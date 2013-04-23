@@ -32,6 +32,7 @@ import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.util.TermFigureStageRange;
 
 import java.util.List;
 import java.util.Set;
@@ -41,6 +42,8 @@ import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
  * Test the ExpressionRepository class.
@@ -499,6 +502,24 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         Set<String> expressedTerms = expRep.getAllDistinctPhenotypeTermIDs();
         assertNotNull(expressedTerms);
         assertTrue(expressedTerms.size() > 100);
+    }
+
+    @Test
+    public void getExpressionResultsByTermAndStage() {
+        String termOboID = "ZFA:0000823";
+        GenericTerm term = getOntologyRepository().getTermByOboID(termOboID);
+        DevelopmentStage start = new DevelopmentStage();
+        start.setAbbreviation("5-9 somites");
+        start = getOntologyRepository().getStageByExample(start);
+        DevelopmentStage end = new DevelopmentStage();
+        end.setAbbreviation("10-13 somites");
+        end = getOntologyRepository().getStageByExample(end);
+        TermFigureStageRange range = new TermFigureStageRange();
+        range.setSuperTerm(term);
+        range.setStart(start);
+        range.setEnd(end);
+        List<ExpressionResult> resultList = getExpressionRepository().getExpressionResultsByTermAndStage(range);
+        assertNotNull(resultList);
     }
 
 }

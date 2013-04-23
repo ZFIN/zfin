@@ -1,5 +1,6 @@
 package org.zfin.uniquery.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Hits;
@@ -317,7 +318,7 @@ public class SiteSearchHelper {
         String categoryDisplayName = SiteSearchCategories.getDisplayName(categoryID);
         RelatedTermsService terms = new RelatedTermsService();
         String queryTerm = getQueryTerm();
-        Map<String, List<String>> anatomyHits = terms.getAllAnatomyHits(queryTerm);
+        List<String> anatomyHits = terms.getAllAnatomyHits(queryTerm);
 
         if (categoryDisplayName.toLowerCase().equals("mutants/transgenics")) {
             specificSearchURL = "/action/fish/do-search?geneOrFeatureName=" + queryTerm;
@@ -328,25 +329,21 @@ public class SiteSearchHelper {
                only have expression search page, no phenotype search page now. */
             specificSearchURL = "aa-xpatselect.apg";
             categoryDisplayName = "Expression";
-            if (anatomyHits.size() > 0) {
+            if (CollectionUtils.isNotEmpty(anatomyHits)) {
                 specificSearchURL += "&TA_selected_structures=";
-                Vector<String> anatkeys = new Vector<String>(anatomyHits.keySet());
-                Collections.sort(anatkeys);
-                for (String anatkey : anatkeys) {
+                for (String anatkey : anatomyHits) {
                     specificSearchURL += URLEncoder.encode(anatkey, "UTF-8") + "%0D%0A"; // %0D%0A = CR-LF
                 }
             } else {
                 specificSearchURL += "&gene_name=" + queryTerm;
             }
-        } else if (categoryDisplayName.toLowerCase().equals("anatomy")) {
-            specificSearchURL = "anatomy/anatomy-search";
-            if (anatomyHits.size() > 0) {
-                specificSearchURL += "?action=term-search&searchTerm=";
-                Vector<String> anatkeys = new Vector<String>(anatomyHits.keySet());
-                Collections.sort(anatkeys);
-                for (String anatkey : anatkeys) {
+        } else if (categoryDisplayName.toLowerCase().startsWith("anatomy")) {
+            specificSearchURL = "/action/ontology/term-detail/";
+            if (CollectionUtils.isNotEmpty(anatomyHits)) {
+                for (String anatkey : anatomyHits) {
                     specificSearchURL += URLEncoder.encode(anatkey, "UTF-8") + " ";
                 }
+                specificSearchURL += "?ontologyName=zebrafish_anatomy,cellular_component,molecular_function,biological_process";
             }
         } else if (categoryDisplayName.toLowerCase().equals("people")) {
             specificSearchURL = "aa-quickfindpers.apg&pname=" + queryTerm;
@@ -358,8 +355,8 @@ public class SiteSearchHelper {
         if (specificSearchURL.length() > 0) {
             returnResults += "<span class='specific_search'>";
             returnResults += "Advanced search: ";
-            if (categoryDisplayName.toLowerCase().equals("anatomy"))
-                returnResults += "<a href='/action/" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
+            if (categoryDisplayName.toLowerCase().startsWith("anatomy"))
+                returnResults += "<a href='" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
             else if (categoryDisplayName.toLowerCase().equals("mutants/transgenics"))
                 returnResults += "<a href='" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
             else

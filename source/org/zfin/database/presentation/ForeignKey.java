@@ -219,6 +219,11 @@ public enum ForeignKey {
     EXTERNAL_REFERENCE_FOREIGN_DB(Table.FOREIGN_DB, Table.EXTERNAL_REFERENCE, "exref_foreign_db_id"),
     EXTERNAL_REFERENCE_ATTRIBUTION_TYPE(Table.ATTRIBUTION_TYPE, Table.EXTERNAL_REFERENCE, "exref_attype_type"),
     EXTERNAL_REFERENCE_PUBLICATION(Table.PUBLICATION, Table.EXTERNAL_REFERENCE, "exref_reference"),
+    TERM_STAGE_TERM(Table.TERM, Table.TERM_STAGE, "ts_term_zdb_id"),
+    START_STAGE_STAGE_TERM(Table.STAGE, Table.TERM_STAGE, "ts_start_stg_zdb_id"),
+    END_STAGE_STAGE_TERM(Table.STAGE, Table.TERM_STAGE, "ts_end_stg_zdb_id"),
+    MARKER_ZDB_ACTIVE_DATA(Table.MARKER, Table.ZDB_ACTIVE_DATA, "zactvd_zdb_id"),
+    TERM_ZDB_ACTIVE_DATA(Table.TERM, Table.ZDB_ACTIVE_DATA, "zactvd_zdb_id"),
 
     TERM_SUBSET_ASSOC(Table.TERM, Table.ONTOLOGY_SUBSET, Table.TERM_SUBSET),
     SUBSET_TERM_ASSOC(Table.ONTOLOGY_SUBSET, Table.TERM, Table.SUBSET_TERM),

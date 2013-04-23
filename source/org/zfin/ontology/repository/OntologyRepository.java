@@ -7,10 +7,7 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -25,7 +22,8 @@ public interface OntologyRepository {
      */
     List<GenericTerm> getAllTermsFromOntology(Ontology ontology);
 
-    int getNumberTermsForOntology(Ontology ontology) ;
+    int getNumberTermsForOntology(Ontology ontology);
+
     /**
      * Retrieve a collection of aliases that match a term of a given ontology.
      * An alias has to be unique within an ontology.
@@ -114,6 +112,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all subset definition from all ontologies in the database.
+     *
      * @return set of subsets
      */
     List<Subset> getAllSubsets();
@@ -140,6 +139,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve a list of phenotypes that have annotations with secondary terms listed.
+     *
      * @return list of PhenotypeStatement
      */
     List<PhenotypeStatement> getPhenotypesWithSecondaryTerms();
@@ -168,7 +168,7 @@ public interface OntologyRepository {
 
     List<GenericTerm> getChildTerms(GenericTerm goTerm, int distance);
 
-    List<GenericTerm> getAllChildTerms(GenericTerm goTerm) ;
+    List<GenericTerm> getAllChildTerms(GenericTerm goTerm);
 
     List<TransitiveClosure> getChildrenTransitiveClosures(GenericTerm term);
 
@@ -178,26 +178,27 @@ public interface OntologyRepository {
 
     DevelopmentStage getDevelopmentStageFromTerm(Term term);
 
-    Map<String,TermDTO> getTermDTOsFromOntology(Ontology ontology);
+    Map<String, TermDTO> getTermDTOsFromOntology(Ontology ontology);
 
     Collection<TermDTO> getTermDTOsFromOntologyNoRelation(Ontology stage);
 
     Set<String> getAllChildZdbIDs(String rootZdbID);
 
     /**
-      * Retrieve all term ids.
-      * If firstNIds > 0 return only the first N.
-      * If firstNIds < 0 return null
-      * @param firstNIds number of records
-      * @return list of ids
-      */
-     List<String> getAllTerms(int firstNIds);
+     * Retrieve all term ids.
+     * If firstNIds > 0 return only the first N.
+     * If firstNIds < 0 return null
+     *
+     * @param firstNIds number of records
+     * @return list of ids
+     */
+    List<String> getAllTerms(int firstNIds);
 
     /**
      * Retrieves firstN terms of each ontology.
      * If firstN = 0 retrieve all terms
      * If firstN < 0 return null
-     *
+     * <p/>
      * Note: No terms marked as secondary are retrieved (those terms are removed
      * from the obo file and only function as an alias and a place holder for a
      * previously used oboID so it does not get re-used.
@@ -209,6 +210,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all terms that replace an obsoleted term.
+     *
      * @param obsoletedTerm obsoleted Term
      * @return list of terms
      */
@@ -216,6 +218,7 @@ public interface OntologyRepository {
 
     /**
      * Retrieve all terms that can be considered for a given obsoleted term.
+     *
      * @param obsoletedTerm obsoleted Term
      * @return list of terms
      */
@@ -223,19 +226,97 @@ public interface OntologyRepository {
 
     /**
      * Retrieve phenotypes with secondary terms annotated.
+     *
      * @return phenotypes
      */
     List<PhenotypeStatement> getPhenotypesOnSecondaryTerms();
 
     /**
      * Retrieve expressions with secondary terms annotated.
+     *
      * @return expressions
      */
     List<ExpressionResult> getExpressionsOnSecondaryTerms();
 
     /**
      * Retrieve go evidences with secondary terms annotated.
+     *
      * @return expressions
      */
     List<MarkerGoTermEvidence> getGoEvidenceOnSecondaryTerms();
+
+    /**
+     * Retrieves a list of terms for which the start stage is not compliant
+     * with the terms parent term start stage
+     *
+     * @return list of term Relationships
+     */
+    List<GenericTermRelationship> getTermsWithInvalidStartStageRange();
+
+    /**
+     * Retrieves a list of terms for which the end stage is not compliant
+     * with the terms parent term end stage.
+     * The termOne is the parent term while termTwo is the child term on the relationshipTerm object.
+     *
+     * @return list of term Relationships
+     */
+    List<GenericTermRelationship> getTermsWithInvalidEndStageRange();
+
+    /**
+     * Retrieves a list of term relationships of type develops_from
+     * for which the start stage of the child is after the end stage of the parent term, i.e. there is no
+     * stage overlap between the two terms (develops into requires a stage overlap).
+     * The termOne is the parent term while termTwo is the child term on the relationshipTerm object.
+     *
+     * @return list of term Relationships
+     */
+    List<GenericTermRelationship> getTermsWithInvalidStartEndStageRangeForDevelopsFrom();
+
+    /**
+     * Retrieves all expression result objects that define stage ranges in violation of the stage ranges given
+     * by the used term stages. Each term has a stage range in which it is defined, thus, the expression result
+     * stage range needs to fit into the smallest window of the used terms.
+     *
+     * @return list of expression results records.
+     */
+    List<ExpressionResult> getExpressionResultsViolateStageRanges();
+
+    /**
+     * Retrieve a generic term by one or more of its values.
+     *
+     * @param superTerm term
+     * @return term
+     */
+    GenericTerm getTermByExample(GenericTerm superTerm);
+
+    /**
+     * Retrieve a stage by one or more of its values.
+     *
+     * @param stage developmental stage
+     * @return stage
+     */
+    DevelopmentStage getStageByExample(DevelopmentStage stage);
+
+    /**
+     * Retrieve all new relationships that were generated on a given day.
+     *
+     * @param date     date
+     * @param ontology Ontology
+     */
+    List<GenericTermRelationship> getNewRelationships(Calendar date, Ontology ontology);
+
+    /**
+     * Retrieve all new relationships that were generated today.
+     *
+     * @param ontology Ontology
+     */
+    List<GenericTermRelationship> getNewRelationships(Ontology ontology);
+
+    /**
+     * Retrieve a Term Relationship by ID
+     *
+     * @param id relationship id
+     * @return term relationship
+     */
+    GenericTermRelationship getRelationshipById(String id);
 }

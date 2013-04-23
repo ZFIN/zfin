@@ -6,6 +6,9 @@ import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
@@ -48,4 +51,19 @@ public class InfrastructureService {
         throw new RuntimeException("No implementation for this type of entity: " + entityID);
     }
 
+    public static String getZdbDate(Calendar date) {
+        if (date == null)
+            return null;
+        StringBuilder builder = new StringBuilder();
+        builder.append(Integer.toString(date.get(Calendar.YEAR)).substring(2));
+        int month = date.get(Calendar.MONTH) + 1;
+        if (month < 10)
+            builder.append("0");
+        builder.append(month);
+        int day = date.get(Calendar.DAY_OF_MONTH);
+        if (day < 10)
+            builder.append("0");
+        builder.append(day);
+        return builder.toString();
+    }
 }

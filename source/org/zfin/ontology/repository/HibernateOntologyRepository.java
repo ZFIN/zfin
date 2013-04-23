@@ -1,14 +1,17 @@
 package org.zfin.ontology.repository;
 
 import org.hibernate.*;
+import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
@@ -863,6 +866,148 @@ public class HibernateOntologyRepository implements OntologyRepository {
         query.setBoolean("secondary", true);
 
         return (List<MarkerGoTermEvidence>) query.list();
+    }
+
+    /**
+     * Retrieves a list of term relationships for which the child's start stage is not compliant
+     * with the terms parent term start stage.
+     * (a child's stage needs to be within the stage range of the parent term).
+     *
+     * @return list of terms
+     */
+    @Override
+    public List<GenericTermRelationship> getTermsWithInvalidStartStageRange() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select relationship from GenericTermRelationship relationship " +
+                " where relationship.termOne.start.hoursStart > relationship.termTwo.start.hoursStart AND " +
+                "       relationship.termTwo.start.name != :unknown ";
+        Query query = session.createQuery(hql);
+        query.setString("unknown", DevelopmentStage.UNKNOWN);
+        return query.list();
+    }
+
+    /**
+     * Retrieves a list of term relationships for which the child's end stage is not compliant
+     * with the terms parent term end stage, i.e. child's end stage is after the parent's end stage
+     * (a child's stage needs to be within the stage range of the parent term).
+     * The termOne is the parent term while termTwo is the child term on the relationshipTerm object.
+     * The child's end stage needs to be at or before the parent's end stage.
+     *
+     * @return list of term Relationships
+     */
+    @Override
+    public List<GenericTermRelationship> getTermsWithInvalidEndStageRange() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select relationship from GenericTermRelationship relationship " +
+                " where relationship.termOne.end.hoursEnd < relationship.termTwo.end.hoursEnd AND " +
+                "       relationship.termTwo.end.name != :unknown AND " +
+                " relationship.type != :developsFrom";
+        Query query = session.createQuery(hql);
+        query.setString("unknown", DevelopmentStage.UNKNOWN);
+        query.setString("developsFrom", RelationshipSorting.DEVELOPS_FROM);
+        return query.list();
+    }
+
+    /**
+     * Retrieves a list of term relationships of type develops_from
+     * for which the start stage of the child is after the end stage of the parent term, i.e. there is no
+     * stage overlap between the two terms (develops into requires a stage overlap).
+     * The termOne is the parent term while termTwo is the child term on the relationshipTerm object.
+     *
+     * @return list of term Relationships
+     */
+    @Override
+    public List<GenericTermRelationship> getTermsWithInvalidStartEndStageRangeForDevelopsFrom() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select relationship from GenericTermRelationship relationship " +
+                " where relationship.termOne.end.hoursEnd < relationship.termTwo.start.hoursStart AND " +
+                "       relationship.termTwo.end.name != :unknown AND " +
+                " relationship.type = :developsFrom";
+        Query query = session.createQuery(hql);
+        query.setString("unknown", DevelopmentStage.UNKNOWN);
+        query.setString("developsFrom", RelationshipSorting.DEVELOPS_FROM);
+        return query.list();
+    }
+
+    /**
+     * Retrieves all expression result objects that define stage ranges in violation of the stage ranges given
+     * by the used term stages. Each term has a stage range in which it is defined, thus, the expression result
+     * stage range needs to fit into the smallest window of the used terms.
+     *
+     * @return list of expression results records.
+     */
+    @Override
+    public List<ExpressionResult> getExpressionResultsViolateStageRanges() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select result from ExpressionResult result " +
+                " where result.startStage.hoursStart < result.entity.superterm.start.hoursStart " +
+                " AND result.startStage.name != :excludedStageName ";
+        Query query = session.createQuery(hql);
+        query.setParameter("excludedStageName", DevelopmentStage.UNKNOWN);
+        return query.list();
+    }
+
+    /**
+     * Retrieve a generic term by one or more of its values.
+     *
+     * @param superTerm
+     * @return
+     */
+    @Override
+    public GenericTerm getTermByExample(GenericTerm superTerm) {
+        Session session = HibernateUtil.currentSession();
+        return (GenericTerm) session.createCriteria(GenericTerm.class).add(Example.create(superTerm)).uniqueResult();
+    }
+
+    /**
+     * Retrieve a stage by one or more of its values.
+     *
+     * @param stage stage
+     * @return
+     */
+    @Override
+    public DevelopmentStage getStageByExample(DevelopmentStage stage) {
+        Session session = HibernateUtil.currentSession();
+        return (DevelopmentStage) session.createCriteria(DevelopmentStage.class).add(Example.create(stage).excludeZeroes()).uniqueResult();
+    }
+
+    /**
+     * Retrieve all new relationships that were generated on a given day.
+     *
+     * @param date     date
+     * @param ontology Ontology
+     */
+    @Override
+    public List<GenericTermRelationship> getNewRelationships(Calendar date, Ontology ontology) {
+        String zdbDate = InfrastructureService.getZdbDate(date);
+        Session session = HibernateUtil.currentSession();
+        String hql = "select relationship from GenericTermRelationship relationship " +
+                " where relationship.zdbId like :termRelationshipLike";
+        Query query = session.createQuery(hql);
+        query.setParameter("termRelationshipLike", "ZDB-TERMREL-" + zdbDate + "%");
+        return query.list();
+
+    }
+
+    /**
+     * Retrieve all new relationships that were generated today.
+     *
+     * @param ontology Ontology
+     */
+    @Override
+    public List<GenericTermRelationship> getNewRelationships(Ontology ontology) {
+        return getNewRelationships(Calendar.getInstance(), ontology);
+    }
+
+    /**
+     * Retrieve a Term Relationship by ID
+     *
+     * @param id relationship id
+     * @return term relationship
+     */
+    @Override
+    public GenericTermRelationship getRelationshipById(String id) {
+        return (GenericTermRelationship) HibernateUtil.currentSession().get(GenericTermRelationship.class, id);
     }
 
     private List<Ontology> getDistinctOntologies() {

@@ -196,14 +196,6 @@ public interface InfrastructureRepository {
     List<String> getDataAliasesWithAbbreviation(String aliasLowerName);
 
     /**
-     * Retrieve anatomy terms (zdbIDs) by token.
-     *
-     * @param name string
-     * @return list of strings
-     */
-    List<String> getAnatomyTokens(String name);
-
-    /**
      * Retrieve zdbIDs from entities that best match a given name
      *
      * @param name string

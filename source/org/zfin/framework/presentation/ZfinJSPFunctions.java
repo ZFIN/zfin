@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
+import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.dto.TermNotFoundException;
 
@@ -356,5 +357,16 @@ public class ZfinJSPFunctions {
     public static boolean isZfinData(String id) {
         return ActiveSource.validateActiveData(id);
     }
+
+    private static Map<String, String> stageListDisplay;
+
+    public static Map<String, String> getDisplayStages() {
+        if (stageListDisplay != null)
+            return stageListDisplay;
+
+        stageListDisplay = AnatomyService.getDisplayStages();
+        return stageListDisplay;
+    }
+
 
 }

@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/$(DIR)
 TESTDIR = /tmp/$(DBNAME)/$(DIR)
 
 STATIC_PROCS = tokenize_init.sql tokenize_list.sql
-GENERIC_PROCS = regen_anatomy_tokens.sql regen_alias_tokens.sql
+GENERIC_PROCS = regen_alias_tokens.sql
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
@@ -60,23 +60,6 @@ runanat :
 	/bin/date
 	echo 'execute function regen_anatomy_tokens()' | $(DBACCESS) $(DBNAME)
 	/bin/date
-
-testanatpre : 
-	-mkdir -p $(TESTDIR)
-	echo ' \
-  unload to "$(TESTDIR)/all_anatomy_tokens.pre" \
-    select anattok_token_lower, anattok_anatitem_zdb_id \
-      from all_anatomy_tokens \
-      order by anattok_anatitem_zdb_id, anattok_token_lower' | $(DBACCESS) $(DBNAME)
-
-testanatpost :
-	echo ' \
-  unload to "$(TESTDIR)/all_anatomy_tokens.post" \
-    select anattok_token_lower, anattok_anatitem_zdb_id \
-      from all_anatomy_tokens \
-      order by anattok_anatitem_zdb_id, anattok_token_lower' | $(DBACCESS) $(DBNAME)
-	-/bin/diff $(TESTDIR)/all_anatomy_tokens.pre $(TESTDIR)/all_anatomy_tokens.post
-
 
 # TEST REGEN_ALIAS_TOKENS()
 

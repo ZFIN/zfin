@@ -38,6 +38,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.util.TermFigureStageRange;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -1405,6 +1406,27 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         expressedTerms.addAll(results);
         return expressedTerms;
     }
+
+    /**
+     * Retrieve expression results for given super term and stage range.
+     * @param range
+     * @return
+     */
+    @Override
+    public List<ExpressionResult> getExpressionResultsByTermAndStage(TermFigureStageRange range) {
+        String hql = "SELECT distinct result " +
+                "FROM " +
+                "ExpressionResult result "+
+                " WHERE " +
+                "result.entity.superterm = :superTerm " +
+                "AND result.startStage = :start " +
+                "AND result.endStage = :end ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("superTerm", range.getSuperTerm());
+        query.setParameter("start", range.getStart());
+        query.setParameter("end", range.getEnd());
+        return (List<ExpressionResult>) query
+                .list();    }
 
     @SuppressWarnings("unchecked")
     public List<GenericTerm> getWildTypeAnatomyExpressionForMarker(String zdbID) {

@@ -49,6 +49,7 @@ gene-product-description
 /phenotype-statement
 /downloads
 mutant/mutant-list
+internal_wzest.cgi
 /zirc/
 action/genotype/
 action/marker/view

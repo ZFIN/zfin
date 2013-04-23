@@ -1,0 +1,42 @@
+<%@ page import="org.zfin.ontology.Ontology" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<table class="primary-entity-attributes">
+    <tr>
+        <th><span class="name-label">${expressionResultDisplays.size()} FX Stage Range Violations:</span> Term start
+            stage begins after figure start stage.
+        </th>
+    </tr>
+</table>
+
+<p/>
+
+<table class="summary sortable">
+    <tr>
+        <th>Term Name</th>
+        <th>Term Start Stage</th>
+        <th>Figure Start Stage</th>
+        <th>Figure End Stage</th>
+        <th>#</th>
+        <th>Publication</th>
+    </tr>
+    <c:forEach var="display" items="${expressionResultDisplays}" varStatus="index">
+        <tr>
+            <td><zfin:link entity="${display.superterm}"/></td>
+            <td>${display.superterm.start.name}</td>
+            <td>${display.start.name}</td>
+            <td>${display.end.name}</td>
+            <td>${display.expressionResultList.size()}</td>
+            <td><zfin:link entity="${display.distinctPublications}"/></td>
+        </tr>
+    </c:forEach>
+    <tfoot>
+    <tr>
+        <th colspan="4"> Total violations (Expression Results)</th>
+        <th colspan="2">${violations.size()}</th>
+    </tr>
+    </tfoot>
+</table>
+
+<p/>
+

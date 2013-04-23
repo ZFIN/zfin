@@ -103,7 +103,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         PROSITE("PROSITE"),
         PFAM("Pfam"),
         PREENSEMBL_ZV7_("PreEnsembl(Zv7)"),
-        PUBMED("PubMed"),
+        PMID("PMID"),
         PUBPROT("PUBPROT"),
         PUBRNA("PUBRNA"),
         QUICKGO("QuickGO"),

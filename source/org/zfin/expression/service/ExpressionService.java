@@ -1,11 +1,14 @@
 package org.zfin.expression.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.*;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.presentation.StageExpressionPresentation;
@@ -19,8 +22,14 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.util.ExpressionResultSplitStatement;
+import org.zfin.util.TermFigureStageRange;
+import org.zfin.util.TermStageSplitStatement;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
  * Service Class that deals with Marker related logic.
@@ -412,4 +421,104 @@ public class ExpressionService {
         }
         return new ArrayList<ExpressionExperiment>(expressionExperimentSet);
     }
+
+    public static String populateEntities(TermFigureStageRange stageRange) {
+        try {
+            GenericTerm term = getOntologyRepository().getTermByExample(stageRange.getSuperTerm());
+            stageRange.setSuperTerm(term);
+        } catch (Exception e) {
+            String error = "Superterm not found by oboID: " + stageRange.getSuperTerm().getOboID();
+            logger.error(error);
+            return error;
+        }
+        try {
+            DevelopmentStage start = getOntologyRepository().getStageByExample(stageRange.getStart());
+            if (start == null)
+                throw new RuntimeException("");
+            stageRange.setStart(start);
+        } catch (Exception e) {
+            String error = "Stage not found by abbreviation: " + stageRange.getStart().getAbbreviation();
+            logger.error(error);
+            return error;
+        }
+        try {
+            DevelopmentStage end = getOntologyRepository().getStageByExample(stageRange.getEnd());
+            stageRange.setEnd(end);
+        } catch (Exception e) {
+            String error = "End Stage not found by abbreviation: " + stageRange.getEnd().getAbbreviation();
+            logger.error(error);
+            return error;
+        }
+        return null;
+    }
+
+    /**
+     * Split an existing expression_result record into multiple ones with a given term and start-end stages.
+     *
+     * @param statement TermStageSplitStatement
+     */
+    public static ExpressionResultSplitStatement splitExpressionAnnotations(TermStageSplitStatement statement) {
+        // find expression Result records matching the original term-stage-range
+        List<ExpressionResult> expressionResultList = getExpressionRepository().getExpressionResultsByTermAndStage(statement.getOriginalTermFigureStageRange());
+        if (CollectionUtils.isEmpty(expressionResultList))
+            return null;
+        logger.info("Found " + expressionResultList.size() + " expression_result records");
+        ExpressionResultSplitStatement splitStatement = new ExpressionResultSplitStatement();
+        for (ExpressionResult result : expressionResultList) {
+            // create new records for the remaining split parts
+            boolean firstElement = true;
+            for (TermFigureStageRange stageRange : statement.getTermFigureStageRangeList()) {
+                GenericTerm superTerm = stageRange.getSuperTerm();
+                if (!validateStageRange(superTerm, stageRange.getStart(), stageRange.getEnd())) {
+                    String message = "Term " + superTerm.getTermName() + " does not appear in the full stage range [";
+                    message += stageRange.getStart().getAbbreviation() + ",";
+                    message += stageRange.getEnd().getAbbreviation() + "]";
+                    throw new RuntimeException(message);
+                }
+                if (firstElement) {
+                    // update existing record
+                    result.setSuperTerm(stageRange.getSuperTerm());
+                    result.setStartStage(stageRange.getStart());
+                    result.setEndStage(stageRange.getEnd());
+                    result.setComment("Created by a split of " + result.getZdbID());
+                    firstElement = false;
+                    splitStatement.setOriginalExpressionResult(result);
+                } else {
+                    ExpressionResult splitResult = new ExpressionResult();
+                    splitResult.setExpressionExperiment(result.getExpressionExperiment());
+                    splitResult.setSuperTerm(stageRange.getSuperTerm());
+                    splitResult.setStartStage(stageRange.getStart());
+                    splitResult.setEndStage(stageRange.getEnd());
+                    splitResult.setExpressionFound(result.isExpressionFound());
+                    splitResult.setComment("Created by a split of " + result.getZdbID());
+                    //splitResult.setFigures(result.getFigures());
+                    for (Figure figure : result.getFigures()) {
+                        getExpressionRepository().createExpressionResult(splitResult, figure);
+                    }
+                    for (Figure figure : result.getFigures()) {
+                        Set<Figure> figures = splitResult.getFigures();
+                        if (figures == null) {
+                            figures = new HashSet<Figure>(2);
+                            splitResult.setFigures(figures);
+                        }
+                        figures.add(figure);
+                    }
+                    splitStatement.getExpressionResultList().add(splitResult);
+                }
+            }
+        }
+        return splitStatement;
+    }
+
+    /**
+     * Check if a given term is defined (appears) in a given stage range.
+     *
+     * @param superTerm  term
+     * @param startStage DevelopmentStage
+     * @param endStage   DevelopmentStage
+     */
+    private static boolean validateStageRange(GenericTerm superTerm, DevelopmentStage startStage, DevelopmentStage endStage) {
+        return DevelopmentStage.stageRangeOverlapsRange(superTerm.getStart(), superTerm.getEnd(), startStage, endStage);
+    }
+
 }

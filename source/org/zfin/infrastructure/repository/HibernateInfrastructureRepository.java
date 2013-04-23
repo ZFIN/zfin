@@ -693,16 +693,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @SuppressWarnings("unchecked")
-    public List<String> getAnatomyTokens(String name) {
-        Session session = HibernateUtil.currentSession();
-        SQLQuery sqlQuery = session.createSQLQuery("select anattok_anatitem_zdb_id as zdbID " +
-                "from all_anatomy_tokens where anattok_token_lower =  :token ");
-        sqlQuery.addScalar("zdbID");
-        sqlQuery.setParameter("token", name.toLowerCase());
-        return (List<String>) sqlQuery.list();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<String> getBestNameMatch(String name) {
         Session session = HibernateUtil.currentSession();
         SQLQuery sqlQuery = session.createSQLQuery("select allmapnm_zdb_id as zdbID from all_map_names " +

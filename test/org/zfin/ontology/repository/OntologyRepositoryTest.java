@@ -14,10 +14,7 @@ import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
@@ -429,4 +426,53 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         List<String> relationshipTypes = ontologyRepository.getAllRelationships(Ontology.SO);
         assertNotNull(relationshipTypes);
     }
+
+    @Test
+    public void getTermsWithInvalidStageDefinition() {
+        List<GenericTermRelationship> relationshipTypes = ontologyRepository.getTermsWithInvalidStartStageRange();
+        assertNotNull(relationshipTypes);
+        relationshipTypes = ontologyRepository.getTermsWithInvalidEndStageRange();
+        assertNotNull(relationshipTypes);
+        relationshipTypes = ontologyRepository.getTermsWithInvalidStartEndStageRangeForDevelopsFrom();
+        assertNotNull(relationshipTypes);
+    }
+
+    @Test
+    public void getExpressionAnnotationStageViolations() {
+        List<ExpressionResult> expressionResultList = ontologyRepository.getExpressionResultsViolateStageRanges();
+        assertNotNull(expressionResultList);
+    }
+
+    @Test
+    public void getTermByExample() {
+        GenericTerm term = new GenericTerm();
+        term.setOboID("ZFA:0000123");
+        GenericTerm genericTerm = ontologyRepository.getTermByExample(term);
+        assertNotNull(genericTerm);
+        assertEquals("liver", genericTerm.getTermName());
+
+        DevelopmentStage stage = new DevelopmentStage();
+        stage.setAbbreviation("5-9 somites");
+        stage = ontologyRepository.getStageByExample(stage);
+        assertNotNull(genericTerm);
+        assertEquals("ZFS:0000024", stage.getOboID());
+
+    }
+
+    @Test
+    public void getNewRelationships() {
+        Calendar date = Calendar.getInstance();
+        date.set(2013, Calendar.APRIL, 15);
+        List<GenericTermRelationship> relationships = ontologyRepository.getNewRelationships(date, Ontology.ANATOMY);
+        assertNotNull(relationships);
+    }
+
+    @Test
+    public void getRelationshipById() {
+        GenericTermRelationship relationship = ontologyRepository.getRelationshipById("ZDB-TERMREL-110123-7220");
+        assertNotNull(relationship);
+
+    }
+
+
 }

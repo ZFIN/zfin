@@ -14,6 +14,7 @@ import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.sequence.MarkerDBLink;
+import org.zfin.util.TermFigureStageRange;
 
 import java.util.List;
 import java.util.Set;
@@ -352,4 +353,11 @@ public interface ExpressionRepository {
      * @return set of expressed Terms.
      */
     Set<String> getAllDistinctPhenotypeTermIDs();
+
+    /**
+     * Retrieve expression results for given super term and stage range.
+     * @param range
+     * @return
+     */
+    List<ExpressionResult> getExpressionResultsByTermAndStage(TermFigureStageRange range);
 }

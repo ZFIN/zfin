@@ -7,7 +7,7 @@ create function regen_anatomy_counts()
 			--expression patterns and term's genotype count
 			--and synonyms count for phenotype.
   --  anatomy_stage_stats: terms gene count and synonyms count of a certain stage
-  --  all_anatomy_contains: each and every ancestor and descendant
+  --  all_term_contains: each and every ancestor and descendant
 
 
   -- see regen_names.sql for details on how to debug SPL routines.

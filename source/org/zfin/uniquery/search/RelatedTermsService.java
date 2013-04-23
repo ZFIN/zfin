@@ -6,17 +6,19 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.ontology.MatchingTerm;
+import org.zfin.ontology.MatchingTermService;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.OntologyManager;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.uniquery.SiteSearchService;
 import org.zfin.uniquery.ZfinAnalyzer;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class RelatedTermsService {
@@ -26,40 +28,41 @@ public class RelatedTermsService {
     private SiteSearchService siteSearchService;
 
     /**
-     * Searches anatomy tokens for a match of a given query string.
-     * Returns results {token=hits} as a Hash table,
-     * where hits is an ArrayList.
+     * Searches ontology terms for matching tokens.
+     * It returns all tokens in a list if at least one term has all tokens in its name.
      *
      * @param queryString string
      * @return map
      */
-    public Map<String, List<String>> getAllAnatomyHits(String queryString) {
-        Map<String, List<String>> results = new HashMap<String, List<String>>();
+    public List<String> getAllAnatomyHits(String queryString) {
+        List<String> results = new ArrayList<String>(2);
 
         List<String> tokens = getTokens(queryString);
+        boolean firstRecord = true;
+        Set<TermDTO> terms = new HashSet<TermDTO>();
         for (String token : tokens) {
-            List<String> anatomyHits = getAnatomyHits(token);
-            if (!anatomyHits.isEmpty()) {
-                token = token.replace("''", "'");
-                results.put(token, anatomyHits);
+            if (firstRecord) {
+                MatchingTermService matcher = new MatchingTermService(-1);
+                for (MatchingTerm term : matcher.getMatchingTerms(token, Ontology.ANATOMY)) {
+                    terms.add(term.getTerm());
+                }
+                firstRecord = false;
+            } else {
+                Iterator<TermDTO> iterator = terms.iterator();
+                while (iterator.hasNext()) {
+                    if (!iterator.next().getTermName().toLowerCase().contains(token.toLowerCase()))
+                        iterator.remove();
+                }
             }
+            if (!terms.isEmpty()) {
+                token = token.replace("''", "'");
+                results.add(token);
+            } else
+                return null;
         }
         return results;
     }
 
-
-    /**
-     * Searches anatomy tokens for a match of a given token.
-     * Returns zdb_ids as an ArrayList.
-     *
-     * @param token string
-     * @return list
-     */
-    public List<String> getAnatomyHits(String token) {
-
-        InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-        return infrastructureRepository.getAnatomyTokens(token);
-    }
 
     /**
      * Search all_map_names and term tables for exact name/symbol match

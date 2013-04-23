@@ -20,6 +20,7 @@ public class CronJobReport {
     private String dataSectionTitle;
     private CronJobUtil cronJobUtil;
     private WikiSynchronizationReport report;
+    private List<Object> headerInfo = new ArrayList<Object>(5);
 
     public CronJobReport(String jobName) {
         this.jobName = jobName;
@@ -107,6 +108,14 @@ public class CronJobReport {
 
     public String getEndDate() {
         return (new Date(finishTime)).toString();
+    }
+
+    public void addHeaderInfo(Object o){
+        headerInfo.add(o);
+    }
+
+    public List<Object> getHeaderInfo() {
+        return headerInfo;
     }
 
     public String getDuration() {

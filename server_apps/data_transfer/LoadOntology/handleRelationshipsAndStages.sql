@@ -12,6 +12,8 @@ load from term_relationships.unl
 
 select distinct termrel_type from tmp_rels;
 
+select * from tmp_rels;
+
 insert into term_relationship_type (termreltype_name)
   select distinct termrel_type from tmp_rels
   	 where not exists (Select 'x' from term_relationship_type
@@ -163,6 +165,7 @@ delete from tmp_rels_zdb
 		      and ttermrel_term_2_zdb_id = a.termrel_term_2_zdb_id
 		      and ttermrel_type = a.termrel_type);
 
+select * From tmp_rels_zdb;
 
 create temp table tmp_zfin_rels  (
 	termrel_zdb_id varchar(50),
@@ -185,6 +188,7 @@ insert into tmp_zfin_rels(
 update tmp_zfin_rels
   set termrel_zdb_id = get_id("TERMREL");
 
+select * From tmp_zfin_rels;
 
 create index tmp_rel_1_index
   on tmp_zfin_rels (termrel_term_1_zdb_id)
@@ -243,7 +247,6 @@ insert into zdb_active_data
 
 select * from  tmp_zfin_rels;
 
-
 select * from term_stage
  where not exists (
    select 'x' from term_stage_temp
@@ -278,10 +281,38 @@ insert into term_relationship (termrel_zdb_id,
 	termrel_type
     from tmp_zfin_rels ;
 
+select * from  term_relationship;
+
+select * from  tmp_zfin_rels;
+
 --update statistics high for table term_relationship ;
 
 --!!! NOT OBVIOUS logic: if the second term in the relationship belongs to this ontology load, then it is
 --!!! safe to check for deletions. Don't want to delete other load relationships.
+
+unload to deleted_relationships_1.unl
+select * from term_relationship
+ where not exists (Select 'x' from term a, term b, tmp_rels
+       	   	  	  where a.term_ont_id = termrel_term_1_id
+			  and b.term_ont_id = termrel_term_2_id
+			  and termrel_term_1_Zdb_id = a.term_zdb_id
+			  and termrel_term_2_zdb_id = b.term_zdb_id
+			  and term_relationship.termrel_type = tmp_rels.termrel_type)
+ and exists (select 'x' from tmp_term_onto_no_dups, term
+     	    	    	where term_id = term_ont_id
+			and term_zdb_id = termrel_term_2_zdb_id);
+
+unload to deleted_relationships_2.unl
+select * from term_relationship
+ where not exists (Select 'x' from term a, term b, tmp_rels
+       	   	  	  where a.term_ont_id = termrel_term_1_id
+			  and b.term_ont_id = termrel_term_2_id
+			  and termrel_term_1_Zdb_id = a.term_zdb_id
+			  and termrel_term_2_zdb_id = b.term_zdb_id
+			  and term_relationship.termrel_type = tmp_rels.termrel_type)
+ and exists (select 'x' from tmp_term_onto_no_dups, term
+     	    	    	where term_id = term_ont_id
+			and term_zdb_id = termrel_term_1_zdb_id);
 
 !echo "delete from term relationship";
 delete from term_relationship
@@ -306,3 +337,5 @@ delete from term_relationship
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_1_zdb_id);
+
+select * from  term_relationship;

@@ -127,14 +127,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void anatomyTokens() {
-        String name = "presumptive";
-        List<String> list = infrastructureRepository.getAnatomyTokens(name);
-        assertNotNull(list);
-        assertTrue(list.size() > 10);
-    }
-
-    @Test
     public void allAssays() {
         List<ExpressionAssay> list = infrastructureRepository.getAllAssays();
         assertTrue(CollectionUtils.isNotEmpty(list));

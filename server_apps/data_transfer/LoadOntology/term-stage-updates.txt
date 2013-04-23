@@ -1,0 +1,17 @@
+-- rhombomere 5: split into
+-- presumptive rhombomere 5
+-- rhombomere 5
+ZFA:0000823|5-9 somites|5-9 somites|ZFA:0000112
+ZFA:0000823|10-13 somites|10-13 somites|ZFA:0000823
+
+-- rhombomere 6: split into
+-- presumptive rhombomere 6
+-- rhombomere 6
+--ZFA:0000069|5-9 somites|5-9 somites|ZFA:0001210
+--ZFA:0000069|10-13 somites|10-13 somites|ZFA:0000069
+
+-- rhombomere 3: split into
+-- presumptive rhombomere 3
+-- rhombomere 3
+--ZFA:0000948|5-9 somites|5-9 somites|ZFA:0001213
+--ZFA:0000948|10-13 somites|10-13 somites|ZFA:0000948

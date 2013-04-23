@@ -17,7 +17,7 @@
 
 <script type="text/javascript">
     var LookupProperties${id} = {
-        <%= Lookup.JSREF_DIV_NAME%>: "term-${id}",
+        <%= Lookup.JSREF_DIV_NAME%>: "term_${id}",
     <%= Lookup.JSREF_INPUT_NAME%>: "searchTerm",
     <%= Lookup.JSREF_SHOWERROR%>: true,
     <c:if test="${not empty action}">
@@ -41,5 +41,5 @@
 
 </script>
 
-<div id="term-${id}"></div>
+<div id="term_${id}"></div>
 

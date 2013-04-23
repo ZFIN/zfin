@@ -23,6 +23,7 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
     private Set<Figure> figures;
     protected GenericTerm subTerm;
     protected PostComposedEntity entity;
+    private String comment;
 
     public String getZdbID() {
         return zdbID;
@@ -138,6 +139,14 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
             }
         }
         return null;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     @Override

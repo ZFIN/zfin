@@ -2,11 +2,14 @@
 
 <project name="load ontology" default="load-ontology" basedir=".">
 
-    <property name="anatomyOboURL" value="http://berkeleybop.org/ontologies/obo-all/zebrafish_anatomy/zebrafish_anatomy.obo"/>
-    <property name="qualityOboURL" value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
+    <property name="anatomyOboURL"
+              value="http://berkeleybop.org/ontologies/obo-all/zebrafish_anatomy/zebrafish_anatomy.obo"/>
+    <property name="qualityOboURL"
+              value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
     <property name="geneOboURL" value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
-    <property name="spatialOboURL" value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
+    <property name="spatialOboURL"
+              value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
 
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
@@ -32,62 +35,63 @@
         </fileset>
     </path>
 
-    <target name="load-sm" >
-        <antcall target="load-spatial-ontology" />
+    <target name="load-sm">
+        <antcall target="load-spatial-ontology"/>
     </target>
 
-    <target name="load-spatial-ontology"  depends="init" >
+    <target name="load-spatial-ontology" depends="init">
         <property name="localOboFile" value="${run-directory}/spatial.obo"/>
         <echo message="${localOboFile}"/>
-        <antcall target="load-ontology" />
+        <antcall target="load-ontology"/>
     </target>
 
-    <target name="download-spatial-ontology" >
+    <target name="download-spatial-ontology">
         <property name="localOboFile" value="spatial.obo"/>
         <property name="oboFileURL" value="${spatialOboURL}"/>
-        <antcall target="download-ontology" />
+        <antcall target="download-ontology"/>
     </target>
 
-    <target name="load-anatomy-ontology"  depends="init">
+    <target name="load-anatomy-ontology" depends="init">
         <property name="localOboFile" value="${run-directory}/zebrafish_anatomy.obo"/>
-        <antcall target="load-ontology-with-stages" />
+        <antcall target="load-ontology-with-stages"/>
     </target>
 
-    <target name="load-gene-ontology"  depends="init">
+    <target name="load-gene-ontology" depends="init">
         <property name="localOboFile" value="${run-directory}/gene-ontology.obo"/>
-        <antcall target="load-ontology" />
+        <antcall target="load-ontology"/>
     </target>
 
-    <target name="download-gene-ontology" >
+    <target name="download-gene-ontology">
         <property name="localOboFile" value="gene-ontology.obo"/>
         <property name="oboFileURL" value="${geneOboURL}"/>
-        <antcall target="download-ontology" />
+        <antcall target="download-ontology"/>
     </target>
 
-    <target name="download-sequence-ontology" >
+    <target name="download-sequence-ontology">
         <property name="localOboFile" value="sequence-ontology.obo"/>
         <property name="oboFileURL" value="${sequenceOboURL}"/>
-        <antcall target="download-ontology" />
+        <antcall target="download-ontology"/>
     </target>
 
-    <target name="load-quality-ontology"  depends="init">
+    <target name="load-quality-ontology" depends="init">
         <property name="localOboFile" value="${run-directory}/quality.obo"/>
-        <antcall target="load-ontology" />
+        <antcall target="load-ontology"/>
     </target>
 
-    <target name="load-sequence-ontology"  depends="init">
+    <target name="load-sequence-ontology" depends="init">
         <property name="localOboFile" value="${run-directory}/sequence-ontology.obo"/>
-        <antcall target="load-ontology" />
+        <antcall target="load-ontology"/>
     </target>
 
-    <target name="download-quality-ontology" >
+    <target name="download-quality-ontology">
         <property name="localOboFile" value="quality.obo"/>
         <property name="oboFileURL" value="${qualityOboURL}"/>
-        <antcall target="download-ontology" />
+        <antcall target="download-ontology"/>
     </target>
 
     <target name="load-ontology" description="Run the ontology loader">
-        <property name="scriptFiles" value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
+        <property name="scriptFiles"
+                  value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
               classpathref="extended.classpath" failonerror="true">
             <classpath refid="classpath"/>
@@ -104,8 +108,8 @@
     </target>
 
     <target name="load-ontology-with-stages" description="Run the ontology loader">
-        <property name="scriptFiles" 
-value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,dropTempTables.sql"/>
+        <property name="scriptFiles"
+                  value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
               classpathref="extended.classpath" failonerror="true">
             <classpath refid="classpath"/>
@@ -121,6 +125,20 @@ value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,h
 
     </target>
 
+    <target name="term-stage-split-update" description="Split term-stage annotations into multiple annotations.">
+        <java classname="org.zfin.ontology.datatransfer.service.OntologyTermFigureStageUpdate" fork="yes"
+              maxmemory="256m"
+              classpathref="extended.classpath" failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-log4jFilename"/>
+            <arg value="log4j.xml"/>
+            <arg value="-termStageUpdateFile"/>
+            <arg value="term-stage-updates.txt"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+        </java>
+    </target>
+
     <target name="check-obo-7bit" description="Check if a term name or a term definition contain a non-7-bit character">
         <java classname="org.zfin.ontology.datatransfer.service.OntologyValidation" fork="yes" maxmemory="256m"
               classpathref="extended.classpath" failonerror="true">
@@ -133,15 +151,16 @@ value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,h
 
     </target>
 
-    <target name="download-anatomy-ontology" >
+    <target name="download-anatomy-ontology">
         <property name="localOboFile" value="zebrafish_anatomy.obo"/>
         <property name="oboFileURL" value="${anatomyOboURL}"/>
-        <antcall target="download-ontology" />
+        <antcall target="download-ontology"/>
     </target>
 
-    
+
     <target name="download-ontology" depends="init" description="Run the ontology loader">
-        <java classname="org.zfin.ontology.datatransfer.DownloadOntology" fork="yes" classpathref="extended.classpath" failonerror="true">
+        <java classname="org.zfin.ontology.datatransfer.DownloadOntology" fork="yes" classpathref="extended.classpath"
+              failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-localOboFileName"/>
             <arg value="${run-directory}/${localOboFile}"/>
@@ -154,16 +173,16 @@ value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,h
     <target name="init">
         <echo message="Launching Ontology Loader"/>
         <tstamp/>
-<!--
-        <property name="run-directory" value="./run-${DSTAMP}"/>
--->
+        <!--
+                <property name="run-directory" value="./run-${DSTAMP}"/>
+        -->
         <property name="run-directory" value="./obo-files"/>
-        <mkdir dir="${run-directory}" />
+        <mkdir dir="${run-directory}"/>
     </target>
 
     <target name="archive-run-directory">
         <echo message="Archive run directory"/>
-        <mkdir dir="${run-directory}" />
+        <mkdir dir="${run-directory}"/>
     </target>
 
 
@@ -182,5 +201,5 @@ value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,h
         </echo>
     </target>
 
-    
+
 </project>

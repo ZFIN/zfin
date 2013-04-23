@@ -40,7 +40,7 @@ public enum Table {
     EXPERIMENT("EXP", "experiment", "exp_zdb_id", "exp_name"),
     EXPERIMENT_CONDITION("EXPCOND", "experiment_condition", "expcond_zdb_id", "expcond_comments"),
     EXPERIMENT_UNIT("EXPUNIT", "experiment_unit", "expunit_zdb_id", "expunit_name"),
-    EXPRESSION_EXPERIMENT("XPAT", "expression_experiment", "xpatex_zdb_id", null, "xpatex_assay_name"),
+    EXPRESSION_EXPERIMENT("XPAT", "expression_experiment", "xpatex_zdb_id", "xpatex_source_zdb_id,xpatex_gene_zdb_id,xpatex_genox_zdb_id", "xpatex_assay_name"),
     EXPRESSION_RESULT("XPATRES", "expression_result", "xpatres_zdb_id", null, "xpatres_expression_found"),
     EXTERNAL_NOTE("EXTNOTE", "external_note", "extnote_zdb_id"),
     EXTERNAL_REFERENCE("EXREFF", "external_reference", "exref_pk_id"),
@@ -119,10 +119,13 @@ public enum Table {
     SEQUENCE_AMBIGUITY_CODE("SEQUENCE_AMBIGUITY_CODE", "sequence_ambiguity_code", "seqac_symbol", "seqac_meaning"),
     STAGE("STAGE", "stage", "stg_zdb_id", "stg_abbrev"),
     TERM("TERM", "term", "term_zdb_id", "term_name", "term_is_obsolete,term_is_secondary,term_is_root"),
+    TERM_STAGE("TERM_STAGE", "term_stage", "ts_term_zdb_id", "ts_term_zdb_id"),
     TERM_RELATIONSHIP("TERMREL", "term_relationship", "termrel_zdb_id", null),
     TERM_RELATIONSHIP_TYPE("TERMRELTYPE", "term_relationship_type", "termreltype_name"),
     TERM_STATS("TERM_STAT", "anatomy_stats", "anatstat_term_zdb_id"),
     ZYGOSITY("ZYG", "zygocity", "zyg_zdb_id", "zyg_name"),
+    ZDB_ACTIVE_DATA("ZDB_ACTIVE_DATA", "zdb_active_data", "zactvd_zdb_id"),
+    ZDB_ACTIVE_SOURCE("ZDB_ACTIVE_SOURCE", "zdb_active_source", "zactvs_zdb_id"),
 
     // many-to-many relationships
     LINK_MEMBER("LINK_MEMBER", "linkage_member", "lnkgmem_linkage_zdb_id,lnkgmem_member_zdb_id", LINKAGE, MARKER),

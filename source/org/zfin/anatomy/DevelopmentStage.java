@@ -2,7 +2,7 @@ package org.zfin.anatomy;
 
 import java.io.Serializable;
 
-public class DevelopmentStage  implements Serializable, Comparable<DevelopmentStage> {
+public class DevelopmentStage implements Serializable, Comparable<DevelopmentStage> {
 
     public static final String ZYGOTE_STAGE = "Zygote:1-cell";
     public static final String ZYGOTE_STAGE_ZDB_ID = "ZDB-STAGE-010723-4";
@@ -97,6 +97,7 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
 
     /**
      * The name of a stage is a concatenation of a short name and an additional description.
+     *
      * @return string
      */
     public String abbreviation() {
@@ -104,7 +105,7 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
             throw new RuntimeException("No name for stage found yet.");
 
         int colonIndex = name.indexOf(":");
-        if(colonIndex == -1)
+        if (colonIndex == -1)
             return name;
 
         return name.substring(0, colonIndex);
@@ -121,20 +122,21 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
     /**
      * Checks if the provided development stage comes after the stage of this object.
      * If they are the same it returns false;
+     *
      * @param stage stage
      * @return boolean
      */
-    public boolean earlierThan(DevelopmentStage stage){
-        if(stage == null)
+    public boolean earlierThan(DevelopmentStage stage) {
+        if (stage == null)
             throw new RuntimeException("No valid stage object provided for comparison.");
 
-        if(this == stage)
+        if (this == stage)
             return false;
 
-        if(this.getName().equals(UNKNOWN))
+        if (this.getName().equals(UNKNOWN))
             return true;
 
-        if(stage.getName().equals(UNKNOWN))
+        if (stage.getName().equals(UNKNOWN))
             return false;
 
         return hoursStart <= stage.getHoursStart();
@@ -144,7 +146,7 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
     public int compareTo(DevelopmentStage anotherStage) {
         if (anotherStage == null)
             return +1;
-        return (int)(hoursStart - anotherStage.getHoursStart());
+        return (int) (hoursStart - anotherStage.getHoursStart());
     }
 
     public String toString() {
@@ -168,5 +170,15 @@ public class DevelopmentStage  implements Serializable, Comparable<DevelopmentSt
 
     public boolean equals(DevelopmentStage anotherStage) {
         return anotherStage.getZdbID().equalsIgnoreCase(zdbID);
+    }
+
+    public static boolean stageRangeOverlapsRange(DevelopmentStage start, DevelopmentStage end, DevelopmentStage intervalStart, DevelopmentStage intervalEnd) {
+        float startFull = start.getHoursStart();
+        float endFull = end.getName().equals(UNKNOWN) ? end.getHoursEnd() : end.getHoursStart();
+        float startInterval = intervalStart.getHoursStart();
+        float endInterval = intervalEnd.getName().equals(UNKNOWN) ? intervalEnd.getHoursEnd() : intervalEnd.getHoursStart();
+
+        // true if full range start is before range start and full range end after interval end
+        return startFull <= startInterval && endFull >= endInterval;
     }
 }

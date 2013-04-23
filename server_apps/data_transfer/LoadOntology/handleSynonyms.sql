@@ -2,12 +2,15 @@ create temp table tmp_syns (term_id varchar(30),
        	    	  	    synonym varchar(255),
 			    scoper varchar(30),
 			    type varchar(30), 
-			    syn varchar(30))
+			    syn varchar(30),
+			    alias_group varchar(30))
 with no log;
 
 !echo "start of the synonym loading";
 load from term_synonyms.unl
   insert into tmp_syns;
+
+select * from tmp_syns;
 
 --GO:0001525|blood vessel formation from pre-existing blood vessels|EXACT|systematic_synonym|synonym|
 --GO:0001527|extended fibrils|EXACT|[]|synonym|
@@ -44,17 +47,67 @@ update tmp_syns
 update data_alias
   set dalias_alias = trim(Dalias_alias)
  where length(dalias_alias) != octet_length(dalias_alias)
- and dalias_data_zdb_id like 'ZDB-TERM%';
+ and get_obj_type(dalias_data_zdb_id) = 'TERM';
 
-delete from tmp_syns
-  where exists (Select 'x' from data_alias,
-  	       	       term,
-		       tmp_term_onto_no_dups,
-  	       	       alias_group
-  	       	       where term_zdb_id = dalias_data_zdb_id
-		       and term_ont_id = term_id
+-- only consider (alias, plural) alias group types
+unload to removedAliases
+   select distinct dalias_zdb_id, term_ont_id, term.term_name, dalias_alias, aliasscope_scope, aliasgrp_name from data_alias,
+              term as term,
+              alias_group,
+              alias_scope,
+              tmp_term_onto_no_dups
+  	       where term_zdb_id = dalias_data_zdb_id
+  	       and term_id = term_ont_id
+		       and term_ontology = term_onto
+		       and aliasgrp_pk_id = dalias_group_id
+		       and aliasscope_pk_id = dalias_scope_id
+		       and dalias_group_id in (1,4)
+      		 and not exists (
+      		     select 'x' from tmp_syns
+               where dalias_alias = synonym
+      		 );
+
+-- delete data_alias records that are not found in the obo file
+delete from data_alias
+ where exists ( select 'x' from term as term,
+              alias_group,
+              alias_scope,
+              tmp_term_onto_no_dups
+  	       where term_zdb_id = dalias_data_zdb_id
+  	       and term_id = term_ont_id
+		       and term_ontology = term_onto
+		       and aliasgrp_pk_id = dalias_group_id
+		       and aliasscope_pk_id = dalias_scope_id
+		       and dalias_group_id in (1,4)
+      		 and not exists (
+      		     select 'x' from tmp_syns
+               where dalias_alias = synonym
+      		 ));
+
+
+Select * from tmp_syns as syn,
+                data_alias,
+  	       	    term,
+		            tmp_term_onto_no_dups as dup,
+  	       	    alias_group
+  	       where term_zdb_id = dalias_data_zdb_id
+		       and term_ont_id = syn.term_id
+		       and term_ont_id = dup.term_id
 		       and dalias_group_id = aliasgrp_pk_id
-		       and dalias_alias = synonym);
+		       and dalias_alias = synonym;
+
+-- remove aliases from temp table that already exist in data_alias table
+delete from tmp_syns
+  where exists (Select 'x' from
+                    data_alias,
+  	       	        term,
+		                tmp_term_onto_no_dups,
+  	       	        alias_group
+  	       	    where term_zdb_id = dalias_data_zdb_id
+                 and term_ont_id = term_id
+                 and dalias_group_id = aliasgrp_pk_id
+                 and dalias_alias = synonym
+                 );
 
 
 --update data_alias
@@ -108,6 +161,7 @@ select count(*) from tmp_syns_with_ids where data_id is not null;
 
 unload to debug
 	select * from tmp_syns_with_ids;
+
 delete from tmp_syns_with_ids where data_id is null;
 
 
@@ -135,6 +189,8 @@ select distinct type
 
 update tmp_syns_with_ids
   set alias_group_id = (select aliasgrp_pk_id from alias_group where aliasgrp_name = type);
+
+select * From tmp_syns_with_ids;
 
 -- remove records that are already in the data_alias table.
 delete from tmp_syns_with_ids as newSyn
@@ -167,6 +223,22 @@ unload to newAliases
   select syn.zdb_id, syn.synonym, term.term_ont_id, term.term_name  from tmp_syns_with_ids as syn, term as term
   where term.term_zdb_id = syn.data_id;
 
+-- remove aliases that do not exist any longer
+
+select * from data_alias
+where get_obj_type(dalias_data_zdb_id) = 'TERM' AND
+      exists (select * from term
+              where term_zdb_id = dalias_data_zdb_id
+              and term_ontology = (Select default_namespace
+      		  	  from tmp_header)
+      ) AND
+      not exists (
+        select 'x' from tmp_syns_with_ids
+        where data_id = dalias_data_zdb_id AND
+          synonym = dalias_alias
+      )   ;
+
+select * from tmp_syns_with_ids;
 
 --!!  COMMENT THIS BACK IN WHEN XREFS are REQUESTED.  Also in the works is a new table for TERM xrefs
 --!!  outside of db_link. Currently, for the GO load, this loads 1.5 million rows into db_link and adds

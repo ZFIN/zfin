@@ -295,5 +295,13 @@
         <function-signature>org.zfin.sequence.blast.Database.AvailableAbbrev getAvailableAbbrev(java.lang.String)</function-signature>
     </function>
 
+    <function>
+        <description>
+        </description>
+        <name>getStageList</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.util.Map getDisplayStages()</function-signature>
+    </function>
+
 
 </taglib>

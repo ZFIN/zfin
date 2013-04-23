@@ -5,9 +5,11 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import java.util.Calendar;
+import java.util.Date;
+
+import static junit.framework.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class InfrastructureServiceTest extends AbstractDatabaseTest {
 
@@ -30,5 +32,16 @@ public class InfrastructureServiceTest extends AbstractDatabaseTest {
         assertTrue("Instance not a Person", o instanceof Person);
         Person person = (Person) o;
         assertEquals("Person name does not match", "Herzog, Wiebke", person.getFullName());
+    }
+
+    @Test
+    public void getZdbDateString() {
+        String zdbDate = InfrastructureService.getZdbDate(null);
+        assertNull(zdbDate);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2013, Calendar.MARCH, 12);
+        zdbDate = InfrastructureService.getZdbDate(calendar);
+        assertNotNull(zdbDate);
+        assertEquals("130312", zdbDate);
     }
 }

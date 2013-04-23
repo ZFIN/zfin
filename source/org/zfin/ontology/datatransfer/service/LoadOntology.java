@@ -22,6 +22,7 @@ import org.zfin.ontology.*;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
+import org.zfin.ontology.datatransfer.GenericCronJobReport;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinProperties;
@@ -40,6 +41,8 @@ import java.text.DateFormat;
 import java.util.*;
 
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.*;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 
 /**
@@ -172,6 +175,7 @@ public class LoadOntology extends AbstractScriptWrapper {
                     report.addMessageToSection("Finish Time: " + new Date() + "\n", sectionName);
                     report.addMessageToSection("Duration: " + DateUtil.getTimeDuration(startTimeLong), sectionName);
                 }
+                runValidationChecks();
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
@@ -188,6 +192,53 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
         //ontologyLoader.closeAllFiles();
+    }
+
+    private void runValidationChecks() {
+        boolean failure = false;
+        // check stage ranges for terms
+        List<GenericTermRelationship> invalidStartStages = getOntologyRepository().getTermsWithInvalidStartStageRange();
+        if (CollectionUtils.isNotEmpty(invalidStartStages)) {
+            String title = "Terms with start stages that are before the start stages of their parent term";
+            createStageReport(invalidStartStages, title, "Start Stage", "Start Stage", "terms with invalid start stages");
+            failure = true;
+        }
+        List<GenericTermRelationship> invalidEndStages = getOntologyRepository().getTermsWithInvalidEndStageRange();
+        if (CollectionUtils.isNotEmpty(invalidEndStages)) {
+            String title = "Terms with end stages that are after the end stages of their parent term";
+            createStageReport(invalidEndStages, title, "End Stage", "End Stage", "terms with invalid end stages (!= develops from)");
+            failure = true;
+        }
+        invalidEndStages = getOntologyRepository().getTermsWithInvalidStartEndStageRangeForDevelopsFrom();
+        if (CollectionUtils.isNotEmpty(invalidEndStages)) {
+            String title = "Terms with start stages that are after the end stages of their parent terms (develops from)";
+            createStageReport(invalidEndStages, title, "End Stage", "Start Stage", "terms with invalid end stages (= develops from)");
+            failure = true;
+        }
+        if (failure)
+            throw new RuntimeException("Error while running stage definition validation checks");
+    }
+
+    private void createStageReport(List<GenericTermRelationship> invalidStages, String title, String parentStage, String childStage, String subject) {
+        LOG.warn(title);
+        List<List<String>> rows = new ArrayList<List<String>>(invalidStages.size());
+        for (GenericTermRelationship pheno : invalidStages) {
+            List<String> row = new ArrayList<String>();
+            row.add(pheno.getTermOne().getTermName());
+            row.add(pheno.getTermTwo().getTermName());
+            row.add(pheno.getTermOne().getStart().getName());
+            row.add(pheno.getTermTwo().getStart().getName());
+            rows.add(row);
+        }
+        CronJobReport cronReport = new CronJobReport(report.getJobName());
+        cronReport.setRows(rows);
+        cronReport.appendToSubject(" - " + rows.size() + subject);
+        cronReport.warning(title);
+        cronJobUtil.addObjectToTemplateMap("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
+        cronReport.addHeaderInfo(title);
+        cronReport.addHeaderInfo(parentStage);
+        cronReport.addHeaderInfo(childStage);
+        cronJobUtil.emailReport("ontology-loader-invalid-stage-defintions.ftl", cronReport);
     }
 
     public boolean initialize(String fileName, CronJobUtil cronJobUtil) {
@@ -213,7 +264,7 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     private void postLoadProcess() {
         // report annotations on obsoleted terms
-        List<PhenotypeStatement> phenotypes = RepositoryFactory.getMutantRepository().getPhenotypesOnObsoletedTerms();
+        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypesOnObsoletedTerms();
         if (phenotypes != null && phenotypes.size() > 0) {
             LOG.warn("Pato annotations found that use obsoleted terms");
             List<List<String>> rows = new ArrayList<List<String>>(phenotypes.size());
@@ -279,7 +330,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);
         }
         // check if any secondary IDs are used in any annotation:
-        List<PhenotypeStatement> secondaryTermsUsed = RepositoryFactory.getMutantRepository().getPhenotypesOnSecondaryTerms();
+        List<PhenotypeStatement> secondaryTermsUsed = getMutantRepository().getPhenotypesOnSecondaryTerms();
         if (secondaryTermsUsed != null && secondaryTermsUsed.size() > 0) {
             LOG.warn("Pato annotations found that use secondary term ids");
             StringBuffer buffer = new StringBuffer();
@@ -418,8 +469,51 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-new-aliases.ftl", cronReport);
         }
+        // removed aliases.
+        if (dataMap.get(UnloadFile.REMOVED_ALIASES.getValue()) != null) {
+            List<List<String>> rows = dataMap.get(UnloadFile.REMOVED_ALIASES.getValue());
+            CronJobReport cronReport = new CronJobReport(report.getJobName());
+            cronReport.setRows(rows);
+            cronReport.appendToSubject(" - " + rows.size() + " existing " + aliasChoice.format(rows.size()) + " removed");
+            cronReport.info();
+            cronJobUtil.emailReport("ontology-loader-removed-aliases.ftl", cronReport);
+        }
+        // report on new relationships
+        List<GenericTermRelationship> newRelationships = getOntologyRepository().getNewRelationships(ontology);
+        if (CollectionUtils.isNotEmpty(newRelationships)) {
+            GenericCronJobReport<List<GenericTermRelationship>> cronReport = new GenericCronJobReport<List<GenericTermRelationship>>(report.getJobName());
+            cronReport.setCollection(newRelationships);
+            cronReport.appendToSubject(" - " + newRelationships.size() + " new Relationships ");
+            cronReport.info();
+            cronJobUtil.emailReport("ontology-loader-new-relationships.ftl", cronReport);
+        }
+        // report on deleted relationships
+        List<List<String>> removedParentRelationships = dataMap.get(UnloadFile.REMOVED_RELATIONSHIPS_1.getValue());
+        if (removedParentRelationships != null) {
+            GenericCronJobReport<List<GenericTermRelationship>> cronReport = new GenericCronJobReport<List<GenericTermRelationship>>(report.getJobName());
+            List<GenericTermRelationship> relationships = createRelationshipList(removedParentRelationships);
+            cronReport.setCollection(relationships);
+            cronReport.appendToSubject(" - " + relationships.size() + " removed Relationships ");
+            cronReport.info();
+            cronJobUtil.emailReport("ontology-loader-delete-relationships.ftl", cronReport);
+        }
         updatePhenotypesReport();
         updateExpressionReport();
+    }
+
+    private List<GenericTermRelationship> createRelationshipList(List<List<String>> relationships) {
+        List<GenericTermRelationship> relationshipList = new ArrayList<GenericTermRelationship>();
+        if (relationships != null) {
+            for (List<String> listID : relationships) {
+                GenericTermRelationship relationship = new GenericTermRelationship();
+                relationship.setZdbId(listID.get(0));
+                relationship.setType(listID.get(3));
+                relationship.setTermOne(getOntologyRepository().getTermByZdbID(listID.get(1)));
+                relationship.setTermTwo(getOntologyRepository().getTermByZdbID(listID.get(2)));
+                relationshipList.add(relationship);
+            }
+        }
+        return relationshipList;
     }
 
     private StringBuilder getListOfHyperlinksOfConsiderTerms(GenericTerm obsoletedTerm) {
@@ -492,7 +586,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         if (!LOG.isDebugEnabled())
-            LOG.info("No Debugging enabled: To see more debug data enable the logger to leg level debug.");
+            LOG.info("No Debugging enabled: To see more debug data enable the logger to log level debug.");
         for (DatabaseJdbcStatement statement : queries) {
             LOG.info("Statement " + statement.getLocationInfo() + ": " + statement.getHumanReadableQueryString());
             if (statement.isInformixWorkStatement())
@@ -585,8 +679,12 @@ public class LoadOntology extends AbstractScriptWrapper {
                             appendFormattedRecord(UnloadFile.TERM_REPLACED, replacedByID.getID(), term.getID(), "replaced_by");
                     }
                     if (term.getSynonyms() != null) {
-                        for (Synonym synonym : term.getSynonyms())
-                            appendSynonym(UnloadFile.TERM_SYNONYMS, term.getID(), synonym.getScope(), synonym.getText());
+                        for (Synonym synonym : term.getSynonyms()) {
+                            if (synonym.getSynonymType() != null)
+                                appendSynonym(UnloadFile.TERM_SYNONYMS, term.getID(), synonym.getScope(), synonym.getText(), synonym.getSynonymType().getName());
+                            else
+                                appendSynonym(UnloadFile.TERM_SYNONYMS, term.getID(), synonym.getScope(), synonym.getText(), "");
+                        }
                     }
                     if (term.getConsiderReplacements() != null) {
                         for (org.obo.datamodel.ObsoletableObject considerObject : term.getConsiderReplacements())
@@ -619,9 +717,9 @@ public class LoadOntology extends AbstractScriptWrapper {
         report.addMessageToSection(message, "Header");
     }
 
-    private void appendSynonym(UnloadFile unloadFile, String id, int scope, String text) {
-        String type = getSynonymDescriptor(scope);
-        appendFormattedRecord(unloadFile, id, text, type, "[]", "synonym");
+    private void appendSynonym(UnloadFile unloadFile, String id, int scope, String text, String synonymType) {
+        String scopeString = getSynonymDescriptor(scope);
+        appendFormattedRecord(unloadFile, id, text, scopeString, "[]", "synonym", synonymType);
     }
 
     private String getSynonymDescriptor(int scope) {
@@ -766,6 +864,9 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     enum UnloadFile {
         NEW_ALIASES("newAliases"),
+        REMOVED_ALIASES("removedAliases"),
+        REMOVED_RELATIONSHIPS_1("deleted_relationships_1.unl"),
+        REMOVED_RELATIONSHIPS_2("deleted_relationships_2.unl"),
         TERM_PARSED("term_parsed.unl"),
         TERM_CONSIDER("term_consider.unl"),
         TERM_RELATIONSHIPS("term_relationships.unl"),

@@ -3,13 +3,21 @@ package org.zfin.ontology.presentation;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.expression.service.ExpressionService;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.ontology.OntologyMetadata;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.DateUtil;
+import org.zfin.util.TermStageSplitStatement;
+
+import java.util.Date;
 
 /**
  * Controller that serves meta information about the ontologies.
@@ -17,7 +25,7 @@ import org.zfin.repository.RepositoryFactory;
 @Controller
 public class OntologyController {
 
-    private static final Logger log = Logger.getLogger(OntologyController.class);
+    private static final Logger LOG = Logger.getLogger(OntologyController.class);
 
     @RequestMapping("/version-info")
     private String retrieveVersionInfo(Model model) {
@@ -32,12 +40,36 @@ public class OntologyController {
     private String forceOntologyLoad(@RequestParam(required = true) String ontologyName,
                                      Model model) {
         Ontology ontology = Ontology.getOntology(ontologyName);
-        if(ontology == null){
+        if (ontology == null) {
             model.addAttribute(LookupStrings.ZDB_ID, ontologyName);
             return "record-not-found.popup";
         }
         OntologyManager.getInstance().reloadOntology(ontology);
         return "redirect:version-info";
+    }
+
+    @RequestMapping("/unset-ontology/{ontologyName}")
+    private String unsetOntology(@PathVariable String ontologyName,
+                                 Model model) {
+        Ontology ontology = Ontology.getOntology(ontologyName);
+        if (ontology == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, ontologyName);
+            return "record-not-found.popup";
+        }
+        OntologyMetadata metadata = RepositoryFactory.getOntologyRepository().getOntologyMetadata(ontologyName);
+        try {
+            HibernateUtil.createTransaction();
+            // set author to something different than it is to allow re-loading
+            metadata.setSavedBy("me");
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            LOG.error(e);
+        } finally {
+            HibernateUtil.closeSession();
+        }
+
+        return "redirect:/version-info";
     }
 
 }

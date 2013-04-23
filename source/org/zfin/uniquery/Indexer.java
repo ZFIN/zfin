@@ -64,7 +64,6 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
 
     private String indexDir;
     private String indexRootDir;
-    private List<UrlLink> urlsToIndex = new ArrayList<UrlLink>();
     private List<String> include = new ArrayList<String>();
     private List<String> exclude = new ArrayList<String>();
     private List<String> crawlOnly = new ArrayList<String>();
@@ -73,7 +72,10 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
     private boolean createDetailPageList = true;
 
     private IndexWriter index;
-    private Set<UrlLink> discoveredURLs = new TreeSet<UrlLink>();
+    // Need to synchronize the collection because of the multi-thread environment the indexer is run
+    private static List<UrlLink> urlsToIndex = Collections.synchronizedList(new ArrayList<UrlLink>());
+    private static Set<UrlLink> discoveredURLs = Collections.synchronizedSet(new TreeSet<UrlLink>());
+
     private Map<String, Boolean> mimeTypes = new HashMap<String, Boolean>();
 
     private int threads = 2;
@@ -242,7 +244,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         // from "run()" method below
         long start = System.currentTimeMillis();
         for (int i = 0; i < threads; i++) {
-            Thread t = new Thread(this, "Thread-" + (i + 1));
+            Thread t = new Thread(this, "Site-Search-Indexer-Thread" + (i + 1));
             t.start();
             threadList.add(t);
         }
@@ -378,8 +380,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
             UrlLink link;
             while ((link = dequeueURL()) != null) {
                 // only index if not already done so
-                if (!discoveredURLs.contains(link)) {
-                    discoveredURLs.add(link);
+                if (discoveredURLs.add(link)) {
                     indexURL(link);
                 }
             }
@@ -404,19 +405,20 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
      * @return URL
      * @throws InterruptedException exception from thread.wait()
      */
-    public synchronized UrlLink dequeueURL() throws InterruptedException {
+    public UrlLink dequeueURL() throws InterruptedException {
         while (true) {
-            if (urlsToIndex.size() > 0) {
-                return urlsToIndex.remove(0);
-            } else {
-                threads--;
-                if (threads > 0) {
-                    wait();
-                    threads++;
-                } else {
-                    notifyAll();
-                    return null;
+            synchronized (urlsToIndex) {
+                if (urlsToIndex.size() > 0) {
+                    return urlsToIndex.remove(0);
                 }
+            }
+            threads--;
+            if (threads > 0) {
+                wait();
+                threads++;
+            } else {
+                notifyAll();
+                return null;
             }
         }
     }
