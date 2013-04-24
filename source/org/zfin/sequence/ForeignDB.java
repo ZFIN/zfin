@@ -88,7 +88,6 @@ public class ForeignDB implements Comparable<ForeignDB> {
         GEO("GEO"),
         HAMAP("HAMAP"),
         INTERPRO("InterPro"),
-        MESH("MESH"),
         MIRBASE_MATURE("miRBASE Mature"),
         MIRBASE_STEM_LOOP("miRBASE Stem Loop"),
         MGI("MGI"),
@@ -103,7 +102,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         PROSITE("PROSITE"),
         PFAM("Pfam"),
         PREENSEMBL_ZV7_("PreEnsembl(Zv7)"),
-        PMID("PMID"),
+        PUBMED("PubMed"),
         PUBPROT("PUBPROT"),
         PUBRNA("PUBRNA"),
         QUICKGO("QuickGO"),
@@ -130,10 +129,11 @@ public class ForeignDB implements Comparable<ForeignDB> {
         ZF_ESPRESSO("ZF-Espresso"),
         ZFIN_PROT("ZFIN_PROT"),
         ZFISHBOOK("zfishbook"),
-        ZMP("ZMP"),
+        ZFISHBOOK_CONSTRUCTS("zfishbook"),
         HTTP("HTTP"),
         ZFIN("ZFIN"),
-        ISBN("ISBN");
+        ISBN("ISBN"),
+        ZMP("ZMP");
 
 
         private final String value;
