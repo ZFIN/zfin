@@ -153,6 +153,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 <?/MICOMMENT>
 <?MIVAR NAME=$fimgview_title>Stock<?/MIVAR>
 <?MIVAR NAME=$fimgview_abbrev><?/MIVAR>
+<?MIVAR NAME=$puback><?/MIVAR>
 
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
@@ -315,6 +316,13 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
                  
                  <?MIVAR NAME=fimgview_phenotype_exists>true<?/MIVAR>
             <?/MISQL>            
+            <?MISQL SQL="
+                select *
+                  from construct_figure
+                 where consfig_fig_zdb_id = '$fimgview_fig_zdb_id';">
+                 
+                 <?MIVAR NAME=fimgview_construct_exists>true<?/MIVAR>
+            <?/MISQL>            
 
            <?MISQL SQL="select *
               from expression_pattern_figure, expression_result, expression_experiment
@@ -389,6 +397,17 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
               <?/MIVAR>
             <?/MIBLOCK>
            
+            <?MIBLOCK COND="$(XST,$fimgview_construct_exists)">
+<?MISQL SQL="select consfig_construct_zdb_id, mrkr_abbrev from construct_figure, marker where consfig_fig_zdb_id='$fimgview_fig_zdb_id' and consfig_construct_zdb_id=mrkr_zdb_id">
+<?MIVAR NAME=$img_cnstrct_id>$1<?/MIVAR>
+<?MIVAR NAME=$img_cnstrct_abbrev>$2<?/MIVAR>
+              <?MIVAR NAME=imgv_figure_display>$imgv_figure_display
+              <?MIVAR><a href="/$img_cnstrct_id"><i>$img_cnstrct_abbrev</i></a><?/MIVAR>
+              <br>          
+              <?/MIVAR>
+<?/MISQL>
+    <?/MIBLOCK>
+
             <?MIVAR NAME=imgv_figure_display>$imgv_figure_display
 
                 </td>
@@ -782,7 +801,26 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
         <?/MIBLOCK>
 
 
-          <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fimgview_pub_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>	
+          <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fimgview_pub_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
+
+        <?MISQL SQL="select pub_acknowledgment from publication,figure where fig_zdb_id='$fig_zdb_id' and fig_source_zdb_id=zdb_id">
+        <?MIVAR NAME=$puback>$1<?/MIVAR>
+        <?/MISQL>
+        <?MIBLOCK COND="$(NE,$puback,)">
+<a name="acknowledgment">
+   
+        <table border=0 width=100% cellspacing=0>
+          <tr bgcolor="<!--|SIDEBAR_COLOR|-->">
+            <td>
+              <b>Acknowledgments:</b>
+            </td>
+          </tr>
+          <tr bgcolor="<!--|HIGHLIGHT_COLOR|-->">
+            <td><?MIVAR>$1<?/MIVAR>
+</table>
+      <?/MIBLOCK>
+
+
         <?/MIBLOCK>
 	
 
