@@ -35,7 +35,7 @@
 <c:if test="${formBean.feature.aliases != null}">
     <tr>
         <th>
-            Previous Names:
+            Synonyms:
         </th>
         <td>
             <c:forEach var="featureAlias" items="${formBean.feature.aliases}" varStatus="loop">
