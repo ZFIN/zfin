@@ -20,7 +20,12 @@
     </tr>
 
     <c:if test="${!empty previousNames}">
+        <c:if test="${formBean.marker.type eq 'GENE'}">
         <zfin2:previousNamesFast label="Previous Names:" previousNames="${previousNames}"/>
+        </c:if>
+        <c:if test="${formBean.marker.type ne 'GENE'}">
+            <zfin2:previousNamesFast  previousNames="${previousNames}"/>
+        </c:if>
     </c:if>
     <%--<zfin2:notes hasNotes="${formBean.marker}"/>--%>
     <zfin2:notesInDiv hasNotes="${formBean.marker}"/>
