@@ -28,17 +28,31 @@
 
 <%--Construct Features--%>
 <%--&lt;%&ndash;SEGMENT (CLONE AND PROBE) RELATIONSHIPS&ndash;%&gt;--%>
+<c:if test="${!empty formBean.marker.figures}">
+    <%--<div style="float: right">--%>
+    <div class="summary">
+        <c:forEach var="fig" items="${formBean.marker.figures}">
+
+        <c:forEach var="img" items="${fig.figure.images}">
+           <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}" width="300" height="200"></a>
+            <%--<zfin:link entity="${img}"/>--%>
+        </c:forEach>
+        </c:forEach>
+    </div>
+</c:if>
 <zfin2:constructFeatures relationships="${formBean.markerRelationshipPresentationList}"
         marker="${formBean.marker}"
-        title="CONSTRUCT FEATURES" />
+        title="CONSTRUCT COMPONENTS" />
 
+<zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
 
 <zfin2:subsection title="TRANSGENIC LINES"
                         test="${!empty formBean.transgenicLineLinks}" showNoData="true">
     <table class="summary horizontal-solidblock">
         <tr>
             <td>
-                <zfin2:toggledHyperlinkStrings collection="${formBean.transgenicLineLinks}" maxNumber="5" suffix="<br>"/>
+                <a href="/action/fish/do-search?geneOrFeatureName=${formBean.marker.name}">View all lines that utilize <i>${formBean.marker.name}</i></a>
+                <%--<zfin2:toggledHyperlinkStrings collection="${formBean.transgenicLineLinks}" maxNumber="5" suffix="<br>"/>--%>
             </td>
         </tr>
     </table>
