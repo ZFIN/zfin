@@ -1,3 +1,4 @@
+<%@ taglib prefix="zfin" uri="http://www.springframework.org/security/tags" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
 
@@ -100,6 +101,59 @@
         <input type="text" size="25" name="query" id="qsearch">
     </form>
 </div>
+
+    <zfin:authorize ifAnyGranted="root">
+        <div id="prototypeSearchBox">
+            <form method="GET" action="https://zfinlabs.zfin.org/prototype" name="prototypesearch">
+                <label for="prototype-query-input">
+                    Prototype:
+                </label>
+                <input class="search-form-input input" style="width: 28em;" name="q" id="prototype-query-input" autocomplete="off" type="text"/>
+            </form>
+        </div>
+        <script>
+
+            jQuery(document).ready(function() {
+                var autocompleteXhr = null;
+
+                jQuery('#prototype-query-input').autocomplete({
+
+                    source: function(request, response) {
+                        /* http://stackoverflow.com/questions/4551175/how-to-cancel-abort-jquery-ajax-request */
+                        if(autocompleteXhr && autocompleteXhr.readyState != 4) {
+                            autocompleteXhr.abort();
+                        }
+                        autocompleteXhr = jQuery.ajax({
+                            url: '/zfinlabs/autocomplete',
+                            dataType: "json",
+                            data: {
+                                q : request.term
+                            },
+                            success: function(data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    select: function(event, ui) {
+                        var val = ui.item.value;
+                        jQuery('#prototype-query-input').val(val);
+                        var form = jQuery(this).parents('form:first');
+                        jQuery(form).submit();
+
+                    },
+                    minLength: 1, delay: 50,
+                    open: function(event, ui){
+                        jQuery("ul.ui-autocomplete li a").each(function(){
+                            var htmlString = jQuery(this).html().replace(/&lt;/g, '<');
+                            htmlString = htmlString.replace(/&gt;/g, '>');
+                            jQuery(this).html(htmlString);
+                        });
+                    }
+                }, {});
+            });
+        </script>
+    </zfin:authorize>
+
 <div id="hdr-banner">
     <div id="hdr-tabs">
         <div id="researchtab">

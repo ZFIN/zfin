@@ -46,6 +46,34 @@
   z-index: 5;
 }
 
+/*******  prototype section start */
+
+#prototypeSearchBox {
+    position: absolute;
+    top: 30px;
+    right: 5px;
+    height: 1.5em;
+    z-index: 4;
+
+    margin:0px;
+    padding: 0px;
+}
+
+#prototypeSearchBox label {
+    text-decoration: none;
+    font-weight: bold;
+    font-size: .8em;
+}
+/* override the jqueryUI default */
+.ui-corner-all  {
+    font-size: .9em !important;
+    background: #fff;
+}
+.search-result-highlight { font-weight: bold }
+
+/******** prototype section end */
+
+
 #quicksearchBox {
    position: absolute;
    top: 5px;
