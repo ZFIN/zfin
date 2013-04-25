@@ -16,14 +16,15 @@ select
    case dblink_acc_num when NULL then gff_source else 'vega' end,
    gff_feature,gff_start,gff_end,gff_score,gff_strand,gff_frame,
     "ID="       || gff_ID      ||
-    ";Name="    || case gff_Name when NULL then "" else gff_Name end ||
+    ";Name="    || nvl(mrkr_name,nvl(gff_name,'')) ||
     ";Parent="  || case gff_Parent when NULL then "" else gff_Parent end || 
     case dblink_linked_recid when NULL then "" else (";zdb_id=" || dblink_linked_recid) end ||
     ";Alias="   || gff_ID
- from  gff3, outer db_link
+ from db_link
+  right outer join gff3 on gff_ID = dblink_acc_num
+  left outer join marker on mrkr_zdb_id = dblink_linked_recid
  where gff_source[1,8] == 'Ensembl_'
    and gff_feature in ('mRNA','transcript')
-   and gff_ID  == dblink_acc_num   
 order by 1,4,3
 ;
 
