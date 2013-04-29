@@ -130,7 +130,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         ZF_ESPRESSO("ZF-Espresso"),
         ZFIN_PROT("ZFIN_PROT"),
         ZFISHBOOK("zfishbook"),
-        ZFISHBOOK_CONSTRUCTS("zfishbook"),
+        ZFISHBOOK_CONSTRUCTS("zfishbook_constructs"),
         HTTP("HTTP"),
         ZFIN("ZFIN"),
         ISBN("ISBN"),
