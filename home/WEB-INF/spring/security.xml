@@ -4,8 +4,8 @@
         xmlns:security="http://www.springframework.org/schema/security"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
     <bean id="apgLogoutHandler" class="org.zfin.security.ApgLogoutSuccessHandler">
         <property name="defaultTargetUrl" value="/"/>
@@ -62,7 +62,6 @@
     <!--filter action should correspond to this:-->
     <!--http://static.springsource.org/spring-security/site/docs/3.0.x/reference/ns-config.html#ns-requires-channel-->
     <security:http
-            lowercase-comparisons="true"
             path-type="ant"
             use-expressions="true"
             create-session="ifRequired"

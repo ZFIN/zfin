@@ -14,12 +14,13 @@ import java.util.*;
  * Validate somebodies has an allowed role.
  * @Deprecated Using default Spring Security 3 voter.
  */
-public class ZfinAuthenticatedVoter implements AccessDecisionVoter {
+public class ZfinAuthenticatedVoter implements AccessDecisionVoter<Object> {
 
     public static final String ROOT = "root";
     public static final String SUBMIT = "submit";
     public static final String GUEST = "guest";
 
+    @Override
     public boolean supports(ConfigAttribute attribute) {
         return (attribute.getAttribute() != null)
                 && (ZfinAuthenticatedVoter.ROOT.equals(attribute.getAttribute())
@@ -33,6 +34,7 @@ public class ZfinAuthenticatedVoter implements AccessDecisionVoter {
      * @param clazz the secure object
      * @return always <code>true</code>
      */
+    @Override
     public boolean supports(Class clazz) {
         return true;
     }
