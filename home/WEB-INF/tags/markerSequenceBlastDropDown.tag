@@ -29,7 +29,7 @@
                 </c:when>
                 <c:when test="${blastDB.abbrev.value ne 'MEGA BLAST'}">
                     <a
-                       href="/action/blast/blast-with-sequence?accession=${sequence}&blastDB=${blastDB.abbrev}">${blastDB.displayName}</a>
+                       href="/action/blast/blast-with-sequence?accession=${sequence}&blastDB=${blastDB.abbrev.toString()}">${blastDB.displayName}</a>
                     <br>
                 </c:when>
             </c:choose>
