@@ -1,4 +1,4 @@
-Back to <a href="/action/dev-tools/home"> Dev-tools</a>
+Back to <a href="/action/devtool/home"> Dev-tools</a>
 
 <p></p>
 
@@ -19,6 +19,15 @@ Back to <a href="/action/dev-tools/home"> Dev-tools</a>
         <td>
             <a href="/action/ontology/term-usage-report">Ontology Term Usage Report</a>
         </td>
+    </tr>
+    <tr>
+        <td><a href="/action/devtool/fx-stage-range-violations">FX Stage Range Violations</a></td>
+    </tr>
+    <tr>
+        <td><a href="/action/devtool/merged-terms-used-in-relationships">Merged Terms used in Term Relationships</a></td>
+    </tr>
+    <tr>
+        <td><a href="/action/devtool/terms-without-relationships">Active Terms without Term Relationships</a></td>
     </tr>
 </table>
 

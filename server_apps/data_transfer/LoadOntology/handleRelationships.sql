@@ -1,5 +1,21 @@
 !echo "now deal with relationships" ;
 
+!echo "Remove term relationships that use merged terms";
+
+unload to removed_term_relationships_with_merged_terms.unl
+select * From term_relationship where exists(
+select 'x' from term
+where (term_zdb_id = termrel_term_1_zdb_id or term_zdb_id = termrel_term_2_zdb_id) AND
+term_is_secondary = 't'
+);
+
+delete From term_relationship
+where exists(
+select 'x' from term
+where (term_zdb_id = termrel_term_1_zdb_id or term_zdb_id = termrel_term_2_zdb_id) AND
+term_is_secondary = 't'
+);
+
 create temp table tmp_rels (
 	termrel_term_1_id varchar(50),
 	termrel_term_2_id varchar(50),
@@ -9,8 +25,6 @@ create temp table tmp_rels (
 
 load from term_relationships.unl
   insert into tmp_rels ;
-
-select distinct termrel_type from tmp_rels;
 
 insert into term_relationship_type (termreltype_name)
   select distinct termrel_type from tmp_rels
@@ -136,7 +150,7 @@ insert into term_relationship (termrel_zdb_id,
     				termrel_term_1_zdb_id,
     				termrel_term_2_zdb_id,
     				termrel_type)
-  select first 1 termrel_zdb_id,
+  select termrel_zdb_id,
 	termrel_term_1_zdb_id,
 	termrel_term_2_zdb_id,
 	termrel_type
@@ -146,6 +160,31 @@ insert into term_relationship (termrel_zdb_id,
 
 --!!! NOT OBVIOUS logic: if the second term in the relationship belongs to this ontology load, then it is
 --!!! safe to check for deletions. Don't want to delete other load relationships.
+
+unload to deleted_relationships_1.unl
+select * from term_relationship
+ where not exists (Select 'x' from term a, term b, tmp_rels
+       	   	  	  where a.term_ont_id = termrel_term_1_id
+			  and b.term_ont_id = termrel_term_2_id
+			  and termrel_term_1_Zdb_id = a.term_zdb_id
+			  and termrel_term_2_zdb_id = b.term_zdb_id
+			  and term_relationship.termrel_type = tmp_rels.termrel_type)
+ and exists (select 'x' from tmp_term_onto_no_dups, term
+     	    	    	where term_id = term_ont_id
+			and term_zdb_id = termrel_term_2_zdb_id);
+
+unload to deleted_relationships_2.unl
+select * from term_relationship
+ where not exists (Select 'x' from term a, term b, tmp_rels
+       	   	  	  where a.term_ont_id = termrel_term_1_id
+			  and b.term_ont_id = termrel_term_2_id
+			  and termrel_term_1_Zdb_id = a.term_zdb_id
+			  and termrel_term_2_zdb_id = b.term_zdb_id
+			  and term_relationship.termrel_type = tmp_rels.termrel_type)
+ and exists (select 'x' from tmp_term_onto_no_dups, term
+     	    	    	where term_id = term_ont_id
+			and term_zdb_id = termrel_term_1_zdb_id);
+
 
 !echo "delete from term relationship";
 delete from term_relationship

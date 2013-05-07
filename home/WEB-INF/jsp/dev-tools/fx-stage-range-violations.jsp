@@ -1,6 +1,10 @@
-<%@ page import="org.zfin.ontology.Ontology" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<a href="/action/devtool/home"> Dev-tools</a>
+>
+<a href="/action/ontology/reports"> Ontology Reports</a>
+
+<p></p>
 <table class="primary-entity-attributes">
     <tr>
         <th><span class="name-label">${expressionResultDisplays.size()} FX Stage Range Violations:</span> Term start
@@ -37,6 +41,4 @@
     </tr>
     </tfoot>
 </table>
-
-<p/>
 

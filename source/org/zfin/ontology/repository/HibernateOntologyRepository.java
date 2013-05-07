@@ -1010,6 +1010,58 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return (GenericTermRelationship) HibernateUtil.currentSession().get(GenericTermRelationship.class, id);
     }
 
+    /**
+     * Retrieve Term Relationships that use merged terms, i.e. terms that are not used any longer.
+     *
+     * @return list of term relationships
+     */
+    @Override
+    public List<GenericTermRelationship> getTermRelationshipsWithMergedTerms() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select relationship from GenericTermRelationship relationship" +
+                " where relationship.termOne.secondary = :secondary OR relationship.termTwo.secondary = :secondary ";
+        Query query = session.createQuery(hql);
+        query.setBoolean("secondary", true);
+        return (List<GenericTermRelationship>) query.list();
+    }
+
+    /**
+     * Retrieve list of distinct merged terms used in relationships.
+     *
+     * @return list fo terms
+     */
+    @Override
+    public List<GenericTerm> getMergedTermsInTermRelationships() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select term from GenericTerm term" +
+                " where term.secondary = :secondary " +
+                "       AND (term.childTermRelationships is not empty " +
+                "         OR term.childTermRelationships is not empty)";
+        Query query = session.createQuery(hql);
+        query.setBoolean("secondary", true);
+        return (List<GenericTerm>) query.list();
+    }
+
+    /**
+     * Retrieve list of terms that are not obsoleted and not merged that do not have a defined relationship.
+     *
+     * @return list of terms
+     */
+    @Override
+    public List<GenericTerm> getActiveTermsWithoutRelationships() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select term from GenericTerm term" +
+                " where term.secondary = :secondary " +
+                "       AND term.childTermRelationships is empty " +
+                "       AND term.parentTermRelationships is empty " +
+                "       AND term.secondary = :secondary " +
+                "       AND term.obsolete = :obsolete ";
+        Query query = session.createQuery(hql);
+        query.setBoolean("secondary", false);
+        query.setBoolean("obsolete", false);
+        return (List<GenericTerm>) query.list();
+    }
+
     private List<Ontology> getDistinctOntologies() {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct ontology from GenericTerm " +

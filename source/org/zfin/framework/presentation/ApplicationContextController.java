@@ -10,13 +10,15 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.ExpressionResultDisplay;
 import org.zfin.expression.presentation.ExpressionResultFormBean;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
@@ -68,6 +70,26 @@ public class ApplicationContextController {
         model.addAttribute("violations", expressionResultsViolateStageRanges);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "dev-tools/fx-stage-range-violations.page";
+    }
+
+    @RequestMapping("/merged-terms-used-in-relationships")
+    protected String showMergedTermsInRelationship(@ModelAttribute("formBean") ExpressionResultFormBean form,
+                                                   Model model)
+            throws Exception {
+        List<GenericTerm> expressionResultsViolateStageRanges = getOntologyRepository().getMergedTermsInTermRelationships();
+        model.addAttribute("mergeTerms", expressionResultsViolateStageRanges);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "dev-tools/merged-terms-used-in-relationships.page";
+    }
+
+    @RequestMapping("/terms-without-relationships")
+    protected String showTermsWithoutRelationships(@ModelAttribute("formBean") ExpressionResultFormBean form,
+                                                   Model model)
+            throws Exception {
+        List<GenericTerm> expressionResultsViolateStageRanges = getOntologyRepository().getActiveTermsWithoutRelationships();
+        model.addAttribute("activeTerms", expressionResultsViolateStageRanges);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "dev-tools/terms-without-relationships.page";
     }
 
 

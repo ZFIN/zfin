@@ -71,6 +71,8 @@ public class TermPresentation extends EntityPresentation {
     protected static String getLink(Term term, String name) {
         if (term == null || name == null)
             return null;
+        if (term.getOntology() == null)
+            return name;
         String title = term.getOntology().getCommonName();
         return getTomcatLinkWithTitle(uri, term.getOboID(), term.getTermName(), name, title);
     }

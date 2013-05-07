@@ -444,6 +444,20 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getListOfMergedTermsInTermRelationship() {
+        List<GenericTermRelationship> relationshipList = ontologyRepository.getTermRelationshipsWithMergedTerms();
+        assertNotNull(relationshipList);
+        List<GenericTerm> termList = ontologyRepository.getMergedTermsInTermRelationships();
+        assertNotNull(termList);
+    }
+
+    @Test
+    public void getTermsWithoutRelationships() {
+        List<GenericTerm> relationshipList = ontologyRepository.getActiveTermsWithoutRelationships();
+        assertNotNull(relationshipList);
+    }
+
+    @Test
     public void getTermByExample() {
         GenericTerm term = new GenericTerm();
         term.setOboID("ZFA:0000123");

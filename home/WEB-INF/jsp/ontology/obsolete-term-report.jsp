@@ -3,7 +3,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
-Back to <a href="/action/dev-tools/home"> Dev-tools</a>
+Back to <a href="/action/devtool/home"> Dev-tools</a>
 |
 Back to <a href="/action/ontology/reports"> Ontology Reports</a>
 

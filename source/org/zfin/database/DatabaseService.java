@@ -349,7 +349,7 @@ public class DatabaseService {
                     LOG.info("No data found for key: " + statement.getDataKey());
                     continue;
                 }
-                statement.updateInsertStatement(data.get(0).size());
+                statement = statement.completeInsertStatement(data.get(0).size());
                 infrastructureRep.executeJdbcStatement(statement, data);
                 LOG.info(data.size() + " records inserted");
             } else if (statement.isDebug()) {

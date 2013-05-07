@@ -3,6 +3,7 @@ package org.zfin.framework.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.zfin.database.presentation.Table;
@@ -27,6 +28,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 /**
  * Controller that obtains the meta data for the database.
  */
+@Controller
 public class DatabaseInfoController extends MultiActionController {
 
     public ModelAndView databaseInfoHandler(HttpServletRequest request, HttpServletResponse response)

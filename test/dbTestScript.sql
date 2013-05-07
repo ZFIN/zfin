@@ -6,5 +6,18 @@ select * from term
 
  --      where not exists (select 'x' from tmp_xrefs_with_fdbcont_dblink
 
+select * from term;
+
+insert into tmp_rels_zdb (ttermrel_ont_id_1, ttermrel_ont_id_2, ttermrel_type)
+  select termrel_term_1_id, termrel_term_2_id, termrel_type
+   from tmp_rels;
+
+!echo "Delete from temp table";
+delete from tmp_zfin_rels
+  where termrel_term_2_zdb_id is null;
+
+load from ontology_header.unl
+  insert into tmp_header;
+
 --rollback work;
 

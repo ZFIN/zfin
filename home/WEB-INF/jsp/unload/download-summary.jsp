@@ -6,7 +6,7 @@
 
 
 <authz:authorize ifAnyGranted="root">
-    Back to <a href="/action/dev-tools/home">Dev Tools Home Page</a>
+    Back to <a href="/action/devtool/home">Dev Tools Home Page</a>
 
 
     <table class="primary-entity-attributes summary">

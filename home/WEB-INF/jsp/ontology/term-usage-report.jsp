@@ -1,6 +1,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-Back to <a href="/action/dev-tools/home"> Dev-tools</a>
+Back to <a href="/action/devtool/home"> Dev-tools</a>
+|
+Back to <a href="/action/ontology/reports"> Ontology Reports</a>
 
 <p></p>
 

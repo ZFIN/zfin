@@ -1,5 +1,6 @@
 package org.zfin.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.presentation.ZfinFilenameFilter;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -57,6 +58,12 @@ public final class FileUtil {
         File file = new File(tempDir, DATA_TRANSFER);
         File fullFile = new File(file, fileName);
         return fullFile.isFile();
+    }
+
+    public static File getFileInTempDirectory(String fileName) {
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File file = new File(tempDir, fileName);
+        return file;
     }
 
     /**
@@ -409,5 +416,21 @@ public final class FileUtil {
         info.setSize(file.length());
         return info;
     }
+
+    /**
+     * Strip off slashes from a file path.
+     *
+     * @param file
+     * @return
+     */
+    public static String getFileNameFromPath(String file) {
+        if (StringUtils.isEmpty(file))
+            return "";
+        int indexOfLastSlash = file.lastIndexOf("/");
+        if (indexOfLastSlash < 0)
+            return file;
+        return file.substring(indexOfLastSlash + 1);
+    }
+
 
 }

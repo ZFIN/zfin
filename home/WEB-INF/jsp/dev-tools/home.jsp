@@ -61,7 +61,7 @@
     </td>
 </tr>
 <tr>
-    <td><a href="/action/devtool/fx-stage-range-violations">FX Stage Range Violations</a></td>
+    <td></td>
     <td>
         <a href="/action/dev-tools/phenotype-curation-history">History: Phenotype Experiments</a>
     </td>

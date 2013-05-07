@@ -110,7 +110,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void replacementZDB() {
-	String replacedZdbID = "ZDB-ANAT-010921-532";
+        String replacedZdbID = "ZDB-ANAT-010921-532";
         ReplacementZdbID replacementZdbID = infrastructureRepository.getReplacementZdbId(replacedZdbID);
         assertNotNull(replacementZdbID);
 
@@ -338,12 +338,10 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
         HibernateUtil.createTransaction();
         try {
-            for (DatabaseJdbcStatement statement : queries) {
-                infrastructureRepository.executeJdbcStatement(statement);
-            }
-            HibernateUtil.flushAndCommitCurrentSession();
+            infrastructureRepository.executeJdbcStatement(queries.get(0));
         } catch (Exception e) {
             fail("error during SQL execution");
+        } finally {
             HibernateUtil.rollbackTransaction();
         }
 
@@ -459,11 +457,11 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             datas.add("ZDB-GENE-000607-47");
             datas.add("ZDB-GENE-000607-71");
             datas.add("ZDB-GENE-030131-10076");
-            for(String data : datas){
-                infrastructureRepository.insertRecordAttribution( data, MicroarrayWebserviceJob.MICROARRAY_PUB);
+            for (String data : datas) {
+                infrastructureRepository.insertRecordAttribution(data, MicroarrayWebserviceJob.MICROARRAY_PUB);
             }
             int removed = infrastructureRepository.removeAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
-            assertEquals(3,removed);
+            assertEquals(3, removed);
         } catch (Exception e) {
             fail(e.toString());
         } finally {
@@ -482,9 +480,9 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             datas.add("ZDB-GENE-000607-71");
             datas.add("ZDB-GENE-030131-10076");
             int added = infrastructureRepository.addAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
-            assertEquals(datas.size(),added);
+            assertEquals(datas.size(), added);
             List<String> numMarkersAttributed = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
-            assertEquals(datas.size(),numMarkersAttributed.size());
+            assertEquals(datas.size(), numMarkersAttributed.size());
         } catch (Exception e) {
             fail(e.toString());
         } finally {
@@ -494,14 +492,14 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void getPublicationAttributionsForPub(){
+    public void getPublicationAttributionsForPub() {
         List<String> markersForPub = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
         assertNotNull(markersForPub);
     }
 
     @Test
-    public void hasStandardPublicationAttribution(){
-        assertFalse(infrastructureRepository.hasStandardPublicationAttribution("ZDB-SSLP-000426-106",MicroarrayWebserviceJob.MICROARRAY_PUB));
+    public void hasStandardPublicationAttribution() {
+        assertFalse(infrastructureRepository.hasStandardPublicationAttribution("ZDB-SSLP-000426-106", MicroarrayWebserviceJob.MICROARRAY_PUB));
         assertTrue(infrastructureRepository.hasStandardPublicationAttribution("ZDB-GENE-030131-9286", MicroarrayWebserviceJob.MICROARRAY_PUB));
         // this keeps popping back and for as a ZGC .. .will remove
 //        assertTrue(infrastructureRepository.hasStandardPublicationAttribution("ZDB-GENE-041008-244", MicroarrayWebserviceJob.MICROARRAY_PUB));
@@ -511,8 +509,8 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void hasStandardPublicationAttributionForRelatedMarkers(){
-        assertFalse(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-SSLP-000426-106",MicroarrayWebserviceJob.MICROARRAY_PUB));
+    public void hasStandardPublicationAttributionForRelatedMarkers() {
+        assertFalse(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-SSLP-000426-106", MicroarrayWebserviceJob.MICROARRAY_PUB));
         assertTrue(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-GENE-030131-9286", MicroarrayWebserviceJob.MICROARRAY_PUB));
 //        assertTrue(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-GENE-041008-244", MicroarrayWebserviceJob.MICROARRAY_PUB));
 

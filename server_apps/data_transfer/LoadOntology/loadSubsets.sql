@@ -13,12 +13,27 @@ with no log;
 load from subsetdefs_header.unl
   insert into tmp_subset;
 
-  select default_namespace from tmp_header;
+!echo "all subset records from obo file";
+!echo "temp table tmp_subset";
+!echo "id, subset_name, subset_def, subset";
+ select * from tmp_subset;
 
-  Select count(*) from ontology_subset, ontology, tmp_header, tmp_subset
+select default_namespace from tmp_header;
+
+!echo "Number of matching subsets found in production";
+
+Select count(*) from ontology_subset, ontology, tmp_header, tmp_subset
 		       where default_namespace = ont_default_namespace
 		       and osubset_subset_name = subset_name
 		       and ont_pk_id = osubset_ont_id;
+
+!echo "Remove rows in tmp_subset"
+select * from tmp_subset
+  where exists (Select 'x' from ontology_subset, ontology, tmp_header
+  	       	       where osubset_subset_name = subset_name
+		       and osubset_subset_definition =subset_def
+		       and default_namespace = ont_default_namespace
+		       and ont_pk_id = osubset_ont_id);
 
 delete from tmp_subset
   where exists (Select 'x' from ontology_subset, ontology, tmp_header
@@ -32,7 +47,7 @@ delete from tmp_subset
 unload to 'debug'
   select count(*) from tmp_subset;
 
-unload to 'debug'
+!echo "Remaining rows in tmp_subset"
   select * from tmp_subset;
 
 update ontology_subset

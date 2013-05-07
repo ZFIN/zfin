@@ -155,7 +155,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     public void runOntologyUpdateProcess() {
-        //ontologyLoader.openAllFiles();
+        openTraceFile();
         if (processOboFile()) {
             try {
                 HibernateUtil.createTransaction();
@@ -187,11 +187,11 @@ public class LoadOntology extends AbstractScriptWrapper {
             // needed to allow the generate absolute hyperlinks in emails
             TermPresentation.domain = "http://" + ZfinPropertiesEnum.DOMAIN_NAME;
             postLoadProcess();
-            // need to reverse it. A bit of a hack!
+            // need to reverse it. A bit of a hack!                                                                                                                                                    zx
             TermPresentation.domain = null;
         }
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
-        //ontologyLoader.closeAllFiles();
+        closeTraceFile();
     }
 
     private void runValidationChecks() {
@@ -583,6 +583,8 @@ public class LoadOntology extends AbstractScriptWrapper {
             LOG.error("Could not find script file " + file.getAbsolutePath());
             return;
         }
+        writeToTraceFile("Executing script file: " + dbScriptFile);
+
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         if (!LOG.isDebugEnabled())
@@ -597,8 +599,9 @@ public class LoadOntology extends AbstractScriptWrapper {
                     LOG.info("No data found for key: " + statement.getDataKey());
                     continue;
                 }
-                statement.updateInsertStatement(data.get(0).size());
-                infrastructureRep.executeJdbcStatement(statement, data);
+                DatabaseJdbcStatement modifiedStatement = statement.completeInsertStatement(data.get(0).size());
+                infrastructureRep.executeJdbcStatement(modifiedStatement, data);
+                runDebugStatement(statement);
                 LOG.info(data.size() + " records inserted");
             } else if (statement.isSingleLoadStatement()) {
                 List<List<String>> data = dataMap.get(statement.getDataKey());
@@ -606,7 +609,7 @@ public class LoadOntology extends AbstractScriptWrapper {
                     LOG.info("No data found for key: " + statement.getDataKey());
                     continue;
                 }
-                statement.updateInsertStatement(data.get(0).size());
+                statement.completeInsertStatement(data.get(0).size());
                 infrastructureRep.executeJdbcStatementOneByOne(statement, data);
                 LOG.info(data.size() + " records inserted");
             } else if (statement.isDebug()) {
@@ -621,9 +624,10 @@ public class LoadOntology extends AbstractScriptWrapper {
                             LOG.debug("  " + row);
                     }
                 }
-            } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
+            } else if (statement.isSelectStatement()) {
                 List<List<String>> dataReturn = null;
                 dataReturn = infrastructureRep.executeNativeQuery(statement);
+                writeToTraceFile(statement, dataReturn);
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
                 } else if (statement.getDataKey() == null) {
@@ -634,12 +638,117 @@ public class LoadOntology extends AbstractScriptWrapper {
                         LOG.info("  " + row);
                 } else
                     dataMap.put(statement.getDataKey(), dataReturn);
+            } else if (statement.isComment()) {
+                writeToTraceFile(statement.getComment());
             } else if (statement.isEcho()) {
                 LOG.info(statement.getQuery());
+                writeToTraceFile(statement.getComment());
             } else {
-                infrastructureRep.executeJdbcStatement(statement);
+                if (statement.isInsertStatement() || statement.isDeleteStatement()) {
+                    runDebugStatement(statement);
+                }
+                int affectedRows = infrastructureRep.executeJdbcStatement(statement);
+                if (statement.isDeleteStatement()) {
+                    writeToTraceFile("Deleted Rows: " + affectedRows);
+                    writeToTraceFile("After Delete Statement: ");
+                    runDebugStatementAfterDelete(statement);
+                }
             }
+            writeToTraceFile("**************************************************************************************");
+            writeToTraceFile("");
             DbSystemUtil.logLockInfo();
+        }
+    }
+
+    private void runDebugStatement(DatabaseJdbcStatement statement) {
+        try {
+            DatabaseJdbcStatement debugStatement = statement.getDebugStatement();
+            List<List<String>> dataReturn = infrastructureRep.executeNativeQuery(debugStatement);
+            writeToTraceFile(debugStatement, dataReturn);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
+    private void runDebugStatementAfterDelete(DatabaseJdbcStatement statement) {
+        try {
+            DatabaseJdbcStatement debugStatement = statement.getDebugDeleteStatement();
+            List<List<String>> dataReturn = infrastructureRep.executeNativeQuery(debugStatement);
+            writeToTraceFile(debugStatement, dataReturn, false);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
+    private void writeToTraceFile(DatabaseJdbcStatement statement, List<List<String>> rows) {
+        writeToTraceFile(statement, rows, true);
+    }
+
+    private void writeToTraceFile(DatabaseJdbcStatement statement, List<List<String>> rows, boolean showLocation) {
+        if (statement.isDebugStatement()) {
+            int numberOfRows = 0;
+            if (CollectionUtils.isNotEmpty(rows))
+                numberOfRows = rows.size();
+            if (showLocation) {
+                writeToTraceFile(statement.getLocationInfo() + " " + FileUtil.getFileNameFromPath(statement.getScriptFile()));
+                writeToTraceFile(statement.getComment());
+                writeToTraceFile("(" + numberOfRows + ")");
+                writeToTraceFileIndendented(statement.getParentStatement().getHumanReadableQueryString());
+            } else {
+                writeToTraceFileIndendented(statement.getHumanReadableQueryString());
+                writeToTraceFileIndendented(" No. of Records: " + numberOfRows);
+            }
+            if (numberOfRows == 0)
+                writeToTraceFileIndendented("NONE");
+            else {
+                writeToTraceFile(rows);
+            }
+        }
+    }
+
+    private void writeToTraceFile(List<List<String>> rows) {
+        if (CollectionUtils.isEmpty(rows))
+            return;
+        int maxNumber = 10;
+        int index = 0;
+        for (List<String> row : rows) {
+            if (index >= maxNumber) {
+                writeToFile("... " + rows.size() + " total records");
+                break;
+            }
+            StringBuilder builder = new StringBuilder();
+            for (String column : row) {
+                builder.append(column);
+                builder.append("|");
+            }
+            builder.append("\n");
+            writeToFile(builder.toString());
+            index++;
+        }
+        writeToFile("\n");
+    }
+
+    private void writeToTraceFile(String comment) {
+        if (StringUtils.isEmpty(comment))
+            return;
+        writeToFile(comment);
+        writeToFile("\n");
+    }
+
+    private void writeToTraceFileIndendented(String comment) {
+        if (StringUtils.isEmpty(comment))
+            return;
+        comment = comment.replace("\n", "\n          ");
+        writeToFile(comment);
+        writeToFile("\n");
+    }
+
+    private void writeToFile(String string) {
+        try {
+            traceFileWriter.write(string);
+            traceFileWriter.flush();
+        } catch (IOException e) {
+            LOG.error("Could not write to trace file: ");
         }
     }
 
@@ -909,6 +1018,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private Map<UnloadFile, FileWriter> fileWriters = new HashMap<UnloadFile, FileWriter>(UnloadFile.values().length);
+    private FileWriter traceFileWriter;
 
     private void appendFormattedRecord(UnloadFile unloadFile, String... record) {
         //appendRecord(unloadFile, InformixUtil.getUnloadRecord(record));
@@ -955,6 +1065,16 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
     }
 
+    private void openTraceFile() {
+        String traceFileName = "trace-" + FileUtil.getFileNameFromPath(oboFilename) + ".log";
+        File file = FileUtil.getFileInTempDirectory(traceFileName);
+        try {
+            traceFileWriter = new FileWriter(file);
+        } catch (IOException e) {
+            LOG.error("Could not open file " + file.getAbsolutePath());
+        }
+    }
+
     private void closeAllFiles() {
         if (fileWriters == null)
             return;
@@ -965,6 +1085,17 @@ public class LoadOntology extends AbstractScriptWrapper {
             } catch (IOException e) {
                 LOG.error("Could not close file " + unloadFile.getValue());
             }
+        }
+    }
+
+    private void closeTraceFile() {
+        if (traceFileWriter == null)
+            return;
+
+        try {
+            fileWriters.get(traceFileWriter).close();
+        } catch (IOException e) {
+            LOG.error("Could not close file " + traceFileWriter.toString());
         }
     }
 

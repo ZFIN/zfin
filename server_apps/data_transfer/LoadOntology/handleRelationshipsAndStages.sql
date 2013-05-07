@@ -1,5 +1,21 @@
 !echo "now deal with relationships" ;
 
+!echo "Remove term relationships that use merged terms";
+
+unload to removed_term_relationships_with_merged_terms.unl
+select * From term_relationship where exists(
+select 'x' from term
+where (term_zdb_id = termrel_term_1_zdb_id or term_zdb_id = termrel_term_2_zdb_id) AND
+term_is_secondary = 't'
+);
+
+delete From term_relationship
+where exists(
+select 'x' from term
+where (term_zdb_id = termrel_term_1_zdb_id or term_zdb_id = termrel_term_2_zdb_id) AND
+term_is_secondary = 't'
+)
+
 create temp table tmp_rels (
 	termrel_term_1_id varchar(50),
 	termrel_term_2_id varchar(50),
@@ -9,10 +25,6 @@ create temp table tmp_rels (
 
 load from term_relationships.unl
   insert into tmp_rels ;
-
-select distinct termrel_type from tmp_rels;
-
-select * from tmp_rels;
 
 insert into term_relationship_type (termreltype_name)
   select distinct termrel_type from tmp_rels
@@ -27,6 +39,10 @@ create temp table tmp_rels_zdb (
 	ttermrel_type varchar(100),
 	ttermrel_ontology varchar(30)
  ) with no log ;
+
+!echo  'insert from tmp_rels into tmp_rels_zdb';
+  select termrel_term_1_id, termrel_term_2_id, termrel_type
+   from tmp_rels;
 
 insert into tmp_rels_zdb (ttermrel_ont_id_1, ttermrel_ont_id_2, ttermrel_type)
   select termrel_term_1_id, termrel_term_2_id, termrel_type
@@ -56,8 +72,6 @@ update tmp_rels_zdb
 --update statistics high for table tmp_rels ;
 --update statistics high for table term ;
 
-
-select * from  tmp_rels_zdb;
 
 create temp table  term_stage_temp  (
 	term_zdb_id_temp varchar(50),
@@ -102,8 +116,6 @@ insert into term_stage_temp
     stg_obo_id = term_ont_id
     );
 
-select * From term_stage_Temp;
-
 -- update end stage info
 update term_stage_temp
  set end_zdb_id_temp = (
@@ -116,17 +128,6 @@ update term_stage_temp
 -- remove records in TERM_STAGE that do not match a record in the temp table
 -- they are either removed from the obo file or have been changed
 
-select * from term_stage_temp;
-
-select * from term_stage
- where not exists (
-   select 'x' from term_stage_temp
-   where
-     term_zdb_id_temp = ts_term_zdb_id AND
-     start_zdb_id_temp = ts_start_stg_zdb_id AND
-     end_zdb_id_temp = ts_end_stg_zdb_id
- );
-
 delete from term_stage
  where not exists (
    select 'x' from term_stage_temp
@@ -136,16 +137,7 @@ delete from term_stage
      end_zdb_id_temp = ts_end_stg_zdb_id
  );
 
-select * From term_stage_Temp;
-
 --insert into term_stage
- select term_zdb_id_temp, start_zdb_id_temp,end_zdb_id_temp
- from term_stage_temp
- where not exists (
-  select 'x' from term_stage as tt
-  where tt.ts_term_zdb_id = term_zdb_id_temp
-  );
-
 insert into term_stage
  select term_zdb_id_temp, start_zdb_id_temp,end_zdb_id_temp
  from term_stage_temp
@@ -156,16 +148,13 @@ insert into term_stage
   tt.ts_end_stg_zdb_id = end_zdb_id_temp
   );
 
-select * from term_stage;
-
 -------------------------------------------------------
+!echo 'Delete records from TMP_RELS_ZDB that exist in term_relationship';
 delete from tmp_rels_zdb
  where exists (Select 'x' from term_relationship a
        	      	      where ttermrel_term_1_zdb_id = a.termrel_term_1_zdb_id
 		      and ttermrel_term_2_zdb_id = a.termrel_term_2_zdb_id
 		      and ttermrel_type = a.termrel_type);
-
-select * From tmp_rels_zdb;
 
 create temp table tmp_zfin_rels  (
 	termrel_zdb_id varchar(50),
@@ -187,8 +176,6 @@ insert into tmp_zfin_rels(
 
 update tmp_zfin_rels
   set termrel_zdb_id = get_id("TERMREL");
-
-select * From tmp_zfin_rels;
 
 create index tmp_rel_1_index
   on tmp_zfin_rels (termrel_term_1_zdb_id)
@@ -245,8 +232,6 @@ insert into zdb_active_data
 
 !echo "populate the TERM_STAGE table with new start/end stages";
 
-select * from  tmp_zfin_rels;
-
 select * from term_stage
  where not exists (
    select 'x' from term_stage_temp
@@ -280,10 +265,6 @@ insert into term_relationship (termrel_zdb_id,
 	termrel_term_2_zdb_id,
 	termrel_type
     from tmp_zfin_rels ;
-
-select * from  term_relationship;
-
-select * from  tmp_zfin_rels;
 
 --update statistics high for table term_relationship ;
 
@@ -326,7 +307,6 @@ delete from term_relationship
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_2_zdb_id);
 
-
 delete from term_relationship
  where not exists (Select 'x' from term a, term b, tmp_rels
        	   	  	  where a.term_ont_id = termrel_term_1_id
@@ -337,5 +317,3 @@ delete from term_relationship
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_1_zdb_id);
-
-select * from  term_relationship;

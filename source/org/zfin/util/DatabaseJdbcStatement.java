@@ -25,7 +25,9 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     public static final String SINGLE_LOAD = "SINGLE-LOAD";
     public static final String SEMICOLON = ";";
 
+    public String comment;
     private boolean unload;
+    private boolean trace;
     private boolean load;
     private boolean singleLoad;
     private boolean echo;
@@ -34,10 +36,14 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     public static final String ECHO = "!ECHO";
     public static final String DEBUG = "DEBUG";
     public static final String TEST = "TEST";
+    public static final String TRACE = "TRACE";
 
     private String booleanOperator;
     private int comparisonValue;
     private String errorMessage;
+    private boolean debugStatement;
+
+    private DatabaseJdbcStatement parentStatement;
 
     public DatabaseJdbcStatement() {
     }
@@ -57,7 +63,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     private void parseLoadingInstruction() {
         String statementStart = query.toString().trim();
-        if (query != null && statementStart.toUpperCase().startsWith(LOAD)) {
+        if (statementStart.toUpperCase().startsWith(LOAD)) {
             checkIfLoadStatement();
         }
         if (query != null && statementStart.toUpperCase().startsWith(SINGLE_LOAD)) {
@@ -72,6 +78,18 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         if (query != null && statementStart.toUpperCase().startsWith(TEST)) {
             parseTestLine();
         }
+        if (query != null && statementStart.toUpperCase().startsWith(TRACE)) {
+            parseTrace();
+        }
+    }
+
+    private void parseTrace() {
+        trace = true;
+        String[] tokens = query.toString().split("'");
+        if (tokens.length == 3)
+            comment = tokens[1];
+        // remove line from query string
+        query.delete(0, query.length() - 1);
     }
 
     private void parseTestLine() {
@@ -103,6 +121,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
             // remove echo directive part from query
             query.delete(0, ECHO.length() + 1);
         }
+        comment = query.toString();
     }
 
     private void checkIfUnloadStatement() {
@@ -161,6 +180,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         return (dataKey != null && dataKey.toUpperCase().equals(DEBUG));
     }
 
+    public boolean isTrace() {
+        return trace;
+    }
+
     public boolean isTest() {
         return (query != null && query.toString().toUpperCase().startsWith(TEST));
     }
@@ -197,7 +220,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public String getLocationInfo() {
-        StringBuffer buffer = new StringBuffer(10);
+        StringBuilder buffer = new StringBuilder(10);
         buffer.append("[");
         buffer.append(startLine);
         buffer.append(",");
@@ -212,18 +235,25 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
      *
      * @param numberOfColumns list of records
      */
-    public void updateInsertStatement(int numberOfColumns) {
-        int indexOfSemicolon = query.toString().indexOf(SEMICOLON);
-        query.deleteCharAt(indexOfSemicolon);
-        query.append("values (");
+    public DatabaseJdbcStatement completeInsertStatement(int numberOfColumns) {
+        DatabaseJdbcStatement modifiedStatement = new DatabaseJdbcStatement(scriptFile);
+        modifiedStatement.load = load;
+        modifiedStatement.comment = comment;
+        modifiedStatement.startLine = startLine;
+        modifiedStatement.endLine = endLine;
+        modifiedStatement.query = new StringBuffer(query);
+        StringBuffer modifiedQuery = modifiedStatement.query;
+        int indexOfSemicolon = modifiedQuery.toString().indexOf(SEMICOLON);
+        modifiedQuery.deleteCharAt(indexOfSemicolon);
+        modifiedQuery.append("values (");
         for (int index = 0; index < numberOfColumns; index++) {
-            query.append("?");
+            modifiedQuery.append("?");
             if (index < numberOfColumns - 1)
-                query.append(",");
+                modifiedQuery.append(",");
         }
-        query.append(")");
-        query.append(SEMICOLON);
-
+        modifiedQuery.append(")");
+        modifiedQuery.append(SEMICOLON);
+        return modifiedStatement;
     }
 
     public String getTableName() {
@@ -240,6 +270,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     public boolean isUnloadStatement() {
         return unload;
+    }
+
+    public boolean isSelectStatement() {
+        return unload || isReadOnlyStatement() || (!isComment() && isTrace());
     }
 
     public boolean isEcho() {
@@ -269,5 +303,87 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     public String getErrorMessage(int value) {
         return StringUtils.replace(errorMessage, "$x", "" + value);
+    }
+
+    public boolean isComment() {
+        return StringUtils.isEmpty(query.toString().trim());
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public DatabaseJdbcStatement getDebugDeleteStatement() {
+        if (!isDeleteStatement())
+            return null;
+        DatabaseJdbcStatement statement = new DatabaseJdbcStatement(scriptFile);
+        statement.startLine = startLine;
+        statement.endLine = endLine;
+        statement.debugStatement = true;
+        statement.load = load;
+        statement.comment = DELETE + " " + FROM + " " + getDeleteTable().toUpperCase();
+        statement.query = new StringBuffer(SELECT + " " + STAR + " " + FROM + " " + getDeleteTable());
+        statement.parentStatement = this;
+        return statement;
+    }
+
+    public DatabaseJdbcStatement getDebugStatement() {
+        DatabaseJdbcStatement statement = new DatabaseJdbcStatement(scriptFile);
+        statement.startLine = startLine;
+        statement.endLine = endLine;
+        statement.debugStatement = true;
+        statement.load = load;
+        // strip off insert statement -> comment
+        if (isInsertStatement()) {
+            if (isLoadStatement()) {
+                statement.comment = "Load records from file / memory into " + getInsertTable().toUpperCase();
+                statement.query = new StringBuffer(getQuery().replace("insert into", SELECT + " " + STAR + " " + FROM));
+            } else {
+                int startOfSelect = getQuery().indexOf(SELECT.toLowerCase());
+                statement.comment = getQuery().substring(0, startOfSelect).trim();
+                statement.query = new StringBuffer(getQuery().substring(startOfSelect));
+            }
+        } else if (isDeleteStatement()) {
+            statement.comment = "DELETE from " + getDeleteTable().toUpperCase();
+            statement.query = new StringBuffer(getQuery().replace("delete", SELECT + " " + STAR));
+        }
+        statement.parentStatement = this;
+        return statement;
+    }
+
+    private String getInsertTable() {
+        return getTableName(INTO);
+    }
+
+    private String getDeleteTable() {
+        return getTableName(FROM);
+    }
+
+    private String getTableName(String keywordBeforeTable) {
+        String[] tokens = query.toString().split(" ");
+        boolean foundFromToken = false;
+        for (String token : tokens) {
+            if (foundFromToken)
+                return token;
+            if (token.toUpperCase().equals(keywordBeforeTable))
+                foundFromToken = true;
+        }
+        return null;
+    }
+
+    public boolean isInsertStatement() {
+        return getQuery().toLowerCase().startsWith(INSERT.toLowerCase());
+    }
+
+    public boolean isDeleteStatement() {
+        return getQuery().toLowerCase().startsWith(DELETE.toLowerCase());
+    }
+
+    public boolean isDebugStatement() {
+        return debugStatement;
+    }
+
+    public DatabaseJdbcStatement getParentStatement() {
+        return parentStatement;
     }
 }

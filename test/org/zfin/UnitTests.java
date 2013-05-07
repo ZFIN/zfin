@@ -79,6 +79,7 @@ import org.zfin.util.*;
 //        BtsContainsServiceTest.class,
         CurationExperimentTest.class,
 	    DatabaseServiceTest.class,
+        DbScriptFileParserTest.class,
         EntityPresentationTest.class,
         EnvironmentDTOTest.class,
         ExpressionExperimentTest.class,

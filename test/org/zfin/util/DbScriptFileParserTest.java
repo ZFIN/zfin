@@ -28,22 +28,29 @@ public class DbScriptFileParserTest {
         assertEquals(6, queries.size());
         DatabaseJdbcStatement statement = queries.get(0);
         assertTrue(!statement.isLoadStatement());
-        statement = queries.get(1);
-        assertTrue(statement.isLoadStatement());
-        assertEquals("syntypedefs_header.unl", statement.getDataKey());
-        assertEquals("insert into tmp_syndef;", statement.getQuery());
-        statement.updateInsertStatement(3);
-        assertEquals("insert into tmp_syndef values (?,?,?);", statement.getQuery());
-        assertEquals("tmp_syndef", statement.getTableName());
-
-        statement = queries.get(4);
-        assertTrue(statement.isUnloadStatement());
+        assertEquals("terms_missing_obo_id.txt", statement.getDataKey());
         assertEquals("select * from term   where term_ont_id like 'ZDB-TERM-%' ;", statement.getQuery());
 
-        statement = queries.get(5);
-        assertTrue(statement.isEcho());
-        assertEquals("\"update the term table with new names where the term id is the same term id in the obo file\" ;", statement.getQuery());
+        // second query is a trace statement
+        statement = queries.get(1);
+        assertEquals("select * from term;", statement.getQuery());
 
+        // insert statement
+        statement = queries.get(2);
+        assertTrue(statement.isInsertStatement());
+        assertEquals("select termrel_term_1_id, termrel_term_2_id, termrel_type    from tmp_rels;", statement.getDebugStatement().getQuery());
+        assertEquals("insert into tmp_rels_zdb (ttermrel_ont_id_1, ttermrel_ont_id_2, ttermrel_type)", statement.getDebugStatement().getComment());
+
+        // load statement
+        statement = queries.get(5);
+        assertTrue(statement.isLoadStatement());
+        assertEquals("SELECT * FROM tmp_header;", statement.getDebugStatement().getQuery());
+
+        // delete statement
+        statement = queries.get(4);
+        assertTrue(statement.isDeleteStatement());
+        assertEquals("SELECT * from tmp_zfin_rels   where termrel_term_2_zdb_id is null;", statement.getDebugStatement().getQuery());
+        assertEquals("SELECT * FROM tmp_zfin_rels", statement.getDebugDeleteStatement().getQuery());
     }
 
 }

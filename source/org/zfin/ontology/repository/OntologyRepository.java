@@ -319,4 +319,26 @@ public interface OntologyRepository {
      * @return term relationship
      */
     GenericTermRelationship getRelationshipById(String id);
+
+    /**
+     * Retrieve Term Relationships that use merged terms, i.e. terms that are not used any longer.
+     *
+     * @return list of term relationships
+     */
+    List<GenericTermRelationship> getTermRelationshipsWithMergedTerms();
+
+    /**
+     * Retrieve list of distinct merged terms used in relationships.
+     *
+     * @return list fo terms
+     */
+    List<GenericTerm> getMergedTermsInTermRelationships();
+
+    /**
+     * Retrieve list of terms that are not obsoleted and not merged that do not have a defined relationship.
+     *
+     * @return list of terms
+     */
+    List<GenericTerm> getActiveTermsWithoutRelationships();
+
 }

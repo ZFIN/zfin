@@ -46,8 +46,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     private static Logger logger = Logger.getLogger(HibernateInfrastructureRepository.class);
 
 
-
-
     public void insertActiveData(String zdbID) {
         Session session = HibernateUtil.currentSession();
         ActiveData activeData = new ActiveData();
@@ -1001,6 +999,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
         return null;
     }
+
     public String getNewZdbID(String wdoldZdbID) {
         List<WithdrawnZdbID> replacedAccessionList =
                 (List<WithdrawnZdbID>) HibernateUtil.currentSession()
@@ -1028,11 +1027,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Session session = currentSession();
         Connection connection = session.connection();
         Statement statement = null;
+        int affectedRows = 0;
         try {
             statement = connection.createStatement();
             statement.execute(jdbcStatement.getQuery());
-            int updateCount = statement.getUpdateCount();
-            logger.info("Number of updated rows: " + updateCount);
+            affectedRows = statement.getUpdateCount();
+            logger.info("Number of updated rows: " + affectedRows);
             session.flush();
         } catch (SQLException exception) {
             logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
@@ -1050,7 +1050,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         jdbcStatement.getHumanReadableQueryString(), e);
             }
         }
-        return 1;
+        return affectedRows;
     }
 
     @Override

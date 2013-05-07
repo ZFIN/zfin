@@ -6,8 +6,6 @@ with no log;
 load from ontology_header.unl
   insert into tmp_header;
 
-select * from tmp_header;
-
 create temp table tmp_syndef (namespace varchar(30), type varchar(30), def varchar(100), scoper varchar(30), syntypedefs varchar(20))
 with no log;
 
@@ -20,9 +18,6 @@ update tmp_syndef
 --update tmp_syndef
 --  set scoper = type
 --  where scoper is null;
-
-unload to debug
-    select * from tmp_syndef;
 
 delete from tmp_syndef
   where exists (select 'x' from alias_group
@@ -152,16 +147,6 @@ unload to 'new_terms.unl'
 	where not exists (Select 'x'
 			   from term
 			   where term.term_ont_id = tmp_term.term_id);
-
-
-select * from tmp_term_onto_with_dups
- where term_id = 'GO:0000758' ;
-
-select * from tmp_term_onto_no_dups
- where term_id = 'GO:0000758' ;
-
-select * from term
- where term_ont_id = 'GO:0000758' ;
 
 
 unload to 'updated_terms.unl'
@@ -401,10 +386,6 @@ load from term_obsolete.unl
 
 !echo "Number of total obsoletes in obo file";
 
-unload to debug
-    select * from tmp_obsoletes;
-
-
 -- set all other terms back to obsolete = 'f'
 
 -- obsoletes from term table
@@ -460,15 +441,6 @@ with no log;
 load from term_replaced.unl
   insert into tmp_replaced;
 
-unload to debug
-    select * from tmp_replaced;
-
-unload to debug
- select * from obsolete_term_replacement
-  where exists (Select 'x' from term, tmp_term_onto_with_dups
-  	       	       where term_ont_id = term_id
-		       and term_zdb_id = obstermrep_term_zdb_id);
-
 delete from obsolete_term_replacement
   where exists (Select 'x' from term, tmp_term_onto_with_dups
   	       	       where term_ont_id = term_id
@@ -483,9 +455,6 @@ insert into obsolete_term_replacement (obstermrep_term_zdb_id, obstermrep_term_r
     where a.term_ont_id = term_id
     and b.term_ont_id = replaced_id;
 
-unload to debug
-  select * from obsolete_term_replacement;
-
 !echo "LOAD SUGGESTIONS aka consider";
 
 create temp table tmp_consider (term_id varchar(50), replaced_id varchar(50), termrep varchar(20))
@@ -493,9 +462,6 @@ with no log;
 
 load from term_consider.unl
   insert into tmp_consider;
-
-unload to debug
-    select * from tmp_consider;
 
 unload to debug
  select * from obsolete_term_suggestion
