@@ -21,6 +21,7 @@ import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.expression.ExpressionSummaryCriteria;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -34,6 +35,7 @@ import javax.validation.Valid;
 
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * Controller class that serves a figure summary page for a given antibody and labeling structure,
@@ -105,15 +107,16 @@ public class AntibodyFigureSummaryController {
                                        @ModelAttribute("formBean") AntibodyBean bean,
                                        Model model) throws Exception {
 
-/*
-        if (antibodyID == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, "EMPTY");
-*/
         Antibody ab = getAntibodyRepository().getAntibodyByID(antibodyID);
-/*
-        if (ab == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, bean.getAntibody().getZdbID());
-*/
+        if (ab == null) {
+            ReplacementZdbID replacementEntity = getInfrastructureRepository().getReplacementZdbId(antibodyID);
+            if (replacementEntity != null)
+                return antibodyCitationList(replacementEntity.getReplacementZdbID(), bean, model);
+        }
+        if (ab == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, antibodyID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
 
         bean.setAntibody(ab);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
@@ -137,7 +140,8 @@ public class AntibodyFigureSummaryController {
             tx.commit();
         } catch (Exception exception) {
             try {
-                tx.rollback();
+                if (tx != null)
+                    tx.rollback();
             } catch (HibernateException hibernateException) {
                 LOG.error("Error during roll back of transaction", hibernateException);
             }
@@ -180,7 +184,8 @@ public class AntibodyFigureSummaryController {
             tx.commit();
         } catch (Exception e) {
             try {
-                tx.rollback();
+                if (tx != null)
+                    tx.rollback();
             } catch (HibernateException he) {
                 LOG.error("Error during roll back of transaction", he);
             }
