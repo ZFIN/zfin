@@ -291,9 +291,8 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_pubs/1pubs.txt"
   select zdb_id, replace(authors,'
-',''), title, replace(pub_abstract,'
-',''), replace(accession_no,"none",""),
-  	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, pub_date
+',''), title, replace(accession_no,"none",""),
+  	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, substr(pub_date,7,10)
     from publication;
 
 
