@@ -310,21 +310,21 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
 					from marker_go_term_evidence 
 					where mrkrgoev_mrkr_zdb_id = '$OID')
     or 
-      recattrib_data_zdb_id in (select fmrel_ftr_zdb_id 
+      recattrib_data_zdb_id in (select fmrel_zdb_id 
                                         from feature_marker_relationship, marker 
                                         where fmrel_mrkr_zdb_id = mrkr_zdb_id
-                                          and mrkr_name = '$OID')
+                                          and mrkr_zdb_id = '$OID')
     or 
-      recattrib_data_zdb_id in (select genofeat_geno_zdb_id 
+      recattrib_data_zdb_id in (select genofeat_zdb_id 
                                         from genotype_feature, feature_marker_relationship, marker 
                                         where genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                           and fmrel_mrkr_zdb_id = mrkr_zdb_id
-                                          and mrkr_name = '$OID')
+                                          and mrkr_zdb_id = '$OID')
    or 
-      recattrib_data_zdb_id in (select genofeat_geno_zdb_id 
+      recattrib_data_zdb_id in (select genofeat_zdb_id 
                                         from genotype_feature, feature
                                         where genofeat_feature_zdb_id = feature_zdb_id
-                                          and feature_name = '$OID')
+                                          and feature_zdb_id = '$OID')
   <?/MIVAR>
    
 
