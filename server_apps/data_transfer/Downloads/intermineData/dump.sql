@@ -293,7 +293,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   select zdb_id, replace(authors,'
 ',''), title, replace(pub_abstract,'
 ',''), replace(accession_no,"none",""),
-  	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages
+  	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, pub_date
     from publication;
 
 
