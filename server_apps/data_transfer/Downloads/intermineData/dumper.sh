@@ -102,6 +102,10 @@ if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/z
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_journals
 fi;
 
+if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/genotypePubs ]; then
+  mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/genotypePubs
+fi
+
 if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featurePubs ]; then
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featurePubs
 fi;

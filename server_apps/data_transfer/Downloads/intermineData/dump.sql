@@ -27,10 +27,11 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 select record_attribution.*, feature_type from record_attribution, feature
  where recattrib_data_zdb_id = feature_zdb_id;
 
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/genotypePubs/1genoPubs.txt"
+select recattrib_source_zdb_id, recattrib_Data_zdb_id from record_Attribution,
+  genotype 
+ where recattrib_Data_zdb_id = geno_zdb_id;
 
-
-
---expression
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/lab/1lab.txt"
   select zdb_id, name, replace(bio,'
