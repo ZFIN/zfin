@@ -35,7 +35,7 @@ sub sendReport()
     open(REPORT, "reportElsevier") 
 	|| die "cannot open reportElsevier";
 
-    print MAIL "To:xshao\@cs.uoregon.edu\n";
+    print MAIL "To:dfashena\@uoneuro.uoregon.edu,xshao\@cs.uoregon.edu\n"; 
 
     print MAIL "Subject: AutoGen: Elsevier publication report\n";
 
