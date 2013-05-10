@@ -1,4 +1,4 @@
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype"
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype/1omimphenotype.txt"
  select omimp_gene_zdb_id,omimp_name,omimp_omim_id from omim_phenotype;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/chromosome/1chromosome.txt"

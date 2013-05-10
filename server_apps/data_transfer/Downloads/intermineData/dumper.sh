@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#/research/zcentral/www_homes/swirl/server_apps/DB_maintenance/loadDb.sh swrdb /research/zunloads/databases/zfin.org/ /research/zusers/staylor/swirl/ZFIN_WWW/ /research/zusers/staylor/swirl/ZFIN_WWW/commons/env/hoover.env
-
 rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.txt
 rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.obo
 rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.zfin
