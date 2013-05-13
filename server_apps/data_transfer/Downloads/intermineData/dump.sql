@@ -133,7 +133,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
     from figure_Term_fish_search;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genotypes/1genos.txt"
-  select distinct geno.*, get_genofeat_mp_zyg_html_display(genofeat_zdb_id), get_genotype_backgrounds(geno_Zdb_id)
+  select distinct geno.*,(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity),get_genotype_backgrounds(geno_zdb_id)
      from genotype geno, genotype_feature
      where geno.geno_zdb_id = genofeat_geno_zdb_id 
      and geno.geno_is_wildtype = 'f'
