@@ -419,8 +419,6 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
                 switch (goPubEnum) {
                     case INTERPRO:
                     case UNIPROTKBKW:
-                    //case SPKW:
-                    //case UNIPATHWAY:
                     case EC:
                         evidenceCodeBox.setIndexForText(GoEvidenceCodeEnum.IEA.name());
                         break;

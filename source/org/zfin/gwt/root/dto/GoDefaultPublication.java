@@ -7,9 +7,7 @@ import java.util.Set;
  */
 public enum GoDefaultPublication implements PubEnum {
     INTERPRO("InterPro2GO Mapping", "ZDB-PUB-020724-1", InferenceCategory.INTERPRO),
-    //SPKW("SPKW2GO Mapping", "ZDB-PUB-020723-1", InferenceCategory.SP_KW),
     UNIPROTKBKW("UNIPROTKB_KW2GO Mapping", "ZDB-PUB-020723-1", InferenceCategory.UNIPROTKB_KW),
-    //UNIPATHWAY("UniPathway to GO mapping", "ZDB-PUB-130131-1", InferenceCategory.UNIPATHWAY) ,
     EC("EC2GO Mapping", "ZDB-PUB-031118-3", InferenceCategory.EC),
     ROOT("Annotation to Root Terms", "ZDB-PUB-031118-1"),
     ISS_REF_GENOME("ISS from Ref. Genome", "ZDB-PUB-071010-1"),
@@ -111,9 +109,7 @@ public enum GoDefaultPublication implements PubEnum {
         if (ieaPubs == null) {
             ieaPubs = new HashSet<GoDefaultPublication>();
             ieaPubs.add(INTERPRO);
-            //ieaPubs.add(SPKW);
             ieaPubs.add(UNIPROTKBKW);
-            //ieaPubs.add(UNIPATHWAY);
             ieaPubs.add(EC);
             ieaPubs.add(GOREF_SP_SL);
             ieaPubs.add(GOREF_UNIPROTKB_SUBCELL1);
