@@ -1,19 +1,5 @@
 #!/private/bin/perl
 # processDanioRerioGeneInfo.pl
-#
-# This script download and parse NCBI's Danio_rerio.gene_info file.
-#
-# It reports the following - "reportFileName":
-# 1) NCBI Gene Ids stored at ZFIN that do not match those on NCBI file - "mismatchedGeneId"
-# 2) NCBI Gene Ids stored at ZFIN that do not match those on NCBI file, found via Vega Id -  "mismatchedGeneIdViaVega"
-# 3) symbol or ZDB Id on NCBI's file does not match that stored at ZFIN, and none of the synonyms matches - "mismatchedEvenWithAllSyn"
-# 4) symbol or ZDB Id on NCBI' file does not match that at ZFIN but one of the synonyms matches - "mismatchedZDBgeneIdSymbol"
-# 5) the list of EntreGene Id found via VegaId (loaded to ZFIN this time) - "parsedViaVega"
-# 6) records with ZDB Id that has been replaced - "replaced"
-# 7) the records that have neither ZDB Id nor Vega Id -  "noZDBgeneVegaId"
-#
-# The script output the parsed result to entrezid_zdbid_lg_type.unl for downstream steps.
-
 
 use DBI;
 use MIME::Lite;
