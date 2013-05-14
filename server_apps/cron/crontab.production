@@ -124,7 +124,7 @@
 #
 # F        9:10pm   weekly update of chromosome position and orthology for
 #                    mouse, human, fly
-10 21 * * 5 cd <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/ && update_orthology.sh
+10 21 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/;update_orthology.sh
 #
 # F        10:10pm   weekly update of omim_phenotype
 #                    
@@ -145,9 +145,6 @@
 #   SMTWT     1:00am   Weekly load of data from ZIRC
 00 01 * * 0-4 <!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/pullFromZirc.pl
 #
-# 
-# SMTWTF   11:33pm ReNo Support, make current Entrez Gene Nomenclature for Human & Mouse     
-33 23 * * 0-5 <!--|ROOT_PATH|-->/server_apps/data_transfer/Load/Entrez/fetch_entrez.sh
 # 
 #
 # Nights   When      Comments
