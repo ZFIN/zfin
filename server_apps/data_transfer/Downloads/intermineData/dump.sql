@@ -133,10 +133,19 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
     from figure_Term_fish_search;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genotypes/1genos.txt"
-  select distinct geno.*,(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity),get_genotype_backgrounds(geno_zdb_id)
+  select distinct geno.*,(select a.zyg_name||","||b.zyg_name from zygocity a, zygocity b where a.zyg_zdb_id = genofeat_dad_zygocity and b.zyg_zdb_id = genofeat_mom_zygocity ),get_genotype_backgrounds(geno_zdb_id)
      from genotype geno, genotype_feature
      where geno.geno_zdb_id = genofeat_geno_zdb_id 
      and geno.geno_is_wildtype = 'f'
+     and genofeat_mom_Zygocity is not null
+     and genofeat_dad_zygocity is not null
+union
+  select distinct geno.*,'',get_genotype_backgrounds(geno_zdb_id)
+     from genotype geno, genotype_feature
+     where geno.geno_zdb_id = genofeat_geno_zdb_id 
+     and geno.geno_is_wildtype = 'f'
+     and genofeat_mom_Zygocity is  null
+     and genofeat_dad_zygocity is  null
   union 
     select geno.*,'',get_genotype_backgrounds(geno_zdb_id)
       from genotype geno
