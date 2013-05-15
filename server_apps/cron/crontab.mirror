@@ -31,6 +31,8 @@
 # ----  1 AM -  3 AM : DATA CLEANING                                  ----
 # ------------------------------------------------------------------------
 #
+# SMTWT 8am give Doug read only permission on mirrordb
+00 08 * * 6 /research/zunloads/projects/readOnlyDb/createGrantSql.sh
 #
 # S         3:00am   Validate data, daily + weekly + orphans check (daily)
 00 03 * * 6 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/validatedata.pl -d -w mirrordb 
@@ -49,7 +51,7 @@
 30 09 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/extentMonitoring/dailyExtentCheck.sh
 
 # build solr index on zfinlabs (builds from almost)
-00 10 * * 1-5 /local/bin/curl "http://zfinlabs.zfin.org/solr/prototype/dataimport?command=full-import&optimize=true&clean=true"
+#00 10 * * 1-5 /local/bin/curl "http://zfinlabs.zfin.org/solr/prototype/dataimport?command=full-import&optimize=true&clean=true"
 
 #
 #
