@@ -30,7 +30,13 @@ open (LOG, ">log1") || die "Cannot open log1 : $!\n";
 
 print LOG "\nDownloading OMIM files ... \n\n";
 
-system("downloadOMIMdatafiles.sh");
+system("/local/bin/wget ftp://grcf.jhmi.edu/OMIM/mim2gene.txt");                              
+system("/local/bin/wget ftp://grcf.jhmi.edu/OMIM/genemap");                                   
+
+if (!-e "genemap" || !-e "mim2gene.txt") {
+   print "One or more required file(s) not exisiting/downloaded. Exit.\n";
+   exit; 
+}  
 
 print "\nDone with downloading OMIM files. \n\n";
 print LOG "\nDone with downloading OMIM files. \n\n";
