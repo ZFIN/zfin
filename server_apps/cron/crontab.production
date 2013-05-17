@@ -124,7 +124,7 @@
 #
 # F        9:10pm   weekly update of chromosome position and orthology for
 #                    mouse, human, fly
-10 21 * * 5 cd /research/zcentral/www_homes/whirly/server_apps/data_transfer/ORTHO/ && update_orthology.sh
+10 21 * * 5 cd <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/ && update_orthology.sh
 #
 # F        10:10pm   weekly update of omim_phenotype
 #                    
