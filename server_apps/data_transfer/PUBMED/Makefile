@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------
 #
-# Makefile for ZFIN_WWW CVS Project, RefSeq automated data load directory
+# Makefile for ZFIN_WWW CVS Project, PUBMED
 #
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -9,23 +9,17 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# The meow.pl script is run by cron every week.  It invokes the sql script.
-# The MEOW DB dump uses the FTP directory structure.  See the 
-# ZFIN Documentation for how FTP is handled differently in test versus 
-# production.
 
 
 # ---------------  Variable Definitions  --------------------------------
 
-TOP = ../../..
+TOP = ../../../..
 include $(TOP)/make.include
 
-TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/RefSeq
+TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
 
-GENERICS = refseq.pl 
+GENERICS = updatepubstatus.pl ppub.sh
 
-STATICS = parseLLintoUNL.pl parseLoc2RefintoUNL.pl parseRefSeq.pl \
-          load_refSeq.sql parseloc2acc.pl parseloc2acclen.pl README
 
 # ---------------  Production Rules  ------------------------------------
 
@@ -39,6 +33,6 @@ include $(TOP)/make.default.rules
 # Run the download script.  This extracts data from ZFIN and places it in 
 # the public ftp directory
 
-run : $(TARGETDIR)/refseq.pl 
-	$(TARGETDIR)/refseq.pl
+run : $(TARGETDIR)/updatepubstatus.pl 
+	$(TARGETDIR)/updatepubstatus.pl
 
