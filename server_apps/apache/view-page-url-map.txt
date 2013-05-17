@@ -45,3 +45,4 @@ ZFS     /action/ontology/term-detail/ZFS
 NBO     /action/ontology/term-detail/NBO
 MPATH     /action/ontology/term-detail/MPATH
 BSPO     /action/ontology/term-detail/BSPO
+SO     /action/ontology/term-detail/SO
