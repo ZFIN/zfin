@@ -21,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/OMIM
 
 GENERICS = OMIM.pl                               
            
-STATICS = downloadOMIMdatafiles.sh loadOMIM.sql README
+STATICS = loadOMIM.sql README
 
 # Define targets that require special handling.
 
