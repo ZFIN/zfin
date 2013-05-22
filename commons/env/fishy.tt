@@ -60,7 +60,7 @@
 <!--|SITE_BACKGROUND|-->	#FFFFCC
 <!--|SOURCEROOT|-->	/research/zusers/pm/fishy/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
+<!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	pm\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	pm\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	pm\@cs.uoregon.edu

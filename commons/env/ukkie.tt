@@ -60,7 +60,7 @@
 <!--|SITE_BACKGROUND|-->	#FF6633
 <!--|SOURCEROOT|-->	/research/zusers/annee/ukkie/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
+<!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	annee\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	annee\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	annee\@cs.uoregon.edu

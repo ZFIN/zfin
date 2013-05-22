@@ -60,7 +60,7 @@
 <!--|SITE_BACKGROUND|-->	#CCFFFF
 <!--|SOURCEROOT|-->	/research/zusers/cmpich/xray/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
+<!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	cmpich\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	cmpich\@cs.uoregon.edu

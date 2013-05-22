@@ -60,7 +60,7 @@
 <!--|SITE_BACKGROUND|-->	#FFFFCC
 <!--|SOURCEROOT|-->	/research/zusers/bsprunge/sleepy/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	zygotix.cs.uoregon.edu
+<!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	bsprunge\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	bsprunge\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	bsprunge\@cs.uoregon.edu
