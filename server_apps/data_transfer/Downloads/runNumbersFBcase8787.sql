@@ -747,6 +747,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
   and mrkr_zdb_id = mfs_mrkr_zdb_id
   and mrkr_zdb_id = fmrel_mrkr_zdb_id
  and b.term_zdb_id = alltermcon_contained_zdb_id
+  and phenos_tag != 'normal'
 ;
 
 insert into tmp_pheno_gene
@@ -870,6 +871,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
   and mrkr_zdb_id = mfs_mrkr_zdb_id
   and mrkr_zdb_id = fmrel_mrkr_zdb_id
  and b.term_zdb_id = alltermcon_contained_zdb_id
+  and phenos_tag != 'normal'
 ;
 
 insert into tmp_pheno_gene
@@ -993,6 +995,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
   and mrkr_zdb_id = mfs_mrkr_zdb_id
   and mrkr_zdb_id = fmrel_mrkr_zdb_id
   and b.term_zdb_id = alltermcon_contained_zdb_id
+  and phenos_tag != 'normal'
 ;
 
 insert into tmp_pheno_gene
