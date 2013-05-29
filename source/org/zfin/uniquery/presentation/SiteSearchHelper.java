@@ -61,7 +61,7 @@ public class SiteSearchHelper {
      */
     private void categorizeSearchResults() {
         try {
-            IndexReader reader = IndexReader.open(siteSearchIndexService.getFullPathMatchingIndexDirectory());
+            IndexReader reader = siteSearchIndexService.getLuceneQueryService().getIndexReader();
             Searcher searcher = new IndexSearcher(reader);
 
             Query query = SiteSearchService.parseQuery(queryString, SiteSearchService.BODY, analyzer);

@@ -44,10 +44,6 @@ public class LuceneQueryService {
                 LOG.warn("indexDirectory " + indexDirectory + " not found. Class is not initialized properly");
                 return;
             }
-            if (!indexDir.canWrite()) {
-                LOG.warn("indexDirectory " + indexDirectory + " cannot be written to.");
-                return;
-            }
             reader = IndexReader.open(indexDir);
             isInitialized = true;
         } catch (Exception e) {
@@ -88,7 +84,6 @@ public class LuceneQueryService {
 
     public Hits getHitsFromAndQuery(Map<String, String> queryProperties) {
         try {
-            IndexReader reader = IndexReader.open(indexDirectory);
             Searcher searcher = new IndexSearcher(reader);
             Query query = null;
             int index = 0;
@@ -206,5 +201,9 @@ public class LuceneQueryService {
         this.indexDirectory = fullPathMatchingIndexDirectory;
         initSummary();
 
+    }
+
+    public IndexReader getIndexReader() {
+        return reader;
     }
 }

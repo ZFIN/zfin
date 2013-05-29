@@ -151,5 +151,9 @@ public class SiteSearchIndexService extends ArchiveService {
             luceneQueryService.changeIndex(getFullPathMatchingIndexDirectory());
         cacheIsBeingUpdated = false;
     }
+
+    public LuceneQueryService getLuceneQueryService() {
+        return luceneQueryService;
+    }
 }
 
