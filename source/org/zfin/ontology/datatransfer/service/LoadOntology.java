@@ -779,9 +779,14 @@ public class LoadOntology extends AbstractScriptWrapper {
                         for (String secondaryID : term.getSecondaryIDs())
                             appendFormattedRecord(UnloadFile.TERM_SECONDARY, term.getID(), secondaryID);
                     }
+                    RelationshipsValidator validator = new RelationshipsValidator(term.getID());
                     for (Link parentTerm : term.getParents()) {
-
-                        appendFormattedRecord(UnloadFile.TERM_RELATIONSHIPS, parentTerm.getParent().getID(), term.getID(), parentTerm.getType().getName());
+                        String type = parentTerm.getType().getName();
+                        String parentTermID = parentTerm.getParent().getID();
+                        validator.addParentRelationship(parentTermID, type);
+                        if (!validator.isValidParentRelationshipUnit())
+                            throw new RuntimeException(validator.getErrorMessage());
+                        appendFormattedRecord(UnloadFile.TERM_RELATIONSHIPS, parentTermID, term.getID(), type);
                     }
                     if (term.getReplacedBy() != null) {
                         for (org.obo.datamodel.ObsoletableObject replacedByID : term.getReplacedBy())
@@ -825,6 +830,53 @@ public class LoadOntology extends AbstractScriptWrapper {
         LOG.info(message);
         report.addMessageToSection(message, "Header");
     }
+
+    class RelationshipsValidator {
+
+        private String childId;
+        // <parentID, relationshipType>
+        private Map<String, String> parentRelationshipMap = new HashMap<String, String>(4);
+        // relationship types
+        private List<String> relationshipTypeList = new ArrayList<String>(4);
+
+        RelationshipsValidator(String childId) {
+            this.childId = childId;
+        }
+
+        protected void addParentRelationship(String termID, String type) {
+            parentRelationshipMap.put(termID, type);
+            relationshipTypeList.add(type);
+        }
+
+        protected boolean isValidParentRelationshipUnit() {
+            if (hasMoreThanOneType("start stage"))
+                return false;
+            if (hasMoreThanOneType("end stage"))
+                return false;
+            return true;
+        }
+
+        private boolean hasMoreThanOneType(String relationshipType) {
+            boolean hasType = false;
+            for (String type : relationshipTypeList) {
+                if (type.equals(relationshipType)) {
+                    if (hasType)
+                        return true;
+                    hasType = true;
+                }
+            }
+            return false;
+        }
+
+        protected String getErrorMessage() {
+            if (hasMoreThanOneType("start stage"))
+                return "Term " + childId + " has more than one start stage:";
+            if (hasMoreThanOneType("end stage"))
+                return "Term " + childId + " has more than one end stage:";
+            return "";
+        }
+    }
+
 
     private void appendSynonym(UnloadFile unloadFile, String id, int scope, String text, String synonymType) {
         String scopeString = getSynonymDescriptor(scope);
