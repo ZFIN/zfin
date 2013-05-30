@@ -46,15 +46,16 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 --   where exists (select 'x' from expression_result where xpatres_xpatex_zdb_id =xpatex_zdb_id) ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/2xpatres.txt"
- select res.*, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.*, xpatfig.*,termt.term_ont_id	 
+ select res.*, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.*, xpatfig.*,termt.term_ont_id, genox_geno_zdb_id, genox_exp_zdb_id	 
  	  
-  from expression_experiment xpatex,expression_pattern_figure xpatfig, expression_result res, stage a, stage b, term anat, outer term termt
+  from expression_experiment xpatex,expression_pattern_figure xpatfig, expression_result res, stage a, stage b, term anat, outer term termt,genotype_experiment
   where res.xpatres_superterm_zdb_id = anat.term_zdb_id
   and res.xpatres_subterm_zdb_id = termt.term_zdb_id
   and res.xpatres_start_stg_zdb_id = a.stg_zdb_id
   and res.xpatres_end_stg_zdb_id = b.stg_zdb_id
   and xpatex.xpatex_zdb_id = res.xpatres_xpatex_zdb_id
-  and res.xpatres_zdb_id = xpatfig.xpatfig_xpatres_zdb_id;
+  and res.xpatres_zdb_id = xpatfig.xpatfig_xpatres_zdb_id
+  and genox_zdb_id = xpatex_genox_zdb_id;
 
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/3xpatfig.txt"
 -- select * from expression_pattern_figure;
@@ -92,9 +93,9 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
 	 g.stg_obo_id,
 	 phenox_fig_zdb_id, 
           phenos_tag,
-	  geno_zdb_id,
-	  exp_zdb_id
-   from phenotype_experiment, phenotype_statement, stage f, stage g,term a, outer term b, outer term c, outer term d, term e, genotype, experiment, genotype_experiment
+	  genox_geno_zdb_id,
+	  genox_exp_zdb_id
+   from phenotype_experiment, phenotype_statement, stage f, stage g,term a, outer term b, outer term c, outer term d, term e, genotype_experiment
    where phenox_start_Stg_zdb_id = f.stg_zdb_id
    and phenox_end_stg_zdb_id = g.stg_zdb_id
    and phenos_entity_1_superterm_Zdb_id = a.term_Zdb_id
