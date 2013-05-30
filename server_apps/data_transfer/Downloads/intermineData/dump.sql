@@ -104,8 +104,6 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
    and phenos_entity_2_subterm_zdb_id = d.term_zdb_id
    and phenos_quality_Zdb_id = e.term_zdb_id
    and phenox_pk_id = phenos_phenox_pk_id
-   and genox_geno_Zdb_id = geno_zdb_id
-   and genox_exp_zdb_id = exp_zdb_id
    and genox_zdb_id = phenox_genox_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_phenotypes/1apato.txt"
