@@ -14,7 +14,7 @@ where exists(
 select 'x' from term
 where (term_zdb_id = termrel_term_1_zdb_id or term_zdb_id = termrel_term_2_zdb_id) AND
 term_is_secondary = 't'
-)
+);
 
 create temp table tmp_rels (
 	termrel_term_1_id varchar(50),
