@@ -75,10 +75,12 @@ create temp table tmp_pato (id int8,
        endstg varchar(50),
        fig varchar(50),
        tag varchar(20),
-       quality varchar(50))
+       quality varchar(50),
+       geno_id varchar(50),
+       exp_id varchar(50))
 with no log;
 
-insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, quality, startstg, endstg, fig, tag)
+insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, quality, startstg, endstg, fig, tag, geno_id, exp_id)
   select phenos_pk_id,
   	 phenox_genox_zdb_id,
 	 a.term_ont_id,
@@ -89,8 +91,10 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
 	 f.stg_obo_id,
 	 g.stg_obo_id,
 	 phenox_fig_zdb_id, 
-          phenos_tag
-   from phenotype_experiment, phenotype_statement, stage f, stage g,term a, outer term b, outer term c, outer term d, term e
+          phenos_tag,
+	  geno_zdb_id,
+	  exp_zdb_id
+   from phenotype_experiment, phenotype_statement, stage f, stage g,term a, outer term b, outer term c, outer term d, term e, genotype, experiment, genotype_experiment
    where phenox_start_Stg_zdb_id = f.stg_zdb_id
    and phenox_end_stg_zdb_id = g.stg_zdb_id
    and phenos_entity_1_superterm_Zdb_id = a.term_Zdb_id
@@ -98,7 +102,10 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
    and phenos_entity_2_superterm_zdb_id = c.term_Zdb_id
    and phenos_entity_2_subterm_zdb_id = d.term_zdb_id
    and phenos_quality_Zdb_id = e.term_zdb_id
-   and phenox_pk_id = phenos_phenox_pk_id;
+   and phenox_pk_id = phenos_phenox_pk_id
+   and genox_geno_Zdb_id = geno_zdb_id
+   and genox_exp_zdb_id = exp_zdb_id
+   and genox_zdb_id = phenox_genox_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_phenotypes/1apato.txt"
   select * from tmp_pato;
