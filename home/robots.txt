@@ -10,6 +10,7 @@ Disallow: /cgi-bin/view_zmapplet.cgi
 Disallow: /action/blast/blast?
 Disallow: /action/blast/blast-view
 Disallow: /action/blast/external-blast
+Disallow: /action/blast/blast-with-sequence
 Disallow: /cgi-bin/webdriver?MIval=aa-companyselect.apg
 Disallow: /cgi-bin/webdriver?MIval=aa-fishselect.apg
 Disallow: /action/fish/search
