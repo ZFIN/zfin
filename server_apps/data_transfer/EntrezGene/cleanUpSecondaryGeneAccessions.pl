@@ -126,12 +126,12 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/";
 
 #remove old files
  
-system("rm -f gene_history");
-system("rm -f genesWithGeneAcc");
-system("rm -f deleteListDblinks");
-system("rm -f deleteListDblinksDetails");
-system("rm -f deleteLog1");
-system("rm -f deleteLog2");
+system("/bin/rm -f gene_history");
+system("/bin/rm -f genesWithGeneAcc");
+system("/bin/rm -f deleteListDblinks");
+system("/bin/rm -f deleteListDblinksDetails");
+system("/bin/rm -f deleteLog1");
+system("/bin/rm -f deleteLog2");
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -184,8 +184,13 @@ print "\nRunning cleanUpSecondaryGeneAccessions.pl on $dbname ...\n\n";
 
 print "\n\n ctGenesWithDiscontinuedAccs = $ctGenesWithDiscontinuedAccs \t ctDblinkIdGeneAccPairs = $ctDblinkIdGeneAccPairs \n\n";
 
-system("wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene_history.gz");
-system("gunzip gene_history.gz");
+system("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene_history.gz");
+system("/local/bin/gunzip gene_history.gz");
+
+if (!-e "gene_history") {
+   print "\nProblem with either downloading or unzipping gene_history.gz  ..... exit\n\n";
+   exit;
+}
 
 open (GENEHISTORY, "gene_history") || die "Cannot open gene_history : $!\n";
 @lines = <GENEHISTORY>;

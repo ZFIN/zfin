@@ -24,22 +24,27 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
-system("rm -f entrezid_zdbid_lg_type.unl");
+system("/bin/rm -f entrezid_zdbid_lg_type.unl");
 
-system("rm -f mismatchedGeneId");
-system("rm -f mismatchedGeneIdViaVega");
-system("rm -f mismatchedEvenWithAllSyn");
-system("rm -f mismatchedZDBgeneIdSymbol");
-system("rm -f parsedViaVega");
-system("rm -f replaced");
-system("rm -f noZDBgeneVegaId");
+system("/bin/rm -f mismatchedGeneId");
+system("/bin/rm -f mismatchedGeneIdViaVega");
+system("/bin/rm -f mismatchedEvenWithAllSyn");
+system("/bin/rm -f mismatchedZDBgeneIdSymbol");
+system("/bin/rm -f parsedViaVega");
+system("/bin/rm -f replaced");
+system("/bin/rm -f noZDBgeneVegaId");
 
-system("rm -f prob_Danio_rerio_gene_info");
-system("rm -f report_Danio_rerio_gene_info");
+system("/bin/rm -f prob_Danio_rerio_gene_info");
+system("/bin/rm -f report_Danio_rerio_gene_info");
 
 
-system("wget --timestamping ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz");
-system("gunzip Danio_rerio.gene_info.gz");
+system("/local/bin/wget --timestamping ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz");
+system("/local/bin/gunzip Danio_rerio.gene_info.gz");
+
+if (!-e "Danio_rerio.gene_info") {
+   print "\nProblem with either downloading or unzipping Danio_rerio.gene_info .... exit....\n\n";
+   exit;
+}
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";

@@ -66,12 +66,12 @@ print "\ncleanUpSecondaryGeneAccessions.pl\n\n";
 
 chdir("<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene") or &logError("cannot chdir to TARGETROOT/server_apps/data_transfer/EntrezGene");
 
-system("./cleanUpSecondaryGeneAccessions.pl");
+system("<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/cleanUpSecondaryGeneAccessions.pl");
 
 ### process NCBI's Danio_rerio.gene_info.gz
-print "\processDanioRerioGeneInfo.pl\n\n";
+print "\nprocessDanioRerioGeneInfo.pl\n\n";
 
-system("./processDanioRerioGeneInfo.pl");
+system("<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/processDanioRerioGeneInfo.pl");
 
 if (!-e "Danio_rerio.gene_info") {
    print "\n processDanioRerioGeneInfo.pl failed.\nExit\n";
