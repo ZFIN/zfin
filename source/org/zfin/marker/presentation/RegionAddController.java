@@ -118,13 +118,17 @@ public class RegionAddController {
         Marker createdRegion = mr.getMarkerByName(newRegion.getName());
         String alias = formBean.getRegionAlias();
 
-        if (!addRegionAlias(createdRegion, alias, regionPub).equalsIgnoreCase("successful")) {
+        if(!StringUtils.isEmpty(alias)) {
+          if (!addRegionAlias(createdRegion, alias, regionPub).equalsIgnoreCase("successful")) {
             return "redirect:/action/dev-tools/test-error-page";
+          }
         }
 
         String curationNote = formBean.getRegionCuratorNote();
-        if (!addCuratorNote(createdRegion, curationNote, currentUser).equalsIgnoreCase(curationNote)) {
+        if(!StringUtils.isEmpty(curationNote)) {
+          if (!addCuratorNote(createdRegion, curationNote, currentUser).equalsIgnoreCase(curationNote)) {
             return "redirect:/action/dev-tools/test-error-page";
+          }
         }
 
         return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
