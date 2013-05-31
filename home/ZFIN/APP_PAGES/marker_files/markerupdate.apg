@@ -32,7 +32,7 @@ function make_correction(mrkr_id,old_v,attr) {
 }
 
 function validate(theform) {
-   <?MIBLOCK COND="$(>,$(POSITION,$OID,REGION),0)">       
+   <?MIBLOCK COND="$(AND,$(>,$(POSITION,$OID,REGION),0),$(>,$(POSITION,$xtra_param,name),0))">
        // if the marker type is REGION, only allow upper case
        var newName = theform.new_value.value;
        if (newName.toUpperCase() == newName) {

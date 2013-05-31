@@ -560,7 +560,7 @@ function jump(form_select){
   <tr>
    <td width=85%>
     <?MIVAR COND="$(XST,$UPDATE)">
-    	<INPUT TYPE=button value=Update onClick="doit('mrkr_name','text','$marker_type_display+Name')">
+    	<INPUT TYPE=button value=Update onClick="doit('mrkr_name','text','$marker_type_display+Name','updatename')">
     <?/MIVAR>
 
     <?MIVAR NAME=$title>$marker_type_display Name<?/MIVAR>
