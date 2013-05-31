@@ -1145,7 +1145,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             return;
 
         try {
-            fileWriters.get(traceFileWriter).close();
+            traceFileWriter.close();
         } catch (IOException e) {
             LOG.error("Could not close file " + traceFileWriter.toString());
         }
