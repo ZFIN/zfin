@@ -62,6 +62,7 @@ public class PhenotypeCurationModule implements HandlesError {
         subterm.add(OntologyDTO.ANATOMY);
         subterm.add(OntologyDTO.GO_CC);
         subterm.add(OntologyDTO.GO_MF);
+        subterm.add(OntologyDTO.GO_BP);
         subterm.add(OntologyDTO.SPATIAL);
         subterm.add(OntologyDTO.MPATH_NEOPLASM);
         termEntryMap.put(EntityPart.ENTITY_SUBTERM, subterm);
