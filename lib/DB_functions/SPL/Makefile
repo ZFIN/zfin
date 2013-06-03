@@ -56,6 +56,7 @@ FISH_STATS   = get_image_stats.sql \
 	       checkFeatureAbbrev.sql \
 	       checkDblinkOneToOneAccessionMapping.sql \
 	       updateConstructAbbrev.sql \
+	       updateExpValueNull.sql \
 	       checkDupFeaturePrefixLineDesignation.sql \
 	       populate_feature_tracking.sql \
 	       p_update_BurgessLinn_genotype_names.sql
@@ -153,7 +154,6 @@ $(STATIC_PROC_TARGETS) : $(TARGETDIR)/% : %
 $(MULTIPLE_PROC_TARGETS_S) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@
 	$(TOUCH) $@
-
 	$(DBACCESS) $(DBNAME) $@
 
 $(SPECIFIC_AGGR_TARGETS) : $(TARGETDIR)/% : %
