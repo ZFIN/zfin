@@ -181,7 +181,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
         if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
             if (false == featureDTO.getLabOfOrigin().equals(existingLabOfOrigin.getZdbID())) {
-                Organization newLabOfOrigin=profileRepository.getLabById(featureDTO.getLabOfOrigin());
+                Organization newLabOfOrigin=profileRepository.getOrganizationByZdbID(featureDTO.getLabOfOrigin());
                 featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
             }
         } else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
@@ -190,10 +190,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
         }
         HibernateUtil.currentSession().update(feature);
-        if (oldFtrName!=newFtrName) {
+        if (!StringUtils.equals(oldFtrName,newFtrName)) {
 
             FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, oldFtrName);
+            if (featureAlias != null){
             infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
+            }
         }
             //currentSession().flush();
         //currentSession().refresh(feature);
