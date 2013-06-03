@@ -10,6 +10,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.FeatureDBLink;
@@ -295,6 +296,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve citation list of pub ids
+     *
      * @param genotypeExperimentIDs
      * @return
      */
@@ -302,6 +304,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve citation list of pubs for fish annotations.
+     *
      * @param genotypeExperimentIDs
      * @return
      */
@@ -309,35 +312,41 @@ public interface MutantRepository {
 
     /**
      * Retrieve Morpholinos by mo Ids
+     *
      * @param moIds MO ids
-     * @return            list of MOs
+     * @return list of MOs
      */
     Morpholino getMorpholinosById(String moIds);
 
     /**
      * Retrieve all wildtype genotypes.
+     *
      * @return
      */
     List<Genotype> getAllWildtypeGenotypes();
 
     /**
      * Retrieve a list of expression result records that show expression data for a given fish
-     * @return  list of expression results
+     *
+     * @return list of expression results
      */
     List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> genoxIds, String geneID);
-    List<ExpressionResult> getConstructExpressionSummary( List<String> genoxIds);
+
+    List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds);
 
 
     /**
      * Check if a given fish has expression data with at least one figure that has an image.
+     *
      * @return
      */
     boolean hasImagesOnExpressionFigures(String genotypeID, List<String> genoxIds);
+
     /**
      * Retrieve figures for phenotypes for a given genotype and structure.
      *
      * @param term                 structure
-     * @param genotype                 genotype
+     * @param genotype             genotype
      * @param includeSubstructures true or false
      * @return list of figures
      */
@@ -345,6 +354,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve phenotype statements for given structure and genotype.
+     *
      * @param term
      * @param genotype
      * @param includeSubstructures
@@ -354,6 +364,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve phenotype statements for given structure and genotype.
+     *
      * @param genotype
      * @param includeSubstructures
      * @return
@@ -361,7 +372,15 @@ public interface MutantRepository {
     List<PhenotypeStatement> getPhenotypeStatement(Genotype genotype, boolean includeSubstructures);
 
     PaginationResult<Genotype> getGenotypesByAnatomyTermIncludingSubstructures(GenericTerm item, boolean wildtype, PaginationBean bean);
+
     List<Genotype> getGenotypes(List<String> genotypeExperimentIDs);
 
-    }
+    /**
+     * Retrieve list of phenotype statements that use obsoleted terms for given ontology.
+     *
+     * @param ontology ontology
+     * @return list of phenotype statements
+     */
+    List<PhenotypeStatement> getPhenotypesOnObsoletedTerms(Ontology ontology);
+}
 

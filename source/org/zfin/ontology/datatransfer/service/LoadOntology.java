@@ -264,7 +264,7 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     private void postLoadProcess() {
         // report annotations on obsoleted terms
-        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypesOnObsoletedTerms();
+        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypesOnObsoletedTerms(ontology);
         if (phenotypes != null && phenotypes.size() > 0) {
             LOG.warn("Pato annotations found that use obsoleted terms");
             List<List<String>> rows = new ArrayList<List<String>>(phenotypes.size());
@@ -289,7 +289,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             }
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " annotations with obsoleted PATO terms");
+            cronReport.appendToSubject(" - " + rows.size() + " annotations with obsoleted terms");
             cronReport.warning("Found phenotypes with obsoleted terms.");
             cronJobUtil.addObjectToTemplateMap("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
             cronJobUtil.emailReport("ontology-loader-obsolete-terms-used.ftl", cronReport);

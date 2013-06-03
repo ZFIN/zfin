@@ -890,41 +890,7 @@ public class HibernateMutantRepository implements MutantRepository {
      */
     @Override
     public List<PhenotypeStatement> getPhenotypesOnObsoletedTerms() {
-        Session session = HibernateUtil.currentSession();
-        List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>();
-
-        String hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.quality is not null AND phenotype.quality.obsolete = :obsolete";
-        Query query = session.createQuery(hql);
-        query.setBoolean("obsolete", true);
-
-        allPhenotypes.addAll((List<PhenotypeStatement>) query.list());
-
-        hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.obsolete = :obsolete";
-        Query queryEntitySuper = session.createQuery(hql);
-        queryEntitySuper.setBoolean("obsolete", true);
-        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySuper.list());
-
-        hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.obsolete = :obsolete";
-        Query queryEntitySub = session.createQuery(hql);
-        queryEntitySub.setBoolean("obsolete", true);
-        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySub.list());
-
-        hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.obsolete = :obsolete";
-        Query queryRelatedEntitySuper = session.createQuery(hql);
-        queryRelatedEntitySuper.setBoolean("obsolete", true);
-        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySuper.list());
-
-        hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.obsolete = :obsolete";
-        Query queryRelatedEntitySub = session.createQuery(hql);
-        queryRelatedEntitySub.setBoolean("obsolete", true);
-        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySub.list());
-
-        return allPhenotypes;
+        return getPhenotypesOnObsoletedTerms(null);
     }
 
     /**
@@ -1322,7 +1288,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
                 " expressionResult.expressionExperiment.genotypeExperiment.zdbID in (:genoxIds) AND " +
-                 " expressionResult.expressionExperiment.gene is not null";
+                " expressionResult.expressionExperiment.gene is not null";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("genoxIds", genoxIds);
@@ -1387,7 +1353,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
         String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeTermFastSearch fastSearch " +
                 "where fastSearch.phenotypeStatement = pheno and " +
-                "pheno.phenotypeExperiment.genotypeExperiment.genotype = :genotype and "+
+                "pheno.phenotypeExperiment.genotypeExperiment.genotype = :genotype and " +
                 "fastSearch.directAnnotation = :directAnnotation ";
 
         if (term != null)
@@ -1436,5 +1402,72 @@ public class HibernateMutantRepository implements MutantRepository {
         return query.list();
 
 
+    }
+
+    /**
+     * Retrieve list of phenotype statements that use obsoleted terms for given ontology.
+     *
+     * @param ontology ontology
+     * @return list of phenotype statements
+     */
+    @Override
+    public List<PhenotypeStatement> getPhenotypesOnObsoletedTerms(Ontology ontology) {
+        boolean getAll = false;
+        if (ontology == null)
+            getAll = true;
+        Session session = HibernateUtil.currentSession();
+        List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>();
+
+        if (getAll || ontology.equals(Ontology.QUALITY)) {
+            String hql = "select phenotype from PhenotypeStatement phenotype " +
+                    "     where phenotype.quality is not null AND phenotype.quality.obsolete = :obsolete";
+            Query query = session.createQuery(hql);
+            query.setBoolean("obsolete", true);
+            allPhenotypes.addAll((List<PhenotypeStatement>) query.list());
+            return allPhenotypes;
+        }
+
+        String hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.obsolete = :obsolete ";
+        if (!getAll)
+            hql += "      AND phenotype.entity.superterm.ontology = :ontology";
+        Query queryEntitySuper = session.createQuery(hql);
+        queryEntitySuper.setBoolean("obsolete", true);
+        if (!getAll)
+            queryEntitySuper.setParameter("ontology", ontology);
+
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySuper.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.obsolete = :obsolete";
+        if (!getAll)
+            hql += "      AND phenotype.entity.subterm.ontology = :ontology";
+        Query queryEntitySub = session.createQuery(hql);
+        queryEntitySub.setBoolean("obsolete", true);
+        if (!getAll)
+            queryEntitySub.setParameter("ontology", ontology);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySub.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.obsolete = :obsolete";
+        if (!getAll)
+            hql += "      AND phenotype.relatedEntity.superterm.ontology = :ontology";
+        Query queryRelatedEntitySuper = session.createQuery(hql);
+        queryRelatedEntitySuper.setBoolean("obsolete", true);
+        if (!getAll)
+            queryRelatedEntitySuper.setParameter("ontology", ontology);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySuper.list());
+
+        hql = "select phenotype from PhenotypeStatement phenotype " +
+                "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.obsolete = :obsolete";
+        if (!getAll)
+            hql += "      AND phenotype.relatedEntity.subterm.ontology = :ontology";
+        Query queryRelatedEntitySub = session.createQuery(hql);
+        queryRelatedEntitySub.setBoolean("obsolete", true);
+        if (!getAll)
+            queryRelatedEntitySub.setParameter("ontology", ontology);
+        allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySub.list());
+
+        return allPhenotypes;
     }
 }

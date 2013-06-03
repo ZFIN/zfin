@@ -290,6 +290,9 @@ public class MutantRepositoryTest {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
         assertNotNull(phenotypes);
         assertEquals(0, phenotypes.size());
+
+        mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.ANATOMY);
+        mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.QUALITY);
     }
 
     //@Test
