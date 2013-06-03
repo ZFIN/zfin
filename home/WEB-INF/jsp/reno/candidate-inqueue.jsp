@@ -109,7 +109,7 @@
                     <td><input type="submit" value="Submit publication update"></td>
 
                     <td>
-                        <c:if test="${formBean.run.type eq redundancy}">
+                        <c:if test="${formBean.run.type eq 'REDUNDANCY'}">
                             <a onclick="setRemainderToNovel = function () {
                                     var really = confirm('Really set remainder to novel?');
                                     if(really){
