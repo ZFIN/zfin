@@ -44,7 +44,6 @@
 function processPopupLinks() {
   //for each popup link, create a div to store the popup contents
     jQuery('.popup-link').each( function() {
-        alert('kkklk');
         div_id = randomUniqueID("popup-");
         jQuery(this).attr("rel","#"+div_id);
         div_html = "<div class=\"simple_overlay\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
