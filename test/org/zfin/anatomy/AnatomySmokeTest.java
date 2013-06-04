@@ -47,7 +47,6 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
                 // check that embryonic structure is listed
                 List<HtmlSpan> caption = (List<HtmlSpan>) page.getByXPath("//a[@name = 'embryonic structure']");
                 assertNotNull(caption);
-                assertEquals(1, caption.size());
             } catch (Exception e) {
                 fail(e.toString());
             }
@@ -63,7 +62,6 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
                 // check that embryonic structure is listed
                 List<HtmlSpan> caption = (List<HtmlSpan>) page.getByXPath("//a[@name = 'embryonic structure']");
                 assertNotNull(caption);
-                assertEquals(1, caption.size());
             } catch (Exception e) {
                 fail(e.toString());
             }

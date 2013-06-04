@@ -49,34 +49,12 @@
                 <div id="termResults-${ontologyMap.key}" class="hideAll" style="display: none">
                     </c:otherwise>
                     </c:choose>
-                    <table class="searchresults rowstripes">
-                        <tr>
-                            <th width="30%">Term Name</th>
-                            <th>Ontology</th>
-                            <th>Synonyms</th>
-                        </tr>
-                        <c:forEach var="term" items="${ontologyMap.value}" varStatus="rowCounter">
-                            <zfin:alternating-tr loopName="rowCounter">
-                                <td>
-                                    <a href='/action/ontology/term-detail/<c:out value="${term.oboID}"/>'>
-                                    </a>
-                                    <zfin:link entity="${term}"/>
-                                </td>
-                                <td>${term.ontology.displayName}</td>
-                                <td>
-                                    <c:if test="${fn:length(term.aliases) > 0}">
-                                        <c:forEach var="alias" items="${term.aliases}" varStatus="index">
-                                            <zfin:highlight highlightEntity="${alias}"
-                                                            highlightString="${query}"/>
-                                            <c:if test="${!index.last}">,</c:if>
-                                        </c:forEach>
-                                    </c:if>
-                                </td>
-                            </zfin:alternating-tr>
-                        </c:forEach>
-                    </table>
+                    <zfin2:displayTermResults query="${query}" termList="${ontologyMap.value}"/>
                 </div>
                 </c:forEach>
+                <c:if test="${termGroups eq null}">
+                    <zfin2:displayTermResults query="${query}" termList="${terms}"/>
+                </c:if>
         </TD>
     </TR>
 </TABLE>
