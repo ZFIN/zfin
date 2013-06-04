@@ -620,7 +620,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
         <Download orderIndex="120">
             <Name>
-                ZFIN Marker associations to Gene sequence data
+                ZFIN Marker associations to NCBI Gene data
             </Name>
             <Category>
                 Sequence Data
