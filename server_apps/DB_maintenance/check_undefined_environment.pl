@@ -79,9 +79,9 @@ $password = "";
 ### open a handle on the db
 $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
 
-$sql = 'select exp_zdb_id, exp_name, exp_source_zdb_id 
-          from experiment 
-         where not exists (select "x" from experiment_condition where exp_zdb_id = expcond_exp_zdb_id) and exp_name <> "_Generic-control";';
+$sql = 'select exp_zdb_id, exp_name, exp_source_zdb_id
+          from experiment, curation
+         where not exists (select "x" from experiment_condition where exp_zdb_id = expcond_exp_zdb_id) and exp_name <> "_Generic-control" and exp_source_zdb_id = cur_pub_zdb_id and cur_closed_date is not null and cur_closed_date != "";';
 
 $cur = $dbh->prepare($sql);
 $cur ->execute();
