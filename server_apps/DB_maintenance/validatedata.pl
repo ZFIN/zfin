@@ -867,8 +867,6 @@ sub pubClosedGenoHandleDoesNotEqualGenoNickname($) {
 #---------------------------------------------------------------
 # associatedDataforPUB030905_1
 #
-# Only orthology evidence code data should be associated with
-# ZDB-PUB-030905-1.
 #
 # In record attribution, each record should have both a GENE and
 # OEVDISP data associated (they should appear in pairs) for
@@ -890,7 +888,7 @@ sub associatedDataforPUB030905_1 ($) {
   my $sql = "select recattrib_data_Zdb_id
              from   record_attribution
              where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-             and get_obj_type(recattrib_data_zdb_id) not in ('DBLINK','MREL','MRKRGOEV','DALIAS')
+             and get_obj_type(recattrib_data_zdb_id) not in ('DBLINK','MREL','MRKRGOEV','DALIAS','ORTHO')
              and    recattrib_data_Zdb_id not in (
              select oevdisp_gene_zdb_id
              from   orthologue_evidence_display
@@ -942,17 +940,6 @@ sub associatedDataforPUB030905_1 ($) {
 
 #---------------------------------------------------------------
 # associatedDBlinkDataforPUB030905_1
-#
-# Only orthology evidence code data should be associated with
-# ZDB-PUB-030905-1.
-#
-# In record attribution, each record should have both a GENE and
-# OEVDISP data associated (they should appear in pairs) for
-# this PUB.  These pairs should correspond to a record in 
-# orthologue_evidence_display.
-#
-# This test identifies any PUB data that does not fit this
-# criteria.
 # 
 # 
 #Parameter
@@ -1021,16 +1008,6 @@ sub associatedDBLinkforPUB030905_1 ($) {
 #---------------------------------------------------------------
 # associatedAliasDataforPUB030905_1
 #
-# Only orthology evidence code data should be associated with
-# ZDB-PUB-030905-1.
-#
-# In record attribution, each record should have both a GENE and
-# OEVDISP data associated (they should appear in pairs) for
-# this PUB.  These pairs should correspond to a record in 
-# orthologue_evidence_display.
-#
-# This test identifies any PUB data that does not fit this
-# criteria.
 # 
 # 
 #Parameter
@@ -1098,17 +1075,6 @@ sub associatedAliasDataforPUB030905_1 ($) {
 #---------------------------------------------------------------
 # associatedMrkrGoevDataforPUB030905_1
 #
-# Only orthology evidence code data should be associated with
-# ZDB-PUB-030905-1.
-#
-# In record attribution, each record should have both a GENE and
-# OEVDISP data associated (they should appear in pairs) for
-# this PUB.  These pairs should correspond to a record in 
-# orthologue_evidence_display.
-#
-# This test identifies any PUB data that does not fit this
-# criteria.
-# 
 # 
 #Parameter
 # $      Email Address for recipients
@@ -1178,16 +1144,6 @@ sub associatedMrkrGoevDataforPUB030905_1 ($) {
 #---------------------------------------------------------------
 # associatedMrelDataforPUB030905_1
 #
-# Only orthology evidence code data should be associated with
-# ZDB-PUB-030905-1.
-#
-# In record attribution, each record should have both a GENE and
-# OEVDISP data associated (they should appear in pairs) for
-# this PUB.  These pairs should correspond to a record in 
-# orthologue_evidence_display.
-#
-# This test identifies any PUB data that does not fit this
-# criteria.
 # 
 # 
 #Parameter
