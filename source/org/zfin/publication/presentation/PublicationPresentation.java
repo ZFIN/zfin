@@ -67,7 +67,6 @@ public class PublicationPresentation extends EntityPresentation {
         uri.append("&recattrsrctype=");
         uri.append(srcType);
         uri.append("&orgOID=");
-        uri.append(zdbID);
 
         sb.append(" (");
         sb.append(getWebdriverLink(uri.toString(), zdbID, String.valueOf(publicationCount)));

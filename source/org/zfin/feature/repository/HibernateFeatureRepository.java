@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
@@ -24,6 +25,8 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.PreviousNameLight;
+import org.zfin.mutant.Genotype;
 import org.zfin.profile.*;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -91,7 +94,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         query.setParameter("pubID", publicationZdbID);
         List<FeatureMarkerRelationship> featureMarkerRelationships = (List<FeatureMarkerRelationship>) query.list();
 
-        // order 
+        // order
         Collections.sort(featureMarkerRelationships, new Comparator<FeatureMarkerRelationship>(){
             @Override
             public int compare(FeatureMarkerRelationship o1, FeatureMarkerRelationship o2) {
@@ -855,5 +858,60 @@ HibernateUtil.currentSession().save(fpPrefix);
                 .executeUpdate();
 
     }
+
+    @Override
+    public List<PreviousNameLight> getPreviousNamesLight(final Genotype genotype) {
+        String sql = "  " +
+                " select da.dalias_alias, ra.recattrib_source_zdb_id, da.dalias_zdb_id " +
+                "    from data_alias da " +
+                "    join alias_group ag on da.dalias_group_id=ag.aliasgrp_pk_id " +
+                "    left outer join record_attribution ra on ra.recattrib_data_zdb_id=da.dalias_zdb_id  " +
+                "    where dalias_data_zdb_id = :markerZdbID " +
+                "    and aliasgrp_pk_id = dalias_group_id " +
+                "    and aliasgrp_name = 'alias' " +
+                " ";
+        return (List<PreviousNameLight>) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbID", genotype.getZdbID())
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        PreviousNameLight previousNameLight = new PreviousNameLight(genotype.getName());
+                        previousNameLight.setMarkerZdbID(genotype.getZdbID());
+                        previousNameLight.setAlias(tuple[0].toString());
+                        previousNameLight.setAliasZdbID(tuple[2].toString());
+                        if (tuple[1] != null) {
+                            previousNameLight.setPublicationZdbID(tuple[1].toString());
+                            previousNameLight.setPublicationCount(1);
+                        }
+
+                        return previousNameLight;
+                    }
+
+                    @Override
+                    public List transformList(List list) {
+                        Map<String, PreviousNameLight> map = new HashMap<String, PreviousNameLight>();
+                        for (Object o : list) {
+                            PreviousNameLight previousName = (PreviousNameLight) o;
+                            PreviousNameLight previousNameStored = map.get(previousName.getAlias());
+
+                            //if it hasn't been stored, it's the first occurrence of this alias text, store it
+                            if (previousNameStored == null) {
+                                map.put(previousName.getAlias(), previousName);
+                            } else {  //if it's already been stored, just increment the pub count
+                                previousNameStored.setPublicationCount(previousNameStored.getPublicationCount() + previousName.getPublicationCount());
+                                map.put(previousNameStored.getAlias(), previousNameStored);
+                            }
+                        }
+
+                        list = new ArrayList(map.values());
+
+                        Collections.sort(list);
+
+                        return list;
+                    }
+                })
+                .list();
+    }
+
 }
 

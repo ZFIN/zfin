@@ -9,6 +9,8 @@ import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.PreviousNameLight;
+import org.zfin.mutant.Genotype;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
@@ -137,4 +139,6 @@ public interface FeatureRepository {
    int insertOrganizationPrefix(Organization organization, FeaturePrefix featurePrefix);
 
    int setNoLabPrefix(String zdbID);
+
+   List<PreviousNameLight> getPreviousNamesLight(Genotype genotype);
 }

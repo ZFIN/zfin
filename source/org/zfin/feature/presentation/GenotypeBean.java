@@ -6,6 +6,7 @@ import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.fish.presentation.AbstractFishViewBean;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.GenotypeFigure;
@@ -28,6 +29,7 @@ public class GenotypeBean  extends AbstractFishViewBean{
     private List<PhenotypeDisplay> phenoDisplays;
     private List<ExpressionDisplay> expressionDisplays;
     private List<ExpressionResult> expressionResults;
+    private List<PreviousNameLight> previousNames;
 
     private int totalNumberOfPublications;
     private int totalNumberOfPhenotypes;
@@ -349,5 +351,13 @@ public class GenotypeBean  extends AbstractFishViewBean{
 
     public void setTotalNumberOfPhenotypes(int totalNumberOfPhenotypes) {
         this.totalNumberOfPhenotypes = totalNumberOfPhenotypes;
+    }
+
+    public List<PreviousNameLight> getPreviousNames() {
+        return previousNames;
+    }
+
+    public void setPreviousNames(List<PreviousNameLight> previousNames) {
+        this.previousNames = previousNames;
     }
 }

@@ -110,6 +110,7 @@ public class GenotypeDetailController {
 
     private void retrievePublicationData(GenotypeBean form, Genotype genotype) {
         form.setTotalNumberOfPublications(RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForGenotype(genotype, 0).getTotalCount());
+        form.setPreviousNames(RepositoryFactory.getFeatureRepository().getPreviousNamesLight(genotype));
     }
 
     @RequestMapping(value = {
