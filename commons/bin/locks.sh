@@ -1,10 +1,4 @@
 
-INFORMIXDIR="/private/apps/Informix/informix"
-export INFORMIXDIR
-
-INFORMIXSERVER="waldo"
-export INFORMIXSERVER
-
 /private/apps/Informix/informix/bin/dbaccess sysmaster 2> /dev/null <<+
 unload to /tmp/locks.out
 select a.dbsname, a.tabname, a.rowidlk, a.type, a.owner, b.username
