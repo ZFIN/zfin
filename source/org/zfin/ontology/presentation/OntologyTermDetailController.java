@@ -80,6 +80,7 @@ public class OntologyTermDetailController {
     private Map<String, List<TermDTO>> getAllListMap(List<TermDTO> terms, Ontology ontology) {
         Collection<Ontology> ontologyList = ontology.getIndividualOntologies();
         Map<String, List<TermDTO>> termGroups = new HashMap<String, List<TermDTO>>(ontologyList.size());
+        // Add the complete list manually and then add the list of terms per ontology
         termGroups.put("All", terms);
         for (Ontology ont : ontologyList) {
             List<TermDTO> subList = new ArrayList<TermDTO>(terms.size());

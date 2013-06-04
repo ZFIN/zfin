@@ -88,12 +88,12 @@ RewriteRule ^/action/ontology/term-detail/ /%1? [NC,R=301]
 RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [NC]
 
 RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg
-RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/anatomy/anatomy-search? [NC,R=301]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/ontology/ontology-search? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    MIval=aa-fishselect.apg
 RewriteRule ^.*$ /action/fish/search? [NC,R=301]
 
-#RewriteRule /action/anatomy/search    /action/anatomy/anatomy-search [NC,R=301]
+#RewriteRule /action/anatomy/search    /action/ontology/ontology-search [NC,R=301]
 
 #We have these strange ZFIN_jump search page links to support...
 

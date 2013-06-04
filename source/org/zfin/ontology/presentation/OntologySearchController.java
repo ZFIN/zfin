@@ -23,9 +23,9 @@ import java.util.List;
  * 3) List all anatomy items.
  */
 @Controller
-public class AnatomySearchController {
+public class OntologySearchController {
 
-    private static final Logger LOG = Logger.getLogger(AnatomySearchController.class);
+    private static final Logger LOG = Logger.getLogger(OntologySearchController.class);
 
     @Autowired
     private AnatomyRepository anatomyRepository;
