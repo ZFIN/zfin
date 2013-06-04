@@ -53,35 +53,8 @@
         </tr>
     </c:if>
 
-    <c:if test="${fn:length(formBean.genotype.aliases) ne null && fn:length(formBean.genotype.aliases) > 0}">
-        <tr>
-            <th>
-                <c:choose>
-                    <c:when test="${fn:length(formBean.genotype.aliases) > 1}">
-                        Previous&nbsp;Names:
-                    </c:when>
-                    <c:otherwise>
-                        Previous&nbsp;Name:
-                    </c:otherwise>
-                </c:choose>
-            </th>
-            <td>
-                <c:forEach var="genoAlias" items="${formBean.genotype.aliases}" varStatus="loop">
-                    ${genoAlias.alias}
-                    <c:if test="${!loop.last}">,&nbsp;</c:if>
-                    <c:if test="${genoAlias.publicationCount > 0}">
-                        <c:choose>
-                            <c:when test="${genoAlias.publicationCount == 1}">
-                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${genoAlias.singlePublication.zdbID}">${genoAlias.publicationCount}</a>)
-                            </c:when>
-                            <c:otherwise>
-                                (<a href="alias-publication-list?genoAlias.zdbID=${genoAlias.zdbID}&orderBy=author">${genoAlias.publicationCount}</a>)
-                            </c:otherwise>
-                        </c:choose>
-                    </c:if>
-                </c:forEach>
-            </td>
-        </tr>
+    <c:if test="${fn:length(formBean.previousNames) ne null && fn:length(formBean.previousNames) > 0}">
+       <zfin2:previousNamesFast label="Previous Names:" previousNames="${formBean.previousNames}"/>
     </c:if>
 
     <c:if test="${!formBean.genotype.wildtype}">
