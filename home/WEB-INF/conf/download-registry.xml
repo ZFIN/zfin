@@ -644,7 +644,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">SO ID</Column>
             <Column id="3">Symbol</Column>
-            <Column id="4">Accession Number</Column>
+            <Column id="4">NCBI Gene ID</Column>
         </Download>
         <Download orderIndex="90">
             <Name>
