@@ -11,6 +11,7 @@ import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.FeatGenoStatistics;
 import org.zfin.mutant.presentation.GenoExpStatistics;
@@ -32,6 +33,7 @@ public class FeatureDetailController {
 
     private FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+    private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     @RequestMapping(value = {
 //            "/detail/{zdbID}", // TODO: move to new one once entire context is moved
@@ -62,19 +64,32 @@ public class FeatureDetailController {
     )
     protected String getFeatureDetail(@RequestParam String zdbID, Model model) {
         LOG.info("Start Feature Detail Controller");
-        Feature feature = featureRepository.getFeatureByID(zdbID);
-        if (feature == null) {
+        if (false == featureRepository.featureExistsForZdbID(zdbID)) {
             String ftr=featureRepository.getFeatureByIDInTrackingTable(zdbID);
             if (ftr!=null) {
-            return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+                  if (zdbID.startsWith("ZDB-ALT-120130")||(zdbID.startsWith("ZDB-ALT-120806"))){
+                     return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+                  }
+                if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
+                      String repldFtr=infrastructureRepository.getReplacedZdbID(zdbID);
+                      if (repldFtr!=null){
+                      zdbID=repldFtr;
+                      }
+                  }
             }
-            else{
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+           else {
+                    model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                }
         }
-        }
+
+
+
+
         FeatureBean form = new FeatureBean();
         form.setZdbID(zdbID);
+         Feature feature=featureRepository.getFeatureByID(zdbID);
+
         form.setFeature(feature);
         form.setSortedMarkerRelationships(FeatureService.getSortedMarkerRelationships(feature));
         form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
@@ -93,9 +108,7 @@ public class FeatureDetailController {
     }
 
     @RequestMapping(value = "/feature/view/{zdbID}")
-    public String retrieveFeatureDetail(Model model
-            , @PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    public String retrieveFeatureDetail(Model model , @PathVariable("zdbID") String zdbID ) throws Exception {
         return getFeatureDetail(zdbID, model);
     }
 
