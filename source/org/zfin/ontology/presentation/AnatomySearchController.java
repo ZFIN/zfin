@@ -1,4 +1,4 @@
-package org.zfin.anatomy.presentation;
+package org.zfin.ontology.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 
@@ -29,7 +30,7 @@ public class AnatomySearchController {
     @Autowired
     private AnatomyRepository anatomyRepository;
 
-    @RequestMapping("/anatomy-search")
+    @RequestMapping("/ontology-search")
     protected String showSearchForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "AO / GO Search");
         return "anatomy/search-form.page";

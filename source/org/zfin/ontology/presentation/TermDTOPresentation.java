@@ -27,7 +27,7 @@ public class TermDTOPresentation extends EntityPresentation {
     }
 
     /**
-     * Generates a Marker link using the Abbreviation
+     * Generates a Term hyperlink
      *
      * @param term term
      * @param name name attribute in hyperlink
@@ -36,7 +36,7 @@ public class TermDTOPresentation extends EntityPresentation {
     public static String getLink(TermDTO term, String name) {
         if (term == null || name == null)
             return null;
-        return getTomcatLinkWithTitle(uri, term.getZdbID(), term.getName(), name, term.getOntology().getOntologyName());
+        return getTomcatLinkWithTitle(uri, term.getOboID(), term.getName(), name, term.getOntology().getOntologyName());
     }
 
 }
