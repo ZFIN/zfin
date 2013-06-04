@@ -3491,7 +3491,6 @@ if($daily) {
     findWithdrawnMarkerMismatch($transcriptEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
     expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
-    xpatHasConsistentMarkerRelationship($geneEmail);
     checkFigXpatexSourceConsistant($dbaEmail);
   # for each zfin curator, run phenotypeAnnotationUnspecified() check
     
@@ -3575,6 +3574,7 @@ if($weekly) {
 
 }
 if($monthly) {
+    xpatHasConsistentMarkerRelationship($geneEmail);
     tgFeatureMissingConstruct($aoEmail);
     orthologyOrganismMatchesForeignDBContains($geneEmail);
     orthologueHasDblink($geneEmail);
