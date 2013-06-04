@@ -54,7 +54,7 @@
     </c:if>
 
     <c:if test="${fn:length(formBean.previousNames) ne null && fn:length(formBean.previousNames) > 0}">
-       <zfin2:previousNamesFast label="Previous Names:" previousNames="${formBean.previousNames}"/>
+       <zfin2:previousNamesFast label="Previous Name" previousNames="${formBean.previousNames}"/>
     </c:if>
 
     <c:if test="${!formBean.genotype.wildtype}">

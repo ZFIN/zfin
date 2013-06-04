@@ -8,6 +8,15 @@
     <c:set var="label" value="Synonyms:"/>
 </c:if>
 
+<c:choose>
+    <c:when test="${fn:length(previousNames) > 1}">
+           <c:set var="label" value="${label}s:"/>
+    </c:when>
+    <c:otherwise>
+            <c:set var="label" value="${label}:"/>
+    </c:otherwise>
+</c:choose>
+
 <c:if test="${!empty previousNames}">
     <tr>
         <th>
