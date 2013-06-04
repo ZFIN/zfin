@@ -17,7 +17,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/anatomy-search");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/ontology-search");
                 assertEquals("ZFIN AO / GO Search", page.getTitleText());
                 List<?> byXPath = page.getByXPath("//label[. = 'Term:']");
                 assertNotNull(byXPath);
