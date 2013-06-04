@@ -4,6 +4,9 @@
 
 <zfin-ontology:anatomy-search-form formBean="${formBean}"/>
 
+<script type="text/javascript">
+    var ontologyDisplay = "All";
+</script>
 <TABLE width="98%">
     <TR>
         <TD>
@@ -15,19 +18,13 @@
                     <table width="100%">
                         <tr>
                             <td>
-                                <c:if test="${histogram != null && histogram.size() > 1}">
-                                    <table>
-                                        <c:forEach var="mapEntry" items="${histogram}" varStatus="index">
-                                            <tr>
-                                                <td align="right">
-                                                    <a href="?name=${query}*&ontologyName=${mapEntry.key.ontologyName}">
-                                                            ${mapEntry.value}
-                                                    </a>
-                                                </td>
-                                                <td> ${mapEntry.key.displayName} </td>
-                                            </tr>
-                                        </c:forEach>
-                                    </table>
+                                <c:if test="${labelMap != null && labelMap.size() > 1}">
+                                    Show Terms only from <select name="ontologyName" onchange="selectOntology(this);">
+                                    <option value="" selected="selected">All</option>
+                                    <c:forEach var="ontologyMap" items="${labelMap}">
+                                        <option value="${ontologyMap.key}">${ontologyMap.value}</option>
+                                    </c:forEach>
+                                </select>
                                 </c:if>
                             </td>
                             <td>
@@ -40,34 +37,58 @@
                     </table>
                 </c:otherwise>
             </c:choose>
-            <HR width=500 size=1 noshade align=left>
-            <table class="searchresults rowstripes">
-                <tr>
-                    <th width="30%">Term Name</th>
-                    <th>Ontology</th>
-                    <th>Synonyms</th>
-                </tr>
-                <c:forEach var="term" items="${terms}" varStatus="rowCounter">
-                    <zfin:alternating-tr loopName="rowCounter">
-                        <td>
-                            <a href='/action/ontology/term-detail/<c:out value="${term.oboID}"/>'>
-                            </a>
-                            <zfin:link entity="${term}"/>
-                        </td>
-                        <td>${term.ontology.displayName}</td>
-                        <td>
-                            <c:if test="${fn:length(term.aliases) > 0}">
-                                <c:forEach var="alias" items="${term.aliases}" varStatus="index">
-                                    <zfin:highlight highlightEntity="${alias}"
-                                                    highlightString="${query}"/>
-                                    <c:if test="${!index.last}">,</c:if>
-                                </c:forEach>
-                            </c:if>
-                        </td>
-                    </zfin:alternating-tr>
+
+            <HR width=500 size=1 noshade align=left/>
+
+            <c:forEach var="ontologyMap" items="${termGroups}">
+            <c:choose>
+            <c:when test="${ontologyMap.key eq 'All'}">
+            <div id="termResults-${ontologyMap.key}" class="hideAll" style="display: inline">
+                </c:when>
+                <c:otherwise>
+                <div id="termResults-${ontologyMap.key}" class="hideAll" style="display: none">
+                    </c:otherwise>
+                    </c:choose>
+                    <table class="searchresults rowstripes">
+                        <tr>
+                            <th width="30%">Term Name</th>
+                            <th>Ontology</th>
+                            <th>Synonyms</th>
+                        </tr>
+                        <c:forEach var="term" items="${ontologyMap.value}" varStatus="rowCounter">
+                            <zfin:alternating-tr loopName="rowCounter">
+                                <td>
+                                    <a href='/action/ontology/term-detail/<c:out value="${term.oboID}"/>'>
+                                    </a>
+                                    <zfin:link entity="${term}"/>
+                                </td>
+                                <td>${term.ontology.displayName}</td>
+                                <td>
+                                    <c:if test="${fn:length(term.aliases) > 0}">
+                                        <c:forEach var="alias" items="${term.aliases}" varStatus="index">
+                                            <zfin:highlight highlightEntity="${alias}"
+                                                            highlightString="${query}"/>
+                                            <c:if test="${!index.last}">,</c:if>
+                                        </c:forEach>
+                                    </c:if>
+                                </td>
+                            </zfin:alternating-tr>
+                        </c:forEach>
+                    </table>
+                </div>
                 </c:forEach>
-            </table>
         </TD>
     </TR>
 </TABLE>
 
+
+<script type="text/javascript">
+    function selectOntology(selection) {
+        var ontology = selection.options[selection.selectedIndex].text;
+        //alert('Selection: '+sel);
+        jQuery('.hideAll').each(function () {
+            jQuery(this).hide();
+        });
+        jQuery('#termResults-' + ontology).show();
+    }
+</script>

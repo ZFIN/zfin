@@ -12,6 +12,7 @@ import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.framework.presentation.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
@@ -59,8 +60,10 @@ public class OntologyTermDetailController {
             model.addAttribute("terms", terms);
             model.addAttribute("query", queryString);
             model.addAttribute("ontology", ontology);
-            Map<OntologyDTO, Integer> histogram = OntologyService.getHistogramOfTerms(terms);
-            model.addAttribute("histogram", histogram);
+            Map<String, String> labelMap = getLabelMap(terms);
+            model.addAttribute("labelMap", labelMap);
+            Map<String, List<TermDTO>> termGroups = getAllListMap(terms, ontology);
+            model.addAttribute("termGroups", termGroups);
             AnatomySearchBean anatomySearchBean = new AnatomySearchBean();
             anatomySearchBean.setQueryString(name);
             model.addAttribute("formBean", anatomySearchBean);
@@ -72,6 +75,30 @@ public class OntologyTermDetailController {
         }
         model.addAttribute(LookupStrings.ZDB_ID, name);
         return LookupStrings.RECORD_NOT_FOUND_PAGE;
+    }
+
+    private Map<String, List<TermDTO>> getAllListMap(List<TermDTO> terms, Ontology ontology) {
+        Collection<Ontology> ontologyList = ontology.getIndividualOntologies();
+        Map<String, List<TermDTO>> termGroups = new HashMap<String, List<TermDTO>>(ontologyList.size());
+        termGroups.put("All", terms);
+        for (Ontology ont : ontologyList) {
+            List<TermDTO> subList = new ArrayList<TermDTO>(terms.size());
+            for (TermDTO term : terms) {
+                if (term.getOntology().equals(DTOConversionService.convertToOntologyDTO(ont)))
+                    subList.add(term);
+            }
+            termGroups.put(DTOConversionService.convertToOntologyDTO(ont).getDisplayName(), subList);
+        }
+        return termGroups;
+    }
+
+    private Map<String, String> getLabelMap(List<TermDTO> terms) {
+        Map<OntologyDTO, Integer> hist = OntologyService.getHistogramOfTerms(terms);
+        Map<String, String> histogram = new HashMap<String, String>(hist.size());
+        for (OntologyDTO ontologyDTO : hist.keySet()) {
+            histogram.put(ontologyDTO.getOntologyName(), ontologyDTO.getDisplayName());
+        }
+        return histogram;
     }
 
     @RequestMapping("/term-detail/{termID}")
