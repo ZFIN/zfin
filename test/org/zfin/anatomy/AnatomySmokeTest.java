@@ -41,7 +41,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     public void testAnatomySearchMultipleResults() {
         for (WebClient webClient : publicWebClients) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                webClient.waitForBackgroundJavaScriptStartingBefore(1000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=emb*");
                 assertEquals("ZFIN", page.getTitleText());
                 // check that embryonic structure is listed

@@ -130,7 +130,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
      */
     private void loadSectionVisibility() {
         String message = "Error while reading Section Visibility";
-        curationRPCAsync.readStructureSectionVisibility(publicationID, new SectionVisibilityCallback(message));
+        curationRPCAsync.readStructureSectionVisibility(publicationID, false, new SectionVisibilityCallback(message));
         curationRPCAsync.isReCreatePhenotypePileLinkNeeded(publicationID, new PileReCreationNeedCallback("Error while reading pile-recreation need"));
     }
 
@@ -286,7 +286,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
                 showStructureSection(false);
                 showStructureSection.setText(SHOW);
                 sectionVisible = false;
-                curationRPCAsync.setStructureVisibilitySession(publicationID, false,
+                curationRPCAsync.setStructureVisibilitySession(publicationID, false, false,
                         new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_STRUCTURE_SECTION));
             } else {
                 // display structure pile
@@ -298,7 +298,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
                 }
                 showStructureSection.setText(HIDE);
                 sectionVisible = true;
-                curationRPCAsync.setStructureVisibilitySession(publicationID, true,
+                curationRPCAsync.setStructureVisibilitySession(publicationID, true, false,
                         new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_STRUCTURE_SECTION));
             }
             clearErrorMessages();

@@ -237,7 +237,7 @@ public interface CurationExperimentRPC extends RemoteService {
      * @param publicationID publication id
      * @return show: true of false
      */
-    boolean readStructureSectionVisibility(String publicationID);
+    boolean readStructureSectionVisibility(String publicationID, boolean isPhenotype);
 
     /**
      * Set the visibility status for the structure section.
@@ -245,7 +245,7 @@ public interface CurationExperimentRPC extends RemoteService {
      * @param publicationID publication id
      * @param show          true or false
      */
-    void setStructureVisibilitySession(String publicationID, boolean show);
+    void setStructureVisibilitySession(String publicationID, boolean show, boolean isPhenotype);
 
     /**
      * Retrieve all structures on the structure pile.

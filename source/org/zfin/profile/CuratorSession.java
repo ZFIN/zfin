@@ -71,6 +71,7 @@ public class CuratorSession extends CuratorSessionDTO {
         SHOW_EXPERIMENT_SECTION,
         SHOW_EXPRESSION_SECTION,
         SHOW_STRUCTURE_SECTION,
+        SHOW_PHENTOYPE_STRUCTURE_SECTION,
         FIGURE_ID,
         MUTANT_DISPLAY_BOX
 

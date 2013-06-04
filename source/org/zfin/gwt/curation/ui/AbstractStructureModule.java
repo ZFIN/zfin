@@ -123,7 +123,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
         showStructureSection.setText(SHOW);
         showStructureSection.setTargetHistoryToken(SHOW);
         showStructureSection.addClickHandler(new ShowHideStructureSectionListener());
-        //panel.add(showStructureSection);
+        titlePanel.add(showStructureSection);
         reCreatePhenotypePileLink.addClickHandler(new CreatePhenotypePileHandler(reCreatePhenotypePileLink));
         reCreatePhenotypePileLink.setVisible(false);
         titlePanel.add(WidgetUtil.getNbsp());
@@ -146,7 +146,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
      */
     private void loadSectionVisibility() {
         String message = "Error while reading Section Visibility";
-        curationRPCAsync.readStructureSectionVisibility(publicationID, new SectionVisibilityCallback(message));
+        curationRPCAsync.readStructureSectionVisibility(publicationID, true, new SectionVisibilityCallback(message));
         phenotypeRPCAsync.isReCreatePhenotypePileLinkNeeded(publicationID, new ReCreatePileNeedCallback("Error while reading pile-recreation need"));
     }
 
@@ -287,7 +287,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
                 showStructureSection(false);
                 showStructureSection.setText(SHOW);
                 sectionVisible = false;
-                curationRPCAsync.setStructureVisibilitySession(publicationID, false,
+                curationRPCAsync.setStructureVisibilitySession(publicationID, false, true,
                         new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_STRUCTURE_SECTION));
             } else {
                 // display structure pile
@@ -299,7 +299,7 @@ public abstract class AbstractStructureModule extends Composite implements Struc
                 }
                 showStructureSection.setText(HIDE);
                 sectionVisible = true;
-                curationRPCAsync.setStructureVisibilitySession(publicationID, true,
+                curationRPCAsync.setStructureVisibilitySession(publicationID, true, true,
                         new VoidAsyncCallback(errorMessage, errorElement, IMAGE_LOADING_STRUCTURE_SECTION));
             }
             clearErrorMessages();

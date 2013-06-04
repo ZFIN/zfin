@@ -861,8 +861,13 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param publicationID publication id
      * @return show: true of false
      */
-    public boolean readStructureSectionVisibility(String publicationID) {
-        CuratorSession session = profileRep.getCuratorSession(publicationID, CuratorSession.Attribute.SHOW_STRUCTURE_SECTION);
+    public boolean readStructureSectionVisibility(String publicationID, boolean isPhenotype) {
+        CuratorSession.Attribute attribute;
+        if (isPhenotype)
+            attribute = CuratorSession.Attribute.SHOW_PHENTOYPE_STRUCTURE_SECTION;
+        else
+            attribute = CuratorSession.Attribute.SHOW_STRUCTURE_SECTION;
+        CuratorSession session = profileRep.getCuratorSession(publicationID, attribute);
         return session == null || session.getValue().equals("true");
     }
 
@@ -872,10 +877,15 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @param publicationID publication id
      * @param show          true or false
      */
-    public void setStructureVisibilitySession(String publicationID, boolean show) {
+    public void setStructureVisibilitySession(String publicationID, boolean show, boolean isPhenotype) {
+        CuratorSession.Attribute attribute;
+        if (isPhenotype)
+            attribute = CuratorSession.Attribute.SHOW_PHENTOYPE_STRUCTURE_SECTION;
+        else
+            attribute = CuratorSession.Attribute.SHOW_STRUCTURE_SECTION;
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            profileRep.setCuratorSession(publicationID, CuratorSession.Attribute.SHOW_STRUCTURE_SECTION, show);
+            profileRep.setCuratorSession(publicationID, attribute, show);
             tx.commit();
         } catch (HibernateException e) {
             tx.rollback();

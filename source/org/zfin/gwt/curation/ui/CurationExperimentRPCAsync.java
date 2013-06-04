@@ -143,9 +143,9 @@ public interface CurationExperimentRPCAsync {
 
     void getFigureAnnotationCheckmarkStatus(String publicationID, AsyncCallback<CheckMarkStatusDTO> callback);
 
-    void readStructureSectionVisibility(String publicationID, AsyncCallback<Boolean> callback);
+    void readStructureSectionVisibility(String publicationID, boolean isPhenotype,  AsyncCallback<Boolean> callback);
 
-    void setStructureVisibilitySession(String publicationID, boolean b, AsyncCallback<Void> async);
+    void setStructureVisibilitySession(String publicationID, boolean b, boolean isPhenotype, AsyncCallback<Void> async);
 
     void getStructures(String publicationID, AsyncCallback<List<ExpressionPileStructureDTO>> retrieveStructuresCallback);
 
