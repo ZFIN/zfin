@@ -3,6 +3,7 @@ gene|IG_pseudogene|2||
 gene|TEC|||
 gene|antisense|||
 gene|lincRNA|||
+gene|ncrna_host|||
 gene|non_coding|||
 gene|polymorphic_pseudogene||18|
 gene|polymorphic||18|
@@ -22,6 +23,7 @@ transcript|artifact||8|
 transcript|disrupted_domain|18||
 transcript|lincRNA|19||
 transcript|lincrna|19||
+transcript|ncrna_host|||
 transcript|non_coding|6||
 transcript|nonsense_mediated_decay|3|7|
 transcript|polymorphic_pseudogene|4|18|

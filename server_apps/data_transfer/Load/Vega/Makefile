@@ -71,14 +71,9 @@ run_commit: begin  fetch_vega novel_check withdrawn_check blast_transcripts load
 
 VEGADIR = /research/zprod/data/VEGA
 
-DEST = $(VEGADIR)/2012-06a
-FTP  = ftp.sanger.ac.uk/pub/users/st3/vega49
-PREV = $(VEGADIR)/2012-01a
-#FTP  = ftp.sanger.ac.uk/pub/ds23/vega47 
-
-
-#PREV = $(VEGADIR)/2011-08
-#DEST = "$(VEGA)/`date +%Y-%m`"
+DEST = $(VEGADIR)/2013-05
+FTP  = ftp.sanger.ac.uk/pub/users/st3/vega53/
+PREV = $(VEGADIR)/2013-02
 
 COMMON_BIN = $(TOP)/commons/bin
 
@@ -216,9 +211,9 @@ $(DEST)/withdrawn.ottdarT:  $(PREV)/ottdarT.list $(DEST)/ottdarT.list
 
 # are any "withdrawn" transcripts on a gene (ottdarG) that has new transcripts
 $(DEST)/withdrawn_ottdarTs.ottdarG: $(DEST)/withdrawn.ottdarT $(PREV)/ottdarT_ottdarG_ottdarP.unl
-	@ggrep -f $+ | cut -f2 -d \| | sort -u > $@
+	@grep -f $+ | cut -f2 -d \| | sort -u > $@
 	@echo "ottdarG with Withdrawn ottdarT also has new ottdarT"
-	@ggrep -f $@  $(DEST)/ottdarGV_updated.txt
+	@grep -f $@  $(DEST)/ottdarGV_updated.txt
 	@echo "Could the old  and new be merged?"
 
 #how many transcripts do those ottdarGs have in  the new load?
@@ -373,7 +368,7 @@ $(DEST)/novel_vega_type_to_add: $(PREV)/check_vega_type.plain \
 	-comm -13 $(PREV)/check_vega_type.plain $(DEST)/check_vega_type.plain |\
 	nawk -F "|" '{print "transcript|"$$1 "|||";print "gene|"$$2"|||"}' |\
 	sort -u | comm -23 -  vega_type_translation.unl |\
-	ggrep -v -f $(DEST)/novel_vega_type_NOT_to_add > $@
+	grep -v -f $(DEST)/novel_vega_type_NOT_to_add > $@
 	
 	# need to sort the appended line into its place the file
 	@if [ -s $@ ] ; then cat $@ vega_type_translation.unl |\

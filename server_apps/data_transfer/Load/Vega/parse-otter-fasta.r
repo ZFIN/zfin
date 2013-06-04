@@ -99,7 +99,7 @@ while [not tail? fasta][
     seq-len: length? trim/all/with copy seq newline
 
     either not none? known: find/case zfin ottdart
-    [zdb: copy first back back known g-name: copy first back known][zdb: copy ""]
+    [zdb: copy first back back back known g-name: copy first back known][zdb: copy ""]
 
     either find cln-acc ","
     [   lg: copy []

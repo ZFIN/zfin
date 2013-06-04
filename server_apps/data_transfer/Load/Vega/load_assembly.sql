@@ -297,7 +297,8 @@ and exists (
 -------------------------------------------------------------------------------
 ! echo "Which clones have changed LG's? (skip to & from  AB & unknown)"
 
-select lnkg_or_lg oldlg, asmb_lg newlg, asmb_name[1,20] clone ,----------------------------------
+-- select lnkg_or_lg oldlg, asmb_lg newlg, asmb_name[1,20] clone ,----------------------------------
+
 drop table assembly;
 
 

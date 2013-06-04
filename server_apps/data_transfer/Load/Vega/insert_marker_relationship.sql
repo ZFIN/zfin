@@ -125,4 +125,4 @@ drop table ott_acc;
 
 -- transaction cloaed externally
 --rollback work;
-commit work;
+--commit work;
