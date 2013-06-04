@@ -1,6 +1,6 @@
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ tag import="org.zfin.gwt.lookup.ui.Lookup" %>
 <%@ tag import="org.zfin.gwt.lookup.ui.LookupTable" %>
+<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -32,6 +32,9 @@
     <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontologyName}",
     </c:when>
     </c:choose>
+    <c:if test="${!empty ontologyName && ontologyName eq 'zebrafish_anatomy'}">
+    <%= Lookup.JSREF_ANATOMY_TERMS_ONLY%>: true,
+    </c:if>
     <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
     <%= LookupTable.JSREF_USE_TERM_TABLE%>: false,
     <%= LookupTable.JSREF_USE_ID_AS_TERM%>: ${useIdAsTerm},

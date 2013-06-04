@@ -99,6 +99,7 @@ public class LookupComposite extends Composite implements Revertible {
     public static final String SHOW_TYPE = "SHOW_TYPE";
     private boolean useIdAsValue = false;
     private boolean useTermsWithDataOnly = false;
+    private boolean useAnatomyTermsOnly = false;
 
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
@@ -168,6 +169,8 @@ public class LookupComposite extends Composite implements Revertible {
                 textBox.setFocus(true);
             }
         });
+        if(useAnatomyTermsOnly)
+            ontologyChecker.setValue(true);
 
         allTermsCheckbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
@@ -668,6 +671,14 @@ public class LookupComposite extends Composite implements Revertible {
 
     public void setUseTermsWithDataOnly(boolean useTermsWithDataOnly) {
         this.useTermsWithDataOnly = useTermsWithDataOnly;
+    }
+
+    public boolean isUseAnatomyTermsOnly() {
+        return useAnatomyTermsOnly;
+    }
+
+    public void setUseAnatomyTermsOnly(boolean useAnatomyTermsOnly) {
+        this.useAnatomyTermsOnly = useAnatomyTermsOnly;
     }
 
     public TermInfoComposite getTermInfoTable() {

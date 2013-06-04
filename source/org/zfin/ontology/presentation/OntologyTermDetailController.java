@@ -66,6 +66,7 @@ public class OntologyTermDetailController {
             model.addAttribute("termGroups", termGroups);
             AnatomySearchBean anatomySearchBean = new AnatomySearchBean();
             anatomySearchBean.setQueryString(name);
+            anatomySearchBean.setOntologyName(ontologyName);
             model.addAttribute("formBean", anatomySearchBean);
             return "anatomy/show-all-terms.page";
         } else {

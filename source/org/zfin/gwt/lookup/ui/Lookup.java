@@ -28,6 +28,7 @@ public class Lookup extends Composite {
     public static final String JSREF_ONTOLOGY_NAME = "ontologyName";
     public static final String JSREF_USE_ID_AS_TERM = "useIdAsTerm";
     public static final String JSREF_TERMS_WITH_DATA_ONLY = "termsWithDataOnly";
+    public static final String JSREF_ANATOMY_TERMS_ONLY = "anatomyTermsOnly";
 
     public void onModuleLoad(Dictionary lookupProperties) {
 
@@ -65,8 +66,10 @@ public class Lookup extends Composite {
             lookup.setUseIdAsValue(Boolean.valueOf(lookupProperties.get(JSREF_USE_ID_AS_TERM)));
         }
         if (keySet.contains(JSREF_TERMS_WITH_DATA_ONLY)) {
-
             lookup.setUseTermsWithDataOnly(Boolean.valueOf(lookupProperties.get(JSREF_TERMS_WITH_DATA_ONLY)));
+        }
+        if (keySet.contains(JSREF_ANATOMY_TERMS_ONLY)) {
+            lookup.setUseAnatomyTermsOnly(Boolean.valueOf(lookupProperties.get(JSREF_ANATOMY_TERMS_ONLY)));
         }
 
         if (keySet.contains(JSREF_ACTION)) {

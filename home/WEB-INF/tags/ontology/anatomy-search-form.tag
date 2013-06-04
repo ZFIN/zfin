@@ -64,7 +64,7 @@
                         <span id="aogo">
                         <zfin2:lookup ontology="<%=Ontology.AOGO%>"
                                       action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"
-                                      wildcard="true" useIdAsTerm="false" termsWithDataOnly="false"/>
+                                      wildcard="true" useIdAsTerm="false" termsWithDataOnly="false" ontologyName="${formBean.ontologyName}"/>
                             </span>
                     </TD>
                 </TR>
