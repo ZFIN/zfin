@@ -1247,7 +1247,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
 
         String hql = "select distinct experiment from Experiment experiment" +
-                "     where experiment.publication.zdbID = :pubID" +
+                "     where experiment.publication.zdbID = :pubID " +
+                "     and experiment.experimentConditions is not empty" +
                 "    order by experiment.name ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
