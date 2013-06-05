@@ -3,6 +3,7 @@ package org.zfin.datatransfer.go;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
+import org.zfin.repository.RepositoryFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -104,7 +105,18 @@ public class FpInferenceGafParser {
     protected GafEntry parseGafEntry(String line) {
         GafEntry gafEntry = new GafEntry();
         String[] entries = line.split("\t");
-        gafEntry.setEntryId(entries[1]); // uniprot ID for GOA, ZDB-GENE for ZFIN
+
+        // uniprot ID for GOA, ZDB-GENE for ZFIN
+        String dbObjectId = entries[1];
+
+        // FB case 7957 "GAF load should handle merged markers"
+        if(StringUtils.startsWith(dbObjectId, "ZDB-")) {
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(dbObjectId);
+            if (replacedZdbID != null) {
+                 dbObjectId = replacedZdbID;
+            }
+        }
+        gafEntry.setEntryId(dbObjectId);
         gafEntry.setQualifier(entries[3]);
         gafEntry.setGoTermId(entries[4]);
         gafEntry.setPubmedId(entries[5]);
@@ -112,7 +124,42 @@ public class FpInferenceGafParser {
             logger.error("bad gaf file: "+line);
         }
         gafEntry.setEvidenceCode(entries[6]);
-        gafEntry.setInferences(entries[7]
+
+        // with field
+        // examples:
+        // ZFIN:ZDB-GENE-030721-3|ZFIN:ZDB-MRPHLNO-070906-3
+        // InterPro:IPR000536|InterPro:IPR001628|InterPro:IPR008946
+
+        // FB case 7957 "GAF load should handle merged markers"
+        String[] withFieldPeieces = entries[7].split("\\|");
+        String currentWithField;
+        String[] withFieldsZFIN = new String [2];
+        String withFieldZDBId;
+        String replacedWithFieldZDBId;
+        StringBuilder sb = new StringBuilder();
+        for( int i = 0; i <= withFieldPeieces.length - 1; i++) {
+            currentWithField = withFieldPeieces[i];
+            if (StringUtils.startsWith(currentWithField,"ZFIN:")) {
+                withFieldsZFIN = currentWithField.split(":");
+                withFieldZDBId = withFieldsZFIN[1];
+                if(StringUtils.startsWith(withFieldZDBId, "ZDB-")) {
+                    sb.append(withFieldsZFIN[0]);     // "ZFIN"
+                    sb.append(":");
+                    replacedWithFieldZDBId = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(withFieldZDBId);
+                    if (replacedWithFieldZDBId != null) {
+                        withFieldZDBId = replacedWithFieldZDBId;
+                    }
+                    sb.append(withFieldZDBId);
+                }
+            } else {
+                sb.append(withFieldPeieces[i]);
+            }
+            if (i < withFieldPeieces.length - 1) {
+                sb.append("|");
+            }
+        }
+        String withField = sb.toString();
+        gafEntry.setInferences(withField
                 .replaceAll("EMBL:", "GenBank:")
                 .replaceAll("protein_id:", "GenPept:")
         );
