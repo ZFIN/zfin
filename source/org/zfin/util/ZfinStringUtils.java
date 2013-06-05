@@ -154,16 +154,15 @@ public class ZfinStringUtils {
 
     /**
      * Escape characters into character entities if they are outside of the range supported by informix
-     * @param s String to escape
+     * @param name String to escape
      * @return escaped String
      */
-    public static String escapeHighUnicode(String s) {
+    public static String escapeHighUnicode(String name) {
 
-        if (s==null)
+        if (name ==null)
             return null;
 
-        String escaped = NumericEntityEscaper.above(0xFF).translate(s);
-        return escaped;
+        return NumericEntityEscaper.above(0xFF).translate(name);
 
     }
 
