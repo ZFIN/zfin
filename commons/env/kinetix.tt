@@ -7,11 +7,11 @@
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	staylor\@cs.uoregon.edu
 <!--|COUNT_PATO_OUT|-->	van_slyke\@uoneuro.uoregon.edu
-<!--|COUNT_THISSE_VEGA_ERR|-->	bsprunge\@cs.uoregon.edu
+<!--|COUNT_THISSE_VEGA_ERR|-->	staylor\@cs.uoregon.edu
 <!--|COUNT_THISSE_VEGA_OUT|-->	van_slyke\@uoneuro.uoregon.edu dfashena\@uoneuro.uoregon.edu
-<!--|COUNT_VEGA_ERR|-->	bsprunge\@cs.uoregon.edu
+<!--|COUNT_VEGA_ERR|-->	staylor\@cs.uoregon.edu
 <!--|COUNT_VEGA_OUT|-->	ksf\@cs.uoregon.edu
-<!--|COUNT_ZGC_ERR|-->	bsprunge\@cs.uoregon.edu
+<!--|COUNT_ZGC_ERR|-->	staylor\@cs.uoregon.edu
 <!--|COUNT_ZGC_OUT|-->	sramacha\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu dfashena\@uoneuro.uoregon.edu
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
@@ -65,7 +65,7 @@
 <!--|SWISSPROT_EMAIL_ERR|-->	informix\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu staylor\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|TARGETROOT|-->	/research/zprod/www_homes/zfin.org
-<!--|VALIDATION_EMAIL_AD|-->	bsprunge\@cs.uoregon.edu
+<!--|VALIDATION_EMAIL_AD|-->	staylor\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu dfashena\@uoneuro.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_EST|-->	informix\@cs.uoregon.edu
@@ -77,7 +77,7 @@
 <!--|VALIDATION_EMAIL_OTHER|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	mochla\@zfin.org holly\@zfin.org knight\@uoneuro.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	sramacha\@uoneuro.uoregon.edu informix\@cs.uoregon.edu
-<!--|VALIDATION_EMAIL_XPAT|-->	bsprunge\@cs.uoregon.edu dfashena\@zfin.org kevin\@zfin.org
+<!--|VALIDATION_EMAIL_XPAT|-->	staylor\@cs.uoregon.edu dfashena\@zfin.org kevin\@zfin.org
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/production
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@cs.uoregon.edu kschaper\@cs.uoregon.edu cmpich\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
