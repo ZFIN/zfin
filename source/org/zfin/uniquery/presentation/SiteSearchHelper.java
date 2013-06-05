@@ -1,6 +1,7 @@
 package org.zfin.uniquery.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Hits;
@@ -346,7 +347,7 @@ public class SiteSearchHelper {
                 specificSearchURL += "?ontologyName=zebrafish_anatomy,cellular_component,molecular_function,biological_process";
             }
         } else if (categoryDisplayName.toLowerCase().equals("people")) {
-            specificSearchURL = "aa-quickfindpers.apg&pname=" + queryTerm;
+            specificSearchURL = "/action/profile/person/search?name=" + queryTerm;
         } else {
             specificSearchURL = "";
         }
@@ -355,12 +356,12 @@ public class SiteSearchHelper {
         if (specificSearchURL.length() > 0) {
             returnResults += "<span class='specific_search'>";
             returnResults += "Advanced search: ";
-            if (categoryDisplayName.toLowerCase().startsWith("anatomy"))
-                returnResults += "<a href='" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
-            else if (categoryDisplayName.toLowerCase().equals("mutants/transgenics"))
-                returnResults += "<a href='" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
-            else
+            //treat it as an app page if it has aa-
+            if (StringUtils.contains(specificSearchURL, "aa-")) {
                 returnResults += "<a href='/cgi-bin/webdriver?MIval=" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
+            } else {
+                returnResults += "<a href='" + specificSearchURL + "'>" + categoryDisplayName + "</a> ";
+            }
 
             returnResults += "</span>";
         }
