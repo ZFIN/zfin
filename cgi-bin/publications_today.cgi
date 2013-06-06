@@ -111,13 +111,13 @@ sub writeReport()
   {
     open (REPORT, ">>report") or die "cannot open report";
     print REPORT "$_[0] \n\n";
-    close (REPORT);
+    close (REPORT);    
   }
 
 sub openReport()
   {
     system("/bin/rm -f report");
-    system("touch report");
+    system("touch report");    
   }
 
 sub sendReport()
@@ -126,8 +126,8 @@ sub sendReport()
     open(REPORT, "report") || die "cannot open report";
 
     print MAIL "To: curators\@zfin.org,mochla\@zfin.org,zfinadmn\@zfin.org\n";
-#    print MAIL "To: bsprunge\@cs.uoregon.edu\n";
-    print MAIL "Subject: Publications Entered Today\n";
+#    print MAIL "To: kevin\@zfin.org,van_slyke\@uoneuro.uoregon.edu\n";
+    print MAIL "Subject: [<!--|INSTANCE|-->] Publications Entered Today\n";
     while($line = <REPORT>)
     {
       print MAIL $line;

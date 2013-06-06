@@ -18,6 +18,9 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 		      )
   || die("Failed while connecting to <!--|DB_NAME|--> "); 
 
+#make the PMED dir
+system("mkdir -p PMED");
+
 #remove old files
 system("rm -f pubnotactive.unl");
 system("rm -f ppublish.unl");
