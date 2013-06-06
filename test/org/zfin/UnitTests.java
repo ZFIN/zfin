@@ -92,7 +92,6 @@ import org.zfin.util.*;
         FunctionsTest.class,
         InferenceUnitTest.class,
 	    IndexerUtilTest.class,
-        GafParserUnitTest.class,
         GenericTermTest.class,
         GwtStringUtilsTest.class,
         HighlightUtilTest.class,
