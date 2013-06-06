@@ -20,8 +20,6 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/fish_files
 
-SUBDIRS = UPDATING
-
 GENERICS = phenotype_miniview.apg
 
 STATICS = setup-new-fish.apg update-fish.apg phenotype_note.apg  fishview.apg  \
