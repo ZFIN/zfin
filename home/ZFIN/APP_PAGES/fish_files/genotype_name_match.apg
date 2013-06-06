@@ -11,9 +11,6 @@
 
      temp table genonm_temp_on_name_<session_id>
 
-  This page is created to be used by both the fishselect.apg
-  and 
-
 <?/MICOMMENT>
 
 <?MIERROR>

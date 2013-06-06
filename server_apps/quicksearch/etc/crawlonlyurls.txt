@@ -13,7 +13,6 @@
 # using a fixed-list of all app (data) pages generated nightly from
 # a database query.
 
-#aa-fishselect.apg
 #fish/search
 #aa-newmrkrselect.apg
 #aa-markerselect.apg

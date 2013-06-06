@@ -681,9 +681,11 @@ DEBUGGING:
 
      <?MIBLOCK COND="$(EC,$the_type,MUTANT)">
 	<SCRIPT>
-          <?MICOMMENT> when this page is called by pubview2.apg with parameter $pub_mapped, mutant record could be retrieved.<?/MICOMMENT>
+          <?MICOMMENT> when this page is called by pubview2.apg with parameter $pub_mapped, mutant record could be retrieved.
+          May need more work to add the feawture name to the search but better to redirect to a view page.
+          <?/MICOMMENT>
           <?MIVAR>
-            replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_allele_id=$the_marker")
+            replaceLocation("/action/fish/search")
           <?/MIVAR>
 	</SCRIPT>
      <?MIELSE>
@@ -902,7 +904,7 @@ DEBUGGING:
 <?MIVAR>$(SETVAR,$displayTitle,t)<?/MIVAR>
 
 <?MICOMMENT>when this page is called from pubview2.apg with parameter pub_mapped, mutant data could be retrieved and displayed. <?/MICOMMENT>
-$(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fishselect.apg&fsel_allele_id="), $(SETVAR,$curviewer,"/action/marker/view/"))
+$(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id="), $(SETVAR,$curviewer,"/action/marker/view/"))
 
 
 <?MICOMMENT> == In case of MO search, list the gene symbol first,

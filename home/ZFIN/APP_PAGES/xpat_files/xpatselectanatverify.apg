@@ -18,7 +18,6 @@ INPUT VARS:
 OUTPUT VARS:
   xpanatv_anatomy_zdb_id_list	anatitem_zdb_id vector of anatomy items that match the terms entered.
   xpanatv_anatomy_error_occured	set to 't' if a structure name isn't in the database
-  xpanatv_called_from           only exists as 'mutantpage' if called from fishselect.apg
 
 OUTPUT:
   An html table giving feedback about anatomical terms entered.

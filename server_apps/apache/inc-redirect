@@ -91,7 +91,7 @@ RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/ontology/ontology-search? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    MIval=aa-fishselect.apg
-RewriteRule ^.*$ /action/fish/search? [NC,R=301]
+RewriteRule ^.*$ /action/fish/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    MIval=aa-quickfindpers.apg
 RewriteRule ^.*$ /action/profile/person/search? [NC,R=301]

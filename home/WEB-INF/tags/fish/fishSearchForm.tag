@@ -171,15 +171,6 @@
             </div>
         </td>
     </tr>
-        <%--<tr>
-            <td colspan="2"></td>
-            <td>
-                <div class="search-form-alternate-link">
-                    Miss our old search form?
-                    <a href="/cgi-bin/webdriver?MIval=aa-fishselect.apg">It's still available</a>
-                </div>
-            </td>
-        </tr>--%>
 </table>
 
 <div class="search-form-bottom-bar" style="text-align:left">
