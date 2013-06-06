@@ -46,6 +46,11 @@ public class EntityDTO implements IsSerializable, Comparable<EntityDTO> {
         return composedID;
     }
 
+    /**
+     * Sort by superterm and then by subterm.
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null)
@@ -91,9 +96,9 @@ public class EntityDTO implements IsSerializable, Comparable<EntityDTO> {
             return 0;
 
         if (subTerm.getTermName().equalsIgnoreCase(o.getSubTerm().getTermName())) {
-            return -1;
+            return 0;
         }
-        return 0;
+        return subTerm.getTermName().compareToIgnoreCase(o.getSubTerm().getTermName());
     }
 
     public boolean equalsByNameAndOntologyOnly(EntityDTO comparisonEntity) {
