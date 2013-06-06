@@ -5,7 +5,7 @@
 <%@ attribute name="instructions" type="java.lang.String" rtexprvalue="true" required="false" %>
 
 
-<div class="analysis_tools_box" style="display: inline-block; width: 200px;">
+<div class="analysis_tools_box" style="display: inline-block;">
     <c:set var="blastLink" value="blast-popup"/>
     <c:set var="blastLinkPopup" value="blast-links"/>
     <div id="${blastLink}" class="analysis_tools_box_header">
