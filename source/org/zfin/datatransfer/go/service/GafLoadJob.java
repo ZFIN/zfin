@@ -87,13 +87,17 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
                 throw new GafValidationError("No gaf entries found in file: "+downloadedFile);
             }
 
+            // 2.5 replace merged ZDB Id
+            // added this step for FB case 7957 "GAF load should handle merged markers"
+            List<GafEntry> gafEntriesMergedZDBIdFree = gafService.replaceMergedZDBIds(gafEntries);
+
             GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository()
                     .getGafOrganization(organizationEnum);
             // 3. create new GAF entries based on rules
             GafJobData gafJobData = new GafJobData();
-            gafJobData.setGafEntryCount(gafEntries.size());
+            gafJobData.setGafEntryCount(gafEntriesMergedZDBIdFree.size());
 
-            gafService.processEntries(gafEntries, gafJobData);
+            gafService.processEntries(gafEntriesMergedZDBIdFree, gafJobData);
 
             addAnnotations(gafJobData);
 //            HibernateUtil.createTransaction();

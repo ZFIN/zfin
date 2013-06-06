@@ -1000,6 +1000,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return null;
     }
 
+    @Override
+    public List<ReplacementZdbID> getReplacedZdbIDsByType(ActiveData.Type type) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(ReplacementZdbID.class);
+        criteria.add(Restrictions.like("oldZdbID", "%ZDB-" + type.toString() + "-"));
+        return (List<ReplacementZdbID>) criteria.list();
+    }
+
     public String getNewZdbID(String wdoldZdbID) {
         List<WithdrawnZdbID> replacedAccessionList =
                 (List<WithdrawnZdbID>) HibernateUtil.currentSession()

@@ -318,6 +318,9 @@ public interface InfrastructureRepository {
     int getGenotypePhenotypeRecordAttributions(String genotypeID, String publicationID);
 
     String getReplacedZdbID(String oldZdbID);
+
+    List<ReplacementZdbID> getReplacedZdbIDsByType(ActiveData.Type type);
+
     String getNewZdbID(String withdrawnZdbID);
 
     /**

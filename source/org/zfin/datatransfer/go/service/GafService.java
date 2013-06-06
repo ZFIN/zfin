@@ -10,6 +10,8 @@ import org.zfin.gwt.root.dto.GoEvidenceQualifier;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.ui.GoEvidenceValidator;
 import org.zfin.gwt.root.ui.ValidationException;
+import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.marker.repository.MarkerRepository;
@@ -58,6 +60,8 @@ public class GafService {
     protected DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
     protected Map<String, Publication> goRefPubMap = new HashMap<String, Publication>();
     protected Pattern patternPipe = Pattern.compile("ZFIN:(.*)\\|.*");
+
+    protected Map<String, String> replacedGeneAndMOZDBIds = new HashMap<String, String>();
 
     public GafService(GafOrganization.OrganizationEnum organizationEnum) {
         this.organizationEnum = organizationEnum;
@@ -490,5 +494,79 @@ public class GafService {
 
         //To change body of created methods use File | Settings | File Templates.
         return markerGoTermEvidenceRepository.deleteMarkerGoTermEvidenceByZdbIDs(zdbIDs);
+    }
+
+    public List<GafEntry> replaceMergedZDBIds(List<GafEntry> gafEntries) {
+        List<ReplacementZdbID> replacedGeneIds = RepositoryFactory.getInfrastructureRepository().getReplacedZdbIDsByType(ActiveData.Type.GENE);
+        List<ReplacementZdbID> replacedMOIds = RepositoryFactory.getInfrastructureRepository().getReplacedZdbIDsByType(ActiveData.Type.MRPHLNO);
+        Map<String,String> oldNewZDBIds = new HashMap<String,String>();
+
+        Iterator<ReplacementZdbID> iterator = replacedGeneIds.iterator();
+        while(iterator.hasNext()) {
+            oldNewZDBIds.put(iterator.next().getOldZdbID(), iterator.next().getReplacementZdbID());
+        }
+
+        iterator = replacedMOIds.iterator();
+        while(iterator.hasNext()) {
+            oldNewZDBIds.put(iterator.next().getOldZdbID(), iterator.next().getReplacementZdbID());
+        }
+
+        List<GafEntry> gasEntriesWithReplacedIds = new ArrayList<GafEntry>(gafEntries.size());
+        GafEntry gafEntry = new GafEntry();
+        Iterator<GafEntry> gafIterator = gafEntries.iterator();
+
+        // FB case 7957 "GAF load should handle merged markers"
+        String[] withFieldPeieces;
+        String currentWithField;
+        String[] withFieldsZFIN = new String [2];
+        String withFieldZDBId;
+        String replacedWithFieldZDBId;
+        StringBuilder sb;
+
+        while(gafIterator.hasNext()) {
+            gafEntry = gafIterator.next();
+
+            // replace the ZDB Id with replaced one for column 2, object id
+            if(StringUtils.startsWith(gafEntry.getEntryId(), "ZDB-")) {
+                if (oldNewZDBIds.containsKey(gafEntry.getEntryId()))
+                   gafEntry.setEntryId(oldNewZDBIds.get(gafEntry.getEntryId()));
+            }
+
+            // with field
+            // examples:
+            // ZFIN:ZDB-GENE-030721-3|ZFIN:ZDB-MRPHLNO-070906-3
+            // InterPro:IPR000536|InterPro:IPR001628|InterPro:IPR008946
+            withFieldPeieces = gafEntry.getInferences().split("\\|");
+
+            sb = new StringBuilder();
+
+            for( int i = 0; i <= withFieldPeieces.length - 1; i++) {
+                currentWithField = withFieldPeieces[i];
+                if (StringUtils.startsWith(currentWithField,"ZFIN:")) {
+                    withFieldsZFIN = currentWithField.split(":");
+                    withFieldZDBId = withFieldsZFIN[1];
+                    if(StringUtils.startsWith(withFieldZDBId, "ZDB-")) {
+                        sb.append(withFieldsZFIN[0]);     // "ZFIN"
+                        sb.append(":");
+                        if (oldNewZDBIds.containsKey(withFieldZDBId)) {
+                            replacedWithFieldZDBId = oldNewZDBIds.get(withFieldZDBId);
+                            sb.append(replacedWithFieldZDBId);
+                        } else {
+                            sb.append(withFieldZDBId);
+                        }
+                    }
+                } else {
+                    sb.append(withFieldPeieces[i]);
+                }
+                if (i < withFieldPeieces.length - 1) {
+                    sb.append("|");
+                }
+            }
+            gafEntry.setInferences(sb.toString());
+
+            gasEntriesWithReplacedIds.add(gafEntry);
+        }
+
+        return gasEntriesWithReplacedIds;
     }
 }
