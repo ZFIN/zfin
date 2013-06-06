@@ -89,10 +89,6 @@ marker.<?/MIVAR>
 
   <?MIVAR COND="$(OR,$(EC,$attr_type,special-newseqnum),$(EC,$attr_type,special-check-newseqnum))" NAME=$comments>Created new link $old_value:$new_value for this record.<?/MIVAR>
  
-  <?MICOMMENT> this is moved from do-fishupdate.apg. 
-     when delete a marker missing or marker present record
-  <?/MICOMMENT>
-
   <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
     <?MISQL SQL="select fdb_db_name, dblink_acc_num, dblink_length, fdbdt_data_type
                  from db_link, foreign_db_contains, foreign_db, foreign_db_data_type

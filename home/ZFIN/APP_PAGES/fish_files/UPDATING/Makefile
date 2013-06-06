@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/fish_files/UPDATING
 
-GENERICS = do-fishupdate.apg fishupdate.apg
+GENERICS = do-fishupdate.apg
 
 # Use default rules for app page directories.
 
