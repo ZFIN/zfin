@@ -46,9 +46,9 @@
   z-index: 5;
 }
 
-/*******  prototype section start */
 
-#prototypeSearchBox {
+
+#feedBox {
     position: absolute;
     top: 30px;
     right: 5px;
@@ -56,10 +56,21 @@
     z-index: 4;
 
     margin:0px;
-    padding: 0px;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-bottom: 0px;
+    padding-right: 2px;
 }
 
-#prototypeSearchBox label {
+#feedBox #rss-icon {
+    height: 18px;
+    position: relative;
+    top: -1px;
+}
+
+/*******  prototype section start */
+
+#feedBox label {
     text-decoration: none;
     font-weight: bold;
     font-size: .8em;

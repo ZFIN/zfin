@@ -103,7 +103,7 @@
 </div>
 
     <zfin:authorize ifAnyGranted="root">
-        <div id="prototypeSearchBox">
+        <div id="feedBox">
             <form method="GET" action="https://zfinlabs.zfin.org/prototype" name="prototypesearch">
                 <label for="prototype-query-input">
                     Prototype:
@@ -152,6 +152,14 @@
                 }, {});
             });
         </script>
+    </zfin:authorize>
+    <zfin:authorize ifNotGranted="root">
+        <div id="feedBox">
+            <a href="feed:https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&sort=created&title=Zebrafish+News&publicFeed=true&rssType=rss2&maxResults=-1&timeSpan=120"><img id="rss-icon" src="/images/feed-icon-28x28.png"></a>
+            <a href="https://twitter.com/ZFINmod" class="twitter-follow-button" data-show-screen-name="false" data-show-count="false" data-lang="en">Follow</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
     </zfin:authorize>
 
 <div id="hdr-banner">
