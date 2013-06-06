@@ -8,6 +8,7 @@ RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3
 #[TYPE]:000000 ids
 RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2 
 
+RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+),(.*)$ /action/fish/fish-detail/ZDB-$1-$2-$3,$4
 
 #zirc "order this" redirects, I'm not sure if there are CDNAs or just ESTs...
 RedirectMatch /zirc-order/ZDB-EST-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-EST-$1
