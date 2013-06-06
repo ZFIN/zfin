@@ -64,7 +64,8 @@ insert into tmp_alias (dalias_alias, cg_geno_zdb_id, group_name, group_id)
     from all_name_ends, all_map_names, construct_group, construct_Group_member
     where allnmend_allmapnm_serial_id = allmapnm_serial_id
    and cg_group_pk_id = cgm_group_id
-   and allmapnm_zdb_id = cgm_member_id;
+   and allmapnm_zdb_id = cgm_member_id
+ and allmapnm_precedence not in ('Accession number','Orthologue','Sequence similarity');
 
 delete from tmp_alias where dalias_alias is null;
 
