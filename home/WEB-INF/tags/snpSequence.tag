@@ -47,7 +47,7 @@
             </table>
         </td>
         <td rowspan="5">
-            <div class="analysis_tools_box" style="min-width: 100px; width: 200px;">
+            <div class="analysis_tools_box">
                 <c:set var="blastLink" value="blast-popup"/>
                 <c:set var="blastLinkPopup" value="blast-links"/>
                 <div id="${blastLink}" class="analysis_tools_box_header">
