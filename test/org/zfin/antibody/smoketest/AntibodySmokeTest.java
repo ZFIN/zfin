@@ -255,7 +255,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 assertTrue(page.getTitleText().contains("Chen et al"));
 
                 HtmlAnchor antibodiesLink = (HtmlAnchor) page.getElementById("list-of-antibodies");
-                HtmlPage antibodyListPage = antibodiesLink.click();
+                HtmlPage antibodyListPage = webClient.getPage(nonSecureUrlDomain + antibodiesLink.getHrefAttribute());
+
                 assertNotNull(antibodyListPage);
                 assertTrue(antibodyListPage.getTitleText().contains("Chen"));
 
@@ -264,7 +265,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 assertNotNull(antibodyLink);
 
                 // check that the link to the antibody view page is working as well.
-                HtmlPage antibodyPage = antibodyLink.click();
+                HtmlPage antibodyPage = webClient.getPage(nonSecureUrlDomain + antibodyLink.getHrefAttribute());
+
                 assertNotNull(antibodyPage);
                 assertTrue(antibodyPage.getTitleText().contains("ZFIN Antibody: Ab-F59"));
 
