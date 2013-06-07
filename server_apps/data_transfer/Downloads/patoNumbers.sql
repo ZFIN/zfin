@@ -107,14 +107,14 @@ select count(*), dblink_linked_recid
   group by dblink_linked_recid
  having count(*) > 1;
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/prepocessed_pheno.txt'
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_pheno.txt'
   select distinct zdb_id, gene_id, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName, 
   	 c_ont_id,e2superName,d_ont_id,e2subName,e_ont_id,qualityName, phenos_tag  
     from tmp_ortho_pheno
     order by gene_id, mrkr_abbrev;
 
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/preprocessed_ortho.txt'
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_ortho.txt'
   select distinct zdb_id, gene_id, mrkr_abbrev, ortho_abbrev
      from tmp_ortho_pheno
     order by gene_id, mrkr_abbrev, ortho_abbrev;
@@ -125,6 +125,5 @@ unload to testPheno.txt
     where mrkr_abbrev = 'brpf1'
     order by e1superName, e1subName, e2superName, e2subName;
 
---commit work;
-
-rollback work ;
+commit work;
+--rollback work ;

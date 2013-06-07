@@ -21,7 +21,7 @@ $dir = "<!--|ROOT_PATH|-->";
 $dbname = $dirPieces[1];
 $dbname =~ s/\///;
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> runNumbersFBcase8787.sql >FB8787log1 2> FB8787log2");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> runNumbersFBcase8787.sql >FB8787log1 2> FB8787log2");
 
 $SUBJECT="Auto: FB8787log1 from ".$dbname;
 $MAILTO="informix\@cs.uoregon.edu";
@@ -62,11 +62,11 @@ Path     => "$TXTFILE";
 open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
 $msg2->print(\*SENDMAIL);
 
-open (XPAT8787PIPIE, "<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatGenesPipe.txt") || die "Cannot open <!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatGenesPipe.txt : $!\n";
+open (XPAT8787PIPIE, "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatGenesPipe.txt") || die "Cannot open <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/xpatGenesPipe.txt : $!\n";
 @lines=<XPAT8787PIPIE>;
 close(XPAT8787PIPIE);
 
-open (XPAT8787, "><!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatGenes.txt") || die "Cannot open <!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatGenes.txt : $!\n";
+open (XPAT8787, "><!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/xpatGenes.txt") || die "Cannot open <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatGenes.txt : $!\n";
 
 
 foreach $line (@lines) {
@@ -77,7 +77,7 @@ foreach $line (@lines) {
 }
 
 # remove temporary file
-system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatGenesPipe.txt");
+system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatGenesPipe.txt");
 
 exit;
 

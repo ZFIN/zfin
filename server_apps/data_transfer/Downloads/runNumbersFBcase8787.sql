@@ -1252,7 +1252,7 @@ with no log;
 
 --id varchar(50), gene_abbrev varchar(50), gene_zdb_id varchar(50), term_ont_id varchar(30), term_name varchar(100), whereFrom varchar(20), geno_id varchar(50), mo_id varchar(50), stage_start_id varchar(50), stage_end_id varchar(50)
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatGenesPipe.txt'
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatGenesPipe.txt'
 DELIMITER "	"
   select gene_abbrev, gene_zdb_id, mo_id, a.term_ont_id, a.term_name, b.term_ont_id, b.term_name, geno_id, geno_display_name, stage_start_id, stage_end_id, xpatex_source_zdb_id
     from tmp_pheno_gene,  expression_result, expression_experiment, term a, term b, genotype
@@ -1376,7 +1376,7 @@ update tmp_dumpPheno
 				  where geno_zdb_id = geno_id);
 
 
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenoGene.txt'
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGene.txt'
  DELIMITER "	"
   select * from tmp_dumpPheno
   	 order by gene_abbrev

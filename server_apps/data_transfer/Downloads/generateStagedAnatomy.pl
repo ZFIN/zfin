@@ -9,7 +9,7 @@
 # INPUT:
 #     none
 # OUTPUT:
-#     <!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_structure.txt
+#     <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_structure.txt
 #
 
 use strict;
@@ -22,7 +22,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 my ($stgZdbId, $lastStgZdbId, $stgName, $anatName, $dispIndent);
 my $mailprog = '/usr/lib/sendmail -t -oi -oem';
-my $output = "<!--|ROOT_PATH|-->/home/data_transfer/Downloads/staged_anatomy.other";
+my $output = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/staged_anatomy.other";
 
 open (OUT,">$output") or &emailError ("Can not open $output to write");
 

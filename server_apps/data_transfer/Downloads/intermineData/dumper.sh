@@ -4,6 +4,9 @@ rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.
 rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.obo
 rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.zfin
 
+rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/intermineData/
+
+
 if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype ]; then
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype
 fi;
@@ -151,5 +154,7 @@ $INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_t
 
 cp /research/zprod/www_homes/zfin.org/server_apps/data_transfer/GO/gene_association.zfin.gz <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation
 gunzip <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation/gene_association.zfin.gz
+
+cp -r <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/ <!--|ROOT_PATH|-->/home/data_transfer/Downloads/
 
 exit

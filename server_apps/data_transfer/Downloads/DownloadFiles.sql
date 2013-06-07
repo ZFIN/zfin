@@ -47,8 +47,8 @@
 
 
 -- create antibody download file
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies2.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies2.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
 	atb_immun_organism, atb_host_organism, szm_term_ont_id
@@ -58,8 +58,8 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
  order by 1;
 
 -- create antibody expression download file
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibody_expressions.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions.txt'
  DELIMITER "	"
 select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
  from marker, expression_experiment, expression_result, term as super,
@@ -78,8 +78,8 @@ select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id
 ;
 
 -- create all marker file
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genetic_markers.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genetic_markers.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genetic_markers.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type, szm_term_ont_id
  from marker, so_zfin_mapping
@@ -87,8 +87,8 @@ select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type, szm_term_ont_id
   order by 1;
 -- create other names file
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/aliases.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/aliases.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/aliases.txt'
   DELIMITER "	"
 select mrkr_zdb_id , mrkr_name, mrkr_abbrev, dalias_alias, szm_term_ont_id  
  from marker, data_alias, so_zfin_mapping
@@ -108,8 +108,8 @@ select geno_zdb_id, geno_display_name, geno_handle, dalias_alias, szm_term_ont_i
 ;
 
 -- Create marker realtionship file
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_marker_relationship.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_marker_relationship.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_marker_relationship.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_marker_relationship.txt'
  DELIMITER "	"
 select gene.mrkr_zdb_id, a.szm_term_ont_id, gene.mrkr_abbrev, seq.mrkr_zdb_id, b.szm_term_ont_id, seq.mrkr_abbrev, mrel_type 
  from marker_relationship, marker gene, marker seq, so_zfin_mapping a, so_zfin_mapping b
@@ -208,24 +208,24 @@ update tmp_ortho_exp set sgd = (
 	   and ortho_id = o.zdb_id
 );
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fly_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fly_orthos.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt'
  DELIMITER "	"
 select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, flybase
  from tmp_ortho_exp
  where organism = 'Fruit fly'
  order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/human_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/human_orthos.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/human_orthos.txt'
  DELIMITER "	"
 select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, omim, entrez
  from tmp_ortho_exp
  where organism = 'Human'
  order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mouse_orthos.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mouse_orthos.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt'
  DELIMITER "	"
 select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, mgi, entrez
  from tmp_ortho_exp
@@ -233,8 +233,8 @@ select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, mgi, entrez
  order by 1;
 
 -- going away shortly
---! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/yeast_orthos.txt'"
---UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/yeast_orthos.txt'
+--! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/yeast_orthos.txt'"
+--UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/yeast_orthos.txt'
 --  DELIMITER "	"
 --select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, sgd
 -- from tmp_ortho_exp
@@ -244,8 +244,8 @@ select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, mgi, entrez
 drop table tmp_ortho_exp;
 
 -- generate a file with genes and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat.txt'
  DELIMITER "	"
 select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
@@ -270,8 +270,8 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
 ;
 
 -- generate a file with antibodies and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/abxpat.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/abxpat.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat.txt'
  DELIMITER "	"
  select antibody.atb_zdb_id, atb.mrkr_abbrev,gene.mrkr_zdb_id as gene_zdb,
 	gene.mrkr_abbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
@@ -302,8 +302,8 @@ UNION
 ;
 
 -- generate a file to map experiment id to environment condition description
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_environment.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_environment.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment.txt'
  DELIMITER "	"
 select exp_zdb_id, cdt_group,
  case when expcond_mrkr_zdb_id is not null
@@ -329,8 +329,8 @@ select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used f
 
 
 -- generate a file with genes and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype.txt'
  DELIMITER "	"
  select distinct g.geno_zdb_id, g.geno_display_name,
             phenox_start_stg_zdb_id,
@@ -360,8 +360,8 @@ UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenotype.txt'
  order by geno_zdb_id, fig_source_zdb_id;
 
 -- generate a file with xpatex and associated figure zdbid's
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatfig.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpatfig.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig.txt'
  DELIMITER "	"
 select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
  from expression_experiment, expression_result,expression_pattern_figure
@@ -371,16 +371,16 @@ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
 
 
 -- generate a file with genotype id's and associated figure zdbid's
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genofig.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genofig.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig.txt'
  DELIMITER "	"
  select distinct genox_geno_zdb_id, phenox_fig_zdb_id
  from genotype_experiment, phenotype_experiment
  where genox_zdb_id = phenox_genox_zdb_id
  order by genox_geno_zdb_id;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_obo.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_obo.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_obo.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_obo.txt'
  DELIMITER "	"
 select "ZFIN:"||geno_zdb_id, geno_display_name,
 			(select stg_obo_id from stage 
@@ -417,8 +417,8 @@ select "ZFIN:"||geno_zdb_id, geno_display_name,
  order by geno_zdb_id, fig_source_zdb_id ;
 
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno_environment.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'
  DELIMITER "	"
 select exp_zdb_id, cdt_group,
  case when expcond_mrkr_zdb_id is not null
@@ -443,13 +443,13 @@ select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used f
  order by 1,2
 ;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pub_to_pubmed_id_translation.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pub_to_pubmed_id_translation.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pub_to_pubmed_id_translation.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pub_to_pubmed_id_translation.txt'
  DELIMITER "	" select zdb_id, accession_no from publication ;
 
 -- Create mapping data file
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/mappings.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt'
  DELIMITER "	"
 select marker_id, mrkr_abbrev, szm_term_ont_id, p.abbrev,or_lg, lg_location, p.metric
  from mapped_marker, panels p, marker m, so_zfin_mapping
@@ -459,8 +459,8 @@ select marker_id, mrkr_abbrev, szm_term_ont_id, p.abbrev,or_lg, lg_location, p.m
 
 -- Generate sequence data files for GenBank, RefSeq, Entrez, UniGene, UniProt, Interpro and GenPept
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genbank.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genbank.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genbank.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -476,8 +476,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num
  ) order by 1;
 
 -- the last condition is added to filter out mis-placed acc
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/refseq.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/refseq.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/refseq.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/refseq.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -489,8 +489,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
    and dblink_acc_num[3] = "_"
  order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -501,8 +501,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
    and fdb_db_name = 'Gene'
  order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/unigene.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/unigene.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/unigene.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/unigene.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -513,8 +513,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
   and fdb_db_name = 'UniGene'
 order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -525,8 +525,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
   and fdb_db_name = 'UniProtKB'
 order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/interpro.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/interpro.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/interpro.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/interpro.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -536,8 +536,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
   and fdb_db_name = 'InterPro'
 order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pfam.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pfam.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pfam.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pfam.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -548,8 +548,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
   and fdb_db_name = 'Pfam'
 order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genpept.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genpept.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genpept.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genpept.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
  where mrkr_zdb_id = dblink_linked_recid
@@ -559,8 +559,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num from marker, db_
    and fdb_db_name = 'GenPept'
  order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/vega.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/vega.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id,mrkr_abbrev,dblink_acc_num
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
@@ -574,8 +574,8 @@ and szm_object_type = mrkr_type
 -- vega_transcript.txt is only used by tomc and Sanger.
 -- please check before changing thanks.
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_transcript.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/vega_transcript.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/vega_transcript.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/vega_transcript.txt'
  DELIMITER "	"
 select distinct mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, marker_relationship, so_zfin_mapping
@@ -592,8 +592,8 @@ select distinct mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
 
 -- the changing assembly version number in db_name
 -- is apt to come back to bite us so I am opting for the zdb_id
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ensembl_1_to_1.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ensembl_1_to_1.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ensembl_1_to_1.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ensembl_1_to_1.txt'
  DELIMITER "	"
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
  from marker, db_link, so_zfin_mapping
@@ -602,8 +602,8 @@ select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
    and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
  order by 1;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/all_rna_accessions.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/all_rna_accessions.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/all_rna_accessions.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/all_rna_accessions.txt'
 select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
  from db_link, marker gene, foreign_db_contains, foreign_db, foreign_db_data_type, so_zfin_mapping
  where dblink_linked_recid=gene.mrkr_zdb_id
@@ -686,8 +686,8 @@ update tmp_geno_data set (gene_id, gene_abbrev) = ((
 	   and fmrel_type = "is allele of"
 ));
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt'
  DELIMITER "	"
 select distinct
 	genotype_id,
@@ -707,8 +707,8 @@ select distinct
 
 drop table tmp_geno_data;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features_missing_markers.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_features_missing_markers.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features_missing_markers.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features_missing_markers.txt'
  DELIMITER "	"
 select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_zdb_id
  from feature_marker_relationship, feature, genotype, genotype_feature, marker
@@ -720,16 +720,16 @@ select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_
    and geno_zdb_id = genofeat_geno_zdb_id
 ;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_backgrounds.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_backgrounds.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_backgrounds.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_backgrounds.txt'
  DELIMITER "	"
 select distinct geno_zdb_id, geno_display_name, genoback_background_zdb_id
  from genotype, genotype_background
  where geno_Zdb_id = genoback_geno_Zdb_id
 ;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtypes.tx'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtypes.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes.tx'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes.txt'
  DELIMITER "	"
 select distinct geno_zdb_id, geno_display_name, geno_handle
  from genotype
@@ -737,8 +737,8 @@ select distinct geno_zdb_id, geno_display_name, geno_handle
 ;
 
 -- generate a file with zdb history data
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zdb_history.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zdb_history.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/zdb_history.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/zdb_history.txt'
  DELIMITER "	"
 select zrepld_old_zdb_id, zrepld_new_zdb_id
 from zdb_replaced_data
@@ -764,21 +764,21 @@ from marker gene, marker est, db_link, marker_relationship,foreign_db, foreign_d
    and fdbcont_fdb_db_id = fdb_db_pk_id
  into temp tmp_veg with no log;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_seq.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/gene_seq.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_seq.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_seq.txt'
  DELIMITER "	" select * from tmp_veg order by 1,3;
 drop table tmp_veg;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/stage_ontology.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/stage_ontology.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/stage_ontology.txt'
  DELIMITER "	"
 select stg_zdb_id, stg_obo_id, stg_name, stg_hours_start, stg_hours_end
   from stage
   order by stg_hours_start, stg_hours_end desc
 ;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_item.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_item.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_item.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_item.txt'
  DELIMITER "	"
 select term_ont_id, term_name, ts_start_stg_zdb_id, ts_end_stg_zdb_id
  from term, term_stage
@@ -787,8 +787,8 @@ select term_ont_id, term_name, ts_start_stg_zdb_id, ts_end_stg_zdb_id
  order by term_name
  ;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_relationship.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_relationship.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_relationship.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_relationship.txt'
 DELIMITER "	"
 select term1.term_ont_id, term2.term_ont_id, termrel_type
  from term_relationship, term as term1, term as term2
@@ -799,8 +799,8 @@ select term1.term_ont_id, term2.term_ont_id, termrel_type
 ;
 
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_stage_anatomy.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/xpat_stage_anatomy.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_stage_anatomy.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_stage_anatomy.txt'
  DELIMITER "	"
 select xpatres_zdb_id,
        xpatres_xpatex_zdb_id,
@@ -815,8 +815,8 @@ select xpatres_zdb_id,
  order by xpatres_xpatex_zdb_id
 ;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_synonyms.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/anatomy_synonyms.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_synonyms.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/anatomy_synonyms.txt'
  DELIMITER "	"
 select term_ont_id, term_name, dalias_alias
  from data_alias, term, alias_group
@@ -832,8 +832,8 @@ select term_ont_id, term_name, dalias_alias
 -- Morpholino data
 -- unloaded Morpholino data would have HTML tags in public note column,
 -- which will be removed by Perl script
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos2.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos2.txt'
 select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, b.szm_term_ont_id, mo.mrkr_abbrev,
 	mrkrseq_sequence, mo.mrkr_comments
  from marker gn, marker mo, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
@@ -849,8 +849,8 @@ select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, b.szm_
 ;
 
 -- Image data
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ImageFigures.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ImageFigures.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ImageFigures.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ImageFigures.txt'
  DELIMITER "	"
 select img_zdb_id, img_fig_zdb_id, img_preparation
  from image
@@ -859,8 +859,8 @@ select img_zdb_id, img_fig_zdb_id, img_preparation
 
 -- Transcript data
 -- Get clones and genes if available but still report if not (a small subset)
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/transcripts.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/transcripts.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/transcripts.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/transcripts.txt'
  DELIMITER "	"
 select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,'no related gene','no related clone',tt.tscriptt_type,ts.tscripts_status
  from transcript t
@@ -891,8 +891,8 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
 ;
 
 -- unload publication - genotype association file
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_publication.txt'"
-unload to  '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/genotype_publication.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_publication.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_publication.txt'
  DELIMITER "	"
 select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_zdb_id
  from record_attribution, genotype
@@ -902,8 +902,8 @@ select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_
 
 -- create full expression file for WT fish: standard condition, expression shown and
 -- only wildtype fish
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtype-expression.txt'"
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/wildtype-expression.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression.txt'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
 	sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name
@@ -928,8 +928,8 @@ select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.ter
 --not for public consumption
 --only for Sanger, will be picked up by sanger folks.
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt'"
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt'
 DELIMITER "	"
 select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
 from feature, record_attribution, publication, journal
@@ -941,8 +941,8 @@ and pub_jrnl_zdb_id=jrnl_zdb_id
 order by feature_abbrev;
  
 --case 9235
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fhAlleles.txt'"
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fhAlleles.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fhAlleles.txt'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fhAlleles.txt'
 DELIMITER "	"
 select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
 from feature, record_attribution, publication, journal
@@ -1013,8 +1013,8 @@ update lamhdi_tmp
 set geno_display_name = geno_display_name || " (" || get_genotype_backgrounds(genofeat_geno_zdb_id) || ")"
 where exists (select 't' from genotype_background where genoback_geno_zdb_id = genofeat_geno_zdb_id);
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/lamhdi.unl'"
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/lamhdi.unl'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/lamhdi.unl'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/lamhdi.unl'
 select distinct dblink_acc_num, ortho_name, ortho_abbrev, fmrel_mrkr_zdb_id, mrkr_name,
 	mrkr_abbrev, genofeat_geno_zdb_id, geno_display_name, feature_name, feature_zdb_id
  from lamhdi_tmp
@@ -1036,8 +1036,8 @@ select recattrib_data_zdb_id geneid, count(recattrib_source_zdb_id) pubcount
 update statistics low for table tmp_gene_pubcount;
 
 -- why isn't this file tab delimited?
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'"
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/uniprot-zfinpub.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot-zfinpub.txt'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot-zfinpub.txt'
  DELIMITER "	"
 select geneid, szm_term_ont_id, dblink_acc_num,zdb_id,accession_no,'Expression' as  cur_topic
 from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,tmp_gene_pubcount, expression_experiment, so_zfin_mapping, marker
@@ -1216,8 +1216,8 @@ and phenos_tag !='normal'
 and jtype='Journal';
 
 -- download file Case 4693 as reuqested by uniprot
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfinpubs.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/zfinpubs.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/zfinpubs.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/zfinpubs.txt'
  DELIMITER "	"
 select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,pub_pages
  from publication, journal
@@ -1226,8 +1226,8 @@ select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,p
 ;
 
 -- a list of all features ordered by abbreviation (case insensitive)
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/features.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/features.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt'
  DELIMITER "	"
 select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee
 from feature, feature_type, feature_assay, so_zfin_mapping
@@ -1239,16 +1239,16 @@ order by lower(feature_abbrev);
 -- a list of all features ordered by abbreviation (case insensitive)
 
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fishMartMembers.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/fishMartMembers.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishMartMembers.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishMartMembers.txt'
  DELIMITER "	"
 select fas_geno_long_name, fas_line_handle, gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
   from gene_Feature_result_View, fish_annotation_search
   where gfrv_fas_id = fas_pk_id 
   order by fas_geno_long_name;
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/snpData.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/snpData.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/snpData.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/snpData.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev, snpd_rs_acc_num, snpdattr_pub_zdb_id
   from marker, snp_download, snp_download_attribution
@@ -1294,14 +1294,14 @@ update tmp_identifiers
 							 
 							 )::lvarchar(4000),11),""),"'}",""),"'","");
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/identifiersForIntermine.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/identifiersForIntermine.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/identifiersForIntermine.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/identifiersForIntermine.txt'
  DELIMITER "	"
 select * from tmp_identifiers;
 
 
-! echo "'<!--|ROOT_PATH|-->/home/data_transfer/Downloads/features-affected-genes.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/features-affected-genes.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt'
  DELIMITER "	"
 select feature_zdb_id, a.szm_term_ont_id, feature_name, mrkr_abbrev, mrkr_zdb_id, b.szm_term_ont_id, fmrel_type from feature,
 feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b
@@ -1584,7 +1584,7 @@ update tmp_dumpPheno
       			  	  from genotype
 				  where geno_zdb_id = geno_id);
 
-unload to '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/phenoGeneClean.txt'
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneClean.txt'
 DELIMITER "	"
   select * From tmp_dumpPheno
   	 order by gene_abbrev

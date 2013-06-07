@@ -17,7 +17,7 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 # call patoNumbers.sql to prepare some download files and some pre-processed files
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> patoNumbers.sql");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> patoNumbers.sql");
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -57,8 +57,8 @@ $cur->finish();
 
 $dbh->disconnect(); 
 
-$prephenofile = "<!--|ROOT_PATH|-->/home/data_transfer/Downloads/prepocessed_pheno.txt";
-$phenofile = "<!--|ROOT_PATH|-->/home/data_transfer/Downloads/pheno.txt";
+$prephenofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_pheno.txt";
+$phenofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno.txt";
 
 
 
@@ -105,8 +105,8 @@ close (PHENO);
 
 system("rm -f $prephenofile");
 
-$preorthofile = "<!--|ROOT_PATH|-->/home/data_transfer/Downloads/preprocessed_ortho.txt";
-$orthofile = "<!--|ROOT_PATH|-->/home/data_transfer/Downloads/ortho.txt";
+$preorthofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_ortho.txt";
+$orthofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ortho.txt";
 
 open (PREORTHO, "$preorthofile") ||  die "Cannot open $preorthofile : $!\n";
 open (ORTHO, ">$orthofile") || die "can not open $orthofile: $!\n";

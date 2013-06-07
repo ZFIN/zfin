@@ -57,10 +57,22 @@ $ENV{"JAVA_HOME"}="/private/apps/java";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads";
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> DownloadFiles.sql");
-system("./patoNumbers.pl");
+$downloadStagingDir = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging";
+if (-e $downloadStagingDir) {
 
-system("./generateStagedAnatomy.pl");
+    system("rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/*");
+
+}
+else {
+    mkdir $downloadStagingDir;
+
+}
+
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> DownloadFiles.sql") and die "there was an error in the DownloadFiles.sql";
+system("./patoNumbers.pl") and die "there was an error in patoNumbers.pl";
+
+system("./generateStagedAnatomy.pl") and die "there was an error in generateStagedAnatomy.pl";
+
 
 
 ### open a handle on the db
@@ -74,13 +86,13 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 
 ### FB case 8651, Include Publication in Morpholino Data Download
 
-$MOfileWithNoPubAndWithHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt';
+$MOfileWithNoPubAndWithHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos2.txt';
 
 open (MO, "$MOfileWithNoPubAndWithHTMLtags") || die "Cannot open Morpholinos2.txt : $!\n";
 @lines=<MO>;
 close(MO);
 
-$MOfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos.txt';
+$MOfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos.txt';
 
 open (MOWITHPUBS, ">$MOfileWithPubsAndNoHTMLtags") || die "Cannot open $MOfileWithPubsAndNoHTMLtags : $!\n";
 
@@ -148,14 +160,14 @@ close MO;
 
 # FB case 7670, add Source field to antibodies.txt download file
 
-$antibodyFile = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies2.txt';
+$antibodyFile = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt';
 
 open (AB, "$antibodyFile") || die "Cannot open antibodies2.txt : $!\n";
 @lines=<AB>;
 close(AB);
 
 
-$antibodyFileWithSupplier = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/antibodies.txt';
+$antibodyFileWithSupplier = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies.txt';
 
 open (ABSOURCE, ">$antibodyFileWithSupplier") || die "Cannot open $antibodyFileWithSupplier : $!\n";
 
@@ -209,12 +221,12 @@ $dbh->disconnect
 
 # FB case 8886, remove HTML tags from the download file of Sanger Alleles
 
-$sangerAllelesWithHTMLtags = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt';
+$sangerAllelesWithHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt';
 
 open (SAHTML, $sangerAllelesWithHTMLtags) || die "Can't open $sangerAllelesWithHTMLtags : $!\n";
 
 @lines=<SAHTML>;
-$sangerAlleles = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles.txt';
+$sangerAlleles = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles.txt';
 
 open (SA,  ">$sangerAlleles") || die "Can't open: $sangerAlleles $!\n";
 foreach $line (@lines) {
@@ -227,29 +239,30 @@ close SA;
 
 # remove temporary files
 
-system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/saAlleles2.txt");
+system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt");
 
-system("rm <!--|ROOT_PATH|-->/home/data_transfer/Downloads/Morpholinos2.txt");
+system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos2.txt");
 
-system("./FBcase8787.pl");
+system("./FBcase8787.pl") and die "there was an error in FBcase8787.pl";
 
 # This part checks for any failed download files (those with 0 bytes), and ends the script if it finds some.
 
 
-system("rm /tmp/emptyFiles.txt");
-my $emptyFilesList = '/tmp/emptyFiles.txt';
+system("rm /tmp/<!--|DB_NAME|-->emptyFiles.txt");
+$emptyFilesList = '/tmp/<!--|DB_NAME|-->emptyFiles.txt';
 
 open (EMPTY, ">$emptyFilesList") || die "Can't open $emptyFilesList !\n";
 
-my $dir = '<!--|ROOT_PATH|-->/home/data_transfer/Downloads/';
-my $filesize = -s "/tmp/emptyFiles.txt";
+$dir = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging';
 
 opendir(DH, $dir) or die $!;
 
 while (my $file = readdir(DH)) {
-    
-    $filesize = -s $dir.$file;
+
+    my $filesize = -s $dir."/".$file || 0;
+
     next if ($filesize > 0);
+
     print "empty file! : $file"."\n"; 
     print EMPTY $file." FILE IS EMPTY! \n";
 }
@@ -259,7 +272,14 @@ if (!(-z $emptyFilesList)) {
     die "there are files with 0 data!";
 }
 
+# move files to production location -- assume all are good, as the file check above did not end the script
 
-# move files to production location -- assume all are good, as the file check above did not end the script.
+
+system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/*");
+
+system("cp <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/*  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/") and die "can not cp files to production location";
+
+
+system("<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dumper.sh");
 
 system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
