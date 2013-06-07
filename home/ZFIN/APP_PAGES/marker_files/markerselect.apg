@@ -685,7 +685,7 @@ DEBUGGING:
           May need more work to add the feawture name to the search but better to redirect to a view page.
           <?/MICOMMENT>
           <?MIVAR>
-            replaceLocation("/action/fish/search")
+            replaceLocation("/$the_marker")
           <?/MIVAR>
 	</SCRIPT>
      <?MIELSE>
