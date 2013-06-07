@@ -518,6 +518,12 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         assertTrue(infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers("ZDB-GENE-031118-138", MicroarrayWebserviceJob.MICROARRAY_PUB));
     }
 
+    @Test
+    public void getCollectionOfReplacedData() {
+        List<ReplacementZdbID> replacedGeneIds = RepositoryFactory.getInfrastructureRepository().getReplacedZdbIDsByType(ActiveData.Type.GENE);
+        assertNotNull(replacedGeneIds);
+        assertTrue(replacedGeneIds.size() > 10);
+    }
 
 }
 

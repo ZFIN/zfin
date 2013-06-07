@@ -89,15 +89,15 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
 
             // 2.5 replace merged ZDB Id
             // added this step for FB case 7957 "GAF load should handle merged markers"
-            List<GafEntry> gafEntriesMergedZDBIdFree = gafService.replaceMergedZDBIds(gafEntries);
+            gafService.replaceMergedZDBIds(gafEntries);
 
             GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository()
                     .getGafOrganization(organizationEnum);
             // 3. create new GAF entries based on rules
             GafJobData gafJobData = new GafJobData();
-            gafJobData.setGafEntryCount(gafEntriesMergedZDBIdFree.size());
+            gafJobData.setGafEntryCount(gafEntries.size());
 
-            gafService.processEntries(gafEntriesMergedZDBIdFree, gafJobData);
+            gafService.processEntries(gafEntries, gafJobData);
 
             addAnnotations(gafJobData);
 //            HibernateUtil.createTransaction();
@@ -110,10 +110,6 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
 //            }
 
             removeAnnotations(gafJobData);
-//            HibernateUtil.createTransaction();
-//            gafService.removeEntries(gafJobData);
-//            HibernateUtil.flushAndCommitCurrentSession();
-
             String summary = gafJobData.toString();
             message.append(summary).append("\n\n");
 

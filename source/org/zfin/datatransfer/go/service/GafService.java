@@ -1,5 +1,6 @@
 package org.zfin.datatransfer.go.service;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -33,6 +34,7 @@ import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.util.FileUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,9 +54,9 @@ public class GafService {
     protected PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     protected MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
     protected OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    protected MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository() ;
-    protected ReferenceDatabase uniprot ;
-    protected GafOrganization.OrganizationEnum organizationEnum ;
+    protected MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+    protected ReferenceDatabase uniprot;
+    protected GafOrganization.OrganizationEnum organizationEnum;
 
 
     protected DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -87,95 +89,92 @@ public class GafService {
         );
     }
 
-    public void processEntries(List<GafEntry> gafEntries, GafJobData gafJobData){
+    public void processEntries(List<GafEntry> gafEntries, GafJobData gafJobData) {
 
         GafOrganization gafOrganization =
                 markerGoTermEvidenceRepository.getGafOrganization(organizationEnum);
 
         logger.info("processing " + gafEntries.size() + " entries");
-        if(gafEntries.size()==0){
+        if (gafEntries.size() == 0) {
             logger.error("no entries to process!");
-            return ;
+            return;
         }
         gafJobData.markStartTime();
 
         int count = 0;
         for (GafEntry gafEntry : gafEntries) {
-          ////FB case 8432 prevent GO annotation to GO:0005623 from FP-Inf. GAF load
-          if (!gafEntry.isCell()) {
-            // find genes based on uniprot ID via marker relations
-            try {
-                Collection<Marker> genes = getGenes(gafEntry.getEntryId()) ;
-                // for each gene, create an entry
-                // if no gene is then report error
-                if(CollectionUtils.isNotEmpty(genes)){
-                    for(Marker gene : genes){
-                        MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
-                        if (annotationToAdd != null) {
-                            if (gafJobData.getNewEntries().contains(annotationToAdd)) {
-                                throw new GafValidationError("A duplicate entry is being added:" +
-                                        FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
-                                        FileUtil.LINE_SEPARATOR + gafEntry);
+            ////FB case 8432 prevent GO annotation to GO:0005623 from FP-Inf. GAF load
+            if (!gafEntry.isCell()) {
+                // find genes based on uniprot ID via marker relations
+                try {
+                    Collection<Marker> genes = getGenes(gafEntry.getEntryId());
+                    // for each gene, create an entry
+                    // if no gene is then report error
+                    if (CollectionUtils.isNotEmpty(genes)) {
+                        for (Marker gene : genes) {
+                            MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
+                            if (annotationToAdd != null) {
+                                if (gafJobData.getNewEntries().contains(annotationToAdd)) {
+                                    throw new GafValidationError("A duplicate entry is being added:" +
+                                            FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
+                                            FileUtil.LINE_SEPARATOR + gafEntry);
+                                }
+                                gafJobData.addNewEntry(annotationToAdd);
+                            } else {
+                                throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
                             }
-                            gafJobData.addNewEntry(annotationToAdd);
-                        } else {
-                            throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
-                        }
-                    } // end of gene loop
+                        } // end of gene loop
+                    } else {
+                        throw new GafValidationError("Unable to find genes associated with ID[" + gafEntry.getEntryId() + "]", gafEntry);
+                    }
+                } catch (GafAnnotationExistsError gafAnnotationExistsError) {
+                    logger.debug("Existing annotation: " + gafAnnotationExistsError.getMessage() + " for " + gafEntry);
+                    gafJobData.addExistingEntry(gafAnnotationExistsError.getAnnotation());
+                } catch (GafValidationError gafValidationError) {
+                    logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
+                    gafJobData.addError(gafValidationError);
                 }
-                else{
-                    throw new GafValidationError("Unable to find genes associated with ID[" +gafEntry.getEntryId()+"]", gafEntry);
-                }
-            } catch (GafAnnotationExistsError gafAnnotationExistsError) {
-                logger.debug("Existing annotation: " + gafAnnotationExistsError.getMessage() + " for " + gafEntry);
-                gafJobData.addExistingEntry(gafAnnotationExistsError.getAnnotation());
-            } catch (GafValidationError gafValidationError) {
-                logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
-                gafJobData.addError(gafValidationError);
-            }
 
-            ++count;
-            if (count % 200 == 0) {
-                logger.info("at " + count + " of " + gafEntries.size() + " done "
-                        + ((float) count / (float) gafEntries.size()) * 100f + "%");
+                ++count;
+                if (count % 200 == 0) {
+                    logger.info("at " + count + " of " + gafEntries.size() + " done "
+                            + ((float) count / (float) gafEntries.size()) * 100f + "%");
+                }
             }
-          }
         } // end of gaf entry for loop
 
 
         gafJobData.markStopTime();
     }
 
-    protected ReferenceDatabase getUniprot () {
-      if (uniprot == null) {
-        // get uniprot ReferenceDatabase
-        uniprot = sequenceRepository.getZebrafishSequenceReferenceDatabase(
-                ForeignDB.AvailableName.UNIPROTKB
-                , ForeignDBDataType.DataType.POLYPEPTIDE
-        );
-      }
+    protected ReferenceDatabase getUniprot() {
+        if (uniprot == null) {
+            // get uniprot ReferenceDatabase
+            uniprot = sequenceRepository.getZebrafishSequenceReferenceDatabase(
+                    ForeignDB.AvailableName.UNIPROTKB
+                    , ForeignDBDataType.DataType.POLYPEPTIDE
+            );
+        }
 
-      return uniprot;
+        return uniprot;
     }
 
     protected Collection<Marker> getGenes(String entryId) throws GafValidationError {
-        Set<Marker> returnGenes = new HashSet<Marker>() ;
-        if(entryId.startsWith("ZDB-GENE-")){
+        Set<Marker> returnGenes = new HashSet<Marker>();
+        if (entryId.startsWith("ZDB-GENE-")) {
             Marker gene = markerRepository.getGeneByID(entryId);
-            if(gene==null){
-                throw new GafValidationError("No gene found for ID: "+entryId);
+            if (gene == null) {
+                throw new GafValidationError("No gene found for ID: " + entryId);
             }
             returnGenes.add(gene);
-        }
-        else{
+        } else {
             List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(entryId, getUniprot());
-            for(MarkerDBLink markerDBLink : markerDBLinks){
+            for (MarkerDBLink markerDBLink : markerDBLinks) {
                 Marker gene = markerDBLink.getMarker();
-                if(gene.getZdbID().startsWith("ZDB-GENE-")){
+                if (gene.getZdbID().startsWith("ZDB-GENE-")) {
                     returnGenes.add(gene);
-                }
-                else{
-                    logger.debug("no gene associated with dblink: "+markerDBLink);
+                } else {
+                    logger.debug("no gene associated with dblink: " + markerDBLink);
                 }
             }
         }
@@ -195,6 +194,7 @@ public class GafService {
 
     /**
      * Find entries in the database that are not in the incoming file for a particular organization.
+     *
      * @param gafJobData
      * @param gafOrganization
      * @return Collection of zdbids to be removed.
@@ -245,8 +245,8 @@ public class GafService {
         markerGoTermEvidenceToAdd.setFlag(goEvidenceQualifier);
         // validate evidence code
         GoEvidenceCode goEvidenceCode = markerGoTermEvidenceRepository.getGoEvidenceCode(gafEntry.getEvidenceCode());
-        if(goEvidenceCode==null){
-            throw new GafValidationError("invalid evidence code: "+gafEntry.getEvidenceCode(),gafEntry);
+        if (goEvidenceCode == null) {
+            throw new GafValidationError("invalid evidence code: " + gafEntry.getEvidenceCode(), gafEntry);
         }
 //        GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(goEvidenceCode.getCode());
         markerGoTermEvidenceToAdd.setEvidenceCode(goEvidenceCode);
@@ -306,7 +306,7 @@ public class GafService {
                         }
                     }
                 }
-                if(inference==null){
+                if (inference == null) {
                     throw new GafValidationError("inference is null " +
                             " for code " + goEvidenceCodeEnum.name() +
                             " and pub " + publicationZdbId + " "
@@ -314,7 +314,7 @@ public class GafService {
                 }
 
                 if (!GoEvidenceValidator.isInferenceValid(inference, goEvidenceCodeEnum, publicationZdbId)) {
-                     throw new GafValidationError("Invalid inference code[" + inference + "] " +
+                    throw new GafValidationError("Invalid inference code[" + inference + "] " +
                             " for code " + goEvidenceCodeEnum.name() +
                             " and pub " + publicationZdbId + " "
                             , gafEntry);
@@ -365,14 +365,12 @@ public class GafService {
         if (StringUtils.isEmpty(pubMedID)) {
             throw new GafValidationError("Must have a Pubmed ID", gafEntry);
         }
-        if (pubMedID.startsWith("ZFIN:") && getZfinPubId(pubMedID)!=null) {
+        if (pubMedID.startsWith("ZFIN:") && getZfinPubId(pubMedID) != null) {
             publication = RepositoryFactory.getPublicationRepository().getPublication(getZfinPubId(pubMedID));
-            if (publication == null ) {
-                throw new GafValidationError("No pub found for zdbID : " + getZfinPubId(pubMedID) , gafEntry);
+            if (publication == null) {
+                throw new GafValidationError("No pub found for zdbID : " + getZfinPubId(pubMedID), gafEntry);
             }
-        }
-        else
-        if (getPubMedId(pubMedID) != null) {
+        } else if (getPubMedId(pubMedID) != null) {
             List<Publication> publications = RepositoryFactory.getPublicationRepository().getPublicationByPmid(getPubMedId(pubMedID));
             if (publications == null || publications.size() == 0) {
                 throw new GafValidationError("No pub found for pmid: " + pubMedID);
@@ -383,8 +381,7 @@ public class GafService {
             }
         }
         // if special go_ref, than use the alternate pubmed id
-        else
-        if (pubMedID.startsWith(FpInferenceGafParser.GOREF_PREFIX)) {
+        else if (pubMedID.startsWith(FpInferenceGafParser.GOREF_PREFIX)) {
             if (goRefPubMap.containsKey(pubMedID)) {
                 publication = goRefPubMap.get(pubMedID);
             } else {
@@ -407,10 +404,9 @@ public class GafService {
      * @return Return pub zdbID.
      */
     protected String getZfinPubId(String pubMedID) {
-        if(pubMedID.contains("|")){
+        if (pubMedID.contains("|")) {
             return patternPipe.matcher(pubMedID).replaceAll("$1");
-        }
-        else{
+        } else {
             return pubMedID.split(":")[1];
         }
     }
@@ -485,91 +481,92 @@ public class GafService {
 
     public int removeEntriesBatch(List<GafJobEntry> batchToRemove, GafJobData gafJobData) {
         List<String> zdbIDs = new ArrayList<String>();
-        for(GafJobEntry gafJobEntry : batchToRemove){
+        for (GafJobEntry gafJobEntry : batchToRemove) {
             zdbIDs.add(gafJobEntry.getZdbID());
         }
 
         // delete record attributions and then evidences directly
         RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionByDataZdbIDs(zdbIDs);
 
-        //To change body of created methods use File | Settings | File Templates.
         return markerGoTermEvidenceRepository.deleteMarkerGoTermEvidenceByZdbIDs(zdbIDs);
     }
 
-    public List<GafEntry> replaceMergedZDBIds(List<GafEntry> gafEntries) {
-        List<ReplacementZdbID> replacedGeneIds = RepositoryFactory.getInfrastructureRepository().getReplacedZdbIDsByType(ActiveData.Type.GENE);
-        List<ReplacementZdbID> replacedMOIds = RepositoryFactory.getInfrastructureRepository().getReplacedZdbIDsByType(ActiveData.Type.MRPHLNO);
-        Map<String,String> oldNewZDBIds = new HashMap<String,String>();
-
-        Iterator<ReplacementZdbID> iterator = replacedGeneIds.iterator();
-        ReplacementZdbID replacementZdbID;
-        while(iterator.hasNext()) {
-            replacementZdbID = iterator.next();
-            oldNewZDBIds.put(replacementZdbID.getOldZdbID(), replacementZdbID.getReplacementZdbID());
-        }
-
-        iterator = replacedMOIds.iterator();
-        while(iterator.hasNext()) {
-            replacementZdbID = iterator.next();
-            oldNewZDBIds.put(replacementZdbID.getOldZdbID(), replacementZdbID.getReplacementZdbID());
-        }
-
-        List<GafEntry> gasEntriesWithReplacedIds = new ArrayList<GafEntry>(gafEntries.size());
-        GafEntry gafEntry = new GafEntry();
-        Iterator<GafEntry> gafIterator = gafEntries.iterator();
-
-        // FB case 7957 "GAF load should handle merged markers"
-        String[] withFieldPeieces;
-        String currentWithField;
-        String[] withFieldsZFIN = new String [2];
-        String withFieldZDBId;
-        String replacedWithFieldZDBId;
-        StringBuilder sb;
-
-        while(gafIterator.hasNext()) {
-            gafEntry = gafIterator.next();
+    /**
+     * Loop over all entries and replace marker IDs if they are merged into new zdb IDs
+     *
+     * @param gafEntries entries to be modified
+     */
+    public void replaceMergedZDBIds(List<GafEntry> gafEntries) {
+        Map<String, String> oldNewZDBIds = getReplacedDataMapFromEntities(ActiveData.Type.GENE, ActiveData.Type.MRPHLNO);
+        for (GafEntry gafEntry : gafEntries) {
 
             // replace the ZDB Id with replaced one for column 2, object id
-            if(StringUtils.startsWith(gafEntry.getEntryId(), "ZDB-")) {
-                if (oldNewZDBIds.containsKey(gafEntry.getEntryId()))
-                   gafEntry.setEntryId(oldNewZDBIds.get(gafEntry.getEntryId()));
+            if (StringUtils.startsWith(gafEntry.getEntryId(), "ZDB-")) {
+                replaceAttributeOnGafEntry(gafEntry, "entryId", oldNewZDBIds);
             }
 
+            // FB case 7957 "GAF load should handle merged markers"
             // with field
             // examples:
             // ZFIN:ZDB-GENE-030721-3|ZFIN:ZDB-MRPHLNO-070906-3
             // InterPro:IPR000536|InterPro:IPR001628|InterPro:IPR008946
-            withFieldPeieces = gafEntry.getInferences().split("\\|");
+            String[] withFieldPieces = gafEntry.getInferences().split("\\|");
 
-            sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-            for( int i = 0; i <= withFieldPeieces.length - 1; i++) {
-                currentWithField = withFieldPeieces[i];
-                if (StringUtils.startsWith(currentWithField,"ZFIN:")) {
-                    withFieldsZFIN = currentWithField.split(":");
-                    withFieldZDBId = withFieldsZFIN[1];
-                    if(StringUtils.startsWith(withFieldZDBId, "ZDB-")) {
+            for (int i = 0; i <= withFieldPieces.length - 1; i++) {
+                String currentWithField = withFieldPieces[i];
+                if (StringUtils.startsWith(currentWithField, "ZFIN:")) {
+                    String[] withFieldsZFIN = currentWithField.split(":");
+                    String withFieldZDBId = withFieldsZFIN[1];
+                    if (StringUtils.startsWith(withFieldZDBId, "ZDB-")) {
                         sb.append(withFieldsZFIN[0]);     // "ZFIN"
                         sb.append(":");
                         if (oldNewZDBIds.containsKey(withFieldZDBId)) {
-                            replacedWithFieldZDBId = oldNewZDBIds.get(withFieldZDBId);
+                            String replacedWithFieldZDBId = oldNewZDBIds.get(withFieldZDBId);
                             sb.append(replacedWithFieldZDBId);
                         } else {
                             sb.append(withFieldZDBId);
                         }
                     }
                 } else {
-                    sb.append(withFieldPeieces[i]);
+                    sb.append(withFieldPieces[i]);
                 }
-                if (i < withFieldPeieces.length - 1) {
+                if (i < withFieldPieces.length - 1) {
                     sb.append("|");
                 }
             }
             gafEntry.setInferences(sb.toString());
 
-            gasEntriesWithReplacedIds.add(gafEntry);
         }
+    }
 
-        return gasEntriesWithReplacedIds;
+    public void replaceAttributeOnGafEntry(GafEntry gafEntry, String fieldName, Map<String, String> translationMap) {
+        if (gafEntry == null || fieldName == null || translationMap == null)
+            return;
+        try {
+            String oldFieldValue = (String) PropertyUtils.getProperty(gafEntry, fieldName);
+            if (translationMap.containsKey(oldFieldValue))
+                PropertyUtils.setProperty(gafEntry, fieldName, translationMap.get(oldFieldValue));
+        } catch (IllegalAccessException e) {
+            logger.error(e);
+        } catch (InvocationTargetException e) {
+            logger.error(e);
+        } catch (NoSuchMethodException e) {
+            logger.error(e);
+        }
+    }
+
+    public Map<String, String> getReplacedDataMapFromEntities(ActiveData.Type... types) {
+        if (types == null)
+            return null;
+        Map<String, String> oldNewZDBIds = new HashMap<String, String>();
+        for (ActiveData.Type type : types) {
+            List<ReplacementZdbID> replacedEntityIds = RepositoryFactory.getInfrastructureRepository().getReplacedZdbIDsByType(type);
+            for (ReplacementZdbID replacementZdbID : replacedEntityIds) {
+                oldNewZDBIds.put(replacementZdbID.getOldZdbID(), replacementZdbID.getReplacementZdbID());
+            }
+        }
+        return oldNewZDBIds;
     }
 }

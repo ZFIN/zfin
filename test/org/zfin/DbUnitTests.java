@@ -9,6 +9,7 @@ import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.database.presentation.DatabaseServiceDbTest;
 import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.datatransfer.go.service.FpInferenceGafServiceTest;
+import org.zfin.datatransfer.go.service.GafServiceTest;
 import org.zfin.datatransfer.go.service.GoaGafServiceTest;
 import org.zfin.datatransfer.go.service.PaintGafServiceTest;
 import org.zfin.expression.FigureServiceTest;
@@ -81,6 +82,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ConstructServiceTest.class,
         FpInferenceGafServiceTest.class,
         GafParserUnitTest.class,
+        GafServiceTest.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
         GwtConversionTest.class,
