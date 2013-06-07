@@ -199,12 +199,8 @@
                                                       figureCount="${fish.expressionFigureCount}"/>
                     <span id="image-icon-${loop.index}">
                     </span>
-                <script type="text/javascript">
-                    jQuery('#image-icon-${loop.index}').load('/action/fish/expression-image-exist?fishID=${fish.fishID}&<%= request.getQueryString()%>', function () {
-                        processPopupLinks();
-                    });
-                </script>
                 </c:if>
+                <zfin2:showCameraIcon hasImage="${fish.expressionImageAvailable}"/>
             </td>
             <td>
                 <c:if test="${fish.phenotypeFigureCount > 0}">

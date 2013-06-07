@@ -70,17 +70,18 @@ public class HibernateFishRepository implements FishRepository {
             annotation.setGeneOrFeatureText((String) annotationObj[6]);
             annotation.setName((String) annotationObj[7]);
             annotation.setGenotypeID((String) annotationObj[9]);
+            annotation.setHasExpressionImages((Boolean) annotationObj[11]);
 
-            String featureComplexity = (annotationObj[11]).toString();
-            String faAllScore = annotationObj[12].toString();
-            String simpleScore = (annotationObj[13]).toString();
+            String featureComplexity = (annotationObj[12]).toString();
+            String faAllScore = annotationObj[13].toString();
+            String simpleScore = (annotationObj[14]).toString();
             String faGeneOrder = "";
             String faFeatureOrder = "";
-            if (annotationObj[14] != null)
-                faGeneOrder = annotationObj[14].toString();
             if (annotationObj[15] != null)
-                faFeatureOrder = annotationObj[15].toString();
-            String featureCount = (annotationObj[16]).toString();
+                faGeneOrder = annotationObj[15].toString();
+            if (annotationObj[16] != null)
+                faFeatureOrder = annotationObj[16].toString();
+            String featureCount = (annotationObj[17]).toString();
 
             annotation.setScoringText(generateScoringDebugOutput(featureComplexity, featureCount, faAllScore, simpleScore, faGeneOrder, faFeatureOrder));
             functionalAnnotations.add(annotation);
@@ -111,7 +112,7 @@ public class HibernateFishRepository implements FishRepository {
 
         String baseSelectColumns = " fas_pk_id, fas_geno_name, \n" +
                 " fas_morpholino_group, fas_feature_group, fas_pheno_figure_count, fas_pheno_figure_group, \n" +
-                " fas_all, fas_geno_long_name, fas_genox_group, fas_genotype_group, fas_xpat_figure_count ";
+                " fas_all, fas_geno_long_name, fas_genox_group, fas_genotype_group, fas_xpat_figure_count, fas_xfigg_has_images ";
 
         String sortColumns = " fas_fish_significance  as complexity, \n";
 
@@ -379,6 +380,7 @@ public class HibernateFishRepository implements FishRepository {
         singleFish.setGenotypeExperimentIDs(getIdList(annotation.getGenotypeExperimentIds()));
         singleFish.setGenotypeExperimentIDsString(annotation.getGenotypeExperimentIds());
         singleFish.setExpressionFigureCount(annotation.getExpressionFigureCount());
+        singleFish.setExpressionImageAvailable(annotation.isHasExpressionImages());
         populateGeneFeatureConstruct(singleFish, annotation);
         if (singleFish.getGenotypeID()!=null){
         addFigures(singleFish, criteria);

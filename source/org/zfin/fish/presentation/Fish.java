@@ -27,6 +27,7 @@ public class Fish extends ZfinEntity {
     private int phenotypeFigureCount;
     private int expressionFigureCount;
     private boolean imageAvailable;
+    private boolean expressionImageAvailable;
     //todo: probably remove this once we have real matching text
     private String geneOrFeatureText;
     private String scoringText;
@@ -196,5 +197,13 @@ public class Fish extends ZfinEntity {
 
     public void setImageAvailable(boolean imageAvailable) {
         this.imageAvailable = imageAvailable;
+    }
+
+    public boolean isExpressionImageAvailable() {
+        return expressionImageAvailable;
+    }
+
+    public void setExpressionImageAvailable(boolean expressionImageAvailable) {
+        this.expressionImageAvailable = expressionImageAvailable;
     }
 }

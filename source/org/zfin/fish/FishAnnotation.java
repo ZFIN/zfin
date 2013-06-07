@@ -15,6 +15,7 @@ public class FishAnnotation {
     private String phenotypeFigureGroupName;
     private int phenotypeFigureCount;
     private int expressionFigureCount;
+    private boolean hasExpressionImages;
 
     //todo: probably remove these, they're around mostly to help develop the sorting algorithm
     private String geneOrFeatureText;
@@ -114,5 +115,13 @@ public class FishAnnotation {
 
     public void setExpressionFigureCount(int expressionFigureCount) {
         this.expressionFigureCount = expressionFigureCount;
+    }
+
+    public boolean isHasExpressionImages() {
+        return hasExpressionImages;
+    }
+
+    public void setHasExpressionImages(boolean hasExpressionImages) {
+        this.hasExpressionImages = hasExpressionImages;
     }
 }
