@@ -1005,7 +1005,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(ReplacementZdbID.class);
-        criteria.add(Restrictions.like("oldZdbID", "%ZDB-" + type.toString() + "-"));
+        criteria.add(Restrictions.like("oldZdbID", "ZDB-" + type.toString() + "-%"));
         return (List<ReplacementZdbID>) criteria.list();
     }
 
