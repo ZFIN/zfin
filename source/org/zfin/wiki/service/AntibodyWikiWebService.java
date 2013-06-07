@@ -733,6 +733,7 @@ public class AntibodyWikiWebService extends WikiWebService {
                 return null;
             } else {
                 if (pageHasLabel(page, Label.ZFIN_ANTIBODY_LABEL.getValue())) {
+                    //hardcode devwiki in case antibody is created while testing.
                     if (instance.wikiHost.contains("devwiki")){
                         StringBuilder sb = new StringBuilder();
                         sb.append("https://");
