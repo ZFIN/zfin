@@ -124,6 +124,7 @@ select first 50 mrel_mrkr_1_zdb_id[1,25] gene, count( distinct gff_seqname ) num
   join gff3 on tscript_load_id == gff_id
  where mrel_type == 'gene produces transcript'
    and gff_source == "vega"
+   and gff_seqname != "AB"
    group by 1
    order by 2 desc
 ;
