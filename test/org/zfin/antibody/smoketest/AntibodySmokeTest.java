@@ -2,6 +2,7 @@ package org.zfin.antibody.smoketest;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.zfin.AbstractSmokeTest;
 
@@ -120,13 +121,13 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testSearchZn5() {
         for (WebClient webClient : publicWebClients) {
             try {
+                webClient.setJavaScriptEnabled(false);
                 String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn5&maxDisplayRecords=25";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
                 assertEquals("Antibody detail page", "ZFIN Antibody: zn-5", page.getTitleText());
                 // Fashena et al. publication: check that this reference is used
                 HtmlAnchor hyperlink = (HtmlAnchor) page.getElementById("ZDB-PUB-990507-16");
-                HtmlPage publicationPage = hyperlink.click();
-                assertEquals("ZFIN: Publication: Fashena et al., 1999. Secondary motoneuron axons localize DM-GRASP on their fasciculated segments", publicationPage.getTitleText());
+                assertTrue(StringUtils.contains(hyperlink.getHrefAttribute(), "ZDB-PUB-990507-16"));
 
                 // alcama antigen gene: check this antigen gene is present
                 HtmlAnchor geneHyperlink = (HtmlAnchor) page.getElementById("ZDB-GENE-990415-30");
@@ -164,6 +165,8 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 // check clonal type
                 span = (HtmlSpan) page.getElementById("clonal type");
                 assertEquals("monoclonal", span.getTextContent());
+                webClient.setJavaScriptEnabled(true);
+
             } catch (IOException e) {
                 fail(e.toString());
             }
