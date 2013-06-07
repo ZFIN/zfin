@@ -502,13 +502,16 @@ public class GafService {
         Map<String,String> oldNewZDBIds = new HashMap<String,String>();
 
         Iterator<ReplacementZdbID> iterator = replacedGeneIds.iterator();
+        ReplacementZdbID replacementZdbID;
         while(iterator.hasNext()) {
-            oldNewZDBIds.put(iterator.next().getOldZdbID(), iterator.next().getReplacementZdbID());
+            replacementZdbID = iterator.next();
+            oldNewZDBIds.put(replacementZdbID.getOldZdbID(), replacementZdbID.getReplacementZdbID());
         }
 
         iterator = replacedMOIds.iterator();
         while(iterator.hasNext()) {
-            oldNewZDBIds.put(iterator.next().getOldZdbID(), iterator.next().getReplacementZdbID());
+            replacementZdbID = iterator.next();
+            oldNewZDBIds.put(replacementZdbID.getOldZdbID(), replacementZdbID.getReplacementZdbID());
         }
 
         List<GafEntry> gasEntriesWithReplacedIds = new ArrayList<GafEntry>(gafEntries.size());
