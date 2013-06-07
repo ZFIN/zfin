@@ -135,6 +135,10 @@ public class WikiWebService {
         return domainName;
     }
 
+    public String getWikiHost() {
+        return wikiHost;
+    }
+
     /**
      * @param spaceToken The token for the space.
      * @return All page summaries for a given space.
