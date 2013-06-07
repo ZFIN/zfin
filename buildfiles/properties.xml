@@ -62,6 +62,7 @@
     <property name="blastTestFile" value="blast-results"/>
     <property name="smokeTestFile" value="smoke-results"/>
     <property name="serviceTestFile" value="service-results"/>
+    <property name="validateTestFile" value="validate-tests"/>
 
     <property name="smokeFailureMessage"
               value="Failed internal smoke test.  See ${smokeTestFile}.txt for more information.  Please confirm that the web client is running properly."/>
