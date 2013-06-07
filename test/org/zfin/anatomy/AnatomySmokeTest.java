@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class AnatomySmokeTest extends AbstractSmokeTest {
 
-    public void testAnatomyLookupFormExists() {
+    public void AnatomyLookupFormExists() {
         for (WebClient webClient : publicWebClients) {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
