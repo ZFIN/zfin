@@ -48,9 +48,6 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
     @Before
     public void setTempDirectory() {
-	System.out.println("odl temp dir: "+ oldTempDirectory);	
-	System.out.println("java.io.tmpdir: "+System.getProperty("java.io.tmpdir") );
-
         if (oldTempDirectory == null || false == oldTempDirectory.equals(testTempDirectory)) {
             oldTempDirectory = System.getProperty("java.io.tmpdir");
             System.setProperty("java.io.tmpdir", testTempDirectory);
@@ -67,9 +64,8 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
         try {
             FileUtils.deleteDirectory(testDirectory);
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        //assertFalse(testDirectory.exists());
+
     }
 
     @Test
