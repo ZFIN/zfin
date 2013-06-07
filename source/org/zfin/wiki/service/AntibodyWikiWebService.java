@@ -9,6 +9,7 @@ import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.presentation.AntibodyPresentation;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
@@ -732,7 +733,20 @@ public class AntibodyWikiWebService extends WikiWebService {
                 return null;
             } else {
                 if (pageHasLabel(page, Label.ZFIN_ANTIBODY_LABEL.getValue())) {
-                    return page.getUrl();
+                    if (instance.wikiHost.contains("devwiki")){
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("https://");
+                        // sb.append(AntibodyWikiWebService.getInstance().getDomainName());
+                        sb.append(AntibodyWikiWebService.getInstance().getWikiHost());
+                        sb.append("/display/AB/");
+                        sb.append(name);
+                        return sb.toString();
+                    }
+                    else{
+                        String url=page.getUrl();
+                        return url;
+                    }
+
                 } else {
                     return null;
                 }
