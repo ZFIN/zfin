@@ -1,8 +1,7 @@
 package org.zfin.util;
 
-import sun.net.www.protocol.http.HttpURLConnection;
-
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
