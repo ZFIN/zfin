@@ -7,7 +7,9 @@
 # 
 
 use DBI;
-use MIME::Lite;
+
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 # set environment variables
 
@@ -18,12 +20,12 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/";
 
-system("rm -f *.txt");
-system("rm -f genemap");
+system("/bin/rmrm -f *.txt");
+system("/bin/rmrm -f genemap");
 
 system("rm -f log*");
 
-system("rm -f geneId_omim_no_pheno");
+system("/bin/rmrm -f geneId_omim_no_pheno");
 
 print "\nDownloading OMIM files ... \n\n";
 open (LOG, ">log1") || die "Cannot open log1 : $!\n";
@@ -365,48 +367,27 @@ print LOG "For all $ctFoundMIMwithSymbolOnGenemap records that found with symbol
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadOMIM.sql >log3 2> log2");
 
-&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","log1","log1");
+$subject1 = "Auto from $dbname: " . "OMIM.pl :: log1";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject1","log1");
 
-&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","log2","log2");
+$subject2 = "Auto from $dbname: " . "OMIM.pl :: log2";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject2","log2");
 
-&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","what new records have been added","whatHaveBeenInsertedIntoOmimPhenotypeTable.txt");
+$subject3 = "Auto from $dbname: " . "OMIM.pl :: what have been added";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject3","whatHaveBeenInsertedIntoOmimPhenotypeTable.txt");
 
-&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","what records have been deleted","whatHaveBeenDeletedFromOmimPhenotypeTable.txt");
+$subject4 = "Auto from $dbname: " . "OMIM.pl :: what have been deleted";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject4","whatHaveBeenDeletedFromOmimPhenotypeTable.txt");
 
-&sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","what records have been updated with new phenotype OMIM Id","whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated.txt");
+$subject5 = "Auto from $dbname: " . "OMIM.pl :: what have been updated";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject5","whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated.txt");
 
-### &sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","genes With MIM not Found On omim_phenotype table","genesWithMIMnotFoundOnOMIMPtable.txt");
-
-### &sendMail("Auto from $dbname: OMIM.pl : ","<!--|SWISSPROT_EMAIL_ERR|-->","debugging output","genemap_records_with_no_phenotype.txt");
-
+$subject6 = "Auto from $dbname: " . "OMIM.pl :: genes with MIM not found in omim_phenotype table";
+ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org","$subject6","genesWithMIMnotFoundOnOMIMPtable.txt");
 
 print LOG "\nAll done!\n\n\n";
 
 exit;
 
 
-sub sendMail($) {
-
-    my $SUBJECT=$_[0] .": " .$_[2];
-    my $MAILTO=$_[1];
-    my $TXTFILE=$_[3]; 
-    
-    # Create a new multipart message:
-    $msg1 = new MIME::Lite 
-	From    => "$ENV{LOGNAME}",
-	To      => "$MAILTO",
-	Subject => "$SUBJECT",
-	Type    => 'multipart/mixed';
-
-    attach $msg1 
-	Type     => 'text/plain',   
-	Path     => "$TXTFILE";
-
-    # Output the message to sendmail
-    
-    open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-    $msg1->print(\*SENDMAIL);
-    close (SENDMAIL);
-    
-}
 
