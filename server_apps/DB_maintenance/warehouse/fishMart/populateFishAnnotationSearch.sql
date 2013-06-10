@@ -106,7 +106,7 @@ select fas_All from fish_Annotation_Search_temp
 where fas_line_handle = 'b380[2,U,U]';
 
 update fish_annotation_search_temp
-  set fas_all = fas_all||","||(select distinct fa_geno_alias from functional_annotation where fa_geno_name = fas_geno_name and fa_geno_alias is not null)
+  set fas_all = fas_all||","||(select distinct fa_geno_alias from functional_annotation where fa_geno_handle = fas_line_handle and fa_geno_alias is not null)
  where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_line_handle and fa_geno_alias is not null);
 
 select fas_All from fish_Annotation_Search_temp
