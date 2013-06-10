@@ -11,8 +11,8 @@
 -- OUTPUT VARS:
 --              None
 -- EFFECTS:
---              This table is currently used on the AO detail page to obtain the
---		antibodies labeling the ao structure
+--              This table is currently used on the Term detail page to obtain the
+--		antibodies labeling terms
 -------------------------------------------------------------
 
 -- Estimated Run Time:  4 minutes using current clones and antibodies. This time will go up.
@@ -33,7 +33,7 @@
 -- ---------------------------------------------------------------------
 
 
-Create dba function regen_feature_ao_fast_search()
+Create dba function regen_feature_term_fast_search()
   returning integer
 
   -- set standard set of session params
@@ -85,15 +85,15 @@ Create dba function regen_feature_ao_fast_search()
 			       ' ISAM Error: ' || isamError::varchar(200) ||
 			       ' ErrorText: '  || errorText || 
 		               ' ErrorHint: '  || errorHint ||
-			       '" >> /tmp/regen_feature_ao_fast_search_exception_<!--|DB_NAME|-->';
+			       '" >> /tmp/regen_feature_term_fast_search_exception_<!--|DB_NAME|-->';
 	system exceptionMessage;
 
-	-- Change the mode of the regen_feature_ao_fast_search_exception file.  This is
+	-- Change the mode of the regen_feature_term_fast_search_exception file.  This is
 	-- only needed the first time it is created.  This allows us to 
 	-- rerun the function from either the web page (as zfishweb) or 
 	-- from dbaccess (as whoever).
 
-	system '/bin/chmod 666 /tmp/regen_feature_ao_fast_search_exception_<!--|DB_NAME|-->';
+	system '/bin/chmod 666 /tmp/regen_feature_term_fast_search_exception_<!--|DB_NAME|-->';
 
 	-- If in a transaction, then roll it back.  Otherwise, by default
 	-- exiting this exception handler will commit the transaction.

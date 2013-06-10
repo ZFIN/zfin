@@ -30,8 +30,8 @@ echo 'execute function regen_maps(); update statistics for procedure' | dbaccess
 echo "Starting regen_oevdisp at `date`"
 echo 'execute function regen_oevdisp(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
-echo "Starting regen_feature_ao_fast_search at `date`"
-echo 'execute function regen_feature_ao_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+echo "Starting regen_feature_term_fast_search at `date`"
+echo 'execute function regen_feature_term_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
 echo "Starting regen_expression_term_fast_search at `date`"
 echo 'execute function regen_expression_term_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
