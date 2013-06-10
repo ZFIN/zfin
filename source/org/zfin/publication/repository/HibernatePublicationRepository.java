@@ -8,7 +8,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
-import org.zfin.anatomy.CanonicalMarker;
 import org.zfin.antibody.Antibody;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Experiment;
@@ -382,11 +381,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public Marker getMarkerByZdbID(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return (Marker) session.load(Marker.class, zdbID);
-    }
-
-    public void insertCanonicalMarker(CanonicalMarker canon) {
-        Session session = HibernateUtil.currentSession();
-        session.save(canon);
     }
 
     public boolean publicationExists(String canonicalPublicationZdbID) {

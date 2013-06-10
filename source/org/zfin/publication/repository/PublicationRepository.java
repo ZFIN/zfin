@@ -1,9 +1,7 @@
 package org.zfin.publication.repository;
 
-import org.zfin.anatomy.CanonicalMarker;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
@@ -153,13 +151,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @param zdbID
      */
     Marker getMarkerByZdbID(String zdbID);
-
-    /**
-     * Save a canonical marker.
-     *
-     * @param canon
-     */
-    void insertCanonicalMarker(CanonicalMarker canon);
 
     /**
      * Check if a publication with the specified primary key exists.

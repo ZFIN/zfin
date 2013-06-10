@@ -130,11 +130,6 @@ get_obj_name(zdbId varchar(50))
      where termdef_zdb_id = zdbId;
   -- Now, list the less frequently hit types in alphabetical order
 
-  elif (objType = "ANATCMK") then
-    select anatcmrkr_zdb_id 	-- don't have names, return ZDB ID
-      into objName
-      from anatomy_canonical_marker
-      where anatcmrkr_zdb_id = zdbId;
    elif (objType = "CDT") then
     select cdt_name
       into objName

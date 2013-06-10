@@ -129,33 +129,6 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         List<AnatomyStatistics> stats = ar.getAnatomyItemStatisticsByStage(stage);
     }
 
-    private static void recommendedMarkers() {
-        Session session = HibernateUtil.currentSession();
-        session.beginTransaction();
-        String zdbID = "ZDB-ANAT-010921-591";
-        OntologyRepository ar = RepositoryFactory.getOntologyRepository();
-/*
-        List<CanonicalMarker> list = ar.getCanonicalMarker(zdbID);
-        System.out.println("list");
-*/
-
-        CanonicalMarker canon = new CanonicalMarker();
-        GenericTerm item = new GenericTerm();
-        item.setZdbID("ZDB-ANAT-010921-591");
-        canon.setItem(item);
-        Publication pub = new Publication();
-        pub.setZdbID("ZDB-PUB-000103-6");
-        Set pubs = new HashSet();
-        pubs.add(pub);
-        canon.setPublications(pubs);
-        Marker marker = new Marker();
-        marker.setZdbID("ZDB-GENE-980526-561");
-        canon.setGene(marker);
-        PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-        pr.insertCanonicalMarker(canon);
-        session.getTransaction().commit();
-    }
-
     private static void createPerson() {
         Person person = new Person();
         person.setLastName("Manitius");
