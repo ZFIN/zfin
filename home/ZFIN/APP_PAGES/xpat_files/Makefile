@@ -32,7 +32,7 @@ xpatselectanatverify.apg xpatselectrowdisplay.apg
 
 STATICS = fxfigphenoanatlist.apg xpatexpcdnsummary.apg xpatexpcdnlist.apg xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
 fxfigstgrng.apg fxassayabbrev.apg fxfigassaylist.apg fxfigfishlist.apg xpatfeatexp.apg \
-fxgenestgrng.apg record_web_update.apg do-addcanmrkr.apg genotypecuration.apg attribupdate.apg \
+fxgenestgrng.apg record_web_update.apg genotypecuration.apg attribupdate.apg \
 genoupdate.apg patocuration.apg fxfigphenostgrng.apg xpatcurreset.apg \
 wordcompletion.apg xpatcurupdatecondition.apg gocuration.apg xpatselect_resultsasimages.apg \
 xpatfeatexpcondn.apg xpatview.apg fxfiganatlist.apg fxfiggenelist.apg fxfigphenogenolist.apg
