@@ -89,7 +89,7 @@
 # Nights   When      Comments
 #
 # SMTWTFS  11:22pm   CURATOR SUPPORT: Nightly check for new publications.
-22 23 * * * <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/ppub.sh
+22 23 * * * <!--|ROOT_PATH|-->/cgi-bin/publications_today.cgi
 #
 #
 # SMTWTFS        10:00pm   Generate standard set of download files for web site, including gff3 files.
@@ -129,10 +129,12 @@
 # F        10:10pm   weekly update of omim_phenotype
 #                    
 10 22 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/OMIM.pl
-#
 # M        10:50pm   weekly check and update of publication table for missing volume and/or page numbers
 #                    the missing data will be pulled from pubmed
 50 22 * * 1 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/pub_check_and_addback_volpg.pl
+
+# F        10:40pm   weeky pull down of pub activation status from pubmed
+50 22 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/updatepubstatus.pl
 #
 #
 # F        11:00pm   weekly download data run, also does DATA TRANSFER OUT
