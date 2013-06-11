@@ -74,7 +74,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <form:label path="phone">Fax:</form:label>
+                            <form:label path="fax">Fax:</form:label>
                         </td>
                         <td>
                             <form:input path="fax"/>
