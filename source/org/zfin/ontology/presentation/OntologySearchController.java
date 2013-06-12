@@ -33,14 +33,14 @@ public class OntologySearchController {
     @RequestMapping("/ontology-search")
     protected String showSearchForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "AO / GO Search");
-        return "anatomy/search-form.page";
+        return "ontology/search-form.page";
     }
 
-    @RequestMapping(value = "/show-terms-by-stage", method = RequestMethod.GET)
+    @RequestMapping(value = "/show-anatomy-terms-by-stage", method = RequestMethod.GET)
     public String showAnatomyTermsByStage(@ModelAttribute("formBean") AnatomySearchBean anatomyForm) throws Exception {
         LOG.debug("Start Action Class");
         doTermSearchByStage(anatomyForm);
-        return "anatomy/show-terms-by-stage.page";
+        return "ontology/show-anatomy-terms-by-stage.page";
     }
 
     private void doTermSearchByStage(AnatomySearchBean anatomyForm) {

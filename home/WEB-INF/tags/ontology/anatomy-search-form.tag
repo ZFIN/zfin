@@ -30,7 +30,7 @@
                     <TD>
                     </TD>
                     <TD rowspan="4">
-                        <A HREF="/action/anatomy/request-new-anatomy-term" target="_new">
+                        <A HREF="/action/ontology/request-new-anatomy-term" target="_new">
                             Request a new Anatomical Term
                         </A>
 
@@ -43,7 +43,7 @@
                         Browse Anatomy Terms by
                         <a href="/zf_info/zfbook/stages/index.html">Developmental Stage</a>
                         <BR>
-                        <form:form method="GET" action="/action/anatomy/show-terms-by-stage" commandName="formBean"
+                        <form:form method="GET" action="/action/ontology/show-anatomy-terms-by-stage" commandName="formBean"
                                    name="formBean">
                             <form:select path="stage.zdbID" onchange="document.formBean.submit();" id="stages"
                                          htmlEscape="false">

@@ -32,7 +32,7 @@
         </TD>
         <td>
             Highlight terms containing: <BR>
-            <form:form method="GET" action="/action/anatomy/show-terms-by-stage" commandName="formBean"
+            <form:form method="GET" action="/action/ontology/show-anatomy-terms-by-stage" commandName="formBean"
                        id="termsByStage">
                 <form:input path="highlightText" size="20" onchange="submit();"/>
                 <form:hidden path="stage.zdbID"/>

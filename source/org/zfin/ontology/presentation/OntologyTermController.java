@@ -37,7 +37,7 @@ public class OntologyTermController {
                                       Model model) throws Exception {
         Ontology ontology = Ontology.ANATOMY;
         model.addAttribute("terms", OntologyManager.getInstance().getAllTerms(ontology));
-        return "anatomy/show-all-terms.page";
+        return "ontology/show-all-terms.page";
     }
 
 

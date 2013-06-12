@@ -68,7 +68,8 @@ public class OntologyTermDetailController {
             anatomySearchBean.setQueryString(name);
             anatomySearchBean.setOntologyName(ontologyName);
             model.addAttribute("formBean", anatomySearchBean);
-            return "anatomy/show-all-terms.page";
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, " Ontology Search");
+            return "ontology/show-all-terms.page";
         } else {
             term = RepositoryFactory.getOntologyRepository().getTermByName(name, ontology);
             if (term != null)
