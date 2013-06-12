@@ -163,7 +163,8 @@ public class DownloadFileService extends ArchiveService {
                 // ignore files that are not registered.
                 if (downloadFile == null) {
                     if (!fileName.equalsIgnoreCase("download-registry.xml")) {
-                      unusedDownloadFiles.add(FileUtil.getFileInfo(dFile));
+                        if (!dFile.isDirectory())
+                            unusedDownloadFiles.add(FileUtil.getFileInfo(dFile));
                     }
                     continue;
                 }
