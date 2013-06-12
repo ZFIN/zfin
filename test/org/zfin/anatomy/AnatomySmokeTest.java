@@ -43,7 +43,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(1000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=emb*");
-                assertEquals("ZFIN", page.getTitleText());
+                assertEquals("ZFIN Ontology Search", page.getTitleText());
                 // check that embryonic structure is listed
                 List<HtmlSpan> caption = (List<HtmlSpan>) page.getByXPath("//a[@name = 'embryonic structure']");
                 assertNotNull(caption);
