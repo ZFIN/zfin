@@ -12,10 +12,7 @@
         <th><span class="name-label">Transcript&nbsp;Name:</span></th>
         <td><span class="name-value"><zfin:name entity="${transcript}"/></span></td>
     </tr>
-    <%--<c:if test="${!empty previousNames}">
-        <zfin2:previousNamesFast label="Previous Names:" previousNames="${previousNames}"/>
-    </c:if>--%>
-    <zfin2:previousNamesFast label="Previous Names:" previousNames="${previousNames}"/>
+    <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}"/>
     <tr>
         <th>Transcript&nbsp;Type:<a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a></th>
         <td><span title="${transcript.transcriptType.definition}">${transcript.transcriptType.display}</span></td>

@@ -5,7 +5,7 @@
               description="if nothing is specified, Synonyms: will be used" %>
 
 <c:if test="${empty label}">
-    <c:set var="label" value="Synonyms"/>
+    <c:set var="label" value="Synonym"/>
 </c:if>
 
 <c:choose>

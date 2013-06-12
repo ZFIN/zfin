@@ -38,7 +38,7 @@
     </tr>
 
     <c:if test="${!empty previousNames}">
-        <zfin2:previousNamesFast label="Previous Names:" previousNames="${previousNames}"/>
+        <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}"/>
     </c:if>
 
     <tr>

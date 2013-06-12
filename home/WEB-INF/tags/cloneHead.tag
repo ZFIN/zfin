@@ -10,7 +10,7 @@
         <th><span class="name-label">${cloneBean.clone.markerType.displayName}&nbsp;Name: </span></th>
         <td><span class="name-value"><zfin:name entity="${cloneBean.clone}"/> </span></td>
     </tr>
-    <zfin2:previousNamesFast label="Previous Names:" previousNames="${cloneBean.previousNames}"/>
+    <zfin2:previousNamesFast label="Previous Name" previousNames="${cloneBean.previousNames}"/>
 
     <c:if test="${!empty cloneBean.clone.problem}">
     <tr>

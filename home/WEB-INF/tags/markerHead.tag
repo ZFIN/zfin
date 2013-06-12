@@ -23,7 +23,7 @@
         <c:choose>
 
         <c:when test="${formBean.marker.type eq 'GENE'}">
-        <zfin2:previousNamesFast label="Previous Names:" previousNames="${previousNames}"/>
+              <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}"/>
         </c:when>
         <c:otherwise>
               <zfin2:previousNamesFast  previousNames="${previousNames}"/>

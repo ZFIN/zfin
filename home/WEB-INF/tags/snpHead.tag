@@ -14,7 +14,7 @@
     </tr>
 
     <c:if test="${!empty markerBean.previousNames}">
-        <zfin2:previousNamesFast label="Previous Names:" previousNames="${markerBean.previousNames}"/>
+        <zfin2:previousNamesFast label="Previous Name" previousNames="${markerBean.previousNames}"/>
     </c:if>
 
     <tr>
