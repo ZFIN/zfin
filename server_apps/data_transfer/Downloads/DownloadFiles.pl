@@ -275,7 +275,9 @@ if (!(-z $emptyFilesList)) {
 # move files to production location -- assume all are good, as the file check above did not end the script
 
 
-system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/*");
+system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/*.txt");
+system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/*.unl");
+system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/intermineData/*");
 
 system("cp <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/*  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/") and die "can not cp files to production location";
 
