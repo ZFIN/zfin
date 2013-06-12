@@ -37,6 +37,11 @@
                             </select>
                         </label>
                     </c:if>
+                    <c:if test="${labelMap != null && labelMap.size() == 1}">
+                        <c:forEach var="ontologyMap" items="${termGroups}" end="0">
+                        All ${ontologyMap.value.size()} Terms
+                        </c:forEach>
+                    </c:if>
                 </td>
                 <td>
                     &nbsp;for: <span style="font-weight: bold;"> ${query} </span>
