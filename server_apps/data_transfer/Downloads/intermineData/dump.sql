@@ -1,3 +1,7 @@
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/markerSequences/1sequences.txt"
+ select mrkr_zdb_id, mrkrseq_sequence, mrkrseq_offset_start, mrkrseq_offset_stop, mrkrseq_variation from marker, marker_Sequnece
+where mrkr_Zdb_id = mrkrseq_mrkr_zdb_id;
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype/1omimphenotype.txt"
  select omimp_gene_zdb_id,omimp_name,omimp_omim_id from omim_phenotype;
 
