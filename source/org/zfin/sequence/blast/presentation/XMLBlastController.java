@@ -14,6 +14,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
@@ -154,6 +155,9 @@ public class XMLBlastController extends SimpleFormController {
             sequenceID = sequenceID.replaceFirst("\\..*", "");
             List<Sequence> sequences =
                     MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs(sequenceID);
+            // If not found in ZFIN go out to NCBI
+            if (CollectionUtils.isEmpty(sequences))
+                sequences = MultipleBlastServerService.getAccessionFromNcbi(sequenceID, xmlBlastBean.getSequenceType().equals("nt") ? NCBIEfetch.Type.NUCLEOTIDE : NCBIEfetch.Type.POLYPEPTIDE);
             sequences = MountedWublastBlastService.getInstance().filterUniqueSequences(sequences);
 
             if (CollectionUtils.isEmpty(sequences)) {
@@ -177,8 +181,8 @@ public class XMLBlastController extends SimpleFormController {
         }
         String fileData = xmlBlastBean.getSequenceFile();
 //        if(StringUtils.isNotEmpty(fileData)){
-        logger.info("fileData is not null: " + fileData) ;
-        fileData = MountedWublastBlastService.getInstance().removeLeadingNumbers(fileData,XMLBlastBean.SequenceType.getSequenceType(xmlBlastBean.getSequenceType()));
+        logger.info("fileData is not null: " + fileData);
+        fileData = MountedWublastBlastService.getInstance().removeLeadingNumbers(fileData, XMLBlastBean.SequenceType.getSequenceType(xmlBlastBean.getSequenceType()));
         fileData = prependSequenceWithDefline(fileData);
         // need to do a validation
         // clip off sequence file and/or validate against
@@ -195,7 +199,7 @@ public class XMLBlastController extends SimpleFormController {
         xmlBlastBean.setQuerySequence(xmlBlastBean.getQuerySequence().trim());
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "querySequence", "Missing sequence.", "Missing sequence.");
         String querySequence = xmlBlastBean.getQuerySequence();
-        querySequence = MountedWublastBlastService.getInstance().removeLeadingNumbers(querySequence,XMLBlastBean.SequenceType.getSequenceType(xmlBlastBean.getSequenceType()));
+        querySequence = MountedWublastBlastService.getInstance().removeLeadingNumbers(querySequence, XMLBlastBean.SequenceType.getSequenceType(xmlBlastBean.getSequenceType()));
         querySequence = prependSequenceWithDefline(querySequence);
         xmlBlastBean.setQuerySequence(querySequence);
     }
@@ -347,7 +351,7 @@ public class XMLBlastController extends SimpleFormController {
             // execute thread
 //            BlastQueryThreadCollection.getInstance().executeBlastThread(blastBean);
             logger.debug("sheduling blast ticket: " + blastBean.getTicketNumber());
-            scheduleBlast(blastBean) ;
+            scheduleBlast(blastBean);
         }
 
         // set the inputXMLBlastBean to the first result bean
@@ -364,14 +368,12 @@ public class XMLBlastController extends SimpleFormController {
         return modelAndView;
     }
 
-    protected void scheduleBlast(XMLBlastBean blastBean){
+    protected void scheduleBlast(XMLBlastBean blastBean) {
         BlastHeuristicFactory productionBlastHeuristicFactory = new ProductionBlastHeuristicFactory();
         BlastHeuristicCollection blastHeuristicCollection = productionBlastHeuristicFactory.createBlastHeuristics(blastBean);
         BlastQueryJob blastSingleTicketQueryThread = new BlastDistributableQueryThread(blastBean, blastHeuristicCollection);
-        BlastQueryThreadCollection.getInstance().addJobAndStart(blastSingleTicketQueryThread) ;
+        BlastQueryThreadCollection.getInstance().addJobAndStart(blastSingleTicketQueryThread);
     }
-
-
 
 
 }

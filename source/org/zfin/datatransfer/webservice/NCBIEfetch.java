@@ -10,7 +10,6 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.sequence.EFetchDefline;
 import org.zfin.sequence.Sequence;
 
-import java.rmi.RemoteException;
 import java.util.*;
 
 
@@ -22,7 +21,6 @@ public class NCBIEfetch {
 
     private final static Logger logger = Logger.getLogger(NCBIEfetch.class);
 
-    private final static String POLYPEPTIDE_DB = "protein";
     private final static String DOT = ".";
     private final static String UNDERSCORE = "_";
 //    private final static String SEQUENCE_DB = "sequence"; // should end up using this one
@@ -33,14 +31,23 @@ public class NCBIEfetch {
      * @return A list of sequence.
      */
     public static List<Sequence> getSequenceForAccession(String accession) {
+        return getSequenceForAccession(accession, Type.POLYPEPTIDE);
+    }
+
+
+    public static List<Sequence> getSequenceForAccession(String accession, Type type) {
 
         List<Sequence> fastaStrings = new ArrayList<Sequence>();
         // fetch a record from Taxonomy database
-        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession);
-        if (result == null) return fastaStrings;
+        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession, type);
+        if (result == null)
+            return fastaStrings;
+        EFetchSequenceServiceStub.GBSetSequenceE[] gbSetSequence = result.getGBSet().getGBSetSequence();
+        if (gbSetSequence == null)
+            return fastaStrings;
         // results output
-        for (int i = 0; i < result.getGBSet().getGBSetSequence().length; i++) {
-            EFetchSequenceServiceStub.GBSeq_type0 gbSeq = result.getGBSet().getGBSetSequence()[i].getGBSeq();
+        for (EFetchSequenceServiceStub.GBSetSequenceE aGbSetSequence : gbSetSequence) {
+            EFetchSequenceServiceStub.GBSeq_type0 gbSeq = aGbSetSequence.getGBSeq();
             Sequence sequence = new Sequence();
             sequence.setData(gbSeq.getGBSeq_sequence());
             sequence.setDefLine(new EFetchDefline(gbSeq));
@@ -52,7 +59,7 @@ public class NCBIEfetch {
     }
 
     public static Boolean validateAccession(String accession) {
-        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession);
+        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession, Type.POLYPEPTIDE);
         if (result == null) return false;
         if (result.getGBSet().getGBSetSequence().length > 1) {
             logger.info(result.getGBSet().getGBSetSequence().length + " sequences returned via EFetch for accession: " + accession);
@@ -61,14 +68,14 @@ public class NCBIEfetch {
     }
 
 
-    private static EFetchSequenceServiceStub.EFetchResult getFetchResults(String accession) {
+    private static EFetchSequenceServiceStub.EFetchResult getFetchResults(String accession, Type type) {
 
         try {
             EFetchSequenceServiceStub service = new EFetchSequenceServiceStub();
             // call NCBI EFetch utility
             EFetchSequenceServiceStub.EFetchRequest req = new EFetchSequenceServiceStub.EFetchRequest();
 //            req.setDb((isNucleotide ? NUCLEOTIDE_DB : POLYPEPTIDE_DB));
-            req.setDb(POLYPEPTIDE_DB);
+            req.setDb(type.getVal());
             req.setId(accession.toUpperCase());
             req.setRetmax("1");
             return service.run_eFetch(req);
@@ -355,6 +362,19 @@ public class NCBIEfetch {
             return accession.substring(0, dotIndex);
         } else {
             return accession;
+        }
+    }
+
+    public enum Type{
+        POLYPEPTIDE("protein"), NUCLEOTIDE("nucleotide");
+
+        private String val;
+        Type(String val) {
+            this.val = val;
+        }
+
+        String getVal() {
+            return val;
         }
     }
 }

@@ -19,7 +19,7 @@ public class MultipleBlastServerService {
     private final static Logger logger = Logger.getLogger(MultipleBlastServerService.class);
 
     public static List<Sequence> getSequencesForAccessionAndReferenceDBs(String accession, ReferenceDatabase... referenceDatabases) {
-        return getSequencesForAccessionAndReferenceDBs(accession,true,referenceDatabases) ;
+        return getSequencesForAccessionAndReferenceDBs(accession, true, referenceDatabases);
     }
 
     /**
@@ -27,38 +27,34 @@ public class MultipleBlastServerService {
      *
      * @param accession          Accession to query.
      * @param allowRemoteFetch
-     *@param referenceDatabases ReferenceDatabases to search for dblinks in.  @return A list of sequences.
+     * @param referenceDatabases ReferenceDatabases to search for dblinks in.  @return A list of sequences.
      */
     public static List<Sequence> getSequencesForAccessionAndReferenceDBs(String accession, boolean allowRemoteFetch, ReferenceDatabase... referenceDatabases) {
 
         List<Sequence> sequences = new ArrayList<Sequence>();
         accession = accession.toUpperCase();
         List<DBLink> dbLinks = RepositoryFactory.getSequenceRepository().getDBLinks(accession, referenceDatabases);
-        if (CollectionUtils.isNotEmpty(dbLinks)) {
-            List<DBLink> internallyRetievableSequences = getInternallyRetrievableSequences(dbLinks);
-            if (CollectionUtils.isNotEmpty(internallyRetievableSequences)) {
-                DatabaseStatistics databaseStatistics;
-                try {
-                    databaseStatistics = WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(internallyRetievableSequences.get(0).getReferenceDatabase().getPrimaryBlastDatabase());
-                    if (databaseStatistics.getNumSequences() > 0) {
-                        sequences = MountedWublastBlastService.getInstance().getSequencesForAccessionAndReferenceDBs(dbLinks);
-                    }
-                } catch (BlastDatabaseException e) {
-                    logger.error("Failed to retrieve sequence locally [" + accession + "]", e);
+        if (CollectionUtils.isEmpty(dbLinks))
+            return sequences;
+        List<DBLink> internallyRetievableSequences = getInternallyRetrievableSequences(dbLinks);
+        if (CollectionUtils.isNotEmpty(internallyRetievableSequences)) {
+            DatabaseStatistics databaseStatistics;
+            try {
+                databaseStatistics = WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(internallyRetievableSequences.get(0).getReferenceDatabase().getPrimaryBlastDatabase());
+                if (databaseStatistics.getNumSequences() > 0) {
+                    sequences = MountedWublastBlastService.getInstance().getSequencesForAccessionAndReferenceDBs(dbLinks);
                 }
+            } catch (BlastDatabaseException e) {
+                logger.error("Failed to retrieve sequence locally [" + accession + "]", e);
             }
+        }
 
-            if (CollectionUtils.isEmpty(sequences) && allowRemoteFetch) {
-                try {
-                    sequences.addAll(getSequenceFromNCBI(dbLinks));
-                } catch (BlastDatabaseException e) {
-                    logger.error("Failed to retrieve sequence from NCBI [" + accession + "]", e);
-                }
+        if (CollectionUtils.isEmpty(sequences) && allowRemoteFetch) {
+            try {
+                sequences.addAll(getSequenceFromNCBI(dbLinks));
+            } catch (BlastDatabaseException e) {
+                logger.error("Failed to retrieve sequence from NCBI [" + accession + "]", e);
             }
-        } else {
-            // assume that the first referenceDatabase indicates the sequence type, if it exists
-            List<Sequence> fastaSequences = NCBIEfetch.getSequenceForAccession(accession);
-            sequences.addAll(fastaSequences);
         }
         return sequences;
     }
@@ -99,5 +95,9 @@ public class MultipleBlastServerService {
             throw new BlastDatabaseException("Failed to get Sequences for accession and reference DB, remote or local", e);
         }
         return returnSequences;
+    }
+
+    public static List<Sequence> getAccessionFromNcbi(String sequenceID, NCBIEfetch.Type nt) {
+        return NCBIEfetch.getSequenceForAccession(sequenceID, nt);
     }
 }
