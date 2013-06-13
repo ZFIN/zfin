@@ -100,7 +100,7 @@ public interface FeatureRepository {
     Feature getFeatureByAbbreviation(String featureAbbrev);
     String getFeatureByAbbreviationInTrackingTable(String featureAbbrev);
     String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID);
-    boolean featureExistsForZdbID(String zdbID);
+
 
     void deleteFeatureAlias(Feature feature, FeatureAlias alias);
     void deleteFeatureDBLink(Feature feature, DBLink sequence);

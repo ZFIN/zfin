@@ -173,16 +173,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " select distinct fp.prefixString from FeaturePrefix fp order by fp.prefixString asc ").list();
     }
     @Override
-    public boolean featureExistsForZdbID(String zdbID) {
-        return null
-                !=
-                HibernateUtil.currentSession()
-                        .createSQLQuery("select f.feature_zdb_id from feature f where f.feature_zdb_id = :featureZdbID")
-                        .setString("featureZdbID", zdbID)
-                        .setMaxResults(1)
-                        .uniqueResult()
-                ;
-    }
+
     /**
      * This is rewritten for speed.
      * @return Gets a reprentation of all of the FeaturePrefixes with their associated labs.
