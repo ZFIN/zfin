@@ -35,7 +35,7 @@
             <c:set var="style" value="${style} min-width: ${minWidth};"/>
         </c:if>
 
-        <div class="analysis_tools_box" style="${style}">
+        <div class="analysis_tools_box_slim" style="${style}">
             <div id="${blastLink}" class="analysis_tools_box_header">
                     ${!empty instructions? instructions : "Select Tool"}
             </div>

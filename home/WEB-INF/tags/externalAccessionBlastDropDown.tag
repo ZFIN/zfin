@@ -9,7 +9,7 @@
     <c:when test="${dbLink.blastableDatabases.size()>1}">
         <c:set var="blastLink" value="blast-popup${zfn:generateRandomDomID()}"/>
         <c:set var="blastLinkPopup" value="blast-links${zfn:generateRandomDomID()}"/>
-        <div class="analysis_tools_box">
+        <div class="analysis_tools_box_slim">
             <div id="${blastLink}" class="analysis_tools_box_header">
                 Select Tool
             </div>
