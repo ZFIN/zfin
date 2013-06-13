@@ -20,12 +20,12 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/";
 
-system("/bin/rmrm -f *.txt");
-system("/bin/rmrm -f genemap");
+system("/bin/rm -f *.txt");
+system("/bin/rm -f genemap");
 
 system("rm -f log*");
 
-system("/bin/rmrm -f geneId_omim_no_pheno");
+system("/bin/rm -f geneId_omim_no_pheno");
 
 print "\nDownloading OMIM files ... \n\n";
 open (LOG, ">log1") || die "Cannot open log1 : $!\n";
