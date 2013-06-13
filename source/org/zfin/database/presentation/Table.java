@@ -47,7 +47,7 @@ public enum Table {
     FOREIGN_DB("FOREIGNDB", "foreign_db", "fdb_db_pk_id", "fdb_db_name"),
     FDBCONT("FDBCONT", "foreign_db_contains", "fdbcont_zdb_id", "fdbcont_organism_common_name"),
     FDBDT("FDBDT", "foreign_db_data_type", "fdbdt_pk_id", "fdbdt_data_type"),
-    FEATURE("ALT", "feature", "feature_zdb_id", "feature_abbrev", "feature_type,feature_lab_prefix_id,feature_mrkr_abbrev,feature_dominant,feature_unspecified,feature_unrecovered,feature_known_insertion_site"),
+    FEATURE("ALT", "feature", "feature_zdb_id", "feature_abbrev", "feature_type,feature_lab_prefix_id,feature_dominant,feature_unspecified,feature_unrecovered,feature_known_insertion_site"),
     FEATURE_ASSAY("FEATASSAY", "feature_assay", "featassay_pk_id", "featassay_mutagen", null),
     FEATURE_HISTORY("FHIST", "feature_history", "fhist_zdb_id"),
     FEATURE_STAT("FEATSTAT", "feature_stats", "fstat_pk_id", null, "fstat_type"),
