@@ -3,6 +3,7 @@ package org.zfin.mutant.repository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
@@ -57,6 +58,11 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     @Before
     public void setUp() {
         TestConfiguration.setAuthenticatedUser();
+    }
+
+    @After
+    public void tearDown() {
+        HibernateUtil.closeSession();
     }
 
 
@@ -286,7 +292,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         phenotype.setPhenotypeExperiment(phenox);
 
         HibernateUtil.createTransaction();
-        //getPhenotypeRepository().runRegenGenotypeFigureScript(genox);
+        getPhenotypeRepository().runRegenGenotypeFigureScript(phenox);
         HibernateUtil.flushAndCommitCurrentSession();
 
     }

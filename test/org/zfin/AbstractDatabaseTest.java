@@ -2,6 +2,8 @@ package org.zfin;
 
 import org.hibernate.SessionFactory;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 
@@ -29,6 +31,11 @@ public abstract class AbstractDatabaseTest {
     @After
     public void closeSession() {
         HibernateUtil.closeSession();
+    }
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        TestConfiguration.setAuthenticatedUser();
     }
 
 }

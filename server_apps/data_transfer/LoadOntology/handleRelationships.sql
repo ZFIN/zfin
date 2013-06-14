@@ -163,12 +163,15 @@ insert into term_relationship (termrel_zdb_id,
 
 unload to deleted_relationships_1.unl
 select * from term_relationship
- where not exists (Select 'x' from term a, term b, tmp_rels
-       	   	  	  where a.term_ont_id = termrel_term_1_id
-			  and b.term_ont_id = termrel_term_2_id
-			  and termrel_term_1_Zdb_id = a.term_zdb_id
-			  and termrel_term_2_zdb_id = b.term_zdb_id
-			  and term_relationship.termrel_type = tmp_rels.termrel_type)
+left outer join term a on a.term_zdb_id = termrel_term_1_Zdb_id
+left outer join term b on b.term_zdb_id = termrel_term_2_Zdb_id
+left outer join tmp_rels temprel on temprel.termrel_type = term_relationship.termrel_type
+where
+a.term_zdb_id is null and
+b.term_zdb_id is null and
+temprel.termrel_type is null and
+temprel.termrel_term_1_id = a.term_ont_id and
+temprel.termrel_term_2_id = b.term_ont_id
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_2_zdb_id);

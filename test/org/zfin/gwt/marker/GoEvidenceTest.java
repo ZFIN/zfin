@@ -1,9 +1,9 @@
 package org.zfin.gwt.marker;
 
-import org.junit.Before;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
@@ -24,21 +24,34 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
 /**
- * DBtests for MarkerGoEvidence code.
+ * DB tests for MarkerGoEvidence code.
  */
 public class GoEvidenceTest extends AbstractDatabaseTest {
 
+    @AfterClass
+    public static void closeDatabaseSession() {
+        HibernateUtil.closeSession();
+    }
 
-    @Before
-    public void setUp() {
-        TestConfiguration.setAuthenticatedUser();
+    @After
+    public void closeSession() {
     }
 
 
+    @Test
+    public void validateReferenceDatabases(){
+        assertNotNull(MarkerGoEvidencePresentation.getGenbankReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getEcReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getGenpeptReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getGoReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getInterproReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getRefseqReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getSpkwReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getUniprotReferenceDatabase()) ;
+    }
 
     @Test
     public void getGoEvidenceDTO(){
-//        String zdbID = "ZDB-MRKRGOEV-031121-22" ;
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
         GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
@@ -78,7 +91,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
     /**
      * Will only be changing the qualifier, evidence code and pub.  The qualifier can be null and not-null.
      */
-    @Test
+    //@Test
     public void editGoEvidenceHeader(){
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
@@ -195,7 +208,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
         GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
         assertNotNull(goEvidenceDTO);
-        assertEquals(markerGoTermEvidence.getZdbID(),goEvidenceDTO.getZdbID());
+        assertEquals(markerGoTermEvidence.getZdbID(), goEvidenceDTO.getZdbID());
 
         // now lets set it to null and create some stuff
         goEvidenceDTO.setZdbID(null);
@@ -207,17 +220,5 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
             // caught error, so that is correct
         }
 
-    }
-
-    @Test
-    public void validateReferenceDatabases(){
-        assertNotNull(MarkerGoEvidencePresentation.getGenbankReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getEcReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getGenpeptReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getGoReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getInterproReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getRefseqReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getSpkwReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getUniprotReferenceDatabase()) ;
     }
 }
