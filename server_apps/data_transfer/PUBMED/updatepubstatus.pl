@@ -78,7 +78,7 @@ print "\nctUpdated = $ctUpdated\n\n";
 $dbname = "<!--|DB_NAME|-->";
 
 $subject = "Auto from $dbname: " . "$ctUpdated of $ctInactivePubs inactive pubs have been updated to active according to PUBMED";
-ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org","$subject","updated");
+ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","updated");
 
 exit;
 
