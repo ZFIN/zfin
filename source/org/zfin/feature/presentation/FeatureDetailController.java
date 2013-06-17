@@ -64,7 +64,8 @@ public class FeatureDetailController {
     )
     protected String getFeatureDetail(@RequestParam String zdbID, Model model) {
         LOG.info("Start Feature Detail Controller");
-        if (null == featureRepository.getFeatureByID(zdbID)) {
+        Feature feature=featureRepository.getFeatureByID(zdbID);
+        if (null == feature) {
             String ftr=featureRepository.getFeatureByIDInTrackingTable(zdbID);
             if (ftr!=null) {
                   if (zdbID.startsWith("ZDB-ALT-120130")||(zdbID.startsWith("ZDB-ALT-120806"))){
@@ -74,14 +75,22 @@ public class FeatureDetailController {
                 //if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
                       String repldFtr=infrastructureRepository.getReplacedZdbID(zdbID);
                       if (repldFtr!=null){
-                      zdbID=repldFtr;
+                      feature= featureRepository.getFeatureByID(repldFtr);
+
+                      }
+                      else{
+                          model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                          return LookupStrings.RECORD_NOT_FOUND_PAGE;
                       }
                   }
+
             }
+
            else {
                     model.addAttribute(LookupStrings.ZDB_ID, zdbID);
                     return LookupStrings.RECORD_NOT_FOUND_PAGE;
                 }
+
         }
 
 
@@ -89,7 +98,7 @@ public class FeatureDetailController {
 
         FeatureBean form = new FeatureBean();
         form.setZdbID(zdbID);
-         Feature feature=featureRepository.getFeatureByID(zdbID);
+
 
         form.setFeature(feature);
         form.setSortedMarkerRelationships(FeatureService.getSortedMarkerRelationships(feature));
