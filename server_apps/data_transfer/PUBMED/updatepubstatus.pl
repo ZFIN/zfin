@@ -12,7 +12,7 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 #remove old files
-system("/bin/rm -f updated");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/updated");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/xml*");
 
 ### open a handle on the db
@@ -47,12 +47,12 @@ my $cur_update_pub = $dbh->prepare_cached('update publication set status = "acti
 
 my $cur_insert_update = $dbh->prepare_cached('insert into updates (rec_id,field_name,new_value,when) select zdb_id,"status","active",current from publication where accession_no = ?;');
 
-open (PPUB, ">updated");
+open (PPUB, "><!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/updated");
 $ctUpdated = 0;
 foreach $pubmed (keys %nonActivePubAccessions) {
-    system("/local/bin/wget -q 'http://www.ncbi.nlm.nih.gov/pubmed?term=$pubmed&report=xml&format=text' -O xml$pubmed");
+    system("/local/bin/wget -q 'http://www.ncbi.nlm.nih.gov/pubmed?term=$pubmed&report=xml&format=text' -O <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/xml$pubmed");
 
-    open(PMED, "xml$pubmed") || die("Could not open xml$pubmed !");
+    open(PMED, "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/xml$pubmed") || die("Could not open xml$pubmed !");
     @lines=<PMED>;
     close(PMED);
 
