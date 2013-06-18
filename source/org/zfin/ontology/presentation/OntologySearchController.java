@@ -13,6 +13,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.ontology.Ontology;
 
 import java.util.List;
 
@@ -31,8 +32,11 @@ public class OntologySearchController {
     private AnatomyRepository anatomyRepository;
 
     @RequestMapping("/ontology-search")
-    protected String showSearchForm(Model model) throws Exception {
+    protected String showSearchForm(Model model,
+                                    AnatomySearchBean form) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "AO / GO Search");
+        form.setOntologyName(Ontology.AOGO.getOntologyName());
+        model.addAttribute("formBean", form);
         return "ontology/search-form.page";
     }
 

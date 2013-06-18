@@ -110,7 +110,7 @@ Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.o
                             </a>
                         </td>
                         <td>
-                            <zfin2:lookup ontology="${value.value.ontology}" id="${loop.count}"
+                            <zfin2:lookup ontologyName="${value.value.ontology.toString()}" id="${loop.count}"
                                           wildcard="false"  useIdAsTerm="true" termsWithDataOnly="false"/>
                         </td>
                     </tr>

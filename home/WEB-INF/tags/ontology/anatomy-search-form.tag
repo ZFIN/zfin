@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.ontology.Ontology" %>
 <%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -43,7 +42,8 @@
                         Browse Anatomy Terms by
                         <a href="/zf_info/zfbook/stages/index.html">Developmental Stage</a>
                         <BR>
-                        <form:form method="GET" action="/action/ontology/show-anatomy-terms-by-stage" commandName="formBean"
+                        <form:form method="GET" action="/action/ontology/show-anatomy-terms-by-stage"
+                                   commandName="formBean"
                                    name="formBean">
                             <form:select path="stage.zdbID" onchange="document.formBean.submit();" id="stages"
                                          htmlEscape="false">
@@ -62,9 +62,9 @@
                     </TD>
                     <TD valign="top">
                         <span id="aogo">
-                        <zfin2:lookup ontology="<%=Ontology.ANATOMY%>"
-                                      action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"
-                                      wildcard="true" useIdAsTerm="false" termsWithDataOnly="false" ontologyName="${formBean.ontologyName}"/>
+                        <zfin2:lookup action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"
+                                      wildcard="true" useIdAsTerm="false" termsWithDataOnly="false"
+                                      ontologyName="${formBean.ontologyName}"/>
                             </span>
                     </TD>
                 </TR>

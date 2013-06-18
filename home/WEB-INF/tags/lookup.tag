@@ -5,7 +5,6 @@
 
 
 <%@attribute name="ontologyName" type="java.lang.String" %>
-<%@attribute name="ontology" type="org.zfin.ontology.Ontology" %>
 <%@attribute name="id" type="java.lang.String" %>
 <%@attribute name="action" type="java.lang.String" required="false" %>
 <%@attribute name="wildcard" type="java.lang.Boolean" required="true" description="Allow to enter a query string with a wildcard added." %>
@@ -25,9 +24,6 @@
     </c:if>
     <%= Lookup.JSREF_TYPE%>: "<%= LookupComposite.GDAG_TERM_LOOKUP%>",
     <c:choose>
-    <c:when test="${!empty ontology}">
-    <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontology.ontologyName}",
-    </c:when>
     <c:when test="${!empty ontologyName}">
     <%= Lookup.JSREF_ONTOLOGY_NAME%>: "${ontologyName}",
     </c:when>
