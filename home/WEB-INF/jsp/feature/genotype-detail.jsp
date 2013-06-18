@@ -119,7 +119,7 @@
                                 <a href="/action/profile/view/${supplier.organization.zdbID}"
                                    id="${supplier.organization.zdbID}">
                                         ${supplier.organization.name}</a>
-                                <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>&nbsp;
+                                <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>
                                 <c:choose>
                                 <c:when test="${supplier.moensLab}">&nbsp;
                                 <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}"
@@ -128,22 +128,22 @@
                                     <c:if test="${!loop.last}">,&nbsp;</c:if>
                                 </c:forEach>
                                 </c:when>
-                                    <c:when test="${supplier.solnicaLab}">&nbsp;
+                                <c:otherwise>
+                                    <c:if test="${supplier.solnicaLab}">&nbsp;
                                         <c:forEach var="affectedGene"
                                                    items="${formBean.genotypeStatistics.affectedMarkers}"
                                                    varStatus="loop">
                                             (<a href="http://devbio.wustl.edu/solnicakrezellab/${affectedGene.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
                                             <c:if test="${!loop.last}">,&nbsp;</c:if>
                                         </c:forEach>
-                                    </c:when>
-                                <c:otherwise>
-
-                                <zfin2:orderThis accessionNumber="${formBean.genotype.zdbID}"
+                                    </c:if>
+                                    <zfin2:orderThis accessionNumber="${formBean.genotype.zdbID}"
                                                  organization="${supplier.organization}"/>
-              </c:otherwise>
-              </c:choose>
+                                </c:otherwise>
+                                </c:choose>
                             </c:otherwise>
                         </c:choose>
+                        <c:if test="${!status.last}">,&nbsp;</c:if>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
