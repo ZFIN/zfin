@@ -662,7 +662,7 @@ public class ExecuteBlastTest {
     /**
      * todo: should really test remote-only services, should fix when doing wsdl stuff
      */
-    @Test
+    //@Test
     public void getSequenceFromRemote(){
         // get a dblink from a genbank database
         List<Sequence> badSequences= MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("ABC123123123ABC", false) ;

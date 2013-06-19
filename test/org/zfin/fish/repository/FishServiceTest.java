@@ -2,6 +2,7 @@ package org.zfin.fish.repository;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.Figure;
@@ -33,10 +34,10 @@ import static org.junit.Assert.assertTrue;
 
 public class FishServiceTest extends AbstractDatabaseTest {
 
-    private FishSearchCriteria criteria;
+    private static FishSearchCriteria criteria;
 
-    @Before
-    public void initCriteria() {
+    @BeforeClass
+    public static void initCriteria() {
         criteria = new FishSearchCriteria(new FishSearchFormBean());
     }
 
@@ -60,7 +61,9 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnGeneAbbreviation() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5");
+        String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8";
+        Fish fish = FishService.getFish(fishID);
+        Assert.assertNotNull("Could not find Fish with fishID: " + fishID, fish);
         FishMatchingService service = new FishMatchingService(fish);
         criteria.getGeneOrFeatureNameCriteria().setValue("Shha");
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
@@ -84,7 +87,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnGeneName() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5");
+        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8");
         FishMatchingService service = new FishMatchingService(fish);
 
         criteria.getGeneOrFeatureNameCriteria().setValue("hedgehog");
@@ -94,7 +97,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnGeneAlias() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5");
+        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8");
         FishMatchingService service = new FishMatchingService(fish);
 
         criteria.getGeneOrFeatureNameCriteria().setValue("you");
@@ -104,7 +107,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnFeatureName() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5");
+        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8");
         criteria.getGeneOrFeatureNameCriteria().setValue("shha");
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
@@ -283,7 +286,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         for (FigureExpressionSummaryDisplay display : list) {
             if (display.getFigure().getZdbID().equals(figID)) {
                 if (display.getExpressedGene().getGene().getAbbreviation().equals(geneAbbreviation))
-                        assertTrue("No expression statement found: ", display.getExpressedGene().getExpressionStatements().size() > 0);
+                    assertTrue("No expression statement found: ", display.getExpressedGene().getExpressionStatements().size() > 0);
             }
         }
     }
