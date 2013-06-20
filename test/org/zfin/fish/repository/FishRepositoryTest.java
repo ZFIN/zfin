@@ -76,8 +76,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getFish() {
         String genoxIds = "ZDB-GENOX-050518-3,ZDB-GENO-030619-2";
-        Fish fish = RepositoryFactory.getFishRepository().getFish(genoxIds);
-        assertNotNull(fish);
+        RepositoryFactory.getFishRepository().getFish(genoxIds);
     }
 
 /*    @Test
