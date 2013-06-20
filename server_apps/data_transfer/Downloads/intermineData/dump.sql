@@ -1,4 +1,4 @@
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt"
 select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier"
  from int_data_supplier
 union all
