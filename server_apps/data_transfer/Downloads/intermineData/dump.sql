@@ -1,3 +1,10 @@
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt
+select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier"
+ from int_data_supplier
+union all
+select ids_data_zdb_id, idsup_source_zdb_id, "","","source"
+from int_data_source;
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/markerSequences/1sequences.txt"
  select mrkr_zdb_id, mrkrseq_sequence, mrkrseq_offset_start, mrkrseq_offset_stop, mrkrseq_variation, get_obj_type(mrkr_zdb_id), mrkrseq_zdb_id from marker, marker_Sequence
 where mrkr_Zdb_id = mrkrseq_mrkr_zdb_id;
