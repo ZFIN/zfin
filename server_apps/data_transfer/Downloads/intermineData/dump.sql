@@ -243,7 +243,10 @@ select dblink_zdb_id, fdb_db_name, dblink_acc_num, dblink_linked_recid, fdbdt_da
   and fdbcont_zdb_id = dblink_fdbcont_Zdb_id
   and fdbcont_fdbdt_id = fdbdt_pk_id
   and fdbcont_fdb_db_id = fdb_db_pk_id
-  and fdb_db_name not in ('miRBASE Mature','miRBASE Stem Loop','unreleaseRNA','ZFIN','ZFIN_PROT','Curated miRNA Mature','Curated miRNA Stem Loop');
+  and fdb_db_name not in ('miRBASE Mature','miRBASE Stem Loop','unreleaseRNA','ZFIN','ZFIN_PROT','Curated miRNA Mature','Curated miRNA Stem Loop')
+union
+ select "", "dbSNP",snpd_rs_acc_num, snpd_mrkr_zdb_id, "genomic", "", ""
+   from snp_download;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_kegg/1keggMapping.txt"
   select dblink_acc_num, dblink_zdb_id, dblink_linked_recid 
