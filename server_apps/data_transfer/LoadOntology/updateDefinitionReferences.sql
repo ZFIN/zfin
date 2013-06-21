@@ -18,6 +18,22 @@ with no log;
 insert into external_reference_temp
 select 0, (SELECT NULL::INTEGER FROM single), term_ont_id_temp, database_id_temp, reference_temp from external_reference_temp_pre;
 
+create index exreftemp_term_id_index
+  on external_reference_temp (tdr_reference_temp)
+ using btree in idxdbs3;
+
+create index exreftemp_term_id_index
+  on external_reference_temp (tdr_database_id_temp)
+ using btree in idxdbs1;
+
+create index exreftemp_term_id_index
+  on external_reference_temp (tdr_term_zdb_id_temp)
+ using btree in idxdbs1;
+
+create index exreftemp_term_id_index
+  on external_reference_temp (tdr_term_ont_id_temp)
+ using btree in idxdbs2;
+
 !echo "Number of records";
 
 select count(*) from external_reference_temp;
