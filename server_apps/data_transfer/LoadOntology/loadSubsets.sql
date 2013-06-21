@@ -80,6 +80,9 @@ insert into tmp_full_term_subset (full_term_zdb_id, term_id, subset_name, subset
 select
 (select term_zdb_id from term where term_ont_Id = term_id), term_id, subset_name, subset from tmp_term_subset;
 
+create index ftzdb_id_index on tmp_full_term_subset (full_term_zdb_id)
+  using btree in idxdbs3;
+
 unload to debug
     select count(*) from tmp_full_term_subset;
 
