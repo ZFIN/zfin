@@ -211,8 +211,8 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
-        <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="0 10 17 ? * MON-FRI"/>
+        <!--goes off every day at 6:40 pm am-->
+        <property name="cronExpression" value="0 40 18 ? * MON-FRI"/>
     </bean>
 
     <bean id="loadQualityOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -235,8 +235,8 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
-        <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="0 0 17 ? *  MON-FRI"/>
+        <!--goes off every day at 6.30 pm -->
+        <property name="cronExpression" value="0 30 18 ? *  MON-FRI"/>
     </bean>
 
     <bean id="loadGeneOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -259,8 +259,8 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
-        <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="1 0 17 ? *  MON-FRI"/>
+        <!--goes off every day at 6.30 pm-->
+        <property name="cronExpression" value="1 30 18 ? *  MON-FRI"/>
     </bean>
 
     <bean id="loadSpatialOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -283,8 +283,8 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
-        <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="3 0 17 ? * MON-FRI"/>
+        <!--goes off every day at 6.30 pm-->
+        <property name="cronExpression" value="3 30 18 ? * MON-FRI"/>
     </bean>
 
 
@@ -309,7 +309,7 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
         <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="4 0 17 ? * MON-FRI"/>
+        <property name="cronExpression" value="4 30 18 ? * MON-FRI"/>
     </bean>
 
      <bean id="loadBehaviorOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -332,8 +332,8 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
-        <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="6 0 17 ? * MON-FRI"/>
+        <!--goes off every day at 6.30 pm-->
+        <property name="cronExpression" value="6 30 18 ? * MON-FRI"/>
     </bean>
 
      <bean id="loadSequenceOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -356,8 +356,8 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
             </bean>
         </property>
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_SMART_POLICY"/>
-        <!--goes off every day at 4.10 am-->
-        <property name="cronExpression" value="5 0 17 ? * MON-FRI"/>
+        <!--goes off every day at 6.30 pm-->
+        <property name="cronExpression" value="5 30 18 ? * MON-FRI"/>
     </bean>
     <!--NOTE: these are both autowired in the zfinapp context-->
     <!--<bean id="downloadService1" class="org.zfin.datatransfer.service.DownloadService"/>-->
