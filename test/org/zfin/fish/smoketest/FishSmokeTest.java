@@ -40,7 +40,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
     public void testFishDetailPageOk() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-GENO-030619-2,ZDB-GENOX-090731-5");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-GENO-030619-2,ZDB-GENOX-090731-5,,ZDB-GENOX-130614-8");
                 assertTrue(page.getTitleText().contains("ZFIN Fish: WT"));
 
             } catch (IOException e) {
@@ -57,7 +57,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
     public void testFishCitationList() {
         for (WebClient webClient : publicWebClients) {
             try {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-publication-list?fishID=ZDB-GENO-030619-2,ZDB-GENOX-090731-5");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-publication-list?fishID=ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8");
                 List<?> pubs = page.getByXPath("//a[@id='ZDB-PUB-081001-3']");
                 assertEquals(1, pubs.size());
 
