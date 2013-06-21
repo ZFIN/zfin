@@ -1,8 +1,8 @@
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt"
-select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier", get_obj_type(idusp_data_zdb_id)
+select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier", get_obj_type(idsup_data_zdb_id)
  from int_data_supplier
 union all
-select ids_data_zdb_id, ids_source_zdb_id, "","","source", get_obj_type(idusp_data_zdb_id)
+select ids_data_zdb_id, ids_source_zdb_id, "","","source", get_obj_type(ids_data_zdb_id)
 from int_data_source;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/markerSequences/1sequences.txt"
