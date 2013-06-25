@@ -60,6 +60,7 @@ update tmp_run set trun_query_fdbcont =
 	   and fdbcont_fdbdt_id = fdbdt_pk_id
         )
         when trun_name[1,7] = 'UniProt' then 'ZDB-FDBCONT-040412-47' -- (get FDBCONT from DB_LINK)
+        when trun_name[1,6] = 'Sanger' then 'ZDB-FDBCONT-061018-1' -- (get FDBCONT from DB_LINK)
         else  'ZDB-FDBCONT-040412-37'        --local??? google???    -- GenBank RNA
     end
 ;
@@ -74,6 +75,7 @@ update tmp_run set trun_target_fdbcont =
         when trun_name[1,3] = 'ZGC' then     'ZDB-FDBCONT-040412-37' -- GenBank RNA
         when trun_name[1,4] = 'Vega' then    'ZDB-FDBCONT-040412-37' -- GenBank RNA
         when trun_name[1,7] = 'UniProt' then 'ZDB-FDBCONT-040412-47' -- UniProt Zebrafish
+        when trun_name[1,6] = 'Sanger' then 'ZDB-FDBCONT-060108-1' -- Sanger-Ensembl
         else  'ZDB-FDBCONT-040412-37'
     end
 ;
