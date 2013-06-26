@@ -171,6 +171,7 @@ select * from term_relationship
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_2_zdb_id);
 
+
 unload to deleted_relationships_2.unl
 select * from term_relationship
  where not exists (Select 'x' from tmp_rels_zdb
@@ -183,6 +184,7 @@ select * from term_relationship
 
 
 !echo "delete from term relationship";
+
 delete from term_relationship
   where not exists (Select 'x' from tmp_rels_zdb
        	   	  	  where ttermrel_term_1_zdb_id = termrel_term_1_zdb_id

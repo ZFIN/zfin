@@ -1,4 +1,5 @@
 begin work;
+set explain on;
 
 create temp table tmp_header (format_ver varchar(10), data_ver varchar(10), datet varchar(20), saved_by varchar(10), auto varchar(50), default_namespace varchar(30), remark varchar(100))
 with no log;
