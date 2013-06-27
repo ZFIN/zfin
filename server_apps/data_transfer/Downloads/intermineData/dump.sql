@@ -51,6 +51,10 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 ',''), contact_person
     from lab;
 
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/company/1company.txt"
+  select zdb_id, name, replace(bio,'
+',''), contact_person
+    from company;
 
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/1xpat.txt"
 -- select * from expression_experiment
