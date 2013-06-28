@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/BLAST
 
-GENERICS = push4genomix.pl getZfinGbAcc.pl getShortSeq.pl getZfinGenomicDNAAll.pl getEnsemblTscripts.sql
+GENERICS = push4genomix.pl getZfinGbAcc.pl getShortSeq.pl getZfinGenomicDNAAll.pl getEnsemblTscripts.sql assembleZfinEnsemblTscripts.sh
 
 
 # ---------------  Production Rules  ------------------------------------
