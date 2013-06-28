@@ -4,13 +4,10 @@
 
 begin work;
 
-create table ensdarT_dbacc (
+create temp table ensdarT_dbacc (
 	ensacc_ensdarT varchar(20),
-	ensacc_dbacc varchar(20)  primary key
-)
-fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-extent size 789585 next size 789585
-; -- SWAG  extents needs adjusting, want tool
+	ensacc_dbacc varchar(20)
+); 
 
 ! echo "ensdarT_dbacc.unl -> load_ensdarT_dbacc.sql"
 load from 'ensdarT_dbacc.unl' insert into ensdarT_dbacc;
@@ -20,7 +17,6 @@ load from 'ensdarT_dbacc.unl' insert into ensdarT_dbacc;
 create unique index ensdarT_dbacc_ensacc_ensdarT_idx
  on ensdarT_dbacc(ensacc_ensdarT) in idxdbs3;
 
-update statistics medium for table ensdarT_dbacc;
 
 ! echo "check if any moved?"
 select ens.dblink_zdb_id as id
@@ -32,11 +28,17 @@ select ens.dblink_zdb_id as id
 into temp tmp_movedENSDARTs;
 
 ! echo "how many deleted b/c of move?"
+
+unload to dblinks_deleted_because_ensdart_moved.txt
+select * from db_link, tmp_movedENSDARTs
+ where dblink_zdb_id = id;
+
 delete from db_link
   where exists (Select 'x' from tmp_movedENSDARTs 
   	       	       where id = dblink_Zdb_id);
 
-! echo "drop existing ensdarT that are not absent from the file"
+! echo "drop existing ensdarT that are absent from the file"
+
 delete from zdb_active_data where exists (
 	select 't' from db_link
 	 where dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-110301-1'
@@ -49,6 +51,7 @@ delete from zdb_active_data where exists (
 
 
 ! echo "drop new ensdarT that already exist"
+
 delete from ensdarT_dbacc where exists (
 	select 't' from db_link
 	 where  dblink_fdbcont_zdb_id == 'ZDB-FDBCONT-110301-1'
@@ -57,6 +60,7 @@ delete from ensdarT_dbacc where exists (
 
 
 ! echo "isolate transcript marker ZDB_ids  linked to ottdarTs"
+
 select dblink_linked_recid tscript, ensacc_ensdarT acc, get_id('DBLINK') zad, dblink_length len
  from db_link , ensdarT_dbacc
  where dblink_acc_num == ensacc_dbacc

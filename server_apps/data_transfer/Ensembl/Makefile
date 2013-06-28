@@ -16,7 +16,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
-GENERICS = fetch_ensembl_agp.sh pullFromBioMart.pl notifyStaleIds.sh
+GENERICS = fetch_ensembl_agp.sh pullFromBioMart.pl notifyStaleIds.sh reportEnsembleStatistics.sh
 
 STATICS  = fetch_ensdarTG.sh fetch_ensdarG.mysql fetch_ensdarT_dbacc.mysql \
 	load_ensdarG.sql load_ensdarT_dbacc.sql \
@@ -95,6 +95,8 @@ run_commit: load_ensdarG_commit load_ensdarT_commit run_gff run_agp notify_stale
 run_gff3:  run_gff run_agp
 
 run_ensembl_load: load_ensdarG_commit load_ensdarT_commit notify_stale
+
+run_ensembl_load_rollback:  load_ensdarG load_ensdarT
 
 clean_ensembl:
 	rm -f $(TARGETDIR)/load_ensdarG.sql $(TARGETDIR)/ensdarT_dbacc.unl
