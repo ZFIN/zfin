@@ -30,7 +30,7 @@ create index exreftemp_term_id_index
   on external_reference_temp (tdr_term_zdb_id_temp)
  using btree in idxdbs1;
 
-create index exreftemp_term_id_index
+create index exreftemp_term_ont_id_index
   on external_reference_temp (tdr_term_ont_id_temp)
  using btree in idxdbs2;
 
