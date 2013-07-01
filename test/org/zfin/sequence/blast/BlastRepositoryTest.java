@@ -123,7 +123,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         assertNotNull("should be not null", databaseLeaves);
         assertNotNull("should be not null", databaseChildren);
         assertEquals("database children for RNA Sequences", 5, databaseChildren.size());
-        assertEquals("database leaves", 5, databaseLeaves.size());
+        assertEquals("database leaves for RNA Sequences", 6, databaseLeaves.size());
 
     }
 
@@ -145,7 +145,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         assertNotNull("should be not null", databaseLeaves);
         assertNotNull("should be not null", databaseChildren);
         assertEquals("database children for RNA sequences", 5, databaseChildren.size());
-        assertEquals("database leaves", 5, databaseLeaves.size());
+        assertEquals("database leaves for RNA sequences", 6, databaseLeaves.size());
         //assertEquals("should be zfin_cdna_seq",Database.AvailableAbbrev.ZFIN_CDNA_SEQ,databaseLeaves.get(0).getAbbrev());
 
         //assertEquals("should be ZFINGenesWithExpression",Database.AvailableAbbrev.ZFINGENESWITHEXPRESSION,databaseLeaves.get(1).getAbbrev());
