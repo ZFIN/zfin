@@ -1,9 +1,22 @@
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt"
-select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier", get_obj_type(idsup_data_zdb_id)
+select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier", get_obj_type(idsup_data_zdb_id), feature_type
+ from int_data_supplier, feature
+where idsup_data_zdb_id like 'ZDB-ALT%'
+and feature_zdb_id = idsup_data_zdb_id
+union
+select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier", get_obj_type(idsup_data_zdb_id), ""
  from int_data_supplier
+where idsup_data_zdb_id not like 'ZDB-ALT%'
 union all
-select ids_data_zdb_id, ids_source_zdb_id, "","","source", get_obj_type(ids_data_zdb_id)
-from int_data_source;
+select ids_data_zdb_id, ids_source_zdb_id, "","","source", get_obj_type(ids_data_zdb_id), feature_type
+from int_data_source, feature
+where ids_data_zdb_id like 'ZDB-ALT%'
+and feature_zdb_id = ids_data_zdb_id
+union 
+select ids_data_zdb_id, ids_source_zdb_id, "","","source", get_obj_type(ids_data_zdb_id), ""
+from int_data_source
+where ids_data_zdb_id not like 'ZDB-ALT%'
+;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/markerSequences/1sequences.txt"
  select mrkr_zdb_id, mrkrseq_sequence, mrkrseq_offset_start, mrkrseq_offset_stop, mrkrseq_variation, get_obj_type(mrkr_zdb_id), mrkrseq_zdb_id from marker, marker_Sequence
