@@ -211,6 +211,7 @@ public class Database {
         CURATEDMICRORNASTEMLOOP("CuratedMicroRNAStemLoop"),
         ENSEMBL("ENSEMBL"),
 	ZFINENSEMBLTSCRIPT("zfinEnsemblTscript"),
+	ENSEMBL_P("Ensembl_P"),
 	ENSEMBL_ZF("ensembl_zf"),
         GBK_EST_HS("gbk_est_hs"),
         GBK_EST_MS("gbk_est_ms"),
