@@ -19,14 +19,22 @@ public class AddRequestInfoToLog4j implements Filter {
     }
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        Map<String, String> logMap = new HashMap<String, String>(10);
-        logMap.put("uri", request.getRequestURI());
-        logMap.put("queryString", request.getQueryString());
-        logMap.put("sessionID", request.getSession().getId());
-        logMap.put("method", request.getMethod());
-        logMap.put("url", request.getRequestURL().toString());
-        MDC.put(REQUEST_MAP, logMap);
+        try {
+            HttpServletRequest request = (HttpServletRequest) req;
+            Map<String, String> logMap = new HashMap<String, String>(10);
+            logMap.put("uri", request.getRequestURI());
+            logMap.put("queryString", request.getQueryString());
+            logMap.put("sessionID", request.getSession().getId());
+            logMap.put("method", request.getMethod());
+            logMap.put("url", request.getRequestURL().toString());
+            logMap.put("user-agent", request.getHeader("user-agent"));
+            logMap.put("referrer", request.getHeader("referrer"));
+            logMap.put("cookie", request.getHeader("cookie"));
+            MDC.put(REQUEST_MAP, logMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // ignore error to make sure any errors here do not stop the request.
+        }
         chain.doFilter(req, resp);
     }
 
