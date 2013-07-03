@@ -142,7 +142,7 @@ my %titles = ();
       
 while ($cur->fetch()) {
    $pmids{$pubZdbId} = $accession;
-   $titles{$pubZdbId} = lc($pubTitle);
+   $titles{$pubZdbId} = $pubTitle;
 }
 
 $cur->finish(); 
@@ -179,7 +179,7 @@ foreach $key (sort keys %nopubmedidPubZdbIds) {
    print NOTUPDATED "$key\n";
 }
 
-my $cmdPart1 = "perl -MLWP::Simple -e ";
+my $cmdPart1 = "/private/bin/perl -MLWP::Simple -e ";
 my $cmdPart2 = '"getprint ';
 my $cmdPart3 = '" > pubXml 2> err';
 my $singleQuote = '\'';
@@ -202,6 +202,7 @@ my $ctMatch = 0;
 my $w = "";
 my @wordsInTitleStoredAtZfin = ();
 my $titlePercentageSimilar = 0;
+my $lcXmlTitle;
 
 foreach $key (sort keys %pmids) {
   $ctTotal++;
@@ -210,7 +211,7 @@ foreach $key (sort keys %pmids) {
   
   $cmd = $cmdPart1 . $cmdPart2 . $singleQuote . $url . $singleQuote . $cmdPart3;  
   
-  ###the cmd would be like this:  perl -MLWP::Simple -e "getprint 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=21262879&retmode=xml'"
+  ###the cmd would be like this:  /private/bin/perl -MLWP::Simple -e "getprint 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=21262879&retmode=xml'"
   
   system("$cmd");
 
@@ -263,12 +264,13 @@ foreach $key (sort keys %pmids) {
           $w =~ s/^\W+//;
           $w =~ s/\W+$//;          
           $w = lc($w);
-          $ctMatch++ if index($xmlTitle, $w) > 0;
+          $lcXmlTitle = lc($xmlTitle);
+          $ctMatch++ if index($lcXmlTitle, $w) >= 0;
         }
         $titlePercentageSimilar = $ctMatch / scalar(@xmlTitleWords) * 100;
     } 
   }
-  
+
   if ($titlePercentageSimilar > 40) {
   
         if ($xmlVol) {
