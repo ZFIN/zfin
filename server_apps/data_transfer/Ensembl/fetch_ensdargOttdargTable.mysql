@@ -1,0 +1,12 @@
+SELECT  g.stable_id AS ensembl_gene_stable_id, 
+	x.dbprimary_acc
+FROM external_db edb 
+JOIN  xref x USING (external_db_id) 
+JOIN  object_xref ox USING (xref_id) 
+JOIN  gene g ON (ox.ensembl_id = g.gene_id) 
+  WHERE   ox.ensembl_object_type = 'Gene' 
+  AND   edb.db_name = 'OTTG'
+
+
+
+ 
