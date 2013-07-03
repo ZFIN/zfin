@@ -1,4 +1,4 @@
-    #! /bin/tcsh
+#!/bin/tcsh
 
 
 # find the name of the most current core database
