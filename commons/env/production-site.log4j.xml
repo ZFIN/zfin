@@ -53,7 +53,7 @@
     <root>
         <priority value="warn"/>
         <appender-ref ref="console"/>
-        <appender-ref ref="email"/>
+        <appender-ref ref="json"/>
         <appender-ref ref="fileAppender"/>
     </root>
 </log4j:configuration>
