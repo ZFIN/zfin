@@ -2,6 +2,7 @@ package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.obo.dataadapter.AbstractParseEngine;
 import org.obo.dataadapter.DefaultOBOParser;
@@ -69,6 +70,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         options.addOption(dbScriptFileOption);
         options.addOption(webrootDirectory);
         options.addOption(productionModeOption);
+        options.addOption(debugModeOption);
     }
 
     private OBOSession oboSession;
@@ -90,6 +92,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     // if true then only import if a new file is encountered
     // if false always load the obo file.
     private boolean productionMode = true;
+    private boolean debugMode = true;
 
     /**
      * Used from within the web app. No initialization needed.
@@ -129,6 +132,7 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     public static void main(String[] arguments) {
         LOG = Logger.getLogger(LoadOntology.class);
+        LOG.setLevel(Level.INFO);
         LOG.info("Start Ontology Loader class: " + (new Date()).toString());
         CommandLine commandLine = parseArguments(arguments, "load <>");
         initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));
@@ -148,6 +152,9 @@ public class LoadOntology extends AbstractScriptWrapper {
         String optionValue = commandLine.getOptionValue(productionModeOption.getOpt());
         if (StringUtils.isNotEmpty(optionValue))
             loader.productionMode = Boolean.parseBoolean(optionValue);
+        String debugOptionValue = commandLine.getOptionValue(debugModeOption.getOpt());
+        if (StringUtils.isNotEmpty(debugOptionValue))
+            loader.debugMode = Boolean.parseBoolean(debugOptionValue);
         LOG.info("Property: " + ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL.value());
         CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
         if (loader.initialize(oboFile, cronJobUtil))
@@ -661,6 +668,8 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private void runDebugStatement(DatabaseJdbcStatement statement) {
+        if(debugMode == false)
+            return;
         try {
             DatabaseJdbcStatement debugStatement = statement.getDebugStatement();
             List<List<String>> dataReturn = infrastructureRep.executeNativeQuery(debugStatement);
@@ -671,6 +680,8 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private void runDebugStatementAfterDelete(DatabaseJdbcStatement statement) {
+        if(debugMode == false)
+            return;
         try {
             DatabaseJdbcStatement debugStatement = statement.getDebugDeleteStatement();
             List<List<String>> dataReturn = infrastructureRep.executeNativeQuery(debugStatement);
