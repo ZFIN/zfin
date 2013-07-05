@@ -258,7 +258,6 @@ public class Database {
         ZFIN_MIRNA_STEMLOOP("zfin_miRNA_stemloop"),
         ZFIN_MIRNA_MATURE("zfin_miRNA_mature"),
         ZFIN_MRPH("zfin_mrph"),
-        ZFINENSEMBLTSCRIPT("zfinEnsemblTscript")
         ;
 
 
