@@ -60,9 +60,14 @@ select recattrib_source_zdb_id, recattrib_Data_zdb_id from record_Attribution,
 
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/lab/1lab.txt"
-  select zdb_id, name, replace(bio,'
-',''), contact_person
+  select zdb_id, name, contact_person
     from lab;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/1person.txt"
+  select zdb_id as person_id, first_name, last_name, target_id as lab_id
+    from person as person, int_person_lab
+    where source_id = zdb_id
+    order by zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/company/1company.txt"
   select zdb_id, name, replace(bio,'
