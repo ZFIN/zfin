@@ -177,9 +177,12 @@ public class DatabaseInfoController extends MultiActionController {
             public int compare(Object a, Object b) {
                 Thread threadOne = (Thread) a;
                 Thread threadTwo = (Thread) b;
-                if (threadOne == null || threadTwo == null) {
+                if (threadOne == null && threadTwo != null)
+                    return 1;
+                if (threadOne != null && threadTwo == null)
                     return -1;
-                }
+                if (threadOne == null && threadTwo == null)
+                    return 0;
                 return threadOne.getThreadGroup().getName().compareToIgnoreCase(threadTwo.getThreadGroup().getName());
             }
         });
