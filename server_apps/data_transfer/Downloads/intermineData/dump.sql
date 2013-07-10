@@ -69,9 +69,9 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
     where source_id = zdb_id
     order by zdb_id;
 
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/company/1company.txt"
-  select zdb_id, name, replace(bio,'
-',''), contact_person
+  select zdb_id, name, contact_person
     from company;
 
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/1xpat.txt"
