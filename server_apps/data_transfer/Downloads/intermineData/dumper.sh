@@ -144,10 +144,10 @@ if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/g
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/genotype_alias
 fi;
 
-export INFORMIXSQLHOSTS=/private/apps/Informix/informix/etc/sqlhosts
-export INFORMIX_SERVER=waldo
-export INFORMIXDIR=/private/apps/Informix/informix
-export INFORMIXSERVER=waldo
+export INFORMIXSQLHOSTS=<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->
+export INFORMIX_SERVER=<!--|INFORMIX_SERVER|-->
+export INFORMIXDIR=<!--|INFORMIX_DIR|-->
+export INFORMIXSERVER=<!--|INFORMIX_SERVER|-->
 export LD_LIBRARY_PATH=/private/apps/Informix/informix/lib:/private/apps/Informix/informix/lib/esql
 export PATH=/private/apps/Informix/informix/bin:/private/ZfinLinks/Commons/bin:/private/apps/wublast:/local/apps/netpbm/bin:/local/bin:/home/zusers/staylor/bin:/local/apps/Lang/SUNWspro/bin:/local/apps/java/bin:/bin:/usr/bin:/cs/bin:/local/apps/X11/bin:/usr/bin/X11:/local/apps/mh/bin:/local/apps/tex/bin:/etc:/usr/etc:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin:/sbin:/usr/sbin:/usr/sfw/bin:.
 
