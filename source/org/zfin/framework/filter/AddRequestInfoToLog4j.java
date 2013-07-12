@@ -1,6 +1,7 @@
 package org.zfin.framework.filter;
 
 import org.apache.log4j.MDC;
+import org.zfin.profile.Person;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -30,10 +31,11 @@ public class AddRequestInfoToLog4j implements Filter {
             logMap.put("user-agent", request.getHeader("user-agent"));
             logMap.put("referrer", request.getHeader("referrer"));
             logMap.put("cookie", request.getHeader("cookie"));
+            // add map to mapped diagnostic context so it gets picked up by the JSONEventLayout
             MDC.put(REQUEST_MAP, logMap);
         } catch (Exception e) {
             e.printStackTrace();
-            // ignore error to make sure any errors here do not stop the request.
+            // ignore error to make sure request does not fail..
         }
         chain.doFilter(req, resp);
     }

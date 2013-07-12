@@ -21,10 +21,10 @@
         </layout>
     </appender>
 
-    <appender name="json" class="org.apache.log4j.DailyRollingFileAppender">
+    <appender name="json" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="${catalina.base}/logs/catalina.json"/>
-        <param name="DatePattern" value=".yyyy-MM-dd"/>
-        <layout class="net.logstash.log4j.JSONEventLayout"/>
+        <param name="DatePattern" value=".yyyy-MM"/>
+        <layout class="org.zfin.util.ZfinJsonEventLayout"/>
     </appender>
 
 
