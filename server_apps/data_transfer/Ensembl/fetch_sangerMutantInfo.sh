@@ -1,5 +1,6 @@
 #!/bin/tcsh
 
+/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/sangerMutantData*.unl;
 
 # find the name of the most current core database
 /local/bin/curl -slo cur_ens_db.txt ftp://ftp.ensembl.org/pub/current_mysql/
@@ -32,8 +33,27 @@ echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
     # Log what is being used as the most current release
     if (! -f fetch_sangerMutantData.log) then
 	    touch fetch_sangerMutantData.log
-    endif      
-echo "Using Ensembl release: $cur   `date`" >> fetch_sangerMutantData.log
+    endif  
+    
 
-/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/sangerMutantData*.unl;
+/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/ensdarPMapping*.unl;
+
+/usr/bin/cat fetch_ensdarpInfo.mysql | \
+/local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur >!  ensdarPMapping.unl;
+/bin/expand -t 2 ensdarPMapping.unl > ensdarPMapping1.unl
+/usr/bin/sed 's/  /|/g' ensdarPMapping1.unl > ensdarPMapping2.unl
+/usr/bin/sed 's/$/|/' ensdarPMapping2.unl > ensdarPMapping3.unl
+
+# load the file from Ensembl mysql into the local database
+# rollback if not called with the (first) argument "commit"
+
+
+echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
+    <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/loadEnsdarPMapping.sql
+    # Log what is being used as the most current release
+    if (! -f fetch_ensdarPMapping.log) then
+	    touch fetch_ensdarPMapping.log
+    endif      
+echo "Using Ensembl release: $cur   `date`" >> fetch_ensdarPMapping.log
+
 

@@ -16,13 +16,13 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Ensembl
 
-GENERICS = fetch_ensembl_agp.sh pullFromBioMart.pl notifyStaleIds.sh reportEnsembleStatistics.sh fetch_ensdargOttdargTable.sh
+GENERICS = fetch_ensembl_agp.sh pullFromBioMart.pl notifyStaleIds.sh reportEnsembleStatistics.sh fetch_ensdargOttdargTable.sh fetch_sangerMutantInfo.sh
 
 STATICS  = fetch_ensdarTG.sh fetch_ensdarG.mysql fetch_ensdarT_dbacc.mysql \
-	load_ensdarG.sql load_ensdarT_dbacc.sql \
+	load_ensdarG.sql load_ensdarT_dbacc.sql fetch_ensdarpInfo.mysql \
 	fetch_ensembl_gff.sh gtf2gff3.pl gtf2gff3.cfg unload_zfin_DNA_clone.sql \
 	 agp_to_gff3.awk agp_to_gff3_trim.awk clone_gff3_w_alias.awk  \
-	  rollback.sql commit.sql readme readme.ensembl_mysql fetch_sangerMutantInfo.mysql fetch_ensdargOttdargTable.mysql loadSangerMutantData.sql loadEnsdargOttdarg.sql 
+	  rollback.sql commit.sql readme readme.ensembl_mysql fetch_sangerMutantInfo.mysql fetch_ensdargOttdargTable.mysql loadEnsdarPMapping.sql loadSangerMutantData.sql loadEnsdargOttdarg.sql 
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
