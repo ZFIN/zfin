@@ -55,7 +55,7 @@ end # foreach
 
 echo "On $HOST blast the nomenclature set against Human & mouse & zebrafish proteins"
 echo ""
-nice +10 ${bin_pth}/blastp "${current}/sptr_hs ${current}/sptr_ms ${current}/sptr_zf ${current}/refseq_zf_aa ${current}/publishedProtein ${current}/unreleasedProtein" accession.pp -E e-50 >! Protein_${timestamp}.out
+nice ${bin_pth}/blastp "${current}/sptr_hs ${current}/sptr_ms ${current}/sptr_zf ${current}/refseq_zf_aa ${current}/publishedProtein ${current}/unreleasedProtein" accession.pp -E e-50 >! Protein_${timestamp}.out
 
 sleep 3
 echo ""
@@ -64,4 +64,4 @@ echo ""
 
 # $SOURCEROOT is the right thing to use here but we are too lame for that 
 
-../../../../../commons/bin/parse-blast-reno.r Protein_${timestamp}.out "Protein_${timestamp}"
+$SOURCEROOT/commons/bin/parse-blast-reno.r Protein_${timestamp}.out "Protein_${timestamp}"

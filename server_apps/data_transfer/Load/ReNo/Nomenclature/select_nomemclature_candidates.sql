@@ -80,6 +80,12 @@ select mrkr_zdb_id, g.mrkr_abbrev, gdbl.dblink_acc_num, gdbl.dblink_length,g.pri
  and    fdbcont_fdb_db_id = fdb_db_pk_id
  and    fdbcont_fdbdt_id = fdbdt_pk_id
  union
+--select mrkr_zdb_id, mrkr_abbrev, ensp_ensdarp_id as dblink_acc_num, ensp_length as dblink_length, 160 as priority, "Ensembl","Polypeptide"
+--  from marker, ensdarg_ensdarp_mapping, db_link
+--  where mrkr_zdb_id = dblink_linked_recid
+-- and dblink_acc_num = ensp_ensdarg_id
+-- and mrkr_Abbrev like 'zmp%'
+--union
 select g.mrkr_zdb_id, g.mrkr_abbrev, edbl.dblink_acc_num, edbl.dblink_length,g.priority, fdb_db_name,fdbdt_data_type
  from tmp_xpat_genes g, db_link edbl,
   foreign_db_contains, foreign_db, foreign_db_data_type, marker_relationship, marker e
@@ -129,9 +135,10 @@ select mrkr_zdb_id
 delete from tmp_can_pp where exists (
     select 1 from tmp_nrs_pp
      where tmp_nrs_pp.mrkr_zdb_id = tmp_can_pp.mrkr_zdb_id
-) and (db_name <> 'RefSeq'
+) and ((db_name <> 'RefSeq' and db_name <> 'Ensembl Protein')
   or   dblink_length is null)
 ;
+
 
 drop table tmp_nrs_pp;
 
@@ -144,7 +151,7 @@ select mrkr_zdb_id
     select 1
      from tmp_can_pp tcp2
      where tcp2.mrkr_zdb_id = tcp1.mrkr_zdb_id
-     and   (tcp2.db_name <> 'UniProtKB'
+     and   (tcp2.db_name <> 'UniProtKB' and db_name <> 'Ensembl Protein'
      or    tcp2.dblink_length is null)
  )
  into temp tmp_nrs_pp with no log
@@ -153,9 +160,10 @@ select mrkr_zdb_id
 delete from tmp_can_pp where exists (
     select 1 from tmp_nrs_pp
      where tmp_nrs_pp.mrkr_zdb_id = tmp_can_pp.mrkr_zdb_id
-) and (db_name <> 'UniProtKB'
+) and (db_name <> 'UniProtKB' and db_name <> 'Ensembl Protein'
   or   dblink_length is null)
 ;
+
 
 drop table tmp_nrs_pp;
 
@@ -191,10 +199,10 @@ insert into nomenclature_candidate(
     db_name,
     priority
  from  tmp_can_pp
- where priority between 161  AND 223 -- TWIDDEL THIS
+ where priority between 150  AND 223; -- TWIDDEL THIS
 
  --order by priority DESC
- ;
+
 {
 -- xpat+si 		= 192 
 -- xpat+si+zgc  = 224  
