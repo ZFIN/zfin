@@ -1,3 +1,5 @@
+
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt"
 select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier", get_obj_type(idsup_data_zdb_id), feature_type
  from int_data_supplier, feature
@@ -24,6 +26,13 @@ where mrkr_Zdb_id = mrkrseq_mrkr_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype/1omimphenotype.txt"
  select omimp_gene_zdb_id,omimp_name,omimp_omim_id from omim_phenotype;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featureCrossReferences/1featureCrossReferences.txt"
+ select feature_zdb_id, feature_type, dblink_acc_num, fdb_db_name, fdb_db_query from feature, db_link, foreign_db, foreign_db_contains
+ where feature_zdb_id = dblink_linked_recid
+ and fdb_db_pk_id = fdbcont_Fdb_db_id
+and fdbcont_zdb_id = dblink_fdbcont_zdb_id;
+
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/chromosome/1chromosome.txt"
 select * from chromosome_search

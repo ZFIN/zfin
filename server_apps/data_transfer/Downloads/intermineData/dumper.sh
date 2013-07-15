@@ -10,6 +10,13 @@ if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/d
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/
 fi;
 
+if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featureCrossReferences ]; then
+  mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featureCrossReferences/
+fi;
+
+if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people ]; then
+  mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/
+fi;
 
 if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/markerSequences ]; then
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/markerSequences
@@ -151,7 +158,7 @@ export INFORMIXSERVER=<!--|INFORMIX_SERVER|-->
 export LD_LIBRARY_PATH=/private/apps/Informix/informix/lib:/private/apps/Informix/informix/lib/esql
 export PATH=/private/apps/Informix/informix/bin:/private/ZfinLinks/Commons/bin:/private/apps/wublast:/local/apps/netpbm/bin:/local/bin:/home/zusers/staylor/bin:/local/apps/Lang/SUNWspro/bin:/local/apps/java/bin:/bin:/usr/bin:/cs/bin:/local/apps/X11/bin:/usr/bin/X11:/local/apps/mh/bin:/local/apps/tex/bin:/etc:/usr/etc:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin:/sbin:/usr/sbin:/usr/sfw/bin:.
 
-$INFORMIXDIR/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dump.sql 
+$INFORMIXDIR/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dump.sql 
 
 #cp /research/zprod/catalina_bases/zfin.org/temp/quality.obo <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_pato/
 
