@@ -62,6 +62,5 @@ echo ""
 echo "Parse the Blast output for loading into ReNo"
 echo ""
 
-# $SOURCEROOT is the right thing to use here but we are too lame for that 
 
 $SOURCEROOT/commons/bin/parse-blast-reno.r Protein_${timestamp}.out "Protein_${timestamp}"
