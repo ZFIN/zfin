@@ -18,7 +18,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodySearchPageOk() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-search");
                 assertEquals("ZFIN Antibody search", "ZFIN Antibody Search", page.getTitleText());
@@ -34,7 +34,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      * result page displays zn-1 and zn-13 among other antibodies.
      */
     public void testSearchZn1() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn1&maxDisplayRecords=25";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
@@ -51,7 +51,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
 
     @Test
     public void testAntibodyDetailPage() throws Exception {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 // name
                 String zdbID = "ZDB-ATB-081002-3";
@@ -76,7 +76,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      * result page displays AB-2F11 and other antibodies capitalized.
      */
     public void testSearchAb_2() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=ab-2&maxDisplayRecords=25";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
@@ -98,7 +98,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     public void testSearchCellularComponent() {
         // nucleus
         String termID = "ZDB-TERM-091209-4086";
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 String uri = "/action/antibody/antibody-do-search?antibodyCriteria.includeSubstructures=true&antibodyCriteria.anatomyTermNames=nuclear%20body&antibodyCriteria.anatomyTermIDs="+termID+"&action=SEARCH";
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
@@ -119,7 +119,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      * See FB case
      */
     public void testSearchZn5() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 webClient.setJavaScriptEnabled(false);
                 String uri = "/action/antibody/antibody-do-search?antibodyCriteria.antibodyNameFilterType=contains&antibodyCriteria.name=zn5&maxDisplayRecords=25";
@@ -178,7 +178,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermAllFigures() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
                 assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
@@ -196,7 +196,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermAllFiguresNoStageInfo() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053");
                 assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
@@ -214,7 +214,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermOnlyFiguresWithImages() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=true");
                 assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
@@ -230,7 +230,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodyFigureSummaryPageSupertermSubtermFiguresWithImages() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=ZDB-TERM-091209-4086&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
                 assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
@@ -248,7 +248,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testListOfAntibodiesLinkOnPublication() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 // Depletion of Zebrafish Essential and Regulator publication with at last 3 antibodies
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-080326-24");

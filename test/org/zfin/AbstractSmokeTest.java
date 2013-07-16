@@ -1,7 +1,6 @@
 package org.zfin;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import net.sourceforge.jwebunit.junit.WebTestCase;
@@ -12,6 +11,7 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinPropertiesEnum;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 /**
@@ -28,13 +28,13 @@ public class AbstractSmokeTest extends WebTestCase {
     protected String secureUrlDomain;
 
     protected final WebClient[] curationWebClients = {
-            new WebClient(BrowserVersion.FIREFOX_3),  // 30-50%
+            new WebClient(BrowserVersion.FIREFOX_17),  // 30-50%
             new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
 //            new WebClient(BrowserVersion.SAFARI),  // 20%
     };
 
     protected final WebClient[] publicWebClients = {
-            new WebClient(BrowserVersion.FIREFOX_3),  // 30-50%
+            new WebClient(BrowserVersion.FIREFOX_17),  // 30-50%
             new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
 //            new WebClient(BrowserVersion.SAFARI),  // 20%
     };
@@ -113,6 +113,31 @@ public class AbstractSmokeTest extends WebTestCase {
         if (spanBody != null)
             assertEquals(spanBody, htmlSpan.getTextContent());
         return true;
+    }
+
+    public WebClient[] getBrowserClients() {
+        for (WebClient client : publicWebClients) {
+            prepare(client);
+        }
+        return publicWebClients;
+    }
+
+    private void prepare(WebClient webClient) {
+        final IncorrectnessListener il = new IncorrectnessListenerImpl();
+        webClient.setIncorrectnessListener(il);
+        final SilentCssErrorHandler eh = new SilentCssErrorHandler();
+        webClient.setCssErrorHandler(eh);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setPopupBlockerEnabled(true);
+        webClient.getOptions().setRedirectEnabled(true);
+        webClient.getOptions().setJavaScriptEnabled(false);
+        CookieManager cm = new CookieManager();
+        webClient.setCookieManager(cm);
+        webClient.setJavaScriptTimeout(8000);
+        webClient.getOptions().setTimeout(9000);
     }
 
 }

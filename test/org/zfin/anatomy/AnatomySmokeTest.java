@@ -14,9 +14,9 @@ import java.util.List;
 public class AnatomySmokeTest extends AbstractSmokeTest {
 
     public void AnatomyLookupFormExists() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                webClient.waitForBackgroundJavaScriptStartingBefore(1);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/ontology-search");
                 assertEquals("ZFIN AO / GO Search", page.getTitleText());
                 List<?> byXPath = page.getByXPath("//label[. = 'Term:']");
@@ -39,9 +39,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     }
 
     public void testAnatomySearchMultipleResults() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(1000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=emb*");
                 assertEquals("ZFIN Ontology Search", page.getTitleText());
                 // check that embryonic structure is listed
@@ -54,9 +53,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     }
 
     public void testAllAnatomyTerms() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-anatomy-terms");
                 assertEquals("ZFIN", page.getTitleText());
                 // check that embryonic structure is listed
@@ -70,9 +68,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
 
     public void testAnatomyDetailPageByAnatId() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZDB-ANAT-010921-415");
                 assertEquals("ZFIN Anatomy Ontology: brain", page.getTitleText());
                 assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
@@ -87,9 +84,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     // liver page
     public void testAnatomyDetailPageByTermId() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZDB-TERM-100331-116");
                 assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
                 assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
@@ -105,9 +101,9 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     // liver page
     public void testAnatomyDetailPageByOboId() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                webClient.waitForBackgroundJavaScriptStartingBefore(1);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZFA:0000123");
                 assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
                 assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
@@ -120,9 +116,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     // liver page
     public void testAnatomyDetailPageByName() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=liver ");
                 assertNotNull(page);
                 assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
@@ -136,9 +131,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     // brain
     public void testShowAllMutantMorpholinos() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-morpholinos/ZDB-TERM-100331-8/false");
                 assertTrue(page.getTitleText().startsWith("ZFIN"));
                 assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-980526-362']").get(0));
@@ -150,9 +144,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     // neural tube
     public void testShowAllWTMorpholinos() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-morpholinos/ZDB-TERM-100331-1095/true");
                 assertTrue(page.getTitleText().startsWith("ZFIN"));
                 assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-030826-1']"));
@@ -166,11 +159,13 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
 
     //floor plate
     public void testShowAllMutants() {
-        String genoID = "ZDB-GENO-050110-1";
-        for (WebClient webClient : publicWebClients) {
+        // vhl^hu2081/+;vhl^hu2117/+;Tg(kdrl:EGFP)s843
+        String genoID = "ZDB-GENO-100524-4";
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-phenotype-mutants/ZDB-TERM-100331-21");
+                // mutants in retina
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + 
+"/action/ontology/show-all-phenotype-mutants/ZDB-TERM-100331-1770");
                 assertTrue(page.getTitleText().startsWith("ZFIN"));
                 assertNotNull(page.getByXPath("//a[@id = '" + genoID + "']"));
                 assertTrue(page.getByXPath("//a[@id = '" + genoID + "']").size() > 0);
@@ -185,9 +180,8 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
      * Check that the expressed gene section is loaded correctly.
      */
     public void testAnatomyDetailPageExpressedGenes() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 // 	telencephalic ventricle [ZDB-TERM-100331-665]
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-expressed-genes/ZDB-TERM-100331-665");
                 // gene creb1a with 3 figures
@@ -202,9 +196,9 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
      * Check that the antibodies section is loaded correctly.
      */
     public void testAnatomyDetailPageAntibodies() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                webClient.waitForBackgroundJavaScriptStartingBefore(1);
                 // 	brain [ZDB-TERM-100331-8]
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-labeled-antibodies/ZDB-TERM-100331-8");
                 // antibody Ab1-5-hmC
@@ -219,9 +213,9 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
      * Check that the antibodies section is loaded correctly.
      */
     public void testAnatomyDetailPageInSituProbe() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+                webClient.waitForBackgroundJavaScriptStartingBefore(1);
                 // 	brain [ZDB-TERM-100331-8]
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-expressed-insitu-probes/ZDB-TERM-100331-8");
                 // gene crhbp with 3 figures
@@ -236,7 +230,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
      * Check that a list of genotypes for a given structure is rendered.
      */
     public void testShowGenotypesPerAOSubstructures() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(1000);
                 // 	actinotrichium [ZDB-TERM-100614-30]

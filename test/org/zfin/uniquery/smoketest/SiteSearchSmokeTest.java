@@ -1,6 +1,7 @@
 package org.zfin.uniquery.smoketest;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -100,7 +101,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
     }
 
     private void assertAlternativeSearchLineAbsent(HtmlPage page) {
-        HtmlElement alternativeSearchLines = page.getElementById(SiteSearchService.ALTERNATIVE_SEARCH_ID);
+        DomElement alternativeSearchLines = page.getElementById(SiteSearchService.ALTERNATIVE_SEARCH_ID);
         assertNull("There is no alternative search line", alternativeSearchLines);
     }
 
@@ -112,7 +113,7 @@ public class SiteSearchSmokeTest extends AbstractSmokeTest {
     }
 
     private void assertAlternativeTermLinePresent(HtmlPage page) {
-        HtmlElement alternativeSearchLines = page.getElementById(SiteSearchService.ALTERNATIVE_SEARCH_ID);
+        DomElement alternativeSearchLines = page.getElementById(SiteSearchService.ALTERNATIVE_SEARCH_ID);
         assertNotNull("There is only one alternative search line", alternativeSearchLines);
     }
 
