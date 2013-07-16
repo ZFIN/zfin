@@ -19,7 +19,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Load/ReNo
 
 SUBDIRS =
 
-GENERICS = generate_UniProt_Nomenclature_run.sh
+GENERICS = generate_UniProt_Nomenclature_run.sh generate_SangerMutant_Nomenclature_run.sh
 
 STATICS =  select_nomemclature_candidates.sql select_sanger_nomemclature_candidates.sql 
 
@@ -37,3 +37,5 @@ include $(TOP)/make.default.rules
 run:  
 	generate_UniProt_Nomenclature_run.sh
 
+runSanger:   
+	generate_SangerMutant_Nomenclature_run.sh
