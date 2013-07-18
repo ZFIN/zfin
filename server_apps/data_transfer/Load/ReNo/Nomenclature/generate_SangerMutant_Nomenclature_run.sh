@@ -16,7 +16,7 @@ set here="`pwd`"
 #dbaccess -a $DBNAME select_nomemclature_candidates.sql
 
 
-cat sanger_mutnat_nomenclature_candidate_pp.unl | cut -f 4,5 -d \| | sort -u > ! keys.txt
+cat sanger_mutant_nomenclature_candidate_pp.unl | cut -f 4,5 -d \| | sort -u > ! keys.txt
 
 # zero out the fasta file
 cat /dev/null >! accession.pp
@@ -25,7 +25,7 @@ foreach key (`cat keys.txt`)
 	echo $key
 	switch ($key)
 		case "Polypeptide|Ensembl":
-			${bin_pth}/xdget -p  ${current}/ensemblProt_zf `grep $key nomenclature_candidate_pp.unl | \
+			${bin_pth}/xdget -p  ${current}/ensemblProt_zf `grep $key sanger_mutant_nomenclature_candidate_pp.unl | \
 			cut -f3 -d \|` >> accession.pp
 		breaksw
 		default:
@@ -36,7 +36,7 @@ end # foreach
 
 echo "On $HOST blast the nomenclature set against Human & mouse & zebrafish proteins"
 echo ""
-nice ${bin_pth}/blastp "${current}/sptr_hs ${current}/sptr_ms ${current}/sptr_zf ${current}/refseq_zf_aa ${current}/publishedProtein ${current}/unreleasedProtein" accession.pp -E e-50 >! Protein_${timestamp}.out
+nice ${bin_pth}/blastp "${current}/sptr_hs ${current}/sptr_ms ${current}/sptr_zf ${current}/refseq_zf_aa ${current}/publishedProtein ${current}/unreleasedProtein" accession.pp -E e-50 -filter=xnu+seg >! Protein_${timestamp}.out
 
 sleep 3
 echo ""

@@ -26,7 +26,7 @@ select distinct mrkr_zdb_id, mrkr_abbrev,160 priority
 ! echo "find the longest protein associated with each gene"
 
 
-select mrkr_zdb_id, mrkr_abbrev, ensp_ensdarp_id as dblink_acc_num, ensp_length as dblink_length, 160 as priority, "Ensembl","Polypeptide"
+select mrkr_zdb_id, mrkr_abbrev, ensp_ensdarp_id as dblink_acc_num, ensp_length as dblink_length, 160 as priority, "Ensembl" as db_name,"Polypeptide" as fdata_type
   from marker, ensdarg_ensdarp_mapping, db_link
   where mrkr_zdb_id = dblink_linked_recid
  and dblink_acc_num = ensp_ensdarg_id
@@ -34,7 +34,7 @@ select mrkr_zdb_id, mrkr_abbrev, ensp_ensdarp_id as dblink_acc_num, ensp_length 
  into temp tmp_can_pp with no log
 ;
 
-drop table tmp_nrs_pp;
+
 
 
 insert into nomenclature_candidate(
