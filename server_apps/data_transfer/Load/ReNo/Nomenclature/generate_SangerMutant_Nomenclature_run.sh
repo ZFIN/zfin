@@ -44,4 +44,10 @@ echo "Parse the Blast output for loading into ReNo"
 echo ""
 
 
-$SOURCEROOT/commons/bin/parse-blast-reno.r Protein_${timestamp}.out "Protein_${timestamp}"
+$SOURCEROOT/commons/bin/parse-blast-reno.r SangerNomenclature_${timestamp}.out "SangerNomenclature_${timestamp}"
+
+/bin/sed 's/tr|/sp|/g' SangerNomenclature_${timestamp} > SangerNomenclature_${timestamp}.tr
+
+#reno parser won't accept tr| (trembl) as a prefix for blast output, change these to sp| (swiss prot)
+/bin/rm SangerNomenclature_${timestamp}.out
+/bin/mv SangerNomenclature_${timestamp}.tr SangerNomenclature_${timestamp}.out 
