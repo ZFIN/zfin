@@ -363,7 +363,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   select jrnl_zdb_id, jrnl_name, jrnl_abbrev, jrnl_publisher
     from journal;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation/1evidence-codes.txt"
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation/evidence-codes.txt"
   select goev_code, goev_name
     from go_evidence_code;
 
