@@ -11,15 +11,14 @@
 -- try moving the transaction start  to after all the create tables
 --
 --  "Cleanup on Aisle 5"
-{  dbaccess -a $DBNAME << END
-drop table tmp_run;
-drop table tmp_report;
-drop table tmp_hit;
-drop table tmp_candidate;
-drop table tmp_run_cnd;
-drop table tmp_blast_query;
-END
-}
+
+--drop table tmp_run;
+--drop table tmp_report;
+--drop table tmp_hit;
+--drop table tmp_candidate;
+--drop table tmp_run_cnd;
+--drop table tmp_blast_query;
+
 
 ! echo "BEGIN `date`"
 create table tmp_run (
@@ -61,6 +60,7 @@ update tmp_run set trun_query_fdbcont =
         )
         when trun_name[1,7] = 'UniProt' then 'ZDB-FDBCONT-040412-47' -- (get FDBCONT from DB_LINK)
         when trun_name[1,6] = 'Sanger' then 'ZDB-FDBCONT-061018-1' -- (get FDBCONT from DB_LINK)
+	when trun_name[1,7] = 'Protein' then 'ZDB-FDBCONT-061018-1'
         else  'ZDB-FDBCONT-040412-37'        --local??? google???    -- GenBank RNA
     end
 ;
@@ -76,6 +76,7 @@ update tmp_run set trun_target_fdbcont =
         when trun_name[1,4] = 'Vega' then    'ZDB-FDBCONT-040412-37' -- GenBank RNA
         when trun_name[1,7] = 'UniProt' then 'ZDB-FDBCONT-040412-47' -- UniProt Zebrafish
         when trun_name[1,6] = 'Sanger' then 'ZDB-FDBCONT-060108-1' -- Sanger-Ensembl
+	when trun_name[1,7] = 'Protein' then 'ZDB-FDBCONT-110301-1' -- Sanger-Ensembl	
         else  'ZDB-FDBCONT-040412-37'
     end
 ;
@@ -119,14 +120,6 @@ create index tmp_report_trpt_acc_len_idx on tmp_report (trpt_acc_len )in idxdbs1
 update statistics high for table tmp_report;
 
 
-! echo "report extent"
-select dbsname, tabname, round (sum (pe_size ) * 4 )ext_size
- from sysmaster:systabnames, sysmaster:sysptnext
- where partnum == pe_partnum
-   and dbsname == 'tomdb'    --  <<< -- CHANGE ME
-   and tabname == 'tmp_report'
-group by 1, 2
-;
 
 ------------------------------------------------------------------
 create table tmp_hit (
@@ -169,14 +162,6 @@ create index tmp_hit_thit_acc_idx on  tmp_hit(thit_acc)in idxdbs3;
 
 update statistics high for table tmp_hit;
 
-! echo "hit extents"
-select dbsname, tabname, round (sum (pe_size ) * 4 )ext_size
- from sysmaster:systabnames, sysmaster:sysptnext
- where partnum == pe_partnum
-   and dbsname == 'tomdb'    --  <<< -- CHANGE ME
-   and tabname == 'tmp_hit'
-group by 1, 2
-;
 
 
 
@@ -191,7 +176,7 @@ group by 1, 2
 update tmp_hit set thit_acc_type = (
 	select case
 		when trun_name[1,4] in ('Vega','ZGC_')
-         and thit_acc_db = 'tpe' then 'transcript'
+         	     		    and thit_acc_db = 'tpe' then 'transcript'
 		else trun_target_type
 	end
 	from tmp_run
@@ -254,7 +239,7 @@ extent size  5000 next size  5000
 -- so although there maybe broken tables to remove
 -- if a roll back happend  it might be better than the locks
 
-							begin work;
+begin work;
 
 ! echo "move run to schema table"
 insert into zdb_active_data select trun_zad from tmp_run;
@@ -284,6 +269,7 @@ insert into run (
         when trun_name like 'Vega_%'    then 'ZDB-PUB-030703-1'
         when trun_name like 'ZGC_%'     then 'ZDB-PUB-040217-1'
         when trun_name like 'UniProt_%' then 'ZDB-PUB-030905-1'
+	when trun_name like 'Protein_%' then 'ZDB-PUB-030905-1'
         else NULL
     end
  from tmp_run, run_program
@@ -432,6 +418,13 @@ update statistics high for table tmp_report;
 ! echo "`date`"
 alter table tmp_report add trpt_cnd_zdbid varchar(50);
 
+--update tmp_report set trpt_alt_id = (Select dblink_acc_num
+--       		     from marker, db_link
+--		     where dblink_linked_recid = mrkr_zdb_id
+--		     and upper(substr(trpt_alt_id,1,18)) = dblink_acc_num)
+--	where trpt_alt_id like 'ensdarg%';
+
+
 update tmp_report
  set trpt_cnd_zdbid = (
     select cnd_zdb_id
@@ -461,6 +454,8 @@ select distinct trpt_alt_id,
 
 update tmp_candidate set tcnd_mrkr_type = trim(tcnd_mrkr_type);
 update tmp_candidate set tcnd_zad = get_id('CND');
+
+
 insert into  zdb_active_data select tcnd_zad from tmp_candidate;
 
 insert into candidate (
