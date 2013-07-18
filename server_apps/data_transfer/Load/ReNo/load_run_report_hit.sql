@@ -12,12 +12,12 @@
 --
 --  "Cleanup on Aisle 5"
 
---drop table tmp_run;
---drop table tmp_report;
---drop table tmp_hit;
---drop table tmp_candidate;
---drop table tmp_run_cnd;
---drop table tmp_blast_query;
+drop table tmp_run;
+drop table tmp_report;
+drop table tmp_hit;
+drop table tmp_candidate;
+drop table tmp_run_cnd;
+drop table tmp_blast_query;
 
 
 ! echo "BEGIN `date`"
@@ -156,6 +156,9 @@ extent size 3407376 next size 340737
 ! echo "Import hit table `date`"
 load from 'hit.unl' insert into tmp_hit;
 ! echo "Import hit table `date`"
+
+select distinct thit_acc_db
+ from tmp_hit;
 
 create index tmp_hit_thit_rpt_idx on  tmp_hit(thit_rpt)in idxdbs3;
 create index tmp_hit_thit_acc_idx on  tmp_hit(thit_acc)in idxdbs3;
@@ -374,6 +377,8 @@ select distinct
          and trpt_acc_db = 'ref'  then 'ZDB-FDBCONT-040412-39'
         when trpt_acc_type = 'protein'
          and trpt_acc_db = 'gb'   then 'ZDB-FDBCONT-040412-42'
+        when trpt_acc_type = 'protein'
+         and trpt_acc_db = 'wz'   then 'ZDB-FDBCONT-090929-8'
         when trpt_acc_type = 'protein'
          and trpt_acc_db = 'sp'   then 'ZDB-FDBCONT-040412-47'
         when trpt_acc_type = 'nucleotide'
@@ -681,11 +686,19 @@ select distinct
     max(thit_acc_len),  -- 3498
     max(case  -- HITs
         when thit_acc_type = 'protein'
-         and thit_acc_db = 'ref'           then 'ZDB-FDBCONT-040412-39'
+         and thit_acc_db = 'ref'           
+	     then 'ZDB-FDBCONT-040412-39'
         when thit_acc_type = 'protein'
-         and thit_acc_db = 'gb'            then 'ZDB-FDBCONT-040412-42'
+         and thit_acc_db = 'gb'            
+	     then 'ZDB-FDBCONT-040412-42'
+        when thit_acc_type = 'protein'
+         and thit_acc_db = 'wz'            
+	     then 'ZDB-FDBCONT-090929-8'
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
+	     then 'ZDB-FDBCONT-040412-47'
+        when thit_acc_type = 'protein'
+         and thit_acc_db = ''
 --       and thit_species= 'Homo sapiens' then 'ZDB-FDBCONT-071023-3'
          and thit_species= 'Homo sapiens' then (
                 select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type

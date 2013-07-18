@@ -22,7 +22,7 @@ SUBDIRS = Nomenclature
 GENERICS = load_run_report_hit.sh
 
 STATICS =  write-run-report-hit.r load_run_report_hit.sql \
-	   commit.sql rollback.sql
+	   commit.sql rollback.sql addTemporaryEnsdarps.sql dropTemporaryEnsdarps.sql
 
 ## provide a default run name so developers can copy or symlink a file
 # and do: gmake run
