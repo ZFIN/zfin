@@ -14,7 +14,7 @@
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-               <![CDATA[
+                <![CDATA[
                 select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type, szm_term_ont_id
                 from marker order by 1
                ]]>
@@ -38,7 +38,7 @@
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-               <![CDATA[
+                <![CDATA[
                 select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data
                ]]>
             </Query>
@@ -58,7 +58,7 @@
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-              <![CDATA[
+                <![CDATA[
                 select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
                 atb_immun_organism, atb_host_organism, szm_term_ont_id 
                 from marker, antibody
@@ -74,7 +74,7 @@
             <Column id="6">Immunogen Organism</Column>
             <Column id="7">Host Organism</Column>
             <Column id="8">Source</Column>
-	    <Column id="9">SO ID</Column>
+            <Column id="9">SO ID</Column>
         </Download>
         <Download orderIndex="5">
             <Name>
@@ -89,7 +89,7 @@
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-              <![CDATA[
+                <![CDATA[
                select feature_zdb_id as id1, feature_zdb_id as id2
 	       from feature
 	       union
@@ -126,7 +126,7 @@
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-              <![CDATA[
+                <![CDATA[
                 select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
                 from marker, expression_experiment, expression_result, term as super,
                 outer term as sub, genotype_experiment, genotype
@@ -162,7 +162,7 @@
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-              <![CDATA[
+                <![CDATA[
                 select mrkr_zdb_id , mrkr_name, mrkr_abbrev, dalias_alias, szm_term_ont_id  
  from marker, data_alias, so_zfin_mapping
  where dalias_data_zdb_id = mrkr_zdb_id
@@ -199,7 +199,7 @@ select geno_zdb_id, geno_display_name, geno_handle, dalias_alias, szm_term_ont_i
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-              <![CDATA[
+                <![CDATA[
                 select marker_id, mrkr_abbrev, p.abbrev,or_lg, lg_location, p.metric
                 from mapped_marker, panels p, marker m
                 where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id
@@ -418,7 +418,7 @@ select geno_zdb_id, geno_display_name, geno_handle, dalias_alias, szm_term_ont_i
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-            <![CDATA[
+                <![CDATA[
 select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,'no related gene','no related clone',tt.tscriptt_type,ts.tscripts_status
  from transcript t
  join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
@@ -467,7 +467,7 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-            <![CDATA[
+                <![CDATA[
 select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
  from db_link, marker gene, foreign_db_contains, foreign_db, foreign_db_data_type, so_zfin_mapping
  where dblink_linked_recid=gene.mrkr_zdb_id
@@ -505,7 +505,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             ]]>
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
-	    <Column id="2">SO ID</Column>
+            <Column id="2">SO ID</Column>
             <Column id="3">Gene Symbol</Column>
             <Column id="4">Sequence Accession</Column>
         </Download>
@@ -1220,7 +1220,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="8">Stage Start</Column>
             <Column id="9">Stage End</Column>
             <Column id="10">Publication</Column>
-        </Download>     
+        </Download>
         <Download orderIndex="4">
             <Name>
                 Genotype-Figure relation
@@ -1306,7 +1306,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="18" unique="true">Publication ID</Column>
             <Column id="19" unique="true">Environment ID</Column>
         </Download>
-	<Download orderIndex="1">
+        <Download orderIndex="1">
             <Name>
                 Phenotype of Zebrafish Genes
             </Name>
@@ -1315,10 +1315,10 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>phenoGeneClean</FileName>
+            <FileName>phenoGeneCleanData</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
-           <Query>
+            <Query>
                 <![CDATA[unload to phenoGeneClean.txt
                           select * From tmp_dumpPheno
                           order by gene_abbrev
@@ -1327,24 +1327,26 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="1">ID</Column>
             <Column id="2">Gene Symbol</Column>
             <Column id="3">Gene ID</Column>
-            <Column id="4">Affected Structure or Process 1 superterm ID</Column>
-            <Column id="5">Affected Structure or Process 1 superterm Name</Column>
-            <Column id="6">Affected Structure or Process 1 subterm ID</Column>
-            <Column id="7">Affected Structure or Process 1 subterm Name</Column>
-            <Column id="8">Affected Structure or Process 2 superterm ID</Column>
-            <Column id="9">Affected Structure or Process 2 superterm name</Column>
-            <Column id="10">Affected Structure or Process 2 subterm ID</Column>
-            <Column id="11">Affected Structure or Process 2 subterm name</Column>
-            <Column id="12">Phenotype Keyword ID</Column>
-            <Column id="13">Phenotypep Keyword Name</Column>
-            <Column id="14">Genotype ID</Column>
-            <Column id="15">Genotype Display Name</Column>
-            <Column id="16">Morpholino or TALEN ID</Column>
-            <Column id="17">Start Stage ID</Column>
-            <Column id="18">End Stage ID</Column>
-	    <Column id="19">Genotype Environment ID</Column>
-	    <Column id="20">Publication ID</Column>
-	    <Column id="21">Figure ID</Column>
+            <Column id="4">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="5">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="6">Post-composed Relationship</Column>
+            <Column id="7">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="8">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="9">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="10">Affected Structure or Process 2 subterm name</Column>
+            <Column id="11">Post-composed Relationship (rel)</Column>
+            <Column id="12">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="13">Affected Structure or Process 2 superterm name</Column>
+            <Column id="14">Phenotype Keyword ID</Column>
+            <Column id="15">Phenotype Keyword Name</Column>
+            <Column id="16">Genotype ID</Column>
+            <Column id="17">Genotype Display Name</Column>
+            <Column id="18">Morpholino or TALEN ID</Column>
+            <Column id="19">Start Stage ID</Column>
+            <Column id="20">End Stage ID</Column>
+            <Column id="21">Genotype Environment ID</Column>
+            <Column id="22">Publication ID</Column>
+            <Column id="23">Figure ID</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
@@ -1618,9 +1620,9 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="8">Allele Display Type</Column>
             <Column id="9">Gene or Construct Symbol</Column>
             <Column id="10">Corresponding ZFIN Gene ID/Construct ID</Column>
-	    <Column id="11">Allele Zygosity</Column>
+            <Column id="11">Allele Zygosity</Column>
         </Download>
-       <Download orderIndex="1">
+        <Download orderIndex="1">
             <Name>
                 Fish Components
             </Name>
@@ -1646,13 +1648,13 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="4">Affector Symbol</Column>
             <Column id="5">Affector Type</Column>
             <Column id="6">Affector Gene Symbol</Column>
-            <Column id="7">Affector Gene ID </Column>
+            <Column id="7">Affector Gene ID</Column>
             <Column id="8">Construct Name</Column>
             <Column id="9">Construct ZDB ID</Column>
         </Download>
-       <Download orderIndex="4">
-            <Name>   
-	      SNP Data
+        <Download orderIndex="4">
+            <Name>
+                SNP Data
             </Name>
             <Category>
                 Genetic Markers
@@ -2260,7 +2262,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Category>
                 Unofficial Download Files
             </Category>
-            <Description> FB Case 8490</Description>
+            <Description>FB Case 8490</Description>
             <WikiLink></WikiLink>
             <FileName>saAlleles</FileName>
             <FileExtension>txt</FileExtension>
@@ -2281,7 +2283,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="2">PubMed ID</Column>
             <Column id="3">Pub Mini Ref</Column>
             <Column id="4">Genomic Feature Abbrev</Column>
-         </Download>
+        </Download>
 
         <Download private="true" orderIndex="3">
             <Name>
@@ -2290,7 +2292,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Category>
                 Unofficial Download Files
             </Category>
-            <Description> FB Case 9235</Description>
+            <Description>FB Case 9235</Description>
             <WikiLink></WikiLink>
             <FileName>fhAlleles</FileName>
             <FileExtension>txt</FileExtension>
@@ -2311,7 +2313,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="2">PubMed ID</Column>
             <Column id="3">Pub Mini Ref</Column>
             <Column id="4">Genomic Feature Abbrev</Column>
-         </Download>
+        </Download>
 
         <Download private="true" orderIndex="10">
             <Name>
