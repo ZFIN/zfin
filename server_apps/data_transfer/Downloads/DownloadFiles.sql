@@ -1501,10 +1501,12 @@ create temp table tmp_dumpPheno (id varchar(50),
        gene_zdb_id varchar(50), 
        asuperterm_ont_id varchar(30), 
        asuperterm_name varchar(255),
+       arelationship_id varchar(30),
        asubterm_ont_id varchar(30),
        asubterm_name varchar(255),
        bsuperterm_ont_id varchar(30), 
        bsuperterm_name varchar(255),
+       brelationship_id varchar(30),
        bsubterm_ont_id varchar(30), 
        bsubterm_name varchar(255),
        quality_id varchar(30),
@@ -1516,7 +1518,9 @@ create temp table tmp_dumpPheno (id varchar(50),
        stage_end_id varchar(50),
        genox_id varchar(50),
        pub_id varchar(50),
-       fig_id varchar(50)
+       fig_id varchar(50),
+       a_ontology_name varchar(50),
+       b_ontology_name varchar(50)
 )
 with no log;
 
@@ -1584,8 +1588,64 @@ update tmp_dumpPheno
       			  	  from genotype
 				  where geno_zdb_id = geno_id);
 
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneClean.txt'
+update tmp_dumpPheno
+  set a_ontology_name = (
+	select term_ontology from term 
+	where term_ont_id = asubterm_ont_id 
+  );
+
+update tmp_dumpPheno
+  set b_ontology_name = (
+	select term_ontology from term 
+	where term_ont_id = bsubterm_ont_id 
+  );
+
+update tmp_dumpPheno
+  set arelationship_id = 
+(
+case 
+when (asubterm_ont_id is not null AND a_ontology_name = 'biological_process')
+then
+'occurs_in'
+when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process')
+then
+'part_of'
+else
+null
+end
+);
+
+update tmp_dumpPheno
+  set brelationship_id =
+(
+case
+when (bsubterm_ont_id is not null AND b_ontology_name = 'biological_process')
+then
+'occurs_in'
+when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process')
+then
+'part_of'
+else
+null
+end
+);
+
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData.txt'
 DELIMITER "	"
-  select * From tmp_dumpPheno
+  select id,gene_abbrev,gene_zdb_id,
+         asubterm_ont_id,asubterm_name,
+	 arelationship_id,
+	 asuperterm_ont_id,asuperterm_name,
+	 bsubterm_ont_id,bsubterm_name,
+	 brelationship_id,
+	 bsuperterm_ont_id,bsuperterm_name,
+	 quality_id,quality_name,
+	 geno_id,geno_display_name,
+	 mo_id,
+	 stage_start_id,stage_end_id,
+	 genox_id,
+	 pub_id,
+	 fig_id 
+  From tmp_dumpPheno
   	 order by gene_abbrev
 ;
