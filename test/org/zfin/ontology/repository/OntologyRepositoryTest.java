@@ -427,7 +427,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(relationshipTypes);
     }
 
-    @Test
+    //@Test
     public void getTermsWithInvalidStageDefinition() {
         List<GenericTermRelationship> relationshipTypes = ontologyRepository.getTermsWithInvalidStartStageRange();
         assertNotNull(relationshipTypes);
@@ -437,13 +437,13 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(relationshipTypes);
     }
 
-    @Test
+    // @Test do not include in regular tests as it takes more than a minute.
     public void getExpressionAnnotationStageViolations() {
         List<ExpressionResult> expressionResultList = ontologyRepository.getExpressionResultsViolateStageRanges();
         assertNotNull(expressionResultList);
     }
 
-    @Test
+    //@Test
     public void getListOfMergedTermsInTermRelationship() {
         List<GenericTermRelationship> relationshipList = ontologyRepository.getTermRelationshipsWithMergedTerms();
         assertNotNull(relationshipList);
