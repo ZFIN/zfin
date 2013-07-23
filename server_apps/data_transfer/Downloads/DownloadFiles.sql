@@ -656,9 +656,35 @@ create temp table tmp_geno_data (
   zygocity varchar(30)
 ) with no log ;
 
+
 insert into tmp_geno_data (
 	genotype_id, geno_display_name, geno_handle, feature_name, feature_abbrev,
-	feature_type, feature_type_display,feature_zdb_id, zygocity
+	feature_type, feature_type_display,feature_zdb_id, zygocity, gene_id, gene_abbrev
+)
+select
+	genofeat_geno_zdb_id,
+	geno_display_name,
+	geno_handle,
+	feature_name,
+	feature_abbrev,
+	lower(feature_type),
+	ftrtype_type_display,
+	feature_zdb_id,
+	zyg_name,
+	mrkr_zdb_id,
+	mrkr_abbrev
+ from genotype_feature, feature, genotype, feature_type, zygocity, marker, feature_marker_relationship
+ where genofeat_feature_zdb_id = feature_zdb_id
+   and geno_zdb_id = genofeat_geno_zdb_id
+   and feature_type = ftrtype_name
+   and genofeat_zygocity = zyg_zdb_id
+   and fmrel_ftr_zdb_id = feature_zdb_id
+   and fmrel_mrkr_zdb_id = mrkr_zdb_id
+   and fmrel_type = "is allele of";
+
+insert into tmp_geno_data (
+	genotype_id, geno_display_name, geno_handle, feature_name, feature_abbrev,
+	feature_type, feature_type_display,feature_zdb_id, zygocity, gene_id, gene_abbrev
 )
 select
 	genofeat_geno_zdb_id,
@@ -670,24 +696,17 @@ select
 	ftrtype_type_display,
 	feature_zdb_id,
 	zyg_name
- from genotype_feature, feature, genotype, feature_type, zygocity
+ from genotype_feature, feature, genotype, feature_type, zygocity, marker, feature_marker_relationship
  where genofeat_feature_zdb_id = feature_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
    and feature_type = ftrtype_name
    and genofeat_zygocity = zyg_zdb_id
-;
-
-update tmp_geno_data set (gene_id, gene_abbrev) = ((
-	select mrkr_zdb_id, mrkr_abbrev
-	 from marker, feature_marker_relationship, feature
-	 where tmp_geno_data.feature_name = feature_name
-	   and fmrel_ftr_zdb_id = feature_zdb_id
-	   and fmrel_mrkr_zdb_id = mrkr_zdb_id
-	   and fmrel_type = "is allele of"
-));
+   and fmrel_ftr_zdb_id = feature_zdb_id
+   and fmrel_mrkr_zdb_id = mrkr_zdb_id
+   and fmrel_type != "is allele of";
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt'
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_featuresgenotype_features.txt'
  DELIMITER "	"
 select distinct
 	genotype_id,
