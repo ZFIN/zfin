@@ -200,10 +200,9 @@ public class MutantRepositoryTest {
 
     @Test
     public void goTermsByPhenotypeAndPublication() {
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-080501-11");
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-080501-10");
         List<GenericTerm> goTerms = getMutantRepository().getGoTermsByPhenotypeAndPublication(publication);
-        LOG.debug(goTerms.size());
-        assertTrue(goTerms.size() > 0);
+        assertNotNull(goTerms);
     }
 
 
