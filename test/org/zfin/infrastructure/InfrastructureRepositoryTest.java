@@ -100,7 +100,8 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(all);
     }
 
-    @Test
+    // infrastructureRepository.getAllNameMarkerMatches(string, type) is not in use
+    //@Test
     public void allMapNamesGenes() {
         String string = "pdx";
         MarkerType type = RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
