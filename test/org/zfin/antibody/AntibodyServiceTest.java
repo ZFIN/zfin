@@ -409,22 +409,16 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
      */
     @Test
     public void figureSummaryTestFromAnatomyPage() {
-        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID("ZDB-ATB-081003-1");
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID("ZDB-ATB-081002-10");
         assertNotNull(antibody);
 
-        GenericTerm slowMuscleCell = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0009116");
-        assertNotNull(slowMuscleCell);
+        GenericTerm neuron = RepositoryFactory.getOntologyRepository().getTermByOboID("ZFA:0009248 ");
+        assertNotNull(neuron);
 
-        Figure fig2 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-100309-44");
-        Figure fig3 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-100309-45");
-        Figure slowMuscleSubtermFigure = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-090618-31");
-
+        Figure fig2 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-081002-2");
         AntibodyService antibodyService = new AntibodyService(antibody);
-
-
-        ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(slowMuscleCell, null, null, null, false);
+        ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(neuron, null, null, null, false);
         antibodyService.createFigureSummary(criteria);
-
 
         List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
         List<Figure> figures = new ArrayList<Figure>();
@@ -434,10 +428,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
             figures.add(figureSummary.getFigure());
         }
 
-        //WT & std env tests
-
-        assertTrue("Figure Summary should include fig. 3", figures.contains(fig3));
-        assertFalse("Figure Summary should not contain fig. 2", figures.contains(fig2));
+        assertTrue("Figure Summary should contain fig2", figures.contains(fig2));
 
     }
 
