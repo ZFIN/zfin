@@ -83,7 +83,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   select zdb_id, name, contact_person
     from company;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/1person_asociations.txt"
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/1person_associations.txt"
   select source_id, target_id
     from int_person_lab
 union
