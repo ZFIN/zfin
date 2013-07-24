@@ -89,7 +89,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 union
 select source_id, target_id from int_person_company
 union
-select source_id, taget_id from int_person_pub;;
+select source_id, target_id from int_person_pub;
 
 
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/1xpat.txt"
