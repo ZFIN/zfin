@@ -73,7 +73,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
     from lab;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/1person.txt"
-  select zdb_id as person_id, first_name, last_name, target_id as lab_id
+  select zdb_id as person_id, first_name, last_name, full_name, email, target_id as lab_id
     from person as person, int_person_lab
     where source_id = zdb_id
     order by zdb_id;
@@ -82,6 +82,15 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/company/1company.txt"
   select zdb_id, name, contact_person
     from company;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/1person_asociations.txt"
+  select source_id, target_id
+    from int_person_lab
+union
+select source_id, target_id from int_person_company
+union
+select source_id, taget_id from int_person_pub;;
+
 
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/1xpat.txt"
 -- select * from expression_experiment
