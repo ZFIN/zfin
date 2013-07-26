@@ -209,7 +209,7 @@ union
       where geno_is_wildtype = 't';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_features/1features.txt"
-  select feature_zdb_id, feature_name, feature_abbrev, feature_type from feature where not exists (Select 'x' from genotype_Feature
+  select feature_zdb_id, feature_name, feature_abbrev, feature_type, feature_lab_prefix_id from feature where not exists (Select 'x' from genotype_Feature
   	 		where genofeat_feature_zdb_id = feature_zdb_id);
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_fmrels/1fmrels.txt"
