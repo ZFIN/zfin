@@ -224,7 +224,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   where genofeat_feature_zdb_id = feature_zdb_id
   and ids_datA_zdb_id = feature_zdb_id
  union 
-select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
+select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,                0
  	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, ""
   from genotype_feature, feature
   where genofeat_feature_zdb_id = feature_zdb_id
@@ -375,4 +375,8 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/go-annotation/evidence-codes.txt"
   select goev_code, goev_name
     from go_evidence_code;
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/lab/feature-prefix-source.txt"
+select sfp_prefix_id, sfp_source_zdb_id
+From source_feature_prefix;
 
