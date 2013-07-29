@@ -73,12 +73,15 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
     from lab;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/1person.txt"
-  select zdb_id as person_id, first_name, last_name, full_name, email
+  select zdb_id as person_id, first_name, last_name, full_name, email,replace(address,'
+','')
     from person
    order by zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/company/1company.txt"
-  select zdb_id, name, contact_person, url,email,fax,phone
+  select zdb_id, name, contact_person, url,email,fax,phone, replace(address,'
+',''), replace(bio,'
+','')
     from company;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/1person_associations.txt"
