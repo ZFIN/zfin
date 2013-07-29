@@ -69,7 +69,9 @@ select recattrib_source_zdb_id, recattrib_Data_zdb_id from record_Attribution,
 
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/lab/1lab.txt"
-  select zdb_id, name, contact_person, url, email,fax,phone
+  select zdb_id, name, contact_person, url, email,fax,phone, replace(address,'
+',''), replace(bio,'
+','')
     from lab;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/people/1person.txt"
