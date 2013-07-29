@@ -222,7 +222,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   where genofeat_feature_zdb_id = feature_zdb_id
   and ids_datA_zdb_id = feature_zdb_id
  union 
-select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,                0
+select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
  	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, ""
   from genotype_feature, feature
   where genofeat_feature_zdb_id = feature_zdb_id
