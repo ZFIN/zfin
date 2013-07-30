@@ -1,8 +1,7 @@
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData\
-/ontologySubset/1ontologySubset.txt"
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/ontologySubset/1ontologySubset.txt"
 select osubset_pk_id, osubset_subset_name, osubset_subset_definition,
        osubset_subset_type, osubset_ont_id, termsub_term_zdb_id
- from ontology_subset, term, term_subset
+ from ontology_subset, term_subset
   where osubset_pk_id = termsub_subset_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt"
