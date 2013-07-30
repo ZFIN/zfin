@@ -136,8 +136,8 @@ public class AbstractSmokeTest extends WebTestCase {
         webClient.getOptions().setJavaScriptEnabled(false);
         CookieManager cm = new CookieManager();
         webClient.setCookieManager(cm);
-        webClient.setJavaScriptTimeout(8000);
-        webClient.getOptions().setTimeout(9000);
+        webClient.setJavaScriptTimeout(15000);
+        webClient.getOptions().setTimeout(15000);
     }
 
 }
