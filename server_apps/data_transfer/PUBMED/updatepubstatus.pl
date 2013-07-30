@@ -1,4 +1,6 @@
 #!/private/bin/perl 
+# updatepubstatus.pl
+# This script first get a list of non-active publications with pubmed ids 
 
 
 use DBI;
@@ -27,22 +29,21 @@ system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/log2");
 my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
   || die("Failed while connecting to <!--|DB_NAME|--> ");
 
-$cur = $dbh->prepare('select accession_no, zdb_id from publication where status != "active" and accession_no is not null;');
-$cur->execute();
-my ($pub_acc_no, $pub_zdbId);
-$cur->bind_columns(\$pub_acc_no,\$pub_zdbId);
+$cur_get_nonactive_pubs = $dbh->prepare('select accession_no, zdb_id from publication where status != "active" and accession_no is not null;');
+$cur_get_nonactive_pubs->execute();
+$cur_get_nonactive_pubs->bind_columns(\$pub_acc_no,\$pub_zdbId);
+
 %nonActivePubAccessions = ();
 $ctInactivePubs = 0;
-while ($cur->fetch()) {
+
+while ($cur_get_nonactive_pubs->fetch()) {
   if ($pub_acc_no =~ /^\d+$/) {
     $nonActivePubAccessions{$pub_zdbId} = $pub_acc_no;
     $ctInactivePubs++;
   }
 }
 
-$cur->finish();
-
-$dbh->disconnect();
+$cur_get_nonactive_pubs->finish();
 
 print "\nctInactivePubs = $ctInactivePubs\n\n";
 
@@ -53,39 +54,50 @@ if ($ctInactivePubs == 0) {
   exit;
 }
 
-open (PPUB, ">listOfUpdatedPubs");
 $ctUpdated = 0;
+%updatedPublications = ();
+
+$cur_update_pub = $dbh->prepare_cached('update publication set status = "active" where accession_no = ?;');
+$cur_insert_update = $dbh->prepare_cached('insert into updates (rec_id,field_name,new_value,when) select zdb_id,"status","active",current from publication where accession_no = ?;');
+
 foreach $pubZDBid (sort keys %nonActivePubAccessions) {
     $pubmedId = $nonActivePubAccessions{$pubZDBid};
     $url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . $pubmedId . '&retmode=xml';
     $content = get $url;
-    unless (defined $content) {
-       ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org","Auto from $dbname : updatepubstatus.pl :: There is error happening when getting the XML contents from $url.","updatepubstatus.pl");
-       close(PPUB);
-       exit;
-    }
-    
-    if ($content =~ m/<PublicationStatus>(\w+)<\/PublicationStatus>/) {
-      $status = $1;
-      if ($status eq "ppublish") {
-        print PPUB "$pubZDBid\t$pubmedId\n";
-        $ctUpdated++;
+    if (defined $content) {
+      if ($content =~ m/<PublicationStatus>(\w+)<\/PublicationStatus>/) {
+        $status = $1;
+        if ($status eq "ppublish") {
+          $cur_update_pub->execute($pubmedId);
+          $cur_insert_update->execute($pubmedId);
+          $updatedPublications{$pubZDBid} = $pubmedId;
+          $ctUpdated++;
+        }
       }
+      undef $content;
     }
-    undef $content;
 }
-close(PPUB);
 
 print "\nctUpdated = $ctUpdated\n\n";
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/updatePublicationStatus.sql >log1 2> log2");
+$cur_update_pub->finish();
+$cur_insert_update->finish();
 
-$subject = "Auto from $dbname : " . "updatepubstatus.pl :: " . "$ctUpdated of $ctInactivePubs non-active pubs (with pubmed id) have been updated to active according to PUBMED";
+$dbh->disconnect();
 
-ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","listOfUpdatedPubs");
+open (ACTIVATED, ">listOfActivatedPubs") ||  die "Cannot open listOfActivatedPubs : $!\n";
+
+foreach $updatedPubId (sort keys %updatedPublications) {
+  $pubmedid = $updatedPublications{$updatedPubId};
+  print ACTIVATED "$updatedPubId\t$pubmedid\n";
+}
+
+close(ACTIVATED);
 
 
-ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org","Auto from $dbname : updatepubstatus.pl :: log file","log2");
+$subject = "Auto from $dbname : " . "updatepubstatus.pl :: " . "$ctUpdated of $ctInactivePubs non-active publications have been activated according to PUBMED";
+
+ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","listOfActivatedPubs");
 
 exit;
 

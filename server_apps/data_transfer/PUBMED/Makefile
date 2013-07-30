@@ -20,21 +20,10 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
 
 GENERICS = updatepubstatus.pl
 
-STATICS = updatePublicationStatus.sql
-
 
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them
 
 include $(TOP)/make.default.rules
-
-
-# ---------------  Misc Targets  ----------------------------------------
-
-# Run the download script.  This extracts data from ZFIN and places it in 
-# the public ftp directory
-
-run : $(TARGETDIR)/updatepubstatus.pl 
-	$(TARGETDIR)/updatepubstatus.pl
 
