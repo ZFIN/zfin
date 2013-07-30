@@ -40,7 +40,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         FigureSummarySmokeTest.class,
         FishSmokeTest.class,
         ConstructSmokeTest.class,
-        GeneEditSmokeTest.class,
+//        GeneEditSmokeTest.class,
         GenotypeDetailSmokeTest.class,
         LookupSmokeTest.class,
         MarkerSoapSmokeTest.class,
