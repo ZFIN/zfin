@@ -1,8 +1,9 @@
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/ontologySubset/1ontologySubset.txt"
 select osubset_pk_id, osubset_subset_name, osubset_subset_definition,
-       osubset_subset_type, osubset_ont_id, termsub_term_zdb_id
- from ontology_subset, term_subset
-  where osubset_pk_id = termsub_subset_id;
+       osubset_subset_type, osubset_ont_id, term_ont_id, term_ontology
+ from ontology_subset, term_subset, term
+  where osubset_pk_id = termsub_subset_id
+  and termsub_term_zdb_id = term_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/1dataSourceSupplier.txt"
 select idsup_data_zdb_id, idsup_supplier_zdb_id, idsup_acc_num, idsup_avail_state, "supplier", get_obj_type(idsup_data_zdb_id), feature_type
