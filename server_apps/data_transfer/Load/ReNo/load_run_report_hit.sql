@@ -12,12 +12,12 @@
 --
 --  "Cleanup on Aisle 5"
 
-drop table tmp_run;
-drop table tmp_report;
-drop table tmp_hit;
-drop table tmp_candidate;
-drop table tmp_run_cnd;
-drop table tmp_blast_query;
+--drop table tmp_run;
+--drop table tmp_report;
+--drop table tmp_hit;
+--drop table tmp_candidate;
+--drop table tmp_run_cnd;
+--drop table tmp_blast_query;
 
 
 ! echo "BEGIN `date`"
@@ -686,18 +686,6 @@ select distinct
     max(thit_acc_len),  -- 3498
     max(case  -- HITs
         when thit_acc_type = 'protein'
-         and thit_acc_db = 'ref'           
-	     then 'ZDB-FDBCONT-040412-39'
-        when thit_acc_type = 'protein'
-         and thit_acc_db = 'gb'            
-	     then 'ZDB-FDBCONT-040412-42'
-        when thit_acc_type = 'protein'
-         and thit_acc_db = 'wz'            
-	     then 'ZDB-FDBCONT-090929-8'
-        when thit_acc_type = 'protein'
-         and thit_acc_db = 'sp'
-	     then 'ZDB-FDBCONT-040412-47'
-        when thit_acc_type = 'protein'
          and thit_acc_db = ''
 --       and thit_species= 'Homo sapiens' then 'ZDB-FDBCONT-071023-3'
          and thit_species= 'Homo sapiens' then (
@@ -721,6 +709,18 @@ select distinct
 		  and fdbcont_fdbdt_id = fdbdt_pk_id
                   and fdbcont_organism_common_name = 'Mouse'
          )
+       when thit_acc_type = 'protein'
+         and thit_acc_db = 'ref'           
+	     then 'ZDB-FDBCONT-040412-39'
+        when thit_acc_type = 'protein'
+         and thit_acc_db = 'gb'            
+	     then 'ZDB-FDBCONT-040412-42'
+        when thit_acc_type = 'protein'
+         and thit_acc_db = 'wz'            
+	     then 'ZDB-FDBCONT-090929-8'
+        when thit_acc_type = 'protein'
+         and thit_acc_db = 'sp'
+	     then 'ZDB-FDBCONT-040412-47'
         when thit_acc_type = 'protein'
          and thit_acc_db = 'sp'
          and thit_species= 'Danio rerio'   then 'ZDB-FDBCONT-040412-47'
