@@ -174,7 +174,20 @@ public class Accession implements Comparable, Serializable {
 
     public Species getOrganism() {
         if (CollectionUtils.isEmpty(relatedEntrezAccessions)) {
-            return Species.ZEBRAFISH;
+            if (!this.getReferenceDatabase().getOrganism().isEmpty()){
+                    if (referenceDatabase.getOrganism().toString().equalsIgnoreCase("mouse")){
+                            return Species.MOUSE;
+                    }
+                    else if (referenceDatabase.getOrganism().toString().equalsIgnoreCase("human")){
+                        return Species.HUMAN;
+                    }
+                    else if (referenceDatabase.getOrganism().toString().equalsIgnoreCase("zebrafish")){
+                        return Species.ZEBRAFISH;
+                    }
+            }
+            else {
+                return Species.ZEBRAFISH;
+            }
         }
         Species species = null;
         for (EntrezProtRelation entrezProtRelation : relatedEntrezAccessions) {

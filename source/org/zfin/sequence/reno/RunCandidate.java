@@ -197,7 +197,7 @@ public class RunCandidate {
             LOG.debug(q.getAccession().getNumber());
             for (Hit h : q.getBlastHits()) {
                 Accession a = h.getTargetAccession();
-                LOG.debug("accessionFound: " + a.getNumber() + " " + a.getID());
+                LOG.debug("accessionFound: " + a.getNumber() + " " + a.getID() + a.getOrganism());
 
                 /*if (a != null) {
                 if ((a.getReferenceDatabase().getOrganism().equals(organism))
