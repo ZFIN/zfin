@@ -709,6 +709,17 @@ select distinct
 		  and fdbcont_fdbdt_id = fdbdt_pk_id
                   and fdbcont_organism_common_name = 'Mouse'
          )
+        when thit_acc_type = 'protein'
+         and thit_acc_db = 'sp'
+         and thit_species= 'Homo sapiens'  then(
+                select fdbcont_zdb_id from foreign_db_contains, foreign_db, foreign_db_data_type
+                where fdbdt_super_type = 'sequence'
+                  and fdbdt_data_type = 'Polypeptide'
+                  and fdb_db_name = 'UniProtKB'
+		  and fdbcont_fdb_db_id = fdb_db_pk_id
+		  and fdbcont_fdbdt_id = fdbdt_pk_id
+                  and fdbcont_organism_common_name = 'Human'
+         )
        when thit_acc_type = 'protein'
          and thit_acc_db = 'ref'           
 	     then 'ZDB-FDBCONT-040412-39'
