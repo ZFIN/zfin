@@ -1,3 +1,7 @@
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/images/images.txt"
+select img_zdb_id, img_fig_zdb_id, img_label
+  from image;
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/ontologySubset/1ontologySubset.txt"
 select osubset_pk_id, osubset_subset_name, osubset_subset_definition,
        osubset_subset_type, osubset_ont_id, term_ont_id, term_ontology

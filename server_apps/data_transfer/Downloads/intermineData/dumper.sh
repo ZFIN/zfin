@@ -10,6 +10,10 @@ if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/o
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/ontologySubset/
 fi;
 
+if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/ontologySubset ]; then
+  mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/images/
+fi;
+
 if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier ]; then
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataSourceSupplier/
 fi;
