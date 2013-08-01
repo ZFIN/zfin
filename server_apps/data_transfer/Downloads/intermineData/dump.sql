@@ -403,3 +403,8 @@ From source_feature_prefix
  where get_obj_type(sfp_source_zdb_id) = "COMPANY"
  and sfp_current_designation = 't';
 
+
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_features/feature-prefix.txt"
+ select fp_pk_id, fp_prefix,fp_Institute_display
+ from feature_prefix;
+
