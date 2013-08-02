@@ -30,7 +30,7 @@ where ids_data_zdb_id not like 'ZDB-ALT%'
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_features/labOfOrigin.txt"
-select ids_data_zdb_id, ids_source_zdb_id
+select ids_data_zdb_id, ids_source_zdb_id, feature_type
 from int_data_source, feature
 where ids_data_zdb_id like 'ZDB-ALT%'
 and feature_zdb_id = ids_data_zdb_id
