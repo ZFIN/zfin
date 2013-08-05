@@ -97,6 +97,8 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> prepareNCBIgeneLoad.sq
 
 print LOG "Done with preparing the delete list and the list for mapping.\n\n";
 
+close LOG;
+
 system("/bin/cat prepareLog1 >> logNCBIgeneLoad");
 
 system("/bin/cat prepareLog2 >> logNCBIgeneLoad");
