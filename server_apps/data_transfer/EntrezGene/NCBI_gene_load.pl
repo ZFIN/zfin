@@ -67,7 +67,7 @@ system("/bin/date");
 #-------------------------------------------------------------------------------------------------
 
 if (!-e "zf_gene_info" || !-e "gene2accession" || !-e "RefSeqCatalog" || !-e "gene2unigene") {
-   $subjectError = "Auto from $dbname: " . "NCBI_gene_load.pl :: ERROR";
+   $subjectError = "Auto from $dbname: " . "NCBI_gene_load.pl :: ERROR with download";
    print LOG "\nMissing one or more downloaded NCBI file(s)\n\n";
    ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subjectError","logNCBIgeneLoad");
    close LOG;
@@ -95,8 +95,6 @@ $fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
 
 print LOG "Done with preparing the delete list and the list for mapping.\n\n";
-
-close LOG;
 
 system("/bin/cat prepareLog1 >> logNCBIgeneLoad");
 
@@ -1871,11 +1869,17 @@ print LOG "Done everything before doing the deleting and inserting\n";
 # execute the SQL file to do the deletion according to delete list, and do the loading according to te add list
 #--------------------------------------------------------------------------------------------------------------------
 
+if (!-e "toDelete.unl" || !-e "toLoad.unl") {
+   $subjectError = "Auto from $dbname: " . "NCBI_gene_load.pl :: missing toDelete.unl or toLoad.unl";
+   print LOG "\nMissing toDelete.unl and/or toLoad.unl\n\n";
+   ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subjectError","logNCBIgeneLoad");
+   close LOG;
+   exit;
+}
+
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadNCBIgeneAccs.sql >loadLog1 2> loadLog2");
 
 print LOG "\nDone with the deltion and loading!\n\n";
-
-close LOG;
 
 system("/bin/cat loadLog1 >> logNCBIgeneLoad");
 
