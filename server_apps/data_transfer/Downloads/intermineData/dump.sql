@@ -1,7 +1,8 @@
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/cleanPhenotype/cleanPhenotype.txt"
-select mfs_mrkr_zdb_id, mfs_genox_zdb_id
- from mutant_fast_search
-  where mfs_mrkr_zdb_id like 'ZDB-GENE%';
+select mfs_mrkr_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id
+ from mutant_fast_search, genotype_experiment
+  where mfs_mrkr_zdb_id like 'ZDB-GENE%'
+ and mfs_genox_zdb_id = genox_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/images/images.txt"
 select img_zdb_id, img_fig_zdb_id, img_label
