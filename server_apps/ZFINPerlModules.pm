@@ -3,6 +3,7 @@ package ZFINPerlModules;
 
 use strict;
 use MIME::Lite;
+use DBI;
 
 sub sendMailWithAttachedReport {
     my $MAILTO = $_[1];
@@ -30,6 +31,34 @@ sub sendMailWithAttachedReport {
     $msg->print(\*SENDMAIL);
     close (SENDMAIL);
 
+}
+
+sub countData() {
+
+  my $ctsql = $_[1];
+  my $nRecords = 0;
+
+  ### open a handle on the db
+  my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+                       '',
+                       '',
+		       {AutoCommit => 1,RaiseError => 1}
+		      )
+    or die ("Failed while connecting to <!--|DB_NAME|-->");
+
+
+  my $sth = $dbh->prepare($ctsql) or die "Prepare fails";
+  
+  $sth -> execute() or die "Could not execute $ctsql";
+  
+  while (my @row = $sth ->fetchrow_array()) {
+    $nRecords++;
+  }  
+
+  $dbh->disconnect
+    or warn "Disconnection failed: $DBI::errstr\n";
+
+  return ($nRecords);
 }
 
 1;
