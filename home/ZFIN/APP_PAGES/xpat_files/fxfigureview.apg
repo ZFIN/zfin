@@ -556,7 +556,7 @@ and display them one after the other horizontally
 
 
 <p><?MICOMMENT>Display acknowledgement only if it is a curated paper<?/MICOMMENT>
-<?MIBLOCK COND="$(AND,$(NE,$fxfigview_jtype,Unpublished),$(NE,$fxfigview_jtype,Curation))">
+<?MIBLOCK COND="$(AND,$(NE,$fxfigview_jtype,Unpublished),$(NE,$fxfigview_jtype,Curation),$(NE,$fxfigview_jtype,Active_Curation))">
   <?MICOMMENT>Display acknowledgement only if it is a full figure<?/MICOMMENT>
    <?MIBLOCK COND="$(AND,$(EQ,$fxfigview_is_lite,no),$(EQ,$fxfigview_is_geli,),$(EQ,$fxfigview_is_text,no))">
       <?MISQL SQL="select WebExplode(object,'pubackn_pub_zdb_id=$fxfigview_source_zdb_id') from webPages where ID='aa-pubacknowledgement.apg';">$1<?/MISQL>
