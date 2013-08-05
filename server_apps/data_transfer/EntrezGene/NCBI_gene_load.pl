@@ -2038,8 +2038,8 @@ print STATS "$numRefPeptAfter   \t";
 printf STATS "%.2f\n", ($numRefPeptAfter - $numRefPeptBefore) / $numRefPeptBefore * 100 if ($numRefPeptBefore > 0);
 
 print STATS "RefSeq DNA                                 \t";
-print STATS "$numRefSeqDNABefore  \t";
-print STATS "$numRefSeqDNAAfter     \t";
+print STATS "$numRefSeqDNABefore      \t";
+print STATS "$numRefSeqDNAAfter        \t";
 if ($numRefSeqDNABefore > 0) {
     printf STATS "%.2f\n", ($numRefSeqDNAAfter - $numRefSeqDNABefore) / $numRefSeqDNABefore * 100;
 } else {
@@ -2057,8 +2057,8 @@ print STATS "$numGenPeptAfter   \t";
 printf STATS "%.2f\n", ($numGenPeptAfter - $numGenPeptBefore) / $numGenPeptBefore * 100 if ($numGenPeptBefore > 0);
 
 print STATS "GenBank DNA                                 \t";
-print STATS "$numGenBankDNABefore           \t";
-print STATS "$numGenBankDNAAfter            \t";
+print STATS "$numGenBankDNABefore       \t";
+print STATS "$numGenBankDNAAfter        \t";
 printf STATS "%.2f\n", ($numGenBankDNAAfter - $numGenBankDNABefore) / $numGenBankDNABefore * 100 if ($numGenBankDNABefore > 0);
 
 print STATS "\n\n";
