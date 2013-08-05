@@ -94,12 +94,6 @@ $fdcontRefSeqDNA = "ZDB-FDBCONT-040527-1";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> prepareNCBIgeneLoad.sql >prepareLog1 2> prepareLog2");
 
-$subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: prepareLog1 file";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","prepareLog1");
-
-$subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: prepareLog2 file";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","prepareLog2");
-
 print LOG "Done with preparing the delete list and the list for mapping.\n\n";
 
 close LOG;
