@@ -16,7 +16,7 @@ echo 'unload to /tmp/queryCostCheck.txt select * from mon_long_queries;' | /priv
 
 echo "sending RED alert (query cost exceeds 10000) email." ;
 
-/local/bin/mutt -a /tmp/queryCostCheck.txt -s "query cost check for waldo" -- <!--|DB_OWNER|-->@zygotix.zfin.org < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+/local/bin/mutt -a /tmp/queryCostCheck.txt -s "query cost check for waldo" -- <!--|DB_OWNER|-->@zfin.org < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 
 echo "delete from mon_long_queries" | /private/apps/Informix/informix/bin/dbaccess sysadmin;
 
