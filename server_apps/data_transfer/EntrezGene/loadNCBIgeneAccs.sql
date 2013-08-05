@@ -40,7 +40,7 @@ insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_info, dblink_zd
 select mapped_zdb_gene_id, ncbi_accession, "uncurated: NCBI gene load " || TODAY, zdb_id, seqence_length, fdbcont_zdb_id 
   from ncbi_gene_load;
     
-! echo "Attribute the new db_link records"
+! echo "Attribute the new db_link records to one of the 2 load publications, depending on what kind of mapping"
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 select zdb_id, load_pub_zdb_id 
   from ncbi_gene_load;

@@ -16,17 +16,24 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
+chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/";
+
 $dbname = "<!--|DB_NAME|-->";
 
 #------------------------------------------------
 # remove old files
 #------------------------------------------------
 
-system("/bin/rm -f *Log*");
+system("/bin/rm -f prepareLog1");
+system("/bin/rm -f prepareLog2");
 system("/bin/rm -f logNCBIgeneLoad");
+system("/bin/rm -f loadLog1");
+system("/bin/rm -f loadLog2");
 system("/bin/rm -f debug*");
 system("/bin/rm -f report*");
-system("/bin/rm -f *.unl");
+system("/bin/rm -f toDelete.unl");
+system("/bin/rm -f toMap.unl");
+system("/bin/rm -f toLoad.unl");
 system("/bin/rm -f seq.fasta");
 
 system("/bin/rm -f zf_gene_info");
@@ -97,14 +104,11 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> prepareNCBIgeneLoad.sq
 
 print LOG "Done with preparing the delete list and the list for mapping.\n\n";
 
-close LOG;
+$subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: prepareLog1 file";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","prepareLog1");
 
-system("/bin/cat prepareLog1 >> logNCBIgeneLoad");
-
-system("/bin/cat prepareLog2 >> logNCBIgeneLoad");
-
-open LOG, '>>', "logNCBIgeneLoad" or die "can not open logNCBIgeneLoad again" ;
-
+$subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: prepareLog2 file";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","prepareLog2");
 
 #--------------------------------------------------------------------------------------
 # record counts before loading starts
@@ -1884,9 +1888,11 @@ system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadNCBIgeneAccs.sql >
 
 print LOG "\nDone with the deltion and loading!\n\n";
 
-system("/bin/cat loadLog1 >> logNCBIgeneLoad");
+$subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog1 file";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","loadLog1");
 
-system("/bin/cat loadLog2 >> logNCBIgeneLoad");
+$subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: loadLog2 file";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","loadLog2");
 
 #------------------------------------------------------------------------------------------
 # record counts after the loading is done, and report statistics

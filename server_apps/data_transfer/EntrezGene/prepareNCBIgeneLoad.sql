@@ -132,17 +132,17 @@ into temp tmp_genes_supported_by_rna with no log;
 
 select count(gene) as numberOfGenesWithRNAevidence from tmp_genes_supported_by_rna;
 
-!echo 'Pseudo-genes involved in the load'
+--!echo 'Pseudo-genes involved in the load'
 
-select distinct gene from tmp_genes_supported_by_rna where gene not like "ZDB-GENE-%"; 
+--select distinct gene from tmp_genes_supported_by_rna where gene not like "ZDB-GENE-%"; 
 
 !echo 'Dump the list of genes supported by GenBank RNA sequenecs, as the start set on ZFIN end for mapping'
 
-unload to 'toMap.unl' select distinct gene from tmp_genes_supported_by_rna order by gene;
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/toMap.unl' select distinct gene from tmp_genes_supported_by_rna order by gene;
 
 !echo 'Dump the delete list'
 
-unload to 'toDelete.unl' select * from pre_delete order by dblink_loaded_zdb_id;
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/toDelete.unl' select * from pre_delete order by dblink_loaded_zdb_id;
 
 --rollback work;
 
