@@ -9,10 +9,6 @@ use ZFINPerlModules;
 
 system("/bin/date"); 
 
-open LOG, '>', "logNCBIgeneLoad" or die "can not open logNCBIgeneLoad" ;
-
-print LOG "Start ... \n";
-
 # set environment variables
 
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -27,6 +23,7 @@ $dbname = "<!--|DB_NAME|-->";
 #------------------------------------------------
 
 system("/bin/rm -f *Log*");
+system("/bin/rm -f logNCBIgeneLoad");
 system("/bin/rm -f debug*");
 system("/bin/rm -f report*");
 system("/bin/rm -f *.unl");
@@ -36,6 +33,10 @@ system("/bin/rm -f zf_gene_info");
 system("/bin/rm -f gene2unigene");
 system("/bin/rm -f gene2accession");
 system("/bin/rm -f RefSeqCatalog");
+
+open LOG, '>', "logNCBIgeneLoad" or die "can not open logNCBIgeneLoad" ;
+
+print LOG "Start ... \n";
 
 #-------------------------------------------------------------------------------------------------
 # Download and decompress NCBI data files 
