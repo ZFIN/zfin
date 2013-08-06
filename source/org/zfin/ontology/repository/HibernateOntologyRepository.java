@@ -906,7 +906,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 "       relationship.type in (:typeList)";
         Query query = session.createQuery(hql);
         query.setString("unknown", DevelopmentStage.UNKNOWN);
-        query.setString("developsFrom", RelationshipSorting.DEVELOPS_FROM);
         query.setParameterList("typeList", new String[]{"is_a", "part_of", "is a", "part of"});
         return query.list();
     }
