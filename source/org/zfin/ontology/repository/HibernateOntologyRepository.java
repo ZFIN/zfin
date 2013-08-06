@@ -880,9 +880,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
         Session session = HibernateUtil.currentSession();
         String hql = "select relationship from GenericTermRelationship relationship " +
                 " where relationship.termOne.start.hoursStart > relationship.termTwo.start.hoursStart AND " +
-                "       relationship.termTwo.start.name != :unknown ";
+                "       relationship.termTwo.start.name != :unknown AND" +
+                "       relationship.type in (:typeList)";
         Query query = session.createQuery(hql);
         query.setString("unknown", DevelopmentStage.UNKNOWN);
+        query.setParameterList("typeList", new String[]{"is_a", "part_of", "is a", "part of", "develops_from", "develops from"});
         return query.list();
     }
 
@@ -901,10 +903,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
         String hql = "select relationship from GenericTermRelationship relationship " +
                 " where relationship.termOne.end.hoursEnd < relationship.termTwo.end.hoursEnd AND " +
                 "       relationship.termTwo.end.name != :unknown AND " +
-                " relationship.type != :developsFrom";
+                "       relationship.type in (:typeList)";
         Query query = session.createQuery(hql);
         query.setString("unknown", DevelopmentStage.UNKNOWN);
         query.setString("developsFrom", RelationshipSorting.DEVELOPS_FROM);
+        query.setParameterList("typeList", new String[]{"is_a", "part_of", "is a", "part of"});
         return query.list();
     }
 
