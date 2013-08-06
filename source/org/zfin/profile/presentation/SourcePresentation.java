@@ -47,6 +47,6 @@ public class SourcePresentation extends EntityPresentation {
      * @return A rendered wiki link.
      */
     public static String getWikiLink(Organization organization) {
-        return getWikiLink(ORGANIZATION_URI , organization.getZdbID(), organization.getName(), organization.getName());
+        return getWikiLink("", organization.getZdbID(), organization.getName(), organization.getName());
     }
 }
