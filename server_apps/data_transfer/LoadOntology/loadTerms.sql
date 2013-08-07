@@ -218,8 +218,9 @@ insert into tmp_term_definition_changed
   from tmp_term_onto_no_dups no_dups, TERM term
   where 
   	term.term_ont_id = no_dups.term_id AND
-  	term.term_definition != no_dups.term_definition AND
-        term.term_is_Secondary = 'f';
+  	(term.term_definition != no_dups.term_definition OR
+  	 (term.term_definition is null AND trim(no_dups.term_definition) != '')) AND
+    term.term_is_Secondary = 'f';
 
 unload to modified_term_definitions.unl
   select * from tmp_term_definition_changed;
