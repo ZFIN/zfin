@@ -163,10 +163,12 @@ insert into term_relationship (termrel_zdb_id,
 
 unload to deleted_relationships_1.unl
 select * from term_relationship
- where not exists (Select 'x' from tmp_rels_zdb
-       	   	  	  where ttermrel_term_1_zdb_id = termrel_term_1_zdb_id
-			  and ttermrel_term_2_zdb_id = termrel_term_2_zdb_id
-			  and term_relationship.termrel_type = tmp_rels_zdb.ttermrel_type)
+ where not exists (Select 'x' from term a, term b, tmp_rels
+       	   	  	  where a.term_ont_id = termrel_term_1_id
+			  and b.term_ont_id = termrel_term_2_id
+			  and termrel_term_1_Zdb_id = a.term_zdb_id
+			  and termrel_term_2_zdb_id = b.term_zdb_id
+			  and term_relationship.termrel_type = tmp_rels.termrel_type)
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_2_zdb_id);
@@ -174,10 +176,12 @@ select * from term_relationship
 
 unload to deleted_relationships_2.unl
 select * from term_relationship
- where not exists (Select 'x' from tmp_rels_zdb
-       	   	  	  where ttermrel_term_1_zdb_id = termrel_term_1_zdb_id
-			  and ttermrel_term_2_zdb_id = termrel_term_2_zdb_id
-			  and term_relationship.termrel_type = tmp_rels_zdb.ttermrel_type)
+ where not exists (Select 'x' from term a, term b, tmp_rels
+       	   	  	  where a.term_ont_id = termrel_term_1_id
+			  and b.term_ont_id = termrel_term_2_id
+			  and termrel_term_1_Zdb_id = a.term_zdb_id
+			  and termrel_term_2_zdb_id = b.term_zdb_id
+			  and term_relationship.termrel_type = tmp_rels.termrel_type)
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_1_zdb_id);
@@ -186,20 +190,24 @@ select * from term_relationship
 !echo "delete from term relationship";
 
 delete from term_relationship
-  where not exists (Select 'x' from tmp_rels_zdb
-       	   	  	  where ttermrel_term_1_zdb_id = termrel_term_1_zdb_id
-			  and ttermrel_term_2_zdb_id = termrel_term_2_zdb_id
-			  and term_relationship.termrel_type = tmp_rels_zdb.ttermrel_type)
+ where not exists (Select 'x' from term a, term b, tmp_rels
+       	   	  	  where a.term_ont_id = termrel_term_1_id
+			  and b.term_ont_id = termrel_term_2_id
+			  and termrel_term_1_Zdb_id = a.term_zdb_id
+			  and termrel_term_2_zdb_id = b.term_zdb_id
+			  and term_relationship.termrel_type = tmp_rels.termrel_type)
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_2_zdb_id);
 
 
 delete from term_relationship
- where not exists (Select 'x' from tmp_rels_zdb
-       	   	  	  where ttermrel_term_1_zdb_id = termrel_term_1_zdb_id
-			  and ttermrel_term_2_zdb_id = termrel_term_2_zdb_id
-			  and term_relationship.termrel_type = tmp_rels_zdb.ttermrel_type)
+ where not exists (Select 'x' from term a, term b, tmp_rels
+       	   	  	  where a.term_ont_id = termrel_term_1_id
+			  and b.term_ont_id = termrel_term_2_id
+			  and termrel_term_1_Zdb_id = a.term_zdb_id
+			  and termrel_term_2_zdb_id = b.term_zdb_id
+			  and term_relationship.termrel_type = tmp_rels.termrel_type)
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
 			and term_zdb_id = termrel_term_1_zdb_id);
