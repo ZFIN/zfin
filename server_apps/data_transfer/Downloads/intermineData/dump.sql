@@ -1,6 +1,8 @@
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/mutagenMutagee/mutagenMutagee.txt"
-select featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee
-  from feature_assay;
+select featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee, feature_type
+  from feature_assay,
+ outer (feature)
+ where feature_zdb_id = featassay_feature_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/cleanPhenotype/cleanPhenotype.txt"
 select mfs_mrkr_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id
@@ -233,8 +235,10 @@ union
       where geno_is_wildtype = 't';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_features/1features.txt"
-  select feature_zdb_id, feature_name, feature_abbrev, feature_type, feature_lab_prefix_id from feature where not exists (Select 'x' from genotype_Feature
-  	 		where genofeat_feature_zdb_id = feature_zdb_id);
+  select feature_zdb_id, feature_name, feature_abbrev, feature_type, feature_lab_prefix_id, featassay_mutagen, featassay_mutagee from feature, feature_Assay
+  where not exists (Select 'x' from genotype_Feature
+  	 		where genofeat_feature_zdb_id = feature_zdb_id)
+ and featassay_feature_zdb_id = feature_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_fmrels/1fmrels.txt"
   select feature_marker_relationship.*,feature_type from feature_marker_relationship, feature
