@@ -1,3 +1,7 @@
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/mutagenMutagee/mutagenMutagee.txt"
+select featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee
+  from feature_assay;
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/cleanPhenotype/cleanPhenotype.txt"
 select mfs_mrkr_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id
  from mutant_fast_search, genotype_experiment
