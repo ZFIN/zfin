@@ -74,7 +74,7 @@ select zdb_id, load_pub_zdb_id
   from ncbi_gene_load;
 
 ! echo "Remove the attribution of the manually curated GenBank db_link records that are not attributed to load publication"
-delete from record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+delete from record_attribution
  where exists(select "x" from manually_curated_GenBank_acc 
                where recattrib_data_zdb_id = dblink_zdb_id 
                  and recattrib_source_zdb_id = non_load_pub_zdb_id);
@@ -86,7 +86,7 @@ select dblink_zdb_id, load_pub_zdb_id
 
 ! echo "Dump all the GenPept accession associated with genes at ZFIN that are still attributed to a non-load pub"
 
-unload to "reportNonLoadPubGenPept" 
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/reportNonLoadPubGenPept" 
 select recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid 
   from db_link, record_attribution 
  where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42" 

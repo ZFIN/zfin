@@ -138,11 +138,11 @@ select count(gene) as numberOfGenesWithRNAevidence from tmp_genes_supported_by_r
 
 !echo 'Dump the list of genes supported by GenBank RNA sequenecs, as the start set on ZFIN end for mapping'
 
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/toMap.unl' select distinct gene from tmp_genes_supported_by_rna order by gene;
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toMap.unl' select distinct gene from tmp_genes_supported_by_rna order by gene;
 
 !echo 'Dump the delete list'
 
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/EntrezGene/toDelete.unl' select * from pre_delete order by dblink_loaded_zdb_id;
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toDelete.unl' select * from pre_delete order by dblink_loaded_zdb_id;
 
 --rollback work;
 
