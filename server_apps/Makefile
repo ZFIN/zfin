@@ -24,7 +24,7 @@ TARGETDIR = $(TARGETROOT)/server_apps
 SUBDIRS = apache cron data_transfer mapimage sysexecs WebSiteTools \
 	DB_maintenance Reports quicksearch 
 
-STATICS = ZFINPerlModules.pm
+GENERICS = ZFINPerlModules.pm
 
 MIRROR_SUBDIRS = WebSiteTools
 
