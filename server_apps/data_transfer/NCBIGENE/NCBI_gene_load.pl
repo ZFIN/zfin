@@ -1981,10 +1981,11 @@ foreach $GenBankRNA (sort keys %accNCBIsupportingOnly1) {
 # get the Genpept accessions and the attribututed pulications that are not the load publications 
 
 $sqlGenPeptAttributedToNonLoadPub = 'select dblink_acc_num, dblink_zdb_id, recattrib_source_zdb_id 
-                                    from record_attribution, db_link 
-                                   where recattrib_data_zdb_id = dblink_zdb_id 
-                                     and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42"
-                                     and recattrib_source_zdb_id not in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2");';
+                                       from record_attribution, db_link 
+                                      where recattrib_data_zdb_id = dblink_zdb_id 
+                                        and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42"
+                                        and dblink_linked_recid like "ZDB-GENE%"
+                                        and recattrib_source_zdb_id not in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2");';
                                                                 
 $curGenPeptAttributedToNonLoadPub = $handle->prepare($sqlGenPeptAttributedToNonLoadPub);
 
@@ -2046,7 +2047,7 @@ foreach $GenPept (sort keys %GenPeptNCBIgeneIds) {
           
           if (exists($GenPeptAttributedToNonLoadPub{$GenPept})) {
             print TOATTRIBUTE "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|$GenPeptAttributedToNonLoadPub{$GenPept}|$pubMappedbasedOnRNA|\n"; 
-            print STATS "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|$GenPeptAttributedToNonLoadPub{$GenPept}|$pubMappedbasedOnRNA|\n"; 
+            print STATS "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}\t$pubMappedbasedOnRNA\n"; 
             $ctToAttribute++;
           }          
       } 
@@ -2059,7 +2060,7 @@ foreach $GenPept (sort keys %GenPeptNCBIgeneIds) {
           
           if (exists($GenPeptAttributedToNonLoadPub{$GenPept})) {
             print TOATTRIBUTE "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|$GenPeptAttributedToNonLoadPub{$GenPept}|$pubMappedbasedOnVega|\n"; 
-            print STATS "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}|$pubMappedbasedOnVega|\n";
+            print STATS "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}\t$pubMappedbasedOnVega\n";
             $ctToAttribute++;
           }          
       } 
@@ -2075,9 +2076,9 @@ print LOG "Add load attribution for the $ctToAttribute manually curated GenBank 
 # ----- get all the Genpept accessions associated with gene at ZFIN, and those with multiple ZFIN genes ----------------------------
 
 $sqlAllGenPeptWithGeneZFIN = 'select dblink_acc_num, dblink_linked_recid 
-                                from db_link dblk1 
-                               where dblk1.dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42" 
-                                 and dblk1.dblink_linked_recid like "ZDB-GENE%";';
+                                from db_link
+                               where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42" 
+                                 and dblink_linked_recid like "ZDB-GENE%";';
                                                                 
 $curAllGenPeptWithGeneZFIN = $handle->prepare($sqlAllGenPeptWithGeneZFIN);
 
@@ -2125,7 +2126,7 @@ print LOG "\nctAllGenPeptWithGeneZFIN = $ctAllGenPeptWithGeneZFIN\n\n";
 
 print LOG "\nctGenPeptWithMultipleZDBgene = $ctGenPeptWithMultipleZDBgene\n\n";
 
-print STATS "-----The GenBank accessions loaded but also associated with other ZFIN gene(s)----\n\n";
+print STATS "-----The GenBank accessions to be loaded but also associated with other ZFIN gene(s)----\n\n";
 print STATS "GenPept \t mapped gene \tother gene(s)\n";
 print STATS "--------\t-------------\t-------------\n";
 
@@ -2291,10 +2292,81 @@ print LOG "\nDone with the deltion and loading!\n\n";
 &sendLoadLogs;
 
 #-------------------------------------------------------------------------------------------------
-# Step 9: Log GenPept accessions associated with ZFIN genes still attributed to a non-load pub
-# And do record counts after the loading is done, and report statistics
+# Step 9: Report the GenPept accessions associated with multiple ZFIN genes after the load.
+# Log GenPept accessions associated with ZFIN genes still attributed to a non-load pub.
+# And do the record counts after the load, and report statistics.
 #-------------------------------------------------------------------------------------------------
 
+# ----- AFTER THE LOAD, get all the Genpept accessions associated with gene at ZFIN, and those with multiple ZFIN genes ---------
+
+$sqlAllGenPeptWithGeneAfterLoad = 'select dblink_acc_num, dblink_linked_recid 
+                                     from db_link 
+                                    where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-42" 
+                                      and dblink_linked_recid like "ZDB-GENE%";';
+                                                                
+$curAllGenPeptWithGeneAfterLoad = $handle->prepare($sqlAllGenPeptWithGeneAfterLoad);
+
+$curAllGenPeptWithGeneAfterLoad->execute;
+
+$curAllGenPeptWithGeneAfterLoad->bind_columns(\$GenPept,\$geneZdbId);
+
+# use the following hash to store all the GenPept accession stored at ZFIN that are assoctied with gene after the load
+# key: GenPept accession
+# value: gene zdb id
+
+%allGenPeptWithGeneAfterLoad = ();
+
+# a hash to store GenPept accessions and the multiple related ZFIN gene Ids after the load
+# key: GenPept accession
+# value: reference to an array of gene zdb id
+
+%GenPeptWithMultipleZDBgeneAfterLoad = ();
+
+while ($curAllGenPeptWithGeneAfterLoad->fetch) {
+  
+  if (exists($GenPeptWithMultipleZDBgeneAfterLoad{$GenPept}) || 
+       (exists($allGenPeptWithGeneAfterLoad{$GenPept}) && $allGenPeptWithGeneAfterLoad{$GenPept} ne $geneZdbId)) {      
+        
+        if (!exists($GenPeptWithMultipleZDBgeneAfterLoad{$GenPept})) {  
+            $firstGenPept = $allGenPeptWithGeneAfterLoad{$GenPept};
+            $ref_arrayZDBgeneIds = [$firstGenPept,$geneZdbId];
+            $GenPeptWithMultipleZDBgeneAfterLoad{$GenPept} = $ref_arrayZDBgeneIds;           
+        } else {      
+            $ref_arrayZDBgeneIds = $GenPeptWithMultipleZDBgeneAfterLoad{$GenPept};
+            push(@$ref_arrayZDBgeneIds, $geneZdbId);
+        }
+   }
+
+  $allGenPeptWithGeneAfterLoad{$GenPept} = $geneZdbId;
+}
+
+$curAllGenPeptWithGeneAfterLoad->finish(); 
+
+$ctAllGenPeptWithGeneZFINafterLoad = scalar(keys %allGenPeptWithGeneAfterLoad);
+
+$ctGenPeptWithMultipleZDBgeneAfterLoad = scalar(keys %GenPeptWithMultipleZDBgeneAfterLoad);
+
+print LOG "\nctAllGenPeptWithGeneZFINafterLoad = $ctAllGenPeptWithGeneZFINafterLoad\n\n";
+
+print LOG "\nctGenPeptWithMultipleZDBgeneAfterLoad = $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n";
+
+print STATS "-----The GenBank accessions after the load but still associated with other ZFIN gene(s)----\n\n";
+print STATS "GenPept \t mapped gene \tother gene(s)\n";
+print STATS "--------\t-------------\t-------------\n";
+
+$ctGenPeptWithMultipleZDBgeneAfterLoad = 0;
+foreach $GenPept (sort keys %GenPeptWithMultipleZDBgeneAfterLoad) {
+    $ref_arrayZDBgeneIds = $GenPeptWithMultipleZDBgeneAfterLoad{$GenPept};
+    print STATS "$GenPept\t$GenPeptsToLoad{$GenPept}\t@$ref_arrayZDBgeneIds\n";
+    $ctGenPeptWithMultipleZDBgeneAfterLoad++;
+}
+print STATS "-----------------------------------------\nTotal: $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n\n";
+
+print LOG "\nctGenPeptWithMultipleZDBgeneAfterLoad = $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n";
+
+#-------------------------------------------------------------------------------------------------
+# Log GenPept accessions associated with ZFIN genes still attributed to a non-load pub.
+#-------------------------------------------------------------------------------------------------
 print LOG "\n------GenPept accessions with ZFIN genes still attributed to non-load publication ----------\n\n";
 
 open (NONLOADPUBGENPPEPT, "reportNonLoadPubGenPept") ||  die "Cannot open reportNonLoadPubGenPept : $!\n";
@@ -2311,6 +2383,10 @@ foreach $line (@lines) {
 close NONLOADPUBGENPPEPT;
 
 print LOG "--------------------------\nTotal: $ctGenPeptNonLoadPub\n\n\n";
+
+#-------------------------------------------------------------------------------------------------
+# Do the record counts after the load, and report statistics.
+#-------------------------------------------------------------------------------------------------
 
 $sql = 'select mrkr_zdb_id, mrkr_abbrev from marker
          where mrkr_zdb_id like "ZDB-GENE%" 
