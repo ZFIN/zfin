@@ -55,7 +55,6 @@ system("/bin/rm -f report*");
 system("/bin/rm -f toDelete.unl");
 system("/bin/rm -f toMap.unl");
 system("/bin/rm -f toLoad.unl");
-system("/bin/rm -f toAttribute.unl");
 system("/bin/rm -f length.unl");
 system("/bin/rm -f noLength.unl");
 system("/bin/rm -f seq.fasta");
@@ -1649,7 +1648,7 @@ print STATS "\nMapping result statistics: number of N:1 (ZFIN to NCBI) - $ctNtoO
 print STATS "\nMapping result statistics: number of N:N (NCBI to ZFIN) - $ctNtoNfromNCBI\n\n";
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of N to N";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|GO_EMAIL_CURATOR|-->","$subject","reportNtoN");
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","reportNtoN");
 
 #--------------------- report 1:N ---------------------------------------------
 
@@ -1672,7 +1671,7 @@ foreach $zdbId (sort keys %oneToN) {
 close ONETON;
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of 1 to N";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|GO_EMAIL_CURATOR|-->","$subject","reportOneToN");
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","reportOneToN");
 
 #------------------- report N:1 -------------------------------------------------
 
@@ -1695,7 +1694,7 @@ foreach $ncbiId (sort keys %nToOne) {
 close NTOONE;
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of N to 1";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|GO_EMAIL_CURATOR|-->","$subject","reportNtoOne");
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","reportNtoOne");
 
 ##-----------------------------------------------------------------------------------
 ## Step 6: map ZFIN gene records to NCBI gene Ids based on common Vega Gene Id
@@ -1974,9 +1973,9 @@ foreach $GenBankRNA (sort keys %accNCBIsupportingOnly1) {
   }
 }
 
-#------------------------------------------------------------------------------------------------------------------------------------------
-#  write GenPept accessions with mapped genes onto toLoad.unl; or, in some case, write the GenPept accessions attributed to toAttribute.unl
-#------------------------------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------
+#  write GenPept accessions with mapped genes onto toLoad.unl
+#---------------------------------------------------------------------------------------
 
 # get the Genpept accessions and the attribututed pulications that are not the load publications 
 
@@ -2020,7 +2019,7 @@ $ctGenPeptAttributedToNonLoadPub = scalar(keys %GenPeptAttributedToNonLoadPub);
 
 print LOG "\nctGenPeptAttributedToNonLoadPub = $ctGenPeptAttributedToNonLoadPub\n\n";
 
-#-------- open toAttribute.unl file for those GenBank accessions attributed to non-load pub but found on the load list -------
+#-------- deal with those GenBank accessions attributed to non-load publication -------
 
 # use the following hash to store GenPept accessions to be loaded
 # key: GenPept accession number
@@ -2028,13 +2027,13 @@ print LOG "\nctGenPeptAttributedToNonLoadPub = $ctGenPeptAttributedToNonLoadPub\
 
 %GenPeptsToLoad = ();
  
-open (TOATTRIBUTE, ">toAttribute.unl") ||  die "Cannot open toAttribute.unl : $!\n";
+open (MORETODELETE, ">>toDelete.unl") ||  die "Cannot open toDelete.unl : $!\n";
 
 $ctToAttribute = 0;
 
-print STATS "\nThe GenPept accessions used to attribute to non-load publication now attribute to load pub:\n\n";
-print STATS "GenPept\tZFIN gene Id\tnon-load pub\tload pub\n";
-print STATS "-------\t------------\t------------\t--------\n";
+print LOG "\nThe GenPept accessions used to attribute to non-load publication now attribute to load pub:\n\n";
+print LOG "GenPept\tZFIN gene Id\tnon-load pub\tload pub\n";
+print LOG "-------\t------------\t------------\t--------\n";
 
 foreach $GenPept (sort keys %GenPeptNCBIgeneIds) {
   $NCBIgeneId = $GenPeptNCBIgeneIds{$GenPept};
@@ -2043,35 +2042,37 @@ foreach $GenPept (sort keys %GenPeptNCBIgeneIds) {
       if (!exists($geneAccFdbcont{$zdbGeneId . $GenPept . $fdcontGenPept})) {
           print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnRNA|\n"; 
           $ctToLoad++;
-          $GenPeptsToLoad{$GenPept} = $zdbGeneId;
-          
-          if (exists($GenPeptAttributedToNonLoadPub{$GenPept})) {
-            print TOATTRIBUTE "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|$GenPeptAttributedToNonLoadPub{$GenPept}|$pubMappedbasedOnRNA|\n"; 
-            print STATS "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}\t$pubMappedbasedOnRNA\n"; 
+          $GenPeptsToLoad{$GenPept} = $zdbGeneId;        
+      } else {
+          if (exists($GenPeptAttributedToNonLoadPub{$GenPept}) && exists($GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept})) {
+            print MORETODELETE "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|\n";
+            print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnRNA|\n";
+            print LOG "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}\t$pubMappedbasedOnRNA\n"; 
             $ctToAttribute++;
-          }          
-      } 
+          }       
+      }
   } elsif (exists($oneToOneViaVega{$NCBIgeneId})) {
       $zdbGeneId = $oneToOneViaVega{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $GenPept . $fdcontGenPept})) {
           print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnVega|\n";  
           $ctToLoad++;
-          $GenPeptsToLoad{$GenPept} = $zdbGeneId;
-          
-          if (exists($GenPeptAttributedToNonLoadPub{$GenPept})) {
-            print TOATTRIBUTE "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|$GenPeptAttributedToNonLoadPub{$GenPept}|$pubMappedbasedOnVega|\n"; 
-            print STATS "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}\t$pubMappedbasedOnVega\n";
+          $GenPeptsToLoad{$GenPept} = $zdbGeneId;     
+      } else {
+          if (exists($GenPeptAttributedToNonLoadPub{$GenPept}) && exists($GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept})) {
+            print MORETODELETE "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|\n";
+            print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnVega|\n";
+            print LOG "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}\t$pubMappedbasedOnVega\n";
             $ctToAttribute++;
-          }          
-      } 
+          }       
+      }
   }
 }
 
-close TOATTRIBUTE;
+close MORETODELETE;
 
-print STATS "---------------------------------------------------------------\nTotal: $ctToAttribute\n\n";
+print LOG "---------------------------------------------------------------\nTotal: $ctToAttribute\n\n";
 
-print LOG "Add load attribution for the $ctToAttribute manually curated GenBank db_link records.\n\n";
+print STATS "\nNon-load attribution for the $ctToAttribute manually curated GenPept db_link records get replaced by;\n 1 of the 2 load pubs (depending on mapping type).\n\n";
 
 # ----- get all the Genpept accessions associated with gene at ZFIN, and those with multiple ZFIN genes ----------------------------
 
@@ -2126,21 +2127,21 @@ print LOG "\nctAllGenPeptWithGeneZFIN = $ctAllGenPeptWithGeneZFIN\n\n";
 
 print LOG "\nctGenPeptWithMultipleZDBgene = $ctGenPeptWithMultipleZDBgene\n\n";
 
-print STATS "-----The GenBank accessions to be loaded but also associated with other ZFIN gene(s)----\n\n";
-print STATS "GenPept \t mapped gene \tother gene(s)\n";
-print STATS "--------\t-------------\t-------------\n";
+print LOG "-----The GenBank accessions to be loaded but also associated with multiple ZFIN genes----\n\n";
+print LOG "GenPept \t mapped gene \tall associated genes\n";
+print LOG "--------\t-------------\t-------------\n";
 
 $ctGenPeptWithMultipleZDBgeneToLoad = 0;
 foreach $GenPept (sort keys %GenPeptWithMultipleZDBgene) {
   if (exists($GenPeptsToLoad{$GenPept})) {
     $ref_arrayZDBgeneIds = $GenPeptWithMultipleZDBgene{$GenPept};
-    print STATS "$GenPept\t$GenPeptsToLoad{$GenPept}\t@$ref_arrayZDBgeneIds\n";
+    print LOG "$GenPept\t$GenPeptsToLoad{$GenPept}\t@$ref_arrayZDBgeneIds\n";
     $ctGenPeptWithMultipleZDBgeneToLoad++;
   }
 }
-print STATS "-----------------------------------------\nTotal: $ctGenPeptWithMultipleZDBgeneToLoad\n\n\n";
+print LOG "-----------------------------------------\nTotal: $ctGenPeptWithMultipleZDBgeneToLoad\n\n\n";
 
-print LOG "\nctGenPeptWithMultipleZDBgeneToLoad = $ctGenPeptWithMultipleZDBgeneToLoad\n\n";
+print STATS "\nBefore the load, the total number of GenPept accessions associated with multiple ZFIN genes: $ctGenPeptWithMultipleZDBgeneToLoad\n\n";
 
 #---------------------------------------------------------------------------
 #  write GenBank DNA accessions with mapped genes onto toLoad.unl
@@ -2271,8 +2272,6 @@ print LOG "Done everything before doing the deleting and inserting\n";
 print LOG "\n$ctToDelete total number of db_link records are dropped.\n$ctToLoad total number of new records are added.\n\n";
 print STATS "\n$ctToDelete total number of db_link records are dropped.\n$ctToLoad total number of new records are added.\n\n";
 
-print STATS "\n\nDepending on the type of mapping, attribute 1 of the load publications for \n";
-
 #-----------------------------------------------------------------------------------------------------------------------
 # Step 8: execute the SQL file to do the deletion according to delete list, and do the loading according to te add list
 #-----------------------------------------------------------------------------------------------------------------------
@@ -2293,7 +2292,7 @@ print LOG "\nDone with the deltion and loading!\n\n";
 
 #-------------------------------------------------------------------------------------------------
 # Step 9: Report the GenPept accessions associated with multiple ZFIN genes after the load.
-# Log GenPept accessions associated with ZFIN genes still attributed to a non-load pub.
+# Report GenPept accessions associated with ZFIN genes still attributed to a non-load pub.
 # And do the record counts after the load, and report statistics.
 #-------------------------------------------------------------------------------------------------
 
@@ -2350,8 +2349,8 @@ print LOG "\nctAllGenPeptWithGeneZFINafterLoad = $ctAllGenPeptWithGeneZFINafterL
 
 print LOG "\nctGenPeptWithMultipleZDBgeneAfterLoad = $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n";
 
-print STATS "-----The GenBank accessions after the load but still associated with other ZFIN gene(s)----\n\n";
-print STATS "GenPept \t mapped gene \tother gene(s)\n";
+print STATS "----- After the load, the GenBank accessions associated with multiple ZFIN genes----\n\n";
+print STATS "GenPept \t mapped gene \tall associated genes\n";
 print STATS "--------\t-------------\t-------------\n";
 
 $ctGenPeptWithMultipleZDBgeneAfterLoad = 0;
@@ -2365,9 +2364,9 @@ print STATS "-----------------------------------------\nTotal: $ctGenPeptWithMul
 print LOG "\nctGenPeptWithMultipleZDBgeneAfterLoad = $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n";
 
 #-------------------------------------------------------------------------------------------------
-# Log GenPept accessions associated with ZFIN genes still attributed to a non-load pub.
+# Report GenPept accessions associated with ZFIN genes still attributed to a non-load pub.
 #-------------------------------------------------------------------------------------------------
-print LOG "\n------GenPept accessions with ZFIN genes still attributed to non-load publication ----------\n\n";
+print STATS "\n------GenPept accessions with ZFIN genes still attributed to non-load publication ----------\n\n";
 
 open (NONLOADPUBGENPPEPT, "reportNonLoadPubGenPept") ||  die "Cannot open reportNonLoadPubGenPept : $!\n";
 
@@ -2377,12 +2376,12 @@ foreach $line (@lines) {
    $ctGenPeptNonLoadPub++;
    chop($line);
    @fields = split(/\|/, $line); 
-   print LOG "$fields[0]\t$fields[1]\t$fields[2]\n";
+   print STATS "$fields[0]\t$fields[1]\t$fields[2]\n";
 }
 
 close NONLOADPUBGENPPEPT;
 
-print LOG "--------------------------\nTotal: $ctGenPeptNonLoadPub\n\n\n";
+print STATS "--------------------------\nTotal: $ctGenPeptNonLoadPub\n\n\n";
 
 #-------------------------------------------------------------------------------------------------
 # Do the record counts after the load, and report statistics.
@@ -2513,6 +2512,8 @@ $sql = 'select distinct dblink_linked_recid
 
 $numGenesGenBankAfter = ZFINPerlModules->countData($sql);
 
+print STATS "\n********* Percentage change of various categories of records *************\n\n";
+
 print STATS "number of db_link records with gene     \t";
 print STATS "before load\t";
 print STATS "after load\t";
@@ -2629,7 +2630,7 @@ print STATS "\ntotal: $ctGenesGainRefSeq\n\n\n";
 close STATS;
 
 $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: Statistics";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|GO_EMAIL_CURATOR|-->","$subject","reportStatistics");
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject","reportStatistics");
 
 print LOG "\n\nAll done! \n\n\n";
 

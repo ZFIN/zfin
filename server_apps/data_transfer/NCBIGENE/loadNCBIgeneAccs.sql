@@ -31,16 +31,8 @@ load from 'toLoad.unl'
   
 update ncbi_gene_load set zdb_id = get_id("DBLINK");
 
-create temp table manually_curated_GenBank_acc (    
-  dblink_zdb_id          varchar(50) not null,
-  non_load_pub_zdb_id    varchar(50) not null,
-  load_pub_zdb_id        varchar(50) not null
-) with no log;
-
-load from 'toAttribute.unl'
-  insert into manually_curated_GenBank_acc;
-
 !echo 'CHECK: how many RefSeq and GenBank accessions missing length before the load'
+
 select count(dblink_zdb_id) as noLengthBefore
   from db_link
  where dblink_length is null
@@ -48,10 +40,12 @@ select count(dblink_zdb_id) as noLengthBefore
    and dblink_linked_recid like "ZDB-GENE%";
 
 !echo 'Delete from zdb_active_data table and cause delete cascades on db_link records'
+
 delete from zdb_active_data
  where exists (select "x" from ncbi_gene_delete where zactvd_zdb_id = delete_dblink_zdb_id);
 
 !echo 'Delete from record_attribution table for those manually curated records but attributed to load publication'
+
 delete from record_attribution
  where recattrib_source_zdb_id in ("ZDB-PUB-020723-3","ZDB-PUB-130725-2")
    and exists (select "x" from db_link
@@ -61,28 +55,20 @@ delete from record_attribution
               );
 
 !echo 'Insert into zdb_active_data the new zdb ids of db_link records'
+
 insert into zdb_active_data select zdb_id from ncbi_gene_load;
 
 !echo 'Insert the new records into db_link table'
+
 insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id) 
 select mapped_zdb_gene_id, ncbi_accession, "uncurated: NCBI gene load " || TODAY, zdb_id, seqence_length, fdbcont_zdb_id 
   from ncbi_gene_load;
     
 ! echo "Attribute the new db_link records to one of the 2 load publications, depending on what kind of mapping"
+
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 select zdb_id, load_pub_zdb_id 
   from ncbi_gene_load;
-
-! echo "Remove the attribution of the manually curated GenBank db_link records that are not attributed to load publication"
-delete from record_attribution
- where exists(select "x" from manually_curated_GenBank_acc 
-               where recattrib_data_zdb_id = dblink_zdb_id 
-                 and recattrib_source_zdb_id = non_load_pub_zdb_id);
-
-! echo "Attribute GenBank db_link records, which used to be attributed to a non-load pub but removed, to one of the 2 load publications, depending on what kind of mapping"
-insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-select dblink_zdb_id, load_pub_zdb_id 
-  from manually_curated_GenBank_acc;
 
 ! echo "Dump all the GenPept accession associated with genes at ZFIN that are still attributed to a non-load pub"
 
@@ -97,6 +83,7 @@ group by recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid
 order by recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid;
 
 !echo 'CHECK: how many RefSeq and GenBank accessions missing length after the load'
+
 select count(dblink_zdb_id) as noLengthAfter
   from db_link
  where dblink_length is null
@@ -104,6 +91,7 @@ select count(dblink_zdb_id) as noLengthAfter
    and dblink_linked_recid like "ZDB-GENE%";
 
 !echo 'CHECK: how many loaded GenBank accessions missing length after the load'
+
 select count(dblink_zdb_id) as noLenLoadedGenBank
   from db_link
  where dblink_length is null
