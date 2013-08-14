@@ -16,7 +16,7 @@ echo 'unload to /tmp/extentCheck.txt select * from mon_extents;' | /private/apps
 
 echo "sending RED alert (extents exceed 10) email." ;
 
-/local/bin/mutt -a /tmp/extentCheck.txt -s "extent check for almdb" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+/local/bin/mutt -a /tmp/extentCheck.txt -s "extent check for almdb" -- <!--|DB_OWNER|-->@zfin.org < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 
 echo "delete from mon_extents" | /private/apps/Informix/informix/bin/dbaccess sysadmin;
 
