@@ -2,6 +2,7 @@ package org.zfin.sequence.blast;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.blast.presentation.XMLBlastBean;
 import org.zfin.sequence.blast.presentation.XMLBlastViewController;
 
@@ -178,5 +179,18 @@ public class BlastNonDBTest {
         }
         assertTrue(xmlBlastViewController.isValidBlastResultLocation(xmlBlastBean));
         assertTrue(xmlBlastBean.getResultFile().delete());
+    }
+
+    @Test
+    public void createBlastTempFile() {
+        try {
+            File localFile = File.createTempFile("test",".fa",new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value())) ;
+            localFile.delete();
+        } catch (IOException e) {
+            String failMessage = String.format("!!!! Couldn't create file! Check permissions for "
+                    + ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value());
+            logger.error(failMessage);
+            fail(failMessage) ;
+        }
     }
 }
