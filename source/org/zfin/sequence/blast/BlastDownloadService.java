@@ -50,7 +50,7 @@ public class BlastDownloadService {
                 Sequence mrphSeq = DNATools.createDNASequence(morpholino.getSequence(),header) ;
                 sequenceDB.addSequence(mrphSeq);
             } catch (BioException e) {
-                logger.error("Failed to add sequence for morpholino: "+ morpholino,e);
+                logger.error("Failed to add sequence for morpholino: "+ header,e);
             }
         }
 
