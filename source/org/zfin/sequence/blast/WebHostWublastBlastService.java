@@ -71,7 +71,7 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
         try {
             backupDatabase(database);
             getLock(database);
-            File fastFilePath = File.createTempFile("fasta", ".fa");
+            File fastFilePath = File.createTempFile("fasta", ".fa", new File("/research/zblastfiles/zmore/devBlastRegeneration/"));
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fastFilePath));
             bufferedWriter.write(sequence.getFormattedData());
             bufferedWriter.close();
