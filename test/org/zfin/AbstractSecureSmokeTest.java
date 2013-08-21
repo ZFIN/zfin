@@ -108,6 +108,7 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
         try {
             loginButton.click();
         } catch (Throwable t) {
+              logger.error("Couldn't login %n" + t.toString());
 //            t.printStackTrace();
             // ignore the 404 error
         }
