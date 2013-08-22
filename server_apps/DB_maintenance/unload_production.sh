@@ -37,6 +37,9 @@ if ($HOST != "zygotix") then
     /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pth/$dirname
     /bin/cp -pr <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname $pthLinux/$dirname
     # sed -i would be easier but does not work on solaris.
+    /bin/sed 's/"bob"/"informix"/g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
+    /bin/rm $pthLinux/$dirname/schemaFile.sql
+    /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
     /bin/sed 's@/research/zprod/www_homes/zfin.org/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
     /bin/rm $pthLinux/$dirname/schemaFile.sql
     /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
@@ -55,6 +58,9 @@ else
     chgrp -R fishadmin $pth/$dirname
     chmod -R g+rw $pth/$dirname
     /bin/cp -pr $pth/$dirname $pthLinux/$dirname
+    /bin/sed 's/"bob"/"informix"/g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
+    /bin/rm $pthLinux/$dirname/schemaFile.sql
+    /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
     /bin/sed 's@/research/zcentral/www_homes/<!--|INSTANCE|-->/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
     /bin/rm $pthLinux/$dirname/schemaFile.sql
     /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
