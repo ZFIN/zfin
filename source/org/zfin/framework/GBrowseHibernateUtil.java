@@ -85,6 +85,8 @@ public class GBrowseHibernateUtil {
     public static Session currentSession() {
         Session s = localGBrowseSession.get();
         if (s == null) {
+            if(gbrowseSessionFactory == null)
+                initForTest();
             s = gbrowseSessionFactory.openSession();
             localGBrowseSession.set(s);
         }
