@@ -6,7 +6,7 @@ into temp tmp_id;
 insert into foreign_db_contains (fdbcont_zdb_id, fdbcont_fdb_db_id,
        	    			fdbcont_fdbdt_id,fdbcont_organism_common_name,
 				fdbcont_primary_blastdb_zdb_id)
- select id2,64,2,'Zebrafish','ZDB-BLASTDB-130401-2'
+ select id2,7,2,'Zebrafish','ZDB-BLASTDB-130401-2'
    from tmp_id;
 
 create temp table tmp_dblink (id varchar(50), dblink_linked_Recid varchar(50), prot_acc varchar(50))
