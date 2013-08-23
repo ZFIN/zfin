@@ -45,8 +45,8 @@ public abstract class AbstractWublastBlastService implements BlastService {
     protected String keyPath = "";
 
     private int maxAttempts = 5;
-    public static final Pattern nucleotideSequencePattern = Pattern.compile("[ATCGUMKRYVBHDWSNatcgumkryvbhdwsn\\-]{40,}") ;
-    public static final Pattern proteinSequencePattern = Pattern.compile("[LSEFAVGKTRPDIQNFYHMCWBZJXlsefavgktrpdiqnfyhmcwbzjx\\-\\*]{40,}") ;
+    public static final Pattern nucleotideSequencePattern = Pattern.compile("[ATCGUMKRYVBHDWSNatcgumkryvbhdwsn\\-]{40,}");
+    public static final Pattern proteinSequencePattern = Pattern.compile("[LSEFAVGKTRPDIQNFYHMCWBZJXlsefavgktrpdiqnfyhmcwbzjx\\-\\*]{40,}");
 
 
     // regeneration methods
@@ -302,8 +302,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             for (Database database : databases) {
                 regenerateDatabaseFromValidAccessions(database);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to regenerate curated sequences", e);
             throw new BlastDatabaseException("Failed to regenerate CURATED blast databases", e);
         }
@@ -442,7 +441,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             throw new BlastDatabaseException("more accession/dblinks [" + numAccessions + "] than sequences [" + numSequences + "] in blast db[" + database.getAbbrev() + "]");
         }
         if (numAccessions != numSequences) {
-            logger.warn("Accessions != not sequences found: [" + numAccessions + "]!=[" + numSequences + "]");
+            logger.warn(database.getDisplayName() + ": accessions [" + numAccessions + "] and sequences in Blast database [" + numSequences + "]");
         }
     }
 
@@ -492,11 +491,9 @@ public abstract class AbstractWublastBlastService implements BlastService {
             Set<String> differences = new HashSet<String>(CollectionUtils.disjunction(validAccessions, blastAccessions));
             File accessionDumpFile = createAccessionDump(differences, database);
             logger.error(differences.size() + " accessions missing from blast database written to: " + accessionDumpFile);
-        }
-        catch (BioException io) {
+        } catch (BioException io) {
             throw new BlastDatabaseException("BioException database: " + database + " is invalid", io);
-        }
-        catch (IOException io) {
+        } catch (IOException io) {
             throw new BlastDatabaseException("database: " + database + " is invalid", io);
         }
     }
@@ -511,11 +508,11 @@ public abstract class AbstractWublastBlastService implements BlastService {
     protected void regenerateDatabaseFromValidAccessions(Database database) throws BlastDatabaseException {
         Set<String> validAccessions = blastRepository.getAllValidAccessionNumbers(database);
         List<String> previousAccession = blastRepository.getPreviousAccessionsForDatabase(database);
-        if(CollectionUtils.isEqualCollection(validAccessions,previousAccession)){
+        if (CollectionUtils.isEqualCollection(validAccessions, previousAccession)) {
             logger.debug("collections have identical accessions for size " + validAccessions.size() + " for[" + database.getAbbrev() + "]");
-            return ;
+            return;
         }
-        logger.info("need to regenerate, # of valid accessions: " + validAccessions.size() + " for[" + database.getAbbrev() + "] vs previous: "+ previousAccession.size());
+        logger.info("need to regenerate, # of valid accessions: " + validAccessions.size() + " for[" + database.getAbbrev() + "] vs previous: " + previousAccession.size());
         if (validAccessions.size() == 0) {
             logger.warn("No valid accessions dump from database[" + database.getName() + "]");
             return;
@@ -531,9 +528,8 @@ public abstract class AbstractWublastBlastService implements BlastService {
             createDatabaseFromFasta(database, fastaFile);
 
             validateDatabase(database);
-            updatePreviousAccessions(database,validAccessions,previousAccession);
-        }
-        catch (Exception e) {
+            updatePreviousAccessions(database, validAccessions, previousAccession);
+        } catch (Exception e) {
             try {
                 restoreDatabase(database);
             } catch (IOException e1) {
@@ -547,11 +543,11 @@ public abstract class AbstractWublastBlastService implements BlastService {
     protected void updatePreviousAccessions(Database database, Collection<String> validAccessions,
                                             Collection<String> previousAccession) {
         // nothing to update, just drop the old and add the new
-        Collection<String> accessionToAdd = CollectionUtils.subtract(validAccessions,previousAccession) ;
-        blastRepository.addPreviousAccessions(database,accessionToAdd) ;
+        Collection<String> accessionToAdd = CollectionUtils.subtract(validAccessions, previousAccession);
+        blastRepository.addPreviousAccessions(database, accessionToAdd);
 
-        Collection<String> accessionToRemove = CollectionUtils.subtract(previousAccession,validAccessions) ;
-        blastRepository.removePreviousAccessions(database,accessionToRemove) ;
+        Collection<String> accessionToRemove = CollectionUtils.subtract(previousAccession, validAccessions);
+        blastRepository.removePreviousAccessions(database, accessionToRemove);
     }
 
 
@@ -813,12 +809,10 @@ public abstract class AbstractWublastBlastService implements BlastService {
                 logger.fatal("Failed to xdget: " + execProcess.getStandardError());
             }
             return execProcess.getSequences();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to retrieve sequences with command [" + commandList.toString().toString().replaceAll(",", " ") + "\n", e);
             return new ArrayList<Sequence>();
-        }
-        finally {
+        } finally {
             unlockForce(blastDatabase);
         }
     }
@@ -891,21 +885,20 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
 
-    public String removeLeadingNumbers(String fileData,XMLBlastBean.SequenceType sequenceType) {
-        String[] lines = fileData.split("[\n]") ;
-        logger.debug("# lines: "+ lines.length);
-        if(lines.length==1){
-            if(sequenceType==XMLBlastBean.SequenceType.NUCLEOTIDE){
-                lines = fixDeflineNucleotideSequence(lines[0]) ;
-            }
-            else{
-                lines = fixDeflineProteinSequence(lines[0]) ;
+    public String removeLeadingNumbers(String fileData, XMLBlastBean.SequenceType sequenceType) {
+        String[] lines = fileData.split("[\n]");
+        logger.debug("# lines: " + lines.length);
+        if (lines.length == 1) {
+            if (sequenceType == XMLBlastBean.SequenceType.NUCLEOTIDE) {
+                lines = fixDeflineNucleotideSequence(lines[0]);
+            } else {
+                lines = fixDeflineProteinSequence(lines[0]);
             }
         }
-        StringBuilder sb = new StringBuilder() ;
-        for(String line: lines){
-            line = line.trim() ;
-            if(line.indexOf(">")<0){
+        StringBuilder sb = new StringBuilder();
+        for (String line : lines) {
+            line = line.trim();
+            if (line.indexOf(">") < 0) {
                 line = line.replaceAll("[0-9, ]", "").trim();
             }
             sb.append(line).append("\n");
@@ -918,38 +911,40 @@ public abstract class AbstractWublastBlastService implements BlastService {
     /**
      * If the sequence is only a single line (no return after the defline), it looks for the sequence and
      * automatically breaks the line.
+     *
      * @param line Unformatted sequence.
      * @return The first string is the defline, the second string is the sequence.
      */
     public String[] fixDeflineNucleotideSequence(String line) {
-        Matcher m = nucleotideSequencePattern.matcher(line) ;
-        if(m.find()){
-            String[] returnStrings = new String[2] ;
-            returnStrings[0] = line.substring(0,m.start()) ;
-            returnStrings[1] = line.substring(m.start()) ;
-            return returnStrings ;
+        Matcher m = nucleotideSequencePattern.matcher(line);
+        if (m.find()) {
+            String[] returnStrings = new String[2];
+            returnStrings[0] = line.substring(0, m.start());
+            returnStrings[1] = line.substring(m.start());
+            return returnStrings;
         }
-        String[] returnString = new String[1] ;
-        returnString[0] = line  ;
-        return returnString ;
+        String[] returnString = new String[1];
+        returnString[0] = line;
+        return returnString;
     }
 
     /**
      * If the sequence is only a single line (no return after the defline), it looks for the sequence and
      * automatically breaks the line.
+     *
      * @param line Unformatted sequence.
      * @return The first string is the defline, the second string is the sequence.
      */
     public String[] fixDeflineProteinSequence(String line) {
-        Matcher m = proteinSequencePattern.matcher(line) ;
-        if(m.find()){
-            String[] returnStrings = new String[2] ;
-            returnStrings[0] = line.substring(0,m.start()) ;
-            returnStrings[1] = line.substring(m.start()) ;
-            return returnStrings ;
+        Matcher m = proteinSequencePattern.matcher(line);
+        if (m.find()) {
+            String[] returnStrings = new String[2];
+            returnStrings[0] = line.substring(0, m.start());
+            returnStrings[1] = line.substring(m.start());
+            return returnStrings;
         }
-        String[] returnString = new String[1] ;
-        returnString[0] = line  ;
-        return returnString ;
+        String[] returnString = new String[1];
+        returnString[0] = line;
+        return returnString;
     }
 }
