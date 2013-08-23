@@ -76,7 +76,8 @@ public class BlastDownloadsTest extends AbstractDatabaseTest{
         assertNotNull(accessions);
         logger.info("results length: "+ accessions.length());
         // seems to be empty
-        assertEquals(0,accessions.length());
+
+        assertTrue(accessions.length() > 10);
     }
 
 
