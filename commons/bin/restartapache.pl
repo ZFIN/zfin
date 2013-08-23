@@ -7,6 +7,11 @@
 # This will sever all connections.
 #
 
+if ($^O eq "linux") {
+    system("sudo /etc/init.d/httpd restart");
+    exit();
+};
+
 BEGIN {
     $ENV{PATH}="/local/bin:/usr/bin";
     $ENV{SHELL}="/usr/bin/sh";
