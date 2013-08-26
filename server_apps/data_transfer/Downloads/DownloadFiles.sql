@@ -45,6 +45,109 @@
 -- Marker Relationship data
 --	marker1 id, marker1 symbol, marker 2 id, marker 2 symbol, relationship
 
+-- prepare phenotype data:
+-- add term_ont_ids and names and post-composed relationships
+
+! echo "Create table to hold phenotype data"
+create temp table tmp_phenotype_statement (
+       phenos_pk_id serial,
+       asuperterm_ont_id varchar(30),
+       asuperterm_name varchar(255),
+       arelationship_id varchar(30),
+       arelationship_name varchar(30),
+       asubterm_ont_id varchar(30),
+       asubterm_name varchar(255),
+       bsuperterm_ont_id varchar(30),
+       bsuperterm_name varchar(255),
+       brelationship_id varchar(30),
+       brelationship_name varchar(30),
+       bsubterm_ont_id varchar(30),
+       bsubterm_name varchar(255),
+       quality_id varchar(30),
+       quality_name varchar(255),
+       quality_tag varchar(20),
+       a_ontology_name varchar(50),
+       b_ontology_name varchar(50)
+)
+with no log;
+
+! echo "Insert all phenotype data with term_ont_ids "
+insert into tmp_phenotype_statement (phenos_Pk_id,asubterm_ont_id, asubterm_name,asuperterm_ont_id, asuperterm_name,
+bsubterm_ont_id, bsubterm_name,bsuperterm_ont_id, bsuperterm_name, quality_id, quality_name, a_ontology_name,b_ontology_name,quality_tag)
+  select phenos_Pk_id, asubterm.term_ont_id, asubterm.term_name, asuperterm.term_ont_id, asuperterm.term_name,
+         bsubterm.term_ont_id, bsubterm.term_name, bsuperterm.term_ont_id, bsuperterm.term_name,
+         quality.term_ont_id, quality.term_name,  asubterm.term_ontology, bsubterm.term_ontology, phenos_tag
+    from phenotype_statement, OUTER term as asubterm, term as asuperterm, OUTER term as bsubterm, OUTER term as bsuperterm,
+         term as quality
+    where asubterm.term_zdb_id = phenos_entity_1_subterm_zdb_id AND
+          asuperterm.term_zdb_id = phenos_entity_1_superterm_zdb_id AND
+          bsubterm.term_zdb_id = phenos_entity_2_subterm_zdb_id AND
+          bsuperterm.term_zdb_id = phenos_entity_2_superterm_zdb_id AND
+          quality.term_zdb_id = phenos_quality_zdb_id;
+
+! echo "update a relationship name"
+update tmp_phenotype_statement
+  set arelationship_name =
+(
+case
+when (asubterm_ont_id is not null AND a_ontology_name = 'biological_process')
+then
+'occurs_in'
+when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process')
+then
+'part_of'
+else
+null
+end
+);
+
+! echo "update a relationship ID"
+update tmp_phenotype_statement
+  set arelationship_id =
+(
+case
+when (asubterm_ont_id is not null AND a_ontology_name = 'biological_process')
+then
+'BFO:0000066'
+when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process')
+then
+'BFO:0000050'
+else
+null
+end
+);
+
+! echo "update b relationship name"
+update tmp_phenotype_statement
+  set brelationship_name =
+(
+case
+when (bsubterm_ont_id is not null AND b_ontology_name = 'biological_process')
+then
+'occurs_in'
+when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process')
+then
+'part_of'
+else
+null
+end
+);
+
+! echo "update b relationship ID"
+update tmp_phenotype_statement
+  set brelationship_id =
+(
+case
+when (bsubterm_ont_id is not null AND b_ontology_name = 'biological_process')
+then
+'BFO:0000066'
+when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process')
+then
+'BFO:0000050'
+else
+null
+end
+);
 
 -- create antibody download file
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibodies2.txt'"
@@ -339,24 +442,29 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
                 where stg_zdb_id = phenox_start_stg_zdb_id),
             phenox_end_stg_zdb_id,
             (select stg_name from stage where stg_zdb_id = phenox_end_stg_zdb_id),
-              (select term_ont_id from term where term_zdb_id = phenos_entity_1_superterm_zdb_id),
-            (select term_name from term where term_zdb_id = phenos_entity_1_superterm_zdb_id),
-              (select term_ont_id from term where term_zdb_id = phenos_entity_1_subterm_zdb_id),
-            (select term_name from term where term_zdb_id = phenos_entity_1_subterm_zdb_id),
-              (select term_ont_id from term where term_zdb_id = phenos_quality_zdb_id),
-            (select term_name from term where term_zdb_id = phenos_quality_zdb_id),
-            phenos_tag,
-              (select term_ont_id from term where term_zdb_id = phenos_entity_2_superterm_zdb_id),
-            (select term_name from term where term_zdb_id = phenos_entity_2_superterm_zdb_id),
-              (select term_ont_id from term where term_zdb_id = phenos_entity_2_subterm_zdb_id),
-            (select term_name from term where term_zdb_id = phenos_entity_2_subterm_zdb_id),
-            fig_source_zdb_id,
-            gx.genox_exp_zdb_id
-  from phenotype_experiment, phenotype_statement, figure, genotype g, genotype_experiment gx
- where phenos_phenox_pk_id = phenox_pk_id
+              tps.asubterm_ont_id,
+              tps.asubterm_name,
+              tps.arelationship_id,
+              tps.arelationship_name,
+              tps.asuperterm_ont_id,
+              tps.asuperterm_name,
+              tps.quality_id,
+              tps.quality_name,
+              phenos_tag,
+              tps.bsubterm_ont_id,
+              tps.bsubterm_name,
+              tps.brelationship_id,
+              tps.brelationship_name,
+              tps.bsuperterm_ont_id,
+              tps.bsuperterm_name,
+              fig_source_zdb_id,
+              gx.genox_exp_zdb_id
+  from phenotype_experiment, phenotype_statement ps, figure, genotype g, genotype_experiment gx, tmp_phenotype_statement tps
+ where ps.phenos_phenox_pk_id = phenox_pk_id
    and phenox_genox_zdb_id = gx.genox_zdb_id
    and gx.genox_geno_zdb_id = g.geno_zdb_id
    and phenox_fig_zdb_id = fig_zdb_id
+   and ps.phenos_pk_Id = tps.phenos_pk_id
  order by geno_zdb_id, fig_source_zdb_id;
 
 -- generate a file with xpatex and associated figure zdbid's
@@ -1508,7 +1616,9 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 ;
 
 ! echo "Create tmp_dumpPheno temp table"
-create temp table tmp_dumpPheno (id varchar(50),
+create temp table tmp_dumpPheno (
+       phenos_id serial,
+       id varchar(50),
        gene_abbrev varchar(50), 
        gene_zdb_id varchar(50), 
        asuperterm_ont_id varchar(30), 
@@ -1539,8 +1649,8 @@ create temp table tmp_dumpPheno (id varchar(50),
 with no log;
 
 ! echo "Insert all tmp_pheno_gene records into tmp_dumpPheno "
-insert into tmp_dumpPheno (id,genox_id, gene_abbrev, gene_zdb_id, geno_id, mo_id, stage_start_id, stage_end_id, asuperterm_ont_id, asuperterm_name, pub_id, fig_id)
-  select distinct id, genox_zdb_id, gene_abbrev, gene_zdb_id, geno_id, mo_id, stage_start_id, stage_end_id, term.term_ont_id, term.term_name, fig_source_zdb_id, fig_zdb_id
+insert into tmp_dumpPheno (phenos_id, id,genox_id, gene_abbrev, gene_zdb_id, geno_id, mo_id, stage_start_id, stage_end_id, asuperterm_ont_id, asuperterm_name, pub_id, fig_id)
+  select distinct phenos_pk_id, id, genox_zdb_id, gene_abbrev, gene_zdb_id, geno_id, mo_id, stage_start_id, stage_end_id, term.term_ont_id, term.term_name, fig_source_zdb_id, fig_zdb_id
     from tmp_pheno_gene, phenotype_statement, phenotype_experiment, term, figure
     where id = phenos_pk_id
     and fig_zdb_id = phenox_fig_zdb_id
@@ -1548,164 +1658,33 @@ insert into tmp_dumpPheno (id,genox_id, gene_abbrev, gene_zdb_id, geno_id, mo_id
     and phenos_entity_1_superterm_zdb_id = term_zdb_id
  and whereFrom like 'pheno%';
 
-! echo "update asubterm_ont_id"
-update tmp_dumpPheno
-  set asubterm_ont_id = (Select term_ont_id from term, phenotype_statement
-      		       	 	 where phenos_pk_id = id
-				 and term_zdb_id = phenos_entity_1_subterm_zdb_id
-				 and phenos_entity_1_subterm_zdb_id is not null);
-
-! echo "update asubterm_name"
-update tmp_dumpPheno
-  set asubterm_name = (Select term_name from term, phenotype_statement
-      		       	 	 where phenos_pk_id = id
-				 and term_zdb_id = phenos_entity_1_subterm_zdb_id
-				 and phenos_entity_1_subterm_zdb_id is not null);
-
-! echo "update bsuperterm_ont_id"
-update tmp_dumpPheno
-  set bsuperterm_ont_id = (Select term_ont_id from term, phenotype_statement
-      		       	 	 where phenos_pk_id = id
-				 and term_zdb_id = phenos_entity_2_superterm_zdb_id
-				 and phenos_entity_2_superterm_zdb_id is not null);
-
-! echo "update bsuperterm_name"
-update tmp_dumpPheno
-  set bsuperterm_name = (Select term_name from term, phenotype_statement
-      		       	 	 where phenos_pk_id = id
-				 and term_zdb_id = phenos_entity_2_superterm_zdb_id
-				 and phenos_entity_2_superterm_zdb_id is not null);
-
-! echo "update bsubterm_ont_id"
-update tmp_dumpPheno
-  set bsubterm_ont_id = (Select term_ont_id from term, phenotype_statement
-      	       	 	 where phenos_pk_id = id
-				 and term_zdb_id = phenos_entity_2_subterm_zdb_id
-				 and phenos_entity_2_subterm_zdb_id is not null);
-
-! echo "update bsubterm_name"
-update tmp_dumpPheno
-  set bsubterm_name = (Select term_name from term, phenotype_statement
-      		       	 	 where phenos_pk_id = id
-				 and term_zdb_id = phenos_entity_2_subterm_zdb_id
-				 and phenos_entity_2_subterm_zdb_id is not null);
-
-! echo "update quality_ont_id"
-update tmp_dumpPheno
-  set quality_id = (Select term_ont_id from term, phenotype_statement
-      		       	 	 where phenos_pk_id = id
-				 and term_zdb_id = phenos_quality_zdb_id
-				);
-
-! echo "update quality_name"
-update tmp_dumpPheno
-  set quality_name = (Select term_name from term, phenotype_statement
-      		       	 	 where phenos_pk_id = id
-				 and term_zdb_id = phenos_quality_zdb_id
-				);
-
 ! echo "update gene_display name"
 update tmp_dumpPheno
   set geno_display_name = (select geno_display_name
       			  	  from genotype
 				  where geno_zdb_id = geno_id);
 
-! echo "update asubterm ontology name"
-update tmp_dumpPheno
-  set a_ontology_name = (
-	select term_ontology from term 
-	where term_ont_id = asubterm_ont_id 
-  );
-
-! echo "update bsubterm ontology name"
-update tmp_dumpPheno
-  set b_ontology_name = (
-	select term_ontology from term 
-	where term_ont_id = bsubterm_ont_id 
-  );
-
-! echo "update a relationship name"
-update tmp_dumpPheno
-  set arelationship_name =
-(
-case 
-when (asubterm_ont_id is not null AND a_ontology_name = 'biological_process')
-then
-'occurs_in'
-when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process')
-then
-'part_of'
-else
-null
-end
-);
-
-! echo "update a relationship ID"
-update tmp_dumpPheno
-  set arelationship_id =
-(
-case
-when (asubterm_ont_id is not null AND a_ontology_name = 'biological_process')
-then
-'BFO:0000066'
-when (asubterm_ont_id is not null AND a_ontology_name != 'biological_process')
-then
-'BFO:0000050'
-else
-null
-end
-);
-
-! echo "update b relationship name"
-update tmp_dumpPheno
-  set brelationship_name =
-(
-case
-when (bsubterm_ont_id is not null AND b_ontology_name = 'biological_process')
-then
-'occurs_in'
-when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process')
-then
-'part_of'
-else
-null
-end
-);
-
-! echo "update b relationship ID"
-update tmp_dumpPheno
-  set brelationship_id =
-(
-case
-when (bsubterm_ont_id is not null AND b_ontology_name = 'biological_process')
-then
-'BFO:0000066'
-when (bsubterm_ont_id is not null AND b_ontology_name != 'biological_process')
-then
-'BFO:0000050'
-else
-null
-end
-);
 
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData.txt'
 DELIMITER "	"
   select id,gene_abbrev,gene_zdb_id,
-         asubterm_ont_id,asubterm_name,
-	 arelationship_id,
-	 arelationship_name,
-	 asuperterm_ont_id,asuperterm_name,
-	 bsubterm_ont_id,bsubterm_name,
-	 brelationship_id,
-	 brelationship_name,
-	 bsuperterm_ont_id,bsuperterm_name,
-	 quality_id,quality_name,
+   tps.asubterm_ont_id,tps.asubterm_name,
+	 tps.arelationship_id,
+	 tps.arelationship_name,
+	 tps.asuperterm_ont_id,tps.asuperterm_name,
+	 tps.quality_id,tps.quality_name,tps.quality_tag,
+	 tps.bsubterm_ont_id,tps.bsubterm_name,
+	 tps.brelationship_id,
+	 tps.brelationship_name,
+	 tps.bsuperterm_ont_id,tps.bsuperterm_name,
 	 geno_id,geno_display_name,
 	 mo_id,
 	 stage_start_id,stage_end_id,
 	 genox_id,
 	 pub_id,
 	 fig_id 
-  From tmp_dumpPheno
-  	 order by gene_abbrev
+  From tmp_dumpPheno, tmp_phenotype_statement tps
+  where tps.phenos_pk_id = phenos_id
+  order by gene_abbrev
 ;
+

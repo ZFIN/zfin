@@ -1292,19 +1292,23 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="4" unique="true">Start Stage Name</Column>
             <Column id="5" unique="true">End Stage ID</Column>
             <Column id="6" unique="true">End Stage Name</Column>
-            <Column id="7" unique="true">Affected Structure or Process 1 superterm ID</Column>
-            <Column id="8" unique="true">Affected Structure or Process 1 superterm Name</Column>
-            <Column id="9" unique="true">Affected Structure or Process 1 subterm ID</Column>
-            <Column id="10" unique="true">Affected Structure or Process 1 subterm Name</Column>
-            <Column id="11" unique="true">Phenotype Keyword ID</Column>
-            <Column id="12" unique="true">Phenotype Keyword Name</Column>
-            <Column id="13" unique="true">Phenotypep Modifier</Column>
-            <Column id="14" unique="true">Affected Structure or Process 2 superterm ID</Column>
-            <Column id="15" unique="true">Affected Structure or Process 2 superterm Name</Column>
-            <Column id="16" unique="true">Affected Structure or Process 2 subterm ID</Column>
-            <Column id="17" unique="true">Affected Structure or Process 2 subterm Name</Column>
-            <Column id="18" unique="true">Publication ID</Column>
-            <Column id="19" unique="true">Environment ID</Column>
+            <Column id="7">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="8">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="9">Post-composed Relationship ID</Column>
+            <Column id="10">Post-composed Relationship Name</Column>
+            <Column id="11">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="13">Phenotype Keyword ID</Column>
+            <Column id="14">Phenotype Keyword Name</Column>
+            <Column id="15">Phenotype Tag</Column>
+            <Column id="16">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="17">Affected Structure or Process 2 subterm name</Column>
+            <Column id="18">Post-composed Relationship (rel) ID</Column>
+            <Column id="19">Post-composed Relationship (rel) Name</Column>
+            <Column id="20">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 superterm name</Column>
+            <Column id="22" unique="true">Publication ID</Column>
+            <Column id="23" unique="true">Environment ID</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1313,8 +1317,8 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Category>
                 Phenotype Data
             </Category>
-            <Description></Description>
-            <WikiLink></WikiLink>
+            <Description/>
+            <WikiLink/>
             <FileName>phenoGeneCleanData</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
@@ -1329,24 +1333,27 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="3">Gene ID</Column>
             <Column id="4">Affected Structure or Process 1 subterm ID</Column>
             <Column id="5">Affected Structure or Process 1 subterm Name</Column>
-            <Column id="6">Post-composed Relationship</Column>
-            <Column id="7">Affected Structure or Process 1 superterm ID</Column>
-            <Column id="8">Affected Structure or Process 1 superterm Name</Column>
-            <Column id="9">Affected Structure or Process 2 subterm ID</Column>
-            <Column id="10">Affected Structure or Process 2 subterm name</Column>
-            <Column id="11">Post-composed Relationship (rel)</Column>
-            <Column id="12">Affected Structure or Process 2 superterm ID</Column>
-            <Column id="13">Affected Structure or Process 2 superterm name</Column>
-            <Column id="14">Phenotype Keyword ID</Column>
-            <Column id="15">Phenotype Keyword Name</Column>
-            <Column id="16">Genotype ID</Column>
-            <Column id="17">Genotype Display Name</Column>
-            <Column id="18">Morpholino or TALEN ID</Column>
-            <Column id="19">Start Stage ID</Column>
-            <Column id="20">End Stage ID</Column>
-            <Column id="21">Genotype Environment ID</Column>
-            <Column id="22">Publication ID</Column>
-            <Column id="23">Figure ID</Column>
+            <Column id="6">Post-composed Relationship ID</Column>
+            <Column id="7">Post-composed Relationship Name</Column>
+            <Column id="8">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="9">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="10">Phenotype Keyword ID</Column>
+            <Column id="11">Phenotype Keyword Name</Column>
+            <Column id="12">Phenotype Tag</Column>
+            <Column id="13">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="14">Affected Structure or Process 2 subterm name</Column>
+            <Column id="15">Post-composed Relationship (rel) ID</Column>
+            <Column id="16">Post-composed Relationship (rel) Name</Column>
+            <Column id="17">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="18">Affected Structure or Process 2 superterm name</Column>
+            <Column id="19">Genotype ID</Column>
+            <Column id="20">Genotype Display Name</Column>
+            <Column id="21">Morpholino or TALEN ID</Column>
+            <Column id="22">Start Stage ID</Column>
+            <Column id="23">End Stage ID</Column>
+            <Column id="24">Genotype Environment ID</Column>
+            <Column id="25">Publication ID</Column>
+            <Column id="26">Figure ID</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
@@ -1355,8 +1362,8 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Category>
                 Phenotype Data
             </Category>
-            <Description></Description>
-            <WikiLink></WikiLink>
+            <Description/>
+            <WikiLink/>
             <FileName>pheno_obo</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
@@ -1473,17 +1480,21 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="2" unique="false">Entrez Zebrafish Gene ID</Column>
             <Column id="3" unique="true">Entrez Human Gene ID</Column>
             <Column id="4" unique="true">ZFIN Gene Symbol</Column>
-            <Column id="5" unique="true">Affected Structure or Process 1 superterm OBO ID</Column>
-            <Column id="6" unique="true">Affected Structure or Process 1 superterm name</Column>
             <Column id="7" unique="true">Affected Structure or Process 1 subterm OBO ID</Column>
             <Column id="8" unique="true">Affected Structure or Process 1 subterm name</Column>
-            <Column id="9" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
-            <Column id="10" unique="true">Affected Structure or Process 2 superterm name</Column>
-            <Column id="11" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
-            <Column id="12" unique="true">Affected Structure or Process 2 subterm name</Column>
+            <Column id="5" unique="true">Post-Composed Relationship ID</Column>
+            <Column id="5" unique="true">Post-Composed Relationship Name</Column>
+            <Column id="5" unique="true">Affected Structure or Process 1 superterm OBO ID</Column>
+            <Column id="6" unique="true">Affected Structure or Process 1 superterm name</Column>
             <Column id="13" unique="true">Phenotype Keyword OBO ID</Column>
             <Column id="14" unique="true">Phenotype Quality</Column>
             <Column id="15" unique="true">Phenotype Tag</Column>
+            <Column id="11" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
+            <Column id="12" unique="true">Affected Structure or Process 2 subterm name</Column>
+            <Column id="5" unique="true">Post-Composed Relationship ID</Column>
+            <Column id="5" unique="true">Post-Composed Relationship Name</Column>
+            <Column id="9" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
+            <Column id="10" unique="true">Affected Structure or Process 2 superterm name</Column>
         </Download>
         <Download orderIndex="5">
             <Name>
@@ -1512,13 +1523,13 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="6" unique="true">Affected Structure or Process 1 superterm name</Column>
             <Column id="7" unique="true">Affected Structure or Process 1 subterm OBO ID</Column>
             <Column id="8" unique="true">Affected Structure or Process 1 subterm name</Column>
-            <Column id="9" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
-            <Column id="10" unique="true">Affected Structure or Process 2 superterm name</Column>
-            <Column id="11" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
-            <Column id="12" unique="true">Affected Structure or Process 2 subterm name</Column>
-            <Column id="13" unique="true">Phenotype Keyword OBO ID</Column>
-            <Column id="14" unique="true">Phenotype Quality</Column>
-            <Column id="15" unique="true">Phenotype Tag</Column>
+            <Column id="9" unique="true">Phenotype Keyword OBO ID</Column>
+            <Column id="10" unique="true">Phenotype Quality</Column>
+            <Column id="11" unique="true">Phenotype Tag</Column>
+            <Column id="12" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
+            <Column id="13" unique="true">Affected Structure or Process 2 superterm name</Column>
+            <Column id="14" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
+            <Column id="15" unique="true">Affected Structure or Process 2 subterm name</Column>
         </Download>
         <Download orderIndex="100">
             <Name>
@@ -1539,23 +1550,31 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                           ]]>
             </Query>
             <Column id="1" unique="true">#</Column>
-            <Column id="2">Gene ID</Column>
-            <Column id="3">E1a ID</Column>
-            <Column id="4">E1a</Column>
-            <Column id="5">E1b ID</Column>
-            <Column id="6">E1b</Column>
-            <Column id="7">E2a ID</Column>
-            <Column id="8">E2a</Column>
-            <Column id="9">E2b ID</Column>
-            <Column id="10">E2b</Column>
-            <Column id="11">Genotype ID</Column>
-            <Column id="12">Genotype Name</Column>
-            <Column id="13">MO ID</Column>
-            <Column id="14">Stage Start</Column>
-            <Column id="15">Stage End</Column>
-            <Column id="16">Quality ID</Column>
-            <Column id="17">Quality</Column>
-            <Column id="18">MO and Background</Column>
+	        <Column id="2">Gene Symbol</Column>
+            <Column id="3">Gene ID</Column>
+            <Column id="4" unique="true">Affected Structure or Process 1 subterm OBO ID</Column>
+            <Column id="5" unique="true">Affected Structure or Process 1 subterm name</Column>
+            <Column id="6" unique="true">Post-Composed Relationship ID</Column>
+            <Column id="7" unique="true">Post-Composed Relationship Name</Column>
+            <Column id="8" unique="true">Affected Structure or Process 1 superterm OBO ID</Column>
+            <Column id="9" unique="true">Affected Structure or Process 1 superterm name</Column>
+            <Column id="10" unique="true">Phenotype Keyword OBO ID</Column>
+            <Column id="11" unique="true">Phenotype Quality</Column>
+            <Column id="12" unique="true">Phenotype Tag</Column>
+            <Column id="13" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
+            <Column id="14" unique="true">Affected Structure or Process 2 subterm name</Column>
+            <Column id="15" unique="true">Post-Composed Relationship ID</Column>
+            <Column id="16" unique="true">Post-Composed Relationship Name</Column>
+            <Column id="17" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
+            <Column id="18" unique="true">Affected Structure or Process 2 superterm name</Column>
+            <Column id="19">Genotype ID</Column>
+            <Column id="20">Genotype Name</Column>
+            <Column id="21">MO ID</Column>
+            <Column id="22">Stage Start</Column>
+            <Column id="23">Stage End</Column>
+            <Column id="24">Genotype Experiment ID</Column>
+            <Column id="25">Publication ID</Column>
+            <Column id="26">Figure ID</Column>
         </Download>
         <Download orderIndex="2">
             <Name>

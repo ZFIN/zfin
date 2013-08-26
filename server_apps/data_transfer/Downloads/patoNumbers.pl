@@ -96,14 +96,23 @@ foreach $prephenoLine (@prephenoLines) {
    $e_ont_id =$prephenoFields[11];
    $qualityName = $prephenoFields[12];
    $phenos_tag = $prephenoFields[13];
-   
-   print PHENO "$zdbgeneId\t$NCBIzfGeneId\t$NCBIhumanGeneId\t$mrkr_abbrev\t$a_ont_id\t$e1superName\t$b_ont_id\t$e1subName\t$c_ont_id\t$e2superName\t$d_ont_id\t$e2subName\t$e_ont_id\t$qualityName\t$phenos_tag\n";
+   $a_relationship_id = $prephenoFields[14];
+   $a_relationship_id = "" if !defined $prephenoFields[14];
+   $a_relationship_name = $prephenoFields[15];
+   $a_relationship_name = "" if !defined $prephenoFields[15];
+   $b_relationship_id = $prephenoFields[16];
+   $b_relationship_id = "" if !defined $prephenoFields[16];
+   $b_relationship_name = $prephenoFields[17];
+   $b_relationship_name = "" if !defined $prephenoFields[17];
+   $quality_id = $prephenoFields[18];
+
+   print PHENO "$zdbgeneId\t$NCBIzfGeneId\t$NCBIhumanGeneId\t$mrkr_abbrev\t$b_ont_id\t$e1subName\t$a_relationship_id\t$a_relationship_name\t$a_ont_id\t$e1superName\t$quality_id\t$qualityName\t$phenos_tag\t$d_ont_id\t$e2subName\t$b_relationship_id\t$b_relationship_name\t$c_ont_id\t$e2superName\n";
 }
 
 close (PREPHENO);
 close (PHENO);
 
-system("rm -f $prephenofile");
+#system("rm -f $prephenofile");
 
 $preorthofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_ortho.txt";
 $orthofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ortho.txt";
