@@ -189,6 +189,7 @@ public class Indexer extends AbstractScriptWrapper implements Runnable {
         mimeTypes.put("text/plain", Boolean.TRUE);
         mimeTypes.put("text/html;charset=ISO-8859-1", Boolean.TRUE);
         mimeTypes.put("text/html;charset=UTF-8", Boolean.TRUE);
+        mimeTypes.put("text/html; charset=UTF-8", Boolean.TRUE);
         // if incremental read indexedUrls.log into discovered
         if (incremental) {
             List<String> urlsIndexed = new ArrayList<String>();
