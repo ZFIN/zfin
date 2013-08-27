@@ -44,7 +44,6 @@ if ($HOST != "zygotix") then
     /bin/rm $pthLinux/$dirname/schemaFile.sql
     /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
     /bin/rm -rf <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
-
     chgrp -R fishadmin $pth/$dirname
     chgrp -R fishadmin $pthLinux/$dirname
     chmod -R g+rw $pth/$dirname
