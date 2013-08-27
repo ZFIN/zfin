@@ -5,3 +5,5 @@ $INFORMIXDIR/bin/dbaccess $DBNAME /research/zcentral/www_homes/trunk/server_apps
 echo "EXECUTE FUNCTION SYSBldPrepare('bts.3.00', 'drop');" | $INFORMIXDIR/bin/dbaccess $DBNAME
  
 echo "EXECUTE FUNCTION SYSBldUnRegister('bts.3.00','sysblderrorlog');" | $INFORMIXDIR/bin/dbaccess $DBNAME
+
+echo "unregistered BTS from $DBNAME";
