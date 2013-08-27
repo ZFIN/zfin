@@ -17,7 +17,4 @@ drop index construct_component_search_temp_all_engineered_names_bts_index;
 drop index construct_gene_feature_result_view_temp_all_allele_gene_names_bts_index;
 drop index figure_term_construct_search_temp_bts_index;
 
-drop index fish_annotation_search_temp_fas_all_bts_index;
-drop index figure_term_fish_search_term_group_temp_bts_index;
-
 commit work ;
