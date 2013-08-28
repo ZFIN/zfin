@@ -1,31 +1,89 @@
 begin work;
 
-create index fish_annotation_search_fas_all_bts_index
-  on fish_annotation_search (fas_pheno_term_group bts_lvarchar_ops,
-			     fas_all bts_lvarchar_ops,
-			     fas_affector_type_group bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="50000") IN smartbs1;
+create index "informix".figure_term_fish_search_term_group_bts_index 
+    on "informix".figure_term_fish_search (ftfs_term_group bts_lvarchar_ops) 
+    using bts (query_default_field='*', analyzer='whitespace', 
+    max_clause_count='10000') in smartbs_bts;
+
+create index "informix".figure_term_fish_search_term_group_temp_bts_index 
+    on "informix".figure_term_fish_search_temp (ftfs_term_group 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
 
 
-create index figure_term_fish_search_term_group_bts_index
-  on figure_term_fish_search (ftfs_term_group bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs1;
+create index "informix".fish_annotation_search_fas_all_bts_index 
+    on "informix".fish_annotation_search (fas_pheno_term_group 
+    bts_lvarchar_ops,fas_all bts_lvarchar_ops,fas_affector_type_group 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='50000') in smartbs_bts;
 
-create index construct_search_all_names_bts_index
-  on construct_search (cons_all_names bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;
+create index "informix".fish_annotation_search_temp_fas_all_bts_index 
+    on "informix".fish_annotation_search_temp (fas_pheno_term_group 
+    bts_lvarchar_ops,fas_all bts_lvarchar_ops,fas_affector_type_group 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='50000') in smartbs_bts;
+
+create index "informix".construct_search_all_names_bts_index 
+    on "informix".construct_search (cons_all_names bts_lvarchar_ops) 
+    using bts (query_default_field='*', analyzer='whitespace', 
+    max_clause_count='10000') in smartbs_bts;
+
+create index "informix".construct_component_search_all_coding_names_bts_index 
+    on "informix".construct_component_search (ccs_coding_all_names 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
+
+create index "informix".construct_component_search_all_engineered_names_bts_index 
+    on "informix".construct_component_search (ccs_engineered_region_all_names 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
+
+create index "informix".construct_component_search_all_promoter_names_bts_index 
+    on "informix".construct_component_search (ccs_promoter_all_names 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
+
+create index "informix".construct_gene_feature_result_view_all_allele_gene_names_bts_index 
+    on "informix".construct_gene_feature_result_view (cgfrv_allele_gene_all_names 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
+
+create index "informix".figure_term_construct_search_bts_index 
+    on "informix".figure_term_construct_search (ftcs_term_group 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
 
 
-create index construct_component_search_all_promoter_names_bts_index
-  on construct_component_search (ccs_promoter_all_names bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;
+create index "informix".construct_search_temp_all_names_bts_index 
+    on "informix".construct_search_temp (cons_all_names bts_lvarchar_ops) 
+    using bts (query_default_field='*', analyzer='whitespace', 
+    max_clause_count='10000') in smartbs_bts;
 
-create index construct_component_search_all_coding_names_bts_index
-  on construct_component_search (ccs_coding_all_names bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;
+create index "informix".construct_component_search_temp_all_coding_names_bts_index 
+    on "informix".construct_component_search_temp (ccs_coding_all_names 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
 
-create index construct_component_search_all_engineered_names_bts_index
-  on construct_component_search (ccs_engineered_region_all_names bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;
+create index "informix".construct_component_search_temp_all_engineered_names_bts_index 
+    on "informix".construct_component_search_temp (ccs_engineered_region_all_names 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
 
-create index construct_gene_feature_result_view_all_allele_gene_names_bts_index
-  on construct_gene_feature_result_view (cgfrv_allele_gene_all_names bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;
+create index "informix".construct_component_search_temp_all_promoter_names_bts_index 
+    on "informix".construct_component_search_temp (ccs_promoter_all_names 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
 
-create index figure_term_construct_search_bts_index
-  on figure_term_construct_search (ftcs_term_group bts_lvarchar_ops) USING BTS(query_default_field="*", analyzer="whitespace",max_clause_count="10000") IN smartbs_bts;
+
+create index "informix".construct_gene_feature_result_view_temp_all_allele_gene_names_bts_index 
+    on "informix".construct_gene_feature_result_view_temp (cgfrv_allele_gene_all_names 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
+
+create index "informix".figure_term_construct_search_temp_bts_index 
+    on "informix".figure_term_construct_search_temp (ftcs_term_group 
+    bts_lvarchar_ops) using bts (query_default_field='*', analyzer=
+    'whitespace', max_clause_count='10000') in smartbs_bts;
+
 
 commit work;
