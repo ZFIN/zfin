@@ -36,11 +36,14 @@
 # Nights   When      Comments
 # MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
 00 23 * * 1-4 /research/zcentral/www_homes/almost/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
+
+# Moved to Jenkins, but staying here uncommented until we have good source control experience with Jenkins
 # M    11:40pm   check for varchars and lvarchar columns that need extending.
-40 23 * * 1 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/checkVarcharOctetLength.pl
+#40 23 * * 1 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/checkVarcharOctetLength.pl
+
 #
 # 4 am, run the downloads on trunk.  This is for intermine pickup.
-00 4 * * 1-4 /research/zcentral/www_homes/trunk/server_apps/data_transfer/Downloads/Downloads.pl
+# 00 4 * * 1-4 /research/zcentral/www_homes/trunk/server_apps/data_transfer/Downloads/Downloads.pl
 # Nights   When      Comments
 # MTWT    10:50pm   Grep for errors in unit tests
 #

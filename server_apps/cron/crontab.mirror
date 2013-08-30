@@ -44,7 +44,7 @@
 #
 
 
-00 04 * * 1-5 /research/zusers/trunk/reload_trunk.sh
+#00 04 * * 1-5 /research/zusers/trunk/reload_trunk.sh
 20 06 * * 1-5 /research/zusers/test/reload_test.sh
 
 00 09 * * 1-5 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/queryMonitoring/dailyQueryCostCheck.sh
