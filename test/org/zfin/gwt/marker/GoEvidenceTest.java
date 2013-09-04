@@ -2,6 +2,7 @@ package org.zfin.gwt.marker;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -167,6 +168,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
      * Will only be changing the qualifier, evidence code and pub.  The qualifier can be null and not-null.
      */
     @Test
+    @Ignore
     public void createGoEvidenceHeader(){
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
@@ -203,6 +205,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
     public void testDuplicateEntry(){
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
