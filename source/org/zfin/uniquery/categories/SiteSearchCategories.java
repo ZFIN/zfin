@@ -56,6 +56,8 @@ public final class SiteSearchCategories {
      * @param propFile The name of  the property file.
      */
     public static void init(String dir, String propFile) {
+        if(propFile == null)
+            propFile = ZFIN_DEFAULT_CATEGORIES_XML;
         propertyFile = FileUtil.createFileFromDirAndName(dir, propFile);
         if (!propertyFile.exists()) {
             LOG.warn("Site Search Category file " + propertyFile.getAbsolutePath() + " not found. Use default file.");

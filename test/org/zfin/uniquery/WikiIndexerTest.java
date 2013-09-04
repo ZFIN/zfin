@@ -1,5 +1,9 @@
 package org.zfin.uniquery;
 
+import org.zfin.properties.ZfinProperties;
+import org.zfin.uniquery.categories.SiteSearchCategories;
+import org.zfin.wiki.WikiLoginException;
+
 import java.io.File;
 
 /**
@@ -7,24 +11,16 @@ import java.io.File;
  */
 public class WikiIndexerTest {
 
-    public static void main(String[] arguments) {
+    public static void main(String[] arguments) throws WikiLoginException {
 
-        File categoryFile = new File("home", "WEB-INF");
-        File file = new File(categoryFile, "conf");
+        File webInf = new File("home", "WEB-INF");
+        File confDirectory = new File(webInf, "conf");
+        File zfinProperties = new File(webInf, "zfin.properties");
 
-        String[] args = { "-u",
-                "server_apps/quicksearch/etc/searchurls-test.txt", "-t", "1",
-                "-categoryDir", file.getAbsolutePath(),
-                "-e", "server_apps/quicksearch/etc/excludeurls.txt",
-                "-indexerDir", "server_apps/quicksearch/",
-                "-numberOfDetailPages", "3",
-                "-createDetailPageList", "false",
-                "-zfinPropertiesDir", "home/WEB-INF/zfin.properties"};
-        try {
-            Indexer.main(args);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ZfinProperties.init(zfinProperties.getAbsolutePath());
+        SiteSearchCategories.init(confDirectory.getAbsolutePath(), null);
+        WikiIndexer indexer = new WikiIndexer();
+        indexer.getUrlSummary();
     }
 
 }
