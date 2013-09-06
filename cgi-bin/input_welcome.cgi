@@ -47,9 +47,11 @@ foreach $item (@items) {
 $email=$data{email};
 if ($email eq 'Unknown') {$email=''};
 
+$tomail = "jknight\@zfin.org";
+
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
-To: <!--|CURATORS_AT_ZFIN|-->
+To: $tomail
 From: $email
 Subject: $data{subject}
 
