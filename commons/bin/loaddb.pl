@@ -1283,6 +1283,11 @@ if (! createDb($dbName, $schemaFile)) {
 			      logError("Failed to enable logging.");
 			  }
 		      }
+		      logMsg("Fix BTS indexes...");
+		      if ($ENV{HOST} !~ /kinetix/) {
+			  chdir ("$ENV{SOURCEROOT}/server_apps/DB_maintenance/fixBts/") ;
+			  system("$ENV{SOURCEROOT}/server_apps/DB_maintenance/fixBts/reload.sh");
+		      }
 		      if ($opt_b && $ENV{HOST} !~ /kinetix/) {
 			  print "creating developer blastdb copy";
 			  system("$ENV{TARGETROOT}/server_apps/DB_maintenance/makeDeveloperBlastDbs.sh");
