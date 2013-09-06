@@ -57,7 +57,7 @@ if (!$data{subject} || $data{subject} =~ m/^\s*$/
 
 open(MAIL, "| $mailprog") || die "Content-type: text/plain\n\nCan't open mailprog $mailprog, stopped";
 print MAIL <<"STOP";
-To: <!--|CURATORS_AT_ZFIN|-->
+To: jknight\@zfin.org
 From: $email
 Subject: Your Input Welcome - $data{subject}
 
