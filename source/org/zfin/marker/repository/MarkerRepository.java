@@ -9,7 +9,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
@@ -43,7 +43,7 @@ public interface MarkerRepository {
 
     Marker getMarkerByAbbreviation(String abbreviation);
 
-    Morpholino getMorpholinoByAbbreviation(String abbreviation);
+    SequenceTargetingReagent getMorpholinoByAbbreviation(String abbreviation);
 
     Marker getMarkerByName(String name);
 
@@ -268,10 +268,10 @@ public interface MarkerRepository {
     /**
      * Create a gene for a given Morpholino which is targeting it.
      *
-     * @param morpholino valid Morpholino of Marker object.
+     * @param sequenceTargetingReagent valid Morpholino of Marker object.
      * @return the target gene of the Morpholino
      */
-    List<Marker> getTargetGenesForMorpholino(Morpholino morpholino);
+    List<Marker> getTargetGenesForMorpholino(SequenceTargetingReagent sequenceTargetingReagent);
 
     /**
      * Checks to see if a marker with the abbreviation given is already in the database.
@@ -374,4 +374,11 @@ public interface MarkerRepository {
     List<Marker> getCodingSequence(Marker construct);
 
     public List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene);
+
+    /**
+     * Retrieve sequence targeting reagent, e.g. MO, TALEN, CRISPR
+     * @param markerID
+     * @return
+     */
+    SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
 }

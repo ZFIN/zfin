@@ -392,7 +392,33 @@ and mrkr_type = 'MRPHLNO'
   <?/MISQL> 
   <?MIVAR COND="$(>,$1,0)">
   <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mo">Morpholino</a> &nbsp; ($1)
-  <?/MIVAR> 
+  <?/MIVAR>
+
+  <?MICOMMENT> ======== TALEN  ============ <?/MICOMMENT>
+  <?MISQL SQL="
+      select count(recattrib_data_zdb_id)::integer
+	from  record_attribution, marker
+	where recattrib_source_zdb_id = '$OID'
+	  and recattrib_data_zdb_id = mrkr_zdb_id
+	  and mrkr_type = 'TALEN'
+      ; ">
+  <?/MISQL>
+  <?MIVAR COND="$(>,$1,0)">
+  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_talen">TALEN</a> &nbsp; ($1)
+  <?/MIVAR>
+
+  <?MICOMMENT> ======== CRISPR  ============ <?/MICOMMENT>
+  <?MISQL SQL="
+      select count(recattrib_data_zdb_id)::integer
+	from  record_attribution, marker
+	where recattrib_source_zdb_id = '$OID'
+	  and recattrib_data_zdb_id = mrkr_zdb_id
+	  and mrkr_type = 'CRISPR'
+      ; ">
+  <?/MISQL>
+  <?MIVAR COND="$(>,$1,0)">
+  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_crispr">CRISPR</a> &nbsp; ($1)
+  <?/MIVAR>
 
   <?MICOMMENT> ======== Antibodies  ============ <?/MICOMMENT>
   <?MISQL SQL="

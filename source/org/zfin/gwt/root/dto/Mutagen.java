@@ -11,7 +11,9 @@ public enum Mutagen {
     G_RAYS("g-rays"),
     SPONTANEOUS("spontaneous"),
     EMS("EMS"),
-    ZINC_FINGER_NUCLEASE("zinc finger nuclease");
+    ZINC_FINGER_NUCLEASE("zinc finger nuclease"),
+    TALEN("TALEN"),
+    CRISPR("CRISPR");
 
 //        RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE("renamed through the nomenclature pipeline");
 

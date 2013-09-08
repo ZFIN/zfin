@@ -10,7 +10,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Journal;
@@ -234,11 +234,11 @@ public interface PublicationRepository extends PaginationParameter {
     /**
      * Retrieve list of figures for a given morpholino and anatomy term
      *
-     * @param morpholino morpholino
+     * @param sequenceTargetingReagent morpholino
      * @param term       anatomy term
      * @return list of figures.
      */
-    List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, GenericTerm term);
+    List<Figure> getFiguresByMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term);
 
     /**
      * Retrieve list of figures for a given genotype and anatomy term
@@ -298,11 +298,11 @@ public interface PublicationRepository extends PaginationParameter {
     /**
      * Retrieve the publications for the figures for a given morpholino and anatomy term
      *
-     * @param morpholino Morpholino
+     * @param sequenceTargetingReagent Morpholino
      * @param aoTerm     anatomy Term
      * @return List of publications
      */
-    List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(Morpholino morpholino, GenericTerm aoTerm);
+    List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm aoTerm);
 
     /**
      * Retrieve figures for a given gene and anatomy term.

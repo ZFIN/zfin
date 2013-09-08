@@ -22,8 +22,8 @@ public class ExperimentConditionPresentation extends EntityPresentation {
      */
     public static String getLink(ExperimentCondition condition, boolean suppressPopupLink) {
         StringBuilder sb = new StringBuilder(100);
-        if (condition.getMorpholino() != null)
-            return MarkerPresentation.getLink(condition.getMorpholino());
+        if (condition.getSequenceTargetingReagent() != null)
+            return MarkerPresentation.getLink(condition.getSequenceTargetingReagent());
         else
             sb.append(getTomcatLink(uri,condition.getExperiment().getZdbID(),getName(condition)));
 
@@ -41,8 +41,8 @@ public class ExperimentConditionPresentation extends EntityPresentation {
      * @return
      */
     public static String getName(ExperimentCondition condition) {
-        if (condition.getMorpholino() != null) {
-            return MarkerPresentation.getName(condition.getMorpholino());
+        if (condition.getSequenceTargetingReagent() != null) {
+            return MarkerPresentation.getName(condition.getSequenceTargetingReagent());
         } else
             return condition.getConditionDataType().getGroup() + ":" + condition.getConditionDataType().getName();
     }

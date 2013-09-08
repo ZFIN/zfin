@@ -24,7 +24,7 @@ public class FeatureValidationService {
                     boolean yes= Window.confirm("Do you want to briefly summarize authors statement about " + featureTypeEnum.getDisplay()+"?") ;
                     return (yes ? "Briefly summarize authors' statement about "+featureTypeEnum.getDisplay()+"." : null) ;
                 }
-                break ; 
+                break ;
         }
 
         return null ;
@@ -48,6 +48,7 @@ public class FeatureValidationService {
                 }
             case POINT_MUTATION:
             case DELETION:
+            case INDEL:
             case SEQUENCE_VARIANT:
             case INSERTION:
                 return  StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
@@ -154,9 +155,10 @@ public class FeatureValidationService {
             case INSERTION:
                 returnString +=  dtoFromGUI.getLabPrefix()
                         + dtoFromGUI.getLineNumber()
-                        ;
+                ;
                 break ;
             case INVERSION:
+            case INDEL:
             case TRANSLOC:
             case DEFICIENCY:
             case COMPLEX_SUBSTITUTION:
@@ -164,7 +166,7 @@ public class FeatureValidationService {
                 returnString += dtoFromGUI.getOptionalName()
                         + dtoFromGUI.getLabPrefix()
                         + dtoFromGUI.getLineNumber()
-                        ;
+                ;
                 break ;
             case UNSPECIFIED:
             case TRANSGENIC_UNSPECIFIED:
@@ -200,6 +202,7 @@ public class FeatureValidationService {
                             + featureDTO.getLineNumber()  ;
                 }
             case INVERSION:
+            case INDEL:
             case TRANSLOC:
             case DEFICIENCY:
             case COMPLEX_SUBSTITUTION:
@@ -239,6 +242,7 @@ public class FeatureValidationService {
             case POINT_MUTATION:
             case DELETION:
             case SEQUENCE_VARIANT:
+            case INDEL:
             case INSERTION:
                 // just uses the defaults
                 return null ;

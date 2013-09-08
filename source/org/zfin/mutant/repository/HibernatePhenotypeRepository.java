@@ -283,9 +283,9 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Set<ExperimentCondition> conditions = phenotypeExperiment.getGenotypeExperiment().getExperiment().getMorpholinoConditions();
         if (conditions != null) {
             for (ExperimentCondition condition : conditions) {
-                Morpholino morpholino = condition.getMorpholino();
-                InformixUtil.runInformixProcedure("regen_genox_marker", morpholino.getZdbID());
-                List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+                SequenceTargetingReagent sequenceTargetingReagent = condition.getSequenceTargetingReagent();
+                InformixUtil.runInformixProcedure("regen_genox_marker", sequenceTargetingReagent.getZdbID());
+                List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(sequenceTargetingReagent);
                 for (Marker targetGene : targetGenes)
                     InformixUtil.runInformixProcedure("regen_genox_marker", targetGene.getZdbID());
             }

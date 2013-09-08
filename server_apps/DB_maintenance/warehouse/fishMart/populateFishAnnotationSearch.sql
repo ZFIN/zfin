@@ -355,12 +355,12 @@ update fish_annotation_search_temp
  where faS_affector_order is null;
 
 update fish_annotation_search_temp
- set fas_affector_Type_group = fas_affector_Type_group||", morpholino"
+ set fas_affector_Type_group = fas_affector_Type_group||", sequence targeting reagent"
  where fas_morpholino_group is not null
 and fas_affector_type_group is not null;
 
 update fish_annotation_search_temp
- set fas_affector_Type_group = "morpholino"
+ set fas_affector_Type_group = "sequence targeting reagent"
  where fas_morpholino_group is not null
 and fas_feature_group is null;
 

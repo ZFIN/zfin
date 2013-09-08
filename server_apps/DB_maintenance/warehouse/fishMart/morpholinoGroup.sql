@@ -41,6 +41,14 @@ update morpholino_group
   set morphg_group_name = replace(morphg_group_name,",M","+M")
   where morphg_Group_name like '%,%';
 
+update morpholino_group
+  set morphg_group_name = replace(morphg_group_name,",T","+T")
+  where morphg_Group_name like '%,%';
+
+update morpholino_group
+  set morphg_group_name = replace(morphg_group_name,",C","+C")
+  where morphg_Group_name like '%,%';
+
 insert into morpholino_group_member(morphgm_group_id, morphgm_member_name, morphgm_member_id)
   select morphg_group_pk_id, mrkr_abbrev, mrkr_Zdb_id
     from marker, genotype_experiment, experiment_Condition, morpholino_group

@@ -8,9 +8,11 @@ public class MarkerSequence {
     private String zdbID;
     private Marker marker;
     private String sequence;
+    private String secondSequence;
     private Long offsetStart;
     private Long offsetStop;
     private String variation;
+    private String type;
 
     public String getStartToOffset(){
         return sequence.substring(0,offsetStart.intValue()-1);
@@ -53,9 +55,10 @@ public class MarkerSequence {
         return "5'" ;
     }
 
+    /*
     public String getType(){
         return "Genomic" ;
-    }
+    }  */
 
     public Long getOffsetStart() {
         return offsetStart;
@@ -79,5 +82,25 @@ public class MarkerSequence {
 
     public void setVariation(String variation) {
         this.variation = variation;
+    }
+
+    public String getSecondSequence() {
+        return secondSequence;
+    }
+
+    public void setSecondSequence(String secondSequence) {
+        this.secondSequence = secondSequence;
+    }
+
+    public String getType() {
+        if (type != null) {
+            return type;
+        } else {
+            return "Genomic";
+        }
+    }
+
+    public void setType(String sequenceType) {
+        this.type = sequenceType;
     }
 }

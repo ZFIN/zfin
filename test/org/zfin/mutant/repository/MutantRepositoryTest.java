@@ -74,7 +74,7 @@ public class MutantRepositoryTest {
         String name = "neural plate";
         OntologyRepository ar = RepositoryFactory.getOntologyRepository();
         GenericTerm ai = ar.getTermByName(name, Ontology.ANATOMY);
-        List<Morpholino> morphs =
+        List<SequenceTargetingReagent> morphs =
                 getMutantRepository().getPhenotypeMorpholinos(ai, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         assertNotNull("morphs exist", morphs);
 
@@ -358,10 +358,10 @@ public class MutantRepositoryTest {
     public void getMorpholinosById() {
         //String genotypeID = "ZDB-GENO-030619-2";
         String moID = "ZDB-MRPHLNO-101014-10";
-        Morpholino morpholino = mutantRepository.getMorpholinosById(moID);
-        assertNotNull(morpholino);
-        assertNotNull(morpholino.getTargetGenes());
-        assertEquals(2, morpholino.getTargetGenes().size());
+        SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getMorpholinosById(moID);
+        assertNotNull(sequenceTargetingReagent);
+        assertNotNull(sequenceTargetingReagent.getTargetGenes());
+        assertEquals(2, sequenceTargetingReagent.getTargetGenes().size());
     }
 
     @Test

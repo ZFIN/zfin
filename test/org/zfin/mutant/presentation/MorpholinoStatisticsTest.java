@@ -7,7 +7,7 @@ import org.zfin.expression.ExperimentCondition;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 
 import java.util.HashSet;
@@ -34,18 +34,18 @@ public class MorpholinoStatisticsTest {
         experimentOne.setName("One");
         genoxOne.setExperiment(experimentOne);
         ExperimentCondition conditionTwo = new ExperimentCondition();
-        Morpholino morpholinoTwo = new Morpholino();
-        morpholinoTwo.setAbbreviation("MO-slit1b");
-        morpholinoTwo.setZdbID("ZDB-MRPHlNO-090311-1");
+        SequenceTargetingReagent sequenceTargetingReagentTwo = new SequenceTargetingReagent();
+        sequenceTargetingReagentTwo.setAbbreviation("MO-slit1b");
+        sequenceTargetingReagentTwo.setZdbID("ZDB-MRPHlNO-090311-1");
 
-        conditionTwo.setMorpholino(morpholinoTwo);
+        conditionTwo.setSequenceTargetingReagent(sequenceTargetingReagentTwo);
 
         ExperimentCondition conditionOne = new ExperimentCondition();
-        Morpholino morpholinoOne = new Morpholino();
-        morpholinoOne.setAbbreviation("MO-slit1a");
-        morpholinoOne.setZdbID("ZDB-MRPHlNO-090311-2");
-        conditionOne.setMorpholino(morpholinoOne);
-        conditionTwo.setMorpholino(morpholinoTwo);
+        SequenceTargetingReagent sequenceTargetingReagentOne = new SequenceTargetingReagent();
+        sequenceTargetingReagentOne.setAbbreviation("MO-slit1a");
+        sequenceTargetingReagentOne.setZdbID("ZDB-MRPHlNO-090311-2");
+        conditionOne.setSequenceTargetingReagent(sequenceTargetingReagentOne);
+        conditionTwo.setSequenceTargetingReagent(sequenceTargetingReagentTwo);
 
         Set<ExperimentCondition> conditions = new HashSet<ExperimentCondition>();
         conditions.add(conditionOne);
@@ -53,8 +53,8 @@ public class MorpholinoStatisticsTest {
         experimentOne.setExperimentConditions(conditions);
 
         // create markers for each MO
-        createMarkerForMo("slit1a", morpholinoOne);
-        createMarkerForMo("slit1b", morpholinoTwo);
+        createMarkerForMo("slit1a", sequenceTargetingReagentOne);
+        createMarkerForMo("slit1b", sequenceTargetingReagentTwo);
 
         createAnatomyTerm();
     }

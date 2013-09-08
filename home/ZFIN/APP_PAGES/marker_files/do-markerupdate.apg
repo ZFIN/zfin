@@ -519,6 +519,61 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
     
    <?/MIBLOCK>
    
+   <?MIBLOCK COND="$(EC,$attr,mrkrseq_sequence_2)">
+
+       <?MICOMMENT> 
+          ==========================================
+            Update existing marker_sequence record 
+          ==========================================
+        <?/MICOMMENT>   
+        
+     <?MIBLOCK COND=$(AND,$(XST,$dataOID),$(NC,$dataOID,))>
+       <?MISQL SQL="
+           update marker_sequence
+              set mrkrseq_sequence = '$new_value'
+            where mrkrseq_zdb_id = '$dataOID';">
+       <?/MISQL>  
+
+       <?MISQL COND="$(XST,$new_value2)"
+          SQL="
+           update marker_sequence
+              set mrkrseq_sequence_2 = '$new_value2'
+            where mrkrseq_zdb_id = '$dataOID';">
+       <?/MISQL>   
+     <?MIELSE>
+    
+       <?MICOMMENT> 
+          ===================================
+            Create a marker_sequence record 
+          ===================================
+        <?/MICOMMENT>
+            
+      <?MISQL SQL="execute function get_id('MRKRSEQ')">
+        <?MIVAR NAME=$domrkr_MrkrSeqId>$1<?/MIVAR>
+      <?/MISQL>
+      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$domrkr_MrkrSeqId');"><?/MISQL>
+      <?MISQL SQL="
+        insert into marker_sequence (
+          mrkrseq_zdb_id,
+          mrkrseq_mrkr_zdb_id,
+          mrkrseq_sequence,
+          mrkrseq_left_end)
+        values (
+          '$domrkr_MrkrSeqId',
+          '$OID',
+          '$new_value',
+          '5''');">
+      <?/MISQL>       
+    
+     <?/MIBLOCK>            
+
+      <?MIBLOCK COND=$(XST,$xtra_param)>
+        <?MIVAR NAME=domrkr_encoded_note>$(URLENCODE,$xtra_param)<?/MIVAR>
+        <?MISQL SQL="select WebExplode(object,'dnotenew_DATA=$OID&dnotenew_CUR=$ZDB_ident&dnotenew_type=none&dnotenew_NOTE=$domrkr_encoded_note') from webPages where ID='aa-dnote_new.apg';">$1<?/MISQL>
+      <?/MIBLOCK> 
+    
+   <?/MIBLOCK>
+   
 
    <?MIBLOCK COND="$(EC,$attr_type,special-updateseqnum)">
      <?MISQL COND="$(AND,$(EC,$old_value,dblink_length),$(NC,$new_value,))" SQL="

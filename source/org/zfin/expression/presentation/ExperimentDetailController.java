@@ -68,7 +68,7 @@ public class ExperimentDetailController {
     protected List<ExperimentCondition> getMorpholinoConditions(Set<ExperimentCondition> conditions) {
         List<ExperimentCondition> moConditions = new ArrayList<ExperimentCondition>();
         for (ExperimentCondition condition : conditions) {
-            if (condition.getMorpholino() != null)
+            if (condition.getSequenceTargetingReagent() != null)
                 moConditions.add(condition);
         }
         return moConditions;
@@ -77,7 +77,7 @@ public class ExperimentDetailController {
     protected List<ExperimentCondition> getNonMorpholinoConditions(Set<ExperimentCondition> conditions) {
         List<ExperimentCondition> nonMoConditions = new ArrayList<ExperimentCondition>();
         for (ExperimentCondition condition : conditions) {
-            if (condition.getMorpholino() == null) {
+            if (condition.getSequenceTargetingReagent() == null) {
                 nonMoConditions.add(condition);
             }
         }

@@ -20,6 +20,7 @@ Three actions are contained in the drop down list.
 INPUT VARS:
   OPTIONAL:
     seqdata_sequence  ::  default value for 'Original' Sequence
+    seqdata_second_sequence :: 2nd sequence for TALEN only at this time
      
 OUTPUT VARS: 
 
@@ -150,6 +151,17 @@ EFFECTS
             }
       }
 
+      function complement2ndSequence (seq, note) {   
+          var compSeq;      
+          
+            compSeq = baseComplement(seq);
+            document.newdata.seqdata_2nd_DisplaySequence.value = compSeq;
+            
+            if (note != "")
+            {
+              curatorNote(note);
+            }
+      }
 
       function reverseSequence (seq, note)
       {   
@@ -164,12 +176,28 @@ EFFECTS
             }
       }
 
+      function reverse2ndSequence(seq, note) {   
+          var revSeq;      
+           
+            revSeq = reverseString(seq);
+            document.newdata.seqdata_2nd_DisplaySequence.value = revSeq;
+            
+            if (note != "")
+            {
+              curatorNote(note);
+            }
+      }
 
       function reverseComplementSequence ()
       
       {   
           complementSequence(document.newdata.seqdata_ReportedSequence.value, "");
           reverseSequence(document.newdata.seqdata_DisplaySequence.value, "reversed and complemented");
+      }
+
+      function reverseComplement2ndSequence() {   
+          complement2ndSequence(document.newdata.seqdata_2nd_ReportedSequence.value, "");
+          reverse2ndSequence(document.newdata.seqdata_2nd_DisplaySequence.value, "reversed and complemented");
       }
       
       function actionSequence (action)      
@@ -191,6 +219,26 @@ EFFECTS
               document.newdata.seqdata_DisplaySequence.value = document.newdata.seqdata_ReportedSequence.value;
               curatorNote('Restored');
           }
+      }
+
+      function action2ndSequence(action) {
+          if (action == 1)
+          {
+              reverse2ndSequence(document.newdata.seqdata_2nd_ReportedSequence.value, 'reversed');
+          }
+          else if (action == 2)
+          {
+              complement2ndSequence(document.newdata.seqdata_2nd_ReportedSequence.value, 'complemented');
+          }
+          else if (action == 3)
+          {
+              reverseComplement2ndSequence();
+          }
+          else if (action == 4)
+          {
+              document.newdata.seqdata_2nd_DisplaySequence.value = document.newdata.seqdata_2nd_ReportedSequence.value;
+              curatorNote('Restored');
+          }      
       }
       
       function curatorNote (action)
@@ -227,7 +275,11 @@ EFFECTS
           <?/MICOMMENT>
           
           <tr>
-            <td valign=top> 5'  <input type=text name=seqdata_ReportedSequence size=40 
+            <td valign=top> 
+              <?MIBLOCK COND="$(XST,$seqdata_second_sequence)">
+                Sequence 1:&nbsp;&nbsp;&nbsp;
+              <?/MIBLOCK>
+               5'  <input type=text name=seqdata_ReportedSequence size=40 
                                <?MIVAR COND=$(XST,$seqdata_sequence)>value=$seqdata_sequence<?/MIVAR>
                                onChange="this.value = this.value.toUpperCase();var text=''; if(validSequence(this.value)){text = this.value} document.newdata.seqdata_DisplaySequence.value = text;}"> 
             </td>
@@ -241,7 +293,7 @@ EFFECTS
                 <option>----------</option>
                 <option>Reverse</option>
                 <option>Complement</option>
-                <option>mRNA --> MO</option>
+                <option>Reverse & Complement</option>
                 <option>Original</option>
               </select>
             </td>
@@ -249,7 +301,33 @@ EFFECTS
                                   onFocus="alert('Modify the sequence in the Original Sequence field');this.blur();">
             </td>
           </tr>
-          
+  
+          <?MIBLOCK COND="$(XST,$seqdata_second_sequence)">
+            <tr>
+              <td valign=top>Sequence 2:&nbsp;&nbsp;&nbsp; 5'  <input type=text name=seqdata_2nd_ReportedSequence size=40 
+                                 <?MIVAR COND=$(XST,$seqdata_second_sequence)>value=$seqdata_second_sequence<?/MIVAR>
+                                 onChange="this.value = this.value.toUpperCase();var text=''; if(validSequence(this.value)){text = this.value} document.newdata.seqdata_2nd_DisplaySequence.value = text;}"> 
+              </td>
+              <td> 
+                <select name=second_seqdata_action onChange="
+                if ( validSequence(document.newdata.seqdata_2nd_ReportedSequence.value) ){
+                    action2ndSequence(this.selectedIndex);
+                }
+                
+                ">
+                  <option>----------</option>
+                  <option>Reverse</option>
+                  <option>Complement</option>
+                  <option>Reverse & Complement</option>
+                  <option>Original</option>
+                </select>
+              </td>
+              <td valign=top> 5'  <input type=text name=seqdata_2nd_DisplaySequence size=40
+                                    onFocus="alert('Modify the sequence in the Original Sequence field');this.blur();">
+              </td>
+            </tr>
+          <?/MIBLOCK>
+  
           <?MICOMMENT> ====== Curator Notes ====== <?/MICOMMENT>
           <tr>
             <td colspan=3>

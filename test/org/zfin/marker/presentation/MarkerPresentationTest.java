@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAbbreviationComparator;
 import org.zfin.marker.MarkerType;
+import org.zfin.marker.service.MarkerService;
 
 import java.util.*;
 
@@ -197,8 +198,8 @@ public class MarkerPresentationTest {
     @Test
     public void getTypeFromZdbID(){
         MarkerViewController markerViewController = new MarkerViewController();
-        assertEquals("GENE",markerViewController.getTypeForZdbID("ZDB-GENE-980526-403"));
-        assertEquals("BAC_END",markerViewController.getTypeForZdbID("ZDB-BAC_END-011115-15"));
+        assertEquals("GENE", MarkerService.getTypeForZdbID("ZDB-GENE-980526-403"));
+        assertEquals("BAC_END",MarkerService.getTypeForZdbID("ZDB-BAC_END-011115-15"));
     }
 
 

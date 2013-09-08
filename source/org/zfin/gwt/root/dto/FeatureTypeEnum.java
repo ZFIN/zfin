@@ -9,13 +9,14 @@ public enum FeatureTypeEnum implements IsSerializable{
     POINT_MUTATION("Point Mutation"),
     DELETION("Small Deletion"),
     INSERTION("Insertion"),
+    INDEL("INDEL"),
     TRANSLOC("Translocation"),
     INVERSION("Inversion"),
     DEFICIENCY("Deficiency"),
     COMPLEX_SUBSTITUTION("Complex"),
     SEQUENCE_VARIANT("Unknown"),
     TRANSGENIC_UNSPECIFIED("unspecified transgenic insertion"),
-    UNSPECIFIED("Unspecified"),
+    UNSPECIFIED("Unspecified")
     ;
 
 

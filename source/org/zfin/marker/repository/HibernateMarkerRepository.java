@@ -22,17 +22,15 @@ import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.MappedMarker;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
@@ -143,11 +141,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (Marker) criteria.uniqueResult();
     }
 
-    public Morpholino getMorpholinoByAbbreviation(String abbreviation) {
+    public SequenceTargetingReagent getMorpholinoByAbbreviation(String abbreviation) {
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(Morpholino.class);
+        Criteria criteria = session.createCriteria(SequenceTargetingReagent.class);
         criteria.add(Restrictions.eq("abbreviation", abbreviation));
-        return (Morpholino) criteria.uniqueResult();
+        return (SequenceTargetingReagent) criteria.uniqueResult();
     }
 
     public Marker getMarkerByName(String name) {
@@ -1431,19 +1429,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * Retrieve gene for a given Morpholino which is targeting it.
      * Target genes are ordered by gene abbreviation
      *
-     * @param morpholino valid Morpholino of Marker object.
+     * @param stReagent valid Morpholino of Marker object.
      * @return the target gene of the Morpholino
      */
-    public List<Marker> getTargetGenesForMorpholino(Morpholino morpholino) {
-        if (morpholino == null)
+    public List<Marker> getTargetGenesForMorpholino(SequenceTargetingReagent stReagent) {
+        if (stReagent == null)
             return null;
-
+        Marker sequenceTargetingReagent = (Marker) stReagent;
         Session session = currentSession();
-        String hql = "select rel.secondMarker from MorpholinoMarkerRelationship as rel  " +
+        String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
                 "where rel.firstMarker = :morpholino and rel.type = :type " +
                 "order by rel.secondMarker.abbreviationOrder";
         Query query = session.createQuery(hql);
-        query.setParameter("morpholino", morpholino);
+        query.setParameter("morpholino", sequenceTargetingReagent);
         query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
         List<Marker> targetGenes = (List<Marker>) query.list();
         return targetGenes;
@@ -2053,7 +2051,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<Marker> getCodingSequence(Marker gene) {
 
 
-
         String hql = " select m from MarkerRelationship mr1,  Marker m " +
                 " where mr1.secondMarker.zdbID=m.zdbID " +
                 " and mr1.firstMarker.zdbID = :markerZdbID " +
@@ -2061,7 +2058,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " ";
 
 
-        return  HibernateUtil.currentSession().createQuery(hql)
+        return HibernateUtil.currentSession().createQuery(hql)
                 .setString("markerZdbID", gene.getZdbID())
                 .setParameter("markerRelationshipType1", MarkerRelationship.Type.CODING_SEQUENCE_OF)
 
@@ -2250,6 +2247,18 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return HibernateUtil.currentSession().createCriteria(OmimPhenotype.class)
                 .add((Restrictions.eq("zfGene", zebrafishGene)))
                 .list();
+    }
+
+    /**
+     * Retrieve sequence targeting reagent, e.g. MO, TALEN, CRISPR
+     *
+     * @param markerID
+     * @return
+     */
+    @Override
+    public SequenceTargetingReagent getSequenceTargetingReagent(String markerID) {
+        Session session = currentSession();
+        return (SequenceTargetingReagent) session.get(SequenceTargetingReagent.class, markerID);
     }
 
 }

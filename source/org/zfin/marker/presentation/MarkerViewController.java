@@ -11,13 +11,12 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.profile.presentation.ProfileController;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -31,9 +30,6 @@ public class MarkerViewController {
 
     private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private Logger logger = Logger.getLogger(MarkerViewController.class);
-
-    private final Pattern typePattern = Pattern.compile("ZDB-([\\p{Alpha}_]+)-.*");
-
 
     @Autowired
     private CloneViewController cloneViewController;
@@ -50,7 +46,7 @@ public class MarkerViewController {
     @Autowired
     private ConstructViewController constructViewController;
     @Autowired
-    private MorpholinoViewController morpholinoViewController;
+    private DisruptorViewController disruptorViewController;
     @Autowired
     private SnpViewController snpViewController;
     @Autowired
@@ -116,19 +112,9 @@ public class MarkerViewController {
         }
     }
 
-    public String getTypeForZdbID(String zdbID) {
-        Matcher matcher = typePattern.matcher(zdbID);
-        if (matcher.matches()) {
-            int numGroups = matcher.groupCount();
-            assert (numGroups == 1);
-            return matcher.group(1);
-        }
-        return null;
-    }
-
     private String getViewForMarkerZdbID(Model model, String zdbID, String userAgent) {
 
-        String type = getTypeForZdbID(zdbID);
+        String type = MarkerService.getTypeForZdbID(zdbID);
 
         try {
             if (type.equals(Marker.Type.ATB.name())) {
@@ -154,8 +140,8 @@ public class MarkerViewController {
                     || type.equals(Marker.Type.TGCONSTRCT.name())
                     ) {
                 return constructViewController.getGeneView(model, zdbID);
-            } else if (type.equals(Marker.Type.MRPHLNO.name())) {
-                return morpholinoViewController.getGeneView(model, zdbID);
+            } else if (type.equals(Marker.Type.MRPHLNO.name()) || type.equals(Marker.Type.TALEN.name()) || type.equals(Marker.Type.CRISPR.name())) {
+                return disruptorViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.SNP.name())) {
                 return snpViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.TSCRIPT.name())) {

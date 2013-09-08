@@ -423,6 +423,8 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         STS("STS"),
         TGCONSTRCT("TGCONSTRCT"),
         TSCRIPT("TSCRIPT"),
+        TALEN("TALEN"),
+        CRISPR("CRISPR")
         ;
 
         private final String value;

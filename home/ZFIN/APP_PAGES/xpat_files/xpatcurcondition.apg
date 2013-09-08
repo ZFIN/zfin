@@ -11,10 +11,6 @@ Comment field is updatable and a delete button exists.
 Javascript functions enforce relationships between condition_data_type,
 condition, and experiment_unit. 
 
-A function also enforces a constraint on morpholinos. At the time the 
-page is loaded, the valid morpholinos are retrieved from the database. 
-The form rejects morpholino entries not in the valid morpholino list.
-
 OnLoad, the formReset() function is called. If form variables exist from
 a previous page submition, drop-down lists are populated with the 
 corresponding values.
@@ -37,7 +33,8 @@ EFFECTS
       xpcur_G_cond_add :: flag for a new condition
       xpcur_G_cond_add_exp :: non-null experiment ZDB-ID
       xpcur_G_cond_add_cond_type :: non-null condition data type ZDB 
-      xpcur_G_cond_add_value :: text
+      xpcur_G_cond_add_value :: test
+      xpcur_G_cond_add_attribute :: ST Reagent ZDB Id
       xpcur_G_cond_add_unit :: text - constrained vocabulary
       xpcur_G_cond_add_comments :: text
 
@@ -73,6 +70,31 @@ EFFECTS
 
 <SCRIPT>	
 
+  // cdt_zdb_id and cdt_group of ST Reagents 
+  <?MISQL SQL="select cdt_zdb_id,cdt_group from condition_data_type where cdt_group = 'morpholino'">
+      var moCondId = "$1";
+      var moCondText = "$2";
+  <?/MISQL>  
+  <?MISQL SQL="select cdt_zdb_id,cdt_group from condition_data_type where cdt_group = 'CRISPR'">
+      var CRISPRcondId = "$1";
+      var CRISPRondText = "$2";
+  <?/MISQL> 
+  <?MISQL SQL="select cdt_zdb_id,cdt_group from condition_data_type where cdt_group = 'TALEN'">
+      var TALENcondId = "$1";
+      var TALENcondText = "$2";
+  <?/MISQL> 
+  
+  // expunit_zdb_id of "N/A" for ST Reagents 
+  <?MISQL SQL="select expunit_zdb_id from experiment_unit where expunit_name = 'N/A' and expunit_condition_group = 'morpholino'">
+      var moNAunitId = "$1";
+  <?/MISQL>  
+  <?MISQL SQL="select expunit_zdb_id from experiment_unit where expunit_name = 'N/A' and expunit_condition_group = 'CRISPR'">
+      var CRISPRnaUnitId = "$1";
+  <?/MISQL> 
+  <?MISQL SQL="select expunit_zdb_id from experiment_unit where expunit_name = 'N/A' and expunit_condition_group = 'TALEN'">
+      var TALENnaUnitId = "$1";
+  <?/MISQL> 
+  
   var array1 = null;
   var array2 = null;
   <?MIVAR NAME="xpcurOB">[<?/MIVAR>
@@ -137,186 +159,204 @@ EFFECTS
   <?/MISQL>
 
 
-  function loadUnitSelectBox(){
-    //clearing loop
+  function loadUnitSelectBox(conditionValue){
     var unitbox = document.condition_new.xpcur_G_cond_add_unit.options;
     for (i = 2; i < document.condition_new.xpcur_G_cond_add_unit.options.length; i++){
       unitbox[i].text = "";
       unitbox[i].value = "";
     }//ends clearing FOR loop
-
+    
     //get selected choice
     var condIndex = document.condition_new.xpcur_G_cond_add_cond.selectedIndex;
     var choice = document.condition_new.xpcur_G_cond_add_cond[condIndex].value;
+
+    if(conditionValue == "STR" || conditionValue.search(/^ZDB/) == 0) {  
+        unitbox[0].text = "N/A";
+        unitbox[0].value = moNAunitId;
+        unitbox[1].text = "";
+        unitbox[1].value = "";      
+        document.condition_new.xpcur_G_cond_add_unit.selectedIndex = 0;      
+    } else {
+        <?MICOMMENT> select from condition group <?/MICOMMENT>
+        var array1 = null;
+        var array2 = null;
     
-    <?MICOMMENT> select from condition group <?/MICOMMENT>
-    var array1 = null;
-    var array2 = null;
-    
-    <?MISQL SQL="
-      select distinct expunit_condition_group
-      from experiment_unit
-      order by expunit_condition_group;">
+        <?MISQL SQL="
+          select distinct expunit_condition_group
+            from experiment_unit
+           order by expunit_condition_group;">
       
-      <?MIVAR NAME=xpcurcond_aUnit_cg>$1<?/MIVAR>
-      <?MIVAR NAME=xpcurcond_aUnit_choice>choice == "$1"<?/MIVAR>
+          <?MIVAR NAME=xpcurcond_aUnit_cg>$1<?/MIVAR>
+          <?MIVAR NAME=xpcurcond_aUnit_choice>choice == "$1"<?/MIVAR>
       
-      <?MIVAR>
-        if ($xpcurcond_aUnit_choice){
-          array1 = $xpcurcond_aUnit_cg;
-          array2 = $xpcurcond_aUnit_cg$descrip;
-        }//ends IF
-      <?/MIVAR>
-    <?/MISQL>
+          <?MIVAR>
+            if ($xpcurcond_aUnit_choice){
+              array1 = $xpcurcond_aUnit_cg;
+              array2 = $xpcurcond_aUnit_cg$descrip;
+            }//ends IF
+          <?/MIVAR>
+        <?/MISQL>
 
-    //clearing loop
-    for (i = 1; i < document.condition_new.xpcur_G_cond_add_unit.options.length; i++){
-      unitbox[i].text = "";
-      unitbox[i].value = "";
-    }//ends clearing FOR loop
+        //clearing loop
+        for (i = 1; i < document.condition_new.xpcur_G_cond_add_unit.options.length; i++){
+          unitbox[i].text = "";
+          unitbox[i].value = "";
+        }//ends clearing FOR loop
 
-    for (i = 0; i < array1.length; i++){
-      unitbox[i+1].value = array1[i];
-      unitbox[i+1].text = array2[i];
-    }// ends populating FOR
+        for (i = 0; i < array1.length; i++){
+          unitbox[i+1].value = array1[i];
+          unitbox[i+1].text = array2[i];
+        }// ends populating FOR
 
-    if (array1.length == 1) {
-      document.condition_new.xpcur_G_cond_add_unit.selectedIndex = 1;
+        if (array1.length == 1) {
+            document.condition_new.xpcur_G_cond_add_unit.selectedIndex = 1;
+        } else {    
+            document.condition_new.xpcur_G_cond_add_unit.selectedIndex = 0;
+        }    
     }
-    else {    
-      document.condition_new.xpcur_G_cond_add_unit.selectedIndex = 0;
-    }    
-
   }//ends function loadUnitSelectBox()
 
-  function loadCDTSelectBox(){
-    //clearing loop
+  function loadCDTSelectBox(conditionValue){
     var cdtbox = document.condition_new.xpcur_G_cond_add_cond_type.options;
     for (i = 2; i < document.condition_new.xpcur_G_cond_add_cond_type.options.length; i++){
       cdtbox[i].text = "";
       cdtbox[i].value = "";
-    }//ends clearing FOR loop
-
+    }//ends clearing FOR loop   
+    
     //get selected choice
     var condIndex = document.condition_new.xpcur_G_cond_add_cond.selectedIndex;
     var choice = document.condition_new.xpcur_G_cond_add_cond[condIndex].value;
     
-
-    <?MICOMMENT> select from condition group <?/MICOMMENT>
-    var array1 = null;
-    var array2 = null;
+    if(conditionValue == "STR" || conditionValue.search(/^ZDB/) == 0) {   
+        cdtbox[0].text = "-------------";
+        cdtbox[0].value = "";
+        cdtbox[1].text = moCondText;
+        cdtbox[1].value = moCondId; 
+        cdtbox[2].text = CRISPRondText;
+        cdtbox[2].value = CRISPRcondId; 
+        cdtbox[3].text = TALENcondText;
+        cdtbox[3].value = TALENcondId; 
+        document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex = 0;
+    } else {
+        <?MICOMMENT> select from condition group <?/MICOMMENT>
+        var array1 = null;
+        var array2 = null;
     
-    <?MISQL SQL="
-      select distinct expunit_condition_group
-      from experiment_unit
-      order by expunit_condition_group;">
+        <?MISQL SQL="
+          select distinct expunit_condition_group
+            from experiment_unit
+        order by expunit_condition_group;">
       
-      <?MIVAR NAME=xpcurcond_aUnit_cg>$1<?/MIVAR>
-      <?MIVAR NAME=xpcurcond_aUnit_choice>choice == "$1"<?/MIVAR>
+          <?MIVAR NAME=xpcurcond_aUnit_cg>$1<?/MIVAR>
+          <?MIVAR NAME=xpcurcond_aUnit_choice>choice == "$1"<?/MIVAR>
       
-      <?MIVAR>
-        if ($xpcurcond_aUnit_choice){
-          array1 = cdt$xpcurcond_aUnit_cg;
-          array2 = cdt$xpcurcond_aUnit_cg$descrip;
-        }//ends IF
-      <?/MIVAR>
-    <?/MISQL>
-
-    //clearing loop
-    for (i = 1; i < document.condition_new.xpcur_G_cond_add_cond_type.options.length; i++){
-      cdtbox[i].text = "";
-      cdtbox[i].value = "";
-    }//ends clearing FOR loop
-
-    for (i = 0; i < array1.length; i++){
-      cdtbox[i+1].value = array1[i];
-      cdtbox[i+1].text = array2[i];
-    }// ends populating FOR
-    
-    if (array1.length == 1) {
-      document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex = 1;
-    }
-    else {    
-      document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex = 0;
-    }
-
-  }//ends function loadCDTSelectBox()
-  
-  <?MISQL SQL="
-    select cdt_zdb_id
-    from condition_data_type
-    where cdt_name = 'morpholino';">
-      var xpcurcond_morph_cdt_zdb_id = "$1";
-  <?/MISQL>
-  
-    function enforceMorpholino(condValue) {
-      var condIndex = document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex;
-      var condSelected = document.condition_new.xpcur_G_cond_add_cond_type[condIndex].value;
-      
-      if (condSelected != xpcurcond_morph_cdt_zdb_id) { 
-        setCondAttrib('');
-        return true ;
-      } 
-      else {
-      validMorpholino = new Array (
-        <?MISQL SQL="select recattrib_data_zdb_id from record_attribution where recattrib_data_zdb_id[1,9] = 'ZDB-MRPHL' and recattrib_source_zdb_Id = '$OID';">
-         $(IF,$(EC,$MI_CURRENTROW,1),'$1',",'$1'")
+          <?MIVAR>
+            if ($xpcurcond_aUnit_choice){
+              array1 = cdt$xpcurcond_aUnit_cg;
+              array2 = cdt$xpcurcond_aUnit_cg$descrip;
+            }//ends IF
+          <?/MIVAR>
         <?/MISQL>
-        )
-        
-        for (i=0; i<validMorpholino.length; i++) {
-          if (condValue = validMorpholino[i]) { return true }//document.condition_new.submit() }
-        }
-                
-        alert("Valid morpholinos have this publication attributed. \n\n "+condValue +" is not associated with this publication and is not valid.");        
-      }
-      return false
-    }
 
-    function validateConditionForm(condValue) {
+        //clearing loop
+        for (i = 1; i < document.condition_new.xpcur_G_cond_add_cond_type.options.length; i++){
+          cdtbox[i].text = "";
+          cdtbox[i].value = "";
+        }//ends clearing FOR loop
+
+        for (i = 0; i < array1.length; i++){
+          cdtbox[i+1].value = array1[i];
+          cdtbox[i+1].text = array2[i];
+        }// ends populating FOR
+    
+        if (array1.length == 1) {
+            document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex = 1;
+        } else {    
+            document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex = 0;
+        }
+    }
+  }//ends function loadCDTSelectBox()
+
+  function validateConditionForm(strId) {
       if (document.condition_new.xpcur_G_cond_add_exp.value == "") {
-        alert("Please select an Environment.")
-        return false}
+        alert("Please select an Environment.");
+        return false;
+      }
 
       if (document.condition_new.xpcur_G_cond_add_cond_type.value == "") {
-        alert("Please select a Data Type.")
-        return false} 
+        alert("Please select a Data Type.");
+        return false;
+      } 
 
       if (document.condition_new.xpcur_G_cond_add_unit.value == "") {
-        alert("Please select a Unit.")
-        return false}        
-
-      var cond_Index = document.condition_new.xpcur_G_cond_add_cond.selectedIndex;        
-      if (document.condition_new.xpcur_G_cond_add_cond[cond_Index].value == xpcurcond_morph_cdt_zdb_id && document.condition_new.xpcur_G_cond_add_attribute.value == "") {
-        alert("Please enter a Morpholino ZDB-ID.")
-        return false}
-
-      return enforceMorpholino(condValue);     
-    }
-
-    function setCondAttrib(text) {
-      document.condition_new.xpcur_G_cond_add_attribute.value = text;
-      if (text.search(/^ZDB/) == 0) {
-        for (i=0; i<document.condition_new.xpcur_G_cond_add_cond.length; i++) {
-          if (document.condition_new.xpcur_G_cond_add_cond[i].value == "morpholino") {
-            document.condition_new.xpcur_G_cond_add_cond.selectedIndex = i;
-          }
-        }
-        loadUnitSelectBox();
-        loadCDTSelectBox();
+        alert("Please select a Unit.");
+        return false;
+      }        
+      
+      var cond_Index = document.condition_new.xpcur_G_cond_add_cond.selectedIndex;   
+      var cond_value = document.condition_new.xpcur_G_cond_add_cond[cond_Index].value;
+      if ((cond_value == "STR") && 
+            !(document.condition_new.xpcur_G_cond_add_cond_type.value == moCondId || 
+              document.condition_new.xpcur_G_cond_add_cond_type.value == CRISPRcondId || 
+              document.condition_new.xpcur_G_cond_add_cond_type.value == TALENcondId)) {
+        alert("Please select the right Sequence-Targeting Reagent: MO or CRISPR or TALEN.");
+        return false;
+      }      
+      
+      if ((cond_value == "STR") && document.condition_new.xpcur_G_cond_add_attribute.value == "") {
+        alert("Please enter a Sequence-Targeting Reagent ZDB-ID.");
+        return false;
       }
-    }
+
+      return true;     
+  }
+
+  function setCondAttrib(STReagent) {
+      document.condition_new.xpcur_G_cond_add_attribute.value = STReagent;
+      document.condition_new.xpcur_G_cond_add_cond.selectedIndex = 1;
+      var cdtbox = document.condition_new.xpcur_G_cond_add_cond_type.options;
+      for (i = 0; i < document.condition_new.xpcur_G_cond_add_cond_type.options.length - 1; i++){
+        cdtbox[i].text = "";
+        cdtbox[i].value = "";
+      }
+      cdtbox[0].text = "-------------";
+      cdtbox[0].value = "";
+      cdtbox[1].text = moCondText;
+      cdtbox[1].value = moCondId; 
+      cdtbox[2].text = CRISPRondText;
+      cdtbox[2].value = CRISPRcondId; 
+      cdtbox[3].text = TALENcondText;
+      cdtbox[3].value = TALENcondId;    
+
+      var unitbox = document.condition_new.xpcur_G_cond_add_unit.options;
+      for (i = 0; i < document.condition_new.xpcur_G_cond_add_unit.options.length - 1; i++){
+        unitbox[i].text = "";
+        unitbox[i].value = "";
+      }    
+      unitbox[0].text = "N/A";      
+      if (STReagent.search(/^ZDB-MRPHL/) == 0) {
+          document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex = 1;
+          unitbox[0].value = moNAunitId;
+      } else if (STReagent.search(/^ZDB-CRISP/) == 0) {
+          document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex = 2;
+          unitbox[0].value = CRISPRnaUnitId;
+      } else if (STReagent.search(/^ZDB-TALEN/) == 0) {
+          document.condition_new.xpcur_G_cond_add_cond_type.selectedIndex = 3;
+          unitbox[0].value = TALENnaUnitId;
+      } 
+      unitbox[0].value = "ZDB-EXPUNIT-050127-1";      
+  }
   
-    function resetCondForm() {
+  function resetCondForm(condValue) {
       document.condition_new.xpcur_G_cond_add_value.value = "";
       document.condition_new.xpcur_G_cond_add_attribute.value = "";
-      document.condition_new.cond_morph_select.selectedIndex = 0;
-      loadUnitSelectBox();
-      loadCDTSelectBox();
-    }
+      document.condition_new.cond_defaultSTR_select.selectedIndex = 0;
+      showDefaultSTRselections();
+      loadUnitSelectBox(condValue);
+      loadCDTSelectBox(condValue);
+  }
     
-  function selected_condition_copy()
-  {    
+  function selected_condition_copy() {    
     var condition_checkbox = document.forms['condition'].elements ;
 
     var c_checked_condition = "";
@@ -335,24 +375,60 @@ EFFECTS
     document.condition.xpcur_G_cond_copy_conditions.value=c_checked_condition;
     document.condition.submit();
   }
-
-  function set_condition_form()
-  {
-      document.condition_new.xpcur_G_cond_add_value.value = "";
-      document.condition_new.xpcur_G_cond_add_attribute.value = "";
-      document.condition_new.cond_morph_select.selectedIndex = 0;    
+  
+  function resetSTR(STRcondId) {
+      if(STRcondId == moCondId) {
+           document.getElementById('defaultSTRlabel').style.display='none';
+           document.getElementById('moLabel').style.display='block';
+           document.getElementById('CRISPRlabel').style.display='none'; 
+           document.getElementById('TALENlabel').style.display='none';
+           document.getElementById('cond_defaultSTR_select').style.display='none';          
+           document.getElementById('cond_morph_select').style.display='block';
+           document.getElementById('cond_TALEN_select').style.display='none';
+            document.getElementById('cond_CRISPR_select').style.display='none';  
+     } else if (STRcondId == CRISPRcondId) { 
+           document.getElementById('defaultSTRlabel').style.display='none';
+           document.getElementById('moLabel').style.display='none';
+           document.getElementById('CRISPRlabel').style.display='block';             
+	   document.getElementById('TALENlabel').style.display='none';
+           document.getElementById('cond_defaultSTR_select').style.display='none';          
+           document.getElementById('cond_morph_select').style.display='none';
+           document.getElementById('cond_TALEN_select').style.display='none';
+           document.getElementById('cond_CRISPR_select').style.display='block';  
+     } else if (STRcondId == TALENcondId) { 
+           document.getElementById('defaultSTRlabel').style.display='none';
+           document.getElementById('moLabel').style.display='none';
+           document.getElementById('CRISPRlabel').style.display='none';   
+	   document.getElementById('TALENlabel').style.display='block';
+           document.getElementById('cond_defaultSTR_select').style.display='none';          
+           document.getElementById('cond_morph_select').style.display='none';
+           document.getElementById('cond_TALEN_select').style.display='block';
+           document.getElementById('cond_CRISPR_select').style.display='none';  
+     } else { 
+           showDefaultSTRselections();
+     }  
   }
+
+  function showDefaultSTRselections() {
+     document.getElementById('defaultSTRlabel').style.display='block';
+     document.getElementById('moLabel').style.display='none';
+     document.getElementById('CRISPRlabel').style.display='none'; 
+     document.getElementById('TALENlabel').style.display='none';     
+     document.getElementById('cond_defaultSTR_select').style.display='block';          
+     document.getElementById('cond_morph_select').style.display='none';
+     document.getElementById('cond_TALEN_select').style.display='none';
+     document.getElementById('cond_CRISPR_select').style.display='none';  
+  }
+  
 </SCRIPT>
 
-
+<?MIVAR NAME="xpcurcond_STR">recattrib_data_zdb_id[1,9] in ('ZDB-MRPHL','ZDB-CRISP','ZDB-TALEN')<?/MIVAR>
     
 <table width=100% border=0 cellspacing=0 cellpadding=3>
   <tr bgcolor=#CCCCCC>    
-    <td colspan=2>Env.</td>
+    <td colspan=2>Environment</td>
     <td>Condition</td>
-    <td>
-      <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&newmrkrSource=$OID&marker_type=MRPHLNO" target=ZFIN_morph>Morpholino</a><?/MIVAR>
-    </td>
+    <td>Sequence-Targeting Reagent</td>
     <td>Value</td>
     <td>Units</td> 
     <td>Comments</td> 
@@ -372,23 +448,24 @@ EFFECTS
 <?MIVAR NAME=xpcurcond_row_color>#FFFFFF<?/MIVAR>
 
 <?MISQL SQL="
-    select exp_name, expcond_zdb_id, cdt_group||':'||cdt_name, expcond_value, expunit_name, expcond_comments, expcond_mrkr_zdb_id, morph.mrkr_abbrev
-    from experiment, experiment_condition, condition_data_type, experiment_unit, OUTER( marker morph)
+    select exp_name, expcond_zdb_id, cdt_group, cdt_name, expcond_value, expunit_name, expcond_comments, expcond_mrkr_zdb_id, str.mrkr_abbrev
+    from experiment, experiment_condition, condition_data_type, experiment_unit, OUTER( marker str)
     where exp_zdb_id in ('$pubcur_G_exp_attrib_csv') 
       and exp_zdb_id = expcond_exp_zdb_id
       and expcond_cdt_zdb_id = cdt_zdb_id
       and expcond_expunit_zdb_id = expunit_zdb_id
-      and expcond_mrkr_zdb_id = morph.mrkr_zdb_id
+      and expcond_mrkr_zdb_id = str.mrkr_zdb_id
     order by exp_name, 3;">
     
     <?MIVAR NAME="xpcurcond_exp_name">$1<?/MIVAR>
     <?MIVAR NAME="xpcurcond_expcond_zdb_id">$2<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_cdt">$3<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_expcond_value">$4<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_expunit_name">$5<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_expcond_comments">$6<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_morph_zdb_id">$7<?/MIVAR>
-    <?MIVAR NAME="xpcurcond_morph_abbrev">$8<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_cdt_group">$3<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_cdt_name">$4<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_expcond_value">$5<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_expunit_name">$6<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_expcond_comments">$7<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_morph_zdb_id">$8<?/MIVAR>
+    <?MIVAR NAME="xpcurcond_morph_abbrev">$9<?/MIVAR>
 
     <?MIVAR NAME="xpcurcond_expcond_minus_dash">$(REPLACE,$xpcurcond_expcond_zdb_id,-,)<?/MIVAR>
     
@@ -402,7 +479,7 @@ EFFECTS
     </td>
     <td> <input type=checkbox name=$xpcurcond_expcond_minus_dash value=$xpcurcond_expcond_zdb_id>
     </td>
-    <td> $(SUBSTR,$xpcurcond_cdt,1,30)
+    <td>$(IF,$(OR,$(EC,$xpcurcond_cdt_group,morpholino),$(EC,$xpcurcond_cdt_group,CRISPR),$(EC,$xpcurcond_cdt_group,TALEN)),ST Reagent:$xpcurcond_cdt_name,$xpcurcond_cdt_group:$(SUBSTR,$xpcurcond_cdt_name,1,25))
     </td>
     <td>
       <?MIVAR COND=$(NC,$xpcurcond_morph_abbrev,NULL)><a href="/action/marker/view/$xpcurcond_morph_zdb_id">$xpcurcond_morph_abbrev</a><?/MIVAR>
@@ -479,14 +556,17 @@ EFFECTS
       </select>
     </td>
     <td>
-        <select name="xpcur_G_cond_add_cond" onChange="resetCondForm();">
+        <select name="xpcur_G_cond_add_cond" onChange="resetCondForm(this.value);">
           <option value=""></option>
+          <option value="STR">ST Reagent</option>
           <?MISQL SQL="select distinct cdt_group from condition_data_type order by 1;">
-            <option value="$1"
-                    $(IF,$(AND,$(XST,$xpcur_G_cond_add_cond),$(EC,$xpcur_G_cond_add_cond,$1)),SELECTED)>$1</option>
+            <?MIVAR NAME=xpcurcond_condition_group>$1<?/MIVAR>
+            <?MIBLOCK COND="$(AND,$(NE,$xpcurcond_condition_group,morpholino),$(NE,$xpcurcond_condition_group,TALEN),$(NE,$xpcurcond_condition_group,CRISPR))">            
+              <?MIVAR><option value="$xpcurcond_condition_group" $(IF,$(AND,$(XST,$xpcur_G_cond_add_cond),$(EC,$xpcur_G_cond_add_cond,$1)),SELECTED)>$xpcurcond_condition_group</option><?/MIVAR>
+            <?/MIBLOCK>
           <?/MISQL>
         </select>
-        <select name="xpcur_G_cond_add_cond_type">
+        <select name="xpcur_G_cond_add_cond_type" onChange="resetSTR(this.value);">
           <option value="">-------------------------</option>
           <?MISQL SQL="
               select cdt_group, count(*) 
@@ -501,7 +581,7 @@ EFFECTS
       </select>
     </td>
     <td>
-        <input name="xpcur_G_cond_add_attribute" type=textbox size=25>
+        <input name="xpcur_G_cond_add_attribute" type=textbox size=25 readonly>
         <br><?MIVAR COND=$(XST,$xpcur_G_cond_add_attribute)>$xpcur_G_cond_add_attribute<?/MIVAR>
     </td>
     <td>
@@ -529,23 +609,69 @@ EFFECTS
   <tr>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
-    <td align=right>Morpholino:</td>
+    <td align=right>
+       <span id="defaultSTRlabel" style="display:block">ST Reagent:</span>
+       <span id="moLabel" style="display:none">Morpholino:</span>
+       <span id="TALENlabel" style="display:none">TALEN:</span>
+       <span id="CRISPRlabel" style="display:none">CRISPR:</span>         
+    </td>
     <td>
-      <select name=cond_morph_select onChange="setCondAttrib(this.value);">
+      <select id="cond_defaultSTR_select" name="cond_defaultSTR_select" style="display:block" onChange="setCondAttrib(this.value);">
+        <option value=" "></option>
+        <?MISQL SQL="
+          select distinct recattrib_data_zdb_id,  str.mrkr_abbrev 
+            from record_attribution, marker gene, marker_relationship, marker str
+           where str.mrkr_type in ('MRPHLNO','TALEN','CRISPR')
+             and recattrib_source_zdb_id = '$OID'
+             and recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
+             and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
+             and mrel_mrkr_1_zdb_id = str.mrkr_zdb_id
+             order by  str.mrkr_abbrev;">
+           <option value="$1">$1  ->  $2</option>
+        <?/MISQL>
+      </select>     
+      <select id="cond_morph_select" name="cond_morph_select" style="display:none" onChange="setCondAttrib(this.value);">
         <option value=" "></option>
         <?MISQL SQL="
           select distinct recattrib_data_zdb_id,  morph.mrkr_abbrev 
             from record_attribution, marker gene, marker_relationship, marker morph
-           where recattrib_data_zdb_id[1,9] = 'ZDB-MRPHL' 
+           where morph.mrkr_type = 'MRPHLNO' 
              and recattrib_source_zdb_id = '$OID'
              and recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
              and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
              and mrel_mrkr_1_zdb_id = morph.mrkr_zdb_id
              order by  morph.mrkr_abbrev;">
-           <!--<option value="$1">$1, $2 -> $3</option>-->
-           <option value="$1">$1  -> $2</option>
+           <option value="$1">$1  ->  $2</option>
         <?/MISQL>
       </select>
+      <select id="cond_TALEN_select" name="cond_TALEN_select" style="display:none" onChange="setCondAttrib(this.value);">
+        <option value=" "></option>
+        <?MISQL SQL="
+          select distinct recattrib_data_zdb_id,  talen.mrkr_abbrev 
+            from record_attribution, marker gene, marker_relationship, marker talen
+           where talen.mrkr_type = 'TALEN' 
+             and recattrib_source_zdb_id = '$OID'
+             and recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
+             and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
+             and mrel_mrkr_1_zdb_id = talen.mrkr_zdb_id
+             order by  talen.mrkr_abbrev;">
+           <option value="$1">$1  ->  $2</option>
+        <?/MISQL>
+      </select>
+      <select id="cond_CRISPR_select" name="cond_CRISPR_select" style="display:none" onChange="setCondAttrib(this.value);">
+        <option value=" "></option>
+        <?MISQL SQL="
+          select distinct recattrib_data_zdb_id,  crispr.mrkr_abbrev 
+            from record_attribution, marker gene, marker_relationship, marker crispr
+           where crispr.mrkr_type = 'CRISPR'
+             and recattrib_source_zdb_id = '$OID'
+             and recattrib_data_zdb_id = mrel_mrkr_1_zdb_id
+             and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
+             and mrel_mrkr_1_zdb_id = crispr.mrkr_zdb_id
+             order by  crispr.mrkr_abbrev;">
+           <option value="$1">$1  ->  $2</option>
+        <?/MISQL>
+      </select> 
     </td>
     <td colspan=3>&nbsp;</td>
   </tr>

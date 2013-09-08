@@ -4,7 +4,7 @@ import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class FishBean extends AbstractFishViewBean {
     private List<Genotype> genotypes;
     private int totalNumberOfPublications;
     private int totalNumberOfPhenotypes;
-    private List<Morpholino> morpholinos;
+    private List<SequenceTargetingReagent> sequenceTargetingReagents;
 
     public AuditLogItem getLatestUpdate() {
         AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
@@ -76,12 +76,12 @@ public class FishBean extends AbstractFishViewBean {
         this.fish = fish;
     }
 
-    public List<Morpholino> getMorpholinos() {
-        return morpholinos;
+    public List<SequenceTargetingReagent> getSequenceTargetingReagents() {
+        return sequenceTargetingReagents;
     }
 
-    public void setMorpholinos(List<Morpholino> morpholinos) {
-        this.morpholinos = morpholinos;
+    public void setSequenceTargetingReagents(List<SequenceTargetingReagent> sequenceTargetingReagents) {
+        this.sequenceTargetingReagents = sequenceTargetingReagents;
     }
 
     public int getTotalNumberOfPhenotypes() {

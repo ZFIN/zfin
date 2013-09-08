@@ -30,7 +30,7 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY("gene product recognized by antibody"),
         KNOCKDOWN_REAGENT_TARGETS_GENE("knockdown reagent targets gene"),
         TRANSCRIPT_TARGETS_GENE("transcript targets gene"),
-        PROMOTER_OF("promoter of"),;
+        PROMOTER_OF("promoter of");
 
         private final String value;
 

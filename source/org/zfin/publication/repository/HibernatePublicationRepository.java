@@ -22,7 +22,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.DOIAttempt;
@@ -536,14 +536,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresByMorpholinoAndAnatomy(Morpholino morpholino, GenericTerm term) {
+    public List<Figure> getFiguresByMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term) {
         Session session = HibernateUtil.currentSession();
 
         StringBuilder hql = new StringBuilder("select figure ");
         getBaseQueryForMorpholinoFigureData(hql);
         hql.append("order by figure.orderingLabel    ");
         Query query = session.createQuery(hql.toString());
-        query.setString("markerID", morpholino.getZdbID());
+        query.setString("markerID", sequenceTargetingReagent.getZdbID());
         query.setParameter("term", term);
         return (List<Figure>) query.list();
     }
@@ -554,7 +554,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql.append("where marker.zdbID = :markerID AND ");
         hql.append("      geno.experiment = exp AND ");
         hql.append("      con.experiment = exp AND  ");
-        hql.append("      marker = con.morpholino AND  ");
+        hql.append("      marker = con.sequenceTargetingReagent AND  ");
         hql.append("      phenotype.phenotypeExperiment.genotypeExperiment = geno AND  ");
         hql.append("      phenotype.phenotypeExperiment.figure = figure AND ");
         hql.append("      ( phenotype.entity.superterm = :term OR phenotype.entity.subterm = :term  OR" +
@@ -584,7 +584,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "        phenos.relatedEntity.superterm = transitiveClosure.child OR phenos.relatedEntity.subterm = transitiveClosure.child) " +
                 "      and not exists (from ExperimentCondition as cond where " +
                 "                           cond.experiment = genox.experiment" +
-                "                           AND cond.morpholino is not null)" +
+                "                           AND cond.sequenceTargetingReagent is not null)" +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
@@ -698,7 +698,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 " AND phenotype.phenotypeExperiment.genotypeExperiment.genotype.wildtype = :wildtype" +
                 " AND not exists (from ExperimentCondition as cond " +
                 "                 where cond.experiment = phenotype.phenotypeExperiment.genotypeExperiment.experiment" +
-                "                       and cond.morpholino is not null)";
+                "                       and cond.sequenceTargetingReagent is not null)";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", aoTerm);
@@ -793,18 +793,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     /**
      * Retrieve the publications for the figures for a given morpholino and anatomy term
      *
-     * @param morpholino Morpholino
+     * @param sequenceTargetingReagent Morpholino
      * @param aoTerm     anatomy Term
      * @return List of publications
      */
-    public List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(Morpholino morpholino, GenericTerm aoTerm) {
+    public List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
 
         StringBuilder hql = new StringBuilder("select figure ");
         getBaseQueryForMorpholinoFigureData(hql);
         hql.append("order by figure.orderingLabel    ");
         Query query = session.createQuery(hql.toString());
-        query.setString("markerID", morpholino.getZdbID());
+        query.setString("markerID", sequenceTargetingReagent.getZdbID());
         query.setParameter("term", aoTerm);
         List<Publication> publications = query.list();
         return publications;

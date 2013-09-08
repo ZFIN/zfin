@@ -14,17 +14,15 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
@@ -197,7 +195,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String aoZdbID = "ZDB-ANAT-011113-460";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        List<Morpholino> morphs = mutantRepository.getPhenotypeMorpholinos(item, 4);
+        List<SequenceTargetingReagent> morphs = mutantRepository.getPhenotypeMorpholinos(item, 4);
         assertTrue(morphs != null);
 //        assertEquals("13 figures", 3, morphs.size());
 
@@ -394,13 +392,13 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getFiguresForMorpholino() {
         //  morhpolino MO1-nkx2.2a
         String morpholinoZdbID = "ZDB-MRPHLNO-070305-1";
-        Morpholino morpholino = new Morpholino();
-        morpholino.setZdbID(morpholinoZdbID);
+        SequenceTargetingReagent sequenceTargetingReagent = new SequenceTargetingReagent();
+        sequenceTargetingReagent.setZdbID(morpholinoZdbID);
         //  lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        List<Figure> figs = publicationRepository.getFiguresByMorpholinoAndAnatomy(morpholino, item);
+        List<Figure> figs = publicationRepository.getFiguresByMorpholinoAndAnatomy(sequenceTargetingReagent, item);
         assertTrue(figs != null);
 //        assertEquals("1 figure", 1, figs.size());
 

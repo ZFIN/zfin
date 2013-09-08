@@ -166,6 +166,18 @@ public class ZfinStringUtils {
 
     }
 
+    public static boolean containsWhiteSpaceOrNoneATGC(final String sequenceString){
+        if(sequenceString != null){
+            for(int i = 0; i < sequenceString.length(); i++){
+                char c = sequenceString.charAt(i);
+                if(Character.isWhitespace(c) || (c != 'A' && c != 'T' && c != 'G' && c != 'C')){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
 
 

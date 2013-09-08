@@ -103,6 +103,7 @@
         <security:intercept-url pattern="/action/marker/transcript-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/marker/region-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/marker/disruptor-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/people/edit-user*" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
         <security:intercept-url pattern="/action/feature/alleleDesig-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/marker/antibody-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />

@@ -75,6 +75,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getFeatureRelationshipTypesForPointMutationType() {
         List<String> pointMutantTypes = new ArrayList<String>();
         pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.CREATED_BY.toString());
 
         List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.POINT_MUTATION);
         assertTrue(CollectionUtils.isEqualCollection(pointMutantTypes, types));
@@ -86,6 +87,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
         tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
         tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CREATED_BY.toString());
 
         List<String> types = featureRepository.getRelationshipTypesForFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION);
         assertTrue(CollectionUtils.isEqualCollection(tgInsertionTypes, types));

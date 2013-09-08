@@ -6,6 +6,7 @@ BAC_END	/action/marker/view/ZDB-BAC_END
 CDNA	/action/marker/view/ZDB-CDNA
 COMPANY	/action/profile/view/ZDB-COMPANY
 CONSTRCT	/action/marker/view/ZDB-CONSTRCT
+CRISPR   /action/marker/view/ZDB-CRISPR
 EFG	/action/marker/view/ZDB-EFG
 EST	/action/marker/view/ZDB-EST
 ETCONSTRCT	/action/marker/view/ZDB-ETCONSTRCT
@@ -36,6 +37,7 @@ REGION	/action/marker/view/ZDB-REGION
 SNP	/action/marker/view/ZDB-SNP
 SSLP	/action/marker/view/ZDB-SSLP
 STS	/action/marker/view/ZDB-STS
+TALEN /action/marker/view/ZDB-TALEN
 TERM	/action/ontology/term-detail/ZDB-TERM
 TGCONSTRCT	/action/marker/view/ZDB-TGCONSTRCT
 TSCRIPT	/action/marker/view/ZDB-TSCRIPT

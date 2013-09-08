@@ -92,7 +92,7 @@ OUPUT:
                         gene is not redundant, add it to display string.
            <?/MICOMMENT>              
 	   <?MIBLOCK COND="$(EC,$cds_firstMo,t)">
-	      <?MIVAR>$(SETVAR,$cds_display,MO:$cds_gene_sym)<?/MIVAR>
+	      <?MIVAR>$(SETVAR,$cds_display,Knockdown reagent:$cds_gene_sym)<?/MIVAR>
            <?MIELSE>
 	      <?MIVAR COND="$(=,$(POSITION,$cds_uniq_gene_list,$cds_gene_sym$cds_delimiter),0)">
 		$(SETVAR,$cds_display,$cds_display$cds_delimiter$cds_gene_sym)

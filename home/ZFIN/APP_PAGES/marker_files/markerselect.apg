@@ -576,7 +576,7 @@ DEBUGGING:
 
     <?MIVAR> $(SETVAR,$type_of_genedom,t) <?/MIVAR>
 
-  <?MIELSE COND="$(EC,$type,pub_mo)" >
+  <?MIELSE COND="$(EC,$type,pub_mo)">
      <?MISQL SQL="
        insert into $markerselect_temp_marker
 	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev,
@@ -591,6 +591,40 @@ DEBUGGING:
      <?/MISQL>
      <?MIVAR NAME=$type_of_knockdown_reagent>t<?/MIVAR>
      <?MIVAR NAME=$type_of_genedom>f<?/MIVAR>
+
+  <?MIELSE COND="$(EC,$type,pub_talen)">
+     <?MISQL SQL="
+       insert into $markerselect_temp_marker
+	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev,
+	     mstmrkr_abbrev_order,  mstmrkr_type )
+	select mrkr_zdb_id, mrkr_name, mrkr_abbrev,
+	       mrkr_abbrev_order, mrkr_type
+	from  record_attribution, marker
+	where recattrib_source_zdb_id = '$pubId'
+	  and recattrib_data_zdb_id = mrkr_zdb_id
+	  and mrkr_type = 'TALEN';
+	">
+     <?/MISQL>
+     <?MIVAR NAME=$type_of_knockdown_reagent>t<?/MIVAR>
+     <?MIVAR NAME=$type_of_genedom>f<?/MIVAR>
+
+
+  <?MIELSE COND="$(EC,$type,pub_crispr)">
+     <?MISQL SQL="
+       insert into $markerselect_temp_marker
+	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev,
+	     mstmrkr_abbrev_order,  mstmrkr_type )
+	select mrkr_zdb_id, mrkr_name, mrkr_abbrev,
+	       mrkr_abbrev_order, mrkr_type
+	from  record_attribution, marker
+	where recattrib_source_zdb_id = '$pubId'
+	  and recattrib_data_zdb_id = mrkr_zdb_id
+	  and mrkr_type = 'CRISPR';
+	">
+     <?/MISQL>
+     <?MIVAR NAME=$type_of_knockdown_reagent>t<?/MIVAR>
+     <?MIVAR NAME=$type_of_genedom>f<?/MIVAR>
+
 
   <?MIELSE COND="$(EC,$type,pub_efg)" >
      <?MISQL SQL="
@@ -710,6 +744,10 @@ DEBUGGING:
                 Genes / Markers
             <?MIELSE COND="$(EC,$type,pub_mo)">
                 Morpholino
+            <?MIELSE COND="$(EC,$type,pub_talen)">
+                TALEN
+           <?MIELSE COND="$(EC,$type,pub_crispr)">
+                CRISPR
             <?MIELSE COND="$(EC,$type,pub_efg)">
                 Engineered Foreign Genes
             <?MIELSE>
@@ -794,11 +832,11 @@ DEBUGGING:
             order by mstmrkr_significance, mstmrkr_type, mstmrkr_abbrev_order;
     <?/MIVAR>
 
-    <?MICOMMENT> For morpholino, the order is only meaningful when it is by gene
+    <?MICOMMENT> For Disruptors (Morpholino, TALEN, CRISPR), the order is only meaningful when it is by gene
                  symbol. Alternatively, we could store the expected gene symbol
-                 string as the morpholino name/abbrev order string.
+                 string as the Disruptor name/abbrev order string.
     <?/MICOMMENT>
-    <?MIBLOCK COND="$(OR,$(AND,$(XST,$marker_type),$(EC,$marker_type,MRPHLNO)),$(EC,$type,pub_mo))">
+    <?MIBLOCK COND="$(OR,$(AND,$(XST,$marker_type),$(OR,$(EC,$marker_type,MRPHLNO),$(EC,$marker_type,TALEN),$(EC,$marker_type,CRISPR))),$(OR,$(EC,$type,pub_mo),$(EC,$type,pub_talen),$(EC,$type,pub_crispr)))">
 	<?MIVAR NAME=$mrkrsel_master_sql>
 	       select distinct mstmrkr_name, mstmrkr_abbrev, mstmrkr_type,
 		      mt.mrkrtype_type_display, mstmrkr_zdb_id,
@@ -912,7 +950,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 	   == row color by gene group.
 <?/MICOMMENT>
 
-<?MIBLOCK COND="$(>,$(POSITION,$OID,MRPHLNO),0)">
+<?MIBLOCK COND="$(OR,$(>,$(POSITION,$OID,MRPHLNO),0),$(>,$(POSITION,$OID,TALEN),0),$(>,$(POSITION,$OID,CRISPR),0))">
 
  <?MIVAR NAME=$display_target_gene><?/MIVAR>
 
@@ -941,7 +979,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 <?MICOMMENT> start new row and column <?/MICOMMENT>
 <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
 
-<?MIBLOCK COND="$(>,$(POSITION,$OID,MRPHLNO),0)">
+<?MIBLOCK COND="$(OR,$(>,$(POSITION,$OID,MRPHLNO),0),$(>,$(POSITION,$OID,TALEN),0),$(>,$(POSITION,$OID,CRISPR),0))">
   <TD>
    <?MIVAR>$display_target_gene<?/MIVAR>
   </TD>

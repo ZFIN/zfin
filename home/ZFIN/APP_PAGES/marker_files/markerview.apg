@@ -328,6 +328,7 @@ function jump(form_select){
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super=protein&fdbcont_data=domain');
   		}
 	}
+	
 	function new_mrkrrel(mrkrrel_type, mrkr_abbrev_value) {
 		var mrkr_abbrev = escape(mrkr_abbrev_value.strip());
 		mrkrrel_type.replace(/ /,"%20");
@@ -335,7 +336,6 @@ function jump(form_select){
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_type+'&new_value='+mrkr_abbrev+'&target_table=marker');
   		}
 	}
-
 
 	function update_nomen_comments(nomen_zdb,comments_obj) {
         	var new_comments = escape(comments_obj.value);
@@ -355,15 +355,24 @@ function jump(form_select){
  		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
  		}
         }
-
-	function update_problem_type(old_value , new_value) {
-        old_value.replace(/ /, "%20") ;
- 	    old_value = escape(old_value);
-        new_value.replace(/ /, "%20") ;
- 	    new_value = escape(new_value);
-        if(old_value!=new_value){
-           window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&anchor=top&OID=$OID&attr=clone_problem_type&attr_type=boolean&old_value='+old_value+'&new_value='+new_value+'&target_table=clone');
+        
+        
+        function update_second_mrkrsequence(mrkrseq_zdb,old_seq,new_seq,note,new_seq_2) {
+ 	        if (note == '') {note = 'Second sequence Modified';}
+ 	        note = escape(note.replace(/\n/g, "<br>"));
+ 		if ((new_seq != '')) {
+ 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence_2&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note+'&new_value2='+new_seq_2);
+ 		}        
         }
+        
+	function update_problem_type(old_value , new_value) {
+            old_value.replace(/ /, "%20") ;
+ 	    old_value = escape(old_value);
+            new_value.replace(/ /, "%20") ;
+ 	    new_value = escape(new_value);
+            if(old_value!=new_value){
+               window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&anchor=top&OID=$OID&attr=clone_problem_type&attr_type=boolean&old_value='+old_value+'&new_value='+new_value+'&target_table=clone');
+            }
 	}
 
 	function new_attrib_nomen(nomen_zdb,pub_obj) {
@@ -793,13 +802,14 @@ Only need to update clones, etc., which should be the only things that will have
  <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id><?/MIVAR>
 
  <?MISQL SQL="
-   select mrkrseq_sequence, mrkrseq_zdb_id, mrkrseq_offset_start,mrkrseq_offset_stop
+   select mrkrseq_sequence, mrkrseq_sequence_2, mrkrseq_zdb_id, mrkrseq_offset_start,mrkrseq_offset_stop
      from marker_sequence
     where mrkrseq_mrkr_zdb_id = '$OID';">
     <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$2<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_start>$3<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_stop>$4<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_second_sequence>$2<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$3<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_mrkrseq_start>$4<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_mrkrseq_stop>$5<?/MIVAR>
  <?/MISQL>
 
  <?MICOMMENT> get blast linkout url to ncbi-blast<?/MICOMMENT>
@@ -821,8 +831,12 @@ Only need to update clones, etc., which should be the only things that will have
 
       <table border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
         <tr><td>
-        <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>
-
+        <?MIBLOCK COND="$(XST,$mrkrview_second_sequence)">
+          <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence&seqdata_second_sequence=$mrkrview_second_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>
+        <?MIELSE>
+          <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>
+        <?/MIBLOCK>
+    <?MIBLOCK COND="$(OR,$(NXST,$mrkrview_second_sequence),$(EQ,$mrkrview_second_sequence,))">
       <INPUT TYPE=button
         value="Update Sequence"
         <?MIVAR>
@@ -835,6 +849,21 @@ Only need to update clones, etc., which should be the only things that will have
             update_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)
         }">
         <?/MIVAR>
+     <?/MIBLOCK>
+    <?MIBLOCK COND="$(AND,$(XST,$mrkrview_second_sequence),$(NE,$mrkrview_second_sequence,))">
+      <INPUT TYPE=button
+        value="Update Sequence"
+        <?MIVAR>
+        onClick="
+        if(document.newdata.seqdata_action.selectedIndex==0){
+            actionSequence(4); 
+        }
+
+        if (validSequence(document.newdata.seqdata_DisplaySequence.value) && validSequence(document.newdata.seqdata_2nd_DisplaySequence.value)){
+            update_second_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_second_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value,document.newdata.seqdata_2nd_DisplaySequence.value)
+        }">
+        <?/MIVAR>
+     <?/MIBLOCK>     
         <br>
         </td></tr>
       </table>
@@ -1090,7 +1119,7 @@ Only need to update clones, etc., which should be the only things that will have
 <?/MIVAR>
 
 </P>
-<?MIVAR>
+<?MIVAR COND="$(AND,$(NE,$marker_type,CRISPR),$(NE,$marker_type,MRPHLNO),$(NE,$marker_type,TALEN))">
 To view the Gene Expression section go to the 
 <a href="/$OID">view page</a>
 <?/MIVAR>
@@ -2200,8 +2229,9 @@ union
 
 
 <?MICOMMENT>
-  ------------- SEQUENCE INFOMATION -------------------------------
+  ------------- SEQUENCE INFORMATION -------------------------------
 <?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(NE,$marker_type,CRISPR),$(NE,$marker_type,MRPHLNO),$(NE,$marker_type,TALEN))">
 
 <?MICOMMENT> Get count of # of sequence links.  Union gets rid of dups <?/MICOMMENT>
 <?MICOMMENT> TODO: redo with display groups, same as on sequence.apg page<?/MICOMMENT>
@@ -2521,6 +2551,8 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
   </form>  <?MICOMMENT> end form updateseq <?/MICOMMENT>
 <?/MIBLOCK>
 
+
+<?/MIBLOCK>
 <?MICOMMENT>
   ---------------- ends of SEQUENCE INFORMATION ---------------
 <?/MICOMMENT>

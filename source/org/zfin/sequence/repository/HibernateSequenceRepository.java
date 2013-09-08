@@ -14,6 +14,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -1040,6 +1042,19 @@ public class HibernateSequenceRepository implements SequenceRepository {
         if (numberOfRecords > 0)
             query.setMaxResults(numberOfRecords);
         return (List<DBLink>) query.list();
+    }
+
+    public MarkerSequence createMarkerSequence(MarkerSequence markerSequence, String attributionZdbID) {
+        Session session = HibernateUtil.currentSession();
+        session.save(markerSequence);
+        if (attributionZdbID != null && attributionZdbID.length() > 0) {
+            PublicationAttribution pa = new PublicationAttribution();
+            pa.setSourceZdbID(attributionZdbID);
+            pa.setDataZdbID(markerSequence.getZdbID());
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+            session.save(pa);
+        }
+        return markerSequence;
     }
 }
 

@@ -7,6 +7,16 @@ update marker
   where mrkr_abbrev like 'MO%'
  and mrkr_type = 'MRPHLNO';
 
+update marker
+  set (mrkr_name,mrkr_abbrev) = (replace(mrkr_name,"+",","),replace(mrkr_abbrev,"+",","))
+  where mrkr_abbrev like 'TALEN%'
+ and mrkr_type = 'TALEN';
+
+update marker
+  set (mrkr_name,mrkr_abbrev) = (replace(mrkr_name,"+",","),replace(mrkr_abbrev,"+",","))
+  where mrkr_abbrev like 'CRISPR%'
+ and mrkr_type = 'CRISPR';
+
 --set pdqpriority high;
 
 insert into tmp_genox(genox_Zdb_id)

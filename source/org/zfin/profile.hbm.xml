@@ -142,6 +142,8 @@
                                     WHEN 'PAC' THEN 'Marker'
                                     WHEN 'GENO' THEN 'Genoty'
                                     WHEN 'ALT' THEN 'Featur'
+                                    WHEN 'TALEN' THEN 'Marker'
+                                    WHEN 'CRISPR' THEN 'Marker'
                                     ELSE             'other-'
                                  END)"/>
 
@@ -261,4 +263,5 @@
 
 
 </hibernate-mapping>
+
 

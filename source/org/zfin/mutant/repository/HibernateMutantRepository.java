@@ -22,7 +22,6 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -81,7 +80,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "AND genox.experiment.name in (:condition) " +
                         "AND not exists (select 1 from ExperimentCondition cond where" +
                         " cond.experiment = genox.experiment " +
-                        " AND cond.morpholino is not null ) ";
+                        " AND cond.sequenceTargetingReagent is not null ) ";
 
         if (!wildtype) {
             hql += "AND genox.genotype.wildtype = 'f' ";
@@ -126,7 +125,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "AND genox.standardOrGenericControl = :standardOrGeneric " +
                         "AND not exists (select 1 from ExperimentCondition cond where" +
                         " cond.experiment = genox.experiment " +
-                        " AND cond.morpholino is not null ) ";
+                        " AND cond.sequenceTargetingReagent is not null ) ";
 
         if (!wildtype) {
             hql += "AND geno.wildtype = 'f' ";
@@ -239,7 +238,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param numberOfRecords number
      * @return list of statistics
      */
-    public List<Morpholino> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords) {
+    public List<SequenceTargetingReagent> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords) {
         Session session = HibernateUtil.currentSession();
 
         // This returns morpholinos by phenote annotations
@@ -254,7 +253,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setBoolean("isWildtype", true);
 
         @SuppressWarnings("unchecked")
-        List<Morpholino> morphs = new ArrayList<Morpholino>();
+        List<SequenceTargetingReagent> morphs = new ArrayList<SequenceTargetingReagent>();
         morphs.addAll(getMorpholinoRecords(null));
 
         //retrieve morpholinos annotated through the expression section
@@ -308,9 +307,9 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       phenoeq.tag != :tag AND " +
                 "       con.experiment = exp AND " +
                 "       genotypeExperiment.genotype = geno AND " +
-                "       marker = con.morpholino AND " +
+                "       marker = con.sequenceTargetingReagent AND " +
                 "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
-                "                             expCon.morpholino is null ) ";
+                "                             expCon.sequenceTargetingReagent is null ) ";
         if (isWildtype != null) {
             hql += " AND geno.wildtype = :isWildtype ";
         }
@@ -345,12 +344,12 @@ public class HibernateMutantRepository implements MutantRepository {
         return criteria.list();
     }
 
-    private List<Morpholino> getMorpholinoRecords(List<Marker> markers) {
-        List<Morpholino> morphs = new ArrayList<Morpholino>(5);
+    private List<SequenceTargetingReagent> getMorpholinoRecords(List<Marker> markers) {
+        List<SequenceTargetingReagent> morphs = new ArrayList<SequenceTargetingReagent>(5);
         if (markers != null) {
             // ToDo: Integrate Morpholinos better in the Marker: Inherit from it an map it better in Hibernate.
             for (Marker marker : markers) {
-                Morpholino morph = new Morpholino();
+                SequenceTargetingReagent morph = new SequenceTargetingReagent();
                 morph.setMarkerType(marker.getMarkerType());
                 morph.setAbbreviation(marker.getAbbreviation());
                 morph.setZdbID(marker.getZdbID());
@@ -760,7 +759,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
-        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from Morpholino m  " +
+        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
                 "inner join m.sequences s " +
                 "inner join m.firstMarkerRelationships  " +
                 "where m.markerType =  :markerType ";
@@ -1238,8 +1237,8 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param moId MO id
      * @return MO
      */
-    public Morpholino getMorpholinosById(String moId) {
-        return (Morpholino) HibernateUtil.currentSession().get(Morpholino.class, moId);
+    public SequenceTargetingReagent getMorpholinosById(String moId) {
+        return (SequenceTargetingReagent) HibernateUtil.currentSession().get(SequenceTargetingReagent.class, moId);
     }
 
     /**

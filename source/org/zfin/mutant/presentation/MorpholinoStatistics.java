@@ -52,7 +52,7 @@ public class MorpholinoStatistics extends EntityStatistics {
             }
         });
         for (ExperimentCondition condition : experimentConditions) {
-            Marker morpholino = condition.getMorpholino();
+            Marker morpholino = condition.getSequenceTargetingReagent();
             if (morpholino != null) {
                 Set<MarkerRelationship> markerRelationshipSet = morpholino.getFirstMarkerRelationships();
                 for (MarkerRelationship markerRelation : markerRelationshipSet) {

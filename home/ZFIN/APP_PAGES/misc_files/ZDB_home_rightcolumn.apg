@@ -9,19 +9,20 @@
         <li>View <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubselect2.apg&query_results=exist&curator=$ZDB_ident&cur_status=is "><em>my open pubs</em></a></li>
         <?/MIVAR>
         <li>
-          Add 
+          Add
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE"><em>gene</em></a>,
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENEP"><em>pseudogene</em></a>,
           <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=EFG"><em>foreign gene</em></a>,
-          <br>&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=MRPHLNO"><em>morpholino</em></a>,
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><em>linkages</em></a>,
-          <a href="/action/marker/antibody-add-form"><em>antibody</em></a>,
-
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="/action/marker/antibody-add-form"><em>antibody</em></a>,
+          <a href="/action/marker/disruptor-add?disruptorType=MRPHLNO"><em>morpholino</em></a>,
+          <a href="/action/marker/disruptor-add?disruptorType=TALEN"><em>TALEN</em></a>,
+          <a href="/action/marker/disruptor-add?disruptorType=CRISPR"><em>CRISPR</em></a>,
+          <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/marker/transcript-add"><em>transcript</em></a>,
-          <a href="/action/marker/region-add"><em>engineered region</em></a>
+          <a href="/action/marker/region-add"><em>engineered region</em></a>,
+          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg"><em>linkages</em></a>
 
 
 
@@ -36,11 +37,11 @@
                         <a href="javascript:document.maps.submit();"><em>Maps</em></a>,
                         <a href="javascript:document.orthologue.submit();"><em>Orthologue</em></a>
 
-            <form name="fishsearch" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
+            <form name="fishsearch" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi'
 			    method="POST" >
 
-			<input type=hidden 
-			       name="run" 
+			<input type=hidden
+			       name="run"
 			       value="regen_fishsearch">
 		      </form>
 
@@ -54,16 +55,16 @@
 		      </form>
 
 
-		      <form name="orthologue" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi' 
+		      <form name="orthologue" action='/<!--|CGI_BIN_DIR_NAME|-->/runSPL.cgi'
 			    method="POST" >
-			<input type=hidden 
-			       name="run" 
+			<input type=hidden
+			       name="run"
 			       value="regen_oevdisp">
 		      </form>
         </li>
         <li>
         <script type="text/javascript">
-        function handleOID(){ 
+        function handleOID(){
             if(document.quickpub.OIDpart.value.indexOf('ZDB-PUB-') != '0'){
               document.quickpub.OID.value = 'ZDB-PUB-' + document.quickpub.OIDpart.value;
             }
@@ -72,7 +73,7 @@
             }
         }
         </script>
-        
+
         <form name="quickpub" action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method="get" onsubmit="handleOID() ; ">
                <input type="hidden" name="MIval" value="aa-curation.apg">
                <input type="hidden" name="OID">
@@ -103,10 +104,10 @@
 	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_journal.apg"><em>journal</em></a>,
            <a href="/action/feature/alleleDesig-add-form"><em>line designation</em></a>
         </li>
-        <li> 
+        <li>
           Find <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalselect.apg"><em>Existing Journal</em></a>
         <li>
-          Generate <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN><em>dist. list</em></a>, 
+          Generate <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list.apg" TARGET=NEW_WIN><em>dist. list</em></a>,
 	  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_usa.apg" TARGET=NEW_WIN><em>USA dist. list</em></a>, <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-mkdist_list_PI.apg" TARGET=NEW_WIN><em>PI dist. list</em></a>
         </li>
       </ul>
@@ -124,7 +125,7 @@
   <h3><a href="http://zebrafish.org/" title="Zebrafish International Resource Center (ZIRC) Home">Zebrafish International Resource Center</a></h3>
   <ul>
     <li>
-        Request:         
+        Request:
         <a href="http://zebrafish.org/zirc/fish/lineAll.php">Fish Lines</a>,
         <a href="http://zebrafish.org/zirc/est/estAll.php">ESTs/cDNAs</a>,
         <a href="http://zebrafish.org/zirc/abs/absAll.php">Monoclonal Antibodies</a>,
@@ -143,28 +144,28 @@
  <h3>Genomics</h3>
   <ul>
     <li>Browse genome:
-      <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>, 
+      <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>,
       <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</a>,<br>
       <a href="http://genome.ucsc.edu/cgi-bin/hgGateway?hgsid=85282730&clade=vertebrate&org=Zebrafish&db=0">UCSC</a>,
       <a href="http://www.ncbi.nlm.nih.gov/projects/mapview/map_search.cgi?taxid=7955">NCBI</a>, <a href="http://genome.igib.res.in/">FishMap</a>
     </li>
     <li>
-      View <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi" 
+      View <a href="/<!--|CGI_BIN_DIR_NAME|-->/mapper_select.cgi"
               title="View genetic, radiation hybrid or consolidated maps">
            Genetic Maps</a>
     </li>
 
-    <li>BLAST: 
-      <a href="/action/blast/blast">ZFIN</a>, 
-      <a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a>, 
+    <li>BLAST:
+      <a href="/action/blast/blast">ZFIN</a>,
+      <a href="http://www.ensembl.org/Danio_rerio/blastview">Ensembl</a>,
       <a href="http://vega.sanger.ac.uk/Multi/blastview?species=Danio_rerio">Vega</a>,
       <a href="http://www.ncbi.nlm.nih.gov/projects/genome/seq/BlastGen/BlastGen.cgi?taxid=7955">NCBI</a>,
       <a href="http://danio.mgh.harvard.edu/blast/blast_grp.html">MGH</a>
     </li>
 
     <li>Find cDNAs and ESTs at
-      <a href="http://zgc.nci.nih.gov/">ZGC</a>,  
+      <a href="http://zgc.nci.nih.gov/">ZGC</a>,
       <a href="http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/gimain.pl?gudb=zfish">ZGI</a>
     </li>
 
@@ -181,8 +182,8 @@
     </li>
 
   </ul>
- 
- 
+
+
   <h3><strong>Zebrafish Programs</strong></h3>
   <ul>
     <li>
@@ -195,35 +196,35 @@
 
 
 
-   <h3> 
+   <h3>
       News
    </h3>
    <ul>
        <?MICOMMENT> template:
-       
-       
+
+
        <li>
          <a href="/zf_info/news/siteNews.html">
          Month day - link text
          </a>
        </li>
-       <?/MICOMMENT> 
-       
-       
+       <?/MICOMMENT>
+
+
 
                <!--
        <li>
          <a href="/zf_info/news/siteNews.html#zv9">
            November 16, 2010 - Zv9 is released in Ensembl</a>
-       </li> 
-       
-       
+       </li>
+
+
                <li>
          <a href="/zf_info/news/siteNews.html#grc">
           October 6, 2010 - Zebrafish Genome Sequence handed over to Genome Reference Consortium</a>
-       </li> 
-       
-       
+       </li>
+
+
 
      -->
 
@@ -235,18 +236,18 @@
 
        <div id="news"></div>
 
-     
- 
-       <li> 
+
+
+       <li>
          <a href="/zf_info/news/Newsletters.html">ZFIN Newsletters</a>,
          <!--<a href="/zf_info/news/siteNews.html">News Archive</a>-->
            <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/news">News Archive</a>
       </li>
-   
+
     <br>
 
      </ul>
-  
+
      <img id="zdbhome-fishimg" src="/images/betterfish.jpg">
 
 

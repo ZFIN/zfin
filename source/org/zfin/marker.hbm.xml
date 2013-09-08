@@ -45,7 +45,7 @@
 
         <discriminator type="string"
                        formula="(CASE get_obj_type(mrel_mrkr_1_zdb_id)
-                                    WHEN 'MRPHLNO' THEN       'MORPH'
+                                    WHEN 'MRPHLNO' THEN       'other'
                                     ELSE                      'other'
                                  END)"/>
 
@@ -59,10 +59,7 @@
             <key column="recattrib_data_zdb_id"/>
             <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
         </set>
-        <subclass name="org.zfin.mutant.MorpholinoMarkerRelationship" extends="org.zfin.marker.MarkerRelationship" discriminator-value="MORPH" >
-            <many-to-one name="firstMarker" class="org.zfin.mutant.Morpholino" column="mrel_mrkr_1_zdb_id" lazy="no-proxy" insert="false" update="false"/>
-        </subclass>
-        <subclass name="org.zfin.marker.MarkerRelationship" discriminator-value="other" >
+        <subclass name="org.zfin.marker.MarkerRelationship" discriminator-value="other">
             <many-to-one name="firstMarker" class="org.zfin.marker.Marker" column="mrel_mrkr_1_zdb_id" lazy="no-proxy"/>
         </subclass>
     </class>
@@ -91,6 +88,8 @@
         <discriminator type="string"
                        formula="(CASE get_obj_type(mrkr_zdb_id)
                                     WHEN 'MRPHLNO' THEN       'MO'
+                                    WHEN 'TALEN' THEN       'MO'
+                                    WHEN 'CRISPR' THEN       'MO'
                                     ELSE                      'ot'
                                  END)"/>
 
@@ -169,7 +168,7 @@
             <key column="dalias_data_zdb_id"/>
             <one-to-many class="org.zfin.marker.MarkerAlias"/>
         </set>
-        <set name="figures" lazy="true" table="construct_figure"  inverse="false">
+        <set name="figures" lazy="true" table="construct_figure" inverse="false">
             <key column="consfig_construct_zdb_id"/>
             <one-to-many class="org.zfin.marker.MarkerFigure"/>
         </set>
@@ -247,14 +246,7 @@
             </set>
         </joined-subclass>
 
-        <joined-subclass name="org.zfin.marker.MarkerSequenceMarker" table="marker_sequence">
-            <key column="mrkrseq_mrkr_zdb_id"/>
-            <set name="sequences" lazy="true">
-                <key column="mrkrseq_mrkr_zdb_id"/>
-                <one-to-many class="org.zfin.sequence.MarkerSequence"/>
-            </set>
 
-        </joined-subclass>
     </class>
 
     <class name="org.zfin.marker.Vector" table="vector">

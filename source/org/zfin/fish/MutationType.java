@@ -12,6 +12,7 @@ public enum MutationType {
     DEFICENCY("Deficiency"),
     INSERTION("Insertion"),
     MORPHOLINO("Morpholino"),
+    INDEL("INDEL"),
     POINT_MUTATION("Point Mutation"),
     SMALL_DELETION("Small Deletion"),
     INVERSION("Inversion"),

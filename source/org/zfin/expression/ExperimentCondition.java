@@ -1,7 +1,7 @@
 package org.zfin.expression;
 
 import org.apache.log4j.Logger;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 
 /**
  * Entity class that maps to experiment table.
@@ -10,7 +10,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
 
     private String zdbID;
     private Experiment experiment;
-    private Morpholino morpholino;
+    private SequenceTargetingReagent sequenceTargetingReagent;
     private String value;
     private ExperimentUnit unit;
     private ConditionDataType conditionDataType;
@@ -34,12 +34,12 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
         this.experiment = experiment;
     }
 
-    public Morpholino getMorpholino() {
-        return morpholino;
+    public SequenceTargetingReagent getSequenceTargetingReagent() {
+        return sequenceTargetingReagent;
     }
 
-    public void setMorpholino(Morpholino morpholino) {
-        this.morpholino = morpholino;
+    public void setSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+        this.sequenceTargetingReagent = sequenceTargetingReagent;
     }
 
     public String getValue() {
@@ -76,7 +76,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
 
     public boolean isMoCondition() {
         boolean moCondition = conditionDataType.getGroup().equalsIgnoreCase("morpholino");
-        if (moCondition && morpholino == null) {
+        if (moCondition && sequenceTargetingReagent == null) {
             String message = "No Morpholino found for experiment " + experiment.getName() + " [" + zdbID + "]. ";
             message += "Publication: " + experiment.getPublication().getZdbID();
             logger.error(message);
@@ -97,7 +97,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
         if (conditionDataType.compareTo(o.getConditionDataType()) != 0)
             return conditionDataType.compareTo(o.getConditionDataType());
         else if (isMoCondition() && o.isMoCondition())
-            return morpholino.compareTo(o.getMorpholino());
+            return sequenceTargetingReagent.compareTo(o.getSequenceTargetingReagent());
         else //even if it's the same condition type, we still want consistent order, so use id..
             return getZdbID().compareTo(o.getZdbID());
     }

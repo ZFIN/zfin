@@ -6,10 +6,10 @@
 
 <c:if test="${!empty morpholinoConditions}">
 <div class="summary">
-    <div class="summaryTitle">Morpholino</div>
+    <div class="summaryTitle">Knockdown Reagents</div>
     <table class="summary rowstripes">
         <tr>
-            <th>Morpholino</th>
+            <th>Reagent</th>
             <th>Value</th>
             <th>Unit</th>
             <th>Comments</th>
@@ -17,7 +17,7 @@
         <c:forEach var="condition" items="${morpholinoConditions}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
                 <td>
-                    <zfin:link entity="${condition.morpholino}"/>
+                    <zfin:link entity="${condition.sequenceTargetingReagent}"/>
                 </td>
 
                 <td>

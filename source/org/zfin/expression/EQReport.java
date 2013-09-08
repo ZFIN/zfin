@@ -161,7 +161,7 @@ public class EQReport {
             Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getGenotypeExperiment().getExperiment().getMorpholinoConditions();
             if (conditions != null && conditions.size() > 0) {
                 for (ExperimentCondition condition : conditions) {
-                    buffer.append(condition.getMorpholino().getName());
+                    buffer.append(condition.getSequenceTargetingReagent().getName());
                     buffer.append(",");
                 }
                 buffer.deleteCharAt(buffer.length() - 1);

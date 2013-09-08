@@ -14,6 +14,7 @@ public enum FeatureMarkerRelationshipTypeEnum {
     CONTAINS_INNOCUOUS_SEQUENCE_FEATURE("contains innocuous sequence feature"),
     MARKERS_MISSING("markers missing"),
     MARKERS_MOVED("markers moved"),
+    CREATED_BY("created by"),
     MARKERS_PRESENT("markers present");
 
     private final String value;

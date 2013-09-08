@@ -66,7 +66,7 @@ public class Experiment implements Comparable<Experiment> {
 
         Set<ExperimentCondition> morpholinoConditions = new HashSet<ExperimentCondition>(4);
         for (ExperimentCondition condition : experimentConditions) {
-            if (condition.getMorpholino() != null)
+            if (condition.getSequenceTargetingReagent() != null)
                 morpholinoConditions.add(condition);
         }
         return morpholinoConditions;

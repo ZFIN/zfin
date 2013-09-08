@@ -16,7 +16,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
@@ -721,8 +721,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveSingleTargetGeneFromMorpholino() {
         // MO1-adam8a has one target gene
         MarkerRepository markerRep = markerRepository;
-        Morpholino morpholino = markerRep.getMorpholinoByAbbreviation("MO1-adam8a");
-        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+        SequenceTargetingReagent sequenceTargetingReagent = markerRep.getMorpholinoByAbbreviation("MO1-adam8a");
+        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(sequenceTargetingReagent);
         assertNotNull(targetGenes);
         assertEquals(1, targetGenes.size());
 //        assertEquals("adam8a", targetGenes.iterator().next().getAbbreviation());
@@ -734,8 +734,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveMultipleTargetGenesFromMorpholino() {
         // MO4-rbpja+rbpjb has two target genes
         MarkerRepository markerRep = markerRepository;
-        Morpholino morpholino = markerRep.getMorpholinoByAbbreviation("MO4-rbpja,rbpjb");
-        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(morpholino);
+        SequenceTargetingReagent sequenceTargetingReagent = markerRep.getMorpholinoByAbbreviation("MO4-rbpja,rbpjb");
+        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(sequenceTargetingReagent);
         assertNotNull(targetGenes);
         assertEquals(2, targetGenes.size());
         Iterator<Marker> iter = targetGenes.iterator();
@@ -970,6 +970,14 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(links);
         assertEquals(1, links.size());
         assertTrue(links.get(0).getAccession().startsWith("OTTDARG0000"));
+    }
+
+    @Test
+    public void getSequenceTargetingReagent() {
+        markerRepository.getSequenceTargetingReagent("ZDB-TALEN-130820-2");
+        markerRepository.getSequenceTargetingReagent("ZDB-CRISPR-130820-2");
+        SequenceTargetingReagent marker = markerRepository.getSequenceTargetingReagent("ZDB-MRPHLNO-100729-2");
+        assertNotNull(marker);
     }
 
     @Test

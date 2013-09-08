@@ -48,7 +48,7 @@
                     <c:if test="${phenotype.phenotypeExperiment.genotypeExperiment.experiment.experimentConditions ne null}">
                         <c:forEach var="morpholino"
                                    items="${phenotype.phenotypeExperiment.genotypeExperiment.experiment.experimentConditions}">
-                            ${morpholino.morpholino.abbreviation},
+                            ${morpholino.sequenceTargetingReagent.abbreviation},
                         </c:forEach>
                     </c:if>
                 </td>

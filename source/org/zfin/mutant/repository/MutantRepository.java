@@ -66,7 +66,7 @@ public interface MutantRepository {
      * @param numberOfRecords number
      * @return list of statistics
      */
-    List<Morpholino> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords);
+    List<SequenceTargetingReagent> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords);
 
     /**
      * Retrieve a genotype,feature and marker object by PK.
@@ -316,7 +316,7 @@ public interface MutantRepository {
      * @param moIds MO ids
      * @return list of MOs
      */
-    Morpholino getMorpholinosById(String moIds);
+    SequenceTargetingReagent getMorpholinosById(String moIds);
 
     /**
      * Retrieve all wildtype genotypes.

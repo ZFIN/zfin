@@ -19,7 +19,7 @@ import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.Morpholino;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
@@ -155,19 +155,19 @@ public class FishDetailController {
     private void retrieveMorpholinoData(FishBean form, Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return;
-        form.setMorpholinos(getMorpholinos(fish));
+        form.setSequenceTargetingReagents(getMorpholinos(fish));
     }
 
-    private List<Morpholino> getMorpholinos(Fish fish) {
+    private List<SequenceTargetingReagent> getMorpholinos(Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return null;
         Set<String> moIds = new HashSet<String>(fish.getMorpholinos().size());
         for (ZfinEntity morpholino : fish.getMorpholinos())
             moIds.add(morpholino.getID());
-        List<Morpholino> morpholinos = new ArrayList<Morpholino>(2);
+        List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(2);
         for (String moID : moIds)
-            morpholinos.add(getMutantRepository().getMorpholinosById(moID));
-        return morpholinos;
+            sequenceTargetingReagents.add(getMutantRepository().getMorpholinosById(moID));
+        return sequenceTargetingReagents;
     }
 
     public void retrievePhenotypeData(FishBean form, List<String> genoxIds) {

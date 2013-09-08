@@ -25,6 +25,8 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Sevice Class that deals with Marker related logic.
@@ -38,6 +40,8 @@ public class MarkerService {
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
     private static MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
+
+    private static Pattern typePattern = Pattern.compile("ZDB-([\\p{Alpha}_]+)-.*");
 
     /**
      * Looks for firstMarkers in Genedom and returns the entire relation.
@@ -782,5 +786,15 @@ public class MarkerService {
         Collections.sort(markerRelationshipPresentationList, markerRelationshipSupplierComparator);
         cloneBean.setMarkerRelationshipPresentationList(markerRelationshipPresentationList);
         return cloneBean;
+    }
+
+    public static String getTypeForZdbID(String zdbID) {
+        Matcher matcher = typePattern.matcher(zdbID);
+        if (matcher.matches()) {
+            int numGroups = matcher.groupCount();
+            assert (numGroups == 1);
+            return matcher.group(1);
+        }
+        return null;
     }
 }
