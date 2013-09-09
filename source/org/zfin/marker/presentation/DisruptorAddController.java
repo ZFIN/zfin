@@ -72,8 +72,8 @@ public class DisruptorAddController {
 
     @RequestMapping(value = "/disruptor-do-submit", method = RequestMethod.POST)
     public String addDisruptor (Model model,
-                              @Valid @ModelAttribute("formBean") DisruptorAddBean formBean,
-                              BindingResult result) throws Exception {
+                                @Valid @ModelAttribute("formBean") DisruptorAddBean formBean,
+                                BindingResult result) throws Exception {
 
         if(result.hasErrors())
             return "marker/disruptor-add.page";
@@ -114,7 +114,6 @@ public class DisruptorAddController {
             ir.insertUpdatesTable(newDisruptor, "new " + formBean.getDisruptorType(), "", currentUser);
             PublicationService.addRecentPublications(request.getSession().getServletContext(), disruptorPub, PublicationSessionKey.GENE) ;
 
-         //   Marker createdDisruptor = mr.getMarkerByName(newDisruptor.getName());
             String alias = formBean.getDisruptorAlias();
             if(!StringUtils.isEmpty(alias)) {
                 mr.addMarkerAlias(newDisruptor, alias, disruptorPub);
@@ -122,7 +121,7 @@ public class DisruptorAddController {
 
             String curationNote = formBean.getDisruptorCuratorNote();
             if(!StringUtils.isEmpty(curationNote)) {
-                mr.addMarkerDataNote(newDisruptor, curationNote+disruptorSequence, currentUser);
+                mr.addMarkerDataNote(newDisruptor, curationNote, currentUser);
             }
 
             String targetGeneAbbr = formBean.getTargetGeneSymbol();
@@ -138,8 +137,8 @@ public class DisruptorAddController {
             newDisruptorSequence.setMarker(newDisruptor);
             newDisruptorSequence.setSequence(disruptorSequence.toUpperCase());
             if (formBean.getDisruptorType().equalsIgnoreCase("TALEN")) {
-              String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
-              newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
+                String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
+                newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
             }
             newDisruptorSequence.setType("Nucleotide");
 
@@ -156,7 +155,7 @@ public class DisruptorAddController {
         }
 
         return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
-               "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newDisruptor.getZdbID();
+                "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newDisruptor.getZdbID();
     }
 
 }
