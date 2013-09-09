@@ -278,6 +278,7 @@ EFFECTS
   }//ends function loadCDTSelectBox()
 
   function validateConditionForm(strId) {
+
       if (document.condition_new.xpcur_G_cond_add_exp.value == "") {
         alert("Please select an Environment.");
         return false;
@@ -293,6 +294,12 @@ EFFECTS
         return false;
       }        
       
+      var unitText = document.getElementById("xpcur_G_cond_add_unit").options[document.getElementById('xpcur_G_cond_add_unit').selectedIndex].text;
+      if (unitText == "N/A" && document.condition_new.xpcur_G_cond_add_value.value) {
+         alert("Please do not specify a value when there is no unit.");
+         return false;
+      } 
+ 
       var cond_Index = document.condition_new.xpcur_G_cond_add_cond.selectedIndex;   
       var cond_value = document.condition_new.xpcur_G_cond_add_cond[cond_Index].value;
       if ((cond_value == "STR") && 
@@ -588,7 +595,7 @@ EFFECTS
         <input name="xpcur_G_cond_add_value" type=textbox size=10>
     </td>
     <td>
-        <select name="xpcur_G_cond_add_unit">
+        <select id="xpcur_G_cond_add_unit" name="xpcur_G_cond_add_unit">
           <option value="">-------------------</option>
           <?MISQL SQL="
               select expunit_condition_group, count(*) 
