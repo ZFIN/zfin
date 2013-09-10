@@ -243,7 +243,7 @@ public class NCBIEfetch {
 
         EUtilsServiceStub service = new EUtilsServiceStub();
         EUtilsServiceStub.ESearchRequest request = new EUtilsServiceStub.ESearchRequest();
-        request.setDb("geo");
+        request.setDb("geoprofiles");
         request.setTerm("txid7955[organism]");
         request.setRetStart("0");
         request.setRetMax("0");
@@ -322,7 +322,7 @@ public class NCBIEfetch {
             , int i, int batchSize, int numAttempts) throws Exception {
         summaryRequest.setRetstart(String.valueOf(i));
         summaryRequest.setRetmax(String.valueOf(batchSize));
-        summaryRequest.setDb("geo");
+        summaryRequest.setDb("geoprofiles");
         summaryRequest.setQuery_key("1");
 
         for (int attempt = 0; attempt < numAttempts; ++attempt) {
