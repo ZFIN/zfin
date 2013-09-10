@@ -68,28 +68,28 @@ public class FeatureDetailController {
         if (null == feature) {
             String ftr=featureRepository.getFeatureByIDInTrackingTable(zdbID);
             if (ftr!=null) {
-                  if (zdbID.startsWith("ZDB-ALT-120130")||(zdbID.startsWith("ZDB-ALT-120806"))){
-                     return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
-                  }
+                if (zdbID.startsWith("ZDB-ALT-120130")||(zdbID.startsWith("ZDB-ALT-120806"))){
+                    return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+                }
                 else{
-                //if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
-                      String repldFtr=infrastructureRepository.getReplacedZdbID(zdbID);
-                      if (repldFtr!=null){
-                      feature= featureRepository.getFeatureByID(repldFtr);
+                    //if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
+                    String repldFtr=infrastructureRepository.getReplacedZdbID(zdbID);
+                    if (repldFtr!=null){
+                        feature= featureRepository.getFeatureByID(repldFtr);
 
-                      }
-                      else{
-                          model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                          return LookupStrings.RECORD_NOT_FOUND_PAGE;
-                      }
-                  }
+                    }
+                    else{
+                        model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                        return LookupStrings.RECORD_NOT_FOUND_PAGE;
+                    }
+                }
 
             }
 
-           else {
-                    model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                    return LookupStrings.RECORD_NOT_FOUND_PAGE;
-                }
+            else {
+                model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                return LookupStrings.RECORD_NOT_FOUND_PAGE;
+            }
 
         }
 
@@ -103,6 +103,7 @@ public class FeatureDetailController {
         form.setFeature(feature);
         form.setSortedMarkerRelationships(FeatureService.getSortedMarkerRelationships(feature));
         form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
+        form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
         form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
         form.setSinglePublication(FeatureService.getSinglePublication(feature));
         form.setFeatureMap(FeatureService.getFeatureMap(feature));

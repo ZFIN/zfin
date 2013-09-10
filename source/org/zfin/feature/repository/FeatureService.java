@@ -33,6 +33,23 @@ public class FeatureService {
         return affectedGenes;
     }
 
+    public static FeatureMarkerRelationship getCreatedByRelationship(Feature feature) {
+        Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
+        if (fmrelationships == null) {
+            return null;
+        }
+
+        for (FeatureMarkerRelationship ftrmrkrRelationship : fmrelationships) {
+            if (ftrmrkrRelationship != null) {
+               if (ftrmrkrRelationship.getMarker().getMarkerType().getType().toString() == Marker.Type.CRISPR.toString()
+                    || ftrmrkrRelationship.getMarker().getMarkerType().getType().toString() == Marker.Type.TALEN.toString()) {
+                   return ftrmrkrRelationship;
+               }
+            }
+        }
+
+        return null;
+    }
 
     public static Set<String> getFeatureLocations(Feature feature) {
         TreeSet<String> lg = RepositoryFactory.getFeatureRepository().getFeatureLG(feature);
@@ -98,8 +115,8 @@ public class FeatureService {
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
             if (ftrmrkrRelation != null){
                 if(ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
-                || ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
-                 )  {
+                        || ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
+                        )  {
                     constructMarkers.add(ftrmrkrRelation);
                 }
             }
@@ -122,8 +139,8 @@ public class FeatureService {
         for (FeatureDBLink featureDBLink : featureSequences) {
             if (!featureDBLink.getReferenceDatabase().getForeignDB().isZfishbook()){
                 if (!featureDBLink.getReferenceDatabase().getForeignDB().isZmp()){
-            featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
-            }
+                    featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
+                }
             }
         }
         return featureDBLinkList;

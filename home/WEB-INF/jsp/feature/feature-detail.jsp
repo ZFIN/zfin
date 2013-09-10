@@ -57,7 +57,7 @@
 </c:if>
 <tr>
     <th>
-       Affected Genes:
+        Affected Genes:
     </th>
     <c:choose>
         <c:when test="${fn:length(formBean.sortedMarkerRelationships) > 0 }">
@@ -90,31 +90,31 @@
 </tr>
 
 <c:if test="${formBean.feature.type.transgenic}">
-<tr>
-    <th>
-        Construct:
-    </th>
-    <td>
-        <c:forEach var="mRel" items="${formBean.sortedConstructRelationships}" varStatus="loop">
-            <a href="/action/marker/view/${mRel.marker.zdbID}">${mRel.marker.name}</a>
-            <%--//<zfin:name entity="${mRel.marker}"/>--%>
+    <tr>
+        <th>
+            Construct:
+        </th>
+        <td>
+            <c:forEach var="mRel" items="${formBean.sortedConstructRelationships}" varStatus="loop">
+                <a href="/action/marker/view/${mRel.marker.zdbID}">${mRel.marker.name}</a>
+                <%--//<zfin:name entity="${mRel.marker}"/>--%>
 
-            <c:if test="${mRel.publicationCount > 0}">
-                <c:choose>
-                    <c:when test="${mRel.publicationCount == 1}">
-                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
-                    </c:when>
-                    <c:otherwise>
-                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)
-                    </c:otherwise>
-                </c:choose>
-            </c:if>
-            <c:if test="${!loop.last}">
-                ,&nbsp;
-            </c:if>
-        </c:forEach>
-    </td>
-</tr>
+                <c:if test="${mRel.publicationCount > 0}">
+                    <c:choose>
+                        <c:when test="${mRel.publicationCount == 1}">
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
+                        </c:when>
+                        <c:otherwise>
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
+                <c:if test="${!loop.last}">
+                    ,&nbsp;
+                </c:if>
+            </c:forEach>
+        </td>
+    </tr>
 </c:if>
 <tr>
     <th>
@@ -147,10 +147,17 @@
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
             </c:when>
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
-               ${mutagen.toString()}
+                ${mutagen.toString()}
             </c:when>
             <c:otherwise>
-                ${mutagee.toString()} treated with ${mutagen.toString()}
+                <c:choose>
+                   <c:when test="${formBean.createdByRelationship ne null}">
+                       ${mutagee.toString()} treated with <zfin:link entity="${formBean.createdByRelationship.marker}"/>
+                   </c:when>
+                   <c:otherwise>
+                       ${mutagee.toString()} treated with ${mutagen.toString()}
+                   </c:otherwise>
+                </c:choose>
             </c:otherwise>
         </c:choose>
     </td>
@@ -161,15 +168,15 @@
         Lab Of Origin:
     </th>
     <td>
-    <c:choose>
-      <c:when test="${formBean.feature.sources ne null && fn:length(formBean.feature.sources) > 0}">
-      <c:forEach var="source" items="${formBean.feature.sources}" varStatus="status">
-        <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
-          <zfin:link entity="${source.organization}"/>
-         </c:if>
-      </c:forEach>
-      </c:when>
-    </c:choose>
+        <c:choose>
+            <c:when test="${formBean.feature.sources ne null && fn:length(formBean.feature.sources) > 0}">
+                <c:forEach var="source" items="${formBean.feature.sources}" varStatus="status">
+                    <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
+                        <zfin:link entity="${source.organization}"/>
+                    </c:if>
+                </c:forEach>
+            </c:when>
+        </c:choose>
     </td>
 </tr>
 
@@ -241,7 +248,7 @@
                 <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
                     <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
                        id="${supplier.organization.zdbID}">
-                            ${supplier.organization.name}</a>
+                        ${supplier.organization.name}</a>
                     <c:if test="${supplier.zirc}">&nbsp;
                         <zfin2:orderThis organization="${supplier.organization}"
                                          accessionNumber="${formBean.feature.zdbID}"/>
@@ -272,32 +279,32 @@
         <%--<c:when test="${featureDblink.referenceDatabase.foreignDB.zfishbook||featureDblink.referenceDatabase.foreignDB.zmp}">--%>
         <c:when test="${featureDblink.referenceDatabase.foreignDBDataType.dataType.toString()!='Genomic'}">
 
-        <%--<c:when test="${!featureDblink.referenceDatabase.foreignDB.isGenBank}">--%>
-    <%--<c:choose>
-        <c:when test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">--%>
-          <div class="summary">
-            <table class="summary">
-                <caption>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</caption>
-                <tr>
-                    <td>
+            <%--<c:when test="${!featureDblink.referenceDatabase.foreignDB.isGenBank}">--%>
+            <%--<c:choose>
+                <c:when test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">--%>
+            <div class="summary">
+                <table class="summary">
+                    <caption>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</caption>
+                    <tr>
+                        <td>
 
-                <zfin:link entity="${featureDblink}"/>
-                <c:if test="${featureDblink.publicationCount > 0}">
-                    <c:choose>
-                        <c:when test="${featureDblink.publicationCount == 1}">
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureDblink.singlePublication.zdbID}">${featureDblink.publicationCount}</a>)
-                        </c:when>
-                        <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureDblink.zdbID}&rtype=genotype">${featureDblink.publicationCount}</a>)
-                        </c:otherwise>
-                    </c:choose>
-                </c:if>
-                                </td>
+                            <zfin:link entity="${featureDblink}"/>
+                            <c:if test="${featureDblink.publicationCount > 0}">
+                                <c:choose>
+                                    <c:when test="${featureDblink.publicationCount == 1}">
+                                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureDblink.singlePublication.zdbID}">${featureDblink.publicationCount}</a>)
+                                    </c:when>
+                                    <c:otherwise>
+                                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureDblink.zdbID}&rtype=genotype">${featureDblink.publicationCount}</a>)
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if>
+                        </td>
 
 
-                </tr>
-            </table>
-          </div>
+                    </tr>
+                </table>
+            </div>
         </c:when>
         <c:otherwise>
             <p><strong>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</strong> <span class="no-data-tag">No links to external sites available</span></p>
@@ -410,7 +417,7 @@
                     <a href="javascript:expand()">
                         <img src="/images/darrow.gif" alt="expand" border="0">
                         Show all</a>
-                        ${fn:length(formBean.featgenoStats)} genotypes
+                    ${fn:length(formBean.featgenoStats)} genotypes
                 </div>
             </c:if>
         </div>

@@ -26,6 +26,7 @@ public class FeatureBean {
     private MappedMarkerBean mappedMarkerBean;
     private Set<FeatureMarkerRelationship> sortedMarkerRelationships ;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships ;
+    private FeatureMarkerRelationship createdByRelationship;
     private List<RecordAttribution> featureTypeAttributions ;
     private String singlePublication ;
     private Set<String> featureMap ;
@@ -167,6 +168,14 @@ public class FeatureBean {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public FeatureMarkerRelationship getCreatedByRelationship() {
+        return createdByRelationship;
+    }
+
+    public void setCreatedByRelationship(FeatureMarkerRelationship createdByRelationship) {
+        this.createdByRelationship = createdByRelationship;
     }
 }
 
