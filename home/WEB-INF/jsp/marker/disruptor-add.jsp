@@ -42,9 +42,9 @@
             <td valign=top>
                 <label for="sequence" class="namesearchLabel">Sequence:</label>
                 <c:if test="${formBean.disruptorType ne 'TALEN'}">
-                  <input type=button value="Reverse" onClick="reverseSequence();">
-                  <input type=button value="Complement" onClick="complementSequence();">
-                  <input type=button value="Reverse & Complement" onClick="reverseComplementSequence();">
+                    <input type=button value="Reverse" onClick="reverseSequence();">
+                    <input type=button value="Complement" onClick="complementSequence();">
+                    <input type=button value="Reverse & Complement" onClick="reverseComplementSequence();">
                 </c:if>
             </td>
             <td width=20></td><!-- spacer column -->
@@ -52,13 +52,13 @@
         </tr>
         <tr>
             <td>
-              <c:if test="${formBean.disruptorType ne 'TALEN'}">
-                Reported: 5'-   <input type=text id="reportSeq" name=reportSeq size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"> -3'
-              </c:if>
-              <c:if test="${formBean.disruptorType eq 'TALEN'}">
-                Sequence 1:&nbsp;&nbsp;  5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
-              </c:if>
+                <c:if test="${formBean.disruptorType ne 'TALEN'}">
+                    Reported: 5'-   <form:input id="reportSeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE%>" name="reportSeq" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                </c:if>
+                <c:if test="${formBean.disruptorType eq 'TALEN'}">
+                    Sequence 1:&nbsp;&nbsp;  5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                    <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
+                </c:if>
             </td>
             <td width=20></td><!-- spacer column -->
             <td valign=top rowspan=2>
@@ -68,14 +68,14 @@
         </tr>
         <tr>
             <td>
-              <c:if test="${formBean.disruptorType ne 'TALEN'}">
-                Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
-              </c:if>
-              <c:if test="${formBean.disruptorType eq 'TALEN'}">
-                Sequence 2:&nbsp;&nbsp;  5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" cssClass="error indented-error"/>
-              </c:if>
+                <c:if test="${formBean.disruptorType ne 'TALEN'}">
+                    Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                    <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
+                </c:if>
+                <c:if test="${formBean.disruptorType eq 'TALEN'}">
+                    Sequence 2:&nbsp;&nbsp;  5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                    <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" cssClass="error indented-error"/>
+                </c:if>
             </td>
         </tr>
     </table>
@@ -88,10 +88,10 @@
     </div>
     <p/>
     <c:if test="${formBean.disruptorType eq 'TALEN'}">
-      <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="warnAboutNoTargetGene()">
+        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="warnAboutNoTargetGene()">
     </c:if>
     <c:if test="${formBean.disruptorType ne 'TALEN'}">
-      <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="populateDispSeq()">
+        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="populateDispSeq()">
     </c:if>
 </form:form>
 
@@ -216,14 +216,14 @@
         if(!displayedSeq.value || displayedSeq.value.length == 0 || !/^[\s]+$/.test(displayedSeq.value)) {
             displayedSeq.value = reportSeq.value;
         }
-        
+
         warnAboutNoTargetGene();
     }
 
-    function warnAboutNoTargetGene() {   
+    function warnAboutNoTargetGene() {
         var targetGene = document.getElementById("targetGeneSymbol");
         if (!targetGene || !targetGene.value) {
-           alert("No target gene! You may need to add the target gene when editing the record.");
+            alert("No target gene! You may need to add the target gene when editing the record.");
         }
     }
 

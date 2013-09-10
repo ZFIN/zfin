@@ -10,6 +10,8 @@ public class DisruptorAddBean {
     public static final String NEW_DISRUPTOR_CURNOTE = "disruptorCuratorNote";
     public static final String  NEW_DISRUPTOR_SEQUENCE = "disruptorSequence";
     public static final String  NEW_DISRUPTOR_SECOND_SEQUENCE = "disruptorSecondSequence";
+    public static final String NEW_DISRUPTOR_REPORTEDSEQUENCE = "disruptorReportedSequence";
+    public static final String NEW_DISRUPTOR_TARGET = "targetGeneSymbol";
 
     //public static final String NEW_DISRUPTOR_TARGETGENE = "targetGeneSymbol";
 
@@ -22,6 +24,7 @@ public class DisruptorAddBean {
     private String targetGeneSymbol;
     private String disruptorSequence;
     private String disruptorSecondSequence;
+    private String disruptorReportedSequence;
 
     public String getDisruptorName() {
         return disruptorName;
@@ -93,6 +96,14 @@ public class DisruptorAddBean {
 
     public void setDisruptorSecondSequence(String disruptorSecondSequence) {
         this.disruptorSecondSequence = disruptorSecondSequence;
+    }
+
+    public String getDisruptorReportedSequence() {
+        return disruptorReportedSequence;
+    }
+
+    public void setDisruptorReportedSequence(String disruptorReportedSequence) {
+        this.disruptorReportedSequence = disruptorReportedSequence;
     }
 }
 
