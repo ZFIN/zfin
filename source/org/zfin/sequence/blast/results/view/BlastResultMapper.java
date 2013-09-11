@@ -307,6 +307,26 @@ public class BlastResultMapper {
                     logger.error("blast DB has a bad morpholino: " + hitAccessionID);
                 }
             }
+            // well, then its a talen
+            else if (hitAccessionID.startsWith("ZDB-TALEN")) {
+                hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(hitAccessionID);
+                if (hitMarker != null) {
+                    genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+                    hitViewBean.setMarkerIsHit(true);
+                } else {
+                    logger.error("blast DB has a bad talen: " + hitAccessionID);
+                }
+            }
+            // well, then its a crispr
+            else if (hitAccessionID.startsWith("ZDB-CRISPR")) {
+                hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(hitAccessionID);
+                if (hitMarker != null) {
+                    genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+                    hitViewBean.setMarkerIsHit(true);
+                } else {
+                    logger.error("blast DB has a bad crispr: " + hitAccessionID);
+                }
+            }
             // if there is no hit dblink, then use an accession
             else {
                 List<Accession> accessions = RepositoryFactory.getSequenceRepository().getAccessionsByNumber(hitAccessionID);
