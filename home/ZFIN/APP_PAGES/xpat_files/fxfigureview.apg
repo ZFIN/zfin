@@ -263,7 +263,7 @@ patterns associated with the figure
 
 <?MISQL SQL="select WebExplode(object,'fxp_fig_zdb_id=$OID')from webpages where ID='aa-xpatfeatexpcondn.apg';">
 <?MIBLOCK COND="$(NE,$1,)">
-<?MIVAR><tr><td><b>Condition(s):</b> $(SUBSTR,$1,2,$(STRLEN,$1))<?/MIVAR>
+<?MIVAR><tr><td><b>Condition(s):</b> $1<?/MIVAR>
 <?/MIBLOCK>
 <?/MISQL>
 
