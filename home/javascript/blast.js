@@ -84,7 +84,7 @@ function setInfo (form_select) {
     var abbrev = form_select.options[form_select.selectedIndex].value
     document.getElementById('databaseInfoDiv').innerHTML = '<img src="/images/ajax-loader.gif"/>';
     jQuery('#databaseInfoDiv').load('/action/blast/single-blast-definition?accession='+abbrev);
-    if(abbrev.search('MicroRNA')>=0 || abbrev.search('miRNA')>=0 || abbrev.search('zfin_microRNA')>=0 || abbrev.search("zfin_mrph")>=0){
+    if(abbrev.search('MicroRNA')>=0 || abbrev.search('miRNA')>=0 || abbrev.search('zfin_microRNA')>=0 || abbrev.search("zfin_mrph")>=0 || abbrev.search("zfin_talen")>=0 || abbrev.search("zfin_crispr")>=0){
         document.getElementById('SHORT').checked = true ;
     }else{
         document.getElementById('SHORT').checked = false ;
