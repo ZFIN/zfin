@@ -6,8 +6,8 @@
 
 
 <div class="analysis_tools_box" style="display: inline-block;">
-    <c:set var="blastLink" value="blast-popup"/>
-    <c:set var="blastLinkPopup" value="blast-links"/>
+    <c:set var="blastLink" value="${sequence}"/>
+    <c:set var="blastLinkPopup" value="blast${zfn:generateRandomDomID()}"/>
     <div id="${blastLink}" class="analysis_tools_box_header">
         <c:choose>
             <c:when test="${!empty instructions}">
