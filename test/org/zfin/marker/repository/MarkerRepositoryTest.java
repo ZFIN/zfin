@@ -973,6 +973,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
     public void getSequenceTargetingReagent() {
         markerRepository.getSequenceTargetingReagent("ZDB-TALEN-130820-2");
         markerRepository.getSequenceTargetingReagent("ZDB-CRISPR-130820-2");
