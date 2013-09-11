@@ -104,7 +104,9 @@ public class XMLBlastController extends SimpleFormController {
             if (StringUtils.contains(xmlBlastBean.getDataLibraryString(), "MicroRNA")
                     || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "miRNA")
                     || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_microRNA")
-                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_mrph")) {
+                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_mrph")
+                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_talen")
+                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_crispr")) {
                 //these values should match blast.js
                 xmlBlastBean.setShortAndNearlyExact(true);
                 xmlBlastBean.setExpectValue(1000d);

@@ -100,6 +100,8 @@ public abstract class AbstractExternalBlastController extends AbstractController
                     || database.getAbbrev() == Database.AvailableAbbrev.CURATEDMICRORNASTEMLOOP
                     || database.getAbbrev() == Database.AvailableAbbrev.ZFIN_MIRNA_MATURE
                     || database.getAbbrev() == Database.AvailableAbbrev.ZFIN_MRPH
+                    || database.getAbbrev() == Database.AvailableAbbrev.ZFIN_CRISPR
+                    || database.getAbbrev() == Database.AvailableAbbrev.ZFIN_TALEN
                     || database.getAbbrev() == Database.AvailableAbbrev.LOADEDMICRORNAMATURE
                     || database.getAbbrev() == Database.AvailableAbbrev.LOADEDMICRORNASTEMLOOP
                     ) {
