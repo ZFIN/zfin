@@ -33,7 +33,7 @@
         <td>
             <span class="">
                     <c:forEach var="entry" items="${formBean.markerRelationshipPresentationList}" varStatus="loop">
-                        ${entry.link} ${entry.attributionLink}
+                        <i>${entry.link}</i> ${entry.attributionLink}
                         ${!loop.last ? ", " : ""}
                     </c:forEach>
             </span>
@@ -45,16 +45,16 @@
     </c:if>
 
     <c:if test="${typeName ne 'Morpholino'}">
-    <tr>
-       <td>
-            <b>Source:</b>
-       </td>
-       <td align="left" nowrap="true">
-            <zfin2:orderThis markerSuppliers="${markerBean.suppliers}" accessionNumber="${marker.zdbID}"/>
-       </td>
-    </tr>
-    </c:if>    
-        
+        <tr>
+            <td>
+                <b>Source:</b>
+            </td>
+            <td align="left" nowrap="true">
+                <zfin2:orderThis markerSuppliers="${markerBean.suppliers}" accessionNumber="${marker.zdbID}"/>
+            </td>
+        </tr>
+    </c:if>
+
     <tr>
         <td>
             <b>Sequence<c:if test="${typeName eq 'TALEN'}">&nbsp;1</c:if>:</b>
@@ -92,37 +92,37 @@
     </tr>
 
     <c:if test="${typeName eq 'TALEN'}">
-    <tr>
-        <td>
-            <b>Sequence&nbsp;2:</b>
-        </td>
-        <td align="left" nowrap="true">
-            <c:choose>
-                <c:when test="${!empty marker.sequence}">
-                    <div class="sequence">
-                        5' - ${marker.sequence.secondSequence} - 3'
-                        <c:if test="${!empty markerBean.sequenceAttribution}">
-                            (${markerBean.sequenceAttribution})
+        <tr>
+            <td>
+                <b>Sequence&nbsp;2:</b>
+            </td>
+            <td align="left" nowrap="true">
+                <c:choose>
+                    <c:when test="${!empty marker.sequence}">
+                        <div class="sequence">
+                            5' - ${marker.sequence.secondSequence} - 3'
+                            <c:if test="${!empty markerBean.sequenceAttribution}">
+                                (${markerBean.sequenceAttribution})
+                            </c:if>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;
+                        <c:if test="${firstSeqLen > secondSeqLen}">
+                            <c:set var="loopEnd">${firstSeqLen - secondSeqLen}</c:set>
+                            <c:forEach var="i" begin="1" end="${loopEnd}">&nbsp;</c:forEach>
                         </c:if>
-                    </div>
-                    &nbsp;&nbsp;&nbsp;
-                    <c:if test="${firstSeqLen > secondSeqLen}">
-                        <c:set var="loopEnd">${firstSeqLen - secondSeqLen}</c:set>
-                        <c:forEach var="i" begin="1" end="${loopEnd}">&nbsp;</c:forEach>
-                    </c:if>
-                    <zfin2:markerSequenceBlastDropDown
-                            sequence="${marker.sequence.secondSequence}"
-                            databases="${markerBean.databases}"
-                            instructions="Select Sequence Analysis Tool"
-                            />
-                    <br>
-                </c:when>
-                <c:otherwise>
-                    <zfin2:noDataAvailable/>
-                </c:otherwise>
-            </c:choose>
-        </td>
-    </tr>
+                        <zfin2:markerSequenceBlastDropDown
+                                sequence="${marker.sequence.secondSequence}"
+                                databases="${markerBean.databases}"
+                                instructions="Select Sequence Analysis Tool"
+                                />
+                        <br>
+                    </c:when>
+                    <c:otherwise>
+                        <zfin2:noDataAvailable/>
+                    </c:otherwise>
+                </c:choose>
+            </td>
+        </tr>
     </c:if>
     <tr>
         <td>&nbsp;</td>
