@@ -22,7 +22,7 @@ public class DisruptorAddBeanValidator implements Validator {
 
         String disruptorName = formBean.getDisruptorName();
         if (StringUtils.isEmpty(disruptorName)) {
-            errors.rejectValue("disruptorName", "code", "The name of of the new sequence-targeting reagent cannot be null.");
+            errors.rejectValue("disruptorName", "code", "The name of the new sequence-targeting reagent cannot be null.");
         }
 
         if (!StringUtils.isEmpty(disruptorName)) {
