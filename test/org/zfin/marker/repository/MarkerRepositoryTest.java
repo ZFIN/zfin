@@ -2,6 +2,7 @@ package org.zfin.marker.repository;
 
 import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
