@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Genotype;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.sequence.MarkerSequence;
 import org.zfin.sequence.blast.Database;
@@ -21,6 +22,7 @@ public class DisruptorBean extends MarkerBean{
     private String ncbiBlastUrl;
     private String sequenceAttribution;
     private List<Database> databases;
+    private List<Genotype> genotypes;
 
     public Set<Marker> getTargetGenes() {
         return targetGenes;
@@ -94,7 +96,7 @@ public class DisruptorBean extends MarkerBean{
         return false;
     }
 
-     public boolean isCRISPR() {
+    public boolean isCRISPR() {
         if (this.marker.getType().isMarkerType("CRISPR")) {
             return true;
         }
@@ -108,6 +110,14 @@ public class DisruptorBean extends MarkerBean{
 
     public void setSuppliers(List<MarkerSupplier> suppliers) {
         this.suppliers = suppliers;
+    }
+
+    public List<Genotype> getGenotypes() {
+        return genotypes;
+    }
+
+    public void setGenotypes(List<Genotype> genotypes) {
+        this.genotypes = genotypes;
     }
 }
 

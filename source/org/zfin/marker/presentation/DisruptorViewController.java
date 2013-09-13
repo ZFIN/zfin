@@ -71,6 +71,11 @@ public class DisruptorViewController {
         // PHENOTYPE
         disruptorBean.setPhenotypeOnMarkerBeans(MarkerService.getPhenotypeOnGene(disruptor));
 
+        // GENOTYPE (for CRISPR and TALEN only at this time)
+        if (disruptorBean.isTALEN() || disruptorBean.isCRISPR()) {
+            disruptorBean.setGenotypes(markerRepository.getTALENorCRISPRcreatedGenotypes(zdbID));
+        }
+
         // add sequence
         //disruptorBean.setSequences(markerRepository.getMarkerSequences(disruptor));
 

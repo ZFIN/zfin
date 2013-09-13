@@ -352,6 +352,14 @@ public interface MarkerRepository {
      */
     List<Genotype> getMutantsAndTgsByGene(String geneID);
 
+    /**
+     * Retrieve list of genotypes being created with a TALEN or CRISPR
+     *
+     * @param streagentId TALEN or CRISPR ID
+     * @return list of genotypes
+     */
+    List<Genotype> getTALENorCRISPRcreatedGenotypes(String streagentId);
+
     List<Marker> getConstructsForGene(Marker gene);
 
     Genotype getStrainForTranscript(String zdbID);

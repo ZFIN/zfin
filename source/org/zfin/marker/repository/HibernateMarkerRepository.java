@@ -2242,6 +2242,28 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (List<Genotype>) query.list();
     }
 
+    /**
+     * Retrieve list of genotypes being created with a TALEN or CRISPR
+     *
+     * @param streagentId TALEN or CRISPR ID
+     * @return list of genotypes
+     */
+    public List<Genotype> getTALENorCRISPRcreatedGenotypes(String streagentId) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct mutant from Genotype mutant, GenotypeFeature genoFtr, FeatureMarkerRelationship fmRel " +
+                "      where fmRel.marker.zdbID = :streagentId " +
+                "        and fmRel.feature = genoFtr.feature" +
+                "        and genoFtr.genotype = mutant" +
+                "        and fmRel.type = 'created by'" +
+                "   order by mutant.nameOrder ";
+
+        Query query = session.createQuery(hql);
+        query.setString("streagentId", streagentId);
+
+        return (List<Genotype>) query.list();
+    }
+
     @Override
     public List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene) {
         return HibernateUtil.currentSession().createCriteria(OmimPhenotype.class)
