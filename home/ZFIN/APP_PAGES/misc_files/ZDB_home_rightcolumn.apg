@@ -16,7 +16,7 @@
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/marker/antibody-add-form"><em>antibody</em></a>,
-          <a href="/action/marker/disruptor-add?disruptorType=MRPHLNO"><em>morpholino</em></a>,
+          <a href="/action/marker/disruptor-add?disruptorType=Morpholino"><em>morpholino</em></a>,
           <a href="/action/marker/disruptor-add?disruptorType=TALEN"><em>TALEN</em></a>,
           <a href="/action/marker/disruptor-add?disruptorType=CRISPR"><em>CRISPR</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;

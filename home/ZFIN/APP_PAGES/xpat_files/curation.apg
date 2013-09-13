@@ -344,15 +344,9 @@ function setMarkerTarget(featreli,anchor){
 
 <?MIVAR>
      function DeleteFeature(featzdbid,anchor){
-     window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&rtype=feature&OID='+featzdbid+"#"+anchor);
-}
-
-
-     function addSTR(addSTRdrowDown) {
-       var targetIndex = addSTRdrowDown.selectedIndex;
-       addSTRdrowDown.selectedIndex = 0;
-       open("/action/marker/disruptor-add?disruptorPublicationZdbID=$OID&disruptorType="+addSTRdrowDown.options[targetIndex].value,"helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes");
+        window.open('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&rtype=feature&OID='+featzdbid+"#"+anchor);
      }
+
 <?/MIVAR>
   </script>
 
@@ -884,15 +878,13 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
  <?MIVAR>
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a>
-  <span id="STRselection">
-  <select class="blueselect" onChange="addSTR(this);">
-     <option selected="selected" disabled="disabled">Add New ST Reagent</option>
-     <option value="CRISPR">CRISPR</option>
-     <option value="Morpholino">Morpholino</option>
-     <option value="TALEN">TALEN</option>
-  </select>
-  </span>
   &nbsp;
+  <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/disruptor-add?disruptorPublicationZdbID=$OID&disruptorType=Morpholino","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>Add New Morpholino</a>
+  &nbsp;
+  <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/disruptor-add?disruptorPublicationZdbID=$OID&disruptorType=TALEN","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>Add New TALEN</a>
+  &nbsp;  
+  <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/disruptor-add?disruptorPublicationZdbID=$OID&disruptorType=CRISPR","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>Add New CRISPR</a>
+  &nbsp;    
   <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/antibody-add-form?antibodyPublicationZdbID=$OID","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Antibody</a>
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-add_linkage.apg&calling_form=linkage&pub_source=$OID&source_specified=true","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add Linkages</a>
