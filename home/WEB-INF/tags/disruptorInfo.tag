@@ -127,7 +127,7 @@
     <tr>
         <td>&nbsp;</td>
         <td>
-            <c:if test="${!empty markerBean.sequence}">
+            <c:if test="${!empty marker.sequence}">
                 <small>
                     (Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence
                     analysis before ordering any reagent.)

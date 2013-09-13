@@ -29,6 +29,11 @@
 <%--// PHENOTYPE --%>
 <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
+<%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
+<c:if test="${formBean.TALEN || formBean.CRISPR}">
+<zfin2:genotypesWithTALENCRISPR strBean="${formBean}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+</c:if>
+
 <%--OTHER GENE/Marker Pages--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
 
