@@ -18,6 +18,11 @@ public class DisruptorAddBeanValidator implements Validator {
 
     public void validate(Object command, Errors errors) {
         DisruptorAddBean formBean = (DisruptorAddBean) command;
+
+        if (!formBean.getDisruptorPublicationZdbID().startsWith("ZDB-PUB-")) {
+            errors.rejectValue("disruptorPublicationZdbID", "code", "Please enter the full publication id starting with ZDB-PUB.");
+        }
+
         PublicationValidator.validatePublicationID(formBean.getDisruptorPublicationZdbID(), DisruptorAddBean.DISRUPTOR_PUBLICATION_ZDB_ID, errors);
 
         String disruptorName = formBean.getDisruptorName();
