@@ -147,16 +147,16 @@
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
             </c:when>
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
-                ${mutagen.toString()}
+                ${mutagen.toString()} <c:if test="${formBean.createdByRelationship ne null}"><zfin:link entity="${formBean.createdByRelationship.marker}"/></c:if>
             </c:when>
             <c:otherwise>
                 <c:choose>
-                   <c:when test="${formBean.createdByRelationship ne null}">
-                       ${mutagee.toString()} treated with <zfin:link entity="${formBean.createdByRelationship.marker}"/>
-                   </c:when>
-                   <c:otherwise>
-                       ${mutagee.toString()} treated with ${mutagen.toString()}
-                   </c:otherwise>
+                    <c:when test="${formBean.createdByRelationship ne null}">
+                        ${mutagee.toString()} treated with <zfin:link entity="${formBean.createdByRelationship.marker}"/>
+                    </c:when>
+                    <c:otherwise>
+                        ${mutagee.toString()} treated with ${mutagen.toString()}
+                    </c:otherwise>
                 </c:choose>
             </c:otherwise>
         </c:choose>
