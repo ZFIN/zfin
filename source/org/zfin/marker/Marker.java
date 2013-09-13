@@ -410,7 +410,6 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         GENEFAMILY("GENEFAMILY"),
         GENEP("GENEP"),
         GTCONSTRCT("GTCONSTRCT"),
-        INDEL("INDEL"),
         MRPHLNO("MRPHLNO"),
         MUTANT("MUTANT"),
         PAC("PAC"),
