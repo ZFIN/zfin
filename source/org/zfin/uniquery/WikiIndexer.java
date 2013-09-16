@@ -57,7 +57,7 @@ public class WikiIndexer {
         // retrieve blog pages
         for (RemoteBlogEntrySummary blogSummaryPage : blogPages) {
             try {
-                summaryList.add(createWebPageSummary(blogSummaryPage));
+                summaryList.add(createBlogPageSummary(blogSummaryPage));
             } catch (Exception e) {
                 logger.error("failed to create summary for page: " + blogSummaryPage.getTitle(), e);
             }
@@ -70,6 +70,19 @@ public class WikiIndexer {
     private WebPageSummary createWebPageSummary(AbstractRemotePageSummary remoteSummary) throws Exception {
         WebPageSummary summary = new WebPageSummary();
         RemotePage page = WikiWebService.getInstance().getPage(remoteSummary.getId());
+        String title = remoteSummary.getTitle();
+        summary.setTitle(title);
+        String url = remoteSummary.getUrl();
+        summary.setUrl(new URL(url));
+        summary.setUrlName(url);
+        summary.setText(page.getContent());
+        summary.setBody(page.getContent());
+        return summary;
+    }
+
+    private WebPageSummary createBlogPageSummary(RemoteBlogEntrySummary remoteSummary) throws Exception {
+        WebPageSummary summary = new WebPageSummary();
+        RemoteBlogEntry page = WikiWebService.getInstance().getBlogPage(remoteSummary.getId());
         String title = remoteSummary.getTitle();
         summary.setTitle(title);
         String url = remoteSummary.getUrl();

@@ -278,4 +278,8 @@ public class WikiWebService {
         return service.getPage(token,id) ;
     }
 
+    public RemoteBlogEntry getBlogPage(long id) throws Exception{
+        return service.getBlogEntry(token, id);
+    }
+
 }
