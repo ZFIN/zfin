@@ -2,9 +2,7 @@ package org.zfin.uniquery;
 
 import org.apache.log4j.Logger;
 import org.zfin.uniquery.categories.SiteSearchCategories;
-import org.zfin.wiki.RemotePage;
-import org.zfin.wiki.RemotePageSummary;
-import org.zfin.wiki.WikiLoginException;
+import org.zfin.wiki.*;
 import org.zfin.wiki.service.WikiWebService;
 
 import java.net.URL;
@@ -16,8 +14,7 @@ import java.util.List;
  */
 public class WikiIndexer {
 
-    private List<String> wikiSpaces = new ArrayList<String>();
-    public static final String WIKI_CATEGORY_ID = "WIKI";
+    private List<String> wikiSpaces = new ArrayList<>();
     private static final Logger logger = Logger.getLogger(WikiIndexer.class);
 
     public WikiIndexer() {
@@ -39,27 +36,38 @@ public class WikiIndexer {
     }
 
     public List<WebPageSummary> getUrlSummary() throws WikiLoginException {
-        List<WebPageSummary> summaries = new ArrayList<WebPageSummary>();
-        for (String wikispace : wikiSpaces) {
-            summaries.addAll(processPagesForSpace(wikispace));
+        List<WebPageSummary> summaries = new ArrayList<>();
+        for (String wikiSpace : wikiSpaces) {
+            summaries.addAll(processPagesForSpace(wikiSpace));
         }
         return summaries;
     }
 
-    private List<WebPageSummary> processPagesForSpace(String wikispace) throws WikiLoginException {
-        RemotePageSummary[] pages = WikiWebService.getInstance("wiki.zfin.org").getAllPagesForSpace(wikispace);
-        List<WebPageSummary> summaryList = new ArrayList<WebPageSummary>(pages.length);
-        for (RemotePageSummary remoteSummary : pages) {
+    private List<WebPageSummary> processPagesForSpace(String wikiSpace) throws WikiLoginException {
+        RemotePageSummary[] pages = WikiWebService.getInstance("wiki.zfin.org").getAllPagesForSpace(wikiSpace);
+        RemoteBlogEntrySummary[] blogPages = WikiWebService.getInstance("wiki.zfin.org").getAllBLogPagesForSpace(wikiSpace);
+        List<WebPageSummary> summaryList = new ArrayList<>(pages.length + blogPages.length);
+        for (AbstractRemotePageSummary remoteSummary : pages) {
             try {
                 summaryList.add(createWebPageSummary(remoteSummary));
             } catch (Exception e) {
                 logger.error("failed to create summary for page: " + remoteSummary.getTitle(), e);
             }
         }
+        // retrieve blog pages
+        for (RemoteBlogEntrySummary blogSummaryPage : blogPages) {
+            try {
+                summaryList.add(createWebPageSummary(blogSummaryPage));
+            } catch (Exception e) {
+                logger.error("failed to create summary for page: " + blogSummaryPage.getTitle(), e);
+            }
+        }
+        //List<WebPageSummary> summaryBlogList = new ArrayList<WebPageSummary>(pages.length);
+
         return summaryList;
     }
 
-    private WebPageSummary createWebPageSummary(RemotePageSummary remoteSummary) throws Exception {
+    private WebPageSummary createWebPageSummary(AbstractRemotePageSummary remoteSummary) throws Exception {
         WebPageSummary summary = new WebPageSummary();
         RemotePage page = WikiWebService.getInstance().getPage(remoteSummary.getId());
         String title = remoteSummary.getTitle();

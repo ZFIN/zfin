@@ -152,6 +152,20 @@ public class WikiWebService {
         }
     }
 
+    /**
+     *
+     * @param spaceToken The token for the space.
+     * @return All page summaries for a given space.
+     */
+    public RemoteBlogEntrySummary[] getAllBLogPagesForSpace(String spaceToken) {
+        try {
+            return service.getBlogEntries(token, spaceToken);
+        } catch (java.rmi.RemoteException e) {
+            logger.error(e);
+            return null;
+        }
+    }
+
 
     /**
      * @param title      Title of the page to find.
