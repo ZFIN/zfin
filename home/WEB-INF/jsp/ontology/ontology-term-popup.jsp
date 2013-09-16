@@ -15,6 +15,7 @@
             background: white;
         }
 */
+        body {background: white; margin: 1px;}
 
         a.external {
             background: transparent url(/images/external.png) no-repeat scroll right center;
