@@ -34,12 +34,7 @@ create procedure checkfeatureabbrev (vFeatureZdbId varchar(50),
        	    if (vFeatureAbbrev not like 'd%')
        	    then raise exception -746,0,"FAIL!: dominant allele must have abbrev like d*. checkFeatureAbbrev.";
 	    end if;
-       elif (vFeatureType = 'TRANSGENIC_INSERTION' and vFeatureKnownInsertionSite = 'f')
-       then 
-	    if (vFeatureAbbrev != vFeatureLabPrefix||vFeatureLineNumber)
-	    then raise exception -746,0,"FAIL!:tg insert not like labPrefix||lineNumber. checkFeatureAbbrev.";
-	    end if;
-       elif (vFeatureType = 'TRANSGENIC_INSERTION' and vFeatureKnownInsertionSite = 't')
+       elif (vFeatureType = 'TRANSGENIC_INSERTION')
        then
             if (vFeatureAbbrev != vFeatureLabPrefix||vFeatureLineNumber||vFeatureTgSuffix)
             then raise exception -746,0,"FAIL!:tg known insert not like labPrefix||lineNumber||tgSuffix checkFeatureAbbrev.";
