@@ -2,6 +2,7 @@ package org.zfin.fish.presentation;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -41,7 +43,7 @@ public class FishDetailController {
 
     @RequestMapping(value = "/fish-detail/{ID}")
     protected String showFishDetail(Model model,
-                                    @PathVariable("ID") String fishID) {
+                                    @PathVariable("ID") String fishID, HttpServletResponse response) {
         LOG.info("Start Fish Detail Controller");
 
         fishID = ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishID);
@@ -55,6 +57,7 @@ public class FishDetailController {
             return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
            }
                else{
+               response.setStatus(HttpStatus.NOT_FOUND.value());
             return LookupStrings.idNotFound(model, fishID);
            }
         }
