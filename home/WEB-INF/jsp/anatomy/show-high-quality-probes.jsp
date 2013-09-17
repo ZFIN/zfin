@@ -38,14 +38,7 @@
         </td>
     </tr>
     <c:forEach var="probeStats" items="${formBean.highQualityProbeGenes}" varStatus="rowCounter">
-        <c:choose>
-            <c:when test="${rowCounter.count % 2 != 0}">
-                <tr class="odd">
-            </c:when>
-            <c:otherwise>
-                <tr>
-            </c:otherwise>
-        </c:choose>
+        <zfin:alternating-tr loopName="rowCounter">
         <td>
             <zfin:link entity="${probeStats.genes}"/>
         </td>
@@ -84,7 +77,7 @@
                 </c:if>
             </c:if>
         </td>
-        </tr>
+        </zfin:alternating-tr>
     </c:forEach>
 </table>
 <p/>
