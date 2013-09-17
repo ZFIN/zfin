@@ -44,7 +44,7 @@ public abstract class AllNamesFastSearch {
     }
 
     public static Precedence[] getGenePrecedences() {
-        return new Precedence[]{Precedence.GENE_ALIAS, Precedence.GENE_SYMBOL, Precedence.CURRENT_NAME, Precedence.CURRENT_SYMBOL};
+        return new Precedence[]{Precedence.GENE_ALIAS, Precedence.GENE_SYMBOL, Precedence.CURRENT_NAME, Precedence.CURRENT_SYMBOL, Precedence.PREVIOUS_NAME};
     }
 
     public enum Precedence {

@@ -432,6 +432,21 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertTrue(numberOfAb > 0);
     }
 
+    @Test
+    public void getAntibodyByAntigenNamePreviousNameMatch() {
+
+        String antigenName = "wu";
+
+        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
+        searchCriteria.setAntigenGeneName(antigenName);
+        searchCriteria.setAntigenNameFilterType(FilterType.BEGINS);
+
+        PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
+        assertTrue(abs != null);
+        int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
+        assertTrue(numberOfAb > 0);
+    }
+
     // Test search by:
     //  antigen name
 
