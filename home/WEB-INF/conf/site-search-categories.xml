@@ -38,13 +38,13 @@
     <Category ID="Expression" order="30">
         <DisplayName>Expression/Phenotype</DisplayName>
         <UrlMapping>
-            <urlPattern type="ExpressionFigureView">fxfigureview.apg</urlPattern>
+            <urlPattern type="ExpressionFigureView">/ZDB-FIG-\p{ASCII}*</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="SEQUENCE"  order="40">
         <DisplayName>Sequence Information</DisplayName>
         <UrlMapping>
-            <urlPattern type="GeneSequence">sequence.apg</urlPattern>
+            <urlPattern type="GeneSequence">sequence/view/ZDB-</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="ANATOMY"  order="50">
@@ -83,8 +83,7 @@
     <Category ID="NOMENCLATURE"  order="100">
         <DisplayName>Nomenclature</DisplayName>
         <UrlMapping>
-            <urlPattern type="GeneNomenclature" boostValue="256">zf_info/nomen.htm</urlPattern>
-            <urlPattern type="LineDesignation" boostValue="8">zf_info/zfbook/lab_desig.htm</urlPattern>
+            <urlPattern type="LineDesignation" boostValue="8">zf_info/zfbook/lab_desig.html</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="WIKI_NEWS"  order="110">
