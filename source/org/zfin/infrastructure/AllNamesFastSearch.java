@@ -52,7 +52,7 @@ public abstract class AllNamesFastSearch {
         CURRENT_NAME("Current name"),
         CURRENT_SYMBOL("Current symbol"),
         GENE_ALIAS("Gene alias"),
-        gene_name("Gene name"),
+        GENE_NAME("Gene name"),
         GENE_SYMBOL("Gene symbol"),
         PREVIOUS_NAME("Previous name");
 

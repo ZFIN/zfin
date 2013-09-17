@@ -430,8 +430,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertTrue(abs != null);
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
-        assertTrue(numberOfAb < 10);
-
     }
 
     // Test search by:

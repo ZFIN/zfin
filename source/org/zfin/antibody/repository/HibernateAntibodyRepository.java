@@ -92,7 +92,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 query.setParameter("markerName", "%" + searchCriteria.getAntigenGeneName().toLowerCase().trim() + "%");
             if (searchCriteria.getAntigenNameFilterType() == FilterType.BEGINS)
                 query.setParameter("markerName", searchCriteria.getAntigenGeneName().toLowerCase().trim() + "%");
-            //query.setParameter("genePrecedence", getGenePrecedenceInClause());
+            query.setParameterList("genePrecedence", getGenePrecedenceInClause());
         }
         if (searchCriteria.isHostSpeciesDefined())
             query.setParameter("hostSpecies", searchCriteria.getHostSpecies());
@@ -115,18 +115,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return antibodyObjects;
     }
 
-    private String getGenePrecedenceInClause() {
+    private List<String> getGenePrecedenceInClause() {
         AllNamesFastSearch.Precedence[] genePrecedence = AllNamesFastSearch.getGenePrecedences();
         if (genePrecedence == null)
             return null;
-        StringBuilder inClause = new StringBuilder();
+        List<String> list = new ArrayList<>(genePrecedence.length);
         for (AllMarkerNamesFastSearch.Precedence precedence : genePrecedence) {
-            inClause.append("'");
-            inClause.append(precedence.toString());
-            inClause.append("',");
+            list.add(precedence.toString());
         }
-        inClause.deleteCharAt(inClause.length() - 1);
-        return inClause.toString();
+        return list;
     }
 
     public int getNumberOfAntibodies(AntibodySearchCriteria searchCriteria) {
@@ -146,7 +143,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 query.setParameter("markerName", "%" + searchCriteria.getAntigenGeneName().toLowerCase() + "%");
             else if (searchCriteria.getAntigenNameFilterType() == FilterType.BEGINS)
                 query.setParameter("markerName", searchCriteria.getAntigenGeneName().toLowerCase() + "%");
-            //query.setParameter("genePrecedence", getGenePrecedenceInClause());
+            query.setParameterList("genePrecedence", getGenePrecedenceInClause());
         }
         if (searchCriteria.isHostSpeciesDefined())
             query.setParameter("hostSpecies", searchCriteria.getHostSpecies());
@@ -412,8 +409,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             if (hasOneWhereClause)
                 hql.append(" AND ");
             hql.append("    rel.secondMarker = antibody AND ");
-            hql.append("   (mapGene.marker =  rel.firstMarker AND mapGene.nameLowerCase like :markerName ) ");
-//                    "       AND mapGene.precedence in (:genePrecedence) )");
+            hql.append("   (mapGene.marker =  rel.firstMarker AND mapGene.nameLowerCase like :markerName ) " +
+                    "       AND mapGene.precedence in (:genePrecedence) )");
             hasOneWhereClause = true;
         }
         if (searchCriteria.isAssaySearch()) {
