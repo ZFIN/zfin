@@ -83,7 +83,7 @@ public abstract class AbstractGoViewTable extends ZfinFlexTable implements Handl
         public GoLink(TermDTO goTerm) {
             String htmlString = "";
             htmlString += "<a href='";
-            htmlString += "http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=";
+            htmlString += "http://www.ebi.ac.uk/QuickGO/GTerm?id=";
             htmlString += goTerm.getOboID();
             htmlString += "'>";
             htmlString += goTerm.getName();
