@@ -141,6 +141,22 @@ public class AnatomyAjaxController {
         return "anatomy/show-all-phenotype-mutants.page";
     }
 
+    @RequestMapping(value = "/show-all-in-situ-probes/{zdbID}")
+    public String showAllInSituProbes(Model model
+            , @ModelAttribute("formBean") AnatomySearchBean form
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
+
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        if (term == null)
+            return "";
+
+        form.setAoTerm(term);
+        retrieveMutantData(term, form, false);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-all-in-situ-probes.page";
+    }
+
     @RequestMapping(value = "/show-all-phenotype-mutants-substructures/{zdbID}")
     public String showAllPhenotypeMutantsIncludingSubstructures(Model model
             , @ModelAttribute("formBean") AnatomySearchBean form

@@ -18,8 +18,10 @@
             <STRONG>
                 In-Situ Probes for <i>
                 <zfin:link entity="${formBean.aoTerm}"/>
-            </i></STRONG>: &nbsp; <a
-                href="/zf_info/stars.html">Recommended</a>
+                <c:if test="${includingSubstructures}">
+                    or subterms
+                </c:if>
+            </i></STRONG>: &nbsp; <a href="/zf_info/stars.html">Recommended</a>
             by
             <a href='/ZDB-LAB-980204-15'>
                 Thisse lab</a></TD>

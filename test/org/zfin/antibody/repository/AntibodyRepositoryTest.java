@@ -417,6 +417,23 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void getAntibodyByAntigenNameBeginsWith() {
+
+        String antigenName = "ca";
+
+        AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
+        searchCriteria.setAntigenGeneName(antigenName);
+        searchCriteria.setAntigenNameFilterType(FilterType.BEGINS);
+
+        PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
+        assertTrue(abs != null);
+        int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
+        assertTrue(numberOfAb > 0);
+        assertTrue(numberOfAb < 10);
+
+    }
+
     // Test search by:
     //  antigen name
 

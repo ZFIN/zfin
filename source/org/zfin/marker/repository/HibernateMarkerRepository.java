@@ -1080,27 +1080,26 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         // if no antibodies found return here
         if (totalCount == 0)
-            return new PaginationResult<HighQualityProbe>(0, null);
-
-        if (includeSubstructures)
-            return new PaginationResult<HighQualityProbe>(totalCount, null);
+            return new PaginationResult<>(0, null);
 
         String sqlQueryStr = " select distinct(stat.fstat_feat_zdb_id), probe.mrkr_abbrev, gene.mrkr_zdb_id," +
                 "                       gene.mrkr_abbrev,gene.mrkr_abbrev_order  " +
                 "from feature_stats as stat, marker as gene, marker as probe " +
                 "     where fstat_superterm_zdb_id = :aoterm " +
-                "           and fstat_subterm_zdb_id = :aoterm " +
                 "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
                 "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
-                "           and fstat_type = :type" +
-                "     order by gene.mrkr_abbrev_order ";
+                "           and fstat_type = :type ";
+        if (!includeSubstructures)
+            sqlQueryStr += "  and fstat_subterm_zdb_id = :aoterm ";
+        sqlQueryStr += "order by gene.mrkr_abbrev_order ";
+
         SQLQuery sqlQquery = session.createSQLQuery(sqlQueryStr);
         sqlQquery.setString("aoterm", aoTerm.getZdbID());
         sqlQquery.setString("type", "High-Quality-Probe");
         sqlQquery.setFirstResult(pagination.getFirstRecord() - 1);
         sqlQquery.setMaxResults(pagination.getMaxDisplayRecordsInteger());
         List<Object[]> objs = sqlQquery.list();
-        List<Marker> hqpRecords = new ArrayList<Marker>();
+        List<Marker> hqpRecords = new ArrayList<>();
         for (Object[] objects : objs) {
             Marker probe = new Marker();
             probe.setZdbID((String) objects[0]);
@@ -1129,14 +1128,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "from feature_stats as stat, marker as gene, marker as probe, figure as fig, publication as pub, " +
                 "     OUTER image as img " +
                 "     where fstat_superterm_zdb_id = :aoterm " +
-                "           and fstat_subterm_zdb_id = :aoterm " +
                 "           and fstat_gene_zdb_id = gene.mrkr_zdb_id " +
                 "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
                 "           and fstat_type = :type " +
                 "           and fstat_fig_zdb_id = fig.fig_zdb_id " +
                 "           and fstat_pub_zdb_id = pub.zdb_id " +
-                "           and fstat_img_zdb_id = img.img_zdb_id " +
-                "     order by gene.mrkr_abbrev_order ";
+                "           and fstat_img_zdb_id = img.img_zdb_id ";
+        if (!includeSubstructures)
+            sqlQueryAllStr += "  and fstat_subterm_zdb_id = :aoterm ";
+        sqlQueryAllStr += "order by gene.mrkr_abbrev_order ";
+
         SQLQuery sqlAllQquery = session.createSQLQuery(sqlQueryAllStr);
         sqlAllQquery.setString("aoterm", aoTerm.getZdbID());
         sqlAllQquery.setString("type", "High-Quality-Probe");

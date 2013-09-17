@@ -33,6 +33,7 @@ public class HighQualityProbesController {
 
     @RequestMapping(value = "/show-high-quality-probes/{zdbID}")
     public String showHighQualityProbes(Model model,
+                                        @ModelAttribute("formBean") AnatomySearchBean anatomyForm,
                                         @PathVariable("zdbID") String termID
     ) throws Exception {
 
@@ -41,12 +42,36 @@ public class HighQualityProbesController {
         if (term == null)
             return "";
 
-        AnatomySearchBean anatomyForm = new AnatomySearchBean();
         anatomyForm.setAoTerm(term);
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         anatomyForm.setRequestUrl(request.getRequestURL());
 
         PaginationResult<HighQualityProbe> hqp = markerRepository.getHighQualityProbeStatistics(term, anatomyForm, false);
+        anatomyForm.setHighQualityProbeGenes(hqp.getPopulatedResults());
+        anatomyForm.setNumberOfHighQualityProbes(hqp.getTotalCount());
+        anatomyForm.setTotalRecords(hqp.getTotalCount());
+        model.addAttribute(LookupStrings.FORM_BEAN, anatomyForm);
+
+        return "anatomy/show-high-quality-probes.page";
+    }
+
+    @RequestMapping(value = "/show-high-quality-probes-substructures/{zdbID}")
+    public String showHighQualityProbesSubstructures(Model model,
+                                        @ModelAttribute("formBean") AnatomySearchBean anatomyForm,
+                                        @PathVariable("zdbID") String termID
+    ) throws Exception {
+
+        LOG.info("Start High Quality Probes Controller");
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        if (term == null)
+            return "";
+
+        anatomyForm.setAoTerm(term);
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+        anatomyForm.setRequestUrl(request.getRequestURL());
+        model.addAttribute("includingSubstructures", true);
+
+        PaginationResult<HighQualityProbe> hqp = markerRepository.getHighQualityProbeStatistics(term, anatomyForm, true);
         anatomyForm.setHighQualityProbeGenes(hqp.getPopulatedResults());
         anatomyForm.setNumberOfHighQualityProbes(hqp.getTotalCount());
         anatomyForm.setTotalRecords(hqp.getTotalCount());

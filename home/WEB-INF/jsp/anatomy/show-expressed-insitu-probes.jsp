@@ -65,6 +65,7 @@
                                            recordsExist="${formBean.inSituProbesExist}"
                                            anatomyStatistics="${formBean.anatomyStatisticsProbe}"
                                            structureSearchLink="/action/ontology/show-high-quality-probes/${formBean.aoTerm.zdbID}"
+                                           substructureSearchLink="/action/ontology/show-high-quality-probes-substructures/${formBean.aoTerm.zdbID}"
                                            choicePattern="0# Probes| 1# probe| 2# probes"
                                            allRecordsAreDisplayed="${formBean.allProbesAreDisplayed}"
                                            totalRecordCount="${formBean.numberOfHighQualityProbes}"/>
