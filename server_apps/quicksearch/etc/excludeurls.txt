@@ -42,6 +42,7 @@ action/anatomy/anatomy-search
 action/antibody
 action/ontology
 action/blast
+action/genotype/genotype-detail
 action/feature/detail
 action/feature/feature-detail
 action/fish
@@ -72,3 +73,5 @@ aa-pubmedredirect.apg
 aa-pubmedlink.apg
 aa-markergoview.apg
 aa-pheno_summary.apg
+
+marker/note/external
