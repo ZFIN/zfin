@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
@@ -205,7 +206,7 @@ class StructurePileTable extends ZfinFlexTable {
         if (!getSelectedExpressions().isEmpty() && add.getValue()) {
             StageRangeUnion union = new StageRangeUnion(expressionModule.getSelectedExpressions());
             StageRangeIntersection intersection = new StageRangeIntersection(union.getStart(), union.getEnd());
-            if (!intersection.isFullOverlap(selectedPileStructure.getStart(), selectedPileStructure.getEnd())) {
+            if (!intersection.isOverlap(selectedPileStructure.getStart(), selectedPileStructure.getEnd())) {
                 suggestionBox.setVisible(true);
                 noStageOverlapTitle(selectedPileStructure.getExpressedTerm(), intersection);
                 curationRPCAsync.getTermsWithStageOverlap(selectedPileStructure, intersection,
@@ -414,7 +415,7 @@ class StructurePileTable extends ZfinFlexTable {
             ExpressionPileStructureDTO structure = displayTableMap.get(row);
             if (structure == null)
                 continue;
-            if (stageIntersection.isFullOverlap(structure.getStart(), structure.getEnd()))
+            if (stageIntersection.isOverlap(structure.getStart(), structure.getEnd()))
                 highlightStructure(row, true);
             else
                 highlightStructure(row, false);

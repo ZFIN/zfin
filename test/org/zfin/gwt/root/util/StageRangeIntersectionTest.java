@@ -71,6 +71,25 @@ public class StageRangeIntersectionTest {
     }
 
     @Test
+    public void overlappingRanges() {
+        StageDTO startUnion = new StageDTO();
+        startUnion.setStartHours(1.25F);
+        StageDTO endUnion = new StageDTO();
+        endUnion.setStartHours(10.33F);
+        StageRangeIntersection intersection = new StageRangeIntersection(startUnion, endUnion);
+
+        StageDTO start = new StageDTO();
+        start.setStartHours(5.25F);
+        start.setAbbreviation("Harry");
+        StageDTO end = new StageDTO();
+        end.setStartHours(10.32F);
+        end.setAbbreviation("Kate");
+
+        assertTrue(intersection.isOverlap(start, end));
+
+    }
+
+    @Test
     public void twoOverlappingRangesWithUnknown() {
         ExpressionFigureStageDTO efs1 = new ExpressionFigureStageDTO();
         StageDTO start = new StageDTO();

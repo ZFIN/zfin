@@ -9,10 +9,10 @@ import java.util.List;
  * Holds the intersection of a given collection of stage ranges.
  * <p/>
  * Calculates the stage range that all ranges in the collection have in common.
- * If no overlappping stage range is found start and end stage set to a negative value.
+ * If no overlapping stage range is found start and end stage set to a negative value.
  * <p/>
  * Exception occurs:
- * 1) either start or end stage is negative, i.e. unitialized.
+ * 1) either start or end stage is negative, i.e. uninitialized.
  * 2) start > end stage
  */
 public class StageRangeIntersection implements IsSerializable {
