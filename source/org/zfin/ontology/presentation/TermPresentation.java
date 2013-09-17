@@ -20,7 +20,7 @@ public class TermPresentation extends EntityPresentation {
     private static final String popupUri = "ontology/term-detail-popup?termID=";
     private static final String postComposedUri = "ontology/post-composed-term-detail?";
     private static final String postComposedPopupUri = "ontology/post-composed-term-detail-popup?";
-    public static final String GO_URI = "http://www.ebi.ac.uk/ego/GTerm?id=";
+    public static final String GO_URI = "http://www.ebi.ac.uk/QuickGO/GTerm?id=";
 
     private final static Logger logger = Logger.getLogger(TermPresentation.class);
 
