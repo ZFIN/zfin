@@ -632,3 +632,6 @@ table.searchform th { text-align: left ; width: 5%; white-space: nowrap}
 label.curation-form-label { font-weight: bold; }
 
 .sequence {display: inline-block; vertical-align: top; font-family: Monaco, "Courier New", monospace;}
+
+.datablade-error-message { margin: 1em; }
+.datablade-error-contents { margin: 1em; color: #ccc } 

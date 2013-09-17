@@ -1,12 +1,28 @@
 <?MIERROR>
+<html>
+<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
+<script language="JavaScript" src="/javascript/header.js"></script>
+<script language="JavaScript" src="/javascript/datablade_error.js"></script>
+<div class="datablade-error-contents">
   <?MIVAR COND=$(XST,$MI_SQL)>
     SQL: $MI_SQL<br><br>
   <?/MIVAR>
-
   Code:    $MI_ERRORCODE <br>
   State:   $MI_ERRORSTATE <br>
   Message: $MI_ERRORMSG <br>
-
+<script language="JavaScript" src="/javascript/footer.js"></script>
+</div>
+<script>
+jQuery.ajax({
+  url:'/action/devtool/datablade-error'
+  ,type:'POST'
+  ,data: {
+           url: window.location.href
+           ,message: jQuery('.datablade-error-contents').text()
+         }
+ });
+</script>
+</html>
 <?/MIERROR>
 
 <?MICOMMENT>
@@ -76,7 +92,7 @@ displays a publication record, or many publication records if > 1 returned.
 <?/MICOMMENT>
 
 <?MISQL SQL="
-  select title, authors, year(pub_date), jrnl_abbrev, keywords, pub_abstract, 
+select title, authors, year(pub_date), jrnl_abbrev, keywords, pub_abstract, 
          accession_no, pub_errata_and_notes, jtype, pub_file, 
 	 pub_completion_date, pub_volume, pub_pages, status, pub_mini_ref,
 	 pub_doi, jrnl_publisher
