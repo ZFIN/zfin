@@ -37,11 +37,11 @@
                             <td style="text-indent: ${foreignKeyResult.level *20}px">
                                 <c:choose>
                                     <c:when test="${(ID eq null) || (ID eq '')}">
-                                        <a href="/action/database/view-records/<c:out value="${foreignKey.foreignKeyTable.tableName}"/>?columnName=${formBean.columnName[0]}&columnValue=${formBean.columnValue[0]}&foreignKeyName=${foreignKey.foreignKey}&fullNodeName=${formBean.fullNodeNameForNextForeignKey}${foreignKeyResult.fullNodeName}">
+                                        <a href="/action/database/view-records/<c:out value="${foreignKey.foreignKeyTable.tableName}"/>?columnName=${formBean.columnName[0]}&columnValue=${formBean.columnValue[0]}&foreignKeyName=${foreignKey.foreignKey}&fullNodeName=${formBean.fullNodeNameForNextForeignKey}${foreignKeyResult.fullNodeName}&baseTable=${table.tableName}">
                                             <c:out value="${fn:toUpperCase(foreignKey.foreignKeyTable.tableName)}"/></a>
                                     </c:when>
                                     <c:otherwise>
-                                        <a href="/action/database/view-records/<c:out value="${foreignKey.foreignKeyTable.tableName}"/>?columnName=${foreignKey.foreignKey}&columnValue=${ID}&foreignKeyName=${foreignKey.foreignKey}&fullNodeName=${formBean.fullNodeNameForNextForeignKey}${foreignKeyResult.fullNodeName}">
+                                        <a href="/action/database/view-records/<c:out value="${foreignKey.foreignKeyTable.tableName}"/>?columnName=${foreignKey.foreignKey}&columnValue=${ID}&foreignKeyName=${foreignKey.foreignKey}&fullNodeName=${formBean.fullNodeNameForNextForeignKey}${foreignKeyResult.fullNodeName}&baseTable=${table.tableName}">
                                             <c:out value="${fn:toUpperCase(foreignKey.foreignKeyTable.tableName)}"/></a>
                                     </c:otherwise>
                                 </c:choose>

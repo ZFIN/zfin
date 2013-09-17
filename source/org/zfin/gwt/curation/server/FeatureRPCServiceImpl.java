@@ -38,6 +38,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
@@ -263,7 +264,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.createTransaction();
         FeatureAlias featureAlias = new FeatureAlias();
         featureAlias.setFeature(feature);
-        featureAlias.setAlias(DTOConversionService.escapeString(name));
+        featureAlias.setAlias(ZfinStringUtils.escapeHighUnicode(name));
         String groupName = DataAliasGroup.Group.ALIAS.toString();
         DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
         featureAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null

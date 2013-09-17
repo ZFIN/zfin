@@ -270,11 +270,11 @@ public class DatabaseService {
     }
 
     public static DatabaseJdbcStatement createQueryFromFullForeignKeyHierarchy(String fullNodeName, String pkValue) {
-        return createQueryFromFullForeignKeyHierarchy(fullNodeName, pkValue, null);
+        return createQueryFromFullForeignKeyHierarchy(fullNodeName, pkValue, null, null);
     }
 
-    public static DatabaseJdbcStatement createQueryFromFullForeignKeyHierarchy(String fullNodeName, String pkValue, Table entityTable) {
-        Table rootTable = ForeignKey.getRootTableFromNodeName(fullNodeName);
+    public static DatabaseJdbcStatement createQueryFromFullForeignKeyHierarchy(String fullNodeName, String pkValue, Table entityTable, Table baseTable) {
+        Table rootTable = ForeignKey.getRootTableFromNodeName(fullNodeName, baseTable);
         TableValueLookup lookup = new TableValueLookup(rootTable);
         ColumnValue columnValue = new ColumnValue(rootTable, pkValue);
         lookup.addColumnValue(columnValue);

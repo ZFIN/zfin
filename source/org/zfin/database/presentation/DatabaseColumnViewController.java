@@ -54,7 +54,8 @@ public class DatabaseColumnViewController {
                                                      @ModelAttribute("formBean") DatabaseQueryFormBean formBean,
                                                      BindingResult bindingResult) {
         Table entityTable = Table.getEntityTableByTableName(table);
-        DatabaseJdbcStatement statement = DatabaseService.createQueryFromFullForeignKeyHierarchy(formBean.getFullNodeName(), formBean.getColumnValue().get(0), entityTable);
+        Table baseTable = Table.getEntityTableByTableName(formBean.getBaseTable());
+        DatabaseJdbcStatement statement = DatabaseService.createQueryFromFullForeignKeyHierarchy(formBean.getFullNodeName(), formBean.getColumnValue().get(0), entityTable, baseTable);
         runQuery(model, entityTable, statement);
         List<ForeignKeyResult> foreignKeyResultList = DatabaseService.createFKResultList(formBean.getFullNodeName(), formBean.getColumnValue().get(0));
         model.addAttribute("foreignKeyResultList", foreignKeyResultList);

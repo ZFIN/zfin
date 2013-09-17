@@ -56,15 +56,15 @@ public enum ForeignKey {
     FEATURE_EVENT_FEATURE_HISTORY(Table.MARKER_HISTORY_EVENT, Table.FEATURE_HISTORY, "fhist_event"),
     FEATURE_REASON_FEATURE_HISTORY(Table.MARKER_HISTORY_REASON, Table.FEATURE_HISTORY, "fhist_reason"),
     ALIAS_FEATURE_HISTORY(Table.DATA_ALIAS, Table.FEATURE_HISTORY, "fhist_dalias_zdb_id"),
-    CONSTRUCT_CONSTRUCT_GROUP_MEMBER( Table.MARKER,Table.CONSTRUCT_GROUP_MEMBER, "cgm_member_id"),
-    MARKER_MAPPED_MARKER( Table.MARKER,Table.MAPPED_MARKER, "marker_id"),
-    LAB_MAPPED_MARKER( Table.LAB,Table.MAPPED_MARKER, "lab"),
-    PERSON_MAPPED_MARKER( Table.PERSON,Table.MAPPED_MARKER, "submitter"),
-    OWNER_MAPPED_MARKER( Table.PERSON,Table.MAPPED_MARKER, "owner"),
-    PANEL_MAPPED_MARKER( Table.PANEL,Table.MAPPED_MARKER, "refcross_id"),
-    PERSON_PANEL( Table.PERSON,Table.PANEL, "producer"),
-    COMPANY_PANEL( Table.COMPANY,Table.PANEL, "source"),
-    LAB_PANEL( Table.LAB,Table.PANEL, "source"),
+    CONSTRUCT_CONSTRUCT_GROUP_MEMBER(Table.MARKER, Table.CONSTRUCT_GROUP_MEMBER, "cgm_member_id"),
+    MARKER_MAPPED_MARKER(Table.MARKER, Table.MAPPED_MARKER, "marker_id"),
+    LAB_MAPPED_MARKER(Table.LAB, Table.MAPPED_MARKER, "lab"),
+    PERSON_MAPPED_MARKER(Table.PERSON, Table.MAPPED_MARKER, "submitter"),
+    OWNER_MAPPED_MARKER(Table.PERSON, Table.MAPPED_MARKER, "owner"),
+    PANEL_MAPPED_MARKER(Table.PANEL, Table.MAPPED_MARKER, "refcross_id"),
+    PERSON_PANEL(Table.PERSON, Table.PANEL, "producer"),
+    COMPANY_PANEL(Table.COMPANY, Table.PANEL, "source"),
+    LAB_PANEL(Table.LAB, Table.PANEL, "source"),
     PERSON_LAB_ASSOC(Table.PERSON, Table.LAB, Table.PERSON_LAB),
     LAB_PERSON_ASSOC(Table.LAB, Table.PERSON, Table.LAB_PERSON),
     PERSON_PUB_ASSOC(Table.PERSON, Table.PUBLICATION, Table.PERSON_PUB),
@@ -143,6 +143,7 @@ public enum ForeignKey {
     NOTE_EXT_GENO(Table.GENOTYPE, Table.EXTERNAL_NOTE, "extnote_data_zdb_id"),
     NOTE_EXT_GENOX(Table.GENOTYPE_EXPERIMENT, Table.EXTERNAL_NOTE, "extnote_data_zdb_id"),
     NOTE_EXT_MARKER(Table.MARKER, Table.EXTERNAL_NOTE, "extnote_data_zdb_id"),
+    NOTE_EXT_ANTIBODY(Table.ANTIBODY, Table.EXTERNAL_NOTE, "extnote_data_zdb_id"),
     MARKER_TYPE_MARKER(Table.MARKER_TYPE, Table.MARKER, "mrkr_type"),
     MARKER_TYPE_GROUP_MARKER(Table.MARKER_TYPE, Table.MARKER_TYPE_GROUP, "mtgrp_name"),
     MARKER_MARKER_SEQUENCE(Table.MARKER, Table.MARKER_SEQUENCE, "mrkrseq_mrkr_zdb_id"),
@@ -296,11 +297,19 @@ public enum ForeignKey {
     }
 
     public static ForeignKey getForeignKeyByColumnName(String columnName) {
+        return getForeignKeyByColumnName(columnName, null);
+    }
+
+    public static ForeignKey getForeignKeyByColumnName(String columnName, Table entityTable) {
         if (columnName == null)
             return null;
         for (ForeignKey foreignKey : values()) {
-            if (!foreignKey.isManyToManyRelationship() && foreignKey.getForeignKey().equals(columnName))
-                return foreignKey;
+            if (!foreignKey.isManyToManyRelationship() && foreignKey.getForeignKey().equals(columnName)) {
+                if (entityTable == null)
+                    return foreignKey;
+                if(foreignKey.entityTable == entityTable)
+                    return foreignKey;
+            }
             if (foreignKey.isManyToManyRelationship() && foreignKey.getManyToManyTable().getPkName().equals(columnName))
                 return foreignKey;
         }
@@ -536,15 +545,15 @@ public enum ForeignKey {
     }
 
     /**
-     * Assumes the first fk name is points to the root table
+     * Assumes the first fk name points to the root table
      *
      * @param fullNodeName
      * @return
      */
-    public static Table getRootTableFromNodeName(String fullNodeName) {
+    public static Table getRootTableFromNodeName(String fullNodeName, Table entityTable) {
         if (fullNodeName == null)
             return null;
-        return getForeignKeyByColumnName(fullNodeName.split(DELIMITER)[0]).getEntityTable();
+        return getForeignKeyByColumnName(fullNodeName.split(DELIMITER)[0], entityTable).getEntityTable();
     }
 
     public static final String DELIMITER = "\\|";

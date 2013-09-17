@@ -23,6 +23,7 @@ public class DatabaseQueryFormBean extends PaginationBean {
     private String foreignKeyName;
     private String parentPkValue;
     private String fullNodeName;
+    private String baseTable;
 
     public String getForeignKeyName() {
         return foreignKeyName;
@@ -64,6 +65,14 @@ public class DatabaseQueryFormBean extends PaginationBean {
 
     public void setParentPkValue(String parentPkValue) {
         this.parentPkValue = parentPkValue;
+    }
+
+    public String getBaseTable() {
+        return baseTable;
+    }
+
+    public void setBaseTable(String baseTable) {
+        this.baseTable = baseTable;
     }
 
     public String getFullNodeName() {

@@ -126,7 +126,7 @@ public class DatabaseServiceTest {
                 "AND publication_1.zdb_id = figure_1.fig_source_zdb_id " +
                 "AND figure_1.fig_zdb_id = image_1.img_fig_zdb_id", statement.getQuery());
 
-        statement = DatabaseService.createQueryFromFullForeignKeyHierarchy("fig_source_zdb_id|img_fig_zdb_id", pubID, Table.PUBLICATION);
+        statement = DatabaseService.createQueryFromFullForeignKeyHierarchy("fig_source_zdb_id|img_fig_zdb_id", pubID, Table.PUBLICATION, null);
         assertEquals("SELECT publication_1.* FROM publication as publication_1, figure as figure_1, image as image_1 " +
                 "WHERE publication_1.zdb_id = 'ZDB-PUB-010705-7' " +
                 "AND publication_1.zdb_id = figure_1.fig_source_zdb_id " +

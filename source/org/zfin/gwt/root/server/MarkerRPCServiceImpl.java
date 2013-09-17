@@ -35,6 +35,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
+import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
@@ -74,7 +75,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Set<DataNote> dataNotes = marker.getDataNotes();
         for (DataNote dataNote : dataNotes) {
             if (dataNote.getZdbID().equals(noteDTO.getZdbID())) {
-                dataNote.setNote(DTOConversionService.escapeString(noteDTO.getNoteData()));
+                dataNote.setNote(ZfinStringUtils.escapeHighUnicode(noteDTO.getNoteData()));
               //  InfrastructureService.insertUpdate(marker, "updated note: " + noteDTO);
                 HibernateUtil.currentSession().update(dataNote);
                 HibernateUtil.currentSession().flush();
@@ -108,7 +109,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         HibernateUtil.createTransaction();
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
         String oldNote = DTOConversionService.unescapeString(marker.getPublicComments());
-        String newNote = DTOConversionService.escapeString(noteDTO.getNoteData());
+        String newNote = ZfinStringUtils.escapeHighUnicode(noteDTO.getNoteData());
         if (!StringUtils.equals(newNote, oldNote)) {
             marker.setPublicComments(DTOConversionService.escapeString(noteDTO.getNoteData()));
            // InfrastructureService.insertUpdate(marker, "Public Note", oldNote, newNote);
@@ -295,7 +296,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         Session session = HibernateUtil.currentSession();
-        String aliasName = DTOConversionService.escapeString(relatedEntityDTO.getName());
+        String aliasName = ZfinStringUtils.escapeHighUnicode(relatedEntityDTO.getName());
         session.beginTransaction();
         Publication publication = null;
         if (StringUtils.isNotEmpty(relatedEntityDTO.getPublicationZdbID())) {
@@ -324,7 +325,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
      */
     public RelatedEntityDTO addDataAliasAttribution(RelatedEntityDTO relatedEntityDTO) {
         logger.debug(relatedEntityDTO.toString());
-        String aliasName = DTOConversionService.escapeString(relatedEntityDTO.getName());
+        String aliasName = ZfinStringUtils.escapeHighUnicode(relatedEntityDTO.getName());
 
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         Session session = HibernateUtil.currentSession();
@@ -365,7 +366,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
      * @param relatedEntityDTO bindle of data with data id, name & pub for attribution
      */
     public void removeDataAliasAttribution(RelatedEntityDTO relatedEntityDTO) {
-        String aliasName = DTOConversionService.escapeString(relatedEntityDTO.getName());
+        String aliasName = ZfinStringUtils.escapeHighUnicode(relatedEntityDTO.getName());
         String pub = relatedEntityDTO.getPublicationZdbID();
         Marker marker = markerRepository.getMarkerByID(relatedEntityDTO.getDataZdbID());
         DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);

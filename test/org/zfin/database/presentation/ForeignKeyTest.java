@@ -65,9 +65,17 @@ public class ForeignKeyTest {
     @Test
     public void getRootTableFromNodeName() {
         String fullNode = "feature:dalias_data_zdb_id";
-        Table table = ForeignKey.getRootTableFromNodeName(fullNode);
+        Table table = ForeignKey.getRootTableFromNodeName(fullNode, null);
         assertNotNull(table);
         assertEquals(Table.FEATURE, table);
+    }
+
+    @Test
+    public void getRootTableFromNodeNameAntibody() {
+        String fullNode = "extnote_data_zdb_id";
+        Table table = ForeignKey.getRootTableFromNodeName(fullNode, Table.ANTIBODY);
+        assertNotNull(table);
+        assertEquals(Table.ANTIBODY, table);
     }
 
     //@Test

@@ -32,6 +32,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.presentation.DBLinkPresentation;
+import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
@@ -73,7 +74,7 @@ public class DTOConversionService {
         return CollectionUtils.collect(uncleansedCharacter, new Transformer() {
             @Override
             public String transform(Object o) {
-                return DTOConversionService.escapeString(o.toString());
+                return ZfinStringUtils.escapeHighUnicode(o.toString());
             }
         });
     }
