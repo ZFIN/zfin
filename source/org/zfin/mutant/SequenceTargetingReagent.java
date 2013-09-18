@@ -15,7 +15,7 @@ import java.util.Set;
 public class SequenceTargetingReagent extends Marker {
 
     private List<Marker> targetGenes;
-    private Set<MarkerSequence> sequences;
+    private MarkerSequence sequence;
     private static Logger logger = Logger.getLogger(SequenceTargetingReagent.class);
 
     /**
@@ -38,19 +38,11 @@ public class SequenceTargetingReagent extends Marker {
         this.targetGenes = targetGenes;
     }
 
-    public Set<MarkerSequence> getSequences() {
-        return sequences;
-    }
-
-    public void setSequences(Set<MarkerSequence> sequences) {
-        this.sequences = sequences;
-    }
-
     public MarkerSequence getSequence() {
-        if (sequences == null)
-            return null;
-        if (sequences.size() > 1)
-            logger.warn("More than one sequence found for " + getZdbID());
-        return sequences.iterator().next();
+        return sequence;
+    }
+
+    public void setSequence(MarkerSequence sequence) {
+        this.sequence = sequence;
     }
 }

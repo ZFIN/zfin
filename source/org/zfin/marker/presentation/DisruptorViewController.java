@@ -82,7 +82,7 @@ public class DisruptorViewController {
         // get sequence attribution
         if (disruptor.getSequence() != null) {
             List<RecordAttribution> attributions = RepositoryFactory.getInfrastructureRepository()
-                    .getRecordAttributionsForType(disruptor.getSequence().getZdbID(), RecordAttribution.SourceType.STANDARD);
+                    .getRecordAttributionsForType(disruptor.getZdbID(), RecordAttribution.SourceType.SEQUENCE);
             // for this particular set, we only ever want the first one
             if (attributions.size() >= 1) {
                 disruptorBean.setSequenceAttribution(PublicationPresentation.getLink(attributions.iterator().next().getSourceZdbID(), "1"));
@@ -92,16 +92,15 @@ public class DisruptorViewController {
         }
 
         disruptorBean.setDatabases(databases);
-
         String disruptorType = disruptor.getType().toString();
 
-        if (disruptorType == "MRPHLNO") {
+        // Todo: there should be a better place to store the display name for the different STR entities
+        if (disruptorType.equals("MRPHLNO")) {
             disruptorType = "Morpholino";
         }
 
         // set source
         disruptorBean.setSuppliers(markerRepository.getSuppliersForMarker(disruptor.getZdbID()));
-
         model.addAttribute(LookupStrings.FORM_BEAN, disruptorBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, disruptorType + ": " + disruptor.getAbbreviation());
 

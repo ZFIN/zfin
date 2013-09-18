@@ -1,12 +1,13 @@
 package org.zfin.sequence;
 
-import org.zfin.marker.Marker;
-
 /**
+ * Component class for SequenceTargetingReagent.
+ * Only MO, TALEN and CRISPR marker have sequence associated.
+ * In case we decide to also include sequence info for general marker type we would make this a component
+ * of the Marker class.
  */
 public class MarkerSequence {
-    private String zdbID;
-    private Marker marker;
+
     private String sequence;
     private String secondSequence;
     private Long offsetStart;
@@ -14,33 +15,16 @@ public class MarkerSequence {
     private String variation;
     private String type;
 
-    public String getStartToOffset(){
-        return sequence.substring(0,offsetStart.intValue()-1);
+    public String getStartToOffset() {
+        return sequence.substring(0, offsetStart.intValue() - 1);
     }
 
-    public String getAmbiguity(){
-        return sequence.substring(offsetStart.intValue()-1,offsetStart.intValue());
+    public String getAmbiguity() {
+        return sequence.substring(offsetStart.intValue() - 1, offsetStart.intValue());
     }
 
-    public String getOffsetToEnd(){
+    public String getOffsetToEnd() {
         return sequence.substring(offsetStart.intValue());
-    }
-
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
     }
 
     public String getSequence() {
@@ -51,8 +35,8 @@ public class MarkerSequence {
         this.sequence = sequence;
     }
 
-    public String getLeftEnd(){
-        return "5'" ;
+    public String getLeftEnd() {
+        return "5'";
     }
 
     /*

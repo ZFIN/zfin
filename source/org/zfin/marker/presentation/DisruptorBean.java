@@ -31,15 +31,6 @@ public class DisruptorBean extends MarkerBean{
     public void setTargetGenes(Set<Marker> targetGenes) {
         this.targetGenes = targetGenes;
     }
-
-    public List<MarkerSequence> getSequences() {
-        return sequences;
-    }
-
-    public void setSequences(List<MarkerSequence> sequences) {
-        this.sequences = sequences;
-    }
-
     /**
      * Most of the time there will only be a single sequence.
      * @return

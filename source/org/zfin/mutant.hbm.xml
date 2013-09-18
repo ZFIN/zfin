@@ -38,13 +38,6 @@
         <param name="enumClassname">org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum</param>
     </typedef>
 
-    <subclass name="org.zfin.mutant.SequenceTargetingReagent" extends="org.zfin.marker.Marker">
-        <set name="sequences" lazy="true">
-            <key column="mrkrseq_mrkr_zdb_id"/>
-            <one-to-many class="org.zfin.sequence.MarkerSequence"/>
-        </set>
-    </subclass>
-
     <class name="org.zfin.mutant.Genotype" table="genotype">
         <id name="zdbID" type="string">
             <column name="geno_zdb_id" not-null="true"/>

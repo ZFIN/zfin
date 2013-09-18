@@ -2,7 +2,6 @@ package org.zfin.marker.repository;
 
 import org.apache.log4j.Logger;
 import org.hibernate.*;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -799,9 +798,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getMarkerSequences() {
-        Marker m = markerRepository.getMarkerByID("ZDB-SNP-060626-88");
-        assertEquals(1, markerRepository.getMarkerSequences(m).size());
-        assertEquals("TATTTC", markerRepository.getMarkerSequences(m).iterator().next().getSequence().substring(0, 6));
+        SequenceTargetingReagent m = (SequenceTargetingReagent) markerRepository.getMarkerByID("ZDB-SNP-060626-88");
+        assertEquals("TATTTC", m.getSequence().getSequence().substring(0, 6));
     }
 
     @Test
@@ -974,11 +972,10 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void getSequenceTargetingReagent() {
-        markerRepository.getSequenceTargetingReagent("ZDB-TALEN-130820-2");
-        markerRepository.getSequenceTargetingReagent("ZDB-CRISPR-130820-2");
-        SequenceTargetingReagent marker = markerRepository.getSequenceTargetingReagent("ZDB-MRPHLNO-100729-2");
+        Marker marker = markerRepository.getMarkerByID("ZDB-MRPHLNO-100729-2");
+        assertNotNull(marker);
+        marker = markerRepository.getMarkerByID("ZDB-TSCRIPT-090929-193");
         assertNotNull(marker);
     }
 

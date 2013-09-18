@@ -19,7 +19,8 @@ public class RecordAttribution implements Serializable {
         SEGREGATION("segregation"),
         STANDARD("standard"),
         TERM_DEFINITION("term definition"),
-        FIRST_CURATED_SEQUENCE_PUB("first curated sequence pub");
+        FIRST_CURATED_SEQUENCE_PUB("first curated sequence pub"),
+        SEQUENCE("sequence");
 
         private final String value;
 

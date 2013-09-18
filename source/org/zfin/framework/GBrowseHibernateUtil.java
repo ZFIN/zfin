@@ -27,7 +27,7 @@ public class GBrowseHibernateUtil {
     public static void init() {
         try {
             if (gbrowseSessionFactory != null) {
-                throw new RuntimeException("GBrowse SessionFactory already instatiated.");
+                throw new RuntimeException("GBrowse SessionFactory already instantiated.");
             }
 
             Configuration config = new Configuration().configure("hibernate-gbrowse.cfg.xml");

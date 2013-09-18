@@ -131,8 +131,6 @@ public interface SequenceRepository {
      * @return list of DBLink records.
      */
     List<DBLink> getDBLinks(ForeignDB.AvailableName name, int numberOfRecords);
-
-    MarkerSequence createMarkerSequence(MarkerSequence markerSequence, String attributionZdbID);
 }
 
 

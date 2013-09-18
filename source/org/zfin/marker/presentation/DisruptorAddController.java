@@ -19,6 +19,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
@@ -80,10 +81,8 @@ public class DisruptorAddController {
 
         String disruptorName = formBean.getDisruptorName();
 
-        String disruptorSequence = formBean.getDisruptorSequence();
-
         Person currentUser = Person.getCurrentSecurityUser();
-        Marker newDisruptor = new Marker();
+        SequenceTargetingReagent newDisruptor = new SequenceTargetingReagent();
         newDisruptor.setName(disruptorName);
         newDisruptor.setAbbreviation(disruptorName);
 
@@ -95,8 +94,7 @@ public class DisruptorAddController {
             formBean.setDisruptorPublicationZdbID(PublicationValidator.completeZdbID(pubZdbID));
         else
             formBean.setDisruptorPublicationZdbID(pubZdbID);
-        String zdbID = formBean.getDisruptorPublicationZdbID();
-        Publication disruptorPub = pr.getPublication(zdbID);
+        Publication disruptorPub = pr.getPublication(formBean.getDisruptorPublicationZdbID());
 
         MarkerType mt = new MarkerType();
         if (formBean.getDisruptorType().equalsIgnoreCase("Morpholino")) {
@@ -106,8 +104,17 @@ public class DisruptorAddController {
         } else if (formBean.getDisruptorType().equalsIgnoreCase("CRISPR")) {
             mt = mr.getMarkerTypeByName(Marker.Type.CRISPR.toString());
         }
-
         newDisruptor.setMarkerType(mt);
+        // set marker sequence component
+        MarkerSequence newDisruptorSequence = new MarkerSequence();
+        newDisruptorSequence.setSequence(formBean.getDisruptorSequence().toUpperCase());
+        if (formBean.getDisruptorType().equalsIgnoreCase("TALEN")) {
+            String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
+            newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
+        }
+        newDisruptorSequence.setType("Nucleotide");
+        newDisruptor.setSequence(newDisruptorSequence);
+
         try {
             HibernateUtil.createTransaction();
             mr.createMarker(newDisruptor, disruptorPub);
@@ -127,22 +134,10 @@ public class DisruptorAddController {
             String targetGeneAbbr = formBean.getTargetGeneSymbol();
             Marker targetGene = mr.getGeneByAbbreviation(targetGeneAbbr);
 
-            if (newDisruptor != null && targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
+            if (targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
                 MarkerService.addMarkerRelationship(newDisruptor, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
             }
 
-            // HibernateUtil.currentSession().merge(newDisruptor);
-
-            MarkerSequence newDisruptorSequence = new MarkerSequence();
-            newDisruptorSequence.setMarker(newDisruptor);
-            newDisruptorSequence.setSequence(disruptorSequence.toUpperCase());
-            if (formBean.getDisruptorType().equalsIgnoreCase("TALEN")) {
-                String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
-                newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
-            }
-            newDisruptorSequence.setType("Nucleotide");
-
-            sr.createMarkerSequence(newDisruptorSequence, pubZdbID);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             try {

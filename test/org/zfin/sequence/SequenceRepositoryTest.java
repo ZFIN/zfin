@@ -133,11 +133,6 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                 .uniqueResult();
         assertNotNull(markerSequence);
         assertNotNull(markerSequence.getSequence());
-        assertNotNull(markerSequence.getZdbID());
-        assertNotNull(markerSequence.getMarker());
-        logger.debug(markerSequence.getSequence());
-        logger.debug(markerSequence.getZdbID());
-        logger.debug(markerSequence.getMarker());
     }
 
     @Test

@@ -136,7 +136,7 @@
         </td>
     </tr>
 
-    <zfin2:notesInDiv hasNotes="${formBean.marker}"/>
+    <zfin2:notesInDiv hasNotes="${marker}"/>
 
 </table>
 

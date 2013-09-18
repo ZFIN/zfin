@@ -1044,18 +1044,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return (List<DBLink>) query.list();
     }
 
-    public MarkerSequence createMarkerSequence(MarkerSequence markerSequence, String attributionZdbID) {
-        Session session = HibernateUtil.currentSession();
-        session.save(markerSequence);
-        if (attributionZdbID != null && attributionZdbID.length() > 0) {
-            PublicationAttribution pa = new PublicationAttribution();
-            pa.setSourceZdbID(attributionZdbID);
-            pa.setDataZdbID(markerSequence.getZdbID());
-            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-            session.save(pa);
-        }
-        return markerSequence;
-    }
 }
 
 
