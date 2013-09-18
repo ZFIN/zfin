@@ -27,8 +27,9 @@
                 >Blast at ${blastDB.displayName}</a>
     </c:when>
     <c:when test="${fn:length(dbLink.referenceDatabase.relatedBlastDbs) > 1}">
-        <c:set var="blastLink" value="blast-popup${dbLink.accessionNumber}"/>
-        <c:set var="blastLinkPopup" value="blast-links${dbLink.accessionNumber}"/>
+        <c:set var="domID" value="${zfn:generateRandomDomID()}"/>
+        <c:set var="blastLink" value="blast-popup${domID}"/>
+        <c:set var="blastLinkPopup" value="blast-links${domID}"/>
 
         <c:set var="style" value="vertical-align: top; text-align: center;"/>
         <c:if test="${!empty minWidth}">
