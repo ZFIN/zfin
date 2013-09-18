@@ -1,7 +1,15 @@
 
 
-jQuery(document).ready(function() { jQuery(".default-input").focus(); })
-
+try {
+  jQuery(document).ready(function() { jQuery(".default-input").focus(); })
+}
+catch(e) {
+    if (e instanceof ReferenceError) {
+	// just ignore it...
+    } else {
+	throw e; // let others bubble up
+    }
+}
 
 document.write(" </div> ");
 document.write(" <div id=\"footer\">  ");
