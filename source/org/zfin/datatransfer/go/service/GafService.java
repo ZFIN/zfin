@@ -412,9 +412,20 @@ public class GafService {
     }
 
     protected GenericTerm getGoTerm(GafEntry gafEntry) throws GafValidationError {
+        String inferences = gafEntry.getInferences();
+        if (inferences != null && inferences.startsWith("GO:")) {
+            GenericTerm goTermInference = ontologyRepository.getTermByOboID(inferences);
+            validateGoTerm(goTermInference.getOboID(), gafEntry);
+        }
         GenericTerm goTerm = ontologyRepository.getTermByOboID(gafEntry.getGoTermId());
+        validateGoTerm(goTerm.getOboID(), gafEntry);
+        return goTerm;
+    }
+
+    protected GenericTerm validateGoTerm(String goTermID, GafEntry gafEntry) throws GafValidationError {
+        GenericTerm goTerm = ontologyRepository.getTermByOboID(goTermID);
         if (goTerm == null) {
-            throw new GafValidationError("Unable to find GO Term for:" + FileUtil.LINE_SEPARATOR + gafEntry.getGoTermId(),
+            throw new GafValidationError("Unable to find GO Term for:" + FileUtil.LINE_SEPARATOR + goTermID,
                     gafEntry);
         }
         if (goTerm.isObsolete()) {

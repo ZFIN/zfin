@@ -90,6 +90,24 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
     }
 
 
+    @Test
+    public void fpInferenceObsoleteGoTerm() throws Exception {
+        File file = new File(FP_INFERENCE_DIRECTORY +"GOcol8test.gaf");
+        List<GafEntry> gafEntries = gafParser.parseGafFile(file);
+        assertEquals(2, gafEntries.size());
+        GafJobData gafJobData = new GafJobData();
+        gafService.processEntries(gafEntries, gafJobData);
+        logger.debug("summary: " + gafJobData.toString());
+        logger.debug("entries: " + gafJobData.getNewEntries().size());
+        logger.debug("existing: " + gafJobData.getExistingEntries().size());
+        logger.debug("errors: " + gafJobData.getErrors().size());
+
+        assertEquals(1, gafJobData.getErrors().size());
+        assertEquals(1, gafJobData.getNewEntries().size() + gafJobData.getExistingEntries().size());
+        assertEquals(0, gafJobData.getRemovedEntries().size());
+    }
+
+
     /**
      * Just tests a normal load
      * @throws Exception
