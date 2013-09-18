@@ -126,16 +126,6 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getMarkerSequenceForMorpholino() {
-        MarkerSequence markerSequence = (MarkerSequence) HibernateUtil.currentSession()
-                .createCriteria(MarkerSequence.class)
-                .setMaxResults(1)
-                .uniqueResult();
-        assertNotNull(markerSequence);
-        assertNotNull(markerSequence.getSequence());
-    }
-
-    @Test
     public void testGenbankAllDownload() {
         List<String> dblinks = sequenceRepository.getGenbankSequenceDBLinks();
         assertNotNull(dblinks);
