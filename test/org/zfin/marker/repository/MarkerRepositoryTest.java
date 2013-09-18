@@ -2,6 +2,7 @@ package org.zfin.marker.repository;
 
 import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -855,6 +856,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
     public void getGeneProducts() {
         List<GeneProductsBean> geneProductsBean = markerRepository.getGeneProducts("ZDB-GENE-980526-561");
         assertNotNull(geneProductsBean);
