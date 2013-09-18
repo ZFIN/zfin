@@ -760,7 +760,7 @@ public class HibernateMutantRepository implements MutantRepository {
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
         final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-                "inner join m.sequences s " +
+                "inner join m.sequence s " +
                 "inner join m.firstMarkerRelationships  " +
                 "where m.markerType =  :markerType ";
 
