@@ -1036,7 +1036,16 @@ select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
-	sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name
+	sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+	xpatex_source_zdb_id,
+ case when xpatex_probe_feature_zdb_id is not null
+	then xpatex_probe_feature_zdb_id
+	else ''
+ end,
+ case when xpatex_atb_zdb_id is not null
+	then xpatex_atb_zdb_id
+	else ''
+ end
  from marker
  join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
  join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
