@@ -14,6 +14,7 @@ import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.ZfinStringUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ public class GwtConversionTest extends AbstractDatabaseTest{
     // This is the correct character if it looks like a N with a tilde on top of it.
     // Off of solaris, it is rendered correctly (a long mdash).  
     private final String unescapedName = "(\u2014Tg:123)" ;
-    private final String escapedName = "(&mdash;Tg:123)";
+    private final String escapedName = "(&#8212;Tg:123)";
      private final String unescapedNote = "(\u0392Tg:123)" ;
     private final String escapedNote = "(&Beta;Tg:123)";
 
@@ -61,7 +62,7 @@ public class GwtConversionTest extends AbstractDatabaseTest{
         Collection<String> converted = DTOConversionService.escapeStrings(strings);
         assertNotNull(converted);
         String convertedString = converted.iterator().next() ;
-        assertEquals(DTOConversionService.escapeString(unescapedName), convertedString);
+        assertEquals(ZfinStringUtils.escapeHighUnicode(unescapedName), convertedString);
         assertEquals(escapedName, convertedString);
 
         Collection<String> unescapedCollection = DTOConversionService.unescapeStrings(converted);
