@@ -40,22 +40,6 @@ public class GwtConversionTest extends AbstractDatabaseTest{
     private final String escapedNote = "(&Beta;Tg:123)";
 
     @Test
-    public void testConverter(){
-        String converted = DTOConversionService.escapeString(unescapedName);
-        logger.debug(converted);
-        assertNotNull(converted);
-        assertEquals(escapedName, converted);
-    }
-
-    @Test
-    public void testUnescape(){
-        String converted = DTOConversionService.unescapeString(escapedName);
-        logger.debug(converted);
-        assertEquals(unescapedName,converted);
-        assertEquals(escapedName,DTOConversionService.escapeString(converted));
-    }
-
-    @Test
     public void testConverterCollection(){
         Set<String> strings = new HashSet<String>();
         strings.add(unescapedName);
