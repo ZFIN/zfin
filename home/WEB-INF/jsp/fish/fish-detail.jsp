@@ -38,7 +38,7 @@
             <c:forEach var="genotypeFeature" items="${formBean.genotype.genotypeFeatures}">
                 <jsp:useBean id="genotypeFeature" class="org.zfin.mutant.GenotypeFeature" scope="request"/>
                 <tr>
-                    <td style="vertical-align: bottom;"><zfin:link entity="${formBean.genotype}"/></td>
+                    <td style="vertical-align: bottom;"><zfin:link entity="${formBean.genotype}"/></td>   <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup/ZDB-GENO-130130-1"></a>
                     <td style="vertical-align: bottom;">
                         <zfin2:listOfAffectedGenes markerCollection="${genotypeFeature.feature.affectedGenes}"/>
                     </td>

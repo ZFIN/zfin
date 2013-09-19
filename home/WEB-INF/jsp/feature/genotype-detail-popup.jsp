@@ -1,0 +1,150 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
+
+<jsp:useBean id="formBean" class="org.zfin.feature.presentation.GenotypeBean" scope="request"/>
+
+<script type="text/javascript">
+
+    function start_note(ref_page) {
+        top.zfinhelp = open("/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-" + ref_page + ".apg", "notewindow", "scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=325");
+    }
+
+    function popup_url(url) {
+        open(url, "Description", "toolbar=yes,scrollbars=yes,resizable=yes");
+    }
+
+</script>
+
+
+
+
+
+<div class="popup-header">
+
+        Genotype Name: <zfin:name entity="${formBean.genotype}"/>
+
+    </div>
+<div class="popup-body">
+<table class="primary-entity-attributes">
+    <tr>
+        <th class="genotype-name-label">
+            <c:if test="${!formBean.genotype.wildtype}">
+                <span class="name-label">Genotype:</span>
+            </c:if>
+            <c:if test="${formBean.genotype.wildtype}">
+                <span class="name-value">Wild-Type Line:</span>
+            </c:if>
+        </th>
+        <td class="genotype-name-value">
+            <span class="name-value"><zfin:name entity="${formBean.genotype}"/></span>
+        </td>
+    </tr>
+
+    <c:if test="${formBean.genotype.wildtype}">
+        <tr>
+            <th>
+                <span class="name-label">Abbreviation:</span>
+            </th>
+            <td>
+                <span class="name-value">${formBean.genotype.handle}</span>
+            </td>
+        </tr>
+    </c:if>
+
+
+
+    <c:if test="${!formBean.genotype.wildtype}">
+        <tr>
+            <th>
+                Background:
+            </th>
+            <td>
+                <c:choose>
+                    <c:when test="${fn:length(formBean.genotype.associatedGenotypes) ne null && fn:length(formBean.genotype.associatedGenotypes) > 0}">
+                        <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}" varStatus="loop">
+                            <zfin:link entity="${background}"/>
+                            <c:if test="${background.handle != background.name}">(${background.handle})</c:if>
+                            <c:if test="${!loop.last}">,&nbsp;</c:if>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        Unspecified
+                    </c:otherwise>
+                </c:choose>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <c:choose>
+                    <c:when test="${fn:length(formBean.genotypeStatistics.affectedMarkers) ne null && fn:length(formBean.genotypeStatistics.affectedMarkers) > 1}">
+                        Affected&nbsp;Genes:
+                    </c:when>
+                    <c:otherwise>
+                        Affected&nbsp;Gene:
+                    </c:otherwise>
+                </c:choose>
+            </th>
+            <td>
+                <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}" varStatus="loop">
+                    <zfin:link entity="${affectedGene}"/><c:if test="${!loop.last}">,&nbsp;</c:if>
+                </c:forEach>
+            </td>
+        </tr>
+    </c:if>
+
+
+
+        </td>
+    </tr>
+</table>
+
+
+
+
+<c:if test="${!formBean.genotype.wildtype}">
+<div class="summary">
+    <b>GENOTYPE COMPOSITION</b>
+    <c:choose>
+        <c:when test="${formBean.genotypeFeatures ne null && fn:length(formBean.genotypeFeatures) > 0}">
+            <table class="summary rowstripes">
+                <tbody>
+                <tr>
+                    <th width="20%">
+                        Genomic Feature
+                    </th>
+                    <th width="20%">
+                        Construct
+                    </th>
+
+
+                </tr>
+                <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
+                    <zfin:alternating-tr loopName="loop">
+                        <td>
+                            <zfin:link entity="${genoFeat.feature}"/>
+                        </td>
+                        <td>
+                            <c:forEach var="construct" items="${genoFeat.feature.constructs}"
+                                       varStatus="constructsloop">
+                                <a href="/action/marker/view/${construct.marker.zdbID}">${construct.marker.name}</a>
+                                <c:if test="${!constructsloop.last}">
+                                    ,&nbsp;
+                                </c:if>
+                            </c:forEach>
+                        </td>
+
+
+                    </zfin:alternating-tr>
+                </c:forEach>
+
+                </tbody>
+            </table>
+        </c:when>
+        <c:otherwise>
+            <br>No data available</br>
+        </c:otherwise>
+    </c:choose>
+</div>
+</c:if>
+</div>
+

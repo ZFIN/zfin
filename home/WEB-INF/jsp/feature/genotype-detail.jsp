@@ -207,37 +207,25 @@
                         Genomic Feature
                     </th>
                     <th width="20%">
-                        Zygosity
-                    </th>
-                    <th width="20%">
-                        Parental Genotype
+                        Construct
                     </th>
                     <th width="20%">
                         Lab of Origin
                     </th>
                     <th width="20%">
-                        Construct
+                        Zygosity
                     </th>
+                    <th width="20%">
+                        Parental Genotype
+                    </th>
+
+
 
                 </tr>
                 <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
                     <zfin:alternating-tr loopName="loop">
                         <td>
                             <zfin:link entity="${genoFeat.feature}"/>
-                        </td>
-                        <td>
-                                ${genoFeat.zygosity.name}
-                        </td>
-                        <td>
-                                ${genoFeat.parentalZygosityDisplay}
-                        </td>
-                        <td>
-                            <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
-                                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
-                                        ${source.organization.name}
-                                </a>
-                                <c:if test="${!status.last}">,&nbsp;</c:if>
-                            </c:forEach>
                         </td>
                         <td>
                             <c:forEach var="construct" items="${genoFeat.feature.constructs}"
@@ -248,6 +236,22 @@
                                 </c:if>
                             </c:forEach>
                         </td>
+                        <td>
+                            <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
+                                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
+                                        ${source.organization.name}
+                                </a>
+                                <c:if test="${!status.last}">,&nbsp;</c:if>
+                            </c:forEach>
+                        </td>
+                        <td>
+                                ${genoFeat.zygosity.name}
+                        </td>
+                        <td>
+                                ${genoFeat.parentalZygosityDisplay}
+                        </td>
+
+
                     </zfin:alternating-tr>
                 </c:forEach>
 

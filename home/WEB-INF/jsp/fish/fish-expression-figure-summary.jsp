@@ -22,7 +22,7 @@
     <tr>
         <th>Genotype:</th>
         <td>
-            <zfin:link entity="${phenotypeSummaryCriteria.genotypeExperiments[0].genotype}"/>
+            <zfin:link entity="${phenotypeSummaryCriteria.genotypeExperiments[0].genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${phenotypeSummaryCriteria.genotypeExperiments[0].genotype.zdbID}"></a>
         </td>
     </tr>
     <c:if test="${!empty phenotypeSummaryCriteria.genotypeExperiments}">

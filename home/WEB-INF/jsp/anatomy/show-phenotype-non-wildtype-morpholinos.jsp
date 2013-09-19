@@ -38,7 +38,7 @@
                         <zfin:link entity="${morpholinoStat.genoExperiment.experiment.morpholinoConditions}"/>
                     </td>
                     <td>
-                        <zfin:link entity="${morpholinoStat.genoExperiment.genotype}"/>
+                        <zfin:link entity="${morpholinoStat.genoExperiment.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${morpholinoStat.genoExperiment.genotype.zdbID}"></a>
                     </td>
                     <td>
                         <c:forEach var="statement" items="${morpholinoStat.phenotypeStatements}"

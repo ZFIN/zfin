@@ -27,7 +27,7 @@
             <c:forEach var="genoStat" items="${formBean.genotypeStatistics}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
                     <td>
-                        <zfin:link entity="${genoStat.genotype}"/>
+                        <zfin:link entity="${genoStat.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${genoStat.genotype.zdbID}">
                         <c:if test="${fn:length(genoStat.genotype.associatedGenotypes)>0}">
                         </c:if>
 

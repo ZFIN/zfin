@@ -10,7 +10,12 @@
             <TD width=90%>
                 <font size="+1">
                     <center>
+    <c:if test="${formBean.callingPage == null}">
                         Mutant / Transgenic Lines (${fn:length(formBean.mutants)} records)
+        </c:if>
+    <c:if test="${formBean.callingPage == null}">
+        Features/Constructs
+    </c:if>
                     </center>
 
           </font>
@@ -24,7 +29,7 @@
     </TR>
   </TABLE>
 
-            <TD width=10%>
+            <%--<TD width=10%>
 
                 <table leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" border="0" cellspacing="0"
                        cellpadding="0">
@@ -38,8 +43,8 @@
                 </table>
             </TD>
         </TR>
-    </TABLE>
-
+    </TABLE>--%>
+    <c:if test="${formBean.callingPage == null}">
     <table class="summary rowstripes">
         <tbody>
         <tr>
@@ -59,7 +64,7 @@
         <c:forEach var="geno" items="${formBean.mutants}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
                 <td width="30%">
-                    <zfin:link entity="${geno}"/>
+                    <zfin:link entity="${geno}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${geno.zdbID}"></a>
                 </td>
 
                 <td width="70%">
@@ -82,6 +87,41 @@
     </table>
 
 </c:if>
+</c:if>
+<c:if test="${formBean.callingPage != null}">
+    <table class="summary rowstripes">
+        <tbody>
+
+
+
+
+                    <tr>
+                        <th width="33%">Genomic Feature</th>
+                        <th width="33%">Relationship</th>
+                        <th width="34%">Construct(s)</th>
+                    </tr>
+
+
+
+
+                        <c:forEach var="fmRel" items="${formBean.fmRels}" varStatus="loop">
+                                <zfin:alternating-tr loopName="loop">
+
+                                <td width="33%"><zfin:link entity="${fmRel.feature}"/></td>
+                                <td width="33%">${fmRel.featureMarkerRelationshipType.name}</td>
+                                <td width="34%">
+                                    <zfin:link entity="${fmRel.marker}"/>
+                                </td>
+                            </zfin:alternating-tr>
+                        </c:forEach>
+
+
+
+        </tbody>
+    </table>
+
+</c:if>
+
 
 <c:if test="${formBean.gene != null}">
 
@@ -98,13 +138,10 @@
             <th width="60%">
                 <table border="0" cellspacing="0" width="100%">
                     <tr>
-                    <th border=0
-                    " width="33%">Genomic Feature
+                    <th border=0 width="33%">Genomic Feature
             </th>
-            <th border=0
-            " width="33%">Type</th>
-            <th border=0
-            " width="34%">Affected Gene(s)</th>
+            <th border=0 width="33%">Type</th>
+            <th border=0 width="34%">Affected Gene(s)</th>
         </tr>
     </table>
     </th>
@@ -115,19 +152,16 @@
     <c:forEach var="geno" items="${formBean.mutants}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td width="25%">
-                <zfin:link entity="${geno}"/>
+                <zfin:link entity="${geno}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${geno.zdbID}"></a>
             </td>
 
             <td width="60%">
                 <table border="0" cellspacing="0" width="100%">
                     <c:forEach var="genoFeat" items="${geno.genotypeFeatures}" varStatus="genoFeatloop">
                         <tr>
-                            <td border=0
-                            " width="33%"><zfin:link entity="${genoFeat.feature}"/></td>
-                            <td border=0
-                            " width="33%">${genoFeat.feature.type.display}</td>
-                            <td border=0
-                            " width="34%">
+                            <td border=0 width="33%"><zfin:link entity="${genoFeat.feature}"/></td>
+                            <td border=0 width="33%">${genoFeat.feature.type.display}</td>
+                            <td border=0 width="34%">
                             <c:if test="${fn:length(genoFeat.feature.affectedGenes) > 0 }">
                                 <c:forEach var="affectedGene" items="${genoFeat.feature.affectedGenes}"
                                            varStatus="geneLoop">

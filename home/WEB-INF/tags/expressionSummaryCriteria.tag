@@ -15,7 +15,7 @@
     <c:if test="${!empty criteria.genotypeExperiment}">
       <tr>
         <th>Genotype:</th>
-        <td><zfin:link entity="${criteria.genotypeExperiment.genotype}"/> </td>
+        <td><zfin:link entity="${criteria.genotypeExperiment.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${criteria.genotypeExperiment.genotype.zdbID}"></a> </td>
       </tr>
       <tr>
           <th>Conditions:</th>
@@ -26,7 +26,7 @@
     <c:if test="${!empty criteria.genotype}">
         <tr>
             <th class="genotype-name-label">Genotype:</th>
-            <td class="genotype-name-value"><zfin:link entity="${criteria.genotype}"/> </td>
+            <td class="genotype-name-value"><zfin:link entity="${criteria.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${criteria.genotype.zdbID}"></a> </td>
         </tr>
     </c:if>    
     <c:if test="${!empty criteria.antibody}">

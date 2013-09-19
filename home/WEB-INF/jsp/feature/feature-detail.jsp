@@ -334,7 +334,7 @@
                 <c:forEach var="featgenoStat" items="${formBean.featgenoStats}" varStatus="loop" end="4">
                     <zfin:alternating-tr loopName="loop">
                         <td>
-                            <zfin:link entity="${featgenoStat.genotype}"/>
+                            <zfin:link entity="${featgenoStat.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${featgenoStat.genotype.zdbID}"></a>
                         </td>
                         <td>
                             <zfin:link entity="${featgenoStat.affectedMarkers}"/>
@@ -447,7 +447,7 @@
         <c:forEach var="featgenoStat" items="${formBean.featgenoStats}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
                 <td>
-                    <zfin:link entity="${featgenoStat.genotype}"/>
+                    <zfin:link entity="${featgenoStat.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${featgenoStat.genotype.zdbID}"></a>
                 </td>
                 <td>
                     <zfin:link entity="${featgenoStat.affectedMarkers}"/>

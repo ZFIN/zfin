@@ -169,8 +169,8 @@
             style="white-space: nowrap;">Line/MO
             <img class="column-sort-button feature-column-sort-button" src="/images/transp.gif" alt=""/>
         </th>
-        <th width="15%">Mutation Type</th>
         <th>Construct</th>
+        <th width="15%">Mutation Type</th>
         <th></th>
         <th width="18%">
             <div id="showAllLink" style="float: right; font-size:small; font-weight:normal;">
@@ -191,6 +191,7 @@
             <td class="bold" colspan="5">
                 <c:if test="${fish.genotypeID!=null}">
                 <zfin:link entity="${fish}"/>
+                    <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${fish.genotypeID}"></a>
                 </c:if>
             </td>
             <td>
@@ -229,10 +230,10 @@
                     <zfin:link entity="${featureGene.feature}"/>
                 </td>
                 <td>
-                        ${featureGene.typeDisplay}
+                    <zfin:link entity="${featureGene.construct}"/>
                 </td>
                 <td>
-                    <zfin:link entity="${featureGene.construct}"/>
+                        ${featureGene.typeDisplay}
                 </td>
                 <td>
                 </td>
