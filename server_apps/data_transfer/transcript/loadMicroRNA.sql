@@ -108,8 +108,8 @@ insert into marker_relationship (mrel_zdb_id, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zd
 insert into sequence_type
   values ('RNA','rna sequences');
 
-insert into marker_Sequence (mrkrseq_zdb_id, mrkrseq_mrkr_Zdb_id, mrkrseq_sequence, mrkrseq_seq_type)
-  select get_id('MRKRSEQ'),mrkr_zdb_id, t_seq, 'RNA'
+insert into marker_Sequence (mrkrseq_mrkr_Zdb_id, mrkrseq_sequence, mrkrseq_seq_type)
+  select mrkr_zdb_id, t_seq, 'RNA'
      from marker, tmp_t
      where mrkr_abbrev = t_noDrename
      and mrkr_zdb_id like 'ZDB-TSCRIPT%';
@@ -127,11 +127,6 @@ insert into zdb_active_data
     where not exists (Select 'x' 
     	      	     	     from zdb_active_data
   			     where zactvd_zdb_id = mrel_zdb_id);
-insert into zdb_active_data
-  select mrkrseq_zdb_id from marker_sequence
-    where not exists (Select 'x' 
-    	      	     	     from zdb_active_data
-  			     where zactvd_zdb_id = mrkrseq_zdb_id);
 
 insert into zdb_active_data
   select mrkr_zdb_id from marker

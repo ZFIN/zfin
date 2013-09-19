@@ -203,26 +203,6 @@ create index tmp_ortho_pheno_index
   on tmp_ortho_pheno (phenos_id)
   using btree in idxdbs3 ;
 
-!echo "tp53 count";
-select count(*) from tmp_ortho_pheno
- where mrkr_abbrev = 'tp53';
-
-!echo "dld count"
- select count(*) from tmp_ortho_pheno
- where mrkr_abbrev = 'dld';
-
-select count(*) as counter, dblink_Acc_num, dblink_linked_recid
- from db_link, tmp_ortho_pheno
- where gene_id = dblink_linked_recid
- and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
- group by dblink_acc_num, dblink_linked_recid having count(*) > 1
-  into temp tmp_dups;
-
-select count(*), dblink_linked_recid
-  from tmp_dups
-  group by dblink_linked_recid
- having count(*) > 1;
-
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_pheno.txt'
   select distinct zdb_id, gene_id, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName, 
   	 c_ont_id,e2superName,d_ont_id,e2subName,e_ont_id,qualityName, phenos_tag,
@@ -236,12 +216,6 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
   select distinct zdb_id, gene_id, mrkr_abbrev, ortho_abbrev
      from tmp_ortho_pheno
     order by gene_id, mrkr_abbrev, ortho_abbrev;
-
-
-unload to testPheno.txt
-    select * from tmp_ortho_pheno
-    where mrkr_abbrev = 'brpf1'
-    order by e1superName, e1subName, e2superName, e2subName;
 
 commit work;
 --rollback work ;

@@ -222,11 +222,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from marker_go_term
       where mrkrgo_zdb_id = zdbId;
-  elif (objType = "MRKRSEQ") then
-    select mrkrseq_zdb_id
-      into objName
-      from marker_sequence
-      where mrkrseq_zdb_id = zdbId;
   elif (objType = "NOMEN") then
     select mhist_zdb_id
       into objName
