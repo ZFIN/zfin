@@ -15,6 +15,7 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.RecordAttribution;
@@ -453,6 +454,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         crit.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
         List<Figure> figures = crit.list();
         return figures;
+    }
+
+    public List<FeatureMarkerRelationship> getFeatureMarkerRelationshipsByPubID(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct fmRel from FeatureMarkerRelationship fmRel, PublicationAttribution attr " +
+                "      where attr.publication.zdbID = :pubID " +
+                "        and attr.dataZdbID = fmRel.zdbID order by fmRel.feature.zdbID" ;
+                    Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        return (List<FeatureMarkerRelationship>) query.list();
     }
 
     private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, Term aoTerm) {

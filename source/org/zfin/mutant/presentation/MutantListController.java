@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Figure;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -29,7 +30,8 @@ public class MutantListController {
     private PhenotypeRepository phenoRepository = RepositoryFactory.getPhenotypeRepository();
 
     @RequestMapping(value={"/mutant-list"})
-    protected String getMutantList(@RequestParam String zdbID, Model model) {
+    protected String getMutantList(@RequestParam String zdbID,@RequestParam(value = "callingPage", required = false) String callingPage, Model model) {
+
         LOG.debug("Start MutantListController");
 
         if (zdbID.startsWith("ZDB-PUB-")) {
@@ -51,8 +53,12 @@ public class MutantListController {
 
           MutantListBean form = new MutantListBean();
           form.setPublication(pub);
+          if (callingPage!=null){
+              form.setCallingPage(callingPage);
+          }
 
           retrieveMutantListByPub(form, zdbID);
+
 
           model.addAttribute(LookupStrings.FORM_BEAN, form);
           model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mutant and Transgenic Line List");
@@ -92,8 +98,15 @@ public class MutantListController {
     }
 
     private void retrieveMutantListByPub(MutantListBean form, String pubId) {
+        if (form.getCallingPage()==null){
         List<Genotype> mutantsAndTgs = pubRepository.getMutantsAndTgsByPublication(pubId);
-        form.setMutants(mutantsAndTgs);
+            form.setMutants(mutantsAndTgs);
+        }
+        else {
+            List<FeatureMarkerRelationship> ftrMarkers=pubRepository.getFeatureMarkerRelationshipsByPubID(pubId);
+            form.setFmRels(ftrMarkers);
+        }
+
     }
 
     private void retrieveMutantListByGene(MutantListBean form, String geneId) {

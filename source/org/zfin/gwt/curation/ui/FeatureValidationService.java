@@ -36,7 +36,7 @@ public class FeatureValidationService {
         switch(dtoFromGUI.getFeatureType()){
             case TRANSGENIC_INSERTION:
                 boolean isKnownInSite = dtoFromGUI.getKnownInsertionSite();
-                if(isKnownInSite){
+                /*if(isKnownInSite){
                     return  StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
                             StringUtils.isNotEmpty(dtoFromGUI.getLineNumber()) &&
                             StringUtils.isNotEmpty(dtoFromGUI.getTransgenicSuffix()) ;
@@ -45,7 +45,11 @@ public class FeatureValidationService {
                     return StringUtils.isNotEmpty(dtoFromGUI.getOptionalName()) &&
                             StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
                             StringUtils.isNotEmpty(dtoFromGUI.getLineNumber());
-                }
+                } */
+                return  StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
+                    StringUtils.isNotEmpty(dtoFromGUI.getLineNumber()) &&
+                    StringUtils.isNotEmpty(dtoFromGUI.getTransgenicSuffix()) ;
+
             case POINT_MUTATION:
             case DELETION:
             case INDEL:
@@ -138,7 +142,7 @@ public class FeatureValidationService {
         String returnString = (dtoFromGUI.getDominant() ? "d" : "") ;
         switch(featureType){
             case TRANSGENIC_INSERTION:
-                if(isKnownInSite){
+                /*if(isKnownInSite){
                     returnString += dtoFromGUI.getLabPrefix()
                             + dtoFromGUI.getLineNumber()
                             + dtoFromGUI.getTransgenicSuffix() ;
@@ -147,7 +151,10 @@ public class FeatureValidationService {
                     returnString += dtoFromGUI.getOptionalName()
                             + dtoFromGUI.getLabPrefix()
                             + dtoFromGUI.getLineNumber()  ;
-                }
+                }*/
+                returnString += dtoFromGUI.getLabPrefix()
+                        + dtoFromGUI.getLineNumber()
+                        + dtoFromGUI.getTransgenicSuffix() ;
                 break ;
             case POINT_MUTATION:
             case DELETION:
@@ -190,7 +197,11 @@ public class FeatureValidationService {
 
         switch (featureDTO.getFeatureType()){
             case TRANSGENIC_INSERTION:
-                if(featureDTO.getKnownInsertionSite()){
+                return dominantString
+                        +  featureDTO.getLabPrefix()
+                        + featureDTO.getLineNumber()
+                        + featureDTO.getTransgenicSuffix() ;
+                /*if(featureDTO.getKnownInsertionSite()){
                     return dominantString
                             +  featureDTO.getLabPrefix()
                             + featureDTO.getLineNumber()
@@ -200,7 +211,7 @@ public class FeatureValidationService {
                     return  dominantString
                             +  featureDTO.getLabPrefix()
                             + featureDTO.getLineNumber()  ;
-                }
+                }*/
             case INVERSION:
             case INDEL:
             case TRANSLOC:
@@ -233,12 +244,12 @@ public class FeatureValidationService {
         String name = featureDTO.getName();
         switch (featureDTO.getFeatureType()){
             case TRANSGENIC_INSERTION:
-                if(featureDTO.getKnownInsertionSite()){
+               /* if(featureDTO.getKnownInsertionSite()){
                     return null ;
                 }
-                else{
+                else{*/
                     return name.substring(0,name.indexOf(featureDTO.getLabPrefix()+featureDTO.getLineNumber())).substring(dominantIndex) ;
-                }
+//                }
             case POINT_MUTATION:
             case DELETION:
             case SEQUENCE_VARIANT:

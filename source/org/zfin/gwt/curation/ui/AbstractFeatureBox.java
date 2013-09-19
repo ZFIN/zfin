@@ -130,8 +130,10 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 } else {
                     featureNameBox.setVisible(false);
                     constructTextBox.setVisible(true);
-                    featureSuffixBox.setVisible(false);
-                    suffixLabel.setVisible(false);
+                    /*featureSuffixBox.setVisible(false);
+                    suffixLabel.setVisible(false);*/
+                    featureSuffixBox.setVisible(true);
+                    suffixLabel.setVisible(true);
                 }
                 handleDirty();
             }
@@ -216,14 +218,17 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         switch (featureTypeSelected){
             case TRANSGENIC_INSERTION:
                 knownInsertionCheckBox.setEnabled(true);
-                if (knownInsertionCheckBox.getValue()) {
+                /*if (knownInsertionCheckBox.getValue()) {
                     featureSuffixBox.setVisible(true);
                     suffixLabel.setVisible(true);
                 }
                 else{
                     featureNameBox.setVisible(false);
                     constructTextBox.setVisible(true);
-                }
+                }*/
+                featureSuffixBox.setVisible(true);
+                featureSuffixBox.setEnabled(true);
+                suffixLabel.setVisible(true);
                 break ;
             case POINT_MUTATION:
             case DELETION:
@@ -305,9 +310,11 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         featureDTO.setKnownInsertionSite(knownInsertionCheckBox.getValue());
 
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
-        if (knownInsertionCheckBox.getValue()){
+        /*if (knownInsertionCheckBox.getValue()){
             featureDTO.setTransgenicSuffix(featureSuffixBox.getSelectedText());
-        }
+
+        }*/
+        featureDTO.setTransgenicSuffix(featureSuffixBox.getSelectedText());
         featureDTO.setFeatureSequence(featureSequenceBox.getText());
 
         // we set the name right at the end, once everything has been set

@@ -161,9 +161,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         feature.setDominantFeature(featureDTO.getDominant());
         feature.setKnownInsertionSite(featureDTO.getKnownInsertionSite());
-        if (featureDTO.getKnownInsertionSite()) {
+       /* if (featureDTO.getKnownInsertionSite()) {
             feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
-        }
+        }*/
+        feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
         if (featureDTO.getLineNumber() != null) {
             feature.setLineNumber(featureDTO.getLineNumber());
         }

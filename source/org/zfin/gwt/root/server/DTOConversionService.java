@@ -425,9 +425,10 @@ public class DTOConversionService {
             feature.setUnspecifiedFeature(true);
         }
 
-        if (featureDTO.getKnownInsertionSite()) {
+       /* if (featureDTO.getKnownInsertionSite()) {
             feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
-        }
+        }*/
+        feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
 
         if (featureDTO.getPublicNote() != null) {
             feature.setPublicComments(escapeString(featureDTO.getPublicNote().getNoteData()));

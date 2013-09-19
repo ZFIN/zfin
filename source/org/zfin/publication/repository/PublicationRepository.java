@@ -5,6 +5,7 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
@@ -173,6 +174,8 @@ public interface PublicationRepository extends PaginationParameter {
     Figure getFigureByID(String figureZdbID);
 
     List<Figure> getFiguresByGeneAndPublication(String geneID, String publicationID);
+
+    List<FeatureMarkerRelationship> getFeatureMarkerRelationshipsByPubID(String publicationID);
 
     /**
      * Return all figures for a specified gene, probe and anatommical structure.

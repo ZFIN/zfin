@@ -63,6 +63,7 @@ public class FishDetailController {
         }
         if (fish.getGenotype() != null && fish.getMorpholinos().size() == 0) {
             return genotypeDetailController.getGenotypeDetail(fish.getGenotypeID(), model);
+            //return genotypeDetailController.getGenotypePopup(fish.getGenotypeID(), model);
         }
 
 

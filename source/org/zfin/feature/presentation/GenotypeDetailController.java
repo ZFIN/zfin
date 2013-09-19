@@ -69,6 +69,46 @@ public class GenotypeDetailController {
         return "genotype/genotype-detail.page";
     }
 
+    @RequestMapping(value = {"/genotype-detail-popup"})
+    public String getGenotypePopup(@RequestParam String zdbID, Model model) {
+
+        LOG.debug("Start Genotype Detail Controller");
+        Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
+        if (genotype == null) {
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                genotype = mutantRepository.getGenotypeByID(replacedZdbID);
+            } else {
+                String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(zdbID);
+                if (newZdbID != null) {
+                    LOG.debug("found a replaced zdbID for: " + zdbID + "->" + newZdbID);
+                    return "redirect:/ZDB-PUB-121121-2";
+                }
+            }
+        }
+        if (genotype == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return "record-not-found.popup";
+        }
+        GenotypeBean form = new GenotypeBean();
+        form.setGenotype(genotype);
+        if (!genotype.isWildtype()) {
+            retrieveGenotypeAndFeatureData(form, genotype);
+
+        }
+
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        String genotypeName = genotype.getName();
+        genotypeName = genotypeName.replaceAll("<sup>", "^");
+        genotypeName = genotypeName.replaceAll("</sup>", "");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
+
+        return "genotype/genotype-detail-popup.popup";
+    }
+
+
+
     @RequestMapping(value = {"/show_all_expression"})
     public String getAllExpressionsPerGenotype(@RequestParam String genoID, Model model) {
         LOG.debug("Start All Expressions for Genotype");
