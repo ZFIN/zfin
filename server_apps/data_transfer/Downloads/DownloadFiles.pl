@@ -122,7 +122,7 @@ foreach $line (@lines) {
     }
 
 
-    $cur = $dbh->prepare('select distinct recattrib_source_zdb_id from record_attribution, marker_sequence where recattrib_data_zdb_id = mrkrseq_zdb_id and mrkrseq_mrkr_zdb_id = ? order by recattrib_source_zdb_id;');
+    $cur = $dbh->prepare('select distinct recattrib_source_zdb_id from record_attribution, marker_sequence where mrkrseq_mrkr_zdb_id = ? and recattrib_source_type = "sequence" order by recattrib_source_zdb_id;');
     $cur->execute($MoId);
     my ($pub);
     %pubIds = ();
