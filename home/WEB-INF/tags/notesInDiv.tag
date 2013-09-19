@@ -10,7 +10,7 @@
             <td>
                 <c:forEach var="curatorNote" items="${hasNotes.dataNotes}" varStatus="loopCurNote">
                     ${curatorNote.curator.shortName}&nbsp;&nbsp;${curatorNote.date}<br/>
-                    <zfin2:toggleTextLength text="${curatorNote.note}" idName="${loopCurNote.index+50}" shortLength="80"/>
+                    <zfin2:toggleTextLength text="${curatorNote.note}" idName="${zfn:generateRandomDomID()}" shortLength="80"/>
                     ${!loopCurNote.last ? "<br/>&nbsp;<br>" : ""}
                 </c:forEach>
             </td>

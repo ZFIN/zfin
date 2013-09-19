@@ -17,7 +17,7 @@
                     <zfin:link entity="${extnote.singlePubAttribution.publication}"/>
                 </td>
                 <td>
-                    <zfin2:toggleTextLength text="${extnote.note}" idName="${loop.index}" shortLength="80"/>
+                    <zfin2:toggleTextLength text="${extnote.note}" idName="${zfn:generateRandomDomID()}" shortLength="80"/>
                 </td>
             </zfin:alternating-tr>
         </c:forEach>
