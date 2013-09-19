@@ -701,20 +701,20 @@ sub unrecoveredFeatureNameAbbrevUpdate($) {
 }
 
 #---------------------------------------------------------------
-# morpholinoAbbrevContainsGeneAbbrev
+# strAbbrevContainsGeneAbbrev
 #
 # Parameter
 # $ Email Address for recipients
 
-sub morpholinoAbbrevContainsGeneAbbrev($) {
-  my $routineName = "morpholinoAbbrevContainsGeneAbbrev";
+sub strAbbrevContainsGeneAbbrev($) {
+  my $routineName = "strAbbrevContainsGeneAbbrev";
 	
   my $sql = "select a.mrkr_abbrev, b.mrkr_abbrev
                from marker a, marker b, marker_relationship c
                where a.mrkr_zdb_id = c.mrel_mrkr_1_zdb_id
                and b.mrkr_zdb_id = c.mrel_mrkr_2_zdb_id
                and b.mrkr_abbrev not like 'mir%'
-               and get_obj_type(a.mrkr_zdb_id) = 'MRPHLNO'
+               and get_obj_type(a.mrkr_zdb_id) in ('MRPHLNO','TALEN','CRISPR')
                and not exists (select 'x' from marker_relationship d
                                  where d.mrel_mrkr_1_zdb_id = c.mrel_mrkr_1_zdb_id
                                  and d.mrel_mrkr_2_zdb_id != c.mrel_mrkr_2_zdb_id)
@@ -728,15 +728,15 @@ sub morpholinoAbbrevContainsGeneAbbrev($) {
                 )
               order by b.mrkr_abbrev";
 
-  my @colDesc = ("Morpholino abbrev         ",
+  my @colDesc = ("STR abbrev         ",
 		 "Gene abbrev       ");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
 
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Morpholino abbrev not like gene_abbrev";
-    my $errMsg = "There are $nRecords morpholinos without corresponding gene abbrevs. ";
+    my $subject = "STR abbrev not like gene_abbrev";
+    my $errMsg = "There are $nRecords STRs without corresponding gene abbrevs. ";
     
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -746,19 +746,19 @@ sub morpholinoAbbrevContainsGeneAbbrev($) {
 }
 
 #---------------------------------------------------------------
-# morpholinoAbbrevContainsGeneAbbrev
+# strAbbrevContainsGeneAbbrev
 #
 # Parameter
 # $ Email Address for recipients
 
-sub morpholinoAbbrevContainsGeneAbbrevBasic($) {
-  my $routineName = "morpholinoAbbrevContainsGeneAbbrevBasic";
+sub strAbbrevContainsGeneAbbrevBasic($) {
+  my $routineName = "strAbbrevContainsGeneAbbrevBasic";
 	
   my $sql = "select a.mrkr_abbrev, b.mrkr_abbrev
                from marker a, marker b, marker_relationship c
                where a.mrkr_zdb_id = c.mrel_mrkr_1_zdb_id
                and b.mrkr_zdb_id = c.mrel_mrkr_2_zdb_id
-               and get_obj_type(a.mrkr_zdb_id) = 'MRPHLNO'
+               and get_obj_type(a.mrkr_zdb_id) in ('MRPHLNO','TALEN','CRISPR')
                 and b.mrkr_abbrev !=
                (substring(a.mrkr_abbrev 
                             from
@@ -769,15 +769,15 @@ sub morpholinoAbbrevContainsGeneAbbrevBasic($) {
                 )
               order by b.mrkr_abbrev";
 
-  my @colDesc = ("Morpholino abbrev         ",
+  my @colDesc = ("STR abbrev         ",
 		 "Gene abbrev       ");
 
   my $nRecords = execSql ($sql, undef, @colDesc);
 
   if ( $nRecords > 0 ) {
     my $sendToAddress = $_[0];
-    my $subject = "Morpholino abbrev not like gene_abbrev";
-    my $errMsg = "There are $nRecords morpholinos without corresponding gene abbrevs. ";
+    my $subject = "Str abbrev not like gene_abbrev";
+    my $errMsg = "There are $nRecords strs without corresponding gene abbrevs. ";
     
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -3433,7 +3433,7 @@ my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
 my $aoEmail      = "<!--|AO_EMAIL_CURATOR|-->";
 my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $webAdminEmail = "<!--|WEB_ADMIN_EMAIL|-->";
-my $morpholinoEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
+my $strEmail = "<!--|VALIDATION_EMAIL_STR|-->";
 my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 my $transcriptEmail = "<!--|VALIDATION_EMAIL_TRANSCRIPT|-->";
 my $publicationEmail = "<!--|VALIDATION_EMAIL_PUBLICATION|-->";
@@ -3526,7 +3526,7 @@ if($weekly) {
 	# daily.
 
 	refSeqAccessionInWrongFormat($geneEmail);
-	# changed to monthly morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
+	# changed to monthly strAbbrevContainsGeneAbbrev($strEmail);
 
 }
 if($monthly) {
@@ -3534,7 +3534,7 @@ if($monthly) {
     tgFeatureMissingConstruct($aoEmail);
     orthologyOrganismMatchesForeignDBContains($geneEmail);
     orthologueHasDblink($geneEmail);
-    morpholinoAbbrevContainsGeneAbbrev($morpholinoEmail);
+    strAbbrevContainsGeneAbbrev($strEmail);
     orthologyHasEvidence($geneEmail);
     mouseOrthologyHasValidMGIAccession($geneEmail);
     mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
@@ -3567,7 +3567,7 @@ if($monthly) {
 }
 if ($yearly) {
     
-    morpholinoAbbrevContainsGeneAbbrevBasic($morpholinoEmail);
+    strAbbrevContainsGeneAbbrevBasic($strEmail);
 }
 	   
 
