@@ -1040,12 +1040,12 @@ select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.ter
 	xpatex_source_zdb_id,
  case when xpatex_probe_feature_zdb_id is not null
 	then xpatex_probe_feature_zdb_id
-	else ''
- end,
+	else ' '
+ end as probe_id,
  case when xpatex_atb_zdb_id is not null
 	then xpatex_atb_zdb_id
-	else ''
- end
+	else ' '
+ end as antibody_id
  from marker
  join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
  join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
@@ -1060,6 +1060,9 @@ select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.ter
    --and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5') -- this ia a slow query
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5') -- might help
    and xpatres_expression_found = 't'
+ group by mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
+	sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+	xpatex_source_zdb_id, probe_id, antibody_id
  order by mrkr_zdb_id
 ;
 
@@ -1674,8 +1677,9 @@ update tmp_dumpPheno
 				  where geno_zdb_id = geno_id);
 
 
+!echo "unload phenoGeneCleanData.txt"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData.txt'
-DELIMITER "	"
+ DELIMITER "	"
   select id,gene_abbrev,gene_zdb_id,
    tps.asubterm_ont_id,tps.asubterm_name,
 	 tps.arelationship_id,
@@ -1694,6 +1698,5 @@ DELIMITER "	"
 	 fig_id 
   From tmp_dumpPheno, tmp_phenotype_statement tps
   where tps.phenos_pk_id = phenos_id
-  order by gene_abbrev
-;
+  order by gene_abbrev;
 
