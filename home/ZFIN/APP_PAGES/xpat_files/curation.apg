@@ -1,4 +1,4 @@
-<?MICOMMENT>
+</c:if><?MICOMMENT>
 
 FILE:     pubcuration.apg
 PREFIX:   pubcur_
@@ -233,7 +233,7 @@ select.blueselect {
 
 #knockdownselection {
     overflow:hidden;
-    background: url(“/images/ARROWS/arrowplan.down.gif”);
+    background: url(ï¿½/images/ARROWS/arrowplan.down.gifï¿½);
 }
 
 </style>
@@ -877,6 +877,22 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <p>
 
  <?MIVAR>
+<?MICOMMENT>
+ <?MISQL SQL="select *
+              from record_attribution, feature_marker_relationship
+              where recattrib_data_zdb_id=fmrel_zdb_id
+              and fmrel_mrkr_zdb_id like '%CONSTRCT%'
+              and recattrib_source_zdb_id='$OID'">
+
+ <?/MISQL>
+
+ <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+    <?MIVAR>
+   <a class="small-new-link" href="javascript:;" onClick=open("/action/mutant/mutant-list?zdbID=$OID&callingPage=curation","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")>Genotype Components</a>
+   <?/MIVAR>
+ <?/MIBLOCK>
+<?/MICOMMENT>
+
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a>
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/disruptor-add?disruptorPublicationZdbID=$OID&disruptorType=Morpholino","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>Add New Morpholino</a>
@@ -895,7 +911,22 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 
  <?/MIVAR>
 
-  <br/>
+  <br/><p>
+
+ <?MISQL SQL="select *
+              from record_attribution, feature_marker_relationship
+              where recattrib_data_zdb_id=fmrel_zdb_id
+              and fmrel_mrkr_zdb_id like '%CONSTRCT%'
+              and recattrib_source_zdb_id='$OID'">
+
+ <?/MISQL>
+
+ <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
+    <?MIVAR>
+   <a class="small-new-link" href="javascript:;" onClick=open("/action/mutant/mutant-list?zdbID=$OID&callingPage=curation","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")><size=15>TRANSGENIC FEATURE COMPONENTS</a>
+   <?/MIVAR>
+ <?/MIBLOCK>
+
 
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-curation.apg">
     <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">

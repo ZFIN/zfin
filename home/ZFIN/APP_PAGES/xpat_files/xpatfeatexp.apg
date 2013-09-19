@@ -39,13 +39,15 @@ OUPUT:
 
 <?MIELSE>
   <?MISQL SQL="
-	select get_geno_name_with_bg_html_link(genox_geno_zdb_id), 
-	       genox_exp_zdb_id
- 	  from genotype_experiment
-	 where genox_zdb_id = '$fxp_zdb_id';">
+	select get_geno_name_with_bg_html_link(genox_geno_zdb_id),
+	       genox_exp_zdb_id , genox_geno_zdb_id,geno_is_wildtype
+ 	  from genotype_experiment, genotype
+	 where genox_geno_zdb_id=geno_zdb_id and genox_zdb_id = '$fxp_zdb_id';">
 
 	<?MIVAR NAME=fxp_genobgrd_html>$1<?/MIVAR>
 	<?MIVAR NAME=fxp_exp_zdb_id>$2<?/MIVAR>
+	<?MIVAR NAME=fxp_geno_wildtype>$4<?/MIVAR>
+	<?MIVAR NAME=fxp_geno_popup><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$<?MIVAR>$3<?/MIVAR>"></a><?/MIVAR>
 
   <?/MISQL>
   <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
@@ -62,10 +64,15 @@ OUPUT:
      <?MICOMMENT>===========  Display   =================
 		 ==   genotype background and experiment condition 
      <?/MICOMMENT>
+<?MIBLOCK COND="$(EC,$fxp_geno_wildtype,f)">
      <?MIVAR>
-$fxp_genobgrd_html$(IF,$(NC,$fxp_exp_html,),", "$fxp_exp_html) 
+$fxp_genobgrd_html$(IF,$(NC,$fxp_exp_html,),", "$fxp_exp_html)$fxp_geno_popup
      <?/MIVAR>	 
- 
+<?MIELSE>
+     <?MIVAR>
+$fxp_genobgrd_html$(IF,$(NC,$fxp_exp_html,),", "$fxp_exp_html)
+     <?/MIVAR>	 
+<?/MIBLOCK> 
    <?/MIBLOCK> <?MICOMMENT> end if genox zdb id is valid <?/MICOMMENT>
 
 <?/MIBLOCK> <?MICOMMENT> end if genox zdb id is passed in <?/MICOMMENT>

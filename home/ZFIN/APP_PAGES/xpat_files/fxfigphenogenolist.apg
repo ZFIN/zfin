@@ -64,6 +64,7 @@ EFFECTS
    ============================================================================
 <?/MICOMMENT>
 <?MISQL SQL="$fxfigfl_sql">
+<?MIVAR NAME=$popuplink> <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$<?MIVAR>$3<?/MIVAR>"></a><?/MIVAR>
 <?MIBLOCK COND=$(EC,$fxfiggeno_display_option,anchor)>
       <?MIVAR NAME=$fxfiggeno_down_arrow>&nbsp;<a href="#phenodetails"><img src=/images/darrow.gif border = 0 title= "Jump to GENOTYPE data."></a><?/MIVAR>
  <?MIVAR NAME=fxfiggeno_geno_href><a href="/action/genotype/genotype-detail?zdbID=$3"><?/MIVAR>
@@ -72,9 +73,9 @@ EFFECTS
  <?MIVAR NAME=fxfiggeno_geno_href><a href="/action/genotype/genotype-detail?zdbID=$3"><?/MIVAR>
 <?/MIBLOCK>
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-      <?MIVAR NAME=fxfigfish_list_items>$fxfiggeno_geno_href$1</a>$fxfiggeno_down_arrow<?/MIVAR>
+      <?MIVAR NAME=fxfigfish_list_items>$fxfiggeno_geno_href$1</a>$popuplink$fxfiggeno_down_arrow<?/MIVAR>
     <?MIELSE>
-      <?MIVAR>$(VECAPPEND,fxfigfish_list_items,$fxfiggeno_geno_href$1</a>$fxfiggeno_down_arrow)<?/MIVAR>
+      <?MIVAR>$(VECAPPEND,fxfigfish_list_items,$fxfiggeno_geno_href$1</a>$popuplink$fxfiggeno_down_arrow)<?/MIVAR>
     <?/MIBLOCK>
 <?/MISQL>
 <?MIBLOCK COND="$(XST,$fxfigfi_is_displayed)">

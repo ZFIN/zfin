@@ -91,7 +91,7 @@ PREFIX:   genocursum_
             
       <?/MISQL>
       <?MISQL SQL="
-          select geno_display_name, geno_name_order
+          select geno_display_name, geno_name_order, geno_zdb_id
           from   genotype_background, genotype
           where  genoback_geno_zdb_id = '$genocursum_geno_zdb_id'
             and  genoback_background_zdb_id = geno_zdb_id
@@ -100,8 +100,9 @@ PREFIX:   genocursum_
             <?MIVAR NAME=genocursum_backgrd_display>
               $genocursum_backgrd_display
               $(IF,$(NE,$MI_CURRENTROW,1),/)
-              $1            
+              $1
             <?/MIVAR>
+
             
       <?/MISQL>
 
@@ -115,7 +116,7 @@ PREFIX:   genocursum_
       </td>
       <td valign=top>
       
-        $genocursum_geno_display &nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$genocursum_geno_zdb_id&rtype=genotype" title="Delete this genotype from ZFIN"><img src="/images/delete-button.png" border="0" alt="delete genotype"></a>
+        $genocursum_geno_display <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=<?MIVAR>$genocursum_geno_zdb_id<?/MIVAR>"></a>&nbsp;<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$genocursum_geno_zdb_id&rtype=genotype" title="Delete this genotype from ZFIN"><img src="/images/delete-button.png" border="0" alt="delete genotype"></a>
       
       </td>
                 

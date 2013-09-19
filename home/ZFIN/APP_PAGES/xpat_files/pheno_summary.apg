@@ -57,10 +57,13 @@ DEBUGGING:
 <?MIVAR NAME="$phenosum_getPheno_sql_space"> <?/MIVAR>
 <?MIVAR NAME=phenosum_getPheno_sql_comma>,<?/MIVAR>
 
-
+<?MICOMMENT>adding block for showing popups only for transgenic genotypes<?/MICOMMENT>
 <?MIBLOCK COND=$(NC,$(SUBSTR,$OID,1,8),ZDB-GENO)>
   <?MIVAR NAME=phenosum_header><?MISQL SQL="execute function get_mrkr_name_html_link('$OID');">$1<?/MISQL><?/MIVAR>
 <?MIELSE>
+<?MICOMMENT>
+  <?MIVAR NAME=phenosum_header><?MISQL SQL="execute function get_geno_name_with_bg_html_link('$OID');">$1<?/MISQL><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$<?MIVAR>$OID<?/MIVAR>"</a><?/MIVAR>
+<?/MICOMMENT>
   <?MIVAR NAME=phenosum_header><?MISQL SQL="execute function get_geno_name_with_bg_html_link('$OID');">$1<?/MISQL><?/MIVAR>
 <?/MIBLOCK>
 
@@ -402,6 +405,7 @@ DEBUGGING:
   <?MIVAR NAME=phenosum_anat_elem_id>$(REPLACE,$phenosum_fig_zdb$phenosum_geno_zdb,"-","")<?/MIVAR>
   <?MIVAR NAME=phenosum_anat_elem_id_nonMO>nonMO$phenosum_anat_elem_id<?/MIVAR>
   <?MIVAR NAME=phenosum_mo_elem_id>mo$phenosum_anat_elem_id<?/MIVAR>
+  <?MIVAR NAME=$phenosum_popuplink> <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$<?MIVAR>$phenosum_geno_zdb<?/MIVAR>"></a><?/MIVAR>
 
   <?MICOMMENT> ** have a different entity list for morphants, if any ** <?/MICOMMENT>
   <?MIBLOCK COND="$(AND,$(XST,$split),$(EC,$split,yes))">  
@@ -473,6 +477,7 @@ DEBUGGING:
       <?MIBLOCK COND="$(AND,$(XST,$phenosum_split),$(EC,$phenosum_split,t))">      
         <?MIVAR>$phenosum_geno<?/MIVAR>&nbsp;<br/>
       <?/MIBLOCK>    
+      <?MICOMMENT><?MIVAR>$phenosum_geno$phenosum_popuplink<?/MIVAR><?/MICOMMENT>
       <?MIVAR>$phenosum_geno<?/MIVAR>
     </td>
  
