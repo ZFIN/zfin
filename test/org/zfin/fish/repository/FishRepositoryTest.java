@@ -314,11 +314,6 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
 
     //full Tg name, several cases including commas, spaces, underscores and colons
     @Test
-    public void tgTest() {
-        genericGeneAlleleBoxTest("Tg(-2.4shha-M12:GFP)ka1");
-    }
-
-    @Test
     public void tgWithSpaceAndCommaTest() {
         genericGeneAlleleBoxTest("Tg(shhb:Gal4TA4, 5xUAS:mRFP)");
     }
