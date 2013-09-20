@@ -799,17 +799,15 @@ Only need to update clones, etc., which should be the only things that will have
  <?/MICOMMENT>
 
  <?MIVAR NAME=$mrkrview_sequence><?/MIVAR>
- <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id><?/MIVAR>
 
  <?MISQL SQL="
-   select mrkrseq_sequence, mrkrseq_sequence_2, mrkrseq_zdb_id, mrkrseq_offset_start,mrkrseq_offset_stop
+   select mrkrseq_sequence, mrkrseq_sequence_2, mrkrseq_offset_start,mrkrseq_offset_stop
      from marker_sequence
     where mrkrseq_mrkr_zdb_id = '$OID';">
     <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
     <?MIVAR NAME=$mrkrview_second_sequence>$2<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_zdb_id>$3<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_start>$4<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_stop>$5<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_mrkrseq_start>$3<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_mrkrseq_stop>$4<?/MIVAR>
  <?/MISQL>
 
  <?MICOMMENT> get blast linkout url to ncbi-blast<?/MICOMMENT>
