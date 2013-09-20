@@ -348,11 +348,11 @@ function jump(form_select){
           by the updating page when xtra_param is null. An edit has occured, so set
           note = 'sequence modified'.
         <?/MICOMMENT>
- 	function update_mrkrsequence(mrkrseq_zdb,old_seq,new_seq,note) {
+ 	function update_mrkrsequence(mrkr_zdb_id,old_seq,new_seq,note) {
  	        if (note == '') {note = 'Sequence Modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
  		if ((new_seq != '')) {
- 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
+ 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkr_zdb_id+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
  		}
         }
         
@@ -844,7 +844,7 @@ Only need to update clones, etc., which should be the only things that will have
         }
 
         if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){
-            update_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)
+            update_mrkrsequence('$OID','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)
         }">
         <?/MIVAR>
      <?/MIBLOCK>
@@ -858,7 +858,7 @@ Only need to update clones, etc., which should be the only things that will have
         }
 
         if (validSequence(document.newdata.seqdata_DisplaySequence.value) && validSequence(document.newdata.seqdata_2nd_DisplaySequence.value)){
-            update_second_mrkrsequence('$mrkrview_mrkrseq_zdb_id','$mrkrview_second_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value,document.newdata.seqdata_2nd_DisplaySequence.value)
+            update_second_mrkrsequence('$OID','$mrkrview_second_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value,document.newdata.seqdata_2nd_DisplaySequence.value)
         }">
         <?/MIVAR>
      <?/MIBLOCK>     
@@ -866,16 +866,16 @@ Only need to update clones, etc., which should be the only things that will have
         </td></tr>
       </table>
 
-      <?MIVAR COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
+      <?MIVAR COND="$(NC,$mrkrview_sequence,)">
          <br>Add Sequence Reference:
          <input type=text name=mrkrview_seq_pubid>
-         <input type=button value="Add" onClick=new_attrib_mrkrseq('$mrkrview_mrkrseq_zdb_id');>
-        <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+         <input type=button value="Add" onClick=new_attrib_mrkrseq('$OID');>
+        <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         <p>
       <?/MIVAR>
       </form>
 
-  <?MIELSE COND="$(NC,$mrkrview_mrkrseq_zdb_id,)">
+  <?MIELSE COND="$(NC,$mrkrview_sequence,)">
       <br> <?MICOMMENT> for display purpose <?/MICOMMENT>
       <?MICOMMENT>use table to align sequence and disclaimer<?/MICOMMENT>
       <table width=100% cellspacing=0>
@@ -889,13 +889,13 @@ Only need to update clones, etc., which should be the only things that will have
    <?MIBLOCK COND="$(NC,$marker_type,SNP)">
         <td>
           <?MIVAR>&nbsp;5' - $mrkrview_sequence - 3'<?/MIVAR>
-          <?MISQL SQL="select WebExplode(object,'dataId=$mrkrview_mrkrseq_zdb_id&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
+          <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
 
           <?MIVAR>
           <?MICOMMENT>
           <script type="text/javascript">
-                    <!--new Ajax.Updater('blastDropDown','/action/blast/include-external-blast?zdbID=$mrkrview_mrkrseq_zdb_id');-->
-            jQuery('#blastDropDown').load('/action/blast/include-external-blast?zdbID=$mrkrview_mrkrseq_zdb_id');
+                    <!--new Ajax.Updater('blastDropDown','/action/blast/include-external-blast?zdbID=$OID');-->
+            jQuery('#blastDropDown').load('/action/blast/include-external-blast?zdbID=$OID');
            </script>
            <div id="blastDropDown"></div>
           <?/MICOMMENT>

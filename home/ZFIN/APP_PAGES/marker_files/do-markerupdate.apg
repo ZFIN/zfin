@@ -483,7 +483,7 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
        <?MISQL SQL="
            update marker_sequence
               set mrkrseq_sequence = '$new_value'
-            where mrkrseq_zdb_id = '$dataOID';">
+            where mrkrseq_mrkr_zdb_id = '$dataOID';">
        <?/MISQL>   
      <?MIELSE>
     
@@ -493,18 +493,12 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
           ===================================
         <?/MICOMMENT>
             
-      <?MISQL SQL="execute function get_id('MRKRSEQ')">
-        <?MIVAR NAME=$domrkr_MrkrSeqId>$1<?/MIVAR>
-      <?/MISQL>
-      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$domrkr_MrkrSeqId');"><?/MISQL>
       <?MISQL SQL="
         insert into marker_sequence (
-          mrkrseq_zdb_id,
           mrkrseq_mrkr_zdb_id,
           mrkrseq_sequence,
           mrkrseq_left_end)
         values (
-          '$domrkr_MrkrSeqId',
           '$OID',
           '$new_value',
           '5''');">
@@ -531,14 +525,14 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
        <?MISQL SQL="
            update marker_sequence
               set mrkrseq_sequence = '$new_value'
-            where mrkrseq_zdb_id = '$dataOID';">
+            where mrkrseq_mrkr_zdb_id = '$dataOID';">
        <?/MISQL>  
 
        <?MISQL COND="$(XST,$new_value2)"
           SQL="
            update marker_sequence
               set mrkrseq_sequence_2 = '$new_value2'
-            where mrkrseq_zdb_id = '$dataOID';">
+            where mrkrseq_mrkr_zdb_id = '$dataOID';">
        <?/MISQL>   
      <?MIELSE>
     
@@ -548,18 +542,12 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
           ===================================
         <?/MICOMMENT>
             
-      <?MISQL SQL="execute function get_id('MRKRSEQ')">
-        <?MIVAR NAME=$domrkr_MrkrSeqId>$1<?/MIVAR>
-      <?/MISQL>
-      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$domrkr_MrkrSeqId');"><?/MISQL>
       <?MISQL SQL="
         insert into marker_sequence (
-          mrkrseq_zdb_id,
           mrkrseq_mrkr_zdb_id,
           mrkrseq_sequence,
           mrkrseq_left_end)
         values (
-          '$domrkr_MrkrSeqId',
           '$OID',
           '$new_value',
           '5''');">
