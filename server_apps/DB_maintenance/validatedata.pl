@@ -744,6 +744,40 @@ sub strAbbrevContainsGeneAbbrev($) {
   &recordResult($routineName, $nRecords);
 
 }
+#---------------------------------------------------------------
+# strHasCreatedByRelationship
+#
+# Parameter
+# $ Email Address for recipients
+
+sub strHasCreatedByRelationship($) {
+  my $routineName = "strHasCreatedByRelationship";
+	
+  my $sql = "select feature_zdb_id, feature_name
+                from feature
+                where (feature_type = 'TALEN'
+                          or feature_type ='CRISPR')
+                and not exists (Select 'x' from feature_marker_relationship
+                                  where fmrel_feature_zdb_id = feature_zdb_id
+                                  and fmrel_type = 'created by'";
+
+  my @colDesc = ("STR zdb_id         ",
+		 "STR abbrev       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Str(s) does not have 'created by' relationship";
+    my $errMsg = "There are $nRecords strs without 'created by' relationship. ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
+
 
 #---------------------------------------------------------------
 # strAbbrevContainsGeneAbbrev
@@ -3421,6 +3455,7 @@ $dbh = DBI->connect("DBI:Informix:$globalDbName",
 #    send error message and query results to sb.
 #  endif
 
+my $ceri         = "<!--|COUNT_PATO_ERR|-->"
 my $adEmail      = "<!--|VALIDATION_EMAIL_AD|-->";
 my $xpatEmail    = "<!--|VALIDATION_EMAIL_XPAT|-->";
 my $linkageEmail = "<!--|VALIDATION_EMAIL_LINKAGE|-->";
@@ -3493,6 +3528,7 @@ if($daily) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
+    strHasCreatedByRelationship($ceri);
 	estsHave1Gene($estEmail);
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
