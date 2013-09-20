@@ -357,7 +357,7 @@ document.write("       <input type=\"text\" size=\"25\" name=\"query\" id=\"qsea
 document.write("     </form>");
 document.write("   </div>");
 document.write("   <div id=\"feedBox\"> ");
-document.write("      <a href=\"feed:https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&sort=created&title=Zebrafish+News&publicFeed=true&rssType=rss2&maxResults=-1&timeSpan=120\"><img id=\"rss-icon\" src=\"/images/feed-icon-28x28.png\"></a>");
+document.write("      <a href=\"feed:https://@WIKI_HOST@/spaces/createrssfeed.action?types=blogpost&spaces=news&sort=created&title=Zebrafish+News&publicFeed=true&rssType=rss2&maxResults=-1&timeSpan=120\"><img id=\"rss-icon\" src=\"/images/feed-icon-28x28.png\"></a>");
 document.write("      <a href=\"https://twitter.com/ZFINmod\" class=\"twitter-follow-button\" data-show-screen-name=\"false\" data-show-count=\"false\" data-lang=\"en\">Follow</a> ");
 document.write("      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=\"//platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");</script>");
 document.write("   </div> ");
@@ -446,11 +446,11 @@ document.write("     <a href=\"/\"></a> ");
 
 document.write("     <a href=\"/\">Home</a> "); 
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write(" <a href=\"https://wiki.zfin.org/\" title=\"ZFIN-hosted community wiki: browse, contribute and export\">Wiki</A>");
+document.write(" <a href=\"https://@WIKI_HOST@/\" title=\"ZFIN-hosted community wiki: browse, contribute and export\">Wiki</A>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write(" <a href=\"https://wiki.zfin.org/display/jobs\" title=\"Zebrafish-related job announcements\">Jobs</a>");
+document.write(" <a href=\"https://@WIKI_HOST@/display/jobs\" title=\"Zebrafish-related job announcements\">Jobs</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write(" <a href=\"https://wiki.zfin.org/display/meetings\" title=\"Zebrafish-related meeting announcements\">Meetings</a>");
+document.write(" <a href=\"https://@WIKI_HOST@/display/meetings\" title=\"Zebrafish-related meeting announcements\">Meetings</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
  document.write("    <a href=\"/zf_info/news/newsgroup.html\" title=\"Moderated, online discussion group for anyone interested in zebrafish research\">Newsgroup</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
