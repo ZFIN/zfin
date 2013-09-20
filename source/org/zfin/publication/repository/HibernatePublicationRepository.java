@@ -459,12 +459,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<FeatureMarkerRelationship> getFeatureMarkerRelationshipsByPubID(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct fmRel from FeatureMarkerRelationship fmRel, PublicationAttribution attr " +
+        String hql = "select distinct fmRel from FeatureMarkerRelationship fmRel,Feature ftr, PublicationAttribution attr " +
                 "      where attr.publication.zdbID = :pubID " +
-                "        and attr.dataZdbID = fmRel.zdbID order by fmRel.feature.zdbID" ;
+                "      and attr.dataZdbID=ftr.zdbID "+
+                "      and ftr.zdbID=fmRel.feature.zdbID "+
+                "      and ftr.type=:tg "+
+                "      order by fmRel.feature.zdbID" ;
                     Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
-
+        query.setString("tg", "TRANSGENIC_INSERTION");
         return (List<FeatureMarkerRelationship>) query.list();
     }
 
