@@ -98,7 +98,7 @@
                     <tr>
                         <th width="33%">Genomic Feature</th>
                         <th width="33%">Relationship</th>
-                        <th width="34%">Construct(s)</th>
+                        <th width="34%">Target(s)</th>
                     </tr>
 
 
