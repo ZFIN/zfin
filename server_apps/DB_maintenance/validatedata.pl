@@ -3455,7 +3455,7 @@ $dbh = DBI->connect("DBI:Informix:$globalDbName",
 #    send error message and query results to sb.
 #  endif
 
-my $ceri         = "<!--|COUNT_PATO_ERR|-->"
+my $ceri         = "<!--|COUNT_PATO_ERR|-->";
 my $adEmail      = "<!--|VALIDATION_EMAIL_AD|-->";
 my $xpatEmail    = "<!--|VALIDATION_EMAIL_XPAT|-->";
 my $linkageEmail = "<!--|VALIDATION_EMAIL_LINKAGE|-->";
