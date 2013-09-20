@@ -735,14 +735,17 @@ public class HibernateSequenceRepository implements SequenceRepository {
      * @param superType
      * @return
      */
+    //TODO: change ENSDARP to a real HQL query, or re-write as sql: Christian and Sierra struggled with this for a couple of
+    //hours with no easy fix using DisplayGroup and DisplayGroupMember.  The mapping on those classes makes for a
+    //very odd query output where hibernate tries to find fdbcont_zdb_ids in a collection of fdbcdgm_pk_ids.
+
     @Override
     public List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType superType) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct dbl from DBLink dbl  " +
                 "where dbl.referenceDatabase.foreignDBDataType.superType = :superType " +
                 " and dbl.dataZdbID = :markerZdbId " +
-//                " order by dbl.referenceDatabase.foreignDB.significance, dbl.referenceDatabase.foreignDB.dbName , dbl.accessionNumberDisplay "+
-                " ";
+                " and dbl.accessionNumber not like 'ENSDARP%' ";
 
         Query query = session.createQuery(hql);
         query.setParameter("superType", superType);
