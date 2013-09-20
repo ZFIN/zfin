@@ -75,7 +75,7 @@
 --%>
                     <td>
                 <c:if test="${!empty figureExpressionSummaryDisplay.genotype}">
-                        <zfin:link entity="${figureExpressionSummaryDisplay.genotype}"/> <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${figureExpressionSummaryDisplay.genotype.zdbID}"></a>
+                        <zfin:link entity="${figureExpressionSummaryDisplay.genotype}"/>
                             <%--${figureExpressionSummaryDisplay.geno}--%>
 
                     </td>
