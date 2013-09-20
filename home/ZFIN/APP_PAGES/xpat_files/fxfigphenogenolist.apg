@@ -49,7 +49,7 @@ EFFECTS
 <?MIVAR COND=$(NXST,$fxfiggeno_display_option) NAME=$fxfiggeno_display_option><?/MIVAR>
 
   <?MIVAR NAME=$fxfigfl_sql>
-       SELECT distinct get_geno_name_with_bg_html_link(geno_zdb_id), geno_name_order, geno_zdb_id
+       SELECT distinct get_geno_name_with_bg_html_link(geno_zdb_id), geno_name_order, geno_zdb_id, geno_is_wildtype
          FROM genotype_experiment, genotype, figure, phenotype_statement, phenotype_experiment
         WHERE fig_zdb_id = '$fxfigfi_fig_zdb_id'
           AND fig_zdb_id = phenox_fig_zdb_id
@@ -64,6 +64,7 @@ EFFECTS
    ============================================================================
 <?/MICOMMENT>
 <?MISQL SQL="$fxfigfl_sql">
+<?MIVAR NAME=$geno_is_wild>$4<?/MIVAR>
 <?MIVAR NAME=$popuplink> <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$<?MIVAR>$3<?/MIVAR>"></a><?/MIVAR>
 <?MIBLOCK COND=$(EC,$fxfiggeno_display_option,anchor)>
       <?MIVAR NAME=$fxfiggeno_down_arrow>&nbsp;<a href="#phenodetails"><img src=/images/darrow.gif border = 0 title= "Jump to GENOTYPE data."></a><?/MIVAR>
@@ -73,9 +74,18 @@ EFFECTS
  <?MIVAR NAME=fxfiggeno_geno_href><a href="/action/genotype/genotype-detail?zdbID=$3"><?/MIVAR>
 <?/MIBLOCK>
     <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
+     <?MIBLOCK COND=$(EQ,$geno_is_wild,f)>
       <?MIVAR NAME=fxfigfish_list_items>$fxfiggeno_geno_href$1</a>$popuplink$fxfiggeno_down_arrow<?/MIVAR>
+      <?MIELSE>
+      <?MIVAR NAME=fxfigfish_list_items>$fxfiggeno_geno_href$1</a>$fxfiggeno_down_arrow<?/MIVAR>
+      <?/MIBLOCK>
     <?MIELSE>
+     <?MIBLOCK COND=$(EQ,$geno_is_wild,f)>
       <?MIVAR>$(VECAPPEND,fxfigfish_list_items,$fxfiggeno_geno_href$1</a>$popuplink$fxfiggeno_down_arrow)<?/MIVAR>
+       <?MIELSE>
+      <?MIVAR>$(VECAPPEND,fxfigfish_list_items,$fxfiggeno_geno_href$1</a>$fxfiggeno_down_arrow)<?/MIVAR>
+
+<?/MIBLOCK>
     <?/MIBLOCK>
 <?/MISQL>
 <?MIBLOCK COND="$(XST,$fxfigfi_is_displayed)">
