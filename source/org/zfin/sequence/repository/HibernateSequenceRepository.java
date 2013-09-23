@@ -742,13 +742,14 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @Override
     public List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType superType) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct dbl from DBLink dbl  " +
-                "where dbl.referenceDatabase.foreignDBDataType.superType = :superType " +
-                " and dbl.dataZdbID = :markerZdbId " +
-                " and dbl.accessionNumber not like 'ENSDARP%' ";
+        String hql = "select distinct dbl from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref " +
+                "where dbl.referenceDatabase = ref and ref.foreignDBDataType.superType = :superType " +
+                "and dbl.dataZdbID = :markerZdbId and dg not member of ref.displayGroups " +
+                "and dg.groupName = :groupName ";
 
         Query query = session.createQuery(hql);
         query.setParameter("superType", superType);
+        query.setParameter("groupName", DisplayGroup.GroupName.HIDDEN_DBLINKS);
         query.setString("markerZdbId", zdbID);
         return query.list();
     }

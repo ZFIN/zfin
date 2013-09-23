@@ -182,7 +182,7 @@ public class MarkerService {
         if (marker.getDbLinks() != null) {
             logger.debug(marker.getDbLinks().size() + " total marker dblinks");
             for (MarkerDBLink dblink : marker.getDbLinks()) {
-                if (dblink.getReferenceDatabase().getForeignDBDataType().getSuperType().equals(ForeignDBDataType.SuperType.SEQUENCE))
+                if (dblink.getReferenceDatabase().getForeignDBDataType().getSuperType().equals(ForeignDBDataType.SuperType.SEQUENCE) && !dblink.isInDisplayGroup(DisplayGroup.GroupName.HIDDEN_DBLINKS))
                     sequenceInfo.addDBLink(dblink);
             }
         }
