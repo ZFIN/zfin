@@ -18,9 +18,8 @@ import org.zfin.wiki.WikiConnectTest;
         WikiConnectTest.class,
         MicroarrayServiceTest.class,
         WebServiceSoapClientTest.class,
-        BlastDBServiceTest.class
-        // ToDo: Need to replace citeexplore
-        //DOITest.class
+        BlastDBServiceTest.class,
+        DOITest.class
 //        PostForeignTest.class
         })
 

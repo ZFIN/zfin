@@ -1,11 +1,12 @@
 package org.zfin.datatransfer.webservice;
 
+import ebi.ws.client.ResponseWrapper;
+import ebi.ws.client.Result;
+import ebi.ws.client.WSCitationImpl;
+import ebi.ws.client.WSCitationImplService;
 import org.apache.log4j.Logger;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.publication.Publication;
-import uk.ac.ebi.cdb.webservice.Doc2LocResultBean;
-import uk.ac.ebi.cdb.webservice.Doc2LocResultListBean;
-import uk.ac.ebi.cdb.webservice.WSCitationImpl;
-import uk.ac.ebi.cdb.webservice.WSCitationImplService;
 
 import javax.xml.ws.WebServiceRef;
 import java.text.NumberFormat;
@@ -14,35 +15,25 @@ import java.util.List;
 
 
 /**
- * Class Citexplore.  Collects DOIs from the Citexplorer webservice.
+ * Retrieves DOIs from the Citexplorer webservice for given pubMed ID (= accessionNumber).
  */
 public class Citexplore {
 
-    @WebServiceRef(wsdlLocation = "http://www.ebi.ac.uk/webservices/citexplore/v1.0/service?wsdl")
+    @WebServiceRef(wsdlLocation = "http://www.ebi.ac.uk/webservices/citexplore/v3.0.1/service?wsdl")
     private static final WSCitationImplService service = new WSCitationImplService();
-    private final String PMID_TOKEN = "pmid";
     public final static String DOI_URL = "http://dx.doi.org";
 
     private Logger logger = Logger.getLogger(Citexplore.class);
 
 
     /**
-     * getDoisForPubmedID.
-     * Note:  This is a destructive method which changes the input structure.
      * Iterates through the Publication list and updates the DOI, if it exists, from the CiteXplorer Webservice.
-     * The DOI is the key and doc2loc is the webservice method from the compiled client-side webservice code.
-     * Many IDs are returned, one of which may be the DOI, which always contains the DOI_URL link.
      *
      * @param publicationList Publications with accession numbers but no DOIs.
      * @return List<Publication>
      */
-//    @SuppressWarnings({"PointlessBooleanExpression"})
     public List<Publication> getDoisForPubmedID(List<Publication> publicationList) {
         try {
-            logger.debug("Invoking doc2loc operation on wscitationImpl port");
-            Doc2LocResultListBean doc2LocResultListBean;
-            List<Doc2LocResultBean> doc2LocResultBeanCollection;
-            String urlString, doiValue;
             int counter = 0;
             boolean hasDOI;
             int initSize = publicationList.size();
@@ -52,22 +43,22 @@ public class Citexplore {
             while (iter.hasNext()) {
                 Publication publication = iter.next();
                 try {
-                    doc2LocResultListBean = port.doc2Loc(PMID_TOKEN, publication.getAccessionNumber());
-                    doc2LocResultBeanCollection = doc2LocResultListBean.getDoc2LocResultBeanCollection();
+                    ResponseWrapper response = port.searchPublications(publication.getAccessionNumber(), "metadata", "lite", 0, false, "cmpich@zfin.org");
+                    if (response.getHitCount() == 0)
+                        throw new RuntimeException("No Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
+                    if (response.getHitCount() > 1)
+                        throw new RuntimeException("More than one Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
                     hasDOI = false;
-                    for (Doc2LocResultBean doc2LocResultBean : doc2LocResultBeanCollection) {
-                        urlString = doc2LocResultBean.getUrl();
-                        // Valid DOI's do not end with "/"
-                        if (urlString.contains(DOI_URL) && false==urlString.endsWith("/")) {
-                            doiValue = urlString.substring(DOI_URL.length() + 1);
+                    String doiValue;
+                    for (Result publicationBean : response.getResultList().getResult()) {
+                        doiValue = publicationBean.getDOI();
+                        if (StringUtils.isNotEmpty(doiValue))
                             logger.info("added doi[" + doiValue + "]  for pmid[" + publication.getAccessionNumber() + "]");
-                            publication.setDoi(doiValue);
-                            hasDOI = true;
-                        }
+                        publication.setDoi(doiValue);
+                        hasDOI = true;
                     }
 
-
-                    if (hasDOI == false) {
+                    if (!hasDOI) {
                         logger.info("doi not found for pmid[" + publication.getAccessionNumber() + "]");
                         publication.setDoi(null);
                         iter.remove();
@@ -81,8 +72,7 @@ public class Citexplore {
                     logger.error("protocol exception getting doi for pub: " + publication, e);
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Unable to access dois:\n" + e);
         }
 
