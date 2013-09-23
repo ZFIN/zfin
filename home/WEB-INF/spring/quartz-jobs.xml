@@ -395,7 +395,7 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
         <property name="jobDataAsMap">
             <map>
                 <entry key="downloadService" value-ref="downloadService"/>
-                <entry key="downloadUrl" value="ftp://ftp.geneontology.org/pub/go/scratch/gaf-inference/gene_association.zfin.inf.gaf"/>
+                <entry key="downloadUrl" value="http://build.berkeleybop.org/view/GAF/job/gaf-check-zfin/lastSuccessfulBuild/artifact/gene_association.zfin.inf.gaf"/>
                 <entry key="organization" value="FP Inferences"/>
                 <entry key="gafParser" value-ref="fpGafParser"/>
             </map>
