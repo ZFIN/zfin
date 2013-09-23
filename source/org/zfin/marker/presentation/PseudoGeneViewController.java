@@ -13,7 +13,11 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.TranscriptService;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  */
@@ -21,6 +25,8 @@ import org.zfin.sequence.service.TranscriptService;
 public class PseudoGeneViewController {
 
     private Logger logger = Logger.getLogger(PseudoGeneViewController.class);
+
+    private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayOtherComparator();
 
     @Autowired
     private ExpressionService expressionService ;
@@ -42,6 +48,16 @@ public class PseudoGeneViewController {
         geneBean.setMarker(gene);
 
         MarkerService.createDefaultViewForMarker(geneBean);
+
+        // OTHER GENE / MARKER PAGES:
+        // pull vega genes from transcript onto gene page
+        // case 7586
+        List<LinkDisplay> otherMarkerDBLinksLinks = geneBean.getOtherMarkerPages();
+        otherMarkerDBLinksLinks.addAll(RepositoryFactory.getMarkerRepository()
+                .getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE)) ;
+        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator) ;
+        geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
+
 
         // EXPRESSION SECTION
         geneBean.setMarkerExpression(expressionService.getExpressionForGene(gene));
