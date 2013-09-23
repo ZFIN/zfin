@@ -6,10 +6,13 @@ import org.hibernate.type.Type;
 import org.zfin.util.ZfinStringUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Hibernate Interceptor to trim strings and escape characters that informix can't handle
- *
+ * <p/>
  * http://jagadesh4java.blogspot.com/2009/10/hibernate-interceptors.html
  */
 public class StringCleanInterceptor extends EmptyInterceptor {
@@ -19,7 +22,7 @@ public class StringCleanInterceptor extends EmptyInterceptor {
                           String[] propertyNames, Type[] types) {
 
         if (state != null) {
-            for(int i=0 ; i < state.length ; i++) {
+            for (int i = 0; i < state.length; i++) {
                 state[i] = processState(state[i]);
             }
         }
@@ -29,7 +32,7 @@ public class StringCleanInterceptor extends EmptyInterceptor {
 
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
         if (currentState != null) {
-            for(int i=0 ; i < currentState.length ; i++) {
+            for (int i = 0; i < currentState.length; i++) {
                 currentState[i] = processState(currentState[i]);
             }
         }
@@ -37,18 +40,66 @@ public class StringCleanInterceptor extends EmptyInterceptor {
     }
 
 
-
     private Object processState(Object state) {
-
-        if(state != null && state instanceof String) {
-            String obtainedValue=(String)state;
-            logger.debug("before: " + obtainedValue);
-            obtainedValue = ZfinStringUtils.escapeHighUnicode(obtainedValue);
-            state=obtainedValue.trim();
-            logger.debug(" after: " + state);
+        if (state == null)
+            return null;
+        if (state instanceof String)
+            return processState((String) state);
+        else {
+            Field[] fields = state.getClass().getDeclaredFields();
+            if (fields != null)
+                for (Field field : fields) {
+                    if (field.getType() == String.class)
+                        runSetter(field, state, processState(runGetter(field, state)));
+                }
         }
         return state;
     }
 
+    private Object processState(String state) {
+        if (logger.isDebugEnabled())
+            logger.debug("before: " + state);
+        state = ZfinStringUtils.escapeHighUnicode(state);
+        state = state.trim();
+        if (logger.isDebugEnabled())
+            logger.debug(" after: " + state);
+        return state;
+    }
+
+    public static Object runGetter(Field field, Object o) {
+        // Find the correct method
+        for (Method method : o.getClass().getMethods()) {
+            if ((method.getName().startsWith("get")) && (method.getName().length() == (field.getName().length() + 3))) {
+                if (method.getName().toLowerCase().endsWith(field.getName().toLowerCase())) {
+                    try {
+                        return method.invoke(o);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        logger.error("Could not determine method: " + method.getName());
+                    }
+
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Object runSetter(Field field, Object o, Object value) {
+        // Find the correct method
+        for (Method method : o.getClass().getMethods()) {
+            if ((method.getName().startsWith("set")) && (method.getName().length() == (field.getName().length() + 3))) {
+                if (method.getName().toLowerCase().endsWith(field.getName().toLowerCase())) {
+                    try {
+                        return method.invoke(o, value);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        logger.error("Could not determine method: " + method.getName());
+                    }
+
+                }
+            }
+        }
+
+
+        return null;
+    }
 }
 
