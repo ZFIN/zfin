@@ -415,24 +415,24 @@ public class GafService {
         String inferences = gafEntry.getInferences();
         if (inferences != null && inferences.startsWith("GO:")) {
             GenericTerm goTermInference = ontologyRepository.getTermByOboID(inferences);
-            validateGoTerm(goTermInference.getOboID(), gafEntry);
+            validateGoTerm(goTermInference.getOboID(), gafEntry, "Inference");
         }
         GenericTerm goTerm = ontologyRepository.getTermByOboID(gafEntry.getGoTermId());
-        validateGoTerm(goTerm.getOboID(), gafEntry);
+        validateGoTerm(goTerm.getOboID(), gafEntry, "GO Term");
         return goTerm;
     }
 
-    protected GenericTerm validateGoTerm(String goTermID, GafEntry gafEntry) throws GafValidationError {
+    protected GenericTerm validateGoTerm(String goTermID, GafEntry gafEntry, String columnName) throws GafValidationError {
         GenericTerm goTerm = ontologyRepository.getTermByOboID(goTermID);
         if (goTerm == null) {
             throw new GafValidationError("Unable to find GO Term for:" + FileUtil.LINE_SEPARATOR + goTermID,
                     gafEntry);
         }
         if (goTerm.isObsolete()) {
-            throw new GafValidationError("Go term must not be obsolete:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
+            throw new GafValidationError("Go term in column [" +columnName+"] must not be obsolete:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
         }
         if (goTerm.isSecondary()) {
-            throw new GafValidationError("Go term must not be secondary:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
+            throw new GafValidationError("Go term in column [" +columnName+"] must not be secondary:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
         }
         return goTerm;
     }
