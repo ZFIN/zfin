@@ -13,13 +13,12 @@ import java.util.List;
 public class PileConstructionSmokeTest extends AbstractSecureSmokeTest {
 
     public void testOntologyCombinations() {
-        for (WebClient webClient : curationWebClients) {
-            webClient.setJavaScriptEnabled(true);
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 login(webClient);
                 // retrieve curation page for given publication
                 //  Johnson et al., 1995, Genetic control of adult pigment stripe development in zebrafish
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/phenotype-curation#ZDB-TERM-100331-611");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/devtool/gwt/phenotype-curation#ZDB-TERM-100331-611");
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Phenotype Curation", page.getTitleText());
                 HtmlInput inputField = (HtmlInput) page.getByXPath("//input[@id='ENTITY_SUPERTERM']").get(0);

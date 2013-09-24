@@ -16,11 +16,10 @@ import org.zfin.repository.RepositoryFactory;
 public class SimpleSmokeTest extends AbstractSecureSmokeTest {
 
     public void testSimpleComposite() {
-        for (WebClient webClient : publicWebClients) {
+        for (WebClient webClient : getBrowserClients()) {
             try {
                 login(webClient);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/modules");
-                webClient.setJavaScriptEnabled(true);
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/devtool/gwt/modules");
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Modules", page.getTitleText());
                 HtmlAnchor htmlAnchor = (HtmlAnchor) page.getByXPath("//a[ . = 'Test: TestComposite']").get(0);
