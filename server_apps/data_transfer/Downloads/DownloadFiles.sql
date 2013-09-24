@@ -2,7 +2,7 @@
 --
 -- We extract several different kinds of information:
 --
--- All genetic markers (includes genes, ests, sslps, etc.)
+-- All genetic markers (includes genes, ESTs, SSLPs, etc.)
 --	zfin id, name, symbol, type, OR_lg
 --
 -- Synonyms  (for any item in all genetic markers file) There may be multiple lines
@@ -19,7 +19,7 @@
 --   zebrafish - yeast [5 stale records]
 --	zfin id,  zebrafish symbol, yeast symbol,  SGD id
 --
--- Gene Onotology-
+-- Gene Ontology
 --	A copy of the file we send to GO.
 --
 -- Gene Expression
@@ -36,7 +36,7 @@
 --	zfin id, symbol, accession number
 --
 -- Genotypes
---	zfin id, allele/construct, type, gene symblol, corresponding zfin gene id
+--	zfin id, allele/construct, type, gene symbol, corresponding zfin gene id
 --
 -- create genetic markers file
 --
@@ -1038,14 +1038,8 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
 	sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
 	xpatex_source_zdb_id,
- case when xpatex_probe_feature_zdb_id is not null
-	then xpatex_probe_feature_zdb_id
-	else ' '
- end as probe_id,
- case when xpatex_atb_zdb_id is not null
-	then xpatex_atb_zdb_id
-	else ' '
- end as antibody_id
+	nvl(xpatex_probe_feature_zdb_id,'') as probe_id,
+	nvl(xpatex_atb_zdb_id,'')  as antibody_id
  from marker
  join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
  join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id

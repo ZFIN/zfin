@@ -974,9 +974,9 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="8">Start Stage</Column>
             <Column id="9">End Stage</Column>
             <Column id="10">Assay</Column>
-            <Column id="10">Publication ID</Column>
-            <Column id="10">Probe ID</Column>
-            <Column id="10">Antibody ID</Column>
+            <Column id="11">Publication ID</Column>
+            <Column id="12">Probe ID</Column>
+            <Column id="13">Antibody ID</Column>
         </Download>
         <Download orderIndex="4">
             <Name>
