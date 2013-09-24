@@ -17,10 +17,10 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
 
     public void testSimpleComposite() {
         for (WebClient webClient : getBrowserClients()) {
+	    webClient.getOptions().setJavaScriptEnabled(true);
             try {
                 login(webClient);
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/devtool/gwt/modules");
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Modules", page.getTitleText());
                 HtmlAnchor htmlAnchor = (HtmlAnchor) page.getByXPath("//a[ . = 'Test: TestComposite']").get(0);
                 assertNotNull(htmlAnchor);
