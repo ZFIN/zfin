@@ -21,7 +21,7 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/gwt/modules">GWT Modules</a>
+        <a href="/action/devtool/gwt/modules">GWT Modules</a>
     </td>
     <td>
         <a href="/action/dev-tools/blast-jobs">Blast Jobs</a>

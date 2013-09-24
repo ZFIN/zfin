@@ -53,6 +53,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/{1}.jsp"/>
     </definition>
 
+    <definition name="dev-tools/gwt/*.page" extends="dev_layout">
+        <put-attribute name="staticTitle" value="GWT Modules"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/{1}.jsp"/>
+    </definition>
+
     <definition name="feature/wildtype-lines.page" extends="main_layout">
         <put-attribute name="staticTitle" value="ZFIN: Wild-Type Lines: Summary Listing"/>
         <put-attribute name="body" value="/WEB-INF/jsp/feature/wildtype-lines.jsp"/>

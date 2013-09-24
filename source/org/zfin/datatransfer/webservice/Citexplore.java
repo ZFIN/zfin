@@ -15,7 +15,7 @@ import java.util.List;
 
 
 /**
- * Retrieves DOIs from the Citexplorer webservice for given pubMed ID (= accessionNumber).
+ * Retrieves DOIs from the Citexplore webservice for given pubMed ID (= accessionNumber).
  */
 public class Citexplore {
 
@@ -52,14 +52,15 @@ public class Citexplore {
                     String doiValue;
                     for (Result publicationBean : response.getResultList().getResult()) {
                         doiValue = publicationBean.getDOI();
-                        if (StringUtils.isNotEmpty(doiValue))
+                        if (StringUtils.isNotEmpty(doiValue)) {
                             logger.info("added doi[" + doiValue + "]  for pmid[" + publication.getAccessionNumber() + "]");
-                        publication.setDoi(doiValue);
-                        hasDOI = true;
+                            publication.setDoi(doiValue);
+                            hasDOI = true;
+                        }
                     }
 
                     if (!hasDOI) {
-                        logger.info("doi not found for pmid[" + publication.getAccessionNumber() + "]");
+                        logger.info("doi not found for PubMed ID[" + publication.getAccessionNumber() + "]");
                         publication.setDoi(null);
                         iter.remove();
                     }

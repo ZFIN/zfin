@@ -1,35 +1,70 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * This Controller is used to pass a publication to the jsp page.
  */
-public class CurationTestController extends SimplePassThroughController {
+@Controller
+public class CurationTestController {
 
-    private String publicationID;
+    @RequestMapping("/gwt/modules")
+    protected String gwtModulesSummaryPage() throws Exception {
+        return "dev-tools/gwt/modules.page";
+    }
 
-    @Override
-    public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        publicationID = httpServletRequest.getParameter("publicationID");
-        if (StringUtils.isEmpty(publicationID)){
+    @RequestMapping("/gwt/fx-curation")
+    protected String fxCuration(@RequestParam(required = false) String publicationID,
+                                          Model model) throws Exception {
+
+        if (StringUtils.isEmpty(publicationID)) {
+            publicationID = "ZDB-PUB-990507-16";
+        }
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
+        model.addAttribute(publication);
+        return "dev-tools/gwt/fx-curation.page";
+    }
+
+    @RequestMapping("/gwt/phenotype-curation")
+    protected String phenotypeCuration(@RequestParam(required = false) String publicationID,
+                                          Model model) throws Exception {
+
+        if (StringUtils.isEmpty(publicationID)) {
             publicationID = "ZDB-PUB-961014-496";
         }
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
-        return new ModelAndView(viewName, "publication", publication);
+        model.addAttribute(publication);
+        return "dev-tools/gwt/phenotype-curation.page";
     }
 
-    public String getPublicationID() {
-        return publicationID;
+    @RequestMapping("/gwt/feature-curation")
+    protected String featureCuration(@RequestParam(required = false) String publicationID,
+                                          Model model) throws Exception {
+
+        if (StringUtils.isEmpty(publicationID)) {
+            publicationID = "ZDB-PUB-961014-496";
+        }
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
+        model.addAttribute(publication);
+        return "dev-tools/gwt/feature-curation.page";
     }
 
-    public void setPublicationID(String publicationID) {
-        this.publicationID = publicationID;
+    @RequestMapping("/gwt/go-curation")
+    protected String goCuration(@RequestParam(required = false) String publicationID,
+                                          Model model) throws Exception {
+
+        if (StringUtils.isEmpty(publicationID)) {
+            publicationID = "ZDB-PUB-961014-496";
+        }
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
+        model.addAttribute(publication);
+        return "dev-tools/gwt/go-curation.page";
     }
+
 }

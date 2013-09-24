@@ -26,25 +26,25 @@
     <tr>
         <td class="sectionTitle">FX Curation Interface</td>
         <td >
-            <a href="/action/dev-tools/gwt/fx-curation">Curation Interface: Expression Section</a>
+            <a href="/action/devtool/gwt/fx-curation">Curation Interface: Expression Section</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Phenotype Curation Interface</td>
         <td>
-            <a href="/action/dev-tools/gwt/phenotype-curation">Curation Interface: Phenotype Section</a>
+            <a href="/action/devtool/gwt/phenotype-curation">Curation Interface: Phenotype Section</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">GO Curation Interface</td>
         <td>
-            <a href="/action/dev-tools/gwt/go-curation">Curation Interface: GO Section</a>
+            <a href="/action/devtool/gwt/go-curation">Curation Interface: GO Section</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Feature Curation Interface</td>
         <td width="120" colspan="2" class="sectionTitle">
-            <a href="/action/dev-tools/gwt/feature-curation">Curation Interface: Feature Section</a>
+            <a href="/action/devtool/gwt/feature-curation">Curation Interface: Feature Section</a>
         </td>
     </tr>
     <tr>

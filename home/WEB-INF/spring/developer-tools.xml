@@ -28,12 +28,7 @@
                 <prop key="/dev-tools/zfin-statistics">zfinStatistics</prop>
                 <prop key="/dev-tools/phenotype-curation-history">devToolsDatabaseInfo</prop>
                 <prop key="/dev-tools/phenotype-curation-history-statements">devToolsDatabaseInfo</prop>
-                <prop key="/dev-tools/gwt/modules">gwtModules</prop>
-                <prop key="/dev-tools/gwt/fx-curation">fxCuration</prop>
                 <prop key="/dev-tools/gwt/image-edit-test">imageEditTest</prop>
-                <prop key="/dev-tools/gwt/phenotype-curation">phenotypeCuration</prop>
-                <prop key="/dev-tools/gwt/go-curation">goCuration</prop>
-                <prop key="/dev-tools/gwt/feature-curation">featureCuration</prop>
                 <prop key="/dev-tools/gwt/lookup">lookup</prop>
                 <prop key="/dev-tools/gwt/lookup-table">lookupTable</prop>
                 <prop key="/dev-tools/gwt/transcript-edit">transcriptEdit</prop>
@@ -61,42 +56,15 @@
         </property>
     </bean>
 
-    <!-- Make sure to use scope=prototype to instantiate a new object to make the call thread-safe!-->
-    <bean name="gwtModules" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
-        <property name="viewName" value="gwt-modules"/>
-    </bean>
-
     <bean name="globalSession" class="org.zfin.framework.presentation.GlobalSessionViewController" >
         <property name="commandClass" value="org.zfin.framework.presentation.GlobalSessionBean"/>
         <property name="zfinGlobalSessionBean" ref="zfinGlobalSessionBean"/>
-    </bean>
-
-    <bean name="fxCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
-        <property name="viewName" value="fx-curation"/>
-    </bean>
-
-    <bean name="phenotypeCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
-        <property name="viewName" value="phenotype-curation"/>
-    </bean>
-
-    <bean name="goCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
-        <property name="viewName" value="go-curation"/>
-    </bean>
-
-    <bean name="featureCuration" class="org.zfin.framework.presentation.CurationTestController" scope="prototype">
-        <property name="viewName" value="feature-curation"/>
     </bean>
 
     <bean name="ontologyCaching" class="org.zfin.ontology.presentation.OntologyManagerController" scope="prototype">
         <property name="viewName" value="ontology-manager"/>
     </bean>
 
-<!--
-    <bean name="ontologyReports" class="org.zfin.ontology.presentation.OntologyReportController" scope="prototype">
-        <property name="viewName" value="ontology-reports"/>
-    </bean>
-
--->
     <bean name="imageEditTest" class="org.zfin.framework.presentation.SimplePassThroughController" scope="prototype">
         <property name="viewName" value="image-edit-test"/>
     </bean>

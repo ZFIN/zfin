@@ -11,109 +11,106 @@ import org.zfin.publication.repository.PublicationRepository;
 import java.util.List;
 
 
-/**  UpdateDOIMain is is the driver class that updates Publication DOIs which have existing pubmed IDs (accession numbers).
- *
+/**
+ * Update ZFIN Publication's DOI Ids if they are missing. Use external site (PubMed Central) to obtain Ids.
  */
 public class DOIProcessor {
 
-    public static final int ALL = -1 ;
+    public static final int ALL = -1;
 
-    private int maxToProcess = ALL ;
-    private int maxAttempts = 50 ;
-    private PublicationRepository publicationRepository = new HibernatePublicationRepository() ; ;
+    private int maxToProcess = ALL;
+    private int maxAttempts = 50;
+    private PublicationRepository publicationRepository = new HibernatePublicationRepository();
     private Logger logger = Logger.getLogger(DOIProcessor.class);
 
-    private boolean reportAll = false ;
-    private boolean doisUpdated = false ;
+    private boolean reportAll = false;
+    private boolean doisUpdated = false;
 
-    private StringBuilder message ;
+    private StringBuilder message;
 
     public DOIProcessor(boolean reportAll) {
-        this(reportAll,Integer.MAX_VALUE);
+        this(reportAll, Integer.MAX_VALUE);
     }
 
-    public DOIProcessor(boolean reportAll,int maxAttempts) {
-        this.reportAll = reportAll ;
-        if(maxAttempts==ALL){
+    public DOIProcessor(boolean reportAll, int maxAttempts) {
+        this.reportAll = reportAll;
+        if (maxAttempts == ALL) {
             this.maxAttempts = Integer.MAX_VALUE;
+        } else {
+            this.maxAttempts = maxAttempts;
         }
-        else{
-            this.maxAttempts = maxAttempts ;
-        }
-        message = new StringBuilder() ;
+        message = new StringBuilder();
 
     }
 
-    public DOIProcessor(boolean reportAll,int maxAttempts,int maxToProcess) {
-        this.reportAll = reportAll ;
-        this.maxToProcess = (maxToProcess==ALL ? Integer.MAX_VALUE : maxToProcess );
-        this.maxAttempts = (maxAttempts==ALL ? Integer.MAX_VALUE : maxAttempts );
-        message = new StringBuilder() ;
-        publicationRepository = new HibernatePublicationRepository() ;
+    public DOIProcessor(boolean reportAll, int maxAttempts, int maxToProcess) {
+        this.reportAll = reportAll;
+        this.maxToProcess = (maxToProcess == ALL ? Integer.MAX_VALUE : maxToProcess);
+        this.maxAttempts = (maxAttempts == ALL ? Integer.MAX_VALUE : maxAttempts);
+        message = new StringBuilder();
     }
-
-
-    /**  Gets publications that have pubmedIds with no IDS from the database.
-     * @return List<Publication> Returns list of publications without a DOI.
-     */
-    private List<Publication> getPubmedIdsWithNoDOIs(){
-//        List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOI(maxProcesses) ;
-        List<Publication> publicationList =  publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess) ;
-        if(reportAll || CollectionUtils.isNotEmpty(publicationList)){
-            message.append("number of dois to populate:  ").append(publicationList.size() ).append("\n") ;
-        }
-        return publicationList ;
-    }
-
 
 
     /**
-     * Finds pumbed IDS with no DOI.  Accesses Citexplore via webservice to get DOIS for  pubmed IDS and finally updates pubmed IDS that it does find.
+     * Gets publications that have pubMed Ids with no IDs from the database.
+     *
+     * @return List<Publication> Returns list of publications without a DOI.
      */
-    public void findAndUpdateDOIs(){
-        try{
-            List<Publication> publicationList = getPubmedIdsWithNoDOIs() ;
-            publicationRepository.addDOIAttempts(publicationList) ;
-            HibernateUtil.currentSession().flush();
-            Citexplore wsdlConnect = new Citexplore() ;
-            publicationList = wsdlConnect.getDoisForPubmedID(publicationList) ;
-            DOIHTTPTester httpTester = new DOIHTTPTester() ;
-            publicationList = httpTester.testDOIList(publicationList) ;
-            for(Publication publication: publicationList){
-                message.append("added doi["+publication.getDoi()+"] for publication["+publication.getZdbID()+"]") ;
-            }
-            updateDOIs(publicationList) ;
-            HibernateUtil.closeSession();
+    private List<Publication> getPubmedIdsWithNoDOIs() {
+        List<Publication> publicationList = publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess);
+        if (reportAll || CollectionUtils.isNotEmpty(publicationList)) {
+            message.append("number of dois to populate:  ").append(publicationList.size()).append("\n");
         }
-        catch(Exception e){
+        return publicationList;
+    }
+
+
+    /**
+     * Find publications with missing DOI Ids in ZFIN, retrieve those publications from Citexplore
+     * (Europe PubMed Central webservice) and obtain DOI IDs. Update ZFIN publication with DOI Id.
+     * If no DOI ID available do nothing.
+     */
+    public void findAndUpdateDOIs() {
+        try {
+            List<Publication> publicationList = getPubmedIdsWithNoDOIs();
+            publicationRepository.addDOIAttempts(publicationList);
+            HibernateUtil.currentSession().flush();
+            Citexplore wsdlConnect = new Citexplore();
+            publicationList = wsdlConnect.getDoisForPubmedID(publicationList);
+            DOIHTTPTester httpTester = new DOIHTTPTester();
+            publicationList = httpTester.testDOIList(publicationList);
+            for (Publication publication : publicationList) {
+                message.append("added doi[" + publication.getDoi() + "] for publication[" + publication.getZdbID() + "]");
+            }
+            updateDOIs(publicationList);
+            HibernateUtil.closeSession();
+        } catch (Exception e) {
             logger.error(e);
-            message.append(e) ;
+            message.append(e);
         }
     }
 
 
-
-    /**  updateDOIs:  sets DOI for ZDB_ID
-     *  @param  publicationList   A list of publications.
+    /**
+     * updateDOIs:  sets DOI for ZDB_ID
      *
+     * @param publicationList A list of publications.
      */
-    private void updateDOIs(List<Publication> publicationList){
+    private void updateDOIs(List<Publication> publicationList) {
 
-        if(publicationList==null || publicationList.size()==0 ){
-            message.append("No sources to udpate") ;
-            doisUpdated=false ;
-            return ;
-        }
-        else{
-            doisUpdated=true;
+        if (publicationList == null || publicationList.size() == 0) {
+            message.append("No sources to udpate");
+            doisUpdated = false;
+            return;
+        } else {
+            doisUpdated = true;
         }
         HibernateUtil.createTransaction();
-        try{
-            publicationRepository.updatePublications( publicationList) ;
+        try {
+            publicationRepository.updatePublications(publicationList);
             HibernateUtil.flushAndCommitCurrentSession();
-        }
-        catch(Exception e){
-            logger.error(e) ;
+        } catch (Exception e) {
+            logger.error(e);
             message.append(e);
             HibernateUtil.rollbackTransaction();
         }
@@ -131,9 +128,8 @@ public class DOIProcessor {
     public static void main(String[] args) {
         try {
             DOIProcessor driver = new DOIProcessor(true);
-            driver.findAndUpdateDOIs() ;
-        }
-        catch(Exception e) {
+            driver.findAndUpdateDOIs();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
