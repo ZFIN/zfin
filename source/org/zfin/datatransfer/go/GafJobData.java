@@ -9,10 +9,11 @@ import java.util.*;
  * Data associated with a GafJob.
  */
 public class GafJobData {
-    private Set<MarkerGoTermEvidence> newEntries = new LinkedHashSet<MarkerGoTermEvidence>();
-    private List<GafJobEntry> existingEntries = new ArrayList<GafJobEntry>();
-    private List<GafJobEntry> removedEntries = new ArrayList<GafJobEntry>();
-    private List<GafValidationError> errors = new ArrayList<GafValidationError>();
+    private Set<MarkerGoTermEvidence> newEntries = new LinkedHashSet<>();
+    private List<GafJobEntry> existingEntries = new ArrayList<>();
+    private List<GafJobEntry> removedEntries = new ArrayList<>();
+    private List<GafEntry> cellEntries = new ArrayList<>();
+    private List<GafValidationError> errors = new ArrayList<>();
     private int gafEntryCount = 0;
     private long startTime;
     private long stopTime;
@@ -28,6 +29,10 @@ public class GafJobData {
 
     public void addExistingEntry(MarkerGoTermEvidence entry) {
         existingEntries.add(new GafJobEntry(entry));
+    }
+
+    public void addCellEntry(GafEntry entry) {
+        cellEntries.add(entry);
     }
 
     public void addRemoved(MarkerGoTermEvidence markerGoTermEvidence) {
@@ -59,6 +64,7 @@ public class GafJobData {
                 "removed: " + removedEntries.size() + "" + FileUtil.LINE_SEPARATOR +
                 "errors: " + errors.size() + "" + FileUtil.LINE_SEPARATOR +
                 "existing: " + existingEntries.size() + "" + FileUtil.LINE_SEPARATOR +
+                "cell Terms: " + cellEntries.size() + "" + FileUtil.LINE_SEPARATOR +
                 "time: " + (stopTime - startTime) / (1000f) + " seconds" + FileUtil.LINE_SEPARATOR
                 ;
     }
@@ -73,5 +79,9 @@ public class GafJobData {
 
     public List<GafJobEntry> getExistingEntries() {
         return existingEntries;
+    }
+
+    public List<GafEntry> getCellEntries() {
+        return cellEntries;
     }
 }

@@ -140,7 +140,8 @@ public class GafService {
                     logger.info("at " + count + " of " + gafEntries.size() + " done "
                             + ((float) count / (float) gafEntries.size()) * 100f + "%");
                 }
-            }
+            } else
+                gafJobData.addCellEntry(gafEntry);
         } // end of gaf entry for loop
 
 
@@ -429,10 +430,10 @@ public class GafService {
                     gafEntry);
         }
         if (goTerm.isObsolete()) {
-            throw new GafValidationError("Go term in column [" +columnName+"] must not be obsolete:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
+            throw new GafValidationError("Go term in column [" + columnName + "] must not be obsolete:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
         }
         if (goTerm.isSecondary()) {
-            throw new GafValidationError("Go term in column [" +columnName+"] must not be secondary:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
+            throw new GafValidationError("Go term in column [" + columnName + "] must not be secondary:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
         }
         return goTerm;
     }
