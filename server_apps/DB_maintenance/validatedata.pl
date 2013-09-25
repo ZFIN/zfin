@@ -760,7 +760,10 @@ sub strHasNoCreatedByRelationship($) {
                 where feature_type = 'INDEL'
                 and not exists (Select 'x' from feature_marker_relationship
                                   where fmrel_ftr_zdb_id = feature_zdb_id
-                                  and fmrel_type = 'created by')";
+                                  and fmrel_type = 'created by')
+		and exists (select 'x' from feature_assay
+                               where featassay_feature_zdb_id = feature_zdb_id
+                                and (featassay_mutagen = 'TALEN' or featassay_mutagen = 'CRISPR'))";
 
   my @colDesc = ("STR zdb_id         ",
 		 "STR abbrev       ");
