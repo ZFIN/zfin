@@ -747,7 +747,7 @@ sub strAbbrevContainsGeneAbbrev($) {
 
 }
 #---------------------------------------------------------------
-# strHasCreatedByRelationship
+# strHasNoCreatedByRelationship
 #
 # Parameter
 # $ Email Address for recipients
@@ -781,7 +781,74 @@ sub strHasNoCreatedByRelationship($) {
   &recordResult($routineName, $nRecords);
 
 }
+#---------------------------------------------------------------
+# crisprRelatedToNonTalen
+#
+# Parameter
+# $ Email Address for recipients
 
+sub talenRelatedToNonTalen($) {
+  my $routineName = "crisprRelatedToNonTalen";
+	
+  my $sql = "select feature_zdb_id, featassay_mutagen, fmrel_mrkr_zdb_id
+                from feature, feature_assay, feature_marker_relationship
+                where feature_zdb_id = featassay_feature_zdb_id
+                and feature_zdb_id = fmrel_ftr_zdb_id
+                and featassay_mutagen = 'TALEN' 
+                and (fmrel_mrkr_zdb_id like 'ZDB-CRISPR%'
+                    or fmrel_mrkr_zdb_id like 'ZDB-MRPH%')";
+
+  my @colDesc = ("STR feature_zdb_id         ",
+		 "STR mutagen       ",
+		 "STR marker_zdb_id       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Str(s) does not have 'created by' relationship";
+    my $errMsg = "There are $nRecords talen mutagens are not related to ZDB-TALENs. ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
+#---------------------------------------------------------------
+# crisprRelatedToNonCrispr
+#
+# Parameter
+# $ Email Address for recipients
+
+sub crisprRelatedToNonCrispr($) {
+  my $routineName = "crisprRelatedToNonCrispr";
+	
+  my $sql = "select feature_zdb_id, featassay_mutagen, fmrel_mrkr_zdb_id
+                from feature, feature_assay, feature_marker_relationship
+                where feature_zdb_id = featassay_feature_zdb_id
+                and feature_zdb_id = fmrel_ftr_zdb_id
+                and featassay_mutagen = 'CRISPR' 
+                and (fmrel_mrkr_zdb_id like 'ZDB-TALEN%'
+                    or fmrel_mrkr_zdb_id like 'ZDB-MRPH%')";
+
+  my @colDesc = ("STR feature_zdb_id         ",
+		 "STR mutagen       ",
+		 "STR marker_zdb_id       ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Str(s) does not have 'created by' relationship";
+    my $errMsg = "There are $nRecords crispr mutagens are not related to ZDB-CRISPRs. ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
 
 #---------------------------------------------------------------
 # strAbbrevContainsGeneAbbrev
@@ -3535,6 +3602,8 @@ if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
     strHasNoCreatedByRelationship($ceri);
+    crisprRelatedToNonCrispr($ceri);
+    talenRelatedToNonTalen($ceri);
 	estsHave1Gene($estEmail);
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
