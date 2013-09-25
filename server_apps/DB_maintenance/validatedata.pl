@@ -714,7 +714,9 @@ sub strAbbrevContainsGeneAbbrev($) {
                where a.mrkr_zdb_id = c.mrel_mrkr_1_zdb_id
                and b.mrkr_zdb_id = c.mrel_mrkr_2_zdb_id
                and b.mrkr_abbrev not like 'mir%'
-               and get_obj_type(a.mrkr_zdb_id) in ('MRPHLNO','TALEN','CRISPR')
+               and exists (Select 'x' from marker_type_group_member where
+                              a.mrkr_type = mtgrpmem_mrkr_type
+                              and mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT')
                and not exists (select 'x' from marker_relationship d
                                  where d.mrel_mrkr_1_zdb_id = c.mrel_mrkr_1_zdb_id
                                  and d.mrel_mrkr_2_zdb_id != c.mrel_mrkr_2_zdb_id)
@@ -750,13 +752,12 @@ sub strAbbrevContainsGeneAbbrev($) {
 # Parameter
 # $ Email Address for recipients
 
-sub strHasCreatedByRelationship($) {
-  my $routineName = "strHasCreatedByRelationship";
+sub strHasNoCreatedByRelationship($) {
+  my $routineName = "strHasNoCreatedByRelationship";
 	
   my $sql = "select feature_zdb_id, feature_name
                 from feature
-                where (feature_type = 'TALEN'
-                          or feature_type ='CRISPR')
+                where feature_type = 'INDEL'
                 and not exists (Select 'x' from feature_marker_relationship
                                   where fmrel_ftr_zdb_id = feature_zdb_id
                                   and fmrel_type = 'created by')";
@@ -792,7 +793,9 @@ sub strAbbrevContainsGeneAbbrevBasic($) {
                from marker a, marker b, marker_relationship c
                where a.mrkr_zdb_id = c.mrel_mrkr_1_zdb_id
                and b.mrkr_zdb_id = c.mrel_mrkr_2_zdb_id
-               and get_obj_type(a.mrkr_zdb_id) in ('MRPHLNO','TALEN','CRISPR')
+    and exists (Select 'x' from marker_type_group_member where
+                              a.mrkr_type = mtgrpmem_mrkr_type
+                              and mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT')
                 and b.mrkr_abbrev !=
                (substring(a.mrkr_abbrev 
                             from
@@ -3528,7 +3531,7 @@ if($daily) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
-    strHasCreatedByRelationship($ceri);
+    strHasNoCreatedByRelationship($ceri);
 	estsHave1Gene($estEmail);
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
