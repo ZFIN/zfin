@@ -475,10 +475,10 @@ DEBUGGING:
     <?MICOMMENT> *** Phenotype <?/MICOMMENT>
     <td nowrap  valign=bottom>
       <?MIBLOCK COND="$(AND,$(XST,$phenosum_split),$(EC,$phenosum_split,t))">      
-        <?MIVAR>$phenosum_geno<?/MIVAR>&nbsp;<br/>
+        <?MIVAR>$phenosum_geno$phenosum_popuplink<?/MIVAR>&nbsp;<br/>
       <?/MIBLOCK>    
       <?MICOMMENT><?MIVAR>$phenosum_geno$phenosum_popuplink<?/MIVAR><?/MICOMMENT>
-      <?MIVAR>$phenosum_geno<?/MIVAR>
+      <?MIVAR>$phenosum_geno$phenosum_popuplink<?/MIVAR>
     </td>
  
        
