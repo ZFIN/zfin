@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomySmokeTest;
 import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.datatransfer.DownloadSmokeTest;
+import org.zfin.expression.FigureViewSmokeTest;
 import org.zfin.expression.presentation.FigureSummarySmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.fish.smoketest.FishSmokeTest;
@@ -39,6 +40,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         ExpressionSmokeTest.class,
         FigureSummarySmokeTest.class,
         FishSmokeTest.class,
+        FigureViewSmokeTest.class,
         ConstructSmokeTest.class,
 //        GeneEditSmokeTest.class,
         GenotypeDetailSmokeTest.class,
