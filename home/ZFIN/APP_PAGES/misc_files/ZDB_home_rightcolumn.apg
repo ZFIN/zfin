@@ -200,34 +200,6 @@
       News
    </h3>
    <ul>
-       <?MICOMMENT> template:
-
-
-       <li>
-         <a href="/zf_info/news/siteNews.html">
-         Month day - link text
-         </a>
-       </li>
-       <?/MICOMMENT>
-
-
-
-               <!--
-       <li>
-         <a href="/zf_info/news/siteNews.html#zv9">
-           November 16, 2010 - Zv9 is released in Ensembl</a>
-       </li>
-
-
-               <li>
-         <a href="/zf_info/news/siteNews.html#grc">
-          October 6, 2010 - Zebrafish Genome Sequence handed over to Genome Reference Consortium</a>
-       </li>
-
-
-
-     -->
-
        <script type="text/javascript">
         jQuery.get( '/webapp/wiki/summary/news?length=2', {}, function(data){
             document.getElementById('news').innerHTML = data ;
@@ -235,8 +207,6 @@
        </script>
 
        <div id="news"></div>
-
-
 
        <li>
          <a href="/zf_info/news/Newsletters.html">ZFIN Newsletters</a>,
@@ -249,10 +219,6 @@
      </ul>
 
      <img id="zdbhome-fishimg" src="/images/betterfish.jpg">
-
-
-
-
 
      <?MICOMMENT> ** Adjust the number of breaks here to keep the columns
                      roughtly the same height ** <?/MICOMMENT>
