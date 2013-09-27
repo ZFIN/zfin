@@ -1,6 +1,8 @@
 package org.zfin;
 
+import de.oschoen.junit.runner.BatchTestRunner;
 import junit.framework.JUnit4TestAdapter;
+import org.jenkinsci.testinprogress.runner.ProgressSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomyItemTest;
@@ -65,7 +67,8 @@ import org.zfin.util.*;
  * This is the master unit test class that runs all registered unit tests (suite).
  * Add your new unit test here if it is ready to be included in regular builds.
  */
-@RunWith(Suite.class)
+@RunWith(ProgressSuite.class)
+@BatchTestRunner.BatchTestInclude("**.*Suite")
 @Suite.SuiteClasses({
         ActiveSourceTest.class,
         ActiveDataTest.class,
