@@ -72,10 +72,6 @@
                     <c:if test="${typeName eq 'TALEN'}">
                         <c:set var="firstSeqLen">${fn:length(marker.sequence.sequence)}</c:set>
                         <c:set var="secondSeqLen">${fn:length(marker.sequence.secondSequence)}</c:set>
-                        <c:if test="${firstSeqLen < secondSeqLen}">
-                            <c:set var="loopEnd">${secondSeqLen - firstSeqLen}</c:set>
-                            <c:forEach var="i" begin="1" end="${loopEnd}">&nbsp;</c:forEach>
-                        </c:if>
                     </c:if>
                     <zfin2:markerSequenceBlastDropDown
                             sequence="${marker.sequence.sequence}"
@@ -106,10 +102,6 @@
                             </c:if>
                         </div>
                         &nbsp;&nbsp;&nbsp;
-                        <c:if test="${firstSeqLen > secondSeqLen}">
-                            <c:set var="loopEnd">${firstSeqLen - secondSeqLen}</c:set>
-                            <c:forEach var="i" begin="1" end="${loopEnd}">&nbsp;</c:forEach>
-                        </c:if>
                         <zfin2:markerSequenceBlastDropDown
                                 sequence="${marker.sequence.secondSequence}"
                                 databases="${markerBean.databases}"
