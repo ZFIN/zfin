@@ -10,7 +10,7 @@ Contact the <a href="mailto:asinger@zfin.org">Nomenclature Coordinator</a> to be
 <ul>
     <li>A 2-letter designation is preferred, but is not always possible.  In that case a 3-letter designation must be chosen.</li>
     <li>The designation must not conflict with any zebrafish, human or mouse gene or phenotypic designations.</li>
-    <li>The designation must not conflict with any other line designations.  For example, t is listed as the designation for Tübingen, but they use most 2-letter designations that begin with "t".</li>
+    <li>The designation must not conflict with any other line designations.  For example, t is listed as the designation for Tubingen, but they use most 2-letter designations that begin with "t".</li>
  </ul>
 
 <p>Allele-specific names for zebrafish mutants are denoted by superscript following the mutant locus symbol. They are formed by the following rules:</p>
