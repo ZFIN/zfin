@@ -4,15 +4,14 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Date;
@@ -26,12 +25,20 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
     protected String password = "veryeasypass";
     private final Logger logger = Logger.getLogger(AbstractSecureSmokeTest.class);
 
-    private ProfileService profileService = new ProfileService();
+    public AbstractSecureSmokeTest(WebClient webClient) {
+        super(webClient);
+    }
 
-    @Override
-    public void setUp() {
+    public AbstractSecureSmokeTest() {
+    }
+
+
+
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         insertTestPersonIntoDatabase();
+        login(webClient);
     }
 
     @Override
@@ -40,8 +47,13 @@ public class AbstractSecureSmokeTest extends AbstractSmokeTest {
         super.tearDown();
     }
 
+    @BeforeClass
+    public static void setUpGLobal() {
 
-    private void createTestPersonObject() {
+    }
+
+
+        private void createTestPersonObject() {
 
         person = new Person();
 

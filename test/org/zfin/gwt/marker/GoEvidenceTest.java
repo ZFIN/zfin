@@ -1,7 +1,5 @@
 package org.zfin.gwt.marker;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -28,28 +26,6 @@ import static org.junit.Assert.*;
  * DB tests for MarkerGoEvidence code.
  */
 public class GoEvidenceTest extends AbstractDatabaseTest {
-
-    @AfterClass
-    public static void closeDatabaseSession() {
-        HibernateUtil.closeSession();
-    }
-
-    @After
-    public void closeSession() {
-    }
-
-
-    @Test
-    public void validateReferenceDatabases(){
-        assertNotNull(MarkerGoEvidencePresentation.getGenbankReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getEcReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getGenpeptReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getGoReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getInterproReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getRefseqReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getSpkwReferenceDatabase()) ;
-        assertNotNull(MarkerGoEvidencePresentation.getUniprotReferenceDatabase()) ;
-    }
 
     @Test
     public void getGoEvidenceDTO(){
@@ -87,6 +63,19 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         assertEquals("ZDB-GENE-010717-1",goEvidenceDTO.getMarkerDTO().getZdbID());
         assertNull(goEvidenceDTO.getFlag());
 
+    }
+
+    @Test
+    @Ignore
+    public void validateReferenceDatabases(){
+        assertNotNull(MarkerGoEvidencePresentation.getGenbankReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getEcReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getGenpeptReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getGoReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getInterproReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getRefseqReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getSpkwReferenceDatabase()) ;
+        assertNotNull(MarkerGoEvidencePresentation.getUniprotReferenceDatabase()) ;
     }
 
     /**

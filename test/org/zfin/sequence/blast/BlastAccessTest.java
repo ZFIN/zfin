@@ -37,12 +37,6 @@ public class BlastAccessTest extends AbstractDatabaseTest{
         RepositoryFactory.getBlastRepository().setAllDatabaseLock(false);
     }
 
-    @After
-    public void closeSession() {
-        RepositoryFactory.getBlastRepository().setAllDatabaseLock(false);
-        HibernateUtil.closeSession();
-    }
-
     @Test
     public void getBlastPath() {
         assertNotNull("blast path should not be null", ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value());

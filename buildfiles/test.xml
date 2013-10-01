@@ -191,6 +191,13 @@ test(s) need to be run before committing changes or pushing files to production 
                 <formatter type="xml"/>
             </test>
 
+            <test name="org.zfin.SmokeTestsReadWrite" todir="${test.reports.dir}" outfile="${smokeTestFileReadWrite}"
+                  haltonerror="${isalmosthappytrunktest}" haltonfailure="${isalmosthappytrunktest}"
+                  failureproperty="smoke.failure">
+                <formatter type="brief"/>
+                <formatter type="xml"/>
+            </test>
+
             <classpath refid="extended.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
@@ -346,12 +353,12 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <batchtest name="org.zfin.SmokeTests" outfile="${smokeTestFile}"
+            <batchtest
                   todir="${test.reports.dir}"
                   haltonerror="false" haltonfailure="true"
                   failureproperty="smoke.failure" >
-                <fileset dir="${test}">
-                    <include name="**/UnitTests.java" />
+                <fileset dir="test">
+                    <include name="**/SmokeTests.java" />
                 </fileset>
                 <formatter type="brief"/>
                 <formatter type="xml"/>
@@ -359,6 +366,36 @@ test(s) need to be run before committing changes or pushing files to production 
         </junit>
         <antcall target="handleSmokeFailure">
             <param name="test.output.file" value="${smokeTestFile}"/>
+        </antcall>
+    </target>
+
+    <target name="smokeTestsReadWrite" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
+
+        <junit fork="yes"
+               printsummary="yes"
+               haltonfailure="false"
+               haltonerror="false"
+               showoutput="true"
+               maxmemory="2024m"
+               >
+<!--            <jvmarg line="${junrt.jvmargs}"/>-->
+            <classpath refid="extended.classpath"/>
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
+            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+            <batchtest
+                  todir="${test.reports.dir}"
+                  haltonerror="false" haltonfailure="true"
+                  failureproperty="smoke.failure" >
+                <fileset dir="test">
+                    <include name="**/SmokeTestsReadWrite.java" />
+                </fileset>
+                <formatter type="brief"/>
+                <formatter type="xml"/>
+            </batchtest>
+        </junit>
+        <antcall target="handleSmokeFailure">
+            <param name="test.output.file" value="${smokeTestReadWriteFile}"/>
         </antcall>
     </target>
 

@@ -27,12 +27,6 @@ public class BlastDownloadsTest extends AbstractDatabaseTest{
         RepositoryFactory.getBlastRepository().setAllDatabaseLock(false);
     }
 
-    @After
-    public void closeSession() {
-        RepositoryFactory.getBlastRepository().setAllDatabaseLock(false);
-        HibernateUtil.closeSession();
-    }
-
     // the test should be to write it out to a temp file and reread it without error
     @Test
     public void blastMorpholinoDownload() throws Exception{

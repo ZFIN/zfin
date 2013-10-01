@@ -4,14 +4,16 @@ import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import net.sourceforge.jwebunit.junit.WebTestCase;
-import net.sourceforge.jwebunit.util.TestingEngineRegistry;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
+import org.junit.Before;
+import org.junit.runners.Parameterized;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.properties.ZfinPropertiesEnum;
 
-import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,13 +21,22 @@ import java.util.List;
  */
 public class AbstractSmokeTest extends WebTestCase {
 
-    private static boolean initDatabase = false;
+    protected static String mutant;
+    protected static String domain;
 
-    protected String mutant;
-    protected String domain;
+    protected static String nonSecureUrlDomain;
+    protected static String secureUrlDomain;
+    // browser that is used in a single test run
+    // we loop over all browser emulations.
+    protected WebClient webClient;
 
-    protected String nonSecureUrlDomain;
-    protected String secureUrlDomain;
+    // used to only initialize this class once for all unit tests run in the sub class.
+    protected static boolean isInitialized;
+
+    @Parameterized.Parameters
+    public static Collection webClients() {
+        return Arrays.asList(new Object[][]{{getBrowserClients()[0]}, {getBrowserClients()[1]}});
+    }
 
     protected final WebClient[] curationWebClients = {
             new WebClient(BrowserVersion.FIREFOX_17),  // 30-50%
@@ -33,7 +44,7 @@ public class AbstractSmokeTest extends WebTestCase {
 //            new WebClient(BrowserVersion.SAFARI),  // 20%
     };
 
-    protected final WebClient[] publicWebClients = {
+    protected static final WebClient[] publicWebClients = {
             new WebClient(BrowserVersion.FIREFOX_17),  // 30-50%
             new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
 //            new WebClient(BrowserVersion.SAFARI),  // 20%
@@ -51,8 +62,17 @@ public class AbstractSmokeTest extends WebTestCase {
         return nonSecureUrlDomain + "/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT;
     }
 
-    @Override
-    public void setUp() {
+    public AbstractSmokeTest(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
+    public AbstractSmokeTest() {
+    }
+
+    @Before
+    public void setUp() throws Exception{
+        if (isInitialized)
+            return;
         TestConfiguration.configure();
         domain = ZfinPropertiesEnum.DOMAIN_NAME.toString();
         mutant = ZfinPropertiesEnum.MUTANT_NAME.toString();
@@ -60,11 +80,9 @@ public class AbstractSmokeTest extends WebTestCase {
         if (ZfinPropertiesEnum.USE_APACHE_FOR_SMOKE_TESTS.value().equals("false"))
             nonSecureUrlDomain += ":" + ZfinPropertiesEnum.NON_SECUREPORT;
         secureUrlDomain = ZfinPropertiesEnum.SECURE_HTTP + domain;
-        if (!initDatabase) {
             initDatabase();
-        }
-        initDatabase = true;
-        setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
+        //setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
+        isInitialized = true;
     }
 
     private static final Logger LOG = Logger.getLogger(AbstractSmokeTest.class);
@@ -115,14 +133,14 @@ public class AbstractSmokeTest extends WebTestCase {
         return true;
     }
 
-    public WebClient[] getBrowserClients() {
+    public static WebClient[] getBrowserClients() {
         for (WebClient client : publicWebClients) {
             prepare(client);
         }
         return publicWebClients;
     }
 
-    private void prepare(WebClient webClient) {
+    private static void prepare(WebClient webClient) {
         final IncorrectnessListener il = new IncorrectnessListenerImpl();
         webClient.setIncorrectnessListener(il);
         final SilentCssErrorHandler eh = new SilentCssErrorHandler();
@@ -130,14 +148,15 @@ public class AbstractSmokeTest extends WebTestCase {
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setUseInsecureSSL(true);
-        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setCssEnabled(true);
         webClient.getOptions().setPopupBlockerEnabled(true);
         webClient.getOptions().setRedirectEnabled(true);
-        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         CookieManager cm = new CookieManager();
         webClient.setCookieManager(cm);
-        webClient.setJavaScriptTimeout(15000);
-        webClient.getOptions().setTimeout(15000);
+        webClient.setJavaScriptTimeout(30000);
+        webClient.getOptions().setTimeout(30000);
     }
 
 }

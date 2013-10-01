@@ -61,6 +61,7 @@
     <property name="controllerTestFile" value="controller-results"/>
     <property name="blastTestFile" value="blast-results"/>
     <property name="smokeTestFile" value="smoke-results"/>
+    <property name="smokeTestFileReadWrite" value="smoke-read-write-results"/>
     <property name="serviceTestFile" value="service-results"/>
     <property name="validateTestFile" value="validate-tests"/>
 

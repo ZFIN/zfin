@@ -2,12 +2,19 @@ package org.zfin.gwt.lookup;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.zfin.AbstractSecureSmokeTest;
 
-/**
- */
+@RunWith(Parameterized.class)
 public class LookupSmokeTest extends AbstractSecureSmokeTest {
 
+    public LookupSmokeTest(WebClient webClient) throws Exception {
+        super(webClient);
+    }
+
+    @Test
     public void testAnatomyLookupForm() {
         for (WebClient webClient : publicWebClients) {
             try {
@@ -29,7 +36,7 @@ public class LookupSmokeTest extends AbstractSecureSmokeTest {
         }
     }
 
-
+    @Test
     public void testAnatomyLookupTyping() {
         for (WebClient webClient : publicWebClients) {
             try {

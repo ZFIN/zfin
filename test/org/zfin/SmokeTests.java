@@ -10,14 +10,9 @@ import org.zfin.expression.FigureViewSmokeTest;
 import org.zfin.expression.presentation.FigureSummarySmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.fish.smoketest.FishSmokeTest;
-import org.zfin.mutant.smoketest.ConstructSmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
-import org.zfin.gwt.MorpholinoAddSmokeTest;
-import org.zfin.gwt.SimpleSmokeTest;
-import org.zfin.gwt.curation.PileConstructionSmokeTest;
-import org.zfin.gwt.lookup.LookupSmokeTest;
-import org.zfin.gwt.marker.GeneEditSmokeTest;
 import org.zfin.httpunittest.MarkerViewSmokeTest;
+import org.zfin.mutant.smoketest.ConstructSmokeTest;
 import org.zfin.ontology.presentation.OntologySmokeTest;
 import org.zfin.publication.presentation.PublicationCloseSmokeTest;
 import org.zfin.sequence.blast.smoketest.BlastSmokeTest;
@@ -34,7 +29,6 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
 
         AnatomySmokeTest.class,
         AntibodySmokeTest.class,
-//        AntibodyEditSmokeTest.class // speed issues on embryonix make this unstable
         BlastSmokeTest.class,
         DownloadSmokeTest.class,
         ExpressionSmokeTest.class,
@@ -42,18 +36,13 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         FishSmokeTest.class,
         FigureViewSmokeTest.class,
         ConstructSmokeTest.class,
-//        GeneEditSmokeTest.class,
         GenotypeDetailSmokeTest.class,
-        LookupSmokeTest.class,
         MarkerSoapSmokeTest.class,
         MarkerSoapClientSmokeTest.class,
         MarkerViewSmokeTest.class,
         MarkerRestSmokeTest.class,
-        MorpholinoAddSmokeTest.class,
         OntologySmokeTest.class,
-        PileConstructionSmokeTest.class,
         PublicationCloseSmokeTest.class,
-        SimpleSmokeTest.class,
         SiteSearchSmokeTest.class
 
 })

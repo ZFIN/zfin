@@ -1,76 +1,63 @@
 package org.zfin.feature.presentation;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.*;
-import org.zfin.AbstractSecureSmokeTest;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.zfin.AbstractSmokeTest;
 
+import java.io.IOException;
 import java.util.List;
 
-/**
- */
-public class GenotypeDetailSmokeTest extends AbstractSecureSmokeTest {
+@RunWith(Parameterized.class)
+public class GenotypeDetailSmokeTest extends AbstractSmokeTest {
 
-    private String pageUrl = "/ZDB-GENO-050916-1";
 
-    public void testGenotypeDetailPage() {
-        for (WebClient browser : curationWebClients) {
-            browser.setJavaScriptEnabled(true);
-            try {
-                browser.waitForBackgroundJavaScript(2000);
-                HtmlPage page = browser.getPage("http://" + domain + pageUrl);
-                browser.waitForBackgroundJavaScriptStartingBefore(1000);
-                assertEquals("Genotype: hand2^s40", page.getTitleText());
-
-                //get a feature link by zdb_id put in the dom id field...
-                HtmlAnchor featureLink = (HtmlAnchor) page.getByXPath("//a[@id='ZDB-ALT-050916-2']").get(0);
-                assertNotNull(featureLink);
-
-            } catch (Exception e) {
-                fail(e.toString());
-            }
-        }
+    public GenotypeDetailSmokeTest(WebClient webClient) {
+        super();
+        this.webClient = webClient;
     }
 
-    public void testGenotypeDetailPageWhenLoggedInAsRoot() {
-        for (WebClient browser : curationWebClients) {
-            browser.setJavaScriptEnabled(true);
-            try {
-                login(browser);
-                browser.waitForBackgroundJavaScript(2000);
-                HtmlPage page = browser.getPage("http://" + domain + pageUrl);
-                browser.waitForBackgroundJavaScriptStartingBefore(1000);
-                assertEquals("Genotype: hand2^s40", page.getTitleText());
+    private String pageUrl = "/action/genotype/genotype-detail?zdbID=ZDB-GENO-050916-1";
 
-                //get a feature link by zdb_id put in the dom id field...
-                HtmlAnchor featureLink = (HtmlAnchor) page.getByXPath("//a[@id='ZDB-ALT-050916-2']").get(0);
-                assertNotNull(featureLink);
+    @Test
+    public void testGenotypeDetailPage() throws IOException {
+        webClient.waitForBackgroundJavaScript(2000);
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + pageUrl);
+        webClient.waitForBackgroundJavaScriptStartingBefore(1000);
+        assertEquals("Genotype: hand2^s40", page.getTitleText());
 
-            } catch (Exception e) {
-                fail(e.toString());
-            }
-        }
+        //get a feature link by zdb_id put in the dom id field...
+        HtmlAnchor featureLink = (HtmlAnchor) page.getByXPath("//a[@id='ZDB-ALT-050916-2']").get(0);
+        assertNotNull(featureLink);
     }
 
+    @Test
+    public void testGenotypeDetailPageWhenLoggedInAsRoot() throws IOException {
+        webClient.waitForBackgroundJavaScript(2000);
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + pageUrl);
+        webClient.waitForBackgroundJavaScriptStartingBefore(1000);
+        assertEquals("Genotype: hand2^s40", page.getTitleText());
 
-    public void testAllWildtypePAge() {
-        for (WebClient browser : curationWebClients) {
-            browser.setJavaScriptEnabled(true);
-            String pageUrl = "/action/feature/wildtype-list";
-            try {
-                browser.waitForBackgroundJavaScript(2000);
-                HtmlPage page = browser.getPage("http://" + domain + pageUrl);
-                browser.waitForBackgroundJavaScriptStartingBefore(1000);
-                assertEquals("ZFIN: Wild-Type Lines: Summary Listing", page.getTitleText());
+        //get a feature link by zdb_id put in the dom id field...
+        HtmlAnchor featureLink = (HtmlAnchor) page.getByXPath("//a[@id='ZDB-ALT-050916-2']").get(0);
+        assertNotNull(featureLink);
+    }
 
-                // check that AB genotype is listed.
-                List<Object> links = (List<Object>) page.getByXPath("//a[@id='ZDB-GENO-960809-7']");
-                assertNotNull(links);
-                assertEquals(1, links.size());
-            } catch (Exception e) {
-                fail(e.toString());
-            }
-        }
+    @Test
+    public void testAllWildtypePAge() throws IOException {
+        String pageUrl = "/action/feature/wildtype-list";
+        webClient.waitForBackgroundJavaScript(2000);
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + pageUrl);
+        webClient.waitForBackgroundJavaScriptStartingBefore(1000);
+        assertEquals("ZFIN: Wild-Type Lines: Summary Listing", page.getTitleText());
+
+        // check that AB genotype is listed.
+        List<Object> links = (List<Object>) page.getByXPath("//a[@id='ZDB-GENO-960809-7']");
+        assertNotNull(links);
+        assertEquals(1, links.size());
     }
 
 }
