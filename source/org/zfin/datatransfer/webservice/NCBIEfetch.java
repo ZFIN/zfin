@@ -140,7 +140,8 @@ public class NCBIEfetch {
             request.setRetMax("0");
             EUtilsServiceStub.ESearchResult result = service.run_eSearch(request);
 
-            if (result == null) return false;
+            if (result == null || result.getCount() == null)
+                return false;
             if (Integer.parseInt(result.getCount()) > 0) {
                 return true;
             } else {
@@ -295,25 +296,25 @@ public class NCBIEfetch {
             long endTime = System.currentTimeMillis();
             totalTime += (endTime - startTime);
 
-            logMessage(i,batchSize,totalTime,totalGeoAccessions);
+            logMessage(i, batchSize, totalTime, totalGeoAccessions);
         }
-        logMessage(totalGeoAccessions,batchSize,totalTime,totalGeoAccessions);
+        logMessage(totalGeoAccessions, batchSize, totalTime, totalGeoAccessions);
 
         return bean;
     }
 
-    private static void logMessage(int i,int batchSize,long totalTime,int totalGeoAccessions) {
-        int processed = i+batchSize;
-        float avgTime = (float) (totalTime / 1000) / (float) processed ;
-        float estTotal = totalGeoAccessions * avgTime ;
-        float estRemaining = estTotal  - (totalTime / 1000) ;
+    private static void logMessage(int i, int batchSize, long totalTime, int totalGeoAccessions) {
+        int processed = i + batchSize;
+        float avgTime = (float) (totalTime / 1000) / (float) processed;
+        float estTotal = totalGeoAccessions * avgTime;
+        float estRemaining = estTotal - (totalTime / 1000);
         // processed N / M (X s) est Remaining (M s) estTotalTime (Q s) totalTimeSpent (P s) avg Time (R s)
-        String message = "GEO retrieved\n " ;
-        message += " Processed : "+ (processed) + "/"+ (totalGeoAccessions) ;
-        message += " est Remaining ("+estRemaining+" s)";
-        message += " est Total time ("+estTotal+" s)";
-        message += " time spent ("+(totalTime / 1000)+" s)";
-        message += " avgTime per entry ("+avgTime+" s)";
+        String message = "GEO retrieved\n ";
+        message += " Processed : " + (processed) + "/" + (totalGeoAccessions);
+        message += " est Remaining (" + estRemaining + " s)";
+        message += " est Total time (" + estTotal + " s)";
+        message += " time spent (" + (totalTime / 1000) + " s)";
+        message += " avgTime per entry (" + avgTime + " s)";
         logger.info(message);
     }
 
@@ -329,10 +330,10 @@ public class NCBIEfetch {
             try {
                 return service.run_eSummary(summaryRequest);
             } catch (Exception e) {
-                logger.warn("problem connecting to service attempt "+ (attempt+1) +"/"+numAttempts,e);
+                logger.warn("problem connecting to service attempt " + (attempt + 1) + "/" + numAttempts, e);
             }
         }
-        throw new ServiceConnectionException("Failed to retrieve batch after "+ numAttempts+ " attempts at batch "+i+"");
+        throw new ServiceConnectionException("Failed to retrieve batch after " + numAttempts + " attempts at batch " + i + "");
     }
 
     /**
@@ -365,10 +366,11 @@ public class NCBIEfetch {
         }
     }
 
-    public enum Type{
+    public enum Type {
         POLYPEPTIDE("protein"), NUCLEOTIDE("nucleotide");
 
         private String val;
+
         Type(String val) {
             this.val = val;
         }
