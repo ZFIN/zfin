@@ -353,16 +353,13 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <batchtest
+            <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}"
                   todir="${test.reports.dir}"
                   haltonerror="false" haltonfailure="true"
                   failureproperty="smoke.failure" >
-                <fileset dir="test">
-                    <include name="**/SmokeTests.java" />
-                </fileset>
                 <formatter type="brief"/>
                 <formatter type="xml"/>
-            </batchtest>
+            </test>
         </junit>
         <antcall target="handleSmokeFailure">
             <param name="test.output.file" value="${smokeTestFile}"/>
@@ -383,16 +380,13 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-            <batchtest
+            <test name="org.zfin.SmokeTestsReadWrite" outfile="${smokeTestFileReadWrite}"
                   todir="${test.reports.dir}"
                   haltonerror="false" haltonfailure="true"
                   failureproperty="smoke.failure" >
-                <fileset dir="test">
-                    <include name="**/SmokeTestsReadWrite.java" />
-                </fileset>
                 <formatter type="brief"/>
                 <formatter type="xml"/>
-            </batchtest>
+            </test>
         </junit>
         <antcall target="handleSmokeFailure">
             <param name="test.output.file" value="${smokeTestReadWriteFile}"/>
