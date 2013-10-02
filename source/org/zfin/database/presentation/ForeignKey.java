@@ -236,10 +236,10 @@ public enum ForeignKey {
     WH_FEATURE_RESULT_CONSTRUCT(Table.MARKER, Table.WH_GENE_FEATURE_RESULT_VIEW, "gfrv_construct_zdb_id"),
     //WH_FAS_PFIGG(Table.WH_FISH, Table.WH_PHENOTYPE_FIGURE_GROUP, "pfigg_group_name", "fas_pheno_figure_group"),
     WH_FTFS_FAS(Table.WH_FISH, Table.WH_FIGURE_TERM_FISH_SEARCH, "ftfs_fas_id"),
-    //WH_FAS_MORPHGG(Table.WH_FISH, Table.WH_MORPHOLINO_GROUP, "morphg_group_name", "fas_morpholino_group"),
+    //WH_FAS_STRGG(Table.WH_FISH, Table.WH_STR_GROUP, "strg_group_name", "fas_str_group"),
     //WH_FTFS_TERMGROUP(Table.WH_TERM_GROUP, Table.WH_FIGURE_TERM_FISH_SEARCH, "ftfs_term_group"),
     WH_FAS_PFIGM(Table.WH_PHENOTYPE_FIGURE_GROUP, Table.WH_PHENOTYPE_FIGURE_GROUP_MEMBER, "pfiggm_group_id"),
-    WH_FAS_MORPHGM(Table.WH_MORPHOLINO_GROUP, Table.WH_MORPHOLINO_GROUP_MEMBER, "morphgm_group_id"),
+    WH_FAS_STRGM(Table.WH_STR_GROUP, Table.WH_STR_GROUP_MEMBER, "morphgm_group_id"),
     WH_FTFS_FIGURE(Table.FIGURE, Table.WH_FIGURE_TERM_FISH_SEARCH, "ftfs_fig_zdb_id");
 
     private Table entityTable;

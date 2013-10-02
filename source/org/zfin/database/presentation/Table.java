@@ -163,8 +163,8 @@ public enum Table {
     WH_FISH("FISH", "fish_annotation_search", "fas_pk_id", null, "fas_affector_type_group"),
     WH_FIGURE_TERM_FISH_SEARCH("FTFS", "figure_term_fish_search", "ftfs_pk_id"),
     WH_GENE_FEATURE_RESULT_VIEW("GENE_FEATURE_RESULT_VIEW", "gene_feature_result_view", "gfrv_pk_id", null, "gfrv_affector_type_display", "gfrv_affector_id,gfrv_construct_zdb_id"),
-    WH_MORPHOLINO_GROUP("WHMORPHGG", "morpholino_group", "morphg_group_pk_id"),
-    WH_MORPHOLINO_GROUP_MEMBER("WHMORPHGM", "morpholino_group_member", "morphgm_pk_id"),
+    WH_STR_GROUP("WHSTRGG", "str_group", "strg_group_pk_id"),
+    WH_STR_GROUP_MEMBER("WHSTRGM", "str_group_member", "strgm_pk_id"),
     WH_PHENOTYPE_FIGURE_GROUP("PFIGG", "phenotype_figure_group", "pfigg_group_pk_id"),
     WH_PHENOTYPE_FIGURE_GROUP_MEMBER("PFIGM", "phenotype_figure_group_member", "pfiggm_pk_id"),
     WH_TERM_GROUP("TG", "term_group", "tg_group_name");

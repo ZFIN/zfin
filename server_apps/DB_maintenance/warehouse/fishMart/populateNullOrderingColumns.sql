@@ -26,7 +26,7 @@ update fish_annotation_search_temp set fas_fish_significance = '999999' where fa
 delete from fish_annotation_search_temp
  where fas_feature_group is null
  and fas_gene_group is null
-and fas_morpholino_group is null
+and fas_str_group is null
     and fas_construct_group is null
     ;
 

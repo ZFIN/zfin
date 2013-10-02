@@ -10,13 +10,13 @@ delete from fish_annotation_search_temp
 
 delete from fish_annotation_search_temp
  where fas_gene_group is null
- and fas_morpholino_group is null
+ and fas_str_group is null
  and fas_feature_group is null
  and fas_construct_group is null;
 
 delete from functional_annotation
  where fa_gene_group is null
- and fa_morpholino_group is null
+ and fa_str_group is null
  and fa_feature_group is null
  and fa_construct_group is null;
 
@@ -24,7 +24,7 @@ update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("t",current year to second)
  where zflag_name = "regen_fishmart_bts_indexes";
 
-update statistics high for table morpholino_group_member;
+update statistics high for table str_group_member;
 update statistics high for table affected_gene_group_member;
 update statistics high for table feature_group_member;
 update statistics high for table construct_group_member;
@@ -212,7 +212,7 @@ select distinct fa_pk_id,
  and fas_line_handle = fa_geno_handle;
 
 
-----MORPHS------
+----STRS------
 insert into gene_feature_result_view_temp (gfrv_fa_id,
 gfrv_fas_id,
        gfrv_line_handle,
@@ -226,27 +226,30 @@ gfrv_fas_id,
 select distinct fa_pk_id,
        fas_pk_id,
        fa_geno_handle,
-       morphgm_member_id,
+       strgm_member_id,
        c.mrkr_abbrev,
        c.mrkr_abbrev_order,
-       'Morpholino',
+       get_obj_type(strgm_member_id),
        a.mrkr_zdb_id,
        a.mrkr_abbrev,
        a.mrkr_abbrev_order    
   from functional_annotation,
        fish_annotation_search_temp,
-      morpholino_Group_member,
-      morpholino_group,
+      str_Group_member,
+      str_group,
       marker c,
       marker_relationship, marker a
-  where fa_genox_zdb_id = morphg_genox_zdb_id
-  and morphgm_group_id = morphg_group_pk_id
- and fa_morpholino_group is not null
- and morphgm_member_id = c.mrkr_zdb_id
+  where fa_genox_zdb_id = strg_genox_zdb_id
+  and strgm_group_id = strg_group_pk_id
+ and fa_str_group is not null
+ and strgm_member_id = c.mrkr_zdb_id
  and c.mrkr_zdb_id = mrel_mrkr_1_zdb_id
  and a.mrkr_Zdb_id = mrel_mrkr_2_zdb_id
 and fas_line_handle = fa_geno_handle;
 
+update gene_feature_result_view_temp
+  set gfrv_affector_type_display = "Morpholino"
+  where gfrv_affector_type_display = "MRPHLNO";
 
 insert into gene_feature_result_view_temp (gfrv_fa_id,
 gfrv_fas_id,

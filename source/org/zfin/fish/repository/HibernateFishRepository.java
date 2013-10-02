@@ -111,7 +111,7 @@ public class HibernateFishRepository implements FishRepository {
         List<String> fromClauseList = new ArrayList<String>();
 
         String baseSelectColumns = " fas_pk_id, fas_geno_name, \n" +
-                " fas_morpholino_group, fas_feature_group, fas_pheno_figure_count, fas_pheno_figure_group, \n" +
+                " fas_str_group, fas_feature_group, fas_pheno_figure_count, fas_pheno_figure_group, \n" +
                 " fas_all, fas_geno_long_name, fas_genox_group, fas_genotype_group, fas_xpat_figure_count, fas_xfigg_has_images ";
 
         String sortColumns = " fas_fish_significance  as complexity, \n";
@@ -140,11 +140,11 @@ public class HibernateFishRepository implements FishRepository {
 
 
         if (criteria.getExcludeMorphantsCriteria().isTrue()) {
-            whereClauseList.add(" fas_morpholino_group is null ");
+            whereClauseList.add(" fas_str_group is null ");
         }
 
         if (criteria.getRequireMorphantsCriteria().isTrue()) {
-            whereClauseList.add(" fas_morpholino_group is not null ");
+            whereClauseList.add(" fas_str_group is not null ");
         }
 
         if (criteria.getExcludeTransgenicsCriteria().isTrue()) {
@@ -248,7 +248,7 @@ public class HibernateFishRepository implements FishRepository {
         sb.append("</td></tr>");
 
 
-        sb.append("<tr><td><strong>Feature+Mo Count:</strong></td><td>");
+        sb.append("<tr><td><strong>Feature+STR Count:</strong></td><td>");
         sb.append(featureCount);
         sb.append("</td></tr>");
 
@@ -433,6 +433,7 @@ public class HibernateFishRepository implements FishRepository {
                 if (o1.getGene() == null && o2.getGene() != null)
                     return 1;
                 return o1.getGene().getNameOrder().compareTo(o2.getGene().getNameOrder());
+                //debug this!!
             }
         });
         for (FeatureGene geneFeature : genotypeFeatures) {
@@ -571,8 +572,8 @@ public class HibernateFishRepository implements FishRepository {
         if (fishAnnotation.getMorpholinoGroupName() == null)
             return null;
         Session session = HibernateUtil.currentSession();
-        String sqlFeatures = "select distinct morphgm_member_name, morphgm_member_id from morpholino_group_member, morpholino_group " +
-                "where morphgm_group_id = morphg_group_pk_id and morphg_group_name = :morphoIds ";
+        String sqlFeatures = "select distinct strgm_member_name, strgm_member_id from str_group_member, str_group " +
+                "where strgm_group_id = strg_group_pk_id and strg_group_name = :morphoIds ";
         Query sqlQuery = session.createSQLQuery(sqlFeatures);
         sqlQuery.setParameter("morphoIds", fishAnnotation.getMorpholinoGroupName());
         List<Object[]> objs = sqlQuery.list();

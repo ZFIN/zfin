@@ -14,8 +14,8 @@ echo "ready to start environmentGroup.sql" ;
 /private/apps/Informix/informix/bin/dbaccess -a $1 environmentGroup.sql
 echo "ready to start featureGroup.sql" ;
 /private/apps/Informix/informix/bin/dbaccess -a $1 featureGroup.sql
-echo "ready to start morpholinoGroup.sql" ;
-/private/apps/Informix/informix/bin/dbaccess -a $1 morpholinoGroup.sql
+echo "ready to start strGroup.sql" ;
+/private/apps/Informix/informix/bin/dbaccess -a $1 strGroup.sql
 echo "ready to start constructGroup.sql" ;
 /private/apps/Informix/informix/bin/dbaccess -a $1 constructGroup.sql
 echo "ready to start populateFunctionalAnnotation.sql" ;

@@ -1,8 +1,8 @@
 
 drop table functional_annotation;
 --drop table fish_annotation_search_temp;
-drop table morpholino_group;
-drop table morpholino_group_member;
+drop table str_group;
+drop table str_group_member;
 
 drop table feature_group;
 drop table feature_group_member;

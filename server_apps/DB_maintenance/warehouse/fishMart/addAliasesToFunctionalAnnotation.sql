@@ -279,11 +279,11 @@ and fa_gene_alias is null
 drop table tmp_tg;
 drop table tmp_alias;
 
-select distinct dalias_alias, morphg_group_name as group_name
-from data_alias, morpholino_group, 
-	morpholino_group_member
-where dalias_data_zdb_id = morphgm_member_id
-and morphg_group_pk_id = morphgm_group_id
+select distinct dalias_alias, strg_group_name as group_name
+from data_alias, str_group, 
+	str_group_member
+where dalias_data_zdb_id = strgm_member_id
+and strg_group_pk_id = strgm_group_id
 into temp tmp_alias;
 
 
@@ -299,11 +299,11 @@ update statistics high for table tmp_alias;
 
 
 select replace(replace(replace(substr(multiset (select distinct item dalias_alias from tmp_alias
-							  where morphg_group_name = group_name
+							  where strg_group_name = group_name
 							  order by dalias_alias
 							 )::lvarchar(380),11),""),"'}",""),"'","") 
-							 as tg_name,morphg_group_name as ttg_group_name
-  from morpholino_group
+							 as tg_name,strg_group_name as ttg_group_name
+  from str_group
 into temp tmp_tg;
 
 delete from tmp_tg where tg_name is null;
@@ -311,10 +311,10 @@ delete from tmp_tg where tg_name is null;
 --select first 6 * from tmp_tg;
 
 update functional_annotation
-  set fa_morph_alias = (select distinct tg_name 
+  set fa_str_alias = (select distinct tg_name 
       		       	       from tmp_tg 
-			       where ttg_group_name = fa_morpholino_group)
-  where fa_morpholino_group is not null;
+			       where ttg_group_name = fa_str_group)
+  where fa_str_group is not null;
 
 drop table tmp_tg;
 drop table tmp_alias;
@@ -378,8 +378,8 @@ update functional_Annotation
  ;
 
 update functional_Annotation
-  set fa_all = fa_all||","||fa_morpholino_group
- where fa_morpholino_group is not null;
+  set fa_all = fa_all||","||fa_str_group
+ where fa_str_group is not null;
 
 
 
@@ -400,8 +400,8 @@ update functional_annotation
 
 
 update functional_annotation
-  set fa_all = fa_all||","||fa_morph_alias
-  where fa_morph_alias is not null;
+  set fa_all = fa_all||","||fa_str_alias
+  where fa_str_alias is not null;
 
 select count(*) from functional_annotation 
 where fa_all ='sierra';

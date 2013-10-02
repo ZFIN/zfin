@@ -31,7 +31,7 @@ select distinct genox_zdb_id
 -- !!! INSERT INTO FUNCTIONAL ANNOTATION !!!---
 
 
---no morpholinos, but yes phenotypes
+--no strs, but yes phenotypes
 insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name, fa_genox_zdb_id)
   select distinct geno_zdb_id, geno_handle,geno_display_name, genox_zdb_id
    from genotype, genotype_Experiment
@@ -41,7 +41,7 @@ insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name,
        		       	       where phenos_phenox_pk_id = phenox_pk_id
 			       and phenos_tag != 'normal');
 
---no morpholinos, but yes expression
+--no strs, but yes expression
 insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name, fa_genox_zdb_id)
   select distinct geno_zdb_id, geno_handle,geno_display_name, genox_Zdb_id
    from genotype, genotype_experiment
@@ -70,16 +70,16 @@ insert into functional_annotation (fa_geno_zdb_id, fa_geno_handle, fa_geno_name,
        	   	  	  where xpatex_genox_Zdb_id = genox_Zdb_id)
    and genox_geno_zdb_id = geno_Zdb_id;
 
---morphs with pheno
+--strs with pheno
 --set explain on;
 
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_feature_group, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_display_name||"+"||morphg_group_name, fg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group, feature_group
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_feature_group, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_display_name||"+"||strg_group_name, fg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group, feature_group
      where geno_Zdb_id = genox_geno_zdb_id
      and genox_zdb_id = fg_genox_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
 and exists (select 'x' from phenotype_experiment, phenotype_statement
     	   	   where phenox_genox_zdb_id = genox_zdb_id
 		   and phenos_phenox_pk_id = phenox_pk_id
@@ -87,13 +87,13 @@ and exists (select 'x' from phenotype_experiment, phenotype_statement
 		   )
 and geno_is_wildtype = 'f';
 
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_feature_group, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_handle||"+"||morphg_group_name, fg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group, feature_group
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_feature_group, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_handle||"+"||strg_group_name, fg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group, feature_group
      where geno_Zdb_id = genox_geno_zdb_id
      and genox_zdb_id = fg_genox_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
 and exists (select 'x' from phenotype_experiment, phenotype_statement
     	   	   where phenox_genox_zdb_id = genox_zdb_id
 		   and phenos_phenox_pk_id = phenox_pk_id
@@ -103,42 +103,42 @@ and geno_is_wildtype = 't';
 
 
 --set explain off;
---morphs with xpat
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_feature_group, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_handle||"+"||morphg_group_name, fg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group, feature_group
+--strs with xpat
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_feature_group, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_handle||"+"||strg_group_name, fg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group, feature_group
      where geno_Zdb_id = genox_geno_zdb_id
      and genox_zdb_id = fg_genox_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
 and not exists (select 'x' from phenotype_Experiment
     	   	   where phenox_genox_zdb_id = genox_zdb_id
 		   )
   and exists (select 'x' from expression_experiment where xpatex_genox_zdb_id = genox_zdb_id)
 and geno_is_wildtype = 't';
 
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_feature_group, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_display_name||"+"||morphg_group_name, fg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group, feature_group
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_feature_group, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_display_name||"+"||strg_group_name, fg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group, feature_group
      where geno_Zdb_id = genox_geno_zdb_id
      and genox_zdb_id = fg_genox_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
 and not exists (select 'x' from phenotype_Experiment
     	   	   where phenox_genox_zdb_id = genox_zdb_id
 		   )
   and exists (select 'x' from expression_experiment where xpatex_genox_zdb_id = genox_zdb_id)
 and geno_is_wildtype = 'f';
 
-!echo "insert into functional annotation some morphs with no features";
+!echo "insert into functional annotation some strs with no features";
 
---morphs with no features, yes phenotype
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_handle||"+"||morphg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group
+--strs with no features, yes phenotype
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_handle||"+"||strg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group
      where geno_Zdb_id = genox_geno_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
     and not exists (Select 'x' from feature_group where fg_geno_zdb_id = geno_zdb_id) 
     and exists (select 'x' from phenotype_Experiment, phenotype_statement
     	       	        where phenox_genox_zdb_id = genox_zdb_id
@@ -146,12 +146,12 @@ insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_g
 			and phenos_tag != 'normal')
 and geno_is_wildtype = 't';
 
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_display_name||"+"||morphg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_display_name||"+"||strg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group
      where geno_Zdb_id = genox_geno_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
     and not exists (Select 'x' from feature_group where fg_geno_zdb_id = geno_zdb_id) 
     and exists (select 'x' from phenotype_Experiment, phenotype_statement
     	       	        where phenox_genox_zdb_id = genox_zdb_id
@@ -159,13 +159,13 @@ insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_g
 			and phenos_tag != 'normal')
 and geno_is_wildtype = 'f';
 
---morphs with no features, yes expression, no phenotype.
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_handle||"+"||morphg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group
+--strs with no features, yes expression, no phenotype.
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_handle||"+"||strg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group
      where geno_Zdb_id = genox_geno_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
     and not exists (Select 'x' from feature_group where fg_geno_zdb_id = geno_zdb_id) 
     and not exists (select 'x' from phenotype_Experiment
     	       	        where phenox_genox_zdb_id = genox_zdb_id
@@ -174,12 +174,12 @@ insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_g
     	       	       where xpatex_genox_zdb_id = genox_zdb_id)
  and geno_is_wildtype = 't';
 
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_display_name||"+"||morphg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_display_name||"+"||strg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group
      where geno_Zdb_id = genox_geno_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
     and not exists (Select 'x' from feature_group where fg_geno_zdb_id = geno_zdb_id) 
     and not exists (select 'x' from phenotype_Experiment
     	       	        where phenox_genox_zdb_id = genox_zdb_id
@@ -188,13 +188,13 @@ insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_g
     	       	       where xpatex_genox_zdb_id = genox_zdb_id)
 and geno_is_wildtype = 'f';
 
---morphs with no features, yes expression, no phenotype.
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_handle||"+"||morphg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group
+--strs with no features, yes expression, no phenotype.
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_handle||"+"||strg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group
      where geno_Zdb_id = genox_geno_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
     and exists (Select 'x' from feature_group where fg_geno_zdb_id = geno_zdb_id) 
     and not exists (select 'x' from phenotype_Experiment
     	       	        where phenox_genox_zdb_id = genox_zdb_id
@@ -203,12 +203,12 @@ insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_g
     	       	       where xpatex_genox_zdb_id = genox_zdb_id)
 and geno_is_wildtype = 't';
 
-insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_morpholino_group, fa_genox_zdb_id)
-  select distinct geno_handle||"+"||morphg_group_name,geno_display_name||"+"||morphg_group_name, 
-  	 morphg_group_name, genox_zdb_id
-   from genotype, genotype_Experiment, morpholino_group
+insert into functional_annotation (fa_geno_handle, fa_geno_name, fa_str_group, fa_genox_zdb_id)
+  select distinct geno_handle||"+"||strg_group_name,geno_display_name||"+"||strg_group_name, 
+  	 strg_group_name, genox_zdb_id
+   from genotype, genotype_Experiment, str_group
      where geno_Zdb_id = genox_geno_zdb_id
-     and morphg_genox_zdb_id = genox_zdb_id
+     and strg_genox_zdb_id = genox_zdb_id
     and exists (Select 'x' from feature_group where fg_geno_zdb_id = geno_zdb_id) 
     and not exists (select 'x' from phenotype_Experiment
     	       	        where phenox_genox_zdb_id = genox_zdb_id
@@ -249,6 +249,6 @@ insert into feature_group_member (fgm_group_id, fgm_member_name, fgm_member_id, 
  and feature_zdb_id = genofeat_feature_zdb_id
  and ftrtype_name = feature_type
  and fg_geno_zdb_id = genofeat_geno_zdb_id
- and fa_morpholino_group is not null;
+ and fa_str_group is not null;
 
 

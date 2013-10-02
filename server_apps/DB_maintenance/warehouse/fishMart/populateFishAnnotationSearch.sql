@@ -22,7 +22,7 @@ insert into fish_annotation_search_temp (fas_geno_name,
        	    			   	fas_line_handle,
        	    			   	fas_feature_group, 
 					fas_gene_group, 
-					fas_morpholino_group, 
+					fas_str_group, 
 					fas_construct_group, 
 					fas_fish_parts_count, 
 					fas_affector_type_group,
@@ -33,7 +33,7 @@ select distinct fa_geno_name,
        		fa_geno_handle,
        		fa_feature_group, 
 		fa_gene_group, 
-		fa_morpholino_group, 
+		fa_str_group, 
 		fa_construct_group, 
 		fa_fish_parts_count, 
 		fa_affector_type_group,
@@ -59,8 +59,8 @@ update fish_annotation_search_temp
 
 
 update fish_annotation_search_temp
-  set fas_all = fas_all||","||fas_morpholino_group
- where fas_morpholino_group is not null;
+  set fas_all = fas_all||","||fas_str_group
+ where fas_str_group is not null;
 
 
 
@@ -99,8 +99,8 @@ where fas_line_handle = 'b380[2,U,U]';
 
 
 update fish_annotation_search_temp
-  set fas_all = fas_all||","||(select distinct fa_morph_alias from functional_annotation where fa_geno_name = fas_geno_name and fa_morph_alias is not null)
- where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_line_handle and fa_morph_alias is not null);
+  set fas_all = fas_all||","||(select distinct fa_str_alias from functional_annotation where fa_geno_name = fas_geno_name and fa_str_alias is not null)
+ where exists (Select 'x' from functional_annotation where fa_geno_handle = fas_line_handle and fa_str_alias is not null);
 
 select fas_All from fish_Annotation_Search_temp
 where fas_line_handle = 'b380[2,U,U]';
@@ -324,14 +324,14 @@ update fish_annotation_search_temp
  where fas_feature_group is not null;
 
 update fish_annotation_search_temp
-  set fas_affector_group = fas_morpholino_group
- where fas_morpholino_group is not null
+  set fas_affector_group = fas_str_group
+ where fas_str_group is not null
  and fas_feature_group is null
  and fas_affector_group is null;
 
 update fish_annotation_search_temp
-  set fas_affector_group = fas_affector_Group||","||fas_morpholino_group
- where fas_morpholino_group is not null
+  set fas_affector_group = fas_affector_Group||","||fas_str_group
+ where fas_str_group is not null
  and fas_feature_group is not null;
 
 
@@ -340,14 +340,14 @@ update fish_annotation_search_temp
  where fas_feature_order is not null;
 
 update fish_annotation_search_temp
-  set fas_affector_order = fas_morpholino_group
- where fas_morpholino_group is not null
+  set fas_affector_order = fas_str_group
+ where fas_str_group is not null
  and fas_feature_order is null
  and fas_affector_order is null;
 
 update fish_annotation_search_temp
-  set fas_affector_order = fas_affector_order||", zzzzzzzzzzzz, "||fas_morpholino_group
- where fas_morpholino_group is not null
+  set fas_affector_order = fas_affector_order||", zzzzzzzzzzzz, "||fas_str_group
+ where fas_str_group is not null
  and fas_feature_order is not null;
 
 update fish_annotation_search_temp
@@ -356,12 +356,12 @@ update fish_annotation_search_temp
 
 update fish_annotation_search_temp
  set fas_affector_Type_group = fas_affector_Type_group||", sequence targeting reagent"
- where fas_morpholino_group is not null
+ where fas_str_group is not null
 and fas_affector_type_group is not null;
 
 update fish_annotation_search_temp
  set fas_affector_Type_group = "sequence targeting reagent"
- where fas_morpholino_group is not null
+ where fas_str_group is not null
 and fas_feature_group is null;
 
 update fish_annotation_search_temp

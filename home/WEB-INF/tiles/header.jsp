@@ -248,7 +248,7 @@
                title="Search for antibodies by gene, labeled anatomy and other attributes">Antibodies</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
 
-            <a href="/action/fish/search">Mutants / Morphants / Tg</a>
+            <a href="/action/fish/search">Mutants / Knockdowns / Tg</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/action/mutant/construct-search">Constructs</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">

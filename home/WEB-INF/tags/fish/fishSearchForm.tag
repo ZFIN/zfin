@@ -136,11 +136,11 @@
                     <td>
                         <form:radiobutton path="filter1" id="morphantsOnly" value="morphantsOnly"
                                           autocomplete="off"/>
-                        <label for="morphantsOnly">Show only morphants</label> <br/>
+                        <label for="morphantsOnly">Show only knockdowns</label> <br/>
 
                         <form:radiobutton path="filter1" id="noMorphants" value="excludeMorphants"
                                           autocomplete="off"/>
-                        <label for="noMorphants">Exclude morphants</label> <br/>
+                        <label for="noMorphants">Exclude knockdowns</label> <br/>
 
                         <form:radiobutton path="filter1" id="transgenicsOnly" value="tgOnly"
                                           autocomplete="off"/>

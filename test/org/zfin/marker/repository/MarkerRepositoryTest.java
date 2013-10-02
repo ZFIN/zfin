@@ -194,7 +194,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             Marker marker = insertTestMarker();
             Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
             marker.setName("test1 name");
-            marker.setAbbreviation("test1");
+            marker.setAbbreviation("testsierra");
             markerRepository.renameMarker(marker, publication, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
             MarkerHistory mhist = markerRepository.getLastMarkerHistory(marker, MarkerHistory.Event.REASSIGNED);
             assertTrue(mhist.getReason().equals(MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES));

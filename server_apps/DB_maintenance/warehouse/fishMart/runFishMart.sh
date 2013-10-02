@@ -20,7 +20,7 @@ set fishMartScripts=(begin.sql \
 	     geneGroup.sql \
 	     environmentGroup.sql \
 	     featureGroup.sql \
-	     morpholinoGroup.sql \
+	     strGroup.sql \
 	     constructGroup.sql \
 	     commit.sql \
 	     begin.sql \
@@ -98,7 +98,7 @@ set fullFishMartScripts=(begin.sql \
 	     geneGroup.sql \
 	     environmentGroup.sql \
 	     featureGroup.sql \
-	     morpholinoGroup.sql \
+	     strGroup.sql \
 	     constructGroup.sql \
 	     commit.sql \
 	     begin.sql \

@@ -69,7 +69,7 @@ public class Fish extends ZfinEntity {
 
         features = new ArrayList<ZfinEntity>(featureGenes.size());
         for (FeatureGene featureGene : featureGenes)
-            if (!featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO))
+            if (!featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO)||!featureGene.getMutationTypeDisplay().equals(MutationType.CRISPR)||!featureGene.getMutationTypeDisplay().equals(MutationType.TALEN))
                 features.add(featureGene.getFeature());
         return features;
     }
@@ -79,7 +79,7 @@ public class Fish extends ZfinEntity {
     }
 
     public List<ZfinEntity> getMorpholinos() {
-        if (CollectionUtils.isEmpty(featureGenes))
+            if (CollectionUtils.isEmpty(featureGenes))
             return null;
 
         if (morpholinos != null)
@@ -87,7 +87,7 @@ public class Fish extends ZfinEntity {
 
         morpholinos = new ArrayList<ZfinEntity>(featureGenes.size());
         for (FeatureGene featureGene : featureGenes) {
-            if (featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO))
+            if (featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO) || featureGene.getMutationTypeDisplay().equals(MutationType.TALEN) || featureGene.getMutationTypeDisplay().equals(MutationType.CRISPR))
                 morpholinos.add(featureGene.getFeature());
         }
         return morpholinos;

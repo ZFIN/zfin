@@ -104,6 +104,12 @@ public class MarkerPresentation extends EntityPresentation {
             case MRPHLNO:
                 marker = getMarkerFromEntity(entity, Marker.Type.MRPHLNO, Marker.TypeGroup.MRPHLNO);
                 return MarkerPresentation.getMarkerLink(marker);
+            case TALEN:
+                marker = getMarkerFromEntity(entity, Marker.Type.TALEN, Marker.TypeGroup.KNOCKDOWN_REAGENT);
+                return MarkerPresentation.getMarkerLink(marker);
+            case CRISPR:
+                marker = getMarkerFromEntity(entity, Marker.Type.CRISPR, Marker.TypeGroup.KNOCKDOWN_REAGENT);
+                return MarkerPresentation.getMarkerLink(marker);
             case TGCONSTRCT:
                 marker = getMarkerFromEntity(entity, Marker.Type.TGCONSTRCT, Marker.TypeGroup.CONSTRUCT);
                 return MarkerPresentation.getMarkerLink(marker);

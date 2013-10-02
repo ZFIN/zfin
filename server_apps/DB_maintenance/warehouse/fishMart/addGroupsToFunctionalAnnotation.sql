@@ -138,7 +138,7 @@ delete from functional_annotation
 
 --update statistics high for table functional_annotation;
 --update statistics high for table feature_group;
---update statistics high for table morpholino_group;
+--update statistics high for table str_group;
 --update statistics high for table affected_gene_group;
 --update statistics high for table environment_group;
 --update statistics high for table term_group;

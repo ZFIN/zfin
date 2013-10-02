@@ -11,7 +11,7 @@ create table functional_annotation(
        fa_gene_alias lvarchar(1500),
        fa_gene_alt_alias lvarchar(1000),
        fa_geno_alias lvarchar(1000),
-       fa_morph_alias lvarchar(1000),
+       fa_str_alias lvarchar(1000),
        fa_construct_alias lvarchar(3000),
        fa_geno_name varchar(255),
        fa_geno_handle varchar(255) not null constraint fa_geno_handle_not_null,
@@ -19,7 +19,7 @@ create table functional_annotation(
        fa_feature_group lvarchar(2500),
        fa_gene_group lvarchar(1500),
        fa_construct_group lvarchar(500),
-       fa_morpholino_group lvarchar(380),
+       fa_str_group lvarchar(380),
        fa_feature_group_id int8,
        fa_environment_group lvarchar(380),
        fa_pheno_term_group lvarchar(4000),
@@ -29,8 +29,8 @@ create table functional_annotation(
        fa_geno_is_wildtype boolean,
        fa_fish_significance int,
        fa_feature_significance int,
-       fa_morph_significance int,
-       fa_morph_member_count int,
+       fa_str_significance int,
+       fa_str_member_count int,
        fa_gene_count int,
        fa_fish_parts_count int,
        fa_feature_count int,
@@ -55,7 +55,7 @@ create index fa_geno_index on functional_annotation(fa_geno_zdb_id)
 --create index fa_feature_group_index on functional_annotation(fa_feature_group)
 -- using btree in idxdbs2;
 
-create index fa_morpholino_group_index on functional_annotation(fa_morpholino_group)
+create index fa_str_group_index on functional_annotation(fa_str_group)
  using btree in idxdbs1;
 
 
@@ -243,18 +243,18 @@ alter table feature_group
   add constraint primary key (fg_group_pk_id)
   constraint feature_group_primary_key;
 
-create table morpholino_group (morphg_group_pk_id serial8 not null constraint morphg_group_pk_id_not_null, 
-       	     		      			  morphg_group_name lvarchar(200), 
-						  morphg_genox_Zdb_id varchar(50))
+create table str_group (strg_group_pk_id serial8 not null constraint strg_group_pk_id_not_null, 
+       	     		      			  strg_group_name lvarchar(200), 
+						  strg_genox_Zdb_id varchar(50))
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
 
-create unique index morphg_group_id_index on morpholino_group (morphg_group_pk_id)
+create unique index strg_group_id_index on str_group (strg_group_pk_id)
   using btree in idxdbs2;
 
-alter table morpholino_group
-  add constraint primary key (morphg_group_pk_id)
-  constraint morpholino_group_primary_key;
+alter table str_group
+  add constraint primary key (strg_group_pk_id)
+  constraint str_group_primary_key;
 
 create table feature_group_member (fgm_group_id int8 not null constraint fgm_group_id_not_null, 
        	     			  		fgm_member_name varchar(50), 
@@ -285,31 +285,31 @@ alter table feature_group_member
   add constraint primary key (fgm_pk_id) constraint feature_group_member_primary_key;
 
 
-create table morpholino_group_member (morphgm_pk_id serial8 not null constraint morphgm_pk_id_not_null, 
-       	     			     		    morphgm_group_id int8 not null constraint morphgm_group_id_not_null, 
-						    morphgm_member_name varchar(50), 
-						    morphgm_member_id varchar(50), 
-						    morphgm_significance int)
+create table str_group_member (strgm_pk_id serial8 not null constraint strgm_pk_id_not_null, 
+       	     			     		    strgm_group_id int8 not null constraint strgm_group_id_not_null, 
+						    strgm_member_name varchar(50), 
+						    strgm_member_id varchar(50), 
+						    strgm_significance int)
 fragment by round robin in tbldbs1, tbldbs2, tbldbs3
 extent size 9964 next size 9964;
 
-create unique index morpholino_group_member_primary_key_index on morpholino_group_member (morphgm_pk_id)
+create unique index str_group_member_primary_key_index on str_group_member (strgm_pk_id)
   using btree in idxdbs2;
 
-create index morpholino_group_member_id_index on morpholino_group_member (morphgm_member_id)
+create index str_group_member_id_index on str_group_member (strgm_member_id)
   using btree in idxdbs2;
 
-create index morpholino_group_member_group_id_index on morpholino_group_member (morphgm_group_id)
+create index str_group_member_group_id_index on str_group_member (strgm_group_id)
   using btree in idxdbs2;
 
-alter table morpholino_group_member
-  add constraint primary key (morphgm_pk_id) constraint morpholino_group_member_primary_key;
+alter table str_group_member
+  add constraint primary key (strgm_pk_id) constraint str_group_member_primary_key;
 
 
-create index morphg_group_name_index on morpholino_group (morphg_group_name)
+create index strg_group_name_index on str_group (strg_group_name)
   using btree in idxdbs2;
 
-create index morphg_genox_zdb_index on morpholino_group (morphg_genox_zdb_id)
+create index strg_genox_zdb_index on str_group (strg_genox_zdb_id)
   using btree in idxdbs3;
 
 

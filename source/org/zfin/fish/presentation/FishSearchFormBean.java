@@ -257,7 +257,7 @@ public class FishSearchFormBean extends PaginationBean {
         mutationTypeList.put(MutationType.COMPLEX.getName(), FeatureTypeEnum.COMPLEX_SUBSTITUTION.getDisplay());
         mutationTypeList.put(MutationType.TRANSLOCATION.getName(), FeatureTypeEnum.TRANSLOC.getDisplay());
         mutationTypeList.put(MutationType.UNSPECIFIED.getName(), FeatureTypeEnum.UNSPECIFIED.getDisplay());
-
+        mutationTypeList.put(MutationType.INDEL.getName(), FeatureTypeEnum.INDEL.getDisplay());
         return mutationTypeList;
     }
 

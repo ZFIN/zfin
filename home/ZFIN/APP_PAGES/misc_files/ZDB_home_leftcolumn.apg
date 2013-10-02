@@ -35,7 +35,7 @@
     <ul>
      <li><a href="/action/fish/search"
                    title="Search by allele, mutant/morphant gene, affected anatomy and other attributes">
-         <strong>Mutants / Morphants / Transgenics</strong>
+         <strong>Mutants / Knockdowns / Transgenics</strong>
          </a></li>
      <ul>
        <li><a href="/action/feature/wildtype-list"

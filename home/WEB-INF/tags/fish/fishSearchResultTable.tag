@@ -23,14 +23,14 @@
             <select name="sortByPulldown" id="sort-by-pulldown">
                 <option value="<%= SortBy.BEST_MATCH %>" id="sort-by-best-match">Fish (Best Match)
                 </option>
-                <option value="<%= SortBy.GENES %>" id="sort-by-genes">Mutant/MO Gene
+                <option value="<%= SortBy.GENES %>" id="sort-by-genes">Affected Gene
                 </option>
                 <%--
                         <option value="<%= SortBy.GENES_REVERSE %>" id="sort-by-genes-reverse"
                                 onclick="setSortingOption('<%= SortBy.GENES_REVERSE %>');">Affected Genes (Reversed)
                         </option>
                 --%>
-                <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/MO
+                <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/Reagent
                 </option>
                 <%--
                         <option value="<%= SortBy.FEATURES_REVERSE %>" id="sort-by-features-reverse"
@@ -138,7 +138,7 @@
                     class="secretly-clickable sortable-column ${fishColumnClass}"
         --%>
             style="vertical-align: text-top;"
-            title="Fish = genotype + morpholinos">
+            title="Fish = genotype + reagents">
             Fish
             <img class="column-sort-button fish-column-sort-button " src="/images/transp.gif" alt=""/>
         </th>
@@ -156,7 +156,7 @@
                     class="secretly-clickable sortable-column ${geneColumnClass}"
         --%>
             id="affected-gene-column-header" style="white-space: nowrap;">
-            Mutant/MO Gene
+            Affected Gene
             <%--
                         <img class="column-sort-button gene-column-sort-button" src="/images/transp.gif"/>
             --%>
@@ -166,7 +166,7 @@
         <%--
                     class="secretly-clickable sortable-column ${featureColumnClass}"
         --%>
-            style="white-space: nowrap;">Line/MO
+            style="white-space: nowrap;">Line/Reagent
             <img class="column-sort-button feature-column-sort-button" src="/images/transp.gif" alt=""/>
         </th>
         <th>Construct</th>

@@ -9,23 +9,23 @@ update statistics high for table feature_group;
 update statistics high for table feature_group_member;
 update statistics high for table affected_gene_group_member;
 update statistics high for table affected_gene_group;
-update statistics high for table morpholino_group;
+update statistics high for table str_group;
 update statistics high for table phenotype_experiment;
 
 
 update functional_annotation
- set fa_morph_member_count = 0;
+ set fa_str_member_count = 0;
 
 
 update functional_annotation
-  set fa_morph_member_count = (Select count(distinct morphgm_member_id) 
-      			      from morpholino_group_member, morpholino_group 
-			      where fa_morpholino_group = morphg_group_name 
-			      and morphgm_group_id = morphg_group_pk_id
-			      and morphg_genox_zdb_id = fa_genox_zdb_id)
+  set fa_str_member_count = (Select count(distinct strgm_member_id) 
+      			      from str_group_member, str_group 
+			      where fa_str_group = strg_group_name 
+			      and strgm_group_id = strg_group_pk_id
+			      and strg_genox_zdb_id = fa_genox_zdb_id)
 where fa_genox_zdb_id is not null
- and fa_morph_member_count = 0
- and fa_morpholino_group is not null;
+ and fa_str_member_count = 0
+ and fa_str_group is not null;
 
 update functional_annotation
  set fa_feature_count = 0;
@@ -86,11 +86,11 @@ update functional_annotation
  where fa_feature_count is null;
 
 update functional_annotation 
- set fa_morph_member_count = 0
- where fa_morph_member_count is null;
+ set fa_str_member_count = 0
+ where fa_str_member_count is null;
 
 update functional_annotation
- set fa_fish_parts_count = fa_feature_count + fa_morph_member_count ;
+ set fa_fish_parts_count = fa_feature_count + fa_str_member_count ;
 
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("t",current year to second)

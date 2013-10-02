@@ -72,7 +72,7 @@ public class FishDetailController {
         retrieveGenotypeExperiment(form, fish);
         retrieveGenotypes(form, fish);
         retrievePhenotypeData(form, fish.getGenotypeExperimentIDs());
-        retrieveMorpholinoData(form, fish);
+        retrieveSTRData(form, fish);
         retrievePublicationData(form, fish);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         String fishName = fish.getName();
@@ -156,7 +156,7 @@ public class FishDetailController {
         return "genotype/fish-all-expressions.page";
     }
 
-    private void retrieveMorpholinoData(FishBean form, Fish fish) {
+    private void retrieveSTRData(FishBean form, Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return;
         form.setSequenceTargetingReagents(getMorpholinos(fish));

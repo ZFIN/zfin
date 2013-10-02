@@ -16,7 +16,7 @@
         <property name="featureGroupName" column="fas_feature_group"/>
         <property name="genotypeExperimentIds" column="fas_genox_group"/>
         <property name="genotypeID" column="fas_genotype_group"/>
-        <property name="morpholinoGroupName" column="fas_morpholino_group"/>
+        <property name="morpholinoGroupName" column="fas_str_group"/>
     </class>
 
     <class name="org.zfin.fish.WarehouseSummary" table="warehouse_run_tracking">

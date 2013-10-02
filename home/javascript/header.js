@@ -430,7 +430,7 @@ document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar
 document.write("       <a href=\"/action/antibody/antibody-search\" title=\"Search for antibodies by gene, labeled anatomy and other attributes\">Antibodies</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 
-document.write("       <a href=\"/action/fish/search\">Mutants / Morphants / Tg</a>");
+document.write("       <a href=\"/action/fish/search\">Mutants / Knockdowns / Tg</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/action/mutant/construct-search\">Constructs</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");

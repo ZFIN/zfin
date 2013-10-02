@@ -4,8 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Enumeration of mutation types supported in ZFIN.
- * This includes Morpholino which currently only in the warehouse
- * is an accepted mutation type.
+ * This includes Morpholino, TALEN and CRISPR which are currently only in the warehouse
  */
 public enum MutationType {
     COMPLEX("Complex"),
@@ -22,7 +21,9 @@ public enum MutationType {
     // Todo: db column needs to be increased to hold the full name
     UNSPECIFIED_TRANSGENIC_INSERTION("Unspecified Transgenic Insertion"),
     NON_ALLELIC_TRANSGENIC_INSERTION("Transgenic Insertion, non-allelic"),
-    UNSPECIFIED("Unspecified");
+    UNSPECIFIED("Unspecified"),
+    CRISPR("CRISPR"),
+    TALEN("TALEN");
 
     private String name;
 

@@ -38,6 +38,17 @@
         </sourceRoots>
       </configuration>
     </facet>
+    <facet type="ejb" name="EJB">
+      <configuration>
+        <ejbRoots>
+          <root url="file://$MODULE_DIR$/../client_apps/Map" />
+          <root url="file://$MODULE_DIR$/../j2ee/MergerServlet/WEB-INF/src" />
+          <root url="file://$MODULE_DIR$/../lib/Java" />
+          <root url="file://$MODULE_DIR$/../server_apps/mapimage" />
+          <root url="file://$MODULE_DIR$/../source" />
+        </ejbRoots>
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../home/WEB-INF/classes" />
@@ -54,7 +65,6 @@
       <excludeFolder url="file://$MODULE_DIR$/../j2ee" />
       <excludeFolder url="file://$MODULE_DIR$/../lib/Java/Acme" />
       <excludeFolder url="file://$MODULE_DIR$/../lib/Java/netscape" />
-      <excludeFolder url="file://$MODULE_DIR$/../server_apps" />
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -297,6 +307,9 @@
     <orderEntry type="library" name="hibernate3 (2)" level="project" />
     <orderEntry type="library" name="gwt-user" level="project" />
     <orderEntry type="library" name="build-time" level="project" />
+    <orderEntry type="library" name="Java EE 5-Java EE 5" level="project" />
+    <orderEntry type="library" name="javaee-api-6.0" level="project" />
+    <orderEntry type="library" name="liquibase" level="project" />
   </component>
 </module>
 

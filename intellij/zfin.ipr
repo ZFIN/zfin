@@ -107,6 +107,12 @@
             </element>
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/org.geneontology.jar" />
             <element id="library" level="project" name="informix-jdbc" />
+            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/obo-util.zip" />
+            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/IAClasses.zip" />
+            <element id="library" level="project" name="runtime" />
+            <element id="library" level="project" name="gwt-user" />
+            <element id="library" level="project" name="build-time" />
+            <element id="library" level="project" name="liquibase" />
           </element>
         </element>
       </root>
@@ -360,9 +366,11 @@
     </modules>
   </component>
   <component name="ProjectResources">
+    <resource url="http://www.liquibase.org/xml/ns/dbchangelog" location="$USER_HOME$/Library/Caches/IntelliJIdea11/extResources/fdbcb8f6_dbchangelog-2.0.xsd" />
+    <resource url="http://www.liquibase.org/xml/ns/dbchangelog-ext" location="$USER_HOME$/Library/Caches/IntelliJIdea11/extResources/99f6323_dbchangelog-ext.xsd" />
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/../home/WEB-INF/conf" />
   </component>
   <component name="ResourceManagerContainer">
@@ -440,6 +448,28 @@
     <library name="informix-jdbc">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/../lib/Java/ifxjdbc-3.70.JC1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Java EE 5-Java EE 5">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/javaee.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="javaee-api-6.0">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/../lib/Java/javaee-api-6.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="liquibase">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/../lib/Java/liquibase.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../lib/Java/LiquibaseEjb.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

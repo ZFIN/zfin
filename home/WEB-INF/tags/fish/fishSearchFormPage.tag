@@ -45,7 +45,7 @@
 
 <div class="search-form-top-bar">
     <span class="search-form-title">
-        Search for Mutants / Morphants / Tg
+        Search for Mutants / Knockdowns / Tg
     </span>
     <a href="/ZFIN/misc_html/fish_search_tips.html" class="popup-link help-popup-link"></a>
 
