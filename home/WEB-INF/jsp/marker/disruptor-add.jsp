@@ -223,9 +223,10 @@
     function warnAboutNoTargetGene() {
         var targetGene = document.getElementById("targetGeneSymbol");
         if (!targetGene || !targetGene.value) {
-            alert("No target gene! You may need to add the target gene when editing the record.");
+            alert("Add target gene!");
         }
     }
+
 
 </script>
 
