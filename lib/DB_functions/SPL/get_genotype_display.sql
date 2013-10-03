@@ -127,13 +127,14 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	  and fmrel_type = gcs_fmrel_type
 	  and gcs_mrkr_type = mrkr_type
 	  and gcs_ftr_type = feature_type
+	  and fmrel_type != 'is allele of'
 	  and not exists (
 	          select *
 	          from feature_marker_relationship as fm2
 	          where fm2.fmrel_ftr_zdb_id = fm1.fmrel_ftr_zdb_id
 	            and fm1.fmrel_type in ("contains innocuous sequence feature",
-	                                   "contains phenotypic sequence feature",
-					   "is allele of")
+	                                   "contains phenotypic sequence feature")
+		    and fm2.fmrel_type = "is allele of"
 	       )
 
        order by gcs_significance asc, mrkr_abbrev asc , zyg_abbrev , fad2, fad asc
