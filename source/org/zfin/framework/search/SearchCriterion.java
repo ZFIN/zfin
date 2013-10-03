@@ -57,7 +57,7 @@ public class SearchCriterion {
                     queryTerms.add(term);
             }
         } else {
-            //copied and slightly modified from antibodybean - maybe should use the same syntax as above?
+            //copied and slightly modified from antibody bean - maybe should use the same syntax as above?
             String[] array;
             array = value.split(separator);
 

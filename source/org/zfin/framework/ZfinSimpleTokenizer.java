@@ -29,7 +29,7 @@ public class ZfinSimpleTokenizer implements Iterator<String> {
     private int index;
 
     //replace commas within names with the @ symbol?
-    private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\*\\?\\\"\\,]";
+    private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\[\\]\\{\\}\\~\\*\\?\\\"\\,]";
     private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
     private static final String REPLACEMENT_STRING = "\\\\$0";
     private static final List<String> charactersToRemove = Arrays.asList("-", ":", "\\(", "\\)", "\\[", "\\]", "\\.");
