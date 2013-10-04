@@ -334,6 +334,21 @@ public class Feature implements EntityNotes{
             }
         }
         return affectedGenes;
+
+
+    }
+
+    public SortedSet<Marker> getTgConstructs() {
+        SortedSet<Marker> tgConstructs = new TreeSet<Marker>();
+        for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
+            if(ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
+                    || ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
+                    )  {
+
+                tgConstructs.add(ftrmarkrel.getMarker());
+            }
+        }
+        return tgConstructs;
     }
     public boolean isAllZfishbook () {
 		if (dbLinks == null || dbLinks.isEmpty())

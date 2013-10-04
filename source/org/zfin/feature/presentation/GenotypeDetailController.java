@@ -7,15 +7,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.FishBean;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.zfin.repository.RepositoryFactory.getFishRepository;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 
 //@RequestMapping(value ="/genotype")
@@ -73,7 +83,27 @@ public class GenotypeDetailController {
     public String getGenotypePopup(@RequestParam String zdbID, Model model) {
 
         LOG.debug("Start Genotype Detail Controller");
+        GenotypeBean form = new GenotypeBean();
+
+        if (zdbID.contains(",")){
+           Fish fish=getFishRepository().getFish(zdbID);
+            form.setFishName(fish.getName());
+           ZfinEntity geno=fish.getGenotype();
+           Genotype genotype=mutantRepository.getGenotypeByID(geno.getID());
+            form.setGenotype(genotype);
+            retrieveGenotypeAndFeatureData(form, genotype);
+            retrieveMorpholinoData(form,fish);
+            model.addAttribute(LookupStrings.FORM_BEAN, form);
+            String genotypeName = genotype.getName();
+            genotypeName = genotypeName.replaceAll("<sup>", "^");
+
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
+
+            return "genotype/genotype-detail-popup.popup";
+        }
+        else{
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
+
         if (genotype == null) {
             String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
             if (replacedZdbID != null) {
@@ -91,7 +121,7 @@ public class GenotypeDetailController {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return "record-not-found.popup";
         }
-        GenotypeBean form = new GenotypeBean();
+
         form.setGenotype(genotype);
         if (!genotype.isWildtype()) {
             retrieveGenotypeAndFeatureData(form, genotype);
@@ -105,6 +135,7 @@ public class GenotypeDetailController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
 
         return "genotype/genotype-detail-popup.popup";
+        }
     }
 
 
@@ -134,6 +165,23 @@ public class GenotypeDetailController {
 
         GenotypeStatistics genoStat = new GenotypeStatistics(genotype);
         form.setGenotypeStatistics(genoStat);
+    }
+    private void retrieveMorpholinoData(GenotypeBean form, Fish fish) {
+        if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
+            return;
+        form.setSequenceTargetingReagents(getMorpholinos(fish));
+    }
+
+    private List<SequenceTargetingReagent> getMorpholinos(Fish fish) {
+        if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
+            return null;
+        Set<String> moIds = new HashSet<String>(fish.getMorpholinos().size());
+        for (ZfinEntity morpholino : fish.getMorpholinos())
+            moIds.add(morpholino.getID());
+        List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(2);
+        for (String moID : moIds)
+            sequenceTargetingReagents.add(getMutantRepository().getMorpholinosById(moID));
+        return sequenceTargetingReagents;
     }
 
     private void retrieveExpressionData(GenotypeBean form, Genotype genotype) {

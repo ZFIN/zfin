@@ -31,6 +31,7 @@
     <tr>
         <th width="20%">Genotype</th>
         <th>Affected Gene</th>
+        <th>Construct</th>
         <th>Parental Zygosity</th>
     </tr>
     <c:choose>
@@ -38,10 +39,13 @@
             <c:forEach var="genotypeFeature" items="${formBean.genotype.genotypeFeatures}">
                 <jsp:useBean id="genotypeFeature" class="org.zfin.mutant.GenotypeFeature" scope="request"/>
                 <tr>
-                    <td style="vertical-align: bottom;"><zfin:link entity="${formBean.genotype}"/></td>   <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup/ZDB-GENO-130130-1"></a>
+                    <td style="vertical-align: bottom;"><zfin:link entity="${formBean.genotype}"/>   <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${formBean.genotype.zdbID}"></a></td>
+
                     <td style="vertical-align: bottom;">
                         <zfin2:listOfAffectedGenes markerCollection="${genotypeFeature.feature.affectedGenes}"/>
                     </td>
+                    <td style="vertical-align: bottom;"><zfin2:listOfTgConstructs markerCollection="${genotypeFeature.feature.tgConstructs}"/></td>
+
                     <td style="vertical-align: bottom;">
                             ${genotypeFeature.parentalZygosityDisplay}
                     </td>

@@ -26,6 +26,7 @@
     </div>
 <div class="popup-body">
 <table class="primary-entity-attributes">
+<c:if test="${fn:length(formBean.sequenceTargetingReagents) == 0 }">
     <tr>
         <th class="genotype-name-label">
             <c:if test="${!formBean.genotype.wildtype}">
@@ -39,6 +40,18 @@
             <span class="name-value"><zfin:name entity="${formBean.genotype}"/></span>
         </td>
     </tr>
+</c:if>
+<c:if test="${fn:length(formBean.sequenceTargetingReagents) > 0 }">
+        <tr>
+            <th class="fish-name-label" style="vertical-align: bottom;">
+                <span class="name-label">Genotype + Morpholinos:</span>
+            </th>
+            <td class="fish-name-value" style="vertical-align: bottom;">
+                <span class="name-value">${formBean.fishName}</span>
+            </td>
+        </tr>
+</c:if>
+
 
     <c:if test="${formBean.genotype.wildtype}">
         <tr>
@@ -146,5 +159,26 @@
     </c:choose>
 </div>
 </c:if>
+ <p></p>
+    <c:if test="${fn:length(formBean.sequenceTargetingReagents) > 0 }">
+        <table class="summary rowstripes">
+            <tr>
+                <th width="20%">Morpholino</th>
+                <th width=20%>Targeted Gene</th>
+            </tr>
+
+                <c:forEach var="morpholino" items="${formBean.sequenceTargetingReagents}" varStatus="loop">
+                    <jsp:useBean id="morpholino" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
+                    <tr>
+                        <td><zfin:link entity="${morpholino}"/></td>
+                        <td>
+                            <zfin2:listOfAffectedGenes markerCollection="${morpholino.targetGenes}"/>
+                        </td>
+                    </tr>
+                </c:forEach>
+
+        </table>
+
+    </c:if>
 </div>
 

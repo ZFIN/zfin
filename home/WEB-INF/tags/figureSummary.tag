@@ -75,10 +75,16 @@
 --%>
                     <td>
                 <c:if test="${!empty figureExpressionSummaryDisplay.genotype}">
-                        <zfin:link entity="${figureExpressionSummaryDisplay.genotype}"/>
+                    <c:forEach var="genotype" items="${figureExpressionSummaryDisplay.genotype}" varStatus="status">
+                        <zfin:link entity="${figureExpressionSummaryDisplay.genotype[status.index]}"/>
+
+                    <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${figureExpressionSummaryDisplay.genotype[status.index].zdbID}"></a>
                             <%--${figureExpressionSummaryDisplay.geno}--%>
 
-                    </td>
+                        <c:if test="${!status.last}">,&nbsp&nbsp;</c:if>
+                    </c:forEach>
+
+</td>
                 </c:if>
                 </c:if>
                 <c:if test="${showMarker}">

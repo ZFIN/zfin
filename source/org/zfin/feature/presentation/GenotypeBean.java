@@ -7,10 +7,7 @@ import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.fish.presentation.AbstractFishViewBean;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.GenotypeFigure;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
@@ -31,10 +28,29 @@ public class GenotypeBean  extends AbstractFishViewBean{
     private List<ExpressionResult> expressionResults;
     private List<PreviousNameLight> previousNames;
 
+    public String getFishName() {
+        return fishName;
+    }
+
+    public void setFishName(String fishName) {
+        this.fishName = fishName;
+    }
+
     private int totalNumberOfPublications;
     private int totalNumberOfPhenotypes;
+    private List<SequenceTargetingReagent> sequenceTargetingReagents;
+    private String fishName;
+
+    public List<SequenceTargetingReagent> getSequenceTargetingReagents() {
+        return sequenceTargetingReagents;
+    }
+
+    public void setSequenceTargetingReagents(List<SequenceTargetingReagent> sequenceTargetingReagents) {
+        this.sequenceTargetingReagents = sequenceTargetingReagents;
+    }
 
     public GenotypeBean() {
+
     }
 
     public Genotype getGenotype() {

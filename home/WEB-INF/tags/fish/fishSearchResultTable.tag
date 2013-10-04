@@ -191,8 +191,15 @@
             <td class="bold" colspan="5">
                 <c:if test="${fish.genotypeID!=null}">
                 <zfin:link entity="${fish}"/>
+                    <c:if test="${fn:length(fish.morpholinos) > 0 }">
+                        <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${fish.fishID}"></a>
+                     </c:if>
+                <c:if test="${fn:length(fish.morpholinos) == 0 }">
                     <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${fish.genotypeID}"></a>
                 </c:if>
+
+                </c:if>
+
             </td>
             <td>
                <c:if test="${fish.expressionFigureCount > 0}">
