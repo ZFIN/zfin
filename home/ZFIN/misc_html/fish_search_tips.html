@@ -22,6 +22,8 @@
                     </li>
                 </ul>
             </li>
+
+
             <li style="margin-bottom: 5px;">
                 <span class="bold">Phenotype:</span> Enter terms one at a time in the Phenotype field.
                 Typing in this field will auto-complete with suggested terms from the Zebrafish Anatomical Ontology (kidney, brain ...)
@@ -40,16 +42,23 @@
                     </li>
                 </ul>
             </li>
-            <li style="margin-bottom: 5px;">
+             <li style="margin-bottom: 5px;">
+                    <span class="bold">Knockdown Reagent:</span>
+                    Knockdowns refer to zebrafish injected with sequence-targeted
+                    reagents that alter the levels of gene products.  Morpholinos (MOs),
+                    TALENs and CRISPRs are examples.  Fish that inherit germline
+                    mutations made using TALENS or CRISPRs are not considered knockdowns.
+             </li>
+             <li style="margin-bottom: 5px;">
                 <span class="bold">Sorting your results:</span>
-                Search results are Fish - the combination of a genotype with morpholinos. Three different sorting
+                Search results are Fish - the combination of a genotype with knockdown reagents. Three different sorting
                 schemes can be selected from the "Sort by" pull-down menu at the top-left of the results.
                 <ul>
                     <li><span class="bold">Fish (Best Match):</span> the default sorting order, optimized for exact
                         matches in simpler fish.
-		    <li><span class="bold">Mutant/MO gene:</span> single mutant/knockdowns first, then doubles etc.
+		        <li><span class="bold">Affected gene:</span> single mutant/knockdowns first, then doubles etc.
                     </li>
-                    <li><span class="bold">Line/MO:</span> single allele/transgenic lines first, then doubles etc.
+                    <li><span class="bold">Line/Reagent:</span> single allele/transgenic lines first, then doubles etc.
                         etc.
                     </li>
                 </ul>
