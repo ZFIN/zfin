@@ -44,7 +44,7 @@
     <Category ID="SEQUENCE"  order="40">
         <DisplayName>Sequence Information</DisplayName>
         <UrlMapping>
-            <urlPattern type="GeneSequence">sequence/view/ZDB-</urlPattern>
+            <urlPattern type="GeneSequence">marker/sequence/view/ZDB-</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="ANATOMY"  order="50">
