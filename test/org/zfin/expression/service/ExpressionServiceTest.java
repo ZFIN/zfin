@@ -48,16 +48,12 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         MarkerExpression markerExpression = expressionService.getExpressionForEfg(marker);
         assertNotNull(markerExpression);
         assertThat(markerExpression.getTotalCountForStuff(), greaterThan(160));
-        assertThat(markerExpression.getTotalCountForStuff(), lessThan(190));
         assertNotNull(markerExpression.getDirectlySubmittedExpression());
         assertThat(markerExpression.getDirectlySubmittedExpression().getFigureCount(), greaterThan(140));
-        assertThat(markerExpression.getDirectlySubmittedExpression().getFigureCount(), lessThan(200));
         assertThat(markerExpression.getDirectlySubmittedExpression().getImageCount(), greaterThan(1000));
         assertThat(markerExpression.getDirectlySubmittedExpression().getFigureCount(), lessThan(2000));
         assertThat(markerExpression.getAllExpressionData().getPublicationCount(), greaterThan(10));
-        assertThat(markerExpression.getAllExpressionData().getPublicationCount(), lessThan(30));
         assertThat(markerExpression.getAllExpressionData().getFigureCount(), greaterThan(160));
-        assertThat(markerExpression.getAllExpressionData().getFigureCount(), lessThan(200));
         assertNull(markerExpression.getWildTypeStageExpression());
     }
 
