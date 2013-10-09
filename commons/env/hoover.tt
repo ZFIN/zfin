@@ -58,7 +58,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
-<!--|SOURCEROOT|-->	/research/zusers/staylor/hoover/ZFIN_WWW
+<!--|SOURCEROOT|-->	/opt/zfin/source_roots/hoover/ZFIN_WWW_hoover
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	informixtest.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	smoxon\@zfin.org

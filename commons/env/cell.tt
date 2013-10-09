@@ -58,7 +58,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFFF
-<!--|SOURCEROOT|-->	/research/zusers/kschaper/cell/ZFIN_WWW
+<!--|SOURCEROOT|-->	/opt/zfin/source_roots/cell/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	devtest2.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	kschaper\@cs.uoregon.edu
