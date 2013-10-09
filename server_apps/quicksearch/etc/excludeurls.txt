@@ -74,4 +74,4 @@ aa-pubmedlink.apg
 aa-markergoview.apg
 aa-pheno_summary.apg
 
-marker/note/external
+action/marker/note/external
