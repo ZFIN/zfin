@@ -12,6 +12,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,7 +58,7 @@ public final class SiteSearchCategories {
      * @param propFile The name of  the property file.
      */
     public static void init(String dir, String propFile) {
-        if(propFile == null)
+        if (propFile == null)
             propFile = ZFIN_DEFAULT_CATEGORIES_XML;
         propertyFile = FileUtil.createFileFromDirAndName(dir, propFile);
         if (!propertyFile.exists()) {
@@ -122,10 +124,10 @@ public final class SiteSearchCategories {
                 UrlPattern pattern = new UrlPattern();
                 pattern.setPattern(patternInternal.getValue());
                 pattern.setType(patternInternal.getType());
-                if (patternInternal.getBoostValue() != null){
+                if (patternInternal.getBoostValue() != null) {
                     pattern.setBoostValue(patternInternal.getBoostValue().abs().intValue());
                 }
-                if (patternInternal.getTitlePrefix() != null){
+                if (patternInternal.getTitlePrefix() != null) {
                     pattern.setTitlePrefix(patternInternal.getTitlePrefix());
                 }
                 patterns.add(pattern);
@@ -199,10 +201,10 @@ public final class SiteSearchCategories {
                 }
                 pattern.setPattern(urlPatternString);
                 pattern.setType(patternInternal.getType());
-                if (patternInternal != null && patternInternal.getBoostValue() != null){
+                if (patternInternal != null && patternInternal.getBoostValue() != null) {
                     pattern.setBoostValue(patternInternal.getBoostValue().abs().intValue());
                 }
-                if (patternInternal != null && patternInternal.getTitlePrefix() != null){
+                if (patternInternal != null && patternInternal.getTitlePrefix() != null) {
                     pattern.setTitlePrefix(patternInternal.getTitlePrefix());
                 }
                 patterns.add(pattern);
@@ -242,6 +244,8 @@ public final class SiteSearchCategories {
         if (categoriesWithoutAllAndOthers == null)
             throw new NullPointerException("No categories found.");
 
+        url = getUri(url);
+
         for (SearchCategory category : categoriesWithoutAllAndOthers) {
             List<UrlPattern> urls = category.getUrlPatterns();
             for (UrlPattern urlString : urls) {
@@ -252,6 +256,18 @@ public final class SiteSearchCategories {
             }
         }
         return SiteSearchCategories.OTHER;
+    }
+
+    public static String getUri(String url) {
+        if (url == null)
+            return null;
+        try {
+            URI uri = new URI(url);
+            return uri.getPath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static SearchCategory getCategoryById(String id) {

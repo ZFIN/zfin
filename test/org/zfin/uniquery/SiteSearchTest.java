@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test class for site search.
@@ -160,6 +161,18 @@ public class SiteSearchTest {
         assertEquals("MarkerView", docType);
         docType = SiteSearchCategories.getDocType("http://localhost/action/marker/view/ZDB-ATB-081002-20");
         assertEquals("AntibodyView", docType);
+        docType = SiteSearchCategories.getDocType("http://localhost/action/marker/sequence/view/ZDB-GENE-990415-72");
+        assertEquals("GeneSequence", docType);
     }
+
+    @Test
+    public void checkGetUri() {
+        String url = "http://localhost/action/marker/sequence/view/ZDB-GENE-990415-72";
+        assertEquals("/action/marker/sequence/view/ZDB-GENE-990415-72", SiteSearchCategories.getUri(url));
+        url = "HTTPS://credo.zfin.org:8080/action/marker/sequence/view/ZDB-GENE-990415-72";
+        assertEquals("/action/marker/sequence/view/ZDB-GENE-990415-72", SiteSearchCategories.getUri(url));
+    }
+
+
 
 }
