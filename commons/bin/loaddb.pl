@@ -1221,7 +1221,7 @@ else {
     restartApache();
 
     logMsg("stopping tomcat...");
-    if ($ENV{USER} eq "informix"){
+    if ($ENV{USER} eq "informix" or $ENV{USER} eq "bob"){
 	system("/private/ZfinLinks/Commons/bin/stoptomcat.pl $ENV{INSTANCE}");
 
     }
