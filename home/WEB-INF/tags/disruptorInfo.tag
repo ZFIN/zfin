@@ -33,8 +33,7 @@
         <td>
             <span class="">
                     <c:forEach var="entry" items="${formBean.markerRelationshipPresentationList}" varStatus="loop">
-                        <i>${entry.link}</i> ${entry.attributionLink}
-                        ${!loop.last ? ", " : ""}
+                        <i>${entry.link}</i> ${entry.attributionLink}${!loop.last ? ", " : ""}
                     </c:forEach>
             </span>
         </td>
