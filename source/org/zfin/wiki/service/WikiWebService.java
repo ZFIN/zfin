@@ -6,6 +6,7 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.*;
 
+import javax.xml.rpc.ServiceException;
 import java.util.GregorianCalendar;
 
 /**
@@ -17,7 +18,7 @@ public class WikiWebService {
     protected String token = null;
     protected ConfluenceSoapService service = null;
     protected final String PAGE_TYPE = "page";
-    protected final String ENDPOINT_SUFFIX = "/rpc/soap-axis/confluenceservice-v1";
+    protected final String ENDPOINT_SUFFIX = "/rpc/soap-axis/confluenceservice-v2";
     protected final String WEBSERVICE_PROTOCOL = "https://";
 
     protected String wikiUserName = ZfinPropertiesEnum.WIKI_USER.value();
@@ -41,8 +42,7 @@ public class WikiWebService {
                     "{pagetreesearch}\n\n" +
                     "{pagetree}\n\n" +
                     "{column}\n\n" +
-                    "{section}"
-            ;
+                    "{section}";
 
 
     private static WikiWebService instance = null;
@@ -58,7 +58,7 @@ public class WikiWebService {
         if (instance == null) {
             instance = new WikiWebService();
             if (wikiHost != null)
-                instance.wikiHost= wikiHost;
+                instance.wikiHost = wikiHost;
         }
         if (instance.login()) {
             return instance;
@@ -87,7 +87,7 @@ public class WikiWebService {
                     if (service.hasUser(token, ZfinPropertiesEnum.WIKI_USER.value())) {
                         return true;
                     } else {
-                        throw new WikiLoginException("Failed to find webservice user: "+ZfinPropertiesEnum.WIKI_USER.value());
+                        throw new WikiLoginException("Failed to find webservice user: " + ZfinPropertiesEnum.WIKI_USER.value());
                     }
                 } catch (InvalidSessionException e) {
                     return doLogin();
@@ -102,11 +102,10 @@ public class WikiWebService {
         }
     }
 
-    private boolean doLogin() throws WikiLoginException {
+    private boolean doLogin() throws WikiLoginException, ServiceException {
         ConfluenceSoapServiceServiceLocator serviceLocator = new ConfluenceSoapServiceServiceLocator();
-        serviceLocator.setConfluenceserviceV1EndpointAddress(WEBSERVICE_PROTOCOL + wikiHost + ENDPOINT_SUFFIX);
         try {
-            service = serviceLocator.getConfluenceserviceV1();
+            service = serviceLocator.getConfluenceserviceV2();
             token = service.login(wikiUserName, wikiPassword);
 
             if (service == null) {
@@ -153,7 +152,6 @@ public class WikiWebService {
     }
 
     /**
-     *
      * @param spaceToken The token for the space.
      * @return All page summaries for a given space.
      */
@@ -189,12 +187,12 @@ public class WikiWebService {
 
         try {
             RemoteSearchResult[] pages = service.getLabelContentByName(token, label);
-            logger.debug("pages to process: "+ pages.length + " for label: "+label);
+            logger.debug("pages to process: " + pages.length + " for label: " + label);
 
             // for each page:
             // if there is is editing or view restriction, then add an editing one to the creator
             for (RemoteSearchResult page : pages) {
-                logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]") ;
+                logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]");
                 if (page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token, page.getId()).length == 0) {
                     logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "] # perm["
                             + service.getContentPermissionSets(token, page.getId()).length + "]");
@@ -210,7 +208,7 @@ public class WikiWebService {
                     permissionForZfinGroup.setGroupName(Group.ZFIN_USERS.getValue());
                     logger.info(" setting permission for: " + page.getTitle() + " to group " + Group.ZFIN_USERS);
                     permissionForZfinGroup.setType(Permission.EDIT.getValue());
-                    permissions[1] = permissionForZfinGroup ;
+                    permissions[1] = permissionForZfinGroup;
 
                     service.setContentPermissions(token, page.getId(), Permission.EDIT.getValue(), permissions);
                 }
@@ -227,32 +225,33 @@ public class WikiWebService {
      * Removes all pages individually and then creates a new home page.
      * Was previously dropping the entire space, but makes the space look like it is new, not cleaned.
      * see fogbugz 5179 for more details.
+     *
      * @throws Exception Thrown if problems during the process.
      */
-    public void cleanSandbox() throws Exception{
+    public void cleanSandbox() throws Exception {
 
         if (false == ZfinProperties.isPushToWiki()) {
             return;
         }
 
-        RemotePageSummary[] pages = service.getPages(token,Space.SANDBOX.getValue()) ;
-        if(pages.length==1){
-            if(service.getPage(token,pages[0].getId()).getContent().equals(SANDBOX_DEFAULT_CONTENT)){
+        RemotePageSummary[] pages = service.getPages(token, Space.SANDBOX.getValue());
+        if (pages.length == 1) {
+            if (service.getPage(token, pages[0].getId()).getContent().equals(SANDBOX_DEFAULT_CONTENT)) {
                 logger.info("Nothing changed in wiki sandbox homepage, doing nothing");
-                return ;
+                return;
             }
         }
         logger.info("Wiki sandbox changed, reverting.");
 
-        if(pages!=null && pages.length>0){
-            for(RemotePageSummary page: pages){
-                logger.debug("removing page: "+ page.getTitle());
-                service.removePage(token,page.getId()) ;
+        if (pages != null && pages.length > 0) {
+            for (RemotePageSummary page : pages) {
+                logger.debug("removing page: " + page.getTitle());
+                service.removePage(token, page.getId());
             }
         }
 
 
-        RemotePage homePage = new RemotePage() ;
+        RemotePage homePage = new RemotePage();
         homePage.setContent(SANDBOX_DEFAULT_CONTENT);
         homePage.setCreated(GregorianCalendar.getInstance());
         homePage.setCreator(wikiUserName);
@@ -260,25 +259,25 @@ public class WikiWebService {
         homePage.setCurrent(true);
         homePage.setSpace(Space.SANDBOX.getValue());
         homePage.setTitle("Home");
-        service.storePage(token,homePage) ;
+        service.storePage(token, homePage);
 
     }
 
-    public RemoteSearchResult[] getLabelContent(String label) throws Exception{
-        return service.getLabelContentByName(token,label) ;
+    public RemoteSearchResult[] getLabelContent(String label) throws Exception {
+        return service.getLabelContentByName(token, label);
     }
 
-    public RemoteContentPermission[] getRemoteContentPermissions(long id,String type) throws Exception{
-        RemoteContentPermissionSet remoteContentPermissionSet = service.getContentPermissionSet(token,id,type) ;
-        RemoteContentPermission[] remoteContentPermissions = remoteContentPermissionSet.getContentPermissions() ;
-        return remoteContentPermissions ;
+    public RemoteContentPermission[] getRemoteContentPermissions(long id, String type) throws Exception {
+        RemoteContentPermissionSet remoteContentPermissionSet = service.getContentPermissionSet(token, id, type);
+        RemoteContentPermission[] remoteContentPermissions = remoteContentPermissionSet.getContentPermissions();
+        return remoteContentPermissions;
     }
 
-    public RemotePage getPage(long id) throws Exception{
-        return service.getPage(token,id) ;
+    public RemotePage getPage(long id) throws Exception {
+        return service.getPage(token, id);
     }
 
-    public RemoteBlogEntry getBlogPage(long id) throws Exception{
+    public RemoteBlogEntry getBlogPage(long id) throws Exception {
         return service.getBlogEntry(token, id);
     }
 

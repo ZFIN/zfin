@@ -9,8 +9,6 @@ import org.zfin.wiki.service.WikiWebService;
 
 import static org.junit.Assert.*;
 
-/**
- */
 public class WikiConnectTest {
 
     private NewsWikiWebService newsWikiWebService;
