@@ -781,6 +781,45 @@ sub strHasNoCreatedByRelationship($) {
   &recordResult($routineName, $nRecords);
 
 }
+
+#---------------------------------------------------------------
+# strFeatureOnlyHasOneRelationship
+#
+# Parameter
+# $ Email Address for recipients
+
+sub strFeatureOnlyHasOneRelationship($) {
+  my $routineName = "strFeatureOnlyHasOneRelationship";
+	
+  my $sql = "select feature_zdb_id, feature_name, fmrel_type
+                from feature, feature_marker_relationship a
+                where feature_type = 'INDEL'
+                and fmrel_ftr_zdb_id = feature_zdb_id
+                and not exists (Select 'x' from feature_marker_relationship b
+                                  where b.fmrel_zdb_id != a.fmrel_Zdb_id)
+		and exists (select 'x' from feature_assay
+                               where featassay_feature_zdb_id = feature_zdb_id
+                                and (featassay_mutagen = 'TALEN' or featassay_mutagen = 'CRISPR'))";
+
+  my @colDesc = ("STR zdb_id         ",
+		 "STR abbrev       ",
+                 "STR existing relationship      ");
+
+  my $nRecords = execSql ($sql, undef, @colDesc);
+
+  if ( $nRecords > 0 ) {
+    my $sendToAddress = $_[0];
+    my $subject = "Str(s) has only 1 relationship";
+    my $errMsg = "There are $nRecords strs with only 1 relationship. ";
+    
+    logError ($errMsg);
+    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
+  }
+  &recordResult($routineName, $nRecords);
+
+}
+
+
 #---------------------------------------------------------------
 # crisprRelatedToNonTalen
 #
@@ -3602,6 +3641,7 @@ if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
     strHasNoCreatedByRelationship($ceri);
+    strFeatureOnlyHasOneRelationship($ceri);
     crisprRelatedToNonCrispr($ceri);
     talenRelatedToNonTalen($ceri);
 	estsHave1Gene($estEmail);
