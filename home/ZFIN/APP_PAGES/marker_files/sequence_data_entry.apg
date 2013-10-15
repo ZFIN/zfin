@@ -247,6 +247,24 @@ EFFECTS
           var note = document.newdata.seqdata_CuratorNote.value;
           document.newdata.seqdata_CuratorNote.value = "Reported Sequence: '"+ document.newdata.seqdata_ReportedSequence.value + "' was " + action +".\n\n" + note;           
       }
+      
+      function changeSeq(obj) {
+          obj.value = obj.value.toUpperCase();
+          var text = ''; 
+          if(validSequence(obj.value)) {
+            text = obj.value;
+          } 
+          document.newdata.seqdata_DisplaySequence.value = text;
+      }
+
+      function changeSeq2(obj) {
+          obj.value = obj.value.toUpperCase();
+          var text = ''; 
+          if(validSequence(obj.value)) {
+            text = obj.value;
+          } 
+          document.newdata.seqdata_2nd_DisplaySequence.value = text;
+      }
 
   </SCRIPT>
     
@@ -281,7 +299,7 @@ EFFECTS
               <?/MIBLOCK>
                5'  <input type=text name=seqdata_ReportedSequence size=40 
                                <?MIVAR COND=$(XST,$seqdata_sequence)>value=$seqdata_sequence<?/MIVAR>
-                               onChange="this.value = this.value.toUpperCase();var text=''; if(validSequence(this.value)){text = this.value} document.newdata.seqdata_DisplaySequence.value = text;}"> 
+                               onChange="changeSeq(this);"> 
             </td>
             <td> 
               <select name=seqdata_action onChange="
@@ -306,7 +324,7 @@ EFFECTS
             <tr>
               <td valign=top>Sequence 2:&nbsp;&nbsp;&nbsp; 5'  <input type=text name=seqdata_2nd_ReportedSequence size=40 
                                  <?MIVAR COND=$(XST,$seqdata_second_sequence)>value=$seqdata_second_sequence<?/MIVAR>
-                                 onChange="this.value = this.value.toUpperCase();var text=''; if(validSequence(this.value)){text = this.value} document.newdata.seqdata_2nd_Reported.value = text;}"> 
+                                 onChange="changeSeq2(this);"> 
               </td>
               <td> 
                 <select name=second_seqdata_action onChange="
