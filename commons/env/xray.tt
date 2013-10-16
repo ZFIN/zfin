@@ -58,7 +58,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
-<!--|SOURCEROOT|-->	/research/zusers/informix/xray/ZFIN_WWW
+<!--|SOURCEROOT|-->	/research/zusers/bob/ZFIN_WWW_xray
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	bob\@zfin.org
