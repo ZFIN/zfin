@@ -62,15 +62,15 @@ given ($ARGV[0]) {
     when ("darwin") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop darwin";
     }
-    when ("smith") {
-	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop smith";
+    when ("xray") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop xray";
     }
 
     when ("darwindb") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop darwin";
     }
-    when ("smithdb") {
-	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop smith";
+    when ("xraydb") {
+	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop xray";
     }
     when ("zygotix") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop zygotix";
