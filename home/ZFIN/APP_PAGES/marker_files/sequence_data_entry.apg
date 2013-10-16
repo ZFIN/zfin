@@ -159,7 +159,7 @@ EFFECTS
             
             if (note != "")
             {
-              curatorNote(note);
+              curatorNoteSeq2(note);
             }
       }
 
@@ -184,7 +184,7 @@ EFFECTS
             
             if (note != "")
             {
-              curatorNote(note);
+              curatorNoteSeq2(note);
             }
       }
 
@@ -217,7 +217,7 @@ EFFECTS
           else if (action == 4)
           {
               document.newdata.seqdata_DisplaySequence.value = document.newdata.seqdata_ReportedSequence.value;
-              curatorNote('Restored');
+              curatorNote('modified');
           }
       }
 
@@ -237,17 +237,28 @@ EFFECTS
           else if (action == 4)
           {
               document.newdata.seqdata_2nd_DisplaySequence.value = document.newdata.seqdata_2nd_ReportedSequence.value;
-              curatorNote('Restored');
+              curatorNoteSeq2('modified');
           }      
       }
       
-      function curatorNote (action)
-      
-      {
+      function curatorNote (action) {
           var note = document.newdata.seqdata_CuratorNote.value;
-          document.newdata.seqdata_CuratorNote.value = "Reported Sequence: '"+ document.newdata.seqdata_ReportedSequence.value + "' was " + action +".\n\n" + note;           
+          if (action != "modified") {
+              document.newdata.seqdata_CuratorNote.value = "Reported sequence: '"+ document.newdata.seqdata_ReportedSequence.value + "' was " + action +".\n\n" + note;  
+          } else {
+              document.newdata.seqdata_CuratorNote.value = "Reported sequence was modified" + ".\n\n" + note;            
+          }
       }
-      
+ 
+      function curatorNoteSeq2 (action) {
+           var note = document.newdata.seqdata_CuratorNote.value;
+           if (action != "modified") {
+               document.newdata.seqdata_CuratorNote.value = "Reported Sequence: '"+ document.newdata.seqdata_2nd_ReportedSequence.value + "' was " + action +".\n\n" + note;   
+           } else {
+	       document.newdata.seqdata_CuratorNote.value = "Reported sequence(s) modified" + ".\n\n" + note;            
+          }
+      }   
+ 
       function changeSeq(obj) {
           obj.value = obj.value.toUpperCase();
           var text = ''; 
@@ -312,7 +323,7 @@ EFFECTS
                 <option>Reverse</option>
                 <option>Complement</option>
                 <option>Reverse & Complement</option>
-                <option>Original</option>
+                <option>Modified</option>
               </select>
             </td>
             <td valign=top> 5'  <input type=text name=seqdata_DisplaySequence size=40
@@ -337,7 +348,7 @@ EFFECTS
                   <option>Reverse</option>
                   <option>Complement</option>
                   <option>Reverse & Complement</option>
-                  <option>Original</option>
+                  <option>Modified</option>
                 </select>
               </td>
               <td valign=top> 5'  <input type=text name=seqdata_2nd_DisplaySequence size=40

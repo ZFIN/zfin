@@ -346,10 +346,10 @@ function jump(form_select){
 
         <?MICOMMENT> Note Can Be Blank. However, the xtra_param variable is set to alias
           by the updating page when xtra_param is null. An edit has occured, so set
-          note = 'sequence modified'.
+          note = 'Sequence modified'.
         <?/MICOMMENT>
  	function update_mrkrsequence(mrkr_zdb_id,old_seq,new_seq,note) {
- 	        if (note == '') {note = 'Sequence Modified';}
+ 	        if (note == '') {note = 'Sequence modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
  		if ((new_seq != '')) {
  		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkr_zdb_id+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
@@ -358,7 +358,7 @@ function jump(form_select){
         
         
         function update_second_mrkrsequence(mrkrseq_zdb,old_seq,new_seq,note,new_seq_2) {
- 	        if (note == '') {note = 'Second sequence Modified';}
+ 	        if (note == '') {note = 'Sequence modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
  		if ((new_seq != '')) {
  		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence_2&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note+'&new_value2='+new_seq_2);
