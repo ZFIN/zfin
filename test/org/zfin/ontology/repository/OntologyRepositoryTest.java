@@ -115,7 +115,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Default name space", "quality", metadata.getDefaultNamespace());
     }
 
-    @Test
+    //@Test
     public void getPhenotypesWithSecondaryTerms() throws Exception {
         List<PhenotypeStatement> phenotypesWithSecondaryTerms = ontologyRepository.getPhenotypesWithSecondaryTerms();
         assertNotNull(phenotypesWithSecondaryTerms);
