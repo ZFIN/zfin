@@ -10,8 +10,6 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.*;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.marker.presentation.SupplierLookupEntry;
-import org.zfin.marker.repository.MarkerRepository;
 
 import java.util.List;
 
@@ -25,9 +23,6 @@ public class OrganizationMembersController {
 
     @Autowired
     private ProfileRepository profileRepository;
-
-    @Autowired
-    private MarkerRepository markerRepository;
 
     @Autowired
     private ProfileService profileService;
@@ -202,7 +197,7 @@ public class OrganizationMembersController {
 
         HibernateUtil.currentSession().flush();
         HibernateUtil.currentSession().getTransaction().commit();
-
+        
         return (result ? 1 : 0);
     }
 
@@ -221,15 +216,6 @@ public class OrganizationMembersController {
         HibernateUtil.currentSession().getTransaction().commit();
 
         return result;
-    }
-
-    // looks up labs and companies
-    @RequestMapping(value = "/find-supplier", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    List<SupplierLookupEntry> lookupSuppliers(@RequestParam("term") String lookupString) {
- //       return profileRepository.getPersonNamesForString(lookupString);
-          return markerRepository.getSupplierNamesForString(lookupString);
     }
 
 }

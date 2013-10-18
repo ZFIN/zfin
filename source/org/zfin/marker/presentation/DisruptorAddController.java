@@ -32,18 +32,21 @@ import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class DisruptorAddController {
 
     private static Logger LOG = Logger.getLogger(DisruptorAddController.class);
+
+    @Autowired
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
     private static SequenceRepository sr = RepositoryFactory.getSequenceRepository();
 
     @ModelAttribute("formBean")
-    private DisruptorAddBean getDefaultSearchForm(@RequestParam(value = "disruptorType", required = true) String type,
+    private DisruptorAddBean getDefaultSearchForm(@RequestParam(value = "disruptorType", required = false) String type,
                                                   @RequestParam(value = "disruptorPublicationZdbID", required = false) String pubZdbID) {
         DisruptorAddBean disruptorBean = new DisruptorAddBean();
 
@@ -153,6 +156,13 @@ public class DisruptorAddController {
                 "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newDisruptor.getZdbID();
     }
 
+    // looks up labs and companies
+    @RequestMapping(value = "/find-suppliers-for-STR", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<SupplierLookupEntry> lookupSuppliers(@RequestParam("term") String lookupString) {
+        return mr.getSupplierNamesForString(lookupString);
+    }
 }
 
 
