@@ -862,7 +862,16 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 
   <?/MIBLOCK> 
 
+  <!-- Special case for adding new supplier -->
+  <?MIBLOCK COND="$(EC,$attr_type,special-newsupplier)">
+      <?MISQL SQL="
+          insert into int_data_supplier 
+            (idsup_data_zdb_id, idsup_supplier_zdb_id) 
+          values 
+	    ('$OID','$new_value');">
+      <?/MISQL>
 
+  <?/MIBLOCK> 
 
   <!-- Special case for deleting an alias -->
   <?MIBLOCK COND="$(EC,$attr_type,delete-alias)">
@@ -944,6 +953,15 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 					)
 		       and mrel_type = '$info') ;">
      <?/MISQL>
+  <?/MIBLOCK>
+
+  <!-- Special case for deleting a supplier -->
+  <?MIBLOCK COND="$(EC,$attr_type,delete-supplier)">
+     <?MISQL SQL="
+	delete from int_data_supplier
+	      where idsup_data_zdb_id = '$OID'
+	        and idsup_supplier_zdb_id = '$old_value';">
+     <?/MISQL>  
   <?/MIBLOCK>
   
   <?MIBLOCK COND="$(EC,$attr,mrkr_comments)">

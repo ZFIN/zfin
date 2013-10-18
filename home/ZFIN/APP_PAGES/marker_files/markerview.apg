@@ -42,8 +42,31 @@ for antibody: added meta redirect at the beginning and the end of the file.
 <head>
   <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
+  <script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
+
+  <script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
+  <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">
+
+  <script src="/javascript/profile-edit.js"></script>
+
+  <link rel=stylesheet type="text/css" href="/css/tabEdit.css">         
+
   <SCRIPT>
 
+  jQuery(document).ready(function () {
+     alert("start");   
+     
+     jQuery( "#supplier" ).autocomplete({
+  //strangely, this is not working!     source:'/action/marker/find-suppliers',
+       source: '/action/profile/find-supplier',
+       minLength: 2, 
+       select: function (event, ui) {
+         jQuery('#supplier').val(ui.item.label);
+         supplierToAddZdbID = ui.item.id;
+       }
+     });
+  });
 
   function updateInnerHTML(element_id,html_to_display) {
     var c1 = document.getElementById(element_id);
@@ -230,6 +253,10 @@ function jump(form_select){
 	function Delete_mrel(mrel_partner_id, type) {
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_partner_id+'&comments=Deleted&target_table=marker&info='+type);
 	}
+	
+	function delete_supplier(supplier_zdb_id) {
+ 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr_type=delete-supplier&old_value='+supplier_zdb_id);	
+	}
 
 	function new_ortho() {
 		var speciesind=document.updater1.species.selectedIndex;
@@ -334,6 +361,12 @@ function jump(form_select){
 		mrkrrel_type.replace(/ /,"%20");
 		if (mrkr_abbrev != '') {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_type+'&new_value='+mrkr_abbrev+'&target_table=marker');
+  		}
+	}
+
+	function new_supplier(supplier_id) {
+		if (supplier_id != '') {
+		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr_type=special-newsupplier&new_value='+supplier_id);
   		}
 	}
 
@@ -790,7 +823,46 @@ Only need to update clones, etc., which should be the only things that will have
 <?/MIVAR>
 <?/MIBLOCK> <?MICOMMENT> end display_sequence_similarity <?/MICOMMENT>
 
+ <?MICOMMENT>
+              ============================================
+                Supplier for TALEN and CRISPR
+              ============================================
+ <?/MICOMMENT>
+<?MIBLOCK COND="$(AND,$(XST,$UPDATE),$(OR,$(EC,$marker_type,CRISPR),$(EC,$marker_type,TALEN)))">
+<p/>
+  <b> Supplier: </b>
+  <?MISQL SQL="select zdb_id, name
+	         from int_data_supplier
+		 join lab on idsup_supplier_zdb_id = zdb_id
+	        where idsup_data_zdb_id = '$OID'
+	       union
+	       select zdb_id, name
+	         from int_data_supplier
+		 join company on idsup_supplier_zdb_id = zdb_id
+	        where idsup_data_zdb_id = '$OID';">
 
+    <?MIVAR NAME=mrkrview_str_supplier_zdb_id>$1<?/MIVAR>
+    <?MIVAR NAME=mrkrview_str_supplier_name>$2<?/MIVAR>
+    <?MIBLOCK COND="$(=,$MI_CURRENTROW,1)">
+    <?MIELSE>
+	, &nbsp;
+    <?/MIBLOCK>
+
+    <?MIVAR>
+       <input type="button" value="Delete" onClick="delete_supplier('$mrkrview_str_supplier_zdb_id')">
+    <?/MIVAR>
+    <?MIVAR>$mrkrview_str_supplier_name<?/MIVAR>
+  <?/MISQL>
+  <?MIBLOCK COND="$(!=,$MI_ROWCOUNT,0)">
+    <p> <?MICOMMENT> for display purpose <?/MICOMMENT>
+  <?/MIBLOCK>
+
+<div>
+<form>
+<input type="button" value="Add supplier" onClick="new_supplier(supplierToAddZdbID);"><input id="supplier" type="text" size="20" />
+</form>
+</div>
+<?/MIBLOCK> <?MICOMMENT> end of supplier section <?/MICOMMENT>
 
  <?MICOMMENT>
               ===================
