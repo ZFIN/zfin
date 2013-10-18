@@ -55,10 +55,8 @@ for antibody: added meta redirect at the beginning and the end of the file.
   <SCRIPT>
 
   jQuery(document).ready(function () {
-     alert("start");   
      
      jQuery( "#supplier" ).autocomplete({
-  //strangely, this is not working!     source:'/action/marker/find-suppliers',
        source: '/action/profile/find-supplier',
        minLength: 2, 
        select: function (event, ui) {
