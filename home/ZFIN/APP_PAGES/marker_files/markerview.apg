@@ -57,7 +57,7 @@ for antibody: added meta redirect at the beginning and the end of the file.
   jQuery(document).ready(function () {
      
      jQuery( "#supplier" ).autocomplete({
-       source: '/action/marker/find-suppliers-for-STR',
+       source: '/action/marker/find-suppliers',
        minLength: 2, 
        select: function (event, ui) {
          jQuery('#supplier').val(ui.item.label);
@@ -857,7 +857,7 @@ Only need to update clones, etc., which should be the only things that will have
 
 <div>
 <form>
-<input type="button" value="Add supplier" onClick="new_supplier(supplierToAddZdbID);"><input id="supplier" type="text" size="20" />
+<input type="button" value="Add supplier" onClick="new_supplier(supplierToAddZdbID);"><input id="supplier" type="text" size="35" />
 </form>
 </div>
 <?/MIBLOCK> <?MICOMMENT> end of supplier section <?/MICOMMENT>

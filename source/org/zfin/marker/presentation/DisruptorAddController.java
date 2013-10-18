@@ -157,7 +157,7 @@ public class DisruptorAddController {
     }
 
     // looks up labs and companies
-    @RequestMapping(value = "/find-suppliers-for-STR", method = RequestMethod.GET)
+    @RequestMapping(value = "/find-suppliers", method = RequestMethod.GET)
     public
     @ResponseBody
     List<SupplierLookupEntry> lookupSuppliers(@RequestParam("term") String lookupString) {
