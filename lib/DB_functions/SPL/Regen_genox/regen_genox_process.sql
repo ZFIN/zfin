@@ -100,7 +100,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                        from genotype_feature OtherPhenotypicFeature, feature
                       where genox_geno_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
-                        and feature_type in ('DEFICIENCY','TRANSLOC','INSERTION','COMPLEX_SUBSTITUTION','INVERSION')) 
+                        and feature_type in ('DEFICIENCY','TRANSLOC','COMPLEX_SUBSTITUTION','INVERSION')) 
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
      and genox_geno_zdb_id = genofeat_geno_zdb_id                   
      and not exists (select exp_name 
@@ -137,7 +137,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                        from genotype_feature OtherPhenotypicFeature, feature
                       where genox_geno_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
-                        and feature_type in ('DEFICIENCY','TRANSLOC','INSERTION','COMPLEX_SUBSTITUTION','INVERSION')) 
+                        and feature_type in ('DEFICIENCY','TRANSLOC','COMPLEX_SUBSTITUTION','INVERSION')) 
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
      and genox_geno_zdb_id = genofeat_geno_zdb_id   
      and expcond_exp_zdb_id = genox_exp_zdb_id 
@@ -176,7 +176,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                        from genotype_feature OtherPhenotypicFeature, feature
                       where genox_geno_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
-                        and feature_type in ('DEFICIENCY','TRANSLOC','INSERTION','COMPLEX_SUBSTITUTION','INVERSION'))
+                        and feature_type in ('DEFICIENCY','TRANSLOC','COMPLEX_SUBSTITUTION','INVERSION'))
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
      and genox_geno_zdb_id = genofeat_geno_zdb_id
      and not exists (select exp_name 
@@ -228,7 +228,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                        from genotype_feature OtherPhenotypicFeature, feature
                       where genox_geno_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
-                        and feature_type in ('DEFICIENCY','TRANSLOC','INSERTION','COMPLEX_SUBSTITUTION','INVERSION'))
+                        and feature_type in ('DEFICIENCY','TRANSLOC','COMPLEX_SUBSTITUTION','INVERSION'))
      and exists (select phenox_genox_zdb_id
                    from phenotype_experiment, phenotype_statement 
                   where phenox_genox_zdb_id = genox_zdb_id  
