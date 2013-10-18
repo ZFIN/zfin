@@ -44,6 +44,7 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.util.NumberAwareStringComparator;
 import org.zfin.util.ZfinStringUtils;
+import org.zfin.profile.Organization;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -2285,4 +2286,26 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (SequenceTargetingReagent) session.get(SequenceTargetingReagent.class, markerID);
     }
 
+    @Override
+    public List<SupplierLookupEntry> getSupplierNamesForString(String lookupString) {
+        String hql = " select o FROM Organization o " +
+                "where " +
+                "lower(o.name) like :lookupString " +
+                "order by o.name  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                        Organization o = (Organization) tuple[0];
+                        SupplierLookupEntry supplierSuggestionList = new SupplierLookupEntry();
+                        supplierSuggestionList.setId(o.getZdbID());
+                        supplierSuggestionList.setLabel(o.getName());
+                        supplierSuggestionList.setValue(o.getName());
+                        return supplierSuggestionList;
+                    }
+                })
+                .list()
+                ;
+    }
 }

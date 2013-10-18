@@ -381,7 +381,7 @@ public interface MarkerRepository {
 
     List<Marker> getCodingSequence(Marker construct);
 
-    public List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene);
+    List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene);
 
     /**
      * Retrieve sequence targeting reagent, e.g. MO, TALEN, CRISPR
@@ -389,4 +389,6 @@ public interface MarkerRepository {
      * @return
      */
     SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
+
+    List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 }
