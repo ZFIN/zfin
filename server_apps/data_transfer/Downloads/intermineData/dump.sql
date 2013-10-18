@@ -209,7 +209,17 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
  select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
   	 gfrv_construct_name, gfrv_construct_zdb_id,'morpholino'
     from gene_Feature_result_view
-    where gfrv_affector_id like 'ZDB-MRPH%';
+    where gfrv_affector_id like 'ZDB-MRPH%'
+     union
+ select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
+  	 gfrv_construct_name, gfrv_construct_zdb_id,'TALEN'
+    from gene_Feature_result_view
+    where gfrv_affector_id like 'ZDB-TALEN%'
+     union
+ select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
+  	 gfrv_construct_name, gfrv_construct_zdb_id,'CRISPR'
+    from gene_Feature_result_view
+    where gfrv_affector_id like 'ZDB-CRISPR%';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/3figureAnat.txt"
   select ftfs_fas_id, ftfs_genox_zdb_id, ftfs_geno_name, ftfs_geno_handle, ftfs_fig_zdb_id 
