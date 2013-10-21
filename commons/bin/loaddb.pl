@@ -1211,10 +1211,10 @@ else  {
 }
 
 if ($ENV{HOST} =~ /kinetix/){
-    $ENV{PDQPRIORITY} = "30";    # Take as much as you can.
+    $ENV{PDQPRIORITY} = "30";    
 }
 else {
-    $ENV{PDQPRIORITY} = "50";    # Take as much as you can.
+    $ENV{PDQPRIORITY} = "80";    
     $ENV{IFX_DIRTY_WAIT} = "30";
 
     logMsg("Restarting Apache ...");
