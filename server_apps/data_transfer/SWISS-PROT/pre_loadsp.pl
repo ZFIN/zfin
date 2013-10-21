@@ -12,26 +12,9 @@ use DBI;
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
-   &process_vertebrates ;
-
-   print "WARNING!!! no pre_pre_zfin.dat provided. \n" if (!-e "pre_pre_zfin.dat");
-
-   print "WARNING!!! no pre_zfin.dat provided. \n" if (!-e "pre_zfin.dat");
-
-   my $sleepNumDownload1 = 500;
-   while($sleepNumDownload1--){
-      sleep(1);
-   }
-
-   system("touch pre_zfin.dat");
-
-   system("wget -q http://www.geneontology.org/external2go/uniprotkb_kw2go -O spkw2go");
-   system("wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
-   system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
-   
-   print "WARNING!!! no pre_pre_zfin.dat provided. \n" if (!-e "pre_pre_zfin.dat");
-
-   print "WARNING!!! no pre_zfin.dat provided. \n" if (!-e "pre_zfin.dat");
+   system("/local/bin/wget -q http://www.geneontology.org/external2go/uniprotkb_kw2go -O spkw2go");
+   system("/local/bin/wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
+   system("/local/bin/wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
 
    print "WARNING!!! no spkw2go provided. \n" if (!-e "spkw2go");
 
@@ -39,10 +22,23 @@ sub downloadGOtermFiles () {
 
    print "WARNING!!! no ec2go provided. \n" if (!-e "ec2go");
 
+   &process_vertebrates ;
+
+   print "WARNING!!! no pre_pre_zfin.dat provided. \n" if (!-e "pre_pre_zfin.dat");
+
+   print "WARNING!!! no pre_zfin.dat provided. \n" if (!-e "pre_zfin.dat");
+
    if (!-e "pre_pre_zfin.dat" || !-e "pre_zfin.dat" || !-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
       print "One or more required file(s) not exisiting. Exit.\n";
       exit;
    }   
+
+   my $sleepNumDownload1 = 500;
+   while($sleepNumDownload1--){
+      sleep(1);
+   }
+
+   system("touch pre_zfin.dat");
 
    my $sleepNumDownload2 = 500;
    while($sleepNumDownload2--){
@@ -188,10 +184,10 @@ sub sendRunningResult {
 # Extracts only zfin data from vertebrates.
 #
 sub process_vertebrates{
-    system("wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
+    system("/local/bin/wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
     system("gunzip uniprot_trembl_vertebrates.dat.gz");
     system("cp uniprot_trembl_vertebrates.dat pre_pre_zfin.dat");
-    system("wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
+    system("/local/bin/wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
     system("gunzip uniprot_sprot_vertebrates.dat.gz");
     system("cat uniprot_sprot_vertebrates.dat >> pre_pre_zfin.dat");
 
