@@ -276,20 +276,20 @@ order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_n
 		select geno_display_name
 		  from genotype
 	 where geno_zdb_id = '$accID'">
-      <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
+      <?MIVAR NAME=inf_mem_sym><i>$1</i><?/MIVAR>	
    <?/MISQL>
    <?MISQL COND="$(=,$(POSITION,$accID,GENO),0)" 
 	   SQL="
-	select mrkr_abbrev
+	select mrkr_abbrev,mrkr_type
 	  from marker
 	 where mrkr_zdb_id = '$accID'">
+      <?MIBLOCK COND="$(EQ,$2,GENE)">
+      <?MIVAR NAME=inf_mem_sym><i>$1</i><?/MIVAR>	
+      <?MIELSE>
       <?MIVAR NAME=inf_mem_sym>$1<?/MIVAR>	
+       <?/MIBLOCK>
    <?/MISQL>
-   <?MIBLOCK COND="$(=,$(POSITION,$accID,MRPHLNO),0)">
-      <?MIVAR NAME=inf_mem_sym><i>$inf_mem_sym</i><?/MIVAR>	
-   <?MIELSE>
       <?MIVAR NAME=inf_mem_sym>$inf_mem_sym<?/MIVAR>	
-   <?/MIBLOCK>
 <?MIBLOCK COND="$(>,$(POSITION,$accID,GENO),0)">
    <?MIVAR NAME=$currinflink><a href="/<!--|CGI_BIN_DIR_NAME|-->/ZFIN_jump?record=$accID">$inf_mem_sym</a>
 <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$<?MIVAR>$accID<?/MIVAR>"</a><?/MIVAR>
