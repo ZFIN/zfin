@@ -20,6 +20,7 @@
 <filter token="BLAST_CACHE_AT_STARTUP" value="${BLAST_CACHE_AT_STARTUP}"/>
 <filter token="BLAST_FILE_DIR" value="${BLAST_FILE_DIR}"/>
 <filter token="BLAST_SCRIPT_DIR" value="${BLAST_SCRIPT_DIR}"/>
+<filter token="BUILD_EMAIL" value="${BUILD_EMAIL}"/>
 <filter token="CATALINA_BASE" value="${CATALINA_BASE}"/>
 <filter token="CATALINA_HOME" value="${CATALINA_HOME}"/>
 <filter token="CATALINA_PID" value="${CATALINA_PID}"/>
