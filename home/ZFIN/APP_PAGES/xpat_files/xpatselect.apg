@@ -873,7 +873,7 @@ return false ; "
 	<tr>
 	  <td>
 	    <!-- begin morpholino --> 
-	    <label for="xpatselMoSearchtype" class="namesearchLabel" id="xpatselMOSearchLabel">MO knockdown: Gene</label>
+	    <label for="xpatselMoSearchtype" class="namesearchLabel" id="xpatselMOSearchLabel">Target Gene</label>
 	      <SELECT name="MOsearchtype">
 		<option value="contains" $(IF,$(AND,$(XST,$MOsearchtype),$(EC,$MOsearchtype,contains)),SELECTED)>contains
 		<option value="begins"  $(IF,$(AND,$(XST,$MOsearchtype),$(EC,$MOsearchtype,begins)),SELECTED) >begins with
