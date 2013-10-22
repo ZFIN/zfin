@@ -13,7 +13,7 @@ package org.zfin.gwt.root.dto;
  * The third parameter is extra display text.
  */
 public enum InferenceCategory {
-    ZFIN_MRPH_GENO("ZFIN", "ZFIN:ZDB-MRPHLNO-.*|ZFIN:ZDB-GENO-.*", "(Morpholino/Genotype)"),
+    ZFIN_MRPH_GENO("ZFIN", "ZFIN:ZDB-MRPHLNO-.*|ZFIN:ZDB-TALEN-.*|ZFIN:ZDB-CRISPR-.*|ZFIN:ZDB-GENO-.*", "(Knockdown/Genotype)"),
     ZFIN_GENE("ZFIN", "ZFIN:ZDB-GENE-.*", "(Gene)"),
     UNIPROTKB("UniProtKB"),
     GO("GO"),

@@ -174,7 +174,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
             List<Marker> morpholinos = markerRepository.getMarkersForStandardAttributionAndType(publication, "MRPHLNO");
             if (CollectionUtils.isNotEmpty(morpholinos)) {
                 RelatedEntityDTO morpholinoLabelDTO = new RelatedEntityDTO();
-                morpholinoLabelDTO.setName("Morpholinos:");
+                morpholinoLabelDTO.setName("Knockdowns:");
                 relatedEntityDTOs.add(morpholinoLabelDTO);
                 for (Marker gene : morpholinos) {
                     relatedEntityDTOs.add(DTOConversionService.convertToMarkerDTO(gene));

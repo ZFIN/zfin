@@ -154,7 +154,7 @@ public class MarkerGoEvidencePresentation {
         switch (inferenceCategory) {
             case ZFIN_MRPH_GENO:
             case ZFIN_GENE:
-                if (accession.startsWith("ZDB-MRPHLNO-") || accession.startsWith("ZDB-GENE-")) {
+                if (accession.startsWith("ZDB-MRPHLNO-") || accession.startsWith("ZDB-GENE-")||accession.startsWith("ZDB-TALEN-") ||accession.startsWith("ZDB-CRISPR-")) {
                     Marker morpholino = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
                     if (morpholino == null) {
                         return "<span class=error>" + accession + " is a bad link</span>";
