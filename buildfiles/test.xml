@@ -149,29 +149,42 @@ test(s) need to be run before committing changes or pushing files to production 
                haltonerror="yes"
                maxmemory="2024m"
                showoutput="false">
-            <test name="org.zfin.UnitTests" todir="${test.reports.dir}" outfile="${unitTestFile}">
+            <test name="org.zfin.UnitTests" todir="${test.reports.dir}" 
+		  haltonerror="${isalmosthappytrunktest}" haltonfailure="${isalmosthappytrunktest}"
+                  failureproperty="test.failure"
+                  outfile="${unitTestFile}">
                 <formatter type="brief"/>
                 <formatter type="xml"/>
             </test>
 
-            <test name="org.zfin.DbUnitTests" todir="${test.reports.dir}" outfile="${dbTestFile}">
+            <test name="org.zfin.DbUnitTests" todir="${test.reports.dir}" 
+		  haltonerror="${isalmosthappytrunktest}" haltonfailure="${isalmosthappytrunktest}"
+                  failureproperty="test.failure"
+                  outfile="${dbTestFile}">
                 <formatter type="brief"/>
                 <formatter type="xml"/>
             </test>
 
 
-            <test name="org.zfin.DbControllerTests" todir="${test.reports.dir}" outfile="${controllerTestFile}">
+            <test name="org.zfin.DbControllerTests" todir="${test.reports.dir}" 
+		  haltonerror="${isalmosthappytrunktest}" haltonfailure="${isalmosthappytrunktest}"
+                  failureproperty="test.failure"
+                  outfile="${controllerTestFile}">
                 <formatter type="brief"/>
                 <formatter type="xml"/>
             </test>
 
             <test name="org.zfin.infrastructure.EnumValidationTest" todir="${test.reports.dir}"
+		  haltonerror="${isalmosthappytrunktest}" haltonfailure="${isalmosthappytrunktest}"
+                  failureproperty="test.failure"
                   outfile="validate-tests">
                 <formatter type="brief"/>
                 <formatter type="xml"/>
             </test>
                
             <test name="org.zfin.sequence.blast.BlastAndDBTests" todir="${test.reports.dir}"
+                  haltonerror="${isalmosthappytrunktest}" haltonfailure="${isalmosthappytrunktest}"
+		  failureproperty="test.failure"
                   outfile="${blastTestFile}">
                 <formatter type="brief"/>
                 <formatter type="xml"/>
@@ -179,7 +192,8 @@ test(s) need to be run before committing changes or pushing files to production 
 
             <test name="org.zfin.ThirdPartyServiceTests" todir="${test.reports.dir}"
                   outfile="${serviceTestFile}"
-                  haltonerror="false" haltonfailure="false" failureproperty="service.failure" >
+                  haltonerror="false" haltonfailure="false" failureproperty="service.failure" 
+                  >
                 <formatter type="brief"/>
                 <formatter type="xml"/>
             </test>
@@ -211,6 +225,9 @@ test(s) need to be run before committing changes or pushing files to production 
             <param name="test.output.file" value="${smokeTestFile}"/>
         </antcall>
         <antcall target="handleServiceFailure"/>
+        <fail message=":TESTS FAILED:" if="test.failure"/>
+        <fail message=":SMOKE TESTS FAILED:" if="smoke.failure"/>
+        <fail message=":SERVICE TESTS FAILED:" if="service.failure"/>
         <echo message=":ALL UNIT TESTS PASSED:"/>
     </target>
 
@@ -295,6 +312,15 @@ test(s) need to be run before committing changes or pushing files to production 
         <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
               fork="yes"
               classpathref="classpath">
+        </java>
+    </target>
+
+    <target name="handleTestFailure" if="test.failure">
+        <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
+	            fork="yes"
+              classpathref="classpath">
+            <arg value="Failed tests."/>
+            <arg value="${serviceFailureMessage}"/>
         </java>
     </target>
 
