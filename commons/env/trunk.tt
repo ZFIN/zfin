@@ -19,7 +19,7 @@
 <!--|DB_NAME|-->	trunkdb
 <!--|DB_OWNER|-->	informix
 <!--|DOMAIN_NAME|-->	trunk.zfin.org
-<!--|FTP_ROOT|-->	/research/zcentral/ftp/test/trunk
+<!--|FTP_ROOT|-->	/opt/zfin/ftp/test/trunk
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
@@ -32,16 +32,17 @@
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4
 <!--|HIGHLIGHT_COLOR|-->	#EEEEEE
 <!--|IMAGE_LOAD|-->	/imageLoadUp
+<!--|INFORMIXSQLHOSTS|-->	/private/apps/Informix/informix/etc/sqlhosts
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
-<!--|INFORMIX_SERVER|-->	waldo
+<!--|INFORMIX_SERVER|-->	waffle
 <!--|INSTANCE|-->	trunk
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@cs.uoregon.edu
-<!--|MACHINE_NAME|-->	zygotix
+<!--|MACHINE_NAME|-->	torso
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	trunk
 <!--|NOMEN_COORDINATOR|-->	informix\@cs.uoregon.edu
@@ -53,18 +54,18 @@
 <!--|PATO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	informix\@cs.uoregon.edu
-<!--|ROOT_PATH|-->	/research/zcentral/www_homes/trunk
+<!--|ROOT_PATH|-->	/opt/zfin/www_homes/trunk
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#CCFFFF
-<!--|SOURCEROOT|-->	/research/zusers/trunk/ZFIN_WWW
+<!--|SOURCEROOT|-->	/opt/zfin/source_roots/trunk/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
+<!--|SQLHOSTS_HOST|-->	torso.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	informix\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	informix\@cs.uoregon.edu xshao\@cs.uoregon.edu
-<!--|TARGETROOT|-->	/research/zcentral/www_homes/trunk
+<!--|TARGETROOT|-->	/opt/zfin/www_homes/trunk
 <!--|VALIDATION_EMAIL_AD|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_DBA|-->	informix\@cs.uoregon.edu

@@ -5,10 +5,10 @@ use DBI;
 
 use MIME::Lite;
 
-$ENV{"INFORMIXDIR"}      = "/private/apps/Informix/informix";
-$ENV{"INFORMIXSERVER"}   = "waldo";
+$ENV{"INFORMIXDIR"}      = "<!--|INFORMIX_DIR|-->";
+$ENV{"INFORMIXSERVER"}   = "<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}         = "onconfig";
-$ENV{"INFORMIXSQLHOSTS"} = "/private/apps/Informix/informix/etc/sqlhosts";
+$ENV{"INFORMIXSQLHOSTS"} = "<!--|INFORMIXSQLHOSTS|-->";
 
 
 my $dbname = $ENV{"DBNAME"};
