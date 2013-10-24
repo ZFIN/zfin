@@ -5,6 +5,15 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.DisruptorAddBean" scope="request"/>
 
 <html>
+<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
+
+<script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
+<link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">
+
+<script src="/javascript/profile-edit.js"></script>
+
+<link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 
 <h1>Describe new ${formBean.disruptorType}</h1>
 
@@ -36,6 +45,13 @@
         <b>Add Target Gene:</b>
         <div id="targetgene" onkeypress="return noenter(event)"></div>
     </div>
+    <c:if test="${formBean.disruptorType eq 'TALEN' || formBean.disruptorType eq 'CRISPR'}">
+        <br/>
+        <div>
+            <b>Add Supplier:</b><br/>
+            <form:input path="<%= DisruptorAddBean.NEW_DISRUPTOR_SUPPLIER_NAME%>" id="supplierName" type="text" size="35" />
+        </div>
+    </c:if>
     <p/>
     <table border=0>
         <tr>
@@ -91,7 +107,7 @@
         <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="warnAboutNoTargetGene()">
     </c:if>
     <c:if test="${formBean.disruptorType ne 'TALEN'}">
-        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="populateDispSeq()">
+        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="preSubmit()">
     </c:if>
 </form:form>
 
@@ -210,7 +226,7 @@
         cNote.value = "Reported Sequence: "+ reportSeq.value + " was " + action +".\r\n" + cNote.value;
     }
 
-    function populateDispSeq() {
+    function preSubmit() {
         var displayedSeq = document.getElementById('displaySeq');
         var reportSeq = document.getElementById('reportSeq');
         if(!displayedSeq.value || displayedSeq.value.length == 0 || !/^[\s]+$/.test(displayedSeq.value)) {
@@ -227,6 +243,16 @@
         }
     }
 
+    jQuery(document).ready(function () {
+
+        jQuery( "#supplierName" ).autocomplete({
+            source: '/action/marker/find-suppliers',
+            minLength: 2,
+            select: function (event, ui) {
+                jQuery('#supplierName').val(ui.item.label);
+            }
+        });
+    });
 
 </script>
 

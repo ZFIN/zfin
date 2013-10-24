@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
-import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -22,6 +21,8 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.profile.Organization;
+import org.zfin.profile.repository.*;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
@@ -44,6 +45,7 @@ public class DisruptorAddController {
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
     private static SequenceRepository sr = RepositoryFactory.getSequenceRepository();
+    private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
     @ModelAttribute("formBean")
     private DisruptorAddBean getDefaultSearchForm(@RequestParam(value = "disruptorType", required = false) String type,
@@ -129,7 +131,7 @@ public class DisruptorAddController {
                 mr.addMarkerAlias(newDisruptor, alias, disruptorPub);
             }
 
-            String curationNote = formBean.getDisruptorCuratorNote();
+            String curationNote = formBean.getDisruptorCuratorNote()+formBean.getDisruptorSupplierName();
             if(!StringUtils.isEmpty(curationNote)) {
                 mr.addMarkerDataNote(newDisruptor, curationNote, currentUser);
             }
@@ -140,6 +142,9 @@ public class DisruptorAddController {
             if (targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
                 MarkerService.addMarkerRelationship(newDisruptor, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
             }
+
+            Organization supplier = profileRepository.getOrganizationByName(formBean.getDisruptorSupplierName());
+            profileRepository.addSupplier(supplier, newDisruptor);
 
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
