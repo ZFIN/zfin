@@ -44,7 +44,7 @@
 <c:if test="${fn:length(formBean.sequenceTargetingReagents) > 0 }">
         <tr>
             <th class="fish-name-label" style="vertical-align: bottom;">
-                <span class="name-label">Genotype + Morpholinos:</span>
+                <span class="name-label">Genotype + Knockdowns:</span>
             </th>
             <td class="fish-name-value" style="vertical-align: bottom;">
                 <span class="name-value">${formBean.fishName}</span>
@@ -163,7 +163,7 @@
     <c:if test="${fn:length(formBean.sequenceTargetingReagents) > 0 }">
         <table class="summary rowstripes">
             <tr>
-                <th width="20%">Morpholino</th>
+                <th width="20%">Knockdown(s)</th>
                 <th width=20%>Targeted Gene</th>
             </tr>
 
