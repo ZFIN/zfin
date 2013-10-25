@@ -28,7 +28,7 @@ RewriteCond %{HTTPS} =off
   # Enumerate all urls that require https here, [OR]
   # goes at the end of all but the last one
 RewriteCond %{REQUEST_URI} ^/action/people/edit-user$ [OR]
-RewriteCond %{REQUEST_URI} ^/build [OR]
+#RewriteCond %{REQUEST_URI} ^/build [OR]
 RewriteCond %{REQUEST_URI} ^/action/login-redirect$
 RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 
