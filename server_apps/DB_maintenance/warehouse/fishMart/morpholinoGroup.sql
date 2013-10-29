@@ -1,5 +1,5 @@
 
-!echo "begin morpholino group";
+!echo "begin STR group";
 
 insert into morpholino_group (morphg_genox_Zdb_id)
   select distinct genox_zdb_id from genotype_experiment
@@ -57,7 +57,7 @@ insert into morpholino_group_member(morphgm_group_id, morphgm_member_name, morph
    and morphg_genox_zdb_id = genox_zdb_id;
 
 
-!echo "lvarchar length for morpholino group";
+!echo "lvarchar length for STR group";
 
 select max(octet_length(morphg_group_name))
  from morpholino_group;

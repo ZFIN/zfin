@@ -222,7 +222,7 @@ elsif (1 == $nArgs && "-i" eq $ARGV[0]) {
 }
 
 # Find latest DB dump
-$dumpDir = "/research/zunloads/databases/production";
+$dumpDir = "/research/zunloads/databases/production/linux/";
 $latestDump = `/bin/ls -1t $dumpDir | head -1`;
 chop($latestDump);
 print(LOG "Using dump $dumpDir/$latestDump\n");
