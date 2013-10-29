@@ -9,7 +9,7 @@ public enum FeatureTypeEnum implements IsSerializable{
     POINT_MUTATION("Point Mutation"),
     DELETION("Small Deletion"),
     INSERTION("Insertion"),
-    INDEL("indel"),
+    INDEL("Indel"),
     TRANSLOC("Translocation"),
     INVERSION("Inversion"),
     DEFICIENCY("Deficiency"),
