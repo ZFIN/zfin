@@ -399,7 +399,7 @@ $(IF,$(>,$(POSITION,$rtype,goview),0),
      <?/MIVAR><br>
     <?MIELSE>
      <?MIVAR>
-	$(IF,$(>,$(POSITION,$OID,GENO),0),Genotype Name:&nbsp;$geno_name)<?MIVAR><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$OID"></a><?/MIVAR>
+	$(IF,$(!=,$(POSITION,$OID,GENO),0),Genotype Name:&nbsp;$geno_name <?MIVAR><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$OID"></a><?/MIVAR>)
 	$(IF,$(>,$(POSITION,$OID,ALT),0),Feature Name:&nbsp;$feature_name)
 	$(IF,$(>,$(POSITION,$OID,ANAT),0),Anatomy Name:&nbsp;$ao_name)
       <?/MIVAR><br>
