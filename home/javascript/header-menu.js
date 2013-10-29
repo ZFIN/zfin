@@ -109,7 +109,7 @@ function showZFINLinks() {
 
 
     document.getElementById("hdr-zirclinks").style.display = "none";
-    //document.getElementById("hdr-generallinks").style.display = "none";
+    document.getElementById("hdr-generallinks").style.display = "none";
     document.getElementById("hdr-motto").style.display = "none";
     document.getElementById("hdr-zfinlinks").style.display = "block";
 
@@ -160,7 +160,7 @@ function showZIRCLinks() {
 
 
     document.getElementById("hdr-zfinlinks").style.display = "none";
-//    document.getElementById("hdr-generallinks").style.display = "none";
+    document.getElementById("hdr-generallinks").style.display = "none";
     document.getElementById("hdr-motto").style.display = "none";
     document.getElementById("hdr-zirclinks").style.display = "block";
 
@@ -170,6 +170,6 @@ function showZIRCLinks() {
 function showMotto() {
     document.getElementById("hdr-zfinlinks").style.display = "none";
     document.getElementById("hdr-zirclinks").style.display = "none";
-//        document.getElementById("hdr-generallinks").style.display = "none";
+        document.getElementById("hdr-generallinks").style.display = "none";
         document.getElementById("hdr-motto").style.display = "block";
     }
