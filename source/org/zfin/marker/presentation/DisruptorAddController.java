@@ -131,7 +131,7 @@ public class DisruptorAddController {
                 mr.addMarkerAlias(newDisruptor, alias, disruptorPub);
             }
 
-            String curationNote = formBean.getDisruptorCuratorNote()+formBean.getDisruptorSupplierName();
+            String curationNote = formBean.getDisruptorCuratorNote();
             if(!StringUtils.isEmpty(curationNote)) {
                 mr.addMarkerDataNote(newDisruptor, curationNote, currentUser);
             }
@@ -143,8 +143,11 @@ public class DisruptorAddController {
                 MarkerService.addMarkerRelationship(newDisruptor, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
             }
 
-            Organization supplier = profileRepository.getOrganizationByName(formBean.getDisruptorSupplierName());
-            profileRepository.addSupplier(supplier, newDisruptor);
+            String supplierName = formBean.getDisruptorSupplierName();
+            if (!StringUtils.isEmpty(supplierName)) {
+              Organization supplier = profileRepository.getOrganizationByName(formBean.getDisruptorSupplierName());
+              profileRepository.addSupplier(supplier, newDisruptor);
+            }
 
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
