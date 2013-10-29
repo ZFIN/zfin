@@ -912,11 +912,20 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
  <?/MIVAR>
 
   <br/><p>
-
+<?MICOMMENT>
  <?MISQL SQL="select *
               from record_attribution, feature_marker_relationship
               where recattrib_data_zdb_id=fmrel_zdb_id
               and fmrel_mrkr_zdb_id like '%CONSTRCT%'
+              and recattrib_source_zdb_id='$OID'">
+
+ <?/MISQL>
+<?/MICOMMENT>
+ <?MISQL SQL="select *
+              from record_attribution,feature_marker_relationship,feature
+              where recattrib_data_zdb_id=feature_zdb_id
+and feature_zdb_id=fmrel_ftr_zdb_id
+              and feature_type like '%TRANSGENIC%'
               and recattrib_source_zdb_id='$OID'">
 
  <?/MISQL>
