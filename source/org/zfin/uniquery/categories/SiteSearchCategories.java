@@ -262,7 +262,7 @@ public final class SiteSearchCategories {
         if (url == null)
             return null;
         try {
-            URI uri = new URI(url);
+            URI uri = new URI(url.trim());
             return uri.getPath();
         } catch (URISyntaxException e) {
             e.printStackTrace();
