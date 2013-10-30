@@ -310,7 +310,8 @@ union
 --markers
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/1markers.txt"
-select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkr_name from marker;
+select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkr_name from marker
+ where mrkr_type not in ('TALEN','CRISPR');
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/2mrels.txt"
  select mrel.* from marker_relationship mrel, marker a, marker b
