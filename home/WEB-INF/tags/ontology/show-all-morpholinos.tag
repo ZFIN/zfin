@@ -7,7 +7,7 @@
 <table border="0" width="100%">
     <tbody>
         <tr align="left">
-            <td><b>All ${formBean.wildtypeMorpholinoCount} Morpholino Experiments
+            <td><b>All ${formBean.wildtypeMorpholinoCount} Knockdown Experiments
                 (<c:if test="${wildtype}">wild-type</c:if><c:if test="${!wildtype}">mutant</c:if>)
              for:</b>
                 <zfin:link entity="${formBean.aoTerm}" />
@@ -23,7 +23,7 @@
                 Target Genes
             </TD>
             <TD width="20%">
-                Morpholinos
+                Reagents
             </TD>
             <TD width="20%">
                 Genotype

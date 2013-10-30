@@ -39,7 +39,7 @@ import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.PhenotypeStatementTest;
 import org.zfin.mutant.PhenotypeStructureTest;
-import org.zfin.mutant.presentation.MorpholinoStatisticsTest;
+import org.zfin.mutant.presentation.SequenceTargetingReagentStatisticsTest;
 import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyTokenizationTest;
@@ -81,7 +81,7 @@ import org.zfin.util.*;
         BlastPresentationServiceTest.class,
 //        BtsContainsServiceTest.class,
         CurationExperimentTest.class,
-	    DatabaseServiceTest.class,
+        DatabaseServiceTest.class,
         DbScriptFileParserTest.class,
         EntityPresentationTest.class,
         EnvironmentDTOTest.class,
@@ -94,7 +94,7 @@ import org.zfin.util.*;
         FishServiceNoDBTest.class,
         FunctionsTest.class,
         InferenceUnitTest.class,
-	    IndexerUtilTest.class,
+        IndexerUtilTest.class,
         GenericTermTest.class,
         GwtStringUtilsTest.class,
         HighlightUtilTest.class,
@@ -108,7 +108,6 @@ import org.zfin.util.*;
         Md5PasswordEncoderTest.class,
         MicroarrayParseTest.class,
         MergeMarkerUnitTest.class,
-        MorpholinoStatisticsTest.class,
         OntologyServiceTest.class,
         OntologyTokenizationTest.class,
         OrganizationUrlTest.class,
@@ -128,6 +127,7 @@ import org.zfin.util.*;
         SectionVisibilityTest.class,
         SearchCriterionTest.class,
         SequenceTest.class,
+        SequenceTargetingReagentStatisticsTest.class,
         SerializationTests.class,
         SingleAssociatedGenesFromQueryTest.class,
         SiteSearchTest.class,

@@ -4,7 +4,7 @@
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
 <div class="summary">
-    <div class="summaryTitle">Morpholino Experiments in Mutant and Transgenic Fish</div>
+    <div class="summaryTitle">Knockdown Experiments in Mutant and Transgenic Fish</div>
 
     <c:if test="${!formBean.nonWildtypeMorpholinoExist}">
         No data available
@@ -17,7 +17,7 @@
                     Target Genes
                 </th>
                 <th width="15%">
-                    Morpholinos
+                    Reagents
                 </th>
                 <th width="20%">
                     Genotype
