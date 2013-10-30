@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.presentation.MorpholinoStatistics;
+import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
 
@@ -66,7 +66,7 @@ public class AllMorpholinoExperimentController {
         if (request.getQueryString() != null)
             form.setQueryString(request.getQueryString());
 
-        retrieveMorpholinoData(term, form, isWildtype);
+        retrieveSequenecTargetingReagentData(term, form, isWildtype);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         if (isWildtype)
             return "anatomy/show-all-wildtype-morpholinos.page";
@@ -74,16 +74,16 @@ public class AllMorpholinoExperimentController {
             return "anatomy/show-all-non-wildtype-morpholinos.page";
     }
 
-    protected void retrieveMorpholinoData(GenericTerm term, AnatomySearchBean form, boolean wildtype) {
+    protected void retrieveSequenecTargetingReagentData(GenericTerm term, AnatomySearchBean form, boolean wildtype) {
 
         PaginationResult<GenotypeExperiment> wildtypeMorphResults =
-                getMutantRepository().getGenotypeExperimentMorpholinos(term, wildtype, form);
+                getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(term, wildtype, form);
         int count = wildtypeMorphResults.getTotalCount();
         List<GenotypeExperiment> experiments = wildtypeMorphResults.getPopulatedResults();
 
-        List<MorpholinoStatistics> morpholinoStats = createMorpholinoStats(experiments, term);
-        Collections.sort(morpholinoStats, new Comparator<MorpholinoStatistics>() {
-            public int compare(MorpholinoStatistics one, MorpholinoStatistics two) {
+        List<SequenceTargetingReagentStatistics> morpholinoStats = createMorpholinoStats(experiments, term);
+        Collections.sort(morpholinoStats, new Comparator<SequenceTargetingReagentStatistics>() {
+            public int compare(SequenceTargetingReagentStatistics one, SequenceTargetingReagentStatistics two) {
                 return (one.getTargetGeneOrder().compareTo(two.getTargetGeneOrder()));
             }
         });
@@ -93,13 +93,13 @@ public class AllMorpholinoExperimentController {
         form.setAllMorpholinos(morpholinoStats);
     }
 
-    protected List<MorpholinoStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, GenericTerm term) {
+    protected List<SequenceTargetingReagentStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, GenericTerm term) {
         if (morpholinos == null || term == null)
             return null;
 
-        List<MorpholinoStatistics> stats = new ArrayList<MorpholinoStatistics>();
+        List<SequenceTargetingReagentStatistics> stats = new ArrayList<SequenceTargetingReagentStatistics>();
         for (GenotypeExperiment genoExp : morpholinos) {
-            MorpholinoStatistics stat = new MorpholinoStatistics(genoExp, term);
+            SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, term);
             stats.add(stat);
         }
         return stats;

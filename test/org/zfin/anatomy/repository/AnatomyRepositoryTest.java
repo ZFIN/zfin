@@ -59,8 +59,8 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void compareWildTypeSelectionToFullForMorphs() {
         GenericTerm item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
-        PaginationResult<GenotypeExperiment> genotypeWildtype = getMutantRepository().getGenotypeExperimentMorpholinos(item, true, null);
-        PaginationResult<GenotypeExperiment> genotypeNonWildtype = getMutantRepository().getGenotypeExperimentMorpholinos(item, false, null);
+        PaginationResult<GenotypeExperiment> genotypeWildtype = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true, null);
+        PaginationResult<GenotypeExperiment> genotypeNonWildtype = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, false, null);
 
         assertNotNull(genotypeWildtype.getPopulatedResults());
         assertNotNull(genotypeNonWildtype.getPopulatedResults());
@@ -73,11 +73,11 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     public void getWildtypeMorpholinos() {
         // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
         GenericTerm item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
-        PaginationResult<GenotypeExperiment> genos = getMutantRepository().getGenotypeExperimentMorpholinos(item, true, null);
+        PaginationResult<GenotypeExperiment> genos = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true, null);
         assertNotNull(genos.getPopulatedResults());
         assertTrue(genos.getPopulatedResults().size() > 1);
 
-        List<GenotypeExperiment> genotypeList = getMutantRepository().getGenotypeExperimentMorpholinos(item, true);
+        List<GenotypeExperiment> genotypeList = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true);
         assertNotNull(genotypeList);
         assertTrue(genotypeList.size() > 1);
 

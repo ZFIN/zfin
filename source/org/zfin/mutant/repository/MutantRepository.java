@@ -104,7 +104,7 @@ public interface MutantRepository {
      * @param numberOfRecords defines the first n records to retrieve
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, int numberOfRecords);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, int numberOfRecords);
 
     /**
      * Retrieve all genotype objects that are associated to a morpholino.
@@ -115,7 +115,7 @@ public interface MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    List<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype);
+    List<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype);
 
     /**
      * Retrieve genotype objects that are associated to a morpholino within the range specified
@@ -128,7 +128,7 @@ public interface MutantRepository {
      * @param bean       PaginationBean
      * @return list of genotype object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, PaginationBean bean);
+    PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, PaginationBean bean);
 
     /**
      * @param name name of quality term

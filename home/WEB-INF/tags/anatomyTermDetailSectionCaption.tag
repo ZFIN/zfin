@@ -88,7 +88,7 @@
                                     <c:otherwise>
                                         <zfin:choice choicePattern="${choicePattern}"
                                                      integerEntity="${anatomyStatistics.numberOfTotalDistinctObjects}"
-                                                     includeNumber="true"/> 
+                                                     includeNumber="true"/>
                                     </c:otherwise>
                                 </c:choose>)
                             </c:if>
@@ -110,7 +110,7 @@
                              includeNumber="true"/></a> affecting children of '${anatomyItem.termName}'.
             </c:when>
             <c:otherwise>
-                </br>No data available.
+                No data available.
             </c:otherwise>
         </c:choose>
 

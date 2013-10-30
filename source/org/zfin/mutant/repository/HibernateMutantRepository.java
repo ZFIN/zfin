@@ -281,22 +281,22 @@ public class HibernateMutantRepository implements MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype object
      */
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, int numberOfRecords) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, int numberOfRecords) {
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(numberOfRecords);
-        return getGenotypeExperimentMorpholinos(item, isWildtype, bean);
+        return getGenotypeExperimentSequenceTargetingReagents(item, isWildtype, bean);
     }
 
-    public List<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype) {
-        return getGenotypeExperimentMorpholinos(item, isWildtype, null).getPopulatedResults();
+    public List<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype) {
+        return getGenotypeExperimentSequenceTargetingReagents(item, isWildtype, null).getPopulatedResults();
     }
 
     @SuppressWarnings("unchecked")
-    public PaginationResult<GenotypeExperiment> getGenotypeExperimentMorpholinos(GenericTerm item, Boolean isWildtype, PaginationBean bean) {
+    public PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, PaginationBean bean) {
         Session session = HibernateUtil.currentSession();
         String hql = "SELECT distinct genotypeExperiment " +
                 "FROM  GenotypeExperiment genotypeExperiment, Experiment exp, Genotype geno, " +
-                "      PhenotypeExperiment phenox, PhenotypeStatement phenoeq, ExperimentCondition con, Marker marker " +
+                "      PhenotypeExperiment phenox, PhenotypeStatement phenoeq, ExperimentCondition con " +
                 "WHERE   " +
                 "      genotypeExperiment.experiment = exp AND phenoeq.phenotypeExperiment = phenox AND " +
                 "       (phenoeq.entity.superterm = :aoTerm " +
@@ -307,15 +307,14 @@ public class HibernateMutantRepository implements MutantRepository {
                 "       phenoeq.tag != :tag AND " +
                 "       con.experiment = exp AND " +
                 "       genotypeExperiment.genotype = geno AND " +
-                "       marker = con.sequenceTargetingReagent AND " +
-                "       not exists (select 1 from ExperimentCondition expCon where expCon.experiment = exp AND " +
-                "                             expCon.sequenceTargetingReagent is null ) ";
+                "       con.sequenceTargetingReagent is not null";
         if (isWildtype != null) {
             hql += " AND geno.wildtype = :isWildtype ";
         }
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+
         if (isWildtype != null) {
             query.setBoolean("isWildtype", isWildtype);
         }

@@ -13,7 +13,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
-import org.zfin.mutant.presentation.MorpholinoStatistics;
+import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
@@ -65,9 +65,9 @@ public class AnatomySearchBean extends PaginationBean {
     private int totalNumberOfFiguresPerAnatomyItem;
     private int totalNumberOfImagesPerAnatomyItem;
     private List<GenotypeStatistics> genoStats;
-    private List<MorpholinoStatistics> allMorpholinos;
+    private List<SequenceTargetingReagentStatistics> allMorpholinos;
     private List<AntibodyStatistics> antibodyStatistics;
-    private List<MorpholinoStatistics> nonWildtypeMorpholinos;
+    private List<SequenceTargetingReagentStatistics> nonWildtypeMorpholinos;
     private Term aoTerm;
     private String ontologyName = Ontology.ANATOMY.getOntologyName();
 
@@ -259,12 +259,12 @@ public class AnatomySearchBean extends PaginationBean {
         return genoStats;
     }
 
-    public void setAllMorpholinos(List<MorpholinoStatistics> morphs) {
+    public void setAllMorpholinos(List<SequenceTargetingReagentStatistics> morphs) {
         allMorpholinos = morphs;
     }
 
 
-    public List<MorpholinoStatistics> getAllMorpholinos() {
+    public List<SequenceTargetingReagentStatistics> getAllMorpholinos() {
         return allMorpholinos;
     }
 
@@ -276,11 +276,11 @@ public class AnatomySearchBean extends PaginationBean {
         this.antibodyStatistics = antibodyStatistics;
     }
 
-    public List<MorpholinoStatistics> getNonWildtypeMorpholinos() {
+    public List<SequenceTargetingReagentStatistics> getNonWildtypeMorpholinos() {
         return nonWildtypeMorpholinos;
     }
 
-    public void setNonWildtypeMorpholinos(List<MorpholinoStatistics> nonWildtypeMorpholinos) {
+    public void setNonWildtypeMorpholinos(List<SequenceTargetingReagentStatistics> nonWildtypeMorpholinos) {
         this.nonWildtypeMorpholinos = nonWildtypeMorpholinos;
     }
 

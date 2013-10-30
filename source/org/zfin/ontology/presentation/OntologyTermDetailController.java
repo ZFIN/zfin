@@ -300,7 +300,7 @@ public class OntologyTermDetailController {
 
         // check for MOs
         List<GenotypeExperiment> morphs =
-                getMutantRepository().getGenotypeExperimentMorpholinos(term, null);
+                getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(term, null);
         return morphs != null && morphs.size() > 0;
     }
 

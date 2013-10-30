@@ -101,7 +101,7 @@ public class MutantRepositoryTest {
         OntologyRepository ar = RepositoryFactory.getOntologyRepository();
         GenericTerm ai = ar.getTermByName(name, Ontology.ANATOMY);
         PaginationResult<GenotypeExperiment> morphs =
-                getMutantRepository().getGenotypeExperimentMorpholinos(ai, true, null);
+                getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(ai, true, null);
         assertNotNull("morphs exist", morphs.getPopulatedResults());
 
     }
@@ -130,7 +130,7 @@ public class MutantRepositoryTest {
 
     @Test
     public void checkQualityTerms() {
-        //  quality term: red 
+        //  quality term: red
         String name = "red";
         List<GenericTerm> terms = getMutantRepository().getQualityTermsByName(name);
         assertNotNull(terms);
@@ -279,7 +279,7 @@ public class MutantRepositoryTest {
         // bile canaliculus
         String oboID = "ZFA:0005163 ";
         GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(oboID);
-        List<GenotypeExperiment> genox = mutantRepository.getGenotypeExperimentMorpholinos(term, null);
+        List<GenotypeExperiment> genox = mutantRepository.getGenotypeExperimentSequenceTargetingReagents(term, null);
         assertNotNull(genox);
         assertTrue(genox.size() >= 0);
     }

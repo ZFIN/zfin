@@ -6,7 +6,7 @@
 <div class="summary">
     <div class="summaryTitle">Morpholino Experiments in Wild-type Fish</div>
     <c:if test="${!formBean.morpholinoExist}">
-        <br/>No data available
+        No data available
     </c:if>
     <c:if test="${formBean.morpholinoExist}">
         <table class="summary rowstripes">
@@ -87,7 +87,7 @@
                     <td>
                         Show all
                         <a href="/action/ontology/show-all-morpholinos/${formBean.aoTerm.zdbID}/true">
-                                ${formBean.wildtypeMorpholinoCount}
+                            ${formBean.wildtypeMorpholinoCount}
                             <zfin:choice choicePattern="0# experiments| 1# experiment| 2# experiments"
                                          integerEntity="${formBean.wildtypeMorpholinoCount}"/>
                         </a>

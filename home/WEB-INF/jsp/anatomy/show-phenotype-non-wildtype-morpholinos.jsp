@@ -4,10 +4,10 @@
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
 <div class="summary">
-    <b>Morpholino Experiments in Mutant and Transgenic Fish</b>
+    <div class="summaryTitle">Morpholino Experiments in Mutant and Transgenic Fish</div>
 
     <c:if test="${!formBean.nonWildtypeMorpholinoExist}">
-        </br>No data available
+        No data available
     </c:if>
     <c:if test="${formBean.nonWildtypeMorpholinoExist}">
         <table class="summary rowstripes">
@@ -92,6 +92,7 @@
                                 ${formBean.mutantMorpholinoCount}
                                 <zfin:choice choicePattern="0# experiments| 1# experiment| 2# experiments"
                                              integerEntity="${formBean.mutantMorpholinoCount}"/>
+                                </a>
                     </td>
                 </tr>
                 </tbody>

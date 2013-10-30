@@ -14,14 +14,14 @@
                              showAllUsed="false"
                              displaySectionName="PHENOTYPE"/>
 
-    <p></p>
+    <p/>
 <%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
             jQuery('#${phenotypeSection}-mutants').load('/action/ontology/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks(); } );
-            jQuery('#${phenotypeSection}-morpholinos').load('/action/ontology/show-phenotype-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${phenotypeSection}-non-wildtype-morpholinos').load('/action/ontology/show-phenotype-non-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-sequence-targeting-reagents').load('/action/ontology/show-phenotype-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents').load('/action/ontology/show-phenotype-non-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
             showSection('${phenotypeSection}', true);
         }
     </script>
@@ -32,13 +32,13 @@
         </div>
         <p></p>
 
-        <div id="${phenotypeSection}-morpholinos" class="indented-section"><span
-                class="search-result-table-header">Wildtype Morpholinos</span>
+        <div id="${phenotypeSection}-sequence-targeting-reagents" class="indented-section"><span
+                class="search-result-table-header">Wildtype Sequence Targeting Reagents</span>
             loading <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
         <p></p>
 
-        <div id="${phenotypeSection}-non-wildtype-morpholinos" class="indented-section"><span
+        <div id="${phenotypeSection}-non-wildtype-sequence-targeting-reagents" class="indented-section"><span
                 class="search-result-table-header">Non-wildtype Morpholinos</span>
             loading <img src="/images/ajax-loader.gif" alt="loading...">
         </div>

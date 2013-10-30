@@ -25,7 +25,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
-import org.zfin.mutant.presentation.MorpholinoStatistics;
+import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -184,7 +184,7 @@ public class AnatomyAjaxController {
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
-        retrieveMorpholinoData(term, form, true);
+        retrieveSequenecTargetingReagentData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "anatomy/show-phenotype-wildtype-morpholinos.ajax";
     }
@@ -256,7 +256,7 @@ public class AnatomyAjaxController {
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
-        retrieveMorpholinoData(term, form, false);
+        retrieveSequenecTargetingReagentData(term, form, false);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "anatomy/show-phenotype-non-wildtype-morpholinos.ajax";
     }
@@ -375,14 +375,14 @@ public class AnatomyAjaxController {
      * @param form     form bean
      * @param wildtype wild type or not
      */
-    protected void retrieveMorpholinoData(GenericTerm ai, AnatomySearchBean form, boolean wildtype) {
+    protected void retrieveSequenecTargetingReagentData(GenericTerm ai, AnatomySearchBean form, boolean wildtype) {
 
         PaginationResult<GenotypeExperiment> wildtypeMorphResults =
-                mutantRepository.getGenotypeExperimentMorpholinos(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+                mutantRepository.getGenotypeExperimentSequenceTargetingReagents(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         int count = wildtypeMorphResults.getTotalCount();
         List<GenotypeExperiment> experiments = wildtypeMorphResults.getPopulatedResults();
 
-        List<MorpholinoStatistics> morpholinoStats = createMorpholinoStats(experiments, ai);
+        List<SequenceTargetingReagentStatistics> morpholinoStats = createMorpholinoStats(experiments, ai);
         if (wildtype) {
             form.setWildtypeMorpholinoCount(count);
             form.setAllMorpholinos(morpholinoStats);
@@ -392,13 +392,13 @@ public class AnatomyAjaxController {
         }
     }
 
-    protected static List<MorpholinoStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, GenericTerm ai) {
+    protected static List<SequenceTargetingReagentStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, GenericTerm ai) {
         if (morpholinos == null || ai == null)
             return null;
 
-        List<MorpholinoStatistics> stats = new ArrayList<MorpholinoStatistics>();
+        List<SequenceTargetingReagentStatistics> stats = new ArrayList<SequenceTargetingReagentStatistics>();
         for (GenotypeExperiment genoExp : morpholinos) {
-            MorpholinoStatistics stat = new MorpholinoStatistics(genoExp, ai);
+            SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, ai);
             stats.add(stat);
         }
         return stats;
