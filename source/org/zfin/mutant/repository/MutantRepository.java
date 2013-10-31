@@ -362,6 +362,8 @@ public interface MutantRepository {
      */
     List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Genotype genotype, boolean includeSubstructures);
 
+    List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
+
     /**
      * Retrieve phenotype statements for given structure and genotype.
      *

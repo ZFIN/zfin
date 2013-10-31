@@ -171,7 +171,7 @@ public class FigureService {
 
     public static List<FigureSummaryDisplay> createPhenotypeFigureSummary(GenericTerm term, Genotype geno, boolean includeSubstructures) {
 
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, geno, includeSubstructures);
+        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatementForMutantSummary(term, geno, includeSubstructures);
         // a map of publicationID-FigureID as keys and figure summary display objects as values
         Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
         for (PhenotypeStatement statement : statements) {
