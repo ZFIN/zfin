@@ -209,17 +209,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
  select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
   	 gfrv_construct_name, gfrv_construct_zdb_id,'morpholino'
     from gene_Feature_result_view
-    where gfrv_affector_id like 'ZDB-MRPH%'
-     union
- select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
-  	 gfrv_construct_name, gfrv_construct_zdb_id,'TALEN'
-    from gene_Feature_result_view
-    where gfrv_affector_id like 'ZDB-TALEN%'
-     union
- select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
-  	 gfrv_construct_name, gfrv_construct_zdb_id,'CRISPR'
-    from gene_Feature_result_view
-    where gfrv_affector_id like 'ZDB-CRISPR%';
+    where gfrv_affector_id like 'ZDB-MRPH%';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/3figureAnat.txt"
   select ftfs_fas_id, ftfs_genox_zdb_id, ftfs_geno_name, ftfs_geno_handle, ftfs_fig_zdb_id 
@@ -311,18 +301,25 @@ union
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/1markers.txt"
 select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkr_name from marker
- where mrkr_type not in ('TALEN','CRISPR');
+  where mrkr_type not in ('TALEN','CRISPR');
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/2mrels.txt"
  select mrel.* from marker_relationship mrel, marker a, marker b
   where a.mrkr_Zdb_id = mrel_mrkr_1_zdb_id
   and b.mrkr_Zdb_id = mrel_mrkr_2_zdb_id 
-  and mrel_type != 'clone overlap';
+  and mrel_type != 'clone overlap'
+and a.mrkr_type!= 'TALEN'
+   and a.mrkr_type!='CRISPR'
+   and b.mrkr_type!= 'TALEN'
+   and b.mrkr_type!='CRISPR'
+  ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/3dalias.txt"
   select data_alias.*,alias_group.aliasgrp_name from data_alias, alias_group
     where exists (select 'x' from marker where mrkr_zdb_id = dalias_data_zdb_id)
-    and aliasgrp_pk_id = dalias_group_id;
+    and aliasgrp_pk_id = dalias_group_id
+    and dalias_data_zdb_id not like 'ZDB-CRISPR%'
+    and dalias_data_zdb_id not like 'ZDB-TALEN%';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/feature_alias/1dalias.txt"
   select data_alias.*,alias_group.aliasgrp_name,feature_type from data_alias, alias_group, feature
@@ -366,7 +363,9 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/6recattrib.txt"
 select recattrib_data_zdb_id, recattrib_source_zdb_id
   from record_Attribution, marker
-  where mrkr_zdb_id = recattrib_data_zdb_id;
+  where mrkr_zdb_id = recattrib_data_zdb_id
+  and mrkr_type not like 'TALEN'
+  and mrkr_type not like 'CRISPR';
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/7antibody.txt"
 select * from antibody;
