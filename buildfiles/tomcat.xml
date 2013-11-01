@@ -198,6 +198,7 @@
 
     <target name="create-download-file-symlink">
       <symlink link="${home.target}/data-transfer" action="single" overwrite="true" failonerror="fail" resource="${env.DOWNLOAD_DIRECTORY}"/>
+      <symlink link="${env.DOWNLOAD_DIRECTORY}/current" action="single" overwrite="true" failonerror="fail" resource="${TARGETROOT}/home/data_transfer/Downloads"/>
     </target>
 
     <target name="upgrade-tomcat">
