@@ -114,7 +114,8 @@
 </html>
 
 <script type="text/javascript">
-
+    var sequenceManipulated = "no";
+    
     function noenter(e) {
         var ENTER_KEY = 13;
         var code = "";
@@ -224,13 +225,16 @@
         var cNote = document.getElementById('curatorNote');
         var reportSeq = document.getElementById('reportSeq');
         cNote.value = "Reported Sequence: "+ reportSeq.value + " was " + action +".\r\n" + cNote.value;
+        sequenceManipulated = "yes";
     }
 
     function preSubmit() {
         var displayedSeq = document.getElementById('displaySeq');
         var reportSeq = document.getElementById('reportSeq');
         if(!displayedSeq.value || displayedSeq.value.length == 0 || !/^[\s]+$/.test(displayedSeq.value)) {
-            displayedSeq.value = reportSeq.value;
+            if (sequenceManipulated == "no") {
+                displayedSeq.value = reportSeq.value;
+            }
         }
 
         warnAboutNoTargetGene();
