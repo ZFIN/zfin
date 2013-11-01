@@ -58,7 +58,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
  select mrkr_zdb_id, mrkrseq_sequence, mrkrseq_offset_start, mrkrseq_offset_stop, mrkrseq_variation, get_obj_type(mrkr_zdb_id),mrkr_zdb_id from marker, marker_Sequence
 where mrkr_Zdb_id = mrkrseq_mrkr_zdb_id
 and mrkr_type not in ('TALEN','CRISPR')
-and ;
+;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype/1omimphenotype.txt"
  select omimp_gene_zdb_id,omimp_name,omimp_omim_id from omim_phenotype;
