@@ -26,7 +26,7 @@ create procedure regen_genofig_clean_exp()
   -- crank up the parallelism.
   set pdqpriority high;
 
-  -- gather the clean environments with morpholinos
+  -- gather the clean environments with sequence-targeting reagents
   insert into regen_genofig_clean_exp_with_morph_temp
       ( rgfcx_clean_exp_zdb_id, rgfcx_morph_zdb_id )
   select distinct exp_zdb_id, expcond_mrkr_zdb_id 
@@ -37,7 +37,7 @@ create procedure regen_genofig_clean_exp()
                       from experiment_condition xc2 , condition_data_type
                      where xc1.expcond_exp_zdb_id = xc2.expcond_exp_zdb_id 
                        and xc2.expcond_cdt_zdb_id = cdt_zdb_id
-                       and cdt_group != "morpholino");
+                       and cdt_group not in ("morpholino","TALEN","CRISPR"));
 
 
   -- gather the "not normal" phenotype records
