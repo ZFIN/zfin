@@ -383,7 +383,7 @@ DEBUGGING:
   <?/MICOMMENT>  
   <?MIBLOCK COND="$(OR, $(AND, $(XST, $includingMO), $(EC, $includingMO, yes) ), $(EC,$(SUBSTR,$OID,1,8),ZDB-GENE) )">
   <td>
-    <b>Morpholino</b>
+    <b>Reagent</b>
   </td> 
   <?/MIBLOCK>
   <td>
