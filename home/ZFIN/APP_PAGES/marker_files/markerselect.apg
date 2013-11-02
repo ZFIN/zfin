@@ -911,17 +911,20 @@ jQuery.ajax({
           <?/MIBLOCK>
         <?/MIBLOCK>
 
+
+
+
         <?MICOMMENT> ========== display title line ===============
         <?/MICOMMENT>
-        <TABLE width=100% border=0 cellspacing=0>
+        <TABLE width=100% border=0 cellspacing=0 id="markerselect-results-table" class="rowstripes">
           <TR align=left>
            <?MIVAR COND="$(EC,$type_of_knockdown_reagent,t)">
-             <TD align=left width=25%>
+             <TH align=left width=25%>
                 <b>Gene</b>
-             </TD>
+             </TH>
            <?/MIVAR>
 
-           <TD align=left width=25%>
+           <TH align=left width=25%>
              <?MIBLOCK COND=$(EC,$type_of_knockdown_reagent,t)>
 	        <b>Reagent</b>
              <?MIELSE COND=$(EC,$type_of_genedom,t)>
@@ -929,11 +932,11 @@ jQuery.ajax({
              <?MIELSE>
 	        <b>Name</b>
              <?/MIBLOCK>
-           </TD>
+           </TH>
 
-	   <?MIVAR COND="$(AND,$(EC,$type_of_genedom,t),$(NC,$show_xpat_pato,f))">
-             <TD align=left width=10%><B>Expression</B></TD>
-             <TD align=left width=15%><B>Phenotype</b></TD>
+   	   <?MIVAR COND="$(AND,$(EC,$type_of_genedom,t),$(NC,$show_xpat_pato,f))">
+             <TH align=left width=10%><B>Expression</B></TH>
+             <TH align=left width=15%><B>Phenotype</b></TH>
 	   <?/MIVAR>
 
            <?MIVAR NAME=mksel_map_col>t<?/MIVAR>
@@ -941,18 +944,18 @@ jQuery.ajax({
 		$(SETVAR,$mksel_map_col,f)
            <?/MIVAR>
            <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT)))">
-       	     <TD align-left><b>Map</b></TD>
+       	     <TH align-left><b>Map</b></TH>
            <?/MIVAR>
 	   <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EQ,$marker_type,TSCRIPT))">
-             <TD align-left><b><a href="/action/marker/transcript-types">Transcript Type</a></b></TD>
+             <TH align-left><b><a href="/action/marker/transcript-types">Transcript Type</a></b></TH>
            <?/MIBLOCK>
 
 
            <?MIBLOCK COND="$(XST,$input_name)">
      <?MIBLOCK COND="$(AND,$(XST,$mtype),$(>,$(POSITION,$mtype,CONSTRCT),0))">
-       <TD align=left>&nbsp;</TD>
+       <TH align=left>&nbsp;</TH>
      <?/MIBLOCK>
-     <TD align=left><b>Matching Text</b></TD>
+     <TH align=left><b>Matching Text</b></TH>
    <?/MIBLOCK>
  </TR>
 <?/MIBLOCK><?MICOMMENT>===== end of title display ===<?/MICOMMENT>
@@ -968,33 +971,19 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 <?/MICOMMENT>
 
 <?MIBLOCK COND="$(OR,$(>,$(POSITION,$OID,MRPHLNO),0),$(>,$(POSITION,$OID,TALEN),0),$(>,$(POSITION,$OID,CRISPR),0))">
+    <?MIVAR NAME=$display_target_gene><a class="genedom" href="/action/marker/view/$mrkrsel_mo_gene_zdb_id">$mrkrsel_mo_gene_sym</a><?/MIVAR>
+<?/MIBLOCK>    
 
- <?MIVAR NAME=$display_target_gene><?/MIVAR>
 
- <?MICOMMENT>== when starts MOs on a new gene ==<?/MICOMMENT>
- <?MIBLOCK COND="$(OR,$(NXST,$target_gene_zdb_id),$(AND,$(XST,$target_gene_zdb_id),$(NC,$mrkrsel_mo_gene_zdb_id,$target_gene_zdb_id)))">
-     <?MIVAR NAME=$display_target_gene><i><A HREF=/action/marker/view/$mrkrsel_mo_gene_zdb_id> $mrkrsel_mo_gene_sym </A></i><?/MIVAR>
 
-     <?MIBLOCK COND="$(NC,$rowNUM,1)">
-	 <?MIBLOCK COND="$(EC,$row_color,$highlight)">
-	    <?MIVAR>$(SETVAR,$row_color,#FFFFFF)<?/MIVAR>
-	 <?MIELSE>
-	    <?MIVAR>$(SETVAR,$row_color,$highlight)<?/MIVAR>
-	 <?/MIBLOCK>
-     <?/MIBLOCK>
+<?/MIBLOCK> <?MICOMMENT> end of line display difference <?/MICOMMENT>
 
- <?MICOMMENT>== when MOs continue on the same gene ==<?/MICOMMENT>
- <?MIELSE>
-      <?MIVAR NAME=$display_target_gene> &nbsp; <?/MIVAR>
+<?MIVAR NAME=$target_gene_zdb_id>$mrkrsel_mo_gene_zdb_id<?/MIVAR>
 
-  <?/MIBLOCK> <?MICOMMENT> end of line display difference <?/MICOMMENT>
-
-  <?MIVAR NAME=$target_gene_zdb_id>$mrkrsel_mo_gene_zdb_id<?/MIVAR>
-
-<?/MIBLOCK>
 
 <?MICOMMENT> start new row and column <?/MICOMMENT>
-<TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
+
+  <TR bgcolor="<?MIVAR>$row_color<?/MIVAR>">
 
 <?MIBLOCK COND="$(OR,$(>,$(POSITION,$OID,MRPHLNO),0),$(>,$(POSITION,$OID,TALEN),0),$(>,$(POSITION,$OID,CRISPR),0))">
   <TD>
@@ -1203,13 +1192,15 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
  	  </TR>
 
 	  <?MICOMMENT> change row_color for non-morph case <?/MICOMMENT>
-	  <?MIBLOCK COND="$(=,$(POSITION,$OID,MRPHLNO),0)">
+	  <?MIBLOCK COND="$(=,  $(OR,$(>,$(POSITION,$OID,MRPHLNO),0),$(>,$(POSITION,$OID,TALEN),0),$(>,$(POSITION,$OID,CRISPR),0)) ,0)">
                <?MIBLOCK COND="$(EC,$row_color,$highlight)">
 		  <?MIVAR>$(SETVAR,$row_color,#FFFFFF)<?/MIVAR>
                <?MIELSE>
 		  <?MIVAR>$(SETVAR,$row_color,$highlight)<?/MIVAR>
                <?/MIBLOCK>
 	  <?/MIBLOCK>
+
+         
 
 
     <?/MISQL> 	 <?MICOMMENT> for each search result <?/MICOMMENT>
@@ -1288,3 +1279,45 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
+<?MIBLOCK COND="$(EC,$type_of_knockdown_reagent,t)">
+<script>
+
+//stripe the MO table
+jQuery(document).ready(new function() {
+
+ jQuery('#markerselect-results-table tr').each( function() {
+
+   //get the value of the gene column
+   var value = jQuery(this).children('td:first').text().trim();
+   var lastValue = jQuery(this).prev().children('td:first').text().trim();
+
+   //clear out the existing background color, set as a style
+   //jQuery(this).css("background-color","");
+   //jQuery(this).removeAttr("bgcolor");  
+
+   //jQuery(this).children('td:first').append(jQuery(this).index() + " " + lastValue);
+      
+   //new gene (or first row)
+   if (lastValue != value || jQuery(this).index() == 1) { 
+       if (jQuery(this).prev().hasClass("odd"))
+         jQuery(this).addClass("even")
+       else
+         jQuery(this).addClass("odd")   
+   
+   //same gene
+   } else {
+       if (jQuery(this).prev().hasClass("odd"))
+         jQuery(this).addClass("odd")
+       else
+         jQuery(this).addClass("even")   
+    
+       //also hide the contents of the cell
+       jQuery(this).find('td:first a').hide();
+   }
+       
+ });
+});
+
+
+</script>
+<?/MIBLOCK>
