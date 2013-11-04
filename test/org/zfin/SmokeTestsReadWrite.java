@@ -22,7 +22,8 @@ import org.zfin.gwt.marker.GeneEditSmokeTest;
         AntibodyEditSmokeTest.class,
         GeneEditSmokeTest.class,
         LookupSmokeTest.class,
-        MorpholinoAddSmokeTest.class,
+        /*commenting out MorpholinoAddSMokeTst for now. Freom release 1053 on, morphos are no longer created using the app page.
+        MorpholinoAddSmokeTest.class,*/
         PileConstructionSmokeTest.class,
         SimpleSmokeTest.class
 
