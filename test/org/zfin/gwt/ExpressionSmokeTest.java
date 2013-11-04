@@ -33,7 +33,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
         // type value
         htmlInput.type("retina");
         assertEquals("retina", htmlInput.getValueAttribute());
-        webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+        webClient.waitForBackgroundJavaScriptStartingBefore(4000);
 
         // wait for popup
         assertNotNull(page.getByXPath("//div[@class='gwt-SuggestBoxPopup']"));
