@@ -20,7 +20,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
     @Test
     public void testExpressionLookupTable() throws IOException {
         HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "?MIval=aa-xpatselect.apg");
-        webClient.waitForBackgroundJavaScriptStartingBefore(2000);
+        webClient.waitForBackgroundJavaScriptStartingBefore(5000);
 
         // find gui components
         HtmlLabel htmlLabel = (HtmlLabel) page.getByXPath("//label[@class = 'multisearchLabel']").get(0);
