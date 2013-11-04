@@ -48,14 +48,15 @@
     <table class="summary rowstripes">
         <tbody>
         <tr>
-            <th width="30%">
+            <th width="20%">
                 Genotype (Background)
             </th>
             <th width="70%">
                 <table border="0" cellspacing="0" width="100%">
                     <tr>
-                        <th width="33%">Genomic Feature</th>
-                        <th width="33%">Type</th>
+                        <th width="20%">Genomic Feature</th>
+                        <th width="30%">Construct</th>
+                        <th width="25%">Type</th>
                         <th width="34%">Affected Gene(s)</th>
                     </tr>
                 </table>
@@ -63,7 +64,7 @@
         </tr>
         <c:forEach var="geno" items="${formBean.mutants}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
-                <td width="30%">
+                <td width="20%">
                     <zfin:link entity="${geno}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${geno.zdbID}"></a>
                 </td>
 
@@ -71,8 +72,10 @@
                     <table border="0" cellspacing="0" width="100%">
                         <c:forEach var="genoFeat" items="${geno.genotypeFeatures}" varStatus="genoFeatloop">
                             <tr>
-                                <td width="33%"><zfin:link entity="${genoFeat.feature}"/></td>
-                                <td width="33%">${genoFeat.feature.type.display}</td>
+                                <td width="20%"><zfin:link entity="${genoFeat.feature}"/></td>
+                                <td width="30%">
+                                    <zfin2:listOfTgConstructs markerCollection="${genoFeat.feature.tgConstructs}"/></td>
+                                <td width="25%">${genoFeat.feature.type.display}</td>
                                 <td width="34%">
                                     <zfin2:listOfAffectedGenes markerCollection="${genoFeat.feature.affectedGenes}"/>
                                 </td>
