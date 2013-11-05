@@ -16,6 +16,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
@@ -294,14 +295,19 @@ public class OntologyTermDetailController {
 
     private boolean hasPhenotypeData(Term anatomyTerm) {
         GenericTerm term = getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
-        AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatisticsForMutants(term.getZdbID());
-        if (statistics != null && (statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0))
+        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypeWithEntity(term);
+        if (phenotypes != null && phenotypes.size() > 0) {
             return true;
+        }
 
-        // check for MOs
-        List<GenotypeExperiment> morphs =
+        // check for STRs
+        List<GenotypeExperiment> strPhenotypes =
                 getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(term, null);
-        return morphs != null && morphs.size() > 0;
+        if (strPhenotypes != null && strPhenotypes.size() > 0) {
+            return true;
+        }
+
+        return false;
     }
 
 
