@@ -1225,36 +1225,29 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Marker> getMarkersForStandardAttributionAndType(Publication publication, String type) {
-        if (type=="MRPHLNO"){
         List<String> types = new ArrayList<String>();
+        if (type=="MRPHLNO"){
+
         types.add(Marker.Type.MRPHLNO.name());
         types.add(Marker.Type.TALEN.name());
         types.add(Marker.Type.CRISPR.name());
-            String hql = "select m from PublicationAttribution pa , Marker m " +
-                    " where pa.dataZdbID=m.zdbID and pa.publication.zdbID= :pubZdbID  " +
-                    " and pa.sourceType= :sourceType and m.markerType.name in (:types) " +
-                    " order by m.abbreviationOrder ";
-            Query query = HibernateUtil.currentSession().createQuery(hql);
-            query.setString("pubZdbID", publication.getZdbID());
-            query.setString("sourceType", RecordAttribution.SourceType.STANDARD.toString());
-            // yes, this is a hack, should use typeGroup, I guess
-            query.setParameterList("types", types);
-            return query.list();
+
         }
         else{
-            List<String> types = new ArrayList<String>();
+
             types.add(Marker.Type.GENE.name());
-            String hql = "select m from PublicationAttribution pa , Marker m " +
-                    " where pa.dataZdbID=m.zdbID and pa.publication.zdbID= :pubZdbID  " +
-                    " and pa.sourceType= :sourceType and m.markerType.name in (:types) " +
-                    " order by m.abbreviationOrder ";
-            Query query = HibernateUtil.currentSession().createQuery(hql);
-            query.setString("pubZdbID", publication.getZdbID());
-            query.setString("sourceType", RecordAttribution.SourceType.STANDARD.toString());
-            // yes, this is a hack, should use typeGroup, I guess
-            query.setParameterList("types", types);
-            return query.list();
+
         }
+        String hql = "select m from PublicationAttribution pa , Marker m " +
+                " where pa.dataZdbID=m.zdbID and pa.publication.zdbID= :pubZdbID  " +
+                " and pa.sourceType= :sourceType and m.markerType.name in (:types) " +
+                " order by m.abbreviationOrder ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("pubZdbID", publication.getZdbID());
+        query.setString("sourceType", RecordAttribution.SourceType.STANDARD.toString());
+        // yes, this is a hack, should use typeGroup, I guess
+        query.setParameterList("types", types);
+        return query.list();
     }
 
 
