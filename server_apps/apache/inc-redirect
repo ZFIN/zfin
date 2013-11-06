@@ -125,7 +125,7 @@ RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpat
 
 
 # normal ZFIN_jump requests
-RewriteCond %{QUERY_STRING}     ^record=([\w-]+)$    [NC]
+RewriteCond %{QUERY_STRING}     ^record=([\w-0-9:]+)$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /%1? [NC,R=301]
 
 # catch the jump-to.apg as well!
