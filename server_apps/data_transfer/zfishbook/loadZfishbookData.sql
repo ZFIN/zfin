@@ -64,14 +64,14 @@ insert into pre_feature (
       preftr_known_insertion_site
       )
   select distinct ekker_indx,
-                  mrkr_abbrev || ekker_feature,
+                  ekker_alias2,
                   ekker_alias,
                   ekker_alias2,
                   ekker_labId,
                   'embryos',
                   'DNA',
                   ekker_constructId,
-                  ekker_feature,
+                  ekker_alias2,
                   ekker_lineNum,
                   fp_pk_id,
                   'f'
@@ -99,13 +99,13 @@ insert into pre_feature (
       preftr_tg_suffix
       )
   select distinct ekker_indx,
-                  ekker_feature,
+                  ekker_alias2,
                   ekker_alias,
                   ekker_labId,
                   'embryos',
                   'DNA',
                   ekker_constructId,
-                  ekker_feature,
+                  ekker_alias2,
                   ekker_lineNum,
                   fp_pk_id,
                   'Gt'
@@ -271,20 +271,6 @@ insert into pre_data_alias (
 
 ! echo "         into pre_data_alias table."
 
-insert into pre_data_alias (
-      predalias_data_zdb_id,
-      predalias_alias,
-      predalias_group_id
-      )
-  select distinct preftr_feature_zdb_id,
-                  preftr_alias2,
-                  aliasgrp_significance
-    from pre_feature, alias_group
-   where preftr_alias2 is not null
-     and aliasgrp_name = "alias";
-
-! echo "         into pre_data_alias table."
-
 
 -- if the feature is already in ZFIN before the loading
 insert into pre_data_alias (
@@ -402,8 +388,8 @@ insert into pre_geno (
 )
 select ekker_featureId,
        mrkr_abbrev || '<sup>' || ekker_alias2 || '/+' || '</sup>',
-       ekker_feature || '[1,U,U]' || 'AB',
-       ekker_feature || '[1,U,U]' || 'AB'
+       ekker_alias2 || '[1,U,U]' || 'AB',
+       ekker_alias2 || '[1,U,U]' || 'AB'
   from ekkerLabData, marker
  where ekker_geneId = mrkr_zdb_id
    and ekker_featureId like "ZDB-ALT-%";
@@ -644,6 +630,8 @@ drop table pre_geno;
 drop table pre_geno_ftr_relationship;
 drop table pre_db_link;
 
+-- execute the geno_complexity_trigger
+update genotype set geno_handle = geno_handle;
 
 --rollback work;
 
