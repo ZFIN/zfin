@@ -371,9 +371,6 @@
                                              includeNumber="true"/>
                             </c:if>
                             <zfin2:showCameraIcon hasImage="${featgenoStat.isImage}"/>
-                            <c:if test="${featgenoStat.isMorpholino}">
-                                <img src="/images/MO_icon.gif" alt="MO">
-                            </c:if>
 
                         </td>
 
@@ -481,9 +478,6 @@
                         <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
                                      integerEntity="${featgenoStat.numberOfPublications}"
                                      includeNumber="true"/>
-                    </c:if>
-                    <c:if test="${featgenoStat.isMorpholino}">
-                        <img src="/images/MO_icon.gif" alt="MO">
                     </c:if>
                     <zfin2:showCameraIcon hasImage="${featgenoStat.isImage}"/>
                 </td>

@@ -1147,9 +1147,6 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
                 <?MIVAR COND="$(>,$mrkrsel_pheno_img_count,0)">
 		   <img src="/images/camera_icon.gif" border=0 alt="with image(s)">
 	        <?/MIVAR>
-	        <?MIVAR COND="$(>,$mrkrsel_MO_flag,0)">
-	           <img src="/images/MO_icon.gif" border="0" alt="MO image">
-	        <?/MIVAR>
 	      <?/MIBLOCK>
               &nbsp;
               </TD>
