@@ -59,6 +59,7 @@ for antibody: added meta redirect at the beginning and the end of the file.
      jQuery( "#supplier" ).autocomplete({
        source: '/action/marker/find-suppliers',
        minLength: 2, 
+       autoFocus: true,
        select: function (event, ui) {
          jQuery('#supplier').val(ui.item.label);
          supplierToAddZdbID = ui.item.id;
@@ -68,7 +69,7 @@ for antibody: added meta redirect at the beginning and the end of the file.
     jQuery( "#supplier" ).keypress(function(event) {
        if (event.keyCode == 13) {
 	 event.preventDefault();
-	 return false;
+	 new_supplier(supplierToAddZdbID);
        }
     });     
   });
