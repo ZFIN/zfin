@@ -252,6 +252,7 @@
         jQuery( "#supplierName" ).autocomplete({
             source: '/action/marker/find-suppliers',
             minLength: 2,
+            autoFocus: true,
             select: function (event, ui) {
                 jQuery('#supplierName').val(ui.item.label);
             }
