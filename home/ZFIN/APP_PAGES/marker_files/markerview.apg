@@ -64,6 +64,13 @@ for antibody: added meta redirect at the beginning and the end of the file.
          supplierToAddZdbID = ui.item.id;
        }
      });
+     
+    jQuery( "#supplier" ).keypress(function(event) {
+       if (event.keyCode == 13) {
+	 event.preventDefault();
+	 return false;
+       }
+    });     
   });
 
   function updateInnerHTML(element_id,html_to_display) {

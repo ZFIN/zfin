@@ -256,6 +256,14 @@
                 jQuery('#supplierName').val(ui.item.label);
             }
         });
+        
+        jQuery( "#supplierName" ).keypress(function(event) {
+	            if (event.keyCode == 13) {
+	                event.preventDefault();
+	                return false;
+	            }
+        });
+        
     });
 
 </script>
