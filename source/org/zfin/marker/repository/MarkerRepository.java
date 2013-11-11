@@ -391,4 +391,6 @@ public interface MarkerRepository {
     SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
 
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
+
+    List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
 }

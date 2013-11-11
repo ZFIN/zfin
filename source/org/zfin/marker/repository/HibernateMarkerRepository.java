@@ -1228,9 +1228,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<String> types = new ArrayList<String>();
         if (type=="MRPHLNO"){
 
-        types.add(Marker.Type.MRPHLNO.name());
-        types.add(Marker.Type.TALEN.name());
-        types.add(Marker.Type.CRISPR.name());
+            types.add(Marker.Type.MRPHLNO.name());
+            types.add(Marker.Type.TALEN.name());
+            types.add(Marker.Type.CRISPR.name());
 
         }
         else{
@@ -2314,13 +2314,39 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
-                    public Object transformTuple(Object[] tuple, String[] aliases) {
+                    public Object transformTuple(Object[] tuple, String[] supplierNames) {
                         Organization o = (Organization) tuple[0];
                         SupplierLookupEntry supplierSuggestionList = new SupplierLookupEntry();
                         supplierSuggestionList.setId(o.getZdbID());
                         supplierSuggestionList.setLabel(o.getName());
                         supplierSuggestionList.setValue(o.getName());
                         return supplierSuggestionList;
+                    }
+                })
+                .list()
+                ;
+    }
+
+    @Override
+    public List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString) {
+        String hql = " select targetGene from Marker targetGene " +
+                "where " +
+                "lower(targetGene.abbreviation) like :lookupString " +
+                "and targetGene.markerType.name in (:type1 , :type2) " +
+                "order by targetGene.abbreviation  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setString("type1", "GENE")
+                .setString("type2", "GENEP")
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
+                        Marker targetGene = (Marker) tuple[0];
+                        TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
+                        targetGeneSuggestionList.setId(targetGene.getZdbID());
+                        targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
+                        targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
+                        return targetGeneSuggestionList;
                     }
                 })
                 .list()

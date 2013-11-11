@@ -48,7 +48,7 @@ public class DisruptorAddBeanValidator implements Validator {
 
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
-            errors.rejectValue("targetGeneSymbol", "code", "The gene of [" + targetGeneSymbol + "]  cannot be null.");
+            errors.rejectValue("targetGeneSymbol", "code", "The target gene of [" + disruptorName + "]  cannot be null.");
         }
 
         if(ZfinStringUtils.containsWhiteSpaceOrNoneATGC(disruptorSequence)) {

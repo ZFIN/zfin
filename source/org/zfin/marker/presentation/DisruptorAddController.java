@@ -145,8 +145,8 @@ public class DisruptorAddController {
 
             String supplierName = formBean.getDisruptorSupplierName();
             if (!StringUtils.isEmpty(supplierName)) {
-              Organization supplier = profileRepository.getOrganizationByName(formBean.getDisruptorSupplierName());
-              profileRepository.addSupplier(supplier, newDisruptor);
+                Organization supplier = profileRepository.getOrganizationByName(formBean.getDisruptorSupplierName());
+                profileRepository.addSupplier(supplier, newDisruptor);
             }
 
             HibernateUtil.flushAndCommitCurrentSession();
@@ -164,12 +164,20 @@ public class DisruptorAddController {
                 "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newDisruptor.getZdbID();
     }
 
-    // looks up labs and companies
+    // looks up suppliers
     @RequestMapping(value = "/find-suppliers", method = RequestMethod.GET)
     public
     @ResponseBody
     List<SupplierLookupEntry> lookupSuppliers(@RequestParam("term") String lookupString) {
         return mr.getSupplierNamesForString(lookupString);
+    }
+
+    // looks up target genes
+    @RequestMapping(value = "/find-targetGenes", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<TargetGeneLookupEntry> lookupTargetGenes(@RequestParam("term") String lookupString) {
+        return mr.getTargetGenesWithNoTranscriptForString(lookupString);
     }
 }
 

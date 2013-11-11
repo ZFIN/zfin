@@ -72,6 +72,39 @@ for antibody: added meta redirect at the beginning and the end of the file.
 	 new_supplier(supplierToAddZdbID);
        }
     });     
+
+    jQuery( "#targetGeneSymbol" ).autocomplete({
+      source: '/action/marker/find-targetGenes',
+      minLength: 3,
+      autoFocus: true,
+      select: function (event, ui) {
+          jQuery('#targetGeneSymbol').val(ui.item.label);
+      }
+    });
+
+    jQuery( "#targetGeneSymbol" ).keypress(function(event) {
+      if (event.keyCode == 13) {
+         event.preventDefault();
+         return false;
+      }
+    });
+    
+    jQuery( "#targetGeneSymbol2" ).autocomplete({
+      source: '/action/marker/find-targetGenes',
+      minLength: 3,
+      autoFocus: true,
+      select: function (event, ui) {
+          jQuery('#targetGeneSymbol2').val(ui.item.label);
+      }
+    });
+
+    jQuery( "#targetGeneSymbol2" ).keypress(function(event) {
+      if (event.keyCode == 13) {
+         event.preventDefault();
+         return false;
+      }
+    });    
+    
   });
 
   function updateInnerHTML(element_id,html_to_display) {
@@ -1062,11 +1095,11 @@ Only need to update clones, etc., which should be the only things that will have
   <?MIBLOCK COND="$(XST,$UPDATE)">
      <form>
      Add Target Gene:
-     Symbol: <input type=text size=15 name=mrkr_abbrev>
+     Symbol: <input type=text size=15 name=mrkr_abbrev id="targetGeneSymbol">
      <input type=button value="Add it!" onClick="new_mrkrrel('1to2-knockdown reagent targets gene',this.form.mrkr_abbrev.value)">
      <br>
      Add Reference:
-     Gene symbol:<input type=text name=attrib_mrkr_abbrev>
+     Gene symbol:<input type=text name=attrib_mrkr_abbrev id="targetGeneSymbol2">
      Reference:<input type=text name=attrib_mrel_pubid>
      <input type=button value="Add" onClick=new_attrib_mrel(this.form);>
      </form>
@@ -1076,7 +1109,8 @@ Only need to update clones, etc., which should be the only things that will have
 	       from marker_relationship
 		    join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
 	      where mrel_mrkr_1_zdb_id = '$OID'
-		and mrel_type = 'knockdown reagent targets gene';">
+		and mrel_type = 'knockdown reagent targets gene'
+		order by 2;">
 
     <?MIVAR NAME=mrkrview_trg_gene_zdb_id>$1<?/MIVAR>
     <?MIVAR NAME=mrkrview_trg_gene_sym>$2<?/MIVAR>

@@ -40,10 +40,9 @@
     </div>
     <p/>
     <div>
-        <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
-        <script language="javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
-        <b>Add Target Gene:</b>
-        <div id="targetgene" onkeypress="return noenter(event)"></div>
+        <b>Add Target Gene:</b><br/>
+        <form:input path="<%= DisruptorAddBean.NEW_DISRUPTOR_TARGET%>" id="targetGeneSymbol" type="text" size="25" />
+        <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_TARGET%>" cssClass="error indented-error"/>
     </div>
     <c:if test="${formBean.disruptorType eq 'TALEN' || formBean.disruptorType eq 'CRISPR'}">
         <br/>
@@ -98,13 +97,13 @@
     <p/>
     <div>
         <form:label path="<%= DisruptorAddBean.DISRUPTOR_PUBLICATION_ZDB_ID%>" class="curation-form-label">Publication:</form:label>
-        <form:input path="<%= DisruptorAddBean.DISRUPTOR_PUBLICATION_ZDB_ID%>" size="25"
-                    onkeypress="return noenter(event)" value="${formBean.disruptorPublicationZdbID}"></form:input>
+        <form:input path="<%= DisruptorAddBean.DISRUPTOR_PUBLICATION_ZDB_ID%>" size="25" onChange="this.value = this.value.toUpperCase()"
+                    onkeypress="return noenter(event)" value="${formBean.disruptorPublicationZdbID}" id = "publicationZdbId"></form:input>
         <form:errors path="<%= DisruptorAddBean.DISRUPTOR_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
     </div>
     <p/>
     <c:if test="${formBean.disruptorType eq 'TALEN'}">
-        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="warnAboutNoTargetGene()">
+        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="completePubId()">
     </c:if>
     <c:if test="${formBean.disruptorType ne 'TALEN'}">
         <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="preSubmit()">
@@ -115,7 +114,7 @@
 
 <script type="text/javascript">
     var sequenceManipulated = "no";
-    
+
     function noenter(e) {
         var ENTER_KEY = 13;
         var code = "";
@@ -133,17 +132,6 @@
             return false;
         }
     }
-
-    var LookupProperties0 = {
-        divName: "targetgene",
-        inputName: "targetGeneSymbol",
-        showError: true,
-        wildcard: false,
-        width: "25",
-        type: "GENEDOM_AND_EFG_LOOKUP",
-        useTermTable: false
-    };
-
 
     function baseComplement(s) {
         var i;
@@ -236,14 +224,18 @@
                 displayedSeq.value = reportSeq.value;
             }
         }
-
-        warnAboutNoTargetGene();
+        completePubId();
     }
 
-    function warnAboutNoTargetGene() {
-        var targetGene = document.getElementById("targetGeneSymbol");
-        if (!targetGene || !targetGene.value) {
-            alert("Add target gene!");
+    function completePubId() {
+        var pubId = document.getElementById('publicationZdbId');
+        var shortId = /^(\d){6}-(\d)+/;
+        var shortIdStartWithHyphen = /^-(\d){6}-(\d)+/;
+        if (shortId.test(pubId.value)) {
+            pubId.value = "ZDB-PUB-" + pubId.value;
+        }
+        if (shortIdStartWithHyphen.test(pubId.value)) {
+            pubId.value = "ZDB-PUB" + pubId.value;
         }
     }
 
@@ -257,14 +249,29 @@
                 jQuery('#supplierName').val(ui.item.label);
             }
         });
-        
+
         jQuery( "#supplierName" ).keypress(function(event) {
-	            if (event.keyCode == 13) {
-	                event.preventDefault();
-	                return false;
-	            }
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
         });
-        
+
+        jQuery( "#targetGeneSymbol" ).autocomplete({
+            source: '/action/marker/find-targetGenes',
+            minLength: 3,
+            autoFocus: true,
+            select: function (event, ui) {
+                jQuery('#targetGeneSymbol').val(ui.item.label);
+            }
+        });
+
+        jQuery( "#targetGeneSymbol" ).keypress(function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
     });
 
 </script>
