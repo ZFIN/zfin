@@ -50,7 +50,7 @@ insert into tmp_genes_with_phenos_m
 
 select count(*) from tmp_genes_with_phenos_m;
 
-!echo "number of genes whose morpholinos are using in environments on WT genotypes that have phenotypes";
+!echo "number of genes whose morpholinos are used in environments on WT genotypes that have phenotypes";
 
 --transgenic doesn't matter because we're on a WT background
 create temp table tmp_genes_with_phenos_m_w (mrkr_id varchar(50))
@@ -222,7 +222,7 @@ select distinct fmrel_mrkr_zdb_id
 
 select count(*) from tmp_genes_with_phenos_imgs_tgs;
 
-!echo "number of distinct genes whose morpholinos are being used in genotype environments, where the genotypes have tg insertion features and produce phenotypes" ;
+!echo "number of distinct genes whose morpholinos are used in genotype environments, where the genotypes have tg insertion features and produce phenotypes" ;
 
 create temp table tmp_genes_with_phenos_m_tg (mrkr_id varchar(50))
 with no log ;
@@ -249,7 +249,7 @@ insert into tmp_genes_with_phenos_m_tg
 
 select count(*) from tmp_genes_with_phenos_m_tg;
 
-!echo "number of distinct genes whose morpholinos are being used in genotype environments, where the genotypes have tg insertion features and produce phenotypes and have images" ;
+!echo "number of distinct genes whose morpholinos are used in genotype environments, where the genotypes have tg insertion features and produce phenotypes and have images" ;
 
 create temp table tmp_genes_with_phenos_imgs_tgs_m (mrkr_id varchar(50))
 with no log ;
