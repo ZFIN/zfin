@@ -37,7 +37,9 @@ insert into tmp_genes_with_phenos_m
 	genotype,
         phenotype_experiment,
 	feature_marker_relationship
-   where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
+   where mrel_type = "knockdown reagent targets gene"
+   and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
+   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and genox_geno_Zdb_id = genofeat_geno_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
@@ -61,7 +63,9 @@ insert into tmp_genes_with_phenos_m_w
         genotype_experiment,
 	genotype,
         phenotype_experiment
-   where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
+   where mrel_type = "knockdown reagent targets gene"
+   and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
+   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and phenox_genox_zdb_id = genox_zdb_id
    and geno_is_wildtype = 't'
@@ -109,7 +113,9 @@ insert into tmp_genes_with_phenos_imgs_m
         phenotype_experiment,
 	figure, 
 	image, genotype
-   where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
+   where mrel_type = "knockdown reagent targets gene"
+   and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
+   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and genox_geno_Zdb_id = genofeat_geno_zdb_id
    and genox_geno_zdb_id = geno_zdb_id
@@ -229,7 +235,9 @@ insert into tmp_genes_with_phenos_m_tg
 	genotype_feature,
 	genotype,
         phenotype_experiment
-   where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
+   where mrel_type = "knockdown reagent targets gene"
+   and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
+   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and genox_geno_Zdb_id = genofeat_geno_zdb_id
    and geno_zdb_id =genox_geno_zdb_id
@@ -255,7 +263,9 @@ insert into tmp_genes_with_phenos_imgs_tgs_m
         phenotype_experiment,
 	figure, 
 	image
-   where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
+   where mrel_type = "knockdown reagent targets gene"
+   and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
+   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and genox_geno_Zdb_id = genofeat_geno_zdb_id
    and phenox_genox_zdb_id = genox_zdb_id
