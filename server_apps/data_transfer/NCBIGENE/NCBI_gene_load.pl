@@ -75,9 +75,9 @@ print LOG "Start ... \n";
 ## only the following RefSeq catalog file may remain unchanged over a period of time
 ## the rest 3 are changing every day
 
-system("/local/bin/wget -N ftp://ftp.ncbi.nih.gov/refseq/release/release-catalog/RefSeq-release60.catalog.gz");
+system("/local/bin/wget -N ftp://ftp.ncbi.nih.gov/refseq/release/release-catalog/RefSeq-release62.catalog.gz");
 
-&doSystemCommand("/local/bin/gunzip -c RefSeq-release60.catalog.gz >RefSeqCatalog");
+&doSystemCommand("/local/bin/gunzip -c RefSeq-release62.catalog.gz >RefSeqCatalog");
 
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz");
   
