@@ -12,26 +12,25 @@ use DBI;
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
-   system("/local/bin/wget -q http://www.geneontology.org/external2go/uniprotkb_kw2go -O spkw2go");
-   system("/local/bin/wget -q http://www.geneontology.org/external2go/interpro2go -O interpro2go");
-   system("/local/bin/wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
+   system("/local/bin/wget http://www.geneontology.org/external2go/uniprotkb_kw2go -O spkw2go");
+   system("/local/bin/wget http://www.geneontology.org/external2go/interpro2go -O interpro2go");
+   system("/local/bin/wget http://www.geneontology.org/external2go/ec2go -O ec2go");
 
-   print "WARNING!!! no spkw2go provided. \n" if (!-e "spkw2go");
-
-   print "WARNING!!! no interpro2go provided. \n" if (!-e "interpro2go");
-
-   print "WARNING!!! no ec2go provided. \n" if (!-e "ec2go");
-
-   &process_vertebrates ;
-
-   print "WARNING!!! no pre_pre_zfin.dat provided. \n" if (!-e "pre_pre_zfin.dat");
-
-   print "WARNING!!! no pre_zfin.dat provided. \n" if (!-e "pre_zfin.dat");
-
-   if (!-e "pre_pre_zfin.dat" || !-e "pre_zfin.dat" || !-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
-      print "One or more required file(s) not exisiting. Exit.\n";
+   if (!-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
+      print "One or more of the go translation files not exisiting. Exit.\n";
       exit;
-   }   
+   } else {
+      print "\nDone with downloading the go translation files.\n\n\n";  
+   }
+
+   &select_zebrafish ;
+
+   if (!-e "pre_zfin.dat") {
+      print "\nSomething is wrong with pre_zfin.dat. Exit.\n\n";
+      exit;
+   } else {
+      print "\nDone with generating pre_zfin.dat\n\n\n";  
+   }  
 
    my $sleepNumDownload1 = 500;
    while($sleepNumDownload1--){
@@ -183,45 +182,48 @@ sub sendRunningResult {
 #
 # Extracts only zfin data from vertebrates.
 #
-sub process_vertebrates{
+sub select_zebrafish {
     system("/local/bin/wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
     system("gunzip uniprot_trembl_vertebrates.dat.gz");
-    system("cp uniprot_trembl_vertebrates.dat pre_pre_zfin.dat");
+    
+    if (!-e "uniprot_trembl_vertebrates.dat") {
+        print "Failed to download uniprot_trembl_vertebrates.dat. Exit.\n";
+        exit;
+    } else {
+        print "\nDownload uniprot_trembl_vertebrates.dat\n\n";    
+    }
+        
     system("/local/bin/wget -q ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
     system("gunzip uniprot_sprot_vertebrates.dat.gz");
-    system("cat uniprot_sprot_vertebrates.dat >> pre_pre_zfin.dat");
 
-    open(DAT, "pre_pre_zfin.dat") || die("Could not open file!");
-
-    open OUTPUT, ">pre_zfin.dat" or die "Cannot open zfin.dat";
-
-    # find each "//\n" and test to see if its a zfin record.
-    my $buffer = "" ; 
-    my $line ; 
-    foreach $line(<DAT>){
-       if( 
-           $line !~ m/CC   -------/
-           and 
-           $line !~ m/CC   Copyrighted/ 
-           and 
-           $line !~ m/CC   Distributed/ 
-           and
-           $line !~ m/DR   ZFIN; ZDB-GENE/
-           ){
-           $buffer = $buffer .  $line  ; 
-       }
-       if($line=~ m/DR   ZFIN; ZDB-GENE/){
-           $buffer = $line .  $buffer; 
-       }
-       if($line=~ m/\/\/\n/){
-           if($buffer=~ m/OS   Danio rerio/){
-               print OUTPUT $buffer; 
-           }
-           $buffer = "" ;  # reset the buffer
-       }
+    if (!-e "uniprot_sprot_vertebrates.dat") {
+        print "Failed to download uniprot_sprot_vertebrates.dat. Exit.\n";
+        exit;
+    } else {
+        print "\nDownload uniprot_sprot_vertebrates.dat\n\n";    
     }
 
-    close(DAT) ; 
+    $/ = "\/\/\n";
+    open(DAT1, "uniprot_trembl_vertebrates.dat") || die("Could not open uniprot_trembl_vertebrates.dat!");
+
+    open OUTPUT, ">pre_zfin.dat" or die "Cannot open pre_zfin.dat";
+
+    my @records = <DAT1>;
+    my $record;
+    foreach $record (@records){
+       print OUTPUT "$record" if $record =~ m/OS   Danio rerio/; 
+    }
+    close(DAT1) ; 
+
+    open(DAT2, "uniprot_sprot_vertebrates.dat") || die("Could not open uniprot_sprot_vertebrates.dat!"); 
+    @records = <DAT2>;
+    foreach $record (@records){
+       print OUTPUT "$record" if $record =~ m/OS   Danio rerio/; 
+    }
+
+    $/ = "\n";
+
+    close(DAT2) ; 
     close(OUTPUT) ; 
 }
 
