@@ -275,7 +275,7 @@ jQuery.ajax({
         <?/MIVAR>
       <?/MIBLOCK>
 
-      <?MIBLOCK COND="$(EQ,$marker_type,MRPHLNO)">
+      <?MIBLOCK COND="$(OR,$(EQ,$marker_type,MRPHLNO),$(EQ,$marker_type,TALEN),$(EQ,$marker_type,CRISPR))">
         <?MIVAR NAME=mrkrsel_union>
 	UNION
 	 select mrel_mrkr_1_zdb_id as allmapnm_zdb_id, allmapnm_name,
