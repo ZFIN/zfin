@@ -86,33 +86,28 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 
 ### FB case 8651, Include Publication in Morpholino Data Download
 
-$MOfileWithNoPubAndWithHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos2.txt';
+$sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, b.szm_term_ont_id, mo.mrkr_abbrev,
+	       mrkrseq_sequence, mo.mrkr_comments
+          from marker gn, marker mo, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+           and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+           and a.szm_object_type = gn.mrkr_type
+           and b.szm_object_type = mo.mrkr_type
+           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+           and mrel_mrkr_1_zdb_id[1,12] = "ZDB-MRPHLNO-"
+           and mrel_type = "knockdown reagent targets gene"
+           and mo.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+      order by gn.mrkr_abbrev;';
 
-open (MO, "$MOfileWithNoPubAndWithHTMLtags") || die "Cannot open Morpholinos2.txt : $!\n";
-@lines=<MO>;
-close(MO);
+$cur = $dbh->prepare($sql);
+$cur->execute();
+$cur->bind_columns(\$geneId, \$a_szm_term_ont_id, \$gene, \$MoId, \$b_szm_term_ont_id, \$Mo, \$MoSeq, \$note); 
 
 $MOfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos.txt';
 
 open (MOWITHPUBS, ">$MOfileWithPubsAndNoHTMLtags") || die "Cannot open $MOfileWithPubsAndNoHTMLtags : $!\n";
 
-
-foreach $line (@lines) {
-
-    chop($line);
-    undef (@fields);
-    @fields = split(/\|/, $line);
-
-    $geneId = $fields[0];
-    $a_szm_term_ont_id = $fields[1];
-    $gene = $fields[2];
-    $MoId = $fields[3];
-    $b_szm_term_ont_id = $fields[4];
-    $Mo = $fields[5];
-    $MoSeq = $fields[6];
-    $note = " ";
-    $note = $fields[7];
-
+while ($cur->fetch()) {
     # remove HTML tags and back slash from the public note column of the download file of Morpholino data
     if ($note) {
       $note =~ s/<[^<>]+>//g;
@@ -120,42 +115,164 @@ foreach $line (@lines) {
     } else {
         $note = "";
     }
+            
+    print MOWITHPUBS "$geneId\t$a_szm_term_ont_id\t$gene\t$MoId\t$b_szm_term_ont_id\t$Mo\t$MoSeq\t";
 
-
-    $cur = $dbh->prepare('select distinct recattrib_source_zdb_id from record_attribution, marker_sequence where mrkrseq_mrkr_zdb_id = ? and recattrib_source_type = "sequence" order by recattrib_source_zdb_id;');
-    $cur->execute($MoId);
-    my ($pub);
     %pubIds = ();
     $numOfPubs = 0;
-    $cur->bind_columns(\$pub);
-    while ($cur->fetch()) {
-         $pubIds{$numOfPubs} = $pub;
+    my ($pub);
+    $innerSql = "select distinct recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id = " . "\"" . $MoId . "\";";
+        
+    $curInner = $dbh->prepare($innerSql);
+    $curInner->execute();
+    $curInner->bind_columns(\$pub);
+    while ($curInner->fetch()) {
+         $pubIds{$pub} = 1;
          $numOfPubs++;
     }
 
-    $cur->finish();
-
-    print MOWITHPUBS "$geneId\t$a_szm_term_ont_id\t$gene\t$MoId\t$b_szm_term_ont_id\t$Mo\t$MoSeq\t";
-
     if ($numOfPubs > 0) {
         $numOfPubsCt = $numOfPubs;
-        foreach $key (keys %pubIds) {
+        foreach $key (sort keys %pubIds) {
            $numOfPubsCt--;
-           $value = $pubIds{$key};
            if ($numOfPubsCt == 0) {
-               print MOWITHPUBS "$value\t$note\n";
+               print MOWITHPUBS "$key\t$note\n";
            } else {
-               print MOWITHPUBS "$value,";
+               print MOWITHPUBS "$key,";
            }
         }
     } else {
-        print MOWITHPUBS "\t$note\n";
-    }
-
+        print MOWITHPUBS "$note\n";
+    }    
 }
 
 close MOWITHPUBS;
-close MO;
+
+$TALENfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/TALEN.txt';
+
+open (TALENWITHPUBS, ">$TALENfileWithPubsAndNoHTMLtags") || die "Cannot open $TALENfileWithPubsAndNoHTMLtags : $!\n";
+
+$sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id, b.szm_term_ont_id, talen.mrkr_abbrev,
+	       mrkrseq_sequence, mrkrseq_sequence_2, talen.mrkr_comments
+          from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+           and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+           and a.szm_object_type = gn.mrkr_type
+           and b.szm_object_type = talen.mrkr_type
+           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+           and mrel_mrkr_1_zdb_id[1,10] = "ZDB-TALEN-"
+           and mrel_type = "knockdown reagent targets gene"
+           and talen.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+      order by gn.mrkr_abbrev;';
+
+$cur = $dbh->prepare($sql);
+$cur->execute();
+$cur->bind_columns(\$geneId, \$a_szm_term_ont_id, \$gene, \$talen_id, \$b_szm_term_ont_id, \$talen, \$talen_seq1, \$talen_seq2, \$note); 
+
+while ($cur->fetch()) {
+    # remove HTML tags and back slash from the public note column of the download file of TALEN data
+    if ($note) {
+      $note =~ s/<[^<>]+>//g;
+      $note =~ s/\\//g;
+    } else {
+        $note = "";
+    }
+            
+    print TALENWITHPUBS "$geneId\t$a_szm_term_ont_id\t$gene\t$talen_id\t$b_szm_term_ont_id\t$talen\t$talen_seq1\t$talen_seq2\t";
+
+    %pubIds = ();
+    $numOfPubs = 0;
+    my ($pub);
+    $innerSql = "select distinct recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id = " . "\"" . $talen_id . "\";";
+        
+    $curInner = $dbh->prepare($innerSql);
+    $curInner->execute();
+    $curInner->bind_columns(\$pub);
+    while ($curInner->fetch()) {
+         $pubIds{$pub} = 1;
+         $numOfPubs++;
+    }
+
+    if ($numOfPubs > 0) {
+        $numOfPubsCt = $numOfPubs;
+        foreach $key (sort keys %pubIds) {
+           $numOfPubsCt--;
+           if ($numOfPubsCt == 0) {
+               print TALENWITHPUBS "$key\t$note\n";
+           } else {
+               print TALENWITHPUBS "$key,";
+           }
+        }
+    } else {
+        print TALENWITHPUBS "$note\n";
+    }    
+}
+
+close TALENWITHPUBS;
+
+$CRISPRfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/CRISPR.txt';
+
+open (CRISPRWITHPUBS, ">$CRISPRfileWithPubsAndNoHTMLtags") || die "Cannot open $CRISPRfileWithPubsAndNoHTMLtags : $!\n";
+
+$sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id, b.szm_term_ont_id, crispr.mrkr_abbrev,
+	       mrkrseq_sequence, crispr.mrkr_comments
+          from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+           and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+           and a.szm_object_type = gn.mrkr_type
+           and b.szm_object_type = crispr.mrkr_type
+           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+           and mrel_mrkr_1_zdb_id[1,11] = "ZDB-CRISPR-"
+           and mrel_type = "knockdown reagent targets gene"
+           and crispr.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+      order by gn.mrkr_abbrev;';
+
+$cur = $dbh->prepare($sql);
+$cur->execute();
+$cur->bind_columns(\$geneId, \$a_szm_term_ont_id, \$gene, \$crispr_id, \$b_szm_term_ont_id, \$crispr, \$crispr_seq, \$note); 
+
+while ($cur->fetch()) {
+    # remove HTML tags and back slash from the public note column of the download file of CRISPR data
+    if ($note) {
+      $note =~ s/<[^<>]+>//g;
+      $note =~ s/\\//g;
+    } else {
+        $note = "";
+    }
+            
+    print CRISPRWITHPUBS "$geneId\t$a_szm_term_ont_id\t$gene\t$crispr_id\t$b_szm_term_ont_id\t$crispr\t$crispr_seq\t";
+
+    %pubIds = ();
+    $numOfPubs = 0;
+    my ($pub);
+    $innerSql = "select distinct recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id = " . "\"" . $crispr_id . "\";";
+        
+    $curInner = $dbh->prepare($innerSql);
+    $curInner->execute();
+    $curInner->bind_columns(\$pub);
+    while ($curInner->fetch()) {
+         $pubIds{$pub} = 1;
+         $numOfPubs++;
+    }
+
+    if ($numOfPubs > 0) {
+        $numOfPubsCt = $numOfPubs;
+        foreach $key (sort keys %pubIds) {
+           $numOfPubsCt--;
+           if ($numOfPubsCt == 0) {
+               print CRISPRWITHPUBS "$key\t$note\n";
+           } else {
+               print CRISPRWITHPUBS "$key,";
+           }
+        }
+    } else {
+        print CRISPRWITHPUBS "$note\n";
+    }    
+}
+
+close CRISPRWITHPUBS;
+
+$curInner->finish();
 
 
 # FB case 7670, add Source field to antibodies.txt download file
@@ -191,8 +308,6 @@ foreach $line (@lines) {
          $numOfSuppliers++;
     }
 
-    $cur->finish();
-
     print ABSOURCE "$line\t";
 
     if ($numOfSuppliers > 0) {
@@ -214,6 +329,8 @@ foreach $line (@lines) {
 
 close ABSOURCE;
 close AB;
+
+$cur->finish();
 
 $dbh->disconnect
     or warn "Disconnection failed: $DBI::errstr\n";
@@ -240,8 +357,6 @@ close SA;
 # remove temporary files
 
 system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt");
-
-system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos2.txt");
 
 system("./FBcase8787.pl") and die "there was an error in FBcase8787.pl";
 

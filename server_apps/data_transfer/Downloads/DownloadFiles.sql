@@ -959,25 +959,6 @@ select term_ont_id, term_name, dalias_alias
  order by term_name
 ;
 
--- Morpholino data
--- unloaded Morpholino data would have HTML tags in public note column,
--- which will be removed by Perl script
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos2.txt'"
-unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/Morpholinos2.txt'
-select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, b.szm_term_ont_id, mo.mrkr_abbrev,
-	mrkrseq_sequence, mo.mrkr_comments
- from marker gn, marker mo, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
- where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
-   and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
-   and a.szm_object_type = gn.mrkr_type
-   and b.szm_object_type = mo.mrkr_type
-   and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
-   and mrel_mrkr_1_zdb_id[1,12] = "ZDB-MRPHLNO-"
-   and mrel_type = "knockdown reagent targets gene"
-   and mo.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
-   order by gn.mrkr_abbrev
-;
-
 -- Image data
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ImageFigures.txt'"
 unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/ImageFigures.txt'
@@ -1171,7 +1152,6 @@ select recattrib_data_zdb_id geneid, count(recattrib_source_zdb_id) pubcount
 
 update statistics low for table tmp_gene_pubcount;
 
--- why isn't this file tab delimited?
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot-zfinpub.txt'"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot-zfinpub.txt'
  DELIMITER "	"
@@ -1260,7 +1240,7 @@ and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
 and fdb.fdb_db_name = 'UniProtKB'
 and mfs_mrkr_zdb_id = mrel_mrkr_1_zdb_id
-and mfs_mrkr_zdb_id like 'ZDB-MRPHLNO%'
+and mfs_mrkr_zdb_id[1,10] in ('ZDB-MRPHLN', 'ZDB-TALEN-', 'ZDB-CRISPR')
 and mrel_mrkr_2_zdb_id = geneid
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
@@ -1342,7 +1322,7 @@ and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
 and fdb.fdb_db_name = 'UniProtKB'
 and mfs_mrkr_zdb_id = mrel_mrkr_1_zdb_id
-and mfs_mrkr_zdb_id like 'ZDB-MRPHLNO%'
+and mfs_mrkr_zdb_id[1,10] in ('ZDB-MRPHLN', 'ZDB-TALEN-', 'ZDB-CRISPR')
 and mrel_mrkr_2_zdb_id = geneid
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
