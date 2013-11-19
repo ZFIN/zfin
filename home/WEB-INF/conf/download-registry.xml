@@ -1351,7 +1351,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="18">Affected Structure or Process 2 superterm name</Column>
             <Column id="19">Genotype ID</Column>
             <Column id="20">Genotype Display Name</Column>
-            <Column id="21">Morpholino or TALEN ID</Column>
+            <Column id="21">Knockdown Reagent ID</Column>
             <Column id="22">Start Stage ID</Column>
             <Column id="23">End Stage ID</Column>
             <Column id="24">Genotype Environment ID</Column>
@@ -1572,7 +1572,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="18" unique="true">Affected Structure or Process 2 superterm name</Column>
             <Column id="19">Genotype ID</Column>
             <Column id="20">Genotype Name</Column>
-            <Column id="21">MO ID</Column>
+            <Column id="21">Knockdown Reagent ID</Column>
             <Column id="22">Stage Start</Column>
             <Column id="23">Stage End</Column>
             <Column id="24">Genotype Experiment ID</Column>
@@ -2187,7 +2187,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                 Morpholino
             </Name>
             <Category>
-                Morpholino Data
+                Knockdown Reagent Data
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
@@ -2218,6 +2218,83 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="8">Publication(s)</Column>
             <Column id="9">Note</Column>
         </Download>
+        <Download orderIndex="2">
+            <Name>
+                TALEN
+            </Name>
+            <Category>
+                Knockdown Reagent Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>TALEN</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+        select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id, b.szm_term_ont_id, talen.mrkr_abbrev,
+	       mrkrseq_sequence, mrkrseq_sequence_2, talen.mrkr_comments
+          from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+           and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+           and a.szm_object_type = gn.mrkr_type
+           and b.szm_object_type = talen.mrkr_type
+           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+           and mrel_mrkr_1_zdb_id[1,10] = "ZDB-TALEN-"
+           and mrel_type = "knockdown reagent targets gene"
+           and talen.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+      order by gn.mrkr_abbrev
+                          ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene SO ID</Column>
+            <Column id="3">Gene Symbol</Column>
+            <Column id="4">TALEN ID</Column>
+            <Column id="5">TALEN SO ID</Column>
+            <Column id="6">TALEN Symbol</Column>
+            <Column id="7">TALEN Target Sequence 1</Column>
+            <Column id="7">TALEN Target Sequence 2</Column>
+            <Column id="9">Publication(s)</Column>
+            <Column id="10">Note</Column>
+        </Download>  
+        <Download orderIndex="3">
+            <Name>
+                CRISPR
+            </Name>
+            <Category>
+                Knockdown Reagent Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>CRISPR</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+        select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id, b.szm_term_ont_id, crispr.mrkr_abbrev,
+	       mrkrseq_sequence, crispr.mrkr_comments
+          from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+         where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+           and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+           and a.szm_object_type = gn.mrkr_type
+           and b.szm_object_type = crispr.mrkr_type
+           and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+           and mrel_mrkr_1_zdb_id[1,11] = "ZDB-CRISPR-"
+           and mrel_type = "knockdown reagent targets gene"
+           and crispr.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+      order by gn.mrkr_abbrev
+                          ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene SO ID</Column>
+            <Column id="3">Gene Symbol</Column>
+            <Column id="4">CRISPR ID</Column>
+            <Column id="5">CRISPR SO ID</Column>
+            <Column id="6">CRISPR Symbol</Column>
+            <Column id="7">CRISPR Target Sequence</Column>
+            <Column id="8">Publication(s)</Column>
+            <Column id="9">Note</Column>
+        </Download>                
         <Download orderIndex="1">
             <Name>
                 Image-Figure translations
@@ -2423,7 +2500,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <name>Phenotype Data</name>
         </Category>
         <Category orderIndex="90">
-            <name>Morpholino Data</name>
+            <name>Knockdown Reagent Data</name>
         </Category>
         <Category orderIndex="100">
             <name>Gene Expression</name>
