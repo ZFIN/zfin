@@ -112,8 +112,8 @@ create procedure p_check_anatrel_stg_consistent (
   if (relDageditId = "is_a" OR relDageditId = "part_of") then	
     if (childStartHour < parentStartHour OR childEndHour > parentEndHour) then
 	  raise exception -746, 0, 
-	    "For " || relDageditId || " relationship, "||
-	    "child stage range must be within parent stage range";
+	    "For " || relDageditId || " rel, "||
+	    "child " || childAnatZdbId || " parent " || parentAnatZdbId || "  stage range";
     end if 
   end if 
 
