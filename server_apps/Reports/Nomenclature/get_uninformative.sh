@@ -4,7 +4,7 @@
 #COMMONS_BIN=/research/zusers/tomc/Projects/TRUNK/ZFIN_WWW/commons/bin
 COMMONS_BIN=/private/ZfinLinks/Commons/bin
 
-(${INFORMIXDIR}/bin/dbaccess -a <!--|DB_NAME|--> << END
+(${INFORMIXDIR}/bin/dbaccess -a zezdb << END
 
  select "          count" type from single;
 
@@ -36,7 +36,5 @@ COMMONS_BIN=/private/ZfinLinks/Commons/bin
     and mrkr_abbrev like "zgc:%"
 ;
 END
-)2> /dev/null|/usr/bin/grep -v "^$" |\
-${COMMONS_BIN}/collapse.awk 2 |\
-awk 'BEGIN{print "Subject: Uninformative Gene Nomenclature with/without Orthology\n\n"}{print}'|\
-mail -t <!--|COUNT_VEGA_OUT|-->
+
+)> result.log

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Jenkins" default="jenkins-usage" basedir="../../">
+
+    <!-- import high-level build file -->
+    <import file="${basedir}/build.xml"/>
+
+
+</project>

@@ -1,0 +1,4 @@
+<%
+def directory = System.getenv('TARGETROOT')+"/server_apps/DB_maintenance/fx_permission/"
+print new File(directory + "email.list").text
+%>

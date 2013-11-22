@@ -27,6 +27,9 @@
                    maxmemory="2024m"
                     >
                 <classpath refid="extended.classpath"/>
+<!--
+                <formatter classname="org.zfin.util.JunitFormatter" usefile="false" />
+-->
                 <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
                     <formatter type="brief"/>
                     <formatter type="xml"/>

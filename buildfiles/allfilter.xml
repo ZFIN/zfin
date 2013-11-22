@@ -1,5 +1,6 @@
 <project>
 <filterset id='allfilters'>
+<filter token="ALL_FAILURE_REPORTS_EMAIL" value="${ALL_FAILURE_REPORTS_EMAIL}"/>
 <filter token="ANT_OPTS" value="${ANT_OPTS}"/>
 <filter token="AO_EMAIL_CURATOR" value="${AO_EMAIL_CURATOR}"/>
 <filter token="AO_EMAIL_ERR" value="${AO_EMAIL_ERR}"/>
@@ -48,6 +49,7 @@
 <filter token="DOI_EMAIL_REPORT" value="${DOI_EMAIL_REPORT}"/>
 <filter token="DOMAIN_NAME" value="${DOMAIN_NAME}"/>
 <filter token="DOWNLOAD_DIRECTORY" value="${DOWNLOAD_DIRECTORY}"/>
+<filter token="ELSEVIER_REPORT" value="${ELSEVIER_REPORT}"/>
 <filter token="EMAIL_SENDER_CLASS" value="${EMAIL_SENDER_CLASS}"/>
 <filter token="FTPROOT_PATH" value="${FTPROOT_PATH}"/>
 <filter token="FTP_ROOT" value="${FTP_ROOT}"/>
@@ -82,6 +84,7 @@
 <filter token="INSTANCE" value="${INSTANCE}"/>
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
+<filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
 <filter token="LD_LIBRARY_PATH" value="${LD_LIBRARY_PATH}"/>
 <filter token="LINKBAR_COLOR" value="${LINKBAR_COLOR}"/>
@@ -98,6 +101,7 @@
 <filter token="MICROARRAY_EMAIL" value="${MICROARRAY_EMAIL}"/>
 <filter token="MOVE_BLAST_FILES_TO_DEVELOPMENT" value="${MOVE_BLAST_FILES_TO_DEVELOPMENT}"/>
 <filter token="MUTANT_NAME" value="${MUTANT_NAME}"/>
+<filter token="NEW_PUBLICATION_REPORT" value="${NEW_PUBLICATION_REPORT}"/>
 <filter token="NOMEN_COORDINATOR" value="${NOMEN_COORDINATOR}"/>
 <filter token="NON_SECUREPORT" value="${NON_SECUREPORT}"/>
 <filter token="NON_SECURE_HTTP" value="${NON_SECURE_HTTP}"/>
@@ -114,6 +118,7 @@
 <filter token="REQUEST_NEW_ANATOMY_EMAIL" value="${REQUEST_NEW_ANATOMY_EMAIL}"/>
 <filter token="ROOT_PATH" value="${ROOT_PATH}"/>
 <filter token="RUN_QUARTZ_JOBS" value="${RUN_QUARTZ_JOBS}"/>
+<filter token="SCHEDULE_TRIGGER_FILES" value="${SCHEDULE_TRIGGER_FILES}"/>
 <filter token="SECUREPORT" value="${SECUREPORT}"/>
 <filter token="SECURE_HTTP" value="${SECURE_HTTP}"/>
 <filter token="SECURE_SERVER" value="${SECURE_SERVER}"/>

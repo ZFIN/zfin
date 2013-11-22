@@ -56,7 +56,7 @@ openReport();
                 and when::date = TODAY
               order by 2";
 
-    open (REPORT, ">>report") or die "can not open report";
+    open (REPORT, ">>report.txt") or die "can not open report";
 
     print REPORT "ZFIN Publications added ".`/bin/date "+%a %b %e, %Y"`."\n";
 
@@ -109,24 +109,24 @@ sub d8 {
 
 sub writeReport()
   {
-    open (REPORT, ">>report") or die "cannot open report";
+    open (REPORT, ">>report.txt") or die "cannot open report.txt";
     print REPORT "$_[0] \n\n";
     close (REPORT);    
   }
 
 sub openReport()
   {
-    system("/bin/rm -f report");
-    system("touch report");    
+    system("/bin/rm -f report.txt");
+    system("touch report.txt");    
   }
 
 sub sendReport()
   {
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
-    open(REPORT, "report") || die "cannot open report";
+    open(REPORT, "report.txt") || die "cannot open report";
 
-    print MAIL "To: curators\@zfin.org,mochla\@zfin.org,zfinadmn\@zfin.org\n";
-#    print MAIL "To: kevin\@zfin.org,van_slyke\@uoneuro.uoregon.edu\n";
+#    print MAIL "To: curators\@zfin.org,mochla\@zfin.org,zfinadmn\@zfin.org\n";
+    print MAIL "To: cmpich\@zfin.org\n";
     print MAIL "Subject: [<!--|INSTANCE|-->] Publications Entered Today\n";
     while($line = <REPORT>)
     {

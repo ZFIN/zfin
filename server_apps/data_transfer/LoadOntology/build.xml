@@ -19,19 +19,16 @@
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
 
+    <property environment="env"/>
+
     <!-- Classpath definitions -->
     <path id="classpath">
         <pathelement location="${classbin.dir}"/>
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
-    </path>
-
-    <path id="extended.classpath">
-        <path refid="classpath"/>
-        <fileset dir="${lib}">
-            <include name="*.jar"/>
-            <include name="*.zip"/>
+        <fileset dir="${env.SOURCEROOT}/lib/Java">
+            <include name="*jdbc*.jar"/>
         </fileset>
     </path>
 
@@ -40,9 +37,7 @@
     </target>
 
     <target name="load-spatial-ontology" depends="init">
-        <property name="localOboFile" value="${run-directory}/spatial.obo"/>
-        <echo message="${localOboFile}"/>
-        <antcall target="load-ontology"/>
+        <load-ontology oboDirectory="${run-directory}" oboFileName="spatial.obo" />
     </target>
 
     <target name="download-spatial-ontology">
@@ -57,8 +52,7 @@
     </target>
 
     <target name="load-gene-ontology" depends="init">
-        <property name="localOboFile" value="${run-directory}/gene-ontology.obo"/>
-        <antcall target="load-ontology"/>
+        <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo" />
     </target>
 
     <target name="download-gene-ontology">
@@ -74,13 +68,20 @@
     </target>
 
     <target name="load-quality-ontology" depends="init">
-        <property name="localOboFile" value="${run-directory}/quality.obo"/>
-        <antcall target="load-ontology"/>
+        <load-ontology oboDirectory="${run-directory}" oboFileName="quality.obo" />
     </target>
+
+    <target name="load-quality" depends="download-quality-ontology,load-quality-ontology"/>
+
+    <target name="load-spatial" depends="download-spatial-ontology,load-spatial-ontology"/>
+
+    <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
+
+    <target name="load-anatomy" depends="download-spatial-ontology,load-spatial-ontology"/>
 
     <target name="load-sequence-ontology" depends="init">
         <property name="localOboFile" value="${run-directory}/sequence-ontology.obo"/>
-        <antcall target="load-ontology"/>
+        <load-ontology oboDirectory="${run-directory}" oboFileName="sequence-ontology.obo" />
     </target>
 
     <target name="download-quality-ontology">
@@ -89,29 +90,36 @@
         <antcall target="download-ontology"/>
     </target>
 
-    <target name="load-ontology" description="Run the ontology loader">
-        <property name="scriptFiles"
-                  value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
-        <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
-              classpathref="extended.classpath" failonerror="true">
-            <classpath refid="classpath"/>
-            <arg value="-localOboFileName"/>
-            <arg value="${localOboFile}"/>
-            <arg value="-log4jFilename"/>
-            <arg value="log4j.xml"/>
-            <arg value="-dbScriptFileNames"/>
-            <arg value="${scriptFiles}"/>
-            <arg value="-webrootDirectory"/>
-            <arg value="${web.dir}"/>
-        </java>
+    <property name="scriptFiles"
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,dropTempTables.sql"/>
 
-    </target>
+    <macrodef name="load-ontology" description="Run the ontology loader">
+        <attribute name="oboFileName"/>
+        <attribute name="oboDirectory"/>
+
+        <sequential>
+            <echo>OBO dir : @{oboFileName}</echo>
+            <echo>OBO file: @{oboDirectory}</echo>
+            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
+                  failonerror="true">
+                <classpath refid="classpath"/>
+                <arg value="-localOboFileName"/>
+                <arg value="@{oboDirectory}/@{oboFileName}"/>
+                <arg value="-log4jFilename"/>
+                <arg value="log4j.xml"/>
+                <arg value="-dbScriptFileNames"/>
+                <arg value="${scriptFiles}"/>
+                <arg value="-webrootDirectory"/>
+                <arg value="${web.dir}"/>
+            </java>
+        </sequential>
+    </macrodef>
 
     <target name="load-ontology-with-stages" description="Run the ontology loader">
         <property name="scriptFiles"
                   value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
-              classpathref="extended.classpath" failonerror="true">
+              failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-localOboFileName"/>
             <arg value="${localOboFile}"/>
@@ -128,7 +136,7 @@
     <target name="term-stage-split-update" description="Split term-stage annotations into multiple annotations.">
         <java classname="org.zfin.ontology.datatransfer.service.OntologyTermFigureStageUpdate" fork="yes"
               maxmemory="256m"
-              classpathref="extended.classpath" failonerror="true">
+              failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-log4jFilename"/>
             <arg value="log4j.xml"/>
@@ -141,7 +149,7 @@
 
     <target name="check-obo-7bit" description="Check if a term name or a term definition contain a non-7-bit character">
         <java classname="org.zfin.ontology.datatransfer.service.OntologyValidation" fork="yes" maxmemory="256m"
-              classpathref="extended.classpath" failonerror="true">
+              failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-localOboFileName"/>
             <arg value="anatomy.obo"/>
@@ -159,7 +167,7 @@
 
 
     <target name="download-ontology" depends="init" description="Run the ontology loader">
-        <java classname="org.zfin.ontology.datatransfer.DownloadOntology" fork="yes" classpathref="extended.classpath"
+        <java classname="org.zfin.ontology.datatransfer.DownloadOntology" fork="yes"
               failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-localOboFileName"/>
@@ -198,6 +206,8 @@
             load-anatomy-ontology
             load-gene-ontology
             load-spatial-ontology
+
+            load-quality
         </echo>
     </target>
 

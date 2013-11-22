@@ -23,31 +23,69 @@ $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
 sub openReport()
   {
-    system("/bin/rm -f reportElsevier");
-    system("/bin/touch reportElsevier");
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
   }
 
-sub sendReport()
+sub openReport()
   {
-    open(MAIL, "| $mailprog") 
-	|| die "cannot open mailprog $mailprog, stopped";
- 
-    open(REPORT, "reportElsevier") 
-	|| die "cannot open reportElsevier";
-
-    print MAIL "To:dfashena\@uoneuro.uoregon.edu,xshao\@cs.uoregon.edu\n"; 
-
-    print MAIL "Subject: AutoGen: Elsevier publication report\n";
-
-    while($line = <REPORT>)
-    {
-	print MAIL $line;
-    }
-    close (REPORT);
-
-    close (MAIL);
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
   }
 
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
+
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
+
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
+
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
+
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
+
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
+
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
+
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
+
+sub openReport()
+  {
+    system("/bin/rm -f reportElsevier.txt");
+    system("/bin/touch reportElsevier.txt");
+  }
 
 ## -------  MAIN -------- ##
 
@@ -73,7 +111,7 @@ $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
 openReport();
 
-open (REPORT, "> reportElsevier") or die "can not open report" ;
+open (REPORT, "> reportElsevier.txt") or die "can not open report.txt" ;
 
 $elsevier_query = "select distinct zdb_id,jrnl_name,entry_time from record_attribution, publication, journal
                     where recattrib_source_zdb_id = zdb_id
@@ -99,7 +137,7 @@ my $total = 0;
 
 my $prev_journal = "";
 
-print "\nStarted SQL for the elsevier report ....\n\n";
+print "\nStarted SQL for the Elsevier report ....\n\n";
 
 while ($elsevier_cur->fetch) {
    print REPORT "$journal\n-------------------------------\n" if $grandTotal == 0;   
@@ -121,8 +159,6 @@ print REPORT "Total with $prev_journal: $total\n";
 print REPORT "\n\nGrand total number of Elsevier publications with at least one record in ZFIN record_attribution table: $grandTotal\n\n";
 
 close(REPORT);
-
-sendReport();
 
 print "\nDone\n\n";
 

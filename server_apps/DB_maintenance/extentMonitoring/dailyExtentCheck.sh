@@ -3,20 +3,19 @@
 # rm old reports
 
 setenv INSTANCE <!--|INSTANCE|-->;
+cd <!--|TARGETROOT|-->/server_apps/DB_maintenance/extentMonitoring
 
-if ( -e /tmp/extentCheck.txt ) then
- /bin/rm /tmp/extentCheck.txt;
- /bin/touch /tmp/extentCheck.txt;
+if ( -e extentCheck.txt ) then
+ /bin/rm extentCheck.txt;
+ /bin/touch extentCheck.txt;
 
 endif
 
 echo "unloading daily RED alerts from sysadmin";
 
-echo 'unload to /tmp/extentCheck.txt select * from mon_extents;' | /private/apps/Informix/informix/bin/dbaccess sysadmin ;
+echo 'unload to extentCheck.txt select * from mon_extents;' | /private/apps/Informix/informix/bin/dbaccess sysadmin ;
 
 echo "sending RED alert (extents exceed 10) email." ;
-
-/local/bin/mutt -a /tmp/extentCheck.txt -s "extent check for almdb" -- <!--|DB_OWNER|-->@zfin.org < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 
 echo "delete from mon_extents" | /private/apps/Informix/informix/bin/dbaccess sysadmin;
 

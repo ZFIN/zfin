@@ -45,7 +45,7 @@ public final class SiteSearchCategories {
     /**
      * Initialize properties via property file import.
      *
-     * @param properties onfiguration data from the zfin-properties.xml file
+     * @param properties configuration data from the zfin-properties.xml file
      */
     public static void init(Categories properties) {
         props = properties;

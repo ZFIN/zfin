@@ -25,6 +25,7 @@ SUBDIRS = apache cron data_transfer mapimage sysexecs WebSiteTools \
 	DB_maintenance Reports quicksearch 
 
 GENERICS = ZFINPerlModules.pm
+STATICS = build.xml
 
 MIRROR_SUBDIRS = WebSiteTools
 

@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------
 #
 # Script to scan all occurrences of char and varchar columns in all tables 
-# for condtions that we don't want to happen.  These conditions are those
+# for conditions that we don't want to happen.  These conditions are those
 # that can be fixed by the scrub_char() function.  Any columns reported by
 # this script should be examined and either:
 #  1. Added to this script's avoid list, in which case the script will no

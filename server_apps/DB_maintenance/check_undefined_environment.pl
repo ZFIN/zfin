@@ -98,7 +98,7 @@ while ($cur->fetch()) {
 
 $cur->finish(); 
 
-open (REPORT, ">undefinedEnvReport") || die "Cannot open undefinedEnvReport : $!\n";
+open (REPORT, ">undefinedEnvReport.txt") || die "Cannot open undefinedEnvReport.txt : $!\n";
 
 $ctTotal = 0;
 foreach $key (sort keys %pubIds) {
@@ -150,6 +150,6 @@ close (REPORT);
 
 print "\n$ctTotal undefined environments found and sent to curator(s)\n\n\n";
 
-&sendResult("Monthly undefined environment check report: $ctTotal found on $dbname", "xshao\@zfin.org","./undefinedEnvReport");
+&sendResult("Monthly undefined environment check report: $ctTotal found on $dbname", "xshao\@zfin.org","./undefinedEnvReport.txt");
   
 exit;

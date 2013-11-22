@@ -20,38 +20,10 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
-$mailprog = '/usr/lib/sendmail -t -oi -oem';
-
-# subroutines to send email reports to curators.
-
-sub openReport()
-  {
-    system("/bin/rm -f reportPermissions");
-    system("touch reportPermissions");
-  }
-
-sub sendReport($)
-  {
-    open(MAIL, "| $mailprog") 
-	|| die "cannot open mailprog $mailprog, stopped";
- 
-   open(REPORT, "reportPermissions") 
-	|| die "cannot open reportPermissons";
-
-    print MAIL "To:". $_[0]."\n";
-
-    print MAIL "Subject: AutoGen: FX lite-figures have permission to become full-figured\n";
-
-    while($line = <REPORT>)
-    {
-      print MAIL $line;
-    }
-    close (REPORT);
-    close (MAIL);
-  }
-
-
 ## -------  MAIN -------- ##
+$dataDirectory = 'fx_permission';
+system("rm -rf $dataDirectory");
+mkdir "$dataDirectory";
 
 # open a handle on the db
 
@@ -63,17 +35,11 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
   || emailError("Failed while connecting to <!--|DB_NAME|--> "); 
 
 
-# move into the appropriate directory
-
-chdir "<!--|ROOT_PATH|-->/<!--|CGI_BIN_DIR_NAME|-->/";
-
 # set the mail program
-
-$mailprog = '/usr/lib/sendmail -t -oi -oem';
 
 # establish a list of possible curators to mail to
 
-$get_curators_query = "select distinct cur_curator_zdb_id, email
+$get_curators_query = "select distinct cur_curator_zdb_id, email, replace(name, ' ','')
                              from curation, 
                                    person 
                              where person.zdb_id = cur_curator_zdb_id";
@@ -84,26 +50,15 @@ my $cur = $dbh->prepare($get_curators_query);
 
 $cur->execute;
 my($cur_curator_zdb_id, $email);
-$cur->bind_columns(\$cur_curator_zdb_id, \$email) ;
+$cur->bind_columns(\$cur_curator_zdb_id, \$email, \$curatorName) ;
 
 # for each curator, get a list of pubs that they've curated
 # that have permissions to show images, but whose figures (one or more)
 # do not have images 
 
+open (REP, '>fx_permission/email.list')|| die "cannot open email-list.txt";
+
 while ($cur->fetch) {
-
-    # open a new report each time, so each curator only gets their
-    # personal records.
-
-    openReport() ;
-    
-    open (REPORT, ">>reportPermissions") or die "can not open report" ;
-
-    print REPORT "These figures are from publications with expression or phenotype data where\n";
-    print REPORT "permission to use images was originally denied, but is now granted.\n\n";
-    print REPORT "For more information, including how to get figures to be ignored by this check,\n";
-    print REPORT "see https://wiki.zfin.org/display/doc/FX+Permisssion+Check\n\n";
-    
 
     # prepare the query to get the lite figures that should
     # be full figures.
@@ -154,22 +109,32 @@ while ($cur->fetch) {
     
     # for each pub and figure, print out that figure/pub to a report
 
+    $FILENAME = $curatorName . "txt" ;
+    open(dataFile, ">>fx_permission/$FILENAME");
     while ($sub_cur->fetch)
     {
-	print REPORT "$cur_pub_zdb_id : $fig_label" if ($fig_full_label ne '');
-	print REPORT "\n";
-	
-	# increment the counter
+	print dataFile "$cur_pub_zdb_id : $fig_label" if ($fig_full_label ne '');
+	print dataFile "\n";
 
+	# increment the counter
 	$count++;
+    }
+    close(dataFile);
+
+    my $filesize = -s "fx_permission/$FILENAME" || 0;
+    if($filesize < 1){
+	unlink "fx_permission/$FILENAME";
     }
 
     # send the report to the appropriate curator if the number of rows
     # returned is not zero.
 
-    sendReport($email) if ($count != 0 );
+    print REP $email . " "  if($count > 0);
+
 }
 
-# close the connection to the database.
+close (REP);
 
+# close the connection to the database.
 $dbh->disconnect();
+

@@ -32,7 +32,7 @@
 # ------------------------------------------------------------------------
 #
 # SMTWT 8am give Doug read only permission on mirrordb
-00 08 * * 6 /research/zunloads/projects/readOnlyDb/createGrantSql.sh
+#00 08 * * 6 /research/zunloads/projects/readOnlyDb/createGrantSql.sh
 #
 # S         3:00am   Validate data, daily + weekly + orphans check (daily)
 00 03 * * 6 /research/zcentral/www_homes/mirror/server_apps/DB_maintenance/validatedata.pl -d -w mirrordb 

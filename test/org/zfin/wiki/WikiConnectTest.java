@@ -38,7 +38,10 @@ public class WikiConnectTest {
     @Test
     public void getPagesForspace() {
         try {
-            assertTrue(WikiWebService.getInstance().getAllPagesForSpace("prot").length > 100);
+            WikiWebService instance = WikiWebService.getInstance();
+            RemotePageSummary[] prots = instance.getAllPagesForSpace("prot");
+            RemotePage page = instance.getPageForTitleAndSpace("Breeding", "prot");
+            assertTrue(prots.length > 100);
         } catch (WikiLoginException e) {
             fail(e.fillInStackTrace().toString());
         }

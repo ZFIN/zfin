@@ -2,7 +2,7 @@
 #
 #
 #  This script creates a file that ZFIN sends to Stanford. The file is tab
-#  delimitted with 14 columns, each GO term/gene association on a seperate
+#  delimited with 14 columns, each GO term/gene association on a separate
 #  line.
 #  One tech people would get error report if any. One curator would get
 #  gene_association.zfin file and gp2protein.zfin file in email attachment.

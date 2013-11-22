@@ -1,10 +1,8 @@
 package org.zfin.ontology;
 
-import com.zerog.ia.installer.InstallSet;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
 import org.zfin.sequence.ForeignDB;
-import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
 
 import java.util.*;

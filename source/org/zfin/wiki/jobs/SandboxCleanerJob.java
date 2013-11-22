@@ -3,8 +3,8 @@ package org.zfin.wiki.jobs;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.zfin.framework.ZfinBasicQuartzJob;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.wiki.service.WikiWebService;
 
 /**
@@ -22,6 +22,10 @@ public class SandboxCleanerJob extends ZfinBasicQuartzJob {
             logger.error("Failed to clean sandbox",e);
             throw new JobExecutionException(e);
         }
+    }
 
+    public static void main(String[] arguments) throws Exception {
+        ZfinProperties.init(arguments[0]);
+        WikiWebService.getInstance().cleanSandbox() ;
     }
 }

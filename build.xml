@@ -65,7 +65,7 @@
         </then>
         <else>
             <property name="INSTANCE" value="${env.INSTANCE}"/>
-            <echo message="Setting INSTANCE to '${INSTANCE}' from environment"/>
+            <echo message="INSTANCE = ${INSTANCE}"/>
         </else>
     </if>
 
@@ -75,7 +75,9 @@
     <property name="log4j.file" value="${commons.dir}/${INSTANCE}.log4j.xml"/>
 
     <!--If the property file is not defined then fail.-->
+<!--
     <echo message="property file=${property.file}"/>
+-->
     <available property="property.file.available" file="${property.file}"/>
 
     <fail unless="property.file.available" message="Unable to find property file[${property.file}] for instance[${INSTANCE}"/>
@@ -83,7 +85,7 @@
 
     <exportProperties
             file="${commons.dir}/${INSTANCE}.properties"
-            target="home/WEB-INF/zfin.properties"
+            target="${basedir}/home/WEB-INF/zfin.properties"
             header="#Properties for INSTANCE=${INSTANCE}"
             keySuffix="="
             />
@@ -102,7 +104,11 @@
     <import file="${buildfiles.dir}/serialization.xml"/>
     <import file="${buildfiles.dir}/warehouse.xml"/>
     <import file="${buildfiles.dir}/utilities.xml"/>
+    <import file="${buildfiles.dir}/jenkins.xml"/>
+    <import file="${buildfiles.dir}/base-properties.xml"/>
+<!--
     <echo message="property file=${LOG4J_FILE}"/>
+-->
 
     <!-- ====================================================================== -->
     <!-- COMPILE TASKS                                                          -->
@@ -285,6 +291,26 @@
         <exportAllInstances instancesFile="${commons.dir}/instances.properties" target="createPropertiesFilesForInstance" />
     </target>
 
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <!-- This class needs to come first to ensure that unit test methods are executed in the order they appear in the source file -->
+        <fileset dir="${lib}">
+            <include name="junit-orderOfExecution.jar"/>
+        </fileset>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+        <fileset dir="${gwt.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${jwebunit.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <!--<fileset dir="${CATALINA_HOME}/common/lib">-->
+        <!--<include name="ifxjdbc.jar"/>-->
+        <!--</fileset>-->
+    </path>
 
     <target name="compile" depends="prepare"
             description="Target to compile all classes, excluding test files, and moving anything from the source

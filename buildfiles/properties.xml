@@ -111,16 +111,6 @@
     <!-- war file name-->
     <property name="zfin.war" value="${basedir}/zfin.war"/>
 
-    <!-- Classpath definitions -->
-    <path id="classpath">
-        <pathelement location="${classbin.dir}"/>
-        <pathelement location="${servlet.jar}"/>
-        <fileset dir="${web.lib}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
-
     <!-- Tomcat related environment variables -->
     <property name="tomcat-conf" value="${CATALINA_BASE}/conf"/>
     <property name="tomcat-lib" value="${CATALINA_BASE}/lib"/>

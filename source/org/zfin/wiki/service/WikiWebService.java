@@ -229,12 +229,12 @@ public class WikiWebService {
      * @throws Exception Thrown if problems during the process.
      */
     public void cleanSandbox() throws Exception {
-
         if (false == ZfinProperties.isPushToWiki()) {
             return;
         }
 
         RemotePageSummary[] pages = service.getPages(token, Space.SANDBOX.getValue());
+        System.out.println(pages.length);
         if (pages.length == 1) {
             if (service.getPage(token, pages[0].getId()).getContent().equals(SANDBOX_DEFAULT_CONTENT)) {
                 logger.info("Nothing changed in wiki sandbox homepage, doing nothing");
