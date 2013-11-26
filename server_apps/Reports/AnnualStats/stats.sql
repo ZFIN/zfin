@@ -60,7 +60,7 @@ where feature_type = 'TRANSGENIC_INSERTION'
 --  Transgenic Construct
 select count(distinct mrkr_zdb_id) tg_const
 from marker
-where mrkr_type = 'TGCONSTRCT'
+where mrkr_type in  ('TGCONSTRCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT')
   and mrkr_abbrev not like "%;%"
 ;
 
@@ -102,6 +102,10 @@ select count(*) go_all from marker_go_term_evidence
 
 ;
 
+--Genes with OMIM disease phenotypes
+select count(distinct omimp_gene_zdb_id) as omim
+ from omim_phenotype ;
+
 
 ---------------------------------------------------------------Reagents ----------------------------
 --Morpholinos
@@ -109,6 +113,14 @@ select count(*) mo from marker
  where mrkr_zdb_id[1,12] = 'ZDB-MRPHLNO-'
 --and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ; --grep 'ZDB-MRPHLNO-' marker | wc -l
+
+--TALEN
+select count(*) as talen from marker
+ where mrkr_zdb_id like 'ZDB-TALEN%';
+
+--CRISPR
+select count(*) as crispr from marker
+  where mrkr_zdb_id like 'ZDB-CRISPR%';
 
 -- Antibodies
 select count(*) ab from marker
@@ -132,15 +144,22 @@ select count(*) exp_pat from expression_experiment
 where xpatex_zdb_id not like 'ZDB-%-10____-%'
 ;
 
--- Images (phenotypes, expression patterns)
-select count(*)fish_img from image --fish_image
+--Phenotype Statements
+select count(*) as phenoStatements from phenotype_statement;
+
+
+-- Images annotated for expression
+select count(*)fish_img from image
+ --fish_image
 --where img_zdb_id not like 'ZDB-%-12____-%'
 ;
 
+
 -- Anatomical structures
-select count(*)anatomy_item from anatomy_item
+select count(*) as anatomy_item from term
+ where term_ontology in ('zebrafish_anatomy','zebrafish_anatomical_ontology');
 --where anatitem_zdb_id not like 'ZDB-%-12____-%'
-;
+
 
 -- Developmental stages select count(*) stage from stage
 --where stg_zdb_id not like 'ZDB-%-12____-%';
