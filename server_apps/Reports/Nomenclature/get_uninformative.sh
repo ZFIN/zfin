@@ -4,7 +4,7 @@
 #COMMONS_BIN=/research/zusers/tomc/Projects/TRUNK/ZFIN_WWW/commons/bin
 COMMONS_BIN=/private/ZfinLinks/Commons/bin
 
-(${INFORMIXDIR}/bin/dbaccess -a zezdb << END
+(${INFORMIXDIR}/bin/dbaccess -a <!--|DB_NAME|--> << END
 
  select "          count" type from single;
 

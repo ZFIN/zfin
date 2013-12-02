@@ -22,8 +22,8 @@ TARGETDIR = $(TARGETROOT)/server_apps/Reports/Nomenclature
 SUBDIRS = 
 
 
-GENERICS = 
-STATICS  = get_uninformative.sh
+GENERICS = get_uninformative.sh
+STATICS  =
 
 
 # ---------------  Production Rules  ------------------------------------
