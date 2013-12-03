@@ -39,7 +39,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern></attachmentsPattern>
+            <attachmentsPattern>server_apps/Reports/Nomenclature/*.txt,server_apps/Reports/Nomenclature/*.log</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo>${DB_OWNER}@zfin.org</replyTo>
@@ -55,7 +55,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern></attachmentsPattern>
+            <attachmentsPattern>server_apps/Reports/Nomenclature/*.log</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo>${DB_OWNER}@zfin.org</replyTo>
@@ -66,7 +66,7 @@
       <contentType>default</contentType>
       <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
-      <attachmentsPattern>server_apps/Reports/Nomenclature/*.txt,server_apps/Reports/Nomenclature/*.log</attachmentsPattern>
+      <attachmentsPattern></attachmentsPattern>
       <presendScript></presendScript>
       <attachBuildLog>false</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>
