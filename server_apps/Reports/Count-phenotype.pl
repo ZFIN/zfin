@@ -142,7 +142,7 @@ $sql =  'select distinct mrel_mrkr_2_zdb_id
             
 my $ctGenes6 = ZFINPerlModules->countData($sql);
 
-open (PHENO, ">>PhenotypeStatistics") || die "Cannot open PhenotypeStatistics : $!\n";
+open (PHENO, ">>PhenotypeStatistics.txt") || die "Cannot open PhenotypeStatistics.txt : $!\n";
 
 print PHENO "\n\nNumber of Genes with TALEN (in environment) Phenotype: $ctGenes1";
 print PHENO "\n\nNumber of Genes with CRISPR (in environment) Phenotype: $ctGenes2";
