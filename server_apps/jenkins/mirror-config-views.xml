@@ -7,6 +7,7 @@
     <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator"/>
         <string>Check-Extent_d</string>
+        <string>Check-Term-Stage-Range_d</string>
         <string>Elsevier-Reports_w</string>
         <string>Figure-Permission_m</string>
         <string>Lab-Address-Change_w</string>

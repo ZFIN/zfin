@@ -51,6 +51,10 @@
     <target name="deploy-email-templates" description="Copy jobs into Jenkins_home">
         <tstamp/>
         <echo message="Deploy email templates into: ${JENKINS_HOME}/email-templates"/>
+        <copy todir="${emailTemplates}">
+            <fileset dir="${basedir}/server_apps/jenkins/email-templates"/>
+        </copy>
+
         <property name="jobDirectory" value="${basedir}/server_apps/jenkins/jobs"/>
         <groovy>
             def dir = new File(properties.jobDirectory)
@@ -209,6 +213,7 @@
     </target>
 
     <target name="start-jenkins" depends="create-jenkins-symlink" description="Start up Jenkins ">
+        <echo message="Source: ${jenkins}"/>
         <exec executable="${jenkins}/jenkins.sh">
             <arg value="start"/>
         </exec>
