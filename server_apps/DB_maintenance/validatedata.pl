@@ -2201,42 +2201,6 @@ sub xxGenesHaveNoClones ($) {
 #Parameter
 # $      Email Address for recipients
 # 
-sub linkageHasMembers ($) {
-
-  my $routineName = "linkageHasMembers";
-	
-  my $sql = '
-             select lnkg_zdb_id,
-                    lnkg_or_lg,
-                    recattrib_source_zdb_id
-               from linkage, record_attribution
-	      where lnkg_zdb_id not in (
-	            	      select lnkgmem_linkage_zdb_id 
-                                from linkage_member)
-                and lnkg_zdb_id = recattrib_data_zdb_id
-             ';
-
-  my @colDesc = ("Lnkg ZDB ID       ",
-		 "Lnkg or lg        ",
-		 "Lnkg source ZDB ID" );
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "linkage has no member(s)";
-    my $errMsg = "In linkage table, $nRecords records have no members in linkage_member. ";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
-#---------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
 sub linkagePairHas2Members ($) {
 	
   my $routineName = "linkagePairHas2Members";
@@ -3640,7 +3604,6 @@ if($monthly) {
     encodesRelationshipsInBACorPAC($geneEmail);
     mrkrgoevInfgrpDuplicatesFound($goEmail);
     printTop40PostcomposedTerms($aoEmail);
-    linkageHasMembers($linkageEmail);
     linkagePairHas2Members($linkageEmail);
     # for each zfin curator, run phenotypeAnnotationUnspecified() check
     my $sql = " select email, full_name
