@@ -42,7 +42,7 @@ print new File(description).text
 <tr>
 <%
 // header info
-def header = System.getenv('TARGETROOT')+"/server_apps/DB_maintenance/stageRangeValidation.header"
+def header = System.getenv('TARGETROOT')+"/server_apps/DB_maintenance/column.header"
 head =  new File(header).text
 List elements = head.tokenize('\\|');
         elements.each { record ->
