@@ -7,38 +7,8 @@
 # See FB case 7788 and 8007 for more information.
 #
 use strict;
-use MIME::Lite;
 use DBI;
 
-#------------------ Send Result ----------------
-#
-#
-sub sendResult ($$$){
-
-  my $SUBJECT=$_[0];
-  my $MAILTO=$_[1];
-  my $TXTFILE=$_[2];
-
-  # Create a new multipart message:
-  my $msg = new MIME::Lite
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
-
-  attach $msg
-   Type     => 'text/plain',
-   Path     => "$TXTFILE";
-
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg->print(\*SENDMAIL);
-
-  close(SENDMAIL);
-}
-
-#------------------ Main -------------------------
 # set environment variables
 
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
@@ -191,8 +161,5 @@ print SQLFILE "rollback work;\n\n";
 close(SQLFILE);
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> finPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
-
-&sendResult("Monthly Fin Phenotype statistics", "<!--|COUNT_PATO_OUT|-->","./FinPhenotypeStatistics.txt");
-&sendResult("Monthly Phenotype statistics Err", "<!--|COUNT_VEGA_ERR|-->", "./errFin.txt");
 
 exit;
