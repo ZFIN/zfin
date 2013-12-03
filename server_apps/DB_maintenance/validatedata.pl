@@ -393,58 +393,6 @@ sub phenotypeAnnotationUnspecified ($$) {
 } 
 
 
-#---------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-# Use the SPL routine anatitem_overlaps_stg_window() to check if
-# any record in expression_result violates the rule.
-# 
-sub expressionResultStageWindowOverlapsAnatomyItem ($) {
-	
-  my $routineName = "expressionResultStageWindowOverlapsAnatomyItem";
-	
-  my $sql = '
-            select xpatres_zdb_id,
-                   s1.stg_name_long, s2.stg_name_long,
-                   xpatres_superterm_zdb_id, term_name,
-                   s3.stg_name_long, s4.stg_name_long
-	      from expression_result, term_stage, stage s1, stage s2,stage s3, stage s4, term
-             where aoterm_overlaps_stg_window(
-                                     xpatres_superterm_zdb_id,
-                                     xpatres_start_stg_zdb_id,
-                                     xpatres_end_stg_zdb_id
-                                     ) = "f"
-                        and ts_start_stg_zdb_id = s3.stg_zdb_id
-                        and ts_end_stg_zdb_id = s4.stg_zdb_id
-                        and term_zdb_id = ts_term_zdb_id
-                        and xpatres_superterm_zdb_id = term_zdb_id
-                        and xpatres_start_stg_zdb_id = s1.stg_zdb_id
-                        and xpatres_end_stg_zdb_id = s2.stg_zdb_id';
-
-   my @colDesc = ( "Xpatres ZDB ID      ",
-		   "Xpatres start stage ",
-		   "Xpatres end stage   ",
-		   "Anatitem ZDB ID     ",
-		   "Anatitem name       ",
-		   "Anatitem start stage",
-		   "Anatitem end stage  " );
-
-  my $nRecords = execSql($sql, undef, @colDesc);
-  
-  if ( $nRecords > 0 ) {
-      
-      my $sendToAddress = $_[0];
-      my $subject = "Xpat's stage window not overlaps with anatomy item's";
-      my $errMsg = "In expression_result, $nRecords records' stage "
-	  ."window don't overlap with the anatomy item's stage window.";
-      
-      logError ($errMsg);	
-      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);   
-  }
-  &recordResult($routineName, $nRecords);
-}
-
 
 #====================== Expression ================================
 # Parameter
@@ -3593,7 +3541,6 @@ if($daily) {
     tscriptLoadIdMatchesDBLink($transcriptEmail);
     findWithdrawnMarkerMismatch($transcriptEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
-    expressionResultStageWindowOverlapsAnatomyItem($xpatEmail);
     checkFigXpatexSourceConsistant($dbaEmail);
   # for each zfin curator, run phenotypeAnnotationUnspecified() check
     
