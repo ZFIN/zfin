@@ -51,7 +51,7 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
 my $ctGenes2 = ZFINPerlModules->countData($sql);
 
 $sql = 'select distinct mrel_mrkr_2_zdb_id   
-          from marker_relationship, experiment_condition, genotype_experiment gx1, phenotype_experiment px1, phenotype_statement ps1, genotype 
+          from marker_relationship, experiment_condition, genotype_experiment gx1, phenotype_experiment px1, genotype 
          where mrel_type = "knockdown reagent targets gene" 
            and mrel_mrkr_1_zdb_id like "ZDB-TALEN%" 
            and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id 
@@ -59,20 +59,8 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
            and gx1.genox_zdb_id = px1.phenox_genox_zdb_id 
            and gx1.genox_geno_zdb_id = geno_zdb_id 
            and geno_is_wildtype = "t" 
-           and ps1.phenos_phenox_pk_id = px1.phenox_pk_id
-           and not exists(select "x" from phenotype_statement ps2, phenotype_experiment px2, genotype_experiment gx2, genotype_feature, feature_marker_relationship
-                           where ps2.phenos_entity_1_superterm_zdb_id||
-                                 ps2.phenos_entity_1_subterm_zdb_id||
-                                 ps2.phenos_entity_2_superterm_zdb_id||
-                                 ps2.phenos_entity_2_subterm_zdb_id||
-                                 ps2.phenos_tag =
-                                 ps1.phenos_entity_1_superterm_zdb_id||
-				 ps1.phenos_entity_1_subterm_zdb_id||
-				 ps1.phenos_entity_2_superterm_zdb_id||
-				 ps1.phenos_entity_2_subterm_zdb_id||
-                                 ps1.phenos_tag
-                             and ps2.phenos_phenox_pk_id = px2.phenox_pk_id
-                             and gx2.genox_zdb_id = px2.phenox_genox_zdb_id
+           and not exists(select "x" from phenotype_experiment px2, genotype_experiment gx2, genotype_feature, feature_marker_relationship
+                           where gx2.genox_zdb_id = px2.phenox_genox_zdb_id
                              and gx2.genox_geno_zdb_id = genofeat_geno_zdb_id
                              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                              and fmrel_mrkr_zdb_id = mrel_mrkr_2_zdb_id);';
@@ -81,7 +69,7 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
 my $ctGenes3 = ZFINPerlModules->countData($sql);
 
 $sql = 'select distinct mrel_mrkr_2_zdb_id   
-          from marker_relationship, experiment_condition, genotype_experiment gx1, phenotype_experiment px1, phenotype_statement ps1, genotype 
+          from marker_relationship, experiment_condition, genotype_experiment gx1, phenotype_experiment px1, genotype 
          where mrel_type = "knockdown reagent targets gene" 
            and mrel_mrkr_1_zdb_id like "ZDB-CRISPR%" 
            and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id 
@@ -89,24 +77,11 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
            and gx1.genox_zdb_id = px1.phenox_genox_zdb_id 
            and gx1.genox_geno_zdb_id = geno_zdb_id 
            and geno_is_wildtype = "t" 
-           and ps1.phenos_phenox_pk_id = px1.phenox_pk_id
-           and not exists(select "x" from phenotype_statement ps2, phenotype_experiment px2, genotype_experiment gx2, genotype_feature, feature_marker_relationship
-                           where ps2.phenos_entity_1_superterm_zdb_id||
-                                 ps2.phenos_entity_1_subterm_zdb_id||
-                                 ps2.phenos_entity_2_superterm_zdb_id||
-                                 ps2.phenos_entity_2_subterm_zdb_id||
-                                 ps2.phenos_tag =
-                                 ps1.phenos_entity_1_superterm_zdb_id||
-				 ps1.phenos_entity_1_subterm_zdb_id||
-				 ps1.phenos_entity_2_superterm_zdb_id||
-				 ps1.phenos_entity_2_subterm_zdb_id||
-                                 ps1.phenos_tag
-                             and ps2.phenos_phenox_pk_id = px2.phenox_pk_id
-                             and gx2.genox_zdb_id = px2.phenox_genox_zdb_id
+           and not exists(select "x" from phenotype_experiment px2, genotype_experiment gx2, genotype_feature, feature_marker_relationship
+                           where gx2.genox_zdb_id = px2.phenox_genox_zdb_id
                              and gx2.genox_geno_zdb_id = genofeat_geno_zdb_id
                              and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                              and fmrel_mrkr_zdb_id = mrel_mrkr_2_zdb_id);';
-                                                 
 
 my $ctGenes4 = ZFINPerlModules->countData($sql);
 
