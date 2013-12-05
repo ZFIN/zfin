@@ -37,6 +37,6 @@ BEGIN {
 $5 != "N" {
 	#split($6,a,".");  
 	$6=substr($6,1,index($6,".")-1); 
-	feature="clone"; if(1==match($6,"CABZ")){feature="contig"};
+	feature="tiling_path_clone"; if(1==match($6,"CABZ")){feature="contig"};
 	print substr($1,4) "\tEnsembl_" src[$5] "_trimmed\t" feature "\t" $2 "\t" $3 "\t.\t" $9 "\t.\tID="$1 ":" $4 ";Name=" $6
 } 

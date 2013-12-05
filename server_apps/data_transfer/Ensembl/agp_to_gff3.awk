@@ -45,7 +45,7 @@ BEGIN			{
 $5 != "N" {
 	$6=substr($6,1,index($6,".")-1); #chop accession version
 	while( (z[zrow,1] < $6) && (zrow <= zmax)){ zrow++ };
-	feature="clone"; 
+	feature="genomic_clone"; 
 	if(1 == match($6,"CABZ")){feature="contig"};
 	start = $2; 
 	end = $3;
