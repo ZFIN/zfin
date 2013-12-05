@@ -49,6 +49,7 @@
         <div>
             <b>Add Supplier:</b><br/>
             <form:input path="<%= DisruptorAddBean.NEW_DISRUPTOR_SUPPLIER_NAME%>" id="supplierName" type="text" size="35" />
+            <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SUPPLIER_NAME%>" cssClass="error indented-error"/>
         </div>
     </c:if>
     <p/>

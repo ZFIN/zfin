@@ -5,12 +5,15 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.profile.Organization;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
+import org.zfin.profile.repository.ProfileRepository;
 
 public class DisruptorAddBeanValidator implements Validator {
     private MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+    private ProfileRepository pr = RepositoryFactory.getProfileRepository();
 
     public boolean supports(Class aClass) {
         return true;
@@ -49,10 +52,16 @@ public class DisruptorAddBeanValidator implements Validator {
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
             errors.rejectValue("targetGeneSymbol", "code", "The target gene of [" + disruptorName + "]  cannot be null.");
+        } else if (mr.getGeneByAbbreviation(targetGeneSymbol) == null) {
+            errors.rejectValue("targetGeneSymbol", "code", targetGeneSymbol + " cannot be found.");
         }
 
-        if (mr.getGeneByAbbreviation(targetGeneSymbol) == null) {
-            errors.rejectValue("targetGeneSymbol", "code", targetGeneSymbol + " cannot be found.");
+        String disruptorSupplierName = formBean.getDisruptorSupplierName();
+        if (!StringUtils.isEmpty(disruptorSupplierName)) {
+            Organization supplier = pr.getOrganizationByName(disruptorSupplierName);
+            if (supplier == null) {
+                errors.rejectValue("disruptorSupplierName", "code", disruptorSupplierName + " cannot be found.");
+            }
         }
 
         if(ZfinStringUtils.containsWhiteSpaceOrNoneATGC(disruptorSequence)) {
