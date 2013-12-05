@@ -51,6 +51,10 @@ public class DisruptorAddBeanValidator implements Validator {
             errors.rejectValue("targetGeneSymbol", "code", "The target gene of [" + disruptorName + "]  cannot be null.");
         }
 
+        if (mr.getGeneByAbbreviation(targetGeneSymbol) == null) {
+            errors.rejectValue("targetGeneSymbol", "code", targetGeneSymbol + " cannot be found.");
+        }
+
         if(ZfinStringUtils.containsWhiteSpaceOrNoneATGC(disruptorSequence)) {
             errors.rejectValue("disruptorSequence", "code", "The sequence of [" + disruptorName + "]  cannot contain white space or character other than ATGC.");
         }
@@ -69,7 +73,4 @@ public class DisruptorAddBeanValidator implements Validator {
         }
     }
 }
-
-
-
 
