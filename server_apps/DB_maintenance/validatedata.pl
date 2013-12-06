@@ -3121,36 +3121,6 @@ sub experimentNullValue ($) {
   &recordResult($routineName, $nRecords);
 }
 
-#---------------------------------------------------------------
-# check for secondary annotations
-
-# Parameter
-#  $     Email Address for recipient
-#
-sub mrkrgoevSecondaryAnnotationsFound ($) {
-
-  my $routineName = "mrkrgoevSecondaryAnnotationsFound";
-
-  my $sql = 'select mrkrgoev_zdb_id, mrkr_abbrev, term_name, mrkrgoev_source_zdb_id
-               from marker_go_term_evidence, term, marker
-               where mrkrgoev_term_zdb_id = term_zdb_id
-               and term_is_secondary = "t"
-               and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id'
-              ;
-
-  my @colDesc = ("mrkrgoev_zdb_id","mrkr_abbrev","goterm_name", "mrkrgoev_source_zdb_id");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "secondary go terms exist with annotations";
-    my $errMsg = "$nRecords annotations exist with secondary go terms";
-    logError($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-}
-
 #---------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -3441,7 +3411,6 @@ if($daily) {
 
     mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
-    mrkrgoevSecondaryAnnotationsFound($goEmail);
 }
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
