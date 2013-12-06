@@ -128,6 +128,26 @@
 	</fail>
     </target>
 
+    <target name="report-marker-go-secondary-annotation" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <exec executable="dbaccess"  failifexecutionfails="true">
+            <arg value="-a"/>
+            <arg value="${DBNAME}" />
+            <arg value="${validateData}/validatedata/MarkerGoSecondaryAnnotation.sql"/>
+        </exec>
+        <echo file="${validateData}/column.header" append="false">MarkerGOEvidence ID|Marker Symbol|Term Name|Publiction ID</echo>
+        <echo file="${validateData}/description.txt" append="false">
+        There are marker_go_term_evidence records with secondary terms.
+        </echo>
+        <fail message="Failed: There are records in violation">
+          <condition>
+        <resourcecontains resource="reportRecords.txt" substring="|"/>
+          </condition>
+        </fail>
+    </target>
+
+
     <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
 
     <macrodef name="run-db-query">

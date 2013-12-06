@@ -27,7 +27,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/validatedata
 
-GENERICS = stageRangeValidation.sql linkageHasMember.sql StrGeneAbbreviation.sql MarkerGoEvidenceDuplicate.sql
+GENERICS = stageRangeValidation.sql linkageHasMember.sql StrGeneAbbreviation.sql MarkerGoEvidenceDuplicate.sql MarkerGoSecondaryAnnotation.sql
 
 
 # ---------------  Production Rules  ------------------------------------
