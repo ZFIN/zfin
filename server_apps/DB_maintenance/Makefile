@@ -24,7 +24,7 @@ GENERICS = updateunFeatures.pl regen.sh scrubscan.pl unload_production.sh valida
 	   load_and_index_almost.pl dumpServer.pl dumpLogsContinuous.pl \
            fx_permission_check.pl pnas_report.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl \
 	   performance.pl  orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh \
-	   check_undefined_environment.pl checkSOZFINMapping.sh reportLabAddressChanges.sh delete_dup_alias.pl
+	   check_undefined_environment.pl checkSOZFINMapping.sh reportLabAddressChanges.sh delete_dup_alias.pl feature_genotype_association_check.pl
 
 
 STATICS = postloaddb_almost.csh updatePNAS.sql loadDb.sh \

@@ -436,52 +436,6 @@ sub xpatObjectNotGeneOrEFG ($) {
 }
 
 
-#========================  Features  ================================
-#
-#---------------------------------------------------------------
-# featureAssociatedWithGenotype
-#
-# After curation is done, each feature record should be associated
-# with a genotype as an entry in genotype_feature table. Since a 
-# feature is created first and then associated with a genotype, we
-# couldn't make this a database constraint.  We are excluding Burges Lin features from this requirement.
-#
-# Parameter
-# $ Email Address for recipients
-
-sub featureAssociatedWithGenotype($$$) {
-  my $routineName = "featureAssociatedWithGenotype";
-	
-  my $sql = "select distinct feature_name, feature_zdb_id, recattrib_source_zdb_id
-               from feature, updates,record_attribution
-              where not exists
-                    (select 't'
-                       from genotype_feature
-                      where genofeat_feature_zdb_id = feature_zdb_id)
-              and rec_id=feature_zdb_id
-              and feature_zdb_id=recattrib_data_zdb_id
-              and recattrib_source_zdb_id!='ZDB-PUB-121121-1'
-              and feature_lab_prefix_id!=85
-              and submitter_id='$_[1]'";
-
-  my @colDesc = ("Feature name         ",
-		 "Feature zdb id       ",
-		 "Publication zdb id   ");
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $curatorFirstName = $_[2];
-    my $subject = "Features not in any genotype";
-    my $errMsg = "Dear $curatorFirstName. there are $nRecords feature record(s) that were created by you that are not associated with any genotype. Please add it to a genotype or delete it ";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, "void", $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-
-}
-
 sub tgFeatureMissingConstruct($) {
   my $routineName = "tgFeatureMissingConstruct";
 	
@@ -3372,30 +3326,6 @@ if($daily) {
     findWithdrawnMarkerMismatch($transcriptEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
     checkFigXpatexSourceConsistant($dbaEmail);
-  # for each zfin curator, run phenotypeAnnotationUnspecified() check
-    
-    my $sql = " select email, zdb_id,full_name
-                from int_person_lab 
-                     join person on source_id = zdb_id
-                     join lab_position on position_id = labpos_pk_id
-               where target_id = 'ZDB-LAB-000914-1'
-                 and labpos_position = 'Research Staff'";
-    my $sth = $dbh->prepare ($sql) or die "Prepare fails on email selection";
-    $sth->execute();
-
-    while (my ($curatorEmail, $curatorId, $curatorName) = $sth->fetchrow_array()) {
-	if ($globalDbName ne "mirrordb"){
-	    $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
-	}
-	if (!$curatorEmail){
-	    $curatorEmail = "<!--|VALIDATION_EMAIL_OTHER|-->";
-	}
-	my @curatorName = split(/,/,$curatorName);
-	my $curatorFirstName = $curatorName[$#curatorName];
-	$curatorFirstName =~ s/^\s+//;
-	featureAssociatedWithGenotype ($curatorEmail, $curatorId, $curatorFirstName);
-    }
-    #removing this routine as it seems that it is no longer needed as curator is notified when pub is closed.
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     allTranscriptsHaveAtLeastOneDbLink($dbaEmail);
     syncDbLinkAccBkLength($dbaEmail);

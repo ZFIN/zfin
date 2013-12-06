@@ -147,6 +147,24 @@
         </fail>
     </target>
 
+    <target name="report-publication-duplicate" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <exec executable="dbaccess"  failifexecutionfails="true">
+            <arg value="-a"/>
+            <arg value="${DBNAME}" />
+            <arg value="${validateData}/validatedata/PublicationDuplicate.sql"/>
+        </exec>
+        <echo file="${validateData}/column.header" append="false">Publication Title|Accession Number|Publication ID|Authors|Publication Date|Journal|Publication Volume|Publication Pages|</echo>
+        <echo file="${validateData}/description.txt" append="false">
+        Check that there are no duplicate publications.
+        </echo>
+        <fail message="Failed: There are records in violation">
+          <condition>
+        <resourcecontains resource="reportRecords.txt" substring="|"/>
+          </condition>
+        </fail>
+    </target>
 
     <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
 
