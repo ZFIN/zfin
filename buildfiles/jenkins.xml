@@ -308,6 +308,7 @@
             copy-job-into-source -DjobName=[jobName]
             create-views creates daily/weekly/monthly job views.
             deploy-plugins deploy jenkins plugins into JENKINS_HOME
+	    deploy-email-templates deploy the email templates into JENKINS_HOME
 
             Jenkins Server
             start-jenkins start a Jenkins instance

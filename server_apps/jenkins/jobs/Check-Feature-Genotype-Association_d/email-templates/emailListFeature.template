@@ -1,0 +1,4 @@
+<%
+def directory = System.getenv('TARGETROOT')+"/server_apps/DB_maintenance/feature_genotype/"
+print new File(directory + "email.list").text
+%>

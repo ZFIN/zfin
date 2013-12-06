@@ -47,7 +47,6 @@ my $cur = $dbh->prepare($get_curators_query);
 $cur->execute;
 my($cur_curator_zdb_id, $email);
 $cur->bind_columns(\$cur_curator_zdb_id, \$email, \$curatorName) ;
-print "hello";
 # for each curator, get a list of features that they've curated
 # that do not have a genotype
 
@@ -95,11 +94,13 @@ while ($cur->fetch) {
     my $filesize = -s "feature_genotype/$FILENAME" || 0;
     if($filesize < 1){
 	unlink "feature_genotype/$FILENAME";
+    } else {
         $exitVal = 1;
     }
 
-    print REP $email . " "  if($count > 0);
-
+    if($count >0){
+       print REP $email . " ";
+    }
 }
 
 close (REP);
