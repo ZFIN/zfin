@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Check that marker_go_term_evidence table does not contain duplicate records.&#xd;
+&#xd;
+An &apos;unique&apos; annotation for go consists of a specific pub, evidence code,&#xd;
+marker/feature, term, any inference data and any evidence_flags such as&#xd;
+&apos;not&apos; or &apos;contributes to&apos;.&#xd;
+The marker_go_term_evidence table keeps track of pub, evidence code, term,&#xd;
+and marker but does not enforce that the combination of these 4 is unique &#xd;
+(no AK on the four columns).  Instead, duplicate values of these 4 columns&#xd;
+can exist in this table if and only if the 2 duplicate records also contain&#xd;
+references to a unique combination of inference data (in the table&#xd;
+inference_group_member).  However, we can not enforce this relationship via a &#xd;
+table constraint as some marker, term, evidence_code, pub records will&#xd;
+have no inference data or flags.  Therefore, on entering data into &#xd;
+the marker_go_term_evidence table, it is impossible to know if a user&#xd;
+is trying to add a duplicate record, or if they are trying to add either&#xd;
+and inference group or an evidence flag.  We need to check for duplicates&#xd;
+at the end of the process.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.TimerTrigger>
+      <spec></spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>$TARGETROOT</customWorkspace>
+  <builders>
+    <hudson.tasks.Ant plugin="ant@1.2">
+      <targets>report-marker-go-duplicate</targets>
+      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+    </hudson.tasks.Ant>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/DB_maintenance/column.header,server_apps/DB_maintenance/reportRecords.txt</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>true</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+      <recipientList></recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <recipientList>${GO_EMAIL_CURATOR} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern>server_apps/DB_maintenance/str-gene-abbrev.txt</attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo></replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+      </configuredTriggers>
+      <contentType>text/html</contentType>
+      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern></attachmentsPattern>
+      <presendScript></presendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>${DB_OWNER}@zfin.org</replyTo>
+      <saveOutput>false</saveOutput>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers>
+    <EnvInjectBuildWrapper plugin="envinject@1.89">
+      <info>
+        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+  </buildWrappers>
+</project>

@@ -2912,64 +2912,6 @@ sub foreigndbNotInFdbcontains ($) {
   &recordResult($routineName, $nRecords);
 } 
 
-#---------------------------------------------------------------
-# An 'unique' annotation for go consists of a specific pub, evidence code,
-# marker/feature, term, any inference data and any evidence_flags such as
-# 'not' or 'contributes to'.
-# The marker_go_term_evidence table keeps track of pub, evidence code, term,
-# and marker but does not enforce that the combination of these 4 is unique 
-# (no AK on the four columns).  Instead, duplicate values of these 4 columns
-# can exist in this table if and only if the 2 duplicate records also contain
-# references to a unique combination of inference data (in the table
-# inference_group_member).  However, we can not enforce this relationship via a 
-# table constraint as some marker, term, evidence_code, pub records will
-# have no inference data or flags.  Therefore, on entering data into 
-# the marker_go_term_evidence table, it is impossible to know if a user
-# is trying to add a duplicate record, or if they are trying to add either
-# and inference group or an evidence flag.  We need to check for duplicates
-# at the end of the process.
-
-# Parameter
-#  $     Email Address for recipient
-#
-sub mrkrgoevDuplicatesFound ($) {
-
-  my $routineName = "mrkrgoevDuplicatesFound";
-
-  my $sql = 'select count(*),  
-                    mrkrgoev_mrkr_zdb_id, 
-                    mrkrgoev_term_zdb_id,
-                    mrkrgoev_source_zdb_id, 
-                    mrkrgoev_evidence_code
-               from marker_go_term_evidence
-               where not exists (select * 
-                                   from inference_group_member
-                                   where mrkrgoev_zdb_id = 
-                                            infgrmem_mrkrgoev_zdb_id)
-               and mrkrgoev_gflag_name is null
-               group by mrkrgoev_mrkr_zdb_id,
-                        mrkrgoev_term_zdb_id,
-                        mrkrgoev_source_zdb_id,
-                        mrkrgoev_evidence_code
-               having count(*) > 1 ';
-
-  my @colDesc = ("count", 
-		 "mrkrgoev_mrkr_zdb_id" ,
-		 "mrkrgoev_term_zdb_id",
-		 "mrkrgoev_source_zdb_id", 
-		 "mrkrgoev_evidence_code");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Possible duplicate records in marker_go_term_evidence";
-    my $errMsg = "$nRecords are possible duplicates in marker_go_term_evidence";
-    logError($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
- 
 #----------------------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, inference_groups.
 #
@@ -3497,7 +3439,6 @@ if($daily) {
     pubTitlesAreUnique($publicationEmail);
     zdbReplacedDataIsReplaced($dbaEmail);
 
-    mrkrgoevDuplicatesFound($goEmail);
     mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
     mrkrgoevSecondaryAnnotationsFound($goEmail);
