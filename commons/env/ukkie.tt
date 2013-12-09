@@ -21,9 +21,9 @@
 <!--|DOMAIN_NAME|-->	ukkie.zfin.org
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/ukkie
 <!--|GBROWSE_DB|-->	ensembl_current
-<!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
-<!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
-<!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
+<!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org
+<!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
+<!--|GBROWSE_PATH_FROM_ROOT|-->	gb2/gbrowse/zfin_ensembl/
 <!--|GENBANK_DAILY_EMAIL|-->	annee\@cs.uoregon.edu
 <!--|GO_EMAIL_CURATOR|-->	annee\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	annee\@cs.uoregon.edu

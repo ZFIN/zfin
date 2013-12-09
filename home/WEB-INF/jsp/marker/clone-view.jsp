@@ -33,11 +33,11 @@
                 <td style="text-align: center">
                     <div style="margin: .5em; border: 1px solid black; background: white">
 
-                        <a href="/<%=ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value()%>?name=${formBean.marker.abbreviation}">
+                        <a href="/<%=ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value()%>?name=genomic_clone:${formBean.marker.abbreviation}">
                             <img
                                     onload="document.getElementById('clone_gbrowse_thumbnail_box').style.display = 'block';"
                                     style="padding-bottom:10px; border: 0 "
-                                    src="/<%=ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.value()%>?grid=0&width=600&options=fullclone+0+mRNA+0+genes+0&type=fullclone&type=genes&type=mRNA&name=${formBean.marker.zdbID}&h_feat=${formBean.marker.abbreviation}">
+                                    src="/<%=ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.value()%>?grid=0&width=600&options=fullclone+0+mRNA+0+genes+0&type=fullclone&type=genes&type=mRNA&name=genomic_clone:${formBean.marker.zdbID}&h_feat=${formBean.marker.abbreviation}">
 
                         </a>
 

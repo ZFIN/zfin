@@ -21,9 +21,9 @@
 <!--|DOMAIN_NAME|-->	ogon.zfin.org
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/ogon
 <!--|GBROWSE_DB|-->	ensembl_current
-<!--|GBROWSE_DB_HOST|-->	gbrowse2.zfin.org
-<!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	cgi-perl/gbrowse_img/current/
-<!--|GBROWSE_PATH_FROM_ROOT|-->	cgi-perl/gbrowse/current/
+<!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org
+<!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
+<!--|GBROWSE_PATH_FROM_ROOT|-->	gb2/gbrowse/zfin_ensembl/
 <!--|GENBANK_DAILY_EMAIL|-->	cmpich\@cs.uoregon.edu
 <!--|GO_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	cmpich\@cs.uoregon.edu

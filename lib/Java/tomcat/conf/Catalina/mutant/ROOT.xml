@@ -24,7 +24,7 @@ jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSER
   <Resource name="jdbc/gbrowse" auth="Container"
             type="javax.sql.DataSource" username="nobody"
             driverClassName="com.mysql.jdbc.Driver"
-            url="jdbc:mysql://@GBROWSE_DB_HOST@:3306/@GBROWSE_DB@?interactiveClient=true&amp;connectTimeout=1&amp;socketTimeout=1"  	 
+            url="jdbc:mysql://@GBROWSE_DB_HOST@:3306/@GBROWSE_DB@?interactiveClient=true"  	 
             maxActive="8" maxIdle="4"/>
 
  <Resource name="jdbc/sysmaster" auth="Container" factory="org.apache.naming.factory.BeanFactory"
