@@ -1950,53 +1950,6 @@ sub prefixedGenesHave1Est ($) {
 
 
 #---------------------------------------------------------------
-# xpatHasConsistentMarkerRelationship
-#
-# Temporary expression experiments are sometimes not updated 
-# when an actual marker relationship is found.
-#
-# This test identifies any expresssion_experiment (probe,gene) pairs
-# that need to be updated based on marker_relationship.
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub xpatHasConsistentMarkerRelationship ($) {
-
-  my $routineName = "xpatHasConsistentMarkerRelationship";
-
-  my $sql = 'select xpatex_zdb_id, xpatex_probe_feature_zdb_id, xpatex_gene_zdb_id
-               from expression_experiment
-               where xpatex_probe_feature_zdb_id is not null
-               and not exists
-                (
-                   select * 
-                     from marker_relationship
-                     where xpatex_probe_feature_zdb_id = mrel_mrkr_2_zdb_id
-                     and xpatex_gene_zdb_id = mrel_mrkr_1_zdb_id
-                 )';
-
-  my @colDesc = ("xpat ZDB ID       ",
-		 "probe ZDB ID      ",
-		 "xpat gene         ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "For a given probe, expression_experiment gene is out-of-sync.";
-    my $errMsg = "$nRecords genes in expression_experiment need to be synchronized "
-		. "with marker_relationship.";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
-#---------------------------------------------------------------
 # estsWithoutClonesHaveXxGenes
 #
 # If an EST does not have a corresponding clone record, then its corresponding
@@ -3386,7 +3339,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    xpatHasConsistentMarkerRelationship($geneEmail);
     tgFeatureMissingConstruct($aoEmail);
     orthologyOrganismMatchesForeignDBContains($geneEmail);
     orthologueHasDblink($geneEmail);
