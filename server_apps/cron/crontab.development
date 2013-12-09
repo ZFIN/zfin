@@ -80,16 +80,6 @@
 # -------------------------------------------------------------------------------------------------------
 # ------  Reminders to staff
 # -------------------------------------------------------------------------------------------------------
-# 10 AM first day of the month report vacation and sick hours to Neuroscience contact
-#
-00 10 1 * * /research/zusers/almost/ZFIN_WWW/commons/bin/email.pl
-#
-# F   4:30 PM  technical staff weekly status reports
-30 16 * * 5 /research/zusers/almost/ZFIN_WWW/commons/bin/status_report.pl
-#
-# 20th of each month reminder for curator project reports
-00 10 20 * * /research/zusers/almost/ZFIN_WWW/commons/bin/monthly_report.pl
-# 
 # 20th of each month reminder to restart ontape on production
 00 10 20 * * /research/zusers/almost/ZFIN_WWW/commons/bin/monthly_ontape.pl
 # 
