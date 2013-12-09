@@ -224,6 +224,25 @@
         </fail>
     </target>
 
+	<target name="report-est-one-marker" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <exec executable="dbaccess"  failifexecutionfails="true">
+            <arg value="-a"/>
+            <arg value="${DBNAME}" />
+            <arg value="${validateData}/validatedata/ESTOneMarker.sql"/>
+        </exec>
+        <echo file="${validateData}/column.header" append="false">EST ID|EST Name| EST Abbreviation</echo>
+        <echo file="${validateData}/description.txt" append="false">
+	ESTs have 0 or more than 1 associated gene.
+        </echo>
+        <fail message="Failed: There are records in violation">
+          <condition>
+        <resourcecontains resource="reportRecords.txt" substring="|"/>
+          </condition>
+        </fail>
+    </target>
+
     <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
 
     <macrodef name="run-db-query">

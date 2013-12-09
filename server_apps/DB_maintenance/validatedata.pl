@@ -1801,53 +1801,6 @@ sub encodesRelationshipsInBACorPAC ($) {
 
 
 #======================== Gene - EST relationships =====================
-#
-# All ESTs in ZFIN are supposed to be associated with Genes.
-# These routines check that those relationships are correctly defined.
-
-#---------------------------------------------------------------
-# estsHave1Gene
-#
-# Each EST should be associated with 1 and only 1 gene
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-sub estsHave1Gene ($) {
-
-  my $routineName = "estsHave1Gene";
-
-  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
-               from marker m2
-               where mrkr_type = "EST"
-                 and 1 <> 
-                     ( select count(*) 
-                         from marker m1, marker_relationship
-                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
-                           and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and m1.mrkr_type in (select mtgrpmem_mrkr_type
-				                  from marker_type_group_member
-						 where mtgrpmem_mrkr_type_group="GENEDOM"))
-               order by mrkr_name';
-
-  my @colDesc = ("EST ZDB ID        ",
-		 "EST Name          ",
-		 "EST Abbrev        ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "ESTs have 0 or > 1 associated genes";
-    my $errMsg = "$nRecords ESTs had 0 or more than 1 associated genes. ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);   
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
 #---------------------------------------------------------------
 # prefixedGenesHave1Est
 #
@@ -3249,7 +3202,6 @@ if($weekly) {
     strFeatureOnlyHasOneRelationship($ceri);
     crisprRelatedToNonCrispr($ceri);
     talenRelatedToNonTalen($ceri);
-	estsHave1Gene($estEmail);
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
 	xxGenesHaveNoClones($estEmail);
