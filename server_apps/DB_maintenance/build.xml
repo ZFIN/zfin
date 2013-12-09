@@ -185,6 +185,45 @@
         </fail>
     </target>
 
+
+   <target name="report-est-contained-in-relationship" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <exec executable="dbaccess"  failifexecutionfails="true">
+            <arg value="-a"/>
+       	    <arg value="${DBNAME}" />
+            <arg value="${validateData}/validatedata/EstContainedInRelationship.sql"/>
+        </exec>
+        <echo file="${validateData}/column.header" append="false">Marker 1 ID|Marker 2 ID|Marker Type|Relationship Type</echo>
+        <echo file="${validateData}/description.txt" append="false">
+	ESTs have 'contained in' relationships.
+        </echo>
+        <fail message="Failed: There are records in violation">
+          <condition>
+        <resourcecontains resource="reportRecords.txt" substring="|"/>
+          </condition>
+        </fail>
+    </target>
+
+   <target name="report-marker-go-inference" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <exec executable="dbaccess"  failifexecutionfails="true">
+            <arg value="-a"/>
+            <arg value="${DBNAME}" />
+            <arg value="${validateData}/validatedata/MarkerGoInference.sql"/>
+        </exec>
+        <echo file="${validateData}/column.header" append="false">MarkerGoEvidence 1 ID|Marker 1 ID|MarkerGoEvidence 2 ID|Marker 2 ID|Count</echo>
+        <echo file="${validateData}/description.txt" append="false">
+	Possible duplicate records in marker_go_term_evidence, inference_group_member
+        </echo>
+        <fail message="Failed: There are records in violation">
+          <condition>
+        <resourcecontains resource="reportRecords.txt" substring="|"/>
+          </condition>
+        </fail>
+    </target>
+
     <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
 
     <macrodef name="run-db-query">

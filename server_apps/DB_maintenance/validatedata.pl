@@ -1736,59 +1736,6 @@ sub associatedOrthoEvidenceDataforPUB030905_2 ($) {
 
 
 #======================== Marker Relationships ========================
-#
-#---------------------------------------------------------------
-# containedInRelationshipsInEST
-#
-# This test identifies segments where "contained in" 
-# relationships are associated with ESTs.
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub containedInRelationshipsInEST ($) {
-
-  my $routineName = "containedInRelationshipsInEST";
-
-  my $sql = "select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
-             from   marker, marker_relationship, marker_relationship_type
-             where  mrkr_type = 'EST'
-             and    (mrkr_zdb_id = mrel_mrkr_2_zdb_id
-                     and    mrel_type = mreltype_name
-                     and    mrel_type != 'contains polymorphism'
-                     and    mreltype_2_to_1_comments = 'Contained in')
-             union
-             select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
-             from   marker, marker_relationship, marker_relationship_type
-             where  mrkr_type = 'EST'
-             and    (mrkr_zdb_id = mrel_mrkr_1_zdb_id
-                     and    mrel_type = mreltype_name
-                     and    mrel_type != 'contains polymorphism'
-                     and    mreltype_1_to_2_comments = 'Contains')";
-
-  my @colDesc = ("Marker ID 1       ",
-		 "Marker ID 2       ",
-		 "Marker Type       ",
-		 "Relationship type ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "ESTs have 'contained in' relationships.";
-    my $errMsg = "$nRecords segments with 'contained in' relationships "
-                 . "are associated with ESTs.";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-
-
 #---------------------------------------------------------------
 # encodesRelationshipsInBACorPAC
 #
@@ -3345,7 +3292,6 @@ if($monthly) {
     orthologyHasEvidence($geneEmail);
     mouseOrthologyHasValidMGIAccession($geneEmail);
     mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
-    containedInRelationshipsInEST($geneEmail);
     encodesRelationshipsInBACorPAC($geneEmail);
     mrkrgoevInfgrpDuplicatesFound($goEmail);
     printTop40PostcomposedTerms($aoEmail);
@@ -3378,3 +3324,4 @@ if ($yearly) {
 	   
 
 #rmdir($globalWorkingDir);
+
