@@ -138,6 +138,7 @@
 <filter token="TARGETFTPROOT" value="${TARGETFTPROOT}"/>
 <filter token="TARGETROOT" value="${TARGETROOT}"/>
 <filter token="TARGETROOT_PREFIX" value="${TARGETROOT_PREFIX}"/>
+<filter token="TECHNICAL_AT_ZFIN" value="${TECHNICAL_AT_ZFIN}"/>
 <filter token="USER" value="${USER}"/>
 <filter token="USE_APACHE_FOR_SMOKE_TESTS" value="${USE_APACHE_FOR_SMOKE_TESTS}"/>
 <filter token="VALIDATION_EMAIL_AD" value="${VALIDATION_EMAIL_AD}"/>
