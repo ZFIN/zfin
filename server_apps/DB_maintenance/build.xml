@@ -262,6 +262,25 @@
         </fail>
     </target>
 
+   <target name="report-refseq-accession-format" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <exec executable="dbaccess"  failifexecutionfails="true">
+            <arg value="-a"/>
+            <arg value="${DBNAME}" />
+            <arg value="${validateData}/validatedata/RefseqAccessionFormat.sql"/>
+        </exec>
+        <echo file="${validateData}/column.header" append="false">Record ID|DB Name|Accession Number</echo>
+        <echo file="${validateData}/description.txt" append="false">
+       	RefSeq accession number in wrong format. Needs to have an underscore as the third position.
+        </echo>
+        <fail message="Failed: There are records in violation">
+          <condition>
+        <resourcecontains resource="reportRecords.txt" substring="|"/>
+          </condition>
+        </fail>
+    </target>
+
 
     <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
 

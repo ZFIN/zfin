@@ -2174,56 +2174,6 @@ sub orthologyOrganismMatchesForeignDBContains ($) {
 # Parameter
 # $      Email Address for recipients
 #
-# Note: The check could be more specific, such as if the db type is
-# cDNA, then the RefSeq accession would be [NX]M_####, if the db type
-# is Polypeptide, then would be [NX]P_####. We do this specific check 
-# at the curator interface. 
-#
-sub refSeqAccessionInWrongFormat ($) {
-    my $routineName = "refSeqAccessionInWrongFormat";
-    my $sql = '
-               select dblink_linked_recid, "RefSeq", dblink_acc_num
-                 from db_link, foreign_db_contains, foreign_db_data_type,foreign_db
-                where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdb_db_name = "RefSeq"
-                  and fdbdt_super_type = "sequence"
-                  and fdbcont_fdbdt_id = fdbdt_pk_id
-                  and fdbcont_fdb_db_id = fdb_db_pk_id
-                  and dblink_acc_num[3] <> "_"
-               UNION 
-               select dblink_linked_recid, fdb_db_name, dblink_acc_num
-                 from db_link, foreign_db_contains, foreign_db, foreign_db_data_type
-                where fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                  and fdb_db_name <> "RefSeq"
-                  and fdbdt_super_type = "sequence"
-                  and fdbcont_fdbdt_id = fdbdt_pk_id
-                  and fdbcont_fdb_db_id = fdb_db_pk_id
-                  and dblink_acc_num[3] = "_"
-                   ';
-
-    my @colDesc =("Data zdb id",
-		  "Db name    ",
-                  "Acc number ");
-
-    my $nRecords = execSql ($sql, undef, @colDesc);
-
-    if ( $nRecords > 0 ) {
-
-	my $sendToAddress = $_[0];
-	my $subject = "RefSeq accession number in wrong format";
-	my $errMsg = "In db_link, $nRecords RefSeq accession numbers are in wrong format";
-	
-	logError ($errMsg); 
-	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-    }
-    &recordResult($routineName, $nRecords);
-} 
-
-
-#----------------------------------------------
-# Parameter
-# $      Email Address for recipients
-#
 # 
 sub allTranscriptsHaveAtLeastOneDbLink ($) {
     my $routineName = "allTranscriptsHaveAtLeastOneDbLink";
@@ -3183,8 +3133,6 @@ if($weekly) {
 
 	# put these here until we get them down to 0 records.  Then move them to 
 	# daily.
-
-	refSeqAccessionInWrongFormat($geneEmail);
 	# changed to monthly strAbbrevContainsGeneAbbrev($strEmail);
 
 }
