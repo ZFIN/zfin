@@ -35,14 +35,16 @@ couldn&apos;t make this a database constraint.  We are excluding Burges Lin feat
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>${SCRIPT, template=&quot;emailListFigurePermissions.template&quot;} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
+            <recipientList>${SCRIPT, template=&quot;emailListFeature.template&quot;} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
+            <body>${SCRIPT, template=&quot;emailBodyFeature.template&quot;}
+&lt;p/&gt;
+$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/str-gene-abbrev.txt</attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/feature_genotype/*.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
