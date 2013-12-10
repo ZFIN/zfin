@@ -1902,54 +1902,6 @@ sub estsWithoutClonesHaveXxGenes ($) {
 } 
 
 
-#---------------------------------------------------------------
-# xxGenesHaveNoClones
-#
-# Genes that are prefixed with xx: exist as placeholder genes for ESTs
-# for which we don't have clone information.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub xxGenesHaveNoClones ($) {
-
-  my $routineName = "xxGenesHaveNoClones";
-
-  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
-               from marker m1
-               where mrkr_type = "GENE"
-                 and mrkr_name like "xx:%"
-                 and exists
-                     ( select * 
-                         from marker m2, marker_relationship
-                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
-                           and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and mrel_type = "gene encodes small segment" 
-                           and exists
-                               ( select * 
-                                   from clone
-                                   where clone_mrkr_zdb_id = m2.mrkr_zdb_id ) )
-               order by mrkr_name';
-
-  my @colDesc = ("Gene ZDB ID       ",
-		 "Gene Name         ",
-		 "Gene Abbrev       ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "'xx:' genes had a corresponding clone record";
-    my $errMsg = "$nRecords xx: genes had a corresponding clone record\n";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
-
 #==================== Detect Gene Merge Candidates ======================
 
 # These tests could be filed under the gene-est tests above, or under the
@@ -3204,7 +3156,6 @@ if($weekly) {
     talenRelatedToNonTalen($ceri);
 	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
-	xxGenesHaveNoClones($estEmail);
 	xpatObjectNotGeneOrEFG ($xpatEmail);
 	constructNameNotSubstringOfFeatureName($dbaEmail);
 
