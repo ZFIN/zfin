@@ -331,10 +331,9 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
                 ++count;
             }
         }
-        assertEquals(9, count);
-        assertThat(cloneBean.getMarkerRelationshipPresentationList().size(), greaterThan(30));
-        assertThat(cloneBean.getMarkerRelationshipPresentationList().size(), lessThan(40));
-
+        assertEquals(9,count);
+        assertThat(cloneBean.getMarkerRelationshipPresentationList().size(),greaterThan(5));
+        assertThat(cloneBean.getMarkerRelationshipPresentationList().size(),lessThan(400));
 
         MarkerService.pullGeneOntoCloneFromTranscript(cloneBean);
         count = 0;
