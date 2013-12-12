@@ -19,6 +19,7 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.datatransfer.service.ExpressionResultUpdateRecord;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -521,4 +522,7 @@ public class ExpressionService {
         return DevelopmentStage.stageRangeOverlapsRange(superTerm.getStart(), superTerm.getEnd(), startStage, endStage);
     }
 
+    public static ExpressionResultSplitStatement updateExpressionResult(ExpressionResultUpdateRecord statement) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
 }

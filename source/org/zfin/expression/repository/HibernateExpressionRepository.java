@@ -1409,6 +1409,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     /**
      * Retrieve expression results for given super term and stage range.
+     *
      * @param range
      * @return
      */
@@ -1416,7 +1417,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public List<ExpressionResult> getExpressionResultsByTermAndStage(TermFigureStageRange range) {
         String hql = "SELECT distinct result " +
                 "FROM " +
-                "ExpressionResult result "+
+                "ExpressionResult result " +
                 " WHERE " +
                 "result.entity.superterm = :superTerm " +
                 "AND result.startStage = :start " +
@@ -1426,7 +1427,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setParameter("start", range.getStart());
         query.setParameter("end", range.getEnd());
         return (List<ExpressionResult>) query
-                .list();    }
+                .list();
+    }
+
+    @Override
+    public ExpressionResult getExpressionResult(String expressionResultID) {
+        return (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, expressionResultID);
+    }
+
+    @Override
+    public void deleteExpressionResult(ExpressionResult expressionResult) {
+        ActiveData activeData = getInfrastructureRepository().getActiveData(expressionResult.getZdbID());
+        getInfrastructureRepository().deleteActiveData(activeData);
+    }
 
     @SuppressWarnings("unchecked")
     public List<GenericTerm> getWildTypeAnatomyExpressionForMarker(String zdbID) {

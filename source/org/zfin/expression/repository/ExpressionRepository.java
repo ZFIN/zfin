@@ -360,4 +360,12 @@ public interface ExpressionRepository {
      * @return
      */
     List<ExpressionResult> getExpressionResultsByTermAndStage(TermFigureStageRange range);
+
+    ExpressionResult getExpressionResult(String expressionResultID);
+
+    /**
+     * Deletes a given ExpressionResult record and its associations to all figures.
+     * @param expressionResult
+     */
+    void deleteExpressionResult(ExpressionResult expressionResult);
 }

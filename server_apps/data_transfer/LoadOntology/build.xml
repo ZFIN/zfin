@@ -147,6 +147,20 @@
         </java>
     </target>
 
+    <target name="update-term-annotations" description="update / delete individual xpatres records with term info.">
+        <java classname="org.zfin.ontology.datatransfer.service.ExpressionResultUpdate" fork="yes"
+              maxmemory="256m"
+              failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-log4jFilename"/>
+            <arg value="log4j.xml"/>
+            <arg value="-termStageUpdateFile"/>
+            <arg value="expression-result-update.txt"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+        </java>
+    </target>
+
     <target name="check-obo-7bit" description="Check if a term name or a term definition contain a non-7-bit character">
         <java classname="org.zfin.ontology.datatransfer.service.OntologyValidation" fork="yes" maxmemory="256m"
               failonerror="true">
