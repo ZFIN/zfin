@@ -137,7 +137,7 @@
         <java classname="org.zfin.ontology.datatransfer.service.OntologyTermFigureStageUpdate" fork="yes"
               maxmemory="256m"
               failonerror="true">
-            <classpath refid="classpath"/>
+            <classpath refid="extended.classpath"/>
             <arg value="-log4jFilename"/>
             <arg value="log4j.xml"/>
             <arg value="-termStageUpdateFile"/>
@@ -151,7 +151,7 @@
         <java classname="org.zfin.ontology.datatransfer.service.ExpressionResultUpdate" fork="yes"
               maxmemory="256m"
               failonerror="true">
-            <classpath refid="classpath"/>
+            <classpath refid="extended.classpath"/>
             <arg value="-log4jFilename"/>
             <arg value="log4j.xml"/>
             <arg value="-termStageUpdateFile"/>
