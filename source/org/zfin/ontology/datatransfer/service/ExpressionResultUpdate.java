@@ -110,16 +110,14 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
                         expressionResult.getEndStage().getZdbID().equals(record.getEndStageID())) {
                     // different super term: update to new one.
                     GenericTerm superTerm = expressionResult.getEntity().getSuperterm();
-                    if (!superTerm.getOboID().equals(record.getSuperTermOboID())) {
-                        if (record.getSuperTermOboID().equalsIgnoreCase("delete")) {
-                            LOG.info("Deleted " + expressionResult.getZdbID());
-                            getExpressionRepository().deleteExpressionResult(expressionResult);
-                        } else {
-                            expressionResult.getEntity().setSuperterm(getOntologyRepository().getTermByOboID(record.getSuperTermOboID()));
-                            if (record.getSubTermOboID() != null)
-                                expressionResult.getEntity().setSubterm(getOntologyRepository().getTermByOboID(record.getSubTermOboID()));
-                            LOG.info("Updated " + expressionResult.getZdbID());
-                        }
+                    if (record.getSuperTermOboID().equalsIgnoreCase("delete")) {
+                        LOG.info("Deleted " + expressionResult.getZdbID());
+                        getExpressionRepository().deleteExpressionResult(expressionResult);
+                    } else {
+                        expressionResult.getEntity().setSuperterm(getOntologyRepository().getTermByOboID(record.getSuperTermOboID()));
+                        if (record.getSubTermOboID() != null)
+                            expressionResult.getEntity().setSubterm(getOntologyRepository().getTermByOboID(record.getSubTermOboID()));
+                        LOG.info("Updated " + expressionResult.getZdbID());
                     }
                     String n = "";
                 }
