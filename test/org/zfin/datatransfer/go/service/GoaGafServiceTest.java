@@ -658,7 +658,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void testDownloadGoaGzip() throws Exception {
         DownloadService downloadService = new DownloadService();
         File downloadedFile = downloadService.downloadFile(new File(System.getProperty("java.io.tmpdir") + "/" + "gene_association.goa_zebrafish")
-                , new URL("ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz")
+                , new URL("ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz")
                 , true);
         assertTrue(downloadedFile.exists());
         assertTrue(downloadedFile.delete());

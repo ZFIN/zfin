@@ -18,9 +18,9 @@
                 <ref bean="microarrayTrigger"/>
                 <ref bean="reloadOntologyTrigger"/>
                 <ref bean="loadQualityOntology"/>
-<!--
-Not needed any longer                <ref bean="loadAnatomyOntology"/>
--->
+                <!--
+                Not needed any longer                <ref bean="loadAnatomyOntology"/>
+                -->
                 <ref bean="loadGeneOntology"/>
                 <ref bean="loadSpatialOntology"/>
                 <ref bean="loadMPATHOntology"/>
@@ -288,7 +288,7 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
     </bean>
 
 
-     <bean id="loadMPATHOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+    <bean id="loadMPATHOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="MPATH Ontology"/>
@@ -312,7 +312,7 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
         <property name="cronExpression" value="4 30 18 ? * MON-FRI"/>
     </bean>
 
-     <bean id="loadBehaviorOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+    <bean id="loadBehaviorOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Behavior Ontology"/>
@@ -336,7 +336,7 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
         <property name="cronExpression" value="6 30 18 ? * MON-FRI"/>
     </bean>
 
-     <bean id="loadSequenceOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
+    <bean id="loadSequenceOntology" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.JobDetailBean">
                 <property name="name" value="Sequence Ontology"/>
@@ -363,9 +363,9 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
     <!--<bean id="downloadService1" class="org.zfin.datatransfer.service.DownloadService"/>-->
     <!--<bean id="gafService1" class="org.zfin.datatransfer.go.service.GafService"/>-->
     <!--<bean id="uniprotGafLoadJob1" class="org.zfin.datatransfer.service.UniprotGafLoadJob">-->
-        <!--<property name="downloadService" ref="downloadService1"/>-->
-        <!--<property name="gafService" ref="gafService1"/>-->
-        <!--<property name="fanged" value="false"/>-->
+    <!--<property name="downloadService" ref="downloadService1"/>-->
+    <!--<property name="gafService" ref="gafService1"/>-->
+    <!--<property name="fanged" value="false"/>-->
     <!--</bean>-->
 
     <!--This is defined in a separate context-->
@@ -381,7 +381,7 @@ Not needed any longer                <ref bean="loadAnatomyOntology"/>
         <property name="jobDataAsMap">
             <map>
                 <entry key="downloadService" value-ref="downloadService"/>
-                <entry key="downloadUrl" value="ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz"/>
+                <entry key="downloadUrl" value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz"/>
                 <entry key="organization" value="GOA"/>
                 <entry key="gafParser" value-ref="goaGafParser"/>
             </map>

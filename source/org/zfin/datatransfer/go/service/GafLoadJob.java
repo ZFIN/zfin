@@ -76,6 +76,8 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
             setFields(jobExecutionContext.getJobDetail().getJobDataMap());
 // 1. download gzipped GAF file
 //        ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz
+//  as described in FB case 10369, changed to:
+//        ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz
             File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
@@ -104,9 +106,9 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
 //            gafService.addAnnotations(gafJobData);
 //            HibernateUtil.flushAndCommitCurrentSession();
 
-              // see FB cases 8455 and 8166
+            // see FB cases 8455 and 8166
 //            if (GafOrganization.OrganizationEnum.FP_INFERENCES != GafOrganization.OrganizationEnum.getType(gafOrganization.getOrganization())) {
-               gafService.generateRemovedEntries(gafJobData, gafOrganization);
+            gafService.generateRemovedEntries(gafJobData, gafOrganization);
 //            }
 
             removeAnnotations(gafJobData);
