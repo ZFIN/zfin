@@ -24,7 +24,7 @@ that need to be updated based on marker_relationship.&#xd;
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>report-refeq-accession-format</targets>
+      <targets>report-refseq-accession-format</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
