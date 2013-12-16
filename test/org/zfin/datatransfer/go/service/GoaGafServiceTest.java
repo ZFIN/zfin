@@ -274,9 +274,9 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             );
         }
 
-        assertEquals(6, gafReport1.getNewEntries().size());
+        assertEquals(4, gafReport1.getNewEntries().size());
         assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(9, gafReport1.getErrors().size());
+        assertEquals(11, gafReport1.getErrors().size());
         assertEquals(0, gafReport1.getRemovedEntries().size());
 
     }
@@ -590,9 +590,9 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("existing: " + gafReport1.getExistingEntries());
         logger.debug("errors: " + gafReport1.getErrors());
 
-        assertEquals(3, gafReport1.getNewEntries().size());
+        assertEquals(2, gafReport1.getNewEntries().size());
         assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(1, gafReport1.getErrors().size());
+        assertEquals(2, gafReport1.getErrors().size());
         assertEquals(0, gafReport1.getRemovedEntries().size());
     }
 

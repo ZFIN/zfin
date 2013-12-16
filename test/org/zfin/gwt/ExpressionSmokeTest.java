@@ -20,7 +20,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
 
     //Temporarily commenting this test out, if both tests run, the other one fails.
     //Since it seems like a superset of this test, I thought it's the one that should stay.
-    //@Test
+    @Test
     public void testExpressionLookupTable() throws IOException {
         HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "?MIval=aa-xpatselect.apg");
         webClient.waitForBackgroundJavaScriptStartingBefore(10000);
@@ -59,7 +59,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
     }
 
 
-    @Test
+    //@Test
     public void testExpressionLookupTableWithSubmitButton() throws IOException {
         HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "?MIval=aa-xpatselect.apg");
         webClient.waitForBackgroundJavaScriptStartingBefore(2000);
