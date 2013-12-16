@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Check that all RefSeq accession numbers are of the format&#xd;
-[xx]_[yyy], e.g. NP_001005390&#xd;
-</description>
+  <description>Invalid data is associated with ZDB-PUB-030905-1.&#xd;
+&#xd;
+Data are associated with ZDB-PUB-030905-1 that either do not have an attributed GENE or&#xd;
+do not have attributed orthologue evidence.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -20,7 +21,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>report-refseq-accession-format</targets>
+      <targets>report-associate-curate-orthology</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
@@ -35,7 +36,7 @@
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>${VALIDATION_EMAIL_GENE} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
+            <recipientList>${VALIDATION_EMAIL_DBA} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
