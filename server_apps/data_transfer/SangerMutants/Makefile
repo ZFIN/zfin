@@ -19,9 +19,10 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/SangerMutants
 
-GENERICS = loadSanger.pl                                    
+GENERICS = loadSanger131203.pl                                   
            
-STATICS = loadSangerData.sql   
+STATICS = loadSangerData131203.sql checkMultipleGenes.sql   lookforEnsdargMatches.sql alleleZfinKnown.csv allelenozfin131203.inp 
+
 
 # Define targets that require special handling.
 
@@ -47,5 +48,5 @@ $(HTTP_DATA_TRANSFER_DIR) :
 # ---------------  Misc Targets  ----------------------------------------
 
 run :
-	$(TARGETDIR)/loadSanger.pl
+	$(TARGETDIR)/loadSanger131203.pl
 
