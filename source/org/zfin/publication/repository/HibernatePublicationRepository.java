@@ -323,6 +323,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public int getTotalNumberOfFiguresPerAnatomyItem(GenericTerm anatomyTerm) {
 
         Session session = HibernateUtil.currentSession();
+
+        String sql = "select count(distinct fig_zdb_id) " +
+                "from figure" +
+                "     join expression_pattern_figure on xpatfig_fig_zdb_id = fig_zdb_id " +
+                "     join expression_result on xpatres_zdb_id = xpatfig_xpatres_zdb_id " +
+                "     join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "     join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id " +
+                "     join marker on mrkr_zdb_id = xpatex_gene_zdb_id " +
+                "where (xpatres_superterm_zdb_id = :termZdbId or xpatres_subterm_zdb_id = :termZdbId) " +
+                "   and xpatres_expression_found = :expressionFound " +
+                "   and genox_is_std_or_generic_control = :condition " +
+                "   and mrkr_abbrev not like :withdrawn " +
+                "   and not exists (select 'x' from clone " +
+                "                   where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "                     and clone_problem_type <> :chimeric); ";
+
+
+
+
+
+/*
         String hql = "select count(distinct fig) from Figure fig, ExpressionResult res " +
                 "WHERE (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) " +
                 "AND fig member of res.figures " +
@@ -334,9 +355,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "           clone.zdbID = res.expressionExperiment.probe.zdbID AND " +
                 "           clone.problem  <> :chimeric " +
                 ")";
-        Query query = session.createQuery(hql);
+*/
+//        Query query = session.createQuery(hql);
+
+        Query query = session.createSQLQuery(sql);
+
         query.setBoolean("expressionFound", true);
-        query.setParameter("aoTerm", anatomyTerm);
+        query.setParameter("termZdbId", anatomyTerm.getZdbID());
         query.setBoolean("condition", true);
         query.setString("withdrawn", Marker.WITHDRAWN + "%");
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString());
