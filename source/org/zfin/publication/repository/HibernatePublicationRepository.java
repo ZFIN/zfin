@@ -703,11 +703,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure from Figure figure, ExpressionResult res, ExpressionExperiment exp," +
-                "GenotypeExperiment genox, Genotype geno " +
+                "GenotypeExperiment genox, Genotype geno, ExpressionResultFigure xpatfig " +
                 "where geno.zdbID = :genoID AND " +
                 "      genox.genotype = geno AND " +
                 "   res.expressionExperiment = exp AND " +
-                "   figure member of res.figures AND " +
+                "   xpatfig.expressionResult = res AND " +
+                "   xpatfig.figure = figure AND " +
                 "   exp.antibody is null AND " +
                 "   exp.genotypeExperiment = genox AND " +
                 "   genox.genotype = geno  " +

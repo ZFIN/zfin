@@ -165,6 +165,13 @@
 
     </class>
 
+    <class name="org.zfin.expression.ExpressionResultFigure" table="expression_pattern_figure">
+        <composite-id>
+            <key-many-to-one name="figure" class="Figure" column="xpatfig_fig_zdb_id"/>
+            <key-many-to-one name="expressionResult" class="ExpressionResult" column="xpatfig_xpatres_zdb_id"/>
+        </composite-id>
+    </class>
+
     <!-- This object should exist in the database -->
     <!--
         <class name="ExperimentFigureStage" >
