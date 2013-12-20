@@ -12,11 +12,12 @@ echo "check target DB modified date"
 ls -lh $db_path/zfin_cdna_seq* 
 ls -lh $db_path/vega_withdrawn*
 ls -lh $db_path/unreleasedRNA*
+ls -lh $db_path/vega_transcript*
 echo ""
 
 rm -f $nt_fasta:r.out
 nice +10 $blastn \
-"$db_path/zfin_cdna_seq $db_path/unreleasedRNA $db_path/vega_withdrawn $wz_est" \
+"$db_path/zfin_cdna_seq $db_path/unreleasedRNA $db_path/vega_transcript $db_path/vega_withdrawn $wz_est" \
  $nt_fasta -E e-50 -B 100 > $nt_fasta:r.out
 
 echo ""
