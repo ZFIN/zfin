@@ -84,7 +84,7 @@
 </p>
 
 <div class="summary">
-    <b>GENE EXPRSSION</b>&nbsp;
+    <b>GENE EXPRESSION</b>&nbsp;
     <small><a class='popup-link info-popup-link' href='/action/marker/note/expression'></a></small>
     <br/>
     <b>Gene expression in <zfin:name entity="${formBean.fish}"/></b>
