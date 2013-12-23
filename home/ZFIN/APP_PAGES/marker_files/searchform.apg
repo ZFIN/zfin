@@ -2,7 +2,22 @@
 Input:
    page:  either searchpage or resultpage
 -->
+  <SCRIPT>
 
+      jQuery(document).ready(changeBestMatchState);
+      function changeBestMatchState(){
+
+         var nameAndAccBlank= document.critform.input_name.value == "" && document.critform.input_acc.value == "";
+
+         if (nameAndAccBlank) {
+              document.critform.getTop.disabled = true;
+         } else {
+              document.critform.getTop.disabled = false;
+         }
+
+      }
+
+  </SCRIPT>
   
   <TABLE class="search" width=100% border=0 cellpadding=1 cellspacing=0>
     <TR>
@@ -51,14 +66,15 @@ Input:
 	     <option $(IF,$(EC,$compare,contains),SELECTED) value=contains>contains
 	     <option $(IF,$(EC,$compare,starts),SELECTED) value=starts>begins with
           </SELECT>
-	<INPUT type=text name=input_name size=30 class="default-input" value="$(IF,$(XST,$input_name),$input_name)">
+	<INPUT type=text name=input_name size=30 onKeyUp = 'changeBestMatchState()'  class="default-input" value="$(IF,$(XST,$input_name),$input_name)">
+
 	</td><?/MIVAR>
        </tr></table>
       </TD>
       <TD> 
       <?MIVAR>
        <b>Accession Number:</b>
-       <input type=text name=input_acc size=25 onChange='document.critform.START.value = "";' $(IF,$(XST,$input_acc),value='$input_acc')>
+       <input type=text name=input_acc size=25 onKeyUp = 'changeBestMatchState()'  onChange='document.critform.START.value = "";' $(IF,$(XST,$input_acc),value='$input_acc')>
       </TD><?/MIVAR>
      </TR>
 
@@ -158,7 +174,8 @@ Input:
 	<?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
 	  <?MIVAR> 
 	    <SCRIPT> 
-	      document.critform.WINSIZE.value = "$WINSIZE" 
+	      document.critform.WINSIZE.value = "$WINSIZE"
+
 	    </SCRIPT>
 	  <?/MIVAR> 
 	<?/MIBLOCK>
@@ -182,8 +199,11 @@ Input:
   	<?/MIVAR>
 
 	<input type=submit name=action value="Search">
-	<input type=submit name=getTop value="Best match">
-	<input type=button value="Reset" onClick="call_reset()">  
+	<input type=submit name=getTop value="Best match" disabled='disabled' >
+	<input type=button value="Reset" onClick="call_reset()">
+
+
       </TD></form>
     </TR>
  </TABLE>
+

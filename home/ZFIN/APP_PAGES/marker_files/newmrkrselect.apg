@@ -75,7 +75,8 @@ jQuery.ajax({
 	document.critform.marker_type.selectedIndex = 0;
 	document.critform.WINSIZE.value = 25;
 
-     }
+	}
+
    </SCRIPT>
 
    <?MISQL SQL="
