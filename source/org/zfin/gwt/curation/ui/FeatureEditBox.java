@@ -159,6 +159,10 @@ public class FeatureEditBox extends AbstractFeatureBox {
         // this displays most changes
         // alias and notes are done automatically?
         isDirty = featureDisplayName.isDirty(dto.getName()) || isDirty  ;
+        if (knownInsertionCheckBox.getValue()!=dto.getKnownInsertionSite()){
+            saveButton.setEnabled(true);
+            isDirty=true;
+        }
         if(featureTypeBox.getSelected()!=null && dto.getFeatureType()!=null){
             isDirty = featureTypeBox.isDirty(dto.getFeatureType().name()) || isDirty;
         }

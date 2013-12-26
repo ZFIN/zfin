@@ -36,19 +36,16 @@ public class FeatureValidationService {
         switch(dtoFromGUI.getFeatureType()){
             case TRANSGENIC_INSERTION:
                 boolean isKnownInSite = dtoFromGUI.getKnownInsertionSite();
-                /*if(isKnownInSite){
+                if(isKnownInSite){
                     return  StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
                             StringUtils.isNotEmpty(dtoFromGUI.getLineNumber()) &&
                             StringUtils.isNotEmpty(dtoFromGUI.getTransgenicSuffix()) ;
                 }
                 else{
-                    return StringUtils.isNotEmpty(dtoFromGUI.getOptionalName()) &&
-                            StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
-                            StringUtils.isNotEmpty(dtoFromGUI.getLineNumber());
-                } */
-                return  StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
-                    StringUtils.isNotEmpty(dtoFromGUI.getLineNumber()) &&
-                    StringUtils.isNotEmpty(dtoFromGUI.getTransgenicSuffix()) ;
+                    return  StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
+                            StringUtils.isNotEmpty(dtoFromGUI.getLineNumber()) &&
+                            StringUtils.isNotEmpty(dtoFromGUI.getTransgenicSuffix()) ;
+                }
 
             case POINT_MUTATION:
             case DELETION:

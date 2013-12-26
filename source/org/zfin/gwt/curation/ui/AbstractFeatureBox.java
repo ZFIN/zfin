@@ -127,9 +127,12 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                     featureSuffixBox.setVisible(true);
                     suffixLabel.setVisible(true);
                     constructTextBox.setVisible(false);
+                   // featureNameBox.setValue("testign knwon");
+                    saveButton.setEnabled(true);
                 } else {
                     featureNameBox.setVisible(false);
                     constructTextBox.setVisible(true);
+                    featureNameBox.setEnabled(false);
                     /*featureSuffixBox.setVisible(false);
                     suffixLabel.setVisible(false);*/
                     featureSuffixBox.setVisible(true);
@@ -229,6 +232,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 featureSuffixBox.setVisible(true);
                 featureSuffixBox.setEnabled(true);
                 suffixLabel.setVisible(true);
+                saveButton.setEnabled(true);
                 break ;
             case POINT_MUTATION:
             case DELETION:
