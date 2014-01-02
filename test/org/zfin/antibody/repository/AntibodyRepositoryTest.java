@@ -201,7 +201,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     // Test search by two ao terms ANDed
 
     // ToDo commented out until query is tuned for Informix 12.1 version upgrade
-    //@Test
+    @Test
     public void getAntibodyByTwoAnatomyTermAndConnected() {
 
         // brain,eye
