@@ -60,6 +60,7 @@ TRIGGERS = \
 	journal_update_trigger.sql \
 	lab_insert_trigger.sql \
 	lab_update_trigger.sql \
+	lab_address_update_trigger.sql \
 	linkage_pair_member_insert_trigger.sql \
 	linkage_pair_member_update_trigger.sql \
 	marker_insert_trigger.sql \
