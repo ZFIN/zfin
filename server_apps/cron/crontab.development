@@ -43,7 +43,7 @@
 
 #
 # 4 am, run the downloads on trunk.  This is for intermine pickup.
-00 4 * * 1-4 /research/zcentral/www_homes/test/server_apps/data_transfer/Downloads/Downloads.pl
+#00 4 * * 1-4 /research/zcentral/www_homes/test/server_apps/data_transfer/Downloads/Downloads.pl
 # Nights   When      Comments
 # MTWT    10:50pm   Grep for errors in unit tests
 #
