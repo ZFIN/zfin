@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>In record attribution, each record should have both a GENE and&#xd;
-OEVDISP data associated (they should appear in pairs) for&#xd;
-this PUB.  These pairs should correspond to a record in &#xd;
-orthologue_evidence_display.&#xd;
+  <description>parses OMIM data on mim2gene.txt and genemap files&#xd;
 &#xd;
-This test identifies any PUB data that does not fit this criteria.</description>
+does some checking for the OMIM data (since at first I doubled why there were only 5K+ records inserted &#xd;
+while there are 10K+ gene MIM numbers at ZFIN) calls loadOMIM.sql to do the loading with &#xd;
+pre_load_input_omim.txt and reports what have been loaded with whatHaveBeenInsertedIntoOmimPhenotypeTable.txt&#xd;
+</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -22,14 +22,13 @@ This test identifies any PUB data that does not fit this criteria.</description>
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
-    <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>report-associate-curate-orthology</targets>
-      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
-    </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command>cd $TARGETROOT/server_apps/data_transfer/OMIM &amp;&amp; OMIM.pl</command>
+    </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/column.header,server_apps/DB_maintenance/reportRecords.txt</artifacts>
+      <artifacts>server_apps/data_transfer/OMIM/*.txt,server_apps/data_transfer/OMIM/*.log</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -38,25 +37,41 @@ This test identifies any PUB data that does not fit this criteria.</description>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>${VALIDATION_EMAIL_DBA} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
+            <recipientList>${SWISSPROT_EMAIL_REPORT} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/str-gene-abbrev.txt</attachmentsPattern>
+            <attachmentsPattern></attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
             <contentType>project</contentType>
           </email>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+          <email>
+            <recipientList>${SWISSPROT_EMAIL_REPORT}</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
       </configuredTriggers>
       <contentType>text/html</contentType>
       <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
-      <attachmentsPattern></attachmentsPattern>
+      <attachmentsPattern>server_apps/data_transfer/OMIM/*.txt,server_apps/data_transfer/OMIM/*.log</attachmentsPattern>
       <presendScript></presendScript>
       <attachBuildLog>false</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>

@@ -28,7 +28,7 @@ system("rm -f log*");
 system("/bin/rm -f geneId_omim_no_pheno");
 
 print "\nDownloading OMIM files ... \n\n";
-open (LOG, ">log1") || die "Cannot open log1 : $!\n";
+open (LOG, ">log1.log") || die "Cannot open log1.log : $!\n";
 
 print LOG "\nDownloading OMIM files ... \n\n";
 
@@ -366,25 +366,7 @@ print LOG "For all $ctFoundMIMwithSymbolOnGenemap records that found with symbol
 
 ##################################################################################################################################################################
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadOMIM.sql >log3 2> log2");
-
-$subject1 = "Auto from $dbname: " . "OMIM.pl :: log1";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject1","log1");
-
-$subject2 = "Auto from $dbname: " . "OMIM.pl :: log2";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject2","log2");
-
-$subject3 = "Auto from $dbname: " . "OMIM.pl :: what have been added";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject3","whatHaveBeenInsertedIntoOmimPhenotypeTable.txt");
-
-$subject4 = "Auto from $dbname: " . "OMIM.pl :: what have been deleted";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject4","whatHaveBeenDeletedFromOmimPhenotypeTable.txt");
-
-$subject5 = "Auto from $dbname: " . "OMIM.pl :: what have been updated";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_REPORT|-->","$subject5","whatPhenoOMIMnumInOmimPhenotypeTableHaveBeenUpdated.txt");
-
-$subject6 = "Auto from $dbname: " . "OMIM.pl :: genes with MIM not found in omim_phenotype table";
-ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org","$subject6","genesWithMIMnotFoundOnOMIMPtable.txt");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadOMIM.sql >log3.log 2> log2.log");
 
 print LOG "\nAll done!\n\n\n";
 
