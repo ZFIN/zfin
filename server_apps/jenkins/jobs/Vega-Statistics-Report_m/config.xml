@@ -32,7 +32,7 @@
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
-            <recipientList>${COUNT_ZGC_OUT}</recipientList>
+            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
@@ -48,7 +48,7 @@
         </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>${COUNT_ZGC_ERR},${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>

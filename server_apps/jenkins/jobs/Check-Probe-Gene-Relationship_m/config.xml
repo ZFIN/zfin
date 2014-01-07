@@ -39,7 +39,7 @@ that need to be updated based on marker_relationship.&#xd;
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>${VALIDATION_EMAIL_GENE} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>

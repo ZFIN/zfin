@@ -43,6 +43,7 @@
             <fileset dir="${basedir}/server_apps/jenkins/jobs"/>
         </copy>
         <antcall target="add-triggers"/>
+        <antcall target="add-email-notifications"/>
         <antcall target="deploy-email-templates"/>
     </target>
 
@@ -60,26 +61,26 @@
             def dir = new File(properties.jobDirectory)
             def jobs = dir.list()
             new File(properties.jobDirectory).eachFile {
-                if (!it.name.endsWith(".svn") ){
-                    def jobDirName = it.name
-                    def directory = new File(dir,jobDirName)
-                    new File(dir, jobDirName).eachFile {
-                        def subDir = it.name
-                        if(subDir == 'email-templates'){
-                            def targetDir = new File(properties.emailTemplates)
-                            targetDir.mkdir()
-                            new File(directory, subDir).eachFile{
-                                def fileName = it.name
-                                if(fileName.endsWith('template')){
-                                    def file = new File(new File(directory,subDir),fileName)
-                                    def targetFile = new File(targetDir, fileName)
-                                    println targetFile.absolutePath
-                                    new AntBuilder().copy( file:file, tofile:targetFile)
-                                }
-                            }
-                        }
-                    }
-                }
+            if (!it.name.endsWith(".svn") ){
+            def jobDirName = it.name
+            def directory = new File(dir,jobDirName)
+            new File(dir, jobDirName).eachFile {
+            def subDir = it.name
+            if(subDir == 'email-templates'){
+            def targetDir = new File(properties.emailTemplates)
+            targetDir.mkdir()
+            new File(directory, subDir).eachFile{
+            def fileName = it.name
+            if(fileName.endsWith('template')){
+            def file = new File(new File(directory,subDir),fileName)
+            def targetFile = new File(targetDir, fileName)
+            println targetFile.absolutePath
+            new AntBuilder().copy( file:file, tofile:targetFile)
+            }
+            }
+            }
+            }
+            }
             }
 
         </groovy>
@@ -171,16 +172,52 @@
     <property name="trigger" value="${SCHEDULE_TRIGGER_FILES}"/>
 
     <target name="add-triggers">
-        <echo>${emailTriggerName}</echo>
-        <groovy>
-            println "JENKINS_HOME/jobs " + properties.jenkinsHomeJobs
-            def dir = new File(properties.jenkinsHomeJobs)
-            def jobs = dir.list()
-            jobs.eachWithIndex { value, i -> properties.jobName = value
-            //println value
-            ant.project.executeTarget('add-trigger-for-job')
-            }
-        </groovy>
+        <property name="propertyFile"
+                  value="${basedir}/server_apps/jenkins/trigger.${trigger}.properties"/>
+        <if>
+            <available file="${propertyFile}"/>
+            <then>
+                <echo message="File exists"/>
+                <groovy>
+                    println "JENKINS_HOME/jobs " + properties.jenkinsHomeJobs
+                    def dir = new File(properties.jenkinsHomeJobs)
+                    def jobs = dir.list()
+                    jobs.eachWithIndex { value, i -> properties.jobName = value
+                    //println value
+                    ant.project.executeTarget('add-trigger-for-job')
+                    }
+                </groovy>
+            </then>
+            <else>
+                <echo message="No trigger configuration file found: ${propertyFile}. Not generating any triggers."/>
+            </else>
+        </if>
+    </target>
+
+<!--
+    <property name="trigger" value="reports"/>
+-->
+    <target name="add-email-notifications">
+        <property name="propertyFile"
+                  value="${basedir}/server_apps/jenkins/email-configuration.${trigger}.properties"/>
+        <if>
+            <available file="${propertyFile}"/>
+            <then>
+                <echo message="File exists"/>
+                <groovy>
+                    println "JENKINS_HOME/jobs: " + properties.jenkinsHomeJobs
+                    def dir = new File(properties.jenkinsHomeJobs)
+                    def jobs = dir.list()
+                    jobs.eachWithIndex { value, i -> properties.jobName = value
+                    //println value
+                    ant.project.executeTarget('add-notification-for-job')
+                    }
+                </groovy>
+            </then>
+            <else>
+                <echo message="No email configuration file found: ${propertyFile}. Not generating email notifications on triggers."/>
+            </else>
+        </if>
     </target>
 
     <target name="add-trigger-for-job" description="run target for given jobName and triggerName">
@@ -205,6 +242,10 @@
         <add-trigger-per-job/>
     </target>
 
+    <target name="add-notification-for-job" description="run target for given jobName and triggerName">
+        <add-notification-per-job/>
+    </target>
+
 
     <target name="create-jenkins-symlink">
         <mkdir dir="${JENKINS_HOME}/logs"/>
@@ -213,7 +254,8 @@
     </target>
 
     <target name="copy-certificate">
-       <copy tofile="${JENKINS_HOME}/bouncer.zfin.org-cert" file="${basedir}/server_apps/jenkins/bouncer.zfin.org-cert"/>
+        <copy tofile="${JENKINS_HOME}/bouncer.zfin.org-cert"
+              file="${basedir}/server_apps/jenkins/bouncer.zfin.org-cert"/>
     </target>
 
     <target name="start-jenkins" depends="copy-certificate,create-jenkins-symlink" description="Start up Jenkins ">
@@ -312,6 +354,53 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="add-notification-per-job">
+        <sequential>
+            <echo message="Job Name: ${jobName}"/>
+
+            <property name="emailConfiguration" value=""/>
+
+            <groovy>
+                File propertyFile = new File(properties.propertyFile)
+                def props = new Properties()
+                propertyFile.withInputStream {
+                stream -> props.load(stream)
+                }
+                def emailConfig = props[properties.jobName+".FAILURE"]
+                if (emailConfig != null)
+                properties.emailConfiguration = emailConfig
+                //println "Property: " + props[properties.jobName+".FAILURE"]
+
+            </groovy>
+            <echo message="emailConfiguration: ${emailConfiguration}"/>
+
+            <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
+                           replace="${emailConfiguration}">
+                <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
+            </replaceregexp>
+            <var name="emailConfiguration" unset="true"/>
+
+            <groovy>
+                def props = new Properties()
+                new File(properties.propertyFile).withInputStream {
+                stream -> props.load(stream)
+                }
+                def emailConfig = props[properties.jobName+".SUCCESS"]
+                if (emailConfig != null)
+                properties.emailConfiguration = emailConfig
+                //println "Property: " + props[properties.jobName+".SUCCESS"]
+
+            </groovy>
+            <echo message="emailConfiguration: ${emailConfiguration}"/>
+
+            <replaceregexp match="@SUCCESS-RECIPIENT-LIST@"
+                           replace="${emailConfiguration}">
+                <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
+            </replaceregexp>
+            <var name="emailConfiguration" unset="true"/>
+        </sequential>
+    </macrodef>
+
     <target name="jenkins-usage">
         <echo>
             TARGETS
@@ -320,14 +409,14 @@
             copy-job-into-source -DjobName=[jobName]
             create-views creates daily/weekly/monthly job views.
             deploy-plugins deploy jenkins plugins into JENKINS_HOME
-	    deploy-email-templates deploy the email templates into JENKINS_HOME
+            deploy-email-templates deploy the email templates into JENKINS_HOME
 
             Jenkins Server
-            start-jenkins    start a Jenkins instance
+            start-jenkins start a Jenkins instance
             stop-jenkins
             kill-jenkins
             restart-jenkins
-	    tail-log         do a 'tail -f $JENKINS_HOME/logs/jenkins.log'
+            tail-log do a 'tail -f $JENKINS_HOME/logs/jenkins.log'
         </echo>
     </target>
 
