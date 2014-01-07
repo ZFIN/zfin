@@ -21,7 +21,19 @@ select distinct mrkr_zdb_id, mrkr_abbrev,160 priority
  and  mrkr_abbrev like "zmp:%"  --or mrkr_name like  "% like")
  into temp tmp_xpat_genes with no log;
 
+insert into tmp_xpat_genes (mrkr_Zdb_id, mrkr_Abbrev, priority)
+select mrkr_zdb_id, mrkr_abbrev, 160
+  from marker
+ where mrkr_abbrev like "%:%" 
+ and mrkr_type = 'GENE'
+ and mrkr_Abbrev not like "zmp:%"
+ and exists (Select 'x' from feature_marker_relationship, feature
+     	    	    where fmrel_Ftr_zdb_id = feature_zdb_id
+		    and fmrel_mrkr_zdb_id = mrkr_Zdb_id
+		    and feature_abbrev like 'sa%');
 
+unload to candidatesTest.txt
+ select mrkr_abbrev from tmp_xpat_genes;
 
 ! echo "find the longest protein associated with each gene"
 
@@ -30,7 +42,12 @@ select mrkr_zdb_id, mrkr_abbrev, ensp_ensdarp_id as dblink_acc_num, ensp_length 
   from marker, ensdarg_ensdarp_mapping, db_link
   where mrkr_zdb_id = dblink_linked_recid
  and dblink_acc_num = ensp_ensdarg_id
- and mrkr_Abbrev like 'zmp%'
+ and (mrkr_Abbrev like 'zmp%'
+  or ((mrkr_abbrev like "%:%") and exists (Select 'x' from feature_marker_relationship, feature
+     	    	    where fmrel_Ftr_zdb_id = feature_zdb_id
+		    and fmrel_mrkr_zdb_id = mrkr_Zdb_id
+		    and feature_abbrev like 'sa%'))
+      )
  into temp tmp_can_pp with no log
 ;
 
@@ -83,3 +100,4 @@ drop table nomenclature_candidate;
 ! echo "this roll back is expected"
 --
 rollback work;
+
