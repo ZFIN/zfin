@@ -81,7 +81,7 @@
 # ------  Reminders to staff
 # -------------------------------------------------------------------------------------------------------
 # 20th of each month reminder to restart ontape on production
-00 10 20 * * /research/zusers/almost/ZFIN_WWW/commons/bin/monthly_ontape.pl
+# 00 10 20 * * /research/zusers/almost/ZFIN_WWW/commons/bin/monthly_ontape.pl
 # 
 #
 # Daily 3:30am   Populate dblink microarrays.
