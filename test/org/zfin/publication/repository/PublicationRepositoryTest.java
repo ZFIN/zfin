@@ -55,7 +55,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void runGetAllExpressedGenes() {
         // somite
-        String zdbID = "ZDB-TERM-100331-144";
+        String zdbID = "ZDB-TERM-100331-665";
         GenericTerm term = new GenericTerm();
         term.setZdbID(zdbID);
         PaginationResult<MarkerStatistic> paginationResult = publicationRepository.getAllExpressedMarkers(term, 0, 5);
@@ -436,18 +436,16 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getFiguresForGene() {
-        //  foxi1
-        String markerZdbID = "ZDB-GENE-030505-1";
+        //  creb1a
+        String markerZdbID = "ZDB-GENE-040426-750";
         Marker marker = new Marker();
         marker.setZdbID(markerZdbID);
-        //   presumptive ectoderm
-        String aoZdbID = "ZDB-ANAT-060131-50";
+        //   telencephalic ventricle
+        String aoZdbID = "ZDB-TERM-100331-665";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item);
         assertTrue(figs != null);
-//        assertEquals("1 figure", 1, figs.size());
-
     }
 
     @Test
