@@ -21,7 +21,7 @@ SUBDIRS =
 
 GENERICS = generate_UniProt_Nomenclature_run.sh 
 
-STATICS =  select_nomemclature_candidates.sql select_sanger_nomemclature_candidates.sql generate_SangerMutant_Nomenclature_run.sh
+STATICS =  select_nomemclature_candidates.sql select_sanger_nomemclature_candidates.sql generate_SangerMutant_Nomenclature_run.sh moveEnsdarTToZMP.sql
 
 # ---------------  Production Rules  ------------------------------------
 
