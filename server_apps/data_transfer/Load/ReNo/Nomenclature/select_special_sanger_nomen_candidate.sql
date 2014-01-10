@@ -167,8 +167,8 @@ delete from tmp_can_pp where exists (
 drop table tmp_nrs_pp;
 
 
-{
-select mrkr_zdb_id
+
+select mrkr_zdb_id as id
  from tmp_can_pp
  group by 1
  having count(*) > 1
@@ -180,8 +180,50 @@ select *
     select * from tmp_dups
 )
 order by mrkr_zdb_id;
+ 
+
+delete from tmp_can_pp
+ where exists (select 'x' from tmp_dups
+       	      	      where mrkr_zdb_id = id
+		      and dblink_length is null);
+
 drop table tmp_dups;
-}
+
+select mrkr_zdb_id as id
+ from tmp_can_pp
+ group by 1
+ having count(*) > 1
+ into temp tmp_dups
+;
+select *
+ from tmp_can_pp
+ where mrkr_zdb_id in (
+    select * from tmp_dups
+);
+
+select mrkr_zdb_id,
+    mrkr_abbrev,
+    min(dblink_acc_num) as dblink_acc_num,
+    fdata_type,
+    db_name,
+    priority
+from tmp_can_pp
+group by mrkr_zdb_id, mrkr_abbrev, fdata_type, db_name, priority
+ into tmp_distincts;
+
+drop table tmp_dups;
+
+select mrkr_zdb_id as id
+ from tmp_distincts
+ group by 1
+ having count(*) > 1
+ into temp tmp_dups
+;
+select *
+ from tmp_distincts
+ where mrkr_zdb_id in (
+    select * from tmp_dups
+);
 
 insert into nomenclature_candidate(
     nc_mrkr_zdb_id,
@@ -197,7 +239,7 @@ insert into nomenclature_candidate(
     fdata_type,
     db_name,
     priority
- from  tmp_can_pp
+ from  tmp_distincts
  order by priority asc;
 
 
