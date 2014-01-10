@@ -1728,54 +1728,6 @@ sub encodesRelationshipsInBACorPAC ($) {
 
 #======================== Gene - EST relationships =====================
 #---------------------------------------------------------------
-# prefixedGenesHave1Est
-#
-# Genes that have a 2 character prefix, followed by a : should always have
-# a corresponding EST.
-#
-# This test excludes genes that start with "id:".  See the description of
-# the following test for more info.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub prefixedGenesHave1Est ($) {
-
-  my $routineName = "prefixedGenesHave1Est";
-
-  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
-               from marker m1
-               where mrkr_type = "GENE"
-                 and mrkr_name[3]  == ":"
-                 and mrkr_name[1,2] not in ("id","si")
-                 and 1 <> 
-                     ( select count(*) 
-                         from marker m2, marker_relationship
-                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
-                           and mrel_mrkr_2_zdb_id = m2.mrkr_zdb_id
-                           and mrel_type = "gene encodes small segment" )
-               order by mrkr_name';
-
-  my @colDesc = ("Gene ZDB ID       ",
-		 "Gene Name         ",
-		 "Gene Abbrev       ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Prefixed genes have 0 or > 1 associated ESTs";
-    my $errMsg = "$nRecords prefixed genes had 0 or more than 1 associated ESTs. ";
-
-    logWarning ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
-
-#---------------------------------------------------------------
 # estsWithoutClonesHaveXxGenes
 #
 # If an EST does not have a corresponding clone record, then its corresponding
@@ -3030,7 +2982,6 @@ if($weekly) {
     strFeatureOnlyHasOneRelationship($ceri);
     crisprRelatedToNonCrispr($ceri);
     talenRelatedToNonTalen($ceri);
-	prefixedGenesHave1Est($estEmail);
 	estsWithoutClonesHaveXxGenes($estEmail);
 	xpatObjectNotGeneOrEFG ($xpatEmail);
 	constructNameNotSubstringOfFeatureName($dbaEmail);
