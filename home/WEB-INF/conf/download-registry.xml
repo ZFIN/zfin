@@ -1627,7 +1627,9 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                         feature_type_display,
                         gene_abbrev,
                         gene_id,
-			feature_zygosity
+			feature_zygosity,
+                        construct_name,
+                        construct_zdb_id
                      from tmp_geno_data
                      order by genotype_id, geno_display_name
                    ]]>
@@ -1643,6 +1645,8 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="9">Gene or Construct Symbol</Column>
             <Column id="10">Corresponding ZFIN Gene ID/Construct ID</Column>
             <Column id="11">Allele Zygosity</Column>
+	    <Column id="12">Construct Name</Column>
+	    <Column id="13">Construct ZdbId</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
