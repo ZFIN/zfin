@@ -216,7 +216,7 @@
         <c:forEach var="featureGenbank" items="${formBean.feature.dbLinks}" varStatus="loop">
 
             <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zfishbook}">
-                <c:if test="${!featureGenbank.referenceDatabase.foreignDB.crezoo}">
+                <c:if test="${!featureGenbank.referenceDatabase.foreignDB.CreZoo}">
                     <c:if test="${!featureGenbank.referenceDatabase.foreignDB.zmp}">
                         <%--${featureGenbank.accessionNumber}--%>
 
