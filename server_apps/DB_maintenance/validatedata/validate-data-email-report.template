@@ -1,0 +1,61 @@
+<html><head>
+<title>Report</title>
+
+<style>
+#result {
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    border-collapse: collapse;
+}
+table, th, td, input, textarea {
+    font-size: 100%;
+    border: 1px solid green;
+    text-align: left:
+}
+
+#result th {
+    font-size: 1em;
+    text-align: left;
+    padding-top: 5px;
+    padding-bottom: 4px;
+    background-color: rgb(167, 201, 66);
+    color: rgb(255, 255, 255);
+}
+#result tr.alt td
+{
+color:#000;
+background-color:#EAF2D3;
+}
+</style>
+</head>
+<body>
+
+Report Run: ${dateRun?string("yyyy-MM-dd HH:mm:ss")}
+
+${numberOfRecords} ${errorMessage}
+
+<table id=3D"result">
+<tbody><tr>
+<#list headerColumns as headerEntry>
+<th>${headerEntry}</th>
+</#list>
+</tr>
+<#list recordList as resultObject>
+   <tr>
+<#list resultObject as record>
+<td>
+${record}
+</td>
+</#list>
+   </tr>
+</#list>
+
+</tbody></table>
+
+<hr>
+
+SQL being executed:
+<pre>
+${sqlQuery}
+</pre>
+
+</body></html>

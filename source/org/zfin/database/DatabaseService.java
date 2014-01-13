@@ -323,6 +323,12 @@ public class DatabaseService {
         return runDbScriptFile(file, dataMap);
     }
 
+    private List<List<List<String>>> listOfResultRecords = new ArrayList<>(5);
+
+    public List<List<List<String>>> getListOfResultRecords() {
+        return listOfResultRecords;
+    }
+
     public List<String> runDbScriptFile(File dbScriptFile, Map<String, List<List<String>>> dataMap) {
         List<String> errorMessage = new ArrayList<String>(2);
         if (!dbScriptFile.exists()) {
@@ -356,6 +362,7 @@ public class DatabaseService {
                 List<List<String>> dataReturn = null;
                 if (LOG.isDebugEnabled()) {
                     dataReturn = infrastructureRep.executeNativeQuery(statement);
+                    listOfResultRecords.add(dataReturn);
                     if (dataReturn == null)
                         LOG.debug("  Debug data: No records found.");
                     else {
@@ -367,6 +374,7 @@ public class DatabaseService {
             } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
                 List<List<String>> dataReturn = null;
                 dataReturn = infrastructureRep.executeNativeQuery(statement);
+                listOfResultRecords.add(dataReturn);
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
                 } else if (statement.getDataKey() == null) {

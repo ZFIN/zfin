@@ -18,16 +18,16 @@
             <include name="*.jar"/>
         </fileset>
     </path>
-	
+
     <taskdef name="loadProperties"
              classname="org.zfin.properties.ant.LoadPropertiesTask"
              classpathref="classpath"/>
 
-    <loadProperties file="${web-inf.dir}/zfin.properties" />
+    <loadProperties file="${web-inf.dir}/zfin.properties"/>
 
     <path id="extended.classpath">
         <path refid="classpath"/>
-        <fileset dir="${CATALINA_HOME}/endorsed">
+        <fileset dir="${env.CATALINA_HOME}/endorsed">
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
@@ -52,271 +52,286 @@
 
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
 
-    <target name="report-stage-range-validation" description="Set the timestamp of the download files int database_info table">
+    <target name="report-stage-range-validation"
+            description="Set the timestamp of the download files int database_info table">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-	    <arg value="${DBNAME}" />
-	    <arg value="${basedir}/server_apps/DB_maintenance/validatedata/stageRangeValidation.sql"/>
+            <arg value="${DBNAME}"/>
+            <arg value="${basedir}/server_apps/DB_maintenance/validatedata/stageRangeValidation.sql"/>
         </exec>
-	<echo file="${validateData}/column.header" append="false">Pub ID|Figure ID|Start Stage ID|Xpat Start Stage|End Stage ID|Xpat End Stage|Term ID|Term OBO ID|Term Name|Term Start Stage|Term End Stage|Xpatres ID</echo>
-	<echo file="${validateData}/description.txt" append="false">
-	  There are expression_result records whose stage window don't overlap with the anatomy term's stage window.
-	  </echo>
-	<fail message="Failed: There are records that violate the stage range">
-	  <condition>
-        <resourcecontains resource="reportRecords.txt" substring="ZDB"/>
-	  </condition>
-	</fail>
+        <echo file="${validateData}/column.header" append="false">Pub ID|Figure ID|Start Stage ID|Xpat Start Stage|End
+            Stage ID|Xpat End Stage|Term ID|Term OBO ID|Term Name|Term Start Stage|Term End Stage|Xpatres ID
+        </echo>
+        <echo file="${validateData}/description.txt" append="false">
+            There are expression_result records whose stage window don't overlap with the anatomy term's stage window.
+        </echo>
+        <fail message="Failed: There are records that violate the stage range">
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="ZDB"/>
+            </condition>
+        </fail>
     </target>
 
     <target name="report-linkage-has-member" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-	    <arg value="${DBNAME}" />
-	    <arg value="${validateData}/validatedata/linkageHasMember.sql"/>
+            <arg value="${DBNAME}"/>
+            <arg value="${validateData}/validatedata/linkageHasMember.sql"/>
         </exec>
-	<echo file="${validateData}/column.header" append="false">Linkage ID|Linkage Group|Linkage Source ID</echo>
-	<echo file="${validateData}/description.txt" append="false">
-	  There are records in LINKAGE table that do not have a LINKAGE_MEMBER record.
-	</echo>
-	<fail message="Failed: There are records in violation">
-	  <condition>
-        <resourcecontains resource="reportRecords.txt" substring="ZDB"/>
-	  </condition>
-	</fail>
+        <echo file="${validateData}/column.header" append="false">Linkage ID|Linkage Group|Linkage Source ID</echo>
+        <echo file="${validateData}/description.txt" append="false">
+            There are records in LINKAGE table that do not have a LINKAGE_MEMBER record.
+        </echo>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="ZDB"/>
+            </condition>
+        </fail>
     </target>
 
     <target name="report-str-gene-abbrev" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-	    <arg value="${DBNAME}" />
-	    <arg value="${validateData}/validatedata/StrGeneAbbreviation.sql"/>
+            <arg value="${DBNAME}"/>
+            <arg value="${validateData}/validatedata/StrGeneAbbreviation.sql"/>
         </exec>
-	<echo file="${validateData}/column.header" append="false">STR Abbreviation|Gene Abbreviation</echo>
-	<echo file="${validateData}/description.txt" append="false">
-        There are STRs without corresponding gene abbreviations.
-	</echo>
-	<fail message="Failed: There are records in violation">
-	  <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-	  </condition>
-	</fail>
+        <echo file="${validateData}/column.header" append="false">STR Abbreviation|Gene Abbreviation</echo>
+        <echo file="${validateData}/description.txt" append="false">
+            There are STRs without corresponding gene abbreviations.
+        </echo>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
+        </fail>
     </target>
 
     <target name="report-marker-go-duplicate" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-	    <arg value="${DBNAME}" />
-	    <arg value="${validateData}/validatedata/MarkerGoEvidenceDuplicate.sql"/>
+            <arg value="${DBNAME}"/>
+            <arg value="${validateData}/validatedata/MarkerGoEvidenceDuplicate.sql"/>
         </exec>
-	<echo file="${validateData}/column.header" append="false">Count|Marker ID|Term ID|Term OBO ID|Publiction ID|Evidence Code</echo>
-	<echo file="${validateData}/description.txt" append="false">
-        There are duplicate marker_go_term_evidence records.
-	</echo>
-	<fail message="Failed: There are records in violation">
-	  <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-	  </condition>
-	</fail>
+        <echo file="${validateData}/column.header" append="false">Count|Marker ID|Term ID|Term OBO ID|Publiction
+            ID|Evidence Code
+        </echo>
+        <echo file="${validateData}/description.txt" append="false">
+            There are duplicate marker_go_term_evidence records.
+        </echo>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
+        </fail>
     </target>
 
     <target name="report-marker-go-secondary-annotation" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-            <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/MarkerGoSecondaryAnnotation.sql"/>
         </exec>
-        <echo file="${validateData}/column.header" append="false">MarkerGOEvidence ID|Marker Symbol|Term Name|Publiction ID</echo>
+        <echo file="${validateData}/column.header" append="false">MarkerGOEvidence ID|Marker Symbol|Term Name|Publiction
+            ID
+        </echo>
         <echo file="${validateData}/description.txt" append="false">
-        There are marker_go_term_evidence records with secondary terms.
+            There are marker_go_term_evidence records with secondary terms.
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
         </fail>
     </target>
 
     <target name="report-publication-duplicate" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-            <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/PublicationDuplicate.sql"/>
         </exec>
-        <echo file="${validateData}/column.header" append="false">Publication Title|Accession Number|Publication ID|Authors|Publication Date|Journal|Publication Volume|Publication Pages|</echo>
+        <echo file="${validateData}/column.header" append="false">Publication Title|Accession Number|Publication
+            ID|Authors|Publication Date|Journal|Publication Volume|Publication Pages|
+        </echo>
         <echo file="${validateData}/description.txt" append="false">
-        Check that there are no duplicate publications.
+            Check that there are no duplicate publications.
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
         </fail>
     </target>
 
     <target name="report-probe-gene-relationship" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-            <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/ProbeGeneRelationship.sql"/>
         </exec>
         <echo file="${validateData}/column.header" append="false">ExpressionExperiment ID|Probe ID|Marker ID</echo>
         <echo file="${validateData}/description.txt" append="false">
-        Check that there is a marker relationship for every probe / gene in expression_experiment table.
+            Check that there is a marker relationship for every probe / gene in expression_experiment table.
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
         </fail>
     </target>
 
 
-   <target name="report-est-contained-in-relationship" description="">
+    <target name="report-est-contained-in-relationship" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-       	    <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/EstContainedInRelationship.sql"/>
         </exec>
-        <echo file="${validateData}/column.header" append="false">Marker 1 ID|Marker 2 ID|Marker Type|Relationship Type</echo>
+        <echo file="${validateData}/column.header" append="false">Marker 1 ID|Marker 2 ID|Marker Type|Relationship
+            Type
+        </echo>
         <echo file="${validateData}/description.txt" append="false">
-	ESTs have 'contained in' relationships.
+            ESTs have 'contained in' relationships.
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
         </fail>
     </target>
 
-   <target name="report-marker-go-inference" description="">
+    <target name="report-marker-go-inference" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-            <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/MarkerGoInference.sql"/>
         </exec>
-        <echo file="${validateData}/column.header" append="false">MarkerGoEvidence 1 ID|Marker 1 ID|MarkerGoEvidence 2 ID|Marker 2 ID|Count</echo>
+        <echo file="${validateData}/column.header" append="false">MarkerGoEvidence 1 ID|Marker 1 ID|MarkerGoEvidence 2
+            ID|Marker 2 ID|Count
+        </echo>
         <echo file="${validateData}/description.txt" append="false">
-	Possible duplicate records in marker_go_term_evidence, inference_group_member
+            Possible duplicate records in marker_go_term_evidence, inference_group_member
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
         </fail>
     </target>
 
-   <target name="report-associate-curate-orthology" description="">
+    <target name="report-associate-curate-orthology" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-            <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/AssoicateDataCurationOrthology.sql"/>
         </exec>
         <echo file="${validateData}/column.header" append="false">Data ID|</echo>
         <echo file="${validateData}/description.txt" append="false">
-	 Invalid Data associated with ZDB-PUB-030905-1: Either the entity has no attributed GENE or
-	 does not have attributed orthologue evidence
+            Invalid Data associated with ZDB-PUB-030905-1: Either the entity has no attributed GENE or
+            does not have attributed orthologue evidence
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
         </fail>
     </target>
 
-	<target name="report-est-one-marker" description="">
+    <target name="report-xx-genes-no-clones" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-            <arg value="${DBNAME}" />
-            <arg value="${validateData}/validatedata/ESTOneMarker.sql"/>
-        </exec>
-        <echo file="${validateData}/column.header" append="false">EST ID|EST Name| EST Abbreviation</echo>
-        <echo file="${validateData}/description.txt" append="false">
-	ESTs have 0 or more than 1 associated gene.
-        </echo>
-        <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
-        </fail>
-    </target>
-
-	<target name="report-xx-genes-no-clones" description="">
-        <echo message="Create Validation Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
-            <arg value="-a"/>
-            <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/XXGenesNoClones.sql"/>
         </exec>
         <echo file="${validateData}/column.header" append="false">Marker ID|Marker Name|Marker Abbreviation</echo>
         <echo file="${validateData}/description.txt" append="false">
-        <![CDATA[ xx:<xxx> genes should have no clones.]]>
+            <![CDATA[ xx:<xxx> genes should have no clones.]]>
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-       	<resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
         </fail>
     </target>
 
-   <target name="report-refseq-accession-format" description="">
+    <target name="report-refseq-accession-format" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-            <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/RefseqAccessionFormat.sql"/>
         </exec>
         <echo file="${validateData}/column.header" append="false">Record ID|DB Name|Accession Number</echo>
         <echo file="${validateData}/description.txt" append="false">
-       	RefSeq accession number in wrong format. Needs to have an underscore as the third position.
+            RefSeq accession number in wrong format. Needs to have an underscore as the third position.
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
         </fail>
     </target>
 
-   <target name="report-est-for-genes-with-prefix" description="">
+    <target name="report-est-for-genes-with-prefix" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess"  failifexecutionfails="true">
+        <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="-a"/>
-            <arg value="${DBNAME}" />
+            <arg value="${DBNAME}"/>
             <arg value="${validateData}/validatedata/PrefixGenesEst.sql"/>
         </exec>
         <echo file="${validateData}/column.header" append="false">Marker ID|Marker Name|Marker Abbreviation</echo>
         <echo file="${validateData}/description.txt" append="false">
-        Genes with a prefix in the names do not have an associated EST or more than one.
+            Genes with a prefix in the names do not have an associated EST or more than one.
         </echo>
         <fail message="Failed: There are records in violation">
-          <condition>
-        <resourcecontains resource="reportRecords.txt" substring="|"/>
-          </condition>
+            <condition>
+                <resourcecontains resource="reportRecords.txt" substring="|"/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="validate-data-report-simple" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <classpath refid="log4j"/>
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+        </java>
+
+        <echo message="${validateData}/validatedata/${JobName}.txt"/>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.txt" substring=","/>
+            </condition>
         </fail>
     </target>
 
@@ -326,12 +341,11 @@
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>
         <sequential>
-            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+            <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
+                  classpathref="extended.classpath"
                   failonerror="true">
                 <classpath refid="log4j"/>
                 <arg value="@{instanceName}"/>
-                <arg value="@{db-query-file}"/>
-                <arg value="${unloadDir}"/>
             </java>
         </sequential>
     </macrodef>

@@ -4,7 +4,7 @@
   <description>After curation is done, each feature record should be associated&#xd;
 with a genotype as an entry in genotype_feature table. Since a &#xd;
 feature is created first and then associated with a genotype, we&#xd;
-couldn&apos;t make this a database constraint.  We are excluding Burges Lin features from this requirement.</description>
+couldn&apos;t make this a database constraint.  We are excluding Burgess Lin features from this requirement.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
