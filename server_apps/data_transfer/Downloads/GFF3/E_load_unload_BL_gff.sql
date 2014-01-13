@@ -31,7 +31,7 @@ select bed_chr,
            bed_strand,
            "." gff_frame,
        'ID=' || feature_zdb_id    --- FEATURE
-       ||';Name=' || feature_abbrev[1,8]
+       ||';Name=' || feature_abbrev
        ||';Alias='|| feature_zdb_id || ','
                   || feature_abbrev || ','
                   || feature_name || ';'  attribute
