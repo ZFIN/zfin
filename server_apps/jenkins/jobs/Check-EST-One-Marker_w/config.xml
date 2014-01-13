@@ -19,7 +19,7 @@ This job check that those relationships are correctly defined.</description>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>validate-data-report-simple -DjobName=Check-EST-One-Marker_w</targets>
+      <targets>validate-data-report-simple -DJobName=Check-EST-One-Marker_w</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
