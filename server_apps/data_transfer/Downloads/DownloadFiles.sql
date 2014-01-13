@@ -761,7 +761,9 @@ create temp table tmp_geno_data (
   gene_abbrev varchar(40),
   gene_id varchar(50),
   feature_zdb_id varchar(50),
-  zygocity varchar(30)
+  zygocity varchar(30),
+  construct_name varchar(255),
+  construct_zdb_id varchar(50)
 ) with no log ;
 
 
@@ -806,14 +808,44 @@ select
 	zyg_name
  from genotype_feature, feature, genotype, feature_type, zygocity
  where genofeat_feature_zdb_id = feature_zdb_id
+ and feature_type != 'TRANSGENIC_INSERTION'
+ and feature_type != 'TRANSGENIC_UNSPECIFIED'
    and geno_zdb_id = genofeat_geno_zdb_id
    and feature_type = ftrtype_name
    and genofeat_zygocity = zyg_zdb_id
    and not exists ( select 'x' from marker, feature_marker_relationship
    where fmrel_ftr_zdb_id = feature_zdb_id
    and fmrel_mrkr_zdb_id = mrkr_zdb_id
-   and fmrel_type = "is allele of"
-   );
+   and fmrel_type = "is allele of");
+
+insert into tmp_geno_data (
+	genotype_id, geno_display_name, geno_handle, feature_name, feature_abbrev,
+	feature_type, feature_type_display,feature_zdb_id, zygocity, construct_zdb_id, construct_name
+)
+select
+	genofeat_geno_zdb_id,
+	geno_display_name,
+	geno_handle,
+	feature_name,
+	feature_abbrev,
+	lower(feature_type),
+	ftrtype_type_display,
+	feature_zdb_id,
+	zyg_name,
+ 	fmrel_mrkr_zdb_id, 
+	mrkr_name
+ from genotype_feature, feature, genotype, feature_type, zygocity, feature_marker_relationship, marker
+ where genofeat_feature_zdb_id = feature_zdb_id
+ and (feature_type = 'TRANSGENIC_INSERTION' or
+  feature_type = 'TRANSGENIC_UNSPECIFIED')
+   and geno_zdb_id = genofeat_geno_zdb_id
+   and feature_type = ftrtype_name
+   and genofeat_zygocity = zyg_zdb_id
+  and fmrel_type != 'is allele of'
+ and fmrel_mrkr_zdb_id = mrkr_zdb_id
+ and fmrel_ftr_zdb_id = feature_zdb_id
+ and mrkr_type in ('TGCONSTRUCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT');
+
 
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt'"
@@ -830,7 +862,9 @@ select distinct
 	feature_type_display,
 	gene_abbrev,
 	gene_id,
-	zygocity
+	zygocity,
+	construct_name,
+	construct_zdb_id
  from tmp_geno_data
  order by genotype_id, geno_display_name
 ;
