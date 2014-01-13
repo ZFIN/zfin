@@ -27,8 +27,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/validatedata
 
-GENERICS = stageRangeValidation.sql linkageHasMember.sql StrGeneAbbreviation.sql MarkerGoEvidenceDuplicate.sql MarkerGoSecondaryAnnotation.sql PublicationDuplicate.sql ProbeGeneRelationship.sql MarkerGoInference.sql EstContainedInRelationship.sql ESTOneMarker.sql XXGenesNoClones.sql RefseqAccessionFormat.sql AssoicateDataCurationOrthology.sql PrefixGenesEst.sql
+GENERICS = stageRangeValidation.sql linkageHasMember.sql StrGeneAbbreviation.sql MarkerGoEvidenceDuplicate.sql MarkerGoSecondaryAnnotation.sql PublicationDuplicate.sql ProbeGeneRelationship.sql MarkerGoInference.sql EstContainedInRelationship.sql Check-EST-One-Marker_w.sql XXGenesNoClones.sql RefseqAccessionFormat.sql AssoicateDataCurationOrthology.sql PrefixGenesEst.sql
 
+STATICS = validate-data-email-report.properties validate-data-email-report.template
 
 # ---------------  Production Rules  ------------------------------------
 
