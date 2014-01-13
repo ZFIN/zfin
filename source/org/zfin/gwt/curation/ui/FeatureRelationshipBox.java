@@ -250,21 +250,21 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
                 FeatureRPCService.App.getInstance().addFeatureMarkerRelationShip(featureMarkerRelationshipDTO
                         ,new FeatureEditCallBack<Void>("Failed to create FeatureMarkerRelation: "+featureMarkerRelationshipDTO,handlesError){
 
-                            @Override
-                            public void onFailure(Throwable throwable) {
-                                super.onFailure(throwable);
-                                addButton.setEnabled(true);
-                                featureToAddTarget.setEnabled(true);
-                                featureToAddList.setEnabled(true);
-                                featureToAddRelationship.setEnabled(true);
-                            }
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        super.onFailure(throwable);
+                        addButton.setEnabled(true);
+                        featureToAddTarget.setEnabled(true);
+                        featureToAddList.setEnabled(true);
+                        featureToAddRelationship.setEnabled(true);
+                    }
 
-                            @Override
-                            public void onSuccess(Void result) {
-                                revertGUI();
-                                clearError();
-                            }
-                        } );
+                    @Override
+                    public void onSuccess(Void result) {
+                        revertGUI();
+                        clearError();
+                    }
+                } );
             }
         });
     }
@@ -341,6 +341,7 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
     private void updateTargets(){
         addButton.setEnabled(false);
         featureToAddTarget.setEnabled(false);
+        final String mutagenForFeature = getFeatureDTOForName(featureToAddList.getSelectedText()).getMutagen();
         FeatureRPCService.App.getInstance().getMarkersForFeatureRelationAndSource(featureToAddRelationship.getSelectedText(), dto.getPublicationZdbID(),
                 new FeatureEditCallBack<List<MarkerDTO>>("Failed to find markers for type[" + featureToAddType.getText() + "] and pub: " +
                         (dto != null ? dto.getPublicationZdbID() : dto), this) {
@@ -350,7 +351,17 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
                         Collections.sort(markers);
                         if (markers != null & markers.size() > 0) {
                             for (MarkerDTO m : markers) {
-                                featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                if (mutagenForFeature != null) {
+                                    if (featureToAddRelationship.getSelectedText().equalsIgnoreCase("created by")) {
+                                        if (m.getName().startsWith(mutagenForFeature)) {
+                                           featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                        }
+                                    }  else {
+                                         featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                    }
+                                } else {
+                                    featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                }
                             }
                             addButton.setEnabled(true);
                             featureToAddTarget.setEnabled(true);
