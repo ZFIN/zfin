@@ -143,10 +143,10 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 my $zircZdbId = "ZDB-LAB-991005-53";
 my $ezrcZdbId = "ZDB-LAB-130607-1";
 my $labZdbId;
-system("/bin/rm -f ./loadReport.txt");
+system("/bin/rm -f /tmp/loadReport.txt");
 
-open(ZIRCREPORT, ">> ./loadReport.txt") or die "can't open loadReport.txt";
-system("/bin/chmod ug+w ./loadReport.txt");
+open(ZIRCREPORT, ">> /tmp/loadReport.txt") or die "can't open loadReport.txt";
+system("/bin/chmod ug+w /tmp/loadReport.txt");
 # Prepare to do some work.
 #  CD into working directory
 #  remove old downloaded files.
@@ -176,6 +176,6 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 $dbh->commit();
 $dbh->disconnect();
 
-&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
+#&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "/tmp/loadReport.txt") ;
 
 exit 0;
