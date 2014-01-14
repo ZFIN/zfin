@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description>All ESTs in ZFIN are supposed to be associated with Genes.&#xd;
-This job check that those relationships are correctly defined.</description>
+This job checks that those relationships are correctly defined.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>

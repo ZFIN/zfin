@@ -19,6 +19,9 @@
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/data_transfer/Downloads &amp;&amp; DownloadFiles.pl</command>
     </hudson.tasks.Shell>
+      <hudson.tasks.Shell>
+          <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3 &amp;&amp; GenerateZFINGFF3.pl</command>
+      </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
@@ -26,7 +29,7 @@
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
-            <recipientList></recipientList>
+            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
@@ -42,7 +45,7 @@
         </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList></recipientList>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
