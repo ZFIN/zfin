@@ -259,7 +259,7 @@
                                onclick="jQuery('#matching-details-show-link${loop.index}').hide();
                                        jQuery('#matching-details-hide-detail${loop.index}').show();
                                        jQuery('#matching-details-${loop.index}').show();
-                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.fishID}&<%= request.getQueryString()%>', function() { processPopupLinks(); });">
+                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.fishID}&<%= request.getQueryString()%>', function() { processPopupLinks('#matching-details-${loop.index}'); });">
                                 Matching Detail</a>
                                 </c:if>
                             <c:if test="${fish.genotypeID==null}">
@@ -267,7 +267,7 @@
                                onclick="jQuery('#matching-details-show-link${loop.index}').hide();
                                        jQuery('#matching-details-hide-detail${loop.index}').show();
                                        jQuery('#matching-details-${loop.index}').show();
-                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.ID}&<%= request.getQueryString()%>', function() { processPopupLinks(); });">
+                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.ID}&<%= request.getQueryString()%>', function() { processPopupLinks('#matching-details-${loop.index}'); });">
                                 Matching Detail</a>
                         </span>
                             </c:if>

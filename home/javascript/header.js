@@ -41,36 +41,41 @@
 
 }
 
-function processPopupLinks() {
-  //for each popup link, create a div to store the popup contents
-    jQuery('.popup-link').each( function() {
+function processPopupLinks(parent) {
+//for each popup link, create a div to store the popup contents
+    var selector = parent + ' .popup-link ';
+
+
+    jQuery(selector).each(function() {
         div_id = randomUniqueID("popup-");
-        jQuery(this).attr("rel","#"+div_id);
+        jQuery(this).attr("rel", "#" + div_id);
         div_html = "<div class=\"simple_overlay\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
-        //append to the body so that we don't get unwanted css rules
+//append to the body so that we don't get unwanted css rules
         jQuery('body').append(div_html);
         if (jQuery(this).overlay != undefined)
             this.style.display = "inline";
 
-  });
+    });
 
-  //use jqueryTOOLS to create popups & use jquery to load via ajax
-  jQuery('.popup-link').overlay({
-	   mask: {
-  		           color: '#000',
-		           loadSpeed: 100,
-		           opacity: 0.15
-	   },
-	   onBeforeLoad: function() {
-			// grab wrapper element inside content
-			var wrap = this.getOverlay().find(".popup-content");
 
-			// load the page specified in the trigger
-			wrap.load(this.getTrigger().attr("href"));
-	   }
+//use jqueryTOOLS to create popups & use jquery to load via ajax
+    jQuery(selector).overlay({
+        mask: {
+            color: '#000',
+            loadSpeed: 100,
+            opacity: 0.15
+        },
+        onBeforeLoad: function() {
+// grab wrapper element inside content
+            var wrap = this.getOverlay().find(".popup-content");
 
-	});
+// load the page specified in the trigger
+            wrap.load(this.getTrigger().attr("href"));
+        }
+
+    });
 }
+
 
 
 
@@ -88,7 +93,7 @@ function addScript(url, onloadFunction) {
 
 addScript("/javascript/jquery-1.4.4.min.js", function() {
     jQuery.noConflict();
-    addScript("/javascript/jquery.tools.min.js", function() { jQuery(document).ready(processPopupLinks);  });
+    addScript("/javascript/jquery.tools.min.js", function() { jQuery(document).ready(function() { processPopupLinks('body'); });  });
     addScript("/javascript/prototype.js");    
     });
 

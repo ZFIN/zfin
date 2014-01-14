@@ -46,9 +46,12 @@
 
     }
 
-    function processPopupLinks() {
+    function processPopupLinks(parent) {
 //for each popup link, create a div to store the popup contents
-        jQuery('.popup-link').each(function() {
+        var selector = parent + ' .popup-link ';
+
+
+        jQuery(selector).each(function() {
             div_id = randomUniqueID("popup-");
             jQuery(this).attr("rel", "#" + div_id);
             div_html = "<div class=\"simple_overlay\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
@@ -59,8 +62,9 @@
 
         });
 
+
 //use jqueryTOOLS to create popups & use jquery to load via ajax
-        jQuery('.popup-link').overlay({
+        jQuery(selector).overlay({
                     mask: {
                         color: '#000',
                         loadSpeed: 100,
@@ -77,8 +81,12 @@
                 });
     }
 
+
+
     jQuery.noConflict();
-    jQuery(document).ready(processPopupLinks);
+
+    jQuery(document).ready(function() { processPopupLinks('body'); });
+
 </script>
 
 <body id="body" onload="hdrSetTabs();">

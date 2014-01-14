@@ -2040,7 +2040,7 @@ union
 <div id="markerviewtranscriptdetails">Loading Transcript Data... <img src="/images/ajax-loader.gif"/></div>
 <?MIVAR>
 <script type="text/javascript">
-  jQuery('#markerviewtranscriptdetails').load('/action/marker/related-transcripts?zdbID=$OID', function() { processPopupLinks(); });
+  jQuery('#markerviewtranscriptdetails').load('/action/marker/related-transcripts?zdbID=$OID', function() { processPopupLinks('#markerviewtranscriptdetails'); });
 </script>
 <?/MIVAR>
 

@@ -557,14 +557,14 @@ DEBUGGING:
    	    function expandMOList$phenosum_mo_elem_id() {
      	      var elem = document.getElementById('$phenosum_mo_elem_id');
               elem.innerHTML = "$phenosum_mo_long_list_escp <a href=javascript:onClick=shrinkMOList$phenosum_mo_elem_id()><img border=0 src=/images/left_arrow.gif></a>";	
-              processPopupLinks();
+              processPopupLinks('$phenosum_mo_elem_id');
 
 	    }
 
    	    function shrinkMOList$phenosum_mo_elem_id() {
               var elem = document.getElementById('$phenosum_mo_elem_id');
               elem.innerHTML = "$phenosum_mo_short_list_escp ... <a href=javascript:onClick=expandMOList$phenosum_mo_elem_id()>(all $phenosum_morphant_pheno_flag) <img border=0 src=/images/right_arrow.gif></a>";	
-              processPopupLinks();
+              processPopupLinks('$phenosum_mo_elem_id');
 
 	    }
 

@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${expressionSection}() {
-            jQuery('#${expressionSection}-genes').load('/action/ontology/show-expressed-genes/${formBean.term.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${expressionSection}-inSituProbes').load('/action/ontology/show-expressed-insitu-probes/${formBean.term.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${expressionSection}-antibodies').load('/action/ontology/show-labeled-antibodies/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${expressionSection}-genes').load('/action/ontology/show-expressed-genes/${formBean.term.zdbID}', function() { processPopupLinks('#${expressionSection}-genes'); });
+            jQuery('#${expressionSection}-inSituProbes').load('/action/ontology/show-expressed-insitu-probes/${formBean.term.zdbID}', function() { processPopupLinks('#${expressionSection}-inSituProbes'); });
+            jQuery('#${expressionSection}-antibodies').load('/action/ontology/show-labeled-antibodies/${formBean.term.zdbID}', function() { processPopupLinks('#${expressionSection}-antibodies'); });
             showSection('${expressionSection}', true);
         }
     </script>

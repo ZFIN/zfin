@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            jQuery('#${phenotypeSection}-mutants').load('/action/ontology/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks(); } );
-            jQuery('#${phenotypeSection}-sequence-targeting-reagents').load('/action/ontology/show-phenotype-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
-            jQuery('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents').load('/action/ontology/show-phenotype-non-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks(); });
+            jQuery('#${phenotypeSection}-mutants').load('/action/ontology/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-mutants'); } );
+            jQuery('#${phenotypeSection}-sequence-targeting-reagents').load('/action/ontology/show-phenotype-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-sequence-targeting-reagents'); });
+            jQuery('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents').load('/action/ontology/show-phenotype-non-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents'); });
             showSection('${phenotypeSection}', true);
         }
     </script>
