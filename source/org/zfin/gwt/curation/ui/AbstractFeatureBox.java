@@ -137,6 +137,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                     suffixLabel.setVisible(false);*/
                     featureSuffixBox.setVisible(true);
                     suffixLabel.setVisible(true);
+                    constructTextBox.setEnabled(false);
                 }
                 handleDirty();
             }
