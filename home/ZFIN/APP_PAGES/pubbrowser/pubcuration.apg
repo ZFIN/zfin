@@ -75,21 +75,21 @@ OPTIONAL VARS:
 
 
       <?MICOMMENT>  Delete all entries for this pub in temp_infrastructure tables <?/MICOMMENT>
-      <?MISQL SQL="SELECT xpatinf_zdb_id 
+      <?MISQL SQL="SELECT xpatinf_zdb_id
                    FROM expression_pattern_infrastructure
                    WHERE xpatinf_pub_zdb_id = '$OID';">
         <?MIVAR NAME=xpatinf_zdb_id>$1<?/MIVAR>
         <?MISQL SQL="delete from zdb_active_data where zactvd_zdb_id = '$xpatinf_zdb_id';"><?/MISQL>
       <?/MISQL>
-      
+
       <?MICOMMENT>  Set all genotype nicknames to the handle <?/MICOMMENT>
-      <?MISQL SQL="SELECT distinct geno_zdb_id, get_genotype_handle(geno_zdb_id) 
+      <?MISQL SQL="SELECT distinct geno_zdb_id, get_genotype_handle(geno_zdb_id)
                    FROM genotype, record_attribution
                    WHERE recattrib_source_zdb_id = '$OID'
                      AND recattrib_data_zdb_id = geno_zdb_id;">
         <?MISQL SQL="update genotype set geno_handle = '$2' where geno_zdb_id = '$1';"><?/MISQL>
       <?/MISQL>
-      
+
   <?/MIBLOCK>
 
   <?MIBLOCK COND=$(AND,$(XST,$paper_status),$(EC,$paper_status,open))>
@@ -114,23 +114,26 @@ OPTIONAL VARS:
   <?/MIBLOCK>
 
   <SCRIPT>
-   
+
       function replaceLocation(url) {
-        if (navigator.userAgent.indexOf("Safari") >= 0) 
-          location = url;        
-        else 
+        if (navigator.userAgent.indexOf("Safari") >= 0)
+          location = url;
+        else
           location.replace(url);
-        
+
       }
-  
+
       function closePaper() {
         var pnote = 'Closed Paper';
-	<?MISQL SQL="SELECT pubcl_topic
+        var closeOKWithMissingFeatGenoRelation = true;
+        var closeOKWithMissingFeatMarkerRelation = true;
+
+	    <?MISQL SQL="SELECT pubcl_topic
 	             FROM publication_claim
 	             WHERE pubcl_pub_zdb_id = '$OID';">
 	    <?MIVAR NAME=OPEN_TOPICS>$1<?/MIVAR>
         <?/MISQL>
-          
+
         <?MIBLOCK COND="$(XST,$OPEN_TOPICS)">
           if (confirm('Warning: Open topics exist and will be closed.')) {
             <?MIVAR>
@@ -138,8 +141,7 @@ OPTIONAL VARS:
             <?/MIVAR>
           }
         <?MIELSE>
-
-<?MIVAR NAME="featureswogenotypes"><?/MIVAR>
+            <?MIVAR NAME="featureswogenotypes"><?/MIVAR>
             <?MISQL SQL="
               select distinct f.feature_name, f.feature_zdb_id, ra1.recattrib_source_zdb_id
               from feature f
@@ -152,38 +154,59 @@ OPTIONAL VARS:
               (
                   select *
                   from genotype_feature gf, record_attribution ra2
-                  where 
+                  where
                   gf.genofeat_feature_zdb_id = f.feature_zdb_id
                   and
                   ra2.recattrib_source_type='standard'
-                  and 
+                  and
                   gf.genofeat_geno_zdb_id = ra2.recattrib_data_zdb_id
                   and
                   ra2.recattrib_source_zdb_id='$OID'
-              )
-              ;
-        ">
-            <?MIVAR NAME="featureswogenotypes">$1 $featureswogenotypes<?/MIVAR>
+              );">
+                <?MIVAR NAME="featureswogenotypes">$1 $featureswogenotypes<?/MIVAR>
             <?/MISQL>
 
           <?MIBLOCK COND="$(>,$(STRLEN,$featureswogenotypes),0)">
             <?MIVAR>
-            var answer = confirm('Close if these features have no genotypes?\n  $featureswogenotypes') ; 
-            if(answer){
-                replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
-            }
-            else{
-                alert("Not closing") ; 
-            }
+              var closeOKWithMissingFeatGenoRelation = confirm('Close if these features have no genotypes?\n  $featureswogenotypes');
             <?/MIVAR>
-          <?MIELSE>
+
+          <?/MIBLOCK>
+
+            <?MIVAR NAME="featuresMissingFeatMarkerRelationships"><?/MIVAR>
+            <?MISQL SQL="
+              select distinct feature_name
+                from record_attribution, feature
+               where recattrib_source_zdb_id = '$OID'
+                 and recattrib_data_zdb_id = feature_zdb_id
+                 and exists(select 'x' from feature_assay
+                             where featassay_feature_zdb_id = recattrib_data_zdb_id
+                               and (featassay_mutagen = 'CRISPR' or featassay_mutagen = 'TALEN'))
+                 and (not exists(select 'x' from feature_marker_relationship
+                                           where fmrel_ftr_zdb_id = recattrib_data_zdb_id
+                                             and fmrel_type = 'is allele of')
+                      or not exists(select 'x' from feature_marker_relationship
+                                     where fmrel_ftr_zdb_id = recattrib_data_zdb_id
+                                       and fmrel_type = 'created by'));">
+                <?MIVAR NAME="featuresMissingFeatMarkerRelationships">$1 $featuresMissingFeatMarkerRelationships<?/MIVAR>
+            <?/MISQL>
+
+          <?MIBLOCK COND="$(>,$(STRLEN,$featuresMissingFeatMarkerRelationships),0)">
             <?MIVAR>
-                replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+              closeOKWithMissingFeatMarkerRelation = confirm('Close if there is feature created by CRISPR or TALEN with missing related feature marker relation?\n  $featuresMissingFeatMarkerRelationships');
             <?/MIVAR>
           <?/MIBLOCK>
+
+          if (closeOKWithMissingFeatGenoRelation && closeOKWithMissingFeatMarkerRelation)
+             <?MIVAR>
+                replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_status=close&pnote="+pnote);
+             <?/MIVAR>
+          else
+             alert("Not closing");
+
         <?/MIBLOCK>
       }
-      
+
       function openPaper(){
         var pnote = 'Reopen Paper';
         <?MIVAR>
@@ -198,29 +221,29 @@ OPTIONAL VARS:
         replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&paper_indexting=yes&pnote="+pnote);
         <?/MIVAR>
       }
-      
+
       function reassignTopic(topic,list){
         var curatorID = escape(list.value);
         <?MIVAR>
         replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&reassignTopic="+topic+"&reassignCurator="+curatorID);
         <?/MIVAR>
       }
-      
+
       function curate(topic,action){
         <?MIVAR>
         replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&"+action+"="+topic+"#topics");
         <?/MIVAR>
       }
-      
+
       function editNote(pnote_zdb_id) {
         helpwin=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pnote_editor.apg&OID="+pnote_zdb_id,"helpwindow","scrollbars=yes,width=800,height=500");
         <?MIVAR>replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID#notes");<?/MIVAR>
       }
-      
+
       function deleteNote(pnote_zdb_id) {
         <?MIVAR>replaceLocation("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&delete_pnote="+pnote_zdb_id+"#notes");<?/MIVAR>
       }
-      
+
       function noData() {
         var pnote = 'Upon Review, this publication contains no information currently curated by ZFIN.';
         <?MIVAR>
@@ -237,14 +260,14 @@ OPTIONAL VARS:
           else
             alert(string.charAt(i));
         }
-        
+
         return true;
       }
-      
+
       function isValidTextArea(ta) {
         var string = escape(ta.value);
-        if (isEmpty(string)) { 
-          alert('Invalid Input: Empty ('+string+')'); 
+        if (isEmpty(string)) {
+          alert('Invalid Input: Empty ('+string+')');
           return false;
         }
         return true;
@@ -252,13 +275,13 @@ OPTIONAL VARS:
 
      function validateCheckbox() {
   	var contact_list  = document.contact_author.contact;
- 	var additional_eaddr = document.contact_author.additional_eaddr.value; 
+ 	var additional_eaddr = document.contact_author.additional_eaddr.value;
 	var valid     = false;
 	var contact_list_param = "";
 	var additional_eaddr_param = "";
 
 	if( contact_list && contact_list.length > 0) {
-	   valid = true; 
+	   valid = true;
 	   for (i=0; i<contact_list.length; i++) {
 	      if(contact_list[i].checked) {
 		contact_list_param += contact_list[i].value+'|';
@@ -268,12 +291,12 @@ OPTIONAL VARS:
 	}
         // when there is only one contact
 	else if (contact_list && contact_list.checked) {
-	   valid = true; 
-	   contact_list_param = "&contact_list=" + contact_list.value +'|';	
+	   valid = true;
+	   contact_list_param = "&contact_list=" + contact_list.value +'|';
 	}
 
         if (! isEmpty(additional_eaddr)) {
-	   additional_eaddr_param = "&additional_eaddr=" + additional_eaddr; 
+	   additional_eaddr_param = "&additional_eaddr=" + additional_eaddr;
 	   valid = true;
 	}
 
@@ -281,58 +304,58 @@ OPTIONAL VARS:
 		alert("Please select contacts first.");
 		return false;
 	}
-  
+
         <?MIVAR>
 	window.open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-notif_frame.apg&status=edit&OID=$OID"+contact_list_param+additional_eaddr_param+"&sender_id=$ZDB_ident","editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
 	<?/MIVAR>
- 	return true;		       
-     }  	
+ 	return true;
+     }
 
 
     <?MIVAR COND="$(XST,$calling_apg)">
       window.replaceLocation("$calling_apg");
     <?/MIVAR>
-  
+
   </SCRIPT>
 
 
   <?MIVAR>
     <TITLE>ZFIN Curate Pub: $title</TITLE>
   <?/MIVAR>
-  
+
   <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
-  
+
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
 
-  
-<?MICOMMENT> 
+
+<?MICOMMENT>
   ========================
   =    GET PUB VALUES    =
   ========================
 <?/MICOMMENT>
 
-  
+
   <?MISQL SQL="SELECT pub_file FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
   <?MIVAR NAME=$pub_file>$1<?/MIVAR>
-  
+
   <?MISQL SQL="SELECT pub_completion_date, pub_is_indexed, pub_indexed_date, jtype FROM publication WHERE zdb_id = '$OID';"><?/MISQL>
   <?MIVAR NAME=$pub_completion_date>$1<?/MIVAR>
   <?MIVAR NAME=$pub_is_indexed>$2<?/MIVAR>
   <?MIVAR NAME=$pub_indexed_date>$3<?/MIVAR>
   <?MIVAR NAME=$pub_jtype>$4<?/MIVAR>
-  
-    
-  <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" METHOD=post NAME=upload  
+
+
+  <FORM ACTION="/<!--|CGI_BIN_DIR_NAME|-->/upload.cgi" METHOD=post NAME=upload
         ENCTYPE="multipart/form-data">
     <?MIVAR>
       <INPUT TYPE=HIDDEN NAME=redirect_url VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
       <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
-      <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+      <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID">
       <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
     <?/MIVAR>
- 
-  
-<?MICOMMENT> 
+
+
+<?MICOMMENT>
   ===============================
   =    CURATION TABLE HEADER    =
   ===============================
@@ -354,7 +377,7 @@ OPTIONAL VARS:
       </td>
       <td align=right>
 <?MICOMMENT>Bugz6808 checking for pub type to disable Cuartion links<?/MICOMMENT>
-<?MIBLOCK COND="$(AND,$(NC,$pub_jtype,Unpublished),$(NC,$pub_jtype,Curation))">        
+<?MIBLOCK COND="$(AND,$(NC,$pub_jtype,Unpublished),$(NC,$pub_jtype,Curation))">
 <?MIVAR>
           $(IF,$(EC,$ZDB_access,root),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID">Curate</A>")
 <?/MIVAR>
@@ -370,7 +393,7 @@ OPTIONAL VARS:
       </td>
     </tr>
 
-<!--  ALERT (2003-08-01) PDF's uploaded to chroix are not the same file size. 
+<!--  ALERT (2003-08-01) PDF's uploaded to chroix are not the same file size.
       Potential issues with Informix. Retest after Informix upgrade.
 -->
 
@@ -383,55 +406,55 @@ OPTIONAL VARS:
              Replace file:
            <?/MIVAR>
          <?MIELSE>
-           Upload PDF: 
+           Upload PDF:
          <?/MIBLOCK>
-           <input type=file name="upload" size=50> 
+           <input type=file name="upload" size=50>
            <input type=submit value=Upload>
       </td>
     </tr>
 
   </table>
-  
+
   </form>
-  
-<?MICOMMENT> 
+
+<?MICOMMENT>
   ===========================
   =    CLOSE PUB BUTTONS    =
   ===========================
 <?/MICOMMENT>
-  
+
   <form name=closing>
   <?MIBLOCK COND="$(EC,$pub_completion_date,NULL)">
-    <?MISQL SQL="SELECT count(*)::integer 
-                 FROM curation 
+    <?MISQL SQL="SELECT count(*)::integer
+                 FROM curation
                  WHERE cur_pub_zdb_id='$OID'
                    AND cur_topic != 'Linked Authors'
                    AND cur_data_found = 't';"><?/MISQL>
     <?MIVAR NAME=curation_count>$1<?/MIVAR>
-  
+
     <?MIBLOCK COND="$(=,$curation_count,0)">
         <input type=button value="Close Paper with No Data Found" onClick="noData()";>
-    <?MIELSE>             
+    <?MIELSE>
           <input type=button value="Close Paper" onClick="closePaper()";>
     <?/MIBLOCK>
   <?MIELSE>
     <input type=button value="ReOpen Paper" onClick="openPaper()";>
   <?/MIBLOCK>
-   
+
   <?MIBLOCK COND="$(EC,$pub_is_indexed,f)">
     &nbsp;&nbsp;&nbsp;<input type=button value="Indexed" onClick="indexPaper()";>
   <?/MIBLOCK>
-   
+
     <div id="unfinished-phenotype-curation" class="error"></div>
    <?MIVAR>
     <script type="text/javascript">
         jQuery('#unfinished-phenotype-curation').load('/action/publication/close-curation?publicationID=$OID');
     </script>
    <?/MIVAR>
- </form> 
+ </form>
 
 
-<?MICOMMENT> 
+<?MICOMMENT>
 Commenting out survey as a part of FB case 7820
 ======================================
 = link to googleforms curator survey =
@@ -440,12 +463,12 @@ Commenting out survey as a part of FB case 7820
    <?MIVAR>
      $(IF,$(EC,$ZDB_access,root),"<A HREF="http://spreadsheets.google.com/viewform?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA&entry_0=$OID" target="blank">Do Curation Questionnaire</A>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="http://spreadsheets.google.com/viewanalytics?formkey=dFo0bTRuOVBEOC1Pa082T3VGdWFYYkE6MA">(View Results)</A>")
    <?/MIVAR>
-  
-<?/MICOMMENT> 
+
+<?/MICOMMENT>
 
 
-  
-<?MICOMMENT> 
+
+<?MICOMMENT>
   ======================
   =    TOPIC STATUS    =
   ======================
@@ -454,9 +477,9 @@ Commenting out survey as a part of FB case 7820
 <P>
   <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=status>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>"> 
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="<?MIVAR>$OID<?/MIVAR>">
 
-<!--  
+<!--
   <table bgcolor="<!--|SIDEBAR_COLOR|-->">
     <tr>
       <td>
@@ -464,7 +487,7 @@ Commenting out survey as a part of FB case 7820
       </td>
     </tr>
   </table>
--->  
+-->
 
 
   <a name=topics></a>
@@ -483,14 +506,14 @@ Commenting out survey as a part of FB case 7820
         <b>Curator</b>
       </td>
     </tr>
-    
+
 <?MICOMMENT> --------------- VARS FOR STATUS TABLE --------------- <?/MICOMMENT>
-  <?MIVAR NAME=CURRENTROW>0<?/MIVAR>  
+  <?MIVAR NAME=CURRENTROW>0<?/MIVAR>
   <?MIVAR NAME=QUERY_CURATORS>
       SELECT p.name, p.zdb_id
       FROM person p, lab l, int_person_lab
-      WHERE p.zdb_id = source_id 
-        AND target_id = l.zdb_id 
+      WHERE p.zdb_id = source_id
+        AND target_id = l.zdb_id
         AND l.name like 'ZFIN%'
         AND (   position_id = '6'
              or
@@ -500,8 +523,8 @@ Commenting out survey as a part of FB case 7820
             )
       ORDER BY p.name;
   <?/MIVAR>
-  
-  <?MISQL SQL="SELECT curtopic_name, cur_closed_date, cur_data_found, p1.zdb_id, p1.name, 
+
+  <?MISQL SQL="SELECT curtopic_name, cur_closed_date, cur_data_found, p1.zdb_id, p1.name,
                pubcl_curator_zdb_id, p2.name
                FROM curation_topic, OUTER(curation, person p1), OUTER(publication_claim, person p2)
                WHERE curtopic_name = cur_topic
@@ -512,7 +535,7 @@ Commenting out survey as a part of FB case 7820
                  and pubcl_curator_zdb_id = p2.zdb_id
                  and curtopic_name != 'Linked Authors'
                ORDER BY curtopic_name;">
-              
+
           <!--    $1, $2, $3, $4, $5, $6 <br>   -->
           <?MIVAR NAME=curtopic_name>$1<?/MIVAR>
           <?MIVAR NAME=cur_closed_date>$2<?/MIVAR>
@@ -521,25 +544,25 @@ Commenting out survey as a part of FB case 7820
           <?MIVAR NAME=cur_curator_name>$5<?/MIVAR>
           <?MIVAR NAME=pubcl_curator_zdb_id>$6<?/MIVAR>
           <?MIVAR NAME=pubcl_curator_name>$7<?/MIVAR>
-          
+
           $(SETVAR,$CURRENTROW,$(+,$CURRENTROW,1))
     <tr $(IF,$(=,$(MOD,$CURRENTROW,2),1),bgcolor=<!--|HIGHLIGHT_COLOR|-->)>
-      
+
     <?MIBLOCK COND="$(NE,$cur_closed_date,NULL)">
       <?MIVAR>
       <td>
-          <input type=checkbox value="c_claim$CURRENTROW" 
+          <input type=checkbox value="c_claim$CURRENTROW"
           $(IF,$(EC,$cur_data_found,t),CHECKED)
           onClick="curate('$curtopic_name','$(IF,$(EC,$cur_data_found,t),unclaim,claim)')">
-          $curtopic_name 
+          $curtopic_name
       </td>
       <td>
-          <input type=checkbox value="c_open$CURRENTROW" 
-          onClick="curate('$curtopic_name','open')"> 
+          <input type=checkbox value="c_open$CURRENTROW"
+          onClick="curate('$curtopic_name','open')">
       </td>
       <td>
           <input type=checkbox value="c_close$CURRENTROW" CHECKED
-          onClick="curate('$curtopic_name','open')"> 
+          onClick="curate('$curtopic_name','open')">
       </td>
       <td>
           $cur_curator_name
@@ -550,7 +573,7 @@ Commenting out survey as a part of FB case 7820
       <td>
           <input type=checkbox value="o_claim$CURRENTROW" CHECKED
           onClick="window.alert('Invalid Entry: Topic is Open.'); return false;">
-          $curtopic_name 
+          $curtopic_name
       </td>
       <td>
           <input type=checkbox value="o_open$CURRENTROW" CHECKED
@@ -558,7 +581,7 @@ Commenting out survey as a part of FB case 7820
       </td>
       <td>
           <input type=checkbox value="o_close$CURRENTROW"
-          <?MIVAR> onClick="curate('$curtopic_name','close')"; <?/MIVAR>> 
+          <?MIVAR> onClick="curate('$curtopic_name','close')"; <?/MIVAR>>
       </td>
       <td>
           <SELECT NAME="curator$CURRENTROW" SIZE=1
@@ -575,28 +598,28 @@ Commenting out survey as a part of FB case 7820
           <input type=checkbox value="claim$CURRENTROW"
             <?MIVAR COND="$(EC,$cur_data_found,t)"> CHECKED onClick="curate('$curtopic_name','unclaim')";<?/MIVAR>
             <?MIVAR COND="$(NE,$cur_data_found,t)"> onClick="curate('$curtopic_name','claim')";<?/MIVAR> >
-          $curtopic_name 
-            
+          $curtopic_name
+
       </td>
       <td>
           <input type=checkbox value="open$CURRENTROW"
-          <?MIVAR COND="$(NC,$curtopic_name,Linked Authors)"> 
-              onClick="curate('$curtopic_name','open')"; 
+          <?MIVAR COND="$(NC,$curtopic_name,Linked Authors)">
+              onClick="curate('$curtopic_name','open')";
           <?/MIVAR>
-          <?MIVAR COND="$(EQ,$curtopic_name,Linked Authors)"> 
+          <?MIVAR COND="$(EQ,$curtopic_name,Linked Authors)">
               onClick="window.alert('Invalid Entry: Use Linked Author Form.'); return false;"
           <?/MIVAR>
           >
       </td>
       <td>
           <input type=checkbox value="close$CURRENTROW"
-          <?MIVAR COND="$(NC,$curtopic_name,Linked Authors)"> 
-              onClick="curate('$curtopic_name','close')"; 
+          <?MIVAR COND="$(NC,$curtopic_name,Linked Authors)">
+              onClick="curate('$curtopic_name','close')";
           <?/MIVAR>
-          <?MIVAR COND="$(EQ,$curtopic_name,Linked Authors)"> 
+          <?MIVAR COND="$(EQ,$curtopic_name,Linked Authors)">
               onClick="window.alert('Invalid Entry: Close using $curtopic_name Form.'); return false;"
           <?/MIVAR>
-          > 
+          >
       </td>
       <td>
           &nbsp;
@@ -606,14 +629,14 @@ Commenting out survey as a part of FB case 7820
     </tr>
   <?/MISQL>
 
-    
+
   </table>
-  
+
   </form>
 
 
 
-<?MICOMMENT> 
+<?MICOMMENT>
   ===========
   =  NOTES  =
   ===========
@@ -624,18 +647,18 @@ Commenting out survey as a part of FB case 7820
   <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" method=post name=new_notes>
     <?MIVAR>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID">
     <INPUT TYPE=HIDDEN NAME=calling_apg VALUE="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">
     <?/MIVAR>
-    
-  <font color="black"><b> Notes </b></font><a name=notes></a>  
+
+  <font color="black"><b> Notes </b></font><a name=notes></a>
 
 
-  <br><TEXTAREA NAME="pnote" rows="4" cols="70" wrap="virtual"></TEXTAREA> 
-  <br><input type="submit" value="New Note" onClick="return isValidTextArea(window.new_notes.pnote)";> 
-  
+  <br><TEXTAREA NAME="pnote" rows="4" cols="70" wrap="virtual"></TEXTAREA>
+  <br><input type="submit" value="New Note" onClick="return isValidTextArea(window.new_notes.pnote)";>
+
   </form>
-  
+
   <table border=0 width=66%>
     <tr>
       <td>
@@ -645,13 +668,13 @@ Commenting out survey as a part of FB case 7820
                WHERE pnote_pub_zdb_id = '$OID'
                  AND pnote_curator_zdb_id = p.zdb_id
                ORDER BY pnote_date desc;">
-                 
+
       <?MIVAR NAME=pnote_curator_id>$1<?/MIVAR>
       <?MIVAR NAME=pnote_curator_name>$2<?/MIVAR>
       <?MIVAR NAME=pnote_text>$3<?/MIVAR>
       <?MIVAR NAME=pnote_date>$4<?/MIVAR>
       <?MIVAR NAME=pnote_zdb_id>$5<?/MIVAR>
-      
+
       <?MIVAR>
         <p>
         $pnote_curator_name - $(SUBSTR,$pnote_date,1,10)
@@ -662,14 +685,14 @@ Commenting out survey as a part of FB case 7820
         <br><UL>$pnote_text</UL>
       <?/MIVAR>
   <?/MISQL>
-  
+
   </form>
 
       </td>
     </tr>
   </table>
-  
-<?MICOMMENT> 
+
+<?MICOMMENT>
   =======================
   =  Contact Author(s)  =
   =======================
@@ -677,24 +700,24 @@ Commenting out survey as a part of FB case 7820
 
 <P>
 <?MIVAR COND="$(XST,$contact)" NAME=$contacts>
-  $(TRIM,$(SEPARATE,$contact,",")) 
+  $(TRIM,$(SEPARATE,$contact,","))
 <?/MIVAR>
 
-<FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post NAME=contact_author 
+<FORM ACTION="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" METHOD=post NAME=contact_author
       ONSUBMIT="return validateCheckbox()">
 
     <?MIVAR>
     <INPUT TYPE=HIDDEN NAME=MIval VALUE="aa-pubcuration.apg">
-    <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID"> 
+    <INPUT TYPE=HIDDEN NAME=OID VALUE="$OID">
 
-    <?/MIVAR> 
+    <?/MIVAR>
   <font color="black"><b> Contact Author(s) </b></font><a name=contact_author></a> <br>
   &nbsp;&nbsp;
 
-  <?MISQL SQL="SELECT get_person_full_name(a.zdb_id), a.zdb_id,  a.email 
-                 FROM person a, int_person_pub b 
-                WHERE source_id = a.zdb_id 
-                  AND target_id='$OID' 
+  <?MISQL SQL="SELECT get_person_full_name(a.zdb_id), a.zdb_id,  a.email
+                 FROM person a, int_person_pub b
+                WHERE source_id = a.zdb_id
+                  AND target_id='$OID'
                   AND a.email is not null
                   AND a.email <> ''
              ORDER BY a.last_name,a.first_name; ">
@@ -703,7 +726,7 @@ Commenting out survey as a part of FB case 7820
      <?MIVAR NAME=author_email>$3<?/MIVAR>
 
      <INPUT type=checkbox CHECKED name=contact value="$author_name=$author_email"> $author_name
-     
+
   <?/MISQL>
 
   <br>	<?MIVAR>
@@ -721,15 +744,15 @@ Commenting out survey as a part of FB case 7820
   <?/MIVAR>
 
 <?/MICOMMENT>
-</form> 
+</form>
 
 
-<?MICOMMENT> 
+<?MICOMMENT>
   ====================
   =  ERROR MESSAGES  =
   ====================
 <?/MICOMMENT>
-  
+
 <?MIELSE>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpageheader.apg';">$1<?/MISQL>
   <b>Requested ID not found in ZFIN.</b>
