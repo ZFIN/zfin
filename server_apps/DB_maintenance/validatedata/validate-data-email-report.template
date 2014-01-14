@@ -25,22 +25,31 @@ table, th, td, input, textarea {
 color:#000;
 background-color:#EAF2D3;
 }
+        table.rowstripes tr.odd {
+            background-color: #eee;
+        }
+        table.rowstripes tr.even { background-color: #fff }
 </style>
 </head>
 <body>
 
-Report Run: ${dateRun?string("yyyy-MM-dd HH:mm:ss")}
+<b>Report Run:</b> ${dateRun?string("yyyy-MM-dd HH:mm:ss")}
 
+<p/>
 ${numberOfRecords} ${errorMessage}
-
-<table id=3D"result">
+<p/>
+<table id="result" class="rowstripes">
 <tbody><tr>
 <#list headerColumns as headerEntry>
 <th>${headerEntry}</th>
 </#list>
 </tr>
 <#list recordList as resultObject>
-   <tr>
+       <#if resultObject_index%2==0>
+    <tr class="odd">
+        <#else>
+        <tr class="even">
+    </#if>
 <#list resultObject as record>
 <td>
 ${record}
