@@ -164,6 +164,12 @@ public class ForeignDB implements Comparable<ForeignDB> {
 
 	    return false;
     }
+    public boolean isCreZoo () {
+        if (displayName != null && displayName.equals("CreZoo"))
+            return true;
+
+        return false;
+    }
     public boolean isZmp () {
         if (displayName != null && displayName.equals("ZMP"))
 			   return true;

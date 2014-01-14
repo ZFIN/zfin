@@ -139,7 +139,9 @@ public class FeatureService {
         for (FeatureDBLink featureDBLink : featureSequences) {
             if (!featureDBLink.getReferenceDatabase().getForeignDB().isZfishbook()){
                 if (!featureDBLink.getReferenceDatabase().getForeignDB().isZmp()){
+                    if (!featureDBLink.getReferenceDatabase().getForeignDB().isCreZoo()){
                     featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
+                    }
                 }
             }
         }
