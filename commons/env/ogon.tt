@@ -59,7 +59,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFCC99
-<!--|SOURCEROOT|-->	/nfs/zygotix/zusers/cmpich/projects/svn/ogon
+<!--|SOURCEROOT|-->	/research/zusers/cmpich/ogon/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
