@@ -35,6 +35,7 @@
     </target>
 
     <property file="/server_apps/jenkins/trigger.mirror.properties"/>
+    <property name="sourceJobsDir" value="${basedir}/server_apps/jenkins/jobs"/>
 
     <target name="deploy-jobs" description="Copy jobs into Jenkins_home">
         <tstamp/>
@@ -42,6 +43,15 @@
         <copy todir="${JENKINS_HOME}/jobs">
             <fileset dir="${basedir}/server_apps/jenkins/jobs"/>
         </copy>
+        <antcall target="add-triggers"/>
+        <antcall target="add-email-notifications"/>
+        <antcall target="deploy-email-templates"/>
+    </target>
+
+    <target name="deploy-production-jobs" description="Copy jobs into Jenkins_home">
+        <tstamp/>
+        <echo message="Deploy production jobs into: ${JENKINS_HOME}"/>
+        <antcall target="copy-production-jobs"/>
         <antcall target="add-triggers"/>
         <antcall target="add-email-notifications"/>
         <antcall target="deploy-email-templates"/>
@@ -194,9 +204,45 @@
         </if>
     </target>
 
-<!--
-    <property name="trigger" value="reports"/>
--->
+    <property name="singleJobName" value="harry"/>
+    <target name="copy-production-jobs">
+        <property name="sourceJobFile"
+                  value="${basedir}/server_apps/jenkins/jobs.production.properties"/>
+        <echo message="Source ${sourceJobsDir}"/>
+        <groovy>
+            println "JENKINS_HOME/jobs " + properties.sourceJobs
+            def dir = new File(properties.sourceJobsDir)
+            def jobs = dir.list()
+            // load defined jobs
+            def props = new Properties()
+
+            new File(properties.sourceJobFile).withInputStream {
+            stream -> props.load(stream)
+            }
+
+            jobs.eachWithIndex { value, i -> job = value
+            //println value
+            if(props[value] != null){
+            println "production job: " + value
+            properties.singleJobName = value
+            ant.project.executeTarget('copy-single-job')
+            }
+            }
+        </groovy>
+    </target>
+
+    <target name="copy-single-job">
+        <echo message="Single Job to copy: ${singleJobName}"/>
+        <echo message="copy from Job: ${sourceJobsDir}/${singleJobName}/config.xml"/>
+        <echo message="delete from Job: ${jenkinsHomeJobs}/${singleJobName}/config.xml"/>
+        <delete file="${jenkinsHomeJobs}/${singleJobName}/config.xml"/>
+        <copy file="${sourceJobsDir}/${singleJobName}/config.xml"
+              tofile="${jenkinsHomeJobs}/${singleJobName}/config.xml"/>
+    </target>
+
+    <!--
+        <property name="trigger" value="reports"/>
+    -->
     <target name="add-email-notifications">
         <property name="propertyFile"
                   value="${basedir}/server_apps/jenkins/email-configuration.${trigger}.properties"/>
