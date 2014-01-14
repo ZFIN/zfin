@@ -60,7 +60,7 @@ use CGI qw(:standard);
 use DBI;
 use English;
 
-$CGI::POST_MAX= 1024 * 1024 * 20 ; # limits post size to 10 meg
+$CGI::POST_MAX= 1024 * 1024 * 50 ; # limits post size to 50 meg
 
 $mailprog = '/usr/lib/sendmail -t -oi -oem';
 
