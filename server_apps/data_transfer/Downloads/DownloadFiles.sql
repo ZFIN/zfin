@@ -868,8 +868,37 @@ select distinct
  from tmp_geno_data
  order by genotype_id, geno_display_name
 ;
-
 drop table tmp_geno_data;
+
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/tgInsertions.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/tgInsertions.txt'
+ DELIMITER "	"
+select distinct feature_zdb_id, feature_abbrev, feature_name, fmrel_mrkr_zdb_id, mrkr_name, szm_term_ont_id
+                     from feature, feature_marker_Relationship, marker, so_zfin_mapping
+                    where fmrel_ftr_zdb_id = feature_zdb_id
+		    and feature_type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+                    and fmrel_mrkr_zdb_id = mrkr_zdb_id
+		    and get_obj_type(mrkr_zdb_id) = szm_object_type;
+
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/constructComponents.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/constructComponents.txt'
+ DELIMITER "	"
+select distinct a.mrkr_zdb_id, 
+                a.mrkr_name, 
+                a.mrkr_type, 
+                b.mrkr_zdb_id, 
+                b.mrkr_name, 
+                b.mrkr_type, 
+		mrel_type,
+                c.szm_term_ont_id, 
+                d.szm_term_ont_id
+         from marker a, marker b, marker_Relationship, so_zfin_mapping c, so_zfin_mapping d
+ 	 where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+	 and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+	 and get_obj_type(a.mrkr_zdb_id) = c.szm_object_type
+	 and get_obj_type(b.mrkr_zdb_id) = d.szm_object_type 
+	 and a.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','ETCONSTRCT','PTCONSTRCT')
+         order by a.mrkr_zdb_id ;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features_missing_markers.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features_missing_markers.txt'
@@ -1375,16 +1404,56 @@ select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,p
    and jtype = 'Journal'
 ;
 
+create temp table tmp_features (feature_id varchar(50), term_o_id varchar(50), f_abbrev varchar(100),
+       	    	  	       f_name varchar(100),ftypedisp varchar(30), mutagen varchar(50),
+			       mutagee varchar(50), construct_id varchar(50), construct_name varchar(50), construct_so_id varchar(50))
+with no log;
+
 -- a list of all features ordered by abbreviation (case insensitive)
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt'
- DELIMITER "	"
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee)
 select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee
 from feature, feature_type, feature_assay, so_zfin_mapping
 where feature_type =ftrtype_name
  and szm_object_type = feature_type
  and feature_zdb_id = featassay_feature_zdb_id
+and feature_Type not in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
 order by lower(feature_abbrev);
+
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, mrkr_zdb_id, mrkr_name
+from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship, marker
+where feature_type =ftrtype_name
+ and szm_object_type = feature_type
+ and feature_zdb_id = featassay_feature_zdb_id
+ and feature_zdb_id = fmrel_ftr_zdb_id
+ and fmrel_mrkr_zdb_id = mrkr_zdb_id
+ and mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+and feature_Type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+and fmrel_type != 'is allele of'
+order by lower(feature_abbrev);
+
+insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
+select feature_zdb_id, szm_term_ont_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee, mrkr_zdb_id, mrkr_name
+from feature, feature_type, feature_assay, so_zfin_mapping, feature_marker_relationship, marker
+where feature_type =ftrtype_name
+ and szm_object_type = feature_type
+ and feature_zdb_id = featassay_feature_zdb_id
+ and feature_zdb_id = fmrel_ftr_zdb_id
+ and fmrel_mrkr_zdb_id = mrkr_zdb_id
+ and mrkr_type not in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+and feature_Type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+and fmrel_type = 'is allele of'
+order by lower(feature_abbrev);
+
+update tmp_features
+  set construct_so_id = (select szm_term_ont_id from so_zfin_mapping
+      		      		where get_obj_type(construct_id) = szm_object_type)
+ where construct_id is not null;
+
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt'
+ DELIMITER "	"
+select * from tmp_features;
 
 -- a list of all features ordered by abbreviation (case insensitive)
 

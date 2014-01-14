@@ -1784,6 +1784,82 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="5">Genomic Feature Type</Column>
             <Column id="6">Mutagen</Column>
             <Column id="7">Mutagee</Column>
+	    <Column id="8">Construct ID</Column>
+	    <Column id="9">Construct name</Column>
+	    <Column id="10">Construct SO ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Transgenic Insertions
+            </Name>
+            <Category>
+                Genomic Feature Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>tgInsertions</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                  select feature_zdb_id, feature_abbrev, feature_name, fmrel_mrkr_zdb_id, mrkr_name
+                     from feature, feature_marker_Relationship, marker
+                    where fmrel_ftr_zdb_id = feature_zdb_id
+		    and feature_type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+                    and fmrel_mrkr_zdb_id = mrkr_zdb_id
+                    order by lower(feature_abbrev)
+                   ;
+                         ]]>
+            </Query>
+            <Column id="1" unique="true">Genomic Feature ID</Column>
+            <Column id="2">Feature SO ID</Column>
+            <Column id="3">Genomic Feature Abbreviation</Column>
+            <Column id="4">Genomic Feature Name</Column>
+            <Column id="5">Construct ID</Column>
+            <Column id="6">Construct Name</Column>
+            <Column id="7">Construct SO ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Construct Components
+            </Name>
+            <Category>
+                Genomic Feature Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>constructComponents</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                 select distinct a.mrkr_zdb_id, 
+                a.mrkr_name, 
+                a.mrkr_type, 
+                b.mrkr_zdb_id, 
+                b.mrkr_name, 
+                b.mrkr_type, 
+		mrel_type,
+                c.szm_term_ont_id, 
+                d.szm_term_ont_id
+         from marker a, marker b, marker_Relationship, so_zfin_mapping c, so_zfin_mapping d
+ 	 where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+	 and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+	 and get_obj_type(a.mrkr_zdb_id) = c.szm_object_type
+	 and get_obj_type(b.mrkr_zdb_id) = d.szm_object_type 
+	 and a.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','ETCONSTRCT','PTCONSTRCT')
+         order by a.mrkr_zdb_id 
+                         ]]>
+            </Query>
+            <Column id="1" unique="true">Construct ID</Column>
+            <Column id="2">Construct Name</Column>
+            <Column id="3">Construct Type</Column>
+            <Column id="4">Component ID</Column>
+            <Column id="5">Component Name</Column>
+            <Column id="6">Component Type</Column>
+            <Column id="7">Relationship</Column>
+	    <Column id="8">Construct SO ID</Column>
+	    <Column id="9">Component SO ID</Column>
         </Download>
         <Download orderIndex="2">
             <Name>
