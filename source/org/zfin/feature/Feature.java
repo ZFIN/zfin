@@ -396,6 +396,22 @@ public class Feature implements EntityNotes{
 
         return false;
     }
+    public boolean isAllCrezoo () {
+        if (dbLinks == null || dbLinks.isEmpty())
+            return false;
+
+        int countCreZoo = 0;
+        for (FeatureDBLink dblink : dbLinks) {
+            if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("CreZoo")) {
+                countCreZoo++;
+            }
+        }
+
+        if (countCreZoo == dbLinks.size())
+            return true;
+
+        return false;
+    }
 
     public boolean isNoZmp () {
 		if (dbLinks == null || dbLinks.isEmpty())
@@ -404,6 +420,18 @@ public class Feature implements EntityNotes{
         for (FeatureDBLink dblink : dbLinks) {
             if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
                   return false;
+            }
+        }
+
+        return true;
+    }
+    public boolean isNoCrezoo () {
+        if (dbLinks == null || dbLinks.isEmpty())
+            return true;
+
+        for (FeatureDBLink dblink : dbLinks) {
+            if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("CreZoo")) {
+                return false;
             }
         }
 
