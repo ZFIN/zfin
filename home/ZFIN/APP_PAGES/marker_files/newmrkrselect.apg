@@ -299,6 +299,20 @@ jQuery.ajax({
     <?/MIBLOCK><!-----------------end input access number ------------>
 
 
+    <!-------  exclude constructs for non-root users --------->
+
+
+    <?MIBLOCK COND="$(NC,$AUTHORIZED,root)">
+        <?MIVAR>
+          $(VECAPPEND, $constraint, " mrkr_type[3,10] != 'CONSTRCT' ")
+          $(SETVAR,$has_constraint,t)
+        <?/MIVAR>
+    <?/MIBLOCK>
+
+
+    <!------- end construct exclusion ----------------------->
+
+
     <!------------------ if LG is selected ---------->
     <?MIBLOCK COND="$(NC,$lg,0)">
       <?MISQL COND=$(XST,$debug_timing) SQL="
