@@ -3,6 +3,7 @@
 <project name="Jenkins" default="run-indexer" basedir="../">
 
     <property environment="env"/>
+    <property name="trigger" value="${SCHEDULE_TRIGGER_FILES}"/>
 
     <!-- Classpath definitions -->
     <path id="classpath">
@@ -179,22 +180,20 @@
         </if>
     </target>
 
-    <property name="trigger" value="${SCHEDULE_TRIGGER_FILES}"/>
-
     <target name="add-triggers">
-        <property name="propertyFile"
-                  value="${basedir}/server_apps/jenkins/trigger.${trigger}.properties"/>
+        <echo message="Instance Name: ${trigger}"/>
+        <property name="propertyFile" value="${basedir}/server_apps/jenkins/trigger.${trigger}.properties"/>
         <if>
             <available file="${propertyFile}"/>
             <then>
-                <echo message="File exists"/>
                 <groovy>
-                    println "JENKINS_HOME/jobs " + properties.jenkinsHomeJobs
+                    //println "JENKINS_HOME/jobs " + properties.jenkinsHomeJobs
                     def dir = new File(properties.jenkinsHomeJobs)
                     def jobs = dir.list()
                     jobs.eachWithIndex { value, i -> properties.jobName = value
                     //println value
-                    ant.project.executeTarget('add-trigger-for-job')
+                    def ant = new AntBuilder(project)
+                    ant."add-trigger-for-job"()
                     }
                 </groovy>
             </then>
@@ -208,9 +207,8 @@
     <target name="copy-production-jobs">
         <property name="sourceJobFile"
                   value="${basedir}/server_apps/jenkins/jobs.production.properties"/>
-        <echo message="Source ${sourceJobsDir}"/>
+        <echo message="Source Directory of Jobs: ${sourceJobsDir}"/>
         <groovy>
-            println "JENKINS_HOME/jobs " + properties.sourceJobs
             def dir = new File(properties.sourceJobsDir)
             def jobs = dir.list()
             // load defined jobs
@@ -221,9 +219,8 @@
             }
 
             jobs.eachWithIndex { value, i -> job = value
-            //println value
             if(props[value] != null){
-            println "production job: " + value
+            //println "production job: " + value
             properties.singleJobName = value
             ant.project.executeTarget('copy-single-job')
             }
@@ -232,9 +229,11 @@
     </target>
 
     <target name="copy-single-job">
-        <echo message="Single Job to copy: ${singleJobName}"/>
-        <echo message="copy from Job: ${sourceJobsDir}/${singleJobName}/config.xml"/>
-        <echo message="delete from Job: ${jenkinsHomeJobs}/${singleJobName}/config.xml"/>
+        <!--
+                <echo message="Single Job to copy: ${singleJobName}"/>
+                <echo message="copy from Job: ${sourceJobsDir}/${singleJobName}/config.xml"/>
+                <echo message="delete from Job: ${jenkinsHomeJobs}/${singleJobName}/config.xml"/>
+        -->
         <delete file="${jenkinsHomeJobs}/${singleJobName}/config.xml"/>
         <copy file="${sourceJobsDir}/${singleJobName}/config.xml"
               tofile="${jenkinsHomeJobs}/${singleJobName}/config.xml"/>
@@ -249,49 +248,46 @@
         <if>
             <available file="${propertyFile}"/>
             <then>
-                <echo message="File exists"/>
                 <groovy>
-                    println "JENKINS_HOME/jobs: " + properties.jenkinsHomeJobs
+                    //println "JENKINS_HOME/jobs: " + properties.jenkinsHomeJobs
                     def dir = new File(properties.jenkinsHomeJobs)
                     def jobs = dir.list()
                     jobs.eachWithIndex { value, i -> properties.jobName = value
                     //println value
-                    ant.project.executeTarget('add-notification-for-job')
+                    def ant = new AntBuilder(project)
+                    ant.'add-notification-per-job'()
                     }
                 </groovy>
             </then>
             <else>
-                <echo message="No email configuration file found: ${propertyFile}. Not generating email notifications on triggers."/>
+                <echo message="No email configuration file found: ${propertyFile}. Generating default email addresses on triggers."/>
+                <groovy>
+                    def dir = new File(properties.jenkinsHomeJobs)
+                    def jobs = dir.list()
+                    jobs.eachWithIndex { value, i -> properties.jobName = value
+                    ant.'add-default-notification-per-job'()
+                    }
+                </groovy>
             </else>
         </if>
     </target>
 
-    <target name="add-trigger-for-job" description="run target for given jobName and triggerName">
-        <groovy>
-            def triggerSeries = properties."trigger".split("\\|")
-            // if no cron trigger found return
-            if(triggerSeries[0] == ''){
-            return
-            }
-            triggerSeries.eachWithIndex { trName, i ->
-            properties.triggerName = trName
-            ant.project.executeTarget('add-trigger-for-job-and-trigger')
-            }
-        </groovy>
-    </target>
-
-    <target name="add-trigger-for-job-and-trigger" description="run target for given jobName and triggerName">
-        <!--
-                <echo message="Job Name: ${jobName}"/>
-                <echo message="Trigger Name: ${triggerName}"/>
-        -->
-        <add-trigger-per-job/>
-    </target>
-
-    <target name="add-notification-for-job" description="run target for given jobName and triggerName">
-        <add-notification-per-job/>
-    </target>
-
+    <macrodef name="add-trigger-for-job" description="run target for given jobName and triggerName">
+        <sequential>
+            <groovy>
+                def triggerSeries = properties."trigger".split("\\|")
+                // if no cron trigger found return
+                if(triggerSeries[0] == ''){
+                return
+                }
+                triggerSeries.eachWithIndex { trName, i ->
+                properties.trigger = trName
+                def ant = new AntBuilder(project)
+                ant.addTriggerPerJob()
+                }
+            </groovy>
+        </sequential>
+    </macrodef>
 
     <target name="create-jenkins-symlink">
         <mkdir dir="${JENKINS_HOME}/logs"/>
@@ -369,10 +365,11 @@
     </target>
 
 
-    <macrodef name="add-trigger-per-job">
+    <macrodef name="addTriggerPerJob">
         <sequential>
-            <echo message="Job Name: ${jobName}"/>
-            <echo message="Trigger Name: ${triggerName}"/>
+            <!--
+                        <echo message="Trigger Name: ${trigger}"/>
+            -->
 
             <property name="propertyFile" value="${basedir}/server_apps/jenkins/trigger.${triggerName}.properties"/>
             <property name="schedule" value=""/>
@@ -389,23 +386,29 @@
                 //println "Property: " + props[properties.jobName]
 
             </groovy>
-            <echo message="Schedule: ${schedule}"/>
-            <echo message="Job: ${jobName}"/>
+            <!--
+                        <echo message="Schedule: ${schedule}"/>
+            -->
 
-            <replaceregexp match="&lt;spec&gt;&lt;/spec&gt;"
-                           replace="&lt;spec&gt;${schedule}&lt;/spec&gt;" flags="g">
-                <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
-            </replaceregexp>
+            <if>
+                <not>
+                    <equals arg1="${schedule}" arg2=""/>
+                </not>
+                <then>
+                    <echo message="Add cron Schedule to ${jobName}: ${schedule} "/>
+                    <replaceregexp match="&lt;spec&gt;&lt;/spec&gt;"
+                                   replace="&lt;spec&gt;${schedule}&lt;/spec&gt;" flags="g">
+                        <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
+                    </replaceregexp>
+                </then>
+            </if>
             <var name="schedule" unset="true"/>
         </sequential>
     </macrodef>
 
     <macrodef name="add-notification-per-job">
         <sequential>
-            <echo message="Job Name: ${jobName}"/>
-
             <property name="emailConfiguration" value=""/>
-
             <groovy>
                 File propertyFile = new File(properties.propertyFile)
                 def props = new Properties()
@@ -418,12 +421,19 @@
                 //println "Property: " + props[properties.jobName+".FAILURE"]
 
             </groovy>
-            <echo message="emailConfiguration: ${emailConfiguration}"/>
 
-            <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
-                           replace="${emailConfiguration}">
-                <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
-            </replaceregexp>
+            <if>
+                <not>
+                    <equals arg1="${emailConfiguration}" arg2=""/>
+                </not>
+                <then>
+                    <echo message="Job Name: ${jobName} : Add Failure trigger ${emailConfiguration}"/>
+                    <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
+                                   replace="${emailConfiguration}">
+                        <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
+                    </replaceregexp>
+                </then>
+            </if>
             <var name="emailConfiguration" unset="true"/>
 
             <groovy>
@@ -434,16 +444,43 @@
                 def emailConfig = props[properties.jobName+".SUCCESS"]
                 if (emailConfig != null)
                 properties.emailConfiguration = emailConfig
+                else
+                properties.emailConfiguration = ""
                 //println "Property: " + props[properties.jobName+".SUCCESS"]
 
             </groovy>
-            <echo message="emailConfiguration: ${emailConfiguration}"/>
+            <if>
+                <not>
+                    <equals arg1="${emailConfiguration}" arg2=""/>
+                </not>
+                <then>
+                    <echo message="Job Name: ${jobName} : Add Success trigger ${emailConfiguration}"/>
+                    <replaceregexp match="@SUCCESS-RECIPIENT-LIST@"
+                                   replace="${emailConfiguration}">
+                        <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
+                    </replaceregexp>
+                </then>
+            </if>
+            <var name="emailConfiguration" unset="true"/>
+        </sequential>
+    </macrodef>
 
+    <macrodef name="add-default-notification-per-job" description="add default email address to job triggers">
+        <sequential>
+            <groovy>
+                properties.emailConfiguration= properties.DEFAULT_EMAIL
+            </groovy>
+            <echo message="Job Name: ${jobName} : Add Failure trigger ${emailConfiguration}"/>
+            <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
+                           replace="${emailConfiguration}">
+                <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
+            </replaceregexp>
+
+            <echo message="Job Name: ${jobName} : Add Success trigger ${emailConfiguration}"/>
             <replaceregexp match="@SUCCESS-RECIPIENT-LIST@"
                            replace="${emailConfiguration}">
                 <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
             </replaceregexp>
-            <var name="emailConfiguration" unset="true"/>
         </sequential>
     </macrodef>
 
