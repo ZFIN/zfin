@@ -56,44 +56,67 @@
     <table border=0>
         <tr>
             <td valign=top>
-                <label for="sequence" class="namesearchLabel">Sequence:</label>
                 <c:if test="${formBean.disruptorType ne 'TALEN'}">
-                    <input type=button value="Reverse" onClick="reverseSequence();">
-                    <input type=button value="Complement" onClick="complementSequence();">
-                    <input type=button value="Reverse & Complement" onClick="reverseComplementSequence();">
+                  <label class="namesearchLabel">Sequence:</label>
                 </c:if>
+                <c:if test="${formBean.disruptorType eq 'TALEN'}">
+                    <label class="namesearchLabel">Sequence 1:</label>
+                </c:if>
+                <input type=button value="Reverse" onClick="reverseSequence('reportSeq','displaySeq');">
+                <input type=button value="Complement" onClick="complementSequence('reportSeq','displaySeq');">
+                <input type=button value="Reverse & Complement" onClick="reverseComplementSequence('reportSeq','displaySeq');">
             </td>
             <td width=20></td><!-- spacer column -->
             <td><form:label path="<%= DisruptorAddBean.NEW_DISRUPTOR_CURNOTE%>" class="curation-form-label">Curator Note:</form:label></td>
         </tr>
         <tr>
             <td>
-                <c:if test="${formBean.disruptorType ne 'TALEN'}">
-                    Reported: 5'-   <form:input id="reportSeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE%>" name="reportSeq" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                </c:if>
-                <c:if test="${formBean.disruptorType eq 'TALEN'}">
-                    Sequence 1:&nbsp;&nbsp;  5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                    <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
-                </c:if>
+               Reported: &nbsp;5'-   <form:input id="reportSeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE%>" name="reportSeq" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
             </td>
             <td width=20></td><!-- spacer column -->
-            <td valign=top rowspan=2>
-                <form:textarea id="curatorNote" path="<%= DisruptorAddBean.NEW_DISRUPTOR_CURNOTE%>" rows="5" cols="70" />
+            <c:choose>
+               <c:when test="${formBean.disruptorType eq 'TALEN'}">
+                 <c:set var="curatorNoteRowspanValue">5</c:set>
+                   <c:set var="curatorNoteRowValue">7</c:set>
+               </c:when>
+               <c:otherwise>
+                   <c:set var="curatorNoteRowspanValue">2</c:set>
+                   <c:set var="curatorNoteRowValue">5</c:set>
+               </c:otherwise>
+            </c:choose>
+            <td valign=top rowspan=${curatorNoteRowspanValue}>
+                <form:textarea id="curatorNote" path="<%= DisruptorAddBean.NEW_DISRUPTOR_CURNOTE%>" rows="${curatorNoteRowValue}" cols="70" />
                 <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_CURNOTE%>" cssClass="error indented-error"/>
             </td>
         </tr>
         <tr>
             <td>
-                <c:if test="${formBean.disruptorType ne 'TALEN'}">
-                    Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                    <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
-                </c:if>
-                <c:if test="${formBean.disruptorType eq 'TALEN'}">
-                    Sequence 2:&nbsp;&nbsp;  5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                    <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" cssClass="error indented-error"/>
-                </c:if>
+                Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
             </td>
         </tr>
+        <c:if test="${formBean.disruptorType eq 'TALEN'}">
+            <tr>
+                <td>
+                    <label class="namesearchLabel">Sequence 2:</label>
+                    <input type=button value="Reverse" onClick="reverseSequence('reportSeq2','displaySeq2');">
+                    <input type=button value="Complement" onClick="complementSequence('reportSeq2','displaySeq2');">
+                    <input type=button value="Reverse & Complement" onClick="reverseComplementSequence('reportSeq2','displaySeq2');">
+                </td>
+                <td width=20></td><!-- spacer column -->
+            </tr>
+            <tr>
+                <td>
+                    Reported: &nbsp;5'-   <input id="reportSeq2" name="reportSeq2" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></input> -3'
+                </td>
+                <td width=20></td><!-- spacer column -->
+            </tr>
+            <tr>
+                <td>
+                    Displayed:&nbsp;&nbsp;  5'- <form:input id="displaySeq2" name="displaySeq2" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                    <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" cssClass="error indented-error"/>                </td>
+            </tr>
+        </c:if>
     </table>
     <p/>
     <div>
@@ -174,45 +197,41 @@
         return reversed;
     }
 
-    function reverseSequence() {
-        var displayedSeq = document.getElementById('displaySeq');
-        var reportSeq = document.getElementById('reportSeq');
-        var revSeq;
-        revSeq = reverseString(reportSeq.value);
+    function reverseSequence(reported, displayed) {
+        var displayedSeq = document.getElementById(displayed);
+        var reportSeq = document.getElementById(reported);
+        var revSeq = reverseString(reportSeq.value);
 
         displayedSeq.value = revSeq;
 
-        doCuratorNote('reversed');
+        doCuratorNote('reversed',reported);
     }
 
-    function complementSequence() {
-        var displayedSeq = document.getElementById('displaySeq');
-        var reportSeq = document.getElementById('reportSeq');
-        var compSeq;
-        compSeq = baseComplement(reportSeq.value);
+    function complementSequence(reported, displayed) {
+        var displayedSeq = document.getElementById(displayed);
+        var reportSeq = document.getElementById(reported);
+        var compSeq = baseComplement(reportSeq.value);
 
         displayedSeq.value = compSeq;
 
-        doCuratorNote('complemented');
+        doCuratorNote('complemented',reported);
     }
 
 
-    function reverseComplementSequence() {
-        var displayedSeq = document.getElementById('displaySeq');
-        var reportSeq = document.getElementById('reportSeq');
-        var revSeq;
-        revSeq = reverseString(reportSeq.value);
-        var compSeq;
-        compSeq = baseComplement(revSeq);
+    function reverseComplementSequence(reported, displayed) {
+        var displayedSeq = document.getElementById(displayed);
+        var reportSeq = document.getElementById(reported);
+        var revSeq = reverseString(reportSeq.value);
+        var compSeq = baseComplement(revSeq);
 
         displayedSeq.value = compSeq;
 
-        doCuratorNote('reversed and complemented');
+        doCuratorNote('reversed and complemented',reported);
     }
 
-    function doCuratorNote(action) {
+    function doCuratorNote(action,reported) {
         var cNote = document.getElementById('curatorNote');
-        var reportSeq = document.getElementById('reportSeq');
+        var reportSeq = document.getElementById(reported);
         cNote.value = "Reported Sequence: "+ reportSeq.value + " was " + action +".\r\n" + cNote.value;
         sequenceManipulated = "yes";
     }
