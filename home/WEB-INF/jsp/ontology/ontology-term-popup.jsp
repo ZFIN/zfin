@@ -3,19 +3,16 @@
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
 
     <%-- override some of zfin.css since this will come up in an iframe --%>
 
     <style type="text/css">
 
-/*
+
         body {
             font-family: arial, sans-serif;
             background: white;
         }
-*/
-        body {background: white; margin: 1px;}
 
         a.external {
             background: transparent url(/images/external.png) no-repeat scroll right center;
