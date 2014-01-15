@@ -73,18 +73,18 @@ public class CreateValidateDataReportTask {
             errorMessages = service.runDbScriptFile(dbQueryFile);
             List<List<List<String>>> resultList = service.getListOfResultRecords();
             createErrorReport(errorMessages, resultList);
-            HibernateUtil.rollbackTransaction();
         } catch (Exception e) {
-            HibernateUtil.rollbackTransaction();
             LOG.error(e);
             throw new RuntimeException(e);
         } finally {
+            HibernateUtil.rollbackTransaction();
             HibernateUtil.closeSession();
         }
     }
 
     private void createErrorReport(List<String> errorMessages, List<List<List<String>>> resultList) {
-
+        if (CollectionUtils.isEmpty(resultList))
+            return;
         freemarker.template.Configuration configuration = new freemarker.template.Configuration();
         try {
             configuration.setDirectoryForTemplateLoading(baseValidateDataDirectory);
