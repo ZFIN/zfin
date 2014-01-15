@@ -19,7 +19,7 @@ public class HitViewBean extends ExpressionMapBean{
     private int version;
     private DBLink hitDBLink;
     private Accession zfinAccession; // if no DBLink is found
-    private Marker hitMarker ; // this is usuae ly a clone or transcript, comes through marker relation
+    private Marker hitMarker ; // this is usually a clone, gene or transcript, comes through marker relation
     private boolean isMarkerIsHit = false ;
     private boolean withdrawn = false ;
     private int hitNumber;

@@ -439,6 +439,7 @@ public class BlastResultMapper {
                 logger.debug("Attempted to fix an empty hitAccesion");
                 logger.debug("Hit_id: " + hit.getHitId());
                 logger.debug("invented Hit_accession:" + hitAccession);
+
             }
 
             // now that we have the accessionID set, we can write the contains method

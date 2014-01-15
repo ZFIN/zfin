@@ -258,8 +258,8 @@ public class Database {
         ZFIN_MIRNA_STEMLOOP("zfin_miRNA_stemloop"),
         ZFIN_MIRNA_MATURE("zfin_miRNA_mature"),
         ZFIN_MRPH("zfin_mrph"),
-	ZFIN_TALEN("zfin_talen"),
-	ZFIN_CRISPR("zfin_crispr")
+	    ZFIN_TALEN("zfin_talen"),
+	    ZFIN_CRISPR("zfin_crispr")
         ;
 
 

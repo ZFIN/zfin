@@ -6,6 +6,8 @@ public class BlastDownloadBean {
 
     public enum Action {
         MORPHOLINO,
+        CRISPR,
+        TALEN,
         GENBANK_ALL,
         GENBANK_CDNA,
         GENBANK_XPAT_CDNA,
