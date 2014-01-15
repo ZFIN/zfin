@@ -52,9 +52,9 @@ i.e. no record_attribution record exists for a given feature ID. It also checks 
             <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q.report.html&quot;}
 
 &lt;hr&gt;
-&lt;pre&gt;
+&lt;h3&gt;
                 Job Description
-&lt;/pre&gt;
+&lt;/h3&gt;
 ${JOB_DESCRIPTION}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
