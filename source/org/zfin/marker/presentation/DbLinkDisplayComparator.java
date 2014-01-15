@@ -1,7 +1,6 @@
 package org.zfin.marker.presentation;
 
 import org.zfin.sequence.DBLink;
-
 import java.util.Comparator;
 
 public class DbLinkDisplayComparator implements Comparator<DBLink> {
@@ -38,17 +37,30 @@ public class DbLinkDisplayComparator implements Comparator<DBLink> {
         if (comparator != 0)
             return comparator;
 
-        if (dbLink2.getLength() == null && dbLink1.getLength() != null)
+        if (!dbLink1.getReferenceDatabase().isRefSeq()) {
+            return compareLength(dbLink1.getLength(), dbLink2.getLength());
+        } else {
+            String prefix1 = dbLink1.getAccessionNumber().substring(0,2);
+            String prefix2 = dbLink2.getAccessionNumber().substring(0,2);
+            if (prefix1.compareTo(prefix2) == 0)
+                return compareLength(dbLink1.getLength(), dbLink2.getLength());
+            else
+                return prefix1.compareTo(prefix2);
+        }
+    }
+
+    public int compareLength(Integer length1, Integer length2) {
+        if (length1 == null && length2 != null)
             return -1;
-        if (dbLink1.getLength() == null && dbLink2.getLength() != null)
+        if (length1 == null && length2 != null)
             return 1;
 
-        if (dbLink1.getLength() != null && dbLink2.getLength() != null) {
-            if (dbLink2.getLength() > dbLink1.getLength())
-                return 1;
-            if (dbLink1.getLength() > dbLink2.getLength())
+        if (length1 != null && length2 != null) {
+            if (length1 > length2)
                 return -1;
+            else
+                return 1;
         }
-        return dbLink2.getAccessionNumberDisplay().compareTo(dbLink1.getAccessionNumberDisplay());
+        return 0;
     }
 }

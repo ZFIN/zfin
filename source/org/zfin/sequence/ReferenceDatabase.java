@@ -141,6 +141,11 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
                 abbrevString.contains("miRBASE")
                 ;
     }
+
+    public boolean isRefSeq() {
+        // would better put the hard=coded ids to somewhere else as Enum values
+        return (getZdbID().equals("ZDB-FDBCONT-040412-38") || getZdbID().equals("ZDB-FDBCONT-040412-39") || getZdbID().equals("ZDB-FDBCONT-040527-1"));
+    }
 }
 
 
