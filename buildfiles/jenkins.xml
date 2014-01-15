@@ -72,26 +72,26 @@
             def dir = new File(properties.jobDirectory)
             def jobs = dir.list()
             new File(properties.jobDirectory).eachFile {
-            if (!it.name.endsWith(".svn") ){
-            def jobDirName = it.name
-            def directory = new File(dir,jobDirName)
-            new File(dir, jobDirName).eachFile {
-            def subDir = it.name
-            if(subDir == 'email-templates'){
-            def targetDir = new File(properties.emailTemplates)
-            targetDir.mkdir()
-            new File(directory, subDir).eachFile{
-            def fileName = it.name
-            if(fileName.endsWith('template')){
-            def file = new File(new File(directory,subDir),fileName)
-            def targetFile = new File(targetDir, fileName)
-            println targetFile.absolutePath
-            new AntBuilder().copy( file:file, tofile:targetFile)
-            }
-            }
-            }
-            }
-            }
+                if (!it.name.endsWith(".svn")) {
+                    def jobDirName = it.name
+                    def directory = new File(dir, jobDirName)
+                    new File(dir, jobDirName).eachFile {
+                        def subDir = it.name
+                        if (subDir == 'email-templates') {
+                            def targetDir = new File(properties.emailTemplates)
+                            targetDir.mkdir()
+                            new File(directory, subDir).eachFile {
+                                def fileName = it.name
+                                if (fileName.endsWith('template')) {
+                                    def file = new File(new File(directory, subDir), fileName)
+                                    def targetFile = new File(targetDir, fileName)
+                                    println targetFile.absolutePath
+                                    new AntBuilder().copy(file: file, tofile: targetFile)
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
         </groovy>
@@ -190,10 +190,11 @@
                     //println "JENKINS_HOME/jobs " + properties.jenkinsHomeJobs
                     def dir = new File(properties.jenkinsHomeJobs)
                     def jobs = dir.list()
-                    jobs.eachWithIndex { value, i -> properties.jobName = value
-                    //println value
-                    def ant = new AntBuilder(project)
-                    ant."add-trigger-for-job"()
+                    jobs.eachWithIndex { value, i ->
+                        properties.jobName = value
+                        //println value
+                        def ant = new AntBuilder(project)
+                        ant."add-trigger-for-job"()
                     }
                 </groovy>
             </then>
@@ -215,15 +216,16 @@
             def props = new Properties()
 
             new File(properties.sourceJobFile).withInputStream {
-            stream -> props.load(stream)
+                stream -> props.load(stream)
             }
 
-            jobs.eachWithIndex { value, i -> job = value
-            if(props[value] != null){
-            //println "production job: " + value
-            properties.singleJobName = value
-            ant.project.executeTarget('copy-single-job')
-            }
+            jobs.eachWithIndex { value, i ->
+                job = value
+                if (props[value] != null) {
+                    //println "production job: " + value
+                    properties.singleJobName = value
+                    ant.project.executeTarget('copy-single-job')
+                }
             }
         </groovy>
     </target>
@@ -252,10 +254,11 @@
                     //println "JENKINS_HOME/jobs: " + properties.jenkinsHomeJobs
                     def dir = new File(properties.jenkinsHomeJobs)
                     def jobs = dir.list()
-                    jobs.eachWithIndex { value, i -> properties.jobName = value
-                    //println value
-                    def ant = new AntBuilder(project)
-                    ant.'add-notification-per-job'()
+                    jobs.eachWithIndex { value, i ->
+                        properties.jobName = value
+                        //println value
+                        def ant = new AntBuilder(project)
+                        ant.'add-notification-per-job'()
                     }
                 </groovy>
             </then>
@@ -264,8 +267,9 @@
                 <groovy>
                     def dir = new File(properties.jenkinsHomeJobs)
                     def jobs = dir.list()
-                    jobs.eachWithIndex { value, i -> properties.jobName = value
-                    ant.'add-default-notification-per-job'()
+                    jobs.eachWithIndex { value, i ->
+                        properties.jobName = value
+                        ant.'add-default-notification-per-job'()
                     }
                 </groovy>
             </else>
@@ -277,13 +281,13 @@
             <groovy>
                 def triggerSeries = properties."trigger".split("\\|")
                 // if no cron trigger found return
-                if(triggerSeries[0] == ''){
-                return
+                if (triggerSeries[0] == '') {
+                    return
                 }
                 triggerSeries.eachWithIndex { trName, i ->
-                properties.trigger = trName
-                def ant = new AntBuilder(project)
-                ant.addTriggerPerJob()
+                    properties.trigger = trName
+                    def ant = new AntBuilder(project)
+                    ant.addTriggerPerJob()
                 }
             </groovy>
         </sequential>
@@ -378,11 +382,11 @@
             <groovy>
                 def props = new Properties()
                 new File(properties.propertyFile).withInputStream {
-                stream -> props.load(stream)
+                    stream -> props.load(stream)
                 }
                 def sched = props[properties.jobName]
                 if (sched != null)
-                properties.schedule = sched
+                    properties.schedule = sched
                 //println "Property: " + props[properties.jobName]
 
             </groovy>
@@ -413,11 +417,11 @@
                 File propertyFile = new File(properties.propertyFile)
                 def props = new Properties()
                 propertyFile.withInputStream {
-                stream -> props.load(stream)
+                    stream -> props.load(stream)
                 }
-                def emailConfig = props[properties.jobName+".FAILURE"]
+                def emailConfig = props[properties.jobName + ".FAILURE"]
                 if (emailConfig != null)
-                properties.emailConfiguration = emailConfig
+                    properties.emailConfiguration = emailConfig
                 //println "Property: " + props[properties.jobName+".FAILURE"]
 
             </groovy>
@@ -439,13 +443,13 @@
             <groovy>
                 def props = new Properties()
                 new File(properties.propertyFile).withInputStream {
-                stream -> props.load(stream)
+                    stream -> props.load(stream)
                 }
-                def emailConfig = props[properties.jobName+".SUCCESS"]
+                def emailConfig = props[properties.jobName + ".SUCCESS"]
                 if (emailConfig != null)
-                properties.emailConfiguration = emailConfig
+                    properties.emailConfiguration = emailConfig
                 else
-                properties.emailConfiguration = ""
+                    properties.emailConfiguration = ""
                 //println "Property: " + props[properties.jobName+".SUCCESS"]
 
             </groovy>
@@ -468,7 +472,7 @@
     <macrodef name="add-default-notification-per-job" description="add default email address to job triggers">
         <sequential>
             <groovy>
-                properties.emailConfiguration= properties.DEFAULT_EMAIL
+                properties.emailConfiguration = properties.DEFAULT_EMAIL
             </groovy>
             <echo message="Job Name: ${jobName} : Add Failure trigger ${emailConfiguration}"/>
             <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
