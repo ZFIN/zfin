@@ -231,7 +231,8 @@ public class BlastResultMapper {
                 DBLink transcriptDBLink = null;
                 DBLink geneDBLink = null;
                 for (DBLink dbLink : dbLinks) {
-                    if (dbLink.getReferenceDatabase().getForeignDBDataType().getSuperType() == ForeignDBDataType.SuperType.SEQUENCE) {
+                    if (dbLink.getReferenceDatabase().getForeignDBDataType().getSuperType() == ForeignDBDataType.SuperType.SEQUENCE ||
+                        dbLink.getReferenceDatabase().getForeignDBDataType().getSuperType() == ForeignDBDataType.SuperType.SUMMARY_PAGE) {
                         // if we do transcript
                         if (dbLink.getDataZdbID().startsWith("ZDB-TSCRIPT-")) {
                             if (ForeignDB.AvailableName.GENBANK != dbLink.getReferenceDatabase().getForeignDB().getDbName()) {
