@@ -83,7 +83,14 @@ public class CreateValidateDataReportTask {
     }
 
     private void createErrorReport(List<String> errorMessages, List<List<List<String>>> resultList) {
-        if (CollectionUtils.isEmpty(resultList))
+        File reportFile = new File(baseValidateDataDirectory, jobName + ".report.html");
+        if(reportFile.exists())
+            reportFile.delete();
+        File dataFile = new File(baseValidateDataDirectory, jobName + ".txt");
+        if(dataFile.exists())
+            dataFile.delete();
+
+        if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList.get(0)))
             return;
         freemarker.template.Configuration configuration = new freemarker.template.Configuration();
         try {
@@ -95,7 +102,7 @@ public class CreateValidateDataReportTask {
         //StringWriter writer = new StringWriter();
         FileWriter writer = null;
         try {
-            writer = new FileWriter(new File(baseValidateDataDirectory, jobName + ".report.html"));
+            writer = new FileWriter(reportFile);
             Template template = configuration.getTemplate(templateName);
             Map<String, Object> root = new HashMap<>();
             root.put("errorMessage", reportProperties.get(jobName + ".errorMessage"));
@@ -115,10 +122,9 @@ public class CreateValidateDataReportTask {
                     lines.append(element);
                     lines.append(",");
                 }
-                lines.deleteCharAt(lines.length() - 1);
                 lines.append("\n");
             }
-            FileUtils.writeStringToFile(new File(baseValidateDataDirectory, jobName + ".txt"), lines.toString());
+            FileUtils.writeStringToFile(dataFile, lines.toString());
         } catch (IOException e) {
             LOG.error(e);
             throw new RuntimeException("Error finding template file.", e);
