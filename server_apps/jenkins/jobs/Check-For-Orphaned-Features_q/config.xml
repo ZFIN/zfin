@@ -2,7 +2,8 @@
 <project>
   <actions/>
   <description>This report checks for all features that do not have a publication associated,&#xd;
-i.e. no record_attribution record for a given feature ID.</description>
+i.e. no record_attribution record exists for a given feature ID. It also checks for
+  attributions on genotype_feature and data_aliases.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -51,7 +52,9 @@ i.e. no record_attribution record for a given feature ID.</description>
             <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q.report.html&quot;}
 
 &lt;hr&gt;
-
+&lt;pre&gt;
+                Job Description
+&lt;/pre&gt;
 ${JOB_DESCRIPTION}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
@@ -66,7 +69,7 @@ ${JOB_DESCRIPTION}</body>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
       <contentType>text/html</contentType>
-      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
+      <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
       <presendScript></presendScript>
