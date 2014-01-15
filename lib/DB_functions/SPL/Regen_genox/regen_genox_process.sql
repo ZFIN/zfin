@@ -62,10 +62,10 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                        and NotThisMO.expcond_mrkr_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
                        and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id) 
-     and not exists(select NOTmo.expcond_mrkr_zdb_id 
-                      from experiment_condition NOTmo
-                     where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
-                       and NOTmo.expcond_mrkr_zdb_id is null)                       
+     and not exists(select NOTstr.expcond_mrkr_zdb_id 
+                      from experiment_condition NOTstr
+                     where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                       and NOTstr.expcond_mrkr_zdb_id is null)                       
      and expcond_exp_zdb_id = exp_zdb_id
      and exp_name not like '\_%'
      and genox_exp_zdb_id = exp_zdb_id
@@ -150,10 +150,10 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                        and NotThisMO.expcond_mrkr_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
                        and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id)  
-     and not exists(select NOTmo.expcond_mrkr_zdb_id 
-                      from experiment_condition NOTmo
-                     where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
-                       and NOTmo.expcond_mrkr_zdb_id is null)                       
+     and not exists(select NOTstr.expcond_mrkr_zdb_id 
+                      from experiment_condition NOTstr
+                     where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                       and NOTstr.expcond_mrkr_zdb_id is null)                       
      and exists (select phenox_genox_zdb_id
                    from phenotype_experiment, phenotype_statement 
                   where phenox_genox_zdb_id = genox_zdb_id  
@@ -204,10 +204,10 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                        and NotThisMO.expcond_mrkr_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
                        and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id) 
-     and not exists(select NOTmo.expcond_mrkr_zdb_id 
-                      from experiment_condition NOTmo
-                     where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
-                       and NOTmo.expcond_mrkr_zdb_id is null)                       
+     and not exists(select NOTstr.expcond_mrkr_zdb_id 
+                      from experiment_condition NOTstr
+                     where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                       and NOTstr.expcond_mrkr_zdb_id is null)                       
      and expcond_mrkr_zdb_id = mrel_mrkr_1_zdb_id
      and expcond_exp_zdb_id = genox_exp_zdb_id 
      and genox_geno_zdb_id = genofeat_geno_zdb_id
@@ -235,11 +235,11 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                     and phenox_pk_id = phenos_phenox_pk_id
                     and phenos_tag != 'normal') ;
 
-   -------------
-   -- for MO
-   -------------
+   ------------------------------
+   -- for MO, TALEN and CRISPR
+   ------------------------------
     
-      -- The genotype include any of the WT lines, and no other MO involved
+      -- The genotypes include any of the WT lines, and no other MO, TALEN or CRISPR involved
       insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
         select distinct rggz_zdb_id, genox_zdb_id
           from genotype_experiment, experiment_condition, regen_genox_input_zdb_id_temp
@@ -248,22 +248,22 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
            and expcond_exp_zdb_id = genox_exp_zdb_id
            and exists (select 'x'
                          from genotype WT
-                        where genox_geno_zdb_id = geno_zdb_id
-                          and geno_is_wildtype = "t")
+                        where genox_geno_zdb_id = WT.geno_zdb_id
+                          and WT.geno_is_wildtype = "t")
            and not exists(select 'x' 
-                            from experiment_condition NOTmo
-                           where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
-                             and NOTmo.expcond_mrkr_zdb_id != rggz_zdb_id)
+                            from experiment_condition NOTstr
+                           where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                             and NOTstr.expcond_mrkr_zdb_id != rggz_zdb_id)
            and not exists(select 'x' 
-                            from experiment_condition NOTmo
-                           where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
-                             and NOTmo.expcond_mrkr_zdb_id is null)
+                            from experiment_condition NOTstr
+                           where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                             and NOTstr.expcond_mrkr_zdb_id is null)
            and not exists(select 'x' 
-                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTmo
+                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr
                            where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
                              and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
-                             and NOTmrkr.fmrel_mrkr_zdb_id = NOTmo.mrel_mrkr_1_zdb_id 
-                             and NOTmo.mrel_mrkr_2_zdb_id != rggz_zdb_id
+                             and NOTmrkr.fmrel_mrkr_zdb_id = NOTstr.mrel_mrkr_1_zdb_id 
+                             and NOTstr.mrel_mrkr_2_zdb_id != rggz_zdb_id
                              and NOTmrkr.fmrel_type = "is allele of") 
            and exists (select phenox_genox_zdb_id
                          from phenotype_experiment, phenotype_statement 
@@ -271,7 +271,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                           and phenox_pk_id = phenos_phenox_pk_id
                           and phenos_tag != 'normal') ;
 
-      -- The genotype include none phenotypic Tg feature only, which are NOT alleles of any gene, and no other MO involved
+      -- The genotypes include none phenotypic Tg feature only, which are NOT alleles of any gene, and no other MO, TALEN or CRISPR involved
       insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
         select distinct rggz_zdb_id, genox_zdb_id
           from genotype_feature, feature_marker_relationship, genotype_experiment, experiment_condition, regen_genox_input_zdb_id_temp
@@ -292,25 +292,26 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                               and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
                               and feature_type != 'TRANSGENIC_INSERTION')                              
            and not exists(select 'x' 
-                            from experiment_condition NOTmo
-                           where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
-                             and NOTmo.expcond_mrkr_zdb_id != rggz_zdb_id)
+                            from experiment_condition NOTstr
+                           where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                             and NOTstr.expcond_mrkr_zdb_id != rggz_zdb_id)
            and not exists(select 'x'
-                            from experiment_condition NOTmo
-                           where NOTmo.expcond_exp_zdb_id = genox_exp_zdb_id 
-                             and NOTmo.expcond_mrkr_zdb_id is null)
+                            from experiment_condition NOTstr
+                           where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                             and NOTstr.expcond_mrkr_zdb_id is null)
            and not exists(select 'x' 
-                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTmo
+                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr
                            where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
                              and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
-                             and NOTmrkr.fmrel_mrkr_zdb_id = NOTmo.mrel_mrkr_1_zdb_id 
-                             and NOTmo.mrel_mrkr_2_zdb_id != rggz_zdb_id
+                             and NOTmrkr.fmrel_mrkr_zdb_id = NOTstr.mrel_mrkr_1_zdb_id 
+                             and NOTstr.mrel_mrkr_2_zdb_id != rggz_zdb_id
                              and NOTmrkr.fmrel_type = "is allele of") 
            and exists (select phenox_genox_zdb_id
                          from phenotype_experiment, phenotype_statement 
                         where phenox_genox_zdb_id = genox_zdb_id  
                           and phenox_pk_id = phenos_phenox_pk_id
                           and phenos_tag != 'normal') ;
+                          
        
 --    end if
 

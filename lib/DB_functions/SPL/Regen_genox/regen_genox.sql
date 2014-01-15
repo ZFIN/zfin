@@ -205,7 +205,7 @@ create dba function regen_genox() returning integer
     let errorHint = "mutant_fast_search_new";
 
     insert into regen_genox_input_zdb_id_temp ( rggz_zdb_id )
-      select mrkr_zdb_id from marker where mrkr_type in ("GENE","MRPHLNO");
+      select mrkr_zdb_id from marker where mrkr_type in ("GENE","MRPHLNO","TALEN", "CRISPR");
 
     -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
     execute procedure regen_genox_process();
