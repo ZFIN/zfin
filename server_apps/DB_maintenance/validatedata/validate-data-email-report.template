@@ -53,7 +53,7 @@ ${numberOfRecords} ${errorMessage}
 <#list resultObject as record>
 <td>
 <#if record?starts_with("ZDB")>
-<a href="http://zfin.org/$record">${record}</a>
+<a href="http://zfin.org/${record}">${record}</a>
 <#else>
 ${record}
 </#if>

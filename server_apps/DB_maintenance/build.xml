@@ -52,28 +52,6 @@
 
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
 
-    <target name="report-stage-range-validation"
-            description="Set the timestamp of the download files int database_info table">
-        <echo message="Create Validation Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="-a"/>
-            <arg value="${DBNAME}"/>
-            <arg value="${basedir}/server_apps/DB_maintenance/validatedata/stageRangeValidation.sql"/>
-        </exec>
-        <echo file="${validateData}/column.header" append="false">Pub ID|Figure ID|Start Stage ID|Xpat Start Stage|End
-            Stage ID|Xpat End Stage|Term ID|Term OBO ID|Term Name|Term Start Stage|Term End Stage|Xpatres ID
-        </echo>
-        <echo file="${validateData}/description.txt" append="false">
-            There are expression_result records whose stage window don't overlap with the anatomy term's stage window.
-        </echo>
-        <fail message="Failed: There are records that violate the stage range">
-            <condition>
-                <resourcecontains resource="reportRecords.txt" substring="ZDB"/>
-            </condition>
-        </fail>
-    </target>
-
     <target name="report-linkage-has-member" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
