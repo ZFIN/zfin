@@ -50,28 +50,28 @@ for antibody: added meta redirect at the beginning and the end of the file.
 
   <script src="/javascript/profile-edit.js"></script>
 
-  <link rel=stylesheet type="text/css" href="/css/tabEdit.css">         
+  <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 
   <SCRIPT>
 
   jQuery(document).ready(function () {
-     
+
      jQuery( "#supplier" ).autocomplete({
        source: '/action/marker/find-suppliers',
-       minLength: 2, 
+       minLength: 2,
        autoFocus: true,
        select: function (event, ui) {
          jQuery('#supplier').val(ui.item.label);
          supplierToAddZdbID = ui.item.id;
        }
      });
-     
+
     jQuery( "#supplier" ).keypress(function(event) {
        if (event.keyCode == 13) {
 	 event.preventDefault();
 	 new_supplier(supplierToAddZdbID);
        }
-    });     
+    });
 
     jQuery( "#targetGeneSymbol" ).autocomplete({
       source: '/action/marker/find-targetGenes',
@@ -88,7 +88,7 @@ for antibody: added meta redirect at the beginning and the end of the file.
          return false;
       }
     });
-    
+
     jQuery( "#targetGeneSymbol2" ).autocomplete({
       source: '/action/marker/find-targetGenes',
       minLength: 3,
@@ -103,8 +103,8 @@ for antibody: added meta redirect at the beginning and the end of the file.
          event.preventDefault();
          return false;
       }
-    });    
-    
+    });
+
   });
 
   function updateInnerHTML(element_id,html_to_display) {
@@ -292,9 +292,9 @@ function jump(form_select){
 	function Delete_mrel(mrel_partner_id, type) {
  		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=marker_relationship&attr_type=delete-mrkrrelation&old_value='+mrel_partner_id+'&comments=Deleted&target_table=marker&info='+type);
 	}
-	
+
 	function delete_supplier(supplier_zdb_id) {
- 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr_type=delete-supplier&old_value='+supplier_zdb_id);	
+ 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr_type=delete-supplier&old_value='+supplier_zdb_id);
 	}
 
 	function new_ortho() {
@@ -394,8 +394,21 @@ function jump(form_select){
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super=protein&fdbcont_data=domain');
   		}
 	}
-	
+
+    function updatePhenotypeData() {
+    	    // when new target gene added or deleted, call regen_genox with all the target genes of the STR
+            <?MISQL SQL="select mrkr_zdb_id
+    	       from marker_relationship
+    		    join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
+    	       where mrel_mrkr_1_zdb_id = '$OID'
+    		     and mrel_type = 'knockdown reagent targets gene';">
+    		     <?MIVAR NAME=targetGene>$1<?/MIVAR>
+                 <?MISQL SQL="execute procedure regen_genox_marker('$targetGene');"><?/MISQL>
+            <?/MISQL>
+    }
+
 	function new_mrkrrel(mrkrrel_type, mrkr_abbrev_value) {
+	    updatePhenotypeData();
 		var mrkr_abbrev = escape(mrkr_abbrev_value.strip());
 		mrkrrel_type.replace(/ /,"%20");
 		if (mrkr_abbrev != '') {
@@ -427,16 +440,16 @@ function jump(form_select){
  		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkr_zdb_id+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
  		}
         }
-        
-        
+
+
         function update_second_mrkrsequence(mrkrseq_zdb,old_seq,new_seq,note,new_seq_2) {
  	        if (note == '') {note = 'Sequence modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
  		if ((new_seq != '')) {
  		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence_2&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note+'&new_value2='+new_seq_2);
- 		}        
+ 		}
         }
-        
+
 	function update_problem_type(old_value , new_value) {
             old_value.replace(/ /, "%20") ;
  	    old_value = escape(old_value);
@@ -457,10 +470,10 @@ function jump(form_select){
 	function new_attrib_mrel(attrmrelform) {
 		var mrkr_abbrev=escape(attrmrelform.attrib_mrkr_abbrev.value.strip());
 		var pub_id=attrmrelform.attrib_mrel_pubid.value.toUpperCase().strip();
-                <?MICOMMENT> 
+                <?MICOMMENT>
                    Do not allow "clone contains gene" marker_relationship for ZDB-PUB-030703-1.
-                   
-                   1. The form passes in gene abbrevs, so get all the abbrevs that have 
+
+                   1. The form passes in gene abbrevs, so get all the abbrevs that have
                    the not allowed relationship.
                    2. Compare the pub id to the identified pub id.
                    3. If the pub is a match, compare against each gene abbrev.
@@ -468,15 +481,15 @@ function jump(form_select){
                 <?/MICOMMENT>
 		var mrkr_match = false;
 		var pub_match = false;
-		
+
 		if (pub_id == "ZDB-PUB-030703-1") { pub_match = true;}
-		
+
 		<?MIVAR>
 		  <?MISQL SQL="select mrkr_abbrev from marker, marker_relationship where mrel_mrkr_2_zdb_id = '$OID' and mrel_mrkr_1_zdb_id = mrkr_zdb_id;">
 		     if (mrkr_abbrev == "$1") {mrkr_match = true;}
 		  <?/MISQL>
 		<?/MIVAR>
-		
+
 		if ((pub_match == true) && (mrkr_match == true))
 		{
 		   alert("clone contains gene is not allowed with Vega Load pub.");
@@ -951,7 +964,7 @@ Only need to update clones, etc., which should be the only things that will have
         <?MIVAR>
         onClick="
         if(document.newdata.seqdata_action.selectedIndex==0){
-            actionSequence(4); 
+            actionSequence(4);
         }
 
         if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){
@@ -965,14 +978,14 @@ Only need to update clones, etc., which should be the only things that will have
         <?MIVAR>
         onClick="
         if(document.newdata.seqdata_action.selectedIndex==0){
-            actionSequence(4); 
+            actionSequence(4);
         }
 
         if (validSequence(document.newdata.seqdata_DisplaySequence.value) && validSequence(document.newdata.seqdata_2nd_DisplaySequence.value)){
             update_second_mrkrsequence('$OID','$mrkrview_second_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value,document.newdata.seqdata_2nd_DisplaySequence.value)
         }">
         <?/MIVAR>
-     <?/MIBLOCK>     
+     <?/MIBLOCK>
         <br>
         </td></tr>
       </table>
@@ -1230,7 +1243,7 @@ Only need to update clones, etc., which should be the only things that will have
 
 </P>
 <?MIVAR COND="$(AND,$(NE,$marker_type,CRISPR),$(NE,$marker_type,MRPHLNO),$(NE,$marker_type,TALEN))">
-To view the Gene Expression section go to the 
+To view the Gene Expression section go to the
 <a href="/$OID">view page</a>
 <?/MIVAR>
 
