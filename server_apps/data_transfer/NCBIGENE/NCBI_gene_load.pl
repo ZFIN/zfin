@@ -75,9 +75,9 @@ print LOG "Start ... \n";
 ## only the following RefSeq catalog file may remain unchanged over a period of time
 ## the rest 3 are changing every day
 
-system("/local/bin/wget -N ftp://ftp.ncbi.nih.gov/refseq/release/release-catalog/RefSeq-release62.catalog.gz");
+system("/local/bin/wget -N \"ftp://ftp.ncbi.nih.gov/refseq/release/release-catalog/RefSeq-release*.catalog.gz\"");
 
-&doSystemCommand("/local/bin/gunzip -c RefSeq-release62.catalog.gz >RefSeqCatalog");
+&doSystemCommand("/local/bin/gunzip -c RefSeq-release*.catalog.gz >RefSeqCatalog");
 
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz");
   
@@ -848,7 +848,7 @@ while (<GENE2ACC>) {
     $status = $fields[2];
  
     if ($status eq "-") {
-        if ($fields[3] ne "-") { 
+        if (ZFINPerlModules->stringStartsWithLetter($fields[3])) { 
           $GenBankRNAaccNCBI = $fields[3];     
           $GenBankRNAaccNCBI =~ s/\.\d+//;  ## truncate version number
           
@@ -892,9 +892,9 @@ while (<GENE2ACC>) {
               push(@$ref_arrayGenes, $NCBIgeneId) if $supportingAccNCBI{$GenBankRNAaccNCBI}[-1] ne $NCBIgeneId; 
           }
           
-        }  ## ending if ($fields[3] ne "-")
+        }  ## ending if (stringStartsWithLetter$fields[3]))
         
-        if ($fields[5] ne "-") {
+        if (ZFINPerlModules->stringStartsWithLetter($fields[5])) {
           $GenPeptAcc = $fields[5];
           $GenPeptAcc =~ s/\.\d+//;
           $GenPeptNCBIgeneIds{$GenPeptAcc} = $NCBIgeneId;
@@ -905,7 +905,7 @@ while (<GENE2ACC>) {
           }          
         }
         
-        if ($fields[7] ne "-") {
+        if (ZFINPerlModules->stringStartsWithLetter($fields[7])) {
           $GenBankDNAacc = $fields[7];
           $GenBankDNAacc =~ s/\.\d+//;
           $GenBankDNAncbiGeneIds{$GenBankDNAacc} = $NCBIgeneId;
@@ -916,7 +916,7 @@ while (<GENE2ACC>) {
           }               
         }
     } else {  # there is value of "status" field for all RefSeq accessions
-        if ($fields[3] ne "-") {
+        if (ZFINPerlModules->stringStartsWithLetter($fields[3])) {
           $RefSeqRNAacc = $fields[3];
           $RefSeqRNAacc =~ s/\.\d+//;
           $RefSeqRNAncbiGeneIds{$RefSeqRNAacc} = $NCBIgeneId;
@@ -928,7 +928,7 @@ while (<GENE2ACC>) {
           }               
         }
         
-        if ($fields[5] ne "-") {
+        if (ZFINPerlModules->stringStartsWithLetter($fields[5])) {
           $RefPeptAcc = $fields[5];
           $RefPeptAcc =~ s/\.\d+//;
           $RefPeptNCBIgeneIds{$RefPeptAcc} = $NCBIgeneId;
@@ -940,7 +940,7 @@ while (<GENE2ACC>) {
           }               
         }
         
-        if ($fields[3] ne "-") {
+        if (ZFINPerlModules->stringStartsWithLetter($fields[7])) {
           $RefSeqDNAacc = $fields[7];   
           $RefSeqDNAacc =~ s/\.\d+//;
           $RefSeqDNAncbiGeneIds{$RefSeqDNAacc} = $NCBIgeneId;

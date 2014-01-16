@@ -61,4 +61,13 @@ sub countData() {
   return ($nRecords);
 }
 
+sub stringStartsWithLetter() {
+  my $stringTested = $_[1];
+  if ($stringTested =~ m/^[a-zA-Z]/) {
+      return 1;
+  } else {
+      return 0;
+  }
+}
+
 1;
