@@ -44,7 +44,11 @@
     <category name="org.zfin.ontology" additivity="true">
         <priority value="info"/>
     </category>
-          
+
+    <category name="org.hibernate.engine.StatefulPersistenceContext.ProxyWarnLog" additivity="true">
+        <priority value="error"/>
+    </category>
+
     <root>
         <priority value="warn"/>
         <appender-ref ref="console"/>
