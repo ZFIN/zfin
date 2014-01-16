@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.StageRangeIntersection;
+import org.zfin.gwt.root.util.StageRangeIntersectionService;
 import org.zfin.gwt.root.util.StageRangeUnion;
 import org.zfin.gwt.root.util.WidgetUtil;
 
@@ -205,8 +206,8 @@ class StructurePileTable extends ZfinFlexTable {
 
         if (!getSelectedExpressions().isEmpty() && add.getValue()) {
             StageRangeUnion union = new StageRangeUnion(expressionModule.getSelectedExpressions());
-            StageRangeIntersection intersection = new StageRangeIntersection(union.getStart(), union.getEnd());
-            if (!intersection.isOverlap(selectedPileStructure.getStart(), selectedPileStructure.getEnd())) {
+            StageRangeIntersectionService intersection = new StageRangeIntersectionService(expressionModule.getSelectedExpressions());
+            if (!intersection.hasOverlapWithAllStageRanges(selectedPileStructure.getStart(), selectedPileStructure.getEnd())) {
                 suggestionBox.setVisible(true);
                 noStageOverlapTitle(selectedPileStructure.getExpressedTerm(), intersection);
                 curationRPCAsync.getTermsWithStageOverlap(selectedPileStructure, intersection,
@@ -409,15 +410,16 @@ class StructurePileTable extends ZfinFlexTable {
         }
     }
 
-    public void markOverlappingStructures(StageRangeIntersection stageIntersection) {
+    public void markOverlappingStructures(StageRangeIntersectionService stageIntersection) {
         int numOfRows = getRowCount();
         for (int row = 1; row < numOfRows - 1; row++) {
             ExpressionPileStructureDTO structure = displayTableMap.get(row);
             if (structure == null)
                 continue;
-            if (stageIntersection.isOverlap(structure.getStart(), structure.getEnd()))
+            if (stageIntersection.hasOverlapWithAllStageRanges(structure.getStart(), structure.getEnd())){
                 highlightStructure(row, true);
-            else
+
+            }else
                 highlightStructure(row, false);
         }
     }
@@ -432,7 +434,7 @@ class StructurePileTable extends ZfinFlexTable {
         setNotExpressedStyle(row);
     }
 
-    private void noStageOverlapTitle(ExpressedTermDTO expressedTerm, StageRangeIntersection intersection) {
+    private void noStageOverlapTitle(ExpressedTermDTO expressedTerm, StageRangeIntersectionService intersection) {
         suggestionBox.clear();
         StringBuilder message = new StringBuilder("'");
         message.append(expressedTerm.getDisplayName());

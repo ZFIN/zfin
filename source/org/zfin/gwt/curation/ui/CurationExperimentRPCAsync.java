@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StageRangeIntersection;
+import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
 import java.util.List;
 
@@ -151,7 +152,7 @@ public interface CurationExperimentRPCAsync {
 
     void updateStructuresForExpression(UpdateExpressionDTO updateEntity, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
 
-    void getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure, StageRangeIntersection intersection, AsyncCallback<List<RelatedPileStructureDTO>> callback);
+    void getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure, StageRangeIntersectionService intersection, AsyncCallback<List<RelatedPileStructureDTO>> callback);
 
     void saveSessionVisibility(SessionVariable sessionVariable, AsyncCallback<Void> callback);
 

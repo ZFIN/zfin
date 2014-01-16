@@ -46,7 +46,7 @@ public class StageRangeIntersection implements IsSerializable {
     /**
      * Calculates the stage range that all ranges in the collection have in common.
      * Exception occurs:
-     * 1) either start or end stage is negative, i.e. unitialized.
+     * 1) either start or end stage is negative, i.e. uninitialized.
      * 2) start > end stage
      */
     private void calculateIntersection() {

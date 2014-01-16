@@ -71,6 +71,43 @@ public class StageRangeUnionTest {
     }
 
 
+
+    @Test
+    public void twoNonOverlappingRanges() {
+        ExpressionFigureStageDTO efs1 = new ExpressionFigureStageDTO();
+        StageDTO start = new StageDTO();
+        start.setStartHours(0.0F);
+        start.setName("Zygote:1-cell");
+        start.setAbbreviation("1-cell");
+        efs1.setStart(start);
+        StageDTO end = new StageDTO();
+        end.setStartHours(0.0F);
+        end.setName("Zygote:1-cell");
+        end.setAbbreviation("1-cell");
+        efs1.setEnd(end);
+        ExpressionFigureStageDTO efs = new ExpressionFigureStageDTO();
+        StageDTO startOne = new StageDTO();
+        startOne.setStartHours(0.75F);
+        startOne.setAbbreviation("8-cell");
+        startOne.setName("Cleavage:8-cell");
+        efs.setStart(startOne);
+        StageDTO endOne = new StageDTO();
+        endOne.setStartHours(0.75F);
+        endOne.setAbbreviation("8-cell");
+        endOne.setName("Cleavage:8-cell");
+        efs.setEnd(endOne);
+        dtos.add(efs1);
+        dtos.add(efs);
+
+        StageRangeUnion stageRange = new StageRangeUnion(dtos);
+        assertEquals(0.0F, stageRange.getStartHours());
+        assertEquals(3.0F, stageRange.getEndHours());
+        assertEquals("Zygote:1-cell", stageRange.getStartStageName());
+        assertEquals("Pharyngula:Prim-25", stageRange.getEndStageName());
+
+    }
+
+
     @Before
     public void setup() {
         dtos = new ArrayList<ExpressionFigureStageDTO>();

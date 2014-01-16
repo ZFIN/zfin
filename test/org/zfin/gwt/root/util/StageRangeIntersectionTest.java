@@ -146,9 +146,7 @@ public class StageRangeIntersectionTest {
         StageDTO start = new StageDTO();
         start.setStartHours(0.0F);
         efs1.setStart(start);
-        StageDTO end = new StageDTO();
-        end.setStartHours(2.0F);
-        end.setAbbreviation("Holger");
+        StageDTO end = getStageDTO(2.0F, "Holger");
         efs1.setEnd(end);
         ExpressionFigureStageDTO efs = new ExpressionFigureStageDTO();
         StageDTO startOne = new StageDTO();
@@ -172,6 +170,33 @@ public class StageRangeIntersectionTest {
         start.setStartHours(1.0F);
         end.setStartHours(6.0F);
         assertTrue(!stageRange.isOverlap(start, end));
+    }
+
+    private StageDTO getStageDTO(float time, String abbreviation) {
+        StageDTO end = new StageDTO();
+        end.setStartHours(time);
+        end.setAbbreviation(abbreviation);
+        return end;
+    }
+
+    @Test
+    public void twoNonOverlappingRangesOverlap() {
+        ExpressionFigureStageDTO efs1 = new ExpressionFigureStageDTO();
+        StageDTO start = getStageDTO(10.33F, "1-4 somites");
+        efs1.setStart(start);
+        efs1.setEnd(start);
+        ExpressionFigureStageDTO efs = new ExpressionFigureStageDTO();
+        StageDTO startOne = getStageDTO(11.66F, "5-9 somites");
+        efs.setStart(startOne);
+        efs.setEnd(startOne);
+        dtos.add(efs1);
+        dtos.add(efs);
+
+        StageRangeIntersectionService stageRange = new StageRangeIntersectionService(dtos);
+        StageDTO one = getStageDTO(10.0F, "Bud");
+        StageDTO two = getStageDTO(900000.0F, "Adult");
+
+        assertTrue(stageRange.hasOverlapWithAllStageRanges(one, two));
     }
 
     @Before

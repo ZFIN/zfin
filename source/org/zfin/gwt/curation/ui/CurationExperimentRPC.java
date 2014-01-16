@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
-import org.zfin.gwt.root.util.StageRangeIntersection;
+import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
 import java.util.List;
 
@@ -267,12 +267,12 @@ public interface CurationExperimentRPC extends RemoteService {
      * Retrieve a list of structures that could be used instead of the selected
      * structure with a stage overlap given by start and end.
      *
-     * @param selectedPileStructure pilse structure
+     * @param selectedPileStructure pile structure
      * @param intersection          intersection
      * @return list of PileStructureDTO,
      */
     List<RelatedPileStructureDTO> getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure,
-                                                           StageRangeIntersection intersection);
+                                                           StageRangeIntersectionService intersection);
 
 
 

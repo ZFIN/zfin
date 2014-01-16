@@ -350,7 +350,7 @@
         <echo>PROCESS INFORMATION</echo>
         <exec executable="bash" resultproperty="process-info">
             <arg value="-c"/>
-            <arg value="ps -ef | grep jenkins.war | grep -v grep"/>
+            <arg value="ps -ef | grep jenkins.war | grep -v grep | grep jobs"/>
         </exec>
         <if>
             <equals arg1="${process-info}" arg2="0"/>

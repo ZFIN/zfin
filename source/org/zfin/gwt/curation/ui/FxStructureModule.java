@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
@@ -11,6 +12,7 @@ import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.CollectionUtils;
 import org.zfin.gwt.root.util.StageRangeIntersection;
+import org.zfin.gwt.root.util.StageRangeIntersectionService;
 import org.zfin.gwt.root.util.StageRangeUnion;
 
 import java.util.*;
@@ -157,7 +159,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
         List<ExpressedTermDTO> intersectionOfStructures = createIntersectionOfStructures(figureAnnotations);
         selectUnselectStructuresOnPile(intersectionOfStructures);
         StageRangeUnion stageUnion = new StageRangeUnion(figureAnnotations);
-        StageRangeIntersection stageIntersection = new StageRangeIntersection(stageUnion.getStart(), stageUnion.getEnd());
+        StageRangeIntersectionService stageIntersection = new StageRangeIntersectionService(figureAnnotations);
         displayTable.markOverlappingStructures(stageIntersection);
     }
 
@@ -238,7 +240,7 @@ public class FxStructureModule extends Composite implements StructurePile<Expres
     }
 
     public boolean hasStructureOnPile(PhenotypeStatementDTO expressedTerm) {
-        return false;  
+        return false;
     }
 
 

@@ -22,6 +22,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.util.StageRangeIntersection;
+import org.zfin.gwt.root.util.StageRangeIntersectionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -984,7 +985,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @return list of PileStructureDTO,
      */
     public List<RelatedPileStructureDTO> getTermsWithStageOverlap(ExpressionPileStructureDTO selectedPileStructure,
-                                                                  StageRangeIntersection intersection) {
+                                                                  StageRangeIntersectionService intersection) {
         GenericTerm term = ontologyRepository.getTermByZdbID(selectedPileStructure.getExpressedTerm().getEntity().getSuperTerm().getZdbID());
         List<TermRelationship> terms = term.getAllDirectlyRelatedTerms();
         List<RelatedPileStructureDTO> structures = new ArrayList<RelatedPileStructureDTO>(terms.size());
@@ -1003,7 +1004,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             Term anatomyItem = ontologyRepository.getTermByOboID(relatedTerm.getOboID());
             StageDTO start = DTOConversionService.convertToStageDTO(anatomyItem.getStart());
             StageDTO end = DTOConversionService.convertToStageDTO(anatomyItem.getEnd());
-            if (intersection.isFullOverlap(start, end)) {
+            if (intersection.hasOverlapWithAllStageRanges(start, end)) {
                 RelatedPileStructureDTO relatedStructure = populatePileStructureDTO(rel.getRelatedTerm(term));
                 relatedStructure.setRelatedStructure(selectedPileStructure);
                 relatedStructure.setRelationship(rel.getRelationshipType().getDbMappedName());
