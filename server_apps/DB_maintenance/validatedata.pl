@@ -436,36 +436,6 @@ sub xpatObjectNotGeneOrEFG ($) {
 }
 
 
-sub tgFeatureMissingConstruct($) {
-  my $routineName = "tgFeatureMissingConstruct";
-	
-  my $sql = "select feature_zdb_id, feature_name
- from feature
- where exists (Select 'x' from genotype_feature
-                where genofeat_feature_zdb_id = feature_zdb_id)
-and not exists (Select 'x' from feature_marker_relationship
- where fmrel_ftr_zdb_id = feature_zdb_id
-and fmrel_type like 'contains%')
-and feature_Type = 'TRANSGENIC_INSERTION' ";
-
-  my @colDesc = ("Feature zdb id         ",
-		 "Feature name       ");
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $curatorFirstName = $_[2];
-    my $subject = "Tg features in genotypes without construct associations";
-    my $errMsg = "There are $nRecords tg feature record(s) without construct relationships";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, "void", $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-
-}
-
-
 #========================  Features  ================================
 #
 #---------------------------------------------------------------
@@ -3012,7 +2982,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    tgFeatureMissingConstruct($aoEmail);
     orthologyOrganismMatchesForeignDBContains($geneEmail);
     orthologueHasDblink($geneEmail);
     orthologyHasEvidence($geneEmail);
