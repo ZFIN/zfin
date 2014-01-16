@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 Name=Jenkins
 DESC="Jenkins CI Server"

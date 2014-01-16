@@ -491,19 +491,21 @@
     <target name="jenkins-usage">
         <echo>
             TARGETS
-            Deployment
-            deploy-jobs
-            copy-job-into-source -DjobName=[jobName]
-            create-views creates daily/weekly/monthly job views.
-            deploy-plugins deploy jenkins plugins into JENKINS_HOME
-            deploy-email-templates deploy the email templates into JENKINS_HOME
+                DEPLOYMENT
+                deploy-jobs
+                deploy-production-jobs dpeloy only the jobs meant to run on production
+                copy-job-into-source -DjobName=[jobName]
+                create-views creates daily/weekly/monthly job views.
+                deploy-plugins deploy jenkins plugins into JENKINS_HOME
+                deploy-email-templates deploy the email templates into JENKINS_HOME
 
-            Jenkins Server
-            start-jenkins start a Jenkins instance
-            stop-jenkins
-            kill-jenkins
-            restart-jenkins
-            tail-log do a 'tail -f $JENKINS_HOME/logs/jenkins.log'
+                JENKINS SERVER
+                start-jenkins start a Jenkins instance
+                stop-jenkins
+                kill-jenkins
+                restart-jenkins
+                pid-jenkins
+                tail-log do a 'tail -f $JENKINS_HOME/logs/jenkins.log'
         </echo>
     </target>
 
