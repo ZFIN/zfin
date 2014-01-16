@@ -41,6 +41,7 @@
         <property name="doi" column="pub_doi" lazy="true"/>
         <property name="indexed" column="pub_is_indexed"/>
         <property name="indexedDate" column="pub_indexed_date"/>
+        <property name="status" column="status"/>
 
         <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" insert="false"
                      update="false"/>

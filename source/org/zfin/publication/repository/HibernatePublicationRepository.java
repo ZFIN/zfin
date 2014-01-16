@@ -486,11 +486,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         String hql = "select distinct fmRel from FeatureMarkerRelationship fmRel,Feature ftr, PublicationAttribution attr " +
                 "      where attr.publication.zdbID = :pubID " +
-                "      and attr.dataZdbID=ftr.zdbID "+
-                "      and ftr.zdbID=fmRel.feature.zdbID "+
-                "      and ftr.type=:tg "+
-                "      order by fmRel.feature.zdbID" ;
-                    Query query = session.createQuery(hql);
+                "      and attr.dataZdbID=ftr.zdbID " +
+                "      and ftr.zdbID=fmRel.feature.zdbID " +
+                "      and ftr.type=:tg " +
+                "      order by fmRel.feature.zdbID";
+        Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
         query.setString("tg", "TRANSGENIC_INSERTION");
         return (List<FeatureMarkerRelationship>) query.list();
@@ -835,7 +835,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * Retrieve the publications for the figures for a given morpholino and anatomy term
      *
      * @param sequenceTargetingReagent Morpholino
-     * @param aoTerm     anatomy Term
+     * @param aoTerm                   anatomy Term
      * @return List of publications
      */
     public List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm aoTerm) {
@@ -1612,5 +1612,25 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("pubID", publicationID);
 
         return (List<Genotype>) query.list();
+    }
+
+    @Override
+    public List<Publication> getPublicationWithPubMedId(Integer maxResult) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "from Publication as publication" +
+                "      where (publication.accessionNumber is not null AND " +
+                "            publication.accessionNumber not in (:list))" +
+                "            AND publication.type not in (:type) " +
+                "            AND publication.status = :status ";
+
+        Query query = session.createQuery(hql);
+        query.setParameterList("list", new String[]{"none", "None"});
+        query.setParameterList("type", new String[]{"Journal", "Review"});
+        query.setString("status", "active");
+        if (maxResult != null)
+            query.setMaxResults(maxResult);
+
+        return (List<Publication>) query.list();
     }
 }

@@ -723,5 +723,11 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         List<Publication> pubs = publicationRepository.getExpressedGenePublications("ZDB-GENE-001103-4 ", "ZDB-TERM-100331-8");
         assertNotNull(pubs);
     }
+
+    @Test
+    public void getPubMedPublications() {
+        List<Publication> pubs = publicationRepository.getPublicationWithPubMedId(2);
+        assertNotNull(pubs);
+    }
 }
 

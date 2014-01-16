@@ -24,6 +24,7 @@ public class Publication implements Comparable<Publication>, Serializable {
     private String accessionNumber;
     private String fileName;
     private String doi;
+    private String status;
     private GregorianCalendar publicationDate;
     private GregorianCalendar closeDate;
     private Journal journal;
@@ -173,6 +174,14 @@ public class Publication implements Comparable<Publication>, Serializable {
 
     public void setFigures(Set<Figure> figures) {
         this.figures = figures;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getCitation() {

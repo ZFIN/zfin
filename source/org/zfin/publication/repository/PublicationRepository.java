@@ -481,4 +481,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of genotype (non-wt)
      */
     List<Genotype> getMutantsAndTgsByPublication(String publicationID);
+
+    List<Publication> getPublicationWithPubMedId(Integer maxResult);
 }
