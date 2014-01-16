@@ -20,6 +20,8 @@
 
 <?/MICOMMENT>
 
+
+
 <html>
 <!--
 EXPECTED VARS:
@@ -28,6 +30,19 @@ attr -- the column to be updated {mrkr_name,mrkr_abbrev}
 new_value -- the replacement value
 old_value -- the value being replaced
 -->
+
+<?MIERROR>
+  <?MIVAR COND=$(XST,$MI_SQL)>
+    SQL: $MI_SQL<br><br>
+  <?/MIVAR>
+
+  Code:    $MI_ERRORCODE <br>
+  State:   $MI_ERRORSTATE <br>
+  Message: $MI_ERRORMSG <br>
+
+<?/MIERROR>
+
+
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 <!-- If one of the values was an empty string, return the user to the previous page.
@@ -137,6 +152,7 @@ old_value -- the value being replaced
       <?MIVAR NAME=$value_on_mhist1>$3<?/MIVAR>
     <?/MIBLOCK>
   <?/MISQL>
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR><?/MIBLOCK>
 
 <?MIBLOCK COND="$(NXST,$max_mhist1)">
   <SCRIPT>
@@ -150,6 +166,7 @@ old_value -- the value being replaced
                WHERE mhist_zdb_id = '$max_mhist1'
                $mhist_where;">
   <?/MISQL>
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
 
 <?MIVAR>
   <!--verify that $old_value = $value_on_mhist1 <p> $MI_SQL -->
@@ -162,7 +179,7 @@ old_value -- the value being replaced
         SET $mrkr_column = '$prev_value'
         WHERE mrkr_zdb_id = '$OID';">
     <?/MISQL>
-    
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
     <!--get mhist_id2 <p> -->
     <?MISQL SQL="
         SELECT mhist_zdb_id, mhist_date
@@ -172,20 +189,35 @@ old_value -- the value being replaced
         ORDER BY mhist_date DESC;">
     <?MIVAR COND=$(=,$MI_CURRENTROW,1) NAME=$max_mhist2>$1<?/MIVAR>
     <?/MISQL>
+    <?MIBLOCK COND="$(XST,$debug)">
+    <?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre>
+    <pre>
+    max_mhist1: $max_mhist1
+    max_mhist2: $max_mhist2
+    </pre>
+    </div> <?/MIVAR>
+    <?/MIBLOCK>
 
     <?MIBLOCK COND="$(NC,$max_mhist1,$max_mhist2)">
+
+    <?MICOMMENT>
+       *** This query seems to always nullify the update above... but why?  if I comment it out, the page
+       *** behaves as expected.  Since there are no comments to explain it's existence, we'll just go with that.
+
       <!--update mrkr <p> -->
       <?MISQL SQL="
           UPDATE marker
           SET $mrkr_column = '$new_value'
           WHERE mrkr_zdb_id = '$OID';">
       <?/MISQL>
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
+    <?/MICOMMENT>
 
       <!--update mrkr_history <p> -->
     
       <!-- ------ assign new mhist with old mhist reasoning  ------ -->
       <?MIVAR NAME=max_mhist3><?/MIVAR>
-      <?MISQL COND="$(=,1,1)" SQL="
+      <?MISQL SQL="
           SELECT mhist_zdb_id, mhist_date
           FROM marker_history
           WHERE mhist_mrkr_zdb_id = '$OID'
@@ -194,27 +226,28 @@ old_value -- the value being replaced
 
         <?MIVAR COND=$(EC,$MI_CURRENTROW,1) NAME=max_mhist3>$1<?/MIVAR>
       <?/MISQL> 
-
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
       <?MISQL SQL="
           UPDATE record_attribution           
           SET recattrib_data_zdb_id = '$max_mhist3'
           WHERE recattrib_data_zdb_id = '$max_mhist1'">
       <?/MISQL>
-
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
       <?MISQL SQL="SELECT mhist_reason, mhist_comments, mhist_date
                    FROM marker_history 
                    WHERE mhist_zdb_id = '$max_mhist1';">
       <?/MISQL>
-      
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
       <?MIVAR NAME=mhist1_reason>$1<?/MIVAR>
       <?MIVAR NAME=mhist1_comments>$2<?/MIVAR>
       <?MIVAR NAME=mhist1_date>$3<?/MIVAR>
 
-      <?MISQL COND=$(=,1,1) SQL="DELETE FROM zdb_active_data
+      <?MISQL SQL="DELETE FROM zdb_active_data
                    WHERE zactvd_zdb_id in ('$max_mhist1','$max_mhist2');">
       <?/MISQL>
+      <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
       <!--delete history max(mhist1,mhist2) <p>-->
-      <?MISQL COND=$(=,1,1) COND="$(EC,$event,reassigned)"
+      <?MISQL COND="$(EC,$event,reassigned)"
               SQL="DELETE FROM zdb_active_data
                    WHERE zactvd_zdb_id IN 
                      ( SELECT dalias_zdb_id
@@ -223,14 +256,14 @@ old_value -- the value being replaced
                          AND dalias_alias = '$old_value'
                      );">
       <?/MISQL>
-
-      <?MISQL COND=$(=,1,1) SQL="
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
+      <?MISQL SQL="
         UPDATE marker_history
         SET mhist_reason = '$mhist1_reason',
             mhist_comments = '$mhist1_comments'
         WHERE mhist_zdb_id = '$max_mhist3';">
       <?/MISQL>
-
+    <?MIBLOCK COND="$(XST,$debug)"><?MIVAR> <div style="border: 5px solid purple;"><pre>$MI_SQL</pre></div> <?/MIVAR> <?/MIBLOCK>
     <?/MIBLOCK> <!-- end mhist1 != mhist2 -->
   <?MIELSE>
       <SCRIPT>
@@ -243,12 +276,17 @@ old_value -- the value being replaced
 <?/MIBLOCK> <!-- end valid input values -->
 
 
+
 <!-- okay, now just bail back to the markerview to view results -->
 <?MIVAR>
   <?MISQL SQL="select get_mrkr_url('$OID') from single;">
+    <?MIBLOCK COND="$(XST,$debug)">
+      <?MIVAR> <a href="$1">back to the gene page</a><?/MIVAR>
+    <?MIELSE>
     <SCRIPT>
-      location.replace("$1")
-    </SCRIPT> 
+      <?MIVAR>location.replace("$1");<?/MIVAR>
+    </SCRIPT>
+    <?/MIBLOCK>
+
   <?/MISQL>
 <?/MIVAR>
-

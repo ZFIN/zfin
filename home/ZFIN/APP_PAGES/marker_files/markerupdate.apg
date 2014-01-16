@@ -28,7 +28,7 @@ target_table -- marker
 <SCRIPT>
 function make_correction(mrkr_id,old_v,attr) {
   var new_v = document.updater.new_value.value;
-  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-marker_history_correction.apg&OID='+mrkr_id+'&new_value='+new_v+'&old_value='+old_v+'&attr='+attr)
+  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-marker_history_correction.apg&OID='+mrkr_id+'&new_value='+new_v+'&old_value='+old_v+'&attr='+attr);
 }
 
 function validate(theform) {
@@ -166,7 +166,9 @@ function validate(theform) {
         <INPUT TYPE=submit name=s_change value="SUBMIT this UPDATE">
         <?MIBLOCK COND="$(OR,$(EC,$attr,mrkr_name),$(EC,$attr,mrkr_abbrev))">
            <?MIVAR NAME=$decoded_current_value>$(URLDECODE,$current_value)<?/MIVAR>
-        <INPUT TYPE=button name=s_correct value="Correct Most Recent Update" onClick="make_correction('$OID','$decoded_current_value','$attr');">
+        <?MIVAR>
+          <INPUT TYPE=button name=s_correct value="Correct Most Recent Update" onClick="make_correction('$OID','$decoded_current_value','$attr');">
+        <?/MIVAR>
         <?/MIBLOCK>
         </TD><TD>
         <INPUT TYPE=button 
