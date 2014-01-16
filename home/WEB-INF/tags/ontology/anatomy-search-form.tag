@@ -10,7 +10,7 @@
             Ontology Search
             </span>
         </td>
-        <td style="background-color: #efefef; text-align: right">
+        <td class="titlebarRight">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                 <tiles:putAttribute name="subjectName" value="Ontology Search"/>
                 <tiles:putAttribute name="subjectID" value=""/>
