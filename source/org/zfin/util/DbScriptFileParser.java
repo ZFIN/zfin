@@ -24,7 +24,7 @@ public class DbScriptFileParser {
     }
 
     public List<DatabaseJdbcStatement> parseFile() {
-        List<DatabaseJdbcStatement> queries = new ArrayList<DatabaseJdbcStatement>();
+        List<DatabaseJdbcStatement> queries = new ArrayList<>();
         FileReader fileReader = null;
         try {
             fileReader = new FileReader(dbScriptFile);

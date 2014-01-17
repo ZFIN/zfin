@@ -1,5 +1,5 @@
 unload to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/reportRecords.txt
-select distinct feature_abbrev, feature_zdb_id, submitter_name, submitter_id, zdb_id,pub_mini_ref
+select distinct feature_abbrev, feature_zdb_id, submitter_name, submitter_id, pub_mini_ref, zdb_id
 from feature, updates, publication
 where not exists (
  select 'x' from record_attribution where

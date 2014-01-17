@@ -119,15 +119,8 @@ public class DatabaseService {
      * @return Jdbc Statement
      */
     public static DatabaseJdbcStatement createJdbcStatement(Table table, String columnName) {
-        StringBuilder builder = new StringBuilder(SELECT);
-        builder.append(" ");
-        builder.append(columnName);
-        builder.append(" ");
-        builder.append(FROM);
-        builder.append(" ");
-        builder.append(table.getTableName());
         DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
-        statement.addQueryPart(builder.toString());
+        statement.addQueryPart(SELECT + " " + columnName + " " + FROM + " " + table.getTableName());
         return statement;
     }
 
@@ -146,10 +139,10 @@ public class DatabaseService {
     /**
      * Ensure that only the entity table columns are retrieved in the query if it is not a count(*) query.
      *
-     * @param lookup
-     * @param foreignKeys
-     * @param entityTable
-     * @return
+     * @param lookup Lookup value
+     * @param foreignKeys list of foreign Keys
+     * @param entityTable Entity Table
+     * @return DatabaseJdbcStatement
      */
     public static DatabaseJdbcStatement createJoinJdbcStatement(TableValueLookup lookup, List<ForeignKey> foreignKeys, Table entityTable) {
         DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
@@ -161,14 +154,12 @@ public class DatabaseService {
                 queryBuilder.addPKWhereClause(colValue);
         }
         if (foreignKeys != null) {
-            String joinColumn = rootTable.getPkName();
             for (ForeignKey foreignKey : foreignKeys) {
                 Table foreignKeyTable = foreignKey.getForeignKeyTable();
                 if (foreignKey.isManyToManyRelationship()) {
                     queryBuilder.addManyToManyJoinClause(rootTable, foreignKey);
                 } else {
                     queryBuilder.addTableWhereJoinedClause(rootTable, foreignKey);
-                    joinColumn = foreignKeyTable.getPkName();
                     rootTable = foreignKey.getForeignKeyTable();
                 }
             }
@@ -179,27 +170,20 @@ public class DatabaseService {
 
 
     public static int getNumberOfRecords(Table table) {
-        StringBuilder builder = new StringBuilder(SELECT);
-        builder.append(" ");
-        builder.append(COUNT_START);
-        builder.append(" ");
-        builder.append(FROM);
-        builder.append(" ");
-        builder.append(table.getTableName());
         DatabaseJdbcStatement statement = new DatabaseJdbcStatement();
-        statement.addQueryPart(builder.toString());
+        statement.addQueryPart(SELECT + " " + COUNT_START + " " + FROM + " " + table.getTableName());
         List<List<String>> result = getInfrastructureRepository().executeNativeQuery(statement);
         return Integer.parseInt(result.get(0).get(0));
     }
 
     public static List<ForeignKeyResult> createFKResultList(Table rootTable, String id) {
-        List<ForeignKeyResult> foreignKeyResultList = new ArrayList<ForeignKeyResult>(4);
-        List<Table> tables = new ArrayList<Table>(5);
+        List<ForeignKeyResult> foreignKeyResultList = new ArrayList<>(4);
+        List<Table> tables = new ArrayList<>(5);
         tables.add(rootTable);
         TableValueLookup lookup = new TableValueLookup(rootTable);
         ColumnValue columnValue = new ColumnValue(rootTable.getPkName(), id);
         lookup.addColumnValue(columnValue);
-        List<ForeignKey> foreignKeyList = new ArrayList<ForeignKey>(5);
+        List<ForeignKey> foreignKeyList = new ArrayList<>(5);
 
         for (Table table : tables) {
             List<ForeignKey> foreignKeys = ForeignKey.getForeignKeys(table);
@@ -269,10 +253,6 @@ public class DatabaseService {
         return null;
     }
 
-    public static DatabaseJdbcStatement createQueryFromFullForeignKeyHierarchy(String fullNodeName, String pkValue) {
-        return createQueryFromFullForeignKeyHierarchy(fullNodeName, pkValue, null, null);
-    }
-
     public static DatabaseJdbcStatement createQueryFromFullForeignKeyHierarchy(String fullNodeName, String pkValue, Table entityTable, Table baseTable) {
         Table rootTable = ForeignKey.getRootTableFromNodeName(fullNodeName, baseTable);
         TableValueLookup lookup = new TableValueLookup(rootTable);
@@ -291,7 +271,7 @@ public class DatabaseService {
         builder.append(tableName);
         builder.append(" order by 1");
         int index = 1;
-        for (String columnName : result) {
+        for (String ignored : result) {
             if (index > 1) {
                 builder.append(",");
                 builder.append(index);
@@ -330,7 +310,7 @@ public class DatabaseService {
     }
 
     public List<String> runDbScriptFile(File dbScriptFile, Map<String, List<List<String>>> dataMap) {
-        List<String> errorMessage = new ArrayList<String>(2);
+        List<String> errorMessage = new ArrayList<>(2);
         if (!dbScriptFile.exists()) {
             String message = "Could not find script file " + dbScriptFile.getAbsolutePath();
             LOG.error(message);
@@ -359,7 +339,7 @@ public class DatabaseService {
                 infrastructureRep.executeJdbcStatement(statement, data);
                 LOG.info(data.size() + " records inserted");
             } else if (statement.isDebug()) {
-                List<List<String>> dataReturn = null;
+                List<List<String>> dataReturn;
                 if (LOG.isDebugEnabled()) {
                     dataReturn = infrastructureRep.executeNativeQuery(statement);
                     listOfResultRecords.add(dataReturn);
@@ -372,7 +352,7 @@ public class DatabaseService {
                     }
                 }
             } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
-                List<List<String>> dataReturn = null;
+                List<List<String>> dataReturn;
                 dataReturn = infrastructureRep.executeNativeQuery(statement);
                 listOfResultRecords.add(dataReturn);
                 if (dataReturn == null) {
