@@ -1,5 +1,6 @@
 unload to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/reportRecords.txt
-select distinct feature_zdb_id, submitter_name, submitter_id from feature, updates
+select distinct feature_abbrev, feature_zdb_id, submitter_name, submitter_id, zdb_id,pub_mini_ref
+from feature, updates, publication
 where not exists (
  select 'x' from record_attribution where
             recattrib_data_zdb_id = feature_zdb_id)
@@ -16,4 +17,4 @@ select 'x'
         where da.dalias_zdb_id = ra.recattrib_data_zdb_id
         and feature_zdb_id = da.dalias_data_zdb_id)
 and rec_id = feature_zdb_id
-and new_value = 'removed';
+and new_value = 'removed' and old_value = zdb_id
