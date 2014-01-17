@@ -126,11 +126,6 @@ while ($cur->fetch) {
 	unlink "fx_permission/$FILENAME";
     }
 
-    # send the report to the appropriate curator if the number of rows
-    # returned is not zero.
-
-    print REP $email . " "  if($count > 0);
-
 }
 
 close (REP);
