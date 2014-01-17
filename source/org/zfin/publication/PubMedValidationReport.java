@@ -1,40 +1,35 @@
 package org.zfin.publication;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
-import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.repository.SessionCreator;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
-public class PubMedValidationReport {
+public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     public static final String PUB_MED = "pubmed";
 
-    private static String propertyFileDirectory;
-
     public static void main(String[] args) throws Exception {
-        String propertyFilePath = args[0];
         PubMedValidationReport task = new PubMedValidationReport();
-        task.propertyFileDirectory = propertyFilePath;
+        task.jobName = args[0];
+        task.baseDir = args[1];
+        task.propertyFilePath = args[2];
         task.init();
         task.execute();
     }
 
-    private void init() {
-        ZfinProperties.init(propertyFileDirectory);
-        new HibernateSessionCreator(false);
-    }
-
     public void execute() {
-        List<Publication> publicationList = getPublicationRepository().getPublicationWithPubMedId(10000);
+        List<Publication> publicationList = getPublicationRepository().getPublicationWithPubMedId(null);
         for (Publication publication : publicationList) {
             checkValidPubMedRecord(publication);
         }
-        if (errorList.size() > 0)
+        createErrorReport(null, pubMedIdNotFoundList, "faulty-PubMed-IDs");
+        createErrorReport(null, pubInfoMismatchList, "faulty-Pub-Info");
+        if (pubMedIdNotFoundList.size() > 0)
             for (String error : errorList)
                 System.out.println(error);
     }
@@ -50,56 +45,161 @@ public class PubMedValidationReport {
             // results output
             EUtilsServiceStub.DocSumType[] docSum = res.getDocSum();
             if (docSum == null) {
-                errorList.add("Could not find PubMed record for " + publication.getZdbID() + "[" + publication.getAccessionNumber() + "]");
+                pubMedIdNotFoundList.add(getElementsList(publication.getShortAuthorList(), publication.getZdbID(), publication.getAccessionNumber()));
                 return;
             }
             if (docSum.length > 1) {
                 errorList.add("More than one PubMed record found for " + publication.getZdbID() + "[" + publication.getAccessionNumber() + "]");
                 return;
             }
-            StringBuilder builder = new StringBuilder();
-            for (EUtilsServiceStub.DocSumType aDocSum : docSum) {
-                String volumeOne = null;
-                String volumeTwo = null;
-                for (int k = 0; k < aDocSum.getItem().length; k++) {
+            PublicationMismatch mismatch = new PublicationMismatch();
+            EUtilsServiceStub.DocSumType aDocSum = docSum[0];
 
-                    String elementName = aDocSum.getItem()[k].getName();
-                    String value = aDocSum.getItem()[k].getItemContent();
-                    if (elementName.equals("Volume")) {
-                        volumeOne = value;
-                    }
-                    if (elementName.equals("Issue")) {
-                        volumeTwo = value;
-                    }
-                    if (elementName.equals("Pages")) {
-                        if (!publication.getPages().equals(value))
-                            builder.append("Pages Mismatch: Is [" + publication.getPages() + "] Should [" + value + "]");
-                    }
-                    if (elementName.equals("DOI") && value != null) {
-                        if (!publication.getDoi().equals(value))
-                            builder.append("DOI Mismatch: Is [" + publication.getDoi() + "] Should [" + value + "]");
-                    }
-                    if (elementName.equals("Title") && value != null) {
-                        if (value.endsWith("."))
-                            value = value.substring(0, value.length() - 1);
-                        if (!publication.getTitle().equalsIgnoreCase(value))
-                            builder.append("Title Mismatch: Is [" + publication.getTitle() + "] Should [" + value + "]");
+            String volumeOne = null;
+            String volumeTwo = null;
+            for (int k = 0; k < aDocSum.getItem().length; k++) {
+
+                String elementName = aDocSum.getItem()[k].getName();
+                String value = aDocSum.getItem()[k].getItemContent();
+                if (elementName.equals("Volume")) {
+                    volumeOne = value;
+                }
+                if (elementName.equals("Issue")) {
+                    volumeTwo = value;
+                }
+                if (elementName.equals("Pages")) {
+                    if (publication.getPages() == null || !publication.getPages().equals(value)) {
+                        mismatch.setPages(publication.getPages());
+                        mismatch.setPagesExternal(value);
                     }
                 }
-                String fullVolumeString = volumeOne;
-                if (volumeTwo != null)
-                    fullVolumeString += "(" + volumeTwo + ")";
-                if (!publication.getVolume().equals(fullVolumeString))
-                    builder.append("Volume Mismatch: Is [" + publication.getVolume() + "] Should [" + fullVolumeString + "]");
+                if (elementName.equals("DOI") && value != null) {
+                    if (publication.getDoi() == null || !publication.getDoi().equals(value)) {
+                        mismatch.setDoi(publication.getDoi());
+                        mismatch.setDoiExternal(value);
+                    }
+                }
+                if (elementName.equals("Title") && value != null) {
+                    if (value.endsWith("."))
+                        value = value.substring(0, value.length() - 1);
+                    if (publication.getTitle() == null || !publication.getTitle().equalsIgnoreCase(value)) {
+                        mismatch.setTitle(publication.getTitle());
+                        mismatch.setTitleExternal(value);
+                    }
+                }
             }
-            if (builder.length() > 0) {
-                String prefix = "Publication " + publication.getZdbID() + " [" + publication.getAccessionNumber() + "]: ";
-                errorList.add(prefix + builder.toString());
+            String fullVolumeString = volumeOne;
+            if (volumeTwo != null)
+                fullVolumeString += "(" + volumeTwo + ")";
+            if (publication.getVolume() == null || !publication.getVolume().equals(fullVolumeString)) {
+                mismatch.setVolume(publication.getVolume());
+                mismatch.setVolumeExternal(fullVolumeString);
             }
+            if (mismatch.hasValues())
+                pubInfoMismatchList.add(mismatch.createPublicationMismatchElements(publication.getZdbID(), publication.getShortAuthorList(), publication.getAccessionNumber()));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private List<String> getElementsList(String... elements) {
+        List<String> listOfElements = new ArrayList<>(elements.length);
+        Collections.addAll(listOfElements, elements);
+        return listOfElements;
+    }
+
     private List<String> errorList = new ArrayList<>();
+    private List<List<String>> pubMedIdNotFoundList = new ArrayList<>();
+    private List<List<String>> pubInfoMismatchList = new ArrayList<>();
+
+    class PublicationMismatch {
+        private String doi;
+        private String volume;
+        private String pages;
+        private String title;
+        private String doiExternal;
+        private String volumeExternal;
+        private String pagesExternal;
+        private String titleExternal;
+
+        public boolean hasValues() {
+            if (doiExternal != null) return true;
+            if (volumeExternal != null) return true;
+            if (pagesExternal != null) return true;
+            if (titleExternal != null) return true;
+            return false;
+        }
+
+        public String getDoi() {
+            return doi;
+        }
+
+        public void setDoi(String doi) {
+            this.doi = doi;
+        }
+
+        public String getVolume() {
+            return volume;
+        }
+
+        public void setVolume(String volume) {
+            this.volume = volume;
+        }
+
+        public String getPages() {
+            return pages;
+        }
+
+        public void setPages(String pages) {
+            this.pages = pages;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDoiExternal() {
+            return doiExternal;
+        }
+
+        public void setDoiExternal(String doiExternal) {
+            this.doiExternal = doiExternal;
+        }
+
+        public String getVolumeExternal() {
+            return volumeExternal;
+        }
+
+        public void setVolumeExternal(String volumeExternal) {
+            this.volumeExternal = volumeExternal;
+        }
+
+        public String getPagesExternal() {
+            return pagesExternal;
+        }
+
+        public void setPagesExternal(String pagesExternal) {
+            this.pagesExternal = pagesExternal;
+        }
+
+        public String getTitleExternal() {
+            return titleExternal;
+        }
+
+        public void setTitleExternal(String titleExternal) {
+            this.titleExternal = titleExternal;
+        }
+
+        public List<String> createPublicationMismatchElements(String pubID, String authors, String pubMedID) {
+            return getElementsList(authors, pubID, pubMedID,
+                    doi == null ? "" : doi, doiExternal,
+                    pages == null ? "" : pages, pagesExternal,
+                    volume == null ? "" : volume, volumeExternal,
+                    title == null ? "" : title, titleExternal);
+        }
+    }
 }
