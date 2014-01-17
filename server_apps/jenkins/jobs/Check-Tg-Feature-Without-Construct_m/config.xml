@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>All ESTs in ZFIN are supposed to be associated with Genes.&#xd;
-This job checks that those relationships are correctly defined.</description>
+  <description>All Tg Features need to have an associated constructs, i.e. a feature-marker-relationship. Only
+      features that are used in a genotype are included.
+      This job checks if that is the case.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
