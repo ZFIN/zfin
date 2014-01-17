@@ -61,12 +61,12 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
           <email>
             <recipientList>cmpich@cs.uoregon.edu</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.fault-PubMed-IDs.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern></attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w.*.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>

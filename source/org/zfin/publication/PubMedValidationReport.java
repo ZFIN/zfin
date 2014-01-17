@@ -1,6 +1,7 @@
 package org.zfin.publication;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 
 import java.util.ArrayList;
@@ -13,18 +14,32 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     public static final String PUB_MED = "pubmed";
 
+    private static Integer numberOfPublicationsToScan;
+
     public static void main(String[] args) throws Exception {
         PubMedValidationReport task = new PubMedValidationReport();
         task.jobName = args[0];
         task.baseDir = args[1];
         task.propertyFilePath = args[2];
+        if (args.length > 3)
+            if (StringUtils.isNotEmpty(args[3]))
+                numberOfPublicationsToScan = Integer.parseInt(args[3]);
         task.init();
         task.execute();
     }
 
     public void execute() {
-        List<Publication> publicationList = getPublicationRepository().getPublicationWithPubMedId(null);
+        List<Publication> publicationList = getPublicationRepository().getPublicationWithPubMedId(numberOfPublicationsToScan);
+        System.out.println(publicationList.size() + " publications are scanned");
+        int index = -1;
         for (Publication publication : publicationList) {
+            if (index++ % 10 == 0) {
+                System.out.print(index);
+                if (index % 1000 == 0)
+                    System.out.println("...");
+                else
+                    System.out.print("...");
+            }
             checkValidPubMedRecord(publication);
         }
         createErrorReport(null, pubMedIdNotFoundList, "faulty-PubMed-IDs");

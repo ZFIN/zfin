@@ -305,6 +305,7 @@
             <arg value="${JobName}"/>
             <arg value="${validateData}/validatedata"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value=""/>
         </java>
 
         <echo message="${validateData}/validatedata/${JobName}.txt"/>
