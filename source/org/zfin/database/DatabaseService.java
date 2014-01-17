@@ -339,7 +339,7 @@ public class DatabaseService {
         }
 
         if (dataMap == null)
-            dataMap = new HashMap<String, List<List<String>>>(5);
+            dataMap = new HashMap<>(5);
         DbScriptFileParser parser = new DbScriptFileParser(dbScriptFile);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         InfrastructureRepository infrastructureRep = RepositoryFactory.getInfrastructureRepository();

@@ -31,6 +31,7 @@ public class DbScriptFileParser {
             LineNumberReader reader = new LineNumberReader(fileReader);
             String line;
             DatabaseJdbcStatement query = new DatabaseJdbcStatement(dbScriptFile.getAbsolutePath());
+            boolean queryClosed = false;
             while ((line = reader.readLine()) != null) {
                 // ignore empty lines or lines with comments
                 if (line.trim().length() == 0 || line.trim().startsWith(COMMENTS))
@@ -39,14 +40,16 @@ public class DbScriptFileParser {
                 if (line.trim().endsWith(QUERY_ENDS_SEMICOLON)) {
                     queries.add(query);
                     query = new DatabaseJdbcStatement(dbScriptFile.getAbsolutePath());
+                    queryClosed = true;
                 }
             }
+            if (!queryClosed)
+                queries.add(query);
         } catch (FileNotFoundException e) {
             // should not happen as this is caught in the constructor.
         } catch (IOException ioe) {
             LOG.error(ioe);
-        }
-        finally {
+        } finally {
             try {
                 if (fileReader != null)
                     fileReader.close();
