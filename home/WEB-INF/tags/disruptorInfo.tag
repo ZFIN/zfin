@@ -56,7 +56,7 @@
 
     <tr>
         <td>
-            <b>Sequence<c:if test="${typeName eq 'TALEN'}">&nbsp;1</c:if>:</b>
+            <b><c:if test="${typeName ne 'Morpholino'}">Target&nbsp;</c:if>Sequence<c:if test="${typeName eq 'TALEN'}">&nbsp;1</c:if>:</b>
         </td>
         <td align="left" nowrap="true">
             <c:choose>
@@ -89,7 +89,7 @@
     <c:if test="${typeName eq 'TALEN'}">
         <tr>
             <td>
-                <b>Sequence&nbsp;2:</b>
+                <b>Target&nbsp;Sequence&nbsp;2:</b>
             </td>
             <td align="left" nowrap="true">
                 <c:choose>
