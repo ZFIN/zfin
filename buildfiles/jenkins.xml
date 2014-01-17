@@ -431,7 +431,7 @@
                     <equals arg1="${emailConfiguration}" arg2=""/>
                 </not>
                 <then>
-                    <echo message="Job Name: ${jobName} : Add Failure trigger ${emailConfiguration}"/>
+                    <echo message="${jobName} : Add Failure trigger ${emailConfiguration}"/>
                     <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
                                    replace="${emailConfiguration}">
                         <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
@@ -458,7 +458,7 @@
                     <equals arg1="${emailConfiguration}" arg2=""/>
                 </not>
                 <then>
-                    <echo message="Job Name: ${jobName} : Add Success trigger ${emailConfiguration}"/>
+                    <echo message="${jobName} : Add Success trigger ${emailConfiguration}"/>
                     <replaceregexp match="@SUCCESS-RECIPIENT-LIST@"
                                    replace="${emailConfiguration}">
                         <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
@@ -474,13 +474,13 @@
             <groovy>
                 properties.emailConfiguration = properties.DEFAULT_EMAIL
             </groovy>
-            <echo message="Job Name: ${jobName} : Add Failure trigger ${emailConfiguration}"/>
+            <echo message="${jobName} : Add Failure trigger ${emailConfiguration}"/>
             <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
                            replace="${emailConfiguration}">
                 <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
             </replaceregexp>
 
-            <echo message="Job Name: ${jobName} : Add Success trigger ${emailConfiguration}"/>
+            <echo message="${jobName} : Add Success trigger ${emailConfiguration}"/>
             <replaceregexp match="@SUCCESS-RECIPIENT-LIST@"
                            replace="${emailConfiguration}">
                 <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
