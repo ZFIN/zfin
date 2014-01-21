@@ -22,7 +22,7 @@ misleading one) if there are no rows in existence for that object type, i.e. for
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>validate-data-report-simple -DJobName=Check-Get_Object_Type-Function_d</targets>
+      <targets>validate-data-report-dynamic -DJobName=Check-Get_Object_Type-Function_d</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
