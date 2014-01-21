@@ -97,6 +97,10 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
                 if (elementName.equals("Title") && value != null) {
                     if (value.endsWith("."))
                         value = value.substring(0, value.length() - 1);
+                    if (value.startsWith("[") && value.endsWith("]"))
+                        value = value.substring(1, value.length() - 1);
+                    if (publication.getTitle() != null && publication.getTitle().startsWith("Chapter ") && publication.getTitle().endsWith(value))
+                        continue;
                     if (publication.getTitle() == null || !publication.getTitle().equalsIgnoreCase(value)) {
                         mismatch.setTitle(publication.getTitle());
                         mismatch.setTitleExternal(value);

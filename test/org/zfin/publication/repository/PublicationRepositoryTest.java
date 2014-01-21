@@ -726,7 +726,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPubMedPublications() {
-        List<Publication> pubs = publicationRepository.getPublicationWithPubMedId(2);
+        List<Publication> pubs = publicationRepository.getPublicationWithPubMedId(null);
         assertNotNull(pubs);
     }
 }
