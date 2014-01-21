@@ -1272,13 +1272,17 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public List<List<String>> executeNativeDynamicQuery(DatabaseJdbcStatement statement) {
+/*
         if (!statement.isDynamicQuery())
             throw new RuntimeException("Not a dynamic query");
+*/
         List<List<String>> firstQueryResultList = executeNativeQuery(statement);
         if (firstQueryResultList == null)
             return null;
         List<List<String>> returnResultList = new ArrayList<>();
         DatabaseJdbcStatement subQuery = statement.getSubQueryStatement();
+        if (subQuery == null)
+            return returnResultList;
         for (List<String> resultRecord : firstQueryResultList) {
             subQuery.bindVariables(resultRecord);
             List<List<String>> c = executeNativeQuery(subQuery);
