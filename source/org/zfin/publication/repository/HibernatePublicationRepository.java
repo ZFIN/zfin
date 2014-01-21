@@ -1621,7 +1621,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "from Publication as publication" +
                 "      where (publication.accessionNumber is not null AND " +
                 "            publication.accessionNumber not in (:list))" +
-                "            AND publication.type not in (:type) " +
+                "            AND publication.type in (:type) " +
                 "            AND publication.status = :status ";
 
         Query query = session.createQuery(hql);
