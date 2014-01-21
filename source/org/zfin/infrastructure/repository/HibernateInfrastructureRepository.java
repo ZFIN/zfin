@@ -4,6 +4,7 @@
  */
 package org.zfin.infrastructure.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -258,7 +259,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @param termName   term name (contains)
      * @param ontologies Ontology
      * @return list of GenericTerm
-     *         exception: If no ontology provided a NullPointerException is thrown.
+     * exception: If no ontology provided a NullPointerException is thrown.
      */
     @SuppressWarnings("unchecked")
     public List<GenericTerm> getTermsByName(String termName, List<Ontology> ontologies) {
@@ -1221,15 +1222,22 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      */
     @Override
     public List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement) {
+        if (statement.isSubquery())
+            return executeNativeQuery(statement.getSubQuery());
+        else
+            return executeNativeQuery(statement.getQuery());
+    }
+
+    public List<List<String>> executeNativeQuery(String queryString) {
         Session session = HibernateUtil.currentSession();
-        SQLQuery query = session.createSQLQuery(statement.getQuery());
+        SQLQuery query = session.createSQLQuery(queryString);
         List objects = query.list();
         if (objects == null)
             return null;
-        if (objects.size() == 0)
+        if (objects.size() == 0 || objects.get(0) == null)
             return null;
 
-        List<List<String>> data = new ArrayList<List<String>>(objects.size());
+        List<List<String>> data = new ArrayList<>(objects.size());
         if (objects.get(0) instanceof Object[]) {
             List<Object[]> entities = (List<Object[]>) objects;
             for (Object[] row : entities) {
@@ -1242,22 +1250,42 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 }
                 data.add(singleRow);
             }
-        } else if (objects.get(0) instanceof BigDecimal) {
-            List<BigDecimal> entities = (List<BigDecimal>) objects;
-            for (BigDecimal row : entities) {
-                List<String> singleRow = new ArrayList<String>(1);
-                singleRow.add(row.toString());
-                data.add(singleRow);
-            }
         } else {
-            List<String> entities = (List<String>) objects;
-            for (String row : entities) {
-                List<String> singleRow = new ArrayList<String>(1);
-                singleRow.add(row);
-                data.add(singleRow);
+            if (objects.get(0) instanceof BigDecimal) {
+                List<BigDecimal> entities = (List<BigDecimal>) objects;
+                for (BigDecimal row : entities) {
+                    List<String> singleRow = new ArrayList<String>(1);
+                    singleRow.add(row.toString());
+                    data.add(singleRow);
+                }
+            } else {
+                List<String> entities = (List<String>) objects;
+                for (String row : entities) {
+                    List<String> singleRow = new ArrayList<String>(1);
+                    singleRow.add(row);
+                    data.add(singleRow);
+                }
             }
         }
         return data;
+    }
+
+    @Override
+    public List<List<String>> executeNativeDynamicQuery(DatabaseJdbcStatement statement) {
+        if (!statement.isDynamicQuery())
+            throw new RuntimeException("Not a dynamic query");
+        List<List<String>> firstQueryResultList = executeNativeQuery(statement);
+        if (firstQueryResultList == null)
+            return null;
+        List<List<String>> returnResultList = new ArrayList<>();
+        DatabaseJdbcStatement subQuery = statement.getSubQueryStatement();
+        for (List<String> resultRecord : firstQueryResultList) {
+            subQuery.bindVariables(resultRecord);
+            List<List<String>> c = executeNativeQuery(subQuery);
+            if (CollectionUtils.isEmpty(c))
+                returnResultList.add(resultRecord);
+        }
+        return returnResultList;
     }
 
     /**

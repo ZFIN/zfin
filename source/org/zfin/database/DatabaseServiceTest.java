@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 public class DatabaseServiceTest {
 
@@ -249,6 +250,19 @@ public class DatabaseServiceTest {
                 "lab_1.zdb_id = int_data_supplier_1.idsup_supplier_zdb_id AND " +
                 "feature_2.feature_zdb_id = int_data_supplier_1.idsup_data_zdb_id", statement.getQuery());
 
+    }
+
+    @Test
+    public void bindVariables() {
+        String query = "select first 1 get_obj_name('$2') from $1";
+
+        List<String> colList = new ArrayList<>(3);
+        colList.add("ANAT");
+        colList.add("FEATURE");
+        colList.add("feature_id");
+        String boundQuery = DatabaseService.bindVariables(query, colList);
+        assertNotNull(boundQuery);
+        assertEquals("select first 1 get_obj_name('feature_id') from FEATURE", boundQuery);
     }
 
     private List<ForeignKey> createForeignKeyList(ForeignKey... foreignKeys) {

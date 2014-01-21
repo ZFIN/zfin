@@ -34,6 +34,7 @@ public class CreateValidateDataReportTask {
     private String templateName = "validate-data-email-report.template";
     private String propertiesFile = "validate-data-email-report.properties";
     private Properties reportProperties;
+    private boolean useDynamicQuery;
 
     public void execute() {
         System.out.println("Job Name: " + jobName);
@@ -47,7 +48,10 @@ public class CreateValidateDataReportTask {
             LOG.error(message);
             throw new RuntimeException(message);
         }
-        queryFile = new File(baseValidateDataDirectory, jobName + ".sql");
+        if (useDynamicQuery)
+            queryFile = new File(baseValidateDataDirectory, jobName + ".sqlj");
+        else
+            queryFile = new File(baseValidateDataDirectory, jobName + ".sql");
         if (!queryFile.exists()) {
             String message = "No file found: " + queryFile.getAbsolutePath();
             LOG.info(message);
@@ -84,10 +88,10 @@ public class CreateValidateDataReportTask {
 
     private void createErrorReport(List<String> errorMessages, List<List<List<String>>> resultList) {
         File reportFile = new File(baseValidateDataDirectory, jobName + ".report.html");
-        if(reportFile.exists())
+        if (reportFile.exists())
             reportFile.delete();
         File dataFile = new File(baseValidateDataDirectory, jobName + ".txt");
-        if(dataFile.exists())
+        if (dataFile.exists())
             dataFile.delete();
 
         if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList.get(0)))
@@ -243,6 +247,8 @@ public class CreateValidateDataReportTask {
         task.setJobName(jobName);
         task.setBaseDir(directory);
         task.setPropertyFilePath(propertyFilePath);
+        if (args.length > 4)
+            task.useDynamicQuery = Boolean.parseBoolean(args[4]);
         task.execute();
     }
 }

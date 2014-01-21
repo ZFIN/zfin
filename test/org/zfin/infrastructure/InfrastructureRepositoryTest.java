@@ -349,6 +349,50 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void runDynamicDbScript() {
+        String fileName = "test//dbTestScriptPerson.sqlj";
+        File file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+
+        DbScriptFileParser parser = new DbScriptFileParser(file);
+        List<DatabaseJdbcStatement> queries = parser.parseFile();
+        List<List<String>> list = null;
+        HibernateUtil.createTransaction();
+        try {
+            list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
+        } catch (Exception e) {
+            fail("error during SQL execution");
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+
+        assertNotNull(list);
+    }
+
+    @Test
+    public void runDynamicDbScript2() {
+        String fileName = "test//dbTestScript.sqlj";
+        File file = new File(fileName);
+        if (!file.exists())
+            fail("Could not find script file");
+
+        DbScriptFileParser parser = new DbScriptFileParser(file);
+        List<DatabaseJdbcStatement> queries = parser.parseFile();
+        List<List<String>> list = null;
+        HibernateUtil.createTransaction();
+        try {
+            list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
+        } catch (Exception e) {
+            fail("error during SQL execution");
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
+
+        assertNotNull(list);
+    }
+
+    @Test
     public void getFirst10Genotypes() {
         List<String> allGenotypes = infrastructureRepository.getAllEntities(Genotype.class, "zdbID", 10);
         assertNotNull(allGenotypes);

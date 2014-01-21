@@ -364,6 +364,13 @@ public interface InfrastructureRepository {
     List<List<String>> executeNativeQuery(DatabaseJdbcStatement statement);
 
     /**
+     * Used to execute a dynamic query, i.e. a query with a sub query.
+     * @param statement
+     * @return
+     */
+    List<List<String>> executeNativeDynamicQuery(DatabaseJdbcStatement statement);
+
+    /**
      * Retrieve all term ids.
      * If firstNIds > 0 return only the first N.
      * If firstNIds < 0 return null

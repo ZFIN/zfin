@@ -2292,64 +2292,6 @@ sub zdbObjectIsSourceDataCorrect($) {
   &recordResult($routineName, $nRecords);
 }
 
-#------------------------------------------------------------
-#zdbObjectHandledByGetObjName
-#
-# This ensures that the get_obj_name function is handling each object type
-# defined in the zdb_object_type table.  get_obj_name returns null if it 
-# does not recognize an object type.  It also flags an error (albeit a 
-# misleading one) if there are no rows in existence for that object type.
-#
-#Parameter
-# $      Email Address for recipients
-# 
-sub zdbObjectHandledByGetObjName ($) {
-
-  my $routineName = "zdbObjectHandledByGetObjName";
-
-  my $sql = "
-             select zobjtype_name,
-                    zobjtype_home_table,
-                    zobjtype_home_zdb_id_column 
-              from  zdb_object_type
-              ";
-
-  my @colDesc = ("Zobjtype name              ",
-		 "Zobjtype home table        ",
-		 "Zobjtype home ZDB ID column" );
-  
-  my $subSqlRef = \&subZdbObjectHandledByGetObjName;
-
-  my $nRecords = execSql ($sql, $subSqlRef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];   	  
-    my $subject = "Object name not available";
-    my $errMsg = "In zdb_object_type, $nRecords records are not properly "
-                  ."handled by the get_obj_name function.";
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-#----------------
-#
-sub subZdbObjectHandledByGetObjName {
-
-  my @row = @_;
-  my $sql = "select first 1 get_obj_name($row[2])
-                 from $row[1]";
-  
-  my $sth = $dbh->prepare ($sql) or die "Prepare fails";
-  $sth->execute();
-  my $result =  $sth->fetchrow_array();
-    
-  return 1 if !$result || $result eq "NULL";
-  return 0;
-}
-
-
 #-------------------------------------------------------------
 # pubTitlesAreUnique
 #

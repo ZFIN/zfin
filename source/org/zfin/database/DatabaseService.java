@@ -139,7 +139,7 @@ public class DatabaseService {
     /**
      * Ensure that only the entity table columns are retrieved in the query if it is not a count(*) query.
      *
-     * @param lookup Lookup value
+     * @param lookup      Lookup value
      * @param foreignKeys list of foreign Keys
      * @param entityTable Entity Table
      * @return DatabaseJdbcStatement
@@ -353,7 +353,7 @@ public class DatabaseService {
                 }
             } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
                 List<List<String>> dataReturn;
-                dataReturn = infrastructureRep.executeNativeQuery(statement);
+                dataReturn = infrastructureRep.executeNativeDynamicQuery(statement);
                 listOfResultRecords.add(dataReturn);
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
@@ -380,6 +380,16 @@ public class DatabaseService {
         }
         return errorMessage;
     }
+
+    public static String bindVariables(String query, List<String> resultRecord) {
+        int index = 0;
+        for (String value : resultRecord) {
+            query = query.replace("$" + index, value);
+            index++;
+        }
+        return query;
+    }
+
 
     private final Logger LOG = Logger.getLogger(DatabaseService.class);
 

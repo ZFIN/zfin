@@ -16,6 +16,8 @@ public class DbScriptFileParser {
     private File dbScriptFile;
     public static final String QUERY_ENDS_SEMICOLON = ";";
     public static final String COMMENTS = "--";
+    public static final String LOOP = "loop";
+    public static final String SUB_QUERY = "subquery";
 
     public DbScriptFileParser(File dbScriptFile) {
         if (dbScriptFile == null)
@@ -32,19 +34,34 @@ public class DbScriptFileParser {
             String line;
             DatabaseJdbcStatement query = new DatabaseJdbcStatement(dbScriptFile.getAbsolutePath());
             boolean queryClosed = false;
+            boolean inSubQuery = false;
+            DatabaseJdbcStatement subQuery = null;
             while ((line = reader.readLine()) != null) {
                 // ignore empty lines or lines with comments
                 if (line.trim().length() == 0 || line.trim().startsWith(COMMENTS))
                     continue;
-                query.addQueryPart(line, reader.getLineNumber());
+                if (line.trim().length() == 0 || line.trim().startsWith(SUB_QUERY)) {
+                    inSubQuery = true;
+                    subQuery = new DatabaseJdbcStatement(dbScriptFile.getAbsolutePath());
+                    subQuery.setSubquery(true);
+                    query.setSubQueryStatement(subQuery);
+                    continue;
+                }
+                if (inSubQuery)
+                    subQuery.addQueryPart(line, reader.getLineNumber());
+                else
+                    query.addQueryPart(line, reader.getLineNumber());
+
                 if (line.trim().endsWith(QUERY_ENDS_SEMICOLON)) {
-                    queries.add(query);
+                    if (!inSubQuery)
+                        queries.add(query);
                     query = new DatabaseJdbcStatement(dbScriptFile.getAbsolutePath());
                     queryClosed = true;
                 }
             }
-            if (!queryClosed)
+            if (!queryClosed) {
                 queries.add(query);
+            }
         } catch (FileNotFoundException e) {
             // should not happen as this is caught in the constructor.
         } catch (IOException ioe) {

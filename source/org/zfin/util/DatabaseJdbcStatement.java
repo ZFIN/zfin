@@ -2,6 +2,8 @@ package org.zfin.util;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 /**
  * Single DB query instruction that will be issued through JDBC connection.
  */
@@ -42,7 +44,8 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     private int comparisonValue;
     private String errorMessage;
     private boolean debugStatement;
-
+    private boolean subquery;
+    private DatabaseJdbcStatement subQueryStatement;
     private DatabaseJdbcStatement parentStatement;
 
     public DatabaseJdbcStatement() {
@@ -385,5 +388,41 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     public DatabaseJdbcStatement getParentStatement() {
         return parentStatement;
+    }
+
+    public boolean isDynamicQuery() {
+        return subQueryStatement != null;
+    }
+
+    public DatabaseJdbcStatement getSubQueryStatement() {
+        return subQueryStatement;
+    }
+
+    public void setSubQueryStatement(DatabaseJdbcStatement subQueryStatement) {
+        this.subQueryStatement = subQueryStatement;
+    }
+
+    public boolean isSubquery() {
+        return subquery;
+    }
+
+    public void setSubquery(boolean subquery) {
+        this.subquery = subquery;
+    }
+
+    private String subQuery;
+
+
+    public String getSubQuery() {
+        return subQuery;
+    }
+
+    public void bindVariables(List<String> resultRecord) {
+        int index = 0;
+        subQuery = query.toString();
+        for (String value : resultRecord) {
+            subQuery = subQuery.replace("$" + index, value);
+            index++;
+        }
     }
 }

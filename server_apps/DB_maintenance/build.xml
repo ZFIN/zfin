@@ -273,6 +273,28 @@
         </fail>
     </target>
 
+    <target name="validate-data-report-dynamic" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <classpath refid="log4j"/>
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="true"/>
+        </java>
+
+        <echo message="${validateData}/validatedata/${JobName}.txt"/>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.txt" substring=","/>
+            </condition>
+        </fail>
+    </target>
+
     <target name="validate-publications-with-PubMed" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>

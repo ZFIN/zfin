@@ -1,8 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Check that marker_go_term_evidence table does not have annotations with secondary terms,
-      i.e. terms that were merged and thus do not exist any longer.</description>
+  <description>This ensures that the get_obj_name function is handling each object type&#xd;
+defined in the zdb_object_type table.  get_obj_name returns null if it &#xd;
+does not recognize an object type.  It also flags an error (albeit a &#xd;
+misleading one) if there are no rows in existence for that object type, i.e. for a given table.&#xd;
+</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -19,28 +22,28 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>validate-data-report-simple -DJobName=Check-Marker-Go-Secondary-Annotation_d</targets>
+      <targets>validate-data-report-simple -DJobName=Check-Get_Object_Type-Function_d</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-Go-Secondary-Annotation_d.report.html,server_apps/DB_maintenance/validatedata/Check-Marker-Go-Secondary-Annotation_d.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.report.html,server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.txt</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
-      <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.3">
-          <reportTargets>
-              <htmlpublisher.HtmlPublisherTarget>
-                  <reportName>Error Report</reportName>
-                  <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-                  <reportFiles>Check-Marker-Go-Secondary-Annotation_d.report.html</reportFiles>
-                  <keepAll>false</keepAll>
-                  <allowMissing>false</allowMissing>
-                  <wrapperName>htmlpublisher-wrapper.html</wrapperName>
-              </htmlpublisher.HtmlPublisherTarget>
-          </reportTargets>
-      </htmlpublisher.HtmlPublisher>
+    <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.3">
+      <reportTargets>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>Error Report</reportName>
+          <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
+          <reportFiles>Check-Get_Object_Type-Function_d.report.html</reportFiles>
+          <keepAll>false</keepAll>
+          <allowMissing>false</allowMissing>
+          <wrapperName>htmlpublisher-wrapper.html</wrapperName>
+        </htmlpublisher.HtmlPublisherTarget>
+      </reportTargets>
+    </htmlpublisher.HtmlPublisher>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>
       <configuredTriggers>
@@ -48,20 +51,20 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern></attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
-            <contentType>project</contentType>
+            <contentType>text/html</contentType>
           </email>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
-      <contentType>text/html</contentType>
+      <contentType>default</contentType>
       <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
