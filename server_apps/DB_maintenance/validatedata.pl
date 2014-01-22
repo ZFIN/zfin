@@ -2879,7 +2879,6 @@ if($daily) {
 
     zdbObjectHomeTableColumnExist($dbaEmail);
     zdbObjectIsSourceDataCorrect($dbaEmail);
-    zdbObjectHandledByGetObjName($dbaEmail);
 
     pubTitlesAreUnique($publicationEmail);
     zdbReplacedDataIsReplaced($dbaEmail);
