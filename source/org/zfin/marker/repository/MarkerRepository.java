@@ -319,10 +319,6 @@ public interface MarkerRepository {
 
     List<PreviousNameLight> getPreviousNamesLight(Marker gene);
 
-    String getVariantForSnp(String zdbID);
-
-    List<STRMarkerSequence> getSTRMarkerSequences(Marker marker);
-    List<SNPMarkerSequence> getSNPMarkerSequences(SNP marker);
 
     List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
 

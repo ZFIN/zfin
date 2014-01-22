@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mapping.presentation.MappedMarkerBean;
-import org.zfin.marker.Marker;
 import org.zfin.marker.SNP;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -46,7 +45,7 @@ public class SnpViewController {
         SNP marker = markerRepository.getSNPByID(zdbID);
         //Marker marker = markerRepository.getMarkerByID(zdbID);
         logger.debug("snp marker: " + marker);
-        logger.debug("snp sequence component: " + marker.getSequence().getSequenceItself().toString()) ;
+        logger.debug("snp sequence component: " + marker.getSequence().getTargetSequence().toString()) ;
 
         SnpMarkerBean snpMarkerBean = new SnpMarkerBean();
         snpMarkerBean.setMarker(marker);
@@ -56,7 +55,7 @@ public class SnpViewController {
         snpMarkerBean.setNcbiBlastUrl(ncbiBlastUrl);
 
         // add variant
-        snpMarkerBean.setVariant(markerRepository.getVariantForSnp(zdbID));
+        snpMarkerBean.setVariant(marker.getSequence().getVariation().toString());
 
         // add sequence
         snpMarkerBean.setSequence(marker.getSequence());

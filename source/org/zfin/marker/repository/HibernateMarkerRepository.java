@@ -1635,28 +1635,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .list();
     }
 
-    @Override
-    public String getVariantForSnp(String zdbID) {
-        String sql = "select seq_variation from snp_sequence where seq_mrkr_zdb_id=:markerZdbID";
-        return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbID", zdbID)
-                .uniqueResult().toString();
-    }
 
 
-    @Override
-     public List<STRMarkerSequence> getSTRMarkerSequences(Marker marker) {
-        return HibernateUtil.currentSession().createCriteria(STRMarkerSequence.class)
-                .add(Restrictions.eq("marker", marker))
-                .list();
-    }
-    @Override
-    public List<SNPMarkerSequence> getSNPMarkerSequences(SNP marker) {
-        logger.debug("SNP Marker in repository method"+ marker.getAbbreviation().toString());
-        return HibernateUtil.currentSession().createCriteria(SNPMarkerSequence.class)
-                .add(Restrictions.eq("snp", marker))
-                .list();
-    }
 
     @Override
     public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... typesNotIn) {

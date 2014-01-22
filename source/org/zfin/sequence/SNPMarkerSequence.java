@@ -1,20 +1,22 @@
 package org.zfin.sequence;
 
 public class SNPMarkerSequence {
-    private String sequenceItself;
+    private String targetSequence;
     private Long offsetStart;
     private Long offsetStop;
     private String variation;
     private String leftEnd;
     private String type;
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+
+
 
     public String getType() {
         return "Nucleotide";
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getVariation() {
@@ -26,29 +28,29 @@ public class SNPMarkerSequence {
     }
 
     public String getStartToOffset() {
-        return sequenceItself.substring(0, offsetStart.intValue() - 1);
+        return targetSequence.substring(0, offsetStart.intValue() - 1);
     }
 
     public String getAmbiguity() {
-        return sequenceItself.substring(offsetStart.intValue() - 1, offsetStart.intValue());
+        return targetSequence.substring(offsetStart.intValue() - 1, offsetStart.intValue());
     }
 
     public String getOffsetToEnd() {
-        return sequenceItself.substring(offsetStart.intValue());
+        return targetSequence.substring(offsetStart.intValue());
     }
 
-    public String getSequenceItself() {
-        return sequenceItself;
+    public String getTargetSequence() {
+        return targetSequence;
     }
 
-    public void setSequenceItself(String sequence) {
-        this.sequenceItself = sequence;
+    public void setTargetSequence(String sequence) {
+        this.targetSequence = sequence;
     }
     public String getSequence() {
-        return sequenceItself;
+        return targetSequence;
     }
     public void setSequence(String sequence) {
-        this.sequenceItself = sequence;
+        this.targetSequence = sequence;
     }
 
     public String getLeftEnd() {
