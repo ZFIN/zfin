@@ -365,6 +365,8 @@ test(s) need to be run before committing changes or pushing files to production 
         </antcall>
     </target>
 
+    <!-- getting a consistent name without having to do a full refactor... -->
+    <target name="runSmokeTests" depends="smokeTests"/>
 
     <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->
     <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->

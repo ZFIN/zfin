@@ -8,6 +8,7 @@ import org.zfin.antibody.smoketest.AntibodySmokeTest;
 import org.zfin.datatransfer.DownloadSmokeTest;
 import org.zfin.expression.FigureViewSmokeTest;
 import org.zfin.expression.presentation.FigureSummarySmokeTest;
+import org.zfin.feature.presentation.FeatureDetailSmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.fish.smoketest.FishSmokeTest;
 import org.zfin.gwt.ExpressionSmokeTest;
@@ -33,6 +34,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         DownloadSmokeTest.class,
 // commenting out as those are flaky in running on linux.
 //        ExpressionSmokeTest.class,
+        FeatureDetailSmokeTest.class,
         FigureSummarySmokeTest.class,
         FishSmokeTest.class,
         FigureViewSmokeTest.class,

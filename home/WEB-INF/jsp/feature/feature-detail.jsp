@@ -3,6 +3,8 @@
 
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
+<meta name="feature-detail-page"/>
+
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="feature"/>
@@ -285,7 +287,7 @@
             <%--<c:choose>
                 <c:when test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">--%>
             <div class="summary">
-                <table class="summary">
+                <table id="other-feature-pages" class="summary">
                     <caption>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</caption>
                     <tr>
                         <td>
@@ -427,33 +429,33 @@
 </c:choose>
 
 <div style="display:none" id="long-version" class="summary">
-    <table class="summary rowstripes">
+    <table id="feature-genotypes-table" class="summary rowstripes">
         <caption>GENOTYPES</caption>
         <tr class="search-result-table-header">
-            <th width="20%">
+            <th class="genotype" width="20%">
                 Genotype (Background)
             </th>
-            <th width="20%">
+            <th class="affected-genes" width="20%">
                 Affected Genes
             </th>
-            <th width="20%">
+            <th class="phenotype" width="20%">
                 Phenotype
             </th>
-            <th width="20%">
+            <th class="gene-expression" width="20%">
                 Gene Expression
             </th>
         </tr>
         <c:forEach var="featgenoStat" items="${formBean.featgenoStats}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
-                <td>
+                <td class="genotype">
                     <zfin:link entity="${featgenoStat.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${featgenoStat.genotype.zdbID}"></a>
                 </td>
-                <td>
+                <td class="affected-genes">
                     <zfin:link entity="${featgenoStat.affectedMarkers}"/>
                 </td>
 
 
-                <td>
+                <td class="phenotype">
                     <c:if test="${featgenoStat.numberOfFigures > 0}">
                         <c:if test="${featgenoStat.numberOfFigures > 1}">
                             <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${featgenoStat.genotype.zdbID}&includingMO=yes&split=yes'>
@@ -484,7 +486,7 @@
                     <zfin2:showCameraIcon hasImage="${featgenoStat.isImage}"/>
                 </td>
 
-                <td>
+                <td class="gene-expression">
                     <c:if test="${featgenoStat.numberOfExpFigures > 0}">
                         <c:if test="${featgenoStat.numberOfExpFigures > 1}">
                             <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${featgenoStat.genotype.zdbID}'>
