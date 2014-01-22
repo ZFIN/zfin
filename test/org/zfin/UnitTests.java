@@ -10,7 +10,6 @@ import org.zfin.anatomy.presentation.*;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
 import org.zfin.database.DatabaseServiceTest;
 import org.zfin.database.presentation.TableTest;
-import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
@@ -35,6 +34,7 @@ import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.infrastructure.SerializationTests;
 import org.zfin.infrastructure.TrieMapTest;
 import org.zfin.marker.MergeMarkerUnitTest;
+import org.zfin.marker.presentation.DbLinkDisplayComparatorTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.PhenotypeStatementTest;
@@ -83,6 +83,7 @@ import org.zfin.util.*;
         CurationExperimentTest.class,
         DatabaseServiceTest.class,
         DbScriptFileParserTest.class,
+        DbLinkDisplayComparatorTest.class,
         EntityPresentationTest.class,
         EnvironmentDTOTest.class,
         ExpressionExperimentTest.class,
