@@ -988,6 +988,21 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertThat(engineeredRegions.size(), greaterThan(10));
     }
 
+    @Test
+    public void getDifferentMarkerTypesByID() {
+        String snpID = "ZDB-SNP-060626-100";
+        SNP snp = markerRepository.getSNPByID(snpID);
+        assertNotNull(snp);
+
+        String strID = "ZDB-TALEN-131030-14";
+        SequenceTargetingReagent str = markerRepository.getSequenceTargetingReagent(strID);
+        assertNotNull(str);
+
+        Marker marker = markerRepository.getMarkerByID(strID);
+        assertTrue(marker instanceof SequenceTargetingReagent);
+        assertNotNull(marker);
+    }
+
 
     @Test
     public void getWeakReferenceMarker() {
