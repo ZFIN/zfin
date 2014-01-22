@@ -1,7 +1,7 @@
 package org.zfin.publication;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
-import org.zfin.gwt.root.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
                     volumeTwo = value;
                 }
                 if (elementName.equals("Pages")) {
-                    if (publication.getPages() == null || !publication.getPages().equals(value)) {
+                    if (!isSamePageNumbers(publication, value)) {
                         mismatch.setPages(publication.getPages());
                         mismatch.setPagesExternal(value);
                     }
@@ -119,6 +119,44 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getCompletePageNumbers(String value) {
+        if (StringUtils.isEmpty(value))
+            return "";
+        StringBuilder builder = new StringBuilder();
+        String[] pageValues = value.split("-");
+        if (pageValues.length == 1)
+            return value;
+        if (pageValues.length > 2)
+            throw new RuntimeException("Could not parse page numbers with more than three components: " + value);
+        String start = pageValues[0];
+        String end = pageValues[1];
+        builder.append(start);
+        builder.append("-");
+        // complete end number
+        int diff = start.length() - end.length();
+        if (diff < 0)
+            return value;
+        if (end.length() == start.length())
+            builder.append(end);
+        else {
+            char[] characters = start.toCharArray();
+            for (int index = 0; index < diff; index++) {
+                builder.append(characters[index]);
+            }
+            builder.append(end);
+        }
+
+        return builder.toString();
+    }
+
+    public static boolean isSamePageNumbers(Publication publication, String value) {
+        String pages = publication.getPages();
+        if (StringUtils.equals(pages, value))
+            return true;
+        // if not the same check if auto-completion of the second page number will make it equal
+        return pages.equals(getCompletePageNumbers(value));
     }
 
     private List<String> getElementsList(String... elements) {
