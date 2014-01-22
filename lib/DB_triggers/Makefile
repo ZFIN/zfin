@@ -50,6 +50,8 @@ TRIGGERS = \
 	feature_abbrev_update_trigger.sql \
 	feature_name_update_trigger.sql \
 	genotype_insert_trigger.sql \
+	genofeat_insert_trigger.sql \
+	genofeat_update_trigger.sql \
 	geno_display_name_update_trigger.sql \
 	geno_handle_update_trigger.sql \
 	image_stage_insert_trigger.sql \
