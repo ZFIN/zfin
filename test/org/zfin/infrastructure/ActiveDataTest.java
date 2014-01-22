@@ -63,4 +63,15 @@ public class ActiveDataTest {
         assertTrue(true);
     }
 
+    @Test
+    public void getTypeForId() {
+        String zdbID = "ZDB-TALEN-120304-11";
+        try {
+            boolean isTalen = ActiveData.isValidActiveData(zdbID, ActiveData.Type.TALEN);
+            assertTrue(isTalen);
+        } catch (RuntimeException re) {
+            fail("No ActiveData type found for " + zdbID);
+        }
+    }
+
 }
