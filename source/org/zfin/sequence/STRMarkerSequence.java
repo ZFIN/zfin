@@ -1,19 +1,37 @@
 package org.zfin.sequence;
 
 /**
- * Component class for SequenceTargetingReagent.
- * Only MO, TALEN and CRISPR marker have sequence associated.
+ * Component class for STRSequence.
+ * Only MO and CRISPR marker have sequence associated.
  * In case we decide to also include sequence info for general marker type we would make this a component
  * of the Marker class.
  */
-public class MarkerSequence {
+public class STRMarkerSequence {
 
     private String sequence;
-    private String secondSequence;
     private Long offsetStart;
     private Long offsetStop;
-    private String variation;
+    private String leftEnd;
     private String type;
+    private String secondSequence;
+
+    public String getSecondSequence() {
+        return secondSequence;
+    }
+
+    public void setSecondSequence(String secondSequence) {
+        this.secondSequence = secondSequence;
+    }
+
+
+
+    public String getType() {
+        return "Nucleotide";
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getStartToOffset() {
         return sequence.substring(0, offsetStart.intValue() - 1);
@@ -38,11 +56,9 @@ public class MarkerSequence {
     public String getLeftEnd() {
         return "5'";
     }
-
-    /*
-    public String getType(){
-        return "Genomic" ;
-    }  */
+    public void setLeftEnd(String leftEnd) {
+        this.leftEnd = leftEnd;
+    }
 
     public Long getOffsetStart() {
         return offsetStart;
@@ -60,31 +76,4 @@ public class MarkerSequence {
         this.offsetStop = offsetStop;
     }
 
-    public String getVariation() {
-        return variation;
-    }
-
-    public void setVariation(String variation) {
-        this.variation = variation;
-    }
-
-    public String getSecondSequence() {
-        return secondSequence;
-    }
-
-    public void setSecondSequence(String secondSequence) {
-        this.secondSequence = secondSequence;
-    }
-
-    public String getType() {
-        if (type != null) {
-            return type;
-        } else {
-            return "Genomic";
-        }
-    }
-
-    public void setType(String sequenceType) {
-        this.type = sequenceType;
-    }
 }

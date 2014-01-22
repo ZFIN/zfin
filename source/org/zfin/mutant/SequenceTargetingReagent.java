@@ -3,11 +3,11 @@ package org.zfin.mutant;
 import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.sequence.MarkerSequence;
+import org.zfin.sequence.STRMarkerSequence;
+import org.zfin.sequence.TalenMarkerSequence;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Business entity for Morpholinos, TALEN and CRISPR.
@@ -15,7 +15,7 @@ import java.util.Set;
 public class SequenceTargetingReagent extends Marker {
 
     private List<Marker> targetGenes;
-    private MarkerSequence sequence;
+    private STRMarkerSequence sequence;
     private static Logger logger = Logger.getLogger(SequenceTargetingReagent.class);
 
     /**
@@ -38,11 +38,11 @@ public class SequenceTargetingReagent extends Marker {
         this.targetGenes = targetGenes;
     }
 
-    public MarkerSequence getSequence() {
+    public STRMarkerSequence getSequence() {
         return sequence;
     }
 
-    public void setSequence(MarkerSequence sequence) {
+    public void setSequence(STRMarkerSequence sequence) {
         this.sequence = sequence;
     }
 }

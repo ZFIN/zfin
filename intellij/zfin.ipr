@@ -4,74 +4,27 @@
     <defaultAnt bundledAnt="true" />
   </component>
   <component name="ArtifactManager">
-    <artifact type="exploded-war" name="zfin:zfin exploded">
-      <root id="root">
-        <element id="javaee-facet-resources" facet="zfin/web/zfin" />
+    <artifact type="jar" name="zfin:zfin exploded">
+      <root id="archive" name="zfin_zfin exploded.jar">
         <element id="directory" name="WEB-INF">
           <element id="directory" name="classes">
             <element id="module-output" name="zfin" />
           </element>
           <element id="directory" name="lib">
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-1.0.3.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/acegi-security-tiger-1.0.3.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ant-antlr-1.6.5.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/antlr-2.7.6rc1.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm-attrs.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/asm.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/cglib-2.1.3.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/clickstream-1.0.3.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-beanutils-1.6.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-codec-1.3.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-collections-3.2.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-digester-1.6.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-lang-2.3.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-logging-1.0.4.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/commons-validator-1.1.4.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/dom4j-1.6.1.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/ehcache-1.1.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/hibernate-3.1.3.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/highlighter.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-impl.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jaxb-libs.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jstl-1.1.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/jta.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/log4j-1.2.14.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/lucene-1.3.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/oro-2.0.8.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/relaxngDatatype.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/spring-2.0.1.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/standard-1.1.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/struts-1.2.9.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xmlbind.jar" />
-            <element id="file-copy" path="/research/zusers/ndunn/cvs/ZFIN_WWW_head/home/WEB-INF/lib/xsdlib.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/ant-antlr-1.6.5.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/antlr-2.7.6rc1.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/asm-attrs.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/asm.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/cglib-2.1.3.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/clickstream-1.0.3.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/commons-beanutils-1.6.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/commons-codec-1.3.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/commons-digester-1.6.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/commons-logging-1.0.4.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/commons-validator-1.1.4.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/dom4j-1.6.1.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/ehcache-1.1.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/highlighter.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/jaxb-impl.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/jaxb-libs.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/jstl-1.1.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/jta.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/log4j-1.2.14.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/lucene-1.3.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/oro-2.0.8.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/relaxngDatatype.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/spring-2.0.1.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/standard-1.1.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/struts-1.2.9.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/xmlbind.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../home/WEB-INF/lib/xsdlib.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/asm-2.2.1.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/catalina.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/cobertura.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/hsqldb.jar" />
@@ -80,39 +33,17 @@
             </element>
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jakarta-oro-2.0.8.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxb-xjc.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/activation.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/FastInfoset.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/http.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jaxb-api.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jaxb-impl.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jaxb-xjc.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jaxws-api.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jaxws-rt.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jaxws-tools.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jsr173_api.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jsr181-api.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/jsr250-api.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/resolver.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/saaj-api.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/saaj-impl.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/sjsxp.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/stax-ex.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/streambuffer.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jaxws/wsdl-client.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jhall.jar" />
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/jung-1.7.4.jar" />
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/junit-4.1.jar" />
             <element id="directory" name="obo-util.zip">
               <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/obo-util.zip" />
             </element>
-            <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/org.geneontology.jar" />
             <element id="library" level="project" name="informix-jdbc" />
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/obo-util.zip" />
             <element id="file-copy" path="$PROJECT_DIR$/../lib/Java/IAClasses.zip" />
             <element id="library" level="project" name="runtime" />
             <element id="library" level="project" name="gwt-user" />
             <element id="library" level="project" name="build-time" />
-            <element id="library" level="project" name="liquibase" />
           </element>
         </element>
       </root>
@@ -370,7 +301,7 @@
     <resource url="http://www.liquibase.org/xml/ns/dbchangelog-ext" location="$USER_HOME$/Library/Caches/IntelliJIdea11/extResources/99f6323_dbchangelog-ext.xsd" />
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/../home/WEB-INF/conf" />
   </component>
   <component name="ResourceManagerContainer">
@@ -420,13 +351,11 @@
       <CLASSES>
         <root url="file://$PROJECT_DIR$/../lib/Java/tomcat" />
         <root url="file://$PROJECT_DIR$/../lib/Java" />
-        <root url="file://$PROJECT_DIR$/../lib/Java/ifc111" />
         <root url="file://$PROJECT_DIR$/../lib/Java/jwebunit" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
       <jarDirectory url="file://$PROJECT_DIR$/../lib/Java" recursive="false" />
-      <jarDirectory url="file://$PROJECT_DIR$/../lib/Java/ifc111" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/../lib/Java/jwebunit" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/../lib/Java/tomcat" recursive="false" />
     </library>
@@ -435,9 +364,7 @@
         <root url="file://$PROJECT_DIR$/../lib/Java/gwt" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES>
-        <root url="jar://$USER_HOME$/Desktop/gwt-user.jar!/" />
-      </SOURCES>
+      <SOURCES />
       <jarDirectory url="file://$PROJECT_DIR$/../lib/Java/gwt" recursive="false" />
     </library>
     <library name="hibernate3 (2)">
@@ -445,31 +372,16 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="ifxjdbc-3.70.JC1">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/Desktop/ifxjdbc-3.70.JC1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
     <library name="informix-jdbc">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/../lib/Java/ifxjdbc-3.70.JC1.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="Java EE 5-Java EE 5">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/javaee.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="javaee-api-6.0">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../lib/Java/javaee-api-6.0.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="liquibase">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../lib/Java/liquibase.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../lib/Java/LiquibaseEjb.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

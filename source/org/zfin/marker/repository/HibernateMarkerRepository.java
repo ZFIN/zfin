@@ -22,7 +22,6 @@ import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
@@ -31,6 +30,7 @@ import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.marker.Talen;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
@@ -72,6 +72,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public Marker getMarkerByID(String zdbID) {
         Session session = currentSession();
         return (Marker) session.get(Marker.class, zdbID);
+    }
+
+
+    public SNP getSNPByID(String zdbID){
+        Session session = currentSession();
+
+        return (SNP) session.get(SNP.class, zdbID);
     }
 
     @Override
@@ -1630,16 +1637,24 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public String getVariantForSnp(String zdbID) {
-        String sql = "select mrkrseq_variation from marker_sequence where mrkrseq_mrkr_zdb_id=:markerZdbID";
+        String sql = "select seq_variation from snp_sequence where seq_mrkr_zdb_id=:markerZdbID";
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("markerZdbID", zdbID)
                 .uniqueResult().toString();
     }
 
+
     @Override
-    public List<MarkerSequence> getMarkerSequences(Marker marker) {
-        return HibernateUtil.currentSession().createCriteria(MarkerSequence.class)
+     public List<STRMarkerSequence> getSTRMarkerSequences(Marker marker) {
+        return HibernateUtil.currentSession().createCriteria(STRMarkerSequence.class)
                 .add(Restrictions.eq("marker", marker))
+                .list();
+    }
+    @Override
+    public List<SNPMarkerSequence> getSNPMarkerSequences(SNP marker) {
+        logger.debug("SNP Marker in repository method"+ marker.getAbbreviation().toString());
+        return HibernateUtil.currentSession().createCriteria(SNPMarkerSequence.class)
+                .add(Restrictions.eq("snp", marker))
                 .list();
     }
 
@@ -2087,7 +2102,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 ;
     }
 
-
+    @Override
+    public SequenceTargetingReagent getSequenceTargetingReagent(String markerID) {
+        Session session = currentSession();
+        return (SequenceTargetingReagent) session.get(SequenceTargetingReagent.class, markerID);
+    }
     @Override
     public Genotype getStrainForTranscript(String zdbID) {
 
@@ -2292,17 +2311,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .list();
     }
 
-    /**
-     * Retrieve sequence targeting reagent, e.g. MO, TALEN, CRISPR
-     *
-     * @param markerID
-     * @return
-     */
-    @Override
-    public SequenceTargetingReagent getSequenceTargetingReagent(String markerID) {
-        Session session = currentSession();
-        return (SequenceTargetingReagent) session.get(SequenceTargetingReagent.class, markerID);
-    }
 
     @Override
     public List<SupplierLookupEntry> getSupplierNamesForString(String lookupString) {

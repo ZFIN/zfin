@@ -28,7 +28,9 @@ import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.MarkerSequence;
+import org.zfin.sequence.STRMarkerSequence;
+import org.zfin.sequence.TalenMarkerSequence;
+import org.zfin.marker.Talen;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,8 +88,22 @@ public class DisruptorAddController {
 
         String disruptorName = formBean.getDisruptorName();
 
+        STRMarkerSequence newDisruptorSequence = new STRMarkerSequence();
+        SequenceTargetingReagent newDisruptor = new SequenceTargetingReagent() ;
+
+        if (formBean.getDisruptorType().equalsIgnoreCase("TALEN")) {
+            String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
+            newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
+            newDisruptorSequence.setType("Nucleotide");
+            newDisruptor.setSequence(newDisruptorSequence);
+        }
+        else {
+            newDisruptorSequence.setSequence(formBean.getDisruptorSequence().toUpperCase());
+            newDisruptorSequence.setType("Nucleotide");
+            newDisruptor.setSequence(newDisruptorSequence);
+        }
         Person currentUser = Person.getCurrentSecurityUser();
-        SequenceTargetingReagent newDisruptor = new SequenceTargetingReagent();
+
         newDisruptor.setName(disruptorName);
         newDisruptor.setAbbreviation(disruptorName);
 
@@ -111,14 +127,8 @@ public class DisruptorAddController {
         }
         newDisruptor.setMarkerType(mt);
         // set marker sequence component
-        MarkerSequence newDisruptorSequence = new MarkerSequence();
-        newDisruptorSequence.setSequence(formBean.getDisruptorSequence().toUpperCase());
-        if (formBean.getDisruptorType().equalsIgnoreCase("TALEN")) {
-            String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
-            newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
-        }
-        newDisruptorSequence.setType("Nucleotide");
-        newDisruptor.setSequence(newDisruptorSequence);
+
+
 
         try {
             HibernateUtil.createTransaction();

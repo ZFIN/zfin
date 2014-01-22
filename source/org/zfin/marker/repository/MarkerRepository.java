@@ -10,6 +10,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.marker.Talen;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
@@ -24,6 +25,8 @@ public interface MarkerRepository {
     Marker getMarker(Marker marker);
 
     Marker getMarkerByID(String zdbID);
+
+    SNP getSNPByID(String zdbID);
 
     Marker getMarkerOrReplacedByID(String zdbID);
 
@@ -318,7 +321,8 @@ public interface MarkerRepository {
 
     String getVariantForSnp(String zdbID);
 
-    List<MarkerSequence> getMarkerSequences(Marker marker);
+    List<STRMarkerSequence> getSTRMarkerSequences(Marker marker);
+    List<SNPMarkerSequence> getSNPMarkerSequences(SNP marker);
 
     List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
 
@@ -360,6 +364,8 @@ public interface MarkerRepository {
      */
     List<Genotype> getTALENorCRISPRcreatedGenotypes(String streagentId);
 
+    SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
+
     List<Marker> getConstructsForGene(Marker gene);
 
     Genotype getStrainForTranscript(String zdbID);
@@ -383,12 +389,6 @@ public interface MarkerRepository {
 
     List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene);
 
-    /**
-     * Retrieve sequence targeting reagent, e.g. MO, TALEN, CRISPR
-     * @param markerID
-     * @return
-     */
-    SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
 
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 

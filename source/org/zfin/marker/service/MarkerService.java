@@ -719,6 +719,7 @@ public class MarkerService {
     public static MarkerBean createDefaultViewForMarker(MarkerBean markerBean) {
 
         Marker marker = markerBean.getMarker();
+        logger.debug("marker is:"+ marker.getZdbID().toString());
         String zdbID = marker.getZdbID();
         if(Marker.Type.GENE == marker.getType()) {
             List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotypesByGene(marker);

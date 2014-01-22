@@ -42,7 +42,6 @@
       <configuration>
         <ejbRoots>
           <root url="file://$MODULE_DIR$/../client_apps/Map" />
-          <root url="file://$MODULE_DIR$/../j2ee/MergerServlet/WEB-INF/src" />
           <root url="file://$MODULE_DIR$/../lib/Java" />
           <root url="file://$MODULE_DIR$/../server_apps/mapimage" />
           <root url="file://$MODULE_DIR$/../source" />
@@ -55,18 +54,17 @@
     <output-test url="file://$MODULE_DIR$/../home/WEB-INF/classes" />
     <content url="file://$MODULE_DIR$/..">
       <sourceFolder url="file://$MODULE_DIR$/../client_apps/Map" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../j2ee/MergerServlet/WEB-INF/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../lib/Java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../server_apps/mapimage" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../source" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../test" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/../client_apps" />
+      <sourceFolder url="file://$MODULE_DIR$/../home/WEB-INF" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../home/WEB-INF/lib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../client_apps/Map/zmapper" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$" />
-      <excludeFolder url="file://$MODULE_DIR$/../j2ee" />
-      <excludeFolder url="file://$MODULE_DIR$/../lib/Java/Acme" />
       <excludeFolder url="file://$MODULE_DIR$/../lib/Java/netscape" />
     </content>
-    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
@@ -167,7 +165,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../home/WEB-INF/lib/jaxb-libs.jar!/" />
@@ -307,9 +305,8 @@
     <orderEntry type="library" name="hibernate3 (2)" level="project" />
     <orderEntry type="library" name="gwt-user" level="project" />
     <orderEntry type="library" name="build-time" level="project" />
-    <orderEntry type="library" name="Java EE 5-Java EE 5" level="project" />
-    <orderEntry type="library" name="javaee-api-6.0" level="project" />
-    <orderEntry type="library" name="liquibase" level="project" />
+    <orderEntry type="library" name="groovy-2.1.6" level="application" />
+    <orderEntry type="library" name="ifxjdbc-3.70.JC1" level="project" />
   </component>
 </module>
 

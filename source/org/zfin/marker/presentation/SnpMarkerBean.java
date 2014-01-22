@@ -2,7 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.zfin.sequence.MarkerSequence;
+import org.zfin.sequence.SNPMarkerSequence;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class SnpMarkerBean extends MarkerBean{
     private Logger logger = Logger.getLogger(SnpMarkerBean.class);
 
     private String variant ;
-    private List<MarkerSequence> sequences;
+    private SNPMarkerSequence sequence;
     private String ncbiBlastUrl ;
     private String snpBlastUrl ;
 
@@ -22,16 +22,8 @@ public class SnpMarkerBean extends MarkerBean{
      * Most of the time there will only be a single sequence.
      * @return
      */
-    public MarkerSequence getSequence(){
-        if(sequences!=null && sequences.size()>0){
-            if(sequences.size()>1){
-                logger.error("more than 1 sequence for marker: " + marker);
-            }
-            return sequences.get(0);
-        }
-        else{
-            return null ;
-        }
+    public SNPMarkerSequence getSequence(){
+        return sequence;
     }
 
 
@@ -43,12 +35,9 @@ public class SnpMarkerBean extends MarkerBean{
         this.variant = variant;
     }
 
-    public List<MarkerSequence> getSequences() {
-        return sequences;
-    }
 
-    public void setSequences(List<MarkerSequence> sequences) {
-        this.sequences = sequences;
+    public void setSequence(SNPMarkerSequence sequence) {
+        this.sequence = sequence;
     }
 
     public String getNcbiBlastUrl() {

@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.profile.MarkerSupplier;
-import org.zfin.sequence.MarkerSequence;
+import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.blast.Database;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class DisruptorBean extends MarkerBean{
     private Logger logger = Logger.getLogger(DisruptorBean.class);
 
     private Set<Marker> targetGenes ;
-    private List<MarkerSequence> sequences;
+    private List<STRMarkerSequence> sequences;
     private List<MarkerSupplier> suppliers;
     private String ncbiBlastUrl;
     private String sequenceAttribution;
@@ -35,7 +35,7 @@ public class DisruptorBean extends MarkerBean{
      * Most of the time there will only be a single sequence.
      * @return
      */
-    public MarkerSequence getSequence(){
+    public STRMarkerSequence getSequence(){
         if(sequences!=null && sequences.size()>0){
             if(sequences.size()>1){
                 logger.error("more than 1 sequence for marker: " + marker);
@@ -71,13 +71,6 @@ public class DisruptorBean extends MarkerBean{
         this.sequenceAttribution = sequenceAttribution;
     }
 
-    public boolean isMorpholino() {
-        if (this.marker.getType().isMarkerType("MRPHLNO")) {
-            return true;
-        }
-
-        return false;
-    }
 
     public boolean isTALEN() {
         if (this.marker.getType().isMarkerType("TALEN")) {

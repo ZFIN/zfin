@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
+import org.zfin.marker.SNP;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
@@ -42,8 +43,10 @@ public class SnpViewController {
         // set base bean
 
         logger.debug("zdbID: " + zdbID);
-        Marker marker = markerRepository.getMarkerByID(zdbID);
+        SNP marker = markerRepository.getSNPByID(zdbID);
+        //Marker marker = markerRepository.getMarkerByID(zdbID);
         logger.debug("snp marker: " + marker);
+        logger.debug("snp sequence component: " + marker.getSequence().getSequenceItself().toString()) ;
 
         SnpMarkerBean snpMarkerBean = new SnpMarkerBean();
         snpMarkerBean.setMarker(marker);
@@ -56,7 +59,7 @@ public class SnpViewController {
         snpMarkerBean.setVariant(markerRepository.getVariantForSnp(zdbID));
 
         // add sequence
-        snpMarkerBean.setSequences(markerRepository.getMarkerSequences(marker));
+        snpMarkerBean.setSequence(marker.getSequence());
 
         // snp marker relationships (is only secondary)
         List<MarkerRelationshipPresentation> cloneRelationships  = new ArrayList<MarkerRelationshipPresentation>();

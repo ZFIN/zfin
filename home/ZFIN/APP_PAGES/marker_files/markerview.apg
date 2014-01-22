@@ -446,7 +446,7 @@ function jump(form_select){
  	        if (note == '') {note = 'Sequence modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
  		if ((new_seq != '')) {
- 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkrseq_zdb+'&attr=mrkrseq_sequence_2&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note+'&new_value2='+new_seq_2);
+ 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+seq_zdb+'&attr=seq_sequence_2&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note+'&new_value2='+new_seq_2);
  		}
         }
 
@@ -695,7 +695,7 @@ function jump(form_select){
  <?/MIVAR>
 <?MICOMMENT>Adding allele variant display for SNP's<?/MICOMMENT>
 <?MIBLOCK COND="$(EC,$marker_type,SNP)">
-       <?MISQL SQL="select mrkrseq_variation from marker_sequence where mrkrseq_mrkr_zdb_id='$OID'"><?/MISQL>
+       <?MISQL SQL="select seq_variation from snp_sequence where seq_mrkr_zdb_id='$OID'"><?/MISQL>
         <?MIVAR NAME=$marker_variant>$1<?/MIVAR>
        <tr><td>
         <FONT size=+1><b>
@@ -925,9 +925,15 @@ Only need to update clones, etc., which should be the only things that will have
  <?MIVAR NAME=$mrkrview_sequence><?/MIVAR>
 
  <?MISQL SQL="
-   select mrkrseq_sequence, mrkrseq_sequence_2, mrkrseq_offset_start,mrkrseq_offset_stop
+   select seq_sequence, "", seq_offset_start,seq_offset_stop
      from marker_sequence
-    where mrkrseq_mrkr_zdb_id = '$OID';">
+    where seq_mrkr_zdb_id = '$OID'
+    and seq_mrkr_zdb_id not like 'ZDB-TALEN%'
+  union
+   select seq_sequence, seq_sequence_2, seq_offset_start,seq_offset_stop
+     from talen_sequence
+    where seq_mrkr_zdb_id = '$OID'
+ ;">
     <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
     <?MIVAR NAME=$mrkrview_second_sequence>$2<?/MIVAR>
     <?MIVAR NAME=$mrkrview_mrkrseq_start>$3<?/MIVAR>
