@@ -12,7 +12,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     public static final String BEGIN_WORK = "BEGIN WORK";
     public static final String COMMIT_WORK = "COMMIT WORK";
     public static final String ROLLBACK_WORK = "ROLLBACK WORK";
-    private StringBuffer query = new StringBuffer(50);
+    private StringBuilder query = new StringBuilder(50);
     private String scriptFile;
     private int startLine = -1;
     private int endLine;
@@ -119,7 +119,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         echo = true;
         // echo string
         if (token.length < 2) {
-            query = new StringBuffer();
+            query = new StringBuilder();
         } else {
             // remove echo directive part from query
             query.delete(0, ECHO.length() + 1);
@@ -136,7 +136,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         // unload file = unload key
         dataKey = token[2].replace("'", "");
         if (token.length < 4) {
-            query = new StringBuffer();
+            query = new StringBuilder();
         } else {
             // remove unloading directive part from query
             int indexOfQueryStart = query.toString().indexOf("'");
@@ -152,7 +152,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
         dataKey = token[2];
         if (token.length < 4) {
-            query = new StringBuffer();
+            query = new StringBuilder();
         } else {
             // remove loading directive part from query
             int indexOfQueryStart = query.toString().toUpperCase().indexOf(INSERT);
@@ -223,14 +223,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public String getLocationInfo() {
-        StringBuilder buffer = new StringBuilder(10);
-        buffer.append("[");
-        buffer.append(startLine);
-        buffer.append(",");
-        buffer.append(endLine);
-        buffer.append("]");
-
-        return buffer.toString();
+        return "[" + startLine + "," + endLine + "]";
     }
 
     /**
@@ -244,8 +237,8 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         modifiedStatement.comment = comment;
         modifiedStatement.startLine = startLine;
         modifiedStatement.endLine = endLine;
-        modifiedStatement.query = new StringBuffer(query);
-        StringBuffer modifiedQuery = modifiedStatement.query;
+        modifiedStatement.query = new StringBuilder(query);
+        StringBuilder modifiedQuery = modifiedStatement.query;
         int indexOfSemicolon = modifiedQuery.toString().indexOf(SEMICOLON);
         modifiedQuery.deleteCharAt(indexOfSemicolon);
         modifiedQuery.append("values (");
@@ -325,7 +318,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         statement.debugStatement = true;
         statement.load = load;
         statement.comment = DELETE + " " + FROM + " " + getDeleteTable().toUpperCase();
-        statement.query = new StringBuffer(SELECT + " " + STAR + " " + FROM + " " + getDeleteTable());
+        statement.query = new StringBuilder(SELECT + " " + STAR + " " + FROM + " " + getDeleteTable());
         statement.parentStatement = this;
         return statement;
     }
@@ -340,15 +333,15 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         if (isInsertStatement()) {
             if (isLoadStatement()) {
                 statement.comment = "Load records from file / memory into " + getInsertTable().toUpperCase();
-                statement.query = new StringBuffer(getQuery().replace("insert into", SELECT + " " + STAR + " " + FROM));
+                statement.query = new StringBuilder(getQuery().replace("insert into", SELECT + " " + STAR + " " + FROM));
             } else {
                 int startOfSelect = getQuery().indexOf(SELECT.toLowerCase());
                 statement.comment = getQuery().substring(0, startOfSelect).trim();
-                statement.query = new StringBuffer(getQuery().substring(startOfSelect));
+                statement.query = new StringBuilder(getQuery().substring(startOfSelect));
             }
         } else if (isDeleteStatement()) {
             statement.comment = "DELETE from " + getDeleteTable().toUpperCase();
-            statement.query = new StringBuffer(getQuery().replace("delete", SELECT + " " + STAR));
+            statement.query = new StringBuilder(getQuery().replace("delete", SELECT + " " + STAR));
         }
         statement.parentStatement = this;
         return statement;

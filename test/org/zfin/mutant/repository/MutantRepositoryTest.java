@@ -177,13 +177,12 @@ public class MutantRepositoryTest {
     @Test
     public void createDefaultPhenotype() {
         String genoxID = "ZDB-GENOX-100111-1";
-        String figID = "ZDB-FIG-091215-69";
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            GenotypeExperiment genox = getMutantRepository().getGenotypeExperiment(genoxID);
+            getMutantRepository().getGenotypeExperiment(genoxID);
         } finally {
             tx.rollback();
         }
