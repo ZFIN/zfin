@@ -77,5 +77,13 @@ startdevl : $(TARGETS)
 starttest : $(TARGETS)
 	/bin/crontab $(TARGETDIR)/crontab.informix.test
 
+# Note: You will need to run this as a user that can sudo to zfishweb
+startzfishweb : $(TARGETS)
+	sudo -u zfishweb /bin/crontab $(TARGETDIR)/crontab.zfishweb
+
 stop :
 	/bin/crontab -r
+
+# Note: You will need to run this as a user that can sudo to zfishweb
+stopzfishweb :
+	sudo -u zfishweb /bin/crontab -r
