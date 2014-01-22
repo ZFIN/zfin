@@ -3,6 +3,8 @@ package org.zfin.marker.presentation;
 import org.zfin.sequence.DBLink;
 import java.util.Comparator;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 public class DbLinkDisplayComparator implements Comparator<DBLink> {
 
     /**
@@ -38,29 +40,14 @@ public class DbLinkDisplayComparator implements Comparator<DBLink> {
             return comparator;
 
         if (!dbLink1.getReferenceDatabase().isRefSeq()) {
-            return compareLength(dbLink1.getLength(), dbLink2.getLength());
+            return ObjectUtils.compare(dbLink2.getLength(), dbLink1.getLength());
         } else {
             String prefix1 = dbLink1.getAccessionNumber().substring(0,2);
             String prefix2 = dbLink2.getAccessionNumber().substring(0,2);
             if (prefix1.compareTo(prefix2) == 0)
-                return compareLength(dbLink1.getLength(), dbLink2.getLength());
+                return ObjectUtils.compare(dbLink2.getLength(), dbLink1.getLength());
             else
                 return prefix1.compareTo(prefix2);
         }
-    }
-
-    public int compareLength(Integer length1, Integer length2) {
-        if (length1 == null && length2 != null)
-            return -1;
-        if (length1 == null && length2 != null)
-            return 1;
-
-        if (length1 != null && length2 != null) {
-            if (length1 > length2)
-                return -1;
-            else
-                return 1;
-        }
-        return 0;
     }
 }
