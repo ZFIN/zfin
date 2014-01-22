@@ -123,13 +123,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from run_Candidate
      where runcan_zdb_id = zdbId;
-  elif (objType = "TERMDEF") then
-    select termdef_zdb_id		-- don't have names, return ZDB ID
-      into objName
-      from term_definition
-     where termdef_zdb_id = zdbId;
-  -- Now, list the less frequently hit types in alphabetical order
-
    elif (objType = "CDT") then
     select cdt_name
       into objName
