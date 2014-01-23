@@ -195,7 +195,8 @@ public class Database {
         sb.append(", publicDatabase=").append(publicDatabase);
         sb.append(", isLocked=").append(isLocked);
         sb.append(", displayName=").append(displayName);
-        sb.append(", origination=").append(origination.getType().toString());
+        if (origination != null)
+            sb.append(", origination=").append(origination.getType().toString());
         sb.append(", childrenRelationships=").append(childrenRelationships.size());
         sb.append(", parentRelationships=").append(parentRelationships.size());
         sb.append('}');

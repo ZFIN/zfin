@@ -63,6 +63,10 @@ public class ForeignDB implements Comparable<ForeignDB> {
     public int compareTo(ForeignDB other) {
         if (other == null)
             return 1;
+        if (other.getSignificance() == null)
+            return 1;
+        if (significance == null)
+            return -1;
         if (significance.compareTo(other.getSignificance()) != 0)
             return significance.compareTo(other.getSignificance());
         return dbName.compareTo(other.getDbName());
