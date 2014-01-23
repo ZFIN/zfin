@@ -55,9 +55,12 @@ and feature_zdb_id = ids_data_zdb_id
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/markerSequences/1sequences.txt"
- select mrkr_zdb_id, seq_sequence, seq_offset_start, seq_offset_stop, seq_variation, get_obj_type(mrkr_zdb_id),mrkr_zdb_id from marker, marker_Sequence
+ select mrkr_zdb_id, seq_sequence, seq_offset_start, seq_offset_stop, seq_variation, get_obj_type(mrkr_zdb_id),mrkr_zdb_id from marker,snp_sequence
 where mrkr_Zdb_id = seq_mrkr_zdb_id
-and mrkr_type not in ('TALEN','CRISPR')
+union
+ select mrkr_zdb_id, seq_sequence, seq_offset_start, seq_offset_stop, "", get_obj_type(mrkr_zdb_id),mrkr_zdb_id from marker,marker_sequence
+where mrkr_Zdb_id = seq_mrkr_zdb_id
+and mrkr_type not in ('TALEN','CRISPR','SNP')
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype/1omimphenotype.txt"
