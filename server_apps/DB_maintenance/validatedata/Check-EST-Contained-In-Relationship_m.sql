@@ -1,4 +1,3 @@
-unload to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/reportRecords.txt
 select mrkr_zdb_id, mrkr_name, mrkr_abbrev
                from marker m1
                where mrkr_type = "GENE"

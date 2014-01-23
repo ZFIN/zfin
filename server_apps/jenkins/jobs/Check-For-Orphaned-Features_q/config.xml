@@ -26,7 +26,7 @@ i.e. no record_attribution record exists for a given feature ID. It also checks 
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q.report.html,server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q.*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

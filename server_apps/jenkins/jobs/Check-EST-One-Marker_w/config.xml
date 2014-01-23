@@ -25,7 +25,7 @@ This job checks that those relationships are correctly defined.</description>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w.report.html,server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w.*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

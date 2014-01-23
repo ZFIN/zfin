@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Check that the stage ranges for each epxression record (expression_result) is within the stage range in which the superterm is defined. </description>
+  <description>Check that the stage ranges for each expression record (EXPRESSION_RESULT) is within the stage range in which the superterm is defined. </description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -24,7 +24,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d.report.html,server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d.*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

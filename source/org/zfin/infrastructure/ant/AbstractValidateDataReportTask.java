@@ -5,9 +5,8 @@ import freemarker.template.TemplateException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
-import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.properties.ZfinProperties;
 
 import java.io.File;
@@ -53,24 +52,21 @@ public abstract class AbstractValidateDataReportTask {
         }
     }
 
-    protected void createErrorReportFull(List<String> errorMessages, List<List<List<String>>> resultList, String reportPrefix) {
-        if (CollectionUtils.isEmpty(resultList))
-            return;
-        if (resultList.size() > 1)
-            throw new RuntimeException("More than one element");
-        createErrorReport(errorMessages, resultList.get(0), reportPrefix);
-    }
-
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, String reportPrefix) {
-        String fileName = jobName + "." + reportPrefix + ".";
-        File reportFile = new File(baseValidateDataDirectory, fileName + "report.html");
-        if (reportFile.exists())
-            reportFile.delete();
-        File dataFile = new File(baseValidateDataDirectory, fileName + "txt");
-        if (dataFile.exists())
-            dataFile.delete();
+        String fileName = jobName;
+        if (StringUtils.isNotEmpty(reportPrefix))
+            fileName += "." + reportPrefix;
 
-        if (CollectionUtils.isEmpty(resultList))
+        File reportFile = new File(baseValidateDataDirectory, fileName + ".report.html");
+        if (reportFile.exists())
+            if (!reportFile.delete())
+                LOG.error("Could not delete report file: " + reportFile.getAbsolutePath());
+        File dataFile = new File(baseValidateDataDirectory, fileName + ".txt");
+        if (dataFile.exists())
+            if (!dataFile.delete())
+                LOG.error("Could not delete data file: " + dataFile.getAbsolutePath());
+
+        if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList.get(0)))
             return;
         freemarker.template.Configuration configuration = new freemarker.template.Configuration();
         try {
@@ -79,21 +75,19 @@ public abstract class AbstractValidateDataReportTask {
             e.printStackTrace();
         }
 
-        //StringWriter writer = new StringWriter();
-        FileWriter writer = null;
+        FileWriter writer;
         try {
             writer = new FileWriter(reportFile);
             Template template = configuration.getTemplate(templateName);
             Map<String, Object> root = new HashMap<>();
-            root.put("errorMessage", reportProperties.get(fileName + ERROR_MESSAGE));
-            root.put("recordList", resultList);
-            root.put("numberOfRecords", resultList.size());
+            root.put("errorMessage", reportProperties.get(jobName + "." + ERROR_MESSAGE));
+            root.put("recordList", resultList.get(0));
+            root.put("numberOfRecords", resultList.get(0).size());
             // header columns
-            String[] headerCols = reportProperties.getProperty(fileName + HEADER_COLUMNS).split("\\|");
+            String[] headerCols = reportProperties.getProperty(jobName + "." + HEADER_COLUMNS).split("\\|");
             root.put("headerColumns", headerCols);
             root.put("dateRun", new Date());
-            if (queryFile != null)
-                root.put("sqlQuery", FileUtils.readFileToString(queryFile));
+            root.put("sqlQuery", FileUtils.readFileToString(queryFile));
             template.process(root, writer);
             writer.flush();
             // export data
@@ -125,6 +119,12 @@ public abstract class AbstractValidateDataReportTask {
         throw new RuntimeException(" Errors in unit test:" + errorMessages.size());
     }
 
+/*
+    protected void createErrorReport(List<String> errorMessages, List<List<List<String>>> resultList) {
+        createErrorReport(errorMessages, resultList, null);
+    }
+
+*/
     public void setInstance(String instance) {
         this.instance = instance;
     }

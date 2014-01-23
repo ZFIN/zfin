@@ -28,7 +28,7 @@ misleading one) if there are no rows in existence for that object type, i.e. for
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.report.html,server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

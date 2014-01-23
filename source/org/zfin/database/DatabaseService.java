@@ -2,14 +2,17 @@ package org.zfin.database;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.log4j.*;
 import org.zfin.database.presentation.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DbScriptFileParser;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
@@ -326,7 +329,7 @@ public class DatabaseService {
         if (!LOG.isDebugEnabled())
             LOG.info("No Debugging enabled: To see more debug data enable the logger to leg level debug.");
         for (DatabaseJdbcStatement statement : queries) {
-            LOG.info("Statement " + statement.getLocationInfo() + ": " + statement.getHumanReadableQueryString());
+            LOG.info("Statement " + statement.getLocationInfo() + "\n" + statement.getHumanReadableQueryString());
             if (statement.isInformixWorkStatement())
                 continue;
             if (statement.isLoadStatement()) {
@@ -346,9 +349,9 @@ public class DatabaseService {
                     if (dataReturn == null)
                         LOG.debug("  Debug data: No records found.");
                     else {
-                        LOG.debug("  Debug data: " + dataReturn.size() + " records.");
+                        LOG.debug("  Debug data:\n " + dataReturn.size() + " records.");
                         for (List<String> row : dataReturn)
-                            LOG.debug("  " + row);
+                            LOG.debug("\n  " + row);
                     }
                 }
             } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
@@ -358,17 +361,17 @@ public class DatabaseService {
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
                 } else if (statement.getDataKey() == null) {
-                    LOG.info("  Data: " + dataReturn.size() + " records.");
+                    LOG.info("\n" + dataReturn.size() + " records retrieved");
                 } else if (statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {
-                    LOG.info("  Debug data: " + dataReturn.size() + " records.");
+                    LOG.info("  Debug data:\n " + dataReturn.size() + " records.");
                     for (List<String> row : dataReturn)
-                        LOG.info("  " + row);
+                        LOG.info("\n  " + row);
                 } else
                     dataMap.put(statement.getDataKey(), dataReturn);
             } else if (statement.isEcho()) {
-                LOG.info(statement.getQuery());
+                LOG.info("\n  " + statement.getQuery());
             } else if (statement.isTest()) {
-                LOG.info(statement.getQuery());
+                LOG.info("\n  " + statement.getQuery());
                 String key = statement.getDataKey();
                 int value = Integer.valueOf(dataMap.get(key).get(0).get(0));
                 if (statement.isTestTrue(value))
@@ -390,6 +393,22 @@ public class DatabaseService {
         return query;
     }
 
+    public void setLoggerLevelInfo() {
+        LOG.setLevel(Level.INFO);
+    }
+
+    public void setLoggerFile(File file) {
+        FileAppender appender;
+        try {
+            String logFilePattern = "%r %-5p %m%n";
+            appender = new FileAppender(new PatternLayout(logFilePattern), file.getAbsolutePath());
+            appender.setAppend(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        LOG.addAppender(appender);
+    }
 
     private final Logger LOG = Logger.getLogger(DatabaseService.class);
 
