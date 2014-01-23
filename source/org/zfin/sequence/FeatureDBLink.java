@@ -20,7 +20,8 @@ public class FeatureDBLink extends DBLink implements Comparable<FeatureDBLink>, 
     }
 
     public void setFeature(Feature feature) {
-        this.feature = feature;
+        this.feature = feature
+        ;
     }
 
     public boolean equals(Object o) {

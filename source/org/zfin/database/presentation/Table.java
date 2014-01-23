@@ -89,7 +89,7 @@ public enum Table {
     MARKER_GO_TERM_EVIDENCE_ANNOTATION_ORGANIZATION("GO_ANNOT_ORG", "marker_go_term_evidence_annotation_organization", "mrkgoevas_pk_id", "mrkrgoevas_annotation_organization"),
     MARKER_RELATION("MREL", "marker_relationship", "mrel_zdb_id", "mrel_type ", "mrel_type", "mrel_mrkr_1_zdb_id,mrel_mrkr_2_zdb_id"),
     MARKER_RELATION_TYPE("MRELTYPE", "marker_relationship_type", "mreltype_name"),
-    MARKER_SEQUENCE("MRKRSEQ", "marker_sequence", "mrkrseq_mrkr_zdb_id"),
+    MARKER_SEQUENCE("MRKRSEQ", "marker_sequence", "seq_mrkr_zdb_id"),
     MARKER_TYPE("MARKERTYPE", "marker_types", "marker_type"),
     MARKER_TYPE_GROUP("MARKERTYPEGRP", "marker_type_group", "mtgrp_name"),
     MARKER_TYPE_GROUP_MEMBER("MARKERTYPEGRPMEM", "marker_type_group_member", "mtgrpmem_mkrk_type"),
