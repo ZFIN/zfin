@@ -793,11 +793,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getVariantForSnp() {
-        assertEquals("A/T", markerRepository.getVariantForSnp("ZDB-SNP-060626-88"));
-    }
-
-    @Test
     public void getMarkerSequences() {
         SequenceTargetingReagent m = (SequenceTargetingReagent) markerRepository.getMarkerByID("ZDB-SNP-060626-88");
         assertEquals("TATTTC", m.getSequence().getSequence().substring(0, 6));
