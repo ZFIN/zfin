@@ -27,9 +27,9 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/validatedata
 
-GENERICS = Check-Term-Stage-Range_d.sql linkageHasMember.sql StrGeneAbbreviation.sql MarkerGoEvidenceDuplicate.sql Check-Marker-Go-Secondary-Annotation_d.sql PublicationDuplicate.sql ProbeGeneRelationship.sql MarkerGoInference.sql EstContainedInRelationship.sql Check-EST-One-Marker_w.sql XXGenesNoClones.sql RefseqAccessionFormat.sql AssoicateDataCurationOrthology.sql Check-EST-Contained-In-Relationship_m.sql Check-For-Orphaned-Features_q.sql Check-Tg-Feature-Without-Construct_m.sql
+GENERICS = linkageHasMember.sql StrGeneAbbreviation.sql MarkerGoEvidenceDuplicate.sql PublicationDuplicate.sql ProbeGeneRelationship.sql MarkerGoInference.sql EstContainedInRelationship.sql XXGenesNoClones.sql RefseqAccessionFormat.sql AssoicateDataCurationOrthology.sql
 
-STATICS = validate-data-email-report.properties validate-data-email-report.template  Check-Get_Object_Type-Function_d.sqlj
+STATICS = validate-data-email-report.properties validate-data-email-report.template  Check-Get_Object_Type-Function_d.sqlj Check-Term-Stage-Range_d.sql Check-Marker-Go-Secondary-Annotation_d.sql Check-EST-One-Marker_w.sql Check-EST-Contained-In-Relationship_m.sql Check-For-Orphaned-Features_q.sql Check-Tg-Feature-Without-Construct_m.sql
 
 # ---------------  Production Rules  ------------------------------------
 
