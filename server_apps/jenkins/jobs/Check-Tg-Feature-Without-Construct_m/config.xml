@@ -26,7 +26,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-Tg-Feature-Without-Construct_m.report.html,server_apps/DB_maintenance/validatedata/Check-Tg-Feature-Without-Construct_m.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Tg-Feature-Without-Construct_m.*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

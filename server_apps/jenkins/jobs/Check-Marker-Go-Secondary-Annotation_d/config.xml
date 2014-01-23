@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Check that marker_go_term_evidence table does not have annotations with secondary terms,
+  <description>Check that MARKER_GO_TERM_EVIDENCE table does not have annotations with secondary terms,
       i.e. terms that were merged and thus do not exist any longer.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
@@ -25,7 +25,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-Go-Secondary-Annotation_d.report.html,server_apps/DB_maintenance/validatedata/Check-Marker-Go-Secondary-Annotation_d.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-Go-Secondary-Annotation_d.report.*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

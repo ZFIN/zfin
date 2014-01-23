@@ -66,7 +66,7 @@ public abstract class AbstractValidateDataReportTask {
             if (!dataFile.delete())
                 LOG.error("Could not delete data file: " + dataFile.getAbsolutePath());
 
-        if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList.get(0)))
+        if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList))
             return;
         freemarker.template.Configuration configuration = new freemarker.template.Configuration();
         try {
@@ -81,8 +81,8 @@ public abstract class AbstractValidateDataReportTask {
             Template template = configuration.getTemplate(templateName);
             Map<String, Object> root = new HashMap<>();
             root.put("errorMessage", reportProperties.get(jobName + "." + ERROR_MESSAGE));
-            root.put("recordList", resultList.get(0));
-            root.put("numberOfRecords", resultList.get(0).size());
+            root.put("recordList", resultList);
+            root.put("numberOfRecords", resultList.size());
             // header columns
             String[] headerCols = reportProperties.getProperty(jobName + "." + HEADER_COLUMNS).split("\\|");
             root.put("headerColumns", headerCols);
