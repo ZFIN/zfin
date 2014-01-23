@@ -433,16 +433,16 @@ function jump(form_select){
           by the updating page when xtra_param is null. An edit has occured, so set
           note = 'Sequence modified'.
         <?/MICOMMENT>
- 	function update_mrkrsequence(mrkr_zdb_id,old_seq,new_seq,note) {
+ 	function update_sequence(mrkr_zdb_id,old_seq,new_seq,note) {
  	        if (note == '') {note = 'Sequence modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
  		if ((new_seq != '')) {
- 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkr_zdb_id+'&attr=mrkrseq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
+ 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkr_zdb_id+'&attr=seq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
  		}
         }
 
 
-        function update_second_mrkrsequence(mrkrseq_zdb,old_seq,new_seq,note,new_seq_2) {
+        function update_second_sequence(seq_zdb,old_seq,new_seq,note,new_seq_2) {
  	        if (note == '') {note = 'Sequence modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
  		if ((new_seq != '')) {
@@ -547,7 +547,7 @@ function jump(form_select){
 		}
 	}
 
- 	function new_attrib_mrkrseq(dataid) {
+ 	function new_attrib_seq(dataid) {
  		var pub_id = document.newdata.mrkrview_seq_pubid.value.toUpperCase().strip();
  		if((dataid != '')&&(pub_id != '')) {
  			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=marker_sequence');
@@ -928,16 +928,11 @@ Only need to update clones, etc., which should be the only things that will have
    select seq_sequence, "", seq_offset_start,seq_offset_stop
      from marker_sequence
     where seq_mrkr_zdb_id = '$OID'
-    and seq_mrkr_zdb_id not like 'ZDB-TALEN%'
-  union
-   select seq_sequence, seq_sequence_2, seq_offset_start,seq_offset_stop
-     from talen_sequence
-    where seq_mrkr_zdb_id = '$OID'
  ;">
     <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
     <?MIVAR NAME=$mrkrview_second_sequence>$2<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_start>$3<?/MIVAR>
-    <?MIVAR NAME=$mrkrview_mrkrseq_stop>$4<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_seq_start>$3<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_seq_stop>$4<?/MIVAR>
  <?/MISQL>
 
  <?MICOMMENT> get blast linkout url to ncbi-blast<?/MICOMMENT>
@@ -978,7 +973,7 @@ Only need to update clones, etc., which should be the only things that will have
         }
 
         if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){
-            update_mrkrsequence('$OID','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)
+            update_sequence('$OID','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)
         }">
         <?/MIVAR>
      <?/MIBLOCK>
@@ -992,7 +987,7 @@ Only need to update clones, etc., which should be the only things that will have
         }
 
         if (validSequence(document.newdata.seqdata_DisplaySequence.value) && validSequence(document.newdata.seqdata_2nd_DisplaySequence.value)){
-            update_second_mrkrsequence('$OID','$mrkrview_second_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value,document.newdata.seqdata_2nd_DisplaySequence.value)
+            update_second_sequence('$OID','$mrkrview_second_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value,document.newdata.seqdata_2nd_DisplaySequence.value)
         }">
         <?/MIVAR>
      <?/MIBLOCK>
@@ -1003,7 +998,7 @@ Only need to update clones, etc., which should be the only things that will have
       <?MIVAR COND="$(NC,$mrkrview_sequence,)">
          <br>Add Sequence Reference:
          <input type=text name=mrkrview_seq_pubid>
-         <input type=button value="Add" onClick=new_attrib_mrkrseq('$OID');>
+         <input type=button value="Add" onClick=new_attrib_seq('$OID');>
         <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         <p>
       <?/MIVAR>
@@ -1056,12 +1051,12 @@ Only need to update clones, etc., which should be the only things that will have
     <td>
         <table border="0"  CELLSPACING="0">
         <tr bgcolor="#EEEEEE">
-        <?MIVAR><br><td>$(SUBSTR,$mrkrview_sequence,1,$(-,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
+        <?MIVAR><br><td>$(SUBSTR,$mrkrview_sequence,1,$(-,$mrkrview_seq_start,1)) <?/MIVAR>
 </td> <td>&nbsp;</td></tr>
-        <?MIVAR NAME="mrkrview_ambiguity_code">$(SUBSTR,$mrkrview_sequence,$mrkrview_mrkrseq_start,1) <?/MIVAR>
-        <tr bgcolor="#EEEEEE"><td><font color=green><?MIVAR>$(SUBSTR,$mrkrview_sequence,$mrkrview_mrkrseq_start,1) <?/MIVAR>
+        <?MIVAR NAME="mrkrview_ambiguity_code">$(SUBSTR,$mrkrview_sequence,$mrkrview_seq_start,1) <?/MIVAR>
+        <tr bgcolor="#EEEEEE"><td><font color=green><?MIVAR>$(SUBSTR,$mrkrview_sequence,$mrkrview_seq_start,1) <?/MIVAR>
 </td></font><td>&nbsp;</td></tr>
-        <tr bgcolor="#EEEEEE"><td><?MIVAR>$(SUBSTR,$mrkrview_sequence,$(+,$mrkrview_mrkrseq_start,1)) <?/MIVAR>
+        <tr bgcolor="#EEEEEE"><td><?MIVAR>$(SUBSTR,$mrkrview_sequence,$(+,$mrkrview_seq_start,1)) <?/MIVAR>
 </td> <td>&nbsp;</td></tr>
          <tr bgcolor="#EEEEEE"><td>
          <font size=-1>
