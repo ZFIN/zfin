@@ -87,7 +87,7 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 ### FB case 8651, Include Publication in Morpholino Data Download
 
 $sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, b.szm_term_ont_id, mo.mrkr_abbrev,
-	       mrkrseq_sequence, mo.mrkr_comments
+	       seq_sequence, mo.mrkr_comments
           from marker gn, marker mo, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
          where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
            and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
@@ -96,7 +96,7 @@ $sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, mo.mrkr_zdb_id
            and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
            and mrel_mrkr_1_zdb_id[1,12] = "ZDB-MRPHLNO-"
            and mrel_type = "knockdown reagent targets gene"
-           and mo.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+           and mo.mrkr_zdb_id = seq_mrkr_zdb_id
       order by gn.mrkr_abbrev;';
 
 $cur = $dbh->prepare($sql);
@@ -153,7 +153,7 @@ $TALENfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer/
 open (TALENWITHPUBS, ">$TALENfileWithPubsAndNoHTMLtags") || die "Cannot open $TALENfileWithPubsAndNoHTMLtags : $!\n";
 
 $sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id, b.szm_term_ont_id, talen.mrkr_abbrev,
-	       mrkrseq_sequence, mrkrseq_sequence_2, talen.mrkr_comments
+	       seq_sequence, seq_sequence_2, talen.mrkr_comments
           from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
          where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
            and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
@@ -162,7 +162,7 @@ $sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb
            and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
            and mrel_mrkr_1_zdb_id[1,10] = "ZDB-TALEN-"
            and mrel_type = "knockdown reagent targets gene"
-           and talen.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+           and talen.mrkr_zdb_id = seq_mrkr_zdb_id
       order by gn.mrkr_abbrev;';
 
 $cur = $dbh->prepare($sql);
@@ -215,7 +215,7 @@ $CRISPRfileWithPubsAndNoHTMLtags = '<!--|ROOT_PATH|-->/server_apps/data_transfer
 open (CRISPRWITHPUBS, ">$CRISPRfileWithPubsAndNoHTMLtags") || die "Cannot open $CRISPRfileWithPubsAndNoHTMLtags : $!\n";
 
 $sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id, b.szm_term_ont_id, crispr.mrkr_abbrev,
-	       mrkrseq_sequence, crispr.mrkr_comments
+	       seq_sequence, crispr.mrkr_comments
           from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
          where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
            and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
@@ -224,7 +224,7 @@ $sql = 'select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zd
            and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
            and mrel_mrkr_1_zdb_id[1,11] = "ZDB-CRISPR-"
            and mrel_type = "knockdown reagent targets gene"
-           and crispr.mrkr_zdb_id = mrkrseq_mrkr_zdb_id
+           and crispr.mrkr_zdb_id = seq_mrkr_zdb_id
       order by gn.mrkr_abbrev;';
 
 $cur = $dbh->prepare($sql);
