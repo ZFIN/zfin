@@ -395,20 +395,7 @@ function jump(form_select){
   		}
 	}
 
-    function updatePhenotypeData() {
-    	    // when new target gene added or deleted, call regen_genox with all the target genes of the STR
-            <?MISQL SQL="select mrkr_zdb_id
-    	       from marker_relationship
-    		    join marker on mrel_mrkr_2_zdb_id = mrkr_zdb_id
-    	       where mrel_mrkr_1_zdb_id = '$OID'
-    		     and mrel_type = 'knockdown reagent targets gene';">
-    		     <?MIVAR NAME=targetGene>$1<?/MIVAR>
-                 <?MISQL SQL="execute procedure regen_genox_marker('$targetGene');"><?/MISQL>
-            <?/MISQL>
-    }
-
 	function new_mrkrrel(mrkrrel_type, mrkr_abbrev_value) {
-	    updatePhenotypeData();
 		var mrkr_abbrev = escape(mrkr_abbrev_value.strip());
 		mrkrrel_type.replace(/ /,"%20");
 		if (mrkr_abbrev != '') {
