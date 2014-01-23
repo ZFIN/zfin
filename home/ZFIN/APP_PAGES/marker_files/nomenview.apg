@@ -198,7 +198,7 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
                value="$(IF,$(EC,$chronology,desc),\/,/\)">
 	<?/MIVAR>
       </td>
-      <td><b>Reason<b></td>
+      <td><b>Reason</b></td>
       <td><b>Comments</b></td>
     </tr>  
   <?/MIBLOCK> <?MICOMMENT> ========= end if (mi_currentrow == 1) ======== <?/MICOMMENT>
@@ -208,15 +208,15 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
         <input type=button value="Edit/Delete" onClick=edit_nomen('$NomenId')>
       <?/MIVAR>
 
-      <?MIBLOCK COND="$(EC,$Event,reassigned)"> 
+      <?MIBLOCK COND="$(EC,$Event,reassigned)">
          <?MIVAR>
-         <b>$MrkrAbbrev</b></td> 
+         <span class="genedom"><b>$MrkrAbbrev</b></span></td>
          <td>renamed from</td>
-         <td><b>$Alias</b></td>
+         <td><span class="genedom"><b>$Alias</b></span></td>
          <?/MIVAR>
       <?MIELSE COND=$(EC,$Event,assigned)>
          <?MIVAR>
-         <b>$MrkrAbbrev</b></td> 
+         <span class="genedom"><b>$MrkrAbbrev</b></span></td>
          <td>$Event</td>
          <td>&nbsp;</td>
          <?/MIVAR>
@@ -224,19 +224,19 @@ $UPDATE: if the viewer is in update mode, this is set to 1.
          <?MIVAR>
          <b>$MrkrName</b></td>
          <td>$Event from</td>
-         <td><b>$MrkrPrevName</b></td>
+         <td><span class="genedom"><b>$MrkrPrevName</b></span></td>
          <?/MIVAR>
       <?MIELSE COND=$(EC,$Event,reserved)>
          <?MIVAR>
-         <b>$MrkrAbbrev</b></td> 
+         <span class="genedom"><b>$MrkrAbbrev</b></span></td>
          <td>$Event</td>
          <td>&nbsp;</td>
          <?/MIVAR>
       <?MIELSE COND=$(EC,$Event,merged)>
          <?MIVAR>
-         <b>$MrkrAbbrev</b></td>
+         <span class="genedom"><b>$MrkrAbbrev</b></span></td>
          <td>$Event with</td>
-         <td><b>$Alias</b></td>
+         <td><span class="genedom"><b>$Alias</b></span></td>
          <?/MIVAR>
       <?/MIBLOCK>
       <td>$Date</td>

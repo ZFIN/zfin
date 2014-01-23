@@ -868,17 +868,18 @@ marker = '';
       <?MIVAR>
       <?MIBLOCK COND="$(=,$(POSITION,$member_zdb_id,ALT),0)")>
 <?MIVAR>
-        <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD><?/MIVAR>
+       <TD><A HREF="$curviewer$member_zdb_id" $(IF, $(EC, $member_type_display, Gene), class="genedom")>$member_abbrev</A> ($member_type_display)</TD><?/MIVAR>
       <?MIELSE>
-      <?MIVAR>  <TD>$member_abbrev ($member_type_display)</TD><?/MIVAR>
+      <?MIVAR>  <TD>  $(IF, $(EC, $member_type_display, Gene), <span class="genedom">$member_abbrev</span>, $member_abbrev) ($member_type_display)</TD><?/MIVAR>
        <?/MIBLOCK>
         <TD> Chr $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
 	<TD>$source_display</TD><TD>&nbsp; &nbsp;</TD>
         <TD><A HREF=javascript:show_detail("$link_id","$member_zdb_id","$member_abbrev","$(IF,$(XST,$abbrev),$abbrev)");>Details</A></TD>
       <?/MIVAR>
     <?MIELSE>
+
       <?MIVAR>
-        <TD><A HREF="$curviewer$member_zdb_id">$member_abbrev</A> ($member_type_display)</TD>
+        <TD><A HREF="$curviewer$member_zdb_id" $(IF, $(EC, $member_type_display, Gene), class="genedom")>$member_abbrev</A> ($member_type_display)</TD>
         <TD> Chr $lg $(IF,$(NC,$distance,),;) $distance $metric $(IF,$(NC,$lod,),;) $lod</TD>
 	<TD>$source_display</TD><TD></TD>
 	<?/MIVAR>
@@ -1110,7 +1111,7 @@ marker = '';
        <td>
          <A HREF="/action/marker/view/$mrkr_OID"><b>$mrkr_abbrev</b></A>
        </td>
-       <td> $1 </td>
+       <td> $1 does the change take effect??s </td>
       </tr>
     <?/MISQL>
     <?MIVAR NAME=$mapped>t<?/MIVAR>
