@@ -471,7 +471,7 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
         =============================================
       <?/MICOMMENT>
 
-     <?MIBLOCK COND="$(EC,$attr,mrkrseq_sequence)">
+     <?MIBLOCK COND="$(EC,$attr,seq_sequence)">
 
        <?MICOMMENT> 
           ==========================================
@@ -482,8 +482,8 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
      <?MIBLOCK COND=$(AND,$(XST,$dataOID),$(NC,$dataOID,))>
        <?MISQL SQL="
            update marker_sequence
-              set mrkrseq_sequence = '$new_value'
-            where mrkrseq_mrkr_zdb_id = '$dataOID';">
+              set seq_sequence = '$new_value'
+            where seq_mrkr_zdb_id = '$dataOID';">
        <?/MISQL>   
      <?MIELSE>
     
@@ -495,9 +495,9 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
             
       <?MISQL SQL="
         insert into marker_sequence (
-          mrkrseq_mrkr_zdb_id,
-          mrkrseq_sequence,
-          mrkrseq_left_end)
+          seq_mrkr_zdb_id,
+          seq_sequence,
+          seq_left_end)
         values (
           '$OID',
           '$new_value',
@@ -513,7 +513,7 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
     
    <?/MIBLOCK>
    
-   <?MIBLOCK COND="$(EC,$attr,mrkrseq_sequence_2)">
+   <?MIBLOCK COND="$(EC,$attr,seq_sequence_2)">
 
        <?MICOMMENT> 
           ==========================================
@@ -524,15 +524,15 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
      <?MIBLOCK COND=$(AND,$(XST,$dataOID),$(NC,$dataOID,))>
        <?MISQL SQL="
            update marker_sequence
-              set mrkrseq_sequence = '$new_value'
-            where mrkrseq_mrkr_zdb_id = '$dataOID';">
+              set seq_sequence = '$new_value'
+            where seq_mrkr_zdb_id = '$dataOID';">
        <?/MISQL>  
 
        <?MISQL COND="$(XST,$new_value2)"
           SQL="
            update marker_sequence
-              set mrkrseq_sequence_2 = '$new_value2'
-            where mrkrseq_mrkr_zdb_id = '$dataOID';">
+              set seq_sequence_2 = '$new_value2'
+            where seq_mrkr_zdb_id = '$dataOID';">
        <?/MISQL>   
      <?MIELSE>
     
@@ -544,9 +544,9 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
             
       <?MISQL SQL="
         insert into marker_sequence (
-          mrkrseq_mrkr_zdb_id,
-          mrkrseq_sequence,
-          mrkrseq_left_end)
+          seq_mrkr_zdb_id,
+          seq_sequence,
+          seq_left_end)
         values (
           '$OID',
           '$new_value',

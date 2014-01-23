@@ -606,10 +606,10 @@ var ENTER_KEY = 13;
       <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$newmrkrMrkrSeqId');"><?/MISQL>
       <?MISQL SQL="
         insert into marker_sequence (
-          mrkrseq_zdb_id,
-          mrkrseq_mrkr_zdb_id,
-          mrkrseq_sequence,
-          mrkrseq_left_end)
+          seq_zdb_id,
+          seq_mrkr_zdb_id,
+          seq_sequence,
+          seq_left_end)
         values (
           '$newmrkrMrkrSeqId',
           '$new_id',
