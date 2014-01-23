@@ -955,7 +955,11 @@ Only need to update clones, etc., which should be the only things that will have
       <form name=newdata>
 
       <br>
-        <b>Sequence:</b>
+        <?MIBLOCK COND="$(OR,$(EC,$marker_type,CRISPR),$(EC,$marker_type,TALEN))">
+          <b>Target Sequence:</b>
+        <?MIELSE>
+          <b>Sequence:</b>
+        <?/MIBLOCK>
 
       <table border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
         <tr><td>

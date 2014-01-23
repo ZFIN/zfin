@@ -17,6 +17,16 @@
 
 <h1>Describe new ${formBean.disruptorType}</h1>
 
+<c:choose>
+    <c:when test="${formBean.disruptorType eq 'Morpholino'}">
+        <c:set var="seqBoxSize">50</c:set>
+    </c:when>
+    <c:otherwise>
+        <c:set var="seqBoxSize">60</c:set>
+    </c:otherwise>
+</c:choose>
+
+
 <form:form action="disruptor-do-submit?disruptorType=${formBean.disruptorType}" commandName="formBean" method="post">
     <div>
         <form:label path="<%= DisruptorAddBean.NEW_DISRUPTOR_NAME%>" class="curation-form-label">${formBean.disruptorType} name:</form:label>
@@ -55,12 +65,15 @@
     <p/>
     <table border=0>
         <tr>
-            <td valign=top>
-                <c:if test="${formBean.disruptorType ne 'TALEN'}">
-                  <label class="namesearchLabel">Sequence:</label>
+            <td valign=top nowrap>
+                <c:if test="${formBean.disruptorType eq 'Morpholino'}">
+                    <label class="namesearchLabel">Sequence:</label>
+                </c:if>
+                <c:if test="${formBean.disruptorType eq 'CRISPR'}">
+                    <label class="namesearchLabel">Target Sequence:</label>
                 </c:if>
                 <c:if test="${formBean.disruptorType eq 'TALEN'}">
-                    <label class="namesearchLabel">Sequence 1:</label>
+                    <label class="namesearchLabel">Target Sequence 1:</label>
                 </c:if>
                 <input type=button value="Reverse" onClick="reverseSequence('reportSeq','displaySeq');">
                 <input type=button value="Complement" onClick="complementSequence('reportSeq','displaySeq');">
@@ -70,19 +83,19 @@
             <td><form:label path="<%= DisruptorAddBean.NEW_DISRUPTOR_CURNOTE%>" class="curation-form-label">Curator Note:</form:label></td>
         </tr>
         <tr>
-            <td>
-               Reported: &nbsp;5'-   <form:input id="reportSeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE%>" name="reportSeq" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+            <td nowrap>
+                Reported: &nbsp;5'-   <form:input id="reportSeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE%>" name="reportSeq" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
             </td>
             <td width=20></td><!-- spacer column -->
             <c:choose>
-               <c:when test="${formBean.disruptorType eq 'TALEN'}">
-                 <c:set var="curatorNoteRowspanValue">5</c:set>
-                   <c:set var="curatorNoteRowValue">7</c:set>
-               </c:when>
-               <c:otherwise>
-                   <c:set var="curatorNoteRowspanValue">2</c:set>
-                   <c:set var="curatorNoteRowValue">5</c:set>
-               </c:otherwise>
+                <c:when test="${formBean.disruptorType eq 'TALEN'}">
+                    <c:set var="curatorNoteRowspanValue">5</c:set>
+                    <c:set var="curatorNoteRowValue">7</c:set>
+                </c:when>
+                <c:otherwise>
+                    <c:set var="curatorNoteRowspanValue">2</c:set>
+                    <c:set var="curatorNoteRowValue">5</c:set>
+                </c:otherwise>
             </c:choose>
             <td valign=top rowspan=${curatorNoteRowspanValue}>
                 <form:textarea id="curatorNote" path="<%= DisruptorAddBean.NEW_DISRUPTOR_CURNOTE%>" rows="${curatorNoteRowValue}" cols="70" />
@@ -90,15 +103,15 @@
             </td>
         </tr>
         <tr>
-            <td>
-                Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+            <td nowrap>
+                Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
                 <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
             </td>
         </tr>
         <c:if test="${formBean.disruptorType eq 'TALEN'}">
             <tr>
-                <td>
-                    <label class="namesearchLabel">Sequence 2:</label>
+                <td nowrap>
+                    <label class="namesearchLabel">Target Sequence 2:</label>
                     <input type=button value="Reverse" onClick="reverseSequence('reportSeq2','displaySeq2');">
                     <input type=button value="Complement" onClick="complementSequence('reportSeq2','displaySeq2');">
                     <input type=button value="Reverse & Complement" onClick="reverseComplementSequence('reportSeq2','displaySeq2');">
@@ -106,14 +119,14 @@
                 <td width=20></td><!-- spacer column -->
             </tr>
             <tr>
-                <td>
-                    Reported: &nbsp;5'-   <input id="reportSeq2" name="reportSeq2" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></input> -3'
+                <td nowrap>
+                    Reported: &nbsp;5'-   <input id="reportSeq2" name="reportSeq2" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></input> -3'
                 </td>
                 <td width=20></td><!-- spacer column -->
             </tr>
             <tr>
-                <td>
-                    Displayed:&nbsp;&nbsp;  5'- <form:input id="displaySeq2" name="displaySeq2" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" size="50" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                <td nowrap>
+                    Displayed:&nbsp;&nbsp;  5'- <form:input id="displaySeq2" name="displaySeq2" path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
                     <form:errors path="<%= DisruptorAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" cssClass="error indented-error"/>                </td>
             </tr>
         </c:if>
