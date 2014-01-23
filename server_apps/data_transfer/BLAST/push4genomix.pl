@@ -182,16 +182,16 @@ sub generateAccMrkrRelationshipFile() {
 	'ZDB-FDBCONT-050210-1'    --PREVEGA    Transcript
 )
        union
-        select mrkrseq_mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev, mrkr_type
+        select seq_mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev, mrkr_type
           from marker_sequence, marker_relationship, marker
-         where mrkrseq_mrkr_zdb_id = mrel_mrkr_1_zdb_id
+         where seqmrkr_zdb_id = mrel_mrkr_1_zdb_id
            and mrel_mrkr_2_zdb_id = mrkr_zdb_id
            and mrel_type = 'knockdown reagent targets gene'
        union
         select mrkr_zdb_id as acc_num, mrkr_zdb_id, mrkr_abbrev, mrkr_type
           from marker_sequence, marker
-         where mrkrseq_mrkr_zdb_id = mrkr_zdb_id
-           and mrkrseq_mrkr_zdb_id like 'ZDB-GENE%' -- this catches Pesudo Genes as well
+         where seqmrkr_zdb_id = mrkr_zdb_id
+           and seqmrkr_zdb_id like 'ZDB-GENE%' -- this catches Pesudo Genes as well
 
        order by acc_num, mrkr_zdb_id ";
 

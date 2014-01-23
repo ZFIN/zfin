@@ -39,10 +39,10 @@ my $dbh = DBI->connect("DBI:Informix:$dbname", $user, $passwd)
 
 my $sql;
 #======  regenerate morpholino sequence set =======
-$sql =    " select mrel_mrkr_1_zdb_id, mrph.mrkr_name, mrkrseq_sequence
+$sql =    " select mrel_mrkr_1_zdb_id, mrph.mrkr_name, seq_sequence
               from marker_sequence 
                    join marker_relationship 
-                         on mrkrseq_mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                         on seq_mrkr_zdb_id = mrel_mrkr_1_zdb_id
                    join marker mrph
                          on mrel_mrkr_1_zdb_id = mrph.mrkr_zdb_id
                    join marker gn
