@@ -80,11 +80,17 @@ public abstract class AbstractValidateDataReportTask {
             writer = new FileWriter(reportFile);
             Template template = configuration.getTemplate(templateName);
             Map<String, Object> root = new HashMap<>();
-            root.put("errorMessage", reportProperties.get(jobName + "." + ERROR_MESSAGE));
+            String errorMessage = (String) reportProperties.get(jobName + "." + ERROR_MESSAGE);
+            String columnHeader = (String) reportProperties.get(jobName + "." + HEADER_COLUMNS);
+            if (StringUtils.isEmpty(errorMessage))
+                throw new RuntimeException("No value for key " + jobName + "." + ERROR_MESSAGE + " found in file " + baseValidateDataDirectory + "/" + templateName);
+            if (StringUtils.isEmpty(columnHeader))
+                throw new RuntimeException("No value for key " + jobName + "." + HEADER_COLUMNS + " found in file " + baseValidateDataDirectory + "/" + templateName);
+            root.put("errorMessage", errorMessage);
             root.put("recordList", resultList);
             root.put("numberOfRecords", resultList.size());
             // header columns
-            String[] headerCols = reportProperties.getProperty(jobName + "." + HEADER_COLUMNS).split("\\|");
+            String[] headerCols = columnHeader.split("\\|");
             root.put("headerColumns", headerCols);
             root.put("dateRun", new Date());
             root.put("sqlQuery", FileUtils.readFileToString(queryFile));
@@ -119,12 +125,12 @@ public abstract class AbstractValidateDataReportTask {
         throw new RuntimeException(" Errors in unit test:" + errorMessages.size());
     }
 
-/*
-    protected void createErrorReport(List<String> errorMessages, List<List<List<String>>> resultList) {
-        createErrorReport(errorMessages, resultList, null);
-    }
+    /*
+        protected void createErrorReport(List<String> errorMessages, List<List<List<String>>> resultList) {
+            createErrorReport(errorMessages, resultList, null);
+        }
 
-*/
+    */
     public void setInstance(String instance) {
         this.instance = instance;
     }
