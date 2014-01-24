@@ -15,7 +15,7 @@ public class SqlQueryUtil implements SqlQueryKeywords {
         if (StringUtils.isEmpty(query))
             return null;
         StringBuilder builder = new StringBuilder();
-        String[] tokens = query.toString().split(" ");
+        String[] tokens = query.split(" ");
         for (String token : tokens) {
             if (StringUtils.isEmpty(token))
                 continue;

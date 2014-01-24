@@ -1,6 +1,7 @@
 package org.zfin.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.jdbc.util.BasicFormatterImpl;
 
 import java.util.List;
 
@@ -284,7 +285,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public String getHumanReadableQueryString() {
-        return SqlQueryUtil.getHumanReadableQueryString(query.toString());
+        return new BasicFormatterImpl().format(query.toString());
     }
 
     public boolean isTestTrue(int value) {
