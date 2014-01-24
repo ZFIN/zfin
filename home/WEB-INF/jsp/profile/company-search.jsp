@@ -19,7 +19,7 @@
 
 
     <div style="float: right; margin-top: 2px; width: auto !important;" class="pagination ">
-        <b>${formBean.totalRecords} ${formBean.totalRecords == 1 ? 'company' : 'companies'} found </b> &nbsp;
+        <b>${formBean.totalRecords}&nbsp;${formBean.totalRecords == 1 ? 'company' : 'companies'} found </b> &nbsp;
         <zfin2:maxRecords count="10" searchBean="${formBean}" searchType="company"/>
         <zfin2:maxRecords count="25" searchBean="${formBean}" searchType="company"/>
         <zfin2:maxRecords count="50" searchBean="${formBean}" searchType="company"/>
