@@ -35,7 +35,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/ResourceCenters/loadReport.txt</artifacts>
+      <artifacts>/tmp/loadReport.txt</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
