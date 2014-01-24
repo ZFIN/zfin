@@ -38,7 +38,7 @@
     <property file="/server_apps/jenkins/trigger.mirror.properties"/>
     <property name="sourceJobsDir" value="${basedir}/server_apps/jenkins/jobs"/>
 
-    <target name="deploy-jobs" description="Copy jobs into Jenkins_home">
+    <target name="deploy-jobs" depends="_copyDefaultConfig" description="Copy jobs into Jenkins_home">
         <tstamp/>
         <echo message="Deploy jobs to into: ${JENKINS_HOME}"/>
         <copy todir="${JENKINS_HOME}/jobs">
@@ -47,6 +47,18 @@
         <antcall target="add-triggers"/>
         <antcall target="add-email-notifications"/>
         <antcall target="deploy-email-templates"/>
+    </target>
+
+    <target name="_copyDefaultConfig">
+        <if>
+            <available file="${JENKINS_HOME}/config.xml"/>
+            <then>
+                <echo message="Configuration file ${JENKINS_HOME}/config.xml is already deployed"/>
+            </then>
+            <else>
+                <copy tofile="${JENKINS_HOME}/config.xml" file="${basedir}/server_apps/jenkins/config.xml" />
+            </else>
+        </if>
     </target>
 
     <target name="deploy-production-jobs" description="Copy jobs into Jenkins_home">
