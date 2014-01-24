@@ -145,7 +145,7 @@ my $ezrcZdbId = "ZDB-LAB-130607-1";
 my $labZdbId;
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 
-open(ZIRCREPORT, ">> <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt/loadReport.txt") or die "can't open loadReport.txt";
+open(ZIRCREPORT, ">> <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") or die "can't open loadReport.txt";
 system("/bin/chmod ug+w /tmp/loadReport.txt");
 # Prepare to do some work.
 #  CD into working directory
