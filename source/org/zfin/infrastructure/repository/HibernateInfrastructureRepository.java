@@ -1279,10 +1279,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         List<List<String>> firstQueryResultList = executeNativeQuery(statement);
         if (firstQueryResultList == null)
             return null;
-        List<List<String>> returnResultList = new ArrayList<>();
         DatabaseJdbcStatement subQuery = statement.getSubQueryStatement();
         if (subQuery == null)
-            return returnResultList;
+            return firstQueryResultList;
+        List<List<String>> returnResultList = new ArrayList<>();
         for (List<String> resultRecord : firstQueryResultList) {
             subQuery.bindVariables(resultRecord);
             List<List<String>> c = executeNativeQuery(subQuery);
