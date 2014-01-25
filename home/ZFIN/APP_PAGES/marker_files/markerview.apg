@@ -911,16 +911,25 @@ Only need to update clones, etc., which should be the only things that will have
 
  <?MIVAR NAME=$mrkrview_sequence><?/MIVAR>
 
- <?MISQL SQL="
-   select seq_sequence, "", seq_offset_start,seq_offset_stop
-     from marker_sequence
-    where seq_mrkr_zdb_id = '$OID'
- ;">
+ <?MIBLOCK COND="$(EC,$marker_type,TALEN)">
+   <?MISQL SQL="select seq_sequence, seq_sequence_2, seq_offset_start,seq_offset_stop
+                  from marker_sequence
+                 where seq_mrkr_zdb_id = '$OID';">
     <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
     <?MIVAR NAME=$mrkrview_second_sequence>$2<?/MIVAR>
     <?MIVAR NAME=$mrkrview_seq_start>$3<?/MIVAR>
     <?MIVAR NAME=$mrkrview_seq_stop>$4<?/MIVAR>
- <?/MISQL>
+   <?/MISQL> 
+ <?MIELSE>
+   <?MISQL SQL="select seq_sequence, "", seq_offset_start,seq_offset_stop
+                  from marker_sequence
+                 where seq_mrkr_zdb_id = '$OID';">
+    <?MIVAR NAME=$mrkrview_sequence>$1<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_second_sequence>$2<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_seq_start>$3<?/MIVAR>
+    <?MIVAR NAME=$mrkrview_seq_stop>$4<?/MIVAR>
+   <?/MISQL>
+ <?/MIBLOCK>
 
  <?MICOMMENT> get blast linkout url to ncbi-blast<?/MICOMMENT>
  <?MISQL SQL="select db.blastdb_path from blast_database db

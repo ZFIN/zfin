@@ -140,10 +140,10 @@
     </div>
     <p/>
     <c:if test="${formBean.disruptorType eq 'TALEN'}">
-        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="completePubId()">
+        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="preSubmit('talen')">
     </c:if>
     <c:if test="${formBean.disruptorType ne 'TALEN'}">
-        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="preSubmit()">
+        <input type=submit name=s_new value="Submit new ${formBean.disruptorType}" onclick="preSubmit('nonTalen')">
     </c:if>
 </form:form>
 
@@ -249,12 +249,21 @@
         sequenceManipulated = "yes";
     }
 
-    function preSubmit() {
+    function preSubmit(type) {
         var displayedSeq = document.getElementById('displaySeq');
         var reportSeq = document.getElementById('reportSeq');
         if(!displayedSeq.value || displayedSeq.value.length == 0 || !/^[\s]+$/.test(displayedSeq.value)) {
             if (sequenceManipulated == "no") {
                 displayedSeq.value = reportSeq.value;
+            }
+        }
+        if (type === 'talen') {
+            var displayedSeq2 = document.getElementById('displaySeq2');
+            var reportSeq2 = document.getElementById('reportSeq2');
+            if(!displayedSeq2.value || displayedSeq2.value.length == 0 || !/^[\s]+$/.test(displayedSeq2.value)) {
+                if (sequenceManipulated == "no") {
+                    displayedSeq2.value = reportSeq2.value;
+                }
             }
         }
         completePubId();
