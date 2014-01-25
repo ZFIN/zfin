@@ -29,8 +29,7 @@ import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.STRMarkerSequence;
-import org.zfin.sequence.TalenMarkerSequence;
-import org.zfin.marker.Talen;
+
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,17 +89,13 @@ public class DisruptorAddController {
 
         STRMarkerSequence newDisruptorSequence = new STRMarkerSequence();
         SequenceTargetingReagent newDisruptor = new SequenceTargetingReagent() ;
+        newDisruptorSequence.setSequence(formBean.getDisruptorSequence().toUpperCase());
+        newDisruptorSequence.setType("Nucleotide");
+        newDisruptor.setSequence(newDisruptorSequence);
 
         if (formBean.getDisruptorType().equalsIgnoreCase("TALEN")) {
             String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
             newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
-            newDisruptorSequence.setType("Nucleotide");
-            newDisruptor.setSequence(newDisruptorSequence);
-        }
-        else {
-            newDisruptorSequence.setSequence(formBean.getDisruptorSequence().toUpperCase());
-            newDisruptorSequence.setType("Nucleotide");
-            newDisruptor.setSequence(newDisruptorSequence);
         }
         Person currentUser = Person.getCurrentSecurityUser();
 
