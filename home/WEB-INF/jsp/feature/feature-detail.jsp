@@ -3,8 +3,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
-<meta name="feature-detail-page"/>
-
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="feature"/>
@@ -149,7 +147,7 @@
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen eq zfn:getMutagen('not specified')}">
             </c:when>
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
-                ${mutagen.toString()}&nbsp;<c:if test="${formBean.createdByRelationship ne null}"><zfin:link entity="${formBean.createdByRelationship.marker}"/></c:if>
+                ${mutagen.toString()} <c:if test="${formBean.createdByRelationship ne null}"><zfin:link entity="${formBean.createdByRelationship.marker}"/></c:if>
             </c:when>
             <c:otherwise>
                 <c:choose>
@@ -253,7 +251,7 @@
                     <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
                        id="${supplier.organization.zdbID}">
                         ${supplier.organization.name}</a>
-                    <c:if test="${supplier.zirc}">&nbsp;
+                    <c:if test="${supplier.zirc || supplier.ezrc}">&nbsp;
                         <zfin2:orderThis organization="${supplier.organization}"
                                          accessionNumber="${formBean.feature.zdbID}"/>
                     </c:if>
@@ -287,7 +285,7 @@
             <%--<c:choose>
                 <c:when test="${formBean.feature.dbLinks != null && fn:length(formBean.feature.dbLinks) > 0}">--%>
             <div class="summary">
-                <table id="other-feature-pages" class="summary">
+                <table class="summary">
                     <caption>OTHER <em>${formBean.feature.name}</em> FEATURE PAGES</caption>
                     <tr>
                         <td>
@@ -429,33 +427,33 @@
 </c:choose>
 
 <div style="display:none" id="long-version" class="summary">
-    <table id="feature-genotypes-table" class="summary rowstripes">
+    <table class="summary rowstripes">
         <caption>GENOTYPES</caption>
         <tr class="search-result-table-header">
-            <th class="genotype" width="20%">
+            <th width="20%">
                 Genotype (Background)
             </th>
-            <th class="affected-genes" width="20%">
+            <th width="20%">
                 Affected Genes
             </th>
-            <th class="phenotype" width="20%">
+            <th width="20%">
                 Phenotype
             </th>
-            <th class="gene-expression" width="20%">
+            <th width="20%">
                 Gene Expression
             </th>
         </tr>
         <c:forEach var="featgenoStat" items="${formBean.featgenoStats}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
-                <td class="genotype">
+                <td>
                     <zfin:link entity="${featgenoStat.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${featgenoStat.genotype.zdbID}"></a>
                 </td>
-                <td class="affected-genes">
+                <td>
                     <zfin:link entity="${featgenoStat.affectedMarkers}"/>
                 </td>
 
 
-                <td class="phenotype">
+                <td>
                     <c:if test="${featgenoStat.numberOfFigures > 0}">
                         <c:if test="${featgenoStat.numberOfFigures > 1}">
                             <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${featgenoStat.genotype.zdbID}&includingMO=yes&split=yes'>
@@ -486,7 +484,7 @@
                     <zfin2:showCameraIcon hasImage="${featgenoStat.isImage}"/>
                 </td>
 
-                <td class="gene-expression">
+                <td>
                     <c:if test="${featgenoStat.numberOfExpFigures > 0}">
                         <c:if test="${featgenoStat.numberOfExpFigures > 1}">
                             <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${featgenoStat.genotype.zdbID}'>
