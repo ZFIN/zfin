@@ -10,9 +10,7 @@
 
 <c:if test="${empty title}">
     <c:set var="title">
-        OTHER <zfin:abbrev entity="${marker}"/>
-        ${marker.markerType.displayName eq 'cDNA' ? marker.markerType.displayName : fn:toUpperCase(marker.markerType.displayName)}
-        PAGES
+        OTHER&nbsp;<zfin:abbrev entity="${marker}"/>&nbsp;${marker.markerType.displayName eq 'cDNA' ? marker.markerType.displayName : fn:toUpperCase(marker.markerType.displayName)}&nbsp;PAGES
     </c:set>
 </c:if>
 

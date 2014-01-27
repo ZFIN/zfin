@@ -12,7 +12,7 @@
 
 <c:if test="${empty title}">
     <c:set var="title">
-        OTHER <zfin:abbrev entity="${marker}"/> ${fn:toUpperCase(marker.markerType.displayName)} PAGES
+        OTHER&nbsp;<zfin:abbrev entity="${marker}"/>&nbsp;${fn:toUpperCase(marker.markerType.displayName)}&nbsp;PAGES
     </c:set>
 </c:if>
 

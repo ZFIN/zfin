@@ -31,7 +31,7 @@
 
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
-    <zfin2:genotypesWithTALENCRISPR strBean="${formBean}" />
+    <zfin2:genotypesWithDisruptors strBean="${formBean}" />
 </c:if>
 
 <%--OTHER GENE/Marker Pages--%>
