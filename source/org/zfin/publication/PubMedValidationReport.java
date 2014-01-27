@@ -2,6 +2,7 @@ package org.zfin.publication;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
     public static final String PUB_MED = "pubmed";
 
     private static Integer numberOfPublicationsToScan;
+    private static final Logger LOG = Logger.getLogger(PubMedValidationReport.class);
 
     public static void main(String[] args) throws Exception {
         PubMedValidationReport task = new PubMedValidationReport();
@@ -128,8 +130,10 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         String[] pageValues = value.split("-");
         if (pageValues.length == 1)
             return value;
-        if (pageValues.length > 2)
-            throw new RuntimeException("Could not parse page numbers with more than three components: " + value);
+        if (pageValues.length > 2) {
+            String errorMessage = "Could not parse page numbers with more than three components: " + value;
+            LOG.error(errorMessage);
+        }
         String start = pageValues[0];
         String end = pageValues[1];
         builder.append(start);
