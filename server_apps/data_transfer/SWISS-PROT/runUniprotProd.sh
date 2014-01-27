@@ -16,8 +16,8 @@ fi
 /bin/cp $1/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/
-/usr/bin/gmake run ;
+/local/bin/gmake run ;
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/GO
-/usr/bin/gmake run ;
+/local/bin/gmake run ;
 
