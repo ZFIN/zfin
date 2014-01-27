@@ -13,7 +13,7 @@ fi
 
 $copyFrom=$1
 
-echo $copyFrom;
+ls $copyFrom/ok*;
 
 cp $copyFrom/ok* <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/;
 cp $copyFrom/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/;
