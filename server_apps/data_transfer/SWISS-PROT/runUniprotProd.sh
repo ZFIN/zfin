@@ -9,6 +9,8 @@
 
 /bin/cp /research/zcentral/www_homes/almost/server_apps/data_transfer/SWISS-PROT/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
 
+/bin/cp /research/zcentral/www_homes/almost/server_apps/data_transfer/SWISS-PROT/zfin.dat <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
+
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/;
 /local/bin/gmake run ;
 
