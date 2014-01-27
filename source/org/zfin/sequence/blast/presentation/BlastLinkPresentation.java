@@ -97,7 +97,7 @@ public class BlastLinkPresentation extends EntityPresentation{
         else
         if(hitViewBean.getHitMarker()!=null
                 &&
-                (hitViewBean.getHitMarker().isInTypeGroup(Marker.TypeGroup.MRPHLNO) || hitViewBean.getHitMarker().isInTypeGroup(Marker.TypeGroup.KNOCKDOWN_REAGENT))
+                (hitViewBean.getHitMarker().isInTypeGroup(Marker.TypeGroup.KNOCKDOWN_REAGENT))
                 ){
             Marker m = hitViewBean.getHitMarker() ;
             return MarkerPresentation.getLink(m) ;
