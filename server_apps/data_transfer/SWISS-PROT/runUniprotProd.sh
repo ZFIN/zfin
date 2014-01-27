@@ -5,12 +5,6 @@
 # this script only runs on almost and production (automates the prod steps
 # of the UniProt load.  See case 2799 for details.
 
-if [ -z "$1" ]      
-then
-    echo "ERROR on usage: no file location to copy from dev to prod";
-    exit;
-fi
-
 /bin/cp /research/zcentral/www_homes/almost/server_apps/data_transfer/SWISS-PROT/ok* <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
 
 /bin/cp /research/zcentral/www_homes/almost/server_apps/data_transfer/SWISS-PROT/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
