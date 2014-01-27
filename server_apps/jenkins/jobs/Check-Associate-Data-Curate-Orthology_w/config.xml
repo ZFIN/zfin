@@ -23,13 +23,13 @@ This test identifies any PUB data that does not fit this criteria.</description>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>report-associate-curate-orthology</targets>
+      <targets>validate-data-report-simple -DJobName=Check-Associate-Data-Curate-Orthology_w</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/column.header,server_apps/DB_maintenance/reportRecords.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w.*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -40,12 +40,12 @@ This test identifies any PUB data that does not fit this criteria.</description>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w.report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/str-gene-abbrev.txt</attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w.*</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
