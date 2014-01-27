@@ -15,8 +15,8 @@ $copyFrom=$1
 
 echo $copyFrom;
 
-/bin/cp $copyFrom/ok* <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/;
-/bin/cp $copyFrom/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/;
+cp $copyFrom/ok* <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/;
+cp $copyFrom/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/;
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/;
 /local/bin/gmake run ;
