@@ -11,13 +11,6 @@ then
     exit;
 fi
 
-$copyFrom=$1
-
-ls $copyFrom/ok*;
-
-cp $copyFrom/ok* <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/;
-cp $copyFrom/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/;
-
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/;
 /local/bin/gmake run ;
 
