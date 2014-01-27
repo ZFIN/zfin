@@ -63,7 +63,7 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&apos;server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d.report.html&apos;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d.report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
