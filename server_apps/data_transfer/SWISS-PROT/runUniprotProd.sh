@@ -11,12 +11,13 @@ then
     exit;
 fi
 
+
 /bin/cp $1/ok* <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
 /bin/cp $1/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/
-/local/bin/gmake run ;
+/usr/bin/gmake run ;
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/GO
-/local/bin/gmake run ;
+/usr/bin/gmake run ;
 
