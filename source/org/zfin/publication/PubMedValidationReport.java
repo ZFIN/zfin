@@ -35,7 +35,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         System.out.println(publicationList.size() + " publications are scanned");
         int index = -1;
         for (Publication publication : publicationList) {
-            if (index++ % 10 == 0) {
+            if (index++ % 100 == 0) {
                 System.out.print(index);
                 if (index % 1000 == 0)
                     System.out.println("...");
@@ -160,7 +160,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         if (StringUtils.equals(pages, value))
             return true;
         // if not the same check if auto-completion of the second page number will make it equal
-        return pages.equals(getCompletePageNumbers(value));
+        return StringUtils.equals(pages, getCompletePageNumbers(value));
     }
 
     private List<String> getElementsList(String... elements) {
