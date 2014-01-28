@@ -61,7 +61,7 @@
         </if>
     </target>
 
-    <target name="deploy-production-jobs" description="Copy jobs into Jenkins_home">
+    <target name="deploy-production-jobs" depends="_copyDefaultConfig" description="Copy jobs into Jenkins_home">
         <tstamp/>
         <echo message="Deploy production jobs into: ${JENKINS_HOME}"/>
         <antcall target="copy-production-jobs"/>
