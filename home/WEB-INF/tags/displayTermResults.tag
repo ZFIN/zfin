@@ -25,7 +25,7 @@
                     <c:forEach var="alias" items="${term.aliases}" varStatus="index">
                         <zfin:highlight highlightEntity="${alias}"
                                         highlightString="${query}"/>
-                        <c:if test="${!index.last}">,</c:if>
+                        <c:if test="${!index.last}">, </c:if>
                     </c:forEach>
                 </c:if>
             </td>
