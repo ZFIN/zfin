@@ -302,7 +302,9 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("fax", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldLab, newLab));
-        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("address", oldLab, newLab));
+        BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("address", oldLab, newLab);
+        beanFieldUpdate.setNullToTrueNull();
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanFieldUpdate);
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("bio", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("contactPerson", oldLab, newLab, Person.class));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("prefix", oldLab, newLab));

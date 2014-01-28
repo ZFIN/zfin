@@ -58,6 +58,11 @@ public class BeanFieldUpdate implements Serializable{
         return sb.toString();
     }
 
+    public void setNullToTrueNull() {
+        if (fieldType == String.class && StringUtils.equalsIgnoreCase((String)to, "null"))
+            setTo(null);
+    }
+
     public void setEmptyToNull() {
         if (fieldType == String.class && StringUtils.equals((String)to, ""))
             setTo(null);
