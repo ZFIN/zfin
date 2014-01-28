@@ -59,7 +59,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
-<!--|SOURCEROOT|-->	/research/zusers/mochla/lucky/ZFIN_WWW
+<!--|SOURCEROOT|-->	/research/zusers/mochla/projects/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	mochla\@zfin.org
