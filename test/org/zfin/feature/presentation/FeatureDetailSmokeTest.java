@@ -1,16 +1,14 @@
 package org.zfin.feature.presentation;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.zfin.AbstractSmokeTest;
 
 import java.io.IOException;
-import java.util.List;
 
 @RunWith(Parameterized.class)
 public class FeatureDetailSmokeTest extends AbstractSmokeTest {
@@ -25,6 +23,9 @@ public class FeatureDetailSmokeTest extends AbstractSmokeTest {
     public void testFeaturePage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-ALT-980203-401");
         assertEquals(page.getTitleText(),"Feature: b191");
+        assertNotNull("Should have a genotype table", page.getElementById("feature-genotypes-table"));
+        assertTrue("Should have a non-empty collection of links in the genotype table",
+                CollectionUtils.isNotEmpty(page.getElementById("feature-genotypes-table").getElementsByTagName("a")));
         assertTrue("Should have several links in the genotype table", page.getElementById("feature-genotypes-table").getElementsByTagName("a").size() > 2);
     }
 
