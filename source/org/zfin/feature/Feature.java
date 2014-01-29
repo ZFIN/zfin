@@ -11,12 +11,10 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
+import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.FeatureDBLink;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**ture
  */
@@ -34,29 +32,19 @@ public class Feature implements EntityNotes{
     private Set<PublicationAttribution> publications;
     private Set<GenotypeFeature> genotypeFeatures;
     private String abbreviationOrder;
-
-    public FeatureDBLink getFeatDBLink() {
-        return featDBLink;
-    }
-
-    public void setFeatDBLink(FeatureDBLink featDBLink) {
-        this.featDBLink = featDBLink;
-    }
-
     private String nameOrder;
     private Boolean isKnownInsertionSite;
     private Boolean isDominantFeature;
     private Boolean isUnspecifiedFeature;
     private Set<MappedDeletion> mappedDeletions;
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
-//    public FeatureType featureType;
+    //    public FeatureType featureType;
     private FeatureTypeEnum type;
     private Set<FeatureSupplier> suppliers;
     private Set<FeatureSource> sources;
     private Set<FeatureAlias> aliases;
     private FeatureAssay featureAssay;
     private Set<FeatureDBLink> dbLinks;
-    private FeatureDBLink featDBLink;
 
 
     public String getTransgenicSuffix() {

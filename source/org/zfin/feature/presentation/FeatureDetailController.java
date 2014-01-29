@@ -19,10 +19,10 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DisplayGroup;
+import org.zfin.sequence.FeatureDBLink;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 @Controller
@@ -108,7 +108,12 @@ public class FeatureDetailController {
         form.setSinglePublication(FeatureService.getSinglePublication(feature));
         form.setFeatureMap(FeatureService.getFeatureMap(feature));
         form.setFeatureLocations(FeatureService.getFeatureLocations(feature));
+        LOG.debug("got to summary page bit");
 
+        form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
+        form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
+
+        LOG.debug("genbank link count "+ form.getGenbankDbLinks().size());
         retrieveGenoData(feature, form);
         retrievePubData(feature, form);
 

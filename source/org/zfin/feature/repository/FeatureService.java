@@ -9,6 +9,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.FeatureDBLink;
 
 import java.util.*;
@@ -31,6 +32,36 @@ public class FeatureService {
         }
 
         return affectedGenes;
+    }
+
+    public static Set<FeatureDBLink> getSummaryDbLinks(Feature feature) {
+
+        Set<FeatureDBLink> summaryLinks = new HashSet<FeatureDBLink>();
+        for (FeatureDBLink featureDBLink : feature.getDbLinks()) {
+            if (featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)){
+                summaryLinks.add(featureDBLink);
+            }
+        }
+        //if (summaryLinks == null){
+        //    return null;
+        //}
+       // else {
+            return summaryLinks;
+       // }
+    }
+    public static Set<FeatureDBLink> getGenbankDbLinks(Feature feature) {
+        Set<FeatureDBLink> genbankLinks = new HashSet<FeatureDBLink>();
+        for (FeatureDBLink featureDBLink : feature.getDbLinks()) {
+            if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)){
+                genbankLinks.add(featureDBLink);
+            }
+        }
+        //if (genbankLinks == null){
+        //    return null;
+       // }
+        //else {
+            return genbankLinks;
+        //}
     }
 
     public static FeatureMarkerRelationship getCreatedByRelationship(Feature feature) {
@@ -137,13 +168,8 @@ public class FeatureService {
         Set<FeatureDBLink> featureSequences = feature.getDbLinks();
         List<String> featureDBLinkList = new ArrayList<String>();
         for (FeatureDBLink featureDBLink : featureSequences) {
-            if (!featureDBLink.getReferenceDatabase().getForeignDB().isZfishbook()){
-                if (!featureDBLink.getReferenceDatabase().getForeignDB().isZmp()){
-                    if (!featureDBLink.getReferenceDatabase().getForeignDB().isCrezoo()){
+            if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE))
                         featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
-                    }
-                }
-            }
         }
         return featureDBLinkList;
     }

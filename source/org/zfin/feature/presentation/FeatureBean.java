@@ -12,6 +12,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.FeatGenoStatistics;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.FeatureDBLink;
 
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,24 @@ public class FeatureBean {
     private Set<String> featureMap ;
     private Set<String> featureLocations ;
     private String zdbID;
+    private Set<FeatureDBLink> summaryPageDbLinks;
+    private Set<FeatureDBLink> genbankDbLinks;
+
+    public Set<FeatureDBLink> getGenbankDbLinks() {
+        return genbankDbLinks;
+    }
+
+    public void setGenbankDbLinks(Set<FeatureDBLink> genbankDbLinks) {
+        this.genbankDbLinks = genbankDbLinks;
+    }
+
+    public Set<FeatureDBLink> getSummaryPageDbLinks() {
+        return summaryPageDbLinks;
+    }
+
+    public void setSummaryPageDbLinks(Set<FeatureDBLink> summaryPageDbLinks) {
+        this.summaryPageDbLinks = summaryPageDbLinks;
+    }
 
     public List<Genotype> getGenotypes() {
         return genotypes;

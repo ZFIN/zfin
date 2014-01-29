@@ -13,6 +13,7 @@ import org.zfin.datatransfer.go.service.GafServiceTest;
 import org.zfin.datatransfer.go.service.GoaGafServiceTest;
 import org.zfin.datatransfer.go.service.PaintGafServiceTest;
 import org.zfin.expression.FigureServiceTest;
+import org.zfin.feature.FeatureServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
 import org.zfin.feature.repository.FeatureRepositoryTest;
@@ -75,6 +76,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ExpressionRepositoryTest.class,
         ExpressionServiceTest.class,
         FeatureRepositoryTest.class,
+        FeatureServiceTest.class,
         FigureServiceTest.class,
         FishRepositoryTest.class,
         FishServiceTest.class,
