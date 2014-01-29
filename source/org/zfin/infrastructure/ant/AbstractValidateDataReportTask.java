@@ -80,12 +80,12 @@ public abstract class AbstractValidateDataReportTask {
             writer = new FileWriter(reportFile);
             Template template = configuration.getTemplate(templateName);
             Map<String, Object> root = new HashMap<>();
-            String errorMessage = (String) reportProperties.get(jobName + "." + ERROR_MESSAGE);
-            String columnHeader = (String) reportProperties.get(jobName + "." + HEADER_COLUMNS);
+            String errorMessage = (String) reportProperties.get(fileName + "." + ERROR_MESSAGE);
+            String columnHeader = (String) reportProperties.get(fileName + "." + HEADER_COLUMNS);
             if (StringUtils.isEmpty(errorMessage))
-                throw new RuntimeException("No value for key " + jobName + "." + ERROR_MESSAGE + " found in file " + baseValidateDataDirectory + "/" + templateName);
+                throw new RuntimeException("No value for key " + fileName + " found in file " + baseValidateDataDirectory + "/" + templateName);
             if (StringUtils.isEmpty(columnHeader))
-                throw new RuntimeException("No value for key " + jobName + "." + HEADER_COLUMNS + " found in file " + baseValidateDataDirectory + "/" + templateName);
+                throw new RuntimeException("No value for key " + fileName + " found in file " + baseValidateDataDirectory + "/" + templateName);
             root.put("errorMessage", errorMessage);
             root.put("recordList", resultList);
             root.put("numberOfRecords", resultList.size());
@@ -93,7 +93,8 @@ public abstract class AbstractValidateDataReportTask {
             String[] headerCols = columnHeader.split("\\|");
             root.put("headerColumns", headerCols);
             root.put("dateRun", new Date());
-            root.put("sqlQuery", FileUtils.readFileToString(queryFile));
+            if (queryFile != null)
+                root.put("sqlQuery", FileUtils.readFileToString(queryFile));
             template.process(root, writer);
             writer.flush();
             // export data
