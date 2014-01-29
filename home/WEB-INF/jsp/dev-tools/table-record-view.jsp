@@ -71,7 +71,9 @@
             Query
         </th>
         <td>
-            ${query.query}
+            <pre>
+                ${query.humanReadableQueryString}
+            </pre>
         </td>
     </tr>
 </table>
