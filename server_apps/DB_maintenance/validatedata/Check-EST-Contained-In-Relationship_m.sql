@@ -1,7 +1,7 @@
 select mrkr_zdb_id, mrkr_name, mrkr_abbrev
                from marker m1
                where mrkr_type = "GENE"
-                 and mrkr_name[3]  == CHAR(58)
+                 and mrkr_name[3]  == ":"
                  and mrkr_name[1,2] not in ("id","si")
                  and 1 <> 
                      ( select count(*) 

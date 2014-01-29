@@ -1229,41 +1229,25 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public List<List<String>> executeNativeQuery(String queryString) {
-        Session session = HibernateUtil.currentSession();
-        SQLQuery query = session.createSQLQuery(queryString);
-        List objects = query.list();
-        if (objects == null)
-            return null;
-        if (objects.size() == 0 || objects.get(0) == null)
-            return null;
-
-        List<List<String>> data = new ArrayList<>(objects.size());
-        if (objects.get(0) instanceof Object[]) {
-            List<Object[]> entities = (List<Object[]>) objects;
-            for (Object[] row : entities) {
-                List<String> singleRow = new ArrayList<String>(row.length);
-                for (Object o : row) {
-                    if (o != null)
-                        singleRow.add(o.toString());
-                    else
-                        singleRow.add("");
-                }
-                data.add(singleRow);
+        Statement stmt = null;
+        List<List<String>> data = new ArrayList<>();
+        try {
+            stmt = HibernateUtil.currentSession().connection().createStatement();
+            ResultSet rs = stmt.executeQuery(queryString);
+            while (rs.next()) {
+                List<String> row = new ArrayList<>();
+                for (int index = 1; index <= rs.getMetaData().getColumnCount(); index++)
+                    row.add(rs.getString(index));
+                data.add(row);
             }
-        } else {
-            if (objects.get(0) instanceof BigDecimal) {
-                List<BigDecimal> entities = (List<BigDecimal>) objects;
-                for (BigDecimal row : entities) {
-                    List<String> singleRow = new ArrayList<String>(1);
-                    singleRow.add(row.toString());
-                    data.add(singleRow);
-                }
-            } else {
-                List<String> entities = (List<String>) objects;
-                for (String row : entities) {
-                    List<String> singleRow = new ArrayList<String>(1);
-                    singleRow.add(row);
-                    data.add(singleRow);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         }
