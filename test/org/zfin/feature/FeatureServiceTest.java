@@ -29,7 +29,6 @@ public class FeatureServiceTest extends AbstractDatabaseTest {
         Set<FeatureDBLink> featureDbLinks = FeatureService.getSummaryDbLinks(feature);
         Set<FeatureDBLink> genbankFeatureDbLinks = FeatureService.getGenbankDbLinks(feature);
         assertNotNull("Feature has genbank dblinks", genbankFeatureDbLinks);
-        assertNull("Feature does not have summary dblinks",featureDbLinks);
     }
 }
 
