@@ -75,9 +75,9 @@
                 <c:if test="${formBean.disruptorType eq 'TALEN'}">
                     <label class="namesearchLabel">Target Sequence 1:</label>
                 </c:if>
-                <input type=button value="Reverse" onClick="reverseSequence('reportSeq','displaySeq');">
-                <input type=button value="Complement" onClick="complementSequence('reportSeq','displaySeq');">
-                <input type=button value="Reverse & Complement" onClick="reverseComplementSequence('reportSeq','displaySeq');">
+                <input type=button value="Reverse" onClick="sequenceManipulated='yes';reverseSequence('reportSeq','displaySeq');">
+                <input type=button value="Complement" onClick="sequenceManipulated='yes';complementSequence('reportSeq','displaySeq');">
+                <input type=button value="Reverse & Complement" onClick="sequenceManipulated='yes';reverseComplementSequence('reportSeq','displaySeq');">
             </td>
             <td width=20></td><!-- spacer column -->
             <td><form:label path="<%= DisruptorAddBean.NEW_DISRUPTOR_CURNOTE%>" class="curation-form-label">Curator Note:</form:label></td>
@@ -112,9 +112,9 @@
             <tr>
                 <td nowrap>
                     <label class="namesearchLabel">Target Sequence 2:</label>
-                    <input type=button value="Reverse" onClick="reverseSequence('reportSeq2','displaySeq2');">
-                    <input type=button value="Complement" onClick="complementSequence('reportSeq2','displaySeq2');">
-                    <input type=button value="Reverse & Complement" onClick="reverseComplementSequence('reportSeq2','displaySeq2');">
+                    <input type=button value="Reverse" onClick="sequence2Manipulated='yes';reverseSequence('reportSeq2','displaySeq2');">
+                    <input type=button value="Complement" onClick="sequence2Manipulated='yes';complementSequence('reportSeq2','displaySeq2');">
+                    <input type=button value="Reverse & Complement" onClick="sequence2Manipulated='yes';reverseComplementSequence('reportSeq2','displaySeq2');">
                 </td>
                 <td width=20></td><!-- spacer column -->
             </tr>
@@ -151,6 +151,7 @@
 
 <script type="text/javascript">
     var sequenceManipulated = "no";
+    var sequence2Manipulated = "no";
 
     function noenter(e) {
         var ENTER_KEY = 13;
@@ -246,7 +247,6 @@
         var cNote = document.getElementById('curatorNote');
         var reportSeq = document.getElementById(reported);
         cNote.value = "Reported Sequence: "+ reportSeq.value + " was " + action +".\r\n" + cNote.value;
-        sequenceManipulated = "yes";
     }
 
     function preSubmit(type) {
@@ -261,7 +261,7 @@
             var displayedSeq2 = document.getElementById('displaySeq2');
             var reportSeq2 = document.getElementById('reportSeq2');
             if(!displayedSeq2.value || displayedSeq2.value.length == 0 || !/^[\s]+$/.test(displayedSeq2.value)) {
-                if (sequenceManipulated == "no") {
+                if (sequence2Manipulated == "no") {
                     displayedSeq2.value = reportSeq2.value;
                 }
             }
