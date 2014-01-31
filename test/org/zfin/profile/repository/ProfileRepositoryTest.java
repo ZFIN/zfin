@@ -196,13 +196,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
         linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://bacpac.chori.org/order_clones.php?cloneList=CH1073-18O17\">order this</a>)</span>";
         assertEquals(linkText2,organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
 
-        // test company
-        organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-BAC-040724-57");
-        assertEquals(1,organizationLinks.size());
-        String linkText3 = "<a href=\"/action/profile/view/ZDB-COMPANY-051101-1\">Source BioScience (formerly Imagenes)</a>";
-        linkText3 += " ";
-        linkText3 += "<span style=\"font-size: small;\">(<a href=\"http://www.rzpd.de/gene?option=search&searchStr=DKEY-164M15\">order this</a>)</span>";
-        assertEquals(linkText3,organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
 
     }
 
