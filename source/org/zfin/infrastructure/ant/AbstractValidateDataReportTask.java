@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinProperties;
 
 import java.io.File;
@@ -17,7 +18,7 @@ import java.util.*;
 
 /**
  */
-public abstract class AbstractValidateDataReportTask {
+public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapper{
 
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String HEADER_COLUMNS = "headerColumns";

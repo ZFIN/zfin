@@ -13,7 +13,6 @@
     <!-- Classpath definitions -->
     <path id="classpath">
         <pathelement location="${classbin.dir}"/>
-        <pathelement location="${basedir}/server_apps/DB_maintenance/conf"/>
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
@@ -25,17 +24,13 @@
 
     <loadProperties file="${web-inf.dir}/zfin.properties"/>
 
+    <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
+
     <path id="extended.classpath">
         <path refid="classpath"/>
         <fileset dir="${env.CATALINA_HOME}/endorsed">
             <include name="*.jar"/>
             <include name="*.zip"/>
-        </fileset>
-    </path>
-
-    <path id="log4j">
-        <fileset dir="${basedir}">
-            <include name="log4j.xml"/>
         </fileset>
     </path>
 
@@ -49,8 +44,6 @@
         <echo message="Use database: ${DBNAME}"/>
         <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${DBNAME}"/>
     </target>
-
-    <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
 
     <target name="report-linkage-has-member" description="">
         <echo message="Create Validation Report"/>
@@ -238,7 +231,6 @@
         <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="no"
               classpathref="extended.classpath"
               failonerror="true">
-            <classpath refid="log4j"/>
             <arg value="${DBNAME}"/>
             <arg value="${JobName}"/>
             <arg value="${validateData}/validatedata"/>
@@ -259,7 +251,6 @@
         <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="no"
               classpathref="extended.classpath"
               failonerror="true">
-            <classpath refid="log4j"/>
             <arg value="${DBNAME}"/>
             <arg value="${JobName}"/>
             <arg value="${validateData}/validatedata"/>
@@ -282,10 +273,16 @@
         <java classname="org.zfin.publication.PubMedValidationReport" fork="no"
               classpathref="extended.classpath"
               failonerror="true">
-            <classpath refid="log4j"/>
+            <arg value="-jobName"/>
             <arg value="${JobName}"/>
+            <arg value="-baseDir"/>
             <arg value="${validateData}/validatedata"/>
+            <arg value="-propertyFilePath"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-numOfPublication"/>
+            <arg value="200"/>
+            <arg value="-threads"/>
+            <arg value="40"/>
             <arg value=""/>
         </java>
 
@@ -311,7 +308,6 @@
             <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
                   classpathref="extended.classpath"
                   failonerror="true">
-                <classpath refid="log4j"/>
                 <arg value="@{instanceName}"/>
             </java>
         </sequential>

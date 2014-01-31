@@ -1,14 +1,20 @@
 package org.zfin.publication;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.spi.RootLogger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.apache.commons.cli.OptionBuilder.withArgName;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 public class PubMedValidationReport extends AbstractValidateDataReportTask {
@@ -16,34 +22,82 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
     public static final String PUB_MED = "pubmed";
 
     private static Integer numberOfPublicationsToScan;
+    private static List<Publication> publicationList;
     private static final Logger LOG = Logger.getLogger(PubMedValidationReport.class);
 
-    public static void main(String[] args) throws Exception {
-        PubMedValidationReport task = new PubMedValidationReport();
-        task.jobName = args[0];
-        task.baseDir = args[1];
-        task.propertyFilePath = args[2];
-        if (args.length > 3)
-            if (StringUtils.isNotEmpty(args[3]))
-                numberOfPublicationsToScan = Integer.parseInt(args[3]);
-        task.init();
-        task.execute();
+    static {
+        options.addOption(withArgName("jobName").hasArg().withDescription("Job Name").create("jobName"));
+        options.addOption(withArgName("baseDir").hasArg().withDescription("Base Directory").create("baseDir"));
+        options.addOption(withArgName("propertyFilePath").hasArg().withDescription("Path to zfin.properties").create("propertyFilePath"));
+        options.addOption(withArgName("numOfPublication").hasArg().withDescription("Maximum number of Publications to scan").create("numOfPublication"));
+        options.addOption(withArgName("threads").hasArg().withDescription("Maximum number of threads to use").create("threads"));
     }
 
-    public void execute() {
-        List<Publication> publicationList = getPublicationRepository().getPublicationWithPubMedId(numberOfPublicationsToScan);
-        System.out.println(publicationList.size() + " publications are scanned");
-        int index = -1;
-        for (Publication publication : publicationList) {
-            if (index++ % 100 == 0) {
-                System.out.print(index);
-                if (index % 1000 == 0)
-                    System.out.println("...");
-                else
-                    System.out.print("...");
-            }
-            checkValidPubMedRecord(publication);
+    private static int numOfThreads = 1;
+
+    public static void main(String[] arguments) throws Exception {
+        initializeLog4J();
+        LOG.info("Start Comparing Publications: ZFIN - PubMed");
+        CommandLine commandLine = parseArguments(arguments, "comparing publications on ZFIN and PubMed ");
+        PubMedValidationReport task = new PubMedValidationReport();
+        task.jobName = commandLine.getOptionValue("jobName");
+        task.baseDir = commandLine.getOptionValue("baseDir");
+        task.propertyFilePath = commandLine.getOptionValue("propertyFilePath");
+        if (StringUtils.isNotEmpty(commandLine.getOptionValue("numOfPublication")))
+            numberOfPublicationsToScan = Integer.parseInt(commandLine.getOptionValue("numOfPublication"));
+        if (StringUtils.isNotEmpty(commandLine.getOptionValue("threads")))
+            numOfThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
+
+        task.init();
+        publicationList = getPublicationRepository().getPublicationWithPubMedId(numberOfPublicationsToScan);
+        LOG.info(numOfThreads + " threads used");
+        LOG.info(publicationList.size() + " publications are scanned");
+        for (int index = 0; index < numOfThreads; index++) {
+            Thread thread = new Thread(new CheckPublications());
+            thread.start();
         }
+        while (publicationList.size() > 0) {
+            Thread.currentThread().sleep(2000);
+        }
+        task.createReports();
+        LOG.info("");
+    }
+
+    private static void initializeLog4J() {
+        Logger rootLogger = RootLogger.getRootLogger();
+        rootLogger.setLevel(Level.WARN);
+        ConsoleAppender appender = new ConsoleAppender(new PatternLayout("%r - %m%n"));
+        rootLogger.addAppender(appender);
+        LOG.setLevel(Level.INFO);
+    }
+
+    @Override
+    public void execute() {
+
+    }
+
+    private static class CheckPublications implements Runnable {
+
+        @Override
+        public void run() {
+            Publication publication;
+            while ((publication = getPublication()) != null) {
+                checkValidPubMedRecord(publication);
+            }
+        }
+
+    }
+
+    private synchronized static Publication getPublication() {
+        if (publicationList.size() > 0) {
+            if (publicationList.size() % 1000 == 0)
+                LOG.info(publicationList.size() + " left");
+            return publicationList.remove(0);
+        }
+        return null;
+    }
+
+    public void createReports() {
         createErrorReport(null, pubMedIdNotFoundList, "faulty-PubMed-IDs");
         createErrorReport(null, pubInfoMismatchList, "faulty-Pub-Info");
         if (pubMedIdNotFoundList.size() > 0)
@@ -51,7 +105,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
                 System.out.println(error);
     }
 
-    private void checkValidPubMedRecord(Publication publication) {
+    private static void checkValidPubMedRecord(Publication publication) {
         try {
             EUtilsServiceStub service = new EUtilsServiceStub();
             // call NCBI ESummary utility
@@ -163,17 +217,17 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         return StringUtils.equals(pages, getCompletePageNumbers(value));
     }
 
-    private List<String> getElementsList(String... elements) {
+    private static List<String> getElementsList(String... elements) {
         List<String> listOfElements = new ArrayList<>(elements.length);
         Collections.addAll(listOfElements, elements);
         return listOfElements;
     }
 
-    private List<String> errorList = new ArrayList<>();
-    private List<List<String>> pubMedIdNotFoundList = new ArrayList<>();
-    private List<List<String>> pubInfoMismatchList = new ArrayList<>();
+    private static List<String> errorList = new ArrayList<>();
+    private static List<List<String>> pubMedIdNotFoundList = new ArrayList<>();
+    private static List<List<String>> pubInfoMismatchList = new ArrayList<>();
 
-    class PublicationMismatch {
+    static class PublicationMismatch {
         private String doi;
         private String volume;
         private String pages;
