@@ -762,8 +762,8 @@ create temp table tmp_geno_data (
   gene_id varchar(50),
   feature_zdb_id varchar(50),
   zygocity varchar(30),
-  construct_name varchar(255),
-  construct_zdb_id varchar(50)
+  construct_zdb_id varchar(50),
+  construct_name varchar(255)
 ) with no log ;
 
 
@@ -808,44 +808,80 @@ select
 	zyg_name
  from genotype_feature, feature, genotype, feature_type, zygocity
  where genofeat_feature_zdb_id = feature_zdb_id
- and feature_type != 'TRANSGENIC_INSERTION'
- and feature_type != 'TRANSGENIC_UNSPECIFIED'
    and geno_zdb_id = genofeat_geno_zdb_id
    and feature_type = ftrtype_name
    and genofeat_zygocity = zyg_zdb_id
    and not exists ( select 'x' from marker, feature_marker_relationship
    where fmrel_ftr_zdb_id = feature_zdb_id
    and fmrel_mrkr_zdb_id = mrkr_zdb_id
-   and fmrel_type = "is allele of");
+   and fmrel_type = "is allele of"
+   );
 
-insert into tmp_geno_data (
-	genotype_id, geno_display_name, geno_handle, feature_name, feature_abbrev,
-	feature_type, feature_type_display,feature_zdb_id, zygocity, construct_zdb_id, construct_name
-)
+select count(*) as counter, fmrel_ftr_zdb_id
+ from feature_marker_relationship
+ where fmrel_type like 'contains%'
+ group by fmrel_ftr_zdb_id having count(*) > 1
+into temp tmp_dups;
+
+delete from tmp_geno_data
+ where feature_zdb_id in (select fmrel_ftr_zdb_id from tmp_dups) ;
+
+update tmp_Geno_data
+ set construct_zdb_id = (Select fmrel_mrkr_Zdb_id from feature_marker_relationship
+     		      		where fmrel_ftr_zdb_id = feature_Zdb_id
+				and fmrel_type like 'contains%')
+ where feature_zdb_id not in (select fmrel_ftr_zdb_id from tmp_dups) ;
+
+
 select
 	genofeat_geno_zdb_id,
 	geno_display_name,
 	geno_handle,
 	feature_name,
 	feature_abbrev,
-	lower(feature_type),
+	lower(feature_type) as feature_type,
 	ftrtype_type_display,
 	feature_zdb_id,
 	zyg_name,
- 	fmrel_mrkr_zdb_id, 
-	mrkr_name
- from genotype_feature, feature, genotype, feature_type, zygocity, feature_marker_relationship, marker
+	mrkr_zdb_id,
+	mrkr_abbrev, "" as construct_Zdb_id,"" as construct_name
+ from genotype_feature, feature, genotype, feature_type, zygocity, marker, feature_marker_relationship
  where genofeat_feature_zdb_id = feature_zdb_id
- and (feature_type = 'TRANSGENIC_INSERTION' or
-  feature_type = 'TRANSGENIC_UNSPECIFIED')
+  and exists (Select 'x' from tmp_dups where feature_zdb_id = fmrel_ftr_zdb_id)
    and geno_zdb_id = genofeat_geno_zdb_id
    and feature_type = ftrtype_name
    and genofeat_zygocity = zyg_zdb_id
-  and fmrel_type != 'is allele of'
- and fmrel_mrkr_zdb_id = mrkr_zdb_id
- and fmrel_ftr_zdb_id = feature_zdb_id
- and mrkr_type in ('TGCONSTRUCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT');
+   and fmrel_ftr_zdb_id = feature_zdb_id
+   and fmrel_mrkr_zdb_id = mrkr_zdb_id
+ and fmrel_type not like 'contains%'
+union
+select
+	genofeat_geno_zdb_id,
+	geno_display_name,
+	geno_handle,
+	feature_name,
+	feature_abbrev,
+	lower(feature_type) as feature_type,
+	ftrtype_type_display,
+	feature_zdb_id,
+	zyg_name,
+	"" as gene_id,
+	"" as gene_name, mrkr_zdb_id,mrkr_name
+ from genotype_feature, feature, genotype, feature_type, zygocity, marker, feature_marker_relationship
+ where genofeat_feature_zdb_id = feature_zdb_id
+   and exists (Select 'x' from tmp_dups where feature_zdb_id = fmrel_ftr_zdb_id)
+   and geno_zdb_id = genofeat_geno_zdb_id
+   and feature_type = ftrtype_name
+   and genofeat_zygocity = zyg_zdb_id
+   and fmrel_ftr_zdb_id = feature_zdb_id
+   and fmrel_mrkr_zdb_id = mrkr_zdb_id
+ and fmrel_type like 'contains%'
+into temp tmp_extras;
 
+insert into tmp_geno_data(
+	genotype_id, geno_display_name, geno_handle, feature_name, feature_abbrev,
+	feature_type, feature_type_display,feature_zdb_id, zygocity, gene_id, gene_abbrev, construct_zdb_id, construct_name
+) select * from tmp_extras;
 
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt'"
@@ -873,12 +909,13 @@ drop table tmp_geno_data;
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/tgInsertions.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/tgInsertions.txt'
  DELIMITER "	"
-select distinct feature_zdb_id, feature_abbrev, feature_name, fmrel_mrkr_zdb_id, mrkr_name, szm_term_ont_id
-                     from feature, feature_marker_Relationship, marker, so_zfin_mapping
+select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id, fmrel_mrkr_zdb_id, mrkr_name, b.szm_term_ont_id
+                     from feature, feature_marker_Relationship, marker, so_zfin_mapping a, so_zfin_mapping b
                     where fmrel_ftr_zdb_id = feature_zdb_id
 		    and feature_type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
                     and fmrel_mrkr_zdb_id = mrkr_zdb_id
-		    and get_obj_type(mrkr_zdb_id) = szm_object_type;
+		    and get_obj_type(mrkr_zdb_id) = b.szm_object_type
+		    and feature_type = a.szm_object_type;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/constructComponents.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/constructComponents.txt'
@@ -1440,7 +1477,7 @@ where feature_type =ftrtype_name
  and feature_zdb_id = featassay_feature_zdb_id
  and feature_zdb_id = fmrel_ftr_zdb_id
  and fmrel_mrkr_zdb_id = mrkr_zdb_id
- and mrkr_type not in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
+ and mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
 and feature_Type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
 and fmrel_type = 'is allele of'
 order by lower(feature_abbrev);
