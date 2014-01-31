@@ -279,8 +279,6 @@
             <arg value="${validateData}/validatedata"/>
             <arg value="-propertyFilePath"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="-numOfPublication"/>
-            <arg value="200"/>
             <arg value="-threads"/>
             <arg value="40"/>
             <arg value=""/>
