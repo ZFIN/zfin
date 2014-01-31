@@ -1,9 +1,7 @@
 select
    fig_source_zdb_id,
    fig_zdb_id,
-   s1.stg_zdb_id,
    s1.stg_name_long,
-   s2.stg_zdb_id,
    s2.stg_name_long,
    xpatres_superterm_zdb_id,
    term_ont_id,
