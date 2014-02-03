@@ -64,9 +64,9 @@ public class StageRangeIntersectionService implements IsSerializable {
     public boolean hasSomeOverlap(StageDTO startStageOuter, StageDTO endStageOuter, StageDTO startStageInner, StageDTO endStageInner) {
 
         float startOuter = startStageOuter.getStartHours();
-        float endOuter = endStageOuter.getEndHours();
+        float endOuter = endStageOuter.getStartHours();
         float startInner = startStageInner.getStartHours();
-        float endInner = endStageInner.getEndHours();
+        float endInner = endStageInner.getStartHours();
         if (startOuter > endInner)
             return false;
         if (endOuter < startInner)

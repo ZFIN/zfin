@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class StageRangeIntersectionTest {
@@ -172,6 +173,19 @@ public class StageRangeIntersectionTest {
         assertTrue(!stageRange.isOverlap(start, end));
     }
 
+    @Test
+    public void twoAdjacentStages() {
+        ExpressionFigureStageDTO efs1 = new ExpressionFigureStageDTO();
+        StageDTO stage = getStageDTO(60F, 72F, "Hatching: Pec-fin");
+        efs1.setStart(stage);
+        efs1.setEnd(stage);
+        dtos.add(efs1);
+
+        StageRangeIntersectionService stageRange = new StageRangeIntersectionService(dtos);
+        StageDTO one = getStageDTO(72F, 96F, "Larval: Protruding-mouth");
+        assertFalse(stageRange.hasOverlapWithAllStageRanges(one, one));
+    }
+
     private StageDTO getStageDTO(float start, float end, String abbreviation) {
         StageDTO dto = new StageDTO();
         dto.setStartHours(start);
@@ -200,7 +214,7 @@ public class StageRangeIntersectionTest {
 
     @Before
     public void setup() {
-        dtos = new ArrayList<ExpressionFigureStageDTO>(4);
+        dtos = new ArrayList<>(4);
     }
 
 }
