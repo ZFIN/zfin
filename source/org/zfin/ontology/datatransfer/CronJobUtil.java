@@ -74,7 +74,7 @@ public class CronJobUtil {
             throw new RuntimeException("Error finding template file.", e);
         } catch (TemplateException e) {
             LOG.error(e);
-            throw new RuntimeException("Error while creating email body", e);
+            //throw new RuntimeException("Error while creating email body", e);
         }
         LOG.debug("Email Body:");
         LOG.debug(writer.getBuffer().toString());

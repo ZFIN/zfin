@@ -224,6 +224,9 @@ insert into tmp_term_definition_changed
 unload to modified_term_definitions.unl
   select * from tmp_term_definition_changed;
 
+unload to new_term_definitions.txt
+  select * From tmp_term_definition_changed;
+
 update term
   set term_definition = (select a.term_definition
    		   from tmp_term_definition_changed a

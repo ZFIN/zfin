@@ -343,6 +343,9 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         } else if (isDeleteStatement()) {
             statement.comment = "DELETE from " + getDeleteTable().toUpperCase();
             statement.query = new StringBuilder(getQuery().replace("delete", SELECT + " " + STAR));
+        } else if (isUpdateStatement()) {
+            statement.comment = "UPDATE " + getUpdateTable().toUpperCase();
+            statement.query = new StringBuilder(getQuery().replace("delete", SELECT + " " + STAR));
         }
         statement.parentStatement = this;
         return statement;
@@ -354,6 +357,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     private String getDeleteTable() {
         return getTableName(FROM);
+    }
+
+    private String getUpdateTable() {
+        return getTableName(UPDATE);
     }
 
     private String getTableName(String keywordBeforeTable) {
@@ -374,6 +381,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     public boolean isDeleteStatement() {
         return getQuery().toLowerCase().startsWith(DELETE.toLowerCase());
+    }
+
+    public boolean isUpdateStatement() {
+        return getQuery().toLowerCase().startsWith(UPDATE.toLowerCase());
     }
 
     public boolean isDebugStatement() {

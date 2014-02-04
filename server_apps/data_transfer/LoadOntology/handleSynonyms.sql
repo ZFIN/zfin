@@ -50,7 +50,7 @@ update data_alias
  and get_obj_type(dalias_data_zdb_id) = 'TERM';
 
 -- only consider (alias, plural) alias group types
-unload to removedAliases
+unload to removed_aliases.txt
    select distinct dalias_zdb_id, term_ont_id, term.term_name, dalias_alias, aliasscope_scope, aliasgrp_name from data_alias,
               term as term,
               alias_group,
@@ -82,19 +82,9 @@ delete from data_alias
       		 and not exists (
       		     select 'x' from tmp_syns
                where dalias_alias = synonym
-      		 ));
+               and term_ont_id = term_id
+               and dalias_data_zdb_id = term_zdb_id      		 ));
 
-
-Select * from tmp_syns as syn,
-                data_alias,
-  	       	    term,
-		            tmp_term_onto_no_dups as dup,
-  	       	    alias_group
-  	       where term_zdb_id = dalias_data_zdb_id
-		       and term_ont_id = syn.term_id
-		       and term_ont_id = dup.term_id
-		       and dalias_group_id = aliasgrp_pk_id
-		       and dalias_alias = synonym;
 
 -- remove aliases from temp table that already exist in data_alias table
 delete from tmp_syns
@@ -219,9 +209,15 @@ select count(*),dalias_data_zdb_id, dalias_group_id, dalias_alias
  group by dalias_data_zdb_id, dalias_group_id, dalias_alias
  having count(*) > 1;
 
-unload to newAliases
-  select syn.zdb_id, syn.synonym, term.term_ont_id, term.term_name  from tmp_syns_with_ids as syn, term as term
-  where term.term_zdb_id = syn.data_id;
+unload to new_aliases.txt
+  SELECT syn.zdb_id,
+         syn.synonym,
+         term.term_ont_id,
+         term.term_name
+  FROM   tmp_syns_with_ids AS syn,
+         term AS term
+  WHERE  term.term_zdb_id = syn.data_id
+  ORDER  BY term.term_ont_id;
 
 -- remove aliases that do not exist any longer
 
