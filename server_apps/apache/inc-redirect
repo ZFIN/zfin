@@ -98,6 +98,8 @@ RewriteRule ^.*$ /action/fish/search [NC,R=301]
 RewriteCond %{QUERY_STRING}    MIval=aa-quickfindpers.apg
 RewriteRule ^.*$ /action/profile/person/search? [NC,R=301]
 
+RewriteRule ^/cgi-perl/gbrowse /gb2/gbrowse/ensembl_current?  [NC,R=301]
+
 #RewriteRule /action/anatomy/search    /action/ontology/ontology-search [NC,R=301]
 
 #We have these strange ZFIN_jump search page links to support...
