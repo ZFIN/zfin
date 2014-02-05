@@ -44,10 +44,14 @@ public class OrganizationLink implements ProvidesLink {
                     + "\">" + urlDisplayText + "</a>)</span>";
         } else if (
                 supplierZdbId.startsWith("ZDB-LAB-")
-         || supplierZdbId.startsWith("ZDB-COMPANY-")
+                        //dumb solution to case 10454 in the last days of IM4.  There are 4 ways to generate order this links in our codebase
+                        //made subcase to unify.  Just not enough time to test a big change here.
+         || supplierZdbId.startsWith("ZDB-COMPANY-") && !supplierZdbId.endsWith("-COMPANY-051101-1")
                 ) {
             return "<span style=\"font-size: small;\">(<a href=\"" + SourcePresentation.getUrl(supplierZdbId) + "\">order this</a>)</span>";
-        } else {
+        }
+
+        else {
             logger.error("bad zdbID for Organization Link[" + supplierZdbId + "]");
             return null;
         }
