@@ -185,7 +185,7 @@ public class LoadOntology extends AbstractScriptWrapper {
                     report.addMessageToSection("Duration: " + DateUtil.getTimeDuration(startTimeLong), sectionName);
                 }
                 runValidationChecks();
-                HibernateUtil.rollbackTransaction();
+                HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
                 LOG.error(e);
