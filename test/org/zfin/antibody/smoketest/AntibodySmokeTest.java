@@ -110,7 +110,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         assertNotNull(genePage);
 
         // check figure view:  Fig. 7 from Chen et al., 2008
-        hyperlink = (HtmlAnchor) page.getElementById("ZDB-FIG-081230-8");
+        hyperlink = (HtmlAnchor) page.getElementById("ZDB-FIG-140206-11");
         HtmlPage figurePage = hyperlink.click();
         assertNotNull(figurePage);
 
