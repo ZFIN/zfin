@@ -1802,19 +1802,19 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                  select feature_zdb_id, feature_abbrev, feature_name, fmrel_mrkr_zdb_id, mrkr_name
-                     from feature, feature_marker_Relationship, marker
+ select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id, fmrel_mrkr_zdb_id, mrkr_name, b.szm_term_ont_id
+                     from feature, feature_marker_Relationship, marker, so_zfin_mapping a, so_zfin_mapping b
                     where fmrel_ftr_zdb_id = feature_zdb_id
 		    and feature_type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
                     and fmrel_mrkr_zdb_id = mrkr_zdb_id
-                    order by lower(feature_abbrev)
-                   ;
+		    and get_obj_type(mrkr_zdb_id) = b.szm_object_type
+		    and feature_type = a.szm_object_type
                          ]]>
             </Query>
             <Column id="1" unique="true">Genomic Feature ID</Column>
-            <Column id="2">Feature SO ID</Column>
-            <Column id="3">Genomic Feature Abbreviation</Column>
-            <Column id="4">Genomic Feature Name</Column>
+            <Column id="2">Genomic Feature Abbreviation</Column>
+            <Column id="3">Genomic Feature Name</Column>
+            <Column id="4">Feature SO ID</Column>
             <Column id="5">Construct ID</Column>
             <Column id="6">Construct Name</Column>
             <Column id="7">Construct SO ID</Column>
