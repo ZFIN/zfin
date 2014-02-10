@@ -832,6 +832,12 @@ update tmp_Geno_data
 				and fmrel_type like 'contains%')
  where feature_zdb_id not in (select fmrel_ftr_zdb_id from tmp_dups) ;
 
+update tmp_Geno_data
+ set construct_name = (Select mrkr_name from feature_marker_relationship, marker
+     		      		where fmrel_ftr_zdb_id = feature_Zdb_id
+				and fmrel_type like 'contains%'
+				and mrkr_zdb_id = fmrel_mrkr_zdb_id)
+ where feature_zdb_id not in (select fmrel_ftr_zdb_id from tmp_dups) ;
 
 select
 	genofeat_geno_zdb_id,
