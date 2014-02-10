@@ -59,7 +59,7 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>cmpich@cs.uoregon.edu</recipientList>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
