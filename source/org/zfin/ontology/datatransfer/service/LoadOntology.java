@@ -405,7 +405,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-secondary-terms-used.ftl", cronReport);
         }
         // missing terms with OBO id report.
-        if (dataMap.get(UnloadFile.TERMS_MISSING_OBO_ID.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.TERMS_MISSING_OBO_ID)) {
             List<List<String>> rows = dataMap.get(UnloadFile.TERMS_MISSING_OBO_ID.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -414,7 +414,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-terms-missing-obo-id.ftl", cronReport);
         }
         // missing terms with OBO id report.
-        if (dataMap.get(UnloadFile.TERMS_UN_OBSOLETED_ID.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.TERMS_UN_OBSOLETED_ID)) {
             List<List<String>> rows = dataMap.get(UnloadFile.TERMS_UN_OBSOLETED_ID.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -423,7 +423,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-terms-un-obsoleted.ftl", cronReport);
         }
         // new terms report.
-        if (dataMap.get(UnloadFile.NEW_TERMS.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.NEW_TERMS)) {
             List<List<String>> rows = dataMap.get(UnloadFile.NEW_TERMS.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -432,7 +432,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-new-terms.ftl", cronReport);
         }
         // updated terms report.
-        if (dataMap.get(UnloadFile.UPDATED_TERMS.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.UPDATED_TERMS)) {
             List<List<String>> rows = dataMap.get(UnloadFile.UPDATED_TERMS.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -441,7 +441,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
         }
         // updated term definitions report.
-        if (dataMap.get(UnloadFile.MODIFIED_TERM_DEFINITIONS.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.MODIFIED_TERM_DEFINITIONS)) {
             List<List<String>> rows = dataMap.get(UnloadFile.MODIFIED_TERM_DEFINITIONS.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -450,7 +450,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
         }
         // updated term comments report.
-        if (dataMap.get(UnloadFile.MODIFIED_TERM_COMMENTS.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.MODIFIED_TERM_COMMENTS)) {
             List<List<String>> rows = dataMap.get(UnloadFile.MODIFIED_TERM_COMMENTS.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -459,16 +459,16 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
         }
         // updated terms report.
-        if (dataMap.get(UnloadFile.SEC_UNLOAD_REPORT.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.SEC_UNLOAD_REPORT)) {
             List<List<String>> rows = dataMap.get(UnloadFile.SEC_UNLOAD_REPORT.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
             cronReport.appendToSubject(" - " + rows.size() + " merged " + termChoice.format(rows.size()) + " updated");
             cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-secondary-terms.ftl", cronReport);
+            cronJobUtil.emailReport("ontology-loader-secondary-terms-used.ftl", cronReport);
         }
         // new aliases.
-        if (dataMap.get(UnloadFile.NEW_ALIASES.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.NEW_ALIASES)) {
             List<List<String>> rows = dataMap.get(UnloadFile.NEW_ALIASES.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -477,7 +477,7 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronJobUtil.emailReport("ontology-loader-new-aliases.ftl", cronReport);
         }
         // removed aliases.
-        if (dataMap.get(UnloadFile.REMOVED_ALIASES.getValue()) != null) {
+        if (dataMapHasValues(UnloadFile.REMOVED_ALIASES)) {
             List<List<String>> rows = dataMap.get(UnloadFile.REMOVED_ALIASES.getValue());
             CronJobReport cronReport = new CronJobReport(report.getJobName());
             cronReport.setRows(rows);
@@ -488,24 +488,65 @@ public class LoadOntology extends AbstractScriptWrapper {
         // report on new relationships
         List<GenericTermRelationship> newRelationships = getOntologyRepository().getNewRelationships(ontology);
         if (CollectionUtils.isNotEmpty(newRelationships)) {
-            GenericCronJobReport<List<GenericTermRelationship>> cronReport = new GenericCronJobReport<List<GenericTermRelationship>>(report.getJobName());
+            GenericCronJobReport<List<GenericTermRelationship>> cronReport;
+            cronReport = new GenericCronJobReport<List<GenericTermRelationship>>(report.getJobName());
             cronReport.setCollection(newRelationships);
             cronReport.appendToSubject(" - " + newRelationships.size() + " new Relationships ");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-new-relationships.ftl", cronReport);
         }
         // report on deleted relationships
-        List<List<String>> removedParentRelationships = dataMap.get(UnloadFile.REMOVED_RELATIONSHIPS_1.getValue());
-        if (removedParentRelationships != null) {
-            GenericCronJobReport<List<GenericTermRelationship>> cronReport = new GenericCronJobReport<List<GenericTermRelationship>>(report.getJobName());
-            List<GenericTermRelationship> relationships = createRelationshipList(removedParentRelationships);
+        if (dataMapHasValues(UnloadFile.REMOVED_RELATIONSHIPS_1)) {
+            GenericCronJobReport<List<GenericTermRelationship>> cronReport = new GenericCronJobReport<>(report.getJobName());
+            List<GenericTermRelationship> relationships = createRelationshipList(dataMap.get(UnloadFile.REMOVED_RELATIONSHIPS_1.getValue()));
             cronReport.setCollection(relationships);
             cronReport.appendToSubject(" - " + relationships.size() + " removed Relationships ");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-delete-relationships.ftl", cronReport);
         }
+        unloadData();
         updatePhenotypesReport();
         updateExpressionReport();
+    }
+
+    private void unloadData() {
+        openAllFiles();
+        writeToFiles();
+        closeAllFiles();
+    }
+
+    private void writeToFiles() {
+        for (String key : dataMap.keySet()) {
+            if (!key.endsWith("txt"))
+                continue;
+            if (dataMapHasValues(key)) {
+                List<List<String>> list = dataMap.get(key);
+                //writeToFile(key, list);
+            }
+        }
+    }
+
+    private boolean dataMapHasValues(UnloadFile unloadFile) {
+        if (unloadFile == null)
+            return false;
+        String value = unloadFile.getValue();
+        if (StringUtils.isEmpty(value))
+            return false;
+        List<List<String>> list = dataMap.get(unloadFile.getValue());
+        return dataMapHasValues(list);
+    }
+
+    private boolean dataMapHasValues(String unloadFileName) {
+        if (unloadFileName == null)
+            return false;
+        if (StringUtils.isEmpty(unloadFileName))
+            return false;
+        List<List<String>> list = dataMap.get(unloadFileName);
+        return dataMapHasValues(list);
+    }
+
+    private boolean dataMapHasValues(List<List<String>> list) {
+        return list != null && CollectionUtils.isNotEmpty(list);
     }
 
     private List<GenericTermRelationship> createRelationshipList(List<List<String>> relationships) {
@@ -570,7 +611,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private void replacedTerms(List<List<String>> data, String termType, String expressionPhenotype) {
-        if (data != null) {
+        if (dataMapHasValues(data)) {
             String message = expressionPhenotype + " Superterms replaced: " + data.size();
             LOG.info(message);
             report.addMessageToSection(message, termType + " replaced by merged term:");
@@ -668,7 +709,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private void runDebugStatement(DatabaseJdbcStatement statement) {
-        if(debugMode == false)
+        if (debugMode == false)
             return;
         try {
             DatabaseJdbcStatement debugStatement = statement.getDebugStatement();
@@ -680,7 +721,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     private void runDebugStatementAfterDelete(DatabaseJdbcStatement statement) {
-        if(debugMode == false)
+        if (debugMode == false)
             return;
         try {
             DatabaseJdbcStatement debugStatement = statement.getDebugDeleteStatement();
@@ -704,7 +745,8 @@ public class LoadOntology extends AbstractScriptWrapper {
                 writeToTraceFile(statement.getLocationInfo() + " " + FileUtil.getFileNameFromPath(statement.getScriptFile()));
                 writeToTraceFile(statement.getComment());
                 writeToTraceFile("(" + numberOfRows + ")");
-                writeToTraceFileIndendented(statement.getParentStatement().getHumanReadableQueryString());
+                if (statement.getParentStatement() != null)
+                    writeToTraceFileIndendented(statement.getParentStatement().getHumanReadableQueryString());
             } else {
                 writeToTraceFileIndendented(statement.getHumanReadableQueryString());
                 writeToTraceFileIndendented(" No. of Records: " + numberOfRows);
@@ -717,6 +759,22 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
     }
 
+/*
+    private void writeToFile(String fileName, List<List<String>> rows) {
+        if (CollectionUtils.isEmpty(rows))
+            return;
+        for (List<String> row : rows) {
+            StringBuilder builder = new StringBuilder();
+            for (String column : row) {
+                builder.append(column);
+                builder.append(",");
+            }
+            builder.append("\n");
+            appendRecord(fileName, builder.toString());
+        }
+    }
+
+*/
     private void writeToTraceFile(List<List<String>> rows) {
         if (CollectionUtils.isEmpty(rows))
             return;
@@ -1078,6 +1136,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         public String getValue() {
             return value;
         }
+
     }
 
     private Map<UnloadFile, FileWriter> fileWriters = new HashMap<UnloadFile, FileWriter>(UnloadFile.values().length);
@@ -1099,7 +1158,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         //appendRecord(unloadFile, InformixUtil.getUnloadRecord(record));
         List<List<String>> data = dataMap.get(unloadFile.getValue());
         if (data == null) {
-            data = new ArrayList<List<String>>();
+            data = new ArrayList<>();
         }
         List<String> individualRecord = new ArrayList<String>(2);
         individualRecord.add(firstString);
@@ -1130,7 +1189,7 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     private void openTraceFile() {
         String traceFileName = "trace-" + FileUtil.getFileNameFromPath(oboFilename) + ".log";
-        File file = FileUtil.getFileInTempDirectory(traceFileName);
+        File file = new File("logs", traceFileName);
         try {
             traceFileWriter = new FileWriter(file);
         } catch (IOException e) {
