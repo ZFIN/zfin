@@ -1,3 +1,7 @@
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataDate/dateUnloaded.txt"
+select di_pk_id, di_date_unloaded
+  from database_info;
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/mutagenMutagee/mutagenMutagee.txt"
 select featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee, feature_type
   from feature_assay,
