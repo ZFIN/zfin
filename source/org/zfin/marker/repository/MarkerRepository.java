@@ -10,7 +10,6 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.marker.Talen;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
@@ -389,4 +388,8 @@ public interface MarkerRepository {
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
+
+    List<TargetGeneLookupEntry> getGenesForMerge(String lookupString);
+
+    List<TranscriptPresentation> getTranscriptsForGeneId(String geneZdbId);
 }

@@ -75,8 +75,7 @@ jQuery.ajax({
 	document.critform.marker_type.selectedIndex = 0;
 	document.critform.WINSIZE.value = 25;
 
-	}
-
+     }
    </SCRIPT>
 
    <?MISQL SQL="
@@ -115,6 +114,11 @@ jQuery.ajax({
         execute function get_time()">
         <br>$1 Page Start
 <?/MISQL>
+
+         <?MISQL SQL="delete from merge_markers_sql 
+                                                    ;">
+
+         <?/MISQL> 
 
 <!---------------this part is executed after a search is submitted ---------------->
 

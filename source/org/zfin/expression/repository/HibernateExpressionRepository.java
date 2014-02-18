@@ -1824,5 +1824,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return stageExpressionPresentation;
     }
 
-
+    @Override
+    public List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ExpressionExperiment.class);
+        criteria.add(Restrictions.eq("gene", gene));
+        return (List<ExpressionExperiment>) criteria.list();
+    }
 }

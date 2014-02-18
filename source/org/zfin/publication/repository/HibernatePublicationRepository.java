@@ -1633,4 +1633,76 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         return (List<Publication>) query.list();
     }
+
+    public SortedSet<Publication> getAllPublicationsForFeature(Feature feature) {
+        SortedSet<Publication> pubList = new TreeSet<Publication>();
+        Query query;
+        String hql;
+        List<Publication> resultList;
+        Session session = HibernateUtil.currentSession();
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p " +
+                " where p.dataZdbID = :featureZdbID ";
+        query = session.createQuery(hql);
+        query.setString("featureZdbID", feature.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , DataAlias  da " +
+                "  where p.dataZdbID = da.zdbID " +
+                " and da.dataZdbID = :featureZdbID ";
+        query = session.createQuery(hql);
+        query.setString("featureZdbID", feature.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
+                " where fmr.feature.zdbID  = :featureZdbID " +
+                " and fmr.feature.zdbID  = p.dataZdbID ";
+
+        query = session.createQuery(hql);
+        query.setString("featureZdbID", feature.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , GenotypeFeature gtf " +
+                " where gtf.genotype.zdbID  = p.dataZdbID " +
+                "  and gtf.feature.zdbID = :featureZdbID ";
+        query = session.createQuery(hql);
+        query.setString("featureZdbID", feature.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+        return pubList;
+    }
+
+    public SortedSet<Publication> getPublicationForJournal(Journal journal) {
+        SortedSet<Publication> pubList = new TreeSet<Publication>();
+        Query query;
+        String hql;
+        List<Publication> resultList;
+        Session session = HibernateUtil.currentSession();
+
+        hql = "select publication " +
+                " from Publication publication " +
+                " where publication.journal = :journalWithPub ";
+        query = session.createQuery(hql);
+        query.setParameter("journalWithPub", journal);
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+        return pubList;
+    }
+
+    public Journal getJournalByID(String zdbID) {
+        return (Journal) HibernateUtil.currentSession().get(Journal.class, zdbID);
+    }
+
 }

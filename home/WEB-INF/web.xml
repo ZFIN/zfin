@@ -425,7 +425,11 @@
         <url-pattern>/action/devtool/*</url-pattern>
     </servlet-mapping>
 
-
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/infrastructure/*</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>zfin</servlet-name>
         <url-pattern>/cgi-bin/*</url-pattern>

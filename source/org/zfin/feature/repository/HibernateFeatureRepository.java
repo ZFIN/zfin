@@ -184,7 +184,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 "join source_feature_prefix sfp on fp.fp_pk_id=sfp.sfp_prefix_id " +
                 "join lab l on sfp.sfp_source_zdb_id=l.zdb_id " +
                 "union " +
-                  "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, sfp.sfp_current_designation " +
+                "select fp.fp_prefix,fp.fp_institute_display,l.zdb_id,l.name, sfp.sfp_current_designation " +
                 "from feature_prefix fp " +
                 "join source_feature_prefix sfp on fp.fp_pk_id=sfp.sfp_prefix_id " +
                 "join company l on sfp.sfp_source_zdb_id=l.zdb_id " +
@@ -228,7 +228,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
             }
             ++i ;
         }
-         featurePrefixLightList.add(featurePrefixLight);
+        featurePrefixLightList.add(featurePrefixLight);
         return featurePrefixLightList;
     }
 
@@ -331,7 +331,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " and lfp.organization.name is not null  " +
                 " and lfp.currentDesignation = :true";
 
-               Query query = HibernateUtil.currentSession().createQuery(hqlLab);
+        Query query = HibernateUtil.currentSession().createQuery(hqlLab);
         query.setBoolean("true", true);
         /*List<FeatureMarkerRelationship> featureMarkerRelationships = (List<FeatureMarkerRelationship>) query.list();
               HibernateUtil.currentSession().createQuery(hqlLab)
@@ -342,14 +342,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
                         return tuple[0];
                     }
                 })*/
-                     List<Organization> organizations = (List<Organization>) query.list();
-                      Collections.sort(organizations, new Comparator<Organization>(){
+        List<Organization> organizations = (List<Organization>) query.list();
+        Collections.sort(organizations, new Comparator<Organization>(){
             @Override
             public int compare(Organization o1, Organization o2) {
                 return o1.getName().compareTo(o2.getName()) ;
             }
         });
-      return organizations;
+        return organizations;
     }
 
 
@@ -512,27 +512,27 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
 
     public void deleteFeatureDBLink(Feature feature, DBLink sequence) {
-           if (feature == null)
-               throw new RuntimeException("No marker object provided.");
-           if (sequence == null)
-               throw new RuntimeException("No alias object provided.");
-           // check that the alias belongs to the marker
-           if (!feature.getDbLinks().contains(sequence))
-               throw new RuntimeException("Alias '" + sequence + "' does not belong to the marker '" + feature + "'! " +
-                       "Cannot remove such an alias.");
-           // remove the ZDB active data record with cascade.
+        if (feature == null)
+            throw new RuntimeException("No marker object provided.");
+        if (sequence == null)
+            throw new RuntimeException("No alias object provided.");
+        // check that the alias belongs to the marker
+        if (!feature.getDbLinks().contains(sequence))
+            throw new RuntimeException("Alias '" + sequence + "' does not belong to the marker '" + feature + "'! " +
+                    "Cannot remove such an alias.");
+        // remove the ZDB active data record with cascade.
 
 
 
 
-           infrastructureRepository.deleteActiveDataByZdbID(sequence.getZdbID());
-           currentSession().flush();
+        infrastructureRepository.deleteActiveDataByZdbID(sequence.getZdbID());
+        currentSession().flush();
 
-           currentSession().refresh(feature);
+        currentSession().refresh(feature);
 
-           // run the fast search table script so the alias is not showing up any more.
-           //runFeatureNameFastSearchUpdate(feature);
-       }
+        // run the fast search table script so the alias is not showing up any more.
+        //runFeatureNameFastSearchUpdate(feature);
+    }
 
 
     @Override
@@ -552,7 +552,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return (String) queryTracker.uniqueResult();
     }
 
-     public String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID) {
+    public String getFeatureByIDInTrackingTable(String featTrackingFeatZdbID) {
         Session session = HibernateUtil.currentSession();
         String hqlFtrTrack = " select ft.featTrackingFeatAbbrev from  FeatureTracking ft where ft.featTrackingFeatZdbID =:featTrackingFeatZdbID ";
         Query queryTracker = session.createQuery(hqlFtrTrack);
@@ -622,11 +622,11 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     /**
-     * @param publicationZdbID Attributed publication zdbID.
+     * @param prefixString Attributed publication zdbID.
      * @return List of feature objects attributed to this pub.
      */
     public String getPrefix(String prefixString) {
-       Session session = HibernateUtil.currentSession();
+        Session session = HibernateUtil.currentSession();
         String hqlLab1 = " select fp.prefixString from  FeaturePrefix fp where fp.prefixString =:prefixString ";
         Query queryLab = session.createQuery(hqlLab1);
         queryLab.setParameter("prefixString", prefixString);
@@ -730,15 +730,15 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-     public FeaturePrefix setNewLabPrefix(String prefix, String location) {
+    public FeaturePrefix setNewLabPrefix(String prefix, String location) {
         logger.debug("enter addMarDataNote");
         FeaturePrefix fpPrefix = new FeaturePrefix();
         fpPrefix.setPrefixString(prefix);
-         fpPrefix.setInstitute(location);
-HibernateUtil.currentSession().save(fpPrefix);
+        fpPrefix.setInstitute(location);
+        HibernateUtil.currentSession().save(fpPrefix);
 
-         return fpPrefix;
-     }
+        return fpPrefix;
+    }
 
 
     @SuppressWarnings("unchecked")
@@ -904,5 +904,11 @@ HibernateUtil.currentSession().save(fpPrefix);
                 .list();
     }
 
+    public int deleteFeatureFromTracking(String featureZdbId) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("delete from FeatureTracking ft where ft.featTrackingFeatZdbID=:featureZdbId");
+        query.setParameter("featureZdbId", featureZdbId);
+        return query.executeUpdate();
+    }
 }
 

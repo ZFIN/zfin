@@ -128,13 +128,13 @@ c.clone_mrkr_zdb_id='$OID';
   <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),$(EC,$rtype,genotype))">
     <?MIVAR COND="$(OR,$(NXST,$calling_page),$(NE,$calling_page,citation))">
     <TD>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete or Merge this record </font></A> 
+        <A HREF="/action/infrastructure/deleteRecord/$OID"><font size=-1 color=red> Delete or Merge this record </font></A> 
     </TD>
     <?/MIVAR>
   <?MIELSE>
     <TD>
       <?MIVAR>
-        <A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&OID=$OID&rtype=$rtype"><font size=-1 color=red> Delete this record </font></A>
+        <A HREF="/action/infrastructure/deleteRecord/$OID"><font size=-1 color=red> Delete this record </font></A>
       <?/MIVAR>
     </TD>
   <?/MIBLOCK>

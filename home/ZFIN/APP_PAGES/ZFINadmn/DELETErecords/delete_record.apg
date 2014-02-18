@@ -221,7 +221,7 @@ Message: $MI_ERRORMSG
   <?MIBLOCK COND="$(AND,$(XST,$OID),$(XST,$rtype))">
 
     <!-- form posts to itself if merge record if requested -->
-    <form name=merge method=post action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
+    <form name=merge method=post >
      <?MICOMMENT> -- this is defined for the "Search" button <?/MICOMMENT>
      <input type=hidden name=MIval value="aa-delete_record.apg">
      <?MIVAR>
@@ -289,7 +289,7 @@ Message: $MI_ERRORMSG
 		<option $(IF,$(EC,$mtype,PAC),SELECTED)>PAC
 		<option $(IF,$(EC,$mtype,BAC_END),SELECTED)>BAC_END
 		<option $(IF,$(EC,$mtype,PAC_END),SELECTED)>PAC_END
-	      </select>  and its abbrev/handle contains:
+	      </select>  and its abbrev/handle begins with:
 	      <input type=text name=merge value="$nsearch" size=8>  
 	      <input type=submit name=do_search value="Search">
 	    </TR>
@@ -307,7 +307,7 @@ Message: $MI_ERRORMSG
                 where mrkr_type = '$mtype' 
                   and mrkr_zdb_id = allmapnm_zdb_id 
                   and allmapnm_serial_id = allnmend_allmapnm_serial_id
-                  and allnmend_name_end_lower like '%$(LOWER,$merge)%' 
+                  and allnmend_name_end_lower like '$(LOWER,$merge)%' 
                 order by mrkr_abbrev;">
               <?MIVAR NAME=$delrec_mrkrZdbId>$1<?/MIVAR>
               <?MIVAR NAME=$delrec_mrkrName>$2<?/MIVAR>
@@ -371,9 +371,15 @@ Message: $MI_ERRORMSG
     <TABLE width=100%>
     <TR align=center>
     <TD><input type=button value="CANCEL" onClick="window.history.go(-1)"></TD>
-    <?MIVAR>
-      <TD><INPUT type=submit value="Delete or Merge" onClick="document.merge.MIval.value='aa-process_delete.apg';set_values('$merge_oid','$(URLENCODE,$merge)'); return validateAction('$merge_oid');"></TD>
-    <?/MIVAR>
+    <?MIBLOCK COND=$(NC,$merge_oid,none)>
+      <?MIVAR>
+        <TD><INPUT type=submit value="Merge " onClick="document.merge.action='http://<!--|DOMAIN_NAME|-->/<!--|CGI_BIN_DIR_NAME|-->/merge_markers.pl';set_values('$merge_oid','$(URLENCODE,$merge)'); return validateAction('$merge_oid');"></TD>   
+      <?/MIVAR>
+    <?MIELSE>
+      <?MIVAR>
+        <TD><INPUT type=submit value="DELETE " onClick="document.merge.action='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->';document.merge.MIval.value='aa-process_delete.apg';set_values('$merge_oid','$(URLENCODE,$merge)'); return validateAction('$merge_oid');"></TD>
+      <?/MIVAR>
+    <?/MIBLOCK>
     </TR></TABLE>
 
   </form>

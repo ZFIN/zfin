@@ -69,13 +69,12 @@ public class AntibodyMarkerBean extends MarkerBean {
 
     public String getEditURL() {
         String zdbID = marker.getZdbID();
-//        return "/action/antibody/update-details?antibody.zdbID=" + zdbID;
         return "/action/marker/marker-edit?zdbID=" + zdbID;
     }
 
     public String getDeleteURL() {
         String zdbID = marker.getZdbID();
-        return "/action/marker/delete?zdbIDToDelete=" + zdbID;
+        return "/action/infrastructure/deleteRecord/" + zdbID;
     }
 
     public String getMergeURL() {

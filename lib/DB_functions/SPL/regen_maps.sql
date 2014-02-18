@@ -99,7 +99,6 @@ create dba function "informix".regen_maps()
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
       extent size 2048 next size 2048
       lock mode page;
-    revoke all on paneled_m_new from "public";
 
    -- faked mapping information for gene is
    -- taken out of mapped_marker table, they should be

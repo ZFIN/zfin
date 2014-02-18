@@ -134,11 +134,13 @@ public interface FeatureRepository {
      */
     List<String> getAllFeatures(int firstNIds);
 
-   FeaturePrefix getFeaturePrefixByPrefix(String prefix);
+    FeaturePrefix getFeaturePrefixByPrefix(String prefix);
 
-   int insertOrganizationPrefix(Organization organization, FeaturePrefix featurePrefix);
+    int insertOrganizationPrefix(Organization organization, FeaturePrefix featurePrefix);
 
-   int setNoLabPrefix(String zdbID);
+    int setNoLabPrefix(String zdbID);
 
-   List<PreviousNameLight> getPreviousNamesLight(Genotype genotype);
+    List<PreviousNameLight> getPreviousNamesLight(Genotype genotype);
+
+    int deleteFeatureFromTracking(String featureZdbId);
 }

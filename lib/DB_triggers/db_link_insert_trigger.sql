@@ -5,7 +5,12 @@ create trigger db_link_insert_trigger
 
   execute function 
       scrub_char(new_db_link.dblink_acc_num) into dblink_acc_num,
-
+     
+  execute procedure
+      checkDblinkTranscriptWithdrawn(new_db_link.dblink_zdb_id,
+                                     new_db_link.dblink_linked_recid,
+                                     new_db_link.dblink_fdbcont_zdb_id),
+                                     
   execute procedure 
       p_dblink_has_parent(new_db_link.dblink_linked_recid),
  
@@ -26,6 +31,7 @@ create trigger db_link_insert_trigger
   execute function get_dblink_acc_num_display(
 			new_db_link.dblink_fdbcont_zdb_id,
 			new_db_link.dblink_acc_num) 
-      into db_link.dblink_acc_num_display
+      into dblink_acc_num_display
 
   );
+  
