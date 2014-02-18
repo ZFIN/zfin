@@ -58,7 +58,6 @@
 <filter token="GBROWSE_IMG_PATH_FROM_ROOT" value="${GBROWSE_IMG_PATH_FROM_ROOT}"/>
 <filter token="GBROWSE_PATH_FROM_ROOT" value="${GBROWSE_PATH_FROM_ROOT}"/>
 <filter token="GC_LOGGING_OPTS" value="${GC_LOGGING_OPTS}"/>
-<filter token="GC_OPTS" value="${GC_OPTS}"/>
 <filter token="GENBANK_DAILY_EMAIL" value="${GENBANK_DAILY_EMAIL}"/>
 <filter token="GO_EMAIL_CURATOR" value="${GO_EMAIL_CURATOR}"/>
 <filter token="GO_EMAIL_ERR" value="${GO_EMAIL_ERR}"/>
