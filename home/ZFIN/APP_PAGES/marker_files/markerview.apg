@@ -534,7 +534,7 @@ function jump(form_select){
 		}
 	}
 
- 	function new_attrib_seq(dataid) {
+ 	function new_attrib_markerseq(dataid) {
  		var pub_id = document.newdata.mrkrview_seq_pubid.value.toUpperCase().strip();
  		if((dataid != '')&&(pub_id != '')) {
  			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=marker_sequence');
@@ -994,7 +994,7 @@ Only need to update clones, etc., which should be the only things that will have
       <?MIVAR COND="$(NC,$mrkrview_sequence,)">
          <br>Add Sequence Reference:
          <input type=text name=mrkrview_seq_pubid>
-         <input type=button value="Add" onClick=new_attrib_seq('$OID');>
+         <input type=button value="Add" onClick=new_attrib_markerseq('$OID');>
         <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
         <p>
       <?/MIVAR>
