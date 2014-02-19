@@ -368,10 +368,4 @@ public interface ExpressionRepository {
      * @param expressionResult
      */
     void deleteExpressionResult(ExpressionResult expressionResult);
-
-    /**
-     * Retrieve list of expression experiment records for a given gene.
-     * @return list of expression experiment records
-     */
-    List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
 }

@@ -167,7 +167,8 @@ public class TranscriptBean extends MarkerBean {
     }
 
     public String getDeleteURL() {
-        return "none";
+        String zdbID = getTranscript().getZdbID();
+        return "/" + ZfinProperties.getWebDriver() + "?MIval=aa-delete_record.apg&rtype=marker&OID=" + zdbID;
     }
 
     public String getEditURL() {

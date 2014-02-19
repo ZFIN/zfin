@@ -26,7 +26,5 @@ create trigger marker_go_term_evidence_update_trigger
 			new_mrkrgoev.mrkrgoev_source_zdb_id),
 	execute procedure p_insert_into_record_attribution_datazdbids (
 			new_mrkrgoev.mrkrgoev_mrkr_zdb_id,
-			new_mrkrgoev.mrkrgoev_source_zdb_id)
---	execute procedure p_marker_go_term_evidence_infered_composite (
---			new_mrkrgoev.mrkrgoev_zdb_id )
+			new_mrkrgoev.mrkrgoev_source_zdb_id)	
      );			

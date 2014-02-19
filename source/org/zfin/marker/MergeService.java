@@ -459,8 +459,6 @@ public class MergeService {
     public static boolean deleteMarker(Marker marker) {
         if (marker.isInTypeGroup(Marker.TypeGroup.ATB)) {
             return deleteAntibody((Antibody) marker);
-        } else if (marker.isInTypeGroup(Marker.TypeGroup.GENE)) {
-            return deleteGene(marker);
         }
         throw new RuntimeException("Marker deletion not supported:\n" + marker);
     }
@@ -481,16 +479,6 @@ public class MergeService {
 
         // need to remove this from the session
         HibernateUtil.currentSession().evict(antibody);
-        return true;
-    }
-    public static boolean deleteGene(Marker gene) {
-        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(gene, "Gene", "Gene Deleted", Person.getCurrentSecurityUser());
-        RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(gene.getZdbID());
-        // this should force a cascade
-        HibernateUtil.currentSession().flush();
-
-        // need to remove this from the session
-        HibernateUtil.currentSession().evict(gene);
         return true;
     }
 }

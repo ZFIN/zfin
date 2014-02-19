@@ -34,10 +34,11 @@
     </class>
 
     <class name="org.zfin.infrastructure.RecordAttribution" table="record_attribution">
-        <id name="id" type="long">
-            <column name="recattrib_pk_id" not-null="true"/>
-            <generator class="increment"/>
-        </id>
+        <composite-id>
+            <key-property name="dataZdbID" column="recattrib_data_zdb_id" type="string"/>
+            <key-property name="sourceZdbID" column="recattrib_source_zdb_id" type="string"/>
+            <key-property name="sourceType" column="recattrib_source_type" type="recordAttributionSourceType"/>
+        </composite-id>
         <discriminator type="string"
                        formula="(CASE get_obj_type(recattrib_source_zdb_id)
                                     WHEN 'PUB' THEN       'Pub    '
@@ -46,9 +47,7 @@
                                     WHEN 'JRNL' THEN      'Journal'
                                     ELSE                  'other'
                                  END)"/>
-        <property name="dataZdbID" column="recattrib_data_zdb_id" type="string"/>
-        <property name="sourceZdbID" column="recattrib_source_zdb_id" type="string"/>
-        <property name="sourceType" column="recattrib_source_type" type="recordAttributionSourceType"/>
+
         <subclass name="org.zfin.infrastructure.PublicationAttribution" discriminator-value="Pub    ">
             <many-to-one name="publication" column="recattrib_source_zdb_id" insert="false" update="false"/>
         </subclass>

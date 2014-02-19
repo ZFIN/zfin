@@ -73,13 +73,16 @@ public class FeatureEditBox extends AbstractFeatureBox {
             public void onClick(ClickEvent event) {
                 final String featureID = featureEditList.getSelected();
                 final String featureName = featureEditList.getSelectedText();
+                if (false == Window.confirm("Delete Feature ["+featureName+"]?")) {
+                    return;
+                }
                 if (StringUtils.isEmpty(featureID)) {
                     setError("Empty ID");
                     resetGUI();
                     return ;
                 }
 
-                Window.open("/action/infrastructure/deleteRecord/"+featureID,
+                Window.open("/cgi-bin/webdriver?MIval=aa-delete_record.apg&OID="+featureID+"&rtype=feature",
                         "_self", "");
 
 //                else{
@@ -268,8 +271,8 @@ public class FeatureEditBox extends AbstractFeatureBox {
         featureDisplayName.setValue(dto.getName());
         zdbIdHTML.setText(dto.getZdbID());
         featureSuffixBox.setIndexForText(dto.getTransgenicSuffix());
-        //if(dto.getFeatureSequences().get(0)!=null){
-        //dto.getFeatureSequence()
+         //if(dto.getFeatureSequences().get(0)!=null){
+             //dto.getFeatureSequence()
         featureSequenceBox.setText(dto.getFeatureSequence());
 
     }

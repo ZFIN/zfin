@@ -20,8 +20,6 @@ import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * Persistence class that deals with Publication objects.
@@ -485,12 +483,4 @@ public interface PublicationRepository extends PaginationParameter {
     List<Genotype> getMutantsAndTgsByPublication(String publicationID);
 
     List<Publication> getPublicationWithPubMedId(Integer maxResult);
-
-
-    SortedSet<Publication> getAllPublicationsForFeature(Feature feature);
-
-    SortedSet<Publication> getPublicationForJournal(Journal journal);
-
-    Journal getJournalByID(String zdbID);
-
 }

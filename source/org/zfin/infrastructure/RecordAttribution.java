@@ -6,18 +6,10 @@ import java.io.Serializable;
 /**
  */
 public class RecordAttribution implements Serializable {
-    private long id;
+
     private String dataZdbID;
     private String sourceZdbID;
     private SourceType sourceType;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public enum SourceType {
         ANATOMY_DEFINITION("anatomy definition"),
@@ -84,14 +76,14 @@ public class RecordAttribution implements Serializable {
     }
 
     public String toString(){
-        String returnString = "" ;
-        returnString += getDataZdbID()  ;
-        returnString += " "  ;
-        returnString += getSourceZdbID() ;
-        returnString += " "  ;
-        returnString += getSourceType() ;
+        String returnString = "" ; 
+        returnString += getDataZdbID()  ; 
+        returnString += " "  ; 
+        returnString += getSourceZdbID() ; 
+        returnString += " "  ; 
+        returnString += getSourceType() ; 
 
-        return returnString ;
+        return returnString ; 
     }
 
 }

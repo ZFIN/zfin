@@ -183,7 +183,7 @@ create dba function regen_genox() returning integer
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
     extent size 512 next size 512 ;
-    
+    revoke all on mutant_fast_search_new from "public";
 
 
     -- -------------------------------------------------------------------
@@ -241,7 +241,7 @@ create dba function regen_genox() returning integer
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
     extent size 512 next size 512 ;
-    
+    revoke all on genotype_figure_fast_search_new from "public";
 
 
     -- --------------------------------------------------------------------------------------

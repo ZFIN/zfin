@@ -224,7 +224,7 @@ create dba function "informix".regen_names() returning integer
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
       extent size 8192 next size 8192 lock mode page;
-    
+    revoke all on all_m_names_new from "public";
 
 
 
@@ -258,7 +258,7 @@ create dba function "informix".regen_names() returning integer
       )
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3  
       extent size 16384 next size 16384 lock mode page;
-    
+    revoke all on all_name_ends_new from "public";
 
 
 

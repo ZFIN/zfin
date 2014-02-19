@@ -87,6 +87,7 @@ create dba function "informix".regen_panelcount()
  	 in tbldbs3
   	extent size 32 next size 32
   	lock mode page;
+	revoke all on panel_count_new from "public";
 
      let errorHint = "populate table";
 

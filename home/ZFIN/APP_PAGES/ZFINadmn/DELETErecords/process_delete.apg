@@ -45,96 +45,14 @@
 
 
     <?MICOMMENT>=========================================================
-                == for Markers only
+                == for Markers, Genotypes
                 =========================================================
     <?/MICOMMENT>
-
+    <?MIBLOCK COND="$(OR,$(EC,$rtype,marker),
+			 $(EC,$rtype,genotype))">
       <?MICOMMENT> =====    MERGE  ======== <?/MICOMMENT>
-         
-         <?MICOMMENT> =====  Record attribution is effected by triggers so do it first.  ======== <?/MICOMMENT>
-         <?MISQL SQL="select mms_sql, mms_pk_id from merge_markers_sql 
-                      where mms_mrkr_1_zdb_id = '$OID'
-                        and mms_mrkr_2_zdb_id = '$merge_oid'
-                        and mms_sql like '%record_attribution%'
-                      order by 2;">
-         
-         	<?MIVAR NAME=$update_sql>$1<?/MIVAR>
-         	<?MIVAR NAME=$update_sql DELIMIT='"' REPLACE="'">$update_sql<?/MIVAR>
-         	<?MISQL SQL="$update_sql"> <?/MISQL>
-         	<?MISQL COND="$(EC,$(SUBSTR,$update_sql,1,6),delete)"
-         	        SQL="insert into updates (
-				submitter_id ,
-				rec_id ,
-				new_value ,
-				comments ,
-				when ,
-				submitter_name )
-			    Values (
-			    	'$ZDB_ident',
-			    	'$merge_oid',
-			    	'DELETE',
-			    	'$update_sql',
-			    	CURRENT,
-			    	'$ZDB_name');">
-		<?/MISQL>
-         
-         <?/MISQL>
-                  
-         
-         <?MISQL SQL="select mms_sql, mms_pk_id from merge_markers_sql 
-                      where mms_mrkr_1_zdb_id = '$OID'
-                        and mms_mrkr_2_zdb_id = '$merge_oid'
-                        and mms_sql not like '%record_attribution%'
-                      order by 2;">
+      <?MIBLOCK COND="$(NC,$merge_oid,none)">
 
-         	<?MIVAR NAME=$update_sql>$1<?/MIVAR>
-         	<?MIVAR NAME=$update_sql DELIMIT='"' REPLACE="'">$update_sql<?/MIVAR>
-         	<?MISQL SQL="$update_sql"> <?/MISQL>
-         	<?MISQL COND="$(EC,$(SUBSTR,$update_sql,1,6),delete)"
-         	        SQL="insert into updates (
-				submitter_id ,
-				rec_id ,
-				new_value ,
-				comments ,
-				when ,
-				submitter_name )
-			    Values (
-			    	'$ZDB_ident',
-			    	'$merge_oid',
-			    	'DELETE',
-			    	'$update_sql',
-			    	CURRENT,
-			    	'$ZDB_name');">
-		<?/MISQL>        	
-         <?/MISQL> 
-         
-
-         <?MICOMMENT> =====  Clean up the merge_markers_sql table ========              
-         <?MISQL SQL="delete from merge_markers_sql 
-                      where mms_mrkr_1_zdb_id = '$OID'
-                        and mms_mrkr_2_zdb_id = '$merge_oid';">
-         	
-         <?/MISQL>  <?/MICOMMENT>  
-  
-         <?MICOMMENT> =====  clean up duplicate GO evidence  ========
-         <?MISQL SQL="select mrkrgoev_zdb_id from marker_go_term_evidence m1
-                      where mrkrgoev_mrkr_zdb_id = '$merge_oid'
-                        and exists (select 'x' from marker_go_term_evidence m2
-                                    where m2.mrkrgoev_mrkr_zdb_id = '$merge_oid'
-                                      and m2.mrkrgoev_zdb_id != m1.mrkrgoev_zdb_id
-                                      and m2.mrkrgoev_inferred_composite = m1.mrkrgoev_inferred_composite
-                                      and m2.mrkrgoev_inferred_composite is not null
-                                      and m1.mrkrgoev_inferred_composite is not null
-                                      and m2.mrkrgoev_date_modified > m1.mrkrgoev_date_modified)"> 
-                
-               <?MISQL SQL="delete from marker_go_term_evidence where mrkrgoev_zdb_id = '$1';"><?/MISQL>
-         <?/MISQL>         
-          <?/MICOMMENT>
-         
-         
-         
-         
-         
          <?MICOMMENT> ====== Common action ====== <?/MICOMMENT>
          <?MICOMMENT> ------    Alias   -----------  
                       -- a. get rid of duplication
@@ -232,24 +150,45 @@
          <?MICOMMENT> End set data_alias <?/MICOMMENT>              
 
 	 <?MICOMMENT> --- Mapping & Linkage ---  <?/MICOMMENT>
-	 <?MISQL COND="$(=,1,0)" SQL="
+	 <?MISQL SQL="
 	      update mapped_marker
 	         set marker_id = '$merge_oid'
 	       where marker_id = '$OID';">
          <?/MISQL>
 
-
+	 <?MICOMMENT>update independent linkage for id that is being replaced  
+	         The "set explain off" is required to avoid a bug with the 
+	         "set constraints" statement below.  The "set explain" statement was 
+	         picked because it was the most innoccuous statement I could think of.
+         <?/MICOMMENT>
+	 <?MISQL SQL="
+	         set explain off;
+	         set constraints lpmem_linkage_member_foreign_key deferred;">
+	 <?/MISQL>
+	 <?MISQL SQL="
+                 update linkage_member 
+                    set lnkgmem_member_zdb_id = '$merge_oid' 
+                  where lnkgmem_member_zdb_id = '$OID';">
+         <?/MISQL>
+	 <?MISQL SQL="
+                 update linkage_pair_member 
+                    set lpmem_member_zdb_id = '$merge_oid' 
+                  where lpmem_member_zdb_id = '$OID';">
+         <?/MISQL>
+	 <?MISQL SQL="
+		 set constraints lpmem_linkage_member_foreign_key immediate;">
+         <?/MISQL>
 
 
  	 <?MICOMMENT>-----------  Others  ---------------- 
                      -- a. data_note
                      -- b. external_note
          <?/MICOMMENT>
-	 <?MISQL COND="$(=,1,0)" SQL="update data_note
+	 <?MISQL SQL="update data_note
 			 set dnote_data_zdb_id = '$merge_oid'
 		       where dnote_data_zdb_id = '$OID';">
 	 <?/MISQL>
-	 <?MISQL COND="$(=,1,0)" SQL="update external_note
+	 <?MISQL SQL="update external_note
 			 set extnote_data_zdb_id = '$merge_oid'
 		       where extnote_data_zdb_id = '$OID';">
 	 <?/MISQL>
@@ -262,7 +201,7 @@
          <?MIBLOCK COND="$(EC,$rtype,marker)">
 
             <?MICOMMENT> --- get marker name --- <?/MICOMMENT>
-	    <?MISQL COND="$(=,1,0)" SQL="
+	    <?MISQL SQL="
 	         select mrkr_name 
                    from marker 
                   where mrkr_zdb_id = '$OID';">
@@ -271,7 +210,7 @@
 
 
 	   <?MICOMMENT> --- update primer set ---  <?/MICOMMENT> 
-	   <?MISQL COND="$(=,1,0)" SQL="
+	   <?MISQL SQL="
                  update primer_set 
                     set marker_id = '$merge_oid' 
                   where marker_id = '$OID';">
@@ -279,21 +218,21 @@
            <?/MISQL>
 
 	   <?MICOMMENT> --- update marker_go_term_evidence --- <?/MICOMMENT>
-           <?MISQL COND="$(=,1,0)" SQL="
+           <?MISQL SQL="
                  update marker_go_term_evidence 
                     set mrkrgoev_mrkr_zdb_id = '$merge_oid' 
                   where mrkrgoev_mrkr_zdb_id = '$OID'">
            <?/MISQL>  
 
 	   <?MICOMMENT> --- update expression_experiment--- <?/MICOMMENT>
-	   <?MISQL COND="$(=,1,0)" SQL="
+	   <?MISQL SQL="
                  UPDATE expression_experiment
                     SET xpatex_gene_zdb_id = '$merge_oid' 
                   WHERE xpatex_gene_zdb_id = '$OID';">
            <?/MISQL>  
  
 	   <?MICOMMENT> --- update feature_marker_relationship --- <?/MICOMMENT>
-           <?MISQL COND="$(=,1,0)" SQL="
+           <?MISQL SQL="
                  UPDATE feature_marker_relationship
                     SET fmrel_mrkr_zdb_id = '$merge_oid' 
                   WHERE fmrel_mrkr_zdb_id = '$OID';">	
@@ -334,15 +273,42 @@
            <?MISQL SQL="
               execute procedure regen_names_marker('$merge_oid');">
             <?/MISQL>  
-            
-           <?MICOMMENT> --- regen_genox_marker --- <?/MICOMMENT>
-           <?MISQL SQL="
-              execute procedure regen_genox_marker('$merge_oid');">
-            <?/MISQL>              
 
           <?/MIBLOCK> 
           <?MICOMMENT> ========= end Marker ============== <?/MICOMMENT>
 
+
+
+         <?MICOMMENT> =========  Genotype  ============== <?/MICOMMENT>
+         <?MIBLOCK COND="$(EC,$rtype,genotype)">
+             <?MICOMMENT> --- get genotype name --- <?/MICOMMENT>
+	     <?MISQL SQL="
+			select geno_display_name
+                          from genotype
+                         where geno_zdb_id = '$OID';">
+             <?/MISQL>
+             <?MIVAR NAME=$old_name>$1<?/MIVAR>
+
+             <?MICOMMENT>
+                      -- for now, we decided that 
+                      -- no action beside the common actions
+             <?/MICOMMENT>
+             <?MICOMMENT> ---  genotype_feature  --- <?/MICOMMENT>            
+             <?MISQL SQL="
+                     update genotype_feature
+                        set genofeat_geno_zdb_id = '$merge_oid'
+                      where genofeat_geno_zdb_id = '$OID' ;">
+             <?/MISQL>    
+
+             <?MICOMMENT> ---  genotype_experiment  --- <?/MICOMMENT>            
+             <?MISQL SQL="
+                     update genotype_experiment
+                        set genox_geno_zdb_id = '$merge_oid'
+                      where genox_geno_zdb_id = '$OID' ;">
+             <?/MISQL>    
+         <?/MIBLOCK>
+         <?MICOMMENT> ========  end Genotype ============ <?/MICOMMENT>
+   
         
          <?MICOMMENT> ========  Common Action (cont) ========= <?/MICOMMENT>
 	 <?MIVAR NAME="old_name">$(REPLACE,$old_name,','')<?/MIVAR>
@@ -367,13 +333,71 @@
          <?MICOMMENT> ========  end  MERGE  ======== <?/MICOMMENT>
 
 
+
+      <?MICOMMENT> =======  DELETE  ======== <?/MICOMMENT>
+      <?MIELSE>
+      	  <?MISQL SQL="
+	       delete from zdb_active_data
+	             where zactvd_zdb_id = '$OID';">
+          <?/MISQL>
+
+      <?/MIBLOCK> <?MICOMMENT> == end of Marker,Genotype Delete/Merge == <?/MICOMMENT>
+
+
+    <?MICOMMENT>=============================================== 
+                ===  Feature  (deletion only)      ======== 
+                ===============================================
+    <?/MICOMMENT>
+    <?MIELSE COND="$(EC,$rtype,feature)">
+      	  <?MISQL SQL="
+	       delete from zdb_active_data
+	             where zactvd_zdb_id = '$OID';">
+          <?/MISQL>	
+
+
+    <?MICOMMENT>=============================================== 
+                ===  Data Source  (deletion only)      ======== 
+                ===============================================
+    <?/MICOMMENT>
+    <?MIELSE COND="$(OR,$(EC,$rtype,company),
+                        $(EC,$rtype,person),
+                        $(EC,$rtype,lab),
+                        $(EC,$rtype,publication),
+                        $(EC,$rtype,journal))">
+        <?MISQL SQL="
+	    delete from zdb_active_source
+	          where zactvs_zdb_id = '$OID';">
+        <?/MISQL>
+    <?MICOMMENT>=========================================================== 
+                If current kind is image then we need to be explicit.
+                =========================================================== 
+    <?/MICOMMENT>
+    <?MIELSE COND="$(OR,$(EC,$rtype,image))">
+        <?MISQL SQL="
+	     delete from $rtype 
+	           where img_zdb_id='$OID';">
+        <?/MISQL>
+    <?MICOMMENT>=========================================================== 
+	        ==  Other than Marker,Feature, Genotype,Data Source ======= 
+                == delete from base table (currently used??)
+                =========================================================== 
+    <?/MICOMMENT>
+    <?MIELSE>
+        <?MISQL SQL="
+	     delete from $rtype 
+	           where zdb_id='$OID';">
+        <?/MISQL>
+    <?/MIBLOCK>
+
+
+
     <?MICOMMENT> =========   Next page  ========== <?/MICOMMENT>
     <?MIVAR NAME=return_page COND="$(NXST,$return_page)">ZDB_home.apg<?/MIVAR>
     <?MIVAR NAME=returnOIDstring COND="$(NXST,$returnOID)"><?/MIVAR>
     <?MIVAR NAME=returnOIDstring COND="$(XST,$returnOID)">&OID=$returnOID<?/MIVAR>
 
     <SCRIPT>
-        <?MIVAR> window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newmrkrselect.apg'<?/MIVAR>;
+        <?MIVAR> window.location.href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-$return_page$returnOIDstring'<?/MIVAR>;
     </SCRIPT> 
 
   <?/MIBLOCK> <?MICOMMENT> ====  end OID & rtype Exist  ===== <?/MICOMMENT>
