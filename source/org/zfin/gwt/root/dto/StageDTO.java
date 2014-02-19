@@ -19,6 +19,8 @@ public class StageDTO implements IsSerializable , Serializable {
     private String timeString;
     private float startHours = -1.0f;
     private float endHours = -1.0f;
+    public static final String UNKNOWN = "Unknown";
+    public static final String UNKNOWN_ABBREV = "unk";
 
     public String getDisplay(){
         return abbreviation + " " + timeString ;

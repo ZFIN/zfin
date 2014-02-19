@@ -65,6 +65,8 @@ public class StageRangeIntersectionService implements IsSerializable {
 
         float startOuter = startStageOuter.getStartHours();
         float endOuter = endStageOuter.getStartHours();
+        if (endStageOuter.getAbbreviation().equals(StageDTO.UNKNOWN_ABBREV))
+            endOuter = endStageOuter.getEndHours();
         float startInner = startStageInner.getStartHours();
         float endInner = endStageInner.getStartHours();
         if (startOuter > endInner)
