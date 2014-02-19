@@ -2,6 +2,7 @@ package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.obo.dataadapter.AbstractParseEngine;
@@ -93,6 +94,7 @@ public class LoadOntology extends AbstractScriptWrapper {
     // if false always load the obo file.
     private boolean productionMode = true;
     private boolean debugMode = true;
+    private File loadDirectory;
 
     /**
      * Used from within the web app. No initialization needed.
@@ -124,9 +126,12 @@ public class LoadOntology extends AbstractScriptWrapper {
         if (!FileUtil.checkFileExists(oboFilename))
             throw new IOException("No OBO file <" + oboFile + "> found. You may have to download the obo file first.");
         if (dbScriptFiles != null) {
-            for (String dbScriptFile : dbScriptFiles)
+            for (String dbScriptFile : dbScriptFiles) {
+                File file = new File(dbScriptFile);
+                loadDirectory = new File(FilenameUtils.getFullPathNoEndSeparator(file.getAbsolutePath()));
                 if (!FileUtil.checkFileExists(dbScriptFile))
                     throw new IOException("No DB script file <" + dbScriptFile + "> found!");
+            }
         }
     }
 
@@ -759,22 +764,22 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
     }
 
-/*
-    private void writeToFile(String fileName, List<List<String>> rows) {
-        if (CollectionUtils.isEmpty(rows))
-            return;
-        for (List<String> row : rows) {
-            StringBuilder builder = new StringBuilder();
-            for (String column : row) {
-                builder.append(column);
-                builder.append(",");
+    /*
+        private void writeToFile(String fileName, List<List<String>> rows) {
+            if (CollectionUtils.isEmpty(rows))
+                return;
+            for (List<String> row : rows) {
+                StringBuilder builder = new StringBuilder();
+                for (String column : row) {
+                    builder.append(column);
+                    builder.append(",");
+                }
+                builder.append("\n");
+                appendRecord(fileName, builder.toString());
             }
-            builder.append("\n");
-            appendRecord(fileName, builder.toString());
         }
-    }
 
-*/
+    */
     private void writeToTraceFile(List<List<String>> rows) {
         if (CollectionUtils.isEmpty(rows))
             return;
@@ -1189,8 +1194,10 @@ public class LoadOntology extends AbstractScriptWrapper {
 
     private void openTraceFile() {
         String traceFileName = "trace-" + FileUtil.getFileNameFromPath(oboFilename) + ".log";
-        File file = new File("logs", traceFileName);
+        File file = new File(loadDirectory, "logs");
+        file = new File(file, traceFileName);
         try {
+            LOG.info("Opening trace file: " + file.getAbsolutePath());
             traceFileWriter = new FileWriter(file);
         } catch (IOException e) {
             LOG.error("Could not open file " + file.getAbsolutePath());
