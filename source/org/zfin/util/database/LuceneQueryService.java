@@ -26,6 +26,10 @@ public class LuceneQueryService {
     private IndexReader reader;
     boolean isInitialized = false;
 
+    static {
+        BooleanQuery.setMaxClauseCount(200000);
+    }
+
     private static Logger LOG = Logger.getLogger(LuceneQueryService.class);
 
     public LuceneQueryService(String indexDirectory) {
