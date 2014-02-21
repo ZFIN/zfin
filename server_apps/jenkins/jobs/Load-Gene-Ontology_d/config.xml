@@ -31,7 +31,7 @@
       <configuredTriggers>
           <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
               <email>
-                  <recipientList>@SUCCESS_EMAIL@</recipientList>
+                  <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                   <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                   <body>$PROJECT_DEFAULT_CONTENT</body>
                   <sendToDevelopers>false</sendToDevelopers>
@@ -41,13 +41,13 @@
                   <attachmentsPattern></attachmentsPattern>
                   <attachBuildLog>false</attachBuildLog>
                   <compressBuildLog>false</compressBuildLog>
-                  <replyTo>@REPLY_TO@</replyTo>
+                  <replyTo></replyTo>
                   <contentType>project</contentType>
               </email>
           </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
               <email>
-                  <recipientList>@FAILURE_EMAIL@</recipientList>
+                  <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                   <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                   <body>$PROJECT_DEFAULT_CONTENT</body>
                   <sendToDevelopers>false</sendToDevelopers>
@@ -57,7 +57,7 @@
                   <attachmentsPattern></attachmentsPattern>
                   <attachBuildLog>false</attachBuildLog>
                   <compressBuildLog>false</compressBuildLog>
-                  <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+                  <replyTo></replyTo>
                   <contentType>project</contentType>
               </email>
           </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
@@ -69,7 +69,7 @@
       <presendScript></presendScript>
       <attachBuildLog>false</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>
-      <replyTo></replyTo>
+      <replyTo>${DB_OWNER}@zfin.org</replyTo>
       <saveOutput>false</saveOutput>
   </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>

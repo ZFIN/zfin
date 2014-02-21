@@ -7,6 +7,7 @@
     <property name="qualityOboURL"
               value="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/quality.obo"/>
     <property name="geneOboURL" value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
+    <property name="mpathOboURL" value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/phenotype/mouse_pathology/mouse_pathology.obo"/>
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
               value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/anatomy/caro/spatial.obo"/>
@@ -55,9 +56,19 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo" />
     </target>
 
+    <target name="load-mpath-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="mouse_pathology.obo" />
+    </target>
+
     <target name="download-gene-ontology">
         <property name="localOboFile" value="gene-ontology.obo"/>
         <property name="oboFileURL" value="${geneOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-mpath-ontology">
+        <property name="localOboFile" value="mouse_pathology.obo"/>
+        <property name="oboFileURL" value="${mpathOboURL}"/>
         <antcall target="download-ontology"/>
     </target>
 
@@ -77,7 +88,11 @@
 
     <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
 
-    <target name="load-anatomy" depends="download-spatial-ontology,load-spatial-ontology"/>
+    <target name="load-anatomy" depends="load-anatomy-ontology"/>
+
+    <target name="load-mpath" depends="download-mpath-ontology,load-mpath-ontology"/>
+
+    <target name="load-sequence" depends="download-sequence-ontology,load-sequence-ontology"/>
 
     <target name="load-sequence-ontology" depends="init">
         <property name="localOboFile" value="${run-directory}/sequence-ontology.obo"/>
@@ -215,13 +230,22 @@
             download-anatomy-ontology
             download-gene-ontology
             download-spatial-ontology
+            download-mpath-ontology
+            download-sequence-ontology
 
             load-quality-ontology
             load-anatomy-ontology
             load-gene-ontology
             load-spatial-ontology
+            load-mpath-ontology
+            load-sequence-ontology
 
             load-quality
+            load-gene
+            load-quality
+            load-anatomy
+            load-mpath
+            load-sequence
         </echo>
     </target>
 
