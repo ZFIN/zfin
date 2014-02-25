@@ -354,10 +354,12 @@ public class AntibodyWikiWebService extends WikiWebService {
         value = value.replace("î", "&icirc;");
         value = value.replace("í", "&iacute;");
         value = value.replace("è", "&egrave;");
+        value = value.replace("ø", "&oslash;");
         value = value.replace("&#945;", "&alpha;");
         value = value.replace("&#946;", "&beta;");
         value = value.replace("&#947;", "&gamma;");
         value = value.replace("&#8211;", "&ndash;");
+        value = value.replace("&#8220;", "&rdquo;");
         value = value.replace("®", "&reg;");
         value = value.replaceAll("R&D", "R&amp;D");
         value = value.replaceAll("\"", "&quot;");
