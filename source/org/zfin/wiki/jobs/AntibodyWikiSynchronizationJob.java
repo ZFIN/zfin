@@ -6,7 +6,6 @@ import org.zfin.wiki.WikiLoginException;
 import org.zfin.wiki.WikiSynchronizationReport;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +17,13 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
     private static final Logger logger = Logger.getLogger(AntibodyWikiSynchronizationJob.class);
 
     public static void main(String[] args) throws WikiLoginException, FileNotFoundException, InterruptedException {
+        initLog4J();
         setLoggerToInfoLevel(logger);
         setLoggerToInfoLevel(WikiSynchronizationReport.LOG);
         setLoggerToInfoLevel(AntibodyWikiWebService.logger);
         logger.info("pushing antibodies to antibody wiki");
         String propertyFilePath = args[0];
         String jobDirectoryString = args[1];
-        File jobDirectory = new File(jobDirectoryString);
         AntibodyWikiSynchronizationJob job = new AntibodyWikiSynchronizationJob();
         job.setPropertyFilePath(propertyFilePath);
         job.setBaseDir(jobDirectoryString);
@@ -38,7 +37,6 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
     private void createReportFiles(WikiSynchronizationReport wikiSynchronizationReport) {
         if (wikiSynchronizationReport == null)
             return;
-        List<List<String>> updatedList = getStringifiedList(wikiSynchronizationReport.getUpdatedPages());
         createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getUpdatedPages()), "updated-antibodies");
         createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getCreatedPages()), "created-antibodies");
         createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getDroppedPages()), "dropped-antibodies");

@@ -1,9 +1,8 @@
 package org.zfin.ontology.datatransfer;
 
 import org.apache.commons.cli.*;
-import org.apache.log4j.Category;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.log4j.*;
+import org.apache.log4j.spi.RootLogger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
@@ -88,6 +87,17 @@ public class AbstractScriptWrapper {
 
     protected static void setLoggerToInfoLevel(Logger logger) {
         logger.setLevel(Level.INFO);
+    }
+
+    /**
+     * Default appender for the root logger. Uses minimal pattern layout to keep the output
+     * neat. Works best for short-lived script executions.
+     */
+    protected static void initLog4J() {
+        Logger rootLogger = RootLogger.getRootLogger();
+        rootLogger.setLevel(Level.WARN);
+        ConsoleAppender appender = new ConsoleAppender(new PatternLayout("%r - %m%n"));
+        rootLogger.addAppender(appender);
     }
 
 

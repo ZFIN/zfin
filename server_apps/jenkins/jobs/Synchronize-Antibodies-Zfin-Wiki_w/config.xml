@@ -49,7 +49,7 @@
               <email>
                   <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                   <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                  <body>$PROJECT_DEFAULT_CONTENT</body>
+                  <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Synchronize-Antibodies-Zfin-Wiki_w.updated-antibodies.report.html&quot;}</body>
                   <sendToDevelopers>false</sendToDevelopers>
                   <sendToRequester>false</sendToRequester>
                   <includeCulprits>false</includeCulprits>
@@ -58,14 +58,14 @@
                   <attachBuildLog>false</attachBuildLog>
                   <compressBuildLog>false</compressBuildLog>
                   <replyTo></replyTo>
-                  <contentType>project</contentType>
+                  <contentType>text/html</contentType>
               </email>
           </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Synchronize-Antibodies-Zfin-Wiki_w.updated-antibodies.report.html&quot;}</body>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

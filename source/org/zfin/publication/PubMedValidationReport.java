@@ -63,11 +63,8 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         LOG.info("");
     }
 
-    private static void initializeLog4J() {
-        Logger rootLogger = RootLogger.getRootLogger();
-        rootLogger.setLevel(Level.WARN);
-        ConsoleAppender appender = new ConsoleAppender(new PatternLayout("%r - %m%n"));
-        rootLogger.addAppender(appender);
+    protected static void initializeLog4J() {
+        initLog4J();
         LOG.setLevel(Level.INFO);
     }
 
