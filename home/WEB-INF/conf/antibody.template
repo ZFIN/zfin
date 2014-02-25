@@ -1,30 +1,105 @@
-{show-to:users=@authenticated}
-{add-page:template=antibody|parent=@home|labels=community_antibody|allowRename=true|live=true}Create New Antibody{add-page}
-{show-to}
+<ac:macro ac:name="show-if">
+<ac:parameter ac:name="users">@authenticated</ac:parameter>
+<ac:parameter ac:name="spacePermission" />
+<ac:rich-text-body>
+<p>
+<ac:macro ac:name="add-page">
+<ac:parameter ac:name="template">antibody</ac:parameter>
+<ac:parameter ac:name="linkText">Create New Antibody</ac:parameter>
+<ac:parameter ac:name="labels">community_antibody</ac:parameter>
+<ac:parameter ac:name="parent">@home</ac:parameter>
+<ac:parameter ac:name="allowRename">true</ac:parameter>
+<ac:parameter ac:name="live">true</ac:parameter>
+</ac:macro>
+</p>
+</ac:rich-text-body>
+</ac:macro>
+<p />
 
-{link-to:add comment}Add Comment{link-to}
+<ac:macro ac:name="link-to">
+<ac:parameter ac:name="linkText">Add Comment</ac:parameter>
+<ac:default-parameter>add comment</ac:default-parameter>
+</ac:macro>
+<p />
 
-{table-plus:columnAttributes=style=width:20%|sortIcon=true}
-|| Antibody&nbsp;Name: | {text-data:AntibodyName}{page-info:title}{text-data} ||
-|| Other names, clone ids, catalog ids etc. | {text-data:OtherInfo}{text-data} ||
-|| Does it work on zebrafish\? | {list-data:WorksOnZebrafish}{list-option}yes{list-option}{list-option}no{list-option}{list-data} ||
-|| Host organism | {text-data:HostOrganism}{text-data} ||
-|| Immunogen organism| {text-data:ImmunogenOrganism}{text-data} ||
-|| Antibody isotype | {text-data:AntibodyIsotype}{text-data} ||
-|| Antibody type | {text-data:AntibodyType}{text-data} ||
-|| Anatomical structures recognized \\
-(use terms from the [ZFIN Anatomical Ontology|http://zfin.org/action/ontology/ontology-search]) | {text-data:AnatomicalStructuresRecognized}{text-data} ||
-|| Recognized target molecules (gene names, domains, epitopes ...)  | {text-data:RecognizedTargetMolecules}{text-data} ||
-|| Recognized ZFIN genes \\
-current ZFIN-gene symbols only [ZFIN Gene Search|http://zfin.org/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg] | {text-data:ZFINGenes}{text-data} ||
-|| Supplier(s) | {text-data:Suppliers}{text-data} ||
-{table-plus}
+<ac:macro ac:name="table-plus">
+<ac:parameter ac:name="sortIcon">true</ac:parameter>
+<ac:parameter ac:name="columnAttributes">style=width:20%</ac:parameter>
+<ac:rich-text-body>
+<table><tbody>
+<tr>
+<th><p> Antibody&nbsp;Name: </p></th>
+<td><p>
+{text-data:AntibodyName}{page-info:title}{text-data}
+ </p></td>
+</tr>
+<tr>
+<th><p> Other names, clone ids, catalog ids etc. </p></th>
+<td><p> {text-data:OtherInfo}{text-data}</p></td>
+</tr>
+<tr>
+<th><p> Does it work on zebrafish? </p></th>
+<td><p> {list-data:WorksOnZebrafish}{list-option}yes{list-option}{list-option}no{list-option}{list-data} </p></td>
+</tr>
+<tr>
+<th><p> Host organism </p></th>
+<td><p> {text-data:HostOrganism}{text-data} </p></td>
+</tr>
+<tr>
+<th><p> Immunogen organism</p></th>
+<td><p> {text-data:ImmunogenOrganism}{text-data} </p></td>
+</tr>
+<tr>
+<th><p> Antibody isotype </p></th>
+<td><p> {text-data:AntibodyIsotype}{text-data}</p></td>
+</tr>
+<tr>
+<th><p> Antibody type </p></th>
+<td><p> {text-data:AntibodyType}{text-data} </p></td>
+</tr>
+<tr>
+<th><p> Anatomical structures recognized <br class="atl-forced-newline" />
+(use terms from the <a href="http://zfin.org/action/ontology/ontology-search">ZFIN Anatomical Ontology</a>) </p></th>
+<td><p> {text-data:AnatomicalStructuresRecognized}{text-data} </p></td>
+</tr>
+<tr>
+<th><p> Recognized target molecules (gene names, domains, epitopes ...)  </p></th>
+<td><p />
+<ac:macro ac:name="text-data">
+<ac:parameter ac:name="content">wiki</ac:parameter>
+<ac:parameter ac:name="name">RecognizedTargetMolecules</ac:parameter>
+<ac:parameter ac:name="atlassian-macro-output-type">INLINE</ac:parameter>
+<ac:parameter ac:name="type">line</ac:parameter>
+</ac:macro><p /></td>
+</tr>
+<tr>
+<th><p> Recognized ZFIN genes <br class="atl-forced-newline" />
+current ZFIN-gene symbols only <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg">ZFIN Gene Search</a> </p></th>
+<td><p>
+{text-data:ZFINGenes}{text-data}
+</p></td>
+</tr>
+<tr>
+<th><p> Suppliers </p></th>
+<td><p>
+ {text-data:Suppliers}{text-data}
+ </p></td>
+</tr>
+</tbody></table>
+</ac:rich-text-body></ac:macro>
+<p />
 
-h3. Assays Tested
+<h3>Assays Tested</h3>
 
-|| Assay || Prep ||Worked || Notes ||
+<table><tbody>
+<tr>
+<th><p> Assay </p></th>
+<th><p> Prep </p></th>
+<th><p>Worked </p></th>
+<th><p> Notes </p></th>
+</tr>
 {table:Assays Tested}
+</tbody></table>
 
-
-h3. Notes
+<h3>Notes</h3>
 {text-data:Comments|type=area|width=400px|height=150px}{text-data}

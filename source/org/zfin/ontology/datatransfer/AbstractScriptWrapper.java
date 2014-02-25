@@ -1,6 +1,8 @@
 package org.zfin.ontology.datatransfer;
 
 import org.apache.commons.cli.*;
+import org.apache.log4j.Category;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.hibernate.SessionFactory;
@@ -83,5 +85,10 @@ public class AbstractScriptWrapper {
 
     private static final Logger LOG = Logger.getLogger(AbstractScriptWrapper.class);
     public static final String NEWLINE = System.getProperty("line.separator");
+
+    protected static void setLoggerToInfoLevel(Logger logger) {
+        logger.setLevel(Level.INFO);
+    }
+
 
 }

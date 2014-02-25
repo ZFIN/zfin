@@ -40,7 +40,7 @@ public class PublicationPresentation extends EntityPresentation {
     }
 
     public static String getWikiLink(Publication publication) {
-        return getWikiLink(ZfinProperties.getWebDriver() + uri, publication.getZdbID(), publication.getAuthors(), publication.getTitle());
+        return getWikiLink("", publication.getZdbID(), publication.getAuthors(), publication.getTitle());
     }
 
     public static String getSingleAttributionLink(String publicationZdbID, int publicationCount) {

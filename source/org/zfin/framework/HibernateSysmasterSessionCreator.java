@@ -78,7 +78,7 @@ public class HibernateSysmasterSessionCreator implements FactoryBean {
             ClassLoader cl = HibernateSysmasterSessionCreator.class.getClassLoader();
             String directory = cl.getResource("org/zfin/database/sysmaster.hbm.xml").toString();
             directory = directory.substring(0, directory.lastIndexOf("/"));
-            directory = directory.replace("file:/", "");
+            directory = directory.replace("file:/", "/");
             hibernateConfDir = FileUtil.createFileFromStrings(directory);
         }
         File[] hibernateConfigurationFiles = hibernateConfDir.listFiles(new HibernateFilenameFilter());

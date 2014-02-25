@@ -1,8 +1,8 @@
 package org.zfin.framework.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.wiki.WikiLoginException;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
 /**
@@ -51,26 +51,19 @@ public abstract class EntityPresentation {
     }
 
     protected static String getWikiLink(String uri, String zdbID, String abbreviation, String name) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            sb.append("[");
-            sb.append(abbreviation);
-            sb.append("|");
-            sb.append("http://");
-            sb.append(AntibodyWikiWebService.getInstance().getDomainName());
-            sb.append("/");
+        StringBuilder sb = new StringBuilder();
+        sb.append("<a href=\"");
+        sb.append("http://zfin.org");
+        sb.append("/");
+        if (StringUtils.isNotEmpty(uri)) {
             sb.append(uri);
-            sb.append(zdbID);
-            if (name != null) {
-                sb.append("|");
-                sb.append(name);
-            }
-            sb.append("]");
-            return sb.toString();
-        } catch (WikiLoginException e) {
-            logger.error(e);
-            return null;
+            sb.append("/");
         }
+        sb.append(zdbID);
+        sb.append("\">");
+        sb.append(AntibodyWikiWebService.getEncodedString(abbreviation));
+        sb.append("</a>");
+        return sb.toString();
     }
 
     protected static String getExternalWikiLink(String link, String name) {
@@ -87,7 +80,7 @@ public abstract class EntityPresentation {
         StringBuilder sb = getViewHyperlinkStart();
         sb.append(zdbID);
         sb.append("\"");
-        if(name != null) {
+        if (name != null) {
             sb.append(" title=\"");
             sb.append(name);
             sb.append("\"");
@@ -108,7 +101,7 @@ public abstract class EntityPresentation {
             sb.append(name);
             sb.append("\"");
         }
-        sb.append(" id='" + zdbID+ "'>");
+        sb.append(" id='" + zdbID + "'>");
         sb.append(abbreviation);
         sb.append("</a>");
         return sb.toString();

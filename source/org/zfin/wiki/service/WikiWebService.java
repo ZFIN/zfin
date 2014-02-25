@@ -105,6 +105,7 @@ public class WikiWebService {
     private boolean doLogin() throws WikiLoginException, ServiceException {
         ConfluenceSoapServiceServiceLocator serviceLocator = new ConfluenceSoapServiceServiceLocator();
         try {
+            serviceLocator.setConfluenceserviceV2EndpointAddress(WEBSERVICE_PROTOCOL + wikiHost + ENDPOINT_SUFFIX);
             service = serviceLocator.getConfluenceserviceV2();
             token = service.login(wikiUserName, wikiPassword);
 

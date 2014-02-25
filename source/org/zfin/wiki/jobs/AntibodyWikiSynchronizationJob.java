@@ -1,26 +1,64 @@
 package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.zfin.framework.ZfinBasicQuartzJob;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.wiki.WikiLoginException;
+import org.zfin.wiki.WikiSynchronizationReport;
 import org.zfin.wiki.service.AntibodyWikiWebService;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  */
-public class AntibodyWikiSynchronizationJob extends ZfinBasicQuartzJob {
+public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTask {
 
-    private final Logger logger = Logger.getLogger(AntibodyWikiSynchronizationJob.class);
+    private static final Logger logger = Logger.getLogger(AntibodyWikiSynchronizationJob.class);
 
-    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public static void main(String[] args) throws WikiLoginException, FileNotFoundException, InterruptedException {
+        setLoggerToInfoLevel(logger);
+        setLoggerToInfoLevel(WikiSynchronizationReport.LOG);
+        setLoggerToInfoLevel(AntibodyWikiWebService.logger);
         logger.info("pushing antibodies to antibody wiki");
-        try {
-            AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
-        } catch (Exception e) {
-            logger.error("Failed to synchronize ZFIN antibodies with wiki antibodies",e);
-            throw new JobExecutionException(e);
-        }
+        String propertyFilePath = args[0];
+        String jobDirectoryString = args[1];
+        File jobDirectory = new File(jobDirectoryString);
+        AntibodyWikiSynchronizationJob job = new AntibodyWikiSynchronizationJob();
+        job.setPropertyFilePath(propertyFilePath);
+        job.setBaseDir(jobDirectoryString);
+        job.setJobName(args[2]);
+        job.init();
+        WikiSynchronizationReport report = AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
+        job.createReportFiles(report
+        );
     }
 
+    private void createReportFiles(WikiSynchronizationReport wikiSynchronizationReport) {
+        if (wikiSynchronizationReport == null)
+            return;
+        List<List<String>> updatedList = getStringifiedList(wikiSynchronizationReport.getUpdatedPages());
+        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getUpdatedPages()), "updated-antibodies");
+        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getCreatedPages()), "created-antibodies");
+        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getDroppedPages()), "dropped-antibodies");
+
+        System.out.print(wikiSynchronizationReport);
+    }
+
+    private List<List<String>> getStringifiedList(List<String> updatedPages) {
+        List<List<String>> returnList = new ArrayList<>(updatedPages.size());
+        for (String value : updatedPages) {
+            List<String> list = new ArrayList<>(1);
+            list.add(value);
+            returnList.add(list);
+        }
+        return returnList;
+    }
+
+
+    @Override
+    public void execute() {
+
+    }
 }

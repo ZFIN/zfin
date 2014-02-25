@@ -214,7 +214,7 @@ public class TermPresentation extends EntityPresentation {
 
     public static String getWikiLink(Term term) {
         if (term.getOntology().equals(Ontology.ANATOMY))
-            return getWikiLink("/action/" + uri, term.getOboID(), term.getTermName());
+            return getWikiLink("", term.getOboID(), term.getTermName());
         else if (Ontology.isGoOntology(term.getOntology()))
             return getExternalWikiLink(GO_URI + term.getOboID(), term.getTermName());
         else {

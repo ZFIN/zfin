@@ -11,12 +11,10 @@
             <list>
                 <ref bean="regenerateWebHostDatabasesDaily"/>
                 <ref bean="validateDatabasesDaily"/>
-                <ref bean="pushAntibodiesToWikiWeekly"/>
                 <ref bean="setPermissionsToOwnerTrigger"/>
                 <ref bean="updateDOIDailyTrigger"/>
                 <ref bean="updateDOIMonthlyTrigger"/>
                 <ref bean="microarrayTrigger"/>
-                <ref bean="reloadOntologyTrigger"/>
                 <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
                 <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
@@ -80,20 +78,6 @@
         <!--a nice lookup-->
         <!--fire at 8.12 pm every Friday -->
         <property name="cronExpression" value="0 12 20 ? * FRI"/>
-    </bean>
-
-    <bean id="pushAntibodiesToWikiWeekly" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Synchronize ZFIN Antibodies With Wiki"/>
-                <property name="group" value="Wiki"/>
-                <property name="jobClass" value="org.zfin.wiki.jobs.AntibodyWikiSynchronizationJob"/>
-            </bean>
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
-        <!--a nice lookup-->
-        <!--fire at 3.12 am every Sunday-->
-        <property name="cronExpression" value="0 12 3 ? * SUN"/>
     </bean>
 
     <bean id="setPermissionsToOwnerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">

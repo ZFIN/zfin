@@ -1,5 +1,8 @@
 package org.zfin.wiki;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.RootLogger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +18,7 @@ public class WikiSynchronizationReport {
     private final List<String> nochangedPages = new ArrayList<String>();
 
     private boolean verbose = false;
+    public static final Logger LOG = RootLogger.getLogger(WikiSynchronizationReport.class);
 
     public WikiSynchronizationReport(boolean verbose) {
         this.verbose = verbose;
@@ -26,27 +30,37 @@ public class WikiSynchronizationReport {
 
     public void addCreatedPage(String title) {
         createdPages.add(title);
-        if (verbose) System.out.print("C");
+        if (verbose) {
+            LOG.info("C " + title + ", ");
+        }
     }
 
     public void addDroppedPage(String title) {
         droppedPages.add(title);
-        if (verbose) System.out.print("D");
+        if (verbose) {
+            System.out.print("D" + title + ", ");
+        }
     }
 
     public void addUpdatedPage(String title) {
         updatedPages.add(title);
-        if (verbose) System.out.print("U");
+        if (verbose) {
+            System.out.print("U " + title + ", ");
+        }
     }
 
     public void addErrorPage(String title) {
         errorPages.add(title);
-        if (verbose) System.out.print("E");
+        if (verbose) {
+            System.out.print("E " + title + ", ");
+        }
     }
 
     public void addNoChangePage(String title) {
         nochangedPages.add(title);
-        if (verbose) System.out.print("N");
+        if (verbose) {
+            System.out.print("N " + title + ", ");
+        }
     }
 
     public String toString() {

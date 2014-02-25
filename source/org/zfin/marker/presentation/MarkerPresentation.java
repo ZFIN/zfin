@@ -80,7 +80,7 @@ public class MarkerPresentation extends EntityPresentation {
      * @return A rendered wiki link.
      */
     public static String getWikiLink(Marker marker) {
-        return getWikiLink("action/" + marker_uri, marker.getZdbID(), "_" + marker.getAbbreviation() + "_", marker.getName());
+        return getWikiLink("", marker.getZdbID(), "<em>" + marker.getAbbreviation() + "</em>", marker.getName());
     }
 
 

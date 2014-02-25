@@ -6,8 +6,7 @@ import org.zfin.antibody.Antibody;
 
 import java.util.concurrent.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
 
 /**
@@ -44,6 +43,31 @@ public class AntibodyWikiWebServiceTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void checkAntibodyTemplate() throws Exception {
+
+        // zn-5
+        String zdbID = "ZDB-ATB-081002-19";
+        Antibody ab = getAntibodyRepository().getAntibodyByID(zdbID);
+        assertTrue(ab != null);
+        AntibodyWikiWebService service = AntibodyWikiWebService.getInstance();
+        String content = service.createWikiPageContentForAntibodyFromTemplate(ab);
+        assertNotNull(content);
+    }
+
+    @Test
+    public void checkReplacementsString() {
+        String value = "G&#945; & s/olf";
+        assertEquals("G&alpha; &amp; s/olf", AntibodyWikiWebService.getEncodedString(value));
+        value = "Piperno & Fuller";
+        assertEquals("Piperno &amp; Fuller", AntibodyWikiWebService.getEncodedString(value));
+/*
+        value = "G&#945; 1&2";
+        assertEquals("G&alpha; 1&amp;2", AntibodyWikiWebService.getEncodedString(value));
+*/
+    }
+
+
 }
 
 class Task implements Callable<String> {
@@ -61,12 +85,3 @@ class Task implements Callable<String> {
         return "Ready!";
     }
 }
-
-class TestTask implements Callable<String> {
-    @Override
-    public String call() throws Exception {
-        Thread.sleep(4000); // Just to demo a long running task of 4 seconds.
-        return "Ready!";
-    }
-}
-
