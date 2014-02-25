@@ -308,6 +308,30 @@ delete from tmp_vega_zeg where exists (
 select * from tmp_disjoint_vega_zeg;
 drop table tmp_disjoint_vega_zeg;
 
+! echo "Gene / ENSDARG Combinations that need to be excluded because they're not 1-1"
+
+select mrkr_zdb_id, dbl1.dblink_acc_num
+from marker
+  join db_link dbl1 on mrkr_zdb_id = dbl1.dblink_linked_recid
+  join (select count(*) as be_zero, dblink_acc_num
+                            from db_link
+                            where dblink_acc_num like 'ENSDARG%'
+                            group by dblink_acc_num
+                            having count(*) > 1) dbl2 on dbl1.dblink_acc_num = dbl2.dblink_acc_num
+union
+select mrkr_zdb_id, dblink_acc_num
+from marker
+  join (select count(*) as be_zero, dblink_linked_recid as troublemaker_zdb_id
+            from db_link dbl1
+            where dblink_acc_num like 'ENSDARG%'
+            group by dblink_linked_recid
+            having count(*) > 1) on mrkr_zdb_id = troublemaker_zdb_id
+  join db_link on dblink_linked_recid = mrkr_zdb_id
+where dblink_acc_num like 'ENSDARG%'
+into temp tmp_ensembl_not_one_to_one with no log;
+
+select * from tmp_ensembl_not_one_to_one;
+
 
 select ----------------- Extra ensdarG 1:1 ----------------------------
 	gff_seqname,
@@ -330,6 +354,9 @@ select ----------------- Extra ensdarG 1:1 ----------------------------
    and not exists ( -- avoid mudding the waters
    	select 't' from tmp_vega_zeg where gene.mrkr_zdb_id == tmp_vega_zeg.alias
   )
+   and not exists (
+    select 't' from tmp_ensembl_not_one_to_one tenoto where tenoto.mrkr_zdb_id = gene.mrkr_zdb_id
+   )
  group by 1,3,7,9,10
  into temp tmp_ensembl_zeg with no log
 ;
