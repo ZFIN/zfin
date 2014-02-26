@@ -19,7 +19,7 @@ import java.net.URLDecoder;
  */
 public class HibernateSessionCreator implements FactoryBean {
 
-    private static final Logger LOG = RootLogger.getLogger(HibernateSessionCreator.class);
+    public static final Logger LOG = RootLogger.getLogger(HibernateSessionCreator.class);
 
     private static String FILE_SEP = System.getProperty("file.separator");
 

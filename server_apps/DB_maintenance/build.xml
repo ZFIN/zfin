@@ -26,6 +26,9 @@
 
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
 
+
+    <echo message="SOURCEROOT: ${env.SOURCEROOT}"/>
+
     <path id="extended.classpath">
         <path refid="classpath"/>
         <fileset dir="${env.CATALINA_HOME}/endorsed">
@@ -42,7 +45,7 @@
     <target name="timestamp-download" description="Set the timestamp of the download files int database_info table">
         <echo message="Update time stamp in DATABASE_INFO table:"/>
         <echo message="Use database: ${DBNAME}"/>
-        <run-db-query db-query-file="set_unload_timestamp" instanceName="${DBNAME}"/>
+        <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${DBNAME}"/>
     </target>
 
     <target name="report-linkage-has-member" description="">
@@ -310,6 +313,21 @@
 
     <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
 
+
+    <macrodef name="run-db-query">
+        <attribute name="db-query-file"/>
+        <attribute name="instanceName"/>
+        <sequential>
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+                  failonerror="true">
+                <arg value="@{instanceName}"/>
+                <arg value="@{db-query-file}"/>
+                <arg value="${unloadDir}"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+<!--
     <macrodef name="run-db-query">
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>
@@ -325,6 +343,7 @@
         </sequential>
     </macrodef>
 
+-->
     <target name="usage">
         <echo>
             TARGETS
