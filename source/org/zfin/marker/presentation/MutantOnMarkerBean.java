@@ -11,15 +11,7 @@ public class MutantOnMarkerBean {
     private List<FeaturePresentationBean> alleles;
     private List<MarkerRelationshipPresentation> knockdownReagents ;
     private String mutantLineDisplay;
-    private Boolean hasOrderThisLinks;
 
-    public Boolean getHasOrderThisLinks() {
-        return hasOrderThisLinks;
-    }
-
-    public void setHasOrderThisLinks(Boolean hasOrderThisLinks) {
-        this.hasOrderThisLinks = hasOrderThisLinks;
-    }
 
     public List<FeaturePresentationBean> getAlleles() {
         return alleles;
