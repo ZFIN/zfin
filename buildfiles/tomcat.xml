@@ -7,14 +7,16 @@
     <property name="tomcat-script-informix-zfishweb-stop" value="/private/ZfinLinks/Commons/bin/stoptomcat.pl"/>
 
 
-    <target name="informix-zfishweb-tomcat-start" if="isinformix" description="Starts tomcat if running as informix/zfishweb">
+    <target name="informix-zfishweb-tomcat-start" if="isinformix"
+            description="Starts tomcat if running as informix/zfishweb">
         <exec executable="${tomcat-script-informix-zfishweb-start}" failifexecutionfails="true">
             <arg value="${INSTANCE}"/>
         </exec>
         <echo message=":ZFISHWEB TOMCAT START SUCCESSFUL:"/>
     </target>
 
-    <target name="informix-zfishweb-tomcat-stop" if="isinformix" description="Stops tomcat if running as informix/zfishweb">
+    <target name="informix-zfishweb-tomcat-stop" if="isinformix"
+            description="Stops tomcat if running as informix/zfishweb">
         <exec executable="${tomcat-script-informix-zfishweb-stop}" failifexecutionfails="true">
             <arg value="${INSTANCE}"/>
         </exec>
@@ -23,7 +25,7 @@
 
 
     <target name="mutant-tomcat-start" if="ismutant" description="Starts tomcat if mutant">
-        <exec executable="${tomcat-script-mutant}"  failifexecutionfails="true">
+        <exec executable="${tomcat-script-mutant}" failifexecutionfails="true">
             <arg value="start"/>
         </exec>
         <echo message=":TOMCAT START SUCCESSFUL:"/>
@@ -36,31 +38,67 @@
         <echo message=":TOMCAT STOP SUCCESSFUL:"/>
     </target>
 
-    <target name="tomcat-stop" depends="mutant-tomcat-stop,informix-zfishweb-tomcat-stop" description="Stops tomcat by calling all tomcat stop targets"/>
-    <target name="tomcat-start" depends="mutant-tomcat-start,informix-zfishweb-tomcat-start" description="Starts tomcat by calling all tomcat stop targets"/>
+    <target name="tomcat-stop" depends="mutant-tomcat-stop,informix-zfishweb-tomcat-stop"
+            description="Stops tomcat by calling all tomcat stop targets"/>
+    <target name="tomcat-start" depends="mutant-tomcat-start,informix-zfishweb-tomcat-start"
+            description="Starts tomcat by calling all tomcat stop targets"/>
 
 
-    <target name="tomcat-debug-start"   description="Starts tomcat in debug mode">
+    <target name="tomcat-debug-start" description="Starts tomcat in debug mode">
         <exec executable="${tomcat-script-mutant}">
             <arg value="debug-start"/>
         </exec>
     </target>
 
 
-    <target name="tomcat-debug-stop"   description="Stops tomcat in debug mode">
+    <target name="tomcat-debug-stop" description="Stops tomcat in debug mode">
         <exec executable="${tomcat-script-mutant}">
             <arg value="debug-stop"/>
         </exec>
     </target>
 
+    <target name="tail-tomcat" description="tail -f on catalina.log file">
+        <exec executable="tail">
+            <arg value="-f"/>
+            <arg value="${CATALINA_BASE}/logs/catalina.out"/>
+        </exec>
+    </target>
 
-    <target name="tomcat-restart" depends="tomcat-stop,tomcat-start"  description="Restarts tomcat for the appropriate machine"/>
-    <target name="tomcat-debug-restart" depends="tomcat-debug-stop,tomcat-debug-start"  description="Restarts tomcat in debug mode"/>
-    <target name="restart" depends="tomcat-restart"  description="Restarts tomcat for the appropriate environment"/>
-    <target name="debug-restart" depends="tomcat-debug-restart"  description="Restarts tomcat in debug mode" />
+    <target name="tail-tomcat-access" description="tail -f on access_log txt file">
+        <property name="currentFileName" value=""/>
+
+        <groovy>
+            def catalina_base = properties.CATALINA_BASE
+            def accessFileList = []
+            new File(catalina_base + "/logs").eachFile() { file ->
+                if (file.getName().contains("access_log."))
+                    if (file.getName().contains(properties.MUTANT_NAME))
+                        accessFileList.add(file.getName())
+            }
+            accessFileList.sort()
+/*
+            accessFileList.each { name ->
+                println name
+            }
+*/
+            properties.currentFileName= accessFileList[accessFileList.size - 1]
+        </groovy>
+
+        <exec executable="tail">
+            <arg value="-f"/>
+            <arg value="${CATALINA_BASE}/logs/${currentFileName}"/>
+        </exec>
+    </target>
+
+    <target name="tomcat-restart" depends="tomcat-stop,tomcat-start"
+            description="Restarts tomcat for the appropriate machine"/>
+    <target name="tomcat-debug-restart" depends="tomcat-debug-stop,tomcat-debug-start"
+            description="Restarts tomcat in debug mode"/>
+    <target name="restart" depends="tomcat-restart" description="Restarts tomcat for the appropriate environment"/>
+    <target name="debug-restart" depends="tomcat-debug-restart" description="Restarts tomcat in debug mode"/>
 
     <!-- an alias to create-mutant-instance with a more explanatory name -->
-    <target name="deploy-catalina-base" depends="create-mutant-instance"  description="Creates a tomcat"/>
+    <target name="deploy-catalina-base" depends="create-mutant-instance" description="Creates a tomcat"/>
 
     <target name="create-mutant-instance" depends="create-tomcat-dirs"
             description="Target to create a Tomcat tree for a given mutant">
@@ -104,7 +142,7 @@
         <antcall target="set-catalina-base-perms"/>
     </target>
 
-    <target name="set-catalina-base-perms"  if="isinformix"  description="Sets permissions for tomcat">
+    <target name="set-catalina-base-perms" if="isinformix" description="Sets permissions for tomcat">
         <echo message="chmod a+rX for ${CATALINA_BASE}"/>
         <chmod perm="a+rX" type="both" verbose="true">
             <fileset dir="${CATALINA_BASE}"/>
@@ -140,7 +178,7 @@
             <mkdir dir="${pre.jsp-compile}"/>
             <taskdef classname="org.apache.jasper.JspC" name="jasper2">
                 <classpath id="jspc.classpath">
-		    <path refid="log4j" />
+                    <path refid="log4j"/>
                     <path refid="classpath"/>
                     <pathelement location="${pre-web-inf}"/>
                     <fileset dir="${CATALINA_HOME}/bin">
@@ -178,27 +216,30 @@
     </macrodef>
 
 
-<!--
-    <target name="has-tomcat-symlink">
-        <echo message="Checking tomcat symlink between ${tomcat-work}/org and ${jsp-compile}/org.  "/>
-        <fail message=":FAIL TOMCAT JSP-COMPILE SYMLINK NOT FOUND:  Try running 'ant create-tomcat-symlink'." unless="has.tomcat.symlink"/>
-        <echo message="Link exists"/>
-    </target>
+    <!--
+        <target name="has-tomcat-symlink">
+            <echo message="Checking tomcat symlink between ${tomcat-work}/org and ${jsp-compile}/org.  "/>
+            <fail message=":FAIL TOMCAT JSP-COMPILE SYMLINK NOT FOUND:  Try running 'ant create-tomcat-symlink'." unless="has.tomcat.symlink"/>
+            <echo message="Link exists"/>
+        </target>
 
-    <target name="create-tomcat-symlink">
-        <symlink link="${tomcat-work}/org" action="single" overwrite="true" failonerror="fail" resource="${jsp-compile}/org"/>
-    </target>
--->
+        <target name="create-tomcat-symlink">
+            <symlink link="${tomcat-work}/org" action="single" overwrite="true" failonerror="fail" resource="${jsp-compile}/org"/>
+        </target>
+    -->
 
     <target name="has-download-symlink">
         <echo message="Checking symlink between ${web}/data-exchange and ${env.DOWNLOAD_DIRECTORY}.  "/>
-        <fail message=":FAIL SYMLINK NOT FOUND:  Try running 'ant create-download-file-symlink'." unless="has.download.symlink"/>
+        <fail message=":FAIL SYMLINK NOT FOUND:  Try running 'ant create-download-file-symlink'."
+              unless="has.download.symlink"/>
         <echo message="Download link exists"/>
     </target>
 
     <target name="create-download-file-symlink">
-      <symlink link="${home.target}/data-transfer" action="single" overwrite="true" failonerror="fail" resource="${env.DOWNLOAD_DIRECTORY}"/>
-      <symlink link="${env.DOWNLOAD_DIRECTORY}/current" action="single" overwrite="true" failonerror="fail" resource="${TARGETROOT}/home/data_transfer/Downloads"/>
+        <symlink link="${home.target}/data-transfer" action="single" overwrite="true" failonerror="fail"
+                 resource="${env.DOWNLOAD_DIRECTORY}"/>
+        <symlink link="${env.DOWNLOAD_DIRECTORY}/current" action="single" overwrite="true" failonerror="fail"
+                 resource="${TARGETROOT}/home/data_transfer/Downloads"/>
     </target>
 
     <target name="upgrade-tomcat">
