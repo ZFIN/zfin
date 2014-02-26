@@ -517,7 +517,7 @@ sub executeUnload($) {
 	    # then there are no primary keys and so we don't want to have
 	    # and order by clause in the unload statement.
 
-	    my $sql = "unload to \"$unloadFile\" select * from $tableName" ;
+	    my $sql = "unload to \"$unloadFile\" select * from only($tableName)" ;
 
 	    execSql($dbName, $sql, $unloadTableLog);
 
@@ -535,8 +535,8 @@ sub executeUnload($) {
 	    # remove trailing comma 
 	    $column_list =~ s/\,\z// ;
 
-	    my $sql = "unload to \"$unloadFile\" select * from $tableName order by $column_list;" ;
-
+	    my $sql = "unload to \"$unloadFile\" select * from only($tableName) order by $column_list;" ;
+	    
 	    execSql($dbName, $sql, $unloadTableLog);
 
 	    if (getNRowsReturned($unloadTableLog) < 0) {
