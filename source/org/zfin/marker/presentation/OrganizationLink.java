@@ -29,11 +29,13 @@ public class OrganizationLink implements ProvidesLink {
         return getLink();
     }
 
-    @Override
+ @Override
     public String getLinkWithAttributionAndOrderThis() {
         String link = getLink() ;
         String orderThisLink = getOrderThisLink();
-        return link + (orderThisLink!=null ? " "+orderThisLink : "");
+
+            return link + (orderThisLink!=null ? " "+orderThisLink : "");
+
     }
 
     public String getOrderThisLink() {
@@ -46,14 +48,14 @@ public class OrganizationLink implements ProvidesLink {
                 supplierZdbId.startsWith("ZDB-LAB-")
                         //dumb solution to case 10454 in the last days of IM4.  There are 4 ways to generate order this links in our codebase
                         //made subcase to unify.  Just not enough time to test a big change here.
-         || supplierZdbId.startsWith("ZDB-COMPANY-") && !supplierZdbId.endsWith("-COMPANY-051101-1")
+         || supplierZdbId.startsWith("ZDB-COMPANY-")  && !supplierZdbId.endsWith("COMPANY-051101-1")
                 ) {
             return "<span style=\"font-size: small;\">(<a href=\"" + SourcePresentation.getUrl(supplierZdbId) + "\">order this</a>)</span>";
         }
 
         else {
-            logger.error("bad zdbID for Organization Link[" + supplierZdbId + "]");
-            return null;
+            logger.info("bad zdbID for Organization Link[" + supplierZdbId + "]");
+            return "";
         }
     }
 
