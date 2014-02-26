@@ -2,23 +2,19 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 select di_pk_id, di_date_unloaded
   from database_info;
 
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/mutagenMutagee/mutagenMutagee.txt"
 select featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee, feature_type
   from feature_assay,
  outer (feature)
- where feature_zdb_id = featassay_feature_zdb_id
- and featassay_mutagen != 'TALEN'
- and featassay_mutagen != 'CRISPR';
+ where feature_zdb_id = featassay_feature_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/cleanPhenotype/cleanPhenotype.txt"
 select mfs_mrkr_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id
  from mutant_fast_search, genotype_experiment
   where mfs_mrkr_zdb_id like 'ZDB-GENE%'
  and mfs_genox_zdb_id = genox_zdb_id
- and not exists (select 'x' from experiment_condition
-      	  	 	 where expcond_exp_zdb_id = genox_exp_zdb_id
-			 and expcond_mrkr_zdb_id not like ('ZDB-TALEN%')
-    and expcond_mrkr_zdb_id not like ('ZDB-CRISPR%'));
+;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/images/images.txt"
 select img_zdb_id, img_fig_zdb_id, img_label
@@ -59,12 +55,8 @@ and feature_zdb_id = ids_data_zdb_id
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/markerSequences/1sequences.txt"
- select mrkr_zdb_id, seq_sequence, seq_offset_start, seq_offset_stop, seq_variation, get_obj_type(mrkr_zdb_id),mrkr_zdb_id from marker,snp_sequence
-where mrkr_Zdb_id = seq_mrkr_zdb_id
-union
- select mrkr_zdb_id, seq_sequence, seq_offset_start, seq_offset_stop, "", get_obj_type(mrkr_zdb_id),mrkr_zdb_id from marker,marker_sequence
-where mrkr_Zdb_id = seq_mrkr_zdb_id
-and mrkr_type not in ('TALEN','CRISPR','SNP')
+ select mrkr_zdb_id, mrkrseq_sequence, mrkrseq_offset_start, mrkrseq_offset_stop, mrkrseq_variation, get_obj_type(mrkr_zdb_id),mrkr_zdb_id, mrkrseq_sequence_2 from marker, marker_Sequence
+where mrkr_Zdb_id = mrkrseq_mrkr_zdb_id
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/omimPhenotype/1omimphenotype.txt"
@@ -104,19 +96,12 @@ where mrkr_Zdb_id = dblink_linked_recid;
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featurePubs/1featurePub.txt"
 select record_attribution.*, feature_type from record_attribution, feature
  where recattrib_data_zdb_id = feature_zdb_id
-and not exists (select 'x' from feature_assay
-    	       	       where featassay_mutagen in ('TALEN','CRISPR')
-		       and featassay_feature_zdb_id = feature_zdb_id)
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/genotypePubs/1genoPubs.txt"
 select recattrib_source_zdb_id, recattrib_Data_zdb_id from record_Attribution,
   genotype 
- where recattrib_Data_zdb_id = geno_zdb_id
-  and not exists (Select 'x' from genotype_Experiment, experiment_condition
-      	  	 	 where genox_exp_Zdb_id = expcond_exp_zdb_id
-			 and expcond_mrkr_zdb_id like 'ZDB-TALEN%'
-			 and expcond_mrkr_zdb_id like 'ZDB-CRISPR%');
+ where recattrib_Data_zdb_id = geno_zdb_id;
 
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/lab/1lab.txt"
@@ -155,11 +140,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   and res.xpatres_end_stg_zdb_id = b.stg_zdb_id
   and xpatex.xpatex_zdb_id = res.xpatres_xpatex_zdb_id
   and res.xpatres_zdb_id = xpatfig.xpatfig_xpatres_zdb_id
-  and genox_zdb_id = xpatex_genox_zdb_id
-  and not exists (Select 'x' from experiment_condition
-      	  	 	 where expcond_mrkr_zdb_id like 'ZDB-TALEN%'
-			 and expcond_mrkr_zdb_id like 'ZDB-CRISPR%'
-			 and expcond_exp_zdb_id = genox_exp_zdb_id);
+  and genox_zdb_id = xpatex_genox_zdb_id;
 
 --unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/3xpatfig.txt"
 -- select * from expression_pattern_figure;
@@ -209,10 +190,6 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
    and phenos_quality_Zdb_id = e.term_zdb_id
    and phenox_pk_id = phenos_phenox_pk_id
    and genox_zdb_id = phenox_genox_zdb_id
-  and not exists (Select 'x' from experiment_condition
-      	  	 	 where expcond_mrkr_zdb_id like 'ZDB-TALEN%'
-			 and expcond_mrkr_zdb_id like 'ZDB-CRISPR%'
-			 and expcond_exp_zdb_id = genox_exp_zdb_id)
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_phenotypes/1apato.txt"
@@ -239,18 +216,13 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
     where gfrv_affector_id = feature_zdb_id
     union
  select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
-  	 gfrv_construct_name, gfrv_construct_zdb_id,'morpholino'
+  	 gfrv_construct_name, gfrv_construct_zdb_id,'str'
     from gene_Feature_result_view
-    where gfrv_affector_id like 'ZDB-MRPH%';
+    where (gfrv_affector_id like 'ZDB-MRPH%' or gfrv_affector_id like 'ZDB-TALEN%' or gfrv_affector_id='ZDB-CRISPR%');
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/3figureAnat.txt"
   select ftfs_fas_id, ftfs_genox_zdb_id, ftfs_geno_name, ftfs_geno_handle, ftfs_fig_zdb_id 
-    from figure_Term_fish_search
-  where not exists (Select 'x' from experiment_condition, genotype_Experiment
-      	  	 	 where expcond_mrkr_zdb_id like 'ZDB-TALEN%'
-			 and expcond_mrkr_zdb_id like 'ZDB-CRISPR%'
-			 and expcond_exp_zdb_id = genox_exp_zdb_id
-			 and genox_zdb_id = ftfs_genox_zdb_id);
+    from figure_Term_fish_search;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genotypes/1genos.txt"
   select distinct geno.*,(select a.zyg_name||","||b.zyg_name from zygocity a, zygocity b where a.zyg_zdb_id = genofeat_dad_zygocity and b.zyg_zdb_id = genofeat_mom_zygocity ),get_genotype_backgrounds(geno_zdb_id)
@@ -259,11 +231,6 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
      and geno.geno_is_wildtype = 'f'
      and genofeat_mom_Zygocity is not null
      and genofeat_dad_zygocity is not null
-     and not exists (Select 'x' from feature, feature_assay
-     	     	    	    where genofeat_feature_zdb_id = feature_zdb_id
-			    and feature_zdb_id = featassay_feature_zdb_id
-			    and featassay_mutagen != 'TALEN'
- 			    and featassay_mutagen != 'CRISPR')
 union
   select distinct geno.*,'',get_genotype_backgrounds(geno_zdb_id)
      from genotype geno, genotype_feature
@@ -271,11 +238,6 @@ union
      and geno.geno_is_wildtype = 'f'
      and genofeat_mom_Zygocity is  null
      and genofeat_dad_zygocity is  null
-     and not exists (Select 'x' from feature, feature_assay
-     	     	    	    where genofeat_feature_zdb_id = feature_zdb_id
-			    and feature_zdb_id = featassay_feature_zdb_id
-			    and featassay_mutagen != 'TALEN'
- 			    and featassay_mutagen != 'CRISPR')
   union 
     select geno.*,'',get_genotype_backgrounds(geno_zdb_id)
       from genotype geno
@@ -287,16 +249,12 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   where not exists (Select 'x' from genotype_Feature
   	 		where genofeat_feature_zdb_id = feature_zdb_id)
  and featassay_feature_zdb_id = feature_zdb_id
- and featassay_mutagen != 'TALEN'
- and featassay_mutagen != 'CRISPR'
  ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_fmrels/1fmrels.txt"
   select feature_marker_relationship.*,feature_type from feature_marker_relationship, feature, feature_assay
    where fmrel_ftr_zdb_id = feature_zdb_id
    and featassay_feature_zdb_id = feature_zdb_id
-   and featassay_mutagen != 'TALEN'
-   and featassay_mutagen != 'CRISPR'	
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genofeats/1genofeats.txt"
@@ -305,33 +263,24 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   from genotype_feature, feature, int_data_source, feature_assay
   where genofeat_feature_zdb_id = feature_zdb_id
   and ids_datA_zdb_id = feature_zdb_id
-  and featassay_feature_zdb_id =feature_zdb_id
-			    and featassay_mutagen != 'TALEN'
- 			    and featassay_mutagen != 'CRISPR'
+and featassay_feature_zdb_id = feature_zdb_id
  union 
 select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
  	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, "", featassay_mutagen, featassay_mutagee
   from genotype_feature, feature,feature_assay
   where genofeat_feature_zdb_id = feature_zdb_id
   and featassay_feature_zdb_id = feature_zdb_id
-  and not exists (select 'x' from int_datA_source where ids_data_zdb_id = feature_zdb_id)
-			    and featassay_mutagen != 'TALEN'
- 			    and featassay_mutagen != 'CRISPR';
+ ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genoenvs/1genoenvs.txt"
  select genox_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id
    from genotype_experiment
-  where not exists (select 'x' from experiment_condition
-      	  	 	 where expcond_exp_zdb_id = genox_exp_zdb_id
-			 and expcond_mrkr_zdb_id not like ('ZDB-TALEN%')
-    and expcond_mrkr_zdb_id not like ('ZDB-CRISPR%'));
+;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genoenvs/2envs.txt"
   select exp_zdb_id, exp_source_zdb_id 
     from experiment, experiment_condition
-   where expcond_mrkr_zdb_id not like ('ZDB-TALEN%')
-    and expcond_mrkr_zdb_id not like ('ZDB-CRISPR%')
-    and expcond_exp_Zdb_id = exp_zdb_id
+   where expcond_exp_Zdb_id = exp_zdb_id
    union
    select exp_zdb_id, exp_source_zdb_id
    from experiment
@@ -352,8 +301,6 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
     where expcond_cdt_zdb_id = cdt_zdb_id
     and exp_zdb_id = expcond_exp_Zdb_id
     and expcond_expunit_zdb_id = expunit_zdb_id
-    and expcond_mrkr_zdb_id not like ('ZDB-TALEN%')
-    and expcond_mrkr_zdb_id not like ('ZDB-CRISPR%')
 union
   select exp_zdb_id,
   	 exp_zdb_id,
@@ -371,26 +318,20 @@ union
 --markers
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/1markers.txt"
-select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkr_name from marker
-  where mrkr_type not in ('TALEN','CRISPR');
+select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mrkr_name from marker;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/2mrels.txt"
  select mrel.* from marker_relationship mrel, marker a, marker b
   where a.mrkr_Zdb_id = mrel_mrkr_1_zdb_id
   and b.mrkr_Zdb_id = mrel_mrkr_2_zdb_id 
   and mrel_type != 'clone overlap'
-and a.mrkr_type!= 'TALEN'
-   and a.mrkr_type!='CRISPR'
-   and b.mrkr_type!= 'TALEN'
-   and b.mrkr_type!='CRISPR'
+
   ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/3dalias.txt"
   select data_alias.*,alias_group.aliasgrp_name from data_alias, alias_group
     where exists (select 'x' from marker where mrkr_zdb_id = dalias_data_zdb_id)
-    and aliasgrp_pk_id = dalias_group_id
-    and dalias_data_zdb_id not like 'ZDB-CRISPR%'
-    and dalias_data_zdb_id not like 'ZDB-TALEN%';
+    and aliasgrp_pk_id = dalias_group_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/feature_alias/1dalias.txt"
   select data_alias.*,alias_group.aliasgrp_name,feature_type from data_alias, alias_group, feature
@@ -434,9 +375,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/6recattrib.txt"
 select recattrib_data_zdb_id, recattrib_source_zdb_id
   from record_Attribution, marker
-  where mrkr_zdb_id = recattrib_data_zdb_id
-  and mrkr_type not like 'TALEN'
-  and mrkr_type not like 'CRISPR';
+  where mrkr_zdb_id = recattrib_data_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_markers/7antibody.txt"
 select * from antibody;
