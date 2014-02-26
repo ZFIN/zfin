@@ -623,31 +623,39 @@ public class AntibodyWikiWebService extends WikiWebService {
 
         int numAntibodies = zfinAntibodyHashMap.values().size();
         // get all pages for the zfin_antibody label
-        RemoteSearchResult[] remoteSearchResults;
+        RemotePageSummary[] remotePageSummaries;
         try {
-            remoteSearchResults = service.getLabelContentByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue());
+            remotePageSummaries = service.getPages(token, "AB");
         } catch (Exception e) {
             logger.error("Failed to drop pages because of error", e);
             return wikiSynchronizationReport;
         }
 
-        if (remoteSearchResults.length < numAntibodies) {
-            logger.error("More Antibodies in ZFIN[" + numAntibodies + "] than in the wiki [" + remoteSearchResults.length + "]");
-        } else if (remoteSearchResults.length > numAntibodies) {
+        if (remotePageSummaries.length < numAntibodies) {
+            logger.error("More Antibodies in ZFIN[" + numAntibodies + "] than in the wiki [" + remotePageSummaries.length + "]");
+        } else if (remotePageSummaries.length > numAntibodies) {
             // drop antibodies
-            logger.warn("Fewer Antibodies in ZFIN[" + numAntibodies + "] than in the wiki [" + remoteSearchResults.length + "]: DROPPING ANTIBODIES");
-            for (RemoteSearchResult remoteSearchResult : remoteSearchResults) {
+            logger.warn("Fewer Antibodies in ZFIN[" + numAntibodies + "] than in the wiki [" + remotePageSummaries.length + "]: DROPPING ANTIBODIES");
+            List<RemotePageSummary> communityAntibodies = new ArrayList<>();
+            for (RemotePageSummary remoteSearchResult : remotePageSummaries) {
                 if (!zfinAntibodyHashMap.containsKey(remoteSearchResult.getTitle().toUpperCase())) {
                     try {
-                        if (remoteSearchResult.getExcerpt().contains("{live-template:antibody}")) {
-                            String errorString = "Trying to remove a user-generated page for some reason, fixing label: " + remoteSearchResult.getTitle() + " " + remoteSearchResult.getUrl();
-                            wikiSynchronizationReport.addErrorPage(errorString);
-                            logger.error(errorString);
-                            service.removeLabelByName(token, Label.ZFIN_ANTIBODY_LABEL.getValue(), remoteSearchResult.getId());
-                            service.addLabelByName(token, Label.COMMUNITY_ANTIBODY.getValue(), remoteSearchResult.getId());
-                        } else {
-                            logger.info("trying to drop!: " + remoteSearchResult.getTitle());
-                            wikiSynchronizationReport = dropPage(remoteSearchResult, wikiSynchronizationReport);
+                        RemoteLabel[] labelsByIds = service.getLabelsById(token, remoteSearchResult.getId());
+                        if (labelsByIds != null) {
+                            boolean isZfinAntibody = false;
+                            // check if the antibody is an old / stale zfin antibody
+                            for (RemoteLabel label : labelsByIds) {
+                                if (label.getName().equalsIgnoreCase(Label.ZFIN_ANTIBODY_LABEL.getValue())) {
+                                    isZfinAntibody = true;
+                                    break;
+                                }
+                            }
+                            // if it is an old ZFIN antibody then drop it otherwise keep it.
+                            if (isZfinAntibody) {
+                                logger.info("trying to drop!: " + remoteSearchResult.getTitle());
+                                wikiSynchronizationReport = dropPage(remoteSearchResult, wikiSynchronizationReport);
+                            } else
+                                communityAntibodies.add(remoteSearchResult);
                         }
                     } catch (Exception e) {
                         logger.error("failed to drop page: " + remoteSearchResult.getTitle(), e);
@@ -655,6 +663,7 @@ public class AntibodyWikiWebService extends WikiWebService {
                     }
                 }
             }
+            logger.info("There are " + communityAntibodies.size() + " antibodies created by the community.");
 
         } else {
             logger.info(numAntibodies + " antibodies updated or created from ZFIN ");
@@ -672,7 +681,7 @@ public class AntibodyWikiWebService extends WikiWebService {
 
     }
 
-    private WikiSynchronizationReport dropPage(RemoteSearchResult remoteSearchResult, WikiSynchronizationReport wikiSynchronizationReport) throws Exception {
+    private WikiSynchronizationReport dropPage(RemotePageSummary remoteSearchResult, WikiSynchronizationReport wikiSynchronizationReport) throws Exception {
         logger.warn("zfin_antibody wiki page not a ZFIN Antibody, DROPPING: " + remoteSearchResult.getTitle());
         // if page has comments, create error
         RemoteComment[] remoteComments = service.getComments(token, remoteSearchResult.getId());
