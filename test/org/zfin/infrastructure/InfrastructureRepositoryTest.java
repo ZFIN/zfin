@@ -549,8 +549,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         // this keeps popping back and for as a ZGC .. .will remove
 //        assertTrue(infrastructureRepository.hasStandardPublicationAttribution("ZDB-GENE-041008-244", MicroarrayWebserviceJob.MICROARRAY_PUB));
 
-        // on clone, but not the gene
-        assertFalse(infrastructureRepository.hasStandardPublicationAttribution("ZDB-GENE-031118-138", MicroarrayWebserviceJob.MICROARRAY_PUB));
     }
 
     @Test
