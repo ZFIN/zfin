@@ -35,7 +35,7 @@ public class AbstractSmokeTest extends WebTestCase {
 
     @Parameterized.Parameters
     public static Collection webClients() {
-        return Arrays.asList(new Object[][]{{getBrowserClients()[0]}, {getBrowserClients()[1]}});
+        return Arrays.asList(new Object[][]{{getBrowserClients()[0]}});
     }
 
     protected final WebClient[] curationWebClients = {
