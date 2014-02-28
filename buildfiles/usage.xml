@@ -49,6 +49,8 @@
             tomcat-debug-start: Start tomcat and allow remote debugging on port $JPDA_ADDRESS
             tomcat-stop: Stop tomcat
             tomcat-kill: Forced tomcat stop
+            tail-tomcat: tail -f $CATALINA_BASE/logs/catalina.out
+            tail-tomcat-access: tail -f $CATALINA_BASE/logs/(xxx.mutant.xxx.access_log.txt) most current file
             deploy-catalina-base: Build/update tomcat instance in CATALINA_BASE
                 (used to be called create-mutant-instance)
 
