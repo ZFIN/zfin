@@ -5,6 +5,7 @@ import freemarker.template.TemplateException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -27,14 +28,20 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     protected String instance;
     protected String baseDir;
     protected String jobName;
-    protected String propertyFilePath;
-    protected File baseValidateDataDirectory;
+    protected String propertyFilePath = "home/WEB-INF/zfin.properties";
+    protected File dataDirectory;
     protected File queryFile;
     protected String templateName = "validate-data-email-report.template";
     protected String propertiesFile = "validate-data-email-report.properties";
     protected Properties reportProperties;
+    protected DatabaseService service = new DatabaseService();
 
     public abstract void execute();
+
+    protected void init(String baseDir) {
+        this.baseDir = baseDir;
+        init(true);
+    }
 
     protected void init() {
         init(true);
@@ -44,30 +51,37 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         ZfinProperties.init(propertyFilePath);
         if (initDatabase)
             new HibernateSessionCreator(false);
-        baseValidateDataDirectory = new File(baseDir);
-        if (!baseValidateDataDirectory.exists()) {
-            String message = "No directory found: " + baseValidateDataDirectory.getAbsolutePath();
-            LOG.error(message);
-            throw new RuntimeException(message);
+
+        if (baseDir != null) {
+            dataDirectory = new File(baseDir);
+            if (!dataDirectory.exists()) {
+                String message = "No directory found: " + dataDirectory.getAbsolutePath();
+                LOG.error(message);
+                throw new RuntimeException(message);
+            }
         }
         reportProperties = new Properties();
         try {
-            reportProperties.load(new FileInputStream(new File(baseValidateDataDirectory, propertiesFile)));
+            reportProperties.load(new FileInputStream(new File(dataDirectory, propertiesFile)));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, String reportPrefix) {
+        createErrorReport(errorMessages, resultList, reportPrefix, dataDirectory);
+    }
+
+    protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, String reportPrefix, File directory) {
         String fileName = jobName;
         if (StringUtils.isNotEmpty(reportPrefix))
             fileName += "." + reportPrefix;
 
-        File reportFile = new File(baseValidateDataDirectory, fileName + ".report.html");
+        File reportFile = new File(directory, fileName + ".report.html");
         if (reportFile.exists())
             if (!reportFile.delete())
                 LOG.error("Could not delete report file: " + reportFile.getAbsolutePath());
-        File dataFile = new File(baseValidateDataDirectory, fileName + ".txt");
+        File dataFile = new File(directory, fileName + ".txt");
         if (dataFile.exists())
             if (!dataFile.delete())
                 LOG.error("Could not delete data file: " + dataFile.getAbsolutePath());
@@ -76,7 +90,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             return;
         freemarker.template.Configuration configuration = new freemarker.template.Configuration();
         try {
-            configuration.setDirectoryForTemplateLoading(baseValidateDataDirectory);
+            configuration.setDirectoryForTemplateLoading(directory);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,9 +103,9 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             String errorMessage = (String) reportProperties.get(fileName + "." + ERROR_MESSAGE);
             String columnHeader = (String) reportProperties.get(fileName + "." + HEADER_COLUMNS);
             if (StringUtils.isEmpty(errorMessage))
-                throw new RuntimeException("No value for key " + fileName + " found in file " + baseValidateDataDirectory + "/" + templateName);
+                throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + templateName);
             if (StringUtils.isEmpty(columnHeader))
-                throw new RuntimeException("No value for key " + fileName + " found in file " + baseValidateDataDirectory + "/" + templateName);
+                throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + templateName);
             root.put("errorMessage", errorMessage);
             root.put("recordList", resultList);
             root.put("numberOfRecords", resultList.size());
@@ -100,7 +114,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             root.put("headerColumns", headerCols);
             root.put("dateRun", new Date());
             if (queryFile != null)
-                root.put("sqlQuery", FileUtils.readFileToString(queryFile));
+                root.put("sqlQuery", getSqlQuery());
             template.process(root, writer);
             writer.flush();
             // export data
@@ -131,6 +145,22 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         }
         throw new RuntimeException(" Errors in unit test:" + errorMessages.size());
     }
+
+    protected String getSqlQuery() throws IOException {
+        return FileUtils.readFileToString(queryFile);
+    }
+
+
+    protected void setLoggerFile() {
+        service.setLoggerLevelInfo();
+        File logFile = new File(dataDirectory, jobName + ".log");
+        if (logFile.exists()) {
+            if (!logFile.delete())
+                LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
+        }
+        service.setLoggerFile(logFile);
+    }
+
 
     /*
         protected void createErrorReport(List<String> errorMessages, List<List<List<String>>> resultList) {

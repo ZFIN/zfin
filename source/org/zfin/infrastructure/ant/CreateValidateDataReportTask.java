@@ -13,16 +13,16 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
 
     private final Logger LOG = Logger.getLogger(CreateValidateDataReportTask.class);
 
-    private boolean useDynamicQuery;
+    protected boolean useDynamicQuery;
     private DatabaseService service = new DatabaseService();
 
     public void execute() {
         LOG.info("Job Name: " + jobName);
         LOG.info("Running SQLQueryTask on instance: " + instance);
         if (useDynamicQuery)
-            queryFile = new File(baseValidateDataDirectory, jobName + ".sqlj");
+            queryFile = new File(dataDirectory, jobName + ".sqlj");
         else
-            queryFile = new File(baseValidateDataDirectory, jobName + ".sql");
+            queryFile = new File(dataDirectory, jobName + ".sql");
         if (!queryFile.exists()) {
             String message = "No file found: " + queryFile.getAbsolutePath();
             LOG.error(message);
@@ -50,17 +50,6 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         }
     }
 
-    private void setLoggerFile() {
-        service.setLoggerLevelInfo();
-        File logFile = new File(baseValidateDataDirectory, jobName + ".log");
-        if (logFile.exists()) {
-            if (!logFile.delete())
-                LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
-        }
-        service.setLoggerFile(logFile);
-    }
-
-
     public static void main(String[] args) {
         String instance = args[0];
         String jobName = args[1];
@@ -69,11 +58,10 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         CreateValidateDataReportTask task = new CreateValidateDataReportTask();
         task.setInstance(instance);
         task.setJobName(jobName);
-        task.setBaseDir(directory);
         task.setPropertyFilePath(propertyFilePath);
         if (args.length > 4)
             task.useDynamicQuery = Boolean.parseBoolean(args[4]);
-        task.init();
+        task.init(directory);
         task.execute();
     }
 }

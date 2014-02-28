@@ -281,6 +281,27 @@
         </fail>
     </target>
 
+    <target name="run-data-report" description="">
+        <echo message="Create Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <echo message="Use ParameterValues: ${ParameterValues}"/>
+        <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${JobName}"/>
+            <arg value="${ParameterVariables}"/>
+            <arg value="${ParameterValues}"/>
+            <arg value="${basedir}"/>
+        </java>
+
+        <echo message="${validateData}/validatedata/${JobName}.txt"/>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.txt" substring=","/>
+            </condition>
+        </fail>
+    </target>
+
     <target name="validate-data-report-dynamic" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>

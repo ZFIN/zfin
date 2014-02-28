@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.jdbc.util.BasicFormatterImpl;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Single DB query instruction that will be issued through JDBC connection.
@@ -48,6 +49,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     private boolean subquery;
     private DatabaseJdbcStatement subQueryStatement;
     private DatabaseJdbcStatement parentStatement;
+    Map<String, String> dataMap;
 
     public DatabaseJdbcStatement() {
     }
@@ -170,7 +172,14 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public String getQuery() {
-        return query.toString().trim();
+        String queryString = query.toString().trim();
+        if (dataMap != null) {
+            for (String key : dataMap.keySet()) {
+                String value = dataMap.get(key);
+                queryString = queryString.replace("$" + key, value);
+            }
+        }
+        return queryString;
     }
 
     public boolean isReadOnlyStatement() {
@@ -285,7 +294,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public String getHumanReadableQueryString() {
-        return new BasicFormatterImpl().format(query.toString());
+        return new BasicFormatterImpl().format(getQuery());
     }
 
     public boolean isTestTrue(int value) {
@@ -429,5 +438,9 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
             subQuery = subQuery.replace("$" + index, value);
             index++;
         }
+    }
+
+    public void setDataMap(Map<String, String> dataMap) {
+        this.dataMap = dataMap;
     }
 }

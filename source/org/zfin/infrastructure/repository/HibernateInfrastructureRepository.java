@@ -1241,7 +1241,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 data.add(row);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             if (stmt != null) {
                 try {

@@ -41,14 +41,13 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         CommandLine commandLine = parseArguments(arguments, "comparing publications on ZFIN and PubMed ");
         PubMedValidationReport task = new PubMedValidationReport();
         task.jobName = commandLine.getOptionValue("jobName");
-        task.baseDir = commandLine.getOptionValue("baseDir");
         task.propertyFilePath = commandLine.getOptionValue("propertyFilePath");
         if (StringUtils.isNotEmpty(commandLine.getOptionValue("numOfPublication")))
             numberOfPublicationsToScan = Integer.parseInt(commandLine.getOptionValue("numOfPublication"));
         if (StringUtils.isNotEmpty(commandLine.getOptionValue("threads")))
             numOfThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
 
-        task.init();
+        task.init(commandLine.getOptionValue("baseDir"));
         publicationList = getPublicationRepository().getPublicationWithPubMedId(numberOfPublicationsToScan);
         LOG.info(numOfThreads + " threads used");
         LOG.info(publicationList.size() + " publications are scanned");

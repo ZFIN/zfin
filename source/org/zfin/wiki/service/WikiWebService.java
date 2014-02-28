@@ -112,9 +112,11 @@ public class WikiWebService {
     private boolean doLogin() throws WikiLoginException, ServiceException {
         ConfluenceSoapServiceServiceLocator serviceLocator = new ConfluenceSoapServiceServiceLocator();
         try {
-            serviceLocator.setConfluenceserviceV2EndpointAddress(WEBSERVICE_PROTOCOL + wikiHost + ENDPOINT_SUFFIX);
+            String wikiServer = WEBSERVICE_PROTOCOL + wikiHost + ENDPOINT_SUFFIX;
+            serviceLocator.setConfluenceserviceV2EndpointAddress(wikiServer);
             service = serviceLocator.getConfluenceserviceV2();
             token = service.login(wikiUserName, wikiPassword);
+            logger.info("logging into "+wikiServer);
 
             if (service == null) {
                 throw new WikiLoginException("service is null, failed to instantiate");

@@ -5,6 +5,7 @@ import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.wiki.WikiLoginException;
 import org.zfin.wiki.WikiSynchronizationReport;
 import org.zfin.wiki.service.AntibodyWikiWebService;
+import org.zfin.wiki.service.WikiWebService;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
         setLoggerToInfoLevel(logger);
         setLoggerToInfoLevel(WikiSynchronizationReport.LOG);
         setLoggerToInfoLevel(AntibodyWikiWebService.logger);
+        setLoggerToInfoLevel(WikiWebService.logger);
         logger.info("pushing antibodies to antibody wiki");
         String propertyFilePath = args[0];
         String jobDirectoryString = args[1];

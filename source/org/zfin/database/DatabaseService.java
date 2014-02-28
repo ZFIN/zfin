@@ -313,6 +313,10 @@ public class DatabaseService {
     }
 
     public List<String> runDbScriptFile(File dbScriptFile, Map<String, List<List<String>>> dataMap) {
+        return runDbScriptFile(dbScriptFile, dataMap, null);
+    }
+
+    public List<String> runDbScriptFile(File dbScriptFile, Map<String, List<List<String>>> dataMap, Map<String, String> variableMap) {
         List<String> errorMessage = new ArrayList<>(2);
         if (!dbScriptFile.exists()) {
             String message = "Could not find script file " + dbScriptFile.getAbsolutePath();
@@ -329,6 +333,7 @@ public class DatabaseService {
         if (!LOG.isDebugEnabled())
             LOG.info("No Debugging enabled: To see more debug data enable the logger to leg level debug.");
         for (DatabaseJdbcStatement statement : queries) {
+            statement.setDataMap(variableMap);
             LOG.info("Statement " + statement.getLocationInfo() + "\n" + statement.getHumanReadableQueryString());
             if (statement.isInformixWorkStatement())
                 continue;
