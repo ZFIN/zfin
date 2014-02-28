@@ -159,4 +159,14 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         this.propertyFilePath = propertyFilePath;
     }
 
+    public static List<List<String>> getStringifiedList(List<String> updatedPages) {
+        List<List<String>> returnList = new ArrayList<>(updatedPages.size());
+        for (String value : updatedPages) {
+            List<String> list = new ArrayList<>(1);
+            list.add(value);
+            returnList.add(list);
+        }
+        return returnList;
+    }
+
 }

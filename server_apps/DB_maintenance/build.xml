@@ -239,6 +239,17 @@
         </java>
     </target>
 
+    <target name="validate-Zebrafish-Book-permissions" description="">
+        <echo message="Set correct permission on Zebrafish bokk in ZFIN with Community Wiki"/>
+        <java classname="org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="Set-Permissions-Zebrafish-Book-Wiki_d"/>
+        </java>
+    </target>
+
     <target name="clean-wiki-sandbox" description="">
         <echo message="Clean out sandbox at the ZFIN Community Wiki"/>
         <java classname="org.zfin.wiki.jobs.SandboxCleanerJob" fork="no"

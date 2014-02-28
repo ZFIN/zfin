@@ -2,7 +2,6 @@ package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.WikiLoginException;
 import org.zfin.wiki.service.AntibodyWikiWebService;
