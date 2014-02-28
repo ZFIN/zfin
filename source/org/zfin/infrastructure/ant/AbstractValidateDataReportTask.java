@@ -18,11 +18,11 @@ import java.util.*;
 
 /**
  */
-public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapper{
+public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapper {
 
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String HEADER_COLUMNS = "headerColumns";
-    private final Logger LOG = Logger.getLogger(AbstractValidateDataReportTask.class);
+    protected static final Logger LOG = Logger.getLogger(AbstractValidateDataReportTask.class);
 
     protected String instance;
     protected String baseDir;
@@ -37,8 +37,13 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     public abstract void execute();
 
     protected void init() {
+        init(true);
+    }
+
+    protected void init(boolean initDatabase) {
         ZfinProperties.init(propertyFilePath);
-        new HibernateSessionCreator(false);
+        if (initDatabase)
+            new HibernateSessionCreator(false);
         baseValidateDataDirectory = new File(baseDir);
         if (!baseValidateDataDirectory.exists()) {
             String message = "No directory found: " + baseValidateDataDirectory.getAbsolutePath();

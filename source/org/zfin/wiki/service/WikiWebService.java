@@ -26,23 +26,30 @@ public class WikiWebService {
     protected String wikiHost = ZfinPropertiesEnum.WIKI_HOST.value();
     protected String domainName = ZfinPropertiesEnum.DOMAIN_NAME.value();
 
-    private final Logger logger = Logger.getLogger(WikiWebService.class);
+    public static final Logger logger = Logger.getLogger(WikiWebService.class);
 
     private final static String SANDBOX_DEFAULT_CONTENT =
-            "This is the home of the SandBox space.\n\n" +
-                    "To help you on your way, we've inserted some of our favourite macros on this home page. As you start creating pages, adding news items and commenting you'll see the macros below fill up with all the activity in your space.\n\n" +
-                    "{section}\n" +
-                    "{column:width=60%}\n" +
-                    "{recently-updated}\n\n\n" +
-                    "{column}\n\n" +
-                    "{column:width=5%}\n" +
-                    "{column}\n\n" +
-                    "{column:width=35%}\n" +
-                    "Navigate space\n" +
-                    "{pagetreesearch}\n\n" +
-                    "{pagetree}\n\n" +
-                    "{column}\n\n" +
-                    "{section}";
+            "<p>This is the home of the SandBox space.</p>\n" +
+                    "\n" +
+                    "\n" +
+                    "<p>To help you on your way, we've inserted some of our favourite macros on this home page. As you start creating pages, adding news items and commenting you'll see the macros below fill up with all the activity in your space.</p>\n" +
+                    "\n" +
+                    "<ac:macro ac:name=\"section\"><ac:rich-text-body>\n" +
+                    "<ac:macro ac:name=\"column\"><ac:parameter ac:name=\"width\">60%</ac:parameter><ac:rich-text-body>\n" +
+                    "<ac:macro ac:name=\"recently-updated\" />\n" +
+                    "\n" +
+                    "</ac:rich-text-body></ac:macro>\n" +
+                    "\n" +
+                    "<ac:macro ac:name=\"column\"><ac:parameter ac:name=\"width\">5%</ac:parameter></ac:macro>\n" +
+                    "\n" +
+                    "<ac:macro ac:name=\"column\"><ac:parameter ac:name=\"width\">35%</ac:parameter><ac:rich-text-body>\n" +
+                    "\n" +
+                    "<p>Navigate space</p>\n" +
+                    "<ac:macro ac:name=\"pagetreesearch\" />\n" +
+                    "\n" +
+                    "<ac:macro ac:name=\"pagetree\" />\n" +
+                    "</ac:rich-text-body></ac:macro>\n" +
+                    "</ac:rich-text-body></ac:macro>";
 
 
     private static WikiWebService instance = null;
@@ -182,7 +189,8 @@ public class WikiWebService {
 
     public void setOwnerForLabel(String label) throws Exception {
 
-        if (false == ZfinProperties.isPushToWiki()) {
+        if (!ZfinProperties.isPushToWiki()) {
+            logger.debug("Not configured to update the wiki: WIKI_PUSH_TO_WIKI=false");
             return;
         }
 
@@ -230,28 +238,27 @@ public class WikiWebService {
      * @throws Exception Thrown if problems during the process.
      */
     public void cleanSandbox() throws Exception {
-        if (false == ZfinProperties.isPushToWiki()) {
+        if (!ZfinProperties.isPushToWiki()) {
+            logger.info("Not configured to update the wiki: WIKI_PUSH_TO_WIKI=false");
             return;
         }
 
         RemotePageSummary[] pages = service.getPages(token, Space.SANDBOX.getValue());
-        System.out.println(pages.length);
+        logger.info(pages.length + " pages in ZFIN community Wiki: Sandbox");
         if (pages.length == 1) {
             if (service.getPage(token, pages[0].getId()).getContent().equals(SANDBOX_DEFAULT_CONTENT)) {
                 logger.info("Nothing changed in wiki sandbox homepage, doing nothing");
                 return;
             }
         }
-        logger.info("Wiki sandbox changed, reverting.");
+        logger.info("Wiki sandbox changed, dropping all pages...");
 
         if (pages != null && pages.length > 0) {
             for (RemotePageSummary page : pages) {
-                logger.debug("removing page: " + page.getTitle());
+                logger.info("removing page: " + page.getTitle());
                 service.removePage(token, page.getId());
             }
         }
-
-
         RemotePage homePage = new RemotePage();
         homePage.setContent(SANDBOX_DEFAULT_CONTENT);
         homePage.setCreated(GregorianCalendar.getInstance());
@@ -261,7 +268,7 @@ public class WikiWebService {
         homePage.setSpace(Space.SANDBOX.getValue());
         homePage.setTitle("Home");
         service.storePage(token, homePage);
-
+        logger.info("Wiki sandbox created home page");
     }
 
     public RemoteSearchResult[] getLabelContent(String label) throws Exception {
@@ -270,8 +277,7 @@ public class WikiWebService {
 
     public RemoteContentPermission[] getRemoteContentPermissions(long id, String type) throws Exception {
         RemoteContentPermissionSet remoteContentPermissionSet = service.getContentPermissionSet(token, id, type);
-        RemoteContentPermission[] remoteContentPermissions = remoteContentPermissionSet.getContentPermissions();
-        return remoteContentPermissions;
+        return remoteContentPermissionSet.getContentPermissions();
     }
 
     public RemotePage getPage(long id) throws Exception {

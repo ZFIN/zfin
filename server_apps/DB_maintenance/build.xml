@@ -239,6 +239,17 @@
         </java>
     </target>
 
+    <target name="clean-wiki-sandbox" description="">
+        <echo message="Clean out sandbox at the ZFIN Community Wiki"/>
+        <java classname="org.zfin.wiki.jobs.SandboxCleanerJob" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="Clean-Wiki-Sandbox_w"/>
+        </java>
+    </target>
+
     <target name="validate-data-report-simple" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>

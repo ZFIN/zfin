@@ -15,7 +15,6 @@
                 <ref bean="updateDOIDailyTrigger"/>
                 <ref bean="updateDOIMonthlyTrigger"/>
                 <ref bean="microarrayTrigger"/>
-                <ref bean="sandboxCleanerTrigger"/>
                 <ref bean="validateZebrafishBookPermissionsTrigger"/>
                 <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
                 <ref bean="goaGafLoadTrigger"/>
@@ -106,20 +105,6 @@
         <property name="cronExpression">
             <!--goes off at 2 am-->
             <value>0 0 2 * * ?</value>
-        </property>
-    </bean>
-
-    <bean id="sandboxCleanerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Clean Sandbox Wiki"/>
-                <property name="group" value="Wiki"/>
-                <property name="jobClass" value="org.zfin.wiki.jobs.SandboxCleanerJob"/>
-            </bean>
-        </property>
-        <property name="cronExpression">
-            <!--goes off at 3 am-->
-            <value>0 0 3 * * ?</value>
         </property>
     </bean>
 

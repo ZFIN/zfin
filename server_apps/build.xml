@@ -28,16 +28,6 @@
              classpathref="classpath"/>
     <loadProperties file="${web-inf.dir}/zfin.properties" />
 
-
-    <target name="clean-sandbox" depends="" description="Clean the sandbox on the wiki">
-        <echo>${WIKI_PUSH_TO_WIKI}</echo>
-        <java classname="org.zfin.wiki.jobs.SandboxCleanerJob" fork="yes"
-              failonerror="true" classpathref="classpath">
-            <arg value="${web-inf.dir}/zfin.properties"/>
-        </java>
-
-    </target>
-
     <target name="validate-zbook-permissions-wiki" depends="" description="Clean the sandbox on the wiki">
         <java classname="org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob" fork="yes"
               failonerror="true" classpathref="classpath">

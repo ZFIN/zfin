@@ -1,31 +1,44 @@
 package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.zfin.framework.ZfinBasicQuartzJob;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.wiki.WikiLoginException;
+import org.zfin.wiki.service.AntibodyWikiWebService;
 import org.zfin.wiki.service.WikiWebService;
+
+import java.io.FileNotFoundException;
 
 /**
  * Cleans sandbox.
  */
-public class SandboxCleanerJob extends ZfinBasicQuartzJob {
+public class SandboxCleanerJob extends AbstractValidateDataReportTask {
 
-    private final Logger logger = Logger.getLogger(SandboxCleanerJob.class);
+    private static final Logger logger = Logger.getLogger(SandboxCleanerJob.class);
 
-    @Override
-    public void run(JobExecutionContext context) throws JobExecutionException {
+    public void execute() {
         try {
-            WikiWebService.getInstance().cleanSandbox() ;
+            WikiWebService.getInstance(ZfinPropertiesEnum.WIKI_HOST.value()).cleanSandbox();
         } catch (Exception e) {
-            logger.error("Failed to clean sandbox",e);
-            throw new JobExecutionException(e);
+            e.printStackTrace();
         }
     }
 
-    public static void main(String[] arguments) throws Exception {
-        ZfinProperties.init(arguments[0]);
-        WikiWebService.getInstance().cleanSandbox() ;
+    public static void main(String[] args) throws WikiLoginException, FileNotFoundException, InterruptedException {
+        initLog4J();
+        setLoggerToInfoLevel(logger);
+        setLoggerToInfoLevel(AbstractValidateDataReportTask.LOG);
+        setLoggerToInfoLevel(AntibodyWikiWebService.logger);
+        setLoggerToInfoLevel(WikiWebService.logger);
+        logger.info("Cleaning sandbox wiki...");
+        String propertyFilePath = args[0];
+        String jobDirectoryString = args[1];
+        SandboxCleanerJob job = new SandboxCleanerJob();
+        job.setPropertyFilePath(propertyFilePath);
+        job.setBaseDir(jobDirectoryString);
+        job.setJobName(args[2]);
+        job.init(false);
+        job.execute();
     }
 }
