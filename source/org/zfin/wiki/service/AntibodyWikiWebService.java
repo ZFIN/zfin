@@ -465,8 +465,6 @@ public class AntibodyWikiWebService extends WikiWebService {
         clearAntibodyTemplate();
         for (Antibody antibody : antibodies) {
             // containers
-            if (!antibody.getName().equals("Ab1-nostrin"))
-                continue;
             pageTitle = getWikiTitleFromAntibody(antibody);
             zfinAntibodyHashMap.put(pageTitle.toUpperCase(), antibody);
             ReturnStatus returnStatus = synchronizeAntibodyWithWiki(antibody);
