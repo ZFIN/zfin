@@ -86,8 +86,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             if (!dataFile.delete())
                 LOG.error("Could not delete data file: " + dataFile.getAbsolutePath());
 
-        if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList))
-            return;
         freemarker.template.Configuration configuration = new freemarker.template.Configuration();
         try {
             configuration.setDirectoryForTemplateLoading(directory);
@@ -107,8 +105,13 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             if (StringUtils.isEmpty(columnHeader))
                 throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + templateName);
             root.put("errorMessage", errorMessage);
-            root.put("recordList", resultList);
-            root.put("numberOfRecords", resultList.size());
+            if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList)) {
+                root.put("recordList", new ArrayList<List<String>>());
+                root.put("numberOfRecords", 0);
+            } else {
+                root.put("recordList", resultList);
+                root.put("numberOfRecords", resultList.size());
+            }
             // header columns
             String[] headerCols = columnHeader.split("\\|");
             root.put("headerColumns", headerCols);
@@ -119,12 +122,14 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             writer.flush();
             // export data
             StringBuilder lines = new StringBuilder();
-            for (List<String> record : resultList) {
-                for (String element : record) {
-                    lines.append(element);
-                    lines.append(",");
+            if (CollectionUtils.isNotEmpty(resultList)) {
+                for (List<String> record : resultList) {
+                    for (String element : record) {
+                        lines.append(element);
+                        lines.append(",");
+                    }
+                    lines.append("\n");
                 }
-                lines.append("\n");
             }
             FileUtils.writeStringToFile(dataFile, lines.toString());
         } catch (IOException e) {

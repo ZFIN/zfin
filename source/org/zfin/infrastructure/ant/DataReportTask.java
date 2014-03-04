@@ -46,6 +46,8 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             List<List<List<String>>> resultList = service.getListOfResultRecords();
             if (resultList != null)
                 createErrorReport(errorMessages, resultList.get(0), null, dataDirectory);
+            else
+                createErrorReport(errorMessages, null, null, dataDirectory);
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);
@@ -64,7 +66,7 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     }
 
 
-    // Todo: Needs to be rafactored to be more general
+    // Todo: Needs to be refactored to be more general default value
     // use commons commandLine and a better way to pass in the value default
     public static void main(String[] args) {
         String jobName = args[0];
@@ -77,7 +79,7 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             int year = now.get(Calendar.YEAR);
             int month = now.get(Calendar.MONTH) + 1;
             int day = now.get(Calendar.DAY_OF_MONTH);
-            values = year + "__" + month + "__" + day;
+            values = year + "__" + getPaddedNumber(month) + "__" + getPaddedNumber(day);
         }
         task.valueNames = values;
         String baseDir = null;
@@ -92,5 +94,12 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         }
         task.dataDirectory = new File(pathname);
         task.execute();
+    }
+
+    private static String getPaddedNumber(int month) {
+        if (month > 9)
+            return String.valueOf(month);
+        else
+            return "0" + String.valueOf(month);
     }
 }
