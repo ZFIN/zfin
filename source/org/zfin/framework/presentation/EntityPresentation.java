@@ -61,7 +61,12 @@ public abstract class EntityPresentation {
         }
         sb.append(zdbID);
         sb.append("\">");
-        sb.append(AntibodyWikiWebService.getEncodedString(abbreviation));
+        // needed so the <em> is not escaped. Hack that needs to be fixed by generic encoding consideration
+        // see antibody wiki page generation...
+        if (zdbID.contains("ZDB-GENE-"))
+            sb.append(abbreviation);
+        else
+            sb.append(AntibodyWikiWebService.getEncodedString(abbreviation));
         sb.append("</a>");
         return sb.toString();
     }

@@ -230,9 +230,9 @@ public class AntibodyWikiWebService extends WikiWebService {
         content = content.replace("{text-data:AntibodyIsotype}{text-data}", isotypeReplaceString);
 
         // antibody type
-        String clonalType = "";
-        if (StringUtils.isNotEmpty(clonalType)) {
-            clonalType = antibody.getClonalType();
+        String clonalType = antibody.getClonalType();
+        if (StringUtils.isEmpty(clonalType)) {
+            clonalType = "";
         }
         content = content.replace("{text-data:AntibodyType}{text-data}", clonalType);
 
@@ -465,6 +465,8 @@ public class AntibodyWikiWebService extends WikiWebService {
         clearAntibodyTemplate();
         for (Antibody antibody : antibodies) {
             // containers
+            if (!antibody.getName().equals("Ab1-nostrin"))
+                continue;
             pageTitle = getWikiTitleFromAntibody(antibody);
             zfinAntibodyHashMap.put(pageTitle.toUpperCase(), antibody);
             ReturnStatus returnStatus = synchronizeAntibodyWithWiki(antibody);
