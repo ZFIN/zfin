@@ -82,7 +82,7 @@
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
-            <recipientList>@SUCCESS-RECIPIENT-LIST@${NEW_PUBLICATION_REPORT}</recipientList>
+            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/New-Publications_d.report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
