@@ -50,6 +50,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     }
 
     protected void init(boolean initDatabase) {
+        clearReportDirectory();
         ZfinProperties.init(propertyFilePath);
         if (initDatabase)
             new HibernateSessionCreator(false);
@@ -173,9 +174,10 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         FileWriter writer;
         try {
             String reportFileName = getReportFileFromTemplateName(templateName);
-            File reportFile = new File(directory, reportFileName);
+            File reportFile = FileUtils.getFile(directory, jobName, reportFileName);
             writer = new FileWriter(reportFile);
             freemarker.template.Configuration configuration = new freemarker.template.Configuration();
+
             configuration.setDirectoryForTemplateLoading(directory);
             Template template = configuration.getTemplate(templateName);
             Map<String, Object> root = new HashMap<>();
@@ -211,12 +213,13 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         if (!templateName.endsWith(TEMPLATE))
             throw new RuntimeException("template file name needs to end with " + TEMPLATE);
         // strip off .template ending
-        return templateName.replace(TEMPLATE, "");
+        // and job name prefix
+        return templateName.replace(TEMPLATE, "").replace(jobName + ".", "");
     }
 
     protected String getSqlQuery() throws IOException {
         String sql = FileUtils.readFileToString(queryFile);
-        if (MapUtils.isNotEmpty(dataMap)){
+        if (MapUtils.isNotEmpty(dataMap)) {
             for (String value : dataMap.keySet()) {
                 sql = sql.replaceAll("\\$" + value, dataMap.get(value));
             }
@@ -224,6 +227,13 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         return sql;
     }
 
+    protected void copyFileToReportDirectory(File file) {
+        try {
+            FileUtils.copyFileToDirectory(file, new File(dataDirectory, jobName));
+        } catch (IOException e) {
+            LOG.error(e);
+        }
+    }
 
     protected void setLoggerFile() {
         service.setLoggerLevelInfo();
@@ -233,6 +243,25 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
         }
         service.setLoggerFile(logFile);
+    }
+
+    protected void setReportLoggerFile() {
+        service.setLoggerLevelInfo();
+        File logFile = FileUtils.getFile(dataDirectory, jobName, jobName + ".log");
+        if (logFile.exists()) {
+            if (!logFile.delete())
+                LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
+        }
+        service.setLoggerFile(logFile);
+    }
+
+    /**
+     * clear out existing report directory named after the job.
+     */
+    protected void clearReportDirectory() {
+        File reportDirectory = new File(dataDirectory, jobName);
+        reportDirectory.delete();
+        reportDirectory.mkdir();
     }
 
 

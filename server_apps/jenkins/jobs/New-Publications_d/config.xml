@@ -61,7 +61,7 @@
   </builders>
   <publishers>
       <hudson.tasks.ArtifactArchiver>
-          <artifacts>server_apps/DB_maintenance/report_data/New-Publications_d.*</artifacts>
+          <artifacts>server_apps/DB_maintenance/report_data/New-Publications_d/*</artifacts>
           <latestOnly>false</latestOnly>
           <allowEmptyArchive>true</allowEmptyArchive>
       </hudson.tasks.ArtifactArchiver>
@@ -69,8 +69,8 @@
           <reportTargets>
               <htmlpublisher.HtmlPublisherTarget>
                   <reportName>New Publication Report</reportName>
-                  <reportDir>server_apps/DB_maintenance/report_data</reportDir>
-                  <reportFiles>New-Publications_d.report.html</reportFiles>
+                  <reportDir>server_apps/DB_maintenance/report_data/New-Publications_d</reportDir>
+                  <reportFiles>report.html</reportFiles>
                   <keepAll>false</keepAll>
                   <allowMissing>false</allowMissing>
                   <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -84,16 +84,16 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/New-Publications_d.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data//New-Publications_d/report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/report_data/New-Publications_d.report.txt</attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/report_data/New-Publications_d/report.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
-            <contentType>project</contentType>
+            <contentType>text/html</contentType>
           </email>
         </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <hudson.plugins.emailext.plugins.trigger.FailureTrigger>

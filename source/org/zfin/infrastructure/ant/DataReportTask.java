@@ -1,8 +1,10 @@
 package org.zfin.infrastructure.ant;
 
+import org.apache.commons.io.FileUtils;
 import org.zfin.framework.HibernateUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -36,7 +38,8 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     }
 
     private void runQueryFile(File dbQueryFile) {
-        setLoggerFile();
+        setReportLoggerFile();
+        copyFileToReportDirectory(dbQueryFile);
         HibernateUtil.currentSession().beginTransaction();
         List<String> errorMessages;
         try {

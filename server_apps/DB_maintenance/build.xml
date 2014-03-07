@@ -285,6 +285,7 @@
         <echo message="Create Report"/>
         <echo message="Use database: ${DBNAME}"/>
         <echo message="Use ParameterValues: ${ParameterValues}"/>
+        <delete dir="${validateData}/report_data/${JobName}" />
         <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
               classpathref="extended.classpath"
               failonerror="true">

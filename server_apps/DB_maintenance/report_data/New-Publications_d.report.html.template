@@ -34,7 +34,7 @@ background-color:#EAF2D3;
 <body>
 
 <b>Report for Date:</b> ${YEAR}-${MONTH}-${DAY}
-
+<p/>
 ${numberOfRecords} ZFIN Publications were added or activated
 
 <p/>
