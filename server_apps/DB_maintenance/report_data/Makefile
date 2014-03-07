@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/report_data
 
-STATICS = New-Publications_d.sql  report-data-email.properties	report-data-email.template
+STATICS = New-Publications_d.sql  report-data-email.properties	report-data-email.template New-Publications_d.report.html.template New-Publications_d.report.txt.template
 
 # ---------------  Production Rules  ------------------------------------
 
