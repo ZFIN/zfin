@@ -11,6 +11,7 @@
           <unit-entry name="home/WEB-INF/classes/hibernate.cfg.xml" value="hoovdb" />
           <unit-entry name="home:WEB-INF:classes:hibernate.cfg.xml" value="1e74b719-8c1e-4edd-886d-ceebde12847c" />
         </datasource-map>
+        <naming-strategy-map />
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/../conf/hibernate.cfg.xml" />
       </configuration>
     </facet>

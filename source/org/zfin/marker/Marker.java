@@ -474,6 +474,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         GENE("GENE"),
         GENEDOM("GENEDOM"),
         GENEDOM_AND_EFG("GENEDOM_AND_EFG"),
+        GENEDOM_EFG_REGION("GENEDOM_EFG_REGION"),
         GENEP("GENEP"),
         KNOCKDOWN_REAGENT("KNOCKDOWN_REAGENT"),
         MRPHLNO("MRPHLNO"),

@@ -167,12 +167,14 @@ public class LabController {
         List<Publication> publications = profileRepository.getPublicationsForLab(zdbID);
         model.addAttribute("publications", publications);
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes(lab.getName(), false);
+        logger.error("featurePrefixCount" +featurePrefixes.size());
         model.addAttribute("prefixes", featurePrefixes);
 
         boolean noPrefixes = featurePrefixes.isEmpty();
         if (!noPrefixes) {
             int ctNoneActiveForSet = 0;
             for (FeaturePrefix fpf : featurePrefixes) {
+                logger.error("featurePrefix is:" + fpf.getPrefixString().toString());
                 if (!fpf.isActiveForSet())
                      ctNoneActiveForSet++;
             }
