@@ -57,7 +57,8 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
             logger.info("no zebrafish book pages detected with bad permissions");
             return;
         }
-        createErrorReport(null, getStringifiedList(pages), "faulty-pages");
+        reportPrefix = "faulty-pages";
+        createErrorReport(null, getStringifiedList(pages));
         logger.info(pages);
     }
 

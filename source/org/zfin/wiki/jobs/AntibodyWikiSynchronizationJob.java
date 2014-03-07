@@ -38,9 +38,12 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
     private void createReportFiles(WikiSynchronizationReport wikiSynchronizationReport) {
         if (wikiSynchronizationReport == null)
             return;
-        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getUpdatedPages()), "updated-antibodies");
-        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getCreatedPages()), "created-antibodies");
-        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getDroppedPages()), "dropped-antibodies");
+        reportPrefix = "updated-antibodies";
+        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getUpdatedPages()));
+        reportPrefix = "created-antibodies";
+        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getCreatedPages()));
+        reportPrefix = "dropped-antibodies";
+        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getDroppedPages()));
 
         System.out.print(wikiSynchronizationReport);
     }

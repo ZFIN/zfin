@@ -1,11 +1,10 @@
 package org.zfin.infrastructure.ant;
 
-import org.apache.commons.io.FileUtils;
 import org.zfin.framework.HibernateUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  */
@@ -13,7 +12,6 @@ public class DataReportTask extends AbstractValidateDataReportTask {
 
     public static final String DELIMITER = "__";
     private static final String REPORT_DIRECTORY = "server_apps/DB_maintenance/report_data";
-    private Map<String, String> dataMap = new HashMap<>(5);
 
     private String variableNames;
     private String valueNames;
@@ -45,9 +43,9 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             errorMessages = service.runDbScriptFile(dbQueryFile, null, dataMap);
             List<List<List<String>>> resultList = service.getListOfResultRecords();
             if (resultList != null)
-                createErrorReport(errorMessages, resultList.get(0), null, dataDirectory);
+                createReportFile(dataDirectory, resultList.get(0), errorMessages);
             else
-                createErrorReport(errorMessages, null, null, dataDirectory);
+                createErrorReport(errorMessages, null, dataDirectory);
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);
@@ -56,15 +54,6 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             HibernateUtil.closeSession();
         }
     }
-
-    protected String getSqlQuery() throws IOException {
-        String sql = FileUtils.readFileToString(queryFile);
-        for (String value : dataMap.keySet()) {
-            sql = sql.replaceAll("\\$" + value, dataMap.get(value));
-        }
-        return sql;
-    }
-
 
     // Todo: Needs to be refactored to be more general default value
     // use commons commandLine and a better way to pass in the value default
@@ -85,8 +74,8 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         String baseDir = null;
         if (args.length > 3)
             baseDir = args[3];
-        task.templateName = "report-data-email.template";
         task.propertiesFile = "report-data-email.properties";
+        task.templateName = "report-data-email.template";
         String pathname = baseDir + "/" + REPORT_DIRECTORY;
         if (baseDir != null) {
             task.propertyFilePath = baseDir + "/" + task.propertyFilePath;

@@ -94,8 +94,10 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
     }
 
     public void createReports() {
-        createErrorReport(null, pubMedIdNotFoundList, "faulty-PubMed-IDs");
-        createErrorReport(null, pubInfoMismatchList, "faulty-Pub-Info");
+        reportPrefix = "faulty-PubMed-IDs";
+        createErrorReport(null, pubMedIdNotFoundList);
+        reportPrefix = "faulty-Pub-Info";
+        createErrorReport(null, pubInfoMismatchList);
         if (pubMedIdNotFoundList.size() > 0)
             for (String error : errorList)
                 System.out.println(error);
