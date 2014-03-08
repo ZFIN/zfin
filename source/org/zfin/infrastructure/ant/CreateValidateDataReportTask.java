@@ -40,7 +40,7 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
             errorMessages = service.runDbScriptFile(dbQueryFile);
             List<List<List<String>>> resultList = service.getListOfResultRecords();
             if (resultList != null)
-                createErrorReport(errorMessages, resultList.get(0), null);
+                createErrorReport(errorMessages, resultList.get(0), new File(baseDir));
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);
