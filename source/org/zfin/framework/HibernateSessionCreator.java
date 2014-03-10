@@ -2,6 +2,7 @@ package org.zfin.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
+import org.hibernate.InvalidMappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.FactoryBean;
@@ -49,7 +50,7 @@ public class HibernateSessionCreator implements FactoryBean {
             throw new RuntimeException("No Hibernate mapping files found!");
 
         LOG.info("Hibernate Mapping files being used:");
-        for (File file : hbmFiles){
+        for (File file : hbmFiles) {
             LOG.info(file.getAbsolutePath());
         }
 
@@ -63,7 +64,12 @@ public class HibernateSessionCreator implements FactoryBean {
         // now add the others
         for (File configurationFile : hbmFiles) {
             if (!configurationFile.getName().startsWith("filter.")) {
-                config.addFile(configurationFile);
+                LOG.info("Loading Hibernate mapping file: " + configurationFile.getAbsolutePath());
+                try {
+                    config.addFile(configurationFile);
+                } catch (InvalidMappingException e) {
+                    LOG.error("Error Loading Hibernate mapping file: " + configurationFile.getAbsolutePath());
+                }
             }
         }
         HibernateUtil.init(config.buildSessionFactory());
@@ -130,7 +136,7 @@ public class HibernateSessionCreator implements FactoryBean {
         String informixPort = ZfinPropertiesEnum.INFORMIX_PORT.value();
         String sqlHostsHost = ZfinPropertiesEnum.SQLHOSTS_HOST.value();
         String connectionString = "jdbc:informix-sqli://" + sqlHostsHost + ":" + informixPort + "/" + db + ":INFORMIXSERVER=" + informixServer;
-        connectionString +=";IFX_LOCK_MODE_WAIT=7;defaultIsolationLevel=1";
+        connectionString += ";IFX_LOCK_MODE_WAIT=7;defaultIsolationLevel=1";
 
 //        System.out.println("connectionString: " + connectionString) ; 
         config.setProperty("hibernate.connection.url", connectionString);
