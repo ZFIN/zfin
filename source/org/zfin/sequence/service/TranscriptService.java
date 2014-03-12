@@ -94,12 +94,7 @@ public class TranscriptService {
         }
 
         if (displayGBrowseImage ) {
-            try {
-                logger.debug("attempting to get GBrowseImage list");
-                rtd.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, highlightedTranscript));
-            } catch (Exception e) {
-                logger.warn("Couldn't get GBrowse Feature " + e.getMessage());
-            }
+            rtd.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, highlightedTranscript));
         } else {
             logger.debug("not even trying showing GBrowse image, probably because the indexer is asking for the page");
         }

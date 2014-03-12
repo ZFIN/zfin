@@ -101,7 +101,6 @@ public class ZfinActionServlet extends DispatcherServlet {
     private void initDatabase() {
         // initialize Hibernate
         HibernateUtil.init();
-        GBrowseHibernateUtil.init();
         SysmasterHibernateUtil.init();
         Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);

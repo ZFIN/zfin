@@ -48,20 +48,44 @@ public class GBrowseService {
      */
     public static List<GBrowseImage> getGBrowseTranscriptImages(Marker gene, Transcript highlightedTranscript) {
         List<GBrowseImage> images = new ArrayList<GBrowseImage>();
-        Map<GBrowseContig, Set<GBrowseFeature>> featureMap = getGBrowseFeaturesGroupedByContig(gene);
 
-        logger.debug("got GBrowse FeatureMap:" + featureMap.toString());
-
-        for (Set<GBrowseFeature> features : featureMap.values()) {
-            GBrowseImage image = buildTranscriptGBrowseImage(features, highlightedTranscript);
-            if (image != null) {
-                images.add(image);
-                logger.debug("adding GBrowse image" + image.getImageURL());
-            }
-        }
+        images.add(buildTranscriptGBrowseImage(gene, highlightedTranscript));
 
         return images;
     }
+
+    public static GBrowseImage buildTranscriptGBrowseImage(Marker gene, Transcript highlightedTranscript) {
+        GBrowseImage image = new GBrowseImage();
+
+        StringBuffer imageURL = new StringBuffer();
+        imageURL.append("/");
+        imageURL.append(ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT);
+        imageURL.append("?grid=0");
+        imageURL.append("&options=mRNA 0");
+        imageURL.append("&type=mRNA");
+
+        StringBuffer linkURL = new StringBuffer();
+        linkURL.append("/");
+        linkURL.append(ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT);
+
+        imageURL.append("&name=");
+        imageURL.append(gene.getAbbreviation());
+        if (highlightedTranscript != null) {
+            imageURL.append("&h_feat=");
+            imageURL.append(highlightedTranscript.getAbbreviation());
+        }
+
+        linkURL.append("?name=");
+        linkURL.append(gene.getAbbreviation());
+
+
+        image.setImageURL(imageURL.toString());
+        image.setLinkURL(linkURL.toString());
+
+        return image;
+    }
+
+
 
     /**
      * Converts a collection of GBrowseFeatures into a GBrowseImage object.
