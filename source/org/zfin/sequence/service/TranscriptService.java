@@ -94,7 +94,8 @@ public class TranscriptService {
         }
 
         if (displayGBrowseImage ) {
-            rtd.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, highlightedTranscript));
+            rtd.setGbrowseImage(GBrowseService.buildTranscriptGBrowseImage(gene, highlightedTranscript));
+
         } else {
             logger.debug("not even trying showing GBrowse image, probably because the indexer is asking for the page");
         }

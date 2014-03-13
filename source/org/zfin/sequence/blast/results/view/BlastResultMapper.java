@@ -376,7 +376,7 @@ public class BlastResultMapper {
                     //get gbrowse images
                     try {
                         logger.debug("attempting to get GBrowseImage list for blast hit");
-                        hitViewBean.setGbrowseImages(GBrowseService.getGBrowseTranscriptImages(gene, transcript));
+                        hitViewBean.setGbrowseImage(GBrowseService.buildTranscriptGBrowseImage(gene,transcript));
                     } catch (Exception e) {
                         logger.error("Couldn't get GBrowse Feature " + e.getMessage());
                     }

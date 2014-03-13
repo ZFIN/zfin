@@ -127,7 +127,7 @@
 
                                     <c:if test="${!empty relatedTranscriptDisplay.gbrowseImages}">
 
-                                        <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImages}"/>
+                                        <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImage}"/>
                                     </c:if>
                                 </td>
                               </c:when>

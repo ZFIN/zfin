@@ -120,7 +120,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         SingleCandidateRepositoryTest.class,
         TranscriptRepositoryTest.class,
         ZfinJSPFunctionsTest.class
-//        GBrowseRepositoryTest.class
 //         MicroArrayTest.class     // Takes 1.5 min to run, but works.
 })
 

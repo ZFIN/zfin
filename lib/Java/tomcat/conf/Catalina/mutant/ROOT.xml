@@ -21,12 +21,6 @@ jdbcUrl="jdbc:informix-sqli://@SQLHOSTSHOST@:@INFORMIXPORT@/@DBNAME@:INFORMIXSER
            idleConnectionTestPeriod="1200" preferredTestQuery="select * from single"
 />
 
-  <Resource name="jdbc/gbrowse" auth="Container"
-            type="javax.sql.DataSource" username="nobody"
-            driverClassName="com.mysql.jdbc.Driver"
-            url="jdbc:mysql://@GBROWSE_DB_HOST@:3306/@GBROWSE_DB@?interactiveClient=true"  	 
-            maxActive="8" maxIdle="4"/>
-
  <Resource name="jdbc/sysmaster" auth="Container" factory="org.apache.naming.factory.BeanFactory"
            description="Database Connections" 
            type="com.mchange.v2.c3p0.ComboPooledDataSource" 

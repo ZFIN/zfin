@@ -30,7 +30,7 @@ public class HitViewBean extends ExpressionMapBean{
     private Set<Marker> genes ;
     private String definition ;
     private List<HighScoringPair> highScoringPairs ;
-    private List<GBrowseImage> gbrowseImages;
+    private GBrowseImage gbrowseImage;
 
 
     public String getAccessionNumber() {
@@ -158,12 +158,12 @@ public class HitViewBean extends ExpressionMapBean{
     }
 
 
-    public List<GBrowseImage> getGbrowseImages() {
-        return gbrowseImages;
+    public GBrowseImage getGbrowseImage() {
+        return gbrowseImage;
     }
 
-    public void setGbrowseImages(List<GBrowseImage> gbrowseImages) {
-        this.gbrowseImages = gbrowseImages;
+    public void setGbrowseImage(GBrowseImage gbrowseImages) {
+        this.gbrowseImage = gbrowseImage;
     }
 
 

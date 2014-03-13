@@ -13,7 +13,7 @@ public class RelatedTranscriptDisplay  {
     private TreeSet<RelatedMarker> nonWithdrawnTranscripts;
     private TreeSet<RelatedMarker> withdrawnTranscripts;
     private Marker gene;
-    private List<GBrowseImage> gbrowseImages;
+    private GBrowseImage gbrowseImage;
 
 
     public RelatedTranscriptDisplay() {
@@ -40,12 +40,12 @@ public class RelatedTranscriptDisplay  {
         transcripts.add(rm);
     }
 
-    public List<GBrowseImage> getGbrowseImages() {
-        return gbrowseImages;
+    public GBrowseImage getGbrowseImage() {
+        return gbrowseImage;
     }
 
-    public void setGbrowseImages(List<GBrowseImage> gbrowseImages) {
-        this.gbrowseImages = gbrowseImages;
+    public void setGbrowseImage(GBrowseImage gbrowseImage) {
+        this.gbrowseImage = gbrowseImage;
     }
 
     public static class RelatedTranscriptNameSort implements Comparator<RelatedMarker> {
