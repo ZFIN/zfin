@@ -70,4 +70,22 @@ sub stringStartsWithLetter() {
   }
 }
 
+sub getYear() {
+  my $dateString = $_[1];
+  my $year = substr $dateString, 0, 4;
+  return $year;
+}
+
+sub getMonth() {
+  my $dateString = $_[1];
+  my $month = substr $dateString, 4, 2;
+  return $month;
+}
+
+sub getDay() {
+  my $dateString = $_[1];
+  my $day = substr $dateString, 6;
+  return $day;
+}
+
 1;
