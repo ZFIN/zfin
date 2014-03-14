@@ -193,6 +193,7 @@ public class PersonController {
 
             fields.addAll(profileService.compareAccountInfoFields(oldAccountInfo, newAccountInfo));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(e);
             errors.reject("", "There was a problem updating your user record.");
         }
@@ -271,6 +272,7 @@ public class PersonController {
             newPerson.generateNameVariations();
             fields.addAll(profileService.comparePersonFields(person, newPerson));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(e);
             errors.reject("", "There was a problem updating your user record.");
         }

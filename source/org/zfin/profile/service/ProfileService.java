@@ -69,7 +69,7 @@ public class ProfileService {
      * If no authorized Person is found return null.
      *
      * TODO: when updating this, also update Person.getCurrentSecurityUser()
-     * 
+     *
      * @return Person object
      */
     public Person getCurrentSecurityUser() {
@@ -303,7 +303,9 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("email", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldLab, newLab));
         BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("address", oldLab, newLab);
-        beanFieldUpdate.setNullToTrueNull();
+        if (beanFieldUpdate != null) {
+            beanFieldUpdate.setNullToTrueNull();
+        }
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanFieldUpdate);
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("bio", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("contactPerson", oldLab, newLab, Person.class));

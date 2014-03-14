@@ -131,6 +131,7 @@ public class CompanyController {
         try {
             fields.addAll(profileService.compareCompanyFields(company, newCompany));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(e);
             errors.reject("", "There was a problem updating your user record.");
         }

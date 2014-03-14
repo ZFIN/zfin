@@ -133,6 +133,7 @@ public class LabController {
         try {
             fields.addAll(profileService.compareLabFields(lab, newLab));
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(e);
             errors.reject("", "There was a problem updating your user record.");
         }
