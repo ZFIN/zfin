@@ -919,7 +919,7 @@ while (<GENE2ACC>) {
         if (ZFINPerlModules->stringStartsWithLetter($fields[3])) {
           $RefSeqRNAacc = $fields[3];
           $RefSeqRNAacc =~ s/\.\d+//;
-          $RefSeqRNAncbiGeneIds{$RefSeqRNAacc} = $NCBIgeneId;
+          $RefSeqRNAncbiGeneIds{$RefSeqRNAacc} = $NCBIgeneId if $RefSeqRNAacc =~ m/^NM/ or $RefSeqRNAacc =~ m/^XM/ or $RefSeqRNAacc =~ m/^NR/ or $RefSeqRNAacc =~ m/^XR/;
           
           if (!exists($sequenceLength{$RefSeqRNAacc})) {
             $noLength{$RefSeqRNAacc} = $NCBIgeneId;
@@ -1962,12 +1962,14 @@ foreach $GenBankRNA (sort keys %accNCBIsupportingOnly1) {
       $zdbGeneId = $mappedReversed{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $GenBankRNA . $fdcontGenBankRNA})) {
         print TOLOAD "$zdbGeneId|$GenBankRNA||$sequenceLength{$GenBankRNA}|$fdcontGenBankRNA|$pubMappedbasedOnRNA|\n"; 
+        $geneAccFdbcont{$zdbGeneId . $GenBankRNA . $fdcontGenBankRNA} = 1;
         $ctToLoad++;
       } 
   } elsif (exists($oneToOneViaVega{$NCBIgeneId})) {
       $zdbGeneId = $oneToOneViaVega{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $GenBankRNA . $fdcontGenBankRNA})) {
         print TOLOAD "$zdbGeneId|$GenBankRNA||$sequenceLength{$GenBankRNA}|$fdcontGenBankRNA|$pubMappedbasedOnVega|\n"; 
+        $geneAccFdbcont{$zdbGeneId . $GenBankRNA . $fdcontGenBankRNA} = 1;
         $ctToLoad++;
       } 
   }
@@ -2041,12 +2043,15 @@ foreach $GenPept (sort keys %GenPeptNCBIgeneIds) {
       $zdbGeneId = $mappedReversed{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $GenPept . $fdcontGenPept})) {
           print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnRNA|\n"; 
+          $geneAccFdbcont{$zdbGeneId . $GenPept . $fdcontGenPept} = 1;
           $ctToLoad++;
           $GenPeptsToLoad{$GenPept} = $zdbGeneId;        
       } else {
           if (exists($GenPeptAttributedToNonLoadPub{$GenPept}) && exists($GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept})) {
             print MORETODELETE "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|\n";
             print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnRNA|\n";
+            $geneAccFdbcont{$zdbGeneId . $GenPept . $fdcontGenPept} = 1;
+            $ctToLoad++;
             print LOG "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}\t$pubMappedbasedOnRNA\n"; 
             $ctToAttribute++;
           }       
@@ -2054,13 +2059,16 @@ foreach $GenPept (sort keys %GenPeptNCBIgeneIds) {
   } elsif (exists($oneToOneViaVega{$NCBIgeneId})) {
       $zdbGeneId = $oneToOneViaVega{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $GenPept . $fdcontGenPept})) {
-          print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnVega|\n";  
+          print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnVega|\n"; 
+          $geneAccFdbcont{$zdbGeneId . $GenPept . $fdcontGenPept} = 1;
           $ctToLoad++;
           $GenPeptsToLoad{$GenPept} = $zdbGeneId;     
       } else {
           if (exists($GenPeptAttributedToNonLoadPub{$GenPept}) && exists($GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept})) {
             print MORETODELETE "$GenPeptDbLinkIdAttributedToNonLoadPub{$GenPept}|\n";
             print TOLOAD "$zdbGeneId|$GenPept||$sequenceLength{$GenPept}|$fdcontGenPept|$pubMappedbasedOnVega|\n";
+            $geneAccFdbcont{$zdbGeneId . $GenPept . $fdcontGenPept} = 1;
+            $ctToLoad++;
             print LOG "$GenPept\t$zdbGeneId\t$GenPeptAttributedToNonLoadPub{$GenPept}\t$pubMappedbasedOnVega\n";
             $ctToAttribute++;
           }       
@@ -2152,13 +2160,15 @@ foreach $GenBankDNA (sort keys %GenBankDNAncbiGeneIds) {
   if (exists($mappedReversed{$NCBIgeneId})) {
       $zdbGeneId = $mappedReversed{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA})) {
-        print TOLOAD "$zdbGeneId|$GenBankDNA||$sequenceLength{$GenBankDNA}|$fdcontGenBankDNA|$pubMappedbasedOnRNA|\n"; 
+        print TOLOAD "$zdbGeneId|$GenBankDNA||$sequenceLength{$GenBankDNA}|$fdcontGenBankDNA|$pubMappedbasedOnRNA|\n";
+        $geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA} = 1;
         $ctToLoad++;
       } 
   } elsif (exists($oneToOneViaVega{$NCBIgeneId})) {
       $zdbGeneId = $oneToOneViaVega{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA})) {
         print TOLOAD "$zdbGeneId|$GenBankDNA||$sequenceLength{$GenBankDNA}|$fdcontGenBankDNA|$pubMappedbasedOnVega|\n";  
+        $geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA} = 1;
         $ctToLoad++;
       } 
   }
@@ -2174,12 +2184,14 @@ foreach $RefSeqRNA (sort keys %RefSeqRNAncbiGeneIds) {
       $zdbGeneId = $mappedReversed{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $RefSeqRNA . $fdcontRefSeqRNA})) {
         print TOLOAD "$zdbGeneId|$RefSeqRNA||$sequenceLength{$RefSeqRNA}|$fdcontRefSeqRNA|$pubMappedbasedOnRNA|\n"; 
+        $geneAccFdbcont{$zdbGeneId . $RefSeqRNA . $fdcontRefSeqRNA} = 1;
         $ctToLoad++;
       }
   } elsif (exists($oneToOneViaVega{$NCBIgeneId})) {
       $zdbGeneId = $oneToOneViaVega{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $RefSeqRNA . $fdcontRefSeqRNA})) {
-        print TOLOAD "$zdbGeneId|$RefSeqRNA||$sequenceLength{$RefSeqRNA}|$fdcontRefSeqRNA|$pubMappedbasedOnVega|\n";  
+        print TOLOAD "$zdbGeneId|$RefSeqRNA||$sequenceLength{$RefSeqRNA}|$fdcontRefSeqRNA|$pubMappedbasedOnVega|\n";
+        $geneAccFdbcont{$zdbGeneId . $RefSeqRNA . $fdcontRefSeqRNA} = 1;
         $ctToLoad++;
       }
   }
@@ -2194,13 +2206,15 @@ foreach $RefPept (sort keys %RefPeptNCBIgeneIds) {
   if (exists($mappedReversed{$NCBIgeneId})) {
       $zdbGeneId = $mappedReversed{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $RefPept . $fdcontRefPept})) {
-        print TOLOAD "$zdbGeneId|$RefPept||$sequenceLength{$RefPept}|$fdcontRefPept|$pubMappedbasedOnRNA|\n"; 
+        print TOLOAD "$zdbGeneId|$RefPept||$sequenceLength{$RefPept}|$fdcontRefPept|$pubMappedbasedOnRNA|\n";
+        $geneAccFdbcont{$zdbGeneId . $RefPept . $fdcontRefPept} = 1;
         $ctToLoad++;
       }
   } elsif (exists($oneToOneViaVega{$NCBIgeneId})) {
       $zdbGeneId = $oneToOneViaVega{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $RefPept . $fdcontRefPept})) {
         print TOLOAD "$zdbGeneId|$RefPept||$sequenceLength{$RefPept}|$fdcontRefPept|$pubMappedbasedOnVega|\n";
+        $geneAccFdbcont{$zdbGeneId . $RefPept . $fdcontRefPept} = 1;
         $ctToLoad++;
       }
   }
@@ -2216,12 +2230,14 @@ foreach $RefSeqDNA (sort keys %RefSeqDNAncbiGeneIds) {
       $zdbGeneId = $mappedReversed{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $RefSeqDNA . $fdcontRefSeqDNA})) {
         print TOLOAD "$zdbGeneId|$RefSeqDNA||$sequenceLength{$RefSeqDNA}|$fdcontRefSeqDNA|$pubMappedbasedOnRNA|\n"; 
+        $geneAccFdbcont{$zdbGeneId . $RefSeqDNA . $fdcontRefSeqDNA} = 1;
         $ctToLoad++;
       }
   } elsif (exists($oneToOneViaVega{$NCBIgeneId})) {
       $zdbGeneId = $oneToOneViaVega{$NCBIgeneId};
       if (!exists($geneAccFdbcont{$zdbGeneId . $RefSeqDNA . $fdcontRefSeqDNA})) {
         print TOLOAD "$zdbGeneId|$RefSeqDNA||$sequenceLength{$RefSeqDNA}|$fdcontRefSeqDNA|$pubMappedbasedOnVega|\n";  
+        $geneAccFdbcont{$zdbGeneId . $RefSeqDNA . $fdcontRefSeqDNA} = 1;
         $ctToLoad++;
       }
   }
@@ -2248,7 +2264,7 @@ while (<GENECLUSTER>) {
     $ncbiGeneId = $1;    
     $UniGeneId = $2;
      
-    # print the RefSeq DNA accessions to be loaded
+    # print the UniGene accessions to be loaded
     if (exists($mappedReversed{$ncbiGeneId})) {
         $zdbGeneId = $mappedReversed{$ncbiGeneId};
         print TOLOAD "$zdbGeneId|$UniGeneId|||$fdcontUniGeneId|$pubMappedbasedOnRNA|\n"; 
