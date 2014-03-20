@@ -136,6 +136,8 @@ $xpdetres_imagesOnlyConstraint
   <?MIVAR NAME="xpdetres_lastPubProbeCombo"><?/MIVAR>
   <?MIVAR NAME="xpdetres_recordIndex">0<?/MIVAR>
 
+  <?MICOMMENT> ** if WINSIZE is greater than 100, set it to 100 ** <?/MICOMMENT>
+  <?MIVAR COND="$(>,$WINSIZE,100)" NAME="WINSIZE">200<?/MIVAR>
  
   <?MICOMMENT> *** open main results sql *** <?/MICOMMENT>
   <?MISQL  WINSTART=$BEGIN WINSIZE=$WINSIZE SQL="

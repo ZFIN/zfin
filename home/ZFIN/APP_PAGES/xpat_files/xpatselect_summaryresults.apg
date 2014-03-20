@@ -71,6 +71,8 @@ OUTPUT VARS:
   </thead>
   <tbody class="searchresults">
 
+  <?MICOMMENT> ** if WINSIZE is greater than 100, set it to 100 ** <?/MICOMMENT>
+  <?MIVAR COND="$(>,$WINSIZE,100)" NAME="WINSIZE">100<?/MIVAR>
 
   <?MICOMMENT> *** zebra striping variables *** <?/MICOMMENT>
 

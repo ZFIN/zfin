@@ -1082,11 +1082,19 @@ return false ; "
               <label for="xpatselRecentRecords">days</label>
             <?MICOMMENT>  ** end recent xpats ** <?/MICOMMENT>
             <br> 
-
+            <?MICOMMENT> set a default WINSIZE of 25 <?/MICOMMENT>
+	    <?MIVAR NAME="WINSIZE" COND="$(NXST,$WINSIZE)">25<?/MIVAR>
             <?MIVAR>
+               <select id="xpatselWinsize" name="WINSIZE">               
+                 <option $(IF,$(EQ,$WINSIZE,25),selected)>25</option>
+                 <option $(IF,$(EQ,$WINSIZE,50),selected)>50</option>
+                 <option $(IF,$(EQ,$WINSIZE,100),selected)>100</option>
+               </select>
+<?MICOMMENT>
                <input type="text" id="xpatselWinsize" 
                       name="WINSIZE" size="3" 
                   onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="25")>
+<?/MICOMMENT>
             <?/MIVAR>
 
 
