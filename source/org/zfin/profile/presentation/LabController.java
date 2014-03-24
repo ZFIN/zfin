@@ -167,7 +167,7 @@ public class LabController {
         model.addAttribute("hasCoPi", numCoPIs>0);
         List<Publication> publications = profileRepository.getPublicationsForLab(zdbID);
         model.addAttribute("publications", publications);
-        List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes(lab.getName(), false);
+        List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixesById(lab.getZdbID(), false);
         logger.error("featurePrefixCount" +featurePrefixes.size());
         model.addAttribute("prefixes", featurePrefixes);
 
@@ -179,6 +179,7 @@ public class LabController {
                 if (!fpf.isActiveForSet())
                      ctNoneActiveForSet++;
             }
+
             if (ctNoneActiveForSet == featurePrefixes.size())
                 noPrefixes = true;
         }

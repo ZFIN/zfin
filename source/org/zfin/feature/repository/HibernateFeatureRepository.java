@@ -365,15 +365,42 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 " join lfp.organization lb " +
                 " where lb.name=:labName " +
                 " order by lfp.currentDesignation desc, lfp.featurePrefix.prefixString asc";
+//        select sfp_current_designation, fp_prefix from source_feature_prefix
+//        join feature_prefix on (sfp_prefix_id = fp_pk_id)
+//        join zdb_active_source on (zactvs_zdb_id = sfp_source_zdb_id)
+//        join lab on (zactvs_zdb_id = zdb_id)
+//        where lab.name = labName;
+
         List<OrganizationFeaturePrefix> organizationFeaturePrefixes = HibernateUtil.currentSession().createQuery(hqlLab1)
                 .setParameter("labName",labName).list();
+        return generateFeaturePrefixes(organizationFeaturePrefixes, assignIfEmpty);
+    }
+
+    public List<FeaturePrefix> getLabPrefixesById(String labZdbID, boolean assignIfEmpty) {
+        String hqlLab1 = " select lfp from OrganizationFeaturePrefix lfp  " +
+                " join lfp.organization lb " +
+                " where lb.zdbID=:labZdbID " +
+                " order by lfp.currentDesignation desc, lfp.featurePrefix.prefixString asc";
+
+        List<OrganizationFeaturePrefix> organizationFeaturePrefixes = HibernateUtil.currentSession().createQuery(hqlLab1)
+                .setParameter("labZdbID",labZdbID).list();
+
+        return generateFeaturePrefixes(organizationFeaturePrefixes, assignIfEmpty);
+    }
+
+    /**
+     * This is a helper method for getLabPrefixes and getLabPrefixesById
+     * @param organizationFeaturePrefixes
+     * @param assignIfEmpty
+     * @return featurePrefixes
+     */
+    private List<FeaturePrefix> generateFeaturePrefixes (List<OrganizationFeaturePrefix> organizationFeaturePrefixes, boolean assignIfEmpty) {
         List<FeaturePrefix> featurePrefixes = new ArrayList<FeaturePrefix>() ;
         for (OrganizationFeaturePrefix organizationFeaturePrefix : organizationFeaturePrefixes) {
             FeaturePrefix featurePrefix = organizationFeaturePrefix.getFeaturePrefix();
             featurePrefix.setCurrentDesignationForSet(organizationFeaturePrefix.getCurrentDesignation());
             featurePrefixes.add(featurePrefix);
         }
-
         if (CollectionUtils.isEmpty(featurePrefixes) && assignIfEmpty) {
             FeaturePrefix featurePrefix = new FeaturePrefix();
             featurePrefix.setPrefixString("zf");

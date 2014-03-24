@@ -60,6 +60,8 @@ public interface FeatureRepository {
 
     List<FeaturePrefix> getLabPrefixes(String labName,boolean assignIfEmpty);
 
+    List<FeaturePrefix> getLabPrefixesById(String labZdbID,boolean assignIfEmpty);
+
     List<Organization> getLabsOfOriginWithPrefix();
 
     List<FeaturePrefixLight> getFeaturePrefixWithLabs();
