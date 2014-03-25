@@ -125,9 +125,9 @@
                                 <td class="gbrowseimage" width="20%"
                                     rowspan="${fn:length(relatedTranscriptDisplay.transcripts)}">
 
-                                    <c:if test="${!empty relatedTranscriptDisplay.gbrowseImages}">
+                                    <c:if test="${!empty relatedTranscriptDisplay.gbrowseImage}">
 
-                                        <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImage}"/>
+                                        <zfin2:gbrowseImageStack gbrowseImage="${relatedTranscriptDisplay.gbrowseImage}"/>
                                     </c:if>
                                 </td>
                               </c:when>

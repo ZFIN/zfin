@@ -48,7 +48,7 @@
                 <c:if test="${!hit.markerIsHit}">
                     <zfin:link entity="${hit.hitMarker}"/>
                     <authz:authorize ifAnyGranted="root">
-                      <zfin2:gbrowseHoverIcon gbrowseImages="${hit.gbrowseImages}"/>
+                      <zfin2:gbrowseHoverIcon gbrowseImage="${hit.gbrowseImage}"/>
                     </authz:authorize>
                 </c:if>
             </td>

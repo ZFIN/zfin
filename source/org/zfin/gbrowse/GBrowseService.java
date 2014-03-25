@@ -26,14 +26,14 @@ public class GBrowseService {
         linkURL.append(ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT);
 
         imageURL.append("&name=");
-        imageURL.append(gene.getAbbreviation());
+        imageURL.append(gene.getZdbID());
         if (highlightedTranscript != null) {
             imageURL.append("&h_feat=");
             imageURL.append(highlightedTranscript.getAbbreviation());
         }
 
         linkURL.append("?name=");
-        linkURL.append(gene.getAbbreviation());
+        linkURL.append(gene.getZdbID());
 
 
         image.setImageURL(imageURL.toString());

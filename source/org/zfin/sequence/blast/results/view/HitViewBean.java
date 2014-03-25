@@ -162,7 +162,7 @@ public class HitViewBean extends ExpressionMapBean{
         return gbrowseImage;
     }
 
-    public void setGbrowseImage(GBrowseImage gbrowseImages) {
+    public void setGbrowseImage(GBrowseImage gbrowseImage) {
         this.gbrowseImage = gbrowseImage;
     }
 

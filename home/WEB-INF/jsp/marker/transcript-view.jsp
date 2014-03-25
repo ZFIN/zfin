@@ -82,7 +82,7 @@
                 <caption>GBrowse:</caption>
                 <tr>
                     <td style="text-align: center">
-                        <zfin2:gbrowseImageStack gbrowseImages="${relatedTranscriptDisplay.gbrowseImages}"
+                        <zfin2:gbrowseImageStack gbrowseImage="${relatedTranscriptDisplay.gbrowseImage}"
                                                  width="600"/>
                     </td>
                 </tr>
