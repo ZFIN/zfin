@@ -42,7 +42,7 @@
 <!--|LN54_CONTACT_EMAIL|-->	zfinadmn\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	locusreg\@zfin.org
-<!--|MACHINE_NAME|-->	torso
+<!--|MACHINE_NAME|-->	thorax
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	mirror
 <!--|NOMEN_COORDINATOR|-->	nomenclature_coordinators\@zfin.org
@@ -61,7 +61,7 @@
 <!--|SITE_BACKGROUND|-->	#CCFFFF
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/mirror/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	torso.zfin.org
+<!--|SQLHOSTS_HOST|-->	thorax.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	informix\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	ksf\@cs.uoregon.edu dhowe\@cs.uoregon.edu staylor\@cs.uoregon.edu xshao\@cs.uoregon.edu sramachandran\@zfin.org

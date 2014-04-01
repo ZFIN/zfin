@@ -84,7 +84,7 @@
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zprod/blastdb/
 <!--|WEB_ADMIN_EMAIL|-->	informix\@cs.uoregon.edu
-<!--|WIKI_HOST|-->	wiki.zfin.org
+<!--|WIKI_HOST|-->	devwiki.zfin.org
 <!--|ZFIN_ADMIN|-->	informix\@cs.uoregon.edu
 <!--|ZFIN_COOKIE|-->	st4mwtR
 # ----------------  SANITY CHECKS  -------------
