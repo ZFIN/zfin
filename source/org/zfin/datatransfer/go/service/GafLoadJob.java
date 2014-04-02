@@ -5,26 +5,15 @@ import org.apache.log4j.Logger;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.stereotype.Component;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.ZfinBasicQuartzJob;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.wiki.WikiSynchronizationReport;
-import org.zfin.wiki.service.AntibodyWikiWebService;
-import org.zfin.wiki.service.WikiWebService;
 
 import java.io.File;
 import java.net.URL;
@@ -60,53 +49,31 @@ import java.util.*;
  * - GafService.removeEntries() is called to do a batch removal.
  * - Messages are created and emailed out.
  */
-@ContextConfiguration(locations = "/../../server_apps/DB_maintenance.xml", inheritLocations = true)
-public class GafLoadJob extends AbstractValidateDataReportTask {
+//@Component
+public class GafLoadJob extends ZfinBasicQuartzJob {
 
-    private static Logger logger = Logger.getLogger(GafLoadJob.class);
+    private Logger logger = Logger.getLogger(GafLoadJob.class);
 
     // these should be autowired, but everything needs to be in the same context, first
 //    @Autowired
     protected DownloadService downloadService = new DownloadService();
-    @Autowired
-    protected GafService gafService;
-    @Autowired
-    protected FpInferenceGafParser gafParser;
-    @Autowired
-    protected GoaGafParser goaGafParser;
-    @Autowired
-    protected PaintGafParser paintGafParser;
-
+    //    @Autowired
+    protected GafService gafService ;
+    //    @Autowired
+    protected FpInferenceGafParser gafParser ;
     private final int BATCH_SIZE = 20;
 
-    protected String downloadUrl;
-    protected String localDownloadFile;
-    protected GafOrganization.OrganizationEnum organizationEnum;
+    protected String downloadUrl ;
+    protected String localDownloadFile ;
+    protected GafOrganization.OrganizationEnum organizationEnum ;
 
-    public static void main(String[] args) {
-        initLog4J();
-        setLoggerToInfoLevel(logger);
-        logger.info("Running GAF Load");
-        String propertyFilePath = args[0];
-        String jobDirectoryString = args[1];
-        if (!jobDirectoryString.startsWith("/"))
-            jobDirectoryString = "/" + jobDirectoryString;
-        if (!jobDirectoryString.endsWith("/"))
-            jobDirectoryString += "/";
-        ApplicationContext context =
-                new ClassPathXmlApplicationContext("applicationContext.xml");
-        GafLoadJob job = new GafLoadJob();
-        job.setPropertyFilePath(propertyFilePath);
-        job.setBaseDir(jobDirectoryString);
-        job.setJobName(args[2]);
-        job.init();
-        job.setFields(args);
-        job.execute();
-    }
+    @Override
+    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
-    public void run() throws JobExecutionException {
+
         StringBuilder message = new StringBuilder();
         try {
+            setFields(jobExecutionContext.getJobDetail().getJobDataMap());
 // 1. download gzipped GAF file
 //        ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz
 //  as described in FB case 10369, changed to:
@@ -118,8 +85,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             // 2. parse file
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
 
-            if (CollectionUtils.isEmpty(gafEntries)) {
-                throw new GafValidationError("No gaf entries found in file: " + downloadedFile);
+            if(CollectionUtils.isEmpty(gafEntries)){
+                throw new GafValidationError("No gaf entries found in file: "+downloadedFile);
             }
 
             // 2.5 replace merged ZDB Id
@@ -172,13 +139,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             }
             message.append("\n\n");
 
-            (new IntegratedJavaMailSender()).sendMail("Summary of " + organizationEnum + " load: " + (new Date()).toString()
+            (new IntegratedJavaMailSender()).sendMail("Summary of "+organizationEnum + " load: " + (new Date()).toString()
                     , message.toString() + " from file: " + downloadedFile,
                     ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_CURATOR));
 
         } catch (Exception e) {
             logger.error("Failed to process Gaf load job", e);
-            if (HibernateUtil.currentSession().getTransaction() != null) {
+            if(HibernateUtil.currentSession().getTransaction()!=null){
                 HibernateUtil.rollbackTransaction();
             }
             (new IntegratedJavaMailSender()).sendMail("Errors in " + organizationEnum + " load: " + (new Date()).toString()
@@ -192,45 +159,46 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     }
 
-    private void setFields(String[] arguments) {
-        String enumString = arguments[3];
+    private void setFields(JobDataMap jobDataMap) {
+        downloadService = (DownloadService) jobDataMap.get("downloadService");
+        String enumString = jobDataMap.get("organization").toString();
 
         // this sets the localDownloadFile, as well and gafService
         organizationEnum = GafOrganization.OrganizationEnum.getType(enumString);
-        localDownloadFile = System.getProperty("java.io.tmpdir") + "/" + "gene_association." + organizationEnum.name();
+        localDownloadFile = System.getProperty("java.io.tmpdir") + "/" + "gene_association."+organizationEnum.name();
         gafService = new GafService(organizationEnum);
 
-        downloadUrl = arguments[4];
-        //gafParser = (FpInferenceGafParser) jobDataMap.get("gafParser");
+        downloadUrl = jobDataMap.get("downloadUrl").toString();
+        gafParser = (FpInferenceGafParser) jobDataMap.get("gafParser");
     }
 
     private void addAnnotations(GafJobData gafJobData) {
         Set<MarkerGoTermEvidence> evidencesToAdd = gafJobData.getNewEntries();
         Iterator<MarkerGoTermEvidence> iteratorToAdd = evidencesToAdd.iterator();
 
-        while (iteratorToAdd.hasNext()) {
+        while(iteratorToAdd.hasNext()){
             // build batch
             List<MarkerGoTermEvidence> batchToAdd = new ArrayList<MarkerGoTermEvidence>();
-            for (int i = 0; i < BATCH_SIZE && iteratorToAdd.hasNext(); ++i) {
+            for(int i = 0 ; i < BATCH_SIZE && iteratorToAdd.hasNext() ; ++i){
                 MarkerGoTermEvidence markerGoTermEvidence = iteratorToAdd.next();
                 batchToAdd.add(markerGoTermEvidence);
             }
             try {
                 HibernateUtil.createTransaction();
-                gafService.addAnnotationsBatch(batchToAdd, gafJobData);
+                gafService.addAnnotationsBatch(batchToAdd,gafJobData);
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
-                String error = "Failed to add batch: ";
-                for (MarkerGoTermEvidence markerGoTermEvidence : batchToAdd) {
+                String error = "Failed to add batch: " ;
+                for(MarkerGoTermEvidence markerGoTermEvidence : batchToAdd ){
                     error += markerGoTermEvidence.toString() + "\n";
                 }
-                GafValidationError gafValidationError = new GafValidationError(error, e);
+                GafValidationError gafValidationError = new GafValidationError(error,e) ;
                 logger.error(gafValidationError);
                 gafJobData.addError(gafValidationError);
             }
             // the theory is that these were being left open . . . this should fix that
-            finally {
+            finally{
                 HibernateUtil.closeSession();
             }
         }
@@ -238,13 +206,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     private void removeAnnotations(GafJobData gafJobData) {
         List<GafJobEntry> evidencesToRemove = gafJobData.getRemovedEntries();
-        Iterator<GafJobEntry> iteratorToRemove = evidencesToRemove.iterator();
+        Iterator<GafJobEntry> iteratorToRemove  = evidencesToRemove.iterator();
 
         // create batch
-        while (iteratorToRemove.hasNext()) {
+        while(iteratorToRemove.hasNext()){
             // build batch
             List<GafJobEntry> batchToRemove = new ArrayList<GafJobEntry>();
-            for (int i = 0; i < BATCH_SIZE && iteratorToRemove.hasNext(); ++i) {
+            for(int i = 0 ; i < BATCH_SIZE && iteratorToRemove.hasNext() ; ++i){
                 GafJobEntry removeEntry = iteratorToRemove.next();
                 batchToRemove.add(removeEntry);
             }
@@ -254,19 +222,15 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
-                String error = "Failed to remove batch: ";
-                for (GafJobEntry evidenceToRemove : batchToRemove) {
+                String error = "Failed to remove batch: " ;
+                for(GafJobEntry evidenceToRemove : batchToRemove ){
                     error += evidenceToRemove.toString() + "\n";
                 }
-                GafValidationError gafValidationError = new GafValidationError(error, e);
+                GafValidationError gafValidationError = new GafValidationError(error,e) ;
                 logger.error(gafValidationError);
                 gafJobData.addError(gafValidationError);
             }
         }
     }
 
-    @Override
-    public void execute() {
-
-    }
 }

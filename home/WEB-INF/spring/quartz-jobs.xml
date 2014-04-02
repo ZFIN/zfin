@@ -152,6 +152,9 @@
 
     <!--This is defined in a separate context-->
     <bean id="downloadService" class="org.zfin.datatransfer.service.DownloadService"/>
+    <bean id="goaGafParser" class="org.zfin.datatransfer.go.GoaGafParser"/>
+    <bean id="fpGafParser" class="org.zfin.datatransfer.go.FpInferenceGafParser"/>
+    <bean id="paintGafParser" class="org.zfin.datatransfer.go.PaintGafParser"/>
 
     <bean id="goaGafLoadJobBean" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="name" value="GOA GAF Load"/>

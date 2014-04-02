@@ -4,7 +4,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
 import org.zfin.datatransfer.go.*;
 import org.zfin.gwt.root.dto.GoDefaultPublication;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -45,7 +44,7 @@ import java.util.regex.Pattern;
 /**
  * Gene Association File Service
  */
-@Service
+//@Service
 public class GafService {
 
     protected Logger logger = Logger.getLogger(GafService.class);

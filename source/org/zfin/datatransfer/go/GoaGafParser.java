@@ -1,11 +1,9 @@
 package org.zfin.datatransfer.go;
 
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 /**
  */
-@Component
 public class GoaGafParser extends FpInferenceGafParser {
 
     private Logger logger = Logger.getLogger(GoaGafParser.class);

@@ -2,7 +2,6 @@ package org.zfin.datatransfer.go;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 
 import java.io.BufferedReader;
@@ -12,7 +11,6 @@ import java.util.*;
 
 /**
  */
-@Component
 public class FpInferenceGafParser {
 
     private Logger logger = Logger.getLogger(FpInferenceGafParser.class);
