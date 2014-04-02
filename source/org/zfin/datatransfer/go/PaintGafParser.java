@@ -1,10 +1,12 @@
 package org.zfin.datatransfer.go;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 
 /**
  */
+@Component
 public class PaintGafParser extends FpInferenceGafParser {
 
     public final static String PAINT_DEFAULT_PUB = GOREF_PREFIX + "0000033";

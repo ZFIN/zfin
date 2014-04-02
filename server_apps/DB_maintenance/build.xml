@@ -239,6 +239,27 @@
         </java>
     </target>
 
+    <path id="spring-xml-classpath">
+        <path refid="extended.classpath"/>
+        <fileset dir="${validateData}">
+            <include name="applicationContext.xml"/>
+        </fileset>
+    </path>
+
+    <target name="gaf-load" description="">
+        <echo message="Gaf Load"/>
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob" fork="no"
+              classpathref="spring-xml-classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}"/>
+            <arg value="Goa-Gaf-Load_w"/>
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz"/>
+            <arg value="GOA"/>
+            <arg value="goaGafParser"/>
+        </java>
+    </target>
+
     <target name="validate-Zebrafish-Book-permissions" description="">
         <echo message="Set correct permission on Zebrafish bokk in ZFIN with Community Wiki"/>
         <java classname="org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob" fork="no"
@@ -285,7 +306,7 @@
         <echo message="Create Report"/>
         <echo message="Use database: ${DBNAME}"/>
         <echo message="Use ParameterValues: ${ParameterValues}"/>
-        <delete dir="${validateData}/report_data/${JobName}" />
+        <delete dir="${validateData}/report_data/${JobName}"/>
         <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
               classpathref="extended.classpath"
               failonerror="true">
@@ -345,12 +366,14 @@
         <echo message="${validateData}/validatedata/${JobName}.txt"/>
         <fail message="Failed: There are records in violation">
             <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.faulty-PubMed-IDs.txt" substring=","/>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.faulty-PubMed-IDs.txt"
+                                  substring=","/>
             </condition>
         </fail>
         <fail message="Failed: There are records in violation">
             <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.faulty-Pub-Infos.txt" substring=","/>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.faulty-Pub-Infos.txt"
+                                  substring=","/>
             </condition>
         </fail>
     </target>
@@ -371,23 +394,23 @@
         </sequential>
     </macrodef>
 
-<!--
-    <macrodef name="run-db-query">
-        <attribute name="db-query-file"/>
-        <attribute name="instanceName"/>
-        <sequential>
-            <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
-                  classpathref="extended.classpath"
-                  failonerror="true">
-                <arg value="@{instanceName}"/>
-                <arg value="@{db-query-file}"/>
-                <arg value="${validateData}"/>
-                <arg value="${web-inf.dir}/zfin.properties"/>
-            </java>
-        </sequential>
-    </macrodef>
+    <!--
+        <macrodef name="run-db-query">
+            <attribute name="db-query-file"/>
+            <attribute name="instanceName"/>
+            <sequential>
+                <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
+                      classpathref="extended.classpath"
+                      failonerror="true">
+                    <arg value="@{instanceName}"/>
+                    <arg value="@{db-query-file}"/>
+                    <arg value="${validateData}"/>
+                    <arg value="${web-inf.dir}/zfin.properties"/>
+                </java>
+            </sequential>
+        </macrodef>
 
--->
+    -->
     <target name="usage">
         <echo>
             TARGETS
