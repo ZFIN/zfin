@@ -28,7 +28,7 @@
             runHibernate: Run the HibernateStandaloneUtil class to check your Persistence
 
             UTILITIES:
-            deploy-javadoc: Create the JavaDoc and deploy it into the targetroot
+            deploy-javadoc: Create the JavaDoc and deploy it into the targetfroot
             build-properties:  Echos important build-propertiets.
             echoProps: Print out all java properties
             jversion: Print out the used JVM
