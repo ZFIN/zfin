@@ -218,7 +218,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         List<GenericTermRelationship> invalidEndStages = getOntologyRepository().getTermsWithInvalidEndStageRange();
         if (CollectionUtils.isNotEmpty(invalidEndStages)) {
             String title = "Terms with end stages that are after the end stages of their parent term";
-            createStageReport(invalidEndStages, title, "End Stage", "End Stage", "terms with invalid end stages (!= develops from)");
+            createEndStageReport(invalidEndStages, title, "End Stage", "End Stage", "terms with invalid end stages (!= develops from)");
             failure = true;
         }
         invalidEndStages = getOntologyRepository().getTermsWithInvalidStartEndStageRangeForDevelopsFrom();
@@ -229,6 +229,20 @@ public class LoadOntology extends AbstractScriptWrapper {
         }
         if (failure)
             throw new RuntimeException("Error while running stage definition validation checks");
+    }
+
+    private void createEndStageReport(List<GenericTermRelationship> invalidStages, String title, String parentStage, String childStage, String subject) {
+        LOG.warn(title);
+        List<List<String>> rows = new ArrayList<List<String>>(invalidStages.size());
+        for (GenericTermRelationship pheno : invalidStages) {
+            List<String> row = new ArrayList<String>();
+            row.add(pheno.getTermOne().getTermName());
+            row.add(pheno.getTermTwo().getTermName());
+            row.add(pheno.getTermOne().getEnd().getName());
+            row.add(pheno.getTermTwo().getEnd().getName());
+            rows.add(row);
+        }
+        emailStageReport(title, parentStage, childStage, subject, rows);
     }
 
     private void createStageReport(List<GenericTermRelationship> invalidStages, String title, String parentStage, String childStage, String subject) {
@@ -242,6 +256,10 @@ public class LoadOntology extends AbstractScriptWrapper {
             row.add(pheno.getTermTwo().getStart().getName());
             rows.add(row);
         }
+        emailStageReport(title, parentStage, childStage, subject, rows);
+    }
+
+    private void emailStageReport(String title, String parentStage, String childStage, String subject, List<List<String>> rows) {
         CronJobReport cronReport = new CronJobReport(report.getJobName());
         cronReport.setRows(rows);
         cronReport.appendToSubject(" - " + rows.size() + subject);
