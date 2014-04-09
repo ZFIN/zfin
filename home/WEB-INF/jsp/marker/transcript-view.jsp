@@ -75,7 +75,7 @@
 
 
     <%--"no siblings" gbrowse image --%>
-    <c:if test="${(fn:length(relatedTranscriptDisplay.transcripts) == 1) && (!empty relatedTranscriptDisplay.gbrowseImages) }">
+    <c:if test="${(fn:length(relatedTranscriptDisplay.transcripts) == 1) && (!empty relatedTranscriptDisplay.gbrowseImage) }">
 
         <div class="summary">
             <table class="summary solidblock">
