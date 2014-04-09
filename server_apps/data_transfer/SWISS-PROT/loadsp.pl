@@ -24,7 +24,7 @@ use MIME::Lite;
 
 sub sendErrorReport ($) {
   
-  my $SUBJECT="Auto SWISS-PROT:".$_[0];
+  my $SUBJECT="Auto from $dbname SWISS-PROT:".$_[0];
   my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
   my $TXTFILE="./report.txt";
  
@@ -52,7 +52,7 @@ sub sendErrorReport ($) {
 #
 sub sendStatistics {
 		
-  my $SUBJECT="Auto: post UniProt load statistics";
+  my $SUBJECT="Auto from $dbname: post UniProt load statistics";
   my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";     
   my $ATTFILE = "postUniProtLoadStatistics.txt";
 
@@ -116,6 +116,7 @@ $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+$dbname = "<!--|DB_NAME|-->";
    
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
 

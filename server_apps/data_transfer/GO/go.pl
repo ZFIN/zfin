@@ -16,7 +16,7 @@ use MIME::Lite;
 sub sendErrorReport ($) {
     open (SENDMAIL, "| /usr/lib/sendmail -t -oi") || die "Cannot open mailprog!";
     print SENDMAIL "To: <!--|GO_EMAIL_ERR|-->\n";
-    print SENDMAIL "Subject: GO file generation error\n";
+    print SENDMAIL "Subject: Auto from $dbname GO file generation error\n";
 
     print SENDMAIL "$_[0]\n";
     close(SENDMAIL);
@@ -30,7 +30,7 @@ sub sendResults {
 
  #----- One mail send out the gene_association file----
 
-  my $SUBJECT="Auto: gene_association.zfin.gz file";
+  my $SUBJECT="Auto from $dbname: gene_association.zfin.gz file";
   my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";
   my $ATTFILE ="gene_association.zfin.gz";
 
@@ -55,7 +55,7 @@ sub sendResults {
 
  #----- Another mail send out problem files ----
 
-  my $SUBJECT="Auto: gp2protein.zfin.gz file";
+  my $SUBJECT="Auto from $dbname: gp2protein.zfin.gz file";
   my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";
   my $ATTFILE = "gp2protein.zfin.gz";
 
@@ -88,6 +88,7 @@ $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
+$dbname = "<!--|DB_NAME|-->";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO";
 
 sendErrorReport ("gofile.sql failed") if
