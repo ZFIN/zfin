@@ -5,11 +5,18 @@
 # this script only runs on almost and production (automates the prod steps
 # of the UniProt load.  See case 2799 for details.
 
-/bin/cp /research/zcentral/www_homes/almost/server_apps/data_transfer/SWISS-PROT/ok* <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
+echo "#########################################################################"
 
-/bin/cp /research/zcentral/www_homes/almost/server_apps/data_transfer/SWISS-PROT/*2go <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
+echo "Remove old files: okfile, *2go" 
+/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/okfile
+/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/ec2go
+/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/interpro2go
+/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/spkw2go
+echo "#########################################################################"
 
-/bin/cp /research/zcentral/www_homes/almost/server_apps/data_transfer/SWISS-PROT/zfin.dat <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/
+echo "Copy new files from /nfs/zygotix/zarchive/load_files/UniProt/"
+/private/bin/scp /nfs/zygotix/zarchive/load_files/UniProt/* <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/
+echo "#########################################################################"
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/;
 /local/bin/gmake run ;
