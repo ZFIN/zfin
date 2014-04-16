@@ -1,8 +1,10 @@
 package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
@@ -44,7 +46,6 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
 
     static {
         options.addOption(termStageUpdateFileOption);
-        options.addOption(log4jFileOption);
         options.addOption(webrootDirectory);
     }
 
@@ -65,6 +66,7 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
     private static String updateFile;
 
     public static void main(String[] arguments) {
+        initLog4J();
         LOG = Logger.getLogger(ExpressionResultUpdate.class);
         LOG.setLevel(Level.INFO);
         LOG.info("Start Expression-Result Update: " + (new Date()).toString());
@@ -98,23 +100,29 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
             long startTimeLong = System.currentTimeMillis();
             startMessage.append("Start Time: " + new Date() + "\n");
             // find expression-result objects
+            int index = 0;
             for (ExpressionResultUpdateRecord record : expressionUpdateRecords) {
+                index++;
                 ExpressionResult expressionResult = getExpressionRepository().getExpressionResult(record.getExpressionResultID());
                 // no expression_result record found
                 if (expressionResult == null) {
-                    LOG.info("No record found: " + record.getExpressionResultID());
+                    LOG.info("[" + index + "] No record found with xpatres: " + record.getExpressionResultID());
                     continue;
                 }
                 // if xpatID, startID,endID is the same then update term
-                if (expressionResult.getStartStage().getZdbID().equals(record.getStartStageID()) &&
-                        expressionResult.getEndStage().getZdbID().equals(record.getEndStageID())) {
+                if (hasSameStageInfo(record, expressionResult)) {
                     // different super term: update to new one.
                     GenericTerm superTerm = expressionResult.getEntity().getSuperterm();
                     if (record.getSuperTermOboID().equalsIgnoreCase("delete")) {
                         LOG.info("Deleted " + expressionResult.getZdbID());
                         getExpressionRepository().deleteExpressionResult(expressionResult);
                     } else {
-                        expressionResult.getEntity().setSuperterm(getOntologyRepository().getTermByOboID(record.getSuperTermOboID()));
+                        GenericTerm superTermNew = getOntologyRepository().getTermByOboID(record.getSuperTermOboID());
+                        if (superTermNew == null) {
+                            LOG.error("[" + index + "] No term found with OBO ID: " + record.getSuperTermOboID());
+                            continue;
+                        }
+                        expressionResult.getEntity().setSuperterm(superTermNew);
                         if (record.getSubTermOboID() != null)
                             expressionResult.getEntity().setSubterm(getOntologyRepository().getTermByOboID(record.getSubTermOboID()));
                         LOG.info("Updated " + expressionResult.getZdbID());
@@ -139,6 +147,23 @@ public class ExpressionResultUpdate extends AbstractScriptWrapper {
         // need to reverse it. A bit of a hack!
         TermPresentation.domain = null;
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
+    }
+
+    private boolean hasSameStageInfo(ExpressionResultUpdateRecord record, ExpressionResult expressionResult) {
+        DevelopmentStage start = expressionResult.getStartStage();
+        DevelopmentStage end = expressionResult.getEndStage();
+
+        if (start == null || end == null)
+            return false;
+
+        if (!StringUtils.equalsIgnoreCase(start.getZdbID(), record.getStartStageID()) &&
+                !StringUtils.containsIgnoreCase(record.getStartStageID(), start.getName()))
+            return false;
+
+        if (!StringUtils.equalsIgnoreCase(end.getZdbID(), record.getEndStageID()) &&
+                !StringUtils.containsIgnoreCase(record.getEndStageID(), end.getName()))
+            return false;
+        return true;
     }
 
     private void generateReport(List<ExpressionResultSplitStatement> statementList) {

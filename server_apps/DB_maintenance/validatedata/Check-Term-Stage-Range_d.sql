@@ -1,13 +1,13 @@
 select
    fig_source_zdb_id,
    fig_zdb_id,
-   s1.stg_name_long,
-   s2.stg_name_long,
+   s1.stg_name,
+   s2.stg_name,
    xpatres_superterm_zdb_id,
    term_ont_id,
    term_name,
-   s3.stg_name_long,
-   s4.stg_name_long,
+   s3.stg_name,
+   s4.stg_name,
    xpatres_zdb_id
 from
    expression_result,
