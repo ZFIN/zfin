@@ -59,7 +59,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#DDEEAA
-<!--|SOURCEROOT|-->	/opt/zfin/source_roots/ZFIN_WWW
+<!--|SOURCEROOT|-->	/opt/zfin/source_roots/frost
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	devtest1.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
