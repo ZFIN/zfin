@@ -187,7 +187,7 @@
         <java classname="org.zfin.ontology.datatransfer.service.ExpressionResultUpdate" fork="yes"
               maxmemory="256m"
               failonerror="true">
-            <classpath refid="extended.classpath"/>
+            <classpath refid="classpath"/>
             <arg value="-termStageUpdateFile"/>
             <arg value="expression-result-update.txt"/>
             <arg value="-webrootDirectory"/>
