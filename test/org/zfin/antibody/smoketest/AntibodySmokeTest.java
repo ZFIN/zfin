@@ -146,7 +146,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAntibodyFigureSummaryPageSupertermAllFigures() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
-        assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
+        assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab1-eng", page.getTitleText());
         // check that Pub Zhou et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
     }
@@ -157,7 +157,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAntibodyFigureSummaryPageSupertermAllFiguresNoStageInfo() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053");
-        assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
+        assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab1-eng", page.getTitleText());
         // check that Pub Zhou et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-090407-2"));
     }
@@ -168,7 +168,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAntibodyFigureSummaryPageSupertermOnlyFiguresWithImages() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=true");
-        assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
+        assertEquals("Antibody figure summary page is not coming up", "ZFIN Antibody figure summary: Ab1-eng", page.getTitleText());
     }
 
     /**
@@ -177,7 +177,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     @Test
     public void testAntibodyFigureSummaryPageSupertermSubtermFiguresWithImages() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-figure-summary?antibodyID=ZDB-ATB-081017-1&superTermID=ZDB-TERM-100331-1053&subTermID=ZDB-TERM-091209-4086&startStageID=ZDB-STAGE-010723-10&endStageID=ZDB-STAGE-010723-10&figuresWithImg=false");
-        assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab-eng", page.getTitleText());
+        assertEquals("Antibody search", "ZFIN Antibody figure summary: Ab1-eng", page.getTitleText());
         // check that pub Liu et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
     }
