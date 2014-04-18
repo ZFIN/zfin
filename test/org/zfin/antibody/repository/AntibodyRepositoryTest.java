@@ -1009,7 +1009,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         term.setTermName(aoTermName);
 
         // real name is Ab-Eng
-        String antibodyName = "Ab-eng";
+        String antibodyName = "Ab1-eng";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
         assertTrue(antibody != null);
 
