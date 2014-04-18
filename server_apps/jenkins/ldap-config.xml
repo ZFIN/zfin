@@ -8,6 +8,7 @@
     <permission>hudson.model.Hudson.Administer:fishadmin</permission>
     <permission>hudson.model.Hudson.ConfigureUpdateCenter:fishadmin</permission>
     <permission>hudson.model.Hudson.Read:fishadmin</permission>
+    <permission>hudson.model.Hudson.Read:curators</permission>
     <permission>hudson.model.Hudson.RunScripts:fishadmin</permission>
     <permission>hudson.model.Hudson.UploadPlugins:fishadmin</permission>
     <permission>hudson.model.Item.Build:curators</permission>
