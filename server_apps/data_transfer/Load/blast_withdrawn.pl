@@ -12,7 +12,7 @@ BEGIN {
 
     #set environment variables
     $ENV{"INFORMIXDIR"}="/private/apps/Informix/informix";
-    $ENV{"INFORMIXSERVER"}="waldo";
+    $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
     $ENV{"ONCONFIG"}="onconfig";
     $ENV{"INFORMIXSQLHOSTS"}="/private/apps/Informix/informix/etc/sqlhosts";
     $ENV{"DBNAME"}="<!--|DB_NAME|-->";

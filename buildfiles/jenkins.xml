@@ -505,7 +505,7 @@
             TARGETS
                 DEPLOYMENT
                 deploy-jobs
-                deploy-production-jobs dpeloy only the jobs meant to run on production
+                deploy-production-jobs deploy only the jobs meant to run on production
                 copy-job-into-source -DjobName=[jobName]
                 create-views creates daily/weekly/monthly job views.
                 deploy-plugins deploy jenkins plugins into JENKINS_HOME
