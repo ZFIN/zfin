@@ -17,7 +17,7 @@
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	smoxon\@zfin.org
 <!--|DB_NAME|-->	hoovdb
-<!--|DB_OWNER|-->	informix
+<!--|DB_OWNER|-->	staylor
 <!--|DOMAIN_NAME|-->	hoover.zfin.org
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/hoover
 <!--|GBROWSE_DB|-->	ensembl_current
@@ -42,7 +42,7 @@
 <!--|LN54_CONTACT_EMAIL|-->	smoxon\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	smoxon\@zfin.org
-<!--|MACHINE_NAME|-->	informixtest
+<!--|MACHINE_NAME|-->	aster
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	hoover
 <!--|NOMEN_COORDINATOR|-->	smoxon\@zfin.org
@@ -61,7 +61,7 @@
 <!--|SITE_BACKGROUND|-->	#CCFFFF
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/hoover/ZFIN_WWW_hoover
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	informixtest.zfin.org
+<!--|SQLHOSTS_HOST|-->	aster.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	smoxon\@zfin.org
 <!--|SWISSPROT_EMAIL_ERR|-->	smoxon\@zfin.org
 <!--|SWISSPROT_EMAIL_REPORT|-->	smoxon\@zfin.org
