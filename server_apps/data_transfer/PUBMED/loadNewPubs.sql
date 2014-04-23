@@ -21,6 +21,9 @@ with no log;
 load from <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log
 insert into tmp_pubs;
 
+delete from tmp_pubs
+ where authors = 'none'
+ and numAuthors = '0';
 
 create temp table tmp_new_pubs (zdb_id varchar(50),
        	    	  	       	pmid varchar(30), 
@@ -171,7 +174,38 @@ insert into publication (zdb_id,
 	 pages,
 	 journal_zdb_id,
          'Journal'
-   from tmp_new_pubs;				 
+   from tmp_new_pubs
+ where year is not null
+ and not exists (Select 'x' from publication where accession_no = pmid);
+
+	insert into publication (zdb_id, 
+       	    			 authors,
+				 num_auths,
+				 title,
+				 keywords,
+				 accession_no,
+				 pub_abstract,
+				 status,
+				 pub_volume,
+				 pub_pages,
+				 pub_jrnl_zdb_id,
+				 jtype)
+  select zdb_id,
+ 	 authors,
+	 numAuthors,
+	 title,
+	 keywords,
+	 pmid,
+	 abstract,
+	 status,
+	 volume,
+	 pages,
+	 journal_zdb_id,
+         'Journal'
+   from tmp_new_pubs
+ where year is null
+ and not exists (Select 'x' from publication where accession_no = pmid);
+			 
 commit work;
 
 --rollback work ;
