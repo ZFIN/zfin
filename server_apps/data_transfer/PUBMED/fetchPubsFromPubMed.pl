@@ -24,9 +24,11 @@ $query = 'zebrafish[mesh]+OR+zebra fish[mesh]+OR+danio rerio';
 
 #assemble the esearch URL
 $base = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
-$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=10&datetype=edat&retmax=100";
+$retmax = '100';
+$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=300&datetype=edat&retmax=$retmax";
 
-#post the esearch URL
+#get the esearch URL
+#the usehistory key creates a url key that we can use to access the return: suggested for larger queries by NCBI
 $output = get($url);
 
 #parse WebEnv and QueryKey
@@ -63,7 +65,7 @@ open (LOG, "><!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log"
 
 ### include this code for ESearch-EFetch
 #assemble the efetch URL
-$url = $base . "efetch.fcgi?db=$db&query_key=$key&WebEnv=$web&retmax=100";
+$url = $base . "efetch.fcgi?db=$db&query_key=$key&WebEnv=$web&retmax=$retmax";
 $url .= "&retmode=xml";
 
 my $pubCount = 0;
@@ -79,6 +81,9 @@ $twig->parseurl($url);
 #print $key."\n";
 
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";
+
+# The twig parser will go through an entire pubMedArticle, extracting fields as it goes.  
+# consequently, the order it parses, is the order the load file will be generated.
 
 sub pubMedArticle {
     $pubCount++;
