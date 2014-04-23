@@ -16,8 +16,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $dbname = "<!--|DB_NAME|-->";
 
 #print "$dbname\n\n";
-# Download PubMed records that are indexed in MeSH for both asthma and 
-# leukotrienes and were also published in 2009.
+# Download PubMed records that are indexed in MeSH for zebrafish and danio rerio
 
 $db = 'pubmed';
 $query = 'zebrafish[mesh]+OR+zebra fish[mesh]+OR+danio rerio';
