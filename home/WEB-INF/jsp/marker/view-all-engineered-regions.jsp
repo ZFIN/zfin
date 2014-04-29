@@ -9,7 +9,6 @@
     <tr>
         <%--<th align="left" width="5%"></th>--%>
         <th align="left">Name</th>
-        <th align="left">Symbol</th>
         <th align="left">Previous Name</th>
         <th align="left"> Comment</th>
 <authz:authorize ifAnyGranted="root">
