@@ -354,6 +354,31 @@
             </condition>
         </fail>
     </target>
+    <target name="fetch-publications-from-ncbi" description="">
+        <echo message="Create get-publication-from-ncbi Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <property name="JobName" value="get-publications-from-ncbi"/>
+        <java classname="org.zfin.publication.FetchPubsFromPubMed" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="-jobName"/>
+            <arg value="${JobName}"/>
+            <arg value="-baseDir"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="-propertyFilePath"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-threads"/>
+            <arg value="40"/>
+            <arg value=""/>
+        </java>
+
+        <echo message="${validateData}/validatedata/${JobName}.txt"/>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.New-Publications-Error.txt" substring=","/>
+            </condition>
+        </fail>
+    </target>
 
     <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
 
