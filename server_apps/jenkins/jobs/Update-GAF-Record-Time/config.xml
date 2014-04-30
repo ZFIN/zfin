@@ -1,10 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Runs on production to update the values of time fields of marker_go_term_evidence records  &#xd;
-&#xd;
-!! Script assumes data files have been copied to almost already, and in&#xd;
-turn uses those files to copy to production !!</description>
+  <description>Runs on production to update the values of time fields of marker_go_term_evidence records
+  </description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <EnvInjectJobProperty plugin="envinject@1.89">
