@@ -5,10 +5,10 @@
 
 # ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz
 # http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz
-# http://build.berkeleybop.org/view/GAF/job/gaf-check-zfin/lastSuccessfulBuild/artifact/gene_association.zfin.inf.gaf 
+# http://build.berkeleybop.org/view/GAF/job/gaf-check-zfin/lastSuccessfulBuild/artifact/gene_association.zfin.inf.gaf
 
 # process and update the time fields of marker_go_term_evidence table according to input
-# 
+#
 
 use DBI;
 use Time::localtime;
@@ -16,11 +16,11 @@ use Time::localtime;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 
-$sqlUpdateGAFtime = "update marker_go_term_evidence 
+$sqlUpdateGAFtime = "update marker_go_term_evidence
                         set mrkrgoev_date_modified = ?
                       where mrkrgoev_zdb_id = ?;";
-                                            
-$sqlUpdateGAFtime2 = "update marker_go_term_evidence 
+
+$sqlUpdateGAFtime2 = "update marker_go_term_evidence
                          set mrkrgoev_date_entered = ?
                        where mrkrgoev_zdb_id = ?;";
 
@@ -64,11 +64,11 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
+$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
-    
-$sqlTermIdLookup = 'select term_ont_id, term_zdb_id 
-                      from term 
+
+$sqlTermIdLookup = 'select term_ont_id, term_zdb_id
+                      from term
                      where term_ontology_id = "3"
                        and term_is_obsolete = "f"
                        and term_is_secondary = "f";';
@@ -86,17 +86,17 @@ while ($cur->fetch()) {
 
 %zdbPubIds = ("GO_REF:0000019" => "ZDB-PUB-110127-1",
               "GO_REF:0000020" => "ZDB-PUB-110127-2",
-              "GO_REF:0000023" => "ZDB-PUB-110127-3",  
-              "GO_REF:0000039" => "ZDB-PUB-120306-2",  
-              "GO_REF:0000040" => "ZDB-PUB-120306-4",  
-              "GO_REF:0000041" => "ZDB-PUB-130131-1", 
-              "GO_REF:0000024" => "ZDB-PUB-110105-1",  
-              "GO_REF:0000033" => "ZDB-PUB-110330-1" 
+              "GO_REF:0000023" => "ZDB-PUB-110127-3",
+              "GO_REF:0000039" => "ZDB-PUB-120306-2",
+              "GO_REF:0000040" => "ZDB-PUB-120306-4",
+              "GO_REF:0000041" => "ZDB-PUB-130131-1",
+              "GO_REF:0000024" => "ZDB-PUB-110105-1",
+              "GO_REF:0000033" => "ZDB-PUB-110330-1"
 );
 
 $paintGafPub = "ZDB-PUB-110330-1";
 
-$sqlZdbPubIdLookup = 'select accession_no, zdb_id 
+$sqlZdbPubIdLookup = 'select accession_no, zdb_id
                         from publication;';
 
 $cur = $dbh->prepare("$sqlZdbPubIdLookup");
@@ -106,7 +106,7 @@ $cur->bind_columns(\$pmid,\$pubZdbId);
 %pmids = ();
 while ($cur->fetch()) {
    $pmids{$pmid} = $pubZdbId;
-}    
+}
 
 open (GAF, "gene_association.zfin.inf.gaf") ||  die "Cannot open gene_association.zfin.inf.gaf : $!\n";
 
@@ -116,7 +116,7 @@ $ctLines = $ctGaf = $ctNoWith = $ctTotalGAFprocessed = $ctRecordTimeUpdated = $c
 
 $ctMultipleWith = 0;
 
-$ctPMID = $ctNotFoundPMIDs = $ctGOpubs = $ctNoGoPubs = $noPubs = $ctPAINTpubs = 0;   
+$ctPMID = $ctNotFoundPMIDs = $ctGOpubs = $ctNoGoPubs = $noPubs = $ctPAINTpubs = 0;
 
 $cur = $dbh->prepare($sqlTermIdLookup);
 
@@ -127,33 +127,33 @@ foreach $gaf (@gafLines) {
   $ctLines++;
 
   next if $gaf =~ m/\!/;  ## ditch documentation lines
-  
+
   chop($gaf);
-  
-  @fields = split("\t", $gaf); 
-  
+
+  @fields = split("\t", $gaf);
+
   $DB = $fields[0];
-    
-  $id = $fields[1];  
-  
+
+  $id = $fields[1];
+
   $qualifier = $fields[3];   ## optional
-  
+
   $qualifier = "noQualifier" if not defined $qualifier;
   $qualifier = "noQualifier" if $qualifier eq "";
-  
+
   $GO = $fields[4];
   next if $GO eq "GO:0005623";        ## cell
   next if !exists($goTermIds{$GO});   ## do nothing if no ZFIN term id found for the GO term Id
-  
-  $termZdbId = $goTermIds{$GO};  
-  
+
+  $termZdbId = $goTermIds{$GO};
+
   $reference = $fields[5];
-  
+
   if ($reference =~ m/PAINT\_REF/) {
      $zdbPubId = $paintGafPub;
      $ctPAINTpubs++;
-     
-  } else {  
+
+  } else {
       if ($reference =~ m/(ZDB\-PUB\-\d+\-\d+)/) {
           $zdbPubId = $1;
       } elsif ($reference =~ m/PMID:(\d+)/) {
@@ -164,7 +164,7 @@ foreach $gaf (@gafLines) {
               $ctNotFoundPMIDs++;
               next;
           }
-      } elsif ($reference =~ m/(GO\_REF:\d+)/) {  
+      } elsif ($reference =~ m/(GO\_REF:\d+)/) {
           $ctGOpubs++;
           if (exists($zdbPubIds{$1})) {
               $zdbPubId = $zdbPubIds{$1};
@@ -175,30 +175,28 @@ foreach $gaf (@gafLines) {
       } else {
           $noPubs++;
           next;
-      }  
+      }
   }
-  
+
   $evidenceCode = $fields[6];
-  
+
   $withField = $fields[7];        # Cardinality of the with field could be 0 or 1 or more
 
-  $isThereWithFields = 1;  
-  
+  $isThereWithFields = 1;
+
   $isThereWithFields = 0 if not defined $withField;
   $isThereWithFields = 0 if $withField eq "";
-      
+
   $taxId = $fields[12];
-  
+
   $date = $fields[13];
-  
+
   $assignedBy = $fields[14];
-    
-  $assignedBy = $assignedBy . "KB" if $assignedBy eq "UniProt";
-              
-  next if $taxId !~ m/7955/ || $assignedBy =~ m/ZFIN/; 
-  
-  $ctGaf++;  
-  
+
+  next if $taxId !~ m/7955/ || $assignedBy =~ m/ZFIN/;
+
+  $ctGaf++;
+
   if ($assignedBy eq "GOC" && $DB eq "ZFIN") {
        $organizationCode = $organizationCodeFP;
   } elsif ($reference =~ m/PAINT\_REF/) {
@@ -206,23 +204,26 @@ foreach $gaf (@gafLines) {
   } else {
        $organizationCode = $organizationCodeGOA;
   }
-  
+
   if ($isThereWithFields == 0) {
-     updateDateGAFtime($organizationCode, "noWith", $termZdbId, $id, $evidenceCode, $zdbPubId, $date, $assignedBy, $DB, $GO, $qualifier);     
-     updateDateGAFtime($organizationCode, "noWith", $termZdbId, $id, $evidenceCode, $zdbPubId, $date, "ENSEMBL", $DB, $GO, $qualifier) if $assignedBy eq "Ensembl";
-  } else { 
+     updateDateGAFtime($organizationCode, "noWith", $termZdbId, $id, $evidenceCode, $zdbPubId, $date, $assignedBy, $DB, $GO, $qualifier);
+     updateDateGAFtime($organizationCode, "noWith", $termZdbId, $id, $evidenceCode, $zdbPubId, $date, "UniProtKB", $DB, $GO, $qualifier) if $assignedBy eq "UniProt";
+     updateDateGAFtime($organizationCode, "noWith", $termZdbId, $id, $evidenceCode, $zdbPubId, $date, "ENSEMBL", $DB, $GO, $qualifier) if $assignedBy eq "Ensembl";    
+  } else {
      if ($withField =~ m/\|/) {
-         @withFields = split(/\|/, $withField);        
+         @withFields = split(/\|/, $withField);
          foreach $with (@withFields) {
            updateDateGAFtime($organizationCode, $with, $termZdbId, $id, $evidenceCode, $zdbPubId, $date, $assignedBy, $DB, $GO, $qualifier);
+           updateDateGAFtime($organizationCode, "noWith", $termZdbId, $id, $evidenceCode, $zdbPubId, $date, "UniProtKB", $DB, $GO, $qualifier) if $assignedBy eq "UniProt";                     
            updateDateGAFtime($organizationCode, $with, $termZdbId, $id, $evidenceCode, $zdbPubId, $date, "ENSEMBL", $DB, $GO, $qualifier) if $assignedBy eq "Ensembl";
          }
       } else {
          updateDateGAFtime($organizationCode, $withField, $termZdbId, $id, $evidenceCode, $zdbPubId, $date, $assignedBy, $DB, $GO, $qualifier);
+         updateDateGAFtime($organizationCode, "noWith", $termZdbId, $id, $evidenceCode, $zdbPubId, $date, "UniProtKB", $DB, $GO, $qualifier) if $assignedBy eq "UniProt";                  
          updateDateGAFtime($organizationCode, $withField, $termZdbId, $id, $evidenceCode, $zdbPubId, $date, "ENSEMBL", $DB, $GO, $qualifier) if $assignedBy eq "Ensembl";
-     } 
+     }
   }
-      
+
   undef $DB;
   undef $id;
   undef $GO;
@@ -239,13 +240,13 @@ print "\nctLines = $ctLines\nctGaf = $ctGaf\nctMultipleWith = $ctMultipleWith \n
 
 print "\n Summary: $ctTotalGAFprocessed  \n updated: $ctRecordTimeUpdated \t not changed: $ctRecordTimeUnchanged \n ctNoWith = $ctNoWith \n ctPAINTpubs = $ctPAINTpubs \n\n";
 
-print "ctPMID = $ctPMID \t ctNotFoundPMIDs = $ctNotFoundPMIDs \t ctGOpubs = $ctGOpubs \t ctNoGoPubs = $ctNoGoPubs \t noPubs = $noPubs\n ctIEAolderThan1Year = $ctIEAolderThan1Year \n\n"; 
- 
+print "ctPMID = $ctPMID \t ctNotFoundPMIDs = $ctNotFoundPMIDs \t ctGOpubs = $ctGOpubs \t ctNoGoPubs = $ctNoGoPubs \t noPubs = $noPubs\n ctIEAolderThan1Year = $ctIEAolderThan1Year \n\n";
+
 close(GAF);
 
-$cur->finish(); 
+$cur->finish();
 
-$dbh->disconnect(); 
+$dbh->disconnect();
 
 close(LOG);
 
@@ -256,7 +257,7 @@ exit;
 
 sub compareDates {
   my ($dateValue1, $dateString2FromDB) = @_;
-  
+
   @dateFileds = split("\s+", $dateString2FromDB);
   $dateValue2 = $dateFileds[0];
   $dateValue2 =~ s/\-//g;
@@ -273,7 +274,7 @@ sub makeDateToUpdate {
   $dateMonth = ZFINPerlModules->getMonth($dateString);
   $dateDay = ZFINPerlModules->getDay($dateString);
   $dateToUpdate = $dateYear . '-' . $dateMonth . '-' . $dateDay . ' ' . '00:00:00';
-  
+
   return $dateToUpdate;
 }
 
@@ -290,7 +291,7 @@ sub updateDateGAFtime {
     my $db = $_[8];
     my $GOid = $_[9];
     my $qualifierString = $_[10];
-    
+
     my $mrkrgoevdZdbId = " ";
     my $lastModDate;
 
@@ -300,76 +301,76 @@ sub updateDateGAFtime {
     my $currentDay = $currentTime->mday;
     my $today = ($currentYear + 1900)*10000 + ($currentMonth + 1)*100 + $currentDay;
 
-    my $sqlGetZFINtimeFrom = "select mrkrgoev_zdb_id, mrkrgoev_date_modified 
+    my $sqlGetZFINtimeFrom = "select mrkrgoev_zdb_id, mrkrgoev_date_modified
                                 from inference_group_member, marker_go_term_evidence ";
-                                                    
 
-    my $sqlGetZFINtimeFromNoWith = "select mrkrgoev_zdb_id, mrkrgoev_date_modified 
+
+    my $sqlGetZFINtimeFromNoWith = "select mrkrgoev_zdb_id, mrkrgoev_date_modified
                                       from marker_go_term_evidence ";
-                        
+
     my $sqlGetZFINtimeWhere;
-    
+
     my $sqlGetZFINtimeWhereNoWith;
-    
+
     my %mrkrGoTermEvdIds = ();
-    
+
     if ($objId !~ m/ZDB/) {
        $sqlGetZFINtimeFrom = $sqlGetZFINtimeFrom . " , db_link ";
-       
+
        $sqlGetZFINtimeFromNoWith = $sqlGetZFINtimeFromNoWith . " , db_link ";
-       
-       $sqlGetZFINtimeWhere = " where mrkrgoev_annotation_organization = ? 
-                                  and infgrmem_mrkrgoev_zdb_id = mrkrgoev_zdb_id 
-                                  and infgrmem_inferred_from = ? 
+
+       $sqlGetZFINtimeWhere = " where mrkrgoev_annotation_organization = ?
+                                  and infgrmem_mrkrgoev_zdb_id = mrkrgoev_zdb_id
+                                  and infgrmem_inferred_from = ?
                                   and mrkrgoev_term_zdb_id = ?
                                   and mrkrgoev_evidence_code = ?
                                   and mrkrgoev_source_zdb_id = ?
-                                  and mrkrgoev_annotation_organization_created_by = ? 
-                                  and mrkrgoev_mrkr_zdb_id = dblink_linked_recid 
-                                  and dblink_acc_num = ? ";  
-                                  
-       $sqlGetZFINtimeWhereNoWith = " where mrkrgoev_annotation_organization = ? 
+                                  and mrkrgoev_annotation_organization_created_by = ?
+                                  and mrkrgoev_mrkr_zdb_id = dblink_linked_recid
+                                  and dblink_acc_num = ? ";
+
+       $sqlGetZFINtimeWhereNoWith = " where mrkrgoev_annotation_organization = ?
                                         and mrkrgoev_term_zdb_id = ?
                                         and mrkrgoev_evidence_code = ?
                                         and mrkrgoev_source_zdb_id = ?
-                                        and mrkrgoev_annotation_organization_created_by = ? 
-                                        and mrkrgoev_mrkr_zdb_id = dblink_linked_recid 
-                                        and dblink_acc_num = ? ";                                    
+                                        and mrkrgoev_annotation_organization_created_by = ?
+                                        and mrkrgoev_mrkr_zdb_id = dblink_linked_recid
+                                        and dblink_acc_num = ? ";
     } else {
-       $sqlGetZFINtimeWhere = " where mrkrgoev_annotation_organization = ? 
-                                  and infgrmem_mrkrgoev_zdb_id = mrkrgoev_zdb_id 
+       $sqlGetZFINtimeWhere = " where mrkrgoev_annotation_organization = ?
+                                  and infgrmem_mrkrgoev_zdb_id = mrkrgoev_zdb_id
                                   and infgrmem_inferred_from = ?
-                                  and mrkrgoev_term_zdb_id = ? 
+                                  and mrkrgoev_term_zdb_id = ?
                                   and mrkrgoev_evidence_code = ?
                                   and mrkrgoev_source_zdb_id = ?
-                                  and mrkrgoev_annotation_organization_created_by = ? 
-                                  and mrkrgoev_mrkr_zdb_id = ? ";    
-                                  
-        $sqlGetZFINtimeWhereNoWith = " where mrkrgoev_annotation_organization = ? 
-                                         and mrkrgoev_term_zdb_id = ? 
+                                  and mrkrgoev_annotation_organization_created_by = ?
+                                  and mrkrgoev_mrkr_zdb_id = ? ";
+
+        $sqlGetZFINtimeWhereNoWith = " where mrkrgoev_annotation_organization = ?
+                                         and mrkrgoev_term_zdb_id = ?
                                          and mrkrgoev_evidence_code = ?
                                          and mrkrgoev_source_zdb_id = ?
-                                         and mrkrgoev_annotation_organization_created_by = ? 
-                                         and mrkrgoev_mrkr_zdb_id = ? ";                                  
+                                         and mrkrgoev_annotation_organization_created_by = ?
+                                         and mrkrgoev_mrkr_zdb_id = ? ";
     }
-    
+
     my $sql;
-    
+
     if ($withString eq "noWith") {
-        $sql = $sqlGetZFINtimeFromNoWith . $sqlGetZFINtimeWhereNoWith; 
+        $sql = $sqlGetZFINtimeFromNoWith . $sqlGetZFINtimeWhereNoWith;
         $ctNoWith++;
     } else {
         $sql = $sqlGetZFINtimeFrom . $sqlGetZFINtimeWhere;
         $ctMultipleWith++;
     }
-    
+
     if ($qualifierString ne "noQualifier") {
       $sql = $sql . " and mrkrgoev_gflag_name = ? ";
     }
-    
+
     $cur = $dbh->prepare($sql);
-    
-    if ($withString eq "noWith") { 
+
+    if ($withString eq "noWith") {
         if ($qualifierString eq "noQualifier") {
              $cur->execute($orgCode, $term, $evidence, $publication, $createdBy, $objId);
         } else {
@@ -381,41 +382,41 @@ sub updateDateGAFtime {
         } else {
              $cur->execute($orgCode, $withString, $term, $evidence, $publication, $createdBy, $objId, $qualifierString);
         }
-    }    
+    }
 
-    $cur->bind_columns(\$mrkrgoevdZdbId,\$lastModDate);  
+    $cur->bind_columns(\$mrkrgoevdZdbId,\$lastModDate);
     while ($cur->fetch()) {
-	$mrkrGoTermEvdIds{$mrkrgoevdZdbId} = $lastModDate;	
-    }                  
+	$mrkrGoTermEvdIds{$mrkrgoevdZdbId} = $lastModDate;
+    }
 
     foreach $mrkrGoTermEvdId (keys %mrkrGoTermEvdIds) {
 	$ctTotalGAFprocessed++;
-	
+
 	$dateStored = $mrkrGoTermEvdIds{$mrkrGoTermEvdId};
-	
+
         if (!exists($alreadyUpdated{$mrkrGoTermEvdId}) && compareDates($newDate, $dateStored) > 0) {
                $updatedDate = makeDateToUpdate($newDate);
-           
+
                if ($evidence eq "IEA" && compareDates($today, $dateStored) > 10000) {
                  $ctIEAolderThan1Year++;
                  print LOG "$mrkrgoevdZdbId\t$db\t$objId\t$GOid\t$term\t$publication\t$evidence\t$withString\t$createdBy\t$updatedDate\t$dateStored\n";
                }
-           
+
                $ctRecordTimeUpdated++;
-           
+
                $cur = $dbh->prepare($sqlUpdateGAFtime);
                $cur->execute($updatedDate, $mrkrgoevdZdbId);
-           
+
                $cur = $dbh->prepare($sqlUpdateGAFtime2);
                $cur->execute($updatedDate, $mrkrgoevdZdbId);
-           
+
                $alreadyUpdated{$mrkrgoevdZdbId} = $newDate;
-           
+
          } else {
                $ctRecordTimeUnchanged++;
          }
-    }  
-        
+    }
+
     undef $mrkrgoevdZdbId;
     undef $lastModDate;
     undef $orgCode;
@@ -427,6 +428,6 @@ sub updateDateGAFtime {
     undef $newDate;
     undef $createdBy;
     undef $db;
-    undef $GOid; 
+    undef $GOid;
     undef %mrkrGoTermEvdIds;
 }
