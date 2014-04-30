@@ -24,7 +24,7 @@ $query = 'zebrafish[mesh]+OR+zebra fish[mesh]+OR+danio rerio';
 #assemble the esearch URL
 $base = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 $retmax = '200';
-$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=60&datetype=edat&retmax=$retmax";
+$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=80&datetype=edat&retmax=$retmax";
 
 #get the esearch URL
 #the usehistory key creates a url key that we can use to access the return: suggested for larger queries by NCBI
