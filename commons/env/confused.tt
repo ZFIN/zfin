@@ -41,6 +41,7 @@
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
+<!--|LOAD_PUBS_DIR|-->	/research/zunloads/pubAcquisitionDev/
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	dense.zfin.org
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false

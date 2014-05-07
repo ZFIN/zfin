@@ -2,7 +2,7 @@
 
 <!--|AO_EMAIL_CURATOR|-->	mochla\@zfin.org
 <!--|AO_EMAIL_ERR|-->	mochla\@zfin.org
-<!--|BACKGROUND_COLOR|-->	#FFFFCC
+<!--|BACKGROUND_COLOR|-->	#33AA22
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	mochla\@zfin.org
@@ -41,6 +41,7 @@
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	mochla\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
+<!--|LOAD_PUBS_DIR|-->	/research/zunloads/pubAcquisitionDev/
 <!--|LOCUS_REGISTRATION_EMAIL|-->	mochla\@zfin.org
 <!--|MACHINE_NAME|-->	shmoo
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false

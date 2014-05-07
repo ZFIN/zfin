@@ -24,7 +24,7 @@ $query = 'zebrafish[mesh]+OR+zebra fish[mesh]+OR+danio rerio';
 #assemble the esearch URL
 $base = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 $retmax = '200';
-$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=80&datetype=edat&retmax=$retmax";
+$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=60&datetype=edat&retmax=$retmax";
 
 #get the esearch URL
 #the usehistory key creates a url key that we can use to access the return: suggested for larger queries by NCBI
@@ -81,7 +81,9 @@ for ($retstart = 0; $retstart < $count; $retstart += $retmax) {
 	);
     $twig->parseurl($fetch_url);
     
-    
+#add exit here
+#add close here
+#add main doc
 #print "Total Pubs Added: ".$pubCount."\n";
 #print $web."\n";
 #print $key."\n";
@@ -91,9 +93,9 @@ for ($retstart = 0; $retstart < $count; $retstart += $retmax) {
 # consequently, the order it parses, is the order the load file will be generated.
 }
 
-# TODO: get Twig working on solaris.  Ryan ran into 64 bit perl problem with expat module.  So for now, we split the parse and load into two
-# jobs and two steps.  Stupid solaris!  The following line now runs from a new job in jenkins on production, and this job runs from mirror.
-# system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";
+#system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";
+
+system("<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/pushPubsToLoad.sh") && die "failure in pushPubsToLoad.sh : $!\n";
 
 sub pubMedArticle {
     $pubCount++;

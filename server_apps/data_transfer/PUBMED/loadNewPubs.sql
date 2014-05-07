@@ -18,7 +18,7 @@ create temp table tmp_pubs (pmid varchar(30),
 				 status varchar(20))
 with no log;
 
-load from <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log
+load from <!--|LOAD_PUBS_DIR|-->/parsePubs.log
 insert into tmp_pubs;
 
 delete from tmp_pubs
@@ -72,8 +72,6 @@ select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower
   from journal, tmp_pubs
   where lower(journaltitle) = jrnl_name_lower
   or lower(iso) = jrnl_abbreV_lower
-  or jrnl_online_issn = issn
- or jrnl_print_issn = issn
 into temp tmp_journal_matches;
 
 select min(jrnl_zdb_id) as id, jrnl_abbrev_lower, jrnl_name_lower
@@ -104,7 +102,7 @@ insert into zdb_active_source
 unload to "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournals.txt"
   select * from tmp_ids;
 
-insert into journal (jrnl_zdb_id, jrnl_name, jrnl_abbrev, jrnl_is_nice, jrnl_print_issn
+insert into journal (jrnl_zdb_id, jrnl_name, jrnl_abbrev, jrnl_is_nice, jrnl_issn
 )
  select id, journaltitle, iso, 'f', issn
   from tmp_ids; 
