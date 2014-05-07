@@ -102,7 +102,7 @@ insert into zdb_active_source
 unload to "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournals.txt"
   select * from tmp_ids;
 
-insert into journal (jrnl_zdb_id, jrnl_name, jrnl_abbrev, jrnl_is_nice, jrnl_issn
+insert into journal (jrnl_zdb_id, jrnl_name, jrnl_abbrev, jrnl_is_nice, jrnl_online_issn
 )
  select id, journaltitle, iso, 'f', issn
   from tmp_ids; 
