@@ -91,7 +91,9 @@ for ($retstart = 0; $retstart < $count; $retstart += $retmax) {
 # consequently, the order it parses, is the order the load file will be generated.
 }
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";
+# TODO: get Twig working on solaris.  Ryan ran into 64 bit perl problem with expat module.  So for now, we split the parse and load into two
+# jobs and two steps.  Stupid solaris!  The following line now runs from a new job in jenkins on production, and this job runs from mirror.
+# system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";
 
 sub pubMedArticle {
     $pubCount++;
