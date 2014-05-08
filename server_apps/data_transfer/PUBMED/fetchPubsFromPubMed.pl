@@ -1,10 +1,8 @@
 #!/private/bin/perl 
 
 use XML::Twig;
-use DBI;
 use LWP::Simple;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
 
 #set environment variables
 
@@ -93,9 +91,7 @@ for ($retstart = 0; $retstart < $count; $retstart += $retmax) {
 # consequently, the order it parses, is the order the load file will be generated.
 }
 
-#system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";
-
-system("<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/pushPubsToLoad.sh") && die "failure in pushPubsToLoad.sh : $!\n";
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadNewPubs.sql >loadSQLOutput.log 2> loadSQLError.log") && die "loading the pubs failed.";
 
 sub pubMedArticle {
     $pubCount++;
