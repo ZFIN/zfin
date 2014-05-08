@@ -92,7 +92,6 @@
 <filter token="LN54_CONTACT_EMAIL" value="${LN54_CONTACT_EMAIL}"/>
 <filter token="LOADUP_FULL_PATH" value="${LOADUP_FULL_PATH}"/>
 <filter token="LOAD_ONTOLOGIES_AT_STARTUP" value="${LOAD_ONTOLOGIES_AT_STARTUP}"/>
-<filter token="LOAD_PUBS_DIR" value="${LOAD_PUBS_DIR}"/>
 <filter token="LOCUS_REGISTRATION_EMAIL" value="${LOCUS_REGISTRATION_EMAIL}"/>
 <filter token="LOG4J_FILE" value="${LOG4J_FILE}"/>
 <filter token="LOG_FILE_MAX" value="${LOG_FILE_MAX}"/>

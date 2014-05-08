@@ -17,7 +17,7 @@ TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/PUBMED
-GENERICS = updatepubstatus.pl fetchPubsFromPubMed.pl loadNewPubs.sql pushPubsToLoad.sh loadPulledPubs.sh
+GENERICS = updatepubstatus.pl fetchPubsFromPubMed.pl loadNewPubs.sql
 
 
 # ---------------  Production Rules  ------------------------------------

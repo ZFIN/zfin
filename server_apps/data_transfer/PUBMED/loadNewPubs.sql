@@ -18,7 +18,7 @@ create temp table tmp_pubs (pmid varchar(30),
 				 status varchar(20))
 with no log;
 
-load from <!--|LOAD_PUBS_DIR|-->/parsePubs.log
+load from <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log
 insert into tmp_pubs;
 
 delete from tmp_pubs
