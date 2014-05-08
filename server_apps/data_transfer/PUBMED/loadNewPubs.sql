@@ -72,6 +72,8 @@ select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower
   from journal, tmp_pubs
   where lower(journaltitle) = jrnl_name_lower
   or lower(iso) = jrnl_abbreV_lower
+  or issn = jrnl_online_issn
+ or issn = jrnl_print_issn
 into temp tmp_journal_matches;
 
 select min(jrnl_zdb_id) as id, jrnl_abbrev_lower, jrnl_name_lower
