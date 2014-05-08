@@ -1,4 +1,4 @@
-#!/private/bin/perl 
+#!/usr/bin/perl 
 
 use XML::Twig;
 use LWP::Simple;
