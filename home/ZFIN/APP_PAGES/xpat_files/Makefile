@@ -34,7 +34,7 @@ STATICS = fxfigphenoanatlist.apg xpatexpcdnsummary.apg xpatexpcdnlist.apg xpatse
 fxfigstgrng.apg fxassayabbrev.apg fxfigassaylist.apg fxfigfishlist.apg xpatfeatexp.apg \
 fxgenestgrng.apg record_web_update.apg genotypecuration.apg attribupdate.apg \
 genoupdate.apg patocuration.apg fxfigphenostgrng.apg xpatcurreset.apg \
-wordcompletion.apg xpatcurupdatecondition.apg gocuration.apg xpatselect_resultsasimages.apg \
+xpatcurupdatecondition.apg gocuration.apg xpatselect_resultsasimages.apg \
 xpatfeatexpcondn.apg xpatview.apg fxfiganatlist.apg fxfiggenelist.apg fxfigphenogenolist.apg
 
 # Use default rules for app page directories.
