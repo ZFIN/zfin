@@ -87,6 +87,7 @@ select
 ! gather_alias.awk <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_zfin_gene_alias_scattered.tmp > <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_zfin_gene_alias.gff3
 ! /usr/bin/rm -f <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_zfin_gene_alias_scattered.tmp
 ! /usr/bin/wc -l <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_zfin_gene_alias.gff3
+! /bin/chmod 644 <!--|ROOT_PATH|-->/home/data_transfer/Downloads/E_zfin_gene_alias.gff3
 ! echo ""
 
 
