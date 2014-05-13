@@ -118,14 +118,14 @@ select id, dblink_acc_num,
 dblink_linked_recid 
    from tmp_drop, record_Attribution, db_link
      where recattrib_data_zdb_id = id
-     and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1')
+     and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1','ZDB-PUB-130211-1','ZDB-PUB-130725-1','ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1','ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1')
      and dblink_zdb_id = id
 and not exists (Select 'x' from ensdar_mapping where ensm_ensdarg_id = dblink_acc_num);
 
 delete from tmp_drop
  where exists (Select 'x' from record_attribution
        	      	      where recattrib_data_zdb_id = id
-		      and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1'));
+		      and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1','ZDB-PUB-130211-1','ZDB-PUB-130725-1','ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1','ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1');
 
 select * From tmp_drop
  where id = 'ZDB-DBLINK-120813-30916';
