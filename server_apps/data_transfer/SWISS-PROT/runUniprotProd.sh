@@ -12,10 +12,12 @@ echo "Remove old files: okfile, *2go"
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/ec2go
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/interpro2go
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/spkw2go
+
 echo "#########################################################################"
 
-echo "Copy new files from /nfs/zygotix/zarchive/load_files/UniProt/"
+echo "Copy new files from /research/zarchive/load_files/UniProt/" 
 /private/bin/scp /research/zarchive/load_files/UniProt/* <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/
+
 echo "#########################################################################"
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/;
