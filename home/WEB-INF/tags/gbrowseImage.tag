@@ -10,15 +10,17 @@
      <c:set var="width" value="${gbrowseImage.defaultWidth}"/>
  </c:if>
 
+   <c:set var="imageDomID" value="gbrowse-image-${zfn:generateRandomDomID()}"/>
 
    <c:if test="${empty gbrowseImage.linkText}">
-    <div style="margin: .5em; border: 1px solid black ; background: white">
+    <div class="gbrowse-image-container" style="display: none; margin: .5em; border: 1px solid black ; background: white">
 
         <a href="${gbrowseImage.linkURL}">
-        <img
+        <img class="gbrowse-image" id="${imageDomID}"
              style="padding-bottom:10px; border: 0 "
              src="${gbrowseImage.imageURL}&width=${width}">
         </a>
+
     </div>
    </c:if>
    <c:if test="${!empty gbrowseImage.linkText}">
@@ -28,3 +30,13 @@
          
        </div>
    </c:if>
+
+   <script>
+       jQuery('#${imageDomID}').load(function() {
+           console.log('image loaded');
+           /* If it happens to be called for a single transcript, show that section */
+           jQuery('#single-transcript-gbrowse-section').show();
+           /* if it's not a single transcript, it's just the nearest div that needs to be shown */
+           jQuery(this).closest('div').show();
+       });
+   </script>
