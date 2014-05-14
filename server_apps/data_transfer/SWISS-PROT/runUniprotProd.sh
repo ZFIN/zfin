@@ -15,7 +15,7 @@ echo "Remove old files: okfile, *2go"
 echo "#########################################################################"
 
 echo "Copy new files from /nfs/zygotix/zarchive/load_files/UniProt/"
-/private/bin/scp /nfs/zygotix/zarchive/load_files/UniProt/* <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/
+/private/bin/scp /research/zarchive/load_files/UniProt/* <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/
 echo "#########################################################################"
 
 cd <!--|SOURCEROOT|-->/server_apps/data_transfer/SWISS-PROT/;
