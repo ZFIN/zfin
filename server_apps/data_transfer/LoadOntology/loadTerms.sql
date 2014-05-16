@@ -181,10 +181,6 @@ insert into tmp_term_name_changed
   	term.term_name != no_dups.term_name AND
         term.term_is_Secondary = 'f';
 
-unload to modified_term_names.unl
-  select newTerm.term_name, oldTerm.term_name, oldTerm.term_ont_id 
-  from tmp_term_name_changed newTerm, TERM oldTerm;
-
 unload to debug
   select term_name, term_id from tmp_term_name_changed;
 
