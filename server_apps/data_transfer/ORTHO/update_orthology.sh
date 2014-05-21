@@ -108,6 +108,10 @@ echo "###############################################################"
 # send the logs/reports via email
 emailOrthologyReports.pl
 
+
+# run the following script to update orthologue names and make a list of zebrafish genes that may need to update the gene names
+NCBIorthology.pl
+
 # note this regen generates a lot of locks (~149,192)
 
 echo "running Regen ortho edvidence display, should be zero"
