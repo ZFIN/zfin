@@ -101,7 +101,7 @@ sub downloadFiles($$) {
 	$labZdbId = "ZDB-LAB-991005-53";
     }
     elsif ($resourceCenter eq "EZRC"){
-	if (system("/local/bin/wget http://www.ezrc.kit.edu/extra/$filename >> $wgetStatusFile 2>&1")) {
+	if (system("/local/bin/wget http://www.ezrc.kit.edu/downloads/$filename >> $wgetStatusFile 2>&1")) {
 	    &errorExit("Failed to download $filename file from EZRC.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-130607-1";
