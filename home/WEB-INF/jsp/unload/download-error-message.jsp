@@ -28,7 +28,7 @@
                 <c:if test="${service.futureArchivesAvailable}">
                     <p/>
                     Future download archive available:
-                    <a href="archive/${service.futureArchive}"> ${service.futureArchive}
+                    <a href="downloads/archive/${service.futureArchive}"> ${service.futureArchive}
                 </c:if>
             </authz:authorize>
         </c:if>

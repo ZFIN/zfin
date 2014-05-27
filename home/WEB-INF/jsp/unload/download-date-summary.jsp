@@ -39,7 +39,7 @@
         <td style="font-weight: bold">
             <c:choose>
                 <c:when test="${fn:contains(formBean.request, 'archive')}">
-                    <a href="../archive">View Archive Files</a>
+                    <a href="../">View Archive Files</a>
                 </c:when>
                 <c:otherwise>
                     <a href="downloads/archive">View Archive Files</a>
