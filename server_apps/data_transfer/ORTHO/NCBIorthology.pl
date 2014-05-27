@@ -127,7 +127,7 @@ $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 $sqlGetZFgeneNamesByHumanAndMouseOrth =
-'select distinct organism,ortho_name,dblink_acc_num,c_gene_id,mrkr_abbrev,mrkr_name ' . 
+'select distinct organism,ortho_name,ortho_abbrev,dblink_acc_num,c_gene_id,mrkr_abbrev,mrkr_name ' . 
   'from db_link,orthologue,marker ' . 
  'where dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-27","ZDB-FDBCONT-040412-28","ZDB-FDBCONT-040412-23") ' .
    'and zdb_id = dblink_linked_recid ' .
@@ -137,7 +137,7 @@ $sqlGetZFgeneNamesByHumanAndMouseOrth =
 
 $cur = $dbh->prepare($sqlGetZFgeneNamesByHumanAndMouseOrth);
 $cur->execute();
-$cur->bind_columns(\$organism,\$orthoName,\$ncbiID,\$zdbGeneId,\$zdbGeneAbbrev,\$zdbGeneName);
+$cur->bind_columns(\$organism,\$orthoName,\$orthoAbbrev,\$ncbiID,\$zdbGeneId,\$zdbGeneAbbrev,\$zdbGeneName);
 
 # %namesZFgene - for zebrafish gene names
 # key: ZF gene ZDB ID
@@ -171,6 +171,12 @@ $cur->bind_columns(\$organism,\$orthoName,\$ncbiID,\$zdbGeneId,\$zdbGeneAbbrev,\
 
 %namesHumanOrthZFIN = ();
 
+# %symbolsHumanOrthZFIN - for human orthology symbols stored at ZFIN
+# key: ZF gene ZDB ID
+# value: human orthology symbol (stored in orthologue)
+
+%symbolsHumanOrthZFIN = ();
+
 # %namesHumanOrthNCBI - for human orthology names from NCBI
 # key: ZF gene ZDB ID
 # value: human orthology name from NCBI
@@ -183,17 +189,31 @@ $cur->bind_columns(\$organism,\$orthoName,\$ncbiID,\$zdbGeneId,\$zdbGeneAbbrev,\
 
 %namesMouseOrthZFIN = ();
 
+# %symbolsMouseOrthZFIN - for mouse orthology symbols stored at ZFIN
+# key: ZF gene ZDB ID
+# value: mouse orthology symbol (stored in orthologue)
+
+%symbolsMouseOrthZFIN = ();
+
+
 # %namesMouseOrthNCBI - for human orthology names from NCBI
 # key: ZF gene ZDB ID
 # value: human orthology name from NCBI
 
 %namesMouseOrthNCBI = ();
 
+
 # %namesFlyOrthZFIN - for fly orthology names stored at ZFIN
 # key: ZF gene ZDB ID
 # value: fly orthology name (stored in orthologue)
 
 %namesFlyOrthZFIN = ();
+
+# %symbolsFlyOrthZFIN - for fly orthology symbols stored at ZFIN
+# key: ZF gene ZDB ID
+# value: fly orthology symbol (stored in orthologue)
+
+%symbolsFlyOrthZFIN = ();
 
 # %namesFlyOrthNCBI - for fly orthology names from NCBI
 # key: ZF gene ZDB ID
@@ -222,6 +242,7 @@ $ct++;
 
    if ($organism eq "Human") {
        $namesHumanOrthZFIN{$zdbGeneId} = $orthoName;
+       $symbolsHumanOrthZFIN{$zdbGeneId} = $orthoAbbrev;
        if (exists($NCBIidsAndNamesHuman{$ncbiID})) {
            $namesHumanOrthNCBI{$zdbGeneId} = $NCBIidsAndNamesHuman{$ncbiID};
        } else {
@@ -230,6 +251,7 @@ $ct++;
        }
    } elsif ($organism eq "Mouse") {
        $namesMouseOrthZFIN{$zdbGeneId} = $orthoName;
+       $symbolsMouseOrthZFIN{$zdbGeneId} = $orthoAbbrev;
        if (exists($NCBIidsAndNamesMouse{$ncbiID})) {
            $namesMouseOrthNCBI{$zdbGeneId} = $NCBIidsAndNamesMouse{$ncbiID};
        } else {
@@ -238,6 +260,7 @@ $ct++;
        }
    } elsif ($organism eq "Fruit fly") {
        $namesFlyOrthZFIN{$zdbGeneId} = $orthoName;
+       $symbolsFlyOrthZFIN{$zdbGeneId} = $orthoAbbrev;
        if (exists($NCBIidsAndNamesFly{$ncbiID})) {
            $namesFlyOrthNCBI{$zdbGeneId} = $NCBIidsAndNamesFly{$ncbiID};
        } else {
@@ -309,8 +332,10 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
               $zebrafishGeneNamesUpdated{$zdbGeneId} = $humanGeneName;
               print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
               print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
-              print ZFNAMEREPORT "gene name (h): $humanGeneName\n";    
-              print ZFNAMEREPORT "gene name (m): $mouseGeneName\n\n";
+              print ZFNAMEREPORT "gene name (h): $humanGeneName\n"; 
+              print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
+              print ZFNAMEREPORT "gene name (m): $mouseGeneName\n";
+              print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
               $ctDiffrentZFgeneNames++;
            } else {
               # gene name not needed to be updated, since mouse gene name is the same, although different from human gene name
@@ -320,8 +345,10 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
            $zebrafishGeneNamesUpdated{$zdbGeneId} = $humanGeneName;
            print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
            print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
-           print ZFNAMEREPORT "gene name (h): $humanGeneName\n";    
-           print ZFNAMEREPORT "gene name (m): no mouse orthology; or the mouse NCBI gene Id not found at NCBI\n\n";
+           print ZFNAMEREPORT "gene name (h): $humanGeneName\n"; 
+           print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
+           print ZFNAMEREPORT "gene name (m): no mouse orthology; or the mouse NCBI gene Id not found at NCBI\n";
+           print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
            $ctDiffrentZFgeneNames++;
        }
        
@@ -344,7 +371,9 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
                   print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
                   print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
                   print ZFNAMEREPORT "gene name (h): no human orthology; or the human NCBI gene Id not found at NCBI\n";   
-                  print ZFNAMEREPORT "gene name (m): $mouseGeneName\n\n";
+                  print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
+                  print ZFNAMEREPORT "gene name (m): $mouseGeneName\n";
+                  print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
                   $ctDiffrentZFgeneNames++;
                } else {
                   $ctIdenticalToMouseAndNoHuman++;
