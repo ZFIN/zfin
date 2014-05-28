@@ -42,7 +42,7 @@
 <!--|LN54_CONTACT_EMAIL|-->	cmpich\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	cmpich\@cs.uoregon.edu
-<!--|MACHINE_NAME|-->	zygotix
+<!--|MACHINE_NAME|-->	aria
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	junior
 <!--|NOMEN_COORDINATOR|-->	cmpich\@cs.uoregon.edu
@@ -61,7 +61,7 @@
 <!--|SITE_BACKGROUND|-->	#FFFFCC
 <!--|SOURCEROOT|-->	/opt/zfin/source_www/junior
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
+<!--|SQLHOSTS_HOST|-->	aria.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	cmpich\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	cmpich\@cs.uoregon.edu
