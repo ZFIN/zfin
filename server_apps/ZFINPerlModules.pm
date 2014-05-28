@@ -61,6 +61,15 @@ sub countData() {
   return ($nRecords);
 }
 
+sub stringStartsWithNumber() {
+  my $stringTested = $_[1];
+  if ($stringTested =~ m/^[0-9]/) {
+      return 1;
+  } else {
+      return 0;
+  }
+}
+
 sub stringStartsWithLetter() {
   my $stringTested = $_[1];
   if ($stringTested =~ m/^[a-zA-Z]/) {
@@ -69,6 +78,16 @@ sub stringStartsWithLetter() {
       return 0;
   }
 }
+
+sub stringStartsWithLetterOrNumber() {
+  my $stringTested = $_[1];
+  if ($stringTested =~ m/^[a-zA-Z0-9]/) {
+      return 1;
+  } else {
+      return 0;
+  }
+}
+
 
 sub getYear() {
   my $dateString = $_[1];
@@ -87,5 +106,6 @@ sub getDay() {
   my $day = substr $dateString, 6;
   return $day;
 }
+
 
 1;
