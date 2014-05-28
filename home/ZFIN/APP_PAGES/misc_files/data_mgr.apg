@@ -125,11 +125,11 @@ c.clone_mrkr_zdb_id='$OID';
 
 
 <?MIBLOCK COND="$(EC,$AUTHORIZED,root)"> 
+  <?MIVAR COND="$(AND,$(OR,$(NXST,$calling_page),$(NE,$calling_page,citation)),$(>,$(POSITION,$OID,-IMAGE-),0))">
     <TD>
-      <?MIVAR>
         <A HREF="/action/infrastructure/deleteRecord/$OID"><font size=-1 color=red> Delete this record </font></A>
-      <?/MIVAR>
     </TD>
+  <?/MIVAR>
 <?/MIBLOCK>
 
 <?MIVAR>
