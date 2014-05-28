@@ -8,7 +8,7 @@ import org.zfin.orthology.OrthologySpecies;
  */
 public class OrthologyPresentation extends EntityPresentation {
 
-    private static final String uri = "?MIval=aa-orthoviewdetailed.apg&userid=GUEST&OID=";
+    private static final String uri = "/action/orthology/";
     public static final String ORTHOLOGY_DETAILS = "Orthology Details";
 
     /**

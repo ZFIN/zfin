@@ -20,6 +20,7 @@ import java.util.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
  * Tests for org.zfin.marker.service.MarkerService
@@ -125,7 +126,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void relatedMarkerDisplayFast() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByAbbreviation("pax6a");
+        Marker m = getMarkerRepository().getGeneByAbbreviation("pax6a");
         List<MarkerRelationshipPresentation> rels;
         rels = MarkerService.getRelatedMarkerDisplayExcludeType(m, false);
         assertNotNull(rels);
@@ -136,7 +137,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void relatedMarkerDisplayFastMultipleSuppliers() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-72");
+        Marker m = getMarkerRepository().getGeneByID("ZDB-GENE-990415-72");
         List<MarkerRelationshipPresentation> rels;
         rels = MarkerService.getRelatedMarkerDisplayExcludeType(m, false);
         assertNotNull(rels);
@@ -154,7 +155,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void relatedMarkerDisplayFastMultipleAttributions() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010718-1");
+        Marker m = getMarkerRepository().getGeneByID("ZDB-GENE-010718-1");
         List<MarkerRelationshipPresentation> rels;
         rels = MarkerService.getRelatedMarkerDisplayExcludeType(m, false);
         assertNotNull(rels);
@@ -179,15 +180,15 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
     public void geneViewController() throws Exception {
         GeneViewController geneViewController = new GeneViewController();
         geneViewController.setExpressionService(new ExpressionService());
-        geneViewController.setMarkerRepository(RepositoryFactory.getMarkerRepository());
+        geneViewController.setMarkerRepository(getMarkerRepository());
         Model model = new ExtendedModelMap();
-        geneViewController.getGeneView(model, "ZDB-GENE-001103-1");
+        geneViewController.getGeneView( "ZDB-GENE-001103-1", model);
     }
 
 
     @Test
     public void getMutantsOnGene() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByAbbreviation("cdh1");
+        Marker m = getMarkerRepository().getGeneByAbbreviation("cdh1");
         assertNotNull(m);
         String display = RepositoryFactory.getMutantRepository().getMutantLinesDisplay(m.getZdbID());
         assertNotNull(display);
@@ -195,7 +196,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void getSequenceInfoSummary() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        Marker m = getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         SequenceInfo sequenceInfo = MarkerService.getSequenceInfoSummary(m);
         assertThat(sequenceInfo.getNumberDBLinks(), greaterThan(11));
         assertThat(sequenceInfo.getNumberDBLinks(), lessThan(50)); // was 18
@@ -204,7 +205,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void getSequenceInfoFull() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        Marker m = getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(m);
         assertThat(sequenceInfo.getDbLinks().size(), greaterThan(7));
         assertThat(sequenceInfo.getDbLinks().size(), lessThan(50)); // was 9
@@ -265,7 +266,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         Marker marker;
         MappedMarkerBean mappedMarkerBean;
 
-        marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-SNP-060626-1008");
+        marker = getMarkerRepository().getMarkerByID("ZDB-SNP-060626-1008");
         assertNotNull(marker);
         mappedMarkerBean = MarkerService.getSnpMappedMarkers(marker);
         assertNotNull(mappedMarkerBean);
@@ -274,7 +275,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         assertEquals("25", unmappedMarkers.iterator().next());
 
         // case 7593, should not be null even if null related markers
-        marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-SNP-060626-97");
+        marker = getMarkerRepository().getMarkerByID("ZDB-SNP-060626-97");
         assertNotNull(marker);
         mappedMarkerBean = MarkerService.getSnpMappedMarkers(marker);
         assertNotNull(mappedMarkerBean);
@@ -282,7 +283,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void getSequenceInfoFullNotDupe() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-030616-329");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-GENE-030616-329");
         SequencePageInfoBean sequencePageInfoBean = MarkerService.getSequenceInfoFull(m);
         Collection<MarkerDBLink> secMarkerDBLinks = sequencePageInfoBean.getSecondRelatedMarkerDBLink();
         assertEquals(2, secMarkerDBLinks.size());
@@ -291,7 +292,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void pullClonesOntoGeneFromTranscript() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-010606-1");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-GENE-010606-1");
         GeneBean geneBean = new GeneBean();
         geneBean.setMarker(m);
         MarkerService.createDefaultViewForMarker(geneBean);
@@ -308,7 +309,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void pullGeneOntoCloneFromTranscript() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-BAC-100127-974");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-BAC-100127-974");
         CloneBean cloneBean = new CloneBean();
         cloneBean.setMarker(m);
         MarkerService.createDefaultViewForMarker(cloneBean);
@@ -321,7 +322,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void pullGeneOntoCloneFromTranscript2() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-BAC-060503-669");
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-BAC-060503-669");
         CloneBean cloneBean = new CloneBean();
         cloneBean.setMarker(m);
         MarkerService.createDefaultViewForMarker(cloneBean);
@@ -331,9 +332,9 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
                 ++count;
             }
         }
-        assertEquals(9,count);
-        assertThat(cloneBean.getMarkerRelationshipPresentationList().size(),greaterThan(5));
-        assertThat(cloneBean.getMarkerRelationshipPresentationList().size(),lessThan(400));
+        assertEquals(9, count);
+        assertThat(cloneBean.getMarkerRelationshipPresentationList().size(), greaterThan(5));
+        assertThat(cloneBean.getMarkerRelationshipPresentationList().size(), lessThan(400));
 
         MarkerService.pullGeneOntoCloneFromTranscript(cloneBean);
         count = 0;
@@ -344,5 +345,14 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         }
         assertTrue(count > 10);
         assertThat(cloneBean.getMarkerRelationshipPresentationList().size(), greaterThan(30));
+    }
+
+    @Test
+    public void getEnsemblAccessionId() {
+        String geneAbbreviation = "pax2a";
+        Marker marker = getMarkerRepository().getMarkerByAbbreviation(geneAbbreviation);
+        String accession = MarkerService.getEnsemblAccessionId(marker);
+        assertNotNull(accession);
+        assertEquals("ENSDARG00000028148", accession);
     }
 }

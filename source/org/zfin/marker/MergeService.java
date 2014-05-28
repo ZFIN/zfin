@@ -14,6 +14,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappedMarker;
+import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -375,23 +376,22 @@ public class MergeService {
         // linkage groups, etc.
         // mapped marker
         if (CollectionUtils.isNotEmpty(markerToDelete.getDirectPanelMappings()))
-            for (MappedMarker mappedMarker : markerToDelete.getDirectPanelMappings())
+            for (MappedMarkerImpl mappedMarker : markerToDelete.getDirectPanelMappings())
                 mappedMarker.setMarker(markerToMergeInto);
 
-        HibernateUtil.currentSession().createSQLQuery("update linkage_member \n" +
-                "                    set lnkgmem_member_zdb_id = :markerToMergeIntoZdbID \n" +
-                "                  where lnkgmem_member_zdb_id = :markerToDeleteZdbID ;")
+        HibernateUtil.currentSession().createSQLQuery("update linkage_membership \n" +
+                "                    set lnkgm_member_1_zdb_id = :markerToMergeIntoZdbID \n" +
+                "                  where lnkgm_member_1_zdb_id = :markerToDeleteZdbID ;")
+                .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
+                .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
+                .executeUpdate();
+        HibernateUtil.currentSession().createSQLQuery("update linkage_membership \n" +
+                "                    set lnkgm_member_2_zdb_id = :markerToMergeIntoZdbID \n" +
+                "                  where lnkgm_member_2_zdb_id = :markerToDeleteZdbID ;")
                 .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
                 .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
                 .executeUpdate();
 
-        HibernateUtil.currentSession().createSQLQuery("update linkage_pair_member \n" +
-                "                    set lpmem_member_zdb_id = :markerToMergeIntoZdbID \n" +
-                "                  where lpmem_member_zdb_id = :markerToDeleteZdbID ;")
-                .setString("markerToMergeIntoZdbID", markerToMergeInto.getZdbID())
-                .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
-                .executeUpdate();
-        // update primer set??
         HibernateUtil.currentSession().createSQLQuery("update primer_set \n" +
                 "                    set marker_id = :markerToMergeIntoZdbID \n" +
                 "                  where marker_id = :markerToDeleteZdbID ;")

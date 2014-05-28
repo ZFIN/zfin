@@ -143,8 +143,6 @@ for antibody: added meta redirect at the beginning and the end of the file.
   </SCRIPT>
   <?MIVAR COND="$(AND,$(NXST,$OID),$(XST,$temp_oid))" NAME=$OID>$temp_oid<?/MIVAR>
 
-  <?MISQL SQL="select object from webPages where ID='aa-chromoscripts.apg';">$1  <?/MISQL>
-
 <script type="text/javascript" language="JavaScript">
 function jump(form_select){
     if (0 != form_select.selectedIndex){
@@ -423,18 +421,17 @@ function jump(form_select){
  	function update_sequence(mrkr_zdb_id,old_seq,new_seq,note) {
  	        if (note == '') {note = 'Sequence modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
- 		if ((new_seq != '')) {
+ 		 
  		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+mrkr_zdb_id+'&attr=seq_sequence&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note);
- 		}
+  
         }
 
 
         function update_second_sequence(seq_zdb,old_seq,new_seq,note,new_seq_2) {
  	        if (note == '') {note = 'Sequence modified';}
  	        note = escape(note.replace(/\n/g, "<br>"));
- 		if ((new_seq != '')) {
- 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+seq_zdb+'&attr=seq_sequence_2&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note+'&new_value2='+new_seq_2);
- 		}
+  		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&dataOID='+seq_zdb+'&attr=seq_sequence_2&attr_type=special&old_value='+old_seq+'&new_value='+new_seq+'&target_table=marker_sequence&xtra_param='+note+'&new_value2='+new_seq_2);
+ 
         }
 
 	function update_problem_type(old_value , new_value) {
@@ -2863,7 +2860,10 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
   <TABLE class="summary">
    <TR>
     <TD>
-       &nbsp;&nbsp;<?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+            <script type="text/javascript">
+                jQuery('#mappingDetail').load('/action/mapping/summary/$OID');
+            </script>
+            <div id="mappingDetail"></div>
     </TD>
    </TR>
   </TABLE>
@@ -2882,7 +2882,12 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthoedit.apg';">$1<?/MISQL>
  <?/MIBLOCK>
 
- <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-orthoviewbrief.apg';" COND="$(XST,$UPDATE)">$1<?/MISQL>
+	      <?MIVAR>
+            <script type="text/javascript">
+                jQuery('#orthology').load('/action/marker/$OID/orthology');
+            </script>
+	    <?/MIVAR>
+            <div id="orthology"></div>
 
 <?/MIBLOCK>
 

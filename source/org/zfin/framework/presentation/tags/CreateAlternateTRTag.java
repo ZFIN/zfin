@@ -58,6 +58,7 @@ public class CreateAlternateTRTag extends TagSupport {
     // class names for the tr-element
     private String trClassNames;
     private boolean newGroup = true;
+    private boolean showRowStyleClass = true;
     private String trStyleName;
 
     private static final Logger LOG = Logger.getLogger(GroupByDisplayTag.class);
@@ -88,7 +89,7 @@ public class CreateAlternateTRTag extends TagSupport {
             try {
                 Object previousGroupBeanAttribute = PropertyUtils.getProperty(previousObject, groupByBean);
                 Object currentGroupBeanAttribute = PropertyUtils.getProperty(currentObject, groupByBean);
-                if (newGroup)
+                //if (newGroup)
                     newGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
                 LOG.debug("previousGroupBeanAttribute: " + previousGroupBeanAttribute);
                 LOG.debug("currentGroupBeanAttribute:" + currentGroupBeanAttribute);
@@ -106,10 +107,12 @@ public class CreateAlternateTRTag extends TagSupport {
         if (trClassNames != null)
             sb.append(trClassNames);
 
-        if (loopIndex % 2 != 0)
-            sb.append(" odd ");
-        else
-            sb.append(" even ");
+        if (showRowStyleClass) {
+            if (loopIndex % 2 != 0)
+                sb.append(" odd ");
+            else
+                sb.append(" even ");
+        }
 
         //if not grouping by anything, treat every row as a new group
         if (newGroup || groupByBean == null) {
@@ -124,9 +127,9 @@ public class CreateAlternateTRTag extends TagSupport {
                 sb.append(" evengroup ");
         }
 //        sb.append("\" id=\"loopindex-" + loopIndex + "\">");
-        if (trStyleName!=null)
+        if (trStyleName != null)
 //            sb.append("\" id=\"loopindex-" + loopIndex + "\" +  style="+ trStyleName +"\">");
-            sb.append("\" id=\"loopindex-" + loopIndex + "\"   style="+ trStyleName +"\"   name="+ trNames + ">");
+            sb.append("\" id=\"loopindex-" + loopIndex + "\"   style=" + trStyleName + "\"   name=" + trNames + ">");
         else
             sb.append("\" id=\"loopindex-" + loopIndex + "\">");
 
@@ -214,5 +217,13 @@ public class CreateAlternateTRTag extends TagSupport {
 
     public void setNewGroup(boolean newGroup) {
         this.newGroup = newGroup;
+    }
+
+    public boolean isShowRowStyleClass() {
+        return showRowStyleClass;
+    }
+
+    public void setShowRowStyleClass(boolean showRowStyleClass) {
+        this.showRowStyleClass = showRowStyleClass;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
+import org.zfin.infrastructure.ZdbID;
 import org.zfin.publication.Publication;
 
 import javax.imageio.ImageIO;
@@ -27,7 +28,7 @@ import java.util.Set;
  * Domain business object that describes a single person.
  * AccountInfo composite contains login information which is optional.
  */
-public class Person implements UserDetails, Serializable, Comparable<Person>, HasUpdateType, ProvidesLink, HasSnapshot {
+public class Person implements UserDetails, Serializable, Comparable<Person>, HasUpdateType, ProvidesLink, HasSnapshot, ZdbID {
 
     @NotNull
     @Size(min = 17, max = 50)

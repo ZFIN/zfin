@@ -28,6 +28,7 @@ import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
@@ -1824,5 +1825,26 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return stageExpressionPresentation;
     }
 
+    @Override
+    public List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ExpressionExperiment.class);
+        criteria.add(Restrictions.eq("gene", gene));
+        return (List<ExpressionExperiment>) criteria.list();
+    }
 
+    @Override
+    public SortedSet<Experiment> getSequenceTargetingReagentExperiments(SequenceTargetingReagent sequenceTargetingReagent) {
+        if (sequenceTargetingReagent == null)
+            return null;
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(ExperimentCondition.class);
+        criteria.add(Restrictions.eq("sequenceTargetingReagent", sequenceTargetingReagent));
+        List<ExperimentCondition> experimentConditions = (List<ExperimentCondition>) criteria.list();
+        SortedSet<Experiment> experiments = new TreeSet<Experiment>();
+        for (ExperimentCondition experimentCondition : experimentConditions) {
+            experiments.add(experimentCondition.getExperiment());
+        }
+        return experiments;
+    }
 }

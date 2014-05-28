@@ -88,14 +88,14 @@
         </example>
     </function>
 
-<function>
-    <description>
-      Retrieve a sorted list of aliases
-    </description>
-    <name>getSortedSynonymList</name>
-    <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-    <function-signature>java.lang.String getSortedSynonymList(org.zfin.gwt.root.dto.TermDTO))</function-signature>
-  </function>
+    <function>
+        <description>
+            Retrieve a sorted list of aliases
+        </description>
+        <name>getSortedSynonymList</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getSortedSynonymList(org.zfin.gwt.root.dto.TermDTO))</function-signature>
+    </function>
 
     <function>
         <description>
@@ -252,7 +252,8 @@
         </description>
         <name>getForeignKeyColumn</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>java.lang.String getForeignKeyColumn(org.zfin.database.presentation.ForeignKey)</function-signature>
+        <function-signature>java.lang.String getForeignKeyColumn(org.zfin.database.presentation.ForeignKey)
+        </function-signature>
         <example>
             ${fn:getForeignKeyColumn( TERM_SUBSET_ASSOC )}
         </example>
@@ -265,7 +266,9 @@
         </description>
         <name>getSubstructure</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>java.lang.String getSubstructure(org.zfin.mutant.PhenotypeStatement,org.zfin.ontology.Term))</function-signature>
+        <function-signature>java.lang.String
+            getSubstructure(org.zfin.mutant.PhenotypeStatement,org.zfin.ontology.Term))
+        </function-signature>
         <example>
             ${fn:getSubstructure(phenotype, term)}
         </example>
@@ -292,7 +295,8 @@
         </description>
         <name>getAvailableAbbrev</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>org.zfin.sequence.blast.Database.AvailableAbbrev getAvailableAbbrev(java.lang.String)</function-signature>
+        <function-signature>org.zfin.sequence.blast.Database.AvailableAbbrev getAvailableAbbrev(java.lang.String)
+        </function-signature>
     </function>
 
     <function>
@@ -301,6 +305,46 @@
         <name>getStageList</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>java.util.Map getDisplayStages()</function-signature>
+    </function>
+
+    <function>
+        <description>
+        </description>
+        <name>getChromosomeInfo</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getChromosomeInfo(org.zfin.infrastructure.ZdbID)</function-signature>
+    </function>
+
+    <function>
+        <description>
+        </description>
+        <name>getMappingEntityType</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getMappingEntityType(org.zfin.infrastructure.EntityZdbID))</function-signature>
+    </function>
+
+    <function>
+        <description>
+        </description>
+        <name>getGenomeLocation</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>org.zfin.mapping.GenomeLocation getGenomeLocation(org.zfin.marker.Marker)</function-signature>
+    </function>
+
+    <function>
+        <description>
+        </description>
+        <name>getGbrowseTracks</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>org.zfin.mapping.GbrowseTrack[] getGbrowseTracks(org.zfin.marker.Marker)</function-signature>
+    </function>
+
+    <function>
+        <description>
+        </description>
+        <name>getGbrowseTrackUrlAddition</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String getGbrowseTrackUrlAddition(org.zfin.marker.Marker)</function-signature>
     </function>
 
 

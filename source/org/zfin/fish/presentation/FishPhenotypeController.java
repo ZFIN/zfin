@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
  * This class serves the phenotype summary page.
  */
 @Controller
+@RequestMapping(value = "/fish")
 public class FishPhenotypeController {
 
     @ModelAttribute("formBean")

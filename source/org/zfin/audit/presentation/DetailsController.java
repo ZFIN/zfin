@@ -1,32 +1,28 @@
 package org.zfin.audit.presentation;
 
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
  * Controller for the Audit Log.
  */
-public class DetailsController extends AbstractCommandController {
+@Controller
+public class DetailsController {
 
-    public DetailsController() {
-        setCommandClass(AuditLogBean.class);
-    }
 
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        AuditLogBean auditLogForm = (AuditLogBean) command;
+    @RequestMapping("/audit-logs/details")
+    protected String geneFamilyHandler(@ModelAttribute("auditLogForm") AuditLogBean auditLogForm) throws Exception {
 
         AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
         List<AuditLogItem> items = alr.getAuditLogItems(auditLogForm.getZdbID());
         auditLogForm.setItems(items);
 
-        return new ModelAndView("audit-log-details", "auditLogForm", auditLogForm);
+        return "audit-log-details";
     }
 }

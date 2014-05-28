@@ -59,7 +59,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
-<!--|SOURCEROOT|-->	/research/zusers/cmpich/eselsohr/ZFIN_WWW
+<!--|SOURCEROOT|-->	/research/zusers/cmpich/projects/svn/eselsohr
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	zygotix.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	cmpich\@cs.uoregon.edu

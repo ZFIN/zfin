@@ -24,7 +24,7 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
     @Test
     public void testSimpleComposite() throws Exception {
         login(webClient);
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/devtool/gwt/modules");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/devtool/gwt/modules");
         assertEquals("GWT Modules", page.getTitleText());
         HtmlAnchor htmlAnchor = (HtmlAnchor) page.getByXPath("//a[ . = 'Test: TestComposite']").get(0);
         assertNotNull(htmlAnchor);
@@ -66,7 +66,7 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
         }
 
 //            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/alternate-gene-edit");
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/devtool/gwt/alternate-gene-edit");
         webClient.waitForBackgroundJavaScriptStartingBefore(2000);
         assertEquals("GWT Gene Edit", page.getTitleText());
         final HtmlDivision div = (HtmlDivision) page.getByXPath("//div[@id='curatorNoteName']").get(0);

@@ -74,8 +74,7 @@ public class CloneBean extends MarkerBean {
     }
 
     public String getDeleteURL() {
-        String zdbID = getClone().getZdbID();
-        return "/" + ZfinProperties.getWebDriver() + "?MIval=aa-delete_record.apg&rtype=marker&OID=" + zdbID;
+        return "none";
     }
 
     public String getEditURL() {

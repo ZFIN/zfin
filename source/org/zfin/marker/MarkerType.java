@@ -1,9 +1,10 @@
 package org.zfin.marker;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MarkerType implements Comparable {
+public class MarkerType implements Comparable, Serializable {
 
     private String name;
     private Marker.Type type;

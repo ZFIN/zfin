@@ -9,6 +9,7 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
@@ -18,6 +19,7 @@ import org.zfin.util.TermFigureStageRange;
 
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -328,7 +330,7 @@ public interface ExpressionRepository {
      * Retrieve all expression result objects that annotate with a secondary term.
      * @return list of expression result objects
      */
-    public List<ExpressionResult> getExpressionOnSecondaryTerms();
+    List<ExpressionResult> getExpressionOnSecondaryTerms();
 
     /**
      * Retrieve list of expression result records that use obsoleted terms in the annotation.
@@ -368,4 +370,12 @@ public interface ExpressionRepository {
      * @param expressionResult
      */
     void deleteExpressionResult(ExpressionResult expressionResult);
+
+    /**
+     * Retrieve list of expression experiment records for a given gene.
+     * @return list of expression experiment records
+     */
+    List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
+
+    SortedSet<Experiment> getSequenceTargetingReagentExperiments(SequenceTargetingReagent sequenceTargetingReagent);
 }

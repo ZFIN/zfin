@@ -76,13 +76,6 @@ jQuery.ajax({
 
    </SCRIPT>
 
- <?MISQL SQL="
-  select object
-    from webPages
-    where ID = 'aa-chromoscripts.apg';">
-   $1
- <?/MISQL>
-
  </HEAD>
 
  <BODY>
@@ -403,8 +396,8 @@ jQuery.ajax({
 	select gt.mrel_mrkr_1_zdb_id
 	 from  marker_relationship gt
 	  join marker_relationship ct on ct.mrel_mrkr_2_zdb_id == gt.mrel_mrkr_2_zdb_id
-	  join linkage_member on ct.mrel_mrkr_1_zdb_id == lnkgmem_member_zdb_id
-	  join linkage on lnkgmem_linkage_zdb_id == lnkg_zdb_id
+	  join linkage_membership on ct.mrel_mrkr_1_zdb_id == lnkgm_member_1_zdb_id
+	  join linkage on lnkgm_linkage_zdb_id == lnkg_zdb_id
 	 where gt.mrel_type == 'gene produces transcript'
 	   and ct.mrel_type == 'clone contains transcript'
 	   and lnkg_or_lg = '$lg'">
@@ -414,10 +407,10 @@ jQuery.ajax({
 		( mstlg_mrkr_zdb_id )
 	select ct.mrel_mrkr_2_zdb_id
 	 from  marker_relationship ct
-	  join linkage_member on ct.mrel_mrkr_1_zdb_id == lnkgmem_member_zdb_id
-	  join linkage on lnkgmem_linkage_zdb_id == lnkg_zdb_id
+	  join linkage_membership on ct.mrel_mrkr_1_zdb_id == lnkgm_member_1_zdb_id
+	  join linkage on lnkgm_linkage_zdb_id == lnkg_zdb_id
 	 where ct.mrel_type == 'clone contains transcript'
-	   and lnkg_or_lg = '$lg';">
+	   and lnkg_chromosome = '$lg';">
       <?/MISQL>
 
       <?MISQL SQL="
@@ -425,7 +418,7 @@ jQuery.ajax({
 	    ( mstlg_mrkr_zdb_id )
 	select marker_id
           from mapped_marker
-	 where or_lg = '$lg';">
+	 where mm_chromosome = '$lg';">
       <?/MISQL>
       <?MISQL SQL="
 	insert into $markerselect_temp_on_lg
@@ -433,7 +426,7 @@ jQuery.ajax({
 	select mrel_mrkr_2_zdb_id
 	  from mapped_marker, marker_relationship
 	 where mrel_mrkr_1_zdb_id = marker_id
-	   and or_lg = '$lg'
+	   and mm_chromosome = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment');">
       <?/MISQL>
@@ -443,7 +436,7 @@ jQuery.ajax({
 	select mrel_mrkr_1_zdb_id
 	  from mapped_marker, marker_relationship
 	 where mrel_mrkr_2_zdb_id = marker_id
-	   and or_lg = '$lg'
+	   and mm_chromosome = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment',
 			     'gene encodes small segment');">
@@ -451,19 +444,19 @@ jQuery.ajax({
       <?MISQL SQL="
 	insert into $markerselect_temp_on_lg
 	    ( mstlg_mrkr_zdb_id )
-        select lnkgmem_member_zdb_id
-	  from linkage, linkage_member
-	 where lnkg_or_lg = '$lg'
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id ;">
+        select lnkgm_member_1_zdb_id
+	  from linkage, linkage_membership
+	 where lnkg_chromosome = '$lg'
+  	   and lnkgm_linkage_zdb_id = lnkg_zdb_id ;">
       <?/MISQL>
       <?MISQL SQL="
 	insert into $markerselect_temp_on_lg
 	    ( mstlg_mrkr_zdb_id )
 	select mrel_mrkr_2_zdb_id
-	  from marker_relationship, linkage, linkage_member
-	 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
+	  from marker_relationship, linkage, linkage_membership
+	 where mrel_mrkr_1_zdb_id = lnkgm_member_1_zdb_id
   	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-	   and lnkg_or_lg = '$lg'
+	   and lnkg_chromosome = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment');">
       <?/MISQL>
@@ -471,10 +464,10 @@ jQuery.ajax({
 	insert into $markerselect_temp_on_lg
 	    ( mstlg_mrkr_zdb_id )
 	select mrel_mrkr_1_zdb_id
-	  from marker_relationship, linkage, linkage_member
-	 where mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id
+	  from marker_relationship, linkage, linkage_membership
+	 where mrel_mrkr_2_zdb_id = lnkgm_member_1_zdb_id
   	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-	   and lnkg_or_lg = '$lg'
+	   and lnkg_chromosome = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment',
 			     'gene encodes small segment');">
@@ -662,24 +655,33 @@ jQuery.ajax({
 	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev,
 	     mstmrkr_abbrev_order,  mstmrkr_type )
 	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_type
-  	from record_attribution, linkage_member,linkage, marker
-  	where recattrib_source_zdb_id = '$pubId'
-    	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
-    	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-    	and lnkgmem_member_zdb_id = mrkr_zdb_id
-	and lnkg_or_lg <> '0';">
+  	from linkage_membership,linkage, marker
+  	where lnkg_source_zdb_id = '$pubId'
+    	and lnkgm_linkage_zdb_id = lnkg_zdb_id
+    	and lnkgm_member_1_zdb_id = mrkr_zdb_id
+	and lnkg_chromosome <> '0';">
+     <?/MISQL>
+     <?MISQL SQL="
+       insert into $markerselect_temp_marker
+	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev,
+	     mstmrkr_abbrev_order,  mstmrkr_type )
+	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_type
+  	from linkage_single,linkage, marker
+  	where lnkg_source_zdb_id = '$pubId'
+    	and lsingle_lnkg_zdb_id = lnkg_zdb_id
+    	and lsingle_member_zdb_id = mrkr_zdb_id
+	and lnkg_chromosome <> '0';">
      <?/MISQL>
      <?MISQL SQL="
        insert into $markerselect_temp_marker
 	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev,
 	     mstmrkr_abbrev_order,  mstmrkr_type )
   	select feature_zdb_id, feature_name, feature_abbrev, feature_abbrev_order, 'MUTANT'
-  	from record_attribution, linkage_member, linkage, feature
-  	where recattrib_source_zdb_id = '$pubId'
-    	and recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
-    	and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-    	and lnkgmem_member_zdb_id = feature_zdb_id
-	and lnkg_or_lg <> '0';">
+  	from linkage_membership, linkage, feature
+  	where lnkg_source_zdb_id = '$pubId'
+    	and lnkgm_linkage_zdb_id = lnkg_zdb_id
+    	and lnkgm_member_1_zdb_id = feature_zdb_id
+	and lnkg_chromosome <> '0';">
      <?/MISQL>
      <?MIVAR NAME=$type_of_genedom>f<?/MIVAR>
 
@@ -733,7 +735,7 @@ jQuery.ajax({
      <?MIBLOCK COND="$(EC,$the_type,MUTANT)">
 	<SCRIPT>
           <?MICOMMENT> when this page is called by pubview2.apg with parameter $pub_mapped, mutant record could be retrieved.
-          May need more work to add the feawture name to the search but better to redirect to a view page.
+          May need more work to add the feature name to the search but better to redirect to a view page.
           <?/MICOMMENT>
           <?MIVAR>
             replaceLocation("/$the_marker")
@@ -941,7 +943,7 @@ jQuery.ajax({
 		$(SETVAR,$mksel_map_col,f)
            <?/MIVAR>
            <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT)))">
-       	     <th align-left><b>Map</b></th>
+       	     <th align-left><b>Location</b></th>
            <?/MIVAR>
 	   <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EQ,$marker_type,TSCRIPT))">
              <th align-left><b><a href="/action/marker/transcript-types">Transcript Type</a></b></th>
@@ -1165,8 +1167,16 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 	  <?MICOMMENT>------ Map info ------<?/MICOMMENT>
 	  <?MIBLOCK COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT)))">
  	      <TD width=20%>
-                   <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$OID')
-                                from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+	      <?MIVAR>
+            <script type="text/javascript">
+	    	    var elementName = 'mappingDetail_';
+		    elementName += '$OID';
+		    elementName = elementName.replace(new RegExp("-", 'g'),"_")
+		    document.write('<div id="mapDetail" class="'+elementName+'"></div>');
+		    elementName = "."+elementName;
+                jQuery(elementName).load('/action/mapping/summary/$OID');
+            </script>
+	    <?/MIVAR>
               </TD>
           <?/MIBLOCK>
           <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EC,$marker_type,TSCRIPT))">

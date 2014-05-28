@@ -1,10 +1,8 @@
 package org.zfin.infrastructure.ant;
 
-import org.apache.commons.io.FileUtils;
 import org.zfin.framework.HibernateUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -58,8 +56,6 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         }
     }
 
-    // Todo: Needs to be refactored to be more general default value
-    // use commons commandLine and a better way to pass in the value default
     public static void main(String[] args) {
         String jobName = args[0];
         DataReportTask task = new DataReportTask();
@@ -94,4 +90,5 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         else
             return "0" + String.valueOf(month);
     }
+
 }

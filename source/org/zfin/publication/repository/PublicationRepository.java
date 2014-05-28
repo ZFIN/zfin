@@ -14,10 +14,14 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
+import org.zfin.orthology.OrthoEvidenceDisplay;
+import org.zfin.orthology.Orthology;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
+import java.util.Set;
+import java.util.SortedSet;
 
 import java.util.List;
 
@@ -482,5 +486,19 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Genotype> getMutantsAndTgsByPublication(String publicationID);
 
+    List<Marker> getOrthologyGeneList(String pubID);
+
+    List<Orthology> getOrthologyPublications(Marker marker);
+
     List<Publication> getPublicationWithPubMedId(Integer maxResult);
+
+    SortedSet<Publication> getAllPublicationsForFeature(Feature feature);
+
+    SortedSet<Publication> getPublicationForJournal(Journal journal);
+
+    Journal getJournalByID(String zdbID);
+
+    SortedSet<Publication> getAllPublicationsForGenotype(Genotype genotype);
+
+    List<String> getPublicationIDsForGOwithField(String zdbID);
 }

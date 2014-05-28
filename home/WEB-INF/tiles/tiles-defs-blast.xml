@@ -27,7 +27,7 @@
 
     <definition name="blast-database-table.page" extends="main_layout">
         <put-attribute name="staticTitle" value="ZFIN: BLAST Database Information" />
-        <put-attribute name="body" value="/WEB-INF/jsp/blast/blast_database_table.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/blast/blast-database-table.jsp"/>
     </definition>
 
     <definition name="blast-cgi-setup.page" extends="main_layout">
@@ -68,7 +68,7 @@
 
     <definition name="downloadable-sequences.page" extends="main_layout">
         <put-attribute name="staticTitle" value="ZFIN: Sequences Download" />
-        <put-attribute name="body" value="/WEB-INF/jsp/blast/sequences_download.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/blast/sequences-download.jsp"/>
     </definition>
 
 </tiles-definitions>

@@ -14,13 +14,13 @@
     <tr>
         <td>Lookup and Auto-Completion </td>
         <td>
-            <a href="/action/dev-tools/gwt/lookup">Lookup / Auto-completion</a> 
+            <a href="/action/devtool/gwt/lookup">Lookup / Auto-completion</a> 
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Lookup Table Auto-Completion </td>
         <td>
-            <a href="/action/dev-tools/gwt/lookup-table">Lookup Table</a>
+            <a href="/action/devtool/gwt/lookup-table">Lookup Table</a>
         </td>
     </tr>
     <tr>
@@ -50,55 +50,55 @@
     <tr>
         <td class="sectionTitle">Base Curation Interface</td>
         <td>
-            <a href="/action/dev-tools/gwt/curation-base">Curation Interface: Base Attribution</a>
+            <a href="/action/devtool/gwt/curation-base">Curation Interface: Base Attribution</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Transcript Edit</td>
         <td>
-            <a href="/action/dev-tools/gwt/transcript-edit">Marker Edit: Transcripts</a>
+            <a href="/action/devtool/gwt/transcript-edit">Marker Edit: Transcripts</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Clone Edit</td>
         <td>
-            <a href="/action/dev-tools/gwt/clone-edit">Marker Edit: Clone</a>
+            <a href="/action/devtool/gwt/clone-edit">Marker Edit: Clone</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Antibody Edit</td>
         <td>
-            <a href="/action/dev-tools/gwt/antibody-edit">Marker Edit: Antibody</a>
+            <a href="/action/devtool/gwt/antibody-edit">Marker Edit: Antibody</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Gene Edit</td>
         <td>
-            <a href="/action/dev-tools/gwt/gene-edit">Marker Edit: Gene on markerview.apg</a>
+            <a href="/action/devtool/gwt/gene-edit">Marker Edit: Gene on markerview.apg</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Alternate/New Gene Edit</td>
         <td>
-            <a href="/action/dev-tools/gwt/alternate-gene-edit">Marker Edit: Gene</a>
+            <a href="/action/devtool/gwt/alternate-gene-edit">Marker Edit: Gene</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Test/TestComposite</td>
         <td>
-            <a href="/action/dev-tools/gwt/test-composite">Test: TestComposite</a>
+            <a href="/action/devtool/gwt/test-composite">Test: TestComposite</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">Image Edit Test</td>
         <td>
-            <a href="/action/dev-tools/gwt/image-edit-test">Image Edit Test</a>
+            <a href="/action/devtool/gwt/image-edit-test">Image Edit Test</a>
         </td>
     </tr>
     <tr>
         <td class="sectionTitle">GO/Go Edit</td>
         <td>
-            <a href="/action/dev-tools/gwt/go-edit">GO: GO Edit</a>
+            <a href="/action/devtool/gwt/go-edit">GO: GO Edit</a>
         </td>
     </tr>
 </table>

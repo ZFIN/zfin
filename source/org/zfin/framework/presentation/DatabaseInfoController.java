@@ -4,8 +4,10 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.zfin.database.presentation.Table;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.PhenotypeExperiment;
@@ -29,31 +31,31 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  * Controller that obtains the meta data for the database.
  */
 @Controller
-public class DatabaseInfoController extends MultiActionController {
+public class DatabaseInfoController {
 
-    public ModelAndView databaseInfoHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-        DatabaseMetaData meta = getMetaData();
-        ModelAndView mv = new ModelAndView("metadata");
-        mv.addObject("metadata", meta);
-        mv.addObject("unloadDate", getInfrastructureRepository().getUnloadInfo());
-        return mv;
+
+    @RequestMapping("/database-info")
+    protected String showDatabaseInfo(Model model) throws Exception {
+        model.addAttribute("metadata", getMetaData());
+        model.addAttribute("unloadDate", getInfrastructureRepository().getUnloadInfo());
+        return "dev-tools/view-database-info.page";
     }
 
-    public ModelAndView btsInfoHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping("/bts-index-info")
+    protected String showBtsIndex(Model model) throws Exception {
         InformixLuceneIndexInspection inspection = new InformixLuceneIndexInspection(Table.WH_FISH, "fas_all");
-        return new ModelAndView("bts-index-statistics", "statistics", inspection);
+        model.addAttribute("statistics", inspection);
+        return "bts-index-statistics.page";
     }
 
-    public ModelAndView jdbcDriverHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-        DatabaseMetaData meta = getMetaData();
-        return new ModelAndView("jdbc-metadata", "metadata", meta);
+    @RequestMapping("/jdbc-driver-info")
+    public String showJdbcDriverInfo(Model model) throws ServletException {
+        model.addAttribute("metadata", getMetaData());
+        return "jdbc-metadata.page";
     }
 
-    public ModelAndView javaPropertiesHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping("/java-properties")
+    public String showJavaProperties(Model model) throws ServletException {
         Properties properties = System.getProperties();
         Enumeration propEnum = properties.propertyNames();
         Map<String, String> props = new TreeMap<String, String>();
@@ -62,11 +64,12 @@ public class DatabaseInfoController extends MultiActionController {
             props.put(key, properties.getProperty(key));
 
         }
-        return new ModelAndView("java-properties", "properties", props);
+        model.addAttribute("properties", props);
+        return "java-properties.page";
     }
 
-    public ModelAndView viewHibernateInfoHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping("/view-hibernate-info")
+    public String viewHibernateInfo(Model model) throws ServletException {
         SessionFactory sessionfac = HibernateUtil.getSessionFactory();
 /*
         Properties properties = sessionfac.getStatistics().;
@@ -79,65 +82,70 @@ public class DatabaseInfoController extends MultiActionController {
             props.put(key, properties.getProperty(key));
 
         }
-        return new ModelAndView("java-properties", "properties", props);
+        return "view-hibernate-info";
     }
 
-    public ModelAndView testBrowserHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping("/test-browser")
+    protected String showBrowserInfo(HttpServletRequest request, Model model) throws Exception {
         HashMap map = new HashMap();
         Enumeration en = request.getHeaderNames();
         while (en.hasMoreElements()) {
             String key = (String) en.nextElement();
             map.put(key, (Object) request.getHeader(key));
         }
-        return new ModelAndView("test-browser", "form", map);
+        return "dev-tools/test-browser.page";
     }
 
-    public ModelAndView viewSessionInfoHandler(HttpServletRequest request, HttpServletResponse response)
+    @RequestMapping("/view-session-info")
+    public String viewSessionInfoHandler(HttpServletRequest request, Model model)
             throws ServletException {
         ZfinSessionBean form = new ZfinSessionBean();
         form.setRequest(request);
-        return new ModelAndView("view-session-info", LookupStrings.FORM_BEAN, form);
+        model.addAttribute("formBean", form);
+        return "view-session-info.page";
     }
 
-    public ModelAndView svnVersionHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("svn-version");
-
-        return modelAndView;
+    @RequestMapping("/svn-version")
+    public String viewSvnInfo() throws ServletException {
+        return "svn-version";
     }
 
-    public ModelAndView phenotypeCurationHistoryHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping("/phenotype-curation-history")
+    public String viewPhenotypeHistory(Model model) {
         List<PhenotypeExperiment> phenotypeExperiments = RepositoryFactory.getPhenotypeRepository().getLatestPhenotypeExperiments(5);
-        ModelAndView modelAndView = new ModelAndView("phenotype-curation-history.page", "phenotypeExperiments", phenotypeExperiments);
-        return modelAndView;
+        model.addAttribute("phenotypeExperiments", phenotypeExperiments);
+        return "phenotype-curation-history.page";
     }
 
-    public ModelAndView phenotypeCurationHistoryStatementsHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-        String experimentIDString = request.getParameter("experimentID");
-        int experimentID = 0;
-        if (!StringUtils.isEmpty(experimentIDString))
-            experimentID = Integer.parseInt(experimentIDString);
+    @RequestMapping("/phenotype-curation-history-statements/{ID}")
+    public String viewPhenotypeHistoryStatementsByID(@PathVariable(value = "ID") String experimentIDString,
+                                                     Model model) {
+        int experimentID = Integer.parseInt(experimentIDString);
         List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getLatestPhenotypeStatements(experimentID, 2);
-        ModelAndView modelAndView = new ModelAndView("phenotype-curation-history-statements.page", "phenotypeStatements", phenotypeStatements);
-        return modelAndView;
+        model.addAttribute("phenotypeStatements", phenotypeStatements);
+        return "phenotype-curation-history-statements.page";
     }
 
-    public ModelAndView singleThreadInfoHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping("/phenotype-curation-history-statements")
+    public String viewPhenotypeHistoryStatements(Model model) {
+        List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getLatestPhenotypeStatements(0, 2);
+        model.addAttribute("phenotypeStatements", phenotypeStatements);
+        return "phenotype-curation-history-statements.page";
+    }
 
-        String threadId = request.getParameter("threadID");
+    @RequestMapping("/single-thread-info/{id}")
+    public String showSingleThreadInfo(@PathVariable("id") String threadId,
+                                       Model model) throws ServletException {
+
         ThreadMXBean mxbean = ManagementFactory.getThreadMXBean();
         int threadID = Integer.parseInt(threadId);
         // stack trace depth: show all
-        return new ModelAndView("single-thread-info", "thread", mxbean.getThreadInfo(threadID, Integer.MAX_VALUE));
+        model.addAttribute("thread", mxbean.getThreadInfo(threadID, Integer.MAX_VALUE));
+        return "single-thread-info.page";
     }
 
-    public ModelAndView threadInfoHandler(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    @RequestMapping("/thread-info")
+    public String showThreadInfo(Model model) throws ServletException {
         Thread currentThread = Thread.currentThread();
 
         Map all = Thread.getAllStackTraces();
@@ -158,15 +166,15 @@ public class DatabaseInfoController extends MultiActionController {
             parent = parentTemp;
         }
         List<Thread> allThreads = getThreads(parent);
-        ModelAndView threads = new ModelAndView("thread-info", "threads", allThreads);
-        threads.addObject("threadMXBean", mxbean);
+        model.addAttribute("threads", allThreads);
+        model.addAttribute("threadMXBean", mxbean);
         ThreadInfo[] attributeValue = mxbean.dumpAllThreads(true, true);
         List<ThreadInfo> threadInfos = Arrays.asList(attributeValue);
         Collections.sort(threadInfos, new ThreadInfoSorting());
-        threads.addObject("allThreads", threadInfos);
-        threads.addObject("deadlockedThreads", mxbean.findDeadlockedThreads());
-        threads.addObject("monitorDeadlockedThreads", mxbean.findMonitorDeadlockedThreads());
-        return threads;
+        model.addAttribute("allThreads", threadInfos);
+        model.addAttribute("deadlockedThreads", mxbean.findDeadlockedThreads());
+        model.addAttribute("monitorDeadlockedThreads", mxbean.findMonitorDeadlockedThreads());
+        return "thread-info.page";
     }
 
     public List<Thread> getThreads(ThreadGroup group) {

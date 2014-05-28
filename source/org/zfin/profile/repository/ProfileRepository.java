@@ -205,4 +205,8 @@ public interface ProfileRepository {
     PaginationResult<Lab> searchLabs(LabSearchBean searchBean);
 
     PaginationResult<Person> searchPeople(PersonSearchBean searchBean);
+
+    List<String> getSuppliedDataIds(Organization organization);
+
+    List<String> getSourcedDataIds(Organization organization);
 }

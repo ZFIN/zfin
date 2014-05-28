@@ -34,6 +34,12 @@ public class ActiveSource implements ZdbID, Serializable {
         return type != null;
     }
 
+    public static boolean isValidActiveData(String id, Type type) {
+        if (type == null || id == null) {
+            return false;
+        }
+        return id.contains(type.name());
+    }
 
     public static Type validateID(String zdbID) {
         if (zdbID == null) {

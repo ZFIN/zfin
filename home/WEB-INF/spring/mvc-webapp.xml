@@ -12,28 +12,35 @@
         <property name="useDefaultSuffixPattern" value="false"/>
     </bean>
 
-    <context:component-scan base-package="org.zfin.webservice"/>
-    <context:component-scan base-package="org.zfin.datatransfer.webservice"/>
-    <context:component-scan base-package="org.zfin.feature.presentation"/>
-    <context:component-scan base-package="org.zfin.feature.repository"/>
-    <context:component-scan base-package="org.zfin.expression.presentation"/>
-    <context:component-scan base-package="org.zfin.mutant.presentation"/>
-    <context:component-scan base-package="org.zfin.ontology.presentation"/>
-    <context:component-scan base-package="org.zfin.wiki.presentation"/>
-    <context:component-scan base-package="org.zfin.marker.presentation"/>
-    <context:component-scan base-package="org.zfin.profile.presentation"/>
-    <context:component-scan base-package="org.zfin.framework.presentation"/>
-    <context:component-scan base-package="org.zfin.sequence.reno.presentation"/>
-    <context:component-scan base-package="org.zfin.fish.presentation"/>
-    <context:component-scan base-package="org.zfin.fish.repository"/>
     <context:component-scan base-package="org.zfin.antibody.presentation"/>
     <context:component-scan base-package="org.zfin.anatomy.presentation"/>
     <context:component-scan base-package="org.zfin.database.presentation"/>
+    <context:component-scan base-package="org.zfin.datatransfer.webservice"/>
+    <context:component-scan base-package="org.zfin.expression.presentation"/>
+    <context:component-scan base-package="org.zfin.feature.presentation"/>
+    <context:component-scan base-package="org.zfin.feature.repository"/>
+    <context:component-scan base-package="org.zfin.fish.presentation"/>
+    <context:component-scan base-package="org.zfin.fish.repository"/>
+    <context:component-scan base-package="org.zfin.framework.presentation"/>
+    <context:component-scan base-package="org.zfin.mapping"/>
+    <context:component-scan base-package="org.zfin.mapping.presentation"/>
+    <context:component-scan base-package="org.zfin.marker.presentation"/>
+    <context:component-scan base-package="org.zfin.mutant.presentation"/>
+    <context:component-scan base-package="org.zfin.ontology.presentation"/>
+    <context:component-scan base-package="org.zfin.orthology.presentation"/>
+    <context:component-scan base-package="org.zfin.profile.presentation"/>
+    <context:component-scan base-package="org.zfin.properties.presentation"/>
+    <context:component-scan base-package="org.zfin.publication.presentation"/>
+    <context:component-scan base-package="org.zfin.sequence.reno.presentation"/>
+    <context:component-scan base-package="org.zfin.sequence.blast.presentation"/>
     <context:component-scan base-package="org.zfin.util.database"/>
-    <context:component-scan base-package="org.zfin.util.downloads"/>
     <context:component-scan base-package="org.zfin.util.database.presentation"/>
     <context:component-scan base-package="org.zfin.util.database.quartz"/>
+    <context:component-scan base-package="org.zfin.util.downloads"/>
     <context:component-scan base-package="org.zfin.uniquery"/>
+    <context:component-scan base-package="org.zfin.webservice"/>
+    <context:component-scan base-package="org.zfin.wiki.presentation"/>
+    <context:component-scan base-package="org.zfin.infrastructure.presentation"/>
     <mvc:annotation-driven/>
 
 </beans>

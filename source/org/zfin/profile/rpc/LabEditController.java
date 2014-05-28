@@ -34,7 +34,7 @@ public class LabEditController {
 //        this.featureRepository = RepositoryFactory.getFeatureRepository();
 //    }
 
-    @RequestMapping(value={"/dev-tools/test-ajax/{id}"},method = RequestMethod.GET)
+    @RequestMapping(value={"/devtool/test-ajax/{id}"},method = RequestMethod.GET)
     public ModelAndView labTestEditPage(@PathVariable("id") String labZdbId){
         Lab lab = profileRepository.getLabById(labZdbId) ;
         ModelAndView modelAndView = new ModelAndView("profile/lab-edit-test.page");

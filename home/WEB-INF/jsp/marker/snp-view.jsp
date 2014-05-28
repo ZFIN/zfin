@@ -10,6 +10,7 @@
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    latestUpdate="${formBean.latestUpdate}"
+                   deleteURL="none"
                    rtype="marker"/>
 
 
@@ -22,18 +23,12 @@
 
 <zfin2:snpHead markerBean="${formBean}"/>
 
-
 <%--MARKER RELATIONSHIPTS--%>
 <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}" marker="${formBean.marker}"
                                 title="${fn:toUpperCase('MARKER RELATIONSHIPS')}" />
 
 <%--OTHER GENE/Marker Pages--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
-
-
-<%--MAPPING INFORMATION--%>
-<zfin2:mappingInformation mappedMarker="${formBean.mappedMarkerBean}"/>
-
 
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>

@@ -27,6 +27,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  * This class serves the phenotype summary page.
  */
 @Controller
+@RequestMapping(value = "/fish")
 public class FishExpressionController {
 
     @ModelAttribute("formBean")

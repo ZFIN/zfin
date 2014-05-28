@@ -1,21 +1,17 @@
 package org.zfin.orthology.repository;
 
+import org.springframework.stereotype.Repository;
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.CachedRepository;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.SpeciesCriteria;
+import org.zfin.orthology.presentation.OrthologySlimPresentation;
 import org.zfin.publication.Publication;
 
 import java.util.List;
 import java.util.Set;
-
-/**
- * User: giles
- * Date: Aug 9, 2006
- * Time: 1:43:30 PM
- */
 
 public interface OrthologyRepository extends CachedRepository {
 
@@ -34,4 +30,6 @@ public interface OrthologyRepository extends CachedRepository {
     List<OrthologyPresentationRow> getOrthologyForGene(Marker m) ;
 
     List<String> getEvidenceCodes(Marker gene);
+
+    List<OrthologySlimPresentation> getOrthologySlimForGeneId(String geneId);
 }

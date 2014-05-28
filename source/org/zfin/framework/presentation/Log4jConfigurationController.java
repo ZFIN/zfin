@@ -5,10 +5,15 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -17,16 +22,11 @@ import java.util.*;
  * Controller class to adjust exsisting logger levels or
  * create new appenders.
  */
-public class Log4jConfigurationController extends AbstractCommandController {
+@Controller
+public class Log4jConfigurationController {
 
-    public Log4jConfigurationController() {
-        setCommandClass(Log4JConfigurationFormBean.class);
-    }
-
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command,
-                                  BindException errors) throws Exception {
-
-        Log4JConfigurationFormBean form = (Log4JConfigurationFormBean) command;
+    @RequestMapping("/log4j-configuration")
+    public String showClassPathInfo(@ModelAttribute("formBean") Log4JConfigurationFormBean form, Model model) throws ServletException {
 
         if (form.isUpdateExistingLogger()) {
             adjustLoggers(form);
@@ -45,7 +45,7 @@ public class Log4jConfigurationController extends AbstractCommandController {
             appenders.add((Appender) allAppenders.nextElement());
         }
         form.setAppenders(appenders);
-        return new ModelAndView("log4j-configuration", "loggerForm", form);
+        return "log4j-configuration.page";
     }
 
     private void createLogger(Log4JConfigurationFormBean form) {

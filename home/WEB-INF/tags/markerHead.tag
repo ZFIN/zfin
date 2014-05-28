@@ -30,7 +30,14 @@
         </c:otherwise>
         </c:choose>
     </c:if>
-    <%--<zfin2:notes hasNotes="${formBean.marker}"/>--%>
+    <tr>
+        <th>Location:</th>
+        <td>
+            <zfin2:displayLocation entity="${formBean.marker}"/>
+        </td>
+    </tr>
+
+<%--<zfin2:notes hasNotes="${formBean.marker}"/>--%>
     <zfin2:notesInDiv hasNotes="${formBean.marker}"/>
 
 </table>

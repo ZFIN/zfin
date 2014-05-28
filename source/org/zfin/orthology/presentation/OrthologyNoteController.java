@@ -4,11 +4,11 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
@@ -19,46 +19,26 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * ToDo: ADD DOCUMENTATION!
+ * Add or update a note for orthology on a given marker.
  */
-public class OrthologyNoteController extends SimpleFormController {
+@Controller
+public class OrthologyNoteController {
 
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static Logger LOG = Logger.getLogger(OrthologyNoteController.class);
 
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) {
-        OrthologyNoteBean bean = (OrthologyNoteBean) command;
-
-        if (bean.getGeneID() == null) {
-            // return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
-            return null;
-        }
-        Marker gene = markerRepository.getMarkerByID(bean.getGeneID());
+    @RequestMapping("/orthology/save-note/{zdbID}")
+    public String updateOrthologyNote(@PathVariable String zdbID,
+                                      @ModelAttribute("formBean") OrthologyNoteBean formBean,
+                                      Model model,
+                                      HttpServletResponse response) throws Exception {
+        Marker gene = markerRepository.getMarkerByID(zdbID);
         if (gene == null) {
-            // return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, form.getAnatomyItem().getZdbID());
-            return null;
-        }
-        OrthologyNote note = gene.getOrthologyNote();
-        bean.setGeneID(gene.getZdbID());
-        if (note != null)
-            bean.setNote(note.getNote());
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put(LookupStrings.FORM_BEAN, bean);
-        return map;
-    }
-
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-                                    Object command, BindException errors) throws Exception {
-        OrthologyNoteBean formBean = (OrthologyNoteBean) command;
-        Marker gene = markerRepository.getMarkerByID(formBean.getGeneID());
-        if (gene == null) {
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, formBean.getGeneID());
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return "record-not-found.page";
         }
         Transaction tx = null;
         Session session = HibernateUtil.currentSession();
@@ -68,14 +48,34 @@ public class OrthologyNoteController extends SimpleFormController {
             tx.commit();
         } catch (Exception e) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
             } catch (HibernateException he) {
                 LOG.error("Error during roll back of transaction", he);
             }
             LOG.error("Error in Transaction", e);
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
-        return new ModelAndView(new RedirectView(createMarkerUpdateLink(formBean.getGeneID()), false));
+        response.sendRedirect(createMarkerUpdateLink(zdbID));
+        return null;
+    }
+
+    @RequestMapping("/orthology/view-note-form/{zdbID}")
+    public String createOrthologyNote(@PathVariable String zdbID,
+                                      @ModelAttribute("formBean") OrthologyNoteBean formBean,
+                                      Model model) throws Exception {
+        Marker gene = markerRepository.getMarkerByID(zdbID);
+        if (gene == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return "record-not-found.page";
+        }
+        formBean.setGeneID(zdbID);
+
+        OrthologyNote note = gene.getOrthologyNote();
+        if (note != null)
+            formBean.setNote(note.getNote());
+        return "create-note.page";
     }
 
     private String createMarkerUpdateLink(String geneID) {

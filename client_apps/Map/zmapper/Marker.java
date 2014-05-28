@@ -35,7 +35,7 @@ public class Marker {
 	public static Color PAC_c = new Color(0,51,0);
 	
 	public Marker(String zdb_id, String abbrev,	String mtype,
-				  String target_abbrev, String lg_location, String OR_lg, String framework_t, String metric)  {
+				  String target_abbrev, String mm_chrom_location, String OR_lg, String framework_t, String metric)  {
 
 		this.zdb_id = zdb_id;
 
@@ -45,7 +45,7 @@ public class Marker {
 		this.abbrev = abbrev;
 		this.mtype = mtype;
 		this.target_abbrev = target_abbrev;
-		this.lg_location = new Float(lg_location);
+		this.lg_location = new Float(mm_chrom_location);
 		try { this.OR_lg = new Integer(OR_lg); }
 		catch (NumberFormatException e) { System.err.println("NumberFormatException: " + this.abbrev + " failed on '" + OR_lg + "'"); }
 									

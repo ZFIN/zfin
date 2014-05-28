@@ -1,52 +1,46 @@
 package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlastDatabaseInfoController extends AbstractCommandController {
+@Controller
+public class BlastDatabaseInfoController {
 
-    @Override
-    protected ModelAndView handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, BindException e) throws Exception {
+    private static Logger logger = Logger.getLogger(BlastDatabaseInfoController.class);
 
-        ModelAndView modelAndView;
-        BlastInfoBean blastInfoBean = (BlastInfoBean) o;
+    @RequestMapping("/blast/blast-definitions")
+    protected String showBlastDefinitions(@RequestParam(required = false) String accession,
+                                          @ModelAttribute("formBean") BlastInfoBean blastInfoBean) throws Exception {
 
-        boolean isRoot = Person.isCurrentSecurityUserRoot();
-
-        String abbreviation = httpServletRequest.getParameter(LookupStrings.ACCESSION);
-        logger.info("abbrev: " + abbreviation);
-
-
+        logger.info("abbrev: " + accession);
         // we don't want the proteinDB string
-
-        if (abbreviation != null && abbreviation.trim().length() > 0) {
+        boolean isRoot = Person.isCurrentSecurityUserRoot();
+        if (accession != null && accession.trim().length() > 0) {
             blastInfoBean.setShowTitle(false);
-            modelAndView = new ModelAndView("single-blast-database-info.page");
-            Database.AvailableAbbrev abbrev = Database.AvailableAbbrev.getType(abbreviation);
+            Database.AvailableAbbrev abbrev = Database.AvailableAbbrev.getType(accession);
             Database database = RepositoryFactory.getBlastRepository().getDatabase(abbrev);
             if (database != null) {
-                logger.info("database is available: " + (isRoot == true || database.isPublicDatabase()));
+                logger.info("database is available: " + (isRoot || database.isPublicDatabase()));
                 HibernateUtil.currentSession().flush();
-                if (isRoot == true || database.isPublicDatabase()) {
-                    List<DatabasePresentationBean> databasePresentationBeanList = new ArrayList<DatabasePresentationBean>();
+                if (isRoot || database.isPublicDatabase()) {
+                    List<DatabasePresentationBean> databasePresentationBeanList = new ArrayList<>();
                     DatabasePresentationBean databasePresentationBean = BlastPresentationService.createPresentationBean(database);
                     databasePresentationBean.setDirectChildren(BlastPresentationService.getDirectChildren(database, isRoot));
                     databasePresentationBean.setLeaves(BlastPresentationService.getLeaves(database));
                     databasePresentationBeanList.add(databasePresentationBean);
                     // should not show a database you don't have
-                    if (true == database.getType().isNucleotide()) {
+                    if (database.getType().isNucleotide()) {
                         blastInfoBean.setNucleotideDatabases(databasePresentationBeanList);
                     } else {
 //                    blastInfoBean.setProteinDatabases(BlastPresentationService.processFromChild(database,isRoot));
@@ -54,32 +48,28 @@ public class BlastDatabaseInfoController extends AbstractCommandController {
                     }
                 }
             } else {
-                logger.info("database is NOT available: " + (isRoot == true || database.isPublicDatabase()));
+                logger.info("database is NOT available: " + isRoot);
                 blastInfoBean.setNucleotideDatabases(null);
                 blastInfoBean.setProteinDatabases(null);
             }
-        } else if (abbreviation == null) {
+        } else if (accession == null) {
             blastInfoBean.setShowTitle(true);
             blastInfoBean.setNucleotideDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.NUCLEOTIDE, !isRoot, true));
             blastInfoBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, !isRoot, true));
 
-            if (true == Person.isCurrentSecurityUserRoot()) {
+            cacheStatistics(blastInfoBean);
+            if (Person.isCurrentSecurityUserRoot()) {
 //                String remoteString = httpServletRequest.getParameter("remote") ;
-                modelAndView = new ModelAndView("blast-database-table.page");
+                return "blast-database-table.page";
             } else {
-                modelAndView = new ModelAndView("blast-database-info.page");
+                return "blast-database-info.page";
             }
         } else {
 //        if(abbreviation!=null && abbreviation.trim().length()==0){
-            modelAndView = new ModelAndView("no-database-selected.page");
+            return "no-database-selected.page";
         }
-
         cacheStatistics(blastInfoBean);
-
-        modelAndView.addObject(LookupStrings.FORM_BEAN, blastInfoBean);
-
-        return modelAndView;
-
+        return "single-blast-database-info.page";
     }
 
     protected BlastInfoBean cacheStatistics(BlastInfoBean blastInfoBean) {
@@ -88,12 +78,11 @@ public class BlastDatabaseInfoController extends AbstractCommandController {
         logger.debug("do refresh: " + blastInfoBean.isDoRefresh());
 
         // handle refresh
-        if (blastInfoBean.isDoRefresh() || databaseStatisticsCache.isCached() == false) {
+        if (blastInfoBean.isDoRefresh() || !databaseStatisticsCache.isCached()) {
             databaseStatisticsCache.clearCache();
             databaseStatisticsCache.cacheAll();
             blastInfoBean.setDoRefresh(false);
         }
-
 
 
         if (CollectionUtils.isNotEmpty(blastInfoBean.getNucleotideDatabases())) {

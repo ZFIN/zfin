@@ -9,7 +9,7 @@ public enum Species {
     ZEBRAFISH("Zebrafish", 1),
     HUMAN("Human", 2),
     MOUSE("Mouse", 3),
-    FLY("Fly", 4),
+    FLY("Fruit fly", 4),
     YEAST("Yeast", 5);
 
     private String value;

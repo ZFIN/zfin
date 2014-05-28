@@ -8,6 +8,8 @@ public class OrthoEvidenceDisplay {
 
     private String zdbID ;
     private Marker gene ;
+    private EvidenceCode evidenceCode;
+    private String organismList;
 
     public String getZdbID() {
         return zdbID;
@@ -23,5 +25,21 @@ public class OrthoEvidenceDisplay {
 
     public void setGene(Marker gene) {
         this.gene = gene;
+    }
+
+    public EvidenceCode getEvidenceCode() {
+        return evidenceCode;
+    }
+
+    public void setEvidenceCode(EvidenceCode evidenceCode) {
+        this.evidenceCode = evidenceCode;
+    }
+
+    public String getOrganismList() {
+        return organismList;
+    }
+
+    public void setOrganismList(String organismList) {
+        this.organismList = organismList;
     }
 }

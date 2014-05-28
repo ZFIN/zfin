@@ -31,7 +31,7 @@ create temp table meow_exp1_dup (
 
 -- get panel mappings
 insert into meow_exp1_dup 
-  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, or_lg, p.zdb_id
+  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mm_chromosome, p.zdb_id
     from marker, mapped_marker, panels p
    where mrkr_type[1,4] == 'GENE'
      and mrkr_zdb_id = marker_id
@@ -39,7 +39,7 @@ insert into meow_exp1_dup
      and refcross_id = p.zdb_id;
 
 insert into meow_exp1_dup 
-  select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, or_lg, p.zdb_id
+  select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, mm_chromosome, p.zdb_id
     from marker a, marker b, mapped_marker, marker_relationship, panels p
    where a.mrkr_type[1,4] == 'GENE'
      and b.mrkr_zdb_id = marker_id
@@ -66,7 +66,7 @@ drop table meow_exp1_dup;
 -- mappings derived from markers
 
 insert into meow_exp1 
-  select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, lnkg_or_lg, recattrib_source_zdb_id
+  select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, lnkg_chromosome, recattrib_source_zdb_id
     from marker a, marker b, linkage_member, linkage, marker_relationship, record_attribution
    where b.mrkr_zdb_id = lnkgmem_member_zdb_id 
      and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
@@ -78,7 +78,7 @@ insert into meow_exp1
 -- mappings derived from clones- Sanger gene mapping data is derived from clone mapping data 
 
 insert into meow_exp1 
-  select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, lnkg_or_lg, recattrib_source_zdb_id
+  select distinct a.mrkr_zdb_id, a.mrkr_name, a.mrkr_abbrev, lnkg_chromosome, recattrib_source_zdb_id
     from marker a, marker b, linkage_member, linkage,marker_relationship, record_attribution
    where b.mrkr_zdb_id = lnkgmem_member_zdb_id 
      and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
@@ -89,7 +89,7 @@ insert into meow_exp1
      and recattrib_data_zdb_id = lnkg_zdb_id;
 
 insert into meow_exp1 
-  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, lnkg_or_lg, recattrib_source_zdb_id
+  select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, lnkg_chromosome, recattrib_source_zdb_id
     from marker, linkage_member, linkage, record_attribution
    where mrkr_zdb_id = lnkgmem_member_zdb_id 
      and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
@@ -278,8 +278,8 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/sanger_mappings.txt'
         where pm.zdb_id[1,8] <> 'ZDB-ALT-'
         and mm.marker_id   == pm.zdb_id
         and mm.refcross_id == pm.target_id
-        and mm.or_lg       == pm.or_lg
-        and mm.lg_location == pm.lg_location
+        and mm.mm_chromosome       == pm.or_lg
+        and mm.mm_chrom_location == pm.lg_location
         and mm.map_name    == pm.map_name
         and mm.metric      == pm.metric
         order by 1;
@@ -290,7 +290,7 @@ UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/mappings.txt'
 --- generate file with zmap mapping data
 ! echo "unload zmap_mappings.txt"
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/zmap_mappings.txt' 
- DELIMITER "	"  select zdb_id, abbrev, abbrevp, panel_id, or_lg, lg_location from zmap_pub_pan_mark;
+ DELIMITER "	"  select zdb_id, abbrev, abbrevp, panel_id, zmap_chromosome, lg_location from zmap_pub_pan_mark;
 ! echo "unload zfin_genes_mutants.txt"
 UNLOAD to '<!--|FTP_ROOT|-->/pub/transfer/MEOW/markers.txt' 
   DELIMITER "	" select distinct zdb_id, abbrev from paneled_markers;

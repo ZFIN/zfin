@@ -14,13 +14,13 @@ showlist -- a parenthesized list of marker types that should be visible.
 
 
 <?MISQL SQL="
-	select marker_id,mrkr_abbrev, marker_type, lg_location,metric 
+	select marker_id,mrkr_abbrev, marker_type, mm_chrom_location,metric
 	from  mapped_marker mm, marker m
 	where refcross_id='$refcross' 
-	and or_lg='$OR_LG' 
+	and mm_chromosome='$mm_chromosome'
 	and (marker_type in $showlist or marker_id='$marker') 
 	and mm.marker_id = m.mrkr_zdb_id
-	order by lg_location;">
+	order by mm_chrom_location;">
 <TR $(IF,$(EC,$1,$marker),"bgcolor=#F9A9BE")>
 <TD ><font size=2>
 $(IF,$(EC,$1,$marker),$(SETVAR,$focus,$MI_CURRENTROW))

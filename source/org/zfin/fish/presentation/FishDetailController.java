@@ -34,6 +34,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  * Controller that serves the fish detail page.
  */
 @Controller
+@RequestMapping(value = "/fish")
 public class FishDetailController {
 
     private static final Logger LOG = Logger.getLogger(FishDetailController.class);

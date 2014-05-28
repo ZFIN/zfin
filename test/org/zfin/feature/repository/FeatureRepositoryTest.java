@@ -2,6 +2,7 @@ package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -20,12 +21,14 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
@@ -96,7 +99,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getMarkersForFeatureRelationAndSource() {
         List<Marker> markers = featureRepository.getMarkersForFeatureRelationAndSource("is allele of", "ZDB-PUB-090324-13");
-        List<Marker> attributedMarkers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution("ZDB-PUB-090324-13");
+        List<Marker> attributedMarkers = getMarkerRepository().getMarkersForAttribution("ZDB-PUB-090324-13");
         assertEquals(attributedMarkers.size(), markers.size());
         assertTrue(CollectionUtils.isEqualCollection(attributedMarkers, markers));
     }
@@ -241,7 +244,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<Feature> features = featureRepository.getFeaturesForAttribution(pubID);
         assertNotNull(features);
 
-        List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution(pubID);
+        List<Marker> markers = getMarkerRepository().getMarkersForAttribution(pubID);
         assertNotNull(markers);
     }
 
@@ -337,6 +340,21 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         } finally {
             HibernateUtil.rollbackTransaction();
         }
+    }
+
+
+    @Test
+    public void getFeaturesFromMarker() {
+        Marker marker = getMarkerRepository().getMarkerByAbbreviation("piru");
+        List<Feature> featureList = featureRepository.getFeaturesByMarker(marker);
+        Assert.assertNotNull(featureList);
+    }
+
+    @Test
+    public void getMarkerFromFeature() {
+        Feature feature = featureRepository.getFeatureByID("ZDB-ALT-050617-64");
+        List<Marker> markerSet = featureRepository.getMarkerIaAlleleOf(feature);
+        Assert.assertNotNull(markerSet);
     }
 
     @Test

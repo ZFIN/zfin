@@ -10,7 +10,6 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.repository.RepositoryFactory;
 
 /**
  */
@@ -20,13 +19,11 @@ public class GenericMarkerViewController {
     private Logger logger = Logger.getLogger(GenericMarkerViewController.class);
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
     @RequestMapping("/marker/view/{zdbID}")
-    public String getGenericMarkerView(
-            Model model
-            , @PathVariable("zdbID") String zdbID
-    ) {
+    public String getGenericMarkerView(@PathVariable("zdbID") String zdbID,
+                                       Model model) {
 
         logger.info("zdbID: " + zdbID);
         Marker marker = markerRepository.getMarkerByID(zdbID);
@@ -35,9 +32,6 @@ public class GenericMarkerViewController {
         markerBean.setMarker(marker);
 
         MarkerService.createDefaultViewForMarker(markerBean);
-
-        // MAPPING INFO:
-        markerBean.setMappedMarkerBean(MarkerService.getMappedMarkers(marker));
 
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + marker.getAbbreviation());

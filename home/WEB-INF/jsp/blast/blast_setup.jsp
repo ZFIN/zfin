@@ -9,7 +9,7 @@
 
 <div style="max-width: 750px;">
 
-    <form:form commandName="formBean" enctype="multipart/form-data">
+    <form:form action="/action/blast/blast" commandName="formBean" enctype="multipart/form-data">
 
 
         <div style="float: right">

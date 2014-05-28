@@ -1,6 +1,5 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.springframework.web.servlet.mvc.AbstractController;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.Database;
 
@@ -18,16 +17,16 @@ import java.util.Map;
  * - accession
  * - reference database (to get the blast database)
  * <p/>
- * To get the above, we can use a dblink, an accession_bk, an acccession (if there is only one entry, which their usually is) + (refDB)
+ * To get the above, we can use a dblink, an accession_bk, an accession (if there is only one entry, which their usually is) + (refDB)
  * <p/>
  * Request must have accession, refDB zdbID, blastDB zdbID.
  */
-public abstract class AbstractExternalBlastController extends AbstractController {
+public abstract class AbstractExternalBlastController {
 
 
     public static Map<String, String> getHiddenVariables(Sequence sequence,Database database,boolean isShortSequence) {
 
-        Map<String, String> hiddenVariables = new HashMap<String, String>();
+        Map<String, String> hiddenVariables = new HashMap<>();
 
         if (database.getType() == Database.Type.NUCLEOTIDE) {
 //            for vega

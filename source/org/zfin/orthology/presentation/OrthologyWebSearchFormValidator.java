@@ -1,5 +1,6 @@
 package org.zfin.orthology.presentation;
 
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -8,6 +9,7 @@ import java.util.List;
 /**
  * This class initiates the validation of the input given by the user in the orhtology search form.
  */
+@Component
 public class OrthologyWebSearchFormValidator implements Validator {
 
     public boolean supports(Class clazz) {

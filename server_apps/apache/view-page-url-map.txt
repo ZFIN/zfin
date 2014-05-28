@@ -32,7 +32,7 @@ PGCONSTRCT	/action/marker/view/ZDB-PGCONSTRCT
 PTCONSTRCT	/action/marker/view/ZDB-PTCONSTRCT
 PUB	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB
 RAPD	/action/marker/view/ZDB-RAPD
-REFCROSS	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=ZDB-REFCROSS
+REFCROSS	/action/mapping/panel-detail/ZDB-REFCROSS
 REGION	/action/marker/view/ZDB-REGION
 SNP	/action/marker/view/ZDB-SNP
 SSLP	/action/marker/view/ZDB-SSLP

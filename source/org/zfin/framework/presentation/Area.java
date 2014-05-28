@@ -11,6 +11,7 @@ public enum Area {
     GENE("Gene")     ,
     PSEUDOGENE("Pseudogene")     ,
     MARKER("Marker")     ,
+    MAPPING("Mapping")     ,
     USER("User")     ,
     PUBLICATION("Publication")     ,
     PERSON("Person")     ,

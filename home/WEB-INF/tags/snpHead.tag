@@ -1,5 +1,5 @@
-<%@ taglib prefix="zfin"    uri="/WEB-INF/tld/zfin-tags.tld"%>
-<%@ taglib prefix="zfin2" tagdir="/WEB-INF/tags"%>
+<%@ taglib prefix="zfin" uri="/WEB-INF/tld/zfin-tags.tld" %>
+<%@ taglib prefix="zfin2" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core' %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -24,6 +24,10 @@
     <tr>
         <th><span class="name-label">Sequence:</span></th>
         <td><zfin2:snpSequence markerBean="${markerBean}"/></td>
+    </tr>
+    <tr>
+        <th><span class="name-label">Location:</span></th>
+        <td><zfin2:displayLocation entity="${formBean.marker}"/></td>
     </tr>
 
     <zfin2:notesInDiv hasNotes="${formBean.marker}"/>

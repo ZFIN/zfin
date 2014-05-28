@@ -19,9 +19,13 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
 import org.zfin.expression.TextOnlyFigure;
+import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
@@ -41,6 +45,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
+import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.util.NumberAwareStringComparator;
 import org.zfin.util.ZfinStringUtils;
@@ -75,7 +80,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-    public SNP getSNPByID(String zdbID){
+    public SNP getSNPByID(String zdbID) {
         Session session = currentSession();
 
         return (SNP) session.get(SNP.class, zdbID);
@@ -244,7 +249,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = currentSession();
         TreeSet<String> lgList = new TreeSet<String>();
 
-        Query query = session.createSQLQuery("select chms_chromosome from chromosome_search where chms_mrkr_zdb_id = :mrkrZdbId order by 1");
+        Query query = session.createSQLQuery("select sfcl_chromosome from sequence_feature_chromosome_location " +
+                "where sfcl_data_zdb_id = :mrkrZdbId order by 1");
         query.setParameter("mrkrZdbId", marker.getZdbID());
 
         lgList.addAll(query.list());
@@ -1233,14 +1239,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<Marker> getMarkersForStandardAttributionAndType(Publication publication, String type) {
         List<String> types = new ArrayList<String>();
-        if (type=="MRPHLNO"){
+        if (type == "MRPHLNO") {
 
             types.add(Marker.Type.MRPHLNO.name());
             types.add(Marker.Type.TALEN.name());
             types.add(Marker.Type.CRISPR.name());
 
-        }
-        else{
+        } else {
 
             types.add(Marker.Type.GENE.name());
 
@@ -1256,10 +1261,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query.setParameterList("types", types);
         return query.list();
     }
-
-
-
-
 
 
     @SuppressWarnings("unchecked")
@@ -1634,8 +1635,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 })
                 .list();
     }
-
-
 
 
     @Override
@@ -2087,6 +2086,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = currentSession();
         return (SequenceTargetingReagent) session.get(SequenceTargetingReagent.class, markerID);
     }
+
     @Override
     public Genotype getStrainForTranscript(String zdbID) {
 
@@ -2339,5 +2339,156 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 })
                 .list()
                 ;
+    }
+
+    @Override
+    public Marker getMarkerByFeature(Feature feature) {
+        String hql = "select fmr.marker from FeatureMarkerRelationship as fmr " +
+                "where " +
+                " fmr.feature = :feature " +
+                " and fmr.type in (:types)";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("feature", feature);
+        query.setParameterList("types", (new FeatureMarkerRelationshipTypeEnum[]{FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF}));
+        return (Marker) query.uniqueResult();
+    }
+
+    @Override
+    public String getAccessionNumber(Marker marker, Database.AvailableAbbrev database) {
+        String hql = "from MarkerDBLink " +
+                "where referenceDatabase.primaryBlastDatabase.abbrev = :database " +
+                "and marker = :marker ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("database", database);
+        query.setParameter("marker", marker);
+        List<MarkerDBLink> dbLinks = (List<MarkerDBLink>) query.list();
+        if (CollectionUtils.isEmpty(dbLinks))
+            return null;
+        if (CollectionUtils.isNotEmpty(dbLinks) && dbLinks.size() > 1) {
+            logger.error("More than one accession number found for " + marker.getAbbreviation() + " and Database " + database.toString());
+        }
+        return dbLinks.get(0).getAccessionNumber();
+    }
+
+    @Override
+    public List<TargetGeneLookupEntry> getGenesForMerge(String lookupString) {
+        String hql = " select gene from Marker gene " +
+                "where " +
+                "lower(gene.abbreviation) like :lookupString " +
+                "and gene.markerType.name in (:type1 , :type2) " +
+                "order by targetGene.abbreviation  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setString("type1", "GENE")
+                .setString("type2", "GENEP")
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
+                        Marker geneMergedInto = (Marker) tuple[0];
+                        TargetGeneLookupEntry geneSuggestionList = new TargetGeneLookupEntry();
+                        geneSuggestionList.setId(geneMergedInto.getZdbID());
+                        geneSuggestionList.setLabel(geneMergedInto.getAbbreviation());
+                        geneSuggestionList.setValue(geneMergedInto.getAbbreviation());
+                        return geneSuggestionList;
+                    }
+                })
+                .list()
+                ;
+    }
+
+    @Override
+    public List<TranscriptPresentation> getTranscriptsForGeneId(String geneZdbId) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select markerRelationship.secondMarker.zdbID, markerRelationship.secondMarker.name from MarkerRelationship markerRelationship " +
+                "      where markerRelationship.type = :type  " +
+                "        and markerRelationship.firstMarker.zdbID = :geneID " +
+                "   order by markerRelationship.secondMarker.abbreviationOrder ";
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)
+                .setString("geneID", geneZdbId)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public TranscriptPresentation transformTuple(Object[] tuple, String[] aliases) {
+                        TranscriptPresentation transcriptPresentation = new TranscriptPresentation();
+                        transcriptPresentation.setZdbID(tuple[0].toString());
+                        transcriptPresentation.setName(tuple[1].toString());
+                        return transcriptPresentation;
+                    }
+
+                })
+                .list();
+    }
+
+    @Override
+    public List<SequenceTargetingReagentLookupEntry> getSequenceTargetingReagentForString(String lookupString, String type) {
+        String hql = " select mo from Marker mo " +
+                "where " +
+                "lower(mo.abbreviation) like :lookupString " +
+                "and mo.markerType.name = :type " +
+                "order by mo.abbreviation  ";
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setString("type", type)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public Object transformTuple(Object[] tuple, String[] morpholino) {
+                        Marker mo = (Marker) tuple[0];
+                        SequenceTargetingReagentLookupEntry moSuggestionList = new SequenceTargetingReagentLookupEntry();
+                        moSuggestionList.setId(mo.getZdbID());
+                        moSuggestionList.setLabel(mo.getAbbreviation());
+                        moSuggestionList.setValue(mo.getAbbreviation());
+                        return moSuggestionList;
+                    }
+                })
+                .list()
+                ;
+    }
+
+    @Override
+    public List<TargetGenePresentation> getTargetGenesForSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+        if (sequenceTargetingReagent == null)
+            return null;
+
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select markerRelationship.secondMarker.zdbID, markerRelationship.secondMarker.abbreviation from MarkerRelationship markerRelationship " +
+                "      where markerRelationship.type = :type  " +
+                "        and markerRelationship.firstMarker.zdbID = :sequenceTargetingReagentID " +
+                "   order by markerRelationship.secondMarker.abbreviationOrder ";
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE)
+                .setString("sequenceTargetingReagentID", sequenceTargetingReagent.getZdbID())
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public TargetGenePresentation transformTuple(Object[] tuple, String[] aliases) {
+                        TargetGenePresentation targetGenePresentation = new TargetGenePresentation();
+                        targetGenePresentation.setZdbID(tuple[0].toString());
+                        targetGenePresentation.setSymbol(tuple[1].toString());
+                        return targetGenePresentation;
+                    }
+
+                })
+                .list();
+    }
+
+    public List<Marker> getSecondMarkersByFirstMarkerAndMarkerRelationshipType(Marker firstMarker, MarkerRelationship.Type relationshipType) {
+        if (firstMarker == null)
+            return null;
+
+        String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
+                      "where rel.firstMarker = :firstMarker " +
+                        "and rel.type = :type " +
+                   "order by rel.secondMarker.abbreviationOrder";
+
+        Session session = currentSession();
+        Query query = session.createQuery(hql);
+
+        query.setParameter("firstMarker", firstMarker);
+        query.setParameter("type", relationshipType);
+
+        return (List<Marker>) query.list();
     }
 }

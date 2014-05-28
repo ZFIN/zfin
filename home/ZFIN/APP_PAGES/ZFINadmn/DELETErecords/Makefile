@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/ZFINadmn/DELETErecords
 
-GENERICS = delete_record.apg process_delete.apg
+GENERICS = process_delete.apg
 
 
 # Use default rules for app page directories.

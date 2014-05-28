@@ -43,7 +43,7 @@
                             </c:choose>
                             <TD>
                                     <%--                                <c:if test="${speciesItem.species.name == 'Zebrafish'}">--%>
-                                <c:if test="${speciesItem.species == 'Zebrafish'}">
+                                <c:if test="${speciesItem.species.toString() == 'Zebrafish'}">
                                     <zfin:link entity="${speciesItem.marker}"/>
                                 </c:if>
                             </TD>
@@ -91,7 +91,7 @@
                                     </c:if>
                                 </td>
                                 <td>
-                                    <c:if test="${speciesItem.species == 'Zebrafish'}">
+                                    <c:if test="${speciesItem.species.toString() == 'Zebrafish'}">
                                         <zfin:link entity="${speciesItem}"/>
                                     </c:if>
                                 </td>

@@ -47,7 +47,8 @@
             <th>Definition:</th>
             <c:set var="term" value="${formBean.term}"/>
             <td id="term-definition">${term.definition}
-            <zfin2:termDefinitionReferences term="${term}"/> </td>
+                <zfin2:termDefinitionReferences term="${term}"/>
+            </td>
         </tr>
         <c:if test="${formBean.term.ontology.ontologyName == 'zebrafish_anatomy'}">
             <tr>

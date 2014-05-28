@@ -99,7 +99,6 @@ create dba function "informix".regen_maps()
       fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
       extent size 2048 next size 2048
       lock mode page;
-    revoke all on paneled_m_new from "public";
 
    -- faked mapping information for gene is
    -- taken out of mapped_marker table, they should be
@@ -134,12 +133,12 @@ create dba function "informix".regen_maps()
     and g.mrkr_abbrev[1,3] in ('zgc', 'si:')
     );
 
-  
+      let errorHint = "paneled_markers 1";
    -- prepare genes whose encoded est is mapped
    -- & genes whose allele is mapped into tmp_gene_id
    
    select mrel_mrkr_1_zdb_id as gene_zdb_id,
-          or_lg, lg_location,refcross_id, metric
+          m.mm_chromosome, m.mm_chrom_location,refcross_id, metric
      from marker_relationship, mapped_marker m
     where (mrel_comments <> "Connects EST to gene that was created for it"
 	   or mrel_comments is null)
@@ -150,7 +149,7 @@ create dba function "informix".regen_maps()
   UNION
  
    select fmrel_mrkr_zdb_id as gene_zdb_id,
-          or_lg, lg_location,refcross_id, metric
+          mm_chromosome, mm_chrom_location,refcross_id, metric
      from feature_marker_relationship, mapped_marker
     where fmrel_ftr_zdb_id = marker_id
       and fmrel_type = "is allele of"
@@ -158,6 +157,8 @@ create dba function "informix".regen_maps()
 
   into temp tmp_gene_id with no log;
 
+
+    let errorHint = "paneled_markers 2"; 
   -----------------------------------------
   -- Markers
   -----------------------------------------
@@ -165,39 +166,62 @@ create dba function "informix".regen_maps()
    -- union gene self mapping info, and those from encoded segments,
    -- and genotype.
 
-     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.OR_lg or_lg,
-            mm.lg_location lg_location, mm.metric metric, pn.abbrev panel,
+     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm.mm_chromosome as mm_chromosome,
+            mm.mm_chrom_location  as mm_chrom_location, mm.metric  as metric, pn.abbrev as panel,
             'f'::boolean frame, mm.refcross_id refcross_id, mm.map_name map_name
        from marker, mapped_marker mm, panels pn
       where mm.marker_id = mrkr_zdb_id
         and mm.refcross_id = pn.zdb_id
     UNION
-     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, or_lg,
-            lg_location, t.metric as metric, p.abbrev as panel,
+     select mrkr_zdb_id, mrkr_abbrev, mrkr_type, mm_chromosome as mm_chromosome,
+            mm_chrom_location as mm_chrom_location, t.metric as metric, p.abbrev as panel,
             'f'::boolean as frame, refcross_id, mrkr_abbrev map_name
        from  tmp_gene_id t, marker m, panels p
       where gene_zdb_id = m.mrkr_zdb_id
         and refcross_id = p.zdb_id
     into temp tmp_paneled_markers;
 
-   insert into paneled_m_new
-    select * from tmp_paneled_markers;
+    let errorHint = "paneled_markers 3";
+
+   insert into paneled_m_new ( zdb_id,
+    abbrev,
+    mtype,
+    OR_lg,
+    lg_location,
+    metric,
+    target_abbrev,
+    mghframework,
+    target_id,
+        map_name)
+    select mrkr_Zdb_id, mrkr_abbrev, mrkr_type, mm_chromosome, mm_chrom_location, metric, panel, frame, refcross_id, map_name from tmp_paneled_markers;
 
    drop table tmp_gene_id;
    drop table tmp_paneled_markers;
+let errorHint = "paneled_markers 3.5";
 
   -----------------------------------------
   -- Alterations (36 total)
   -----------------------------------------
-   insert into paneled_m_new
+   insert into paneled_m_new(zdb_id,
+    abbrev,
+    mtype,
+    OR_lg,
+    lg_location,
+    metric,
+    target_abbrev,
+    mghframework,
+    target_id,
+        map_name)
         select  mm.marker_id, mm.map_name,
-        	mm.marker_type, mm.OR_lg,
-        	mm.lg_location, mm.metric,
+        	mm.marker_type, mm.mm_chromosome,
+        	mm.mm_chrom_location, mm.metric,
         	c.abbrev, 'f'::boolean fw,
         	mm.refcross_id, mm.map_name
  	 from mapped_marker mm, panels c
  	where mm.marker_type = 'MUTANT'
           and mm.marker_id like "ZDB-ALT-%"; -- just be extra sure
+
+    let errorHint = "paneled_markers 4";
 
   --------------------------------------
   -- SNP
@@ -206,7 +230,7 @@ create dba function "informix".regen_maps()
   -- prepare SNPs whose associated ESTs or genes are mapped
 
    select mrel_mrkr_2_zdb_id as snp_zdb_id,
-          or_lg, lg_location, refcross_id, metric
+          m.mm_chromosome, m.mm_chrom_location, refcross_id, metric
      from marker_relationship, mapped_marker m
     where mrel_mrkr_1_zdb_id = m.marker_id
       and mrel_mrkr_1_zdb_id[1,8] in ('ZDB-EST-', 'ZDB-GENE')
@@ -215,8 +239,8 @@ create dba function "informix".regen_maps()
       and m.scoring_data is not null
      into temp tmp_snp_id with no log;
 
-   select mrkr_zdb_id, mrkr_abbrev, mrkr_type, ts.or_lg as or_lg, 
-            ts.lg_location as lg_location, ts.metric as metric, p.abbrev as panel,
+   select mrkr_zdb_id, mrkr_abbrev, mrkr_type, ts.mm_chromosome as or_lg, 
+            ts.mm_chrom_location as lg_location, ts.metric as metric, p.abbrev as panel,
             'f'::boolean as frame, refcross_id, dalias_alias map_name
      from tmp_snp_id ts, marker m, panels p, data_alias
      where snp_zdb_id = m.mrkr_zdb_id
@@ -224,6 +248,8 @@ create dba function "informix".regen_maps()
        and refcross_id = p.zdb_id
      into temp tmp_paneled_snps;
 
+    let errorHint = "paneled_markers 5";
+ 
     insert into paneled_m_new
       select * from tmp_paneled_snps;
 
@@ -254,6 +280,8 @@ create dba function "informix".regen_maps()
     update paneled_m_new set abbrev = concat(abbrev,'*')
       where zdb_id in ( select * from dup_tmp);
 
+
+    let errorHint = "paneled_markers 6";
     drop table dup_tmp;
 
 
@@ -278,7 +306,7 @@ create dba function "informix".regen_maps()
           and b.refcross_id = 'ZDB-REFCROSS-980521-11'
           and b.marker_type = 'SSLP' );
 
-
+    let errorHint = "paneled_markers 7";
    -- to add connecting lines to the mapper between genes & ests commom
    -- to ln54 & t51.
     update paneled_m_new
@@ -312,6 +340,8 @@ create dba function "informix".regen_maps()
     on paneled_m_new (mtype)
     fillfactor 100
     in idxdbs3;
+    let errorHint = "paneled_markers 8";
+
       -- to speed up map generation
       create index paneled_markers_target_abbrev_etc_index_a
     on paneled_m_new (target_abbrev,or_lg,mtype,zdb_id)
@@ -327,6 +357,8 @@ create dba function "informix".regen_maps()
     on paneled_m_new (mtype)
     fillfactor 100
     in idxdbs3;
+    let errorHint = "paneled_markers 9";
+
       -- to speed up map generation
       create index paneled_markers_target_abbrev_etc_index_b
     on paneled_m_new (target_abbrev,or_lg,mtype,zdb_id)
@@ -337,6 +369,11 @@ create dba function "informix".regen_maps()
     fillfactor 100
     in idxdbs3;
     end if
+
+
+  alter table paneled_m_new add constraint (foreign 
+    key (zdb_id) references zdb_active_data  on delete 
+    cascade);
 
     update statistics high for table paneled_m_new;
 

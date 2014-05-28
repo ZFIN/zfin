@@ -37,19 +37,19 @@
              it maps a collection of orthoEvidence objects,
             OrthoEvidence has a similarly complex mapping-->
         <!--<set name="evidences" table="orthologue_evidence_code">-->
-            <!--<key column="oev_ortho_zdb_id"/>-->
-            <!--<one-to-many class="EvidenceCode"/>-->
+        <!--<key column="oev_ortho_zdb_id"/>-->
+        <!--<one-to-many class="EvidenceCode"/>-->
         <!--</set>-->
         <!--<set name="evidence" table="orthologue_evidence">-->
-            <!--<key column="oev_ortho_zdb_id"/>-->
-            <!--<composite-element class="org.zfin.orthology.OrthoEvidence">-->
-                <!--<parent name="orthologue"/>-->
+        <!--<key column="oev_ortho_zdb_id"/>-->
+        <!--<composite-element class="org.zfin.orthology.OrthoEvidence">-->
+        <!--<parent name="orthologue"/>-->
 
-                <!--<many-to-one name="orthologueEvidenceCode" column="oev_evidence_code"-->
-                    <!--not-null="true" class="org.zfin.orthology.EvidenceCode"/>-->
-                <!--<many-to-one name="orthologuePublication" column="oev_pub_zdb_id"-->
-                    <!--not-null="true" class="org.zfin.publication.Publication"/>-->
-            <!--</composite-element>-->
+        <!--<many-to-one name="orthologueEvidenceCode" column="oev_evidence_code"-->
+        <!--not-null="true" class="org.zfin.orthology.EvidenceCode"/>-->
+        <!--<many-to-one name="orthologuePublication" column="oev_pub_zdb_id"-->
+        <!--not-null="true" class="org.zfin.publication.Publication"/>-->
+        <!--</composite-element>-->
         <!--</set>&ndash;&gt;-->
 
     </class>
@@ -62,7 +62,9 @@
                 <param name="insertActiveData">true</param>
             </generator>
         </id>
+        <property name="organismList" column="oevdisp_organism_list"/>
         <many-to-one name="gene" column="oevdisp_gene_zdb_id" class="org.zfin.marker.Marker" not-null="true"/>
+        <many-to-one name="evidenceCode" column="oevdisp_evidence_code" not-null="true"/>
     </class>
 
 
@@ -145,12 +147,12 @@
     <class name="org.zfin.orthology.OrthoEvidence" table="orthologue_evidence">
         <composite-id>
             <key-property name="orthologueZdbID" column="oev_ortho_zdb_id" type="string"/>
-            <key-many-to-one name="publication" column="oev_pub_zdb_id" class="org.zfin.publication.Publication" />
+            <key-many-to-one name="publication" column="oev_pub_zdb_id" class="org.zfin.publication.Publication"/>
             <key-property name="orthologueEvidenceCode" column="oev_evidence_code" type="evidenceCode"/>
         </composite-id>
     </class>
 
-    <class name="org.zfin.orthology.OrthologyEvidenceFastSearch" table="orthologue_evidence_display" >
+    <class name="org.zfin.orthology.OrthologyEvidenceFastSearch" table="orthologue_evidence_display">
         <id name="zdbID" type="string">
             <column name="oevdisp_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -159,7 +161,7 @@
             </generator>
         </id>
         <property name="code" column="oevdisp_evidence_code" type="evidenceCode"/>
-        <property name="organism" column="oevdisp_organism_list" />
+        <property name="organism" column="oevdisp_organism_list"/>
         <many-to-one name="marker" column="oevdisp_gene_zdb_id" class="org.zfin.marker.Marker"/>
     </class>
 
@@ -216,19 +218,14 @@
 
     <class name="org.zfin.orthology.repository.AccessionHelperFDB" table="foreign_db">
 
-        <id name="FDBname" type="string">
-            <column name="fdb_db_name" not-null="true"/>
+        <id name="id">
+            <column name="fdb_db_pk_id" not-null="true"/>
             <generator class="native"/>
         </id>
 
-        <property name="significance">
-            <column name="fdb_db_significance"/>
-        </property>
-
-        <property name="hyperLinkQuery">
-            <column name="fdb_db_query"/>
-        </property>
-
+        <property name="significance" column="fdb_db_significance"/>
+        <property name="hyperLinkQuery" column="fdb_db_query"/>
+        <property name="FDBname" column="fdb_db_name"/>
     </class>
 
 

@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  */
 public class ObjectSource implements Serializable {
-
+    protected long id;
     protected String dataZdbID;
     protected Organization organization;
 
@@ -61,4 +61,11 @@ public class ObjectSource implements Serializable {
                 ObjectUtils.equals(organization, source.getOrganization());
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

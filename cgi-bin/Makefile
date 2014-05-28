@@ -29,7 +29,7 @@ GENERICS = map-options.pl print_map.cgi runSPL.cgi \
 	   input_welcome.cgi input_welcome_generic.cgi  \
        internal_wzest.cgi publications_today.cgi \
 	   upload.cgi send_Judy_your_report.pl \
-	   new_gene.cgi new_line.cgi 
+	   new_gene.cgi new_line.cgi merge_markers.pl 
 
 # ---------------  Production Rules  ------------------------------------
 

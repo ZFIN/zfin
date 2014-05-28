@@ -1,9 +1,16 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.zfin.antibody.presentation.AntibodySearchFormBean;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
@@ -15,16 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
-public class DisplayGroupController extends AbstractCommandController {
 
-    public DisplayGroupController() {
-        setCommandClass(DisplayGroupBean.class);
-    }
+@Controller
+public class DisplayGroupController {
 
-    protected ModelAndView handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, BindException e) throws Exception {
-        DisplayGroupBean formBean = (DisplayGroupBean) o;
-
+    @RequestMapping("/display-groups")
+    protected String showPanelDetail(@ModelAttribute("formBean") DisplayGroupBean formBean,
+                                     Model model) throws Exception {
         if (formBean.getDisplayGroupToEditID() != null) {
             handleCommand(formBean);
         }
@@ -51,9 +58,10 @@ public class DisplayGroupController extends AbstractCommandController {
         modelAndView.addObject(LookupStrings.FORM_BEAN, formBean);
 
         formBean.clear();
-
-        return modelAndView;
+        return "dev-tools/display-groups.page";
     }
+
+    private Logger logger = Logger.getLogger(DisplayGroupController.class);
 
     private void handleCommand(DisplayGroupBean formBean) {
         DisplayGroup displayGroup = (DisplayGroup) HibernateUtil.currentSession().get(DisplayGroup.class, formBean.getDisplayGroupToEditID());

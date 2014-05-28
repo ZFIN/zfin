@@ -13,7 +13,7 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/ontology/summary">Check Ontology Chache</a>
+        <a href="/action/devtool/ontology/summary">Check Ontology Chache</a>
     </td>
     <td>
         <a href="/action/dev-tools/quartz-jobs">Quartz Jobs</a>
@@ -24,12 +24,12 @@
         <a href="/action/devtool/gwt/modules">GWT Modules</a>
     </td>
     <td>
-        <a href="/action/dev-tools/blast-jobs">Blast Jobs</a>
+        <a href="/action/devtool/blast-jobs">Blast Jobs</a>
     </td>
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/view-user-request-tracks">User Request Tracking (Clickstream)</a>
+        <a href="/action/devtool/view-user-request-tracks">User Request Tracking (Clickstream)</a>
     </td>
     <td>
         <a href="/action/blast/blast-definitions">Blast Contents</a>
@@ -45,31 +45,31 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/test-error-page">Test Error Page</a>
+        <a href="/action/devtool/test-error-page">Test Error Page</a>
         &nbsp;
     </td>
     <td>
-        <a href="/action/dev-tools/display-groups">ReferenceDB/DBLink Display Groups</a>
+        <a href="/action/devtool/display-groups">ReferenceDB/DBLink Display Groups</a>
     </td>
 </tr>
 <tr>
     <td>
-        <a href="/webapp/dev-tools/test-ajax/ZDB-LAB-000114-8">Test jQuery Ajax Lab Page</a>
+        <a href="/webapp/dev-tools/request/ZDB-LAB-000114-8">Test jQuery Ajax Lab Page</a>
     </td>
     <td>
-        <a href="/action/dev-tools/blastable-databases">Blast Database Groups</a>
-    </td>
-</tr>
-<tr>
-    <td></td>
-    <td>
-        <a href="/action/dev-tools/phenotype-curation-history">History: Phenotype Experiments</a>
+        <a href="/action/devtool/blastable-databases">Blast Database Groups</a>
     </td>
 </tr>
 <tr>
     <td></td>
     <td>
-        <a href="/action/dev-tools/phenotype-curation-history-statements">History: Phenotype Statements</a>
+        <a href="/action/devtool/phenotype-curation-history">History: Phenotype Experiments</a>
+    </td>
+</tr>
+<tr>
+    <td></td>
+    <td>
+        <a href="/action/devtool/phenotype-curation-history-statements">History: Phenotype Statements</a>
     </td>
 </tr>
 <tr>
@@ -94,23 +94,22 @@
 
 <tr>
     <td>
-        <a href="/action/dev-tools/second-level-cache">Second Level Caching (EhCache):</a>
     </td>
     <td>
-        <a href="/action/dev-tools/log4j-configuration">Edit Log4J</a>
-    </td>
-</tr>
-<tr>
-    <td>
-        <a href="/action/dev-tools/view-hibernate-info">Hibernate Info</a>
-    </td>
-    <td>
-        <a href="/action/dev-tools/svn-version">Java Deploy Version</a>
+        <a href="/action/devtool/log4j-configuration">Edit Log4J</a>
     </td>
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/view-hibernate-statistics">Hibernate Statistics (Global)</a>
+        <a href="/action/devtool/view-hibernate-info">Hibernate Info</a>
+    </td>
+    <td>
+        <a href="/action/devtool/svn-version">Java Deploy Version</a>
+    </td>
+</tr>
+<tr>
+    <td>
+        <a href="/action/devtool/view-hibernate-statistics">Hibernate Statistics (Global)</a>
     </td>
 </tr>
 
@@ -129,28 +128,28 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/java-properties">Java Properties</a>
+        <a href="/action/devtool/java-properties">Java Properties</a>
     </td>
     <td>
-        <a href="/action/dev-tools/test-browser">Check HTTP header of your browser</a>
+        <a href="/action/devtool/test-browser">Check HTTP header of your browser</a>
     </td>
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/thread-info">Thread Info</a>
+        <a href="/action/devtool/thread-info">Thread Info</a>
     </td>
     <td>
-        <a href="/action/dev-tools/view-session-info">Current Session Info</a>
+        <a href="/action/devtool/view-session-info">Current Session Info</a>
         -
-        <a href="/action/dev-tools/view-global-session-info">Global Session Info</a> 
+        <a href="/action/devtool/view-global-session">Global Session Info</a>
     </td>
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/classpath-info">View Classpath Info</a>
+        <a href="/action/devtool/classpath-info">View Classpath Info</a>
     </td>
     <td>
-        <a href="/action/dev-tools/servlet-context">Servlet Context Info</a>
+        <a href="/action/devtool/servlet-context">Servlet Context Info</a>
     </td>
 </tr>
 <tr>
@@ -178,15 +177,14 @@
 
 <tr>
     <td>
-        <a href="/action/dev-tools/zfin-properties">Zfin Properties</a>
+        <a href="/action/devtool/zfin-properties">Zfin Properties</a>
     </td>
     <td>
-        <a href="/action/dev-tools/zfin-statistics">ZFIN Statistics</a>
+        <a href="/action/devtool/zfin-statistics">ZFIN Statistics</a>
     </td>
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/file-content?fileName=/WEB-INF/web.xml">Web Deployment descriptor: web.xml</a>
     </td>
     <td>
         <a href="/action/database/browse-database">Browse Database tables</a>
@@ -228,15 +226,15 @@
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/database-info">Database Info</a><br/>
+        <a href="/action/devtool/database-info">Database Info</a><br/>
     </td>
     <td>
-        <a href="/action/dev-tools/bts-index-info">BTS Index Info</a><br/>
+        <a href="/action/devtool/bts-index-info">BTS Index Info</a><br/>
     </td>
 </tr>
 <tr>
     <td>
-        <a href="/action/dev-tools/jdbc-driver-info">JDBC Driver Info</a>
+        <a href="/action/devtool/jdbc-driver-info">JDBC Driver Info</a>
     </td>
     <td>
         <a href="/action/database/overview">Informix Database </a>

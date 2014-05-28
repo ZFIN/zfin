@@ -1,17 +1,17 @@
 package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.web.servlet.ModelAndView;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.presentation.BlastBean;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.MultipleBlastServerService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Processes a sequence in order to send the post to the appropriate external blast database.
@@ -28,40 +28,36 @@ import javax.servlet.http.HttpServletResponse;
  * <p/>
  * Request must have accession, refDB zdbID, blastDB zdbID.
  */
+@Controller
 public class ExternalBlastAccessionController extends AbstractExternalBlastController{
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
-                                                 HttpServletResponse httpServletResponse) throws Exception {
-        // extract parameters
-        String accession = httpServletRequest.getParameter(LookupStrings.ACCESSION);
-        String refDBZdbID = httpServletRequest.getParameter(LookupStrings.REF_DB);
-        String blastDBZdbID = httpServletRequest.getParameter(LookupStrings.BLAST_DB);
-
-        ReferenceDatabase referenceDatabase = (ReferenceDatabase) HibernateUtil.currentSession().get(ReferenceDatabase.class, refDBZdbID);
-        Database database = (Database) HibernateUtil.currentSession().get(Database.class, blastDBZdbID);
+    @RequestMapping("/blast/external-blast")
+    protected String showExternalBlast(@RequestParam(required = false) String accession,
+                                          @RequestParam(required = false) String refDB,
+                                          @RequestParam(required = false) String blastDB,
+                                          @ModelAttribute("formBean") BlastBean blastBean) throws Exception {
 
 
-        BlastBean blastBean = new BlastBean();
+        ReferenceDatabase referenceDatabase = (ReferenceDatabase) HibernateUtil.currentSession().get(ReferenceDatabase.class, refDB);
+        Database database = (Database) HibernateUtil.currentSession().get(Database.class, blastDB);
+
         blastBean.setDatabase(database);
         blastBean.setSequences(MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs(accession, referenceDatabase));
 
 
-        ModelAndView modelAndView = new ModelAndView("external-blast.page");
-        modelAndView.addObject(LookupStrings.FORM_BEAN, blastBean);
-
         if (CollectionUtils.isEmpty(blastBean.getSequences())) {
-            return modelAndView;
+            return "external-blast.page";
         }
 
-
         if (blastBean.getSequences().size() == 2) {
-            logger.fatal("2 sequences retreived for[" + accession + "] refDB[" + refDBZdbID + "]");
+            logger.fatal("2 sequences retreived for [" + accession + "] refDB [" + refDB + "]");
         }
 
         Sequence sequence = blastBean.getSequence();
-
-        blastBean.setHiddenProperties(getHiddenVariables(sequence,database,referenceDatabase.isShortSequence()));;
-
-        return modelAndView;
+        blastBean.setHiddenProperties(getHiddenVariables(sequence,database,referenceDatabase.isShortSequence()));
+        return "external-blast.page";
     }
+
+    private static Logger logger = Logger.getLogger(ExternalBlastAccessionController.class);
+
 }

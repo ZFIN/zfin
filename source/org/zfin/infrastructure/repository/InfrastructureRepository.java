@@ -35,7 +35,11 @@ public interface InfrastructureRepository {
 
     void deleteActiveData(ActiveData activeData);
 
+    void deleteActiveSource(ActiveSource activeSource);
+
     void deleteActiveDataByZdbID(String zdbID);
+
+    void deleteActiveSourceByZdbID(String zdbID);
 
     int deleteActiveDataByZdbID(List<String> zdbID);
 
@@ -394,9 +398,9 @@ public interface InfrastructureRepository {
 
     List<String> getPublicationAttributionsForPub(String microarrayPub);
 
-   boolean hasStandardPublicationAttribution(String zdbID, String microarrayPub);
+    boolean hasStandardPublicationAttribution(String zdbID, String microarrayPub);
 
-   boolean hasStandardPublicationAttributionForRelatedMarkers(String zdbID, String microarrayPub);
+    boolean hasStandardPublicationAttributionForRelatedMarkers(String zdbID, String microarrayPub);
 
     List<String> retrieveMetaData(String table);
 

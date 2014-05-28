@@ -1,34 +1,26 @@
 package org.zfin.framework.presentation;
 
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.util.FileUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 
-/**
- * Controller that obtains the meta data for the database.
- */
-public class ZfinStatisticsController extends AbstractCommandController {
+@Controller
+public class ZfinStatisticsController {
 
-    public ZfinStatisticsController() {
-        setCommandClass(ZfinStatisticsBean.class);
-    }
+    @RequestMapping("/zfin-statistics")
+    protected String showGlobalSession(@ModelAttribute("formBean") ZfinStatisticsBean form) throws Exception {
 
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-
-        ZfinStatisticsBean form = (ZfinStatisticsBean) command;
         List<File> apgFiles = FileUtil.countApgFiles();
         form.setApgFiles(apgFiles);
         List<File> jspFiles = FileUtil.countJspFiles();
         form.setJspFiles(jspFiles);
         List<File> classesFiles = FileUtil.countClassFiles();
         form.setClassesFiles(classesFiles);
-        return new ModelAndView("zfin-statistics-view", LookupStrings.FORM_BEAN, form);
+        return "zfin-statistics-view";
     }
 
 }

@@ -20,6 +20,7 @@ import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.framework.presentation.ZfinJSPFunctionsTest;
+import org.zfin.gbrowse.GBrowseServiceTest;
 import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
@@ -85,6 +86,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         FpInferenceGafServiceTest.class,
         GafParserUnitTest.class,
         GafServiceTest.class,
+        GBrowseServiceTest.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
         GwtConversionTest.class,

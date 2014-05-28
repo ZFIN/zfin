@@ -6,7 +6,6 @@
         <td rowspan=2 bgcolor="#006666" width=80 align=left valign=bottom>
   <a href="/">
    <img id="logo-img" src="/images/zfinlogo.png">
-   <img id="logo-text" src="/images/zfintxt.png">
   </a>
         </td>
 
@@ -43,7 +42,7 @@
                     </td>
 
                     <td align=center>
-                            <A class="devtools" HREF="/action/dev-tools/log4j-configuration">Log4J</a>
+                            <A class="devtools" HREF="/action/devtool/log4j-configuration">Log4J</a>
                     </td>
 
                     <td align=center>

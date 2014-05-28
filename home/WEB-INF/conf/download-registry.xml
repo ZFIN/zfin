@@ -200,7 +200,7 @@ select geno_zdb_id, geno_display_name, geno_handle, dalias_alias, szm_term_ont_i
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                select marker_id, mrkr_abbrev, p.abbrev,or_lg, lg_location, p.metric
+                select marker_id, mrkr_abbrev, p.abbrev,mm_chromosome, mm_chrom_location, p.metric
                 from mapped_marker, panels p, marker m
                 where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id
                 order by 1

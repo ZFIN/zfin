@@ -38,29 +38,30 @@ public class FeatureService {
 
         Set<FeatureDBLink> summaryLinks = new HashSet<FeatureDBLink>();
         for (FeatureDBLink featureDBLink : feature.getDbLinks()) {
-            if (featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)){
+            if (featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)) {
                 summaryLinks.add(featureDBLink);
             }
         }
         //if (summaryLinks == null){
         //    return null;
         //}
-       // else {
-            return summaryLinks;
-       // }
+        // else {
+        return summaryLinks;
+        // }
     }
+
     public static Set<FeatureDBLink> getGenbankDbLinks(Feature feature) {
         Set<FeatureDBLink> genbankLinks = new HashSet<FeatureDBLink>();
         for (FeatureDBLink featureDBLink : feature.getDbLinks()) {
-            if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)){
+            if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)) {
                 genbankLinks.add(featureDBLink);
             }
         }
         //if (genbankLinks == null){
         //    return null;
-       // }
+        // }
         //else {
-            return genbankLinks;
+        return genbankLinks;
         //}
     }
 
@@ -72,10 +73,10 @@ public class FeatureService {
 
         for (FeatureMarkerRelationship ftrmrkrRelationship : fmrelationships) {
             if (ftrmrkrRelationship != null) {
-               if (ftrmrkrRelationship.getMarker().getMarkerType().getType().toString() == Marker.Type.CRISPR.toString()
-                    || ftrmrkrRelationship.getMarker().getMarkerType().getType().toString() == Marker.Type.TALEN.toString()) {
-                   return ftrmrkrRelationship;
-               }
+                if (ftrmrkrRelationship.getMarker().getMarkerType().getType().toString() == Marker.Type.CRISPR.toString()
+                        || ftrmrkrRelationship.getMarker().getMarkerType().getType().toString() == Marker.Type.TALEN.toString()) {
+                    return ftrmrkrRelationship;
+                }
             }
         }
 
@@ -86,7 +87,7 @@ public class FeatureService {
         TreeSet<String> lg = RepositoryFactory.getFeatureRepository().getFeatureLG(feature);
         TreeSet<String> delmarklg = new TreeSet<String>();
 
-        for (String lgchr : lg){
+        for (String lgchr : lg) {
             delmarklg.add(lgchr);
         }
 
@@ -131,7 +132,7 @@ public class FeatureService {
 
     public static String getSinglePublication(Feature feature) {
         if (getPublicationCount(feature) == 1) {
-            return getFeatureTypeAttributions(feature).get(0).getSourceZdbID() ;
+            return getFeatureTypeAttributions(feature).get(0).getSourceZdbID();
         }
         return null;
     }
@@ -144,10 +145,10 @@ public class FeatureService {
         }
         SortedSet<FeatureMarkerRelationship> constructMarkers = new TreeSet<FeatureMarkerRelationship>();
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
-            if (ftrmrkrRelation != null){
-                if(ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
+            if (ftrmrkrRelation != null) {
+                if (ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
                         || ftrmrkrRelation.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
-                        )  {
+                        ) {
                     constructMarkers.add(ftrmrkrRelation);
                 }
             }
@@ -164,13 +165,24 @@ public class FeatureService {
         }
         return featureAliasList;
     }
+
     public static List<String> getFeatureSequences(Feature feature) {
         Set<FeatureDBLink> featureSequences = feature.getDbLinks();
         List<String> featureDBLinkList = new ArrayList<String>();
         for (FeatureDBLink featureDBLink : featureSequences) {
             if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE))
-                        featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
+                featureDBLinkList.add(featureDBLink.getAccessionNumberDisplay());
         }
         return featureDBLinkList;
+    }
+
+    public static List<Marker> getPresentMarkerList(Feature feature, FeatureMarkerRelationshipTypeEnum featureMarkerRelationship) {
+        List<Marker> featureMarkerList = new ArrayList<>(feature.getFeatureMarkerRelations().size());
+        for (FeatureMarkerRelationship rel : feature.getFeatureMarkerRelations()) {
+            if (rel.getType().equals(featureMarkerRelationship))
+                featureMarkerList.add(rel.getMarker());
+        }
+        Collections.sort(featureMarkerList);
+        return featureMarkerList;
     }
 }

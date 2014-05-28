@@ -13,15 +13,11 @@ import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * This class serves the antibody search page.

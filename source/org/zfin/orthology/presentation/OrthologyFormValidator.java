@@ -162,7 +162,7 @@ public class OrthologyFormValidator implements SearchFormValidator {
         if (criteria == null)
             criteria = "";
         if (filterType.equals("equals") || filterType.equals("contains") ||
-                filterType.equals("begins") || filterType.equals("ends")) {
+                filterType.equals("begins with") || filterType.equals("ends")) {
             if (criteria.matches("\\w*")) {
                 //
             } else {

@@ -63,8 +63,6 @@ TRIGGERS = \
 	lab_insert_trigger.sql \
 	lab_update_trigger.sql \
 	lab_address_update_trigger.sql \
-	linkage_pair_member_insert_trigger.sql \
-	linkage_pair_member_update_trigger.sql \
 	marker_insert_trigger.sql \
 	marker_comments_update_trigger.sql \
 	mrkr_abbrev_update_trigger.sql \
@@ -75,6 +73,9 @@ TRIGGERS = \
 	inference_group_member_notes_update_trigger.sql \
 	inference_group_member_inferred_from_update_trigger.sql \
 	marker_relationship_insert_trigger.sql \
+	marker_relationship_mrkr_1_update_trigger.sql \
+	marker_relationship_mrkr_2_update_trigger.sql \
+	marker_relationship_type_update_trigger.sql \
 	marker_relationship_update_trigger.sql \
 	orthologue_evidence_display_insert_trigger.sql \
 	orthologue_evidence_display_update_trigger.sql \

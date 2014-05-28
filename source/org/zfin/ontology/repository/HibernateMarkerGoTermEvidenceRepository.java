@@ -11,9 +11,16 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.ZfinStringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  */
@@ -184,12 +191,12 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
 
     /**
      *   select first 1 mrkrgoev_zdb_id, term_name, mrkrgoev_gflag_name
-        from term,go_evidence_code, marker_go_term_evidence
-        where mrkrgoev_mrkr_zdb_id = '$OID'
-          and mrkrgoev_term_zdb_id = term_zdb_id
-          and mrkrgoev_evidence_code = goev_code
-          and term_ontology = '$ontology'
-        order by goev_display_order, term_name
+     from term,go_evidence_code, marker_go_term_evidence
+     where mrkrgoev_mrkr_zdb_id = '$OID'
+     and mrkrgoev_term_zdb_id = term_zdb_id
+     and mrkrgoev_evidence_code = goev_code
+     and term_ontology = '$ontology'
+     order by goev_display_order, term_name
      * @param m
      * @return
      */
@@ -202,10 +209,32 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
                 " ";
 
         return (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery(hql)
-        .setParameter("marker",m)
-        .setParameter("ontology",ontology)
-        .setMaxResults(1)
-        .uniqueResult();
+                .setParameter("marker",m)
+                .setParameter("ontology",ontology)
+                .setMaxResults(1)
+                .uniqueResult();
 
+    }
+
+    public SortedSet<GenericTerm> getGOtermsInferedFromZDBid(String zdbID) {
+        if (zdbID == null)
+            return null;
+        String inferredFromSTR = "ZFIN:" + zdbID;
+        String hql = " select infGrpMem from InferenceGroupMember infGrpMem " +
+                     "  where infGrpMem.inferredFrom = :inferredFrom ";
+
+        List<InferenceGroupMember> inferenceGroupMembers = HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("inferredFrom", inferredFromSTR)
+                .list();
+
+        SortedSet<GenericTerm> genericTerms = new TreeSet<GenericTerm>();
+        for (InferenceGroupMember inferenceGroupMember : inferenceGroupMembers) {
+            String markerGoTermEvidenceZdbID = inferenceGroupMember.getMarkerGoTermEvidenceZdbID();
+            MarkerGoTermEvidence markerGoTermEvidence = getMarkerGoTermEvidenceByZdbID(markerGoTermEvidenceZdbID);
+            GenericTerm genericTerm = markerGoTermEvidence.getGoTerm();
+            genericTerms.add(genericTerm);
+        }
+
+        return genericTerms;
     }
 }

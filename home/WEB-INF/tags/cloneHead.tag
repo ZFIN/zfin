@@ -21,7 +21,11 @@
     <%--<zfin2:cloneData clone="${cloneBean.clone}" isThisseProbe="${cloneBean.isThisseProbe}"/>--%>
     <zfin2:cloneData cloneBean="${cloneBean}"/>
 
-    <%--<zfin2:notesInDiv hasNotes="${formBean.marker}"/>--%>
+    <tr>
+        <th>Location:</th>
+        <td><zfin2:displayLocation entity="${cloneBean.clone}"/></td>
+    </tr>
+
     <zfin2:notesInDiv hasNotes="${cloneBean.clone}"/>
 
 </table>

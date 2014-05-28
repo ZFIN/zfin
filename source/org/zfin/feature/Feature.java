@@ -4,6 +4,7 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityNotes;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.MappedDeletion;
 import org.zfin.marker.Marker;
@@ -11,19 +12,23 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
-import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.FeatureDBLink;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-/**ture
+/**
+ * Feature business entity.
  */
-public class Feature implements EntityNotes{
+public class Feature implements EntityNotes, EntityZdbID {
 
+    public static final String MUTANT = "Mutant";
     private String zdbID;
     private String name;
     private String publicComments;
-//    private String ftrType;
+    //    private String ftrType;
     private String lineNumber;
     private FeaturePrefix featurePrefix;
     private String abbreviation;
@@ -256,7 +261,7 @@ public class Feature implements EntityNotes{
     }
 
     public Marker getSingleRelatedMarker() {
-        if (featureMarkerRelations != null && featureMarkerRelations.size() == 1  ) {
+        if (featureMarkerRelations != null && featureMarkerRelations.size() == 1) {
             return featureMarkerRelations.iterator().next().getMarker();
         }
         return null;
@@ -271,8 +276,8 @@ public class Feature implements EntityNotes{
     }
 
     public Set<FeatureMarkerRelationship> getConstructs() {
-        if(!type.isTransgenic()){
-            return null ;
+        if (!type.isTransgenic()) {
+            return null;
         }
         if (featureMarkerRelations == null) {
             return new TreeSet<FeatureMarkerRelationship>();
@@ -287,6 +292,11 @@ public class Feature implements EntityNotes{
             }
         }
         return constructs;
+    }
+
+    @Override
+    public String getEntityType() {
+        return MUTANT;
     }
 
     public Set<FeatureDBLink> getDbLinks() {
@@ -318,7 +328,7 @@ public class Feature implements EntityNotes{
         SortedSet<Marker> affectedGenes = new TreeSet<Marker>();
         for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
             if (ftrmarkrel.isMarkerIsGene() && ftrmarkrel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                  affectedGenes.add(ftrmarkrel.getMarker());
+                affectedGenes.add(ftrmarkrel.getMarker());
             }
         }
         return affectedGenes;
@@ -329,62 +339,64 @@ public class Feature implements EntityNotes{
     public SortedSet<Marker> getTgConstructs() {
         SortedSet<Marker> tgConstructs = new TreeSet<Marker>();
         for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
-            if(ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
+            if (ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString())
                     || ftrmarkrel.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())
-                    )  {
+                    ) {
 
                 tgConstructs.add(ftrmarkrel.getMarker());
             }
         }
         return tgConstructs;
     }
-    public boolean isAllZfishbook () {
-		if (dbLinks == null || dbLinks.isEmpty())
-           return false;
+
+    public boolean isAllZfishbook() {
+        if (dbLinks == null || dbLinks.isEmpty())
+            return false;
 
         int countZfishbook = 0;
         for (FeatureDBLink dblink : dbLinks) {
             if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
-                  countZfishbook++;
+                countZfishbook++;
             }
         }
 
         if (countZfishbook == dbLinks.size())
-	         return true;
+            return true;
 
         return false;
     }
 
-    public boolean isNoZfishbook () {
-		if (dbLinks == null || dbLinks.isEmpty())
-           return true;
+    public boolean isNoZfishbook() {
+        if (dbLinks == null || dbLinks.isEmpty())
+            return true;
 
         for (FeatureDBLink dblink : dbLinks) {
             if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
-                  return false;
+                return false;
             }
         }
 
         return true;
     }
 
-     public boolean isAllZmp () {
-		if (dbLinks == null || dbLinks.isEmpty())
-           return false;
+    public boolean isAllZmp() {
+        if (dbLinks == null || dbLinks.isEmpty())
+            return false;
 
         int countZmp = 0;
         for (FeatureDBLink dblink : dbLinks) {
             if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("ZMP")) {
-                  countZmp++;
+                countZmp++;
             }
         }
 
         if (countZmp == dbLinks.size())
-	         return true;
+            return true;
 
         return false;
     }
-    public boolean isAllCrezoo () {
+
+    public boolean isAllCrezoo() {
         if (dbLinks == null || dbLinks.isEmpty())
             return false;
 
@@ -401,19 +413,20 @@ public class Feature implements EntityNotes{
         return false;
     }
 
-    public boolean isNoZmp () {
-		if (dbLinks == null || dbLinks.isEmpty())
-           return true;
+    public boolean isNoZmp() {
+        if (dbLinks == null || dbLinks.isEmpty())
+            return true;
 
         for (FeatureDBLink dblink : dbLinks) {
             if (dblink.getReferenceDatabase().getForeignDB().getDisplayName() != null && dblink.getReferenceDatabase().getForeignDB().getDisplayName().equals("zfishbook")) {
-                  return false;
+                return false;
             }
         }
 
         return true;
     }
-    public boolean isNoCrezoo () {
+
+    public boolean isNoCrezoo() {
         if (dbLinks == null || dbLinks.isEmpty())
             return true;
 

@@ -563,10 +563,19 @@ and mrkr_type = 'MRPHLNO'
 
   <?MICOMMENT> ======== Mapping Data  ============ <?/MICOMMENT>
   <?MISQL SQL="
-	select count(distinct lnkgmem_member_zdb_id)
-	  from record_attribution, linkage_member
-	 where recattrib_source_zdb_id = '$OID'
-	  and  recattrib_data_zdb_id = lnkgmem_linkage_zdb_id
+select (
+select count(distinct lnkgm_member_1_zdb_id)
+    	  from linkage, linkage_membership
+    	 where lnkg_source_zdb_id = 'ZDB-PUB-070427-10'
+    	 and lnkgm_linkage_zdb_id = lnkg_zdb_id    
+) +
+(select  count(distinct lsingle_member_zdb_id)
+    	  from linkage, linkage_single
+    	 where lnkg_source_zdb_id = 'ZDB-PUB-070427-10'
+    	 and lsingle_lnkg_zdb_id = lnkg_zdb_id
+    	 and not exists (select 'x' from linkage_membership_search 
+    	 where lms_lnkg_zdb_id = lnkg_zdb_id)
+) from systables where tabid = 1
 	  ;">
   <?/MISQL>
 
@@ -598,7 +607,7 @@ and mrkr_type = 'MRPHLNO'
 	">
   <?/MISQL> 
   <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-ortholist.apg&pubId=$OID">Orthology</a> &nbsp;
+  <li><a href="/action/publication/$OID/orthology-list">Orthology</a> &nbsp; ($1)
   <?/MIVAR>
 
   </ul>

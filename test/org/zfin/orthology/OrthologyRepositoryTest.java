@@ -89,7 +89,7 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
         HibernateOrthologyRepository ori = new HibernateOrthologyRepository();
         StringBuilder sb = new StringBuilder();
         ori.createGeneSymbolWhereClause(getFlySpeciesCriteria(), sb, false);
-        assertEquals("Gene Join Where clause", " AND upper(Fly.symbol) like '%RTD5'", sb.toString());
+        assertEquals("Gene Join Where clause", " AND upper(Fruit fly.symbol) like '%RTD5'", sb.toString());
     }
 
     // Single chromosome: test chromosome = 19

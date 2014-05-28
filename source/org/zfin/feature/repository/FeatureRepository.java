@@ -11,6 +11,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
@@ -19,6 +20,8 @@ import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
 
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 
@@ -80,6 +83,8 @@ public interface FeatureRepository {
     FeatureAssay getFeatureAssay(String zdbID);
 
     List<Marker> getMarkersByFeature(Feature feature);
+
+    List<Marker> getMarkerIaAlleleOf(Feature feature);
 
     List<Marker> getMarkersPresentForFeature(Feature feature);
 
@@ -143,4 +148,15 @@ public interface FeatureRepository {
    int setNoLabPrefix(String zdbID);
 
    List<PreviousNameLight> getPreviousNamesLight(Genotype genotype);
+
+    /**
+     * Retrieve features that have an allelic relationship with a given marker.
+     * @param marker
+     * @return
+     */
+    List<Feature> getFeaturesByMarker(Marker marker);
+
+    int deleteFeatureFromTracking(String featureZdbId);
+
+    Set<Feature> getFeaturesCreatedBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
 }

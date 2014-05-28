@@ -379,7 +379,7 @@ PREFIX:   featcurup_
 
 <?MIBLOCK COND=$(XST,$featedit_delete_ftr)>
 <SCRIPT><?MIVAR>
-      location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-delete_record.apg&rtype=feature&return_page=curation.apg&returnOID=$OID&OID=$featcur_featedit_feature_zdb_id#$anchor");
+      location.replace("/action/infrastructure/deleteRecord/$OID");
            <?/MIVAR>
    </SCRIPT>
 

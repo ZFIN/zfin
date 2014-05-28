@@ -25,7 +25,6 @@ SUBDIRS = \
 	fish_files \
 	gene_files \
 	image_files \
-	linkage \
 	locus_files \
 	marker_files \
 	misc_files \

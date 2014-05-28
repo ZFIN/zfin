@@ -16,9 +16,10 @@ import org.zfin.fish.presentation.ZfinEntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.ZfinEntity;
+import org.zfin.mapping.Panel;
+import org.zfin.mapping.presentation.PanelPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
@@ -124,6 +125,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = FishPresentation.getLink((Fish) o);
         else if (o instanceof Image)
             link = ImagePresentation.getLink((Image) o);
+        else if (o instanceof Panel)
+            link = PanelPresentation.getLink((Panel) o);
         else if (o instanceof OrthologySpecies)
             link = OrthologyPresentation.getLink((OrthologySpecies) o);
         else if (o instanceof Genotype)

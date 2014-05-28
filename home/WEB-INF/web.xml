@@ -197,7 +197,6 @@
         </init-param>
         <init-param>
             <param-name>log4j-init-file-directory</param-name>
-            <param-name>log4j-init-file-directory</param-name>
             <param-value>WEB-INF</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
@@ -346,7 +345,7 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>zfin</servlet-name>
+        <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/*</url-pattern>
     </servlet-mapping>
 
@@ -397,11 +396,6 @@
 
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/fish/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/mutant/*</url-pattern>
     </servlet-mapping>
 
@@ -425,6 +419,20 @@
         <url-pattern>/action/devtool/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/autocomplete/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfin</servlet-name>
+        <url-pattern>/action/dev-tools/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/infrastructure/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>zfin</servlet-name>
@@ -454,7 +462,7 @@
         <res-ref-name>
             jdbc/zfin
         </res-ref-name>
-        <res-type>
+        <res-type>                                      `
             javax.sql.DataSource
         </res-type>
         <res-auth>

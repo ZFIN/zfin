@@ -80,21 +80,20 @@ create dba function "informix".regen_panelcount()
   	(
     	panelcnt_panel_zdb_id	varchar(50),
     	panelcnt_mrkr_type		varchar(10),
-    	panelcnt_or_lg		varchar(2),
+    	panelcnt_chromosome		varchar(2),
     	panelcnt_count		integer
       	not null
  	 )
  	 in tbldbs3
   	extent size 32 next size 32
   	lock mode page;
-	revoke all on panel_count_new from "public";
 
      let errorHint = "populate table";
 
      insert into panel_count_new
-          select refcross_id, marker_type, or_lg, count(*)
+          select refcross_id, marker_type, mm_chromosome, count(*)
 	    from mapped_marker
-        group by refcross_id, or_lg, marker_type;
+        group by refcross_id, mm_chromosome, marker_type;
 	
 
     -- To this point, we haven't done anything visible to actual users.
@@ -139,13 +138,13 @@ create dba function "informix".regen_panelcount()
 
       create unique index panel_count_primary_key_index
   	on panel_count (panelcnt_panel_zdb_id, panelcnt_mrkr_type,
-	panelcnt_or_lg)
+	panelcnt_chromosome)
   	in idxdbs2;
 
       alter table panel_count
   	add constraint
    	 primary key (panelcnt_panel_zdb_id, panelcnt_mrkr_type,
-	panelcnt_or_lg)
+	panelcnt_chromosome)
     	constraint panel_count_primary_key;
 
       -- foreign keys
@@ -174,12 +173,12 @@ create dba function "informix".regen_panelcount()
     	constraint panelcnt_mrkr_type_foreign_key;
 
     create index panelcnt_or_lg_index
-  	on panel_count(panelcnt_or_lg)
+  	on panel_count(panelcnt_chromosome)
   	in idxdbs2;
 
     alter table panel_count
   	add constraint
-   	 foreign key (panelcnt_or_lg)
+   	 foreign key (panelcnt_chromosome)
     	references linkage_group
     	on delete cascade
     	constraint panelcnt_or_lg_foreign_key;

@@ -1,6 +1,6 @@
 
 .name-label, .name-value {
-    font-size: large;   
+    font-size: large;
     font-weight: bold;
     text-align:left;
 }
@@ -25,7 +25,7 @@
 .data-sub-page-title {
     font-size: large;
     font-weight: bold;
-    background: #ccc;    
+    background: #ccc;
 }
 
 
@@ -38,7 +38,7 @@ table.primary-entity-attributes {
 }
 
 
-table.primary-entity-attributes th {    
+table.primary-entity-attributes th {
     text-align: left;
     vertical-align: top;
     padding-right: 1em;
@@ -49,7 +49,7 @@ table.primary-entity-attributes th {
 
 table.primary-entity-attributes th.genotype-name-label,
 table.primary-entity-attributes td.genotype-name-value {
-   vertical-align: baseline;
+    vertical-align: baseline;
 }
 
 table.primary-entity-attributes td {
@@ -116,4 +116,26 @@ table.ontology-term-mini-summary td.name {
 
 .data-note{
     font-size: small;
+}
+
+.caution-head{
+    color: red;
+    font-weight: 800;
+    font-size: 200%;
+}
+
+.caution-emphasis{
+    color: red;
+    font-weight: 700;
+    font-size: 130%;
+}
+
+.caution-text{
+    color: black;
+    font-weight: 500;
+    font-size: 110%;
+}
+
+tr.spaceUnder > td{
+    padding-bottom: 1em;
 }

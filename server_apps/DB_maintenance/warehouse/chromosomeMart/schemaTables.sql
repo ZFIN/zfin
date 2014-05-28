@@ -1,2 +1,3 @@
 
-delete from chromosome_search_Temp;
+delete from sequence_feature_chromosome_location_temp;
+delete from linkage_membership_search_temp;

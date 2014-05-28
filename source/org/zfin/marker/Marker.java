@@ -4,11 +4,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
-import org.zfin.infrastructure.DataNote;
-import org.zfin.infrastructure.EntityAlias;
-import org.zfin.infrastructure.EntityNotes;
-import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarker;
+import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.orthology.Orthologue;
 import org.zfin.profile.MarkerSupplier;
@@ -25,7 +23,7 @@ import java.util.*;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
-public class Marker implements Serializable, Comparable, EntityAlias, EntityNotes {
+public class Marker implements Serializable, Comparable, EntityAlias, EntityNotes, EntityZdbID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
     private static Logger LOG = Logger.getLogger(Marker.class);
@@ -45,14 +43,14 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
     private MarkerType markerType;
     private Set<MarkerHistory> markerHistory;
-    private Set<MappedMarker> directPanelMappings;
+    private Set<MappedMarkerImpl> directPanelMappings;
     private Person owner;
     private String publicComments;
     private Set<MarkerDBLink> dbLinks;
     private Set<MarkerAlias> aliases;
     private Set<DataNote> dataNotes;
     private Set<MarkerSupplier> suppliers;
-
+    private String chromosome;
     // cashed attribute
     private transient List<Marker> markers;
     private Set<OrthologyNote> orthologyNotes;
@@ -147,6 +145,11 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
 
     public void setPublications(Set<PublicationAttribution> publications) {
         this.publications = publications;
+    }
+
+    @Override
+    public String getEntityType() {
+        return getType().toString();
     }
 
     /**
@@ -325,68 +328,68 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     }
 
     public int compareTo(Object otherMarker) {
-        if (otherMarker == null || ((Marker)otherMarker).getAbbreviationOrder() == null){
+        if (otherMarker == null || ((Marker) otherMarker).getAbbreviationOrder() == null) {
             return 1;
         }
-        if(getAbbreviationOrder()==null){
+        if (getAbbreviationOrder() == null) {
             return -1;
         }
         return getAbbreviationOrder().compareTo(((Marker) otherMarker).getAbbreviationOrder());
     }
 
-    public Set<MappedMarker> getDirectPanelMappings() {
+    public Set<MappedMarkerImpl> getDirectPanelMappings() {
         return directPanelMappings;
     }
 
-    public void setDirectPanelMappings(Set<MappedMarker> directPanelMappings) {
+    public void setDirectPanelMappings(Set<MappedMarkerImpl> directPanelMappings) {
         this.directPanelMappings = directPanelMappings;
     }
 
     public boolean hasFirstMarkerRelationships(Marker markerToMergeInto) {
-        for(MarkerRelationship markerRelationship: getSecondMarkerRelationships()){
-            if(markerRelationship.getFirstMarker().equals(markerToMergeInto)){
-                return true ;
+        for (MarkerRelationship markerRelationship : getSecondMarkerRelationships()) {
+            if (markerRelationship.getFirstMarker().equals(markerToMergeInto)) {
+                return true;
             }
         }
-        return false ;
+        return false;
     }
 
     public boolean hasSecondMarkerRelationships(Marker markerToMergeInto) {
-        for(MarkerRelationship markerRelationship: getFirstMarkerRelationships()){
-            if(markerRelationship.getSecondMarker().equals(markerToMergeInto)){
-                return true ;
+        for (MarkerRelationship markerRelationship : getFirstMarkerRelationships()) {
+            if (markerRelationship.getSecondMarker().equals(markerToMergeInto)) {
+                return true;
             }
         }
-        return false ;
+        return false;
     }
 
     public boolean hasSupplier(MarkerSupplier markerSupplier) {
-        for(MarkerSupplier aMarkerSupplier: getSuppliers()){
-           if(aMarkerSupplier.getOrganization().getZdbID().equals(markerSupplier.getOrganization().getZdbID())) {
-               return true ;
-           }
+        for (MarkerSupplier aMarkerSupplier : getSuppliers()) {
+            if (aMarkerSupplier.getOrganization().getZdbID().equals(markerSupplier.getOrganization().getZdbID())) {
+                return true;
+            }
         }
         return false;
     }
 
     public boolean hasPublicationAttribution(PublicationAttribution publicationAttribution) {
-        for(PublicationAttribution aPublicationAttribution: getPublications()){
-            if(aPublicationAttribution.getPublication().getZdbID().equals(publicationAttribution.getPublication().getZdbID())) {
-                return true ;
+        for (PublicationAttribution aPublicationAttribution : getPublications()) {
+            if (aPublicationAttribution.getPublication().getZdbID().equals(publicationAttribution.getPublication().getZdbID())) {
+                return true;
             }
         }
         return false;
     }
 
     public MarkerAlias getAlias(String aliasString) {
-        if(CollectionUtils.isEmpty(getAliases())) return null ;
+        if (CollectionUtils.isEmpty(getAliases())) return null;
 
-        for(MarkerAlias aMarkerAlias: getAliases()){
-            if(aMarkerAlias.getAlias().equalsIgnoreCase(aliasString)){
-                return aMarkerAlias ;
+        for (MarkerAlias aMarkerAlias : getAliases()) {
+            if (aMarkerAlias.getAlias().equalsIgnoreCase(aliasString)) {
+                return aMarkerAlias;
             }
         }
-        return null ;
+        return null;
     }
 
     public List<OmimPhenotype> getOmimPhenotypes() {
@@ -423,8 +426,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         TGCONSTRCT("TGCONSTRCT"),
         TSCRIPT("TSCRIPT"),
         TALEN("TALEN"),
-        CRISPR("CRISPR")
-        ;
+        CRISPR("CRISPR");
 
         private final String value;
 
@@ -444,11 +446,11 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
             throw new RuntimeException("No run type of string " + type + " found.");
         }
 
-        public static boolean isMarkerType(String type){
-            if(type == null)
+        public static boolean isMarkerType(String type) {
+            if (type == null)
                 return false;
-            for(Type markerType: values())
-                if(markerType.value.equals(type))
+            for (Type markerType : values())
+                if (markerType.value.equals(type))
                     return true;
             return false;
         }
@@ -514,8 +516,8 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
 
     }
 
-    public TreeSet<String> getLG() {
-        TreeSet<String> lgSet = RepositoryFactory.getLinkageRepository().getLG(this);
+    public TreeSet<String> getChromosomeLocations() {
+        TreeSet<String> lgSet = RepositoryFactory.getLinkageRepository().getChromosomeLocations(this);
         lgSet.remove("0");
         return lgSet;
     }
@@ -561,4 +563,11 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         this.suppliers = suppliers;
     }
 
+    public String getChromosome() {
+        return chromosome;
+    }
+
+    public void setChromosome(String chromosome) {
+        this.chromosome = chromosome;
+    }
 }

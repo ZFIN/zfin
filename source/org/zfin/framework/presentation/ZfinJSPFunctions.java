@@ -1,29 +1,33 @@
 package org.zfin.framework.presentation;
 
 import com.opensymphony.clickstream.ClickstreamRequest;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-//import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.anatomy.service.AnatomyService;
-import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.dto.TermNotFoundException;
-
+import org.zfin.feature.Feature;
+import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
+import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.server.DTOConversionService;
-import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ActiveSource;
+import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.infrastructure.ZdbID;
+import org.zfin.mapping.GbrowseTrack;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.LinkageMember;
+import org.zfin.mapping.MappingService;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
-import org.zfin.profile.Person;
 import org.zfin.ontology.Term;
-import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.profile.Person;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
 
@@ -33,15 +37,14 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
 /**
  * Class that is called from JSP through a function call.
  */
+@SuppressWarnings("SimplifiableIfStatement")
 public class ZfinJSPFunctions {
-    public static final int MILLISECONDS_PER_HOUR = 3600000;
-    public static final int MILLISECONDS_PER_MINUTE = 60000;
-    public static final int MILLISECONDS_PER_SECOND = 1000;
+    public static final String TYPE = "&type=";
 
     /**
      * Escape characters to valid HTML code
@@ -50,9 +53,9 @@ public class ZfinJSPFunctions {
      * @return String
      */
     public static String escapeJavaScript(String string) {
-        if (string.indexOf("\r\n") > -1)
+        if (string.contains("\r\n"))
             string = string.replaceAll("\r\n", "<br/>");
-        if (string.indexOf("\n") > -1)
+        if (string.contains("\n"))
             string = string.replaceAll("\n", "<br/>");
 
         return StringEscapeUtils.escapeEcmaScript(string);
@@ -74,9 +77,9 @@ public class ZfinJSPFunctions {
             string = StringEscapeUtils.unescapeXml(string);
         }
 
-        if (string.indexOf("\r\n") > -1)
+        if (string.contains("\r\n"))
             string = string.replaceAll("\r\n", "<br/>");
-        if (string.indexOf("\n") > -1)
+        if (string.contains("\n"))
             string = string.replaceAll("\n", "<br/>");
 
         return string;
@@ -368,5 +371,42 @@ public class ZfinJSPFunctions {
         return stageListDisplay;
     }
 
+    public static String getChromosomeInfo(ZdbID entity) {
+        return MappingService.getChromosomeLocationDisplay(entity);
+    }
+
+    public static String getMappingEntityType(EntityZdbID entity) {
+        return entity.getEntityType();
+    }
+
+    public static GenomeLocation getGenomeLocation(Marker marker) {
+        if (marker == null)
+            return null;
+        List<GenomeLocation> genomeLocationList = getLinkageRepository().getPhysicalGenomeLocations(marker);
+        if (CollectionUtils.isEmpty(genomeLocationList))
+            return null;
+        Collections.sort(genomeLocationList);
+        return genomeLocationList.get(0);
+    }
+
+    public static GbrowseTrack[] getGbrowseTracks(Marker marker) {
+        if (marker == null)
+            return null;
+        return GBrowseService.getGBrowseTracks(marker);
+    }
+
+    public static String getGbrowseTrackUrlAddition(Marker marker) {
+        if (marker == null)
+            return null;
+        GbrowseTrack[] tracks = GBrowseService.getGBrowseTracks(marker);
+        if(tracks == null)
+            return null;
+        StringBuilder builder = new StringBuilder();
+        for (GbrowseTrack track : tracks) {
+            builder.append(TYPE);
+            builder.append(track.getTrackName());
+        }
+        return builder.toString();
+    }
 
 }

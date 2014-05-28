@@ -1,11 +1,16 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.properties.ZfinPropertiesEnum;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -17,15 +22,11 @@ import java.util.StringTokenizer;
 /**
  * Action class retrieve classes used in the application.
  */
-public class ClasspathInfoController extends AbstractCommandController {
+@Controller
+public class ClasspathInfoController {
 
-    public ClasspathInfoController(){
-        setCommandClass(ClasspathInfoBean.class);
-    }
-
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-
-        ClasspathInfoBean formBean = (ClasspathInfoBean) command;
+    @RequestMapping("/classpath-info")
+    public String showClassPathInfo(@ModelAttribute("formBean") ClasspathInfoBean formBean, Model model) throws ServletException {
 
         retrieveBootClasses(formBean);
         retrieveExtensionClasses(formBean);
@@ -60,8 +61,7 @@ public class ClasspathInfoController extends AbstractCommandController {
                 }
             }
         }
-
-        return new ModelAndView("classpath-info", "classpathForm", formBean);
+        return "classpath-info.page";
     }
 
     private List<ClassLibraryWrapper> createClassLoaderParents(ClassLoader classLoader) {

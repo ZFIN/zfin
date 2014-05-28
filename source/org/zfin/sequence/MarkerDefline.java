@@ -39,8 +39,8 @@ public class MarkerDefline extends AbstractMarkerDefline {
         if (marker.getPublicComments() != null) {
             stringBuilder.append(marker.getPublicComments()).append(" ");
         }
-        if (marker.getLG() != null && marker.getLG().size() > 0) {
-            for (String lg : marker.getLG()) {
+        if (marker.getChromosomeLocations() != null && marker.getChromosomeLocations().size() > 0) {
+            for (String lg : marker.getChromosomeLocations()) {
                 stringBuilder.append(lg);
             }
             stringBuilder.append(" ");

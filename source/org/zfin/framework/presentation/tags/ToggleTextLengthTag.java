@@ -26,7 +26,7 @@ public class ToggleTextLengthTag extends TagSupport {
                 text = "";
             }
             // treat short version just like long version. no difference.
-            if (text.length() < shortLength) {
+            if (text.length() <= shortLength) {
                 shortVersion = false;
             }
             String outputText = null;

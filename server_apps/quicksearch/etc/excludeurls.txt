@@ -36,7 +36,6 @@ download-sequence
 
 view.apg
 view2.apg
-aa-orthoviewdetailed.apg
 action/anatomy/term-detail
 action/anatomy/anatomy-search
 action/antibody
@@ -58,15 +57,12 @@ marker/transcript-view
 aa-fxassayabbrev.apg
 aa-fxallfigures.apg
 aa-geneprddescription.apg
-aa-mappingdetail.apg
 aa-quickfindpers.apg
-aa-refcrosslist.apg
 aa-sequence.apg
 aa-xpatexpcdndisplay.apg
 aa-zirclist.apg
 aa-ZDB_home.apg
 aa-showpubs.apg
-aa-ortholist.apg
 aa-externalredirect.apg
 aa-externallink.apg
 aa-pubmedredirect.apg

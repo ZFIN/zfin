@@ -1,6 +1,9 @@
 package org.zfin.sequence.presentation;
 
+import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.sequence.Accession;
+
+import java.io.Serializable;
 
 
 /**
@@ -9,7 +12,9 @@ import org.zfin.sequence.Accession;
 
 // don't need the EntityPresentation at this point
 //public class AccessionPresentation extends EntityPresentation {
-public class AccessionPresentation {
+public class AccessionPresentation implements Serializable {
+    private String accessionNumber;
+    private String url;
 
     /**
      * Generates an Accession link
@@ -38,6 +43,25 @@ public class AccessionPresentation {
     }
 
 
-} 
+    public String getAccessionNumber() {
+        return accessionNumber;
+    }
+
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int hashCode() {
+        return accessionNumber.hashCode();
+    }
+}
 
 

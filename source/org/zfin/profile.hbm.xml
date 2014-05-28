@@ -74,23 +74,23 @@
 
     </class>
 
-<!--
-    <class name="org.zfin.profile.Address" table="address">
-        <id name="id" column="add_pk_id">
-            <generator class="native"/>
-        </id>
-        <property name="ownerZdbID" column="add_owner_zdb_id"/>
-        <property name="institution" column="add_institution"/>
-        <property name="street1" column="add_street1"/>
-        <property name="street2" column="add_street2"/>
-        <property name="city" column="add_city"/>
-        <property name="stateCode" column="add_state_code"/>
-        &lt;!&ndash;<property name="province" column="add_province"/>&ndash;&gt;
-        <property name="countryCode" column="add_country_code"/>
-        <property name="postalCode" column="add_postal_code"/>
-        <property name="composite" column="add_composite"/>
-    </class>
--->
+    <!--
+        <class name="org.zfin.profile.Address" table="address">
+            <id name="id" column="add_pk_id">
+                <generator class="native"/>
+            </id>
+            <property name="ownerZdbID" column="add_owner_zdb_id"/>
+            <property name="institution" column="add_institution"/>
+            <property name="street1" column="add_street1"/>
+            <property name="street2" column="add_street2"/>
+            <property name="city" column="add_city"/>
+            <property name="stateCode" column="add_state_code"/>
+            &lt;!&ndash;<property name="province" column="add_province"/>&ndash;&gt;
+            <property name="countryCode" column="add_country_code"/>
+            <property name="postalCode" column="add_postal_code"/>
+            <property name="composite" column="add_composite"/>
+        </class>
+    -->
 
     <class name="org.zfin.profile.Organization" abstract="true" >
         <id name="zdbID" column="zdb_id">
@@ -169,11 +169,10 @@
     </class>
 
     <class abstract="true" name="org.zfin.profile.ObjectSource" table="int_data_source">
-        <composite-id>
-            <key-property name="dataZdbID" column="ids_data_zdb_id"/>
-            <key-many-to-one name="organization" column="ids_source_zdb_id" class="org.zfin.profile.Organization"/>
-        </composite-id>
-
+        <id name="id" type="long">
+            <column name="ids_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
         <discriminator type="string"
                        formula="(CASE get_obj_type(ids_data_zdb_id)
                                     WHEN 'ALT' THEN 'Featur'
@@ -185,7 +184,8 @@
                                     ELSE             'other-'
                                  END)"/>
 
-
+        <property name="dataZdbID" column="ids_data_zdb_id"/>
+        <many-to-one name="organization" column="ids_source_zdb_id" class="org.zfin.profile.Organization"/>
 
         <subclass name="org.zfin.profile.FeatureSource" discriminator-value="Featur">
             <many-to-one name="feature" column="ids_data_zdb_id" insert="false" update="false"/>

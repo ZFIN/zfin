@@ -160,8 +160,8 @@ public abstract class DeflineService {
         defLine += " ";
         defLine += marker.getPublicComments() ;
         defLine += " ";
-        if(marker.getLG().size()>0){
-            for(String lg : marker.getLG()){
+        if(marker.getChromosomeLocations().size()>0){
+            for(String lg : marker.getChromosomeLocations()){
                 defLine += lg ;
             }
         }

@@ -6,6 +6,7 @@ import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -15,6 +16,7 @@ import java.io.StringReader;
 /**
  * Validates XMLBlastBeans on submit
  */
+@Component
 public class XMLBlastValidator implements Validator {
 
     private static Logger logger = Logger.getLogger(XMLBlastValidator.class);
@@ -128,21 +130,19 @@ public class XMLBlastValidator implements Validator {
                     String sequence = richSequence.getInternalSymbolList().seqString();
                     if (StringUtils.isEmpty(sequence)
                             &&
-                            false==errors.hasErrors()
-                            ){
-                        errors.rejectValue(field,"code","Problem parsing sequence for accession: "+richSequence.getAccession());
-                    }
-                    else{
-                        if(sequence.length()>querySequenceLimit){
-                            errors.rejectValue(field,"code","Sequence must not exceed "+ querySequenceLimit + " characters.");
+                            false == errors.hasErrors()
+                            ) {
+                        errors.rejectValue(field, "code", "Problem parsing sequence for accession: " + richSequence.getAccession());
+                    } else {
+                        if (sequence.length() > querySequenceLimit) {
+                            errors.rejectValue(field, "code", "Sequence must not exceed " + querySequenceLimit + " characters.");
                         }
                     }
                 }
             } else {
                 errors.rejectValue(field, "code", "No sequences read.");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String sequenceType;
             if (xmlBlastBean.getSequenceType().equals("nt")) {
                 sequenceType = "Nucleotide";

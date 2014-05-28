@@ -6,6 +6,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.ParameterizedType;
 import org.hibernate.usertype.UserType;
 import org.hibernate.util.ReflectHelper;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.ontology.Ontology;
 
 import java.io.Serializable;
@@ -68,6 +69,8 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         String name = rs.getString(names[0]);
         if (rs.wasNull())
             return null;
+        if (enumClass.getName().equals(GenomeLocation.Source.class.getName()))
+            return GenomeLocation.Source.getSource(name);
         // convert enumeration name into upper case as the names are always all upper case.
         // this needs to be done if the enumeration string is not all caps.
         name = name.replace('-', '_');
@@ -88,6 +91,8 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
             if (value instanceof Ontology) {
                 Ontology ontology = (Ontology) value;
                 st.setString(index, ontology.getDbOntologyName());
+            } else if (value instanceof GenomeLocation.Source) {
+                st.setString(index, ((GenomeLocation.Source) value).getName());
             } else
                 st.setString(index, value.toString());
         }

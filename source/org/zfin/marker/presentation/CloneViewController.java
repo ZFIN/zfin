@@ -82,7 +82,7 @@ public class CloneViewController {
 
         // iterate through related marker list to add snps to it (if a dna clone)
         // this is technically a small list, so should be cheap
-        if(false==clone.isRnaClone() && RepositoryFactory.getMarkerRepository().cloneHasSnp(clone)){
+        if(!clone.isRnaClone() && RepositoryFactory.getMarkerRepository().cloneHasSnp(clone)){
             List<MarkerRelationshipPresentation> markerRelationshipPresentationList = cloneBean.getMarkerRelationshipPresentationList();
             MarkerRelationshipPresentation snpPresentation = new SnpMarkerRelationshipPresentation();
             snpPresentation.setZdbId(zdbID);
@@ -92,9 +92,6 @@ public class CloneViewController {
 
         // check whether we are a thisse probe
         cloneBean.setThisseProbe(expressionService.isThisseProbe(clone));
-
-        // MAPPING INFO:
-        cloneBean.setMappedMarkerBean(MarkerService.getMappedMarkers(clone));
 
         model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());

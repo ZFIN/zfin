@@ -27,7 +27,7 @@ unload to '<!--|ROOT_PATH|-->/home/data_transfer/ZIRC/zfinFeatures'
 	 feature_name as allele_feature_name, 
 	 fmrel_mrkr_zdb_id as affected_gene,
 	 geno_zdb_id as genotype,
-         lnkg_or_lg as LG
+         lnkg_chromosome as LG
     from feature,linkage_member, linkage,
 	feature_marker_relationship, genotype_feature, genotype
     where feature_zdb_id = fmrel_ftr_zdb_id

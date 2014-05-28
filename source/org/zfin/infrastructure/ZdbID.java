@@ -8,4 +8,5 @@ public interface ZdbID {
     public String getZdbID();
 
     public void setZdbID(String zdbID);
+
 }

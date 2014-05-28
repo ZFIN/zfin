@@ -4,7 +4,10 @@ import com.opensymphony.clickstream.Clickstream;
 import com.opensymphony.clickstream.ClickstreamListener;
 import com.opensymphony.clickstream.ClickstreamRequest;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 
@@ -17,23 +20,20 @@ import java.util.Map;
 /**
  * Controller that obtains the meta data for the database.
  */
-public class UserRequestTrackController extends AbstractCommandController {
+@Controller
+public class UserRequestTrackController {
 
-    public UserRequestTrackController() {
-        setCommandClass(UserRequestTrackBean.class);
-        setCommandName(LookupStrings.FORM_BEAN);
-    }
 
-    @SuppressWarnings({"unchecked"})
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        UserRequestTrackBean form = (UserRequestTrackBean) command;
+    @RequestMapping("/view-user-request-tracks")
+    protected String showGlobalSession(@ModelAttribute("form") UserRequestTrackBean form,
+                                       HttpServletRequest request) throws Exception {
         Map<String, Clickstream> clickstreamMap = (Map<String, Clickstream>) request.getSession().getServletContext().getAttribute(ClickstreamListener.CLICKSTREAMS_ATTRIBUTE_KEY);
         Map<String, Clickstream> filteredClickstreamMap = clickstreamMap;
         if (StringUtils.isNotEmpty(form.getUrlSearchString()))
             filteredClickstreamMap = filterClickstreamByUrl(form.getUrlSearchString(), clickstreamMap);
         filteredClickstreamMap = filterClickstreamByRobot(form.getShowBots(), filteredClickstreamMap);
         form.setClickstreamMap(filteredClickstreamMap);
-        return new ModelAndView("user-request-tracking", LookupStrings.FORM_BEAN, form);
+        return "user-request-tracking.page";
     }
 
     private Map<String, Clickstream> filterClickstreamByRobot(String showBot, Map<String, Clickstream> fullClickstreamMap) {

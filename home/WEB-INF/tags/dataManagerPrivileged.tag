@@ -10,32 +10,18 @@
 <%@ attribute name="latestUpdate" type="org.zfin.audit.AuditLogItem" rtexprvalue="true" %>
 <%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
 
-
-<script type="text/javascript">
-    function confirmDelete() {
-        if (confirm('Delete: ${zdbID}')) {
-            location.replace('${deleteURL}');
-        }
-    }
-
-    function confirmMerge() {
-        // not confirming here
-        if (confirm('Merge:${zdbID}'))
-            location.replace('${mergeURL}');
-    }
-</script>
-
 <c:if test="${!empty editURL}">
     <td>
         <a href="${editURL}" class="root">Edit</a>
     </td>
 </c:if>
 <c:if test="${!empty deleteURL
+                  and deleteURL ne 'none'
                   and
                   (!empty oboID ? !fn:startsWith('ZDB-TSCRIPT-',oboID) : true)
                   }">
     <td>
-        <a href="javascript:;" class="root" onclick="confirmDelete();">Delete</a>
+        <a href="javascript:;" class="root" onclick="location.replace('${deleteURL}');">Delete</a>
     </td>
 </c:if>
 <c:if test="${!empty mergeURL}">

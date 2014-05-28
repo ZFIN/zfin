@@ -26,7 +26,7 @@ function ImageBox() {
     this.MAX_VISIBLE = 10;
 
     this.IMG_URL = "/imageLoadUp/";
-    this.POPUP_URL = "/action/publication/image-popup?image.zdbID=";
+    this.POPUP_URL = "/action/publication/image-popup/";
     this.FIG_URL = "/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-fxfigureview.apg&OID=";
     this.IMG_PAGE_URL = "/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-imageview.apg&image_table=image&OID=";
 

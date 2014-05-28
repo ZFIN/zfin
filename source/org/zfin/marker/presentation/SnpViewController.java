@@ -7,7 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.SNP;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -45,7 +44,7 @@ public class SnpViewController {
         SNP marker = markerRepository.getSNPByID(zdbID);
         //Marker marker = markerRepository.getMarkerByID(zdbID);
         logger.debug("snp marker: " + marker);
-        logger.debug("snp sequence component: " + marker.getSequence().getTargetSequence().toString()) ;
+        logger.debug("snp sequence component: " + marker.getSequence().getTargetSequence()) ;
 
         SnpMarkerBean snpMarkerBean = new SnpMarkerBean();
         snpMarkerBean.setMarker(marker);
@@ -55,21 +54,15 @@ public class SnpViewController {
         snpMarkerBean.setNcbiBlastUrl(ncbiBlastUrl);
 
         // add variant
-        snpMarkerBean.setVariant(marker.getSequence().getVariation().toString());
+        snpMarkerBean.setVariant(marker.getSequence().getVariation());
 
         // add sequence
         snpMarkerBean.setSequence(marker.getSequence());
 
         // snp marker relationships (is only secondary)
-        List<MarkerRelationshipPresentation> cloneRelationships  = new ArrayList<MarkerRelationshipPresentation>();
+        List<MarkerRelationshipPresentation> cloneRelationships  = new ArrayList<>();
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
         snpMarkerBean.setMarkerRelationshipPresentationList(cloneRelationships);
-
-
-        // add snp mapping
-        MappedMarkerBean mappedMarkerBean = MarkerService.getSnpMappedMarkers(marker);
-        mappedMarkerBean.setMarker(marker);
-        snpMarkerBean.setMappedMarkerBean(mappedMarkerBean);
 
 
         model.addAttribute(LookupStrings.FORM_BEAN, snpMarkerBean);

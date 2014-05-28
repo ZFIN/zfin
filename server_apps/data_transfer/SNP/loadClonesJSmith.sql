@@ -121,7 +121,7 @@ insert into zdb_active_data select dblink_id from pre_lg;
 
 insert into linkage (
     lnkg_zdb_id,
-    lnkg_or_lg,
+    lnkg_chromosome,
     lnkg_comments,
     lnkg_submitter_zdb_id
   )

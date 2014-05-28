@@ -2,6 +2,7 @@ package org.zfin.profile;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.infrastructure.ZdbID;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  *
  */
-public abstract class Organization implements Comparable<Organization>, HasUpdateType , HasSnapshot{
+public abstract class Organization implements Comparable<Organization>, HasUpdateType , HasSnapshot, ZdbID{
 
     public static final String ACTIVE_STATUS = "active";
 

@@ -1,76 +1,71 @@
 package org.zfin.orthology.presentation;
 
-import org.springframework.ui.ModelMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.zfin.framework.presentation.LookupStrings;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.orthology.Orthologs;
 import org.zfin.orthology.OrthologyCriteriaService;
 import org.zfin.orthology.SpeciesCriteria;
 import org.zfin.orthology.repository.OrthologyRepository;
+import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Controller class that takes the orthology search parameters and retrieves all orthologies.
  */
+@Controller
+public class OrthologySearchController {
 
-public class OrthologySearchController extends SimpleFormController {
 
-    // This object is set through IoC of Spring
-    private OrthologyRepository or;
-    private OrthologySearchBean searchBean = new OrthologySearchBean();
+    private OrthologyRepository orthologyRepository = RepositoryFactory.getOrthologyRepository();
 
-    public OrthologySearchController() {
-        setCommandClass(OrthologySearchBean.class);
+    @Autowired
+    private OrthologyWebSearchFormValidator validator;
 
+    @ModelAttribute("formBean")
+    private OrthologySearchBean getDefaultBean() {
+        return new OrthologySearchBean();
     }
 
     // method that is called on a POST request (from submission).
 
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command,
-                                    BindException errors) throws Exception {
-        OrthologySearchBean formBean = (OrthologySearchBean) command;
+    @RequestMapping("/orthology/search")
+    protected String showOrthologyForm(@ModelAttribute("formBean") OrthologySearchBean formBean) throws Exception {
+        return "orthology-search.page";
+    }
 
+    @RequestMapping("/orthology/do-search")
+    protected String doOrthologySearch(@ModelAttribute("formBean") OrthologySearchBean formBean,
+                                       BindingResult bindingResult) throws Exception {
+
+        validator.validate(formBean, bindingResult);
+        if (bindingResult.hasErrors())
+            return "orthology-search.page";
         List<SpeciesCriteriaBean> criteriaBeans = formBean.getCriteria();
         List<SpeciesCriteria> speciesCriteria = OrthologyCriteriaService.getSpeciesCriteria(criteriaBeans);
-        Object[] results = or.getOrthologies(speciesCriteria, formBean.getBasicCriteria());
+        Object[] results = orthologyRepository.getOrthologies(speciesCriteria, formBean.getBasicCriteria());
         if (formBean.getFirstRecord() == 1) {
-            formBean.setTotalRecords((Integer) results[1]);
+            formBean.setTotalRecords(Integer.parseInt(results[1].toString()));
         }
         formBean.setOrthologies((List<Orthologs>) results[0]);
-        String sessionBeanName = getFormSessionAttributeName();
-        // ToDo: Spring removes the form bean from the session and does not put it back into it.
-        // Should not be necessary.
-/*
-        if(isSessionForm()){
-           request.getSession().setAttribute(sessionBeanName, formBean);
-        }
-*/
-        showForm(request, response, errors);
-        return new ModelAndView(getSuccessView(), LookupStrings.FORM_BEAN, formBean);
+        return "orthology-searchresult.page";
     }
 
     /*
      * Add the list of gene symbol filter types to the ModelAndView.
      */
-
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        ModelMap modelMap = new ModelMap("geneSymbolValues", searchBean.getGeneSymbolValues());
-        modelMap.addObject("chromosomeFilterValues", searchBean.getChromosomeFilterValues());
-        return modelMap;
+    @ModelAttribute("geneSymbolValues")
+    protected List<String> populateGeneSymbols() {
+        return getDefaultBean().getGeneSymbolValues();
     }
 
-    public void setOrthologyRepository(OrthologyRepository or) {
-        this.or = or;
+    @ModelAttribute("chromosomeFilterValues")
+    protected List<String> referenceData() {
+        return (List<String>) getDefaultBean().getChromosomeFilterValues();
     }
 
-    public OrthologyRepository getOrthologyRepository() {
-        return or;
-    }
 }

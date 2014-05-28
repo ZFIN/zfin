@@ -20,6 +20,12 @@
     <c:if test="${!empty previousNames}">
         <zfin2:previousNamesFast label="Previous Name" previousNames="${previousNames}"/>
     </c:if>
+    <tr>
+        <th>Location:</th>
+        <td>
+            <zfin2:displayLocation entity="${gene}"/>
+        </td>
+    </tr>
     <c:if test="${formBean.hasMarkerHistory}">
         <tr>
             <td colspan="2">
@@ -29,6 +35,7 @@
             </td>
         </tr>
     </c:if>
+
     <zfin2:notesInDiv hasNotes="${gene}"/>
 
 </table>

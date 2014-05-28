@@ -20,7 +20,7 @@ public class LookupSmokeTest extends AbstractSecureSmokeTest {
             try {
                 login(webClient);
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/lookup-table");
+                HtmlPage page = webClient.getPage(secureUrlDomain + "/action/devtool/gwt/lookup-table");
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 // this is here because the IE clients seems to be too slow otherwise
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
@@ -41,8 +41,7 @@ public class LookupSmokeTest extends AbstractSecureSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 login(webClient);
-                webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/lookup-table");
+                HtmlPage page = webClient.getPage(secureUrlDomain + "/action/devtool/gwt/lookup-table");
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("GWT Lookup Table", page.getTitleText());
                 final HtmlForm form = page.getFormByName("lookupTable");

@@ -2,6 +2,7 @@ package org.zfin.marker.repository;
 
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
+import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
@@ -18,6 +19,7 @@ import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
+import org.zfin.sequence.blast.Database;
 
 import java.util.*;
 
@@ -389,4 +391,30 @@ public interface MarkerRepository {
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
+
+    /**
+     *  Retrieve makrer from feature via feature marker relationship
+     *  'is allele of', 'markers present', 'markers missing'
+     * @param feature
+     * @return
+     */
+    Marker getMarkerByFeature(Feature feature);
+
+    /**
+     * Retrieve accession number for a given marker and database.
+     * @param marker
+     * @param database
+     * @return
+     */
+    String getAccessionNumber(Marker marker, Database.AvailableAbbrev database);
+
+    List<TargetGeneLookupEntry> getGenesForMerge(String lookupString);
+
+    List<TranscriptPresentation> getTranscriptsForGeneId(String geneZdbId);
+
+    List<SequenceTargetingReagentLookupEntry> getSequenceTargetingReagentForString(String lookupString, String type);
+
+    List<TargetGenePresentation> getTargetGenesForSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
+
+    List<Marker> getSecondMarkersByFirstMarkerAndMarkerRelationshipType(Marker firstMarker, MarkerRelationship.Type relationshipType);
 }

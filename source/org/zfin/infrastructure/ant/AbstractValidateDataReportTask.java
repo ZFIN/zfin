@@ -78,6 +78,10 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     }
 
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, File directory) {
+        createErrorReport(errorMessages, resultList, reportPrefix, dataDirectory);
+    }
+
+    protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, String reportPrefix, File directory) {
         String fileName = jobName;
         if (StringUtils.isNotEmpty(reportPrefix))
             fileName += "." + reportPrefix;

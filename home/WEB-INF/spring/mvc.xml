@@ -7,15 +7,6 @@
 
     <!--<import resource="reno.xml"/>-->
     <import resource="developer-tools.xml"/>
-    <import resource="blast.xml"/>
-    <import resource="orthology.xml"/>
-    <import resource="publication.xml"/>
-
-
-    <!--have to wait until the end to do these as they all will be mapped to their context / -->
-    <import resource="framework.xml"/>
-    <import resource="mapper.xml"/>
-
 
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">

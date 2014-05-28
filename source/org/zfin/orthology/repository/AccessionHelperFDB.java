@@ -10,6 +10,7 @@ package org.zfin.orthology.repository;
  * Hibernate repository business object mapped to foreign_db table
 */
 public class AccessionHelperFDB {
+    private long id;
     private int significance;
     private String hyperLinkQuery;
     private String FDBname;
@@ -36,5 +37,13 @@ public class AccessionHelperFDB {
 
     public void setFDBname(String FDBname) {
         this.FDBname = FDBname;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

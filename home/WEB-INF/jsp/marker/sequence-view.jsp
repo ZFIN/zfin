@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:set var="editURL">/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString() %>?MIval=aa-sequence.apg&UPDATE=1&OID=${formBean.marker.zdbID}&rtype=marker</c:set>
-<c:set var="deleteURL">/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString() %>?MIval=aa-delete_record.apg&OID=${formBean.marker.zdbID}&rtype=marker</c:set>
+<c:set var="deleteURL">none</c:set>
 <zfin2:dataManager
         zdbID="${formBean.marker.zdbID}"
         editURL="${editURL}"

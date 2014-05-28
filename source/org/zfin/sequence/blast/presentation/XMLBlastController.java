@@ -2,20 +2,23 @@ package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Sequence;
@@ -24,15 +27,11 @@ import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.StringReader;
+import javax.xml.bind.JAXBException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
@@ -42,35 +41,31 @@ import java.util.StringTokenizer;
  * 2. submit from externalAccessionBlastDropDown
  * 3. view new blast page (ie, someone clicks on the blast link)
  * 4. submit blast
+ * <p/>
  * 5. view old blast via edit and resubmit
  */
-public class XMLBlastController extends SimpleFormController {
+@Controller
+public class XMLBlastController {
 
-    //override POST vs GET distinction and make it explicitly all about the "done" boolean
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        return !StringUtils.isEmpty(request.getParameter("isFormSubmission"));
-    }
-
-    @Override
-    protected Object formBackingObject(HttpServletRequest request) throws Exception {
-        if (request.getParameter("previousSearch") != null) {
-            String ticket = request.getParameter("previousSearch").toString();
+    @ModelAttribute("formBean")
+    private XMLBlastBean getDefaultSearchFormPrevious(HttpServletRequest request) throws JAXBException, FileNotFoundException {
+        String ticket = request.getParameter("previousSearch");
+        if (ticket != null) {
             JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
             XMLBlastBean xmlBlastBean = new XMLBlastBean();
             xmlBlastBean.setTicketNumber(ticket);
             BlastOutput blastOutput = (BlastOutput) jc.createUnmarshaller().unmarshal(new FileInputStream(System.getProperty("java.io.tmpdir") + "/" + xmlBlastBean.getResultFile()));
             xmlBlastBean = BlastResultMapper.createBlastResultBean(blastOutput).getXmlBlastBean();
             return xmlBlastBean;
-        } else {
-            return super.formBackingObject(request);
-        }
+        } else
+            return new XMLBlastBean();
     }
 
-    @Override
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
+    @RequestMapping(value = "/blast/blast", method = RequestMethod.GET)
+    protected String showBlastSearchPage(@RequestParam(required = false) String previousSearch,
+                                         @ModelAttribute("formBean") XMLBlastBean xmlBlastBean,
+                                         Model model) throws Exception {
         boolean isRoot = Person.isCurrentSecurityUserRoot();
-
-        XMLBlastBean xmlBlastBean = (XMLBlastBean) command;
 
         // if no database selected, then select RNA/CDNA
         if (StringUtils.isEmpty(xmlBlastBean.getDataLibraryString())) {
@@ -78,7 +73,7 @@ public class XMLBlastController extends SimpleFormController {
             xmlBlastBean.setDataLibraryString(defaultDatabase.getAbbrev().toString());
         }
 
-        if (request.getParameter("previousSearch") == null) {
+        if (previousSearch == null) {
 //        // set defaults here
             if (xmlBlastBean.getExpectValue() == null) {
                 xmlBlastBean.setExpectValue(1E-25);
@@ -123,28 +118,21 @@ public class XMLBlastController extends SimpleFormController {
         xmlBlastBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, !isRoot, true));
 
 
-        Map map = new ModelMap();
-        map.put(LookupStrings.FORM_BEAN, xmlBlastBean);
-        map.put("sequenceTypes", XMLBlastBean.SequenceType.values());
-        map.put("matrices", XMLBlastBean.Matrix.values());
-        map.put("programs", XMLBlastBean.Program.values());
-        return map;
+        model.addAttribute("sequenceTypes", XMLBlastBean.SequenceType.values());
+        model.addAttribute("matrices", XMLBlastBean.Matrix.values());
+        model.addAttribute("programs", XMLBlastBean.Program.values());
+        return "blast-setup.page";
     }
 
+    @Autowired
+    private XMLBlastValidator xmlBlastValidator;
 
-    /**
-     * Binds sequenceFile to appropriate property editr.
-     *
-     * @param request
-     * @param binder
-     * @throws Exception
-     */
-    @Override
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+    @InitBinder
+    protected void initBinder(ServletRequestDataBinder binder) throws Exception {
         binder.registerCustomEditor(String.class, "sequenceFile", new StringMultipartFileEditor());
     }
 
-    protected void bindBySequenceID(XMLBlastBean xmlBlastBean, BindException errors) {
+    protected void bindBySequenceID(XMLBlastBean xmlBlastBean, BindingResult errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sequenceID", "Missing sequence ID.", "Missing sequence ID.");
         if (errors.hasErrors()) {
             xmlBlastBean.setQuerySequence(null);
@@ -174,7 +162,7 @@ public class XMLBlastController extends SimpleFormController {
         xmlBlastBean.setQuerySequence(sb.toString());
     }
 
-    protected void bindByUpload(XMLBlastBean xmlBlastBean, BindException errors) {
+    protected void bindByUpload(XMLBlastBean xmlBlastBean, BindingResult errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sequenceFile", "Missing file.", "Missing file.");
         if (errors.hasErrors()) {
             xmlBlastBean.setQuerySequence(null);
@@ -191,7 +179,7 @@ public class XMLBlastController extends SimpleFormController {
         xmlBlastBean.setQuerySequence(fileData);
     }
 
-    protected void bindBySequenceBox(XMLBlastBean xmlBlastBean, BindException errors) {
+    protected void bindBySequenceBox(XMLBlastBean xmlBlastBean, BindingResult errors) {
         if (errors.hasErrors()) {
             xmlBlastBean.setSequenceID(null);
             xmlBlastBean.setSequenceFile(null);
@@ -209,14 +197,10 @@ public class XMLBlastController extends SimpleFormController {
     /**
      * This is run before validation.
      *
-     * @param httpServletRequest Servlet request.
-     * @param o                  XMLBlastBean command.
-     * @param errors             Validation errors.
+     * @param errors Validation errors.
      * @throws Exception Failure.
      */
-    @Override
-    protected void onBind(HttpServletRequest httpServletRequest, Object o, BindException errors) throws Exception {
-        XMLBlastBean xmlBlastBean = (XMLBlastBean) o;
+    public void onBind(XMLBlastBean xmlBlastBean, BindingResult errors) throws Exception {
 
         xmlBlastBean.setSequenceType(XMLBlastBean.Program.getSequenceTypeForProgram(xmlBlastBean.getProgram()).getValue());
 
@@ -233,7 +217,7 @@ public class XMLBlastController extends SimpleFormController {
         bindDatabases(xmlBlastBean, errors);
     }
 
-    private void bindDatabases(XMLBlastBean inputXMLBlastBean, BindException errors) throws BlastDatabaseException {
+    private void bindDatabases(XMLBlastBean inputXMLBlastBean, BindingResult errors) throws BlastDatabaseException {
 
         if (StringUtils.isEmpty(inputXMLBlastBean.getDataLibraryString())) {
             errors.rejectValue("dataLibraryString", "code", "Select sequence database.");
@@ -246,7 +230,7 @@ public class XMLBlastController extends SimpleFormController {
         StringTokenizer databaseAbbrevTokens = new StringTokenizer(inputXMLBlastBean.getDataLibraryString(), ",");
 
         // these are the non-empty databases based on the databaseTokens.  databaseTokens >= databaseTargets
-        List<Database> databaseTargets = new ArrayList<Database>();
+        List<Database> databaseTargets = new ArrayList<>();
 
         logger.debug("# of tokens: " + databaseAbbrevTokens.countTokens());
         while (databaseAbbrevTokens.hasMoreTokens()) {
@@ -259,9 +243,7 @@ public class XMLBlastController extends SimpleFormController {
                 for (Database databaseTarget : actualDatabaseTargets) {
                     try {
                         if (WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(databaseTarget).getNumSequences() > 0
-                                &&
-                                false == databaseTargets.contains(databaseTarget)
-                                ) {
+                                && !databaseTargets.contains(databaseTarget)) {
                             databaseTargets.add(databaseTarget);
                         }
                     } catch (Exception e) {
@@ -272,7 +254,7 @@ public class XMLBlastController extends SimpleFormController {
                 try {
                     if (WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(targetDatabase).getNumSequences() > 0
                             &&
-                            false == databaseTargets.contains(targetDatabase)
+                            !databaseTargets.contains(targetDatabase)
                             ) {
                         databaseTargets.add(targetDatabase);
                     }
@@ -283,7 +265,7 @@ public class XMLBlastController extends SimpleFormController {
         }
 
         if (CollectionUtils.isEmpty(databaseTargets)) {
-            String errorString = "";
+            String errorString;
             int numDatabases = databaseAbbrevTokens.countTokens();
             if (numDatabases > 1) {
                 errorString = "Selected databases have no sequence.";
@@ -296,7 +278,7 @@ public class XMLBlastController extends SimpleFormController {
     }
 
     public static String prependSequenceWithDefline(String sequence) {
-        if (sequence != null && false == sequence.startsWith(">")) {
+        if (sequence != null && !sequence.startsWith(">")) {
             sequence = ">single query\n" +
                     sequence;
         }
@@ -304,30 +286,35 @@ public class XMLBlastController extends SimpleFormController {
     }
 
 
-    @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+    @RequestMapping(value = "/blast/blast", method = RequestMethod.POST)
+    protected String initiateBlast(Model model,
+                                   @ModelAttribute("formBean") XMLBlastBean inputXMLBlastBean,
+                                   BindingResult result) throws Exception {
+        onBind(inputXMLBlastBean, result);
         logger.debug("onsubmit enter");
-        XMLBlastBean inputXMLBlastBean = (XMLBlastBean) command;
 
+        xmlBlastValidator.validate(inputXMLBlastBean, result);
+        if (result.hasErrors())
+            return "blast-setup.page";
         // count the number of sequences put in so we can create the correct number of blast files
         BufferedReader bufferedReader = new BufferedReader(new StringReader(inputXMLBlastBean.getQuerySequence()));
         SymbolTokenization symbolTokenization;
         if (inputXMLBlastBean.getSequenceType() == null ||
-                XMLBlastBean.SequenceType.NUCLEOTIDE == XMLBlastBean.SequenceType.getSequenceType(inputXMLBlastBean.getSequenceType().toString())) {
+                XMLBlastBean.SequenceType.NUCLEOTIDE == XMLBlastBean.SequenceType.getSequenceType(inputXMLBlastBean.getSequenceType())) {
             symbolTokenization = RichSequence.IOTools.getNucleotideParser();
         } else {
             symbolTokenization = RichSequence.IOTools.getProteinParser();
         }
         RichSequenceIterator iterator = RichSequence.IOTools.readFasta(bufferedReader, symbolTokenization, new SimpleNamespace("fasta-in"));
         // handle populating view object
-        if (iterator.hasNext() == false) {
+        if (!iterator.hasNext()) {
             logger.error("no sequence read from query sequence in submit phase: \n" + inputXMLBlastBean.getQuerySequence());
-            errors.reject("No sequences given");
+            result.addError(new FieldError("", "", "No sequences given"));
         }
 
 
         // create resultXMLBlastBeans for each query sequence
-        List<XMLBlastBean> resultXMLBlastBeans = new ArrayList<XMLBlastBean>();
+        List<XMLBlastBean> resultXMLBlastBeans = new ArrayList<>();
         // for each sequence, split
         while (iterator.hasNext()) {
             RichSequence sequence = iterator.nextRichSequence();
@@ -346,13 +333,13 @@ public class XMLBlastController extends SimpleFormController {
             resultXMLBlastBeans.add(individualXMLBlastBean);
         }
 
-        // set the mulitple results file for each and execute thread
+        // set the multiple results file for each and execute thread
         for (XMLBlastBean blastBean : resultXMLBlastBeans) {
             // set the multiple query files
             blastBean.setOtherQueries(resultXMLBlastBeans);
             // execute thread
 //            BlastQueryThreadCollection.getInstance().executeBlastThread(blastBean);
-            logger.debug("sheduling blast ticket: " + blastBean.getTicketNumber());
+            logger.debug("scheduling blast ticket: " + blastBean.getTicketNumber());
             scheduleBlast(blastBean);
         }
 
@@ -360,14 +347,8 @@ public class XMLBlastController extends SimpleFormController {
         if (resultXMLBlastBeans.size() > 0) {
             inputXMLBlastBean = resultXMLBlastBeans.get(0);
         }
-        ModelAndView modelAndView = new ModelAndView("redirect:/action/blast/blast-view?resultFile=" + (
-                inputXMLBlastBean.getTicketNumber() != null ? inputXMLBlastBean.getTicketNumber() :
-                        inputXMLBlastBean.getResultFile().getName())
-                + "&refreshTime=8"
-        );
-
-//        modelAndView.addObject(LookupStrings.FORM_BEAN, inputXMLBlastBean) ;
-        return modelAndView;
+	model.addAttribute(LookupStrings.FORM_BEAN, inputXMLBlastBean);
+        return "blast-processing.page";
     }
 
     protected void scheduleBlast(XMLBlastBean blastBean) {
@@ -377,5 +358,6 @@ public class XMLBlastController extends SimpleFormController {
         BlastQueryThreadCollection.getInstance().addJobAndStart(blastSingleTicketQueryThread);
     }
 
+    private static Logger logger = Logger.getLogger(XMLBlastController.class);
 
 }

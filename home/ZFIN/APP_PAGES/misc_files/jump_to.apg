@@ -46,7 +46,7 @@ Note that when they hit the ZFIN HOME button, they will jump to the standard pag
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-EFG-),0)">/action/marker/view/$record<?/MIVAR>
 
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-SNP-),0)">/action/marker/view/$record<?/MIVAR>
-<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-REFCROSS-),0)">MIval=aa-crossview.apg&OID=$record<?/MIVAR>
+<?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-REFCROSS-),0)">/action/mapping/panel-detail/$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-IMAGE-),0)">MIval=aa-imageview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-FIG-),0)">MIval=aa-fxfigureview.apg&OID=$record<?/MIVAR>
 <?MIVAR NAME=$start_page COND="$(>,$(POSITION,$record,-ANAT-),0)">/action/anatomy/term-detail?anatomyItem.zdbID=$record<?/MIVAR>

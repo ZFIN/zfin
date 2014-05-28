@@ -26,6 +26,11 @@ create trigger db_link_update_trigger
       p_check_caps_acc_num(
 	new_db_link.dblink_fdbcont_zdb_id,
 	new_db_link.dblink_acc_num),
+      
+    execute procedure
+      checkDblinkTranscriptWithdrawn(new_db_link.dblink_zdb_id,
+                                     new_db_link.dblink_linked_recid,
+                                     new_db_link.dblink_fdbcont_zdb_id),
 
       execute function
 	get_genbank_dblink_length_type (new_db_link.dblink_acc_num,

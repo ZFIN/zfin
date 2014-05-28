@@ -24,6 +24,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Origination;
+import org.zfin.sequence.presentation.AccessionPresentation;
 
 import java.util.*;
 
@@ -1048,6 +1049,37 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return (List<DBLink>) query.list();
     }
 
+    @Override
+    public List<AccessionPresentation> getAccessionPresentation(ForeignDB.AvailableName name, Marker marker) {
+        if (marker == null)
+            return null;
+
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select dblink.accessionNumber, dblink.referenceDatabase.foreignDB.dbUrlPrefix, dblink.referenceDatabase.foreignDB.dbUrlSuffix from DBLink dblink " +
+                "      where dblink.referenceDatabase.foreignDB.dbName = :dbName  " +
+                "        and dblink.dataZdbID = :dataZdbID " +
+                "   order by dblink.accessionNumber ";
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setParameter("dbName", name)
+                .setString("dataZdbID", marker.getZdbID())
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public AccessionPresentation transformTuple(Object[] tuple, String[] aliases) {
+                        AccessionPresentation accessionPresentation = new AccessionPresentation();
+                        accessionPresentation.setAccessionNumber(tuple[0].toString());
+                        if (tuple[2] == null) {
+                           accessionPresentation.setUrl(tuple[1].toString() + tuple[0].toString());
+                        } else {
+                            accessionPresentation.setUrl(tuple[1].toString() + tuple[0].toString() + tuple[2].toString());
+                        }
+                        return accessionPresentation;
+                    }
+
+                })
+                .list();
+    }
 }
 
 

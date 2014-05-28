@@ -11,6 +11,7 @@ import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.*;
+import org.zfin.orthology.presentation.OrthologySlimPresentation;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.presentation.DBLinkPresentation;
@@ -758,6 +759,28 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     public Object transformTuple(Object[] tuple, String[] aliases) {
                         return tuple[0].toString();
                     }
+                })
+                .list();
+    }
+
+    public List<OrthologySlimPresentation> getOrthologySlimForGeneId(String geneId) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select ortho.organism, ortho.abbreviation from Orthologue ortho " +
+                "      where ortho.gene.zdbID = :geneID  " +
+                "   order by ortho.organism ";
+
+        return HibernateUtil.currentSession().createQuery(hql)
+                .setString("geneID", geneId)
+                .setResultTransformer(new BasicTransformerAdapter() {
+                    @Override
+                    public OrthologySlimPresentation transformTuple(Object[] tuple, String[] aliases) {
+                        OrthologySlimPresentation orthoSlim = new OrthologySlimPresentation();
+                        orthoSlim.setOrganism(tuple[0].toString());
+                        orthoSlim.setOrthologySymbol(tuple[1].toString());
+                        return orthoSlim;
+                    }
+
                 })
                 .list();
     }

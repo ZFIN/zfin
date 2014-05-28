@@ -794,7 +794,7 @@
     " document.optform.submit();\">\n\n";
 
 	print "<br><font size=-1><b>&nbsp;&nbsp;".
-    "<a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=".
+    "<a href=\"/action/mapping/panel-detail/".
     $allpanels_id[$order_increment]."\"".
     ">". $panel . "</a>".
     " panel, Chr: ".$lg .", units: cM".
@@ -833,7 +833,7 @@
     if (! defined  $Q->param('OID')){$Q->param('OID', ''); }
     print   "<param name = \"marker_url\"\t value = \"/action/marker/view/\">\n".
 
-      "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=\">\n".
+      "<param name = \"panel_url\"\t value = \"/action/mapping/panel-detail/\">\n".
 
       "<param name = \"target_frame\"\t value = \"$frame\">\n".
 	 "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n".
@@ -918,7 +918,7 @@
     #### 1      2) mname varchar(80),
     # 2         3) abbrev varchar(40),
     # 3         4) mtype varchar(10),
-    # 4         5) or_lg integer,
+    # 4         5) zmap_chromosome integer,
     # 5         6) lg_location decimal(8,2),
     # 6         7) metric varchar(5),
     # 7         8) target_abbrev varchar(10),
@@ -935,7 +935,7 @@
     #    zdb_id varchar(50),                         ZDB-RAPD-980526-17
     #    abbrevp varchar(45),                        13y910_MOP
     #    mtype varchar(10),                          RAPD
-    #    or_lg integer,                              1
+    #    zmap_chromosome integer,                              1
     #    lg_location decimal(8,2),                   32.83
     #    metric varchar(5),                          cM
     #    target_abbrev varchar(10),                  ZMAP
@@ -950,7 +950,7 @@
 
     my $stmt1 =
       'INSERT INTO PANLG ' .
-      '  SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg, ' .
+      '  SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,zmap_chromosome, ' .
       '         case mghframework ' .
       '           when "t" then "t"::char(1) ' .
       '           when "f" then "f"::char(1) ' .
@@ -959,7 +959,7 @@
       '         metric, abbrevp '.
 	'FROM zmap_pub_pan_mark '.
 	  "WHERE panel_abbrev in (\'$pan\' )" . # panels
-	    'AND or_lg = ? '.
+	    'AND zmap_chromosome = ? '.
 	      "AND mtype IN (\'$types\');";
 
     my $stmt2  = 'SELECT FIRST 1 * FROM PANLG WHERE zdb_id = ? order by lg_location asc;';
@@ -1149,7 +1149,7 @@
   sub get_between {
     my ($panel, $lg, $types, $lg_lo, $lg_hi) = @_;
     $sql =
-	"SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg," .
+	"SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,zmap_chromosome," .
 	"       case mghframework " .
 	"         when 't' then 't'::char(1) " .
 	"         when 'f' then 'f'::char(1) " .
@@ -1158,7 +1158,7 @@
 	"       metric,abbrevp  ".
 	"  FROM zmap_pub_pan_mark  ".
 	"  WHERE panel_abbrev in (\'$panel\') ". # $panels
-	"    AND or_lg = \'$lg\' " . # $lg
+	"    AND zmap_chromosome = \'$lg\' " . # $lg
 	    "AND mtype in (\'$types\' ) ". # $types
 	      "AND lg_location >= \'$lg_lo\' ".	# $lo
 		"AND lg_location <= \'$lg_hi\' ". # $hi
@@ -1198,7 +1198,7 @@
     "SELECT  count(distinct lg_location) ".
       "FROM zmap_pub_pan_mark  ".
 	"WHERE panel_abbrev in (\'$panel\') ". # $panels
-	  "AND or_lg = \'$lg\' " . # $lg
+	  "AND zmap_chromosome = \'$lg\' " . # $lg
 	    "AND mtype in (\'$types\' ) ". # $types
 	      "AND lg_location >= \'$lg_lo\' ".	# $lo
 		"AND lg_location <= \'$lg_hi\' ". # $hi
@@ -1229,7 +1229,7 @@
     if( ! defined $loc || !$loc)  {
       #$note = $note . "finding the location of $zdbid on lg $lg of $panel<p>\n";
       $cur = $dbh->prepare("SELECT lg_location FROM zmap_pub_pan_mark WHERE panel_abbrev in (\'$panel\') ".
-			   " AND or_lg = ? AND zdb_id = ? " );
+			   " AND zmap_chromosome = ? AND zdb_id = ? " );
       $rc = $cur->execute($lg, $zdbid);
       @row = $cur->fetchrow();
       $loc = $row[0];
@@ -1243,7 +1243,7 @@
       "             else $loc - lg_location " .
       "        end distance " .
       "   FROM zmap_pub_pan_mark " .
-      "   WHERE panel_abbrev in ( \'$panel\' ) AND or_lg = ? ".
+      "   WHERE panel_abbrev in ( \'$panel\' ) AND zmap_chromosome = ? ".
       "     AND mtype in ( \'$types\' ) ".
       "   ORDER BY distance;";
 
@@ -1271,7 +1271,7 @@
     my $ztotal = 1;
     #$note = $note . "IN LG QUERY<p>\n";
     $sql =
-	"SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,or_lg," .
+	"SELECT zdb_id,abbrev,mtype,target_abbrev,lg_location,zmap_chromosome," .
 	"       case mghframework " .
 	"         when 't' then 't'::char(1) " .
 	"         when 'f' then 'f'::char(1) " .
@@ -1280,7 +1280,7 @@
 	"       metric,abbrevp ".
 	"  FROM zmap_pub_pan_mark " .
 	"  WHERE panel_abbrev in (\'$panel\') ".
-	"    AND or_lg = ? ".
+	"    AND zmap_chromosome = ? ".
 	    "AND mtype in  ( \'$types\') ".
 	      "ORDER BY lg_location, abbrev;";
 
@@ -1289,7 +1289,7 @@
     $lo = 0; $ztotal = 0;
     while(@row = $cur->fetchrow){
       $row[4] =  ($row[4] == 0)? 0 : $row[4]; # clean up 0.00000E+00
-      #zdb_id,  abbrev, mtype,  target_abbrev, lg_location, or_lg,  mghframework, metric
+      #zdb_id,  abbrev, mtype,  target_abbrev, lg_location, zmap_chromosome,  mghframework, metric
       # 0        1       2       3               4           5       6               7
       $lines = "$row[0]|$row[8]|$row[2]|$row[3]|$row[4]|$row[5]|$row[6]|$row[7]|\n";
       $data = $data . $lines;
@@ -1328,10 +1328,10 @@
   sub get_OIDs_lg {
     my  ($zdbid) = @_;
     $sql =
-      "SELECT first 1 or_lg " .
+      "SELECT first 1 zmap_chromosome " .
 	"FROM zmap_pub_pan_mark WHERE zdb_id = \'$zdbid\';";
-    # "group by or_lg ".
-    #  "order by count(or_lg) DESC;" ;
+    # "group by zmap_chromosome ".
+    #  "order by count(zmap_chromosome) DESC;" ;
 
     $cur = $dbh->prepare($sql) ;
     $rc = $cur->execute();
@@ -1365,7 +1365,7 @@ sub  get_OIDs_abbrev{
 			 "select first 1 zdb_id, abbrev, lg_location, abs(lg_location - $loc) ".
 			 " from zmap_pub_pan_mark ".
 			 " where panel_abbrev in (\'$panel\') ".
-			 " and or_lg = \'$lg\' ".
+			 " and zmap_chromosome = \'$lg\' ".
 			 " AND mtype in ( \'$types\' ) ".
 			 " order by 4;"
 			);
@@ -1385,7 +1385,7 @@ sub  get_OIDs_abbrev{
 			 "select first 1 zdb_id, abbrev, lg_location, abs(lg_location - $loc) ".
 			 " from zmap_pub_pan_mark ".
 			 " where target_abbrev == \'$panel\' ".
-			 " and or_lg = \'$lg\' ".
+			 " and zmap_chromosome = \'$lg\' ".
 			 " AND mtype in ( \'$types\' ) ".
 			 " order by 4;"
 			);
@@ -1403,7 +1403,7 @@ sub  get_OIDs_abbrev{
     $sql =
       "SELECT COUNT(*) FROM zmap_pub_pan_mark ".
 	"WHERE panel_abbrev in (\'$panel\') ".
-	  "AND or_lg = $lg ".
+	  "AND zmap_chromosome = $lg ".
 	    " AND mtype in ( \'$types\' );";
 
     $cur = $dbh->prepare ($sql );
@@ -1429,17 +1429,17 @@ sub  get_OIDs_abbrev{
     my $count = 0;  my $array_ref = '';
     if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM  zmap_pub_pan_mark  ".
+      $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM  zmap_pub_pan_mark  ".
 	  "WHERE mname  = \'$marker\' AND panel_abbrev in (\'$panel\') ".
-      "AND mtype IN (\'$types\') AND or_lg =  \'$lg\'; ";
+      "AND mtype IN (\'$types\') AND zmap_chromosome =  \'$lg\'; ";
     } elsif( defined  $panel) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
+      $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM zmap_pub_pan_mark ".
 	  "WHERE mname  = \'$marker\' AND panel_abbrev in (\'$panel\') ".
       "AND mtype IN ( \'$types\' ); ";
     } else  {
       $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
+      $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM zmap_pub_pan_mark ".
 	  "WHERE mname  = \'$marker\' AND mtype IN ( \'$types\' ) ;";
     }
     $cur = $dbh->prepare($sql);
@@ -1455,15 +1455,15 @@ sub  get_OIDs_abbrev{
       $note = $note .  "\nIs it ACCESSION NUMBER? \n";
       if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| |$lg| officially?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM  zmap_pub_pan_mark,foreign_db, foreign_db_data_type, db_link,foreign_db_contains ".
+      $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM  zmap_pub_pan_mark,foreign_db, foreign_db_data_type, db_link,foreign_db_contains ".
 	 "WHERE dblink_acc_num  = \'$marker\' AND target_abbrev in (\'$panel\') ".
-	  "AND mtype IN (\'$types\') AND or_lg =  \'$lg\' AND zdb_id = dblink_linked_recid ".
+	  "AND mtype IN (\'$types\') AND zmap_chromosome =  \'$lg\' AND zdb_id = dblink_linked_recid ".
       "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbdt_super_type = \'sequence\' AND fdbcont_fdbdt_id = fdbdt_pk_id ".
       "AND fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\' AND fdbcont_fdb_db_id = fdb_db_pk_id;";
 
       } elsif( defined  $panel) {
       $note = $note .  "Is |$marker| exactly unique on |$panel| offically?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark, db_link,foreign_db_contains, foreign_db, foreign_db_data_type ".
+      $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM zmap_pub_pan_mark, db_link,foreign_db_contains, foreign_db, foreign_db_data_type ".
 	 "WHERE dblink_acc_num   = \'$marker\' AND target_abbrev in (\'$panel\') " .
 	  "AND mtype IN ( \'$types\' ) AND zdb_id = dblink_linked_recid AND fdbcont_Fdb_db_id = fdb_db_pk_id and fdbcont_fdbdt_id = fdbdt_pk_id ".
       "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbdt_super_type = \'sequence\' ".
@@ -1471,7 +1471,7 @@ sub  get_OIDs_abbrev{
 
       } else  {
       $note = $note . "Is |$marker| exactly unique in ZFIN officially?<p>\n ";
-      $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark, db_link,foreign_db_contains, foreign_db, foreign_db_data_type ".
+      $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM zmap_pub_pan_mark, db_link,foreign_db_contains, foreign_db, foreign_db_data_type ".
 	  "WHERE dblink_acc_num   = \'$marker\' AND mtype IN ( \'$types\' ) AND zdb_id = dblink_linked_recid AND fdbcont_fdbdt_id = fdbdt_pk_id ".
       "AND dblink_fdbcont_zdb_id =  fdbcont_zdb_id AND fdbdt_super_type = \'sequence\' and fdbcont_fdb_db_id = fdb_db_pk_id ".
       "AND fdbdt_data_type != \'Polypeptide\' and fdbcont_organism_common_name = \'zebrafish\';";
@@ -1490,17 +1490,17 @@ sub  get_OIDs_abbrev{
       #$note = $note .  "\nLOOKING for CONTAINS \n";
       if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
 	    #$note = $note . "Is |$marker| similar & unique on |$panel|& |$lg| offically?<p>\n";
-	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
+	    $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM zmap_pub_pan_mark ".
 	    "WHERE mname  like \'\%$marker\%\' AND panel_abbrev = (\'$panel\') ".
-		"AND mtype IN ( \'$types\' ) AND or_lg = \'$lg\'; ";
+		"AND mtype IN ( \'$types\' ) AND zmap_chromosome = \'$lg\'; ";
       } elsif( defined  $panel ) {
         #$note = $note . "Is |$marker| similar & unique on |$panel| offically?<p>\n";
-	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
+	    $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM zmap_pub_pan_mark ".
 	    "WHERE mname like \'\%$marker\%\' AND panel_abbrev = (\'$panel\') ".
 		"AND mtype IN ( \'$types\' ); ";
       } else  {
 	    #$note = $note . "Is |$marker| similar & unique in ZFIN offically?<p>\n";
-	    $sql = "SELECT UNIQUE zdb_id, or_lg FROM zmap_pub_pan_mark ".
+	    $sql = "SELECT UNIQUE zdb_id, zmap_chromosome FROM zmap_pub_pan_mark ".
 	    "WHERE mname  like \'\%$marker\%\' AND mtype IN ( \'$types\' ) ;"
 	  }
       $cur = $dbh->prepare($sql);$cur->execute();
@@ -1513,22 +1513,22 @@ sub  get_OIDs_abbrev{
     if(($count < 1) ) { ############ if still no hits try all_map_names
         if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25) ) {
             #$note = $note . "Is |$marker| exactly unique on |$panel| |$lg| unoffically?<p>\n ";
-            $sql = "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+            $sql = "SELECT UNIQUE allmapnm_zdb_id, pm.zmap_chromosome ".
 	        "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
 	        "AND allmapnm_name  = \'$marker\' AND pm.panel_abbrev in (\'$panel\') ".
-		    "AND mtype IN (\'$types\') AND pm.or_lg =  \'$lg\'; ";
+		    "AND mtype IN (\'$types\') AND pm.zmap_chromosome =  \'$lg\'; ";
         } elsif( defined  $panel) {
             #$note = $note .  "|$marker| exactly unique on |$panel| unoffically?<p>\n ";
             $sql =
-	            "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	            "SELECT UNIQUE allmapnm_zdb_id, pm.zmap_chromosome ".
 	            "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
 	            "WHERE allmapnm_zdb_id = pm.zdb_id AND allmapnm_name  = \'$marker\' ".
 		        "AND pm.panel_abbrev in (\'$panel\') AND mtype IN (\'$types\'); ";
         } else  {
             #$note = $note . "|$marker| exactly unique in ZFIN  unoffically?<p>\n ";
             $sql =
-	            "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	            "SELECT UNIQUE allmapnm_zdb_id, pm.zmap_chromosome ".
 	            "FROM all_map_names pmn, zmap_pub_pan_mark pm ".
 	            "WHERE allmapnm_zdb_id = pm.zdb_id ".
 	            "AND allmapnm_name = \'$marker\' AND mtype IN (\'$types\') ;";
@@ -1546,17 +1546,17 @@ sub  get_OIDs_abbrev{
         if( (defined $lg) && $lg && ($lg ne "??") && ($lg > 0) && ($lg <= 25)) {
 	        #$note = $note . "|$marker| similar & unique on |$panel|& |$lg|?<p>\n";
 	        $sql =
-	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	        "SELECT UNIQUE allmapnm_zdb_id, pm.zmap_chromosome ".
 	        "FROM all_name_ends, all_map_names pmn, zmap_pub_pan_mark pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
                     "AND allmapnm_serial_id = allnmend_allmapnm_serial_id ".
 		    "AND allnmend_name_end_lower like \'$marker\%\' ".
 		    "AND pm.panel_abbrev = \'$panel\' ".
-		    "AND mtype IN ( \'$types\' ) AND pm.or_lg = \'$lg\'; ";
+		    "AND mtype IN ( \'$types\' ) AND pm.zmap_chromosome = \'$lg\'; ";
         } elsif( defined  $panel ) {
 	        #$note = $note . "|$marker| similar & unique on |$panel|?<p>\n";
 	        $sql =
-	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	        "SELECT UNIQUE allmapnm_zdb_id, pm.zmap_chromosome ".
 	        "FROM all_name_ends, all_map_names pmn, zmap_pub_pan_mark pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
                     "AND allmapnm_serial_id = allnmend_allmapnm_serial_id ".
@@ -1566,7 +1566,7 @@ sub  get_OIDs_abbrev{
         } else  {
 	        #$note = $note . "|$marker| similar & unique in ZFIN??<p>\n";
 	        $sql =
-	        "SELECT UNIQUE allmapnm_zdb_id, pm.or_lg ".
+	        "SELECT UNIQUE allmapnm_zdb_id, pm.zmap_chromosome ".
 	        "FROM all_name_ends, all_map_names pmn, zmap_pub_pan_mark pm ".
 	        "WHERE allmapnm_zdb_id = pm.zdb_id ".
                     "AND allmapnm_serial_id = allnmend_allmapnm_serial_id ".

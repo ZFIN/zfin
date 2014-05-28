@@ -1,7 +1,11 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 import org.zfin.framework.HibernateUtil;
@@ -12,16 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-/**
- */
-public class BlastableDatabasesController extends AbstractCommandController {
+@Controller
+public class BlastableDatabasesController {
 
-    public BlastableDatabasesController() {
-        setCommandClass(BlastableDatabasesBean.class);
-    }
 
-    protected ModelAndView handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, BindException e) throws Exception {
-        BlastableDatabasesBean blastableDatabasesBean = (BlastableDatabasesBean) o;
+    @RequestMapping("/blastable-databases")
+    protected String showBlastableDb(@ModelAttribute("formBean") BlastableDatabasesBean blastableDatabasesBean,
+                                     Model model) throws Exception {
 
         if (blastableDatabasesBean.getSelectedReferenceDatabaseZdbID() != null) {
             handleCommand(blastableDatabasesBean);
@@ -31,16 +32,12 @@ public class BlastableDatabasesController extends AbstractCommandController {
         blastableDatabasesBean.setReferenceDatabases(referenceDatabases);
         List<Database> databases = (List<Database>) HibernateUtil.currentSession().createCriteria(Database.class).list();
         blastableDatabasesBean.setDatabases(databases);
-        ModelAndView modelAndView = new ModelAndView("blastable-databases.page");
-        modelAndView.addObject(LookupStrings.FORM_BEAN, blastableDatabasesBean);
-
         blastableDatabasesBean.setDatabaseToAddZdbID(null);
         blastableDatabasesBean.setDatabaseToRemoveZdbID(null);
         blastableDatabasesBean.setDatabaseToSetAsPrimaryZdbID(null);
         blastableDatabasesBean.setSelectedReferenceDatabaseZdbID(null);
 
-
-        return modelAndView;
+        return "dev-tools/blastable-databases.page";
     }
 
     private void handleCommand(BlastableDatabasesBean blastableDatabasesBean) {

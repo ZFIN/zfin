@@ -66,6 +66,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         HibernateUtil.currentSession().delete(activeData);
     }
 
+
+    public void deleteActiveSource(ActiveSource activeSource) {
+        logger.info("Deleting " + activeSource.getZdbID() + " from zdb_active_source");
+        HibernateUtil.currentSession().delete(activeSource);
+    }
+
     public void deleteActiveDataByZdbID(String zdbID) {
         ActiveData a = getActiveData(zdbID);
         if (a == null) {
@@ -73,6 +79,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             return;
         }
         deleteActiveData(a);
+    }
+
+    public void deleteActiveSourceByZdbID(String zdbID) {
+        ActiveSource activeSource = getActiveSource(zdbID);
+        if (activeSource == null) {
+            logger.error("unable to find zdbID in active source to delete [" + zdbID + "]");
+            return;
+        }
+        deleteActiveSource(activeSource);
     }
 
     public int deleteActiveDataByZdbID(List<String> zdbIDs) {
@@ -230,7 +245,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public PublicationAttribution getPublicationAttribution(PublicationAttribution attribution) {
         Session session = HibernateUtil.currentSession();
-        return (PublicationAttribution) session.get(PublicationAttribution.class, attribution);
+        String hql = "from PublicationAttribution " +
+                "where publication = :publication AND" +
+                "      dataZdbID = :dataID ";
+        Query query = session.createQuery(hql);
+        query.setParameter("publication", attribution.getPublication());
+        query.setParameter("dataID", attribution.getDataZdbID());
+
+        return (PublicationAttribution) query.uniqueResult();
     }
 
     @SuppressWarnings("unchecked")

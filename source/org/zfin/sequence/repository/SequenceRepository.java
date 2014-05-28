@@ -10,6 +10,7 @@ import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
+import org.zfin.sequence.presentation.AccessionPresentation;
 
 import java.util.Collection;
 import java.util.List;
@@ -131,6 +132,8 @@ public interface SequenceRepository {
      * @return list of DBLink records.
      */
     List<DBLink> getDBLinks(ForeignDB.AvailableName name, int numberOfRecords);
+
+    List<AccessionPresentation> getAccessionPresentation(ForeignDB.AvailableName name, Marker marker);
 }
 
 

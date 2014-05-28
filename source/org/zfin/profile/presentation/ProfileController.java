@@ -31,7 +31,7 @@ public class ProfileController {
     @RequestMapping(value = "/view/{zdbID}", method = RequestMethod.GET)
 
     public String viewProfile(@PathVariable String zdbID, Model model, @RequestHeader("User-Agent") String userAgent) {
-        model.addAttribute("deleteURL", "/" + ZfinProperties.getWebDriver() + "?MIval=aa-delete_record.apg&rtype=person&OID=" + zdbID);
+        model.addAttribute("deleteURL", "/action/infrastructure/deleteRecord/" + zdbID);
         model.addAttribute("latestUpdate", RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
         if (zdbID.startsWith("ZDB-LAB")) {
             return labController.viewLab(zdbID, model);

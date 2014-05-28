@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.service.ExpressionService;
@@ -13,12 +14,16 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.orthology.Orthology;
+import org.zfin.orthology.OrthologyEvidenceService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  */
@@ -32,13 +37,11 @@ public class GeneViewController {
     private ExpressionService expressionService;
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
     @RequestMapping(value = "/gene/view/{zdbID}")
-    public String getGeneView(
-            Model model
-            , @PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    public String getGeneView(@PathVariable("zdbID") String zdbID,
+                              Model model) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
@@ -59,8 +62,8 @@ public class GeneViewController {
 //        geneBean.setOtherMarkerPages(RepositoryFactory.getMarkerRepository().getMarkerDBLinksFast(gene, DisplayGroup.GroupName.SUMMARY_PAGE));
         List<LinkDisplay> otherMarkerDBLinksLinks = geneBean.getOtherMarkerPages();
         otherMarkerDBLinksLinks.addAll(RepositoryFactory.getMarkerRepository()
-                .getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE)) ;
-        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator) ;
+                .getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE));
+        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator);
         geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
 
 
@@ -88,12 +91,12 @@ public class GeneViewController {
         geneBean.setGeneProductsBean(RepositoryFactory.getMarkerRepository().getGeneProducts(gene.getZdbID()));
 
         // (CONSTRUCTS)
-        Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
+        Set<MarkerRelationship.Type> types = new HashSet<>();
         types.add(MarkerRelationship.Type.PROMOTER_OF);
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
         types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
-        Set<Marker> constructs = MarkerService.getRelatedMarker(gene, types) ;
-        constructs.addAll(RepositoryFactory.getMarkerRepository().getConstructsForGene(gene)) ;
+        Set<Marker> constructs = MarkerService.getRelatedMarker(gene, types);
+        constructs.addAll(RepositoryFactory.getMarkerRepository().getConstructsForGene(gene));
         geneBean.setConstructs(constructs);
 
         // (Antibodies)
@@ -103,9 +106,6 @@ public class GeneViewController {
 
         // ORTHOLOGY
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
-
-        // MAPPING INFO:
-        geneBean.setMappedMarkerBean(MarkerService.getMappedMarkers(gene));
 
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
 
@@ -121,4 +121,53 @@ public class GeneViewController {
     public void setMarkerRepository(MarkerRepository markerRepository) {
         this.markerRepository = markerRepository;
     }
+
+    @RequestMapping("/{zdbID}/orthology")
+    public String showOrthology(@PathVariable("zdbID") String zdbID,
+                                @ModelAttribute("formBean") GeneBean geneBean,
+                                Model model) {
+
+        logger.info("zdbID: " + zdbID);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        logger.info("gene: " + gene);
+        geneBean.setMarker(gene);
+        geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
+
+        return "marker-orthology.simple-page";
+    }
+
+    @RequestMapping("/publication/{pubID}/orthology-list")
+    public String showOrthologyList(@PathVariable String pubID,
+                                    @ModelAttribute("formBean") GeneBean geneBean,
+                                    Model model) {
+        logger.info("zdbID: " + pubID);
+        List<Marker> list = getPublicationRepository().getOrthologyGeneList(pubID);
+        List<GeneBean> beanList = new ArrayList<>(list.size());
+        for (Marker marker : list) {
+            GeneBean orthologyBean = new GeneBean();
+            orthologyBean.setMarker(marker);
+            orthologyBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(marker));
+            beanList.add(orthologyBean);
+        }
+        model.addAttribute("orthologyBeanList", beanList);
+        return "marker/marker-orthology-list.page";
+    }
+
+
+    @RequestMapping("/{markerID}/orthology-detail")
+    public String showOrthologyDetail(@PathVariable String markerID,
+                                      @ModelAttribute("formBean") GeneBean geneBean,
+                                      Model model) {
+        logger.info("zdbID: " + markerID);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(markerID);
+        geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
+        List<Orthology> list = getPublicationRepository().getOrthologyPublications(gene);
+        List<Orthology> evidenceList = OrthologyEvidenceService.getEvidenceCenteredList(list);
+        geneBean.setMarker(gene);
+        model.addAttribute("publicationOrthologyList", list);
+        model.addAttribute("evidenceOrthologyList", evidenceList);
+
+        return "marker/marker-orthology-detail.page";
+    }
+
 }

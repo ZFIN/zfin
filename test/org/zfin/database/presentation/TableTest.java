@@ -1,12 +1,7 @@
 package org.zfin.database.presentation;
 
-import junit.framework.Assert;
 import org.junit.Test;
-import org.zfin.database.DatabaseService;
-import org.zfin.marker.Marker;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
@@ -57,6 +52,6 @@ public class TableTest {
         assertTrue(!Table.PHENOTYPE_EXPERIMENT.hasZdbPk());
 
         List<Table> allTablesWithZdbPk = Table.getAllTablesWithZdbPk();
-        Assert.assertTrue(allTablesWithZdbPk.size() > 15);
+        assertTrue(allTablesWithZdbPk.size() > 15);
     }
 }

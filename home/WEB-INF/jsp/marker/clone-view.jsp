@@ -5,7 +5,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <c:set var="editURL">/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}</c:set>
-<c:set var="deleteURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-delete_record.apg&OID=${formBean.marker.zdbID}&rtype=marker</c:set>
+<c:set var="deleteURL">none</c:set>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
@@ -65,8 +65,6 @@
 <%--OTHER GENE/Marker Pages--%>
 <%--old page--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
-
-<zfin2:mappingInformation mappedMarker="${formBean.mappedMarkerBean}"/>
 
 <!--http://zfin.org/cgi-bin/webdriver?MIval=aa-showpubs.apg&OID=ZDB-EST-000426-1181&rtype=marker&title=EST+Name&name=fb73a06&abbrev=fb73a06&total_count=2-->
 

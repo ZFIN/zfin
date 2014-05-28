@@ -1,5 +1,6 @@
 package org.zfin.mapping.presentation;
 
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -9,6 +10,7 @@ import java.util.regex.Pattern;
 
 /**
  */
+@Component
 public class LN54MapperValidator implements Validator {
     public boolean supports(Class aClass) {
         return LN54MapperBean.class.equals(aClass);

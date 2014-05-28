@@ -22,11 +22,14 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
+import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
  * Sevice Class that deals with Marker related logic.
@@ -35,7 +38,7 @@ import java.util.regex.Pattern;
 public class MarkerService {
 
     private static Logger logger = Logger.getLogger(MarkerService.class);
-    private static MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+    private static MarkerRepository markerRepository = getMarkerRepository();
     private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
 
@@ -259,7 +262,7 @@ public class MarkerService {
      * @return Gets a set of related markers by type.
      */
     public static Set<Marker> getRelatedMarker(Marker marker, MarkerRelationship.Type type) {
-        TreeSet<MarkerRelationship.Type> types = new TreeSet<MarkerRelationship.Type>();
+        TreeSet<MarkerRelationship.Type> types = new TreeSet<>();
         types.add(type);
         return getRelatedMarker(marker, types);
     }
@@ -359,7 +362,7 @@ public class MarkerService {
 
         Set<LinkageGroup> groups = new TreeSet<LinkageGroup>();
         // if it is a clone (non-gene) check lg for clone first then the gene.
-        Set<String> linkageGroups = lr.getLG(marker);
+        Set<String> linkageGroups = lr.getChromosomeLocations(marker);
         if (marker.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
             // if no linkage group found for transcript
             // check the associated gene
@@ -370,8 +373,8 @@ public class MarkerService {
                 Set<Marker> genes = TranscriptService.getRelatedGenesFromTranscript(markerRepository.getTranscriptByZdbID(marker.getZdbID()));
                 for (Marker gene : genes) {
                     if (gene != null) {
-//                        linkageGroups = mr.getLG(gene);
-                        linkageGroups.addAll(lr.getLG(gene));
+//                        linkageGroups = mr.getChromosomeLocations(gene);
+                        linkageGroups.addAll(lr.getChromosomeLocations(gene));
                     }
                 }
             }
@@ -383,8 +386,8 @@ public class MarkerService {
                 Set<Marker> genes = getRelatedSmallSegmentGenesFromClone(marker);
                 for (Marker gene : genes) {
                     if (gene != null) {
-//                        linkageGroups = mr.getLG(gene);
-                        linkageGroups.addAll(lr.getLG(gene));
+//                        linkageGroups = mr.getChromosomeLocations(gene);
+                        linkageGroups.addAll(lr.getChromosomeLocations(gene));
                     }
                 }
             }
@@ -407,7 +410,7 @@ public class MarkerService {
         List<String> directMappedMarkers = linkageRepository.getDirectMappedMarkers(marker);
         mappedMarkerBean.setHasMappedMarkers((directMappedMarkers.size() > 0));
         mappedMarkerBean.setMarker(marker);
-        mappedMarkerBean.setUnMappedMarkers(new ArrayList<String>(linkageRepository.getLG(marker)));
+        mappedMarkerBean.setUnMappedMarkers(new ArrayList<>(linkageRepository.getChromosomeLocations(marker)));
 
         return mappedMarkerBean;
     }
@@ -509,7 +512,7 @@ public class MarkerService {
      */
     public static void addMarkerRelationshipAttribution(Marker marker1, Marker marker2, String pubZdbID,
                                                         MarkerRelationship.Type markerRelationshipType) {
-        MarkerRelationship markerRelationship = RepositoryFactory.getMarkerRepository().getMarkerRelationship(marker1, marker2, markerRelationshipType);
+        MarkerRelationship markerRelationship = getMarkerRepository().getMarkerRelationship(marker1, marker2, markerRelationshipType);
         //now deal with attribution
         if (pubZdbID != null && pubZdbID.length() > 0) {
             infrastructureRepository.insertRecordAttribution(markerRelationship.getZdbID(), pubZdbID);
@@ -537,7 +540,7 @@ public class MarkerService {
 
 
     public static void deleteMarkerRelationship(MarkerRelationship mrel) {
-        RepositoryFactory.getMarkerRepository().deleteMarkerRelationship(mrel);
+        getMarkerRepository().deleteMarkerRelationship(mrel);
     }
 
     /**
@@ -549,7 +552,7 @@ public class MarkerService {
      * @param type    type of relationship
      */
     public static void deleteMarkerRelationship(Marker marker1, Marker marker2, MarkerRelationship.Type type) {
-        MarkerRelationship mrel = RepositoryFactory.getMarkerRepository().getMarkerRelationship(marker1, marker2, type);
+        MarkerRelationship mrel = getMarkerRepository().getMarkerRelationship(marker1, marker2, type);
         deleteMarkerRelationship(mrel);
     }
 
@@ -557,7 +560,7 @@ public class MarkerService {
         Clone clone = new Clone();
         clone.setName(cloneAddBean.getName());
         clone.setAbbreviation(cloneAddBean.getName());
-        clone.setProbeLibrary(RepositoryFactory.getMarkerRepository().getProbeLibrary(cloneAddBean.getLibraryZdbID()));
+        clone.setProbeLibrary(getMarkerRepository().getProbeLibrary(cloneAddBean.getLibraryZdbID()));
 
         Person person = RepositoryFactory.getProfileRepository().getPerson(cloneAddBean.getOwnerZdbID());
         clone.setOwner(person);
@@ -669,7 +672,7 @@ public class MarkerService {
         MutantOnMarkerBean mutantOnMarkerBean = new MutantOnMarkerBean();
         mutantOnMarkerBean.setMutantLineDisplay(RepositoryFactory.getMutantRepository().getMutantLinesDisplay(gene.getZdbID()));
         mutantOnMarkerBean.setAlleles(RepositoryFactory.getMutantRepository().getAllelesForMarker(gene.getZdbID()));
-        mutantOnMarkerBean.setKnockdownReagents(RepositoryFactory.getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
+        mutantOnMarkerBean.setKnockdownReagents(getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
 
         return mutantOnMarkerBean;
     }
@@ -797,5 +800,16 @@ public class MarkerService {
             return matcher.group(1);
         }
         return null;
+    }
+
+    /**
+     * Retrieve the accession number for Ensembl for a given ZFIN marker.
+     * @param marker
+     * @return
+     */
+    public static String getEnsemblAccessionId(Marker marker){
+        Database.AvailableAbbrev database =  Database.AvailableAbbrev.ENSEMBL_ZF;
+        String accessionID = getMarkerRepository().getAccessionNumber(marker, database);
+        return accessionID;
     }
 }

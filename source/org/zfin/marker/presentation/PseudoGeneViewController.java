@@ -68,9 +68,6 @@ public class PseudoGeneViewController {
         // ORTHOLOGY
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
 
-        // MAPPING INFO:
-        geneBean.setMappedMarkerBean(MarkerService.getMappedMarkers(gene));
-
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PSEUDOGENE.getTitleString() + gene.getAbbreviation());
 

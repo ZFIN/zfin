@@ -19,6 +19,7 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.orthology.Orthology;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
@@ -29,6 +30,7 @@ import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 public class PublicationRepositoryTest extends AbstractDatabaseTest {
@@ -476,7 +478,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String termName = "midbrain hindbrain boundary";
         OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
         GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
-        Marker pax2a = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation("pax2a");
+        Marker pax2a = getMarkerRepository().getMarkerByAbbreviation("pax2a");
 
         PaginationResult<Publication> qualityPubs = publicationRepository.getPublicationsWithFigures(pax2a, item);
         assertTrue(qualityPubs != null);
@@ -688,12 +690,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         int numberPubs;
 
 
-        m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-051005-1");
+        m = getMarkerRepository().getMarkerByID("ZDB-GENE-051005-1");
         numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
         assertThat(numberPubs, greaterThan(15));
         assertThat(numberPubs, lessThan(35));
 
-        m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation("pax6a");
+        m = getMarkerRepository().getMarkerByAbbreviation("pax6a");
         numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
         assertThat(numberPubs, greaterThan(190));
         assertThat(numberPubs, lessThan(300));
@@ -725,9 +727,26 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getOrthologyList() {
+        List<Marker> list = publicationRepository.getOrthologyGeneList("ZDB-PUB-060313-16");
+        assertNotNull(list);
+        assertTrue(list.size() > 5);
+    }
+
+    @Test
+    public void getPublicationsForOrthology() {
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-980526-166 ");
+        List<Orthology> list = publicationRepository.getOrthologyPublications(marker);
+        assertNotNull(list);
+        assertTrue(list.size() > 5);
+    }
+
+
+    @Test
     public void getPubMedPublications() {
         List<Publication> pubs = publicationRepository.getPublicationWithPubMedId(null);
         assertNotNull(pubs);
     }
+
 }
 

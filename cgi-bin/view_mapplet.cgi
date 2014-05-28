@@ -786,7 +786,7 @@
     " document.optform.submit();\">";
 
 	print "<br><font size=-1><b>&nbsp;&nbsp;".
-    "<a href=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&".
+    "<a href=\"/action/mapping/panel-detail/".
     "OID=" . $allpanels_id[$order_increment]."\"".
     ">". $panel . "</a>".
     " panel, Chr: " . $lg . ", units: " . $allpanels_metric[$order_increment] .
@@ -825,7 +825,7 @@
     if (! defined  $Q->param('OID')){$Q->param('OID', ''); }
     print   "<param name = \"marker_url\"\t value = \"/action/marker/view/\">\n".
 
-      "<param name = \"panel_url\"\t value = \"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-crossview.apg&OID=\">\n".
+      "<param name = \"panel_url\"\t value = \"/action/mapping/panel-detail/\">\n".
 
         "<param name = \"target_frame\"\t value = \"$frame\">\n".
           "<param name = \"selected_marker\"\t value = \"". $Q->param('OID')."\">\n".

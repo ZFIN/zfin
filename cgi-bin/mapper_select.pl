@@ -199,7 +199,7 @@ OLDCODENOTE
  print $Q->checkbox(-name=>'MOP',-value=>'1',-label=>'MOP',-checked=>'checked');
  print $Q->checkbox(-name=>'GAT',-value=>'1',-label=>'GAT',-checked=>'checked');
 
- print "<A HREF=\"/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-refcrosslist.apg\" style=\"margin-left:4em;\"><B>Mapping panels summary</B></A>";
+ print "<A HREF=\"/ation/mapping/all-panels\" style=\"margin-left:4em;\"><B>Mapping panels summary</B></A>";
  print "\n</font></TD></TR></TABLE>\n";
 
  print $Q->hidden(-name=>'refresh_map',-value=>'1');

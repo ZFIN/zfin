@@ -1,7 +1,6 @@
 package org.zfin.orthology;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ToDo: Please add documentation for this class.
@@ -43,5 +42,27 @@ public class OrthologyEvidenceService {
         }
         return fastSearchEvidences;
     }
+
+    /**
+     * Creates a new orthology list sorted by evidence / publication.
+     *
+     * @param list Orthology
+     * @return list of Orthology
+     */
+    public static List<Orthology> getEvidenceCenteredList(List<Orthology> list) {
+        List<Orthology> returnList = new ArrayList<>(list.size());
+        returnList.addAll(list);
+        Collections.sort(returnList, new Comparator<Orthology>() {
+            @Override
+            public int compare(Orthology o1, Orthology o2) {
+                if (o1.getEvidenceCode().equals(o2.getEvidenceCode()))
+                    return o1.getPublication().getShortAuthorList().compareTo(o2.getPublication().getShortAuthorList());
+                else
+                    return o1.getEvidenceCode().getOrder().compareTo(o2.getEvidenceCode().getOrder());
+            }
+        });
+        return returnList;
+    }
+
 
 }

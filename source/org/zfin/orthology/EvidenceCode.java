@@ -30,6 +30,22 @@ public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
         return code.compareTo(e.getCode());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EvidenceCode that = (EvidenceCode) o;
+
+        if (code != null ? !code.equals(that.code) : that.code != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return code != null ? code.hashCode() : 0;
+    }
 
     public String toString() {
         return "EvidenceCode{" +

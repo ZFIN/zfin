@@ -32,13 +32,6 @@ marker table.
 
 
 
-<?MISQL SQL="
-  select WebExplode(object,'') 
-    from webPages 
-    where ID='aa-chromoscripts.apg';">
-  $1
-<?/MISQL>
-
   </head>
 
 

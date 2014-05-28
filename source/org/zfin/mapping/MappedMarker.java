@@ -1,36 +1,21 @@
 package org.zfin.mapping;
 
-import org.zfin.marker.Marker;
+import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 
-public class MappedMarker implements Comparable {
-    private String zdbID;
-    private String refcrossID;
-    private Marker marker;
-    private Person submitter;
-    private Lab lab;
-    private Person owner;
-    private String comments;
-    private String lg;
-    private Float lgLocation;
-
-    public int compareTo(Object o) {
-        if (o == null) {
-            return -1;
-        } else if (false == (o instanceof MappedMarker)) {
-            return o.toString().compareTo(toString());
-        }
-        // both MappedMarker
-        else {
-            MappedMarker mappedMarker = (MappedMarker) o;
-            if (false == lg.equalsIgnoreCase(mappedMarker.getLg())) {
-                return lg.toLowerCase().compareTo(mappedMarker.getLg().toLowerCase());
-            } else {
-                return marker.compareTo(mappedMarker.getMarker());
-            }
-        }
-    }
+public abstract class MappedMarker implements Comparable, ZdbID {
+    protected String zdbID;
+    protected Panel panel;
+    protected Person submitter;
+    protected Lab lab;
+    protected Person owner;
+    protected String comments;
+    protected String lg;
+    protected String mappedName;
+    protected String scoringData;
+    protected String metric;
+    protected Float lgLocation;
 
     public String getZdbID() {
         return zdbID;
@@ -40,12 +25,12 @@ public class MappedMarker implements Comparable {
         this.zdbID = zdbID;
     }
 
-    public String getRefcrossID() {
-        return refcrossID;
+    public Panel getPanel() {
+        return panel;
     }
 
-    public void setRefcrossID(String refcrossID) {
-        this.refcrossID = refcrossID;
+    public void setPanel(Panel panel) {
+        this.panel = panel;
     }
 
     public Person getSubmitter() {
@@ -96,12 +81,31 @@ public class MappedMarker implements Comparable {
         this.lgLocation = lgLocation;
     }
 
-    public Marker getMarker() {
-        return marker;
+    public String getMappedName() {
+        return mappedName;
     }
 
-    public void setMarker(Marker marker) {
-        this.marker = marker;
+    public void setMappedName(String mappedName) {
+        this.mappedName = mappedName;
     }
 
+    public String getMetric() {
+        return metric;
+    }
+
+    public void setMetric(String metric) {
+        this.metric = metric;
+    }
+
+    public String getScoringData() {
+        return scoringData;
+    }
+
+    public void setScoringData(String scoringData) {
+        this.scoringData = scoringData;
+    }
+
+    public abstract String getEntityID();
+
+    public abstract String getEntityAbbreviation();
 }

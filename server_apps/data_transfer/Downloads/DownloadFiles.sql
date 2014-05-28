@@ -559,7 +559,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt'
  DELIMITER "	"
-select marker_id, mrkr_abbrev, szm_term_ont_id, p.abbrev,or_lg, lg_location, p.metric
+select marker_id, mrkr_abbrev, szm_term_ont_id, p.abbrev,mm_chromosome, mm_chrom_location, p.metric
  from mapped_marker, panels p, marker m, so_zfin_mapping
  where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id
  and  m.mrkr_type = szm_object_type

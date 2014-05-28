@@ -1,33 +1,21 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-import org.zfin.framework.presentation.LookupStrings;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+@Controller
+public class BlastDatabaseSelectController {
 
-public class BlastDatabaseSelectController extends AbstractController {
+    @RequestMapping("/blast/blast-select")
+    protected String downloadSequence(@ModelAttribute("formBean") BlastInfoBean blastInfoBean) throws Exception {
 
-
-
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
-                                                 HttpServletResponse httpServletResponse) throws Exception {
-
-        boolean isRoot = Person.isCurrentSecurityUserRoot() ;
-
-        ModelAndView modelAndView = new ModelAndView("blast-database-select.page") ;
-        BlastInfoBean blastInfoBean = new BlastInfoBean() ;
-        String abbreviation = httpServletRequest.getParameter(LookupStrings.BLAST_DB) ;
-
-        blastInfoBean.setNucleotideDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.NUCLEOTIDE,!isRoot,true));
-        blastInfoBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN,!isRoot,true));
-        modelAndView.addObject(LookupStrings.FORM_BEAN,blastInfoBean) ;
-
-        return modelAndView ;
-
+        boolean isRoot = Person.isCurrentSecurityUserRoot();
+        blastInfoBean.setNucleotideDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.NUCLEOTIDE, !isRoot, true));
+        blastInfoBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, !isRoot, true));
+        return "blast-database-select.page";
     }
 }

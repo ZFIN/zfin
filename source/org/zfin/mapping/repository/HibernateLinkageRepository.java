@@ -1,15 +1,19 @@
 package org.zfin.mapping.repository;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-import org.zfin.mapping.MappedMarker;
+import org.hibernate.criterion.Restrictions;
+import org.zfin.feature.Feature;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.ZdbID;
+import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 
-import java.util.List;
-import java.util.TreeSet;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
@@ -17,6 +21,9 @@ public class HibernateLinkageRepository implements LinkageRepository {
 
     private Logger logger = Logger.getLogger(HibernateLinkageRepository.class);
 
+
+    public HibernateLinkageRepository() {
+    }
 
     public List<String> getDirectMappedMarkers(Marker marker) {
         Session session = currentSession();
@@ -34,165 +41,294 @@ public class HibernateLinkageRepository implements LinkageRepository {
     }
 
 
-    public TreeSet<String> getLG(Marker marker) {
-        Session session = currentSession();
-        TreeSet<String> lgList = new TreeSet<String>();
+    public TreeSet<String> getChromosomeLocations(Marker marker) {
+        List<MarkerGenomeLocation> genomeLocationList = getGenomeLocation(marker);
+        TreeSet<String> locations = new TreeSet<>();
+        for (MarkerGenomeLocation chromosome : genomeLocationList)
+            locations.add(chromosome.getChromosome());
+        return locations;
+    }
 
-        // a) add self panel mapping
-        if (marker.getDirectPanelMappings() != null) {
-            for (MappedMarker mm : marker.getDirectPanelMappings()) {
-                if (mm != null) {
-                    lgList.add(mm.getLg());
-                }
+    /**
+     * Retrieve all mapping panels.
+     *
+     * @return list of panels.
+     */
+    public List<Panel> getAllPanels() {
+        Session session = HibernateUtil.currentSession();
+        return (List<Panel>) session.createQuery("from Panel").list();
+    }
+
+    @Override
+    public List<MeioticPanel> getMeioticPanels() {
+        Session session = HibernateUtil.currentSession();
+        return (List<MeioticPanel>) session.createQuery("from MeioticPanel").list();
+    }
+
+    @Override
+    public List<RadiationPanel> getRadiationPanels() {
+        Session session = HibernateUtil.currentSession();
+        return (List<RadiationPanel>) session.createQuery("from RadiationPanel").list();
+    }
+
+    @Override
+    public Panel getPanelByName(String name) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from Panel where name = :name";
+        Query query = session.createQuery(hql);
+        query.setString("name", name);
+        return (Panel) query.uniqueResult();
+    }
+
+    @Override
+    public Panel getPanelByAbbreviation(String name) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from Panel where abbreviation = :name";
+        Query query = session.createQuery(hql);
+        query.setString("name", name);
+        return (Panel) query.uniqueResult();
+    }
+
+    @Override
+    public List<MappedMarker> getMappedMarkers(ZdbID marker) {
+        Query query = HibernateUtil.currentSession().createQuery("from MappedMarker where marker = :marker");
+        query.setParameter("marker", marker);
+        return (List<MappedMarker>) query.list();
+    }
+
+    @Override
+    public List<Linkage> getLinkagesForMarker(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery("" +
+                "select link from Linkage as link, LinkageMember as linkageMember " +
+                "where linkageMember member of link.linkageMemberSet " +
+                "and linkageMember.markerOneZdbId = :ID ");
+        query.setParameter("ID", marker.getZdbID());
+        return (List<Linkage>) query.list();
+    }
+
+    @Override
+    public List<Marker> getMappedClonesContainingGene(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "select m from  Marker as m, MarkerRelationship as rel " +
+                        "where rel.secondMarker = :marker  and " +
+                        "rel.type in :relationshipTypes and " +
+                        "m = rel.firstMarker ");
+        query.setParameter("marker", marker);
+        query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
+                MarkerRelationship.Type.CLONE_CONTAINS_GENE, MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT});
+        List<Marker> list = (List<Marker>) query.list();
+        if (list == null)
+            list = new ArrayList<>();
+
+        Query query2 = HibernateUtil.currentSession().createQuery(
+                "select distinct m from  Marker as m, MarkerRelationship as rel1, MarkerRelationship as rel2  " +
+                        "where rel1.firstMarker = :marker  and " +
+                        "rel1.type = :relationshipType1 and " +
+                        "rel2.type = :relationshipType2 and " +
+                        "rel2.secondMarker = rel1.secondMarker and " +
+                        "m = rel2.firstMarker ");
+        query2.setParameter("marker", marker);
+        query2.setParameter("relationshipType1", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
+        query2.setParameter("relationshipType2", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
+        List<Marker> list2 = (List<Marker>) query2.list();
+        if (list2 != null)
+            list.addAll(list2);
+        Set<Marker> set = new HashSet<>(list.size());
+        set.addAll(list);
+        List<Marker> objects = new ArrayList<>();
+        objects.addAll(set);
+        return objects;
+    }
+
+    @Override
+    public List<MappedMarker> getMappedMarkers(Panel panel, ZdbID marker, String lg) {
+
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(MappedMarker.class);
+        if (lg != null)
+            criteria.add(Restrictions.eq("lg", lg));
+        if (marker != null)
+            criteria.add(Restrictions.eq("marker", marker));
+        if (panel != null)
+            criteria.add(Restrictions.eq("panel", panel));
+        return criteria.list();
+
+    }
+
+    @Override
+    public List<PrimerSet> getPrimerSetList(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery("from PrimerSet where marker = :marker");
+        query.setParameter("marker", marker);
+        return (List<PrimerSet>) query.list();
+    }
+
+    @Override
+    public List<Marker> getMarkersEncodedByMarker(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "select m from  Marker as m, MarkerRelationship as rel " +
+                        "where rel.firstMarker = :marker  and " +
+                        "rel.type in :relationshipTypes and " +
+                        "m = rel.secondMarker and " +
+                        " ( exists (from MappedMarker where marker = m) or " +
+                        " exists (from LinkageMember as linkageMember " +
+                        "where linkageMember.markerOneZdbId = :markerID and linkageMember.markerTwoZdbId = m.zdbID))");
+        query.setParameter("markerID", marker.getZdbID());
+        query.setParameter("marker", marker);
+        query.setParameter("relationshipTypes", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+        List<Marker> list = (List<Marker>) query.list();
+        if (list == null)
+            list = new ArrayList<>();
+        return list;
+    }
+
+    @Override
+    public List<Marker> getMarkersContainedIn(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "select distinct m from  Marker as m, MarkerRelationship as rel, MarkerGenomeLocation as loc " +
+                        "where rel.firstMarker = :marker  and " +
+                        "rel.type in :relationshipTypes and " +
+                        "m = rel.secondMarker and " +
+                        "loc.marker = rel.secondMarker ");
+        query.setParameter("marker", marker);
+        query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
+                MarkerRelationship.Type.CLONE_CONTAINS_GENE});
+        List<Marker> list = (List<Marker>) query.list();
+        if (list == null)
+            list = new ArrayList<>();
+        return list;
+    }
+
+    @Override
+    public List<LinkageMember> getLinkageMemberForMarker(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from LinkageMember as linkageMember " +
+                        "where linkageMember.markerOneZdbId = :ID " +
+                        "order by linkageMember.linkage.publication.shortAuthorList");
+        query.setParameter("ID", marker.getZdbID());
+        return (List<LinkageMember>) query.list();
+    }
+
+    @Override
+    public List<MarkerGenomeLocation> getGenomeLocation(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from MarkerGenomeLocation where marker = :marker ");
+        query.setParameter("marker", marker);
+        return (List<MarkerGenomeLocation>) query.list();
+    }
+
+    @Override
+    public List<FeatureGenomeLocation> getGenomeLocation(Feature feature) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from FeatureGenomeLocation where feature = :feature ");
+        query.setParameter("feature", feature);
+        return (List<FeatureGenomeLocation>) query.list();
+    }
+
+    @Override
+    public List<GenomeLocation> getPhysicalGenomeLocations(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from GenomeLocation as loc where marker = :marker " +
+                        "and loc.source != :sourceDB");
+        query.setParameter("marker", marker);
+        query.setParameter("sourceDB", GenomeLocation.Source.OTHER_MAPPING);
+        return (List<GenomeLocation>) query.list();
+    }
+
+    @Override
+    public List<LinkageMember> getLinkagesForFeature(Feature feature) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from LinkageMember as linkageMember " +
+                        "where linkageMember.markerOneZdbId = :ID ");
+        query.setParameter("ID", feature.getZdbID());
+        return (List<LinkageMember>) query.list();
+    }
+
+    @Override
+    public List<Marker> getESTContainingSnp(Marker snp) {
+
+        Query query = HibernateUtil.currentSession().createQuery(
+                "select m from  Marker as m, MarkerRelationship as rel, MarkerType as mtype  " +
+                        "where rel.secondMarker = :marker  and " +
+                        "rel.type in :relationshipTypes and " +
+                        "m = rel.firstMarker and " +
+                        "m.markerType = mtype and " +
+                        "mtype.name = :mtype and " +
+                        " ( exists (from MappedMarker where marker = m) or " +
+                        " exists (from LinkageMember   " +
+                        "where markerOneZdbId = :markerID))");
+        query.setParameter("marker", snp);
+        query.setParameter("markerID", snp.getZdbID());
+        query.setParameter("mtype", Marker.Type.EST.toString());
+        query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CONTAINS_POLYMORPHISM});
+        List<Marker> list = (List<Marker>) query.list();
+        if (list == null)
+            list = new ArrayList<>();
+        return list;
+    }
+
+    @Override
+    public List<Marker> getGeneContainingSnp(Marker snp) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "select m from  Marker as m, MarkerRelationship as rel, MarkerType as mtype " +
+                        "where rel.secondMarker = :marker  and " +
+                        "rel.type in :relationshipTypes and " +
+                        "m = rel.firstMarker  and " +
+                        "m.markerType = mtype and " +
+                        "mtype.name = :mtype ");
+        query.setParameter("marker", snp);
+        query.setParameter("mtype", Marker.Type.GENE.toString());
+        query.setParameterList("relationshipTypes", new MarkerRelationship.Type[]{MarkerRelationship.Type.CONTAINS_POLYMORPHISM});
+        List<Marker> list = (List<Marker>) query.list();
+        if (list == null)
+            list = new ArrayList<>();
+        return list;
+    }
+
+    @Override
+    public List<SingletonLinkage> getSingletonLinkage(ZdbID zdbID) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from SingletonLinkage " +
+                        "where zdbID = :zdbID ");
+        query.setParameter("zdbID", zdbID.getZdbID());
+        return (List<SingletonLinkage>) query.list();
+    }
+
+    @Override
+    public Panel getPanel(String panelID) {
+        return (Panel) HibernateUtil.currentSession().get(Panel.class, panelID);
+    }
+
+    @Override
+    public List<PanelCount> getPanelCount(Panel panel) {
+        if (panel.getAbbreviation().equals("ZMAP")) {
+            String sql = "select name," +
+                    "                panel_date," +
+                    "                ptype," +
+                    "                mtype," +
+                    "                target_abbrev," +
+                    "                zmap_chromosome," +
+                    "                count(*)" +
+                    "        from  panels a,zmap_pub_pan_mark b" +
+                    "  where a.abbrev = b.target_abbrev" +
+                    "  and a.abbrev = 'ZMAP' and zmap_chromosome <> 0" +
+                    "        group by name,panel_date,ptype,target_id,mtype,target_abbrev, zmap_chromosome";
+            List<Object[]> list = HibernateUtil.currentSession().createSQLQuery(sql).list();
+            List<PanelCount> panelCountList = new ArrayList<>(list.size());
+            for (Object[] row : list) {
+                PanelCount panelCount = new PanelCount();
+                panelCount.setPanel(panel);
+                panelCount.setLg((String) row[5]);
+                panelCount.setMarkerType((String) row[3]);
+                panelCount.setCount(((BigDecimal) row[6]).longValue());
+                panelCountList.add(panelCount);
             }
+            return panelCountList;
+        } else {
+            Session session = HibernateUtil.currentSession();
+            String hql = "from PanelCount where panel = :panel order by lg";
+            Query query = session.createQuery(hql);
+            query.setParameter("panel", panel);
+            return (List<PanelCount>) query.list();
         }
-
-        // b) add related(second) marker panel mapping
-        Query query = session.createQuery(
-                "select mm.lg " +
-                        "from MappedMarker mm, MarkerRelationship mr join mr.firstMarker as fm" +
-                        "     join mr.secondMarker as sm        " +
-                        " where fm.zdbID = :zdbID " +
-                        "   and sm.zdbID = mm.marker.zdbID " +
-                        " and  mr.type in (:firstRelationship, :secondRelationship, :thirdRelationship)");
-
-        query.setParameter("zdbID", marker.getZdbID());
-        query.setParameter("firstRelationship", MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT);
-        query.setParameter("thirdRelationship", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-
-        lgList.addAll(query.list());
-
-        // c) add related(first) marker panel mapping
-        query = session.createQuery(
-                "select mm.lg " +
-                        "from MappedMarker mm, MarkerRelationship mr join mr.firstMarker as fm" +
-                        "     join mr.secondMarker as sm        " +
-                        " where sm.zdbID = :zdbId " +
-                        "   and fm.zdbID = mm.marker.zdbID " +
-                        "   and mr.type in (:firstRelationship, :secondRelationship) ");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT);
-
-        lgList.addAll(query.list());
-
-        // d) add allele panel mapping
-        /*query = session.createQuery(
-                "select mm.lg" +
-                        "  from MappedMarker mm, FeatureMarkerRelationship fmr " +
-                        " where fmr.marker.zdbID = :zdbId " +
-                        "   and fmr.featureZdbId = mm.marker.zdbID " +
-                        "   and fmr.type = :relationship ");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("relationship", FeatureMarkerRelationship.IS_ALLELE_OF);
-        lgList.addAll(query.list());*/
-
-        // e) add self linkage mapping
-        query = session.createQuery(
-                "select l.lg " +
-                        "from Linkage l join l.linkageMemberMarkers as m " +
-                        " where m.zdbID = :zdbId ");
-        query.setParameter("zdbId", marker.getZdbID());
-        lgList.addAll(query.list());
-
-        // f) add related(second) marker linkage mapping
-        query = session.createQuery(
-                "select l.lg " +
-                        "from Linkage l join l.linkageMemberMarkers as lm, MarkerRelationship mr join mr.firstMarker as fm" +
-                        "     join mr.secondMarker as sm        " +
-                        " where fm.zdbID = :zdbId " +
-                        "   and sm.zdbID = lm.zdbID " +
-                        "   and mr.type in (:firstRelationship, :secondRelationship, :thirdRelationship)");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT);
-        query.setParameter("thirdRelationship", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
-
-        lgList.addAll(query.list());
-
-        // g) add related(first) marker linkage mapping
-        query = session.createQuery(
-                "select l.lg " +
-                        "from Linkage l join l.linkageMemberMarkers as lm, MarkerRelationship mr join mr.firstMarker as fm" +
-                        "     join mr.secondMarker as sm        " +
-                        " where sm.zdbID = :zdbId " +
-                        "   and fm.zdbID = lm.zdbID " +
-                        "   and mr.type in (:firstRelationship, :secondRelationship) ");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("firstRelationship", MarkerRelationship.Type.CLONE_CONTAINS_GENE);
-        query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT);
-
-        lgList.addAll(query.list());
-
-        // h) add allele linkage mapping
-        query = session.createQuery(
-                "select l.lg" +
-                        "  from Linkage l join l.linkageMemberFeatures as lf, FeatureMarkerRelationship fmr " +
-                        " where fmr.marker.zdbID = :zdbId " +
-                        "   and fmr.feature.zdbID = lf.zdbID " +
-                        "   and fmr.type = :relationship ");
-
-        query.setParameter("zdbId", marker.getZdbID());
-        query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
-        lgList.addAll(query.list());
-
-
-        // i) case 7518 Add to clones
-        /**
-         * select lnkg_or_lg
-         from marker_relationship gt
-         join marker_relationship ct on gt.mrel_mrkr_2_zdb_id = ct.mrel_mrkr_2_zdb_id
-         join linkage_member lm on lm.lnkgmem_member_zdb_id = ct.mrel_mrkr_1_zdb_id
-         join linkage l on lm.lnkgmem_linkage_zdb_id = l.lnkg_zdb_id
-         where gt.mrel_type = 'gene produces transcript'
-         and ct.mrel_type = 'clone contains transcript'
-         and gt.mrel_mrkr_1_zdb_id='ZDB-GENE-030131-5474'
-         ;
-
-         select lnkg_or_lg
-         from marker_relationship gt, marker_relationship ct,
-         linkage_member lm, linkage l
-         where gt.mrel_type = 'gene produces transcript'
-         and ct.mrel_type = 'clone contains transcript'
-         and gt.mrel_mrkr_2_zdb_id = ct.mrel_mrkr_2_zdb_id
-         and ct.mrel_mrkr_1_zdb_id = lm.lnkgmem_member_zdb_id
-         and lm.lnkgmem_linkage_zdb_id = l.lnkg_zdb_id
-         and gt.mrel_mrkr_1_zdb_id='ZDB-GENE-030131-5474'
-
-         ;
-
-         */
-        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-            query = session.createQuery(
-                    "select l.lg " +
-                            "from MarkerRelationship gt , MarkerRelationship ct, Linkage l join l.linkageMemberMarkers lm " +
-                            " where gt.type = :firstRelationship " +
-                            " and ct.type = :secondRelationship" +
-                            " and gt.secondMarker.zdbID = ct.secondMarker.zdbID  " +
-                            " and ct.firstMarker.zdbID = lm.zdbID  " +
-                            " and gt.firstMarker.zdbID = :zdbID  " +
-                            " ");
-
-            query.setParameter("zdbID", marker.getZdbID());
-            query.setParameter("firstRelationship", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
-            query.setParameter("secondRelationship", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT);
-
-            lgList.addAll(query.list());
-        }
-
-        /**
-         * From mapping details
-         07/28/03 we decided to show LG Unknown when LG is 0. If we have
-         other evidence of LG not 0, only the non 0 will be shown in mini mode,
-         but more in mapping detail page.
-         */
-
-        return lgList;
     }
 
 }

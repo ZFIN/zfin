@@ -422,22 +422,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void retrieveLinkageGroupFromGeneFgf14() {
-        Transaction tx = null;
-        try {
-            tx = HibernateUtil.currentSession().beginTransaction();
-            MarkerRepository mr = markerRepository;
-            Marker gene = mr.getMarkerByID("ZDB-GENE-060506-1");
-            Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
-            assertTrue(groups != null);
-            assertEquals("1 linkage groups found", 1, groups.size());
-            LinkageGroup group = groups.iterator().next();
-            assertEquals("First LG", "9", group.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        } finally {
-            tx.rollback();
-        }
+        MarkerRepository mr = markerRepository;
+        Marker gene = mr.getMarkerByID("ZDB-GENE-060506-1");
+        Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
+        assertTrue(groups != null);
+        assertEquals("1 linkage groups found", 1, groups.size());
+        LinkageGroup group = groups.iterator().next();
+        assertEquals("First LG", "9", group.getName());
     }
 
     @Test
@@ -851,7 +842,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void getGeneProducts() {
         List<GeneProductsBean> geneProductsBean = markerRepository.getGeneProducts("ZDB-GENE-980526-561");
         assertNotNull(geneProductsBean);

@@ -1,8 +1,9 @@
 package org.zfin.sequence.blast.presentation;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-import org.zfin.framework.presentation.LookupStrings;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.MountedWublastBlastService;
@@ -17,14 +18,14 @@ import java.util.List;
 /**
  * Allows downloading of blast sequence.
  */
-public class DownloadBlastSequenceController extends AbstractController {
+@Controller
+public class DownloadBlastSequenceController {
 
-    final int BUFSIZE = 256;
+    @RequestMapping("/blast/download-sequence")
+    protected String showBlastDefinitions(@RequestParam(required = false) String accession,
+                                          HttpServletResponse response,
+                                          HttpServletRequest request) throws Exception {
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest,
-                                                 HttpServletResponse httpServletResponse) throws Exception {
-
-        String accession = httpServletRequest.getParameter(LookupStrings.ACCESSION);
         List<Sequence> sequences = MountedWublastBlastService.getInstance().
                 getSequencesForAccessionAndDisplayGroup(
                         accession, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE,
@@ -34,13 +35,13 @@ public class DownloadBlastSequenceController extends AbstractController {
         String sequenceData = sequences.get(0).getFormattedData();
         String fileName = accession + ".fa";
 
-        ServletOutputStream outputStream = httpServletResponse.getOutputStream();
-        ServletContext context = getServletContext();
+        ServletOutputStream outputStream = response.getOutputStream();
+        ServletContext context = request.getSession().getServletContext();
 
         String mimeType = context.getMimeType(fileName);
-        httpServletResponse.setContentType(((mimeType != null) ? mimeType : "application/octet-stream"));
-        httpServletResponse.setContentLength(sequenceData.length());
-        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.setContentType(((mimeType != null) ? mimeType : "application/octet-stream"));
+        response.setContentLength(sequenceData.length());
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
         //
         //  Stream to the requester.
@@ -53,4 +54,6 @@ public class DownloadBlastSequenceController extends AbstractController {
 
         return null;
     }
+
+    private Logger logger = Logger.getLogger(DownloadBlastSequenceController.class);
 }

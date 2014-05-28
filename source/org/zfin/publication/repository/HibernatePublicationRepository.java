@@ -18,6 +18,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -26,6 +27,8 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
+import org.zfin.orthology.OrthoEvidenceDisplay;
+import org.zfin.orthology.Orthology;
 import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
@@ -1615,6 +1618,52 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
+    public List<Marker> getOrthologyGeneList(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct evidence.gene, evidence.gene.abbreviationOrder" +
+                " from OrthoEvidenceDisplay as evidence, PublicationAttribution attr " +
+                "      where attr.publication.zdbID = :pubID " +
+                "        and attr.dataZdbID = evidence.zdbID " +
+                "order by evidence.gene.abbreviationOrder";
+
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        List<Object[]> array = (List<Object[]>) query.list();
+        List<Marker> markerList = new ArrayList<>(array.size());
+        for (Object[] arrayObject : array)
+            markerList.add((Marker) arrayObject[0]);
+        return markerList;
+    }
+
+    @Override
+    public List<Orthology> getOrthologyPublications(Marker marker) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select attr.publication, evidence, attr.publication.shortAuthorList from OrthoEvidenceDisplay as evidence, PublicationAttribution attr " +
+                "      where evidence.gene= :gene " +
+                "        and attr.dataZdbID = evidence.zdbID " +
+                "order by attr.publication.shortAuthorList";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("gene", marker);
+        List<Object[]> array = (List<Object[]>) query.list();
+        List<Orthology> orthologyList = new ArrayList<>(array.size());
+        for (Object[] arrayObject : array) {
+            Orthology orthology = new Orthology();
+            orthology.setPublication((Publication) arrayObject[0]);
+            OrthoEvidenceDisplay orthoEvidenceDisplay = (OrthoEvidenceDisplay) arrayObject[1];
+            orthology.setEvidenceCode(orthoEvidenceDisplay.getEvidenceCode());
+            orthology.setGene(marker);
+            String[] speciesArray = orthoEvidenceDisplay.getOrganismList().split(":");
+            for (String species : speciesArray)
+                orthology.addOrthologousSpecies(species);
+            orthologyList.add(orthology);
+        }
+        return orthologyList;
+    }
+
+    @Override
     public List<Publication> getPublicationWithPubMedId(Integer maxResult) {
         Session session = HibernateUtil.currentSession();
 
@@ -1633,4 +1682,124 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         return (List<Publication>) query.list();
     }
+
+    public SortedSet<Publication> getAllPublicationsForFeature(Feature feature) {
+        SortedSet<Publication> pubList = new TreeSet<Publication>();
+        Query query;
+        String hql;
+        List<Publication> resultList;
+        Session session = HibernateUtil.currentSession();
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p " +
+                " where p.dataZdbID = :featureZdbID ";
+        query = session.createQuery(hql);
+        query.setString("featureZdbID", feature.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , DataAlias  da " +
+                "  where p.dataZdbID = da.zdbID " +
+                " and da.dataZdbID = :featureZdbID ";
+        query = session.createQuery(hql);
+        query.setString("featureZdbID", feature.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
+                " where fmr.feature.zdbID  = :featureZdbID " +
+                " and fmr.feature.zdbID  = p.dataZdbID ";
+
+        query = session.createQuery(hql);
+        query.setString("featureZdbID", feature.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , GenotypeFeature gtf " +
+                " where gtf.genotype.zdbID  = p.dataZdbID " +
+                "  and gtf.feature.zdbID = :featureZdbID ";
+        query = session.createQuery(hql);
+        query.setString("featureZdbID", feature.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+        return pubList;
+    }
+
+    public SortedSet<Publication> getPublicationForJournal(Journal journal) {
+        SortedSet<Publication> pubList = new TreeSet<Publication>();
+        Query query;
+        String hql;
+        List<Publication> resultList;
+        Session session = HibernateUtil.currentSession();
+
+        hql = "select publication " +
+                " from Publication publication " +
+                " where publication.journal = :journalWithPub ";
+        query = session.createQuery(hql);
+        query.setParameter("journalWithPub", journal);
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+        return pubList;
+    }
+
+    public Journal getJournalByID(String zdbID) {
+        return (Journal) HibernateUtil.currentSession().get(Journal.class, zdbID);
+    }
+
+    public SortedSet<Publication> getAllPublicationsForGenotype(Genotype genotype) {
+        SortedSet<Publication> pubList = new TreeSet<Publication>();
+        Query query;
+        String hql;
+        List<Publication> resultList;
+        Session session = HibernateUtil.currentSession();
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p " +
+                " where p.dataZdbID = :genotypeZdbID ";
+        query = session.createQuery(hql);
+        query.setString("genotypeZdbID", genotype.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , DataAlias  da " +
+                "  where p.dataZdbID = da.zdbID " +
+                " and da.dataZdbID = :genotypeZdbID ";
+        query = session.createQuery(hql);
+        query.setString("genotypeZdbID", genotype.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+        hql = "select p.publication " +
+                " from PublicationAttribution p , GenotypeFeature gtf " +
+                " where gtf.feature.zdbID  = p.dataZdbID " +
+                "  and gtf.genotype.zdbID = :genotypeZdbID ";
+        query = session.createQuery(hql);
+        query.setString("genotypeZdbID", genotype.getZdbID());
+        resultList = query.list();
+        pubList.addAll(resultList);
+
+        return pubList;
+    }
+
+    public List<String> getPublicationIDsForGOwithField(String zdbID) {
+        zdbID = "ZFIN:" + zdbID;
+        Session session = HibernateUtil.currentSession();
+        String sql = "select distinct mrkrgoev_source_zdb_id " +
+                " from marker_go_term_evidence, inference_group_member " +
+                " where mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id and infgrmem_inferred_from = :zdbID";
+        SQLQuery query = session.createSQLQuery(sql);
+        query.setString("zdbID", zdbID);
+        List<String> pubIDs = query.list();
+        return pubIDs;
+    }
+
 }

@@ -7,12 +7,13 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.DisruptorBean" scope="request"/>
 
 <c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
-<c:set var="deleteURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-delete_record.apg&OID=${formBean.marker.zdbID}&rtype=marker</c:set>
+<c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
+<c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   mergeURL="${deleteURL}"
+                   mergeURL="${mergeURL}"
                    latestUpdate="${formBean.latestUpdate}"
                    rtype="marker"/>
 

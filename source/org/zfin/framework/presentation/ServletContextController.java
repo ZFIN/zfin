@@ -1,6 +1,10 @@
 package org.zfin.framework.presentation;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 
@@ -10,16 +14,15 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Controller that obtains the meta data for the database.
  */
-public class ServletContextController extends AbstractCommandController {
+@Controller
+public class ServletContextController {
 
-    public ServletContextController() {
-        setCommandClass(ServletInfoBean.class);
-    }
+    @RequestMapping("/servlet-context")
+    protected String showServletContext(@ModelAttribute("formBean") ServletInfoBean form,
+                                        HttpServletRequest request,
+                                        Model model) throws Exception {
 
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-
-        ServletInfoBean form = (ServletInfoBean) command;
         form.setContext(request.getSession().getServletContext());
-        return new ModelAndView("servlet-context-info", LookupStrings.FORM_BEAN, form);
+        return "servlet-context-info";
     }
 }

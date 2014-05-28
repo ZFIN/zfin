@@ -59,13 +59,6 @@ jQuery.ajax({
 
  <?MIVAR NAME=$OID COND="$(NXST,$OID)">NULL<?/MIVAR>
 
- <?MISQL SQL="
-  select object 
-    from webPages 
-    where ID = 'aa-chromoscripts.apg';">
-  $1
- <?/MISQL>
-
  </HEAD>
  
  <BODY>
@@ -339,7 +332,7 @@ jQuery.ajax({
 	  ( msegtlg_mrkr_zdb_id )
 	select marker_id 
           from mapped_marker
-	 where or_lg = '$lg';">
+	 where mm_chromosome = '$lg';">
     <?/MISQL>
     <?MISQL  SQL="
       insert into $msegselect_temp_on_lg
@@ -347,7 +340,7 @@ jQuery.ajax({
 	select mrel_mrkr_2_zdb_id
 	  from mapped_marker, marker_relationship
 	 where mrel_mrkr_1_zdb_id = marker_id
-	   and or_lg = '$lg'
+	   and mm_chromosome = '$lg'
 	   and mrel_type = 'clone contains small segment';">
     <?/MISQL>
     <?MISQL  SQL="
@@ -356,7 +349,7 @@ jQuery.ajax({
 	select mrel_mrkr_1_zdb_id
 	  from mapped_marker, marker_relationship
 	 where mrel_mrkr_2_zdb_id = marker_id
-	   and or_lg = '$lg'
+	   and mm_chromosome = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment');">
     <?/MISQL>
@@ -365,7 +358,7 @@ jQuery.ajax({
 	  ( msegtlg_mrkr_zdb_id )
         select lnkgmem_member_zdb_id
 	  from linkage, linkage_member
-	 where lnkg_or_lg = '$lg'
+	 where lnkg_chromosome = '$lg'
   	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id ;">
     <?/MISQL>
     <?MISQL  SQL="
@@ -375,7 +368,7 @@ jQuery.ajax({
 	  from marker_relationship, linkage, linkage_member
 	 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
   	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-	   and lnkg_or_lg = '$lg'
+	   and lnkg_chromosome = '$lg'
 	   and mrel_type = 'clone contains small segment';">
     <?/MISQL>
     <?MISQL  SQL="
@@ -385,7 +378,7 @@ jQuery.ajax({
 	  from marker_relationship, linkage, linkage_member
 	 where mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id
   	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-	   and lnkg_or_lg = '$lg'
+	   and lnkg_chromosome = '$lg'
 	   and mrel_type in ('clone contains gene',
 			     'clone contains small segment');">
      <?/MISQL> 
@@ -657,7 +650,10 @@ jQuery.ajax({
         </TD> 
 
 	<TD>
-          <?MISQL SQL="select WebExplode(object,'&mapdetails_mode=mini&split=break&hide_empty=t&oID=$OID') from webPages where ID='aa-mappingdetail.apg';">$1<?/MISQL>
+            <script type="text/javascript">
+                jQuery('#mappingDetail').load('/action/mapping/summary/$OID');
+            </script>
+            <div id="mappingDetail"></div>
 	</TD> 
        
         <?MIBLOCK COND="$(XST,$input_name)">   

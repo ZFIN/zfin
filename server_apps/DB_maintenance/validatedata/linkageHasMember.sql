@@ -1,6 +1,6 @@
 unload to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/reportRecords.txt
 select lnkg_zdb_id,
-                    lnkg_or_lg,
+                    lnkg_chromosome,
                     recattrib_source_zdb_id
                from linkage, record_attribution
 	      where lnkg_zdb_id not in (

@@ -46,6 +46,7 @@ import org.zfin.ontology.OntologyTokenizationTest;
 import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
 import org.zfin.ontology.service.OntologyServiceTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
+import org.zfin.orthology.OrthologyEvidenceServiceTest;
 import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
@@ -114,6 +115,7 @@ import org.zfin.util.*;
         OntologyTokenizationTest.class,
         OrganizationUrlTest.class,
         OrthologyEvidenceFastSearchTest.class,
+        OrthologyEvidenceServiceTest.class,
         OrthologyValidationTest.class,
         PaginationBeanTest.class,
         PatoPileStructureValidatorTest.class,

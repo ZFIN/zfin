@@ -29,6 +29,7 @@ import java.util.Set;
  * This class serves the antibody search page.
  */
 @Controller
+@RequestMapping(value = "/fish")
 public class FishSearchController {
 
     @ModelAttribute("formBean")

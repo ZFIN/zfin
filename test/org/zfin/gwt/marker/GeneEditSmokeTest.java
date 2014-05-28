@@ -31,8 +31,7 @@ public class GeneEditSmokeTest extends AbstractSecureSmokeTest {
         }
 
 //            final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3);
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/dev-tools/gwt/alternate-gene-edit");
-        webClient.setJavaScriptEnabled(true);
+        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/devtool/gwt/alternate-gene-edit");
         webClient.waitForBackgroundJavaScriptStartingBefore(2000);
         assertEquals("GWT Gene Edit", page.getTitleText());
         final HtmlDivision div = (HtmlDivision) page.getByXPath("//div[@id='curatorNoteName']").get(0);

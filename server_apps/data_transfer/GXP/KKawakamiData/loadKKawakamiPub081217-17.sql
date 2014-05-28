@@ -187,7 +187,7 @@ insert into zdb_active_data select prelg_zdb_id from pre_linkage;
 ! echo "         into zdb_active_data table."
 
 -- load linkage table
-insert into linkage (lnkg_zdb_id, lnkg_or_lg, lnkg_comments, lnkg_submitter_zdb_id)
+insert into linkage (lnkg_zdb_id, lnkg_chromosome, lnkg_comments, lnkg_submitter_zdb_id)
  select prelg_zdb_id, prelg_or_lg, prelg_comments, prelg_submitter
    from pre_linkage;
 ! echo "         into linkage table."   

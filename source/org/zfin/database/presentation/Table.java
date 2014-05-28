@@ -77,9 +77,10 @@ public enum Table {
     INT_PERSON_COMPANY("INT_PERSON_COPMPANY", "int_person_company", "source_id,target_id"),
     JOURNAL("JRNL", "journal", "jrnl_zdb_id"),
     LAB("LAB", "lab", "zdb_id", "name"),
-    LINKAGE("LINK", "linkage", "lnkg_zdb_id", "lnkg_or_lg"),
+    LINKAGE("LINK", "linkage", "lnkg_zdb_id", "lnkg_chromosome"),
+    LINKAGE_SINGLETON("LINKSING", "linkage_single", "lnkg_zdb_id", "lsingle_pk_id"),
+    LINKAGE_MEMBERSHIP("LINKAGE_MEMBERSHIP", "linkage_membership", "lnkgm_pk_id","lnkgm_member_1_zdb_id"),
     LINKAGE_GROUP("LINK_GROUP", "linkage_group", "lg_name"),
-    LINKAGE_PAIR("LINK_PAIR", "linkage_pair", "lnkgpair_zdb_id"),
     MAPPED_MARKER("MM", "mapped_marker", "zdb_id", "map_name"),
     MARKER("MARKER", "marker", "mrkr_zdb_id", "mrkr_abbrev"),
     MARKER_HISTORY("NOMEN", "marker_history", "mhist_zdb_id"),
@@ -104,6 +105,7 @@ public enum Table {
     ORTHOLOGUE("ORTHO", "orthologue", "zdb_id"),
     ORTHOLOGUE_EVIDENCE("ORTHOEV", "orthologue_evidence", "oev_ortho_zdb_id"),
     PANEL("REFCROSS", "panels", "zdb_id", "name"),
+    PANEL_COUNT("PANELCOUNT", "panel_count", "panelcnt_panel_zdb_id,panelcnt_mrkr_type,panelcnt_or_lg,panelcnt_count,panelcnt_chromosome"),
     PANELED_MARKER("MARKER", "paneled_markers", "zdb_id", "map_name"),
     PERSON("PERS", "person", "zdb_id", "name"),
     PHENOTYPE_EXPERIMENT("PHENOX", "phenotype_experiment", "phenox_pk_id"),
@@ -127,8 +129,7 @@ public enum Table {
     ZDB_ACTIVE_DATA("ZDB_ACTIVE_DATA", "zdb_active_data", "zactvd_zdb_id"),
     ZDB_ACTIVE_SOURCE("ZDB_ACTIVE_SOURCE", "zdb_active_source", "zactvs_zdb_id"),
 
-    // many-to-many relationships
-    LINK_MEMBER("LINK_MEMBER", "linkage_member", "lnkgmem_linkage_zdb_id,lnkgmem_member_zdb_id", LINKAGE, MARKER),
+    //many to many relationships
     MEMBER_LINKAGE("MEMBER_LINKAGE", "linkage_member", "lnkgmem_member_zdb_id,lnkgmem_linkage_zdb_id", MARKER, LINKAGE),
     TERM_SUBSET("TERM_SUBSET", "term_subset", "termsub_term_zdb_id,termsub_subset_id", TERM, ONTOLOGY_SUBSET),
     SUBSET_TERM("SUBSET_TERM", "term_subset", "termsub_subset_id,termsub_term_zdb_id", ONTOLOGY_SUBSET, TERM),
@@ -160,6 +161,8 @@ public enum Table {
     FEATURE_GENOTYPE("FEATURE_GENOTYPE", "genotype_feature", "genofeat_feature_zdb_id,genofeat_geno_zdb_id", FEATURE, GENOTYPE),
 
     // warehouse tables
+    SEQUENCE_FEATURE_CHROMSOME_LOCATION("CHROMOSOME", "sequence_feature_chromosome_location", "sfcl_data_zdb_id,sfcl_chromosome,sfcl_location_source,sfcl_location_subsource,\n" +
+            "    sfcl_start,sfcl_end"),
     WH_FISH("FISH", "fish_annotation_search", "fas_pk_id", null, "fas_affector_type_group"),
     WH_FIGURE_TERM_FISH_SEARCH("FTFS", "figure_term_fish_search", "ftfs_pk_id"),
     WH_GENE_FEATURE_RESULT_VIEW("GENE_FEATURE_RESULT_VIEW", "gene_feature_result_view", "gfrv_pk_id", null, "gfrv_affector_type_display", "gfrv_affector_id,gfrv_construct_zdb_id"),

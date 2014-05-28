@@ -2,6 +2,7 @@ package org.zfin.publication;
 
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
+import org.zfin.infrastructure.ZdbID;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * ToDo:
  */
-public class Publication implements Comparable<Publication>, Serializable {
+public class Publication implements Comparable<Publication>, Serializable, ZdbID {
 
     private String zdbID;
     private String title;

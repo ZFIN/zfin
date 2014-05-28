@@ -1,35 +1,28 @@
 package org.zfin.framework.presentation;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractCommandController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- */
-public class GlobalSessionViewController extends AbstractCommandController{
+@Controller
+public class GlobalSessionViewController {
 
-    /**
-     * This is here only for the view global sesssion.  Could be moved into another controller, however.
-     */
-    private GlobalSessionBean globalSessionBean;
+    @Autowired
+    private SessionRegistry sessionRegistry;
 
-    @Override
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        globalSessionBean.setCurrentSession(request.getSession(false)) ;
-        command = globalSessionBean;
-        return new ModelAndView("view-global-session-info", LookupStrings.FORM_BEAN, command);
+    @RequestMapping("/view-global-session")
+    protected String showGlobalSession(@ModelAttribute("formBean") GlobalSessionBean form,
+                                       HttpServletRequest servletRequest) throws Exception {
+        form.setCurrentSession(servletRequest.getSession(false));
+        form.setSessionRegistry(sessionRegistry);
+        return "view-global-session-info.page";
     }
-
-
-    public GlobalSessionBean getZfinGlobalSessionBean() {
-        return globalSessionBean;
-    }
-
-    public void setZfinGlobalSessionBean(GlobalSessionBean globalSessionBean) {
-        this.globalSessionBean = globalSessionBean;
-    }
-
 }

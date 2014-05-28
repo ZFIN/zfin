@@ -4,9 +4,12 @@ import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  */
@@ -46,4 +49,6 @@ public interface MarkerGoTermEvidenceRepository {
     int getEvidenceForMarkerCount(Marker m);
 
     MarkerGoTermEvidence getFirstEvidenceForMarkerOntology(Marker m,Ontology ontology);
+
+    SortedSet<GenericTerm> getGOtermsInferedFromZDBid(String zdbID);
 }

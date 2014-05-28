@@ -33,12 +33,18 @@ if ($1 == "commit") then
 		touch fetch_ensembl.log
 	endif
 	echo "Using Ensembl release: $cur   `date`" >> fetch_ensembl.log
+	cat updateMarkerChromosomeLocation.sql commit.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
+	echo "Updated marker_chromosome_location" >> fetch_ensembl.log
+
 else
 	echo ""
 	echo "*** Just Testing load_ensdarg.sql into <!--|DB_NAME|--> .***  "
 	echo "To load use:  gmake run_commit"
 	echo ""
 	cat load_ensdarg.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
+	cat updateMarkerChromosomeLocation.sql rollback.sql | <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|-->
+	echo "Updated marker_chromosome_location" >> fetch_ensembl.log
+
 endif
 
 

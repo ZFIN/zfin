@@ -17,6 +17,15 @@ public enum ForeignKey {
     XPATEX_GENOX(Table.GENOTYPE_EXPERIMENT, Table.EXPRESSION_EXPERIMENT, "xpatex_genox_zdb_id"),
     PHENOX_GENOX(Table.GENOTYPE_EXPERIMENT, Table.PHENOTYPE_EXPERIMENT, "phenox_genox_zdb_id"),
     PHENOS_PHENOX(Table.PHENOTYPE_EXPERIMENT, Table.PHENOTYPE_STATEMENT, "phenos_phenox_pk_id"),
+    LINKAGE_MEMBERHIP(Table.LINKAGE, Table.LINKAGE_MEMBERSHIP, "lnkgm_linkage_zdb_id"),
+    PUBLICATION_LINKAGE(Table.PUBLICATION, Table.LINKAGE, "lnkg_source_zdb_id"),
+    PERSON_LINKAGE(Table.PERSON, Table.LINKAGE, "lnkg_submitter_zdb_id"),
+    MARKER_1_LINKAGE_MEMBERHIP(Table.MARKER, Table.LINKAGE_MEMBERSHIP, "lnkgm_member_1_zdb_id"),
+    MARKER_2_LINKAGE_MEMBERHIP(Table.MARKER, Table.LINKAGE_MEMBERSHIP, "lnkgm_member_2_zdb_id"),
+    LINKAGE_LINKAGE_SINGLETON(Table.LINKAGE, Table.LINKAGE_SINGLETON, "lsingle_lnkg_zdb_id"),
+    MARKER_LINKAGE_SINGLETON(Table.MARKER, Table.LINKAGE_SINGLETON, "lsingle_member_zdb_id"),
+    FEATURE_LINKAGE_SINGLETON(Table.FEATURE, Table.LINKAGE_SINGLETON, "lsingle_member_zdb_id"),
+    PANEL_PANELCOUNT(Table.PANEL, Table.PANEL_COUNT, "panelcnt_panel_zdb_id"),
     PHENOX_TERM_1_A(Table.TERM, Table.PHENOTYPE_STATEMENT, "phenos_entity_1_superterm_zdb_id"),
     PHENOX_TERM_2_A(Table.TERM, Table.PHENOTYPE_STATEMENT, "phenos_entity_2_superterm_zdb_id"),
     PHENOS_TERM_1_B(Table.TERM, Table.PHENOTYPE_STATEMENT, "phenos_entity_1_subterm_zdb_id"),
@@ -45,7 +54,6 @@ public enum ForeignKey {
     XPATRES_FIGURE_ASSOC(Table.EXPRESSION_RESULT, Table.FIGURE, Table.XPATRES_FIGURE),
     GENOTEYPE_FEATURE_ASSOC(Table.GENOTYPE, Table.FEATURE, Table.GENOTYPE_FEATURE),
     FEATURE_GENOTYPE_ASSOC(Table.FEATURE, Table.GENOTYPE, Table.FEATURE_GENOTYPE),
-    LINKAGE_MARKER(Table.LINKAGE, Table.MARKER, Table.LINK_MEMBER),
     MARKER_LINK(Table.MARKER, Table.LINKAGE, Table.MEMBER_LINKAGE),
     FDBCONT_BLAST_ASSOC(Table.FDBCONT, Table.BLAST_DB, Table.FDBCONT_BLAST_DB),
     BLAST_FDBCONT_ASSOC(Table.BLAST_DB, Table.FDBCONT, Table.BLAST_DB_FDBCONT),
@@ -126,9 +134,6 @@ public enum ForeignKey {
     GO_FLAG_GO_EVIDENCE(Table.GO_FLAG, Table.MARKER_GO_EVIDENCE, "mrkrgoev_gflag_name"),
     GO_EVIDENCE_INFERENCE(Table.MARKER_GO_EVIDENCE, Table.INFERENCE_GROUP_MEMBER, "infgrmem_mrkrgoev_zdb_id"),
     DATA_NOTE_GENE(Table.MARKER, Table.DATA_NOTE, "dnote_data_zdb_id"),
-    PERSON_LINKAGE(Table.PERSON, Table.LINKAGE, "lnkg_submitter_zdb_id"),
-    LINKAGE_GROUP_LINKAGE(Table.LINKAGE_GROUP, Table.LINKAGE, "lnkg_or_lg"),
-    LINKAGE_LINKAGE_PAIR(Table.LINKAGE, Table.LINKAGE_PAIR, "lnkgpair_linkage_zdb_id"),
     GO_EVIDENCE_PUB(Table.PUBLICATION, Table.MARKER_GO_EVIDENCE, "mrkrgoev_source_zdb_id"),
     GO_EVIDENCE_TERM(Table.TERM, Table.MARKER_GO_EVIDENCE, "mrkrgoev_term_zdb_id"),
     GO_EVIDENCE_PERSON(Table.PERSON, Table.MARKER_GO_EVIDENCE, "mrkrgoev_contributed_by"),
@@ -228,6 +233,8 @@ public enum ForeignKey {
 
     TERM_SUBSET_ASSOC(Table.TERM, Table.ONTOLOGY_SUBSET, Table.TERM_SUBSET),
     SUBSET_TERM_ASSOC(Table.ONTOLOGY_SUBSET, Table.TERM, Table.SUBSET_TERM),
+    CHROMOSOME_LOCATION_MARKER(Table.MARKER, Table.SEQUENCE_FEATURE_CHROMSOME_LOCATION, "sfcl_data_zdb_id"),
+    CHROMOSOME_LOCATION_FEATURE(Table.FEATURE, Table.SEQUENCE_FEATURE_CHROMSOME_LOCATION, "sfcl_data_zdb_id"),
 
     WH_FISH_GENOTYPE(Table.GENOTYPE, Table.WH_FISH, "fas_genotype_group"),
     WH_FEATURE_RESULT_GENE(Table.MARKER, Table.WH_GENE_FEATURE_RESULT_VIEW, "gfrv_gene_zdb_id"),
@@ -307,7 +314,7 @@ public enum ForeignKey {
             if (!foreignKey.isManyToManyRelationship() && foreignKey.getForeignKey().equals(columnName)) {
                 if (entityTable == null)
                     return foreignKey;
-                if(foreignKey.entityTable == entityTable)
+                if (foreignKey.entityTable == entityTable)
                     return foreignKey;
             }
             if (foreignKey.isManyToManyRelationship() && foreignKey.getManyToManyTable().getPkName().equals(columnName))

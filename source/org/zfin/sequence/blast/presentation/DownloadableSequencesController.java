@@ -1,75 +1,62 @@
 package org.zfin.sequence.blast.presentation;
 
 import org.apache.log4j.Logger;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractCommandController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.sequence.blast.BlastDownloadService;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- */
-public class DownloadableSequencesController extends AbstractCommandController{
+@Controller
+public class DownloadableSequencesController {
 
-    private final Logger logger = Logger.getLogger(DownloadableSequencesController.class) ;
+    private final Logger logger = Logger.getLogger(DownloadableSequencesController.class);
 
-    private String view ;
+    @RequestMapping("/blast/blast-files")
+    protected String showBlastDefinitions(HttpServletResponse response,
+                                          @ModelAttribute("formBean") BlastDownloadBean blastDownloadBean) throws Exception {
 
-    public String getView() {
-        return view;
-    }
+        logger.info("action: " + blastDownloadBean.getAction());
 
-    public void setView(String view) {
-        this.view = view;
-    }
-
-    @Override
-    protected ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        BlastDownloadBean blastDownloadBean = (BlastDownloadBean) command ;
-
-        logger.info("action: "+ blastDownloadBean.getAction());
-
-        if(blastDownloadBean.getAction()!=null){
+        if (blastDownloadBean.getAction() != null) {
             switch (blastDownloadBean.getAction()) {
                 case MORPHOLINO:
-                    return download("zfin_mrph.fa",BlastDownloadService.getMorpholinoDownload(),response) ;
+                    return download("zfin_mrph.fa", BlastDownloadService.getMorpholinoDownload(), response);
                 case GENBANK_ALL:
-                    return download("zfin_genbank_acc.unl",BlastDownloadService.getGenbankAllDownload(),response) ;
+                    return download("zfin_genbank_acc.unl", BlastDownloadService.getGenbankAllDownload(), response);
                 case GENBANK_CDNA:
-                    return download("zfin_genbank_cdna_acc.unl",BlastDownloadService.getGenbankCdnaDownload(),response) ;
+                    return download("zfin_genbank_cdna_acc.unl", BlastDownloadService.getGenbankCdnaDownload(), response);
                 case GENBANK_XPAT_CDNA:
-                    return download("zfin_genbank_xpat_cdna_acc.unl",BlastDownloadService.getGenbankXpatCdnaDownload(),response) ;
+                    return download("zfin_genbank_xpat_cdna_acc.unl", BlastDownloadService.getGenbankXpatCdnaDownload(), response);
                 case GENOMIC_REFSEQ:
-                    return download("zfin_genomic_refseq_acc.unl",BlastDownloadService.getGenomicRefseqDownload(),response) ;
+                    return download("zfin_genomic_refseq_acc.unl", BlastDownloadService.getGenomicRefseqDownload(), response);
                 case GENOMIC_GENBANK:
-                    return download("zfin_genomic_genbank_acc.unl",BlastDownloadService.getGenomicGenbankDownload(),response) ;
+                    return download("zfin_genomic_genbank_acc.unl", BlastDownloadService.getGenomicGenbankDownload(), response);
                 default:
-                    throw new RuntimeException("Action not found: "+blastDownloadBean.getAction()) ;
+                    throw new RuntimeException("Action not found: " + blastDownloadBean.getAction());
             }
         }
 
-        return new ModelAndView(view);
+        return "downloadable-sequences.page";
     }
 
-    private ModelAndView download(String name,String data, HttpServletResponse response) throws Exception {
+    private String download(String name, String data, HttpServletResponse response) throws Exception {
         byte[] bytes = data.getBytes();
 
         response.setBufferSize(bytes.length);
         response.setContentLength(bytes.length);
         // reference: http://onjava.com/pub/a/onjava/excerpt/jebp_3/index3.html
         response.setContentType("application/x-download");
-        response.setHeader("Content-Disposition","attachment; filename="+name);
-
+        response.setHeader("Content-Disposition", "attachment; filename=" + name);
 
         ServletOutputStream servletOutputStream = response.getOutputStream();
 
-        servletOutputStream.write(bytes,0,bytes.length);
+        servletOutputStream.write(bytes, 0, bytes.length);
         servletOutputStream.flush();
         servletOutputStream.close();
-        return null ;
+        return null;
     }
 
 }

@@ -26,7 +26,7 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 public class MarkerViewController {
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
     private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
     private Logger logger = Logger.getLogger(MarkerViewController.class);
@@ -65,44 +65,43 @@ public class MarkerViewController {
 
         // hack because they all share the same servlet space
         if (key.startsWith("ZDB-PERS") || key.startsWith("ZDB-LAB") || key.startsWith("ZDB-COMPANY")) {
-            return profileController.viewProfile(key,model,userAgent);
-        }
-        else
-        // first we set the key properly
-        if (key.startsWith("ZDB-")) {
-            if (false == markerRepository.markerExistsForZdbID(key)) {
-                String replacedZdbID = infrastructureRepository.getReplacedZdbID(key);
-                logger.debug("trying to find a replaced zdbID for: " + key);
-                if (replacedZdbID != null) {
-                    if (markerRepository.markerExistsForZdbID(replacedZdbID)) {
-                        logger.debug("found a replaced zdbID for: " + key + "->" + replacedZdbID);
-                        key = replacedZdbID;
+            return profileController.viewProfile(key, model, userAgent);
+        } else
+            // first we set the key properly
+            if (key.startsWith("ZDB-")) {
+                if (false == markerRepository.markerExistsForZdbID(key)) {
+                    String replacedZdbID = infrastructureRepository.getReplacedZdbID(key);
+                    logger.debug("trying to find a replaced zdbID for: " + key);
+                    if (replacedZdbID != null) {
+                        if (markerRepository.markerExistsForZdbID(replacedZdbID)) {
+                            logger.debug("found a replaced zdbID for: " + key + "->" + replacedZdbID);
+                            key = replacedZdbID;
+                        }
                     }
                 }
-            }
-        } else {
-            Marker marker = markerRepository.getMarkerByAbbreviationIgnoreCase(key);
-            if (marker == null) {
-                marker = markerRepository.getMarkerByName(key);
-            }
-            if (marker == null) {
-                List<Marker> markers = markerRepository.getMarkersByAlias(key);
-                if (markers != null && markers.size() == 1) {
-                    marker = markers.get(0);
-                } else if (markers.size() != 1) {
-                    //http://quark.zfin.org/quark/webdriver
-                    return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
+            } else {
+                Marker marker = markerRepository.getMarkerByAbbreviationIgnoreCase(key);
+                if (marker == null) {
+                    marker = markerRepository.getMarkerByName(key);
+                }
+                if (marker == null) {
+                    List<Marker> markers = markerRepository.getMarkersByAlias(key);
+                    if (markers != null && markers.size() == 1) {
+                        marker = markers.get(0);
+                    } else if (markers.size() != 1) {
+                        //http://quark.zfin.org/quark/webdriver
+                        return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
 //                                "?MIval=aa-newmrkrselect.apg&marker_type=all&query_results=t&input_name="+
-                            "?MIval=aa-newmrkrselect.apg&compare=starts&marker_type=all&query_results=exist&action=SEARCH&input_name=" +
-                            key +
-                            "&compare=starts&WINSIZE=200";
+                                "?MIval=aa-newmrkrselect.apg&compare=starts&marker_type=all&query_results=exist&action=SEARCH&input_name=" +
+                                key +
+                                "&compare=starts&WINSIZE=200";
+                    }
+                }
+
+                if (marker != null) {
+                    key = marker.getZdbID();
                 }
             }
-
-            if (marker != null) {
-                key = marker.getZdbID();
-            }
-        }
 
         if (key == null || key.isEmpty() || false == markerRepository.markerExistsForZdbID(key)) {
             model.addAttribute(LookupStrings.ZDB_ID, key);
@@ -127,7 +126,7 @@ public class MarkerViewController {
                     ) {
                 return cloneViewController.getCloneView(model, zdbID);
             } else if (type.equals(Marker.Type.GENE.name())) {
-                return geneViewController.getGeneView(model, zdbID);
+                return geneViewController.getGeneView(zdbID, model);
             } else if (type.equals(Marker.Type.GENEP.name())) {
                 return pseudoGeneViewController.getGeneView(model, zdbID);
             } else if (type.equals(Marker.Type.EFG.name())) {
@@ -153,12 +152,12 @@ public class MarkerViewController {
                     || type.equals(Marker.Type.PAC_END.name())
 //                    || type.equals(Marker.Type.REGION.name())
                     ) {
-                return genericMarkerViewController.getGenericMarkerView(model, zdbID);
+                return genericMarkerViewController.getGenericMarkerView(zdbID, model);
             }
             // includes GENEFAMILY and INDEL!
             else {
                 logger.error("Should not display marker of type " + type + " for ID " + zdbID);
-                return genericMarkerViewController.getGenericMarkerView(model, zdbID);
+                return genericMarkerViewController.getGenericMarkerView(zdbID, model);
             }
 
         } catch (Exception e) {
@@ -172,7 +171,7 @@ public class MarkerViewController {
     public String viewAllEngineeredRegions(Model model) {
 
         List<Marker> engineeredRegions = getMarkerRepository().getAllEngineeredRegions();
-        model.addAttribute("engineeredRegions",engineeredRegions);
+        model.addAttribute("engineeredRegions", engineeredRegions);
         return "marker/view-all-engineered-regions.page";
     }
 

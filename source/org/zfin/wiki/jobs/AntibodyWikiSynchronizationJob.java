@@ -30,7 +30,7 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
         job.setPropertyFilePath(propertyFilePath);
         job.setBaseDir(jobDirectoryString);
         job.setJobName(args[2]);
-        job.init();
+        //job.init();
         WikiSynchronizationReport report = AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
         job.createReportFiles(report);
     }
