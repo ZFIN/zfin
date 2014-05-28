@@ -73,7 +73,7 @@ and fdbcont_zdb_id = dblink_fdbcont_zdb_id;
 
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/chromosome/1chromosome.txt"
-select * from sequence_feature_chromosome_location
+select distinct sfcl_chromosome, sfcl_data_zdb_id from sequence_feature_chromosome_location
  where sfcl_data_zdb_id like 'ZDB-GENE%';
 
 --all identifiers;
