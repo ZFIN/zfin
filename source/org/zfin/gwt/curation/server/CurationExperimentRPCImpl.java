@@ -417,7 +417,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         Publication publication = getPublicationRepository().getPublication(publicationID);
         if (publication.getCloseDate() != null)
             return false;
-        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish2(publicationID, null, null, null);
+        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish(publicationID, null, null, null);
         Collection<ExpressionStructure> structures = expRepository.retrieveExpressionStructures(publicationID);
         return CollectionUtils.isNotEmpty(experiments) && CollectionUtils.isEmpty(structures);
     }
@@ -505,7 +505,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      * @return expression figure stage records
      */
     public List<ExpressionFigureStageDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
-        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish2(experimentFilter.getPublicationID(),
+        List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish(experimentFilter.getPublicationID(),
                 experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
                 experimentFilter.getFishID(),
                 figureID);

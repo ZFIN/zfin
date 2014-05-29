@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
@@ -37,11 +38,8 @@ import org.zfin.util.TermFigureStageRange;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
@@ -71,8 +69,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getMarkerDBLinkByID() {
-        String dblinkID = "ZDB-DBLINK-020710-33129";
-        MarkerDBLink experiment = expRep.getMarkDBLink(dblinkID);
+        String dbLinkID = "ZDB-DBLINK-020710-33129";
+        MarkerDBLink experiment = expRep.getMarkDBLink(dbLinkID);
         assertTrue(experiment != null);
 
     }
@@ -165,48 +163,48 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void retrieveExperimentFigureStages2() {
         String pubID = "ZDB-PUB-060105-3";
 
-        List<ExperimentFigureStage> experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, null, null);
+        List<ExperimentFigureStage> experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
         // this represents 5 unique experiments
         assertThat(experiments.size(), greaterThan(14));
         assertThat(experiments.size(), lessThan(16));
 
         // Fig. 1
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, null, "ZDB-FIG-070109-23");
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, "ZDB-FIG-070109-23");
         assertThat(experiments.size(), greaterThan(2));
         assertThat(experiments.size(), lessThan(4));
 
         // Fig. S3
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, null, "ZDB-FIG-070109-26");
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, "ZDB-FIG-070109-26");
         assertThat(experiments.size(), greaterThan(1));
         assertThat(experiments.size(), lessThan(3));
 
         // mir206-1
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, "ZDB-GENE-050609-28", null, null);
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-GENE-050609-28", null, null);
         assertThat(experiments.size(), greaterThan(4));
         assertThat(experiments.size(), lessThan(6));
 
         // mir122
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, "ZDB-GENE-050609-27", null, null);
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-GENE-050609-27", null, null);
         assertThat(experiments.size(), greaterThan(3));
         assertThat(experiments.size(), lessThan(5));
 
         // genotype . .  .all the same
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, "ZDB-GENO-050209-5", null);
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, "ZDB-GENO-050209-5", null);
         assertThat(experiments.size(), greaterThan(14));
         assertThat(experiments.size(), lessThan(16));
 
         // genotype . .  .all the same
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, null, "ZDB-GENO-050209-3", null);
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, "ZDB-GENO-050209-3", null);
         assertThat(experiments.size(), equalTo(0));
 
         // genotype . .  .all the same
-        experiments = expRep.getExperimentFigureStagesByGeneAndFish2(pubID, "ZDB-GENE-050609-28", "ZDB-GENO-050209-5", "ZDB-FIG-070109-23");
+        experiments = expRep.getExperimentFigureStagesByGeneAndFish(pubID, "ZDB-GENE-050609-28", "ZDB-GENO-050209-5", "ZDB-FIG-070109-23");
         assertThat(experiments.size(), greaterThan(0));
         assertThat(experiments.size(), lessThan(2));
 
     }
 
-    //    @Test
+    @Test
     public void getExpressionExperiments() {
         String zdbID = "ZDB-PUB-990507-16";
 
@@ -214,7 +212,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertTrue(experiments != null);
         // alcam
         String geneID = "ZDB-GENE-990415-30";
-        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, null);
+        experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, null);
         assertTrue(experiments != null);
 
         // alcam and WT
@@ -222,7 +220,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 //        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishName);
 //        assertTrue(experiments != null);
         String fishZdbID = "ZDB-GENO-030619-2";
-        experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishZdbID);
+        experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, fishZdbID);
         assertTrue(experiments != null);
     }
 
@@ -248,14 +246,12 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
 
-    // no longer used
-//    @Test
+    @Test
     public void retrieveExperimentFigureStages() {
         String pubID = "ZDB-PUB-060105-3";
 
         List<ExperimentFigureStage> experiment = expRep.getExperimentFigureStagesByGeneAndFish(pubID, null, null, null);
         assertNotNull(experiment);
-
 
         // mir122
         String markerID = "ZDB-GENE-050609-27";
@@ -287,7 +283,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     // Excluded until we have the ontologyManager loaded into memory for the unit tests.
     // right now it would load all ontologies when trying to create an expression result record.
-    //@Test
+    @Test
+    @Ignore
     public void createExpressionResult() {
         String xpatexID = "ZDB-XPAT-050128-4";
 
