@@ -47,7 +47,7 @@ if ($HOST != "zygotix") then
     /bin/rm $pthLinux/$dirname/schemaFile.sql
     /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
     # Same fix as above, but using the new paths [KLS]
-    /bin/sed 's@/opt/zfin/www_homes/[A-Za-z]+/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
+    /bin/sed 's@/opt/zfin/www_homes/[a-z]*/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
     /bin/rm $pthLinux/$dirname/schemaFile.sql
     /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
     /bin/rm -rf <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
@@ -70,10 +70,6 @@ else
     /bin/sed 's@/research/zcentral/www_homes/<!--|INSTANCE|-->/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
     /bin/rm $pthLinux/$dirname/schemaFile.sql
     /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql
-    # Same fix as above, but using the new paths [KLS]   
-    /bin/sed 's@/opt/zfin/www_homes/[A-Za-z]+/lib/DB_functions/@/private/lib/c_functions/@g' $pthLinux/$dirname/schemaFile.sql > $pthLinux/$dirname/schemaTempFile.sql
-    /bin/rm $pthLinux/$dirname/schemaFile.sql
-    /bin/mv $pthLinux/$dirname/schemaTempFile.sql $pthLinux/$dirname/schemaFile.sql 
 
     chgrp -R fishadmin $pth/$dirname
     chgrp -R fishadmin $pthLinux/$dirname
