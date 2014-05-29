@@ -931,7 +931,7 @@ function showExaplanation(formObj) {
     </form>
     <div id="validationMapInfoText"></div>
     <form id="ignoreMapping">
-        <input type="button" value="Ignore Mapping Info" onclick="ignoreMappingInfo(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the mapping info with ${formBean.markerToDeleteViewString} will be deleted; non-conflicting mapping info will be associated with the gene retained.">
+        <input type="button" value="Ignore Mapping Info" onclick="ignoreMappingInfo(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the mapping info with ${formBean.markerToDeleteViewString} will be associated with the gene retained regardless of whether it conflicts or not.">
     </form>
     <div id="validationSTRText"></div>
 </c:if>
