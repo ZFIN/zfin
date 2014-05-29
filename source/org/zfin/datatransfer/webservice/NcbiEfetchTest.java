@@ -2,14 +2,11 @@ package org.zfin.datatransfer.webservice;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import org.junit.Test;
-import org.zfin.datatransfer.ServiceConnectionException;
-import org.zfin.datatransfer.microarray.GeoMicorarrayEntriesBean;
 import org.zfin.sequence.Sequence;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertNotNull;
-
+import static org.junit.Assert.assertNotNull;
 
 public class NcbiEfetchTest {
 
