@@ -6,7 +6,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import java.util.HashSet;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class ExpressionExperimentTest {
 

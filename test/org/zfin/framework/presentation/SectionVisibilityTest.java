@@ -6,7 +6,7 @@ import org.zfin.ontology.presentation.OntologyBean;
 import java.util.EnumMap;
 import java.util.List;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 /**
  * Class used for showing and hiding sections on a detail page.

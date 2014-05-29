@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.Marker;
 
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 

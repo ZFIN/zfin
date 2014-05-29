@@ -1,8 +1,8 @@
 package org.zfin;
 
 import de.oschoen.junit.runner.BatchTestRunner;
-import junit.framework.JUnit4TestAdapter;
 import org.jenkinsci.testinprogress.runner.ProgressSuite;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomyItemTest;
@@ -157,9 +157,9 @@ import org.zfin.util.*;
 })
 
 public class UnitTests {
-
-    public static junit.framework.Test suite() {
+    @BeforeClass
+    public static void setUpClass() {
+        System.out.println("Master setup");
         TestConfiguration.configure();
-        return new JUnit4TestAdapter(UnitTests.class);
     }
 }

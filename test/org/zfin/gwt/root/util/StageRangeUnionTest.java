@@ -8,7 +8,7 @@ import org.zfin.gwt.root.dto.StageDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class StageRangeUnionTest {
 
@@ -28,8 +28,8 @@ public class StageRangeUnionTest {
         dtos.add(efs);
 
         StageRangeUnion stageRange = new StageRangeUnion(dtos);
-        assertEquals(0.0F, stageRange.getStartHours());
-        assertEquals(0.75F, stageRange.getEndHours());
+        assertEquals(0.0F, stageRange.getStartHours(), 0.1);
+        assertEquals(0.75F, stageRange.getEndHours(), 0.1);
         assertEquals("Zygote", stageRange.getStartStageName());
         assertEquals("Prim-15", stageRange.getEndStageName());
 
@@ -63,8 +63,8 @@ public class StageRangeUnionTest {
         dtos.add(efs);
 
         StageRangeUnion stageRange = new StageRangeUnion(dtos);
-        assertEquals(0.0F, stageRange.getStartHours());
-        assertEquals(3.0F, stageRange.getEndHours());
+        assertEquals(0.0F, stageRange.getStartHours(), 0.1);
+        assertEquals(3.0F, stageRange.getEndHours(), 0.1);
         assertEquals("Zygote:1-cell", stageRange.getStartStageName());
         assertEquals("Pharyngula:Prim-25", stageRange.getEndStageName());
 
@@ -100,8 +100,8 @@ public class StageRangeUnionTest {
         dtos.add(efs);
 
         StageRangeUnion stageRange = new StageRangeUnion(dtos);
-        assertEquals(0.0F, stageRange.getStartHours());
-        assertEquals(0.75F, stageRange.getEndHours());
+        assertEquals(0.0F, stageRange.getStartHours(), 0.1);
+        assertEquals(0.75F, stageRange.getEndHours(), 0.1);
         assertEquals("Zygote:1-cell", stageRange.getStartStageName());
         assertEquals("Cleavage:8-cell", stageRange.getEndStageName());
 

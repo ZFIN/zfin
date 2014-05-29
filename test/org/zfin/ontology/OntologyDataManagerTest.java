@@ -8,7 +8,7 @@ import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.repository.RepositoryFactory;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 public class OntologyDataManagerTest extends AbstractDatabaseTest {
 

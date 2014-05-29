@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import javax.servlet.jsp.tagext.TagSupport;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class HighlightTagTest extends TagSupport {

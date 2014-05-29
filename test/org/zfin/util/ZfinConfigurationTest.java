@@ -11,8 +11,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Iterator;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test class for Configuration class.

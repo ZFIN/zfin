@@ -1,6 +1,5 @@
 package org.zfin;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.ontology.presentation.OntologyControllerTest;
@@ -19,8 +18,4 @@ import org.zfin.ontology.presentation.OntologyControllerTest;
 
 public class DbControllerTests {
 
-    public static junit.framework.Test suite() {
-        TestConfiguration.configure();
-        return new JUnit4TestAdapter(DbControllerTests.class);
-    }
 }

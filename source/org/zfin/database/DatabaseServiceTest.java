@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class DatabaseServiceTest {
 
@@ -266,7 +266,7 @@ public class DatabaseServiceTest {
     }
 
     private List<ForeignKey> createForeignKeyList(ForeignKey... foreignKeys) {
-        List<ForeignKey> foreignKeyList = new ArrayList<ForeignKey>(foreignKeys.length);
+        List<ForeignKey> foreignKeyList = new ArrayList<>(foreignKeys.length);
         Collections.addAll(foreignKeyList, foreignKeys);
         return foreignKeyList;
     }

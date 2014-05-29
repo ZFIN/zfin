@@ -1,6 +1,5 @@
 package org.zfin.repository;
 
-import junit.framework.AssertionFailedError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -21,7 +20,7 @@ import java.util.Properties;
 /**
  * Please provide JavaDoc info!!!
  */
-public abstract class HibernateTestCase extends junit.framework.TestCase {
+public abstract class HibernateTestCase  {
     private static SessionFactory sessions;
     private static Configuration cfg;
     private static Dialect dialect;
@@ -30,10 +29,6 @@ public abstract class HibernateTestCase extends junit.framework.TestCase {
 
     protected boolean recreateSchema() {
         return true;
-    }
-
-    public HibernateTestCase(String x) {
-        super(x);
     }
 
     protected void configure(Configuration cfg) {
@@ -121,44 +116,6 @@ public abstract class HibernateTestCase extends junit.framework.TestCase {
         }
     }
 
-    protected void runTest() throws Throwable {
-        final boolean stats = (sessions).getStatistics().isStatisticsEnabled();
-        try {
-            if (stats) sessions.getStatistics().clear();
-
-            super.runTest();
-
-            if (stats) sessions.getStatistics().logSummary();
-
-            if (session != null && session.isOpen()) {
-                if (session.isConnected()) session.connection().rollback();
-                session.close();
-                session = null;
-                fail("unclosed session");
-            } else {
-                session = null;
-            }
-        }
-        catch (Throwable e) {
-            try {
-                if (session != null && session.isOpen()) {
-                    if (session.isConnected()) session.connection().rollback();
-                    session.close();
-                }
-            }
-            catch (Exception ignore) {
-            }
-            try {
-                if (dropAfterFailure() && sessions != null) {
-                    sessions.close();
-                    sessions = null;
-                }
-            }
-            catch (Exception ignore) {
-            }
-            throw e;
-        }
-    }
 
     protected boolean dropAfterFailure() {
         return true;
@@ -208,15 +165,6 @@ public abstract class HibernateTestCase extends junit.framework.TestCase {
         return new Properties();
     }
 
-    public static void assertClassAssignability(Class source, Class target) throws AssertionFailedError {
-        if (!target.isAssignableFrom(source)) {
-            throw new AssertionFailedError(
-                    "Classes were not assignment-compatible : source<" + source.getName() +
-                            "> target<" + target.getName() + ">"
-            );
-        }
-    }
-
     protected static final Log SKIP_LOG = LogFactory.getLog("org.hibernate.test.SKIPPED");
 
     protected boolean dialectSupportsEmptyInList(String testdescription) {
@@ -255,6 +203,6 @@ public abstract class HibernateTestCase extends junit.framework.TestCase {
     }
 
     public String fullTestName() {
-        return this.getName() + " (" + this.getClass().getName() + ")";
+        return " (" + this.getClass().getName() + ")";
     }
 }

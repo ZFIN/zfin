@@ -13,7 +13,7 @@ import org.zfin.ontology.GenericTerm;
 import java.util.HashSet;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class SequenceTargetingReagentStatisticsTest {
 

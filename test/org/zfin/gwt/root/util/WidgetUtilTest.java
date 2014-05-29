@@ -2,7 +2,7 @@ package org.zfin.gwt.root.util;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 //import com.google.gwt.junit.client.GWTTestCase;
 
 public class WidgetUtilTest {//extends GWTTestCase {

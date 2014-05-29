@@ -31,7 +31,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;

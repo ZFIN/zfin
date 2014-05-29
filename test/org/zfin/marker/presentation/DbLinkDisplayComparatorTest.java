@@ -3,7 +3,7 @@ package org.zfin.marker.presentation;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DbLinkDisplayComparatorTest {
 

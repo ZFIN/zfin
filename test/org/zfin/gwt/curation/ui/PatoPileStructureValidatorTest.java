@@ -6,8 +6,8 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.PhenotypeStatementDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.zfin.gwt.root.dto.OntologyDTO.*;
 
 public class PatoPileStructureValidatorTest {

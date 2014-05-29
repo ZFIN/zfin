@@ -1,6 +1,5 @@
 package org.zfin;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.datatransfer.doi.DOITest;
@@ -25,8 +24,4 @@ import org.zfin.wiki.WikiConnectTest;
 
 public class ThirdPartyServiceTests {
 
-    public static junit.framework.Test suite() {
-        TestConfiguration.configure();
-        return new JUnit4TestAdapter(ThirdPartyServiceTests.class);
-    }
 }

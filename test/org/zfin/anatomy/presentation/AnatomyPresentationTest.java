@@ -1,6 +1,5 @@
 package org.zfin.anatomy.presentation;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.ontology.*;
@@ -11,10 +10,6 @@ import static org.junit.Assert.*;
 
 @SuppressWarnings({"FeatureEnvy"})
 public class AnatomyPresentationTest {
-
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(AnatomyPresentationTest.class);
-    }
 
     @Test
     public void displayRelationshipsOnDetailPage() {

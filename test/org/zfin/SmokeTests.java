@@ -1,6 +1,5 @@
 package org.zfin;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.AnatomySmokeTest;
@@ -11,7 +10,6 @@ import org.zfin.expression.presentation.FigureSummarySmokeTest;
 import org.zfin.feature.presentation.FeatureDetailSmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.fish.smoketest.FishSmokeTest;
-import org.zfin.gwt.ExpressionSmokeTest;
 import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.mutant.smoketest.ConstructSmokeTest;
 import org.zfin.ontology.presentation.OntologySmokeTest;
@@ -50,10 +48,5 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
 
 })
 public class SmokeTests {
-
-    public static junit.framework.Test suite() {
-        TestConfiguration.configure();
-        return new JUnit4TestAdapter(SmokeTests.class);
-    }
 
 }

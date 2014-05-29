@@ -8,8 +8,8 @@ import org.zfin.gwt.root.dto.StageDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class StageRangeIntersectionTest {
@@ -29,8 +29,8 @@ public class StageRangeIntersectionTest {
         dtos.add(efs);
 
         StageRangeIntersection stageRange = new StageRangeIntersection(dtos);
-        assertEquals(0.0F, stageRange.getStartHours());
-        assertEquals(0.75F, stageRange.getEndHours());
+        assertEquals(0.0F, stageRange.getStartHours(), 0.1);
+        assertEquals(0.75F, stageRange.getEndHours(), 0.1);
 
         assertTrue(stageRange.isOverlap(start, start));
 
@@ -58,8 +58,8 @@ public class StageRangeIntersectionTest {
         dtos.add(efs);
 
         StageRangeIntersection stageRange = new StageRangeIntersection(dtos);
-        assertEquals(0.75F, stageRange.getStartHours());
-        assertEquals(2.0F, stageRange.getEndHours());
+        assertEquals(0.75F, stageRange.getStartHours(), 0.1);
+        assertEquals(2.0F, stageRange.getEndHours(), 0.1);
 
         start.setStartHours(0.0F);
         start.setAbbreviation("Guenther");
@@ -111,8 +111,8 @@ public class StageRangeIntersectionTest {
         dtos.add(efs);
 
         StageRangeIntersection stageRange = new StageRangeIntersection(dtos);
-        assertEquals(0.0F, stageRange.getStartHours());
-        assertEquals(2.0F, stageRange.getEndHours());
+        assertEquals(0.0F, stageRange.getStartHours(), 0.1);
+        assertEquals(2.0F, stageRange.getEndHours(), 0.1);
 
         start.setStartHours(0.0F);
         end.setStartHours(0.0F);
@@ -161,8 +161,8 @@ public class StageRangeIntersectionTest {
 
         StageRangeIntersection stageRange = new StageRangeIntersection(dtos);
         assertTrue(!stageRange.hasOverlap());
-        assertEquals(-2.0F, stageRange.getStartHours());
-        assertEquals(-2.0F, stageRange.getEndHours());
+        assertEquals(-2.0F, stageRange.getStartHours(), 0.1);
+        assertEquals(-2.0F, stageRange.getEndHours(), 0.1);
 
         start.setStartHours(0.0F);
         end.setStartHours(0.0F);

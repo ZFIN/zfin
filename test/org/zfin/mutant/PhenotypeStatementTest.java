@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 public class PhenotypeStatementTest {
 

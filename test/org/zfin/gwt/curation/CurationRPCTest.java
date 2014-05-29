@@ -8,7 +8,7 @@ import org.zfin.gwt.root.dto.ExperimentDTO;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 
 public class CurationRPCTest extends AbstractDatabaseTest{

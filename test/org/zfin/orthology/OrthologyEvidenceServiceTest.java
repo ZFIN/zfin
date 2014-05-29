@@ -5,7 +5,7 @@ import org.zfin.publication.Publication;
 
 import java.util.*;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.hibernate.validator.util.Contracts.assertNotNull;
 
 public class OrthologyEvidenceServiceTest {

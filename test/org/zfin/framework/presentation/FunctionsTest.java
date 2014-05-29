@@ -9,9 +9,9 @@ import org.zfin.ontology.presentation.OntologyBean;
 import java.util.Calendar;
 import java.util.Date;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Class that is called from JSP through a function call.

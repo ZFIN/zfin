@@ -43,7 +43,6 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
     public static final String CLASSES_DIR = "home" + FILE_SEP + "WEB-INF" + FILE_SEP + "classes" + FILE_SEP;
 
     public RunHibernateConfigurationChecks(String x) {
-        super(x);
         setup();
     }
 

@@ -3,7 +3,7 @@ package org.zfin.ontology.datatransfer;
 import org.junit.Test;
 import org.zfin.ontology.datatransfer.service.LoadOntology;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Load a given ontology.

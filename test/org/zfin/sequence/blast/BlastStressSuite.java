@@ -1,9 +1,7 @@
 package org.zfin.sequence.blast;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.zfin.TestConfiguration;
 
 
 @RunWith(Suite.class)
@@ -20,8 +18,4 @@ import org.zfin.TestConfiguration;
  */
 public class BlastStressSuite {
 
-    public static junit.framework.Test suite() {
-        TestConfiguration.configure();
-        return new JUnit4TestAdapter(BlastStressSuite.class);
-    }
 }

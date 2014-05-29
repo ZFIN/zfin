@@ -1,6 +1,5 @@
 package org.zfin;
 
-import junit.framework.JUnit4TestAdapter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
@@ -13,9 +12,9 @@ import org.zfin.datatransfer.go.service.GafServiceTest;
 import org.zfin.datatransfer.go.service.GoaGafServiceTest;
 import org.zfin.datatransfer.go.service.PaintGafServiceTest;
 import org.zfin.expression.FigureServiceTest;
-import org.zfin.feature.FeatureServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
+import org.zfin.feature.FeatureServiceTest;
 import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
@@ -127,8 +126,4 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
 
 public class DbUnitTests {
 
-    public static junit.framework.Test suite() {
-        TestConfiguration.configure();
-        return new JUnit4TestAdapter(DbUnitTests.class);
-    }
 }

@@ -2,7 +2,7 @@ package org.zfin.util;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.ws.test.support.AssertionErrors.assertTrue;
 
 public class DatabaseJdbcStatementTest {

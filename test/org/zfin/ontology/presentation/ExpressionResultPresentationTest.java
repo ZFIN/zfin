@@ -6,7 +6,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 /**
  * Display the full list of post composed terms and their hyperlink.

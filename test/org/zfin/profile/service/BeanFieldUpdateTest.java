@@ -1,8 +1,8 @@
 package org.zfin.profile.service;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 
 

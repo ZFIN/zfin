@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.database.presentation.Table;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Inspect Informix Lucene index. Find out how many max clauses are needed.

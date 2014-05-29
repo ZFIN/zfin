@@ -8,7 +8,7 @@ import org.zfin.publication.Publication;
 import java.util.Calendar;
 import java.util.Date;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class InfrastructureServiceTest extends AbstractDatabaseTest {
