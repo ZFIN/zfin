@@ -1,7 +1,9 @@
 package org.zfin.sequence.blast;
 
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.zfin.TestConfiguration;
 
 
 @RunWith(Suite.class)
@@ -17,5 +19,10 @@ import org.junit.runners.Suite;
  *
  */
 public class BlastStressSuite {
+
+    @BeforeClass
+    public static void setUpClass() {
+        TestConfiguration.configure();
+    }
 
 }

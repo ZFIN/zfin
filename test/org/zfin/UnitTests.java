@@ -157,9 +157,9 @@ import org.zfin.util.*;
 })
 
 public class UnitTests {
+
     @BeforeClass
     public static void setUpClass() {
-        System.out.println("Master setup");
         TestConfiguration.configure();
     }
 }
