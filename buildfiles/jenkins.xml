@@ -41,7 +41,8 @@
     <target name="deploy-jobs" depends="_copyDefaultConfig" description="Copy jobs into Jenkins_home">
         <tstamp/>
         <echo message="Deploy jobs to into: ${JENKINS_HOME}"/>
-        <copy todir="${JENKINS_HOME}/jobs">
+        <!-- ensure that jobs will always be copied over -->
+        <copy todir="${JENKINS_HOME}/jobs" overwrite="true">
             <fileset dir="${basedir}/server_apps/jenkins/jobs"/>
         </copy>
         <antcall target="add-triggers"/>
