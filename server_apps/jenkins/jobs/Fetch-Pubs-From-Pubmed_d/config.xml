@@ -71,7 +71,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
       <contentType>text/html</contentType>
       <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
-      <attachmentsPattern>server_apps/data_transfer/PUBMED/*.txt,server_apps/data_transfer/PUBMED/*.log</attachmentsPattern>
+      <attachmentsPattern></attachmentsPattern>
       <presendScript></presendScript>
       <attachBuildLog>true</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>
