@@ -24,8 +24,7 @@ echo "done with file delete" ;
 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt
 
 if ($? != 0) then
- echo "trying to send notification runConstructMart on <!--|DB_NAME|-->";
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt -s "regen construct mart (the building tables, not the public tables) failed on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+ echo "egen construct mart (the building tables, not the public tables) failed on";
 exit 1;
 endif
 
@@ -36,10 +35,10 @@ cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
 /private/bin/ant run-constructmart-unittests >&! reports/tests/constructMartUnitTests.txt
+cp reports/tests/constructMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/constructMart/.
 
 if ($? != 0) then
-   echo "trying to send notification unit tests on <!--|DB_NAME|-->";  
- /local/bin/mutt -a <!--|SOURCEROOT|-->/reports/tests/constructMartUnitTests.txt -s "regen construct mart (the building tables, not the public tables) failed on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+   echo "regen construct mart (the building tables, not the public tables) failed on unit tests";  
 exit 1;
 endif
 
