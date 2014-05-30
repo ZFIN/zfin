@@ -23,7 +23,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/warehouse/runChromosomeMartReport.txt,$SOURCEROOT/reports/tests/chromosomeMartUnitTests.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/warehouse/chromosomeMart/*.txt</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -66,7 +66,7 @@
           <contentType>default</contentType>
           <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
           <defaultContent>$DEFAULT_CONTENT</defaultContent>
-          <attachmentsPattern></attachmentsPattern>
+          <attachmentsPattern>server_apps/DB_maintenance/warehouse/chromosomeMart/*.txt</attachmentsPattern>
           <presendScript></presendScript>
           <attachBuildLog>false</attachBuildLog>
           <compressBuildLog>false</compressBuildLog>

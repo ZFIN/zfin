@@ -24,8 +24,7 @@ echo "done with file delete" ;
 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runChromosomeMartReport.txt
 
 if ($? != 0) then
- echo "trying to send notification runChromosomeMart";
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runChromosomeMartReport.txt -s "regen chromosome mart (the building tables, not the public tables) failed on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+ echo "regen chromosome mart (the building tables, not the public tables) failed";
 exit 1;
 endif
 
@@ -36,10 +35,10 @@ cd <!--|SOURCEROOT|-->
 echo "cd'd to <!--|SOURCEROOT|-->" ;
 
 /private/bin/ant run-chromosomemart-unittests >&! reports/tests/chromosomeMartUnitTests.txt
+cp reports/tests/chromosomeMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/.
 
 if ($? != 0) then
-   echo "trying to send notification unit tests on <!--|DB_NAME|--> ";  
- /local/bin/mutt -a <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTests.txt -s "regen chromosome mart (the building tables, not the public tables) failed on <!--|DB_NAME|--> " -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+   echo "regen chromosome mart (the building tables, not the public tables) failed on unit tests";
 exit 1;
 endif
 
@@ -50,13 +49,10 @@ endif
 <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/chromosomeMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenChromosomeMartReport.txt
 
 if ($? != 0) then
-   echo "trying to send notification regenChromosomeMartReport on <!--|DB_NAME|-->";  
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenChromosomeMartReport.txt -s "refresh chromosome mart (the public tables) failed and was rolled back on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+   echo "refresh chromosome mart (the public tables) failed and was rolled back";
 exit 1;
 endif
 
-echo "sending success email." ;
-
-/local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenChromosomeMartReport.txt -s "regen chromosomemart successful on <!--|DB_NAME|-->." -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+echo "success" ;
 
 exit 0;
