@@ -24,8 +24,7 @@ echo "done with file delete" ;
 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMartReport.txt
 
 if ($? != 0) then
- echo "trying to send notification runFishMart";
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/runFishMartReport.txt -s "regen fish mart (the building tables, not the public tables) failed on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+ echo "regen fish mart (the building tables, not the public tables) failed";
 exit 1;
 endif
 
@@ -39,8 +38,7 @@ echo "cd'd to <!--|SOURCEROOT|-->" ;
 /private/bin/ant run-fishmart-unittests >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/fishMartUnitTests.txt
 
 if ($? != 0) then
-   echo "trying to send notification unit tests";  
- /local/bin/mutt -a <!--|SOURCEROOT|-->/reports/tests/fishMartUnitTests.txt -s "regen fish mart (the building tables, not the public tables) failed on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+   echo "regen fish mart (the building tables, not the public tables) failed on unit tests";
 exit 1;
 endif
 
@@ -51,13 +49,11 @@ echo "done with ant tests" ;
 <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/fishMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/regenFishMartReport.txt
 
 if ($? != 0) then
-   echo "trying to send notification regenFishMartReport";  
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/regenFishMartReport.txt -s "refresh fish mart (the public tables) failed and was rolled back  on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+   echo "refresh fish mart (the public tables) failed and was rolled back";
 exit 1;
 endif
 
-echo "sending success email." ;
+echo "success" ;
 
-/local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/fishMart/regenFishMartReport.txt -s "regen fishmart successful  on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
 
 exit 0;
