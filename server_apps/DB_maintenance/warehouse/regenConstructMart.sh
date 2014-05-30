@@ -50,13 +50,10 @@ endif
 <!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/constructMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt
 
 if ($? != 0) then
-   echo "trying to send notification regenConstructMartReport on <!--|DB_NAME|-->";  
- /local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt -s "refresh construct mart (the public tables) failed and was rolled back on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char; 
+   echo "refresh construct mart (the public tables) failed and was rolled back";
 exit 1;
 endif
 
-echo "sending success email on <!--|DB_NAME|-->. " ;
-
-/local/bin/mutt -a <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt -s "regen constructmart successful on <!--|DB_NAME|-->." -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+echo "success" ;
 
 exit 0;

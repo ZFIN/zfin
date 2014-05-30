@@ -66,7 +66,7 @@
           <contentType>default</contentType>
           <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
           <defaultContent>$DEFAULT_CONTENT</defaultContent>
-          <attachmentsPattern></attachmentsPattern>
+          <attachmentsPattern>server_apps/DB_maintenance/warehouse/runConstructMartReport.txt,$SOURCEROOT/reports/tests/constructMartUnitTests.txt</attachmentsPattern>
           <presendScript></presendScript>
           <attachBuildLog>false</attachBuildLog>
           <compressBuildLog>false</compressBuildLog>
