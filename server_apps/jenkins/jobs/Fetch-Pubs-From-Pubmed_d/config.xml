@@ -37,7 +37,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>${SWISSPROT_EMAIL_REPORT} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
+            <recipientList>informix@cs.uoregon.edu van_slyke@zfin.org dhowe@zfin.org ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
@@ -53,7 +53,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
-            <recipientList>${SWISSPROT_EMAIL_REPORT}</recipientList>
+            <recipientList>informix@cs.uoregon.edu van_slyke@zfin.org dhowe@zfin.org</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
