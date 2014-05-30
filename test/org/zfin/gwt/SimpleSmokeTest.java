@@ -6,6 +6,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.zfin.AbstractSecureSmokeTest;
@@ -19,38 +20,6 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
 
     public SimpleSmokeTest(WebClient webClient) {
         super(webClient);
-    }
-
-    @Test
-    public void testSimpleComposite() throws Exception {
-        login(webClient);
-        HtmlPage page = webClient.getPage(secureUrlDomain + "/action/devtool/gwt/modules");
-        assertEquals("GWT Modules", page.getTitleText());
-        HtmlAnchor htmlAnchor = (HtmlAnchor) page.getByXPath("//a[ . = 'Test: TestComposite']").get(0);
-        assertNotNull(htmlAnchor);
-        page = htmlAnchor.click();
-        webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-        HtmlButton htmlButton1 = (HtmlButton) page.getByXPath("//button[. = 'b1']").get(0);
-        assertNotNull(htmlButton1);
-        HtmlButton htmlButton2 = (HtmlButton) page.getByXPath("//button[. = 'b2']").get(0);
-        assertNotNull(htmlButton2);
-        HtmlButton htmlButton3 = (HtmlButton) page.getByXPath("//button[. = 'b3']").get(0);
-        assertNotNull(htmlButton3);
-        HtmlDivision htmlDivision = (HtmlDivision) page.getByXPath("//div[@class='gwt-Label']").get(0);
-        assertNotNull(htmlDivision);
-        assertEquals("dogz", htmlDivision.getTextContent());
-        htmlButton1.click();
-        assertEquals("catz", htmlDivision.getTextContent());
-        htmlButton2.click();
-        assertEquals("dogz", htmlDivision.getTextContent());
-
-        webClient.setAlertHandler(new AlertHandler() {
-            @Override
-            public void handleAlert(Page page, String s) {
-                assertEquals("red alert", s);
-            }
-        });
-        htmlButton3.click();
     }
 
     @Test

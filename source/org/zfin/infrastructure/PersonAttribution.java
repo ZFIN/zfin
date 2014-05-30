@@ -23,6 +23,7 @@ public class PersonAttribution extends RecordAttribution implements Serializable
      * @param personAttribution PersonAttribution
      * @return comparison integer
      */
+    @Override
     public int compareTo(PersonAttribution personAttribution) {
         if (personAttribution == null)
             return -1;

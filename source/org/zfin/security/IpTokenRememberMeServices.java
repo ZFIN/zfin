@@ -2,6 +2,7 @@ package org.zfin.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
@@ -21,6 +22,10 @@ import java.util.Date;
  */
 public class IpTokenRememberMeServices extends TokenBasedRememberMeServices{
 
+    public IpTokenRememberMeServices(String key, UserDetailsService userDetailsService) {
+        super(key, userDetailsService);
+    }
+
     @Override
     protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request, HttpServletResponse response) {
 
@@ -32,7 +37,7 @@ public class IpTokenRememberMeServices extends TokenBasedRememberMeServices{
         long tokenExpiryTime;
 
         try {
-            tokenExpiryTime = new Long(cookieTokens[1]).longValue();
+            tokenExpiryTime = new Long(cookieTokens[1]);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidCookieException("Cookie token[1] did not contain a valid number (contained '" +

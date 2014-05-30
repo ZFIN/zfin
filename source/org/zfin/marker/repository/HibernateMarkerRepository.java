@@ -10,6 +10,7 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
@@ -143,7 +144,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Criteria criteria = session.createCriteria(Marker.class);
         criteria.add(Restrictions.sqlRestriction("lower({alias}.mrkr_abbrev) = lower(?) "
                 , abbreviation.toLowerCase()
-                , Hibernate.STRING
+                ,  StandardBasicTypes.STRING
         ));
         return (Marker) criteria.uniqueResult();
     }

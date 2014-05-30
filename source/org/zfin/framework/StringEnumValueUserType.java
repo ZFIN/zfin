@@ -86,7 +86,7 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
 
     public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
         if (value == null) {
-            st.setNull(index, Hibernate.STRING.sqlType());
+            st.setNull(index, StandardBasicTypes.STRING.sqlType());
         } else {
             if (value instanceof Ontology) {
                 Ontology ontology = (Ontology) value;

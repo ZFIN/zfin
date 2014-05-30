@@ -2,7 +2,7 @@ package org.zfin.profile;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -311,7 +311,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         if (accountInfo == null)
             return null;
         String role = accountInfo.getRole();
-        GrantedAuthority gr = new GrantedAuthorityImpl(role);
+        GrantedAuthority gr = new SimpleGrantedAuthority(role);
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
         grantedAuthorities.add(gr);
         return grantedAuthorities;

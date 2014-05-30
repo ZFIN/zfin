@@ -28,11 +28,11 @@
     </bean>
 
     <bean id="ipRememberMeService" class="org.zfin.security.IpTokenRememberMeServices" >
-        <property name="userDetailsService" ref="cachingUserDetailService"/>
+        <constructor-arg value="ZFIN_KEY" />
+        <constructor-arg ref="userDetailsService" />
         <property name="cookieName" value="ZFIN_REMEMBER_ME"/>
         <property name="tokenValiditySeconds" value="${VALID_SESSION_TIMEOUT_SECONDS}"/>
         <!--want a parentColumn that is rated strong to reduce likelihood of reverse engineering-->
-        <property name="key" value="ZFIN_KEY"/>
         <property name="useSecureCookie" value="false"/>
     </bean>
 

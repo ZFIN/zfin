@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.zfin.gwt.SimpleSmokeTest;
 import org.zfin.gwt.curation.PileConstructionSmokeTest;
-import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.gwt.marker.AntibodyEditSmokeTest;
 import org.zfin.gwt.marker.GeneEditSmokeTest;
 
@@ -21,7 +20,6 @@ import org.zfin.gwt.marker.GeneEditSmokeTest;
 
         AntibodyEditSmokeTest.class,
         GeneEditSmokeTest.class,
-        LookupSmokeTest.class,
         /*commenting out MorpholinoAddSMokeTst for now. Freom release 1053 on, morphos are no longer created using the app page.
         MorpholinoAddSmokeTest.class,*/
         PileConstructionSmokeTest.class,

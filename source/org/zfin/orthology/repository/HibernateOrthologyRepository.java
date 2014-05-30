@@ -5,6 +5,7 @@ import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.zfin.criteria.ZfinCriteria;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.Updates;
@@ -325,7 +326,7 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
         if (criteria.getFirstRow() == 1) {
             SQLQuery countQuery = session.createSQLQuery(sqlCount.toString());
-            countQuery.addScalar("count", Hibernate.INTEGER);
+            countQuery.addScalar("count", StandardBasicTypes.INTEGER);
             repositoryResults[1] = countQuery.uniqueResult();
         }
 
