@@ -4,13 +4,13 @@
 
 setenv INSTANCE <!--|INSTANCE|-->;
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runChromosomeMartReport.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runChromosomeMartReport.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMartReport.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMartReport.txt
 
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenChromosomeMartReport.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenChromosomeMartReport.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/regenChromosomeMartReport.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/regenChromosomeMartReport.txt
 
 endif
 
@@ -18,10 +18,14 @@ if ( -e <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTests.txt) then
  /bin/rm <!--|SOURCEROOT|-->/reports/tests/chromosomeMartUnitTests.txt
 endif
 
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/chromosomeMartUnitTests.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/chromosomeMartUnitTests.txt
+
+endif
 
 echo "done with file delete" ;
 # build up the warehouse
-<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runChromosomeMartReport.txt
+<!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMart.sh <!--|DB_NAME|--> >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/chromosomeMart/runChromosomeMartReport.txt
 
 if ($? != 0) then
  echo "regen chromosome mart (the building tables, not the public tables) failed";

@@ -4,18 +4,22 @@
 
 setenv INSTANCE <!--|INSTANCE|-->;
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runConstructMartReport.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/runConstructMartReport.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/runConstructMartReport.txt
 
 endif
 
-if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenConstructMartReport.txt) then
- /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/regenConstructMartReport.txt
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/regenConstructMartReport.txt
 
 endif
 
 if ( -e <!--|SOURCEROOT|-->/reports/tests/constructMartUnitTests.txt) then
  /bin/rm <!--|SOURCEROOT|-->/reports/tests/constructMartUnitTests.txt
+endif
+
+if ( -e <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/constructMartUnitTests.txt) then
+ /bin/rm <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/constructMart/constructMartUnitTests.txt
 endif
 
 
