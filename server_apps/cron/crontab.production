@@ -148,7 +148,7 @@
 #
 # Nights   When      Comments
 # SMTWT     2am   Sequentially run regen functions.
-00 02 * * 0-5 cd <!--|ROOT_PATH|-->/server_apps/DB_maintenance;regen.sh;
+#00 02 * * 0-5 cd <!--|ROOT_PATH|-->/server_apps/DB_maintenance;regen.sh;
 #
 #
 # SMTWT     3am check for orphans in zdb_active_data
