@@ -6,6 +6,11 @@ rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.
 
 rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/intermineData/
 
+if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataDate ]; then
+  mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataDate/
+fi;
+
+
 if [ ! -d <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/mutagenMutagee ]; then
   mkdir <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/mutagenMutagee/
 fi;
