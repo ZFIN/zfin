@@ -15,6 +15,7 @@
     </hudson.triggers.TimerTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
+    <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; reportLabAddressChanges.sh</command>
