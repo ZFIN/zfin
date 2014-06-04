@@ -68,6 +68,9 @@ given ($ARGV[0]) {
     when ("darwin") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start darwin";
     }
+    when ("gorp") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start gorp";
+    }
     when ("xray") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start xray";
     }

@@ -58,14 +58,15 @@ given ($ARGV[0]) {
     when ("crickdb") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop crick_test";
     }
-
     when ("darwin") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop darwin";
+    }
+    when ("gorp") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop gorp";
     }
     when ("xray") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop xray";
     }
-
     when ("darwindb") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop darwin";
     }

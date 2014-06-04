@@ -64,9 +64,11 @@ given ($ARGV[0]) {
     when ("xraydb") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart xray";
     }
-
     when ("darwin") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart darwin";
+    }
+    when ("gorp") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart gorp";
     }
     when ("xray") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart xray";
