@@ -40,6 +40,7 @@ public class MappingDetailController {
                                      Model model) throws Exception {
         Panel panel = getLinkageRepository().getPanel(panelID);
         model.addAttribute("panel", panel);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mapping Panel: " + panel.getName());
         model.addAttribute("citationCount", getPublicationRepository().getNumberDirectPublications(panelID));
         return "mapping/panel-detail.page";
     }
@@ -81,6 +82,7 @@ public class MappingDetailController {
             Collections.sort(mappedMarkerList, new ScoringSort());
             model.addAttribute("mappedMarkerList", mappedMarkerList);
         }
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Scoring: " + marker.getAbbreviation() + " on " + panel.getName());
         return "mapping/show-scoring.page";
     }
 

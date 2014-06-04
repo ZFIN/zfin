@@ -10,8 +10,9 @@ import org.zfin.expression.presentation.FigureSummarySmokeTest;
 import org.zfin.feature.presentation.FeatureDetailSmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.fish.smoketest.FishSmokeTest;
-import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.gwt.lookup.LookupSmokeTest;
+import org.zfin.httpunittest.MarkerViewSmokeTest;
+import org.zfin.mapping.MappingDetailSmokeTest;
 import org.zfin.mutant.smoketest.ConstructSmokeTest;
 import org.zfin.ontology.presentation.OntologySmokeTest;
 import org.zfin.publication.presentation.PublicationCloseSmokeTest;
@@ -39,7 +40,8 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         FigureViewSmokeTest.class,
         ConstructSmokeTest.class,
         GenotypeDetailSmokeTest.class,
-	LookupSmokeTest.class,
+        LookupSmokeTest.class,
+        MappingDetailSmokeTest.class,
         MarkerSoapSmokeTest.class,
         MarkerSoapClientSmokeTest.class,
         MarkerViewSmokeTest.class,
