@@ -18,7 +18,8 @@ public class FeatureMarkerLinkageMember extends LinkageMember {
 
     public void setMarker(Marker marker) {
         this.marker = marker;
-        entity = marker;
+        entityOne = feature;
+        entityTwo = marker;
     }
 
     public Feature getFeature() {

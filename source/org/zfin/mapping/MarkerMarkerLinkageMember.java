@@ -25,7 +25,8 @@ public class MarkerMarkerLinkageMember extends LinkageMember {
 
     public void setPairedMarker(Marker pairedMarker) {
         this.pairedMarker = pairedMarker;
-        entity = pairedMarker;
+        entityOne = marker;
+        entityTwo = pairedMarker;
     }
 
     @Override

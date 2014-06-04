@@ -389,4 +389,13 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(singletonLinkage);
         assertEquals("13", singletonLinkage.get(0).getLinkage().getChromosome());
     }
+
+    @Test
+    public void getLinkageInfo() {
+
+        // pax2a linkage
+        Linkage linkage = getLinkageRepository().getLinkage("ZDB-LINK-050822-1");
+        assertNotNull(linkage);
+        assertEquals("13", linkage.getChromosome());
+    }
 }

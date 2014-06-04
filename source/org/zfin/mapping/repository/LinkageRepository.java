@@ -159,8 +159,16 @@ public interface LinkageRepository {
 
     /**
      * Retrieve singleton linkage records.
+     *
      * @return
      */
     List<SingletonLinkage> getSingletonLinkage(ZdbID zdbID);
 
+    /**
+     * Retrieve linkage entity by ID
+     *
+     * @param linkageID id
+     * @return linkage object
+     */
+    Linkage getLinkage(String linkageID);
 }

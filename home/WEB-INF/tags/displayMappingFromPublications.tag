@@ -15,7 +15,10 @@
                 <th style="width: 5%">Chr</th>
                 <th style="width: 5%">Distance</th>
                 <th style="width: 20%">Publication / Person</th>
-                <th style="width: 60%">Comments</th>
+                <th style="width: 55%">Comments</th>
+                <authz:authorize ifAnyGranted="root">
+                    <th>Linkage</th>
+                </authz:authorize>
             </tr>
             <c:forEach var="member" items="${linkageMemberList}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
@@ -27,8 +30,12 @@
                         <zfin:link entity="${member.linkage.reference}"/>
                     </td>
                     <td>
-                        <zfin2:toggleTextLength text=" ${member.linkage.comments}" idName="${zfn:generateRandomDomID()}" shortLength="80"/>
+                        <zfin2:toggleTextLength text=" ${member.linkage.comments}" idName="${zfn:generateRandomDomID()}"
+                                                shortLength="80"/>
                     </td>
+                    <authz:authorize ifAnyGranted="root">
+                        <td><a href="/action/mapping/linkage/${member.linkage.zdbID}">${member.linkage.zdbID}</a></td>
+                    </authz:authorize>
                 </zfin:alternating-tr>
             </c:forEach>
         </table>

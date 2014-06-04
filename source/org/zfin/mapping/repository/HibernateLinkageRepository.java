@@ -293,6 +293,11 @@ public class HibernateLinkageRepository implements LinkageRepository {
     }
 
     @Override
+    public Linkage getLinkage(String linkageID) {
+        return (Linkage) HibernateUtil.currentSession().load(Linkage.class, linkageID);
+    }
+
+    @Override
     public Panel getPanel(String panelID) {
         return (Panel) HibernateUtil.currentSession().get(Panel.class, panelID);
     }

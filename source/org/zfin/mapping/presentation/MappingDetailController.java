@@ -105,6 +105,21 @@ public class MappingDetailController {
         return "mapping-summary.simple-page";
     }
 
+    @RequestMapping("/linkage/{linkageID}")
+    protected String showLinkageInfo(@PathVariable String linkageID,
+                                     Model model) throws Exception {
+
+        if (linkageID == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, "No linkageID found");
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        Linkage linkage = getLinkageRepository().getLinkage(linkageID);
+        model.addAttribute("linkage", linkage);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Linkage: " + linkageID);
+        return "mapping/linkage.page";
+    }
+
 
     @RequestMapping("/detail/{mutantID}")
     protected String showMappingDetail(@PathVariable String mutantID,

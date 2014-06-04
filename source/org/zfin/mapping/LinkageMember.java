@@ -24,7 +24,8 @@ abstract public class LinkageMember implements Cloneable, Comparable<LinkageMemb
 
     // Ensure to set these variables by the sub classes
     // attributes of the second entity
-    protected EntityZdbID entity;
+    protected EntityZdbID entityOne;
+    protected EntityZdbID entityTwo;
 
     public long getId() {
         return id;
@@ -82,6 +83,14 @@ abstract public class LinkageMember implements Cloneable, Comparable<LinkageMemb
         this.markerTwoZdbId = markerTwoZdbId;
     }
 
+    public EntityZdbID getEntityOne() {
+        return entityOne;
+    }
+
+    public EntityZdbID getEntityTwo() {
+        return entityTwo;
+    }
+
     /**
      * Returns the second marker / feature, named as linked member
      *
@@ -99,14 +108,14 @@ abstract public class LinkageMember implements Cloneable, Comparable<LinkageMemb
         int chromosomeComparison = linkage.getChromosome().compareTo(o.getLinkage().getChromosome());
         if (chromosomeComparison != 0)
             return chromosomeComparison;
-        if (!entity.getEntityType().equals(o.entity.getEntityType())) {
-            if (entity.getEntityType().equals(Feature.MUTANT))
+        if (!entityOne.getEntityType().equals(o.entityOne.getEntityType())) {
+            if (entityOne.getEntityType().equals(Feature.MUTANT))
                 return 1;
-            else if (o.entity.getEntityType().equals(Feature.MUTANT))
+            else if (o.entityOne.getEntityType().equals(Feature.MUTANT))
                 return -1;
             else
-                return entity.getEntityType().compareTo(o.entity.getEntityType());
+                return entityOne.getEntityType().compareTo(o.entityOne.getEntityType());
         }
-        return entity.getAbbreviationOrder().compareToIgnoreCase(o.entity.getAbbreviationOrder());
+        return entityOne.getAbbreviationOrder().compareToIgnoreCase(o.entityOne.getAbbreviationOrder());
     }
 }

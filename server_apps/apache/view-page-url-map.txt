@@ -22,6 +22,7 @@ GTCONSTRCT	/action/marker/view/ZDB-GTCONSTRCT
 IMAGE	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-imageview.apg&OID=ZDB-IMAGE
 JRNL    /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-journalview.apg&OID=ZDB-JRNL
 LAB	/action/profile/view/ZDB-LAB
+LINK /action/mapping/linkage/ZDB-LINK
 MRPHLNO	/action/marker/view/ZDB-MRPHLNO
 NBO	/action/ontology/term-detail/NBO
 PAC	/action/marker/view/ZDB-PAC

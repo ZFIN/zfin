@@ -26,7 +26,8 @@ public class FeatureFeatureLinkageMember extends LinkageMember {
 
     public void setPairedFeature(Feature pairedFeature) {
         this.pairedFeature = pairedFeature;
-        entity = pairedFeature;
+        entityOne = pairedFeature;
+        entityTwo = pairedFeature;
     }
 
     @Override
