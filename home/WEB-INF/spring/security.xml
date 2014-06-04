@@ -110,7 +110,6 @@
         <security:intercept-url pattern="/action/devtool/view-global-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/devtool/view-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/devtool/**" access="hasRole('root') or ${DISABLE_SECURITY}" />
-        <security:intercept-url pattern="/action/devtool/**" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/WEB-INF/jsp/dev-tools/gwt" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/marker/*-edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/database/**" access="hasRole('root') or ${DISABLE_SECURITY}" />
