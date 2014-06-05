@@ -119,21 +119,45 @@ while (<NCBI>) {
   ## human gene info
   if ($taxId eq "9606") {
     $humanNCBIgeneID = $fieldsNCBI[1];
-    $NCBIidsAndNamesHuman{$humanNCBIgeneID} = $fieldsNCBI[11] if ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11]);
+    if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11])) {
+        $NCBIidsAndNamesHuman{$humanNCBIgeneID} = $fieldsNCBI[11];
+    } else {
+        if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[8])) {
+            $NCBIidsAndNamesHuman{$humanNCBIgeneID} = $fieldsNCBI[8];
+        } else {
+            print "\nProblematic human orthologue data: $_\n\n";
+        }
+    }
     $ctHumanGenes++;
   }
   
   ## mouse gene info
   if ($taxId eq "10090") {
     $mouseNCBIgeneID = $fieldsNCBI[1];
-    $NCBIidsAndNamesMouse{$mouseNCBIgeneID} = $fieldsNCBI[11] if ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11]);
+    if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11])) {
+        $NCBIidsAndNamesMouse{$mouseNCBIgeneID} = $fieldsNCBI[11];
+    } else {
+        if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[8])) {
+            $NCBIidsAndNamesMouse{$mouseNCBIgeneID} = $fieldsNCBI[8];
+        } else {
+            print "\nProblematic mouse orthologue data: $_\n\n";
+        }
+    }
     $ctMouseGenes++;
   }
 
   ## fly gene info
   if ($taxId eq "7227") {
     $flyNCBIgeneID = $fieldsNCBI[1];
-    $NCBIidsAndNamesFly{$flyNCBIgeneID} = $fieldsNCBI[11] if ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11]);
+    if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[11])) {
+         $NCBIidsAndNamesFly{$flyNCBIgeneID} = $fieldsNCBI[11];
+    } else {
+        if (ZFINPerlModules->stringStartsWithLetterOrNumber($fieldsNCBI[8])) {
+            $NCBIidsAndNamesFly{$mouseNCBIgeneID} = $flyNCBIgeneID[8];
+        } else {
+            print "\nProblematic fly orthologue data: $_\n\n";
+        }
+    }    
     $ctFlyGenes++;
   }  
       
@@ -197,6 +221,7 @@ $cur->bind_columns(\$organism,\$orthoName,\$orthoAbbrev,\$ncbiID,\$zdbGeneId,\$z
 # value: human orthology name (stored in orthologue)
 
 %namesHumanOrthZFIN = ();
+
 
 # %symbolsHumanOrthZFIN - for human orthology symbols stored at ZFIN
 # key: ZF gene ZDB ID
@@ -297,7 +322,6 @@ $ct++;
    } else {
        print LOG "\nError: $organism   $ncbiID   $zdbGeneId   $zdbGeneAbbrev    $zdbGeneName\n"; 
    }
-print "\n$organism,\t$namesZFgene{$zdbGeneId},\t$zdbGeneId,\t$zdbGeneAbbrev,\t$zdbGeneName\n" if $ct < 5;
    
 }
 
@@ -310,7 +334,6 @@ $cur->finish();
 $dbh->disconnect();
 
 
-%zebrafishGeneNamesUpdated = ();
 $ctAll3NamesIdentical = $ctIdenticalToHumanAndNoMouse = $ctIdenticalToMouseAndNoHuman = $ctNoneHumanOrMouse = 0;
 
 $total = 0;
@@ -337,128 +360,62 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
    $geneNameZFChoppedNoCommaLowerCase = lc($geneNameZFChoppedNoComma);
    
    $lastLetter = $lastLetters{$zdbGeneId};
-   
+      
    if (exists($namesHumanOrthNCBI{$zdbGeneId})) {
        $humanGeneName = $namesHumanOrthNCBI{$zdbGeneId};
        $humanGeneNameNoComma = $humanGeneName;
        $humanGeneNameNoComma =~ s/,//g;
        $humanGeneNameNoCommaLowerCase = lc($humanGeneNameNoComma);
-   } else {
-       next;
-   }
-     
-   if (exists($namesMouseOrthNCBI{$zdbGeneId})) { 
-       $mouseGeneName = $namesMouseOrthNCBI{$zdbGeneId} if exists($namesMouseOrthNCBI{$zdbGeneId});
+       
+       if ($geneNameZFnoCommaLowerCase !~ m/\Q$humanGeneNameNoCommaLowerCase/ && $humanGeneNameNoCommaLowerCase !~ m/\Q$geneNameZFChoppedNoCommaLowerCase/) {
+              if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId}) && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) {              
+                $zdbGeneIdsAlreadyReported{$zdbGeneId} = $symbolsZFgene{$zdbGeneId};
+                $ctDiffrentZFgeneNames++;
+                print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
+                print PREVIOUSLYREPORTED "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
+                print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
+                print PREVIOUSLYREPORTED "gene name (z): $geneNameZF\n";
+                print ZFNAMEREPORT "gene name (h): $humanGeneName\n"; 
+                print PREVIOUSLYREPORTED "gene name (h): $humanGeneName\n"; 
+                print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
+                print PREVIOUSLYREPORTED "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
+                if (exists($namesMouseOrthNCBI{$zdbGeneId})) {
+                    print ZFNAMEREPORT "gene name (m): $namesMouseOrthNCBI{$zdbGeneId}\n";
+                    print PREVIOUSLYREPORTED "gene name (m): $namesMouseOrthNCBI{$zdbGeneId}\n";
+                    print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
+                    print PREVIOUSLYREPORTED "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
+                } else {
+                    print ZFNAMEREPORT "gene name (m):\n";
+                    print PREVIOUSLYREPORTED "gene name (m):\n";
+                    print ZFNAMEREPORT "gene symbol (m):\n\n";
+                    print PREVIOUSLYREPORTED "gene symbol (m):\n\n";
+                }
+              }
+       } 
+   } elsif (exists($namesMouseOrthNCBI{$zdbGeneId})) { 
+      if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId}) && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) { 
+       $mouseGeneName = $namesMouseOrthNCBI{$zdbGeneId};
        $mouseGeneNameNoComma = $mouseGeneName;
        $mouseGeneNameNoComma =~ s/,//g;
        $mouseGeneNameNoCommaLowerCase = lc($mouseGeneNameNoComma);
-   } else {
-       next;
-   }
-   
-   if (exists($namesHumanOrthNCBI{$zdbGeneId}) && ($geneNameZFnoCommaLowerCase !~ m/\Q$humanGeneNameNoCommaLowerCase/ && $humanGeneNameNoCommaLowerCase !~ m/\Q$geneNameZFChoppedNoCommaLowerCase/)) {
-       if (exists($namesMouseOrthNCBI{$zdbGeneId})) {
-           if ($geneNameZFnoCommaLowerCase !~ m/\Q$mouseGeneNameNoCommaLowerCase/ && $mouseGeneNameNoCommaLowerCase !~ m/\Q$geneNameZFChoppedNoCommaLowerCase/) {
-              $zebrafishGeneNamesUpdated{$zdbGeneId} = $humanGeneName;
-              if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId}) && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) {              
+       if ($geneNameZFnoCommaLowerCase !~ m/\Q$mouseGeneNameNoCommaLowerCase/ && $mouseGeneNameNoCommaLowerCase !~ m/\Q$geneNameZFChoppedNoCommaLowerCase/) {                             
                 $zdbGeneIdsAlreadyReported{$zdbGeneId} = $symbolsZFgene{$zdbGeneId};
-              
-                print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
-                print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
-                print ZFNAMEREPORT "gene name (h): $humanGeneName\n"; 
-                print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
-                print ZFNAMEREPORT "gene name (m): $mouseGeneName\n";
-                print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
-                
-                print PREVIOUSLYREPORTED "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
-                print PREVIOUSLYREPORTED "gene name (z): $geneNameZF\n";
-                print PREVIOUSLYREPORTED "gene name (h): $humanGeneName\n"; 
-                print PREVIOUSLYREPORTED "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
-                print PREVIOUSLYREPORTED "gene name (m): $mouseGeneName\n";
-                print PREVIOUSLYREPORTED "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";  
-                
                 $ctDiffrentZFgeneNames++;
-              }             
-           } else {
-              # gene name not needed to be updated, since mouse gene name is the same, although different from human gene name
-           }
-           
-       } else {
-           $zebrafishGeneNamesUpdated{$zdbGeneId} = $humanGeneName;
-           if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId})  && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) {
-             $zdbGeneIdsAlreadyReported{$zdbGeneId} = $symbolsZFgene{$zdbGeneId};
-           
-             print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
-             print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
-             print ZFNAMEREPORT "gene name (h): $humanGeneName\n"; 
-             print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
-             print ZFNAMEREPORT "gene name (m): no mouse orthology; or the mouse NCBI gene Id not found at NCBI\n";
-             print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
-             
-             print PREVIOUSLYREPORTED "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
-             print PREVIOUSLYREPORTED "gene name (z): $geneNameZF\n";
-             print PREVIOUSLYREPORTED "gene name (h): $humanGeneName\n"; 
-             print PREVIOUSLYREPORTED "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
-             print PREVIOUSLYREPORTED "gene name (m): no mouse orthology; or the mouse NCBI gene Id not found at NCBI\n";
-             print PREVIOUSLYREPORTED "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";  
-           
-             $ctDiffrentZFgeneNames++;
-           }         
-       }
-       
+                print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
+                print PREVIOUSLYREPORTED "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
+                print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
+                print PREVIOUSLYREPORTED "gene name (z): $geneNameZF\n";
+                print ZFNAMEREPORT "gene name (h):\n"; 
+                print PREVIOUSLYREPORTED "gene name (h):\n";
+                print ZFNAMEREPORT "gene symbol (h):\n"; 
+                print PREVIOUSLYREPORTED "gene symbol (h):\n"; 
+                print ZFNAMEREPORT "gene name (m): $mouseGeneName\n";
+                print PREVIOUSLYREPORTED "gene name (m): $mouseGeneName\n";                
+                print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
+                print PREVIOUSLYREPORTED "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";           
+       }      
+     }
    } 
-   
-   if (exists($namesMouseOrthNCBI{$zdbGeneId}) && ($geneNameZFnoCommaLowerCase !~ m/\Q$mouseGeneNameNoCommaLowerCase/ && $mouseGeneNameNoCommaLowerCase !~ m/\Q$geneNameZFChoppedNoCommaLowerCase/)) {
-       if (exists($namesHumanOrthNCBI{$zdbGeneId})) {
-           if ($geneNameZFnoCommaLowerCase !~ m/\Q$humanGeneNameNoCommaLowerCase/ && $humanGeneNameNoCommaLowerCase !~ m/\Q$geneNameZFChoppedNoCommaLowerCase/) {
-              $zebrafishGeneNamesUpdated{$zdbGeneId} = $mouseGeneName;
-              if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId}) && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) {              
-                $zdbGeneIdsAlreadyReported{$zdbGeneId} = $symbolsZFgene{$zdbGeneId};
-              
-                print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
-                print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
-                print ZFNAMEREPORT "gene name (h): $humanGeneName\n"; 
-                print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
-                print ZFNAMEREPORT "gene name (m): $mouseGeneName\n";
-                print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
-                
-                print PREVIOUSLYREPORTED "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
-                print PREVIOUSLYREPORTED "gene name (z): $geneNameZF\n";
-                print PREVIOUSLYREPORTED "gene name (h): $humanGeneName\n"; 
-                print PREVIOUSLYREPORTED "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
-                print PREVIOUSLYREPORTED "gene name (m): $mouseGeneName\n";
-                print PREVIOUSLYREPORTED "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";  
-                
-                $ctDiffrentZFgeneNames++;
-              }             
-           } else {
-              # gene name not needed to be updated, since human gene name is the same, although different from mouse gene name
-           }
-           
-       } else {
-           $zebrafishGeneNamesUpdated{$zdbGeneId} = $mouseGeneName;
-           if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId})  && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) {
-             $zdbGeneIdsAlreadyReported{$zdbGeneId} = $symbolsZFgene{$zdbGeneId};
-           
-             print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
-             print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
-             print ZFNAMEREPORT "gene name (h): no human orthology; or the human NCBI gene Id not found at NCBI\n";
-             print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
-             print ZFNAMEREPORT "gene name (m): $mouseGeneName\n";
-             print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
-             
-             print PREVIOUSLYREPORTED "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
-             print PREVIOUSLYREPORTED "gene name (z): $geneNameZF\n";
-             print PREVIOUSLYREPORTED "gene name (h): no human orthology; or the human NCBI gene Id not found at NCBI\n";
-             print PREVIOUSLYREPORTED "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
-             print PREVIOUSLYREPORTED "gene name (m): $mouseGeneName\n";
-             print PREVIOUSLYREPORTED "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n"; 
-           
-             $ctDiffrentZFgeneNames++;
-           }         
-       }
-       
-   }    
    
    if(exists($namesHumanOrthZFIN{$zdbGeneId}) && exists($namesHumanOrthNCBI{$zdbGeneId}) && $namesHumanOrthZFIN{$zdbGeneId} ne $namesHumanOrthNCBI{$zdbGeneId}) {
        $ctUpdatedOrthNames++;
@@ -530,7 +487,7 @@ ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$sub
 $ctAlready = $ctAlready + $ctDiffrentZFgeneNames;
 
 $subject = "Auto from $dbname: " . "$ctAlready zebrafish gene names already considered for renaming";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","AlreadyExamined");
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","alreadyExamined");
 
 ### &doSystemCommand("/bin/cat inconsistentZebrafishGeneNamesReport >> alreadyExamined");
 
