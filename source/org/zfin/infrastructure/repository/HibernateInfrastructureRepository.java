@@ -1292,8 +1292,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         for (List<String> resultRecord : firstQueryResultList) {
             subQuery.bindVariables(resultRecord);
             List<List<String>> c = executeNativeQuery(subQuery);
-            if (CollectionUtils.isEmpty(c))
-                returnResultList.add(resultRecord);
+            if ((!subQuery.isExistsSubquery() && CollectionUtils.isEmpty(c)) ||
+                    (subQuery.isExistsSubquery() && CollectionUtils.isNotEmpty(c))) {
+                if (subQuery.isListSubquery())
+                    returnResultList.addAll(c);
+                else
+                    returnResultList.add(resultRecord);
+            }
         }
         return returnResultList;
     }

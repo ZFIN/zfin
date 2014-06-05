@@ -18,6 +18,10 @@ public class DbScriptFileParser {
     public static final String COMMENTS = "--";
     public static final String LOOP = "loop";
     public static final String SUB_QUERY = "subquery";
+    public static final String EXISTS = "exists";
+    public static final String NOT_EXISTS = "not exists";
+    public static final String LIST_SUBQUERY = "list subquery";
+    public static final String LIST_QUERY = "list query";
 
     public DbScriptFileParser(File dbScriptFile) {
         if (dbScriptFile == null)
@@ -47,9 +51,23 @@ public class DbScriptFileParser {
                     query.setSubQueryStatement(subQuery);
                     continue;
                 }
-                if (inSubQuery)
+                if (inSubQuery) {
+                    if (line.trim().length() == 0 || line.trim().startsWith(EXISTS)) {
+                        subQuery.setExistsSubquery(true);
+                        continue;
+                    } else if (line.trim().length() == 0 || line.trim().startsWith(NOT_EXISTS)) {
+                        subQuery.setExistsSubquery(false);
+                        continue;
+                    }
+                    else if (line.trim().length() == 0 || line.trim().startsWith(LIST_SUBQUERY)) {
+                        subQuery.setListSubquery(true);
+                        continue;
+                    } else if (line.trim().length() == 0 || line.trim().startsWith(LIST_QUERY)) {
+                        subQuery.setListSubquery(false);
+                        continue;
+                    }
                     subQuery.addQueryPart(line, reader.getLineNumber());
-                else
+                } else
                     query.addQueryPart(line, reader.getLineNumber());
 
                 if (line.trim().endsWith(QUERY_ENDS_SEMICOLON)) {

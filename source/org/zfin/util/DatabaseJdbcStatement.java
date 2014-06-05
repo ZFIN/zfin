@@ -49,6 +49,9 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     private boolean subquery;
     private DatabaseJdbcStatement subQueryStatement;
     private DatabaseJdbcStatement parentStatement;
+    private boolean listSubquery = false;
+    private boolean existsSubquery = false;
+
     Map<String, String> dataMap;
 
     public DatabaseJdbcStatement() {
@@ -438,6 +441,22 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
             subQuery = subQuery.replace("$" + index, value);
             index++;
         }
+    }
+
+    public boolean isExistsSubquery() {
+        return existsSubquery;
+    }
+
+    public void setExistsSubquery(boolean existsSubquery) {
+        this.existsSubquery = existsSubquery;
+    }
+
+    public boolean isListSubquery() {
+        return listSubquery;
+    }
+
+    public void setListSubquery(boolean listSubquery) {
+        this.listSubquery = listSubquery;
     }
 
     public void setDataMap(Map<String, String> dataMap) {

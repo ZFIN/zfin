@@ -1,0 +1,44 @@
+--begin work;
+
+SELECT mrkr_zdb_id,
+       mrkr_abbrev,
+       Count(DISTINCT zdb_id) AS ct
+FROM   record_attribution,
+       marker,
+       publication
+WHERE  mrkr_zdb_id = recattrib_data_zdb_id
+       AND recattrib_source_zdb_id = zdb_id
+       AND jtype = 'Journal'
+       AND mrkr_type = 'GENE'
+GROUP  BY mrkr_zdb_id,
+          mrkr_abbrev
+HAVING Count(DISTINCT zdb_id) > 100
+ORDER  BY ct DESC
+subquery
+list subquery
+exists
+SELECT FIRST 3
+       mrkr_zdb_id,
+       mrkr_abbrev,
+       '$2',
+       zdb_id,
+       pub_date
+FROM   record_attribution,
+       marker,
+       publication
+WHERE  mrkr_zdb_id = recattrib_data_zdb_id
+       AND recattrib_source_zdb_id = zdb_id
+       AND jtype = 'Journal'
+       AND mrkr_type = 'GENE'
+       AND NOT EXISTS (SELECT 'x'
+                       FROM   curation
+                       WHERE  zdb_id = cur_pub_zdb_id
+                              AND ( ( cur_topic = 'Expression'
+                                      AND cur_closed_date IS NOT NULL )
+                                     OR ( cur_topic = 'Phenotype'
+                                          AND cur_closed_date IS NOT NULL ) ))
+       AND mrkr_zdb_id = '$0'
+ORDER  BY pub_date
+
+--rollback work;
+

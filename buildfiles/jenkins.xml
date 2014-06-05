@@ -48,6 +48,7 @@
         <antcall target="add-triggers"/>
         <antcall target="add-email-notifications"/>
         <antcall target="deploy-email-templates"/>
+        <antcall target="copy-report-files"/>
     </target>
 
     <target name="_copyDefaultConfig">
@@ -57,7 +58,7 @@
                 <echo message="Configuration file ${JENKINS_HOME}/config.xml is already deployed"/>
             </then>
             <else>
-                <copy tofile="${JENKINS_HOME}/config.xml" file="${basedir}/server_apps/jenkins/config.xml" />
+                <copy tofile="${JENKINS_HOME}/config.xml" file="${basedir}/server_apps/jenkins/config.xml"/>
             </else>
         </if>
     </target>
@@ -257,6 +258,29 @@
     <!--
         <property name="trigger" value="reports"/>
     -->
+    <target name="copy-report-files" description="The jobs that run reports may have additional files that need
+    to be copied into TARGETROOT">
+        <groovy>
+            //println "JENKINS_HOME/jobs: " + properties.jenkinsHomeJobs
+            def dir = new File(properties.jenkinsHomeJobs)
+            def jobs = dir.list()
+            jobs.eachWithIndex { value, i ->
+                properties.jobName = value
+                //println value
+/*
+                def reportDir = new File(properties.reportDirSource)
+                def reportDirFiles = reportDir.list()
+                reportDirFiles.eachWithIndex{ entry, int j ->
+                    println(entry)
+                }
+*/
+
+                def ant = new AntBuilder(project)
+                ant.'copy-report-files-per-job'()
+            }
+        </groovy>
+    </target>
+
     <target name="add-email-notifications">
         <property name="propertyFile"
                   value="${basedir}/server_apps/jenkins/email-configuration.${trigger}.properties"/>
@@ -482,6 +506,37 @@
         </sequential>
     </macrodef>
 
+    <property name="report" value="server_apps/DB_maintenance/report_data"/>
+    <property name="reportDirSource" value="${basedir}/${report}/"/>
+    <property name="reportDirTarget" value="${TARGETROOT}/${report}"/>
+
+    <macrodef name="copy-report-files-per-job">
+        <sequential>
+            <!-- only copy if target root is different from source root -->
+            <if>
+                <not>
+                    <equals arg1="${reportDirSource}" arg2="${reportDirTarget}"/>
+                </not>
+                <then>
+                    <groovy>
+                        File sqlFile = new File(properties.reportDirSource + properties.jobName + ".sql")
+                        File sqljFile = new File(properties.reportDirSource + properties.jobName + ".sqlj")
+                        if (sqlFile.exists() || sqljFile.exists())
+                            println("Copy report files for " + properties.jobName);
+                    </groovy>
+                    <copy todir="${reportDirTarget}">
+                        <fileset dir="${reportDirSource}/">
+                            <include name="${jobName}.report.html.template"/>
+                            <include name="${jobName}.sql*"/>
+                            <include name="report-data-email.properties"/>
+                            <include name="report-data-email.template"/>
+                        </fileset>
+                    </copy>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
     <macrodef name="add-default-notification-per-job" description="add default email address to job triggers">
         <sequential>
             <groovy>
@@ -504,21 +559,21 @@
     <target name="jenkins-usage">
         <echo>
             TARGETS
-                DEPLOYMENT
-                deploy-jobs
-                deploy-production-jobs deploy only the jobs meant to run on production
-                copy-job-into-source -DjobName=[jobName]
-                create-views creates daily/weekly/monthly job views.
-                deploy-plugins deploy jenkins plugins into JENKINS_HOME
-                deploy-email-templates deploy the email templates into JENKINS_HOME
+            DEPLOYMENT
+            deploy-jobs
+            deploy-production-jobs deploy only the jobs meant to run on production
+            copy-job-into-source -DjobName=[jobName]
+            create-views creates daily/weekly/monthly job views.
+            deploy-plugins deploy jenkins plugins into JENKINS_HOME
+            deploy-email-templates deploy the email templates into JENKINS_HOME
 
-                JENKINS SERVER
-                start-jenkins start a Jenkins instance
-                stop-jenkins
-                kill-jenkins
-                restart-jenkins
-                pid-jenkins
-                tail-log do a 'tail -f $JENKINS_HOME/logs/jenkins.log'
+            JENKINS SERVER
+            start-jenkins start a Jenkins instance
+            stop-jenkins
+            kill-jenkins
+            restart-jenkins
+            pid-jenkins
+            tail-log do a 'tail -f $JENKINS_HOME/logs/jenkins.log'
         </echo>
     </target>
 

@@ -281,17 +281,48 @@
         </fail>
     </target>
 
-    <target name="run-data-report" description="">
+    <target name="run-data-report-param" description="">
         <echo message="Create Report"/>
         <echo message="Use database: ${DBNAME}"/>
         <echo message="Use ParameterValues: ${ParameterValues}"/>
-        <delete dir="${validateData}/report_data/${JobName}" />
+        <delete dir="${validateData}/report_data/${JobName}"/>
         <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
               classpathref="extended.classpath"
               failonerror="true">
+            <arg value="-jobName"/>
             <arg value="${JobName}"/>
+            <arg value="-useParameters"/>
+            <arg value="true"/>
+            <arg value="-parameterVariables"/>
             <arg value="${ParameterVariables}"/>
+            <arg value="-parameterValues"/>
             <arg value="${ParameterValues}"/>
+            <!--
+                        <arg value="-delimiter"/>
+                        <arg value="${Delimiter}"/>
+            -->
+            <arg value="-baseDir"/>
+            <arg value="${basedir}"/>
+        </java>
+
+        <echo message="${validateData}/validatedata/${JobName}.txt"/>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.txt" substring=","/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="run-data-report" description="">
+        <echo message="Create Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <delete dir="${validateData}/report_data/${JobName}"/>
+        <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="-jobName"/>
+            <arg value="${JobName}"/>
+            <arg value="-baseDir"/>
             <arg value="${basedir}"/>
         </java>
 
@@ -345,12 +376,14 @@
         <echo message="${validateData}/validatedata/${JobName}.txt"/>
         <fail message="Failed: There are records in violation">
             <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.faulty-PubMed-IDs.txt" substring=","/>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.faulty-PubMed-IDs.txt"
+                                  substring=","/>
             </condition>
         </fail>
         <fail message="Failed: There are records in violation">
             <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.faulty-Pub-Infos.txt" substring=","/>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.faulty-Pub-Infos.txt"
+                                  substring=","/>
             </condition>
         </fail>
     </target>
@@ -375,7 +408,8 @@
         <echo message="${validateData}/validatedata/${JobName}.txt"/>
         <fail message="Failed: There are records in violation">
             <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.New-Publications-Error.txt" substring=","/>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.New-Publications-Error.txt"
+                                  substring=","/>
             </condition>
         </fail>
     </target>
@@ -396,23 +430,23 @@
         </sequential>
     </macrodef>
 
-<!--
-    <macrodef name="run-db-query">
-        <attribute name="db-query-file"/>
-        <attribute name="instanceName"/>
-        <sequential>
-            <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
-                  classpathref="extended.classpath"
-                  failonerror="true">
-                <arg value="@{instanceName}"/>
-                <arg value="@{db-query-file}"/>
-                <arg value="${validateData}"/>
-                <arg value="${web-inf.dir}/zfin.properties"/>
-            </java>
-        </sequential>
-    </macrodef>
+    <!--
+        <macrodef name="run-db-query">
+            <attribute name="db-query-file"/>
+            <attribute name="instanceName"/>
+            <sequential>
+                <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
+                      classpathref="extended.classpath"
+                      failonerror="true">
+                    <arg value="@{instanceName}"/>
+                    <arg value="@{db-query-file}"/>
+                    <arg value="${validateData}"/>
+                    <arg value="${web-inf.dir}/zfin.properties"/>
+                </java>
+            </sequential>
+        </macrodef>
 
--->
+    -->
     <target name="usage">
         <echo>
             TARGETS
