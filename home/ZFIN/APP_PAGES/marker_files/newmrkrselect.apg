@@ -427,7 +427,7 @@ jQuery.ajax({
  	  $(IF,$(XST,$input_name),$(VECAPPEND,$critList,name $compare '$input_name'))
 	  $(IF,$(XST,$input_acc),$(VECAPPEND,$critList,accession number '$input_acc'))
 	  $(IF,$(NC,$marker_type,all),$(VECAPPEND,$critList,search type '$mlist'))
-	  $(IF,$(NC,$lg,0),$(VECAPPEND,$critList,linkage group '$lg'))
+	  $(IF,$(NC,$lg,0),$(VECAPPEND,$critList,chromosome '$lg'))
 	  $(IF,$(=,$(VECSIZE,$critList),0),$(VECAPPEND,$critList,All))
      <?/MIVAR>
 
