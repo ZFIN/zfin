@@ -8,12 +8,14 @@ begin work;
 create table geneNameUpdate (
     gene_zdb_id   varchar(50) not null,
     existing_name varchar(50) not null,
-    updated_name  varchar(255)  not null  
+    updated_name  varchar(255)  not null,
+    gene_symbol  varchar(150) not null
 );
 
 create index geneNameUpdate_gene_zdb_id_idx on geneNameUpdate(gene_zdb_id) in idxdbs3;
 create index geneNameUpdate_existing_name_idx on geneNameUpdate(existing_name) in idxdbs3;
 create index geneNameUpdate_updated_name_idx on geneNameUpdate(updated_name) in idxdbs3;
+create index geneNameUpdate_gene_symbol_idx on geneNameUpdate(gene_symbol) in idxdbs3;
 
 --!echo 'Load from namesToUpdate.unl'
 load from namesToUpdate.unl insert into geneNameUpdate;
@@ -45,7 +47,7 @@ select nomen_zdb_id
 
 --!echo 'update marker_history table'
 insert into marker_history (mhist_zdb_id,mhist_mrkr_zdb_id,mhist_event,mhist_reason,mhist_date,mhist_mrkr_name_on_mhist_date,mhist_mrkr_abbrev_on_mhist_date,mhist_mrkr_prev_name,mhist_comments) 
-select nomen_zdb_id,gene_zdb_id,"renamed","renamed to conform with zebrafish guidelines",current,current,current,existing_name,"renamed by Ken and orthology script according to NCBI orthology data" 
+select nomen_zdb_id,gene_zdb_id,"renamed","renamed to conform with zebrafish guidelines",current,updated_name,gene_symbol,existing_name,"Renamed as part of ZFIN nomenclature update project" 
   from geneNameUpdate;
   
 unload to 'geneNamesUpdatedReport'

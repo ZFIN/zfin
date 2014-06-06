@@ -84,14 +84,20 @@ $cur->bind_columns(\$zdbGeneId,\$zdbGeneAbbrev,\$zdbGeneName);
 # value: ZF gene ZDB ID
 %geneNamesZFIN = ();
 
-# %symbolsZFgene - for zebrafish gene symbols
+# %geneIdsZFIN 
 # key: ZF gene ZDB ID
 # value: ZF gene name
 %geneIdsZFIN = ();
 
+# %geneSymbolsZFIN
+# key: ZF gene name
+# value: ZF gene symbol
+%geneSymbolsZFIN = ();
+
 while ($cur->fetch()) {
    $geneNamesZFIN{$zdbGeneName} = $zdbGeneId;
    $geneIdsZFIN{$zdbGeneId} = $zdbGeneName;
+   $geneSymbolsZFIN{$zdbGeneName} = $zdbGeneAbbrev;
 }
 
 $cur->finish(); 
@@ -160,7 +166,8 @@ open (UPDATELIST, ">namesToUpdate.unl") ||  die "Cannot open namesToUpdate.unl :
 foreach $newName (keys %newGeneNames) {
   $id = $newGeneNames{$newName};
   $existingName = $geneIdsZFIN{$id};
-  print UPDATELIST "$id|$existingName|$newName\n";
+  $symbol = $geneSymbolsZFIN{$existingName};  
+  print UPDATELIST "$id|$existingName|$newName|$symbol|\n";
 }
 
 close(UPDATELIST);
