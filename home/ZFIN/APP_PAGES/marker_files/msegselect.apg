@@ -330,59 +330,10 @@ jQuery.ajax({
     <?MISQL  SQL="
       insert into $msegselect_temp_on_lg
 	  ( msegtlg_mrkr_zdb_id )
-	select marker_id 
-          from mapped_marker
-	 where mm_chromosome = '$lg';">
+	SELECT ul_data_zdb_id
+	FROM   unique_location
+	WHERE  ul_chromosome = '$lg';">
     <?/MISQL>
-    <?MISQL  SQL="
-      insert into $msegselect_temp_on_lg
-	  ( msegtlg_mrkr_zdb_id )
-	select mrel_mrkr_2_zdb_id
-	  from mapped_marker, marker_relationship
-	 where mrel_mrkr_1_zdb_id = marker_id
-	   and mm_chromosome = '$lg'
-	   and mrel_type = 'clone contains small segment';">
-    <?/MISQL>
-    <?MISQL  SQL="
-      insert into $msegselect_temp_on_lg
-	  ( msegtlg_mrkr_zdb_id )
-	select mrel_mrkr_1_zdb_id
-	  from mapped_marker, marker_relationship
-	 where mrel_mrkr_2_zdb_id = marker_id
-	   and mm_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment');">
-    <?/MISQL>
-    <?MISQL  SQL="
-      insert into $msegselect_temp_on_lg
-	  ( msegtlg_mrkr_zdb_id )
-        select lnkgmem_member_zdb_id
-	  from linkage, linkage_member
-	 where lnkg_chromosome = '$lg'
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id ;">
-    <?/MISQL>
-    <?MISQL  SQL="
-      insert into $msegselect_temp_on_lg
-	  ( msegtlg_mrkr_zdb_id )
-	select mrel_mrkr_2_zdb_id
-	  from marker_relationship, linkage, linkage_member
-	 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-	   and lnkg_chromosome = '$lg'
-	   and mrel_type = 'clone contains small segment';">
-    <?/MISQL>
-    <?MISQL  SQL="
-      insert into $msegselect_temp_on_lg
-	  ( msegtlg_mrkr_zdb_id )
-	select mrel_mrkr_1_zdb_id
-	  from marker_relationship, linkage, linkage_member
-	 where mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id 
-	   and lnkg_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment');">
-     <?/MISQL> 
-    
      <?MIVAR NAME=$lgConstraint> mrkr_zdb_id in (select distinct msegtlg_mrkr_zdb_id from $msegselect_temp_on_lg)<?/MIVAR>
      <?MIVAR>
        $(VECAPPEND, $constraintList, $lgConstraint)
@@ -651,7 +602,12 @@ jQuery.ajax({
 
 	<TD>
             <script type="text/javascript">
-                jQuery('#mappingDetail').load('/action/mapping/summary/$OID');
+	    	    var elementName = 'mappingDetail_';
+		    elementName += '$OID';
+		    elementName = elementName.replace(new RegExp("-", 'g'),"_")
+		    document.write('<div id="mapDetail" class="'+elementName+'"></div>');
+		    elementName = "."+elementName;
+                jQuery(elementName).load('/action/mapping/summary/$OID');
             </script>
             <div id="mappingDetail"></div>
 	</TD> 

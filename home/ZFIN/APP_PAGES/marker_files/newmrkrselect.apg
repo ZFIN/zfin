@@ -314,64 +314,10 @@ jQuery.ajax({
       <?/MISQL>
       <?MICOMMENT>we do mapping info pullover between clones and genes/small segs. <?/MICOMMENT>
       <?MISQL  SQL="
-	select marker_id
-          from mapped_marker
-	 where mm_chromosome = '$lg'
-      UNION
-	select mrel_mrkr_2_zdb_id as marker_id
-	  from mapped_marker, marker_relationship
-	 where mrel_mrkr_1_zdb_id = marker_id
-	   and mm_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment')
-       UNION
-	select mrel_mrkr_1_zdb_id as marker_id
-	  from mapped_marker, marker_relationship
-	 where mrel_mrkr_2_zdb_id = marker_id
-	   and mm_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment',
-			     'gene encodes small segment')
-       UNION
-        select lnkgmem_member_zdb_id as marker_id
-	  from linkage, linkage_member
-	 where lnkg_chromosome = '$lg'
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-       UNION
-	select mrel_mrkr_2_zdb_id as marker_id
-	  from marker_relationship, linkage, linkage_member
-	 where mrel_mrkr_1_zdb_id = lnkgmem_member_zdb_id
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-	   and lnkg_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment')
-       UNION
-	select mrel_mrkr_1_zdb_id as marker_id
-	  from marker_relationship, linkage, linkage_member
-	 where mrel_mrkr_2_zdb_id = lnkgmem_member_zdb_id
-  	   and lnkgmem_linkage_zdb_id = lnkg_zdb_id
-	   and lnkg_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment',
-			     'gene encodes small segment')
-	UNION
-	select gt.mrel_mrkr_1_zdb_id
-	 from  marker_relationship gt
-	  join marker_relationship ct on ct.mrel_mrkr_2_zdb_id == gt.mrel_mrkr_2_zdb_id
-	  join linkage_member on ct.mrel_mrkr_1_zdb_id == lnkgmem_member_zdb_id
-	  join linkage on lnkgmem_linkage_zdb_id == lnkg_zdb_id
-	 where gt.mrel_type == 'gene produces transcript'
-	   and ct.mrel_type == 'clone contains transcript'
-	   and lnkg_chromosome = '$lg'
-      UNION
-	select  ct.mrel_mrkr_2_zdb_id
-	 from  marker_relationship ct
-	  join linkage_member on ct.mrel_mrkr_1_zdb_id == lnkgmem_member_zdb_id
-	  join linkage on lnkgmem_linkage_zdb_id == lnkg_zdb_id
-	 where ct.mrel_type == 'clone contains transcript'
-	   and lnkg_chromosome = '$lg'
-
-	  into temp bigselect_on_lg with no log; ">
+	SELECT ul_data_zdb_id as marker_id 
+	FROM   unique_location 
+	WHERE  ul_chromosome = '$lg'
+ 	into temp bigselect_on_lg with no log; ">
        <?/MISQL>
 
        <?MIVAR NAME=$lgConstraint> mrkr_zdb_id in (select marker_id from bigselect_on_lg)<?/MIVAR>

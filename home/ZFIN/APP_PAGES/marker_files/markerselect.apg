@@ -393,85 +393,10 @@ jQuery.ajax({
       <?MISQL SQL="
 	insert into $markerselect_temp_on_lg
 		( mstlg_mrkr_zdb_id )
-	select gt.mrel_mrkr_1_zdb_id
-	 from  marker_relationship gt
-	  join marker_relationship ct on ct.mrel_mrkr_2_zdb_id == gt.mrel_mrkr_2_zdb_id
-	  join linkage_membership on ct.mrel_mrkr_1_zdb_id == lnkgm_member_1_zdb_id
-	  join linkage on lnkgm_linkage_zdb_id == lnkg_zdb_id
-	 where gt.mrel_type == 'gene produces transcript'
-	   and ct.mrel_type == 'clone contains transcript'
-	   and lnkg_chromosome = '$lg'">
+	SELECT ul_data_zdb_id 
+	FROM   unique_location 
+	WHERE  ul_chromosome = '$lg'">
       <?/MISQL>
-	 <?MISQL SQL="
-	insert into $markerselect_temp_on_lg
-		( mstlg_mrkr_zdb_id )
-	select ct.mrel_mrkr_2_zdb_id
-	 from  marker_relationship ct
-	  join linkage_membership on ct.mrel_mrkr_1_zdb_id == lnkgm_member_1_zdb_id
-	  join linkage on lnkgm_linkage_zdb_id == lnkg_zdb_id
-	 where ct.mrel_type == 'clone contains transcript'
-	   and lnkg_chromosome = '$lg';">
-      <?/MISQL>
-
-      <?MISQL SQL="
-	insert into $markerselect_temp_on_lg
-	    ( mstlg_mrkr_zdb_id )
-	select marker_id
-          from mapped_marker
-	 where mm_chromosome = '$lg';">
-      <?/MISQL>
-      <?MISQL SQL="
-	insert into $markerselect_temp_on_lg
-	    ( mstlg_mrkr_zdb_id )
-	select mrel_mrkr_2_zdb_id
-	  from mapped_marker, marker_relationship
-	 where mrel_mrkr_1_zdb_id = marker_id
-	   and mm_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment');">
-      <?/MISQL>
-      <?MISQL SQL="
-	insert into $markerselect_temp_on_lg
-	    ( mstlg_mrkr_zdb_id )
-	select mrel_mrkr_1_zdb_id
-	  from mapped_marker, marker_relationship
-	 where mrel_mrkr_2_zdb_id = marker_id
-	   and mm_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment',
-			     'gene encodes small segment');">
-      <?/MISQL>
-      <?MISQL SQL="
-	insert into $markerselect_temp_on_lg
-	    ( mstlg_mrkr_zdb_id )
-        select lnkgm_member_1_zdb_id
-	  from linkage, linkage_membership
-	 where lnkg_chromosome = '$lg'
-  	   and lnkgm_linkage_zdb_id = lnkg_zdb_id ;">
-      <?/MISQL>
-      <?MISQL SQL="
-	insert into $markerselect_temp_on_lg
-	    ( mstlg_mrkr_zdb_id )
-	select mrel_mrkr_2_zdb_id
-	  from marker_relationship, linkage, linkage_membership
-	 where mrel_mrkr_1_zdb_id = lnkgm_member_1_zdb_id
-  	   and lnkgm_linkage_zdb_id = lnkg_zdb_id
-	   and lnkg_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment');">
-      <?/MISQL>
-      <?MISQL SQL="
-	insert into $markerselect_temp_on_lg
-	    ( mstlg_mrkr_zdb_id )
-	select mrel_mrkr_1_zdb_id
-	  from marker_relationship, linkage, linkage_membership
-	 where mrel_mrkr_2_zdb_id = lnkgm_member_1_zdb_id
-  	   and lnkgm_linkage_zdb_id = lnkg_zdb_id
-	   and lnkg_chromosome = '$lg'
-	   and mrel_type in ('clone contains gene',
-			     'clone contains small segment',
-			     'gene encodes small segment');">
-       <?/MISQL>
 
        <?MIVAR NAME=$lgConstraint> mrkr_zdb_id in (select mstlg_mrkr_zdb_id from $markerselect_temp_on_lg)<?/MIVAR>
        <?MIVAR>
