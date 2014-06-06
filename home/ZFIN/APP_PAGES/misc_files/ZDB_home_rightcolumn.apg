@@ -21,8 +21,7 @@
           <a href="/action/marker/disruptor-add?disruptorType=CRISPR"><em>CRISPR</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/marker/transcript-add"><em>transcript</em></a>,
-          <a href="/action/marker/region-add"><em>engineered region</em></a>,
-
+          <a href="/action/marker/region-add"><em>engineered region</em></a>
         </li>
         <li>
             Surf <a href="/action/reno/run-list"><em>ReNo pipeline</em></a>
