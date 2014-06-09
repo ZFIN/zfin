@@ -2859,13 +2859,13 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
   <TABLE class="summary">
    <TR>
-    <TD name="mappingDetail">
+    <TD id="mappingDetail">
     </TD>
    </TR>
   </TABLE>
        	<?MIVAR>
             <script type="text/javascript">
-               	jQuery('.mappingDetail').load('/action/mapping/summary/$OID');
+               	jQuery('#mappingDetail').load('/action/mapping/summary/$OID');
             </script>
        	<?/MIVAR>
 
