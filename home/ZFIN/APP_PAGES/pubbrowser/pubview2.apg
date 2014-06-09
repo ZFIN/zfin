@@ -564,14 +564,14 @@ and mrkr_type = 'MRPHLNO'
   <?MICOMMENT> ======== Mapping Data  ============ <?/MICOMMENT>
   <?MISQL SQL="
 select (
-select count(distinct lnkgm_member_1_zdb_id)
-    	  from linkage, linkage_membership
-    	 where lnkg_source_zdb_id = 'ZDB-PUB-070427-10'
-    	 and lnkgm_linkage_zdb_id = lnkg_zdb_id    
+select count(distinct lms_member_1_zdb_id)
+    	  from linkage, linkage_membership_search
+    	 where lnkg_source_zdb_id = '$OID'
+    	 and lms_lnkg_zdb_id = lnkg_zdb_id    
 ) +
 (select  count(distinct lsingle_member_zdb_id)
     	  from linkage, linkage_single
-    	 where lnkg_source_zdb_id = 'ZDB-PUB-070427-10'
+    	 where lnkg_source_zdb_id = '$OID'
     	 and lsingle_lnkg_zdb_id = lnkg_zdb_id
     	 and not exists (select 'x' from linkage_membership_search 
     	 where lms_lnkg_zdb_id = lnkg_zdb_id)

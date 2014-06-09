@@ -579,11 +579,11 @@ jQuery.ajax({
        insert into $markerselect_temp_marker
 	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev,
 	     mstmrkr_abbrev_order,  mstmrkr_type )
-	select mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_type
-  	from linkage_membership,linkage, marker
+	select distinct mrkr_zdb_id, mrkr_name, mrkr_abbrev, mrkr_abbrev_order, mrkr_type
+  	from linkage_membership_search,linkage, marker
   	where lnkg_source_zdb_id = '$pubId'
-    	and lnkgm_linkage_zdb_id = lnkg_zdb_id
-    	and lnkgm_member_1_zdb_id = mrkr_zdb_id
+    	and lms_lnkg_zdb_id = lnkg_zdb_id
+    	and lms_member_1_zdb_id = mrkr_zdb_id
 	and lnkg_chromosome <> '0';">
      <?/MISQL>
      <?MISQL SQL="
@@ -602,10 +602,10 @@ jQuery.ajax({
 	   ( mstmrkr_zdb_id, mstmrkr_name, mstmrkr_abbrev,
 	     mstmrkr_abbrev_order,  mstmrkr_type )
   	select feature_zdb_id, feature_name, feature_abbrev, feature_abbrev_order, 'MUTANT'
-  	from linkage_membership, linkage, feature
+  	from linkage_membership_search, linkage, feature
   	where lnkg_source_zdb_id = '$pubId'
-    	and lnkgm_linkage_zdb_id = lnkg_zdb_id
-    	and lnkgm_member_1_zdb_id = feature_zdb_id
+    	and lms_lnkg_zdb_id = lnkg_zdb_id
+    	and lms_member_1_zdb_id = feature_zdb_id
 	and lnkg_chromosome <> '0';">
      <?/MISQL>
      <?MIVAR NAME=$type_of_genedom>f<?/MIVAR>
