@@ -1,6 +1,3 @@
-<%@ page import="org.zfin.framework.presentation.PaginationBean" %>
-<%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
-<%@ page import="org.zfin.ontology.Ontology" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.ExpressionPhenotypeReportBean" scope="request"/>

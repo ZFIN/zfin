@@ -4,6 +4,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationBean;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.AttributionService;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -88,13 +90,13 @@ public class MarkerService {
                 )
         );
 
-        Set<MarkerDBLink> markerDBLinks = new TreeSet<MarkerDBLink>() ;
+        Set<MarkerDBLink> markerDBLinks = new TreeSet<MarkerDBLink>();
         markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
                 .getDBLinksForSecondRelatedMarker(marker
                         , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
                         , MarkerRelationship.Type.CLONE_CONTAINS_GENE
                 )
-                );
+        );
 
         markerDBLinks.addAll(getTranscriptReferences(marker));
 
@@ -219,6 +221,17 @@ public class MarkerService {
      * @param types  Marker Relationship type
      * @return a set of markers
      */
+    public static PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, Integer numOfRecords) {
+        if (marker == null)
+            return null;
+        PaginationBean paginationBean = new PaginationBean();
+        if (numOfRecords < 0)
+            paginationBean.setMaxDisplayRecords(Integer.MAX_VALUE);
+        else
+            paginationBean.setMaxDisplayRecords(numOfRecords);
+        return getMarkerRepository().getRelatedMarker(marker, types, paginationBean);
+    }
+
     public static Set<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types) {
         if (types == null)
             return null;
@@ -722,9 +735,9 @@ public class MarkerService {
     public static MarkerBean createDefaultViewForMarker(MarkerBean markerBean) {
 
         Marker marker = markerBean.getMarker();
-        logger.debug("marker is:"+ marker.getZdbID().toString());
+        logger.debug("marker is:" + marker.getZdbID().toString());
         String zdbID = marker.getZdbID();
-        if(Marker.Type.GENE == marker.getType()) {
+        if (Marker.Type.GENE == marker.getType()) {
             List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotypesByGene(marker);
             Collections.sort(omimPhenotypes);
             marker.setOmimPhenotypes(omimPhenotypes);
@@ -740,7 +753,6 @@ public class MarkerService {
 
         // OTHER GENE / MARKER PAGES:
         markerBean.setOtherMarkerPages(markerRepository.getMarkerDBLinksFast(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
-
 
 
         // sequence info page
@@ -804,11 +816,12 @@ public class MarkerService {
 
     /**
      * Retrieve the accession number for Ensembl for a given ZFIN marker.
+     *
      * @param marker
      * @return
      */
-    public static String getEnsemblAccessionId(Marker marker){
-        Database.AvailableAbbrev database =  Database.AvailableAbbrev.ENSEMBL_ZF;
+    public static String getEnsemblAccessionId(Marker marker) {
+        Database.AvailableAbbrev database = Database.AvailableAbbrev.ENSEMBL_ZF;
         String accessionID = getMarkerRepository().getAccessionNumber(marker, database);
         return accessionID;
     }

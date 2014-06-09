@@ -24,6 +24,7 @@
 <%--[put No data avialable / or blank into Curated Microarray Expression]--%>
 <%--4 - (no data available) (markerExpression.geoLinkSearching = false && eq 0)--%>
 <a name="gene_expression"></a>
+
 <div class="summary">
     <c:choose>
         <c:when test="${markerExpression.totalCountForStuff gt 0}">
@@ -112,9 +113,9 @@
                         <td>&nbsp;</td>
                         <td>
                             <zfin2:toggledPostcomposedList
-                                    expressionResults="${markerExpression.wildTypeStageExpression.expressedStructures}"
-                                    showAttributionLinks="false"
-                                    maxNumber="4"
+                                    entities="${markerExpression.wildTypeStageExpression.expressedStructures}"
+                                    showAttributionLinks="false" maxNumber="4"
+                                    numberOfEntities="${fn:length(markerExpression.wildTypeStageExpression.expressedStructures)}"
                                     />
                         </td>
                     </tr>

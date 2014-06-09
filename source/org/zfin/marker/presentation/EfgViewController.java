@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
@@ -17,6 +18,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  */
@@ -26,15 +28,15 @@ public class EfgViewController {
     private Logger logger = Logger.getLogger(EfgViewController.class);
 
     @Autowired
-    private ExpressionService expressionService ;
+    private ExpressionService expressionService;
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
-    @RequestMapping(value ="/efg/view/{zdbID}")
+    @RequestMapping(value = "/efg/view/{zdbID}")
     public String getView(
             Model model
-            ,@PathVariable("zdbID") String zdbID
+            , @PathVariable("zdbID") String zdbID
     ) throws Exception {
         // set base bean
         MarkerBean markerBean = new MarkerBean();
@@ -48,22 +50,15 @@ public class EfgViewController {
 //        MarkerService.createDefaultViewForMarker(markerBean);
 
         markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(efg));
-
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(efg));
-
         markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
-
-        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
+        markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // EXPRESSION SECTION
         markerBean.setMarkerExpression(expressionService.getExpressionForEfg(efg));
 
         // (CONSTRUCTS)
-        Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
-        types.add(MarkerRelationship.Type.PROMOTER_OF);
-        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
-        markerBean.setConstructs(MarkerService.getRelatedMarker(efg, types));
+        populateConstructList(markerBean, efg);
 
         // (Antibodies)
         markerBean.setRelatedAntibodies(markerRepository
@@ -78,5 +73,41 @@ public class EfgViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EFG.getTitleString() + efg.getAbbreviation());
 
         return "marker/efg-view.page";
+    }
+
+    protected void populateConstructList(MarkerBean markerBean, Marker efg) {
+        Set<MarkerRelationship.Type> types = new HashSet<>();
+        types.add(MarkerRelationship.Type.PROMOTER_OF);
+        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        Set<Marker> markerSet = new TreeSet<>();
+        PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(efg, types, 5);
+        markerSet.addAll(relatedMarker.getPopulatedResults());
+        markerBean.setConstructs(markerSet);
+        markerBean.setNumberOfConstructs(relatedMarker.getTotalCount());
+    }
+
+    @RequestMapping(value = "/efg/constructs/{zdbID}")
+    public String getAllConstructs(Model model,
+                                   @PathVariable("zdbID") String zdbID
+    ) throws Exception {
+        // set base bean
+        MarkerBean markerBean = new MarkerBean();
+        Marker efg = markerRepository.getMarkerByID(zdbID);
+        logger.info("gene: " + efg);
+        markerBean.setMarker(efg);
+        // (CONSTRUCTS)
+        Set<MarkerRelationship.Type> types = new HashSet<>();
+        types.add(MarkerRelationship.Type.PROMOTER_OF);
+        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        Set<Marker> markerSet = new TreeSet<>();
+        // get all constructs
+        PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(efg, types, -1);
+        markerSet.addAll(relatedMarker.getPopulatedResults());
+        markerBean.setConstructs(markerSet);
+        markerBean.setNumberOfConstructs(relatedMarker.getTotalCount());
+        model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
+        return "marker/efg-all-constructs.ajax";
     }
 }

@@ -3,11 +3,14 @@
 <div class="summary">
     <b>CONSTRUCTS WITH SEQUENCES FROM <i>${formBean.marker.abbreviation}</i></b>
     <c:choose>
-        <c:when test="${!empty formBean.constructs}"   >
+        <c:when test="${!empty formBean.constructs}">
             <table class="summary">
                 <tr>
                     <td align="left">
-                        <zfin2:toggledPostcomposedList expressionResults="${formBean.constructs}" maxNumber="5"/>
+                        <zfin2:toggledPostcomposedList entities="${formBean.constructs}" maxNumber="5"
+                                                       numberOfEntities="${formBean.numberOfConstructs}"
+                                                       ajaxLink="/action/efg/constructs/${formBean.marker.zdbID}"
+                                                       useAjaxForLongVersion="true"/>
                     </td>
                 </tr>
             </table>

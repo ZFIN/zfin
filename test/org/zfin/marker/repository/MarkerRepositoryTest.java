@@ -988,6 +988,20 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(marker);
     }
 
+    @Test
+    public void getRelatedMarkerEFG() {
+        String efgID = "ZDB-EFG-070117-1";
+        Marker efg = markerRepository.getMarkerByID(efgID);
+        assertNotNull(efg);
+        Set<MarkerRelationship.Type> types = new HashSet<>();
+        types.add(MarkerRelationship.Type.PROMOTER_OF);
+        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+
+        PaginationResult<Marker> relatedMarkerResult = markerRepository.getRelatedMarker(efg, types, new PaginationBean());
+        assertNotNull(relatedMarkerResult);
+    }
+
 
     @Test
     public void getWeakReferenceMarker() {

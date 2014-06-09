@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
+import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
@@ -37,6 +38,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.marker.Talen;
 import org.zfin.mutant.OmimPhenotype;
+import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
@@ -44,6 +46,7 @@ import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
@@ -144,7 +147,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Criteria criteria = session.createCriteria(Marker.class);
         criteria.add(Restrictions.sqlRestriction("lower({alias}.mrkr_abbrev) = lower(?) "
                 , abbreviation.toLowerCase()
-                ,  StandardBasicTypes.STRING
+                , StandardBasicTypes.STRING
         ));
         return (Marker) criteria.uniqueResult();
     }
@@ -2480,9 +2483,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return null;
 
         String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
-                      "where rel.firstMarker = :firstMarker " +
-                        "and rel.type = :type " +
-                   "order by rel.secondMarker.abbreviationOrder";
+                "where rel.firstMarker = :firstMarker " +
+                "and rel.type = :type " +
+                "order by rel.secondMarker.abbreviationOrder";
 
         Session session = currentSession();
         Query query = session.createQuery(hql);
@@ -2491,5 +2494,36 @@ public class HibernateMarkerRepository implements MarkerRepository {
         query.setParameter("type", relationshipType);
 
         return (List<Marker>) query.list();
+    }
+
+    @Override
+    public PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean) {
+        if (marker == null)
+            return null;
+        // second related elements
+        String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
+                "where rel.firstMarker = :firstMarker " +
+                "and rel.type in (:typeList) " +
+                "order by rel.secondMarker.abbreviationOrder";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("firstMarker", marker);
+        query.setParameterList("typeList", types);
+
+        PaginationResult<Marker> markerPaginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean.getMaxDisplayRecordsInteger(), query.scroll());
+
+        // second related elements
+        hql = "select rel.firstMarker from MarkerRelationship as rel  " +
+                "where rel.secondMarker = :secondMarker " +
+                "and rel.type in (:typeList) " +
+                "order by rel.firstMarker.abbreviationOrder";
+
+        Query query2 = HibernateUtil.currentSession().createQuery(hql);
+        query2.setParameter("secondMarker", marker);
+        query2.setParameterList("typeList", types);
+
+        PaginationResult<Marker> markerPaginationResult1 = PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean.getMaxDisplayRecordsInteger(), query2.scroll());
+        markerPaginationResult.add(markerPaginationResult1);
+        return markerPaginationResult;
     }
 }

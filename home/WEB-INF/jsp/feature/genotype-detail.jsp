@@ -304,8 +304,8 @@
                             </zfin:groupByDisplay>
                         </td>
                         <td valign="top">
-                            <zfin2:toggledPostcomposedList expressionResults="${xp.expressionResults}" maxNumber="3"
-                                                           id="${xp.expressedGene.zdbID}"/>
+                            <zfin2:toggledPostcomposedList entities="${xp.expressionResults}" maxNumber="3"
+                                                           id="${xp.expressedGene.zdbID}" numberOfEntities="${fn:length(xp.expressionResults)}"/>
                         </td>
                         <td valign="top">
                             <zfin:link entity="${xp.experiment}"/>

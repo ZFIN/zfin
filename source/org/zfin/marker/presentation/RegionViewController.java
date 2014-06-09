@@ -30,6 +30,9 @@ public class RegionViewController {
 
     @Autowired
     private MarkerRepository markerRepository ;
+    
+    @Autowired
+    private EfgViewController efgViewController;
 
     @RequestMapping(value ="/region/view/{zdbID}")
     public String getView(
@@ -48,22 +51,15 @@ public class RegionViewController {
 //        MarkerService.createDefaultViewForMarker(markerBean);
 
         markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(region));
-
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(region));
-
         markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
-
         markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
 
         // EXPRESSION SECTION
 //        markerBean.setMarkerExpression(expressionService.getExpressionForEfg(region));
 
         // (CONSTRUCTS)
-        Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
-        types.add(MarkerRelationship.Type.PROMOTER_OF);
-        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
-        markerBean.setConstructs(MarkerService.getRelatedMarker(region, types));
+        efgViewController.populateConstructList(markerBean, region);
 
         // (Antibodies)
 //        markerBean.setRelatedAntibodies(markerRepository

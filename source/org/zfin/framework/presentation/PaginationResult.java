@@ -1,5 +1,7 @@
 package org.zfin.framework.presentation;
 
+import org.zfin.marker.Marker;
+
 import java.util.List;
 
 /**
@@ -48,5 +50,10 @@ public class PaginationResult<T> {
 
     public void setStart(int start) {
         this.start = start;
+    }
+
+    public void add(PaginationResult<T> paginationResult) {
+        this.totalCount += paginationResult.totalCount;
+        this.populatedResults.addAll(paginationResult.getPopulatedResults());
     }
 }

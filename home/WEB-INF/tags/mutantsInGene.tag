@@ -30,9 +30,10 @@
             <tr>
                 <td class="data-label"><b>Alleles:</b> </td>
                 <td>
-                    <zfin2:toggledPostcomposedList expressionResults="${mutantsOnMarkerBean.alleles}"
+                    <zfin2:toggledPostcomposedList entities="${mutantsOnMarkerBean.alleles}"
                                                    maxNumber="5"
                                                    suppressPopupLinks="true"
+                                                   numberOfEntities="${fn:length(mutantsOnMarkerBean.alleles)}"
                             />
                 </td>
             </tr>

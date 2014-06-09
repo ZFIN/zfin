@@ -35,6 +35,7 @@ public class MarkerBean {
     private List<PreviousNameLight> previousNames;
     private List<GeneProductsBean> geneProductsBean;
     private List<MarkerRelationshipPresentation> relatedAntibodies;
+    private int numberOfConstructs;
 
     public String getMarkerTypeDisplay() {
         return markerTypeDisplay;
@@ -224,5 +225,13 @@ public class MarkerBean {
 
     public void setGeneProductsBean(List<GeneProductsBean> geneProductsBean) {
         this.geneProductsBean = geneProductsBean;
+    }
+
+    public void setNumberOfConstructs(int numberOfConstructs) {
+        this.numberOfConstructs = numberOfConstructs;
+    }
+
+    public int getNumberOfConstructs() {
+        return numberOfConstructs;
     }
 }

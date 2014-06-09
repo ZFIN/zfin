@@ -182,7 +182,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         geneViewController.setExpressionService(new ExpressionService());
         geneViewController.setMarkerRepository(getMarkerRepository());
         Model model = new ExtendedModelMap();
-        geneViewController.getGeneView( "ZDB-GENE-001103-1", model);
+        geneViewController.getGeneView("ZDB-GENE-001103-1", model);
     }
 
 
@@ -354,5 +354,17 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         String accession = MarkerService.getEnsemblAccessionId(marker);
         assertNotNull(accession);
         assertEquals("ENSDARG00000028148", accession);
+    }
+
+    @Test
+    public void getConstructsForGene() {
+        String geneAbbreviation = "EGFP";
+        Marker efg = getMarkerRepository().getMarkerByAbbreviation(geneAbbreviation);
+        Set<MarkerRelationship.Type> types = new HashSet<>();
+        types.add(MarkerRelationship.Type.PROMOTER_OF);
+        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
+        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
+        Set<Marker> set = MarkerService.getRelatedMarker(efg, types);
+        assertNotNull(set);
     }
 }
