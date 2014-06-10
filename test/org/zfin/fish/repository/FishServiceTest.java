@@ -177,7 +177,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
         assertNotNull(matchingTextList);
-        assertTrue("One Match", matchingTextList.size() == 1);
+        assertThat("At least one matching condition",matchingTextList.size(), greaterThan(1));
         assertEquals("Related Marker to Construct [Marker Symbol]", matchingTextList.iterator().next().getDescriptor());
         assertEquals("[Is Coding Sequence of Gt(GBT-P9)]", matchingTextList.iterator().next().getAppendix());
     }
