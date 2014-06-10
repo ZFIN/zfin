@@ -13,7 +13,7 @@
         </c:forEach>&nbsp;
     </c:when>
     <c:otherwise>
-        <table class="summary">
+        <table>
             <c:forEach var="hyperlinkEntity" items="${formBean.constructs}" varStatus="loop">
                 <tr>
                     <td>
