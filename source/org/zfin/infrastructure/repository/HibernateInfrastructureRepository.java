@@ -1258,8 +1258,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             ResultSet rs = stmt.executeQuery(queryString);
             while (rs.next()) {
                 List<String> row = new ArrayList<>();
-                for (int index = 1; index <= rs.getMetaData().getColumnCount(); index++)
-                    row.add(rs.getString(index));
+                for (int index = 1; index <= rs.getMetaData().getColumnCount(); index++) {
+                    String value = rs.getString(index);
+                    if (value == null)
+                        value = "";
+                    row.add(value);
+                }
                 data.add(row);
             }
         } catch (SQLException e) {
