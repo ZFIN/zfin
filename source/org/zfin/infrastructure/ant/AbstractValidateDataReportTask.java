@@ -63,6 +63,10 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 throw new RuntimeException(message);
             }
         }
+        setReportProperties();
+    }
+
+    protected void setReportProperties() {
         reportProperties = new Properties();
         try {
             reportProperties.load(new FileInputStream(new File(dataDirectory, propertiesFile)));
@@ -83,14 +87,18 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, String reportPrefix, File directory) {
         String fileName = jobName;
-        if (StringUtils.isNotEmpty(reportPrefix))
+        String reportFileName = "report.html";
+        if (StringUtils.isNotEmpty(reportPrefix)) {
             fileName += "." + reportPrefix;
+            reportFileName = reportPrefix + "." + reportFileName;
+        }
 
-        File reportFile = new File(directory, fileName + ".report.html");
+        File reportDirectory = new File(directory, jobName);
+        File reportFile = new File(reportDirectory, reportFileName);
         if (reportFile.exists())
             if (!reportFile.delete())
                 LOG.error("Could not delete report file: " + reportFile.getAbsolutePath());
-        File dataFile = new File(directory, fileName + ".txt");
+        File dataFile = new File(reportDirectory, fileName + ".txt");
         if (dataFile.exists())
             if (!dataFile.delete())
                 LOG.error("Could not delete data file: " + dataFile.getAbsolutePath());
@@ -109,10 +117,19 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             Map<String, Object> root = new HashMap<>();
             String errorMessage = (String) reportProperties.get(fileName + "." + ERROR_MESSAGE);
             String columnHeader = (String) reportProperties.get(fileName + "." + HEADER_COLUMNS);
-            if (StringUtils.isEmpty(errorMessage))
-                throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + propertiesFile);
-            if (StringUtils.isEmpty(columnHeader))
-                throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + propertiesFile);
+            if (StringUtils.isEmpty(errorMessage)) {
+                if (reportPrefix != null)
+                    errorMessage = (String) reportProperties.get(reportPrefix + "." + ERROR_MESSAGE);
+                if (StringUtils.isEmpty(errorMessage))
+                    throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + propertiesFile);
+
+            }
+            if (StringUtils.isEmpty(columnHeader)) {
+                if (reportPrefix != null)
+                    columnHeader = (String) reportProperties.get(reportPrefix + "." + HEADER_COLUMNS);
+                if (StringUtils.isEmpty(columnHeader))
+                    throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + propertiesFile);
+            }
             root.put("errorMessage", errorMessage);
             if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList)) {
                 root.put("recordList", new ArrayList<List<String>>());
@@ -167,7 +184,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 return name.endsWith(TEMPLATE) && name.startsWith(jobName);
             }
         });
-        if (templateFileList != null) {
+        if (templateFileList != null && templateFileList.length > 0) {
             for (File templateFile : templateFileList)
                 createReportFile(directory, templateFile.getName(), resultList, errorMessages);
         } else
@@ -177,8 +194,12 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     protected void createReportFile(File directory, String templateName, List<List<String>> resultList, List<String> errorMessages) {
         FileWriter writer;
         try {
+            LOG.info("Template Name: " + templateName);
             String reportFileName = getReportFileFromTemplateName(templateName);
             File reportFile = FileUtils.getFile(directory, jobName, reportFileName);
+            LOG.info("Report File: " + reportFile.getAbsolutePath());
+            if (!reportFile.exists())
+                reportFile.createNewFile();
             writer = new FileWriter(reportFile);
             freemarker.template.Configuration configuration = new freemarker.template.Configuration();
 

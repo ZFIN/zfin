@@ -17,6 +17,8 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.infrastructure.ant.DataReportTask;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
@@ -58,7 +60,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
  * This class assumes the latest obo file has already been downloaded from the corresponding site.
  * See {@link org.zfin.ontology.datatransfer.DownloadOntology}.
  */
-public class LoadOntology extends AbstractScriptWrapper {
+public class LoadOntology extends AbstractValidateDataReportTask {
 
     @Autowired
     private ExpressionService expressionService = new ExpressionService();
@@ -72,6 +74,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         options.addOption(webrootDirectory);
         options.addOption(productionModeOption);
         options.addOption(debugModeOption);
+        options.addOption(DataReportTask.jobNameOpt);
     }
 
     private OBOSession oboSession;
@@ -144,6 +147,7 @@ public class LoadOntology extends AbstractScriptWrapper {
         String oboFile = commandLine.getOptionValue(oboFileNameOption.getOpt());
         String dbScriptFilesNames = commandLine.getOptionValue(dbScriptFileOption.getOpt());
         String propertyFileName = commandLine.getOptionValue(webrootDirectory.getOpt());
+        String jobName = commandLine.getOptionValue(DataReportTask.jobNameOpt.getOpt());
         String[] dbScriptFiles = dbScriptFilesNames.split(",");
         LOG.info("Loading obo file: " + oboFile);
 
@@ -154,6 +158,8 @@ public class LoadOntology extends AbstractScriptWrapper {
             LOG.error(e.getMessage());
             System.exit(-1);
         }
+        loader.jobName = jobName;
+        LOG.info("Job Name: " + loader.jobName);
         String optionValue = commandLine.getOptionValue(productionModeOption.getOpt());
         if (StringUtils.isNotEmpty(optionValue))
             loader.productionMode = Boolean.parseBoolean(optionValue);
@@ -278,6 +284,11 @@ public class LoadOntology extends AbstractScriptWrapper {
     public boolean initialize(CronJobReport cronJobReport) {
         sectionTime = System.currentTimeMillis();
         this.report = cronJobReport;
+        this.propertiesFile = "report.properties";
+        this.templateName = "report.html.template";
+        this.dataDirectory = loadDirectory;
+        setReportProperties();
+
         try {
             createOboSession();
         } catch (OBOParseException e) {
@@ -448,38 +459,22 @@ public class LoadOntology extends AbstractScriptWrapper {
         // new terms report.
         if (dataMapHasValues(UnloadFile.NEW_TERMS)) {
             List<List<String>> rows = dataMap.get(UnloadFile.NEW_TERMS.getValue());
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " new " + termChoice.format(rows.size()) + " found");
-            cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-new-terms.ftl", cronReport);
+            createErrorReport(null, rows, "new-terms", loadDirectory);
         }
         // updated terms report.
         if (dataMapHasValues(UnloadFile.UPDATED_TERMS)) {
             List<List<String>> rows = dataMap.get(UnloadFile.UPDATED_TERMS.getValue());
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " updated term names");
-            cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
+            createErrorReport(null, rows, "updated-term-names", loadDirectory);
         }
         // updated term definitions report.
         if (dataMapHasValues(UnloadFile.MODIFIED_TERM_DEFINITIONS)) {
             List<List<String>> rows = dataMap.get(UnloadFile.MODIFIED_TERM_DEFINITIONS.getValue());
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " updated term definitions");
-            cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
+            createErrorReport(null, rows, "updated-definitions", loadDirectory);
         }
         // updated term comments report.
         if (dataMapHasValues(UnloadFile.MODIFIED_TERM_COMMENTS)) {
             List<List<String>> rows = dataMap.get(UnloadFile.MODIFIED_TERM_COMMENTS.getValue());
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " " + termChoice.format(rows.size()) + " updated term comments");
-            cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-updated-terms.ftl", cronReport);
+            createErrorReport(null, rows, "updated-term-comments", loadDirectory);
         }
         // updated terms report.
         if (dataMapHasValues(UnloadFile.SEC_UNLOAD_REPORT)) {
@@ -493,20 +488,12 @@ public class LoadOntology extends AbstractScriptWrapper {
         // new aliases.
         if (dataMapHasValues(UnloadFile.NEW_ALIASES)) {
             List<List<String>> rows = dataMap.get(UnloadFile.NEW_ALIASES.getValue());
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " new " + aliasChoice.format(rows.size()) + " found");
-            cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-new-aliases.ftl", cronReport);
+            createErrorReport(null, rows, "new-aliases", loadDirectory);
         }
         // removed aliases.
         if (dataMapHasValues(UnloadFile.REMOVED_ALIASES)) {
             List<List<String>> rows = dataMap.get(UnloadFile.REMOVED_ALIASES.getValue());
-            CronJobReport cronReport = new CronJobReport(report.getJobName());
-            cronReport.setRows(rows);
-            cronReport.appendToSubject(" - " + rows.size() + " existing " + aliasChoice.format(rows.size()) + " removed");
-            cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-removed-aliases.ftl", cronReport);
+            createErrorReport(null, rows, "removed-aliases", loadDirectory);
         }
         // report on new relationships
         List<GenericTermRelationship> newRelationships = getOntologyRepository().getNewRelationships(ontology);
@@ -517,15 +504,18 @@ public class LoadOntology extends AbstractScriptWrapper {
             cronReport.appendToSubject(" - " + newRelationships.size() + " new Relationships ");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-new-relationships.ftl", cronReport);
+            //createErrorReport(null, rows, "removed-aliases", loadDirectory);
         }
         // report on deleted relationships
         if (dataMapHasValues(UnloadFile.REMOVED_RELATIONSHIPS_1)) {
             GenericCronJobReport<List<GenericTermRelationship>> cronReport = new GenericCronJobReport<>(report.getJobName());
-            List<GenericTermRelationship> relationships = createRelationshipList(dataMap.get(UnloadFile.REMOVED_RELATIONSHIPS_1.getValue()));
+            List<List<String>> rows = dataMap.get(UnloadFile.REMOVED_RELATIONSHIPS_1.getValue());
+            List<GenericTermRelationship> relationships = createRelationshipList(rows);
             cronReport.setCollection(relationships);
             cronReport.appendToSubject(" - " + relationships.size() + " removed Relationships ");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-delete-relationships.ftl", cronReport);
+            createErrorReport(null, rows, "removed-relationships", loadDirectory);
         }
         unloadData();
         updatePhenotypesReport();
@@ -923,6 +913,11 @@ public class LoadOntology extends AbstractScriptWrapper {
         report.addMessageToSection(message, "Header");
     }
 
+    @Override
+    public void execute() {
+
+    }
+
     class RelationshipsValidator {
 
         private String childId;
@@ -1116,8 +1111,8 @@ public class LoadOntology extends AbstractScriptWrapper {
     }
 
     enum UnloadFile {
-        NEW_ALIASES("newAliases"),
-        REMOVED_ALIASES("removedAliases"),
+        NEW_ALIASES("new_aliases.txt"),
+        REMOVED_ALIASES("removed_aliases.txt"),
         REMOVED_RELATIONSHIPS_1("deleted_relationships_1.unl"),
         REMOVED_RELATIONSHIPS_2("deleted_relationships_2.unl"),
         TERM_PARSED("term_parsed.unl"),

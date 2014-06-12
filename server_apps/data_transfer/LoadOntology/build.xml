@@ -136,6 +136,7 @@
         <sequential>
             <echo>OBO dir : @{oboFileName}</echo>
             <echo>OBO file: @{oboDirectory}</echo>
+            <antcall target="clear-output-directory"/>
             <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
                   failonerror="true">
                 <classpath refid="classpath"/>
@@ -147,11 +148,20 @@
                 <arg value="${scriptFiles}"/>
                 <arg value="-webrootDirectory"/>
                 <arg value="${web.dir}"/>
+                <arg value="-jobName"/>
+                <arg value="${JobName}"/>
             </java>
         </sequential>
     </macrodef>
 
+    <target name="clear-output-directory">
+        <delete dir="${JobName}"/>
+        <mkdir dir="${JobName}"/>
+    </target>
+
+
     <target name="load-ontology-with-stages" description="Run the ontology loader">
+        <antcall target="clear-output-directory"/>
         <property name="dbScriptFiles"
                   value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
@@ -165,6 +175,8 @@
             <arg value="${dbScriptFiles}"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
+            <arg value="-jobName"/>
+            <arg value="${JobName}"/>
         </java>
 
     </target>
@@ -215,6 +227,8 @@
 
 
     <target name="download-ontology" depends="init" description="Run the ontology loader">
+        <echo>Downloading OBO file: ${oboFileURL}</echo>
+
         <java classname="org.zfin.ontology.datatransfer.DownloadOntology" fork="yes"
               failonerror="true">
             <classpath refid="classpath"/>
