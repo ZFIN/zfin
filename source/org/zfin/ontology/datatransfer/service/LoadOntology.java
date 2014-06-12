@@ -508,13 +508,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         }
         // report on deleted relationships
         if (dataMapHasValues(UnloadFile.REMOVED_RELATIONSHIPS_1)) {
-            GenericCronJobReport<List<GenericTermRelationship>> cronReport = new GenericCronJobReport<>(report.getJobName());
             List<List<String>> rows = dataMap.get(UnloadFile.REMOVED_RELATIONSHIPS_1.getValue());
-            List<GenericTermRelationship> relationships = createRelationshipList(rows);
-            cronReport.setCollection(relationships);
-            cronReport.appendToSubject(" - " + relationships.size() + " removed Relationships ");
-            cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-delete-relationships.ftl", cronReport);
             createErrorReport(null, rows, "removed-relationships", loadDirectory);
         }
         unloadData();
