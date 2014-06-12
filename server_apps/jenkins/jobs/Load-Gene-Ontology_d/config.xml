@@ -27,7 +27,7 @@
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/LoadOntology/Load-Gene-Ontology/*</artifacts>
+            <artifacts>server_apps/data_transfer/LoadOntology/Load-Gene-Ontology/*,server_apps/data_transfer/LoadOntology/obo-files/gene*.obo</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -35,7 +35,7 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Report</reportName>
-                    <reportDir>server_apps/data_transfer/LoadOntology/Load-Gene-Ontology,server_apps/data_transfer/LoadOntology/obo-files/gene*.obo</reportDir>
+                    <reportDir>server_apps/data_transfer/LoadOntology/Load-Gene-Ontology</reportDir>
                     <reportFiles>*report.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>true</allowMissing>
