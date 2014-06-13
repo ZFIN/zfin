@@ -9,6 +9,7 @@ import org.zfin.criteria.ZfinCriteria;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.repository.HibernateOrthologyRepository;
 import org.zfin.orthology.repository.OrthologyPresentationRow;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
@@ -17,6 +18,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.zfin.repository.RepositoryFactory.getOrthologyRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Test for utility methods in the repository class.
@@ -290,11 +293,19 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getOrthologuesForGene(){
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-        List<OrthologyPresentationRow> orthologues = RepositoryFactory.getOrthologyRepository().getOrthologyForGene(m);
+        List<OrthologyPresentationRow> orthologues = getOrthologyRepository().getOrthologyForGene(m);
         assertEquals(2,orthologues .size());
         for(OrthologyPresentationRow orthologue : orthologues ){
            assertTrue(orthologue.getEvidenceCodes().size() > 0);
         }
+
+        // pax2a
+        m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-8");
+        // Pfeffer
+        Publication publication = getPublicationRepository().getPublication("ZDB-PUB-980916-4");
+        orthologues = getOrthologyRepository().getOrthologyForGene(m, publication);
+        assertEquals(1,orthologues .size());
+
     }
 
 
@@ -302,10 +313,19 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
     public void getEvidenceCodesForMarker(){
 
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-        List<String> codes = RepositoryFactory.getOrthologyRepository().getEvidenceCodes(m);
+        List<String> codes = getOrthologyRepository().getEvidenceCodes(m);
         assertEquals(2,codes.size());
         assertEquals("AA", codes.get(0));
         assertEquals("NT", codes.get(1));
+
+        // fbmpr1aa
+        m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-000502-1");
+        // Correa
+        Publication publication = getPublicationRepository().getPublication("ZDB-PUB-050803-7");
+
+        codes = getOrthologyRepository().getEvidenceCodes(m, publication);
+        assertEquals(1,codes.size());
+        assertEquals("CL", codes.get(0));
 
     }
 }

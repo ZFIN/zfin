@@ -661,6 +661,10 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
     @Override
     public List<OrthologyPresentationRow> getOrthologyForGene(Marker m) {
+        return getOrthologyForGene(m, null);
+    }
+
+    public List<OrthologyPresentationRow> getOrthologyForGene(Marker m, Publication publication) {
         String sql = " select distinct o.organism ,o.ortho_abbrev,o.ortho_chromosome, " +
                 "o.ortho_position,oe.oev_evidence_code , fdb.fdb_db_name,dbl.dblink_acc_num, " +
                 "fdb.fdb_db_query,fdb.fdb_url_suffix " +
@@ -670,98 +674,66 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                 "left join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
                 "left join foreign_db fdb on fdb.fdb_db_pk_id=fdbc.fdbcont_fdb_db_id " +
                 "where o.c_gene_id=:markerZdbId ";
-        return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbId", m.getZdbID())
-                .setResultTransformer(new ResultTransformer() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] aliases) {
-                        OrthologyPresentationRow row = new OrthologyPresentationRow();
-                        row.setSpecies(tuple[0].toString());
-                        row.setAbbreviation(tuple[1].toString());
-                        if (tuple[2] != null) {
-                            row.setChromosome(tuple[2].toString());
-                        }
-                        if (tuple[3] != null) {
-                            row.setPosition(tuple[3].toString());
-                        }
-                        if (tuple[4] != null) {
-                            row.addEvidenceCode(tuple[4].toString());
-                        }
-                        if (tuple[6] != null) {
-                            row.addAccession(DBLinkPresentation.getGeneralHyperLink(
-                                    tuple[7].toString()+tuple[6]
-                                            +(tuple[8]!=null ? tuple[8].toString() : ""),   // url
-                                    tuple[5] + ":"+tuple[6])      // name
-                            );
-                        }
+        if (publication != null)
+            sql += " and oe.oev_pub_zdb_id = :pubID";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("markerZdbId", m.getZdbID());
+        if (publication != null)
+            query.setString("pubID", publication.getZdbID());
+        return query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                OrthologyPresentationRow row = new OrthologyPresentationRow();
+                row.setSpecies(tuple[0].toString());
+                row.setAbbreviation(tuple[1].toString());
+                if (tuple[2] != null) {
+                    row.setChromosome(tuple[2].toString());
+                }
+                if (tuple[3] != null) {
+                    row.setPosition(tuple[3].toString());
+                }
+                if (tuple[4] != null) {
+                    row.addEvidenceCode(tuple[4].toString());
+                }
+                if (tuple[6] != null) {
+                    row.addAccession(DBLinkPresentation.getGeneralHyperLink(
+                            tuple[7].toString() + tuple[6]
+                                    + (tuple[8] != null ? tuple[8].toString() : ""),   // url
+                            tuple[5] + ":" + tuple[6])      // name
+                    );
+                }
 
 
-                        return row;
+                return row;
+            }
+
+            /**
+             * Here we compact the list.
+             * @param collection
+             * @return
+             */
+            @Override
+            public List transformList(List collection) {
+                Map<String, OrthologyPresentationRow> condensed = new HashMap<String, OrthologyPresentationRow>();
+                for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
+                    OrthologyPresentationRow row = (OrthologyPresentationRow) iter.next();
+                    if (condensed.containsKey(row.getSpecies())) {
+                        OrthologyPresentationRow rowInstance = condensed.get(row.getSpecies());
+                        rowInstance.copyFrom(row);
+                    } else {
+                        condensed.put(row.getSpecies(), row);
                     }
+                }
 
-                    /**
-                     * Here we compact the list.
-                     * @param collection
-                     * @return
-                     */
-                    @Override
-                    public List transformList(List collection) {
-                        Map<String, OrthologyPresentationRow> condensed = new HashMap<String, OrthologyPresentationRow>();
-                        for (Iterator iter = collection.iterator(); iter.hasNext();) {
-                            OrthologyPresentationRow row = (OrthologyPresentationRow) iter.next();
-                            if (condensed.containsKey(row.getSpecies())) {
-                                OrthologyPresentationRow rowInstance = condensed.get(row.getSpecies());
-                                rowInstance.copyFrom(row);
-                            } else {
-                                condensed.put(row.getSpecies(), row);
-                            }
-                        }
-
-                        return new ArrayList<OrthologyPresentationRow>(condensed.values());
-                    }
-                })
+                return new ArrayList<OrthologyPresentationRow>(condensed.values());
+            }
+        })
                 .list();
     }
 
     @Override
     public List<String> getEvidenceCodes(Marker gene) {
-//        String sql = " select distinct oe.oev_evidence_code , oec.oevcode_order  " +
-//                "from orthologue o  " +
-//                "join orthologue_evidence oe on o.zdb_id=oe.oev_ortho_zdb_id " +
-//                "join orthologue_evidence_code oec on oec.oevcode_code=oe.oev_evidence_code " +
-//                "where o.c_gene_id=:markerZdbId  " +
-//                "order by oec.oevcode_order  ";
-//
-//
-//        return HibernateUtil.currentSession().createSQLQuery(sql)
-//                .setString("markerZdbId",gene.getZdbID())
-//                .setResultTransformer(new BasicTransformerAdapter() {
-//                    @Override
-//                    public Object transformTuple(Object[] tuple, String[] aliases) {
-//                        return tuple[0].toString();
-//                    }
-//                })
-//                .list();
-
-
-        String sql = " select distinct oe.orthologueEvidenceCode , ec.order " +
-                "from Orthologue o , OrthoEvidence oe, EvidenceCode ec " +
-                "where o.zdbID=oe.orthologueZdbID " +
-                "and ec.code=oe.orthologueEvidenceCode " +
-                "and o.gene = :gene " +
-//                "join orthologue_evidence_code oec on oec.oevcode_code=oe.oev_evidence_code " +
-                "order by ec.order  ";
-
-
-        return HibernateUtil.currentSession().createQuery(sql)
-                .setParameter("gene", gene)
-                .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] aliases) {
-                        return tuple[0].toString();
-                    }
-                })
-                .list();
+        return getEvidenceCodes(gene, null);
     }
 
     public List<OrthologySlimPresentation> getOrthologySlimForGeneId(String geneId) {
@@ -783,6 +755,33 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     }
 
                 })
+                .list();
+    }
+
+    @Override
+    public List<String> getEvidenceCodes(Marker gene, Publication publication) {
+
+        String sql = " select distinct oe.orthologueEvidenceCode , ec.order " +
+                "from Orthologue o , OrthoEvidence oe, EvidenceCode ec " +
+                "where o.zdbID=oe.orthologueZdbID " +
+                "and ec.code=oe.orthologueEvidenceCode " +
+                "and o.gene = :gene ";
+        if (publication != null)
+            sql += "and oe.publication = :publication ";
+        sql += "order by ec.order  ";
+
+
+        Query query = HibernateUtil.currentSession().createQuery(sql)
+                .setParameter("gene", gene);
+        if (publication != null)
+            query.setParameter("publication", publication);
+
+        return query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                return tuple[0].toString();
+            }
+        })
                 .list();
     }
 }

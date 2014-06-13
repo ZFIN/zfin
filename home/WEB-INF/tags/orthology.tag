@@ -100,6 +100,19 @@
                         </c:forEach>
                     </c:if>
                 </tr>
+                <c:if test="${loop.last}">
+                    <c:if test="${not hideEvidence}">
+                        <c:if test="${!empty orthologyPresentationBean.evidenceCodes}">
+                            <tr class=${loop.index%2==0 ? "even": "odd"}>
+                                <td colspan="5">
+                                    <a href="/action/marker/${marker.zdbID}/orthology-detail">
+                                        <b>Orthology Details</b>
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:if>
+                    </c:if>
+                </c:if>
             </c:forEach>
         </table>
     </c:if>
@@ -111,15 +124,6 @@
         </div>
     </c:if>
 
-    <c:if test="${not hideEvidence}">
-        <c:if test="${!empty orthologyPresentationBean.evidenceCodes}">
-            <div class="summary">
-                <a href="/action/marker/${marker.zdbID}/orthology-detail">
-                    <b>Orthology Details</b>
-                </a>
-            </div>
-        </c:if>
-    </c:if>
 
 </zfin2:subsection>
 

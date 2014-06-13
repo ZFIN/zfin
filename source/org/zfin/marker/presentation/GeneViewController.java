@@ -16,6 +16,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.Orthology;
 import org.zfin.orthology.OrthologyEvidenceService;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
@@ -142,14 +143,16 @@ public class GeneViewController {
                                     Model model) {
         logger.info("zdbID: " + pubID);
         List<Marker> list = getPublicationRepository().getOrthologyGeneList(pubID);
+        Publication publication = getPublicationRepository().getPublication(pubID);
         List<GeneBean> beanList = new ArrayList<>(list.size());
         for (Marker marker : list) {
             GeneBean orthologyBean = new GeneBean();
             orthologyBean.setMarker(marker);
-            orthologyBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(marker));
+            orthologyBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(marker, publication));
             beanList.add(orthologyBean);
         }
         model.addAttribute("orthologyBeanList", beanList);
+        model.addAttribute("publication", publication);
         return "marker/marker-orthology-list.page";
     }
 

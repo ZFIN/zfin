@@ -825,4 +825,13 @@ public class MarkerService {
         String accessionID = getMarkerRepository().getAccessionNumber(marker, database);
         return accessionID;
     }
+
+    public static OrthologyPresentationBean getOrthologyEvidence(Marker gene, Publication publication) {
+        OrthologyPresentationBean orthologyPresentationBean = new OrthologyPresentationBean();
+        orthologyPresentationBean.setEvidenceCodes(RepositoryFactory.getOrthologyRepository().getEvidenceCodes(gene, publication));
+        orthologyPresentationBean.setOrthologues(RepositoryFactory.getOrthologyRepository().getOrthologyForGene(gene, publication));
+        orthologyPresentationBean.setNotes(RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(gene.getZdbID()));
+
+        return orthologyPresentationBean;
+    }
 }

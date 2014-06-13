@@ -2,7 +2,14 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
-<h2>Orthology List (${orthologyBeanList.size()} genes)</h2>
+<table class="primary-entity-attributes">
+    <tr>
+        <th><span class="name-label">Orthology established by:</span></th>
+        <td><span class="name-value"><zfin:link entity="${publication}"/></span> (${orthologyBeanList.size()} genes)</td>
+    </tr>
+</table>
+
+
 
 <c:forEach var="formBean" items="${orthologyBeanList}">
 

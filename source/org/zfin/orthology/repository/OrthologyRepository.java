@@ -27,9 +27,28 @@ public interface OrthologyRepository extends CachedRepository {
      */
     void updateFastSearchEvidenceCodes(Set<Orthologue> orthologue);
 
-    List<OrthologyPresentationRow> getOrthologyForGene(Marker m) ;
+    List<OrthologyPresentationRow> getOrthologyForGene(Marker gene);
+
+    /**
+     * Retrieve Orthologues for given gene and publication
+     *
+     * @param gene        gene
+     * @param publication publication
+     * @return
+     */
+    List<OrthologyPresentationRow> getOrthologyForGene(Marker gene, Publication publication);
+
 
     List<String> getEvidenceCodes(Marker gene);
 
     List<OrthologySlimPresentation> getOrthologySlimForGeneId(String geneId);
+
+    /**
+     * Retrieve Evidence codes for given gene and publication
+     *
+     * @param m           marker
+     * @param publication publication
+     * @return list of evidence codes.
+     */
+    List<String> getEvidenceCodes(Marker gene, Publication publication);
 }
