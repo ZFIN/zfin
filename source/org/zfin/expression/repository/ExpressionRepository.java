@@ -172,7 +172,7 @@ public interface ExpressionRepository {
      * @param figureID      figure ID
      * @return list of experiment figure stages.
      */
-    List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish2(String publicationID, String geneZdbID, String fishID, String figureID);
+     List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
 
 
     /**
@@ -182,19 +182,6 @@ public interface ExpressionRepository {
      * @return list of experiments
      */
     List<ExpressionExperiment> getExperiments(String publicationID);
-
-    /**
-     * Retrieve an experiment figure stage for given pub, gene and fish.
-     *
-     * @deprecated Use getExperimentFigureStagesByGeneAndFish2
-     *
-     * @param publicationID Publication
-     * @param geneZdbID     gene
-     * @param fishID        fish
-     * @param figureID      figure ID
-     * @return list of experiment figure stages.
-     */
-    List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
 
 
     /**
