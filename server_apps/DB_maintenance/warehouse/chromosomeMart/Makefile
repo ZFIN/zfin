@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance/warehouse/chromosomeMart
 GENERICS = runChromosomeMart.sh
-STATICS = begin.sql schemaTables.sql populateTables.sql chromosome-integrity-tests.sql commit.sql refreshChromosomeMart.sql
+STATICS = begin.sql schemaTables.sql populateTables.sql chromosome-integrity-tests.sql commit.sql refreshChromosomeMart.sql updateUniqueLocationTable.sql
 
 
 # ---------------  Production Rules  ------------------------------------

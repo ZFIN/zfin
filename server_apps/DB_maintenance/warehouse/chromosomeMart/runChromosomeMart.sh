@@ -17,6 +17,7 @@ set chromosomeMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateTables.sql \
+	     updateUniqueLocationTable.sql \
 	     commit.sql \
 	    );
  
