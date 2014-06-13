@@ -144,6 +144,8 @@ into temp tmp_full;
 insert into sequence_feature_chromosome_location_temp (sfcl_chromosome, sfcl_data_zdb_id, sfcl_location_source, sfcl_location_subsource)
 select distinct * from tmp_full;
 
+!echo "Remove AB, U and 0 from chrromosome mart";
+ 
 delete from sequence_feature_chromosome_location_temp
  where sfcl_chromosome in ('AB','U','0');
 

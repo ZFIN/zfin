@@ -1,9 +1,9 @@
--- delete
 delete from unique_location;
 
 select count(*) from unique_location;
 
--- get all the unique marker / feature into table
+!echo ' get all the unique marker / feature into table';
+
 insert into unique_location
 select sfcl_data_zdb_id, '-1'
 from sequence_feature_chromosome_location
@@ -12,7 +12,8 @@ having count(distinct sfcl_chromosome) = 1;
 
 select count(*) from unique_location;
 
--- update the chromosome number
+!echo 'update the chromosome number';
+
 update unique_location as t set ul_chromosome = (
 select distinct ss.sfcl_chromosome from sequence_feature_chromosome_location as ss
 where ss.sfcl_data_zdb_id = t.ul_data_zdb_id
@@ -20,7 +21,8 @@ where ss.sfcl_data_zdb_id = t.ul_data_zdb_id
 
 select count(*) from unique_location;
 
--- insert genes that have unique PM data
+!echo 'insert genes that have unique PM data';
+
 insert into unique_location
 select ss.sfcl_data_zdb_id, '-2'
 from sequence_feature_chromosome_location as ss
@@ -31,7 +33,8 @@ having count(distinct sfcl_chromosome) = 1;
 
 select count(*) from unique_location;
 
--- update chromosome number of inserted markers
+!echo 'update chromosome number of inserted markers';
+
 update unique_location as t set ul_chromosome =
 (
 select distinct ss.sfcl_chromosome from sequence_feature_chromosome_location as ss
