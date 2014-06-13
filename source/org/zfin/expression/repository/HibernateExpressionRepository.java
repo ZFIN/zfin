@@ -31,6 +31,7 @@ import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.Person;
@@ -592,10 +593,10 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @return list of experiment figure stages.
      */
     @SuppressWarnings("unchecked")
-    public List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID,
-                                                                              String geneZdbID,
-                                                                              String fishZdbID,
-                                                                              String figureZdbID) {
+    public List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish2(String publicationID,
+                                                                               String geneZdbID,
+                                                                               String fishZdbID,
+                                                                               String figureZdbID) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select result, fig   from ExpressionResult result"
@@ -667,6 +668,59 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         //query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
 
         return query.list();
+    }
+
+    /**
+     * Retrieve an experiment figure stage for given pub, gene and fish.
+     *
+     * @param publicationID Publication
+     * @param geneZdbID     gene
+     * @param fishID        fish
+     * @return list of experiment figure stages.
+     */
+    @SuppressWarnings("unchecked")
+    public List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID,
+                                                                              String geneZdbID,
+                                                                              String fishID,
+                                                                              String figureID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select result, figure from ExpressionResult result, Figure figure"
+                + "       left join fetch result.expressionExperiment "
+                + "       left join fetch result.startStage "
+                + "       left join fetch result.endStage "
+                + "       left join fetch result.expressionExperiment.antibody "
+                + "       left join fetch result.figures "
+                + "       left join fetch result.expressionExperiment.genotypeExperiment "
+                + "       left join fetch result.expressionExperiment.genotypeExperiment.genotype "
+                + "       left join result.expressionExperiment.gene as gene "
+                + " ";
+        if (fishID != null) {
+            hql += "       join result.expressionExperiment.genotypeExperiment.genotype geno";
+        }
+        hql += "     where result.expressionExperiment.publication.zdbID = :pubID ";
+        if (geneZdbID != null)
+            hql += "           and result.expressionExperiment.gene.zdbID = :geneID ";
+        if (fishID != null)
+            hql += "           and geno.zdbID = :fishID ";
+        if (figureID != null)
+            hql += "           and figure.zdbID = :figureID ";
+        hql += " AND figure member of result.figures ";
+        hql += "    order by figure.orderingLabel, gene.abbreviationOrder, " +
+                "             result.expressionExperiment.genotypeExperiment.genotype.nickname, " +
+                "             result.expressionExperiment.assay.displayOrder, result.startStage.abbreviation ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+        if (geneZdbID != null)
+            query.setString("geneID", geneZdbID);
+        if (fishID != null)
+            query.setString("fishID", fishID);
+        if (figureID != null)
+            query.setString("figureID", figureID);
+
+        //query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
+
+        return populateExperimentFigureStage(query.list());
     }
 
     @SuppressWarnings("unchecked")
@@ -1780,17 +1834,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public SortedSet<Experiment> getSequenceTargetingReagentExperiments(SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<ExperimentCondition> getSequenceTargetingReagentExperiments(SequenceTargetingReagent sequenceTargetingReagent) {
         if (sequenceTargetingReagent == null)
             return null;
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ExperimentCondition.class);
         criteria.add(Restrictions.eq("sequenceTargetingReagent", sequenceTargetingReagent));
         List<ExperimentCondition> experimentConditions = (List<ExperimentCondition>) criteria.list();
-        SortedSet<Experiment> experiments = new TreeSet<Experiment>();
-        for (ExperimentCondition experimentCondition : experimentConditions) {
-            experiments.add(experimentCondition.getExperiment());
-        }
-        return experiments;
+   //     SortedSet<Experiment> experiments = new TreeSet<Experiment>();
+   //     for (ExperimentCondition experimentCondition : experimentConditions) {
+   //         experiments.add(experimentCondition.getExperiment());
+   //     }
+    //    return experiments;
+        return experimentConditions;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.feature.Feature;
@@ -174,12 +175,12 @@ public class DeleteRecordController {
                 argString += "<br/>";
                 formBean.addError("Creating feature: <br/>" + argString);
             }
-            SortedSet<Experiment> sequenceTargetingReagentExperiments = RepositoryFactory.getExpressionRepository().getSequenceTargetingReagentExperiments(sequenceTargetingReagent);
+            List<ExperimentCondition> sequenceTargetingReagentExperiments = RepositoryFactory.getExpressionRepository().getSequenceTargetingReagentExperiments(sequenceTargetingReagent);
             // Can't delete if used in an environment
             if (CollectionUtils.isNotEmpty(sequenceTargetingReagentExperiments)) {
                 String argString = "";
-                for (Experiment exp : sequenceTargetingReagentExperiments) {
-                    argString = argString + "<a target=_blank href=/" + exp.getZdbID() + ">" + exp.getName() + "</a><br/>";
+                for (ExperimentCondition exp : sequenceTargetingReagentExperiments) {
+                    argString = argString + "<a target=_blank href=/" + exp.getExperiment().getZdbID() + ">" + exp.getExperiment().getName() + "</a><br/>";
                 }
                 argString += "<br/>";
                 formBean.addError("Being used in environment: <br/>" + argString);
