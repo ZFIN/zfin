@@ -537,7 +537,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID) {
+    public List<ExpressionExperiment> getExperimentsByGeneAndFish(String publicationID, String geneZdbID, String fishID) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select experiment from ExpressionExperiment experiment";
@@ -582,6 +582,92 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     }
 
+
+    /**
+     * Retrieve an experiment figure stage for given pub, gene and fish.
+     *
+     * @param publicationID Publication
+     * @param geneZdbID     gene
+     * @param fishZdbID     fish
+     * @return list of experiment figure stages.
+     */
+    @SuppressWarnings("unchecked")
+    public List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID,
+                                                                              String geneZdbID,
+                                                                              String fishZdbID,
+                                                                              String figureZdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select result, fig   from ExpressionResult result"
+                + "       left join result.figures fig "
+                + "       left join result.expressionExperiment.gene as gene "
+                + "       join result.expressionExperiment.genotypeExperiment.genotype as geno "
+                + "       where result.expressionExperiment.publication.zdbID = :pubID "
+                + "       AND fig member of result.figures ";
+        if (geneZdbID != null) {
+            hql += " and gene.zdbID = :geneZdbID ";
+        }
+        if (figureZdbID != null) {
+            hql += " and fig.zdbID = :figureZdbID ";
+        }
+        if (fishZdbID != null) {
+            hql += " and geno.zdbID = :fishZdbID ";
+        }
+
+        hql += "       order by fig.orderingLabel, gene.abbreviationOrder "
+                + "             , geno.nickname "
+                + "             , result.expressionExperiment.assay.displayOrder "
+                + "             , result.startStage.abbreviation "
+                + " ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        if (geneZdbID != null) {
+            query.setString("geneZdbID", geneZdbID);
+        }
+        if (figureZdbID != null) {
+            query.setString("figureZdbID", figureZdbID);
+        }
+        if (fishZdbID != null) {
+            query.setString("fishZdbID", fishZdbID);
+        }
+
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                ExperimentFigureStage experimentFigureStage = new ExperimentFigureStage();
+                ExpressionResult er = (ExpressionResult) tuple[0];
+                Figure f = (Figure) tuple[1]; // may be null
+                experimentFigureStage.setStart(er.getStartStage());
+                experimentFigureStage.setEnd(er.getEndStage());
+                experimentFigureStage.setFigure(f);
+                experimentFigureStage.setExpressionExperiment(er.getExpressionExperiment());
+                experimentFigureStage.addExpressionResult(er);
+                return experimentFigureStage;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public List transformList(List collection) {
+                List<ExperimentFigureStage> fullList = (List<ExperimentFigureStage>) collection;
+                List<ExperimentFigureStage> returnList = new ArrayList<ExperimentFigureStage>();
+
+                for (ExperimentFigureStage efs : fullList) {
+                    if (returnList.contains(efs)) {
+                        ExperimentFigureStage oldEFS = returnList.get(returnList.indexOf(efs));
+                        oldEFS.addExpressionResults(efs.getExpressionResults());
+                    } else {
+                        returnList.add(efs);
+                    }
+                }
+
+                return returnList;
+            }
+        });
+
+        //query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
+
+        return query.list();
+    }
 
     @SuppressWarnings("unchecked")
     public List<ExpressionExperiment> getExperimentsByGeneAndFish2(String publicationID, String geneZdbID, String fishID) {
@@ -1701,6 +1787,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Criteria criteria = session.createCriteria(ExperimentCondition.class);
         criteria.add(Restrictions.eq("sequenceTargetingReagent", sequenceTargetingReagent));
         List<ExperimentCondition> experimentConditions = (List<ExperimentCondition>) criteria.list();
+
         return experimentConditions;
     }
 }
