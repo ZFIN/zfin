@@ -137,7 +137,7 @@ public class OrthologyValidationTest {
     }
 
     public void testFlyFalseChromosome() {
-        String species = Species.FLY.toString();
+        String species = Species.FRUIT_FLY.toString();
         String criteriaType = CriteriaType.CHROMOSOME.getName();
         String filterType = "equals";
         String chromoNumber = "4";

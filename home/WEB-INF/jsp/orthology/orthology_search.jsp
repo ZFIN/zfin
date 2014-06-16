@@ -155,7 +155,7 @@
                 <tr>
                     <td>
                         <dd>
-                            <form:checkbox path="includeFly"/> <%= Species.FLY.toString()%> (Drosophila melanogaster)
+                            <form:checkbox path="includeFly"/> <%= Species.FRUIT_FLY.toString()%> (Drosophila melanogaster)
                         </dd>
                     </td>
                     <td>
