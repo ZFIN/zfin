@@ -92,6 +92,12 @@ RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [
 RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/ontology/ontology-search? [NC,R=301]
 
+RewriteCond %{QUERY_STRING}    ^MIval=aa-refcrosslist.apg
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/mapping/all-panels? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-crossview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/mapping/panel-detail/%1? [NC,R=301]
+
 RewriteCond %{QUERY_STRING}    MIval=aa-fishselect.apg
 RewriteRule ^.*$ /action/fish/search [NC,R=301]
 
@@ -152,6 +158,7 @@ RewriteRule ^/downloads/file/(.+) /action/unload/downloads/file/$1 [NC]
 RewriteRule ^/downloads/([\S]+[.][\S]+) /data-transfer/current/$1 [NC,L]
 RewriteRule ^/downloads/([\S]*) /action/unload/downloads/$1 [NC,L,PT]
 RewriteRule ^/downloads /action/unload/downloads/ [NC,L,PT]
+
 
 #Allow use of same cgi-bin/webdriver path on all dev sites,
 #this rule should be below anything else webdriver related,
