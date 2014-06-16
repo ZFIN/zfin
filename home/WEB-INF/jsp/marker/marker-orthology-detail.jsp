@@ -5,12 +5,13 @@
 
 <table class="summary">
     <tr>
-        <th>Orthology Details</th>
-        <th style="float: right;">
-            <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Orthology Detail Page"/>
-                <tiles:putAttribute name="subjectID" value="${formBean.marker.zdbID}"/>
-            </tiles:insertTemplate>
+        <th>Orthology Details
+            <div style="float: right;">
+                <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+                    <tiles:putAttribute name="subjectName" value="Orthology Detail Page"/>
+                    <tiles:putAttribute name="subjectID" value="${formBean.marker.zdbID}"/>
+                </tiles:insertTemplate>
+            </div>
         </th>
     </tr>
 </table>
