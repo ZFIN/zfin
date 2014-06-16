@@ -81,7 +81,7 @@ public class EfgViewController {
         types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
         types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
         Set<Marker> markerSet = new TreeSet<>();
-        PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(efg, types, 5);
+        PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(efg, types, 7);
         markerSet.addAll(relatedMarker.getPopulatedResults());
         markerBean.setConstructs(markerSet);
         markerBean.setNumberOfConstructs(relatedMarker.getTotalCount());

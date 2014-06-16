@@ -40,6 +40,9 @@ public class GeneViewController {
     @Autowired
     private MarkerRepository markerRepository;
 
+    @Autowired
+    private EfgViewController efgViewController;
+
     @RequestMapping(value = "/gene/view/{zdbID}")
     public String getGeneView(@PathVariable("zdbID") String zdbID,
                               Model model) throws Exception {
@@ -92,13 +95,7 @@ public class GeneViewController {
         geneBean.setGeneProductsBean(RepositoryFactory.getMarkerRepository().getGeneProducts(gene.getZdbID()));
 
         // (CONSTRUCTS)
-        Set<MarkerRelationship.Type> types = new HashSet<>();
-        types.add(MarkerRelationship.Type.PROMOTER_OF);
-        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
-        Set<Marker> constructs = MarkerService.getRelatedMarker(gene, types);
-        constructs.addAll(RepositoryFactory.getMarkerRepository().getConstructsForGene(gene));
-        geneBean.setConstructs(constructs);
+        efgViewController.populateConstructList(geneBean, gene);
 
         // (Antibodies)
         geneBean.setRelatedAntibodies(RepositoryFactory.getMarkerRepository()
