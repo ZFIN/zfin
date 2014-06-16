@@ -12,6 +12,7 @@
             <th> Zebrafish</th>
             <th> Human</th>
             <th> Mouse</th>
+            <th> Fruit fly</th>
             <th width="30%"></th>
         </tr>
 
@@ -37,6 +38,11 @@
             </td>
             <td>
                 <c:if test="${orthology.containsSpeciesString('Mouse')}">
+                    <img src="/images/fill_green_ball.gif" border="0" height="10">
+                </c:if>
+            </td>
+            <td>
+                <c:if test="${orthology.containsSpeciesString('Fruit fly')}">
                     <img src="/images/fill_green_ball.gif" border="0" height="10">
                 </c:if>
             </td>
