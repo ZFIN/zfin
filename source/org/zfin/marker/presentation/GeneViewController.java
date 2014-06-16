@@ -95,7 +95,8 @@ public class GeneViewController {
         geneBean.setGeneProductsBean(RepositoryFactory.getMarkerRepository().getGeneProducts(gene.getZdbID()));
 
         // (CONSTRUCTS)
-        efgViewController.populateConstructList(geneBean, gene);
+        if (efgViewController != null)
+            efgViewController.populateConstructList(geneBean, gene);
 
         // (Antibodies)
         geneBean.setRelatedAntibodies(RepositoryFactory.getMarkerRepository()
