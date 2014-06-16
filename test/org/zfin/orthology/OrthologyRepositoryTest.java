@@ -277,7 +277,7 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
 
     private SpeciesCriteria getFlySpeciesCriteria() {
         SpeciesCriteria fly = new SpeciesCriteria();
-        fly.setName(Species.FLY.toString());
+        fly.setName(Species.FRUIT_FLY.toString());
         ChromosomeCriteria flyChrom = new ChromosomeCriteria();
         List<Integer> chromosFly = new ArrayList<Integer>();
         chromosFly.add(1);
