@@ -48,7 +48,7 @@ public class OrthologySearchBean extends PaginationBean implements Serializable 
         mouseCriteriaBean = new SpeciesCriteriaBean();
         mouseCriteriaBean.setName(Species.MOUSE.toString());
         flyCriteriaBean = new SpeciesCriteriaBean();
-        flyCriteriaBean.setName(Species.FLY.toString());
+        flyCriteriaBean.setName(Species.FRUIT_FLY.toString());
         initGeneSymbolValues();
         initChromosomeFilterValues();
     }
@@ -211,7 +211,7 @@ public class OrthologySearchBean extends PaginationBean implements Serializable 
         mouseCriteria.setGeneSymbolFilterType(FilterType.BEGINS.getName());
         criteriaList.add(mouseCriteria);
         SpeciesCriteriaBean flyCriteria = new SpeciesCriteriaBean();
-        flyCriteria.setName(Species.FLY.toString());
+        flyCriteria.setName(Species.FRUIT_FLY.toString());
         flyCriteria.setChromosomeFilterType(FilterType.EQUALS.getName());
         flyCriteria.setGeneSymbolFilterType(FilterType.BEGINS.getName());
         criteriaList.add(flyCriteria);

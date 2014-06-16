@@ -40,7 +40,7 @@ public class OrthologyFormValidator implements SearchFormValidator {
             validateHuman(criteriaType, filterType, criteria);
         } else if (species.equals(Species.MOUSE.toString())) {
             validateMouse(criteriaType, filterType, criteria);
-        } else if (species.equals(Species.FLY.toString())) {
+        } else if (species.equals(Species.FRUIT_FLY.toString())) {
             validateFly(criteriaType, filterType, criteria);
         } else {
             errors.addError("The species '" + species + "' is not supported by this search.");
@@ -337,7 +337,7 @@ public class OrthologyFormValidator implements SearchFormValidator {
     private void validateFly(String criteriaType, String filterType, String criteria) {
         if (criteria == null)
             criteria = "";
-        Species species = Species.FLY;
+        Species species = Species.FRUIT_FLY;
         int maxChromosome = 4;
         if (criteriaType.equals(CriteriaType.GENE_SYMBOL.getName())) {
             validateSymbol(species, filterType, criteria);

@@ -134,8 +134,8 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     currentOrthologySpecies.setSpecies(Species.HUMAN);
                 } else if (currentHelper.getSpecies().equals(Species.MOUSE.toString())) {
                     currentOrthologySpecies.setSpecies(Species.MOUSE);
-                } else if (currentHelper.getSpecies().equals(Species.FLY.toString())) {
-                    currentOrthologySpecies.setSpecies(Species.FLY);
+                } else if (currentHelper.getSpecies().equals(Species.FRUIT_FLY.toString())) {
+                    currentOrthologySpecies.setSpecies(Species.FRUIT_FLY);
                 } else if (currentHelper.getSpecies().equals(Species.YEAST.toString())) {
                     currentOrthologySpecies.setSpecies(Species.YEAST);
                 }
@@ -251,8 +251,8 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     currentOrthologySpecies.setSpecies(Species.HUMAN);
                 } else if (currentHelper.getSpecies().equals(Species.MOUSE.toString())) {
                     currentOrthologySpecies.setSpecies(Species.MOUSE);
-                } else if (currentHelper.getSpecies().equals(Species.FLY.toString())) {
-                    currentOrthologySpecies.setSpecies(Species.FLY);
+                } else if (currentHelper.getSpecies().equals(Species.FRUIT_FLY.toString())) {
+                    currentOrthologySpecies.setSpecies(Species.FRUIT_FLY);
                 } else if (currentHelper.getSpecies().equals(Species.YEAST.toString())) {
                     currentOrthologySpecies.setSpecies(Species.YEAST);
                 }
@@ -367,8 +367,8 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
                     currentOrthologySpecies.setSpecies(Species.HUMAN);
                 } else if (currentHelper.getSpecies().equals(Species.MOUSE.toString())) {
                     currentOrthologySpecies.setSpecies(Species.MOUSE);
-                } else if (currentHelper.getSpecies().equals(Species.FLY.toString())) {
-                    currentOrthologySpecies.setSpecies(Species.FLY);
+                } else if (currentHelper.getSpecies().equals(Species.FRUIT_FLY.toString())) {
+                    currentOrthologySpecies.setSpecies(Species.FRUIT_FLY);
                 } else if (currentHelper.getSpecies().equals(Species.YEAST.toString())) {
                     currentOrthologySpecies.setSpecies(Species.YEAST);
                 }
