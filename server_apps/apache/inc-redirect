@@ -63,6 +63,9 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/anatomy/anatomy-view/%1?
 RewriteCond %{QUERY_STRING}     ^Mival=aa-mappingdetail.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/mapping/detail/%1? [NC,R=301]
 
+RewriteCond %{QUERY_STRING}     ^Mival=aa-orthoviewdetailed.apg&OID=([\w-]+)&(.*)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/%1/orthology-detail? [NC,R=301]
+
 RewriteCond %{QUERY_STRING}     ^Mival=aa-persview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
