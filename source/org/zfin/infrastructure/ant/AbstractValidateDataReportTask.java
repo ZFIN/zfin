@@ -1,5 +1,6 @@
 package org.zfin.infrastructure.ant;
 
+import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.collections.CollectionUtils;
@@ -36,7 +37,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     protected DatabaseService service = new DatabaseService();
     // contains key-value pairs that are used in the report generation.
     protected Map<String, String> dataMap = new HashMap<>(5);
-    protected List<String> templateNameList;
 
     public abstract void execute();
 
@@ -82,55 +82,46 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     }
 
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, File directory) {
-        createErrorReport(errorMessages, resultList, reportPrefix, dataDirectory);
+        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, baseDir, directory.getAbsolutePath());
+        createErrorReport(errorMessages, resultList, reportConfiguration);
     }
 
-    protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, String reportPrefix, File directory) {
-        String fileName = jobName;
-        String reportFileName = "report.html";
-        if (StringUtils.isNotEmpty(reportPrefix)) {
-            fileName += "." + reportPrefix;
-            reportFileName = reportPrefix + "." + reportFileName;
-        }
+    //protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, String reportPrefix, File directory, boolean useReportTemplate) {
+    protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, ReportConfiguration reportConfiguration) {
 
-        File reportDirectory = new File(directory, jobName);
-        File reportFile = new File(reportDirectory, reportFileName);
-        if (reportFile.exists())
-            if (!reportFile.delete())
-                LOG.error("Could not delete report file: " + reportFile.getAbsolutePath());
-        File dataFile = new File(reportDirectory, fileName + ".txt");
-        if (dataFile.exists())
-            if (!dataFile.delete())
-                LOG.error("Could not delete data file: " + dataFile.getAbsolutePath());
-
-        freemarker.template.Configuration configuration = new freemarker.template.Configuration();
+        Configuration configuration = new Configuration();
         try {
-            configuration.setDirectoryForTemplateLoading(directory);
+            configuration.setDirectoryForTemplateLoading(reportConfiguration.getTemplateDirectory());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        LOG.info("Template File being used: " + reportConfiguration.getTemplateDirectory() + "/" + reportConfiguration.getTemplateFileName());
         FileWriter writer;
         try {
-            writer = new FileWriter(reportFile);
-            Template template = configuration.getTemplate(templateName);
+            writer = new FileWriter(reportConfiguration.getReportFile());
+            Template template = configuration.getTemplate(reportConfiguration.getTemplateFileName());
             Map<String, Object> root = new HashMap<>();
-            String errorMessage = (String) reportProperties.get(fileName + "." + ERROR_MESSAGE);
-            String columnHeader = (String) reportProperties.get(fileName + "." + HEADER_COLUMNS);
-            if (StringUtils.isEmpty(errorMessage)) {
-                if (reportPrefix != null)
-                    errorMessage = (String) reportProperties.get(reportPrefix + "." + ERROR_MESSAGE);
-                if (StringUtils.isEmpty(errorMessage))
-                    throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + propertiesFile);
 
+
+            if (reportConfiguration.isUseDefaultReportTemplate()) {
+                String errorMessage = (String) reportProperties.get(reportConfiguration.getReportName() + "." + ERROR_MESSAGE);
+                String columnHeader = (String) reportProperties.get(reportConfiguration.getReportName() + "." + HEADER_COLUMNS);
+                if (StringUtils.isEmpty(errorMessage)) {
+                    LOG.debug("No value for key " + reportConfiguration.getReportName() + " found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
+                    reportConfiguration.getReportFile().delete();
+                    return;
+                }
+                if (StringUtils.isEmpty(columnHeader)) {
+                    LOG.debug("No value for key " + reportConfiguration.getReportName() + " found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
+                    reportConfiguration.getReportFile().delete();
+                    return;
+                }
+                root.put("errorMessage", errorMessage);
+                // header columns
+                String[] headerCols = columnHeader.split("\\|");
+                root.put("headerColumns", headerCols);
             }
-            if (StringUtils.isEmpty(columnHeader)) {
-                if (reportPrefix != null)
-                    columnHeader = (String) reportProperties.get(reportPrefix + "." + HEADER_COLUMNS);
-                if (StringUtils.isEmpty(columnHeader))
-                    throw new RuntimeException("No value for key " + fileName + " found in file " + directory + "/" + propertiesFile);
-            }
-            root.put("errorMessage", errorMessage);
             if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList)) {
                 root.put("recordList", new ArrayList<List<String>>());
                 root.put("numberOfRecords", 0);
@@ -138,10 +129,10 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 root.put("recordList", resultList);
                 root.put("numberOfRecords", resultList.size());
             }
-            // header columns
-            String[] headerCols = columnHeader.split("\\|");
-            root.put("headerColumns", headerCols);
+            // add custom variables
+            addCustomVariables(root);
             root.put("dateRun", new Date());
+//            root.putAll();
             if (queryFile != null)
                 root.put("sqlQuery", getSqlQuery());
             template.process(root, writer);
@@ -157,7 +148,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                     lines.append("\n");
                 }
             }
-            FileUtils.writeStringToFile(dataFile, lines.toString());
+            FileUtils.writeStringToFile(reportConfiguration.getPlainReportFile(), lines.toString());
         } catch (IOException e) {
             LOG.error(e);
             throw new RuntimeException("Error finding template file.", e);
@@ -177,6 +168,11 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         throw new RuntimeException(" Errors in unit test:" + errorMessages.size());
     }
 
+    // Override this in your sub class...
+    protected void addCustomVariables(Map<String, Object> map) {
+
+    }
+
     protected void createReportFile(File directory, List<List<String>> resultList, List<String> errorMessages) {
         File[] templateFileList = directory.listFiles(new FilenameFilter() {
             @Override
@@ -185,50 +181,13 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             }
         });
         if (templateFileList != null && templateFileList.length > 0) {
-            for (File templateFile : templateFileList)
-                createReportFile(directory, templateFile.getName(), resultList, errorMessages);
-        } else
-            createReportFile(directory, templateName, resultList, errorMessages);
-    }
-
-    protected void createReportFile(File directory, String templateName, List<List<String>> resultList, List<String> errorMessages) {
-        FileWriter writer;
-        try {
-            LOG.info("Template Name: " + templateName);
-            String reportFileName = getReportFileFromTemplateName(templateName);
-            File reportFile = FileUtils.getFile(directory, jobName, reportFileName);
-            LOG.info("Report File: " + reportFile.getAbsolutePath());
-            if (!reportFile.exists())
-                reportFile.createNewFile();
-            writer = new FileWriter(reportFile);
-            freemarker.template.Configuration configuration = new freemarker.template.Configuration();
-
-            configuration.setDirectoryForTemplateLoading(directory);
-            Template template = configuration.getTemplate(templateName);
-            Map<String, Object> root = new HashMap<>();
-            root.put("errorMessages", errorMessages);
-            if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList)) {
-                root.put("recordList", new ArrayList<List<String>>());
-                root.put("numberOfRecords", 0);
-            } else {
-                root.put("recordList", resultList);
-                root.put("numberOfRecords", resultList.size());
+            for (File templateFile : templateFileList) {
+                ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, templateFile, jobName, false);
+                createErrorReport(errorMessages, resultList, reportConfiguration);
             }
-            if (MapUtils.isNotEmpty(dataMap)) {
-                for (String key : dataMap.keySet()) {
-                    root.put(key, dataMap.get(key));
-                }
-            }
-            if (queryFile != null)
-                root.put("sqlQuery", getSqlQuery());
-            template.process(root, writer);
-            writer.flush();
-        } catch (IOException e) {
-            LOG.error(e);
-            throw new RuntimeException("Error finding template file.", e);
-        } catch (TemplateException e) {
-            LOG.error(e);
-            throw new RuntimeException("Error while creating email body", e);
+        } else{
+            ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, directory, jobName, true);
+            createErrorReport(errorMessages, resultList, reportConfiguration);
         }
     }
 

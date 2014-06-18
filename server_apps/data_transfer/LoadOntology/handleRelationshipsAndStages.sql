@@ -271,8 +271,14 @@ insert into term_relationship (termrel_zdb_id,
 --!!! NOT OBVIOUS logic: if the second term in the relationship belongs to this ontology load, then it is
 --!!! safe to check for deletions. Don't want to delete other load relationships.
 
-unload to deleted_relationships_1.unl
-select * from term_relationship
+unload to removed_relationships
+select parent.term_ont_id,
+       parent.term_name,
+       child.term_ont_id,
+       child.term_name,
+       termrel_type,
+       termrel_zdb_id
+ from term_relationship, term as parent, term as child
  where not exists (Select 'x' from term a, term b, tmp_rels
        	   	  	  where a.term_ont_id = termrel_term_1_id
 			  and b.term_ont_id = termrel_term_2_id
@@ -281,10 +287,18 @@ select * from term_relationship
 			  and term_relationship.termrel_type = tmp_rels.termrel_type)
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
-			and term_zdb_id = termrel_term_2_zdb_id);
+			and term_zdb_id = termrel_term_2_zdb_id)
+			and parent.term_zdb_id = termrel_term_1_zdb_id
+			and child.term_zdb_id = termrel_term_2_zdb_id			;
 
-unload to deleted_relationships_2.unl
-select * from term_relationship
+unload to removed_relationships
+select parent.term_ont_id,
+       parent.term_name,
+       child.term_ont_id,
+       child.term_name,
+       termrel_type,
+       termrel_zdb_id
+ from term_relationship, term as parent, term as child
  where not exists (Select 'x' from term a, term b, tmp_rels
        	   	  	  where a.term_ont_id = termrel_term_1_id
 			  and b.term_ont_id = termrel_term_2_id
@@ -293,7 +307,9 @@ select * from term_relationship
 			  and term_relationship.termrel_type = tmp_rels.termrel_type)
  and exists (select 'x' from tmp_term_onto_no_dups, term
      	    	    	where term_id = term_ont_id
-			and term_zdb_id = termrel_term_1_zdb_id);
+			and term_zdb_id = termrel_term_1_zdb_id)
+			and parent.term_zdb_id = termrel_term_1_zdb_id
+			and child.term_zdb_id = termrel_term_2_zdb_id			;
 
 !echo "delete from term relationship";
 delete from term_relationship

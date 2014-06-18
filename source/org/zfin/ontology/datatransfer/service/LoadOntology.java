@@ -2,6 +2,7 @@ package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -19,11 +20,11 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.DataReportTask;
+import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
-import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
 import org.zfin.ontology.datatransfer.GenericCronJobReport;
@@ -88,10 +89,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     // i.e. new terms, synonyms etc.. They have a key that is used (referred to) in the db script file
     // Currently, all the data need to be of type string!
     // There are about 20 different types of data set to be imported.  
-    private Map<String, List<List<String>>> dataMap = new HashMap<String, List<List<String>>>(20);
+    private Map<String, List<List<String>>> dataMap = new HashMap<>(20);
     private OntologyMetadata oboMetadata;
     private static final ChoiceFormat termChoice = new ChoiceFormat("0#terms| 1#term| 2#terms");
-    private static final ChoiceFormat aliasChoice = new ChoiceFormat("0#aliases| 1#alias| 2#aliases");
 
     // if true then only import if a new file is encountered
     // if false always load the obo file.
@@ -207,6 +207,15 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             postLoadProcess();
             // need to reverse it. A bit of a hack!                                                                                                                                                    zx
             TermPresentation.domain = null;
+        } else {
+            // copy no-update found file into reports directory
+            try {
+                File srcFile = new File(loadDirectory, "no-update.html");
+                File file = FileUtils.getFile(loadDirectory, jobName, "statistics.html");
+                FileUtils.copyFile(srcFile, file);
+            } catch (IOException e) {
+                LOG.error(e);
+            }
         }
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
         closeTraceFile();
@@ -239,9 +248,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
 
     private void createEndStageReport(List<GenericTermRelationship> invalidStages, String title, String parentStage, String childStage, String subject) {
         LOG.warn(title);
-        List<List<String>> rows = new ArrayList<List<String>>(invalidStages.size());
+        List<List<String>> rows = new ArrayList<>(invalidStages.size());
         for (GenericTermRelationship pheno : invalidStages) {
-            List<String> row = new ArrayList<String>();
+            List<String> row = new ArrayList<>();
             row.add(pheno.getTermOne().getTermName());
             row.add(pheno.getTermTwo().getTermName());
             row.add(pheno.getTermOne().getEnd().getName());
@@ -253,9 +262,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
 
     private void createStageReport(List<GenericTermRelationship> invalidStages, String title, String parentStage, String childStage, String subject) {
         LOG.warn(title);
-        List<List<String>> rows = new ArrayList<List<String>>(invalidStages.size());
+        List<List<String>> rows = new ArrayList<>(invalidStages.size());
         for (GenericTermRelationship pheno : invalidStages) {
-            List<String> row = new ArrayList<String>();
+            List<String> row = new ArrayList<>();
             row.add(pheno.getTermOne().getTermName());
             row.add(pheno.getTermTwo().getTermName());
             row.add(pheno.getTermOne().getStart().getName());
@@ -308,9 +317,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypesOnObsoletedTerms(ontology);
         if (phenotypes != null && phenotypes.size() > 0) {
             LOG.warn("Pato annotations found that use obsoleted terms");
-            List<List<String>> rows = new ArrayList<List<String>>(phenotypes.size());
+            List<List<String>> rows = new ArrayList<>(phenotypes.size());
             for (PhenotypeStatement pheno : phenotypes) {
-                List<String> row = new ArrayList<String>();
+                List<String> row = new ArrayList<>();
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getZdbID());
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getTitle());
                 row.add(pheno.getDisplayName());
@@ -343,9 +352,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             String messageHeader = "Expression annotations found that use obsoleted term ids";
             buffer.append(messageHeader);
             report.addMessageToSection(messageHeader, "Post-Processing");
-            List<List<String>> rows = new ArrayList<List<String>>(obsoletedTermsUsedExpression.size());
+            List<List<String>> rows = new ArrayList<>(obsoletedTermsUsedExpression.size());
             for (ExpressionResult expressionResult : obsoletedTermsUsedExpression) {
-                List<String> row = new ArrayList<String>();
+                List<String> row = new ArrayList<>();
                 row.add(expressionResult.getExpressionExperiment().getPublication().getZdbID());
                 row.add(expressionResult.getExpressionExperiment().getPublication().getTitle());
                 row.add(expressionResult.getEntity().getDisplayName());
@@ -378,9 +387,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             String messageHeader = "Pato annotations found that use secondary term ids";
             buffer.append(messageHeader);
             report.addMessageToSection(messageHeader, "Post-Processing");
-            List<List<String>> rows = new ArrayList<List<String>>(secondaryTermsUsed.size());
+            List<List<String>> rows = new ArrayList<>(secondaryTermsUsed.size());
             for (PhenotypeStatement pheno : secondaryTermsUsed) {
-                List<String> row = new ArrayList<String>();
+                List<String> row = new ArrayList<>();
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getZdbID());
                 row.add(pheno.getPhenotypeExperiment().getFigure().getPublication().getTitle());
                 row.add(pheno.getDisplayName());
@@ -416,9 +425,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             String messageHeader = "Expression annotations found that use secondary term ids";
             buffer.append(messageHeader);
             report.addMessageToSection(messageHeader, "Post-Processing");
-            List<List<String>> rows = new ArrayList<List<String>>(secondaryTermsUsedExpression.size());
+            List<List<String>> rows = new ArrayList<>(secondaryTermsUsedExpression.size());
             for (ExpressionResult expressionResult : secondaryTermsUsedExpression) {
-                List<String> row = new ArrayList<String>();
+                List<String> row = new ArrayList<>();
                 row.add(expressionResult.getExpressionExperiment().getPublication().getZdbID());
                 row.add(expressionResult.getExpressionExperiment().getPublication().getTitle());
                 row.add(expressionResult.getEntity().getDisplayName());
@@ -456,26 +465,6 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-terms-un-obsoleted.ftl", cronReport);
         }
-        // new terms report.
-        if (dataMapHasValues(UnloadFile.NEW_TERMS)) {
-            List<List<String>> rows = dataMap.get(UnloadFile.NEW_TERMS.getValue());
-            createErrorReport(null, rows, "new-terms", loadDirectory);
-        }
-        // updated terms report.
-        if (dataMapHasValues(UnloadFile.UPDATED_TERMS)) {
-            List<List<String>> rows = dataMap.get(UnloadFile.UPDATED_TERMS.getValue());
-            createErrorReport(null, rows, "updated-term-names", loadDirectory);
-        }
-        // updated term definitions report.
-        if (dataMapHasValues(UnloadFile.MODIFIED_TERM_DEFINITIONS)) {
-            List<List<String>> rows = dataMap.get(UnloadFile.MODIFIED_TERM_DEFINITIONS.getValue());
-            createErrorReport(null, rows, "updated-definitions", loadDirectory);
-        }
-        // updated term comments report.
-        if (dataMapHasValues(UnloadFile.MODIFIED_TERM_COMMENTS)) {
-            List<List<String>> rows = dataMap.get(UnloadFile.MODIFIED_TERM_COMMENTS.getValue());
-            createErrorReport(null, rows, "updated-term-comments", loadDirectory);
-        }
         // updated terms report.
         if (dataMapHasValues(UnloadFile.SEC_UNLOAD_REPORT)) {
             List<List<String>> rows = dataMap.get(UnloadFile.SEC_UNLOAD_REPORT.getValue());
@@ -485,35 +474,59 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-secondary-terms-used.ftl", cronReport);
         }
-        // new aliases.
-        if (dataMapHasValues(UnloadFile.NEW_ALIASES)) {
-            List<List<String>> rows = dataMap.get(UnloadFile.NEW_ALIASES.getValue());
-            createErrorReport(null, rows, "new-aliases", loadDirectory);
-        }
-        // removed aliases.
-        if (dataMapHasValues(UnloadFile.REMOVED_ALIASES)) {
-            List<List<String>> rows = dataMap.get(UnloadFile.REMOVED_ALIASES.getValue());
-            createErrorReport(null, rows, "removed-aliases", loadDirectory);
-        }
         // report on new relationships
         List<GenericTermRelationship> newRelationships = getOntologyRepository().getNewRelationships(ontology);
         if (CollectionUtils.isNotEmpty(newRelationships)) {
             GenericCronJobReport<List<GenericTermRelationship>> cronReport;
-            cronReport = new GenericCronJobReport<List<GenericTermRelationship>>(report.getJobName());
+            cronReport = new GenericCronJobReport<>(report.getJobName());
             cronReport.setCollection(newRelationships);
             cronReport.appendToSubject(" - " + newRelationships.size() + " new Relationships ");
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-new-relationships.ftl", cronReport);
             //createErrorReport(null, rows, "removed-aliases", loadDirectory);
         }
-        // report on deleted relationships
-        if (dataMapHasValues(UnloadFile.REMOVED_RELATIONSHIPS_1)) {
-            List<List<String>> rows = dataMap.get(UnloadFile.REMOVED_RELATIONSHIPS_1.getValue());
-            createErrorReport(null, rows, "removed-relationships", loadDirectory);
-        }
-        unloadData();
+        createAllReportFiles();
+        //unloadData();
         updatePhenotypesReport();
         updateExpressionReport();
+    }
+
+    private void createAllReportFiles() {
+        if (CollectionUtils.isEmpty(dataMap.keySet()))
+            return;
+
+        // check every key from the data map to see if there is a report defined.
+        for (String key : dataMap.keySet()) {
+            if (dataMapHasValues(key)) {
+                ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, loadDirectory, key, true);
+                createErrorReport(null, dataMap.get(key), reportConfiguration);
+            }
+        }
+        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, loadDirectory, "statistics", false);
+        createErrorReport(null, null, reportConfiguration);
+
+    }
+
+    @Override
+    protected void addCustomVariables(Map<String, Object> map) {
+        for (String key : dataMap.keySet()) {
+            if (dataMapHasValues(key)) {
+                if (key != null && key.endsWith("_count")) {
+                    map.put(key + "s", getSingleValue(dataMap.get(key)));
+                }
+            }
+        }
+        map.putAll(dataMap);
+    }
+
+    private Object getSingleValue(List<List<String>> lists) {
+        if (lists == null)
+            return null;
+        for (List<String> list : lists) {
+            if (list != null && list.size() == 1)
+                return list.get(0);
+        }
+        return null;
     }
 
     private void unloadData() {
@@ -668,7 +681,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 infrastructureRep.executeJdbcStatementOneByOne(statement, data);
                 LOG.info(data.size() + " records inserted");
             } else if (statement.isDebug()) {
-                List<List<String>> dataReturn = null;
+                List<List<String>> dataReturn;
                 if (LOG.isDebugEnabled()) {
                     dataReturn = infrastructureRep.executeNativeQuery(statement);
                     if (dataReturn == null)
@@ -680,19 +693,22 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                     }
                 }
             } else if (statement.isSelectStatement()) {
-                List<List<String>> dataReturn = null;
+                List<List<String>> dataReturn;
                 dataReturn = infrastructureRep.executeNativeQuery(statement);
                 writeToTraceFile(statement, dataReturn);
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
-                } else if (statement.getDataKey() == null) {
-                    LOG.info("  Data: " + dataReturn.size() + " records.");
-                } else if (statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {
+                } else if (statement.getDataKey() != null && statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {
                     LOG.info("  Debug data: " + dataReturn.size() + " records.");
                     for (List<String> row : dataReturn)
                         LOG.info("  " + row);
-                } else
-                    dataMap.put(statement.getDataKey(), dataReturn);
+                } else {
+                    List<List<String>> existingData = dataMap.get(statement.getDataKey());
+                    if (existingData != null)
+                        addDataToList(existingData, dataReturn);
+                    else
+                        dataMap.put(statement.getDataKey(), dataReturn);
+                }
             } else if (statement.isComment()) {
                 writeToTraceFile(statement.getComment());
             } else if (statement.isEcho()) {
@@ -713,6 +729,13 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             writeToTraceFile("");
             DbSystemUtil.logLockInfo();
         }
+    }
+
+    private void addDataToList(List<List<String>> existingData, List<List<String>> newData) {
+        if (existingData == null || newData == null)
+            return;
+        for (List<String> elements : newData)
+            existingData.add(elements);
     }
 
     private void runDebugStatement(DatabaseJdbcStatement statement) {
@@ -1105,8 +1128,6 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     }
 
     enum UnloadFile {
-        NEW_ALIASES("new_aliases.txt"),
-        REMOVED_ALIASES("removed_aliases.txt"),
         REMOVED_RELATIONSHIPS_1("deleted_relationships_1.unl"),
         REMOVED_RELATIONSHIPS_2("deleted_relationships_2.unl"),
         TERM_PARSED("term_parsed.unl"),
@@ -1135,9 +1156,6 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         SYNTYPEDEFS_HEADER("syntypedefs_header.unl"),
         SEC_UNLOAD_REPORT("sec_unload_report.unl"),
         SEC_UNLOAD("sec_unload.unl"),
-        MODIFIED_TERM_NAMES("modified_term_names.unl"),
-        MODIFIED_TERM_DEFINITIONS("modified_term_definitions.unl"),
-        MODIFIED_TERM_COMMENTS("modified_term_comments.unl"),
         SUBSETDEFS_HEADER("subsetdefs_header.unl");
         private String value;
 

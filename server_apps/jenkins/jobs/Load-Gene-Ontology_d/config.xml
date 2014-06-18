@@ -21,13 +21,13 @@
             <command>cd $TARGETROOT/server_apps/data_transfer/LoadOntology</command>
         </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>load-gene -DJobName=Load-Gene-Ontology</targets>
+            <targets>load-gene -DJobName=Load-Gene-Ontology_d</targets>
             <buildFile>$TARGETROOT/server_apps/data_transfer/LoadOntology/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/LoadOntology/Load-Gene-Ontology/*,server_apps/data_transfer/LoadOntology/obo-files/gene*.obo</artifacts>
+            <artifacts>server_apps/data_transfer/LoadOntology/Load-Gene-Ontology_d/*,server_apps/data_transfer/LoadOntology/obo-files/gene*.obo</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -35,8 +35,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Report</reportName>
-                    <reportDir>server_apps/data_transfer/LoadOntology/Load-Gene-Ontology</reportDir>
-                    <reportFiles>*report.html</reportFiles>
+                    <reportDir>server_apps/data_transfer/LoadOntology/Load-Gene-Ontology_d</reportDir>
+                    <reportFiles>*.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>true</allowMissing>
                     <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -50,7 +50,7 @@
               <email>
                   <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                   <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                  <body>$PROJECT_DEFAULT_CONTENT</body>
+                  <body>${FILE,path=&quot;server_apps/data_transfer/LoadOntology/Load-Gene-Ontology_d/statistics.html&quot;}</body>
                   <sendToDevelopers>false</sendToDevelopers>
                   <sendToRequester>false</sendToRequester>
                   <includeCulprits>false</includeCulprits>
@@ -59,7 +59,7 @@
                   <attachBuildLog>false</attachBuildLog>
                   <compressBuildLog>false</compressBuildLog>
                   <replyTo></replyTo>
-                  <contentType>project</contentType>
+                  <contentType>text/html</contentType>
               </email>
           </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <hudson.plugins.emailext.plugins.trigger.FailureTrigger>

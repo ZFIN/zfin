@@ -70,7 +70,7 @@
               <htmlpublisher.HtmlPublisherTarget>
                   <reportName>New Publication Report</reportName>
                   <reportDir>server_apps/DB_maintenance/report_data/New-Publications_d</reportDir>
-                  <reportFiles>report.html</reportFiles>
+                  <reportFiles>New-Publications_d.report.html</reportFiles>
                   <keepAll>false</keepAll>
                   <allowMissing>false</allowMissing>
                   <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -84,7 +84,7 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data//New-Publications_d/report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data//New-Publications_d/New-Publications_d.report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

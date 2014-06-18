@@ -36,7 +36,7 @@
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Report</reportName>
                     <reportDir>server_apps/data_transfer/LoadOntology/Load-Anatomy-Ontology</reportDir>
-                    <reportFiles>*report.html</reportFiles>
+                    <reportFiles>*.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>true</allowMissing>
                     <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -50,7 +50,7 @@
                     <email>
                         <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>$PROJECT_DEFAULT_CONTENT</body>
+                        <body>${FILE,path=&quot;server_apps/data_transfer/LoadOntology/Load-Anatomy-Ontology/statistics.html&quot;}</body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
@@ -59,7 +59,7 @@
                         <attachBuildLog>false</attachBuildLog>
                         <compressBuildLog>false</compressBuildLog>
                         <replyTo></replyTo>
-                        <contentType>project</contentType>
+                        <contentType>text/html</contentType>
                     </email>
                 </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>

@@ -50,7 +50,7 @@ update data_alias
  and get_obj_type(dalias_data_zdb_id) = 'TERM';
 
 -- only consider (alias, plural) alias group types
-unload to removed_aliases.txt
+unload to removed_aliases
    select distinct dalias_zdb_id, term_ont_id, term.term_name, dalias_alias, aliasscope_scope, aliasgrp_name from data_alias,
               term as term,
               alias_group,
@@ -209,7 +209,7 @@ select count(*),dalias_data_zdb_id, dalias_group_id, dalias_alias
  group by dalias_data_zdb_id, dalias_group_id, dalias_alias
  having count(*) > 1;
 
-unload to new_aliases.txt
+unload to new_aliases
   SELECT syn.zdb_id,
          syn.synonym,
          term.term_ont_id,

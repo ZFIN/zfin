@@ -118,7 +118,7 @@ delete from term_subset
 
 -- select all term subset records that are about to be inserted.
 
-unload to debug
+unload to new_subset
   select distinct term_zdb_id, osubset_pk_id
     from term, tmp_term_subset, ontology_Subset, ontology,tmp_header
     where term_ont_id = term_id

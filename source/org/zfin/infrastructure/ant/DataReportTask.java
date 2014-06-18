@@ -4,11 +4,13 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.zfin.framework.HibernateUtil;
 
 import java.io.File;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  */
@@ -22,6 +24,7 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     private boolean useParameterMap;
 
     public void execute() {
+        LOG.getRootLogger().setLevel(Level.INFO);
         LOG.info("Job Name: " + jobName);
         if (useParameterMap) {
             String[] variables = variableNames.split(delimiter);
@@ -43,6 +46,11 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         }
         LOG.info("Handling file : " + queryFile.getAbsolutePath());
         runQueryFile(queryFile);
+    }
+
+    @Override
+    protected void addCustomVariables(Map<String, Object> map) {
+        map.putAll(dataMap);
     }
 
     private void runQueryFile(File dbQueryFile) {

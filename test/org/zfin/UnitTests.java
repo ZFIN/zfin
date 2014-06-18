@@ -33,6 +33,7 @@ import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.infrastructure.SerializationTests;
 import org.zfin.infrastructure.TrieMapTest;
+import org.zfin.infrastructure.ant.ReportConfigurationTest;
 import org.zfin.marker.MergeMarkerUnitTest;
 import org.zfin.marker.presentation.DbLinkDisplayComparatorTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
@@ -127,6 +128,7 @@ import org.zfin.util.*;
         PublicationTest.class,
         PubMedValidationReportTest.class,
         RelationshipTypeSortingTest.class,
+        ReportConfigurationTest.class,
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,
         SectionVisibilityTest.class,

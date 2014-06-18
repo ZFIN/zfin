@@ -60,5 +60,5 @@ update zdb_flag
  where zflag_name = "regen_chromosomemart" ;
 
 update warehouse_run_tracking
- set wrt_last_loaded_date = current year to second
+ set wrt_last_loaded_date = current year to second x
  where wrt_mart_name = "chromosome mart";

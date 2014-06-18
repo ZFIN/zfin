@@ -141,16 +141,28 @@ insert into tmp_term (
 	(select ont_pk_id from ontology, tmp_header where ont_ontology_name = default_namespace)
     from tmp_term_onto_no_dups ;
 
-unload to 'new_terms.unl'
+unload to new_terms
   select term_id, term_name
     from tmp_term
 	where not exists (Select 'x'
 			   from term
 			   where term.term_ont_id = tmp_term.term_id);
 
+unload to new_terms_count
+  select count(*)
+    from tmp_term
+	where not exists (Select 'x'
+			   from term
+			   where term.term_ont_id = tmp_term.term_id);
 
-unload to 'updated_terms.unl'
+unload to updated_term_names
   select n.term_name, g.term_name, g.term_ont_id
+    from tmp_term_onto_no_dups n, term g
+    where n.term_id = g.term_ont_id
+    and n.term_name not like g.term_name;
+
+unload to updated_term_names_count
+  select count(*)
     from tmp_term_onto_no_dups n, term g
     where n.term_id = g.term_ont_id
     and n.term_name not like g.term_name;
@@ -217,11 +229,20 @@ insert into tmp_term_definition_changed
   	 (term.term_definition is null AND trim(no_dups.term_definition) != '')) AND
     term.term_is_Secondary = 'f';
 
-unload to modified_term_definitions.unl
+unload to updated_definitions
   select * from tmp_term_definition_changed;
 
-unload to new_term_definitions.txt
-  select * From tmp_term_definition_changed;
+unload to new_term_definitions
+  select tmp.term_id, t.term_name, tmp.term_definition
+  From tmp_term_definition_changed as tmp, term as t
+  where tmp.term_id = t.term_ont_id and
+  tmp.term_definition_old is null;
+
+unload to new_term_definition_count
+  select count(*)
+  From tmp_term_definition_changed as tmp, term as t
+  where tmp.term_id = t.term_ont_id and
+  tmp.term_definition_old is null;
 
 update term
   set term_definition = (select a.term_definition
@@ -254,9 +275,10 @@ insert into tmp_term_comment_changed
 --unload to debug
 --  select term_comment, term_id from tmp_term_comment_changed;
 
---unload to modified_term_comments.unl
---  select newTerm.term_comment, oldTerm.term_comment, oldTerm.term_ont_id
---  from tmp_term_comment_changed newTerm, TERM oldTerm;
+unload to updated_term_comments
+  select newTerm.term_comment, oldTerm.term_comment, oldTerm.term_ont_id
+  from tmp_term_comment_changed newTerm, TERM oldTerm
+  where oldTerm.term_ont_id = newTerm.term_id;
 
 update term
   set term_comment = (select a.term_comment
