@@ -23,7 +23,7 @@
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
-            <recipientList>${TECHNICAL_AT_ZFIN}</recipientList>
+            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>[Jenkins][${DOMAIN_NAME}] Status report to Anne</subject>
             <body>Please send your weekly status report to Anne.</body>
             <sendToDevelopers>false</sendToDevelopers>
