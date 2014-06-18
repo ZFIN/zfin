@@ -91,8 +91,8 @@ my $oneMonthAgoStr = $prevYear."-".$preMonth."-".$date." "."00:00:00";
 print "\n  todayStr is $todayStr\n" ;
 print "\n  oneMonthAgoStr is $oneMonthAgoStr\n\n" ;
 
-system("rm -f finPhenoCount.sql");
-open SQLFILE, ">finPhenoCount.sql" || die ("finPhenoCount.sql !");
+system("rm -f FinPhenoCount.sql");
+open SQLFILE, ">FinPhenoCount.sql" || die ("FinPhenoCount.sql !");
 
 print SQLFILE "\nbegin work;\n\n";
 print SQLFILE "create temp table  tmp_contains \n";
@@ -160,6 +160,6 @@ print SQLFILE "rollback work;\n\n";
 
 close(SQLFILE);
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> finPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> FinPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
 
 exit;

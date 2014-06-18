@@ -39,7 +39,7 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/Reports/PATO/Pheno*</attachmentsPattern>
+            <attachmentsPattern>server_apps/Reports/PATO/Pheno*,server_apps/Reports/PATO/FinPheno*</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
