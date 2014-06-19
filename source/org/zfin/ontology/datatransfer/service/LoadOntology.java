@@ -294,7 +294,6 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         sectionTime = System.currentTimeMillis();
         this.report = cronJobReport;
         this.propertiesFile = "report.properties";
-        this.templateName = "report.html.template";
         this.dataDirectory = loadDirectory;
         setReportProperties();
 

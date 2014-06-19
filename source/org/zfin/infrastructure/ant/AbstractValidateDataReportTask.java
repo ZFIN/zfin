@@ -31,7 +31,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     protected String propertyFilePath = "home/WEB-INF/zfin.properties";
     protected File dataDirectory;
     protected File queryFile;
-    protected String templateName = "validate-data-email-report.template";
     protected String propertiesFile = "validate-data-email-report.properties";
     protected Properties reportProperties;
     protected DatabaseService service = new DatabaseService();

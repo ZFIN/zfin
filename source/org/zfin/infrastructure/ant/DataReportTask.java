@@ -103,7 +103,6 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             handleParameterMap(commandLine, task);
         }
         task.propertiesFile = "report-data-email.properties";
-        task.templateName = "report-data-email.template";
         String baseDir = commandLine.getOptionValue(baseDirOpt.getOpt());
         String pathname = baseDir + "/" + REPORT_DIRECTORY;
         if (baseDir != null) {
