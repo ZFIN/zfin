@@ -5,16 +5,16 @@
 
 <c:if test="${linkageMemberList.size() >=1}">
     <div class="summary">
-        <table class="summary rowstripes" style="table-layout:fixed;">
+        <table class="summary rowstripes">
             <c:if test="${!hideTitle}">
                 <caption>MAPPING FROM PUBLICATIONS</caption>
             </c:if>
             <tr>
-                <th style="width: 10%">Marker</th>
-                <th style="width: 10%">Type</th>
+                <th style="width: 8%">Marker</th>
+                <th style="width: 7%">Type</th>
                 <th style="width: 5%">Chr</th>
-                <th style="width: 5%">Distance</th>
-                <th style="width: 20%">Publication / Person</th>
+                <th style="width: 8%">Distance</th>
+                <th style="width: 17%">Publication / Person</th>
                 <th style="width: 55%">Comments</th>
                 <authz:authorize ifAnyGranted="root">
                     <th>Linkage</th>

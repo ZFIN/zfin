@@ -49,6 +49,25 @@
         </ejbRoots>
       </configuration>
     </facet>
+    <facet type="web" name="Web2">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../lib/Java/tomcat/conf/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/../lib/Java/tomcat/conf" relative="/WEB-INF" />
+        </webroots>
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/../client_apps/Map" />
+          <root url="file://$MODULE_DIR$/../lib/Java" />
+          <root url="file://$MODULE_DIR$/../server_apps/mapimage" />
+          <root url="file://$MODULE_DIR$/../source" />
+          <root url="file://$MODULE_DIR$/../home/WEB-INF" />
+          <root url="file://$MODULE_DIR$/../home/WEB-INF/lib" />
+          <root url="file://$MODULE_DIR$/../client_apps/Map/zmapper" />
+        </sourceRoots>
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../home/WEB-INF/classes" />
