@@ -50,7 +50,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     }
 
     protected void init(boolean initDatabase) {
-        clearReportDirectory();
         ZfinProperties.init(propertyFilePath);
         if (initDatabase)
             new HibernateSessionCreator(false);
@@ -82,7 +81,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     }
 
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, File directory) {
-        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, baseDir, directory.getAbsolutePath());
+        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName, true);
         createErrorReport(errorMessages, resultList, reportConfiguration);
     }
 
@@ -185,7 +184,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, templateFile, jobName, false);
                 createErrorReport(errorMessages, resultList, reportConfiguration);
             }
-        } else{
+        } else {
             ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, directory, jobName, true);
             createErrorReport(errorMessages, resultList, reportConfiguration);
         }
@@ -221,7 +220,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     protected void setLoggerFile() {
         service.setLoggerLevelInfo();
-        File logFile = new File(dataDirectory, jobName + ".log");
+        File logFile = FileUtils.getFile(dataDirectory, jobName, jobName + ".log");
         if (logFile.exists()) {
             if (!logFile.delete())
                 LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
@@ -243,7 +242,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
      * clear out existing report directory named after the job.
      */
     protected void clearReportDirectory() {
-        File reportDirectory = new File(dataDirectory, jobName);
+        File reportDirectory = FileUtils.getFile(dataDirectory, jobName);
         reportDirectory.delete();
         reportDirectory.mkdir();
     }

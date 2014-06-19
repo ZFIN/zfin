@@ -29,7 +29,7 @@ This test identifies any PUB data that does not fit this criteria.</description>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w.*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -40,7 +40,7 @@ This test identifies any PUB data that does not fit this criteria.</description>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w/Check-Associate-Data-Curate-Orthology_w.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

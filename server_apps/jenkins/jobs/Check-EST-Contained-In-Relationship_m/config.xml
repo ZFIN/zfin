@@ -30,7 +30,7 @@ that need to be updated based on marker_relationship.&#xd;
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-EST-Contained-In-Relationship_m.*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-EST-Contained-In-Relationship_m/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -38,8 +38,8 @@ that need to be updated based on marker_relationship.&#xd;
           <reportTargets>
               <htmlpublisher.HtmlPublisherTarget>
                   <reportName>Error Report</reportName>
-                  <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-                  <reportFiles>Check-EST-Contained-In-Relationship_m.report.html</reportFiles>
+                  <reportDir>server_apps/DB_maintenance/validatedata/Check-EST-Contained-In-Relationship_m</reportDir>
+                  <reportFiles>Check-EST-Contained-In-Relationship_m.html</reportFiles>
                   <keepAll>false</keepAll>
                   <allowMissing>false</allowMissing>
                   <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -53,7 +53,7 @@ that need to be updated based on marker_relationship.&#xd;
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-EST-Contained-In-Relationship_m.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-EST-Contained-In-Relationship_m/Check-EST-Contained-In-Relationship_m.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

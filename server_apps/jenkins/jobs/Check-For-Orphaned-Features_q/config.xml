@@ -26,7 +26,7 @@ i.e. no record_attribution record exists for a given feature ID. It also checks 
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q.*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -34,8 +34,8 @@ i.e. no record_attribution record exists for a given feature ID. It also checks 
       <reportTargets>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Error Report</reportName>
-          <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-          <reportFiles>Check-For-Orphaned-Features_q.report.html</reportFiles>
+          <reportDir>server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q</reportDir>
+          <reportFiles>Check-For-Orphaned-Features_q.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -49,7 +49,7 @@ i.e. no record_attribution record exists for a given feature ID. It also checks 
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q.report.html&quot;}
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q/Check-For-Orphaned-Features_q.html&quot;}
 
 &lt;hr&gt;
 &lt;h3&gt;

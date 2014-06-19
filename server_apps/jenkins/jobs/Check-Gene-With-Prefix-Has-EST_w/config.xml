@@ -27,7 +27,7 @@
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-Gene-With-Prefix-Has-EST_w.*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Gene-With-Prefix-Has-EST_w/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -35,8 +35,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-                    <reportFiles>Check-Gene-With-Prefix-Has-EST_w.report.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Gene-With-Prefix-Has-EST_w</reportDir>
+                    <reportFiles>Check-Gene-With-Prefix-Has-EST_w.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                     <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -51,13 +51,13 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Gene-With-Prefix-Has-EST_w.report.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Gene-With-Prefix-Has-EST_w/Check-Gene-With-Prefix-Has-EST_w.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
                         <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>server_apps/DB_maintenance/validatedata/Check-Gene-With-Prefix-Has-EST_w.*
+                        <attachmentsPattern>server_apps/DB_maintenance/validatedata/Check-Gene-With-Prefix-Has-EST_w/*
                         </attachmentsPattern>
                         <attachBuildLog>false</attachBuildLog>
                         <compressBuildLog>false</compressBuildLog>

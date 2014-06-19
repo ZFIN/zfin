@@ -26,7 +26,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-Tg-Feature-Without-Construct_m.*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Tg-Feature-Without-Construct_m/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -34,8 +34,8 @@
       <reportTargets>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Error Report</reportName>
-          <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-          <reportFiles>Check-Tg-Feature-Without-Construct_m.report.html</reportFiles>
+          <reportDir>server_apps/DB_maintenance/validatedata/Check-Tg-Feature-Without-Construct_m</reportDir>
+          <reportFiles>Check-Tg-Feature-Without-Construct_m.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -49,7 +49,7 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Tg-Feature-Without-Construct_m.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Tg-Feature-Without-Construct_m/Check-Tg-Feature-Without-Construct_m.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

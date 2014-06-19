@@ -24,7 +24,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d.*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -32,8 +32,8 @@
       <reportTargets>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Error Report</reportName>
-          <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-          <reportFiles>Check-Term-Stage-Range_d.report.html</reportFiles>
+          <reportDir>server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d</reportDir>
+          <reportFiles>Check-Term-Stage-Range_d.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -43,32 +43,16 @@
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>
       <configuredTriggers>
-        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-          <email>
-            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>No Validation Errors found.</body>
-            <sendToDevelopers>false</sendToDevelopers>
-            <sendToRequester>false</sendToRequester>
-            <includeCulprits>false</includeCulprits>
-            <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern></attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo></replyTo>
-            <contentType>project</contentType>
-          </email>
-        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d/Check-Term-Stage-Range_d.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/stageRange*.txt</attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Check-Term-Stage-Range_d/*</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>

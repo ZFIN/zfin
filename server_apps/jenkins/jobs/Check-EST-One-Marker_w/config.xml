@@ -25,7 +25,7 @@ This job checks that those relationships are correctly defined.</description>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w.*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -33,8 +33,8 @@ This job checks that those relationships are correctly defined.</description>
       <reportTargets>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Error Report</reportName>
-          <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-          <reportFiles>Check-EST-One-Marker_w.report.html</reportFiles>
+          <reportDir>server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w</reportDir>
+          <reportFiles>Check-EST-One-Marker_w.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -48,7 +48,7 @@ This job checks that those relationships are correctly defined.</description>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w/Check-EST-One-Marker_w.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

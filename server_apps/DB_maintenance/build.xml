@@ -190,25 +190,6 @@
         </fail>
     </target>
 
-    <target name="report-xx-genes-no-clones" description="">
-        <echo message="Create Validation Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="-a"/>
-            <arg value="${DBNAME}"/>
-            <arg value="${validateData}/validatedata/XXGenesNoClones.sql"/>
-        </exec>
-        <echo file="${validateData}/column.header" append="false">Marker ID|Marker Name|Marker Abbreviation</echo>
-        <echo file="${validateData}/description.txt" append="false">
-            <![CDATA[ xx:<xxx> genes should have no clones.]]>
-        </echo>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="reportRecords.txt" substring="|"/>
-            </condition>
-        </fail>
-    </target>
-
     <target name="report-refseq-accession-format" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
@@ -276,7 +257,7 @@
         <echo message="${validateData}/validatedata/${JobName}.txt"/>
         <fail message="Failed: There are records in violation">
             <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.txt" substring=","/>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}/${JobName}.txt" substring=","/>
             </condition>
         </fail>
     </target>
@@ -350,7 +331,7 @@
         <echo message="${validateData}/validatedata/${JobName}.txt"/>
         <fail message="Failed: There are records in violation">
             <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.txt" substring=","/>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}/${JobName}.txt" substring=","/>
             </condition>
         </fail>
     </target>
