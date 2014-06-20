@@ -429,9 +429,10 @@ public class AntibodyWikiWebService extends WikiWebService {
      * @throws FileNotFoundException Thrown if unable to find the template file.
      */
     public WikiSynchronizationReport synchronizeAntibodiesOnWikiWithZFIN() throws FileNotFoundException {
+        WikiSynchronizationReport wikiSynchronizationReport = new WikiSynchronizationReport(true);
         if (!isPushToWiki()) {
             logger.info("not authorized to push antibodies to wiki");
-            return null;
+            return wikiSynchronizationReport;
         }
         List<Antibody> antibodies = RepositoryFactory.getAntibodyRepository().getAllAntibodies();
         if (CollectionUtils.isEmpty(antibodies)) {
@@ -440,7 +441,6 @@ public class AntibodyWikiWebService extends WikiWebService {
         }
         logger.info("Checking " + antibodies.size() + " antibodies in ZFIN");
         Map<String, Antibody> zfinAntibodyHashMap = new HashMap<>();
-        WikiSynchronizationReport wikiSynchronizationReport = new WikiSynchronizationReport(true);
         String pageTitle;
         clearAntibodyTemplate();
         for (Antibody antibody : antibodies) {
