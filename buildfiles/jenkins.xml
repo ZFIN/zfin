@@ -280,7 +280,7 @@
             }
         </groovy>
         <copy todir="${reportDirTarget}/">
-            <fileset file="${reportDirSource}/report.*"/>
+            <fileset file="${reportDirSource}/*"/>
         </copy>
 
     </target>
