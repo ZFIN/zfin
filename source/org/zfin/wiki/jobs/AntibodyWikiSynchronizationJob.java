@@ -36,6 +36,8 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
 
     @Override
     protected void addCustomVariables(Map<String, Object> map) {
+        if (report == null)
+            return;
         map.put("updatedAntibodies", report.getUpdatedPages());
         map.put("createdAntibodies", report.getCreatedPages());
         map.put("droppedAntibodies", report.getDroppedPages());
