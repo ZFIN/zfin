@@ -55,6 +55,7 @@ public class Isotype {
         IGG2("IgG2"),
         IGG2a("IgG2a"),
         IGG2b("IgG2b"),
+        IGG2c("IgG2c"),
         IGG3("IgG3"),
         IGG4("IgG4"),
         IGM("IgM"),

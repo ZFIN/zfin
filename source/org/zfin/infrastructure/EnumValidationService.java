@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.zfin.anatomy.AnatomyStatistics;
+import org.zfin.antibody.Isotype;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.mapping.GenomeLocation;
@@ -315,6 +316,19 @@ public class EnumValidationService {
         checkEnumVersusDatabaseCollection(typeList, GenomeLocation.Source.values());
     }
 
+    @ServiceTest
+    public void validateHeavyChainIsotypes() throws EnumValidationException {
+        String sql = "select hviso_name from heavy_chain_isotype";
+        List typeList = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        checkEnumVersusDatabaseCollection(typeList, Isotype.HeavyChain.values());
+    }
+
+    @ServiceTest
+    public void validateLightChainIsotypes() throws EnumValidationException {
+        String sql = "select ltiso_name from light_chain_isotype";
+        List typeList = HibernateUtil.currentSession().createSQLQuery(sql).list();
+        checkEnumVersusDatabaseCollection(typeList, Isotype.LightChain.values());
+    }
 
     @ServiceTest
     public void validateInferenceCategory() {
