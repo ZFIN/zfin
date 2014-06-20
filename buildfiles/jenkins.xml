@@ -279,6 +279,10 @@
                 ant.'copy-report-files-per-job'()
             }
         </groovy>
+        <copy todir="${reportDirTarget}/">
+            <fileset file="${reportDirSource}/report.*"/>
+        </copy>
+
     </target>
 
     <target name="add-email-notifications">
