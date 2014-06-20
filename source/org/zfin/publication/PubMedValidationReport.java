@@ -3,12 +3,10 @@ package org.zfin.publication;
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.spi.RootLogger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.infrastructure.ant.ReportConfiguration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +15,7 @@ import java.util.List;
 import static org.apache.commons.cli.OptionBuilder.withArgName;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
+@SuppressWarnings("AccessStaticViaInstance")
 public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     public static final String PUB_MED = "pubmed";
@@ -48,18 +47,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
             numOfThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
 
         task.init(commandLine.getOptionValue("baseDir"));
-        publicationList = getPublicationRepository().getPublicationWithPubMedId(numberOfPublicationsToScan);
-        LOG.info(numOfThreads + " threads used");
-        LOG.info(publicationList.size() + " publications are scanned");
-        for (int index = 0; index < numOfThreads; index++) {
-            Thread thread = new Thread(new CheckPublications());
-            thread.start();
-        }
-        while (publicationList.size() > 0) {
-            Thread.currentThread().sleep(2000);
-        }
-        task.createReports();
-        LOG.info("");
+        task.execute();
     }
 
     protected static void initializeLog4J() {
@@ -69,6 +57,25 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     @Override
     public void execute() {
+        setLoggerFile();
+        setReportProperties();
+        clearReportDirectory();
+        publicationList = getPublicationRepository().getPublicationWithPubMedId(numberOfPublicationsToScan);
+        LOG.info(numOfThreads + " threads used");
+        LOG.info(publicationList.size() + " publications are scanned");
+        for (int index = 0; index < numOfThreads; index++) {
+            Thread thread = new Thread(new CheckPublications());
+            thread.start();
+        }
+        while (publicationList.size() > 0) {
+            try {
+                Thread.currentThread().sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        createReports();
+        LOG.info("Finished");
 
     }
 
@@ -94,10 +101,16 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
     }
 
     public void createReports() {
-        reportPrefix = "faulty-PubMed-IDs";
-        createErrorReport(null, pubMedIdNotFoundList);
-        reportPrefix = "faulty-Pub-Info";
-        createErrorReport(null, pubInfoMismatchList);
+        String templateName = jobName + ".faulty-PubMed-IDs";
+        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        createErrorReport(null, pubMedIdNotFoundList, reportConfiguration);
+
+        templateName = jobName + ".faulty-Pub-Info";
+        reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        createErrorReport(null, pubInfoMismatchList, reportConfiguration);
+
+
+
         if (pubMedIdNotFoundList.size() > 0)
             for (String error : errorList)
                 System.out.println(error);

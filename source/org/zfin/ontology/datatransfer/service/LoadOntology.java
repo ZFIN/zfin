@@ -295,6 +295,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         this.report = cronJobReport;
         this.propertiesFile = "report.properties";
         this.dataDirectory = loadDirectory;
+        clearReportDirectory();
         setReportProperties();
 
         try {

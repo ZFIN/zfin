@@ -82,7 +82,7 @@
             <contentType>default</contentType>
             <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
             <defaultContent>$DEFAULT_CONTENT</defaultContent>
-            <attachmentsPattern>server_apps/data_transfer/LoadOntology/Load-Spatial-Ontology/*</attachmentsPattern>
+            <attachmentsPattern>server_apps/data_transfer/LoadOntology/Load-Spatial-Ontology_d/*</attachmentsPattern>
             <presendScript></presendScript>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>

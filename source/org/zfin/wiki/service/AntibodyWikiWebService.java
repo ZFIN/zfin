@@ -416,26 +416,6 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
 
-    public void replaceAntibodiesOnWikiWithZFIN() throws Exception {
-        if (!isPushToWiki()) {
-            logger.info("not authorized to push antibodies to wiki");
-            return;
-        }
-        RemoteSearchResult[] results = service.getLabelContentByName(token, "zfin_antibody");
-        for (RemoteSearchResult result : results) {
-            logger.info("removing: " + result.getTitle());
-            if (service.getComments(token, result.getId()).length == 0) {
-                service.removePage(token, result.getId());
-            } else {
-                logger.warn("can not remove: " + result.getTitle() + " has comments");
-            }
-        }
-
-
-        synchronizeAntibodiesOnWikiWithZFIN();
-    }
-
-
     /**
      * Synchronizes the antibody wiki and the antibodies in ZFIN, adding, updating, and dropping where appropriate.
      * <p/>
@@ -454,6 +434,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             return null;
         }
         List<Antibody> antibodies = RepositoryFactory.getAntibodyRepository().getAllAntibodies();
+        antibodies  = antibodies.subList(0, 125);
         if (CollectionUtils.isEmpty(antibodies)) {
             logger.error("no antibodies returned");
             return null;

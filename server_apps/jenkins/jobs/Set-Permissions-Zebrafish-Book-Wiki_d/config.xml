@@ -22,13 +22,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-Zebrafish-Book-permissions</targets>
+            <targets>validate-Zebrafish-Book-permissions -DJobName=Set-Permissions-Zebrafish-Book-Wiki_d</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Set-Permissions-Zebrafish-Book-Wiki_d.*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Set-Permissions-Zebrafish-Book-Wiki_d/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -39,7 +39,7 @@
                     <email>
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>$PROJECT_DEFAULT_CONTENT</body>
+                        <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Set-Permissions-Zebrafish-Book-Wiki_d/Set-Permissions-Zebrafish-Book-Wiki_d.faulty-pages.html&quot;}</body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>

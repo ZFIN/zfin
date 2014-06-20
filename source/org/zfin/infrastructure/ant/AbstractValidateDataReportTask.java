@@ -31,7 +31,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     protected String propertyFilePath = "home/WEB-INF/zfin.properties";
     protected File dataDirectory;
     protected File queryFile;
-    protected String propertiesFile = "validate-data-email-report.properties";
+    protected String propertiesFile = "report.properties";
     protected Properties reportProperties;
     protected DatabaseService service = new DatabaseService();
     // contains key-value pairs that are used in the report generation.
@@ -73,25 +73,18 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         }
     }
 
-    protected String reportPrefix;
-
-    protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList) {
-        createErrorReport(errorMessages, resultList, dataDirectory);
-    }
-
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, File directory) {
         ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName, true);
         createErrorReport(errorMessages, resultList, reportConfiguration);
     }
 
-    //protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, String reportPrefix, File directory, boolean useReportTemplate) {
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, ReportConfiguration reportConfiguration) {
 
         Configuration configuration = new Configuration();
         try {
             configuration.setDirectoryForTemplateLoading(reportConfiguration.getTemplateDirectory());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
 
         LOG.info("Template File being used: " + reportConfiguration.getTemplateDirectory() + "/" + reportConfiguration.getTemplateFileName());
@@ -189,16 +182,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         }
     }
 
-    private String getReportFileFromTemplateName(String templateName) {
-        if (StringUtils.isEmpty(templateName))
-            return null;
-        if (!templateName.endsWith(TEMPLATE))
-            throw new RuntimeException("template file name needs to end with " + TEMPLATE);
-        // strip off .template ending
-        // and job name prefix
-        return templateName.replace(TEMPLATE, "").replace(jobName + ".", "");
-    }
-
     protected String getSqlQuery() throws IOException {
         String sql = FileUtils.readFileToString(queryFile);
         if (MapUtils.isNotEmpty(dataMap)) {
@@ -227,32 +210,22 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         service.setLoggerFile(logFile);
     }
 
-    protected void setReportLoggerFile() {
-        service.setLoggerLevelInfo();
-        File logFile = FileUtils.getFile(dataDirectory, jobName, jobName + ".log");
-        if (logFile.exists()) {
-            if (!logFile.delete())
-                LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
-        }
-        service.setLoggerFile(logFile);
-    }
-
     /**
      * clear out existing report directory named after the job.
      */
     protected void clearReportDirectory() {
         File reportDirectory = FileUtils.getFile(dataDirectory, jobName);
-        reportDirectory.delete();
-        reportDirectory.mkdir();
+        try {
+            FileUtils.deleteDirectory(reportDirectory);
+        } catch (IOException e) {
+            LOG.error(e);
+        }
+
+        if (!reportDirectory.mkdir())
+            LOG.error("could not create Directory: " + reportDirectory.getAbsolutePath());
     }
 
 
-    /*
-        protected void createErrorReport(List<String> errorMessages, List<List<List<String>>> resultList) {
-            createErrorReport(errorMessages, resultList, null);
-        }
-
-    */
     public void setInstance(String instance) {
         this.instance = instance;
     }

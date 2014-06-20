@@ -2,14 +2,14 @@ package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.wiki.WikiLoginException;
 import org.zfin.wiki.WikiSynchronizationReport;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 import org.zfin.wiki.service.WikiWebService;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
  */
@@ -28,28 +28,53 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
         String jobDirectoryString = args[1];
         AntibodyWikiSynchronizationJob job = new AntibodyWikiSynchronizationJob();
         job.setPropertyFilePath(propertyFilePath);
-        job.setBaseDir(jobDirectoryString);
         job.setJobName(args[2]);
-        //job.init();
-        WikiSynchronizationReport report = AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
-        job.createReportFiles(report);
+        job.init(jobDirectoryString);
+        job.execute();
     }
 
-    private void createReportFiles(WikiSynchronizationReport wikiSynchronizationReport) {
-        if (wikiSynchronizationReport == null)
+
+    @Override
+    protected void addCustomVariables(Map<String, Object> map) {
+        map.put("updatedAntibodies", report.getUpdatedPages());
+        map.put("createdAntibodies", report.getCreatedPages());
+        map.put("droppedAntibodies", report.getDroppedPages());
+    }
+
+    private void createReportFiles(WikiSynchronizationReport report) {
+        if (report == null)
             return;
-        reportPrefix = "updated-antibodies";
-        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getUpdatedPages()));
-        reportPrefix = "created-antibodies";
-        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getCreatedPages()));
-        reportPrefix = "dropped-antibodies";
-        createErrorReport(null, getStringifiedList(wikiSynchronizationReport.getDroppedPages()));
+        String templateName = jobName + ".updated-antibodies";
+        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        createErrorReport(null, getStringifiedList(report.getUpdatedPages()), reportConfiguration);
 
-        System.out.print(wikiSynchronizationReport);
+        templateName = jobName + ".created-antibodies";
+        reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        createErrorReport(null, getStringifiedList(report.getCreatedPages()), reportConfiguration);
+
+        templateName = jobName + ".dropped-antibodies";
+        reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        createErrorReport(null, getStringifiedList(report.getDroppedPages()), reportConfiguration);
+
+        System.out.print(report);
     }
+
+    private WikiSynchronizationReport report = null;
 
     @Override
     public void execute() {
+        setLoggerFile();
+        setReportProperties();
+        clearReportDirectory();
+        try {
+            report = AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
+        } catch (FileNotFoundException | WikiLoginException e) {
+            logger.error(e);
+        }
+        if (report != null && report.hasChanges())
+            createReportFiles(report);
 
+        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName + ".statistics", false);
+        createErrorReport(null, null, reportConfiguration);
     }
 }

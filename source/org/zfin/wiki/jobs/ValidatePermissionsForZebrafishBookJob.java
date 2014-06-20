@@ -2,9 +2,8 @@ package org.zfin.wiki.jobs;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.properties.ZfinProperties;
+import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.wiki.*;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 import org.zfin.wiki.service.WikiWebService;
@@ -45,7 +44,8 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
             }
 
             // send report
-
+            clearReportDirectory();
+            setReportProperties();
             createReport(pagesWithBadPermissions);
         } catch (Exception e) {
             logger.error("Failed out validate permissions for zebrafish book job", e);
@@ -57,8 +57,9 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
             logger.info("no zebrafish book pages detected with bad permissions");
             return;
         }
-        reportPrefix = "faulty-pages";
-        createErrorReport(null, getStringifiedList(pages));
+        String templateName = jobName + ".faulty-pages";
+        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        createErrorReport(null, getStringifiedList(pages), reportConfiguration);
         logger.info(pages);
     }
 
@@ -77,6 +78,7 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
         job.setBaseDir(jobDirectoryString);
         job.setJobName(args[2]);
         job.init(false);
+        job.setLoggerFile();
         job.execute();
     }
 

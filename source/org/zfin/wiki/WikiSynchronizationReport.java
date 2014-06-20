@@ -1,5 +1,6 @@
 package org.zfin.wiki;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.RootLogger;
 
@@ -11,11 +12,11 @@ import java.util.List;
  */
 public class WikiSynchronizationReport {
 
-    private final List<String> createdPages = new ArrayList<String>();
-    private final List<String> droppedPages = new ArrayList<String>();
-    private final List<String> updatedPages = new ArrayList<String>();
-    private final List<String> errorPages = new ArrayList<String>();
-    private final List<String> nochangedPages = new ArrayList<String>();
+    private final List<String> createdPages = new ArrayList<>();
+    private final List<String> droppedPages = new ArrayList<>();
+    private final List<String> updatedPages = new ArrayList<>();
+    private final List<String> errorPages = new ArrayList<>();
+    private final List<String> nochangedPages = new ArrayList<>();
 
     private boolean verbose = false;
     public static final Logger LOG = RootLogger.getLogger(WikiSynchronizationReport.class);
@@ -114,5 +115,15 @@ public class WikiSynchronizationReport {
 
     public List<String> getUpdatedPages() {
         return updatedPages;
+    }
+
+    public boolean hasChanges() {
+        if (CollectionUtils.isNotEmpty(createdPages))
+            return true;
+        if (CollectionUtils.isNotEmpty(droppedPages))
+            return true;
+        if (CollectionUtils.isNotEmpty(updatedPages))
+            return true;
+        return true;
     }
 }

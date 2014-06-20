@@ -24,13 +24,13 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>validate-publications-with-PubMed</targets>
+      <targets>validate-publications-with-PubMed -DJobName=Compare-Publication-With-PubMed_w</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w.*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -38,16 +38,16 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
       <reportTargets>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Faulty PubMed ID Report</reportName>
-          <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-          <reportFiles>Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.report.html</reportFiles>
+          <reportDir>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w</reportDir>
+          <reportFiles>Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
         </htmlpublisher.HtmlPublisherTarget>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Pub Mismatch Info Report</reportName>
-          <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-          <reportFiles>Compare-Publication-With-PubMed_w.faulty-Pub-Info.report.html</reportFiles>
+          <reportDir>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w</reportDir>
+          <reportFiles>Compare-Publication-With-PubMed_w.faulty-Pub-Info.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -61,12 +61,12 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w.*.txt</attachmentsPattern>
+            <attachmentsPattern>server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/*</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
