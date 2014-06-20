@@ -52,7 +52,7 @@ Statistics:
         <td>${createdAntibodies?size}</td>
     </tr>
     <tr>
-        <th>Created Wiki Pages</th>
+        <th>Updated Wiki Pages</th>
         <td>${updatedAntibodies?size}</td>
     </tr>
     <tr>
