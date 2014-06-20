@@ -434,7 +434,6 @@ public class AntibodyWikiWebService extends WikiWebService {
             return null;
         }
         List<Antibody> antibodies = RepositoryFactory.getAntibodyRepository().getAllAntibodies();
-        antibodies  = antibodies.subList(0, 125);
         if (CollectionUtils.isEmpty(antibodies)) {
             logger.error("no antibodies returned");
             return null;
