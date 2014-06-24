@@ -23,43 +23,10 @@ public class ReportConfiguration {
     private File templateDirectory;
     private String jobName;
     private String reportName;
-    private String templateDirectoryName;
-    private String reportDirectoryName;
     private boolean useDefaultReportTemplate = true;
 
     protected static final Logger LOG = Logger.getLogger(ReportConfiguration.class);
 
-
-    public ReportConfiguration(String jobName, File templateDirectory, File reportDirectory) {
-        checkNotNull(jobName, "No job name provided:");
-        this.jobName = jobName;
-        checkNotNull(templateDirectory, "No template directory provided:");
-        this.templateDirectory = templateDirectory;
-        checkNotNull(reportDirectory, "No report directory provided:");
-        this.reportDirectory = reportDirectory;
-        init();
-    }
-
-    public ReportConfiguration(String jobName, String templateDirectory, String reportDirectory) {
-        checkNotNull(jobName, "No job name provided:");
-        this.jobName = jobName;
-        checkNotNull(templateDirectory, "No template directory provided:");
-        this.templateDirectoryName = templateDirectory;
-        checkNotNull(reportDirectory, "No report directory provided:");
-        this.reportDirectoryName = reportDirectory;
-        init();
-    }
-
-    public ReportConfiguration(String jobName, String templateDirectory, String reportDirectory, String reportName) {
-        checkNotNull(jobName, "No job name provided:");
-        this.jobName = jobName;
-        checkNotNull(templateDirectory, "No template directory provided:");
-        this.templateDirectoryName = templateDirectory;
-        checkNotNull(reportDirectory, "No report directory provided:");
-        this.reportDirectoryName = reportDirectory;
-        this.reportName = reportName;
-        init();
-    }
 
     public ReportConfiguration(String jobName, File templateDirectory, File reportDirectory, String reportName) {
         checkNotNull(jobName, "No job name provided:");

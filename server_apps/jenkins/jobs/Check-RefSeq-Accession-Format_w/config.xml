@@ -20,38 +20,50 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>report-refseq-accession-format</targets>
+        <targets>validate-data-report-simple -DJobName=Check-RefSeq-Accession-Format_w</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/column.header,server_apps/DB_maintenance/reportRecords.txt</artifacts>
+        <artifacts>server_apps/DB_maintenance/validatedata/Check-RefSeq-Accession-Format_w/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
+      <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.3">
+          <reportTargets>
+              <htmlpublisher.HtmlPublisherTarget>
+                  <reportName>Error Report</reportName>
+                  <reportDir>server_apps/DB_maintenance/validatedata/Check-RefSeq-Accession-Format_w</reportDir>
+                  <reportFiles>Check-RefSeq-Accession-Format_w.html</reportFiles>
+                  <keepAll>false</keepAll>
+                  <allowMissing>false</allowMissing>
+                  <wrapperName>htmlpublisher-wrapper.html</wrapperName>
+              </htmlpublisher.HtmlPublisherTarget>
+          </reportTargets>
+      </htmlpublisher.HtmlPublisher>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>${VALIDATION_EMAIL_GENE} ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
-            <sendToDevelopers>false</sendToDevelopers>
-            <sendToRequester>false</sendToRequester>
-            <includeCulprits>false</includeCulprits>
-            <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/DB_maintenance/str-gene-abbrev.txt</attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo></replyTo>
-            <contentType>project</contentType>
+              <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+              <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+              <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-RefSeq-Accession-Format_w/Check-RefSeq-Accession-Format_w.html&quot;}</body>
+              <sendToDevelopers>false</sendToDevelopers>
+              <sendToRequester>false</sendToRequester>
+              <includeCulprits>false</includeCulprits>
+              <sendToRecipientList>true</sendToRecipientList>
+              <attachmentsPattern></attachmentsPattern>
+              <attachBuildLog>false</attachBuildLog>
+              <compressBuildLog>false</compressBuildLog>
+              <replyTo></replyTo>
+              <contentType>project</contentType>
           </email>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
       <contentType>text/html</contentType>
-      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
+      <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
       <presendScript></presendScript>
