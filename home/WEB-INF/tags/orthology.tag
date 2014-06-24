@@ -104,7 +104,7 @@
                     <c:if test="${not hideEvidence}">
                         <c:if test="${!empty orthologyPresentationBean.evidenceCodes}">
                             <tr class=${loop.index%2==0 ? "even": "odd"}>
-                                <td colspan="5">
+                                <td colspan="${4 + fn:length(orthologyPresentationBean.evidenceCodes)}">
                                     <a href="/action/marker/${marker.zdbID}/orthology-detail">
                                         <b>Orthology Details</b>
                                     </a>
