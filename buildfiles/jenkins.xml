@@ -49,6 +49,7 @@
         <antcall target="add-email-notifications"/>
         <antcall target="deploy-email-templates"/>
         <antcall target="copy-report-files"/>
+        <antcall target="copy-validate-data-files"/>
     </target>
 
     <target name="_copyDefaultConfig">
@@ -409,6 +410,26 @@
         </exec>
     </target>
 
+    <target name="copy-validate-data-files">
+        <sequential>
+            <!-- only copy if target root is different from source root -->
+            <if>
+                <not>
+                    <equals arg1="${validateDataDirSource}" arg2="${validateDataDirTarget}"/>
+                </not>
+                <then>
+                    <copy todir="${validateDataDirTarget}">
+                        <fileset dir="${validateDataDirSource}/">
+                            <include name="*.html.template"/>
+                            <include name="*.sql"/>
+                            <include name="*.sqlj"/>
+                            <include name="*.properties"/>
+                        </fileset>
+                    </copy>
+                </then>
+            </if>
+        </sequential>
+    </target>
 
     <macrodef name="addTriggerPerJob">
         <sequential>
@@ -511,8 +532,11 @@
     </macrodef>
 
     <property name="report" value="server_apps/DB_maintenance/report_data"/>
+    <property name="validateData" value="server_apps/DB_maintenance/validatedata"/>
     <property name="reportDirSource" value="${basedir}/${report}/"/>
     <property name="reportDirTarget" value="${TARGETROOT}/${report}"/>
+    <property name="validateDataDirSource" value="${basedir}/${validateData}/"/>
+    <property name="validateDataDirTarget" value="${TARGETROOT}/${validateData}"/>
 
     <macrodef name="copy-report-files-per-job">
         <sequential>
