@@ -46,7 +46,7 @@ public class MarkerRestSmokeTest extends AbstractDatabaseTest{
         Marker m = new Marker() ;
         m.setZdbID("ZDB-GENE-980526-333");
         m.setAbbreviation("sox3");
-        m.setName("SRY-box containing gene 3");
+        m.setName("SRY (sex determining region Y)-box 3");
         try {
             Gene returnObject = (Gene) WebserviceXmlMarshaller.unmarshal(returnValue,Gene.class) ;
             assertEquals(returnObject.getZdbId(),m.getZdbID());
@@ -63,7 +63,7 @@ public class MarkerRestSmokeTest extends AbstractDatabaseTest{
         Marker m = new Marker() ;
         m.setZdbID("ZDB-GENE-980526-333");
         m.setAbbreviation("sox3");
-        m.setName("SRY-box containing gene 3");
+        m.setName("SRY (sex determining region Y)-box 3");
         Gene returnObject = restTemplate.getForObject(url,Gene.class) ;
         assertEquals(returnObject.getZdbId(),m.getZdbID());
         assertEquals(returnObject.getAbbreviation(),m.getAbbreviation());
@@ -78,7 +78,7 @@ public class MarkerRestSmokeTest extends AbstractDatabaseTest{
         Marker m = new Marker() ;
         m.setZdbID("ZDB-GENE-980526-333");
         m.setAbbreviation("sox3");
-        m.setName("SRY-box containing gene 3");
+        m.setName("SRY (sex determining region Y)-box 3");
         Gene returnObject = restTemplate.getForObject(url,Gene.class) ;
         assertEquals(returnObject.getZdbId(),m.getZdbID());
         assertEquals(returnObject.getAbbreviation(),m.getAbbreviation());
