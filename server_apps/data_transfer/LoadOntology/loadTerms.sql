@@ -190,8 +190,7 @@ insert into tmp_term_name_changed
   from tmp_term_onto_no_dups no_dups, TERM term
   where 
   	term.term_ont_id = no_dups.term_id AND
-  	term.term_name != no_dups.term_name AND
-        term.term_is_Secondary = 'f';
+  	term.term_name != no_dups.term_name;
 
 unload to debug
   select term_name, term_id from tmp_term_name_changed;
