@@ -1,8 +1,11 @@
 package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.publication.Publication;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  */
@@ -12,6 +15,7 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable , S
     protected String zdbID ;  // the primary key of this object
     protected String dataZdbID; // the attached value
     protected String publicationZdbID;
+    protected List<PublicationDTO> associatedPublications;
 
     // display
     protected String name ;
@@ -93,6 +97,14 @@ public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable , S
 
     public String getOrderingValue() {
         return name;
+    }
+
+    public List<PublicationDTO> getAssociatedPublications() {
+        return associatedPublications;
+    }
+
+    public void setAssociatedPublications(List<PublicationDTO> associatedPubs) {
+        associatedPublications = associatedPubs;
     }
 
     @Override

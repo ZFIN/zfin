@@ -359,7 +359,24 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getHandle());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
+
+        List<PublicationDTO> associatedPublications = new ArrayList<PublicationDTO>();
+        for (int i = 0; i < genotype.getAssociatedPublications().size(); i++){
+            associatedPublications.add(DTOConversionService.convertToPublicationDTO(genotype.getAssociatedPublications().get(i)));
+        }
+        genotypeDTO.setAssociatedPublications(associatedPublications);
         return genotypeDTO;
+    }
+
+    public static PublicationDTO convertToPublicationDTO(Publication publication) {
+        PublicationDTO publicationDTO = new PublicationDTO(publication.getTitle(),publication.getZdbID());
+        publicationDTO.setAuthors(publication.getAuthors());
+        publicationDTO.setAbstractText(publication.getAbstractText());
+        publicationDTO.setDoi(publication.getDoi());
+        publicationDTO.setAccession(publication.getAccessionNumber());
+        publicationDTO.setCitation(publication.getCitation());
+        publicationDTO.setMiniRef(publication.getShortAuthorList());
+        return publicationDTO;
     }
 
     public static GoEvidenceDTO convertToGoEvidenceDTO(MarkerGoTermEvidence markerGoTermEvidence) {

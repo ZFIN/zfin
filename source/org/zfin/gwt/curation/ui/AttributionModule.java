@@ -9,11 +9,16 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.root.dto.GenotypeDTO;
+import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.LookupRPCService;
+import org.zfin.marker.Marker;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.mutant.Genotype;
 
-import java.util.List;
+import java.util.*;
 
 /**
  */
@@ -25,6 +30,8 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private ListBoxWrapper removeListBox = new ListBoxWrapper(false);
     private HTML messageBox = new HTML("");
     private boolean working = false ;
+    private String removeAttrPopupPrompt = "";
+    private HashMap<String, RelatedEntityDTO> relatedEntityDTOs = new HashMap<String, RelatedEntityDTO>(); // entities in the Remove Attr drop-down list
 
     public static enum RemoveHeader {
         MARKER,
@@ -75,9 +82,11 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
                     @Override
                     public void onSuccess(List<RelatedEntityDTO> result) {
+
                         removeListBox.clear();
                         for (RelatedEntityDTO relatedEntityDTO : result) {
                             removeListBox.addItem(relatedEntityDTO.getName(), relatedEntityDTO.getZdbID());
+                            relatedEntityDTOs.put(relatedEntityDTO.getZdbID(), relatedEntityDTO);
                         }
                         notWorking();
                     }
@@ -157,14 +166,18 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
             public void onChange(ChangeEvent event) {
                 final String attributionToRemoveID = removeListBox.getSelectedStringValue();
                 final String attributionToRemoveLabel = removeListBox.getSelectedText();
+
                 if (RemoveHeader.isHeader(attributionToRemoveID)) {
                     return;
                 }
 
-                if(false==Window.confirm("Are you sure you want to delete: "+ attributionToRemoveLabel)){
-                    return ;
+                if (checkGenotypeHasOnlyOneCitation(attributionToRemoveID, attributionToRemoveLabel)) {
+                    return;
                 }
 
+                if(false==Window.confirm(removeAttrPopupPrompt)) {
+                    return ;
+                }
 
                 working();
                 MarkerRPCService.App.getInstance().removeAttribution(attributionToRemoveID, dto.getPublicationZdbID(),
@@ -190,9 +203,22 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                                 }
                             }
                         });
-
             }
         });
+    }
+
+    private boolean checkGenotypeHasOnlyOneCitation(String attributionToRemoveID, String attributionToRemoveLabel) {
+        // when the related entity is a genotype and there is only one publication associated with it
+        if (attributionToRemoveID.startsWith("ZDB-GENO-") && relatedEntityDTOs.get(attributionToRemoveID).getAssociatedPublications().size()==1) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("This is the last publication associated with ").append(attributionToRemoveLabel).append(".\nTo delete ")
+                    .append(attributionToRemoveLabel).append(", click Cancel and use the interface on the Genotype tab. To remove pub from genotype, click OK.");
+            removeAttrPopupPrompt = sb.toString();
+        } else {
+            removeAttrPopupPrompt = "Are you sure you want to delete: " + attributionToRemoveLabel;
+        }
+        return false;
+
     }
 
     private void addMarkerAttribution(final String value) {

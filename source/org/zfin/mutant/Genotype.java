@@ -4,6 +4,8 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.profile.GenotypeSupplier;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -39,6 +41,7 @@ public class Genotype implements Comparable {
     private Set<Figure> phenotypeFigures;
     private Figure phenotypeSingleFigure;
     private String complexity;
+    private List<Publication> associatedPulications;
 
     public String getZdbID() {
         return zdbID;
@@ -109,10 +112,10 @@ public class Genotype implements Comparable {
         this.associatedGenotypes = associatedGenotypes;
     }
     public Genotype getBackground() {
-      if (CollectionUtils.isEmpty(associatedGenotypes))
-          return null;
+        if (CollectionUtils.isEmpty(associatedGenotypes))
+            return null;
 
-      if (associatedGenotypes.size() > 1)
+        if (associatedGenotypes.size() > 1)
             throw new RuntimeException("Found more than one associated genotype (Background)! " + associatedGenotypes);
         Iterator<Genotype> iterator = associatedGenotypes.iterator();
         return iterator.next();
@@ -120,7 +123,7 @@ public class Genotype implements Comparable {
 
 
     public void setBackground(Genotype background) {
-       if (!CollectionUtils.isEmpty(associatedGenotypes))
+        if (!CollectionUtils.isEmpty(associatedGenotypes))
             throw new RuntimeException("Found already one associated genotype (Background)! " + associatedGenotypes);
         associatedGenotypes = new HashSet<Genotype>();
         associatedGenotypes.add(background);
@@ -266,4 +269,12 @@ public class Genotype implements Comparable {
     public void setExtinct(boolean extinct) {
         this.extinct = extinct;
     }
+
+    public List<Publication> getAssociatedPublications() {
+        if (associatedPulications == null) {
+            associatedPulications = RepositoryFactory.getPublicationRepository().getAllAssociatedPublicationsForGenotype(this, -1).getPopulatedResults();
+        }
+        return associatedPulications;
+    }
+
 }
