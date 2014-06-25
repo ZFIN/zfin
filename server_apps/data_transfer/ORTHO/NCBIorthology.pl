@@ -32,7 +32,7 @@ system("/bin/rm -f orthNamesUpdateList.unl");
 system("/bin/rm -f updateOrthologyNameSQLlog1");
 system("/bin/rm -f updateOrthologyNameSQLlog2");
 
-
+system("rm -f Homo_sapiens.gene_info.gz");
 system("/bin/rm -f Homo_sapiens.gene_info");
 system("/bin/rm -f Mus_musculus.gene_info");
 system("/bin/rm -f Drosophila_melanogaster.gene_info");
@@ -43,6 +43,7 @@ open LOG, '>', "logOthologyUpdateName" or die "can not open logOthologyUpdateNam
 
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Homo_sapiens.gene_info.gz");
+
 
 &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Mus_musculus.gene_info.gz");
@@ -503,7 +504,7 @@ sub doSystemCommand {
   $returnCode = system( $systemCommand );
 
   if ( $returnCode != 0 ) { 
-     $subjectLine = "Auto from $dbname: " . "updateZFgeneNames.pl :: failed at: $systemCommand . $! ";
+     $subjectLine = "Auto from $dbname: " . "NCBIorthology.pl :: failed at: $systemCommand . $! ";
      print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
      
      &reportErrAndExit($subjectLine);

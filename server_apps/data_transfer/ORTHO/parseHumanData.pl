@@ -8,10 +8,14 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 system("rm -f updateHumanOrthologyLog1");
 system("rm -f updateHumanOrthologyLog2");
-system("rm -f Homo_sapiens.gene_info");
+system("rm -f Homo_sapiens.gene_info.gz");
+###system("rm -f Homo_sapiens.gene_info");
 system("rm -f hum_chr_loc_sym_mim.tab");
-system("wget -q --timestamping ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
-system("gunzip Homo_sapiens.gene_info.gz");
+
+if (!-e "Homo_sapiens.gene_info") {
+  system("wget ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
+  system("gunzip Homo_sapiens.gene_info.gz");
+}
 
 $ctHumanLines = $ctMissingMIM = 0;
 

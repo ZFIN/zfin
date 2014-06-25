@@ -9,6 +9,9 @@ echo ""
 echo "`pwd`/$0"
 echo ""
 
+# run the following script to update orthologue names and make a list of zebrafish genes that may need to update the gene names
+NCBIorthology.pl
+
 ### the data files to fetch *IF* they are updated
 human="Homo_sapiens.gene_info.gz"
 mouse="MRK_List1.rpt"
@@ -108,9 +111,6 @@ echo "###############################################################"
 # send the logs/reports via email
 emailOrthologyReports.pl
 
-
-# run the following script to update orthologue names and make a list of zebrafish genes that may need to update the gene names
-NCBIorthology.pl
 
 # note this regen generates a lot of locks (~149,192)
 
