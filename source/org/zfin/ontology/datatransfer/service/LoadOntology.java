@@ -474,17 +474,6 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             cronReport.info();
             cronJobUtil.emailReport("ontology-loader-secondary-terms-used.ftl", cronReport);
         }
-        // report on new relationships
-        List<GenericTermRelationship> newRelationships = getOntologyRepository().getNewRelationships(ontology);
-        if (CollectionUtils.isNotEmpty(newRelationships)) {
-            GenericCronJobReport<List<GenericTermRelationship>> cronReport;
-            cronReport = new GenericCronJobReport<>(report.getJobName());
-            cronReport.setCollection(newRelationships);
-            cronReport.appendToSubject(" - " + newRelationships.size() + " new Relationships ");
-            cronReport.info();
-            cronJobUtil.emailReport("ontology-loader-new-relationships.ftl", cronReport);
-            //createErrorReport(null, rows, "removed-aliases", loadDirectory);
-        }
         createAllReportFiles();
         //unloadData();
         updatePhenotypesReport();
