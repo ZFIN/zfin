@@ -86,6 +86,7 @@
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
+<filter token="JENKINS_PORT" value="${JENKINS_PORT}"/>
 <filter token="JPDA_ADDRESS" value="${JPDA_ADDRESS}"/>
 <filter token="LD_LIBRARY_PATH" value="${LD_LIBRARY_PATH}"/>
 <filter token="LINKBAR_COLOR" value="${LINKBAR_COLOR}"/>
