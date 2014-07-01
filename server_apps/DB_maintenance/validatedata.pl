@@ -573,42 +573,6 @@ sub unrecoveredFeatureNameAbbrevUpdate($) {
 }
 
 #---------------------------------------------------------------
-# strHasNoCreatedByRelationship
-#
-# Parameter
-# $ Email Address for recipients
-
-sub strHasNoCreatedByRelationship($) {
-  my $routineName = "strHasNoCreatedByRelationship";
-	
-  my $sql = "select feature_zdb_id, feature_name
-                from feature
-                where feature_type = 'INDEL'
-                and not exists (Select 'x' from feature_marker_relationship
-                                  where fmrel_ftr_zdb_id = feature_zdb_id
-                                  and fmrel_type = 'created by')
-		and exists (select 'x' from feature_assay
-                               where featassay_feature_zdb_id = feature_zdb_id
-                                and (featassay_mutagen = 'TALEN' or featassay_mutagen = 'CRISPR'))";
-
-  my @colDesc = ("STR zdb_id         ",
-		 "STR abbrev       ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Str(s) does not have 'created by' relationship";
-    my $errMsg = "There are $nRecords strs without 'created by' relationship. ";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-
-}
-
-#---------------------------------------------------------------
 # strFeatureOnlyHasOneRelationship
 #
 # Parameter
@@ -637,76 +601,6 @@ sub strFeatureOnlyHasOneRelationship($) {
     my $sendToAddress = $_[0];
     my $subject = "Str(s) has only 1 relationship";
     my $errMsg = "There are $nRecords strs with only 1 relationship. ";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-
-}
-
-
-#---------------------------------------------------------------
-# crisprRelatedToNonTalen
-#
-# Parameter
-# $ Email Address for recipients
-
-sub talenRelatedToNonTalen($) {
-  my $routineName = "crisprRelatedToNonTalen";
-	
-  my $sql = "select feature_zdb_id, featassay_mutagen, fmrel_mrkr_zdb_id
-                from feature, feature_assay, feature_marker_relationship
-                where feature_zdb_id = featassay_feature_zdb_id
-                and feature_zdb_id = fmrel_ftr_zdb_id
-                and featassay_mutagen = 'TALEN' 
-                and (fmrel_mrkr_zdb_id like 'ZDB-CRISPR%'
-                    or fmrel_mrkr_zdb_id like 'ZDB-MRPH%')";
-
-  my @colDesc = ("STR feature_zdb_id         ",
-		 "STR mutagen       ",
-		 "STR marker_zdb_id       ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Str(s) does not have 'created by' relationship";
-    my $errMsg = "There are $nRecords talen mutagens are not related to ZDB-TALENs. ";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-
-}
-#---------------------------------------------------------------
-# crisprRelatedToNonCrispr
-#
-# Parameter
-# $ Email Address for recipients
-
-sub crisprRelatedToNonCrispr($) {
-  my $routineName = "crisprRelatedToNonCrispr";
-	
-  my $sql = "select feature_zdb_id, featassay_mutagen, fmrel_mrkr_zdb_id
-                from feature, feature_assay, feature_marker_relationship
-                where feature_zdb_id = featassay_feature_zdb_id
-                and feature_zdb_id = fmrel_ftr_zdb_id
-                and featassay_mutagen = 'CRISPR' 
-                and (fmrel_mrkr_zdb_id like 'ZDB-TALEN%'
-                    or fmrel_mrkr_zdb_id like 'ZDB-MRPH%')";
-
-  my @colDesc = ("STR feature_zdb_id         ",
-		 "STR mutagen       ",
-		 "STR marker_zdb_id       ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Str(s) does not have 'created by' relationship";
-    my $errMsg = "There are $nRecords crispr mutagens are not related to ZDB-CRISPRs. ";
     
     logError ($errMsg);
     &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
@@ -2889,10 +2783,7 @@ if($daily) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
-    strHasNoCreatedByRelationship($ceri);
     strFeatureOnlyHasOneRelationship($ceri);
-    crisprRelatedToNonCrispr($ceri);
-    talenRelatedToNonTalen($ceri);
 	estsWithoutClonesHaveXxGenes($estEmail);
 	xpatObjectNotGeneOrEFG ($xpatEmail);
 	constructNameNotSubstringOfFeatureName($dbaEmail);
