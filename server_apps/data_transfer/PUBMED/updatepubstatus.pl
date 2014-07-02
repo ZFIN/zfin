@@ -1,6 +1,6 @@
-#!/private/bin/perl 
+#!/private/bin/perl
 # updatepubstatus.pl
-# This script first get a list of non-active publications with pubmed ids 
+# This script first get a list of non-active publications with pubmed ids
 
 
 use DBI;
@@ -26,7 +26,7 @@ system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/log1");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/log2");
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
+my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
   || die("Failed while connecting to <!--|DB_NAME|--> ");
 
 $cur_get_nonactive_pubs = $dbh->prepare('select accession_no, zdb_id from publication where status != "active" and accession_no is not null;');
@@ -67,7 +67,7 @@ foreach $pubZDBid (sort keys %nonActivePubAccessions) {
     if (defined $content) {
       if ($content =~ m/<PublicationStatus>(\w+)<\/PublicationStatus>/) {
         $status = $1;
-        if ($status eq "ppublish") {
+        if ($status eq "ppublish" || $status eq "epublish") {
           $cur_update_pub->execute($pubmedId);
           $cur_insert_update->execute($pubmedId);
           $updatedPublications{$pubZDBid} = $pubmedId;
