@@ -44,7 +44,7 @@ function ImageBox() {
 
     this.generateImageAnchor = function(image) {
         var anchor = document.createElement('a');
-        anchor.href = this.POPUP_URL + image.imgZdbId + "&imgpop_displayed_width=670";
+        anchor.href = this.POPUP_URL + image.imgZdbId + "?imgpop_displayed_width=670";
         anchor.id = image.imgZdbId;
 
         var img = document.createElement('img');
