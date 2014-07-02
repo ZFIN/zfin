@@ -33,10 +33,7 @@
 
 
 <zfin2:markerSequenceInfoRelated marker="${formBean.marker}"
-                                     dbLinks="${formBean.firstRelatedMarkerDBLink}" title="ENCODES"
-                                      />
-
-<zfin2:markerSequenceInfoRelated marker="${formBean.marker}"
-                                      dbLinks="${formBean.secondRelatedMarkerDBLink}" title="CONTAINED IN"
+                                 dbLinks="${formBean.relatedMarkerDBLinks}"
         />
+
 

@@ -7,6 +7,7 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
+import org.zfin.marker.presentation.RelatedMarkerDBLinkDisplay;
 import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
@@ -106,9 +107,9 @@ public interface SequenceRepository {
 
     List<TranscriptDBLink> getTranscriptDBLinksForMarkerAndDisplayGroup(Transcript transcript, DisplayGroup.GroupName groupName);
 
-    List<MarkerDBLink> getDBLinksForFirstRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes);
+    List<RelatedMarkerDBLinkDisplay> getDBLinksForFirstRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes);
 
-    List<MarkerDBLink> getDBLinksForSecondRelatedMarker(Marker marker,  DisplayGroup.GroupName groupName, MarkerRelationship.Type...  markerRelationshipTypes);
+    List<RelatedMarkerDBLinkDisplay> getDBLinksForSecondRelatedMarker(Marker marker,  DisplayGroup.GroupName groupName, MarkerRelationship.Type...  markerRelationshipTypes);
 
     Collection<String> getDBLinkAccessionsForMarker(Marker marker, ForeignDBDataType.DataType dataType);
 

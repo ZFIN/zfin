@@ -9,6 +9,7 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.presentation.RelatedMarkerDBLinkDisplay;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -202,7 +203,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getDBLinksForFirstRelatedMarker(){
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-        Collection<MarkerDBLink> dbLinkList = sequenceRepository.getDBLinksForFirstRelatedMarker(m
+        Collection<RelatedMarkerDBLinkDisplay> dbLinkList = sequenceRepository.getDBLinksForFirstRelatedMarker(m
                 ,DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
                 ,MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT
                 ,MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT
@@ -216,7 +217,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getDBLinksForSecondRelatedMarker(){
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030616-338");
-        Collection<MarkerDBLink> dbLinkList = sequenceRepository.getDBLinksForSecondRelatedMarker(m
+        Collection<RelatedMarkerDBLinkDisplay> dbLinkList = sequenceRepository.getDBLinksForSecondRelatedMarker(m
                 , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
                 , MarkerRelationship.Type.CLONE_CONTAINS_GENE
         );

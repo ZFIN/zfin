@@ -17,8 +17,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -239,17 +238,18 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
         MarkerDBLink markerDBLink;
 
-        Iterator<MarkerDBLink> firstIter = sequenceInfo.getFirstRelatedMarkerDBLink().iterator();
-        assertEquals(1, sequenceInfo.getFirstRelatedMarkerDBLink().size());
-        markerDBLink = firstIter.next();
+        TreeMap<String, TreeSet<MarkerDBLink>> related = sequenceInfo.getRelatedMarkerDBLinks();
+        assertThat(related, hasKey("Encodes"));
+        assertThat(related.get("Encodes"), hasSize(1));
+        markerDBLink = related.get("Encodes").iterator().next();
 
         assertEquals(ForeignDBDataType.DataType.GENOMIC, markerDBLink.getReferenceDatabase().getForeignDBDataType().getDataType());
         assertEquals(ForeignDB.AvailableName.GENBANK, markerDBLink.getReferenceDatabase().getForeignDB().getDbName());
         assertEquals("eu736", markerDBLink.getMarker().getAbbreviation());
 
-
-        Iterator<MarkerDBLink> secondIter = sequenceInfo.getSecondRelatedMarkerDBLink().iterator();
-        assertEquals(3, sequenceInfo.getSecondRelatedMarkerDBLink().size());
+        assertThat(related, hasKey("Contained in"));
+        assertThat(related.get("Contained in"), hasSize(3));
+        Iterator<MarkerDBLink> secondIter = related.get("Contained in").iterator();
         markerDBLink = secondIter.next();
 
         assertEquals(ForeignDBDataType.DataType.GENOMIC, markerDBLink.getReferenceDatabase().getForeignDBDataType().getDataType());
@@ -285,8 +285,10 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
     public void getSequenceInfoFullNotDupe() {
         Marker m = getMarkerRepository().getMarkerByID("ZDB-GENE-030616-329");
         SequencePageInfoBean sequencePageInfoBean = MarkerService.getSequenceInfoFull(m);
-        Collection<MarkerDBLink> secMarkerDBLinks = sequencePageInfoBean.getSecondRelatedMarkerDBLink();
-        assertEquals(2, secMarkerDBLinks.size());
+        TreeMap<String, TreeSet<MarkerDBLink>> secMarkerDBLinks = sequencePageInfoBean.getRelatedMarkerDBLinks();
+        Set<String> keys = secMarkerDBLinks.keySet();
+        assertThat(keys, hasSize(1));
+        assertThat(secMarkerDBLinks.get(keys.iterator().next()), hasSize(2));
 
     }
 

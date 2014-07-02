@@ -11,8 +11,7 @@ import java.util.*;
 public class SequencePageInfoBean {
 
     private Collection<DBLink> dbLinks;
-    private Collection<MarkerDBLink> firstRelatedMarkerDBLink ;
-    private Collection<MarkerDBLink> secondRelatedMarkerDBLink ;
+    private TreeMap<String, TreeSet<MarkerDBLink>> relatedMarkerDBLinks = new TreeMap<>();
     private Marker marker;
 
 
@@ -47,28 +46,15 @@ public class SequencePageInfoBean {
         this.dbLinks = dbLinks;
     }
 
-//    public Collection<MarkerDBLink> getFirstRelatedMarkerDBLink() {
-//        return firstRelatedMarkerDBLink;
-//    }
-
-    public List<MarkerDBLink> getFirstRelatedMarkerDBLink() {
-        List<MarkerDBLink> dblinks = new ArrayList<MarkerDBLink>(firstRelatedMarkerDBLink);
-        Collections.sort(dblinks,new DbLinkMarkerSortComparator());
-        return dblinks ;
+    public TreeMap<String, TreeSet<MarkerDBLink>> getRelatedMarkerDBLinks() {
+        return relatedMarkerDBLinks;
     }
 
-    public void setFirstRelatedMarkerDBLink(Collection<MarkerDBLink> firstRelatedMarkerDBLink) {
-        this.firstRelatedMarkerDBLink = firstRelatedMarkerDBLink;
-    }
-
-    public List<MarkerDBLink> getSecondRelatedMarkerDBLink() {
-        List<MarkerDBLink> dbLinks = new ArrayList<MarkerDBLink>(secondRelatedMarkerDBLink);
-        Collections.sort(dbLinks,new DbLinkMarkerSortComparator());
-        return dbLinks;
-    }
-
-    public void setSecondRelatedMarkerDBLink(Collection<MarkerDBLink> secondRelatedMarkerDBLink) {
-        this.secondRelatedMarkerDBLink = secondRelatedMarkerDBLink;
+    public void addRelatedMarkerDBLink(String relationshipType, MarkerDBLink link) {
+        if (!relatedMarkerDBLinks.containsKey(relationshipType)) {
+            relatedMarkerDBLinks.put(relationshipType, new TreeSet<>(new DbLinkMarkerSortComparator()));
+        }
+        relatedMarkerDBLinks.get(relationshipType).add(link);
     }
 
     public Marker getMarker() {

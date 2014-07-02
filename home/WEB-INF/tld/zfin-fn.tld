@@ -347,5 +347,4 @@
         <function-signature>java.lang.String getGbrowseTrackUrlAddition(org.zfin.marker.Marker)</function-signature>
     </function>
 
-
 </taglib>

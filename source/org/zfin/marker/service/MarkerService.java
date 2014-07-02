@@ -81,16 +81,18 @@ public class MarkerService {
                         , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE)
         );
 
-        sequenceInfo.addDBLinks(RepositoryFactory.getSequenceRepository()
+        List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
                 .getDBLinksForFirstRelatedMarker(marker,
                         DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
                         MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
                         MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
                         MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
-                )
-        );
+                );
+        for (RelatedMarkerDBLinkDisplay relatedLink : relatedLinks) {
+            sequenceInfo.addDBLink(relatedLink.getLink());
+        }
 
-        Set<MarkerDBLink> markerDBLinks = new TreeSet<MarkerDBLink>();
+        Set<RelatedMarkerDBLinkDisplay> markerDBLinks = new TreeSet<>();
         markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
                 .getDBLinksForSecondRelatedMarker(marker
                         , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
@@ -99,10 +101,9 @@ public class MarkerService {
         );
 
         markerDBLinks.addAll(getTranscriptReferences(marker));
-
-        // TODO: can this be done more efficiently with another datastructure
-        Set<MarkerDBLink> uniqueLinks = new TreeSet<MarkerDBLink>(markerDBLinks);
-        sequenceInfo.addDBLinks(new ArrayList<MarkerDBLink>(uniqueLinks));
+        for (RelatedMarkerDBLinkDisplay relatedLink : markerDBLinks) {
+            sequenceInfo.addDBLink(relatedLink.getLink());
+        }
 
         // TODO: this should use a single SQL statement?
         // but this is a bit unmanageable unless it is really slow
@@ -113,7 +114,7 @@ public class MarkerService {
         Set<String> types = new HashSet<String>();
         for (DBLink dbLink : sequenceInfo.getDbLinks()) {
             String type = dbLink.getReferenceDatabase().getForeignDBDataType().getDataType().toString();
-            if (false == types.contains(type)) {
+            if (!types.contains(type)) {
                 types.add(type);
                 dbLinkSet.add(dbLink);
             } else if (types.contains(type)) {
@@ -137,47 +138,53 @@ public class MarkerService {
         SequencePageInfoBean sequenceInfo = new SequencePageInfoBean();
         sequenceInfo.addDBLinks(RepositoryFactory.getSequenceRepository().getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE));
 
-        sequenceInfo.setFirstRelatedMarkerDBLink(RepositoryFactory.getSequenceRepository()
+        List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
                 .getDBLinksForFirstRelatedMarker(marker,
                         DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
                         MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
                         MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
                         MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
-                )
+                );
+        relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
+                        .getDBLinksForSecondRelatedMarker(marker
+                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                        )
         );
-
-        Set<MarkerDBLink> markerDBLinks = new TreeSet<MarkerDBLink>();
-        markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
-                .getDBLinksForSecondRelatedMarker(marker
-                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                )
-        );
-
-        markerDBLinks.addAll(getTranscriptReferences(marker));
-
-        sequenceInfo.setSecondRelatedMarkerDBLink(markerDBLinks);
+        relatedLinks.addAll(getTranscriptReferences(marker));
+        for (RelatedMarkerDBLinkDisplay relatedLink : relatedLinks) {
+            sequenceInfo.addRelatedMarkerDBLink(relatedLink.getRelationshipType(), relatedLink.getLink());
+        }
 
         return sequenceInfo;
     }
 
-    public static Collection<MarkerDBLink> getTranscriptReferences(Marker marker) {
-        List<MarkerDBLink> markerDBLinks = new ArrayList<MarkerDBLink>();
+    public static Collection<RelatedMarkerDBLinkDisplay> getTranscriptReferences(Marker marker) {
+        List<RelatedMarkerDBLinkDisplay> relatedMarkerDBLinks = new ArrayList<>();
+        List<MarkerDBLink> markerDBLinks = new ArrayList<>();
+        String relationship = "";
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
                     .getWeakReferenceDBLinks(marker
                             , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
                             , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
                     ));
+            relationship = "Contained in";
         } else if (marker.isInTypeGroup(Marker.TypeGroup.CLONE)) {
             markerDBLinks.addAll(RepositoryFactory.getSequenceRepository()
                     .getWeakReferenceDBLinks(marker
                             , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
                             , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
                     ));
+            relationship = "Contains";
         }
-
-        return markerDBLinks;
+        for (MarkerDBLink link : markerDBLinks) {
+            RelatedMarkerDBLinkDisplay display = new RelatedMarkerDBLinkDisplay();
+            display.setLink(link);
+            display.setRelationshipType(relationship);
+            relatedMarkerDBLinks.add(display);
+        }
+        return relatedMarkerDBLinks;
     }
 
     public static SequenceInfo getSequenceInfo(Marker marker) {
