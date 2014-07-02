@@ -1,6 +1,7 @@
 package org.zfin.expression.service;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.MarkerExpression;
@@ -8,6 +9,9 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.repository.RepositoryFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
@@ -59,12 +63,15 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
 
 
     @Test
+    @Ignore
+    // Should go out as
     public void testMicroarrayWebserviceJob() {
 
-//        MicroarrayWebServiceBean microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.GENEP,5);
-        int numberMarkers = RepositoryFactory.getMarkerRepository().getMarkerZdbIdsForType(Marker.Type.GENE).size();
-        long startTime = System.currentTimeMillis();
-        MicroarrayWebServiceBean microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.GENE, 20);
+        MicroarrayWebServiceBean microarrayWebServiceBean = new MicroarrayWebServiceBean();
+        Set<String> ids = new HashSet<>(3);
+        ids.add("ZDB-BAC-041007-88");
+        ids.add("ZDB-BAC-041007-119");
+        microarrayWebServiceBean.setAddZdbIds(ids);
         HibernateUtil.createTransaction();
         try {
             expressionService.writeMicroarrayWebServiceBean(microarrayWebServiceBean);
@@ -73,10 +80,6 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         } finally {
             HibernateUtil.rollbackTransaction();
         }
-        long endTime = System.currentTimeMillis();
-        logger.info("total time: " + (endTime - startTime) + " in seconds " + ((endTime - startTime) / 1000f));
-        logger.info("total records: " + 200);
-        logger.info("time should be : " + (endTime - startTime) / (1000f * 200) + " s");
         assertNotNull(microarrayWebServiceBean);
     }
 
