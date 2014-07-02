@@ -175,7 +175,7 @@ public class LabController {
         if (!noPrefixes) {
             int ctNoneActiveForSet = 0;
             for (FeaturePrefix fpf : featurePrefixes) {
-                logger.error("featurePrefix is:" + fpf.getPrefixString().toString());
+                logger.info("featurePrefix is:" + fpf.getPrefixString().toString());
                 if (!fpf.isActiveForSet())
                      ctNoneActiveForSet++;
             }
