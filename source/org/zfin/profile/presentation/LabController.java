@@ -168,7 +168,7 @@ public class LabController {
         List<Publication> publications = profileRepository.getPublicationsForLab(zdbID);
         model.addAttribute("publications", publications);
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixesById(lab.getZdbID(), false);
-        logger.error("featurePrefixCount" +featurePrefixes.size());
+        logger.info("featurePrefixCount" +featurePrefixes.size());
         model.addAttribute("prefixes", featurePrefixes);
 
         boolean noPrefixes = featurePrefixes.isEmpty();
