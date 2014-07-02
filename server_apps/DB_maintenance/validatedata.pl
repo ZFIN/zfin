@@ -1208,67 +1208,6 @@ sub associatedOevDataforPUB030508_1 ($) {
 
 
 #---------------------------------------------------------------
-# associatedDataforPUB030905_2
-#
-# Data, other than nucleotide sequence accession numbers, associated with ZDB-PUB-030905-2.
-
-# The only data that should be attributed should be sequence accessions (or their markers) 
-# of type Genomic, RNA, or Sequence Clusters.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub associatedDataforPUB030905_2 ($) {
-
-  my $routineName = "associatedDataforPUB030905_2";
-
-  my $sql = "select recattrib_data_zdb_id
-             from   record_attribution r1
-             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
-             and get_obj_type(recattrib_Data_zdb_id) not in ('DBLINK','DALIAS','OEVDISP','MREL')
-             and    not exists (
-                    -- all nucleotide accession numbers assoc. w/pub via dblink_zdb_id (DBLINK)
-                       select recattrib_data_zdb_id
-                       from   db_link, record_attribution r2, foreign_db_contains, foreign_db_data_type
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
-                       and    dblink_zdb_id = recattrib_data_zdb_id
-                       and    fdbcont_fdbdt_id = fdbdt_pk_id
-                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
-                       and    r1.recattrib_data_zdb_id = r2.recattrib_data_zdb_id
-                     union
-                    -- all nucleotide accession numbers assoc. w/pub via dblink_linked_recid (GENE)
-                       select recattrib_data_zdb_id
-                       from   db_link, record_attribution r3, foreign_db_contains, foreign_db_data_type
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-2'
-                       and    dblink_linked_recid = recattrib_data_zdb_id
-                       and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_fdbdt_id = fdbdt_pk_id
-                       and    fdbdt_data_type in ('Genomic','RNA','Sequence Clusters')
-                       and    r1.recattrib_data_zdb_id = r3.recattrib_data_zdb_id
-                    )  
-             order by recattrib_data_zdb_id";
-
-
-  my @colDesc = ("Attributed ZDB ID       ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Invalid data is associated with ZDB-PUB-030905-2.";
-    my $errMsg = "$nRecords data are associated with ZDB-PUB-030905-2 "
-               . " that are not nucleotide sequence accession numbers "
-               . " (i.e. not Genomic, RNA or Sequence Clusters.)";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-#---------------------------------------------------------------
 # associatedDBLinkDataforPUB030905_2
 #
 # Data, other than nucleotide sequence accession numbers, associated with ZDB-PUB-030905-2.
@@ -2801,7 +2740,6 @@ if($weekly) {
 	associatedDblinkDataforPUB030508_1($geneEmail);
 
 	# each bit of the 030905_2 needs different data report to allow curators to clean up.  the generic one goes to DBA.
-	associatedDataforPUB030905_2($dbaEmail);
 	associatedOrthoEvidenceDataforPUB030905_2($geneEmail);
 	associatedAliasDataforPUB030905_2($geneEmail);
 	associatedMrelDataforPUB030905_2($geneEmail);

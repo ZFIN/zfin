@@ -52,6 +52,26 @@
         <antcall target="copy-validate-data-files"/>
     </target>
 
+    <target name="create-new-validatedata-job">
+        <echo message="NEW JOB: ${jobName}"/>
+        <mkdir dir="${jobs}/${jobName}"/>
+        <copy tofile="${jobs}/${jobName}/config.xml" overwrite="true">
+            <fileset file="${basedir}/server_apps/jenkins/validatedata.template.config.xml"/>
+            <filterset>
+                <filter token="JOB_NAME" value="${jobName}"/>
+            </filterset>
+        </copy>
+        <touch file="${validateDataDirSource}/${jobName}.sql"/>
+        <echo file="${validateDataDirSource}/report.properties" append="true"><![CDATA[${jobName}.errorMessage=Please add a title of the error page
+]]></echo>
+        <echo file="${validateDataDirSource}/report.properties" append="true"><![CDATA[${jobName}.headerColumns=Add column headers]]></echo>
+        <sort-file file-name="${validateDataDirSource}/report.properties"/>
+        <echo file="${jenkins}/trigger.reports.properties" append="true"><![CDATA[${jobName}=]]></echo>
+        <sort-file file-name="${jenkins}/trigger.reports.properties"/>
+        <echo file="${jenkins}/email-configuration.reports.properties" append="true"><![CDATA[${jobName}.FAILURE=Please add email addresses]]></echo>
+        <sort-file file-name="${jenkins}/email-configuration.reports.properties"/>
+    </target>
+
     <target name="_copyDefaultConfig">
         <if>
             <available file="${JENKINS_HOME}/config.xml"/>
@@ -581,6 +601,19 @@
                            replace="${emailConfiguration}">
                 <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
             </replaceregexp>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="sort-file" description="sort a given file">
+        <attribute name="file-name"/>
+        <sequential>
+            <echo message="Sorting file @{file-name}"/>
+            <exec executable="sort">
+                <arg value="-fu"/>
+                <arg value="@{file-name}"/>
+                <arg value="-o"/>
+                <arg value="@{file-name}"/>
+            </exec>
         </sequential>
     </macrodef>
 
