@@ -35,7 +35,7 @@
     <class name="org.zfin.infrastructure.RecordAttribution" table="record_attribution" >
         <id name="id" type="long">
             <column name="recattrib_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <discriminator type="string"
                        formula="(CASE get_obj_type(recattrib_source_zdb_id)
