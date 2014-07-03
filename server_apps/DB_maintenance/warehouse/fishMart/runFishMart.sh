@@ -76,6 +76,9 @@ set fishMartScripts=(begin.sql \
 	     populateNullOrderingColumns.sql \
 	     commit.sql \
 	     begin.sql \
+	     fishGenoxMapping.sql \
+	     commit.sql \
+	     begin.sql \
 	     createTempBtsIndexes.sql \
 	     commit.sql \
 	     )
@@ -143,6 +146,9 @@ set fullFishMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     populateNullOrderingColumns.sql \
+	     commit.sql \
+	     begin.sql \
+	     fishGenoxMapping.sql \
 	     commit.sql \
 	     begin.sql \
 	     createTempBtsIndexes.sql \

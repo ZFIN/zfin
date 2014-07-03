@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.RootLogger;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import org.zfin.framework.HibernateSessionCreator;
@@ -27,12 +28,16 @@ public class AbstractScriptWrapper {
     }
 
     protected void initAll(String propertyDirectory) {
-        ZfinProperties.init(propertyDirectory);
+        initProperties(propertyDirectory);
         initDatabase();
     }
 
     protected void initProperties() {
         ZfinProperties.init();
+    }
+
+    protected void initProperties(String propertyDirectory) {
+        ZfinProperties.init(propertyDirectory);
     }
 
     protected void initDatabase() {
@@ -45,6 +50,14 @@ public class AbstractScriptWrapper {
             new HibernateSysmasterSessionCreator();
         }
     }
+
+    protected void initDatabaseWithoutSysmaster() {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        if (sessionFactory == null) {
+            new HibernateSessionCreator();
+        }
+    }
+
 
     protected static void initSpringConfiguration() {
         LocalSessionFactoryBean bean = new LocalSessionFactoryBean();

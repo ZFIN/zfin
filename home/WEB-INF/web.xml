@@ -146,6 +146,11 @@
 
     <servlet-mapping>
         <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/figure/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
         <url-pattern>/action/phenotype/*</url-pattern>
     </servlet-mapping>
 

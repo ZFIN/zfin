@@ -16,8 +16,12 @@
               description="Shows string instead of No data available when there is no data"%>
 <%@ attribute name="anchor" required="false" rtexprvalue="true" type="java.lang.String"
               description="An anchor name to link directly to this section of the page" %>
+<%@ attribute name="additionalCssClass" required="false" rtexprvalue="true" type="java.lang.String"
+              description="An additional class to add to the wrapping tag" %>
 
-<%-- 
+
+
+<%--
 <c:if test="${empty anchor}">  
   <c:set var="anchor" value="${fn:replace(title, \" \", \"_\")}" />
   <c:set var="anchor" value="${fn:replace(anchor, \"(\",\"\")}" />
@@ -40,7 +44,7 @@
 
 <c:if test="${((empty inlineTitle) || (inlineTitle == false)) && !empty title}"> </c:if>
 <c:if test="${!empty anchor}"><a name="${anchor}"></a></c:if>
-<div class="summary">
+<div class="summary ${additionalCssClass}">
     <c:if test="${!empty title}">
         <c:choose>
             <c:when test="${(!empty inlineTitle) && (inlineTitle == true)}">

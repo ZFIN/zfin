@@ -79,6 +79,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	pm\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	pm\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	pm\@cs.uoregon.edu
+<!--|VIDEO_LOAD|-->	/videoLoadUp
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	pm\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver

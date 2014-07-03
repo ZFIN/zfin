@@ -389,6 +389,17 @@
     </tag>
 
     <tag>
+        <name>experiment</name>
+        <tagclass>org.zfin.framework.presentation.tags.CreateExperimentLinkTag</tagclass>
+        <info>Create a hyperlink for conditions so that conditions with the same content are grouped together</info>
+        <attribute>
+            <name>experiment</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>linkWithSubstructure</name>
         <tagclass>org.zfin.framework.presentation.tags.HighlightSubstructureTag</tagclass>
         <info>Create a hyperlink for an object of a given type and mark the term that is substructure</info>

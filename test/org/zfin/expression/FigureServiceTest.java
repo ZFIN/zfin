@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.figure.service.FigureViewService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
@@ -44,7 +45,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         Marker pax2a = markerRepository.getMarkerByAbbreviation("pax2a");
         Marker fgf8a = markerRepository.getMarkerByAbbreviation("fgf8a");
         
-        List<Marker> genes = FigureService.getExpressionGenes(figure);
+        List<Marker> genes = FigureViewService.getExpressionGenes(figure);
 
         assertNotNull("Figure has genes", genes);
         assertTrue("Figure contains pax2a", genes.contains(pax2a));

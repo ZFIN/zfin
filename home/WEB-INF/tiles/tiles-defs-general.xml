@@ -115,6 +115,12 @@
         <put-attribute name="body" value="/WEB-INF/jsp/mutant/{1}.jsp" />
     </definition>
 
+    <!-- figure definitions -->
+    <definition name="figure/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/figure/{1}.jsp"/>
+    </definition>
+
+
     <definition name="infrastructure/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/infrastructure/{1}.jsp" />
     </definition>

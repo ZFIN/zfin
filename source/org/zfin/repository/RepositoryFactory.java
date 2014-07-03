@@ -12,6 +12,8 @@ import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.expression.repository.HibernateExpressionSummaryRepository;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.HibernateFeatureRepository;
+import org.zfin.figure.repository.FigureRepository;
+import org.zfin.figure.repository.HibernateFigureRepository;
 import org.zfin.fish.repository.FishRepository;
 import org.zfin.fish.repository.HibernateFishRepository;
 import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
@@ -56,6 +58,7 @@ public class RepositoryFactory {
     private static ProfileRepository profileRep;
     private static MutantRepository mutRep;
     private static FeatureRepository featRep;
+    private static FigureRepository figureRepository;
     private static ExpressionSummaryRepository xpatsumRep;
     private static MarkerRepository markerRep;
     private static MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository;
@@ -241,6 +244,12 @@ public class RepositoryFactory {
         if (displayGroupRepository == null)
             displayGroupRepository = new HibernateDisplayGroupRepository();
         return displayGroupRepository;
+    }
+
+    public static FigureRepository getFigureRepository() {
+        if (figureRepository == null)
+            figureRepository = new HibernateFigureRepository();
+        return figureRepository;
     }
 
     public static ExpressionRepository getExpressionRepository() {

@@ -79,6 +79,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	cmpich\@zfin.org
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	cmpich\@zfin.org
 <!--|VALIDATION_EMAIL_XPAT|-->	cmpich\@zfin.org
+<!--|VIDEO_LOAD|-->	/videoLoadUp
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	cmpich\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver

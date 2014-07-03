@@ -157,6 +157,7 @@
 <filter token="VALIDATION_EMAIL_TRANSCRIPT" value="${VALIDATION_EMAIL_TRANSCRIPT}"/>
 <filter token="VALIDATION_EMAIL_XPAT" value="${VALIDATION_EMAIL_XPAT}"/>
 <filter token="VALID_SESSION_TIMEOUT_SECONDS" value="${VALID_SESSION_TIMEOUT_SECONDS}"/>
+<filter token="VIDEO_LOAD" value="${VIDEO_LOAD}"/>
 <filter token="WAREHOUSE_DUMP_DIR" value="${WAREHOUSE_DUMP_DIR}"/>
 <filter token="WAREHOUSE_REGN_EMAIL" value="${WAREHOUSE_REGN_EMAIL}"/>
 <filter token="WEBDRIVER_LOC" value="${WEBDRIVER_LOC}"/>

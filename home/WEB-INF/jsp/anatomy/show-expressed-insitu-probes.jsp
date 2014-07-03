@@ -41,7 +41,7 @@
                             </c:if>
                             <!-- If only one figure available go directly to the figure page -->
                             <c:if test="${probeStats.numberOfFigures == 1}">
-                                <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${probeStats.figure.zdbID}'>
+                                <a href='/${probeStats.figure.zdbID}'>
                                     <zfin2:figureOrTextOnlyLink figure="${probeStats.figure}"
                                                                 integerEntity="${probeStats.numberOfFigures}"/>
                                 </a>

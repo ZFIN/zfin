@@ -171,7 +171,7 @@ OUTPUT VARS:
 	      <?MIVAR NAME=xpsumres_fig_label>$1<?/MIVAR>
            <?/MISQL>
 	   <?MIVAR>
-	     <a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$xpsumres_fig_zdb_id'>$xpsumres_fig_label</a> from $xpsumres_figsFrom $(IF,$(XST,$xpsumres_cameraTag),$xpsumres_cameraTag) $(UNSETVAR,$xpsumres_cameraTag)
+	     <a href='/$xpsumres_fig_zdb_id'>$xpsumres_fig_label</a> from $xpsumres_figsFrom $(IF,$(XST,$xpsumres_cameraTag),$xpsumres_cameraTag) $(UNSETVAR,$xpsumres_cameraTag)
            <?/MIVAR>
 	 <?/MIBLOCK>
        </td>

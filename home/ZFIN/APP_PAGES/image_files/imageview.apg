@@ -131,7 +131,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	 img_width, 
 	 HTML_breaks(img_comments), img_view, img_direction, 
 	 img_form, img_preparation, 
-	 img_thumbnail, img_fig_zdb_id
+	 img_thumbnail, img_fig_zdb_id, img_is_video_still
     from $image_table 
     where img_zdb_id='$OID';">
 <?/MISQL>
@@ -147,6 +147,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 <?MIVAR NAME=$fimgview_fimg_preparation>$9<?/MIVAR>
 <?MIVAR NAME=$fimgview_thumbnail>$10<?/MIVAR>
 <?MIVAR NAME=$fimgview_fig_image_zdb_id>$11<?/MIVAR>
+<?MIVAR NAME=$fimgview_img_is_video_still>$12<?/MIVAR>
 <?MIVAR NAME=$fimgview_image_zdb_id>$OID<?/MIVAR>
 <?MICOMMENT>
   for the purpose of having consistant parameter names when pass to showpub.apg
@@ -385,14 +386,14 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
             <?MIBLOCK COND="$(XST,$fimgview_expression_exists)">
               <?MIVAR NAME=imgv_figure_display>$imgv_figure_display
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fimgview_fig_zdb_id#xpat">Gene expression data</a>
+              <a href="/$fimgview_fig_zdb_id#xpat">Gene expression data</a>
               <br>          
               <?/MIVAR>
             <?/MIBLOCK>
             
             <?MIBLOCK COND="$(XST,$fimgview_phenotype_exists)">
               <?MIVAR NAME=imgv_figure_display>$imgv_figure_display
-              <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$fimgview_fig_zdb_id#phenotype">Phenotype data</a>
+              <a href="/$fimgview_fig_zdb_id#phenotype">Phenotype data</a>
               <br>          
               <?/MIVAR>
             <?/MIBLOCK>
@@ -439,6 +440,8 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	  <TABLE border=0 cellpadding=20>
 	    <TR>
 	      <TD align=center bgcolor=#000000>
+
+
 		<?MIVAR> 
 		  <script>
 		    var frameWidth;
@@ -464,7 +467,6 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 		    }
 		  </script>
 		<?/MIVAR>
-
 		<?MIVAR COND="$(XST,$UPDATE)">
 		  <br>
 		  <INPUT TYPE=button 

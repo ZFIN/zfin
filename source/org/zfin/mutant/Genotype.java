@@ -2,6 +2,7 @@ package org.zfin.mutant;
 
 import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
+import org.zfin.fish.FishAnnotation;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.profile.GenotypeSupplier;
 import org.zfin.publication.Publication;
@@ -143,8 +144,13 @@ public class Genotype implements Comparable {
      * @return boolean for equality
      */
     public boolean equals(Object otherGenotype) {
-        if (!(otherGenotype instanceof Genotype))
-            return false;
+        if (!(otherGenotype instanceof Genotype)){
+            if (otherGenotype instanceof FishAnnotation) {
+                return ((FishAnnotation)otherGenotype).getGenotypeID().equals(getZdbID());
+            } else {
+                return false;
+            }
+        }
         Genotype og = (Genotype)otherGenotype;
         return getZdbID().equals(og.getZdbID());
     }

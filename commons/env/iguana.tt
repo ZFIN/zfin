@@ -79,6 +79,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	kevin\@zfin.org
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	kevin\@zfin.org
 <!--|VALIDATION_EMAIL_XPAT|-->	kevin\@zfin.org
+<!--|VIDEO_LOAD|-->	/videoLoadUp
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	kevin\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver

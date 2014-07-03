@@ -11,6 +11,7 @@
             <column name="fig_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">FIG</param>
+                <param name="insertActiveData">true</param>
             </generator>
         </id>
 
@@ -41,31 +42,35 @@
             <many-to-many class="org.zfin.expression.ExpressionResult" column="xpatfig_xpatres_zdb_id"/>
         </set>
 
+        <set name="phenotypeExperiments" lazy="true" table="phenotype_experiment">
+            <key column="phenox_fig_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.PhenotypeExperiment"/>
+        </set>
+
         <set name="images" lazy="true">
             <key column="img_fig_zdb_id"/>
             <one-to-many class="org.zfin.expression.Image"/>
         </set>
 
-        <many-to-one name="publication" class="org.zfin.publication.Publication" column="fig_source_zdb_id"
-                     insert="false"
-                     update="false"/>
+        <many-to-one name="publication" class="org.zfin.publication.Publication" column="fig_source_zdb_id"/>
+
         <subclass name="org.zfin.expression.FigureFigure" discriminator-value="FIG"/>
 
         <subclass name="org.zfin.expression.TextOnlyFigure" discriminator-value="TOD"/>
 
     </class>
 
-    <class name="org.zfin.expression.Image" mutable="false" table="image">
-        <cache usage="read-only"/>
+    <class name="org.zfin.expression.Image" table="image">
         <id name="zdbID" type="string">
             <column name="img_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <param name="type">IMAGE</param>
+                <param name="insertActiveData">true</param>
             </generator>
         </id>
 
         <property name="imageFilename">
-            <column name="img_image"/>
+            <column name="img_image" not-null="true"/>
         </property>
 
         <property name="imageWithAnnotationsFilename">
@@ -73,18 +78,32 @@
         </property>
 
         <property name="height">
-            <column name="img_height"/>
+            <column name="img_height" not-null="true"/>
         </property>
 
         <property name="width">
-            <column name="img_width"/>
+            <column name="img_width" not-null="true"/>
         </property>
+
+        <property name="view" column="img_view" not-null="true"/>
+        <property name="direction" column="img_direction" not-null="true"/>
+        <property name="form" column="img_form" not-null="true"/>
+        <property name="preparation" column="img_preparation" not-null="true"/>
+
+        <many-to-one name="owner" column="img_owner_zdb_id" class="org.zfin.profile.Person" not-null="true"/>
 
         <many-to-one name="figure" class="org.zfin.expression.Figure" column="img_fig_zdb_id"/>
 
         <property name="thumbnail">
-            <column name="img_thumbnail"/>
+            <column name="img_thumbnail" not-null="true"/>
         </property>
+
+        <property name="videoStill" column="img_is_video_still" type="java.lang.Boolean" not-null="true"/>
+
+        <set name="videos" lazy="true" inverse="true">
+            <key column="video_image_still_zdb_id"/>
+            <one-to-many class="org.zfin.expression.Video"/>
+        </set>
 
         <set name="terms" lazy="true" table="int_image_term">
             <key column="iit_img_zdb_id"/>
@@ -102,7 +121,15 @@
                              lazy="proxy"/>
             </component>
         </join>
+    </class>
 
+    <class name="org.zfin.expression.Video" table="video">
+        <id name="id" type="long">
+            <column name="video_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <property name="videoFilename" not-null="true" column="video_path_to_file"/>
+        <many-to-one name="still" class="org.zfin.expression.Image" column="video_image_still_zdb_id"/>
     </class>
 
     <!-- Make sure only attributes that have changed are updated in teh Query: if no probe is given

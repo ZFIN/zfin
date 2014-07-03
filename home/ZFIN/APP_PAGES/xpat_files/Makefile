@@ -21,21 +21,20 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
 GENERICS = anatomy_captures.apg curation.apg experimentcuration.apg \
-figurecuration.apg fxallfigures.apg \
-fxfigprobelist.apg fxfigureview.apg fxinfo.apg fxlabelinfo.apg fxphenoinfo.apg \
-fxprobefig.apg fxpubdisplay.apg genocurbuilder.apg genocursearch.apg \
+figurecuration.apg \
+genocurbuilder.apg genocursearch.apg \
 genocursummary.apg genosearchresulttable.apg pheno_summary.apg xpatcurcondition.apg \
 xpatcurexperiment.apg xpatcurfigure.apg xpatcurimage.apg xpatcurpermission.apg \
  xpatselect.apg \
 xpatselect_detailedresults.apg xpatselect_note.apg xpatselect_summaryresults.apg \
 xpatselectanatverify.apg xpatselectrowdisplay.apg
 
-STATICS = fxfigphenoanatlist.apg xpatexpcdnsummary.apg xpatexpcdnlist.apg xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
-fxfigstgrng.apg fxassayabbrev.apg fxfigassaylist.apg fxfigfishlist.apg xpatfeatexp.apg \
+STATICS = xpatexpcdnsummary.apg xpatexpcdnlist.apg xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
+fxfigstgrng.apg fxfigassaylist.apg fxfigfishlist.apg xpatfeatexp.apg \
 fxgenestgrng.apg record_web_update.apg genotypecuration.apg attribupdate.apg \
-genoupdate.apg patocuration.apg fxfigphenostgrng.apg xpatcurreset.apg \
+genoupdate.apg patocuration.apg xpatcurreset.apg \
 xpatcurupdatecondition.apg gocuration.apg xpatselect_resultsasimages.apg \
-xpatfeatexpcondn.apg xpatview.apg fxfiganatlist.apg fxfiggenelist.apg fxfigphenogenolist.apg
+xpatview.apg fxfiganatlist.apg fxfiggenelist.apg 
 
 # Use default rules for app page directories.
 

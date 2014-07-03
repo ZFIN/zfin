@@ -26,7 +26,7 @@ public class FigureViewSmokeTest extends AbstractSmokeTest {
     @Test
     public void testFigureOneView() throws IOException {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-FIG-080508-24");
-                assertEquals("ZFIN: Figure: Ochi et al., 2008, Fig. 1", page.getTitleText());
+                assertEquals("ZFIN Figure: Ochi et al., 2008, Fig. 1", page.getTitleText());
                 assertNotNull("No Title Found", page.getByXPath("//span[@title = 'myogenic differentiation 1']"));
                 assertNotNull("No Footer Found", page.getByXPath("//div[@id = 'footer']"));
     }
@@ -38,7 +38,7 @@ public class FigureViewSmokeTest extends AbstractSmokeTest {
     @Test
     public void testFigureSuppTwoView()  throws IOException{
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-FIG-080521-3");
-                assertEquals("ZFIN: Figure: Ochi et al., 2008, Fig. S2", page.getTitleText());
+                assertEquals("ZFIN Figure: Ochi et al., 2008, Fig. S2", page.getTitleText());
                 assertNotNull(page.getByXPath("//span[@title = 'SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily d, member 3b']"));
                 assertNotNull(page.getByXPath("//div[@id = 'footer']"));
     }

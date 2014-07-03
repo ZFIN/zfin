@@ -679,7 +679,7 @@ jQuery.ajax({
 
    <?MICOMMENT>return page title display<?/MICOMMENT>
 
-   <table width=100%>
+   <table class="markerselect-results-table" width=100%>
      <TR>
       <TD width=90%>
           <font size="+1"><center>
@@ -980,7 +980,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 
               <TD nowrap>
 
-              <?MIVAR COND="$(=,$mrkrsel_xpat_fig_count,1)"><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_xpat_fig_zdb_id>1 figure</A><?/MIVAR>
+              <?MIVAR COND="$(=,$mrkrsel_xpat_fig_count,1)"><A HREF=/$mrkrsel_xpat_fig_zdb_id>1 figure</A><?/MIVAR>
 
               <?MIVAR COND="$(>,$mrkrsel_xpat_fig_count,1)">
                   <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg&query_results=exists&gene_name=$marker_abbrev&xpatsel_geneZdbId=$OID>$mrkrsel_xpat_fig_count figures</A>
@@ -1068,7 +1068,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 
               <TD nowrap>
 
-              <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)"><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$mrkrsel_pheno_fig_zdb_id>1 figure</A><?/MIVAR>
+              <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)"><A HREF=/$mrkrsel_pheno_fig_zdb_id>1 figure</A><?/MIVAR>
 
               <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">
                   <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figures</A>

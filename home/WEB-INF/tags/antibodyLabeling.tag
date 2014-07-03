@@ -50,7 +50,7 @@
                         <c:if test="${detailedLabeling.numberOfFigures > 0}">
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
-                                    <a href="/${webdriverPath}?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}"
+                                    <a href="/${detailedLabeling.singleFigure.zdbID}"
                                        id="${detailedLabeling.singleFigure.zdbID}">
                                         <zfin2:figureOrTextOnlyLink figure="${detailedLabeling.singleFigure}"
                                                                     integerEntity="${detailedLabeling.numberOfFigures}"/>
@@ -89,7 +89,7 @@
             <tr>
                 <th>Anatomy</th>
                 <th>Stage</th>
-                <th><a href="/${webdriverPath}?MIval=aa-fxassayabbrev.apg">Assay</a></th>
+                <th>Assay <a class="popup-link info-popup-link" href="/action/expression/assay-abbrev-popup"></a></th>
                 <th>Gene</th>
                 <th>Data</th>
             </tr>
@@ -127,7 +127,7 @@
                         <c:if test="${detailedLabeling.numberOfFigures > 0}">
                             <c:choose>
                                 <c:when test="${detailedLabeling.numberOfFigures == 1}">
-                                    <a href="/${webdriverPath}?MIval=aa-fxfigureview.apg&OID=${detailedLabeling.singleFigure.zdbID}">
+                                    <a href="/${detailedLabeling.singleFigure.zdbID}">
                                     <zfin2:figureOrTextOnlyLink figure="${detailedLabeling.singleFigure}"
                                                                 integerEntity="${detailedLabeling.numberOfFigures}"/>
                                 </c:when>

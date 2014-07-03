@@ -325,7 +325,7 @@
                                             ${xp.numberOfFigures} figures</a>
                                 </c:when>
                                 <c:otherwise>
-                                    <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${xp.singleFigure.zdbID}'>
+                                    <a href='/${xp.singleFigure.zdbID}'>
                                         <zfin2:figureOrTextOnlyLink figure="${xp.singleFigure}"
                                                                     integerEntity="${xp.numberOfFigures}"/></a>
                                 </c:otherwise>

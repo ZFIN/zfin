@@ -72,6 +72,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	informix\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	informix\@cs.uoregon.edu
+<!--|VIDEO_LOAD|-->	/videoLoadUp
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver

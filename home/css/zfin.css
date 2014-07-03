@@ -634,4 +634,9 @@ label.curation-form-label { font-weight: bold; }
 .sequence {display: inline-block; vertical-align: top; font-family: Monaco, "Courier New", monospace;}
 
 .datablade-error-message { margin: 1em; }
-.datablade-error-contents { margin: 1em; color: #ccc } 
+.datablade-error-contents { margin: 1em; color: #ccc }
+
+.figure-image-and-caption { background-color: #eee ; padding: 1em; margin-top: 1em; width: 100%}
+.figure-image-and-caption img.placeholder, .figure-image-and-caption img.medium { float: left ; margin-right: 1em }
+.figure-image-and-caption img.placeholder { border: 1px solid black }
+.figure-image-and-caption img { margin: 2px; }

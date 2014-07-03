@@ -12,6 +12,8 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.fish.presentation.Fish;
 import org.zfin.fish.presentation.FishPresentation;
+import org.zfin.fish.FishAnnotation;
+import org.zfin.fish.presentation.FishAnnotationPresentation;
 import org.zfin.fish.presentation.ZfinEntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
@@ -24,7 +26,9 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.presentation.GenotypeExperimentPresentation;
 import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.mutant.repository.FeaturePresentationBean;
@@ -123,6 +127,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = FigurePresentation.getLink((Figure) o);
         else if (o instanceof Fish)
             link = FishPresentation.getLink((Fish) o);
+        else if (o instanceof FishAnnotation)
+            link = FishAnnotationPresentation.getLink((FishAnnotation) o);
         else if (o instanceof Image)
             link = ImagePresentation.getLink((Image) o);
         else if (o instanceof Panel)
@@ -130,13 +136,15 @@ public class CreateLinkTag extends BodyTagSupport {
         else if (o instanceof OrthologySpecies)
             link = OrthologyPresentation.getLink((OrthologySpecies) o);
         else if (o instanceof Genotype)
-            link = GenotypePresentation.getLink((Genotype) o);
+            link = GenotypePresentation.getLink((Genotype) o, suppressPopupLink);
         else if (o instanceof Feature)
             link = FeaturePresentation.getLink((Feature) o);
         else if (o instanceof FeaturePresentationBean)
             link = FeaturePresentation.getLink((FeaturePresentationBean) o);
         else if (o instanceof Experiment)
             link = ExperimentPresentation.getLink((Experiment) o, suppressPopupLink, suppressMoDetails);
+        else if (o instanceof GenotypeExperiment)
+            link = GenotypeExperimentPresentation.getLink((GenotypeExperiment) o, suppressPopupLink, suppressMoDetails);
         else if (o instanceof ExperimentCondition)
             link = ExperimentConditionPresentation.getLink((ExperimentCondition) o, suppressPopupLink);
         else if (o instanceof DevelopmentStage)
@@ -176,6 +184,8 @@ public class CreateLinkTag extends BodyTagSupport {
             linkStart = ProfilePresentation.getLinkStartTag((Person) o);
         else if (o instanceof Image)
             linkStart = ImagePresentation.getLinkStartTag((Image) o);
+        else if (o instanceof Publication)
+            linkStart = PublicationPresentation.getLinkStartTag((Publication) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return linkStart;
@@ -187,6 +197,8 @@ public class CreateLinkTag extends BodyTagSupport {
             linkEnd = FigurePresentation.getLinkEndTag();
         else if (o instanceof Image)
             linkEnd = ImagePresentation.getLinkEndTag();
+        else if (o instanceof Publication)
+            linkEnd = PublicationPresentation.getLinkEndTag();
         else if (o instanceof Person || o instanceof Organization)
             linkEnd = ProfilePresentation.getLinkEndTag();
         else

@@ -17,6 +17,7 @@ import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
+import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -501,10 +502,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                             figureLink.setLinkContent(tuple[1].toString());
                         }
                         figureLink.setLinkValue(
-                                EntityPresentation.getWebdriverLink(
-                                        "?MIval=aa-fxfigureview.apg&OID=", figureLink.getFigureZdbId()
-                                        , figureLink.getLinkContent()
-                                )
+                                FigurePresentation.getLink(figureLink.getFigureZdbId(), figureLink.getLinkContent())
                         );
 
                         return figureLink;

@@ -79,6 +79,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	jknight\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	jknight\@cs.uoregon.edu
 <!--|VALIDATION_EMAIL_XPAT|-->	jknight\@cs.uoregon.edu
+<!--|VIDEO_LOAD|-->	/videoLoadUp
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	jknight\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver

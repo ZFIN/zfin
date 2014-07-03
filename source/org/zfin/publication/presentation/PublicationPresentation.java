@@ -39,6 +39,10 @@ public class PublicationPresentation extends EntityPresentation {
         }
     }
 
+    public static String getLinkStartTag(Publication publication) {
+        return "<a href=\"/" + publication.getZdbID() + "\">";
+    }
+
     public static String getWikiLink(Publication publication) {
         return getWikiLink("", publication.getZdbID(), publication.getAuthors(), publication.getTitle());
     }

@@ -304,7 +304,7 @@ Number exists
 <?MIVAR NAME=$pbv_fig_nongeli_count>$1<?/MIVAR>
 
 <?MIVAR COND="$(AND,$(NC,$jtype,Unpublished),$(NC,$jtype,Curation),$(!=,$pbv_fig_nongeli_count,0))">
-  <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$OID">
+  <a href="/action/figure/all-figure-view/$OID">
 	  <b>FIGURES</b>
   </a> &nbsp;
   <font size=-1>(<a href="javascript:start_note();">current status</a>)</font> 

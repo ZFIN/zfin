@@ -92,16 +92,22 @@ system("/bin/rm -f /tmp/filesystem_pdfs_not_in_database.unl")
 system("/bin/rm -f /tmp/filesystem_images_not_in_database.unl") 
     and die "can not remove /tmp/filesystem_images_not_in_database.unl";
 
+system("/bin/rm -f /tmp/filesystem_videos_not_in_database.unl")
+    and die "can not remove /tmp/filesystem_videos_not_in_database.unl";
+
 system("/bin/rm -f /tmp/orphan_file_report.txt") and die "can not rm orphan_file_report.txt";
 system("/bin/rm -f /tmp/file_list_image") and die "can not rm file_list_image";
 system("/bin/rm -f /tmp/file_list_pdf") and die "can not rm file_list_pdf";
+system("/bin/rm -f /tmp/file_list_video") and die "can not rm file_list_video";
 system("/bin/rm -f /tmp/fl_image_modified") and die "can not rm fl_image_modified";
 system("/bin/rm -f /tmp/fl_pdf_modified") and die "can not rm fl_pdf_modified";
+system("/bin/rm -f /tmp/fl_video_modified") and die "can not rm fl_video_modified";
 system("/bin/rm -f /tmp/moved_image_files.unl") and die "can not rm moved_image_files.unl";
 system("/bin/rm -f /tmp/moved_pdf_files.unl") and die "can not rm moved_pdf_files.un";
+system("/bin/rm -f /tmp/moved_video_files.unl") and die "can not rm moved_video_files.un";
 system("/bin/rm -f /tmp/orphan_image_files.unl") and die "can not rm orhpan_image_files.unl";
 system("/bin/rm -f /tmp/orphan_pdf_files.unl") and die "can not rm orphan_pdf_files.unl";
-
+system("/bin/rm -f /tmp/orphan_video_files.unl") and die "can not rm orphan_video_files.unl";
 # make a list of all the image files available for viewing in the filesystem
 # loadup_full_path points to /research/zprod/loadUp (on production)
 # image_load points to /research/zcentral/loadUp/ImageLoadUp (on development)
@@ -119,6 +125,16 @@ system ("/bin/ls -1 <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> > /tmp/file_list_
     and die "can not ls -1 /tmp/file_list_pdf";
 
 system ("/bin/chmod 644 /tmp/file_list_pdf") and die "can not chmod /tmp/file_list_pdf";
+
+# make a list of all the video files available for viewing in the fielsystem
+# loadup_full_path points to /research/zprod/loadUp (on production)
+# video_load points to /research/zcentral/loadUp/videoLoadUp (on development)
+
+system ("/bin/ls -1 <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|--> > /tmp/file_list_video")
+    and die "can not ls -1 /tmp/file_list_video";
+
+system ("/bin/chmod 644 /tmp/file_list_video") and die "can not chmod /tmp/file_list_video";
+
 
 # file_list_image is the file of all image files available on filesystem
 
@@ -139,7 +155,17 @@ open (FILE_LIST_PDF, "< /tmp/file_list_pdf")
 open FL_PDF_MODIFIED, "> /tmp/fl_pdf_modified" 
     or die "Cannot open the fl_pdf_modified file\n";
 
+# same comments as above, except with videos.
+
+open (FILE_LIST_VIDEO, "< /tmp/file_list_video")
+    or die "Cannot open the file_list_video file\n";
+
+open FL_VIDEO_MODIFIED, "> /tmp/fl_video_modified"
+    or die "Cannot open the fl_video_modified file\n";
+
 print "compiling modified file lists\n";
+
+
 
 #---------------COMPILING MODIFIED FILE LISTS---------------#
 
@@ -193,6 +219,24 @@ foreach $remorph_pdf_line (@remorph_pdfLines) {
     }
 }
 
+# same comments except for videos.  We shouldn't have to worry about
+# thumbnail or annot files in the video directory, but we are paranoid.
+
+@remorph_videoLines = <FILE_LIST_VIDEO>;
+
+foreach $remorph_video_line (@remorph_videoLines) {
+    $remorph_video_line =~ s/$remorph_new_line/|/g ;
+
+    # if video_line doesn't have an underscore and it doesn't have the string
+    # 'bkup' in it, then go ahead and add it to the file list.
+    # bkup/ is a directory, and _ means its a thumbnail or annotation--or
+    # in the case of videos, a mistake.
+
+    if (!($remorph_video_line =~ /\_/) && !($remorph_video_line =~ /bkup/)){
+        print FL_VIDEO_MODIFIED "$remorph_video_line\n";
+    }
+}
+
 #---------------------LOADING FILES TO DB---------------#
 
 print "loading...\n";
@@ -208,14 +252,21 @@ system ("/bin/chmod 644 /tmp/filesystem_images_not_in_database.unl")
 system ("/bin/chmod 644 /tmp/filesystem_pdfs_not_in_database.unl") 
     and die "Can not chmod the filesystem_images_not_in_database.unl";
 
+system ("/bin/chmod 644 /tmp/filesystem_videos_not_in_database.unl")
+    and die "Can not chmod the filesystem_videos_not_in_database.unl";
+
 close FL_PDF_MODIFIED;
 close FL_IMAGE_MODIFIED;
+close FL_VIDEO_MODIFIED;
 close FILE_LIST_PDF;
 close FILE_LIST_IMAGE;
+close FILE_LIST_VIDEO;
 
 system ("/bin/chmod 644 /tmp/fl_image_modified") and die "can not chmod fl_image_modified";
 
 system ("/bin/chmod 644 /tmp/fl_pdf_modified") and die "can not chmod fl_pdf_modified";
+
+system ("/bin/chmod 644 /tmp/fl_video_modified") and die "can not chmod fl_video_modified";
 
 open (ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl") 
     or die "Cannot open the orphan_image_file.unl file\n";
@@ -223,11 +274,17 @@ open (ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl")
 open (ORPHAN_PDF_FILES, "< /tmp/orphan_pdf_files.unl") 
     or die "Cannot open the orphan_image_file.unl file\n";
 
+open (ORPHAN_VIDEO_FILES, "< /tmp/orphan_video_files.unl")
+    or die "Cannot open the orphan_video_file.unl file\n";
+
 open MOVED_IMAGE_FILES, "> /tmp/moved_image_files.unl"
     or die "Cannot open the moved_image_files.unl file\n";
 
 open MOVED_PDF_FILES, "> /tmp/moved_pdf_files.unl"
     or die "Cannot open the moved_pdf_files.unl file\n";
+
+open MOVED_VIDEO_FILES, "> /tmp/moved_video_files.unl"
+    or die "Cannot open the moved_video_files.unl file\n";
 
 print "moving orphan image files... \n";
 
@@ -302,6 +359,28 @@ close MOVED_PDF_FILES;
 
 system ("/bin/chmod 644 /tmp/moved_pdf_files.unl") and die "can not chmod moved_pdf_files";
 
+# do the same thing with video files
+
+print "moving video files...\n";
+
+@remorph_videoLines = <ORPHAN_VIDEO_FILES>;
+foreach $remorph_orphan_video_line (@remorph_videoLines) {
+
+    $remorph_orphan_video_line =~ s/\|//g ;
+    $remorph_orphan_video_line =~ s/$remorph_new_line//g ;
+    $remorph_orphan_video_line =~ s/$remorph_video_extension//i;
+
+    system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/$remorph_orphan_video_line.* <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/bkup/") and die "can not mv videos";
+
+    print MOVED_VIDEO_FILES "orphan_video_line\n";
+}
+
+close MOVED_VIDEO_FILES;
+
+system ("/bin/chmod 644 /tmp/moved_video_files.unl") and die "can not chmod moved_video_files";
+
+
+
 print "closing files...\n" ;
 
 #----------------CLOSE ALL FILES----------------------#
@@ -309,6 +388,8 @@ print "closing files...\n" ;
 close ORPHAN_IMAGE_FILES ;
 
 close ORPHAN_PDF_FILES;
+
+close ORPHAN_VIDEO_FILES;
 
 # count the number of lines read from the file, if > 0, send email, otherwise
 # print that there are no new images/pdfs in the cron output email.
@@ -337,6 +418,7 @@ close NO_FS_IMAGE;
 
 $remorph_count_images = 0;
 
+#--
 
 open(NO_FS_PDF, "< /tmp/filesystem_pdfs_not_in_database.unl") or die "can't open $remorph_file";
 
@@ -357,7 +439,29 @@ close NO_FS_PDF;
 
 $remorph_count_pdfs = 0;
 
-#----------------EMAIL IMAGES/PDFS NOT IN DATABASE--------------#
+#--
+
+open(NO_FS_VIDEO, "< /tmp/filesystem_videos_not_in_database.unl") or die "can't open $remorph_file";
+
+$remorph_count_videos++ while <NO_FS_VIDEO>;
+
+# count_videos now holds the number of lines read, want to do count
+# so that email does not get sent unless there is actual output
+
+if ($remorph_count_videos < 1) {
+    print "No new db videos without files count: $remorph_count_videos \n" ;
+}
+else {
+      &sendLoadReport("No Filesystem Video","<!--|DB_OWNER|-->\@cs.uoregon.edu",
+                      "/tmp/filesystem_videos_not_in_database.unl") ;
+}
+
+close NO_FS_VIDEO;
+
+$remorph_count_videos = 0;
+
+
+#----------------EMAIL IMAGES/PDFS/VIDEOS NOT IN DATABASE--------------#
 
 open(ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl") or die "can't open $remorph_file";
 
@@ -393,6 +497,25 @@ $remorph_count_pdfs++ while <ORPHAN_PDF_FILES>;
   }
 
 close ORPHAN_PDF_FILES;
+
+
+print "count orphan videos \n";
+
+open(ORPHAN_VIDEO_FILES, "< /tmp/orphan_video_files.unl") or die "can't open $remorph_file";
+
+$remorph_count_videos++ while <ORPHAN_VIDEO_FILES>;
+
+# count_videos now holds the number of lines read from the orphan video file
+
+if ($remorph_count_videos < 1) {
+    print "No new orphan videos count: $remorph_count_videos \n" ;
+}
+else {
+    &sendLoadReport("Orphan Videos","<!--|DB_OWNER|-->\@cs.uoregon.edu",
+		    "/tmp/orphan_video_files.unl") ;
+}
+
+close ORPHAN_VIDEO_FILES;
 
 #----------------------END MAIN------------------------#
 

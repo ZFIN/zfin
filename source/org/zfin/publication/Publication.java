@@ -25,6 +25,7 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
     private String accessionNumber;
     private String fileName;
     private String doi;
+    private String acknowledgment;
     private String status;
     private GregorianCalendar publicationDate;
     private GregorianCalendar closeDate;
@@ -34,6 +35,7 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
 
     private boolean deletable;
     private boolean indexed;
+    private boolean canShowImages;
     private GregorianCalendar indexedDate;
 
     //todo: make type into a proper enum, with tests
@@ -177,6 +179,14 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
         this.figures = figures;
     }
 
+    public String getAcknowledgment() {
+        return acknowledgment;
+    }
+
+    public void setAcknowledgment(String acknowledgment) {
+        this.acknowledgment = acknowledgment;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -263,6 +273,14 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
 
     public void setIndexed(boolean indexed) {
         this.indexed = indexed;
+    }
+
+    public boolean isCanShowImages() {
+        return canShowImages;
+    }
+
+    public void setCanShowImages(boolean imageShown) {
+        this.canShowImages = imageShown;
     }
 
     public boolean equals(Object otherPublication) {

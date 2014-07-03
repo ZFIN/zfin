@@ -147,3 +147,5 @@ div.analysis_tools_box_popup_box { display: none;background-color: #DDDDDD; bord
 div.analysis_tools_box_popup_box a{ font-size: small; white-space: nowrap;}
 div.analysis_tools_box_popup_entry { margin-left: 20px; margin-right: 5px; text-align: left; }
 a.analysis_tools_single_link { font-size: small;  white-space: nowrap;}
+
+td.qualifier { font-style: italic }

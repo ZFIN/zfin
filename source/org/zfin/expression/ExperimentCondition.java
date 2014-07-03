@@ -26,6 +26,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
         this.zdbID = zdbID;
     }
 
+
     public Experiment getExperiment() {
         return experiment;
     }

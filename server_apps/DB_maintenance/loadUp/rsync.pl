@@ -41,4 +41,6 @@ system ("cd <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> ");
 
 system("/local/bin/rsync -upvab  --copy-links --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
 
+system("/local/bin/rsync -upvab  --copy-links --ignore-existing <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/ /research/zcentral/loadUp/videoLoadUp/");
+
 exit;

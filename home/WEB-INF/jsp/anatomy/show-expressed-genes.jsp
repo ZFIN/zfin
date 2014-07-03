@@ -35,7 +35,7 @@
                                                     useGeneZdbID="true"/>
                         </c:if>
                         <c:if test="${expressedGene.markerStat.numberOfFigures == 1 }">
-                            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${expressedGene.markerStat.figure.zdbID}'>
+                            <a href='/${expressedGene.markerStat.figure.zdbID}'>
                                 <zfin2:figureOrTextOnlyLink figure="${expressedGene.markerStat.figure}"
                                                             integerEntity="${expressedGene.markerStat.numberOfFigures}"/>
                             </a>

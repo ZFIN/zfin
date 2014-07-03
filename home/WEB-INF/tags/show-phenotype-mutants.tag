@@ -27,7 +27,7 @@
             <c:forEach var="genoStat" items="${formBean.genotypeStatistics}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
                     <td>
-                        <zfin:link entity="${genoStat.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${genoStat.genotype.zdbID}">
+                        <zfin:link entity="${genoStat.genotype}"/>
                         <c:if test="${fn:length(genoStat.genotype.associatedGenotypes)>0}">
                         </c:if>
 
@@ -48,7 +48,7 @@
                                                  integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
                             </c:if>
                             <c:if test="${genoStat.numberOfFigures == 1 }">
-                                <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() %>?MIval=aa-fxfigureview.apg&OID=${genoStat.figure.zdbID}">
+                                <a href="/${genoStat.figure.zdbID}">
                                     <zfin2:figureOrTextOnlyLink figure="${genoStat.figure}"
                                                                 integerEntity="${genoStat.numberOfFigures}"/>
                                 </a>

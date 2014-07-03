@@ -9,7 +9,7 @@ import org.zfin.profile.Person;
 public class ProfilePresentation extends EntityPresentation{
 
     public static String getLink(Organization organization) {
-        return getViewLink(organization.getZdbID(), organization.getName(), null);
+        return getViewLink(organization.getZdbID(), organization.getName(), null,"organization-link");
     }
 
     public static String getLinkStartTag(Organization organization) {

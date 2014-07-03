@@ -118,6 +118,10 @@ table.ontology-term-mini-summary td.name {
     font-size: small;
 }
 
+.publication-info {
+    font-size: x-large;
+}
+
 .caution-head{
     color: red;
     font-weight: 800;
@@ -139,3 +143,4 @@ table.ontology-term-mini-summary td.name {
 tr.spaceUnder > td{
     padding-bottom: 1em;
 }
+

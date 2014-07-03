@@ -17,6 +17,12 @@
         <property name="genotypeExperimentIds" column="fas_genox_group"/>
         <property name="genotypeID" column="fas_genotype_group"/>
         <property name="morpholinoGroupName" column="fas_str_group"/>
+
+        <set name="genotypeExperimentFishAnnotations" lazy="true">
+            <key column="genoxfas_fas_id"/>
+            <one-to-many class="org.zfin.fish.GenotypeExperimentFishAnnotation"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.fish.WarehouseSummary" table="warehouse_run_tracking">
@@ -54,6 +60,15 @@
             <property name="name" column="gfrv_construct_name"/>
             <property name="nameOrder" column="gfrv_construct_abbrev_order"/>
         </component>
+    </class>
+
+    <class name="org.zfin.fish.GenotypeExperimentFishAnnotation" table="genox_fish_annotation_search">
+        <id name="id" type="long">
+            <column name="genoxfas_pk_id" not-null="true"/>
+            <generator class="increment"/>
+        </id>
+        <many-to-one name="genotypeExperiment" column="genoxfas_genox_zdb_id" class="org.zfin.mutant.GenotypeExperiment"/>
+        <many-to-one name="fishAnnotation" column="genoxfas_fas_id" class="org.zfin.fish.FishAnnotation"/>
     </class>
 
 </hibernate-mapping>

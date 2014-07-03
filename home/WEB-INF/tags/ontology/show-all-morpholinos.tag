@@ -49,7 +49,7 @@
                     <zfin:link entity="${morpholinoStat.genoExperiment.experiment.morpholinoConditions}"/>
                 </td>
                 <td>
-                    <zfin:link entity="${morpholinoStat.genoExperiment.genotype}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${morpholinoStat.genoExperiment.genotype.zdbID}"></a>
+                    <zfin:link entity="${morpholinoStat.genoExperiment.genotype}"/>
                 </td>
                 <td>
                     <c:forEach var="statement" items="${morpholinoStat.phenotypeStatements}" varStatus="loop">
@@ -65,7 +65,7 @@
                             </a>
                         </c:if>
                         <c:if test="${morpholinoStat.numberOfFigures == 1 }">
-                            <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${morpholinoStat.figure.zdbID}'>
+                            <a href='/${morpholinoStat.figure.zdbID}'>
                                 <zfin2:figureOrTextOnlyLink figure="${morpholinoStat.figure}"
                                                             integerEntity="${morpholinoStat.numberOfFigures}"/>
                             </a>

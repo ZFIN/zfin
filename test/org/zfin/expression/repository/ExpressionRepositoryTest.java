@@ -484,7 +484,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(figureLink);
         assertEquals("ZDB-FIG-051013-9", figureLink.getFigureZdbId());
         assertEquals("Fig. 4", figureLink.getLinkContent());
-        assertEquals("<a href=\"/" + ZfinProperties.getWebDriver() + "?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-051013-9\">Fig. 4</a>", figureLink.getLink());
+        assertEquals("<a href=\"/ZDB-FIG-051013-9\" class=\"figure-link\" >Fig.&nbsp;4</a>", figureLink.getLink());
     }
 
     @Test

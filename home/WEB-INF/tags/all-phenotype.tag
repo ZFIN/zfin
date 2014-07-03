@@ -30,7 +30,7 @@
             <td>
                 <c:forEach var="figsPub" items="${expressionSummary.figuresPerPub}">
                     <c:forEach var="fig" items="${figsPub.value}" varStatus="figloop">
-                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${fig.zdbID}'><zfin2:figureOrTextOnlyLink
+                        <a href='/${fig.zdbID}'><zfin2:figureOrTextOnlyLink
                                 figure="${fig}" integerEntity="1"/></a>
                         <zfin2:showCameraIcon hasImage="${!fig.imgless}"/>
                         <c:if test="${!figloop.last}">,&nbsp;</c:if>

@@ -88,7 +88,7 @@
                             </c:if>
                             <!-- If only one figure available go directly to the figure page -->
                             <c:if test="${antibodyStats.numberOfFigures == 1}">
-                                <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${antibodyStats.figure.zdbID}'>
+                                <a href='/${antibodyStats.figure.zdbID}'>
                                     <zfin2:figureOrTextOnlyLink figure="${antibodyStats.figure}" />
                                 </a>
                             </c:if>

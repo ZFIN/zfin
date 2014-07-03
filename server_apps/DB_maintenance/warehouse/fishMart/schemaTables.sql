@@ -1,5 +1,6 @@
 
 
+
 create table functional_annotation(
        fa_pk_id serial8 not null constraint fa_pk_id_not_null,
        fa_all lvarchar(4000),
@@ -465,4 +466,3 @@ extent size 9964 next size 9964;
 
 create index genox_idx on tmp_genox (genox_zdb_id)
   using btree in idxdbs3;
-

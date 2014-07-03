@@ -37,6 +37,10 @@
     <c:set var="id" value="${zfn:generateRandomDomID()}"/>
 </c:if>
 
+<c:if test="${numberOfEntities == null}">
+    <c:set var="numberOfEntities">${fn:length(entities)}</c:set>
+</c:if>
+
 
 <c:if test="${numberOfEntities > 0 }">
     <c:choose>

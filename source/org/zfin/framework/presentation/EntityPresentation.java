@@ -81,7 +81,7 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
-    public static String getViewLink(String zdbID, String abbreviation, String name) {
+    public static String getViewLink(String zdbID, String abbreviation, String name, String cssClassName) {
         StringBuilder sb = getViewHyperlinkStart();
         sb.append(zdbID);
         sb.append("\"");
@@ -89,6 +89,11 @@ public abstract class EntityPresentation {
             sb.append(" title=\"");
             sb.append(name);
             sb.append("\"");
+        }
+        if (cssClassName != null) {
+            sb.append(" class=\"");
+            sb.append(cssClassName);
+            sb.append("\" ");
         }
         sb.append(">");
         sb.append(abbreviation);
@@ -201,6 +206,13 @@ public abstract class EntityPresentation {
     protected static String getWebdriverStartTag(String uri, String zdbID) {
         StringBuilder sb = new StringBuilder("<a href=\"");
         sb.append(getWebdriverUrl(uri, zdbID));
+        sb.append("\">");
+        return sb.toString();
+    }
+
+    protected static String getViewStartTag(String zdbID) {
+        StringBuilder sb = new StringBuilder("<a href=\"");
+        sb.append(zdbID);
         sb.append("\">");
         return sb.toString();
     }

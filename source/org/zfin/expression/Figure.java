@@ -1,8 +1,10 @@
 package org.zfin.expression;
 
 import org.zfin.publication.Publication;
+import org.zfin.mutant.PhenotypeExperiment;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -31,6 +33,7 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     private String label;
     private String orderingLabel;
     private Set<ExpressionResult> expressionResults;
+    private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<Image> images;
     private Publication publication;
 
@@ -85,6 +88,14 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
         this.expressionResults = expressionResults;
     }
 
+    public Set<PhenotypeExperiment> getPhenotypeExperiments() {
+        return phenotypeExperiments;
+    }
+
+    public void setPhenotypeExperiments(Set<PhenotypeExperiment> phenotypeExperiments) {
+        this.phenotypeExperiments = phenotypeExperiments;
+    }
+
     public Set<Image> getImages() {
         return images;
     }
@@ -93,6 +104,11 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
         this.images = images;
     }
 
+    public void addImage(Image image) {
+        if (images == null)
+            images = new HashSet<Image>();
+        images.add(image);
+    }
 
     public Publication getPublication() {
         return publication;

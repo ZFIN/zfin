@@ -36,6 +36,7 @@ import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
+import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
@@ -210,10 +211,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 figureLink.setFigureZdbId(tuple[0].toString());
                 figureLink.setLinkContent(tuple[1].toString());
                 figureLink.setLinkValue(
-                        EntityPresentation.getWebdriverLink("?MIval=aa-fxfigureview.apg&OID="
-                                , figureLink.getFigureZdbId()
-                                , figureLink.getLinkContent()
-                        )
+                        FigurePresentation.getLink(figureLink.getFigureZdbId(), figureLink.getLinkContent())
                 );
                 return figureLink;
             }
@@ -817,7 +815,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @SuppressWarnings("unchecked")
-    private List<ExpressionResult> checkForExpressionResultRecord(ExpressionResult result) {
+    public List<ExpressionResult> checkForExpressionResultRecord(ExpressionResult result) {
         // first check if an expression result record already exists
         Session session = HibernateUtil.currentSession();
         Criteria criteria;

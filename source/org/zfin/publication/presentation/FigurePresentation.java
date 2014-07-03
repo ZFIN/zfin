@@ -11,7 +11,6 @@ import org.zfin.ontology.Term;
  * To get/create output from a Figure object
  */
 public class FigurePresentation extends EntityPresentation {
-    private static final String uri = "?MIval=aa-fxfigureview.apg&OID=";
 
     /**
      * Generates a Figure link using the label.
@@ -20,7 +19,14 @@ public class FigurePresentation extends EntityPresentation {
      * @return html for Figure link
      */
     public static String getLink(Figure figure) {
-        return getWebdriverLink(uri, figure.getZdbID(), figure.getLabel().replaceAll(" ", "&nbsp;"));
+        return getViewLink(figure.getZdbID(), figure.getLabel().replaceAll(" ", "&nbsp;"), null, "figure-link");
+    }
+
+    public static String getLink(String zdbID, String linkText) {
+        Figure figure = new FigureFigure();
+        figure.setZdbID(zdbID);
+        figure.setLabel(linkText);
+        return getLink(figure);
     }
 
     /**
@@ -30,15 +36,15 @@ public class FigurePresentation extends EntityPresentation {
      * @return html for Figure link
      */
     public static String getSimpleLink(Figure figure) {
-        return getWebdriverLink(uri, figure.getZdbID(), "1 Figure");
+        return getViewLink(figure.getZdbID(), "1 Figure", null, "figure-link simple-figure-link");
     }
 
     public static String getUrl(Figure figure) {
-        return getWebdriverUrl(uri, figure.getZdbID());
+        return getJumpToLink(figure.getZdbID());
     }
 
     public static String getLinkStartTag(Figure figure) {
-        return getWebdriverStartTag(uri, figure.getZdbID());
+        return getViewStartTag(figure.getZdbID());
     }
 
 

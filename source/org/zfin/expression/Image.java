@@ -2,8 +2,10 @@ package org.zfin.expression;
 
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.profile.Person;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Set;
  * in a figure and a publication.
  */
 public class Image implements Serializable {
+
+    public static String NOT_SPECIFIED = "not specified";
 
     private String zdbID;
     private Figure figure;
@@ -20,6 +24,15 @@ public class Image implements Serializable {
     private Integer height;
     private String thumbnail;
     private Set<GenericTerm> terms;
+    private Boolean videoStill;
+    private String view;
+    private String direction;
+    private String form;
+    private String preparation;
+    private Person owner;
+    private String externalName;
+
+    private Set<Video> videos;
 
     private ImageStage imageStage;
 
@@ -106,6 +119,83 @@ public class Image implements Serializable {
 
     public void setImageStage(ImageStage imageStage) {
         this.imageStage = imageStage;
+    }
+
+    public String getView() {
+        return view;
+    }
+
+    public void setView(String view) {
+        this.view = view;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public String getForm() {
+        return form;
+    }
+
+    public void setForm(String form) {
+        this.form = form;
+    }
+
+    public String getPreparation() {
+        return preparation;
+    }
+
+    public void setPreparation(String preparation) {
+        this.preparation = preparation;
+    }
+
+    public Person getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
+
+    public String getExternalName() {
+        return externalName;
+    }
+
+    public void setExternalName(String externalName) {
+        this.externalName = externalName;
+    }
+
+    public Boolean getVideoStill() {
+        return videoStill;
+    }
+
+    public void setVideoStill(Boolean videoStill) {
+        this.videoStill = videoStill;
+    }
+
+    public Set<Video> getVideos() {
+        return videos;
+    }
+
+    public void setVideos(Set<Video> videos) {
+        this.videos = videos;
+    }
+
+    public Video getFirstVideo() {
+        if (videos == null || videos.size() == 0)
+            return null;
+        else
+            return videos.iterator().next();
+    }
+
+    public void addVideo(Video video) {
+        if (videos == null)
+            videos = new HashSet<Video>();
+        videos.add(video);
     }
 
     public boolean equals(Object otherImage) {

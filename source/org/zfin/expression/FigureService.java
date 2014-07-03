@@ -24,29 +24,6 @@ public class FigureService {
 
 
     /**
-     * Get a sorted list of genes for which expression is shown in this figure
-     *
-     * @param figure Figure
-     * @return List of Markers
-     */
-    public static List<Marker> getExpressionGenes(Figure figure) {
-        List<Marker> genes = new ArrayList<Marker>();
-        for (ExpressionResult er : figure.getExpressionResults()) {
-            ExpressionExperiment ee = er.getExpressionExperiment();
-            Marker marker = ee.getGene();
-
-            if ((marker != null)
-                    && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM))
-                    && !genes.contains(marker)) {
-                genes.add(ee.getGene());
-            }
-        }
-        Collections.sort(genes);
-        LOG.debug("found " + genes.size() + " genes for " + figure.getZdbID());
-        return genes;
-    }
-
-    /**
      * this is the method (parameter set?) as it will be used for genotype expression display of nonstandard envs
      */
     public static ExpressionSummaryCriteria createExpressionCriteria(GenotypeExperiment genox, Marker gene, boolean withImgsOnly) {

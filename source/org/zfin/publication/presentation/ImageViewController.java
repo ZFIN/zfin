@@ -5,8 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.expression.FigureService;
 import org.zfin.expression.Image;
+import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -30,7 +31,7 @@ public class ImageViewController {
 
         LOG.debug("Image.Figure zdbID: " + image.getFigure().getZdbID());
         form.setImage(image);
-        form.setExpressionGenes(FigureService.getExpressionGenes(image.getFigure()));
+        form.setExpressionGenes(FigureViewService.getExpressionGenes(image.getFigure()));
         return "image-popup.page";
     }
 

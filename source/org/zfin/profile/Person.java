@@ -450,7 +450,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
     @Override
     public String getLink() {
-        return EntityPresentation.getViewLink(zdbID, getFullName(), null);
+        return EntityPresentation.getViewLink(zdbID, getFullName(), null,"person-link");
     }
 
     @Override

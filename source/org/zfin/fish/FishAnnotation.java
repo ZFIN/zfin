@@ -1,5 +1,10 @@
 package org.zfin.fish;
 
+import org.zfin.fish.GenotypeExperimentFishAnnotation;
+import org.zfin.mutant.Genotype;
+
+import java.util.Set;
+
 /**
  * ToDo: ADD DOCUMENTATION!
  */
@@ -16,10 +21,20 @@ public class FishAnnotation {
     private int phenotypeFigureCount;
     private int expressionFigureCount;
     private boolean hasExpressionImages;
-
+    private Set<GenotypeExperimentFishAnnotation> genotypeExperimentFishAnnotations;
     //todo: probably remove these, they're around mostly to help develop the sorting algorithm
     private String geneOrFeatureText;
     private String scoringText;
+
+    // generates the same thing as what Fish.getFishID() generates
+    public String getFishID() {
+//        if (getGenotypeID() == null)
+//            throw new NullPointerException("No GENO id found for fish ID: " + ID);
+        String fishID = getGenotypeID();
+        if (getGenotypeExperimentIds() != null)
+            return fishID + "," + getGenotypeExperimentIds();
+        return fishID;
+    }
 
     public String getGenotypeExperimentIds() {
         return genotypeExperimentIds;
@@ -123,5 +138,26 @@ public class FishAnnotation {
 
     public void setHasExpressionImages(boolean hasExpressionImages) {
         this.hasExpressionImages = hasExpressionImages;
+    }
+
+    public Set<GenotypeExperimentFishAnnotation> getGenotypeExperimentFishAnnotations() {
+        return genotypeExperimentFishAnnotations;
+    }
+
+    public void setGenotypeExperimentFishAnnotations(Set<GenotypeExperimentFishAnnotation> genoxFishAnnotations) {
+        this.genotypeExperimentFishAnnotations = genoxFishAnnotations;
+    }
+
+    public boolean equals(Object other) {
+        if (!(other instanceof FishAnnotation)) {
+            if (other instanceof Genotype) {
+                return ((Genotype) other).getZdbID().equals(getGenotypeID());
+            } else {
+                return false;
+            }
+        }
+        FishAnnotation anotherFishAnnotation = (FishAnnotation) other;
+        return getID() == anotherFishAnnotation.getID();
+
     }
 }

@@ -89,12 +89,6 @@ public class PhenotypeExperiment {
     @Override
     public String toString() {
         return "PhenotypeExperiment{" +
-                "id=" + id +
-                ", genotypeExperiment=" + genotypeExperiment +
-                ", startStage=" + startStage +
-                ", endStage=" + endStage +
-                ", figure=" + figure +
-                ", phenotypeStatements=" + phenotypeStatements +
-                '}';
+                "id=" + id  + '}';
     }
 }

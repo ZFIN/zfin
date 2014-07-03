@@ -79,6 +79,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	smoxon\@zfin.org
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	smoxon\@zfin.org
 <!--|VALIDATION_EMAIL_XPAT|-->	smoxon\@zfin.org
+<!--|VIDEO_LOAD|-->	/videoLoadUp
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	smoxon\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver

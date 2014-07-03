@@ -70,11 +70,6 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement> {
     public String toString() {
         return "PhenotypeStatement{" +
                 "id=" + id +
-                ", phenotypeExperiment=" + phenotypeExperiment +
-                ", entity=" + entity +
-                ", quality=" + quality +
-                ", relatedEntity=" + relatedEntity +
-                ", tag='" + tag + '\'' +
                 '}';
     }
 

@@ -31,6 +31,9 @@
     <context:component-scan base-package="org.zfin.profile.presentation"/>
     <context:component-scan base-package="org.zfin.properties.presentation"/>
     <context:component-scan base-package="org.zfin.publication.presentation"/>
+    <context:component-scan base-package="org.zfin.figure.presentation"/>
+    <context:component-scan base-package="org.zfin.figure.repository"/>
+    <context:component-scan base-package="org.zfin.figure.service"/>
     <context:component-scan base-package="org.zfin.sequence.reno.presentation"/>
     <context:component-scan base-package="org.zfin.sequence.blast.presentation"/>
     <context:component-scan base-package="org.zfin.util.database"/>

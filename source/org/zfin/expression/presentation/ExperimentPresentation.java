@@ -9,6 +9,10 @@ import java.util.TreeSet;
 
 public class ExperimentPresentation extends EntityPresentation {
 
+    // the following 2 variables are used for conditions
+    private static final String experimentUri = "expression/experiment?id=";
+    private static final String experimentPopupUri = "expression/experiment-popup?id=";
+
     public static String getLink(Experiment experiment, boolean suppressPopupLink, boolean suppressMoDetails) {
         if (experiment == null)
             return null;
@@ -42,14 +46,44 @@ public class ExperimentPresentation extends EntityPresentation {
     }
 
 
-    //this could share code more elegantly with the getLink method above...
-    public static String getName(Experiment experiment) {
+    /**
+     *
+     * @param experiment
+     * @return
+     *
+     * This method is used to generate conditions in the summary section and the table section (fish column) in a figure view page.
+     *
+     * Compared to getLink(), getLinkWithChemical Details does not have .isChemical() condition checking, which allows a popup
+     * to show up alongside chemical in a figure view table.
+     * Also, standard or control does not show in a table, so if experiment.isStandard() is true, empty string is returned.
+     *
+     */
+
+    public static String getLinkWithChemicalDetails(Experiment experiment) {
         if (experiment == null)
             return null;
         if (experiment.isStandard())
-            return "standard or control";
-        if (experiment.isChemical())
-            return "chemical";
+            return "";
+
+        StringBuilder sb = new StringBuilder(50);
+
+        sb.append(getTomcatLink(experimentUri,experiment.getZdbID(),getNameWithChemicalDetails(experiment)));
+        sb.append(getTomcatPopupLink(experimentPopupUri,experiment.getZdbID(),"Further explanation of experimental conditions"));
+
+        return sb.toString();
+    }
+
+
+    //this could share code more elegantly with the getLink method above...
+    public static String getName(Experiment experiment, boolean suppressChemicalDetails) {
+        if (experiment == null)
+            return null;
+        if (suppressChemicalDetails) {
+            if (experiment.isStandard())
+                return "standard or control";
+            if (experiment.isChemical())
+                return "chemical";
+        }
 
         TreeSet<ExperimentCondition> conditions = new TreeSet<ExperimentCondition>();
         conditions.addAll(experiment.getExperimentConditions());
@@ -63,6 +97,15 @@ public class ExperimentPresentation extends EntityPresentation {
             i++;
         }
         return sb.toString();
+    }
+
+    public static String getName(Experiment experiment) {
+        return getName(experiment, true);
+    }
+
+    //this is called by getLinkWithChemicalDetails. needs to be refactored so that it shares code with getName()
+    public static String getNameWithChemicalDetails(Experiment experiment) {
+        return getName(experiment, false);
     }
 
 }

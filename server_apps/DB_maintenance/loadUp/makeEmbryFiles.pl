@@ -34,4 +34,9 @@ system ("pwd") ;
 
 system("/local/bin/rsync -aupv --delete --ignore-existing /research/zcentral/loadUp/PDFLoadUp/ /research/zcentral/loadUp/embryonixLoadUp/embryonixPDFLoadUp/PDFLoadUp/");
 
+chdir ("/research/zcentral/loadUp/embryonixLoadUp/embryonixVideoLoadUp");
+system ("pwd") ;
+
+system("/local/bin/rsync -aupv --delete --ignore-existing /research/zcentral/loadUp/videoLoadUp/ /research/zcentral/loadUp/embryonixLoadUp/embryonixVideoLoadUp/videoLoadUp/");
+
 exit; 

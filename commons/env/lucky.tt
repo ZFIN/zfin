@@ -79,6 +79,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	mochla\@zfin.org
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	mochla\@zfin.org
 <!--|VALIDATION_EMAIL_XPAT|-->	mochla\@zfin.org
+<!--|VIDEO_LOAD|-->	/videoLoadUp
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	mochla\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver

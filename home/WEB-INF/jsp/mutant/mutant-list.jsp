@@ -65,7 +65,7 @@
         <c:forEach var="geno" items="${formBean.mutants}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
                 <td width="20%">
-                    <zfin:link entity="${geno}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${geno.zdbID}"></a>
+                    <zfin:link entity="${geno}"/>
                 </td>
 
                 <td width="70%">
@@ -155,7 +155,7 @@
     <c:forEach var="geno" items="${formBean.mutants}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td width="25%">
-                <zfin:link entity="${geno}"/><a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${geno.zdbID}"></a>
+                <zfin:link entity="${geno}"/>
             </td>
 
             <td width="60%">
@@ -180,7 +180,7 @@
                 <c:if test="${geno.phenotypeFigures != null && fn:length(geno.phenotypeFigures) > 0}">
                     <c:choose>
                         <c:when test="${fn:length(geno.phenotypeFigures) == 1}">
-                            <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() %>?MIval=aa-fxfigureview.apg&OID=${geno.phenotypeSingleFigure.zdbID}">1
+                            <a href="/${geno.phenotypeSingleFigure.zdbID}">1
                                 figure</a>
                         </c:when>
                         <c:otherwise>

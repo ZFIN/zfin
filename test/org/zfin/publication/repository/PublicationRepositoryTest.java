@@ -8,6 +8,7 @@ import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.feature.Feature;
+import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -465,7 +466,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getExpressedGenesForFigure() {
         Figure fig = publicationRepository.getFigureByID("ZDB-FIG-080617-24"); //has xpat, pheno & AB
 
-        List<Marker> expressedGenes = FigureService.getExpressionGenes(fig);
+        List<Marker> expressedGenes = FigureViewService.getExpressionGenes(fig);
         assertNotNull("FigureService.getExpressedGenes doesn't return a null", expressedGenes);
         for (Marker gene : expressedGenes) {
             assertTrue("expressed genes for a figure should all be genes", gene.isInTypeGroup(Marker.TypeGroup.GENEDOM));

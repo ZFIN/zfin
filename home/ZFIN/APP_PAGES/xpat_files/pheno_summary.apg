@@ -453,7 +453,7 @@ DEBUGGING:
     <td nowrap valign=bottom>
       <?MIBLOCK COND=$(NC,$phenosum_fig_zdb,$phenosum_prev_fig)> 
         <?MIVAR>
-          <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb>$phenosum_fig_label</a>
+          <a href=/$phenosum_fig_zdb>$phenosum_fig_label</a>
         <?/MIVAR>
            
         <?MISQL SQL="select img_thumbnail from image
@@ -463,7 +463,7 @@ DEBUGGING:
  
         <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
           <?MIVAR>
-            <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxfigureview.apg&OID=$phenosum_fig_zdb">
+            <a href="/$phenosum_fig_zdb">
               <img border=1 src="<!--|IMAGE_LOAD|-->/$phenosum_fthmnlName" height="50" title="$MI_ROWCOUNT image$(IF,$(>,$MI_ROWCOUNT,1),s)">$(IF,$(>,$MI_ROWCOUNT,1),<img border=0 src=/images/multibars.gif>)
             </a>
           <?/MIVAR>

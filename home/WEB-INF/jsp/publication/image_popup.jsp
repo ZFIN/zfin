@@ -27,9 +27,11 @@
 
 
 <div id="figpop_image">
+
    <zfin:link entity="${formBean.image}">
-     <img src="${formBean.mediumImageURL}" />
+       <img src="${formBean.mediumImageURL}" />
    </zfin:link>
+
 </div>
 
 

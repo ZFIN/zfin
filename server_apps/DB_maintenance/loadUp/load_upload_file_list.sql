@@ -32,11 +32,21 @@ create unique index tmp_filename_pdf_primary_key_index
   on tmp_pdf_file_list (filename)
   using btree in idxdbs1 ;
 
+create temp table tmp_video_file_list (
+        filename varchar(65))
+with no log ;
+
+create unique index tmp_filename_video_primary_key_index
+  on tmp_video_file_list (filename)
+  using btree in idxdbs1 ;
+
+
+
 --load the files existing in /tmp with proper permissions
 
 load from /tmp/fl_image_modified insert into tmp_image_file_list ;
 load from /tmp/fl_pdf_modified insert into tmp_pdf_file_list ;
-
+load from /tmp/fl_video_modified insert into tmp_video_file_list ;
 --create temp tables to store the mismatches (one for pdfs, one for
 --images. )
 
@@ -48,6 +58,10 @@ create temp table tmp_not_in_pub (
 	filename varchar(65)
 ) with no log ;
 
+create temp table tmp_not_in_video (
+        filename varchar(65)
+) with no log ;
+
 create temp table tmp_not_in_image_files (
 	filename varchar(65)
 ) with no log ;
@@ -56,6 +70,9 @@ create temp table tmp_not_in_pub_files (
 	filename varchar(65)
 ) with no log ;
 
+create temp table tmp_not_in_video_files (
+        filename varchar(65)
+) with no log ;
 
 --do the inserts, create temp tables full of images not in the database
 --from the list of images in the filesystem, and the inverse, images files
@@ -101,6 +118,26 @@ unload to /tmp/filesystem_pdfs_not_in_database.unl
   select * from tmp_not_in_pub_files ;
 
 
+--
+
+update statistics high for table tmp_video_file_list ;
+
+insert into tmp_not_in_video
+  select filename
+        from tmp_video_file_list
+        where not exists (select 'x' from video
+                                where video_path_to_file = filename);
+
+insert into tmp_not_in_video_files
+  select video_file
+        from video
+        where not exists (select 'x' from tmp_video_file_list
+                                where video_file = filename)
+        and video_file is not null;
+
+unload to /tmp/filesystem_videos_not_in_database.unl
+  select * from tmp_not_in_video_files ;
+
 --produce the files not in the database
 
 unload to /tmp/orphan_image_files.unl
@@ -108,5 +145,8 @@ unload to /tmp/orphan_image_files.unl
 
 unload to /tmp/orphan_pdf_files.unl
   select * from tmp_not_in_pub ;
+
+unload to /tmp/orphan_video_files.unl
+  select * from tmp_not_in_video ; 
 
 commit work ;

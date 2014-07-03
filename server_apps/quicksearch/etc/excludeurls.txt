@@ -54,7 +54,7 @@ internal_wzest.cgi
 action/genotype/
 action/marker/view
 marker/transcript-view
-aa-fxassayabbrev.apg
+action/expression/assay-abbrev-popup
 aa-fxallfigures.apg
 aa-geneprddescription.apg
 aa-quickfindpers.apg

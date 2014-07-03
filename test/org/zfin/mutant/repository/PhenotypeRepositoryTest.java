@@ -404,7 +404,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         FigureLink figureLink = getPhenotypeRepository().getPhenotypeFirstFigure(m);
         assertEquals("ZDB-FIG-070307-8", figureLink.getFigureZdbId());
         assertEquals("Fig. 7", figureLink.getLinkContent());
-        assertEquals("<a href=\"/"+ZfinProperties.getWebDriver()+"?MIval=aa-fxfigureview.apg&OID=ZDB-FIG-070307-8\">Fig. 7</a>", figureLink.getLink());
+        assertEquals("<a href=\"/ZDB-FIG-070307-8\" class=\"figure-link\" >Fig.&nbsp;7</a>", figureLink.getLink());
     }
 
     @Test
