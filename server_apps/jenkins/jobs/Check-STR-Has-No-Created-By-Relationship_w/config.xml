@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Checks for features that have an STR &#40;CRISPR or TALEN&#41; as an assay but are missing a &apos;created by&apos; relationship to those STRs.</description>
+  <description>Checks for features that have an STR (CRISPR or TALEN) as an assay but are missing a &apos;created by&apos; relationship to those STRs.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -18,13 +18,13 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>validate-data-report-simple -DJobName=Check-STR-Has-No-Created-By-Relationship_d</targets>
+      <targets>validate-data-report-simple -DJobName=Check-STR-Has-No-Created-By-Relationship_w</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/validatedata/Check-STR-Has-No-Created-By-Relationship_d/*</artifacts>
+      <artifacts>server_apps/DB_maintenance/validatedata/Check-STR-Has-No-Created-By-Relationship_w/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -32,8 +32,8 @@
       <reportTargets>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Feature List</reportName>
-          <reportDir>server_apps/DB_maintenance/validatedata/Check-STR-Has-No-Created-By-Relationship_d</reportDir>
-          <reportFiles>Check-STR-Has-No-Created-By-Relationship_d.html</reportFiles>
+          <reportDir>server_apps/DB_maintenance/validatedata/Check-STR-Has-No-Created-By-Relationship_w</reportDir>
+          <reportFiles>Check-STR-Has-No-Created-By-Relationship_w.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -47,7 +47,7 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-STR-Has-No-Created-By-Relationship_d/Check-STR-Has-No-Created-By-Relationship_d.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-STR-Has-No-Created-By-Relationship_w/Check-STR-Has-No-Created-By-Relationship_w.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
