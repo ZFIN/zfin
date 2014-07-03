@@ -9,7 +9,7 @@
 
         <id name="ID">
             <column name="fas_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <property name="name" column="fas_geno_long_name"/>
@@ -23,7 +23,7 @@
 
         <id name="ID">
             <column name="wrt_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <property name="martName" column="wrt_mart_name"/>
@@ -34,7 +34,7 @@
         <cache usage="read-only"/>
         <id name="ID">
             <column name="gfrv_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <many-to-one name="fishAnnotation" column="gfrv_fas_id"/>

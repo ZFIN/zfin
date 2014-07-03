@@ -28,7 +28,7 @@
     <class name="org.zfin.sequence.Accession" table="accession_bank">
         <id name="ID" type="long">
             <column name="accbk_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="number" column="accbk_acc_num"/>
         <property name="defline" column="accbk_defline"/>
@@ -103,7 +103,7 @@
     <class name="org.zfin.sequence.ForeignDB" table="foreign_db">
         <id name="dbID" type="long">
             <column name="fdb_db_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <!--<property name="baseURL" column=""/> -->
         <property name="dbName" column="fdb_db_name" type="foreignDBAvailableName"/>
@@ -139,7 +139,7 @@
     <class name="org.zfin.sequence.ForeignDBDataType" table="foreign_db_data_type">
         <id name="dataTypeID" type="long">
             <column name="fdbdt_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <property name="dataType" column="fdbdt_data_type" type="foreignDatabaseDataType"/>
@@ -230,7 +230,7 @@
     <class name="org.zfin.sequence.EntrezProtRelation" table="entrez_to_protein">
         <id name="epID" type="long">
             <column name="ep_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <property name="organism" column="ep_organism_common_name" type="organism"/>

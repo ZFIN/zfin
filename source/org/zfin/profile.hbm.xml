@@ -171,7 +171,7 @@
     <class abstract="true" name="org.zfin.profile.ObjectSource" table="int_data_source">
         <id name="id" type="long">
             <column name="ids_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <discriminator type="string"
                        formula="(CASE get_obj_type(ids_data_zdb_id)
@@ -238,7 +238,7 @@
     <class name="org.zfin.profile.CuratorSession" table="curator_session">
         <id name="ID" type="long">
             <column name="cs_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <many-to-one name="curator"

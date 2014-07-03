@@ -222,7 +222,7 @@
     <class name="org.zfin.mutant.PhenotypeExperiment" table="phenotype_experiment">
         <id name="id" type="long">
             <column name="phenox_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <many-to-one name="genotypeExperiment" column="phenox_genox_zdb_id"/>
         <many-to-one name="startStage" column="phenox_start_stg_zdb_id"/>
@@ -241,7 +241,7 @@
     <class name="org.zfin.mutant.PhenotypeStatement" table="phenotype_statement">
         <id name="id" type="long">
             <column name="phenos_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="dateCreated" column="phenos_created_date" not-null="true"/>
         <many-to-one name="phenotypeExperiment" column="phenos_phenox_pk_id" not-null="true"/>
@@ -264,7 +264,7 @@
     <class name="org.zfin.mutant.OmimPhenotype" table="omim_phenotype">
         <id name="id" type="long">
             <column name="omimp_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="name" column="omimp_name"/>
         <property name="omimNum" column="omimp_omim_id"/>
@@ -349,7 +349,7 @@
     <class name="org.zfin.feature.FeatureTracking" table="feature_tracking">
         <id name="pkid" type="int">
             <column name="ft_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="featTrackingFeatZdbID">
             <column name="ft_feature_zdb_id"/>
@@ -499,7 +499,7 @@
     <class name="org.zfin.mutant.PhenotypeTermFastSearch" table="pheno_term_fast_search">
         <id name="id" type="long">
             <column name="ptfs_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <many-to-one name="phenotypeStatement" column="ptfs_phenos_pk_id"/>
         <many-to-one name="term" column="ptfs_term_zdb_id"/>

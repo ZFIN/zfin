@@ -86,7 +86,7 @@
     <class name="org.zfin.sequence.blast.DatabaseRelationship" table="blastdb_order">
         <id name="id" type="long">
             <column name="bdborder_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="order" column="bdborder_order" type="integer" not-null="true"/>
         <many-to-one name="parent" column="bdborder_parent_blastdb_zdb_id" class="org.zfin.sequence.blast.Database"/>
@@ -97,7 +97,7 @@
     <class name="org.zfin.sequence.blast.Origination" table="blast_database_origination_type">
         <id name="id" type="long">
             <column name="bdot_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="type" column="bdot_type" type="originationType" />
         <property name="definition" column="bdot_definition"/>
@@ -106,7 +106,7 @@
     <class name="org.zfin.sequence.blast.BlastRegenerationCache" table="blastdb_regen_content">
         <id name="id" type="long">
             <column name="brc_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="accession" column="brc_acc_num" type="string" not-null="true" />
         <many-to-one name="blastDatabase" column="brc_blastdb_zdb_id" class="org.zfin.sequence.blast.Database" not-null="true" />

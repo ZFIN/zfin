@@ -55,7 +55,7 @@
     <class name="LinkageMember" table="linkage_membership_search">
         <id name="id" type="java.lang.Long">
             <column name="lms_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <discriminator type="string"
@@ -105,7 +105,7 @@
     <class name="org.zfin.mapping.GenomeLocation" table="sequence_feature_chromosome_location">
         <id name="ID">
             <column name="sfcl_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <discriminator type="string"

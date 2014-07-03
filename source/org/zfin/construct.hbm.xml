@@ -9,7 +9,7 @@
 
         <id name="ID">
             <column name="cons_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <property name="constructID" column="cons_construct_zdb_id"/>
@@ -22,7 +22,7 @@
         <cache usage="read-only"/>
         <id name="ID">
             <column name="cgfrv_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
 
         <many-to-one name="constructSearch" column="cgfrv_cs_id"/>

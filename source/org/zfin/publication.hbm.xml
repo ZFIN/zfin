@@ -60,7 +60,7 @@
     <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">
         <id name="id" type="long">
             <column name="doia_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="numAttempts" column="doia_num_attempts" not-null="true"/>
         <many-to-one name="publication" column="doia_pub_zdb_id" not-null="true"/>
