@@ -124,6 +124,6 @@ public class WikiSynchronizationReport {
             return true;
         if (CollectionUtils.isNotEmpty(updatedPages))
             return true;
-        return true;
+        return false;
     }
 }
