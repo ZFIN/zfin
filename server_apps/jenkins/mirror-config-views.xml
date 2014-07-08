@@ -24,6 +24,7 @@
         <string>Vega-Statistics-Report_m</string>
         <string>Vega-Thisse-Statistics-Report_m</string>
         <string>ZGC-Report_m</string>
+        <string>Check-Pubs-With-Duplicate-PubmedIds_m</string>
     </jobNames>
     <jobFilters/>
     <columns>
