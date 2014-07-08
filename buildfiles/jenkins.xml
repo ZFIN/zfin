@@ -45,6 +45,7 @@
         <copy todir="${JENKINS_HOME}/jobs" overwrite="true">
             <fileset dir="${basedir}/server_apps/jenkins/jobs"/>
         </copy>
+        <antcall target="remove-jobs"/>
         <antcall target="add-triggers"/>
         <antcall target="add-email-notifications"/>
         <antcall target="deploy-email-templates"/>
@@ -126,6 +127,39 @@
                             }
                         }
                     }
+                }
+            }
+
+        </groovy>
+    </target>
+
+    <target name="remove-jobs" description="Remove jobs into Jenkins_home that are not defined in the source">
+        <tstamp/>
+        <echo message="Remove undefined jobs in ${JENKINS_HOME}/jobs"/>
+
+        <property name="jobSourceDirectory" value="${basedir}/server_apps/jenkins/jobs"/>
+        <property name="jobTargetDirectory" value="${JENKINS_HOME}/jobs"/>
+        <groovy>
+            def jobSourceDirectory = new File(properties.jobSourceDirectory)
+            def sourceJobs = jobSourceDirectory.listFiles()
+            def file = new File(properties.jobTargetDirectory)
+            def targetJobs = file.listFiles()
+            println(targetJobs.size() + " jobs in target")
+            println(sourceJobs.size() + " jobs in source")
+            int index = 0;
+            targetJobs.each { targetJob ->
+                boolean existOnlyInTarget = true
+                sourceJobs.each { sourceJob ->
+                    if (sourceJob.getName().equals(targetJob.getName()))
+                        existOnlyInTarget = false
+                }
+
+                if (existOnlyInTarget) {
+                    if (index == 0)
+                        println("Removing target jobs...")
+                    println("\t" + targetJob.getName())
+                    targetJob.deleteDir()
+                    index++
                 }
             }
 
