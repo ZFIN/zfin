@@ -128,14 +128,10 @@ public class MappingService {
         List<GenomeLocation> genomeLocationList = getLinkageRepository().getPhysicalGenomeLocations(marker);
         Collections.sort(genomeLocationList);
         List<GenomeLocation> finalGenomeList = new ArrayList<>(genomeLocationList.size());
-        Set<String> browserSet = new HashSet<>(6);
         for (GenomeLocation genomeLocation : genomeLocationList) {
             GenomeLocation.Source source = genomeLocation.getSource();
             if (!source.equals(GenomeLocation.Source.GENERAL_LOAD)) {
-                if (!browserSet.contains(source.getName())) {
-                    finalGenomeList.add(genomeLocation);
-                    browserSet.add(source.getName());
-                }
+                finalGenomeList.add(genomeLocation);
             }
         }
         return finalGenomeList;
