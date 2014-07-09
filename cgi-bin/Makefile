@@ -28,7 +28,7 @@ GENERICS = map-options.pl print_map.cgi runSPL.cgi \
 	   view_mapplet.cgi view_zmapplet.cgi \
 	   input_welcome.cgi input_welcome_generic.cgi  \
        internal_wzest.cgi publications_today.cgi \
-	   upload.cgi send_Judy_your_report.pl \
+	   upload.cgi \
 	   new_gene.cgi new_line.cgi merge_markers.pl 
 
 # ---------------  Production Rules  ------------------------------------

@@ -1,10 +1,14 @@
 package org.zfin.mapping;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.Marker;
-import org.zfin.marker.service.MarkerService;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -44,11 +48,6 @@ public class MappingServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getLinkageMembers() {
-        Marker marker = getMarkerRepository().getMarkerByAbbreviation("pax2a");
-    }
-
-    @Test
     public void getGenomeLocation() {
         Marker marker = getMarkerRepository().getMarkerByAbbreviation("pax2a");
         String location = MappingService.getChromosomeLocationDisplay(marker);
@@ -62,6 +61,27 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         location = MappingService.getChromosomeLocationDisplay(marker);
         assertNotNull(location);
 
+    }
+
+    //@Test
+    public void getAllGenomeLocation() {
+        List<Marker> markerList = getMarkerRepository().getMarkersByAbbreviation("");
+        List<String> line = new ArrayList<>();
+        for (Marker marker : markerList) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(marker.getZdbID());
+            builder.append("\t");
+            builder.append(marker.getAbbreviation());
+            builder.append("\t");
+            builder.append(MappingService.getChromosomeLocationDisplay(marker));
+            System.out.println();
+            line.add(builder.toString());
+        }
+        try {
+            FileUtils.writeLines(new File("test.log"), line, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
