@@ -1266,7 +1266,6 @@ FROM (
 INNER JOIN publication pub ON pub.zdb_id = source_id
 WHERE source_id LIKE 'ZDB-PUB%'
   AND mrkr_type in ("GENE", "GENEP")
-  AND pub.jtype not in ("Curation", "Active_Curation")
 ORDER BY LOWER(mrkr_abbrev)
 ;
 
