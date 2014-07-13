@@ -9,18 +9,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
-import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.presentation.FeatGenoStatistics;
+import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.mutant.repository.MutantRepository;
-import org.zfin.publication.presentation.FigurePresentation;
-import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.FeatureDBLink;
 
 import java.util.*;
 
@@ -131,7 +126,7 @@ public class FeatureDetailController {
     private void retrieveGenoData(Feature fr, FeatureBean form) {
         List<Genotype> genotypes = mutantRepository.getGenotypesByFeature(fr);
         form.setGenotypes(genotypes);
-        List<FeatGenoStatistics> featgenoStats = createGenotypeStats(genotypes, fr);
+        List<GenotypeInformation> featgenoStats = createGenotypeStats(genotypes);
         Collections.sort(featgenoStats);
         form.setFeatgenoStats(featgenoStats);
         List<GenoExpStatistics> genoexpStats = createGenotypeExpStats(genotypes, fr);
@@ -143,12 +138,12 @@ public class FeatureDetailController {
         form.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(fr.getZdbID()));
     }
 
-    private List<FeatGenoStatistics> createGenotypeStats(List<Genotype> genotypes, Feature fr) {
-        if (genotypes == null || fr == null)
+    private List<GenotypeInformation> createGenotypeStats(List<Genotype> genotypes) {
+        if (genotypes == null)
             return null;
-        List<FeatGenoStatistics> stats = new ArrayList<FeatGenoStatistics>();
+        List<GenotypeInformation> stats = new ArrayList<GenotypeInformation>();
         for (Genotype genoType : genotypes) {
-            FeatGenoStatistics stat = new FeatGenoStatistics(genoType, fr);
+            GenotypeInformation stat = new GenotypeInformation(genoType);
             stats.add(stat);
         }
         return stats;

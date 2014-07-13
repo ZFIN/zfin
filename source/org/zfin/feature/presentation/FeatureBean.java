@@ -9,7 +9,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.presentation.FeatGenoStatistics;
+import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.FeatureDBLink;
@@ -20,7 +20,7 @@ import java.util.Set;
 public class FeatureBean {
     private Feature feature;
     private List<Genotype> genotypes;
-    private List<FeatGenoStatistics> featgenoStats;
+    private List<GenotypeInformation> featgenoStats;
     private Marker marker;
     private int numPubs;
     private List<GenoExpStatistics> genoexpStats;
@@ -95,11 +95,11 @@ public class FeatureBean {
         this.genoexpStats = genoexpStats;
     }
 
-    public List<FeatGenoStatistics> getFeatgenoStats() {
+    public List<GenotypeInformation> getFeatgenoStats() {
         return featgenoStats;
     }
 
-    public void setFeatgenoStats(List<FeatGenoStatistics> featgenoStats) {
+    public void setFeatgenoStats(List<GenotypeInformation> featgenoStats) {
         this.featgenoStats = featgenoStats;
     }
 

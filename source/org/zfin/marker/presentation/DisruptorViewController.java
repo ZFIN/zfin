@@ -11,7 +11,9 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -20,6 +22,7 @@ import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.blast.Database;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -73,7 +76,19 @@ public class DisruptorViewController {
 
         // GENOTYPE (for CRISPR and TALEN only at this time)
         if (disruptorBean.isTALEN() || disruptorBean.isCRISPR()) {
-            disruptorBean.setGenotypes(markerRepository.getTALENorCRISPRcreatedGenotypes(zdbID));
+            List<Genotype> genotypes = markerRepository.getTALENorCRISPRcreatedGenotypes(zdbID);
+            disruptorBean.setGenotypes(genotypes);
+            List<GenotypeInformation> genoData = new ArrayList<GenotypeInformation>();
+            if (genotypes == null) {
+                disruptorBean.setGenotypeData(null);
+            } else {
+                for (Genotype geno : genotypes) {
+                  GenotypeInformation genoInfo = new GenotypeInformation(geno);
+                  genoData.add(genoInfo);
+                }
+                Collections.sort(genoData);
+                disruptorBean.setGenotypeData(genoData);
+            }
         }
 
         // add sequence

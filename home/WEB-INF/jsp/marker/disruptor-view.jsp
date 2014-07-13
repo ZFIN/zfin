@@ -32,7 +32,34 @@
 
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
-    <zfin2:genotypesWithDisruptors strBean="${formBean}" />
+    <div id="short-version" class="summary">
+    <c:choose>
+        <c:when test="${formBean.genotypeData != null && fn:length(formBean.genotypeData) > 0 }">
+            <zfin2:genotype-information genotypes="${formBean.genotypeData}" sequenceTargetReagen="${formBean.marker.name}" showNumberOfRecords="5" />
+            <c:if test="${fn:length(formBean.genotypeData) > 5}">
+                <div>
+                    <a href="javascript:expand()">
+                        <img src="/images/darrow.gif" alt="expand" border="0">
+                        Show all</a>
+                        ${fn:length(formBean.genotypeData)} genotypes
+                </div>
+            </c:if>
+        </c:when>
+        <c:otherwise>
+            <span><strong>GENOTYPES CREATED WITH ${formBean.marker.name}</strong></span> <span class="no-data-tag">No data available</span>
+        </c:otherwise>
+    </c:choose>
+    </div>
+    <div style="display:none" id="long-version" class="summary">
+        <c:if test="${formBean.genotypeData != null && fn:length(formBean.genotypeData) > 0 }">
+            <zfin2:genotype-information genotypes="${formBean.genotypeData}" sequenceTargetReagen="${formBean.marker.name}" showNumberOfRecords="${fn:length(formBean.genotypeData)}"/>
+        </c:if>
+        <div>
+            <a href="javascript:collapse()">
+                <img src="/images/up.gif" alt="expand" title="Show first 5 genotypes" border="0">
+                Show first</a> 5 genotypes
+        </div>
+    </div>
 </c:if>
 
 <%--OTHER GENE/Marker Pages--%>
@@ -41,3 +68,14 @@
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
 
+<script type="text/javascript">
+    function expand() {
+        document.getElementById('short-version').style.display = 'none';
+        document.getElementById('long-version').style.display = 'block';
+    }
+
+    function collapse() {
+        document.getElementById('short-version').style.display = 'block';
+        document.getElementById('long-version').style.display = 'none';
+    }
+</script>

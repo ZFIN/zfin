@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import org.apache.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.blast.Database;
@@ -23,6 +24,7 @@ public class DisruptorBean extends MarkerBean{
     private String sequenceAttribution;
     private List<Database> databases;
     private List<Genotype> genotypes;
+    private List<GenotypeInformation> genotypeData;
 
     public Set<Marker> getTargetGenes() {
         return targetGenes;
@@ -102,6 +104,14 @@ public class DisruptorBean extends MarkerBean{
 
     public void setGenotypes(List<Genotype> genotypes) {
         this.genotypes = genotypes;
+    }
+
+    public List<GenotypeInformation> getGenotypeData() {
+        return genotypeData;
+    }
+
+    public void setGenotypeData(List<GenotypeInformation> genotypeData) {
+        this.genotypeData = genotypeData;
     }
 }
 
