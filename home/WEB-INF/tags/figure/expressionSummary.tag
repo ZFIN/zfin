@@ -65,7 +65,7 @@
                         <zfin:choice choicePattern="0#Anatomical Terms:| 1#Anatomical Term:| 2#Anatomical Terms:" integerEntity="${fn:length(entities)}"/>
                     </th>
 
-                    <td> <zfin2:toggledPostcomposedList entities="${expressionEntities}" numberOfEntities="${fn:length(expressionEntities)}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledPostcomposedList entities="${entities}" numberOfEntities="${fn:length(entities)}" maxNumber="5"/>  </td>
 
                 </tr>
             </c:if>

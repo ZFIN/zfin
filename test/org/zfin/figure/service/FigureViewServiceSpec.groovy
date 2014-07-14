@@ -160,6 +160,7 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
         2     | figures.tenXpatRes
         0     | figures.hasOnlyPhenotype
         7     | figures.hasAllThree
+        1     | figures.anatomyNotReturning
 
 
     }

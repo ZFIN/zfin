@@ -13,7 +13,8 @@ class FigureData {
             hasHugeAntibodyTable: "ZDB-FIG-081002-2",
             hasPostComposedExpression: "ZDB-FIG-071116-22",
             directSubmissionThisse: "ZDB-FIG-050630-12149",
-            hasPhenotypeKnockdownReagents: "ZDB-FIG-111129-32"
+            hasPhenotypeKnockdownReagents: "ZDB-FIG-111129-32",
+            anatomyNotReturning: "ZDB-FIG-130624-1"
 
     ]
 

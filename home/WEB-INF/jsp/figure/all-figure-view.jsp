@@ -34,7 +34,7 @@
                                        fishesAndGenotypes="${expressionFishesAndGenotypeMap[figure]}"
                                        strs="${expressionSTRMap[figure]}"
                                        experiments="${expressionConditionMap[figure]}"
-                                       entities="${expressionTermMap[figure]}"
+                                       entities="${expressionEntityMap[figure]}"
                                        start="${expressionStartStageMap[figure]}" end="${expressionEndStageMap[figure]}"/>
 
         <a href="/${figure.zdbID}#expDetail">Expression / Labeling details</a>
