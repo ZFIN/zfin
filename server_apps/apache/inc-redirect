@@ -69,6 +69,12 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/marker/%1/orthology-deta
 RewriteCond %{QUERY_STRING}     ^Mival=aa-ortholist.apg&pubID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/publication/%1/orthology-list? [NC,R=301]
 
+RewriteCond %{QUERY_STRING}     ^Mival=aa-fxfigureview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-fxallfigures.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/figure/all-figure-view/%1? [NC,R=301]
+
 RewriteCond %{QUERY_STRING}     ^Mival=aa-persview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
