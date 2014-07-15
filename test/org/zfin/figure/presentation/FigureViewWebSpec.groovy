@@ -34,8 +34,8 @@ class FigureViewWebSpec extends AbstractZfinSmokeSpec {
         then:
         at AllFigureViewPage
 
-        where: "all of the pages, except for the one that doesn't have any additional figures... "
-        figZdbID << figures.values().findAll{it != figures.hasOnlyPhenotype}
+        where: "all of the pages, except for the ones that don't have any additional figures... "
+        figZdbID << figures.values().findAll{it != figures.hasOnlyPhenotype && it != figures.hasHugeAntibodyTable}
     }
 
 
