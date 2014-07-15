@@ -9,13 +9,16 @@
     <c:set var="autoplay" value="autoplay"/>
 </c:if>
 
+<style>
+    .figure-image { padding-bottom: 1em; }
+</style>
+
 
 <table class="figure-image-and-caption">
   <tr><td>
 
-
       <c:if test="${figure.publication.canShowImages && empty figure.images}">
-          <img class="placeholder" src="/images/imagenotavailable.gif"/>
+          <img class="figure-image placeholder" src="/images/imagenotavailable.gif"/>
       </c:if>
 
 
@@ -23,7 +26,7 @@
     <c:if test="${figure.publication.canShowImages && !empty figure.images && fn:length(figure.images) == 1}">
         <c:forEach var="image" items="${figure.images}">
             <zfin:link entity="${image}">
-                <img class="medium" src="/imageLoadUp/medium/${image.imageFilename}"/>
+                <img class="figure-image medium" src="/imageLoadUp/medium/${image.imageFilename}"/>
             </zfin:link>
         </c:forEach>
     </c:if>
@@ -63,6 +66,8 @@
        </c:choose>
 
     </p>
+
+
 
     <%-- on all figure view, we want to also show some data tables, so they'll be passed in as the
          'body' of this tag --%>

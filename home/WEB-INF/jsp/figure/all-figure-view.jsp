@@ -36,17 +36,23 @@
                                        experiments="${expressionConditionMap[figure]}"
                                        entities="${expressionEntityMap[figure]}"
                                        start="${expressionStartStageMap[figure]}" end="${expressionEndStageMap[figure]}"/>
+        <c:if test="${!empty expressionStartStageMap[figure]}">
+            <div style="margin-top: 1em;">
+                <a href="/${figure.zdbID}#expDetail">Expression / Labeling details</a>
+            </div>
+        </c:if>
 
-        <a href="/${figure.zdbID}#expDetail">Expression / Labeling details</a>
-
-        <zfin-figure:phenotypeSummary fishesAndGenotypes="${expressionFishesAndGenotypeMap[figure]}"
+        <zfin-figure:phenotypeSummary fishesAndGenotypes="${phenotypeFishesAndGenotypeMap[figure]}"
                                       strs="${phenotypeSTRMap[figure]}"
                                       entities="${phenotypeEntitiesMap[figure]}"
                                       experiments="${phenotypeConditionMap[figure]}"
-                                      start="${phenotypeStartStateMap[figure]}" end="${phenotypeEndStateMap[figure]}" />
+                                      start="${phenotypeStartStageMap[figure]}" end="${phenotypeEndStageMap[figure]}" />
 
-        <a href="/${figure.zdbID}#phenoDetail">Phenotype details</a>
-
+        <c:if test="${!empty phenotypeFishesAndGenotypeMap[figure]}">
+            <div style="margin-top: 1em;">
+                <a href="/${figure.zdbID}#phenoDetail">Phenotype details</a>
+            </div>
+        </c:if>
     </zfin-figure:imagesAndCaption>
 </c:forEach>
 

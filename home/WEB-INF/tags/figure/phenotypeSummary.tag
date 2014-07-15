@@ -3,7 +3,6 @@
 
 <%@attribute name="fishesAndGenotypes" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="strs" type="java.util.List" rtexprvalue="true" required="true" %>
-<%-- experiments (labeled as conditions) will go here --%>
 <%@attribute name="entities" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="experiments" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="start" type="org.zfin.anatomy.DevelopmentStage" rtexprvalue="true" required="true"%>
