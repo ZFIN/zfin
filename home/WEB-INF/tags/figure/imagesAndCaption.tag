@@ -9,9 +9,6 @@
     <c:set var="autoplay" value="autoplay"/>
 </c:if>
 
-<style>
-    .figure-image { padding-bottom: 1em; }
-</style>
 
 
 <table class="figure-image-and-caption">
@@ -71,6 +68,8 @@
 
     <%-- on all figure view, we want to also show some data tables, so they'll be passed in as the
          'body' of this tag --%>
+    <div style="padding-top: 1em; clear: both">
     <jsp:doBody/>
+    </div>
   </td></tr>
 </table>
