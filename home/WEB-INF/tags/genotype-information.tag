@@ -5,7 +5,7 @@
 <%@ attribute name="sequenceTargetReagen" type="java.lang.String" required="false" %>
 <%@ attribute name="showNumberOfRecords" type="java.lang.Integer" required="true" %>
 
-<table class="summary rowstripes">
+<table id="genotypes-table" class="summary rowstripes">
      <caption>GENOTYPES <c:if test="${sequenceTargetReagen != null}">CREATED WITH ${sequenceTargetReagen}</c:if></caption>
      <tr>
         <th width="20%">
