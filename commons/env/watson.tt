@@ -79,6 +79,7 @@
 <!--|VALIDATION_EMAIL_PUBLICATION|-->	informix\@zfin.org
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	informix\@zfin.org
 <!--|VALIDATION_EMAIL_XPAT|-->	informix\@zfin.org
+<!--|VIDEO_LOAD|-->	/videoLoadUp
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/watson
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
