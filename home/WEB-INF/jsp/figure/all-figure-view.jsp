@@ -53,6 +53,8 @@
                 <a href="/${figure.zdbID}#phenoDetail">Phenotype details</a>
             </div>
         </c:if>
+        <zfin-figure:constructLinks figure="${figure}"/>
+
     </zfin-figure:imagesAndCaption>
 </c:forEach>
 

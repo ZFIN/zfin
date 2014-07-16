@@ -9,6 +9,7 @@ public class ImageDTO extends RelatedEntityDTO implements IsSerializable   {
     private List<TermDTO> anatomyTerms;
     private StageDTO start;
     private StageDTO end;
+    private List<MarkerDTO> constructs;
 
     public List<TermDTO> getAnatomyTerms() {
         return anatomyTerms;
@@ -32,5 +33,13 @@ public class ImageDTO extends RelatedEntityDTO implements IsSerializable   {
 
     public void setEnd(StageDTO end) {
         this.end = end;
+    }
+
+    public List<MarkerDTO> getConstructs() {
+        return constructs;
+    }
+
+    public void setConstructs(List<MarkerDTO> constructs) {
+        this.constructs = constructs;
     }
 }

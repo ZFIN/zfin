@@ -5,15 +5,19 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.ImageStage;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.marker.ui.ImageRPCService;
 import org.zfin.gwt.root.dto.ImageDTO;
+import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -29,6 +33,7 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
     private transient PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
     private transient AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
     private transient OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private transient MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 
     public ImageDTO getImageForZdbID(String zdbID) {
 
@@ -36,12 +41,13 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
         Image image = publicationRepository.getImageById(zdbID);
         ImageDTO dto = new ImageDTO();
         dto.setZdbID(image.getZdbID());
+        dto.setPublicationZdbID(image.getFigure().getPublication().getZdbID());
 
         if (image.getTerms() != null)
             logger.debug(image.getZdbID() +  " has " + image.getTerms().size() + " terms");
 
 
-        ArrayList<TermDTO> termDTOs = new ArrayList<TermDTO>();        
+        ArrayList<TermDTO> termDTOs = new ArrayList<TermDTO>();
         for(GenericTerm term : image.getTerms()) {
             termDTOs.add(DTOConversionService.convertToTermDTO(term));
         }
@@ -74,6 +80,12 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
             end.setNameLong(unk.getName());
             dto.setEnd(end);
         }
+
+        ArrayList<MarkerDTO> constructDTOs = new ArrayList<MarkerDTO>();
+        for (Marker construct : image.getFigure().getConstructs()) {
+            constructDTOs.add(DTOConversionService.convertToMarkerDTO(construct));
+        }
+        dto.setConstructs(constructDTOs);
         
         return dto;
     }
@@ -152,5 +164,42 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
         }
         session.save(image);
         transaction.commit();
+    }
+
+    @Override
+    public MarkerDTO addConstruct(String name, String imageZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Transaction transaction = session.beginTransaction();
+        Marker construct = markerRepository.getMarkerByName(name);
+
+        Image image = publicationRepository.getImageById(imageZdbID);
+        MarkerDTO markerDTO = new MarkerDTO();
+        markerDTO.setName(construct.getName());
+
+        Figure figure = image.getFigure();
+        figure.getConstructs().add(construct);
+
+        session.save(figure);
+
+        transaction.commit();
+
+        logger.debug("adding construct " + name + " to " + imageZdbID);
+        return markerDTO;
+    }
+
+    @Override
+    public void removeConstruct(String name, String imageZdbID) {
+        Session session = HibernateUtil.currentSession();
+        Transaction transaction = session.beginTransaction();
+        Marker construct = markerRepository.getMarkerByName(name);
+
+        Image image = publicationRepository.getImageById(imageZdbID);
+        Figure figure = image.getFigure();
+        figure.getConstructs().remove(construct);
+
+        session.save(figure);
+
+        transaction.commit();
+        logger.debug("removing construct" + name + " from " + imageZdbID);
     }
 }

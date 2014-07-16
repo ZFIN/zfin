@@ -397,17 +397,6 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
               <br>          
               <?/MIVAR>
             <?/MIBLOCK>
-           
-            <?MIBLOCK COND="$(XST,$fimgview_construct_exists)">
-<?MISQL SQL="select consfig_construct_zdb_id, mrkr_abbrev from construct_figure, marker where consfig_fig_zdb_id='$fimgview_fig_zdb_id' and consfig_construct_zdb_id=mrkr_zdb_id">
-<?MIVAR NAME=$img_cnstrct_id>$1<?/MIVAR>
-<?MIVAR NAME=$img_cnstrct_abbrev>$2<?/MIVAR>
-              <?MIVAR NAME=imgv_figure_display>$imgv_figure_display
-              <?MIVAR><a href="/$img_cnstrct_id"><i>$img_cnstrct_abbrev</i></a><?/MIVAR>
-              <br>          
-              <?/MIVAR>
-<?/MISQL>
-    <?/MIBLOCK>
 
             <?MIVAR NAME=imgv_figure_display>$imgv_figure_display
 
@@ -657,7 +646,8 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
               <script type="text/javascript">
                 var MarkerProperties= { zdbID : "<?MIVAR>$OID<?/MIVAR>",
                                         imageEditDiv: "imageTermBox",
-                                        imageStageEditDiv: "imageStageBox"} ;
+                                        imageStageEditDiv: "imageStageBox",
+                                        imageConstructEditDiv: "imageConstructBox"} ;
               </script>
               <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
               <script language="javascript"
@@ -693,7 +683,41 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
         <?/MIBLOCK>
 
+        <?MICOMMENT>
+              **************
+              * Constructs *
+              **************
+        <?/MICOMMENT>
 
+        <?MIVAR NAME="construct_table_pre">
+            <br>
+            <table class="summary">
+              <tr>
+                 <th>Constructs</th>
+              </tr>
+              <tr>
+                <td>
+        <?/MIVAR>
+        <?MIVAR NAME="construct_table_post">
+                </td>
+              </tr>
+            </table>
+        <?/MIVAR>
+
+        <?MIBLOCK COND="$(XST,$UPDATE)">
+            <?MIVAR>$construct_table_pre<?/MIVAR>
+            <div id="imageConstructBox"></div>
+            <?MIVAR>$construct_table_post<?/MIVAR>
+        <?MIELSE>
+            <?MIBLOCK COND="$(XST,$fimgview_construct_exists)">
+                <?MIVAR>$construct_table_pre<?/MIVAR>
+                <?MISQL SQL="select consfig_construct_zdb_id, mrkr_abbrev from construct_figure, marker where consfig_fig_zdb_id='$fimgview_fig_zdb_id' and consfig_construct_zdb_id=mrkr_zdb_id">
+                    <?MIVAR><a href="/$1"><i>$2</i></a><?/MIVAR>
+                    <br>
+                <?/MISQL>
+                <?MIVAR>$construct_table_post<?/MIVAR>
+            <?/MIBLOCK>
+        <?/MIBLOCK>
 
 
         <?MICOMMENT>

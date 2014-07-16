@@ -1,5 +1,6 @@
 package org.zfin.expression;
 
+import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.mutant.PhenotypeExperiment;
 
@@ -36,6 +37,7 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<Image> images;
     private Publication publication;
+    private Set<Marker> constructs;
 
     public String getZdbID() {
         return zdbID;
@@ -108,6 +110,14 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
         if (images == null)
             images = new HashSet<Image>();
         images.add(image);
+    }
+
+    public Set<Marker> getConstructs() {
+        return constructs;
+    }
+
+    public void setConstructs(Set<Marker> constructs) {
+        this.constructs = constructs;
     }
 
     public Publication getPublication() {

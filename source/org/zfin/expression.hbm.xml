@@ -52,6 +52,11 @@
             <one-to-many class="org.zfin.expression.Image"/>
         </set>
 
+        <set name="constructs" lazy="true" table="construct_figure">
+            <key column="consfig_fig_zdb_id"/>
+            <many-to-many column="consfig_construct_zdb_id" class="org.zfin.marker.Marker"/>
+        </set>
+
         <many-to-one name="publication" class="org.zfin.publication.Publication" column="fig_source_zdb_id"/>
 
         <subclass name="org.zfin.expression.FigureFigure" discriminator-value="FIG"/>

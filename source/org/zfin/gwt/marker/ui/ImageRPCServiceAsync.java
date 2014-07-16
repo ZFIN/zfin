@@ -2,6 +2,7 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.root.dto.ImageDTO;
+import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.StageDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 
@@ -18,4 +19,8 @@ public interface ImageRPCServiceAsync {
     void getStages(AsyncCallback<List<StageDTO>> async);
 
     void setStages(String startStageZdbId, String endStageZdbId, String imageZdbID, AsyncCallback<Void> async);
+
+    void addConstruct(String name, String imageZdbID, AsyncCallback<MarkerDTO> async);
+
+    void removeConstruct(String name, String imageZdbID, AsyncCallback<Void> async);
 }

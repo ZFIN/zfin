@@ -26,10 +26,12 @@ public class ImageEditController extends Composite {
     public static final String LOOKUP_ZDBID = "zdbID";    
     private static final String ANATOMY_CONTAINER_DIV = "imageEditDiv" ;
     private static final String STAGE_CONTAINER_DIV = "imageStageEditDiv";
+    private static final String CONSTRUCT_CONTAINER_DIV = "imageConstructEditDiv";
     private ImageDTO dto;
 
     private ImageAnatomyBox imageAnatomyBox;
     private ImageEditStageSelector stageSelector;
+    private ImageConstructBox imageConstructBox;
 
     public void initGUI() {
     
@@ -42,6 +44,8 @@ public class ImageEditController extends Composite {
         //since it sometimes fails to get set properly, when it's broken
         //it will at least be hidden.
         RootPanel.get(dictionary.get(STAGE_CONTAINER_DIV)).add(stageSelector);
+
+        imageConstructBox = new ImageConstructBox(dictionary.get(CONSTRUCT_CONTAINER_DIV));
 
         setValues();
 
@@ -70,6 +74,7 @@ public class ImageEditController extends Composite {
                             dto = result;
                             imageAnatomyBox.setDTO(dto);
                             stageSelector.setImageDTO(dto);
+                            imageConstructBox.setDTO(dto);
                         }
                     });
 

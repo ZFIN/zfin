@@ -56,6 +56,8 @@
 
 <zfin-figure:phenotypeTable phenotypeTableRows="${phenotypeTableRows}"/>
 
+<zfin-figure:constructLinks figure="${figure}"/>
+
 <c:choose>
     <c:when test="${figure.publication.canShowImages}">
         <zfin2:acknowledgment publication="${figure.publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>

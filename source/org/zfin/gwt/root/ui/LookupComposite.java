@@ -60,8 +60,10 @@ public class LookupComposite extends Composite implements Revertible {
     public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP";
     public final static String GDAG_TERM_LOOKUP = "GDAG_TERM_LOOKUP";
     public static final String MARKER_LOOKUP_AND_TYPE = "MARKER_LOOKUP_AND_TYPE";
+    public static final String CONSTRUCT_LOOKUP = "CONSTRUCT_LOOKUP";
     private Collection<String> types = new ArrayList<String>(10);
     private OntologyDTO ontology;
+    private String pubZdb;
     boolean validatedTerm;
 
     // variables
@@ -109,7 +111,7 @@ public class LookupComposite extends Composite implements Revertible {
         types.add(GENEDOM_AND_EFG);
         types.add(FEATURE_LOOKUP);
         types.add(GDAG_TERM_LOOKUP);
-
+        types.add(CONSTRUCT_LOOKUP);
     }
 
     public void initGui() {
@@ -265,18 +267,14 @@ public class LookupComposite extends Composite implements Revertible {
     void addSuggestBoxHandlers() {
         suggestBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
             public void onSelection(SelectionEvent event) {
-                //Window.alert("onSelection Event useIdAsValue: "+useIdAsValue);
                 suggestion = (SuggestOracle.Suggestion) event.getSelectedItem();
                 final String termID = suggestion.getReplacementString();
-                //Window.alert("onSelection Event termID: " + termID);
                 String displayString = suggestion.getDisplayString();
-                //Window.alert("onSelection Event display: " + displayString);
                 if (displayString == null) {
                     suggestBox.setText(extractPureTermNameHtml(displayString));
                     doSubmit(termID);
                 } else if (termID != null) {
                     if (useIdAsValue && termInfoTable != null) {
-                        //Window.alert("Term name: " + termID);
                         lookupRPC.getTermInfo(ontology, termID,
                                 new TermInfoCallBack(termInfoTable, termID) {
                                     @Override
@@ -289,13 +287,11 @@ public class LookupComposite extends Composite implements Revertible {
                     } else {
                         String text = extractPureTermNameHtml(displayString).trim();
                         suggestBox.setText(text);
-                        //Window.alert("Term name: " +text);
                         // handle wildcard cases
                         // ToDo: This only works for ontology term auto-completes. Not for other entity lookups that
                         // are used with this logic.
                         if (displayString.contains("*")) {
                             String queryString = "term?name=" + termID + "&ontologyName=" + ontology.getDBName();
-                            //Window.alert("Wild card string: " + queryString);
                             doSubmit(queryString);
                         } else
                             doSubmit(termID);
@@ -592,6 +588,14 @@ public class LookupComposite extends Composite implements Revertible {
 
     public OntologyDTO getOntology() {
         return ontology;
+    }
+
+    public void setPubZdb(String pubZdb) {
+        this.pubZdb = pubZdb;
+    }
+
+    public String getPubZdb() {
+        return this.pubZdb;
     }
 
     public void addOnFocusHandler(FocusHandler autocompleteFocusHandler) {

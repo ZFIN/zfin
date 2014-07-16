@@ -33,7 +33,7 @@
     <div class="summary">
         <c:forEach var="fig" items="${formBean.marker.figures}">
 
-        <c:forEach var="img" items="${fig.figure.images}">
+        <c:forEach var="img" items="${fig.images}">
            <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}" width="300" height="200"></a>
             <%--<zfin:link entity="${img}"/>--%>
         </c:forEach>

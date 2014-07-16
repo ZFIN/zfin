@@ -168,9 +168,9 @@
             <key column="dalias_data_zdb_id"/>
             <one-to-many class="org.zfin.marker.MarkerAlias"/>
         </set>
-        <set name="figures" lazy="true" table="construct_figure" inverse="false">
+        <set name="figures" lazy="true" table="construct_figure">
             <key column="consfig_construct_zdb_id"/>
-            <one-to-many class="org.zfin.marker.MarkerFigure"/>
+            <many-to-many column="consfig_fig_zdb_id" class="org.zfin.expression.Figure"/>
         </set>
 
         <set name="publications" lazy="true">
