@@ -34,6 +34,7 @@ public class OntologyManager {
     protected final static String QUALITY_QUALITIES_ROOT = "PATO:0001241";
     protected static final String QUALITATIVE_TERM = "PATO:0000068";
     protected static final String QUALITY_TERM_NORMAL = "PATO:0000461";
+    protected static final String QUALITY_TERM_ABNORMAL = "PATO:0000460";
     protected static final String MPATH_NEOPLASM_ROOT = "MPATH:218";
 
 
@@ -245,9 +246,10 @@ public class OntologyManager {
         // Quality  Processes and Objects
         // Root is "process quality"
         // Quality Processes and Objects
-        // exclude 'normal' term from process and quality ontology.
+        // exclude 'normal' and 'abnormal' terms from process and quality ontology.
         Set<String> excludedTermsIds = new HashSet<String>(2);
         excludedTermsIds.add(QUALITY_TERM_NORMAL);
+        excludedTermsIds.add(QUALITY_TERM_ABNORMAL);
         excludedTerms.put(Ontology.QUALITY_PROCESSES, excludedTermsIds);
         excludedTerms.put(Ontology.QUALITY_QUALITIES, excludedTermsIds);
         excludedTerms.put(Ontology.MPATH_NEOPLASM, excludedTermsIds);
