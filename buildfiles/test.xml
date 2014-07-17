@@ -452,7 +452,7 @@ test(s) need to be run before committing changes or pushing files to production 
     <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
     <target name="smokeTests" if="notproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
 
-        <junit fork="yes"
+        <junit fork="false"
                printsummary="yes"
                haltonfailure="false"
                haltonerror="false"
