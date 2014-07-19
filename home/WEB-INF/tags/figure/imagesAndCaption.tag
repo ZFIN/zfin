@@ -53,9 +53,12 @@
               </c:otherwise>
           </c:choose>
       </strong>
+       <c:if test="${!figure.publication.canShowImages}">
+           <img class="placeholder" src="/images/onlyfrompublisher.jpg">
+       </c:if>
        <c:choose>
-           <c:when test="${!figure.publication.canShowImages}">
-               <img class="placeholder" src="/images/onlyfrompublisher.jpg">
+           <c:when test="${!figure.publication.canShowImages || empty figure.caption}">
+
                ZFIN is incorporating published figure images and captions as part of an ongoing project.
                Figures from some publications have not yet been curated, or are not available for display because of copyright restrictions.
            </c:when>
