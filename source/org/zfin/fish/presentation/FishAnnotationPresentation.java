@@ -4,6 +4,7 @@ import org.zfin.fish.FishAnnotation;
 import org.zfin.framework.presentation.EntityPresentation;
 
 import org.apache.log4j.Logger;
+import org.zfin.marker.Marker;
 
 /**
  *
@@ -38,8 +39,9 @@ public class FishAnnotationPresentation extends EntityPresentation {
      * @return name of the hyperlink.
      */
     public static String getName(FishAnnotation fishAnnotation) {
-        String stageName = fishAnnotation.getName();
-        return getSpanTag("fish", stageName, stageName);
+        String name = fishAnnotation.getName();
+        String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
+        return getSpanTag(cssClassName, name, name);
     }
 
 }
