@@ -90,6 +90,10 @@
                     <th>Probe:</th>
                     <td>
                         <zfin:link entity="${probe}"/>
+
+                        &nbsp; <strong>Quality:</strong>
+                        <img src="/images/${probe.rating+1}0stars.gif" alt="Rating ${probe.rating +1}">
+
                     </td>
                 </tr>
                 <%-- this is deviating from the old figureview, because the nice java tag we have doesn't seem to follow
