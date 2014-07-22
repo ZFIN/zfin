@@ -55,7 +55,7 @@ action/genotype/
 action/marker/view
 marker/transcript-view
 action/expression/assay-abbrev-popup
-aa-fxallfigures.apg
+action/figure/all-figure-view
 aa-geneprddescription.apg
 aa-quickfindpers.apg
 aa-sequence.apg

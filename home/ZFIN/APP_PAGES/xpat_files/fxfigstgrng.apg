@@ -6,9 +6,6 @@ PREFIX:   fxfigst_
 This displays the earliest and latest stage for a figure. 
 
 This page gets called from
-  fxfigureview.apg ::    no optional input vars
-  fxallfigures.apg ::    with $fxfigst_is_displayed
-  fxprobefig.apg   ::    no optional input vars
   xpatselect_detailedresults.apg :: with $fxfigst_gene_zdb_id, $fxfigst_resultTable
 
 INPUT VARS:

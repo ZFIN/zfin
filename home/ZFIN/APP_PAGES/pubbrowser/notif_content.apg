@@ -362,7 +362,7 @@ e-mail:  <?MIVAR><a href="mailto:$sender_email">$sender_email</a><?/MIVAR>
 
           <?MIVAR COND="$(EC,$gene_expression_checked,f)">
                <span style="border: thin solid white; margin-left: 4em;">
-                 <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-fxallfigures.apg&OID=$OID">Curated gene expression</a> for:</span>
+                 <a href="http://zfin.org/action/figure/all-figure-view/$OID">Curated gene expression</a> for:</span>
                  $(SETVAR,gene_expression_checked,t)
               <?/MIVAR>
               <?MIVAR>

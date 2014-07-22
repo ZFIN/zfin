@@ -71,7 +71,7 @@ Create Publication accession
 
 <P>
 
-    <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxallfigures.apg&OID=$OID">
+    <a href="/action/figure/all-figure-view/$OID">
         <b>FIGURES</b>
     </a> &nbsp;
     <font size=-1>(<a href="javascript:start_note();">current status</a>)</font>

@@ -361,11 +361,11 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
             <?MIBLOCK COND="$(XST,$fimgview_probe_zdb_id)">
               <?MIVAR NAME=imgv_all_figure_link> 
-                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fimgview_fig_source_zdb_id&fxallfig_probe_zdb_id=$fimgview_probe_zdb_id">Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR> <?MIVAR>[$fimgview_probe_name]<?/MIVAR></a>
+                <a href="/action/figure/all-figure-view/$fimgview_fig_source_zdb_id?probeZdbID=$fimgview_probe_zdb_id">Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR> <?MIVAR>[$fimgview_probe_name]<?/MIVAR></a>
               <?/MIVAR>
             <?MIELSE>      
               <?MIVAR NAME=imgv_all_figure_link> 
-                <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-fxallfigures.apg&OID=$fimgview_fig_source_zdb_id">All Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR></a>
+                <a href="/action/figure/all-figure-view/$fimgview_fig_source_zdb_id">All Figures for <?MIVAR>$fimgview_pub_mini_ref<?/MIVAR></a>
               <?/MIVAR>
             <?/MIBLOCK> 
           <?/MIBLOCK>

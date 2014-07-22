@@ -79,7 +79,7 @@
                                 </c:otherwise>
                             </c:choose>
                             <td align="left">
-                                <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-fxallfigures.apg&OID=${directlySubmittedExpression.publicationZdbID}&fxallfig_probe_zdb_id=${directlySubmittedExpression.probeFeatureZdbId}">
+                                <a href="/action/figure/all-figure-view/${directlySubmittedExpression.publicationZdbID}?probeZdbID=${directlySubmittedExpression.probeFeatureZdbId}">
                                         ${directlySubmittedExpression.numFigures}
                                     figure${directlySubmittedExpression.numFigures ne 1 ? 's' : ''}
                                     (${directlySubmittedExpression.numImages}

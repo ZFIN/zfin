@@ -22,4 +22,3 @@
 #aa-persselect.apg
 #aa-labselect.apg
 #aa-companyselect.apg
-#aa-fxallfigures.apg
