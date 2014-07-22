@@ -640,3 +640,4 @@ label.curation-form-label { font-weight: bold; }
 .figure-image-and-caption img.placeholder, .figure-image-and-caption img.medium { float: left ; margin-right: 1em }
 .figure-image-and-caption img.placeholder { border: 1px solid black }
 .figure-image-and-caption img { margin: 2px; }
+.figure-image-and-caption a img { border: 1px solid blue;}
