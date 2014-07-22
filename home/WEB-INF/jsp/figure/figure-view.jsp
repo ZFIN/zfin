@@ -59,7 +59,7 @@
 <zfin-figure:constructLinks figure="${figure}"/>
 
 <c:choose>
-    <c:when test="${figure.publication.canShowImages}">
+    <c:when test="${figure.publication.canShowImages && figure.publication.type != 'Unpublished'}">
         <zfin2:acknowledgment publication="${figure.publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>
     </c:when>
     <c:otherwise>

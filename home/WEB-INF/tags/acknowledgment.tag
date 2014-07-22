@@ -40,6 +40,7 @@ EFFECTS
 --%>
 
 
+
 <zfin2:subsection>
 
     <table class="summary">
@@ -64,3 +65,6 @@ EFFECTS
 
 
 </zfin2:subsection>
+
+
+
