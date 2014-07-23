@@ -1,10 +1,12 @@
 package org.zfin.figure.presentation;
 
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.fish.FishAnnotation;
 import org.zfin.mutant.*;
 import org.zfin.mutant.repository.PhenotypeRepository;
 
@@ -15,12 +17,14 @@ import java.util.Set;
 
 /* Should be: Genotype, Experiment, Start Stage, End Stage, PhenotypeStatement  */
 public class PhenotypeTableRow{
+
     private GenotypeExperiment genotypeExperiment;
     private Genotype genotype;
     private Experiment experiment;
     private DevelopmentStage start;
     private DevelopmentStage end;
     private PhenotypeStatement phenotypeStatement;
+    private String fishNameOrder;
 
     public PhenotypeTableRow() {
 
@@ -33,6 +37,15 @@ public class PhenotypeTableRow{
         setStart(phenotypeStatement.getPhenotypeExperiment().getStartStage());
         setEnd(phenotypeStatement.getPhenotypeExperiment().getEndStage());
         setPhenotypeStatement(phenotypeStatement);
+
+        if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
+            FishAnnotation fish = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator().next().getFishAnnotation();
+            //todo: needs to be zero-padded
+            setFishNameOrder(fish.getName());
+        } else {
+            setFishNameOrder(genotypeExperiment.getGenotype().getNameOrder());
+        }
+
     }
 
     public GenotypeExperiment getGenotypeExperiment() {
@@ -81,5 +94,13 @@ public class PhenotypeTableRow{
 
     public void setPhenotypeStatement(PhenotypeStatement phenotypeStatement) {
         this.phenotypeStatement = phenotypeStatement;
+    }
+
+    public String getFishNameOrder() {
+        return fishNameOrder;
+    }
+
+    public void setFishNameOrder(String fishNameOrder) {
+        this.fishNameOrder = fishNameOrder;
     }
 }
