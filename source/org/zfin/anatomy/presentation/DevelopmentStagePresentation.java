@@ -1,5 +1,6 @@
 package org.zfin.anatomy.presentation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.presentation.EntityPresentation;
 
@@ -33,9 +34,11 @@ public class DevelopmentStagePresentation extends EntityPresentation {
         String longName = StagePresentation.createDisplayEntry(stage);
         if (longVersion)
             stageName = longName;
-        else
+        else {
             stageName = stage.getAbbreviation();
-
+            if (StringUtils.equals(stageName, "unk"))
+                stageName = "Unknown";
+        }
         return getSpanTag("stage", longName, stageName);
     }
 
