@@ -1,11 +1,13 @@
 package org.zfin.figure.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.fish.FishAnnotation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -28,7 +30,7 @@ public class AntibodyTableRow {
     private String qualifier;
     private Boolean isExpressionFound;
     private PostComposedEntity entity;
-
+    private String fishNameOrder;
 
 
 
@@ -55,6 +57,15 @@ public class AntibodyTableRow {
         setExpressionFound(expressionResult.isExpressionFound());
         if (!expressionResult.isExpressionFound())
             setQualifier("Not Detected");
+
+        if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
+            FishAnnotation fish = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator().next().getFishAnnotation();
+            //todo: needs to be zero-padded
+            setFishNameOrder(fish.getName());
+        } else {
+            setFishNameOrder(genotypeExperiment.getGenotype().getNameOrder());
+        }
+
     }
 
     public String getAntibodyGenoxZdbIDs() {
@@ -145,4 +156,11 @@ public class AntibodyTableRow {
         isExpressionFound = expressionFound;
     }
 
+    public String getFishNameOrder() {
+        return fishNameOrder;
+    }
+
+    public void setFishNameOrder(String fishNameOrder) {
+        this.fishNameOrder = fishNameOrder;
+    }
 }

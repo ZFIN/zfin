@@ -43,7 +43,7 @@ public class FigureViewService {
 
 
         //taking advantage of domain objects having their own comparators
-        Collections.sort(rows, ComparatorCreator.orderBy("gene", "genotype", "experiment", "start", "end", "entity"));
+        Collections.sort(rows, ComparatorCreator.orderBy("gene", "fishNameOrder", "experiment", "start", "end", "entity"));
 
         return rows;
     }
@@ -71,7 +71,7 @@ public class FigureViewService {
 
         }
 
-        Collections.sort(rows, ComparatorCreator.orderBy("antibody", "assay", "genotype", "experiment", "start", "end", "entity"));
+        Collections.sort(rows, ComparatorCreator.orderBy("antibody", "assay", "fishNameOrder", "experiment", "start", "end", "entity"));
 
         return rows;
     }
