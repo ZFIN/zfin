@@ -58,7 +58,16 @@
     </zfin-figure:imagesAndCaption>
 </c:forEach>
 
-<zfin2:acknowledgment publication="${figure.publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>
+<c:choose>
+    <c:when test="${publication.canShowImages && publication.type != 'Unpublished'}">
+        <zfin2:acknowledgment publication="${publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>
+    </c:when>
+    <c:otherwise>
+        <zfin2:subsection>
+            <zfin-figure:journalAbbrev publication="${publication}"/>
+        </zfin2:subsection>
+    </c:otherwise>
+</c:choose>
 
 <script>
     jQuery(document).ready(function() {
