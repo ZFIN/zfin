@@ -91,7 +91,7 @@
                     <td>
                         <zfin:link entity="${probe}"/>
 
-                        &nbsp; <strong>Quality:</strong>
+                        &nbsp; <strong><a href="/zf_info/stars.html">Quality:</a></strong>
                         <img src="/images/${probe.rating+1}0stars.gif" alt="Rating ${probe.rating +1}">
 
                     </td>

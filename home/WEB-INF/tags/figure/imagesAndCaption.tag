@@ -23,7 +23,15 @@
     <c:if test="${figure.publication.canShowImages && !empty figure.images && fn:length(figure.images) == 1}">
         <c:forEach var="image" items="${figure.images}">
             <zfin:link entity="${image}">
-                <img class="figure-image medium" src="/imageLoadUp/medium/${image.imageFilename}"/>
+                <c:choose>
+                    <c:when test="${!empty image.imageWithAnnotationsFilename}">
+                        <c:set var="filename" value="${image.imageWithAnnotationsFilename}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="filename" value="${image.imageFilename}"/>
+                    </c:otherwise>
+                </c:choose>
+                <img class="figure-image medium" src="/imageLoadUp/medium/${filename}"/>
             </zfin:link>
         </c:forEach>
     </c:if>

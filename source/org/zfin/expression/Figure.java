@@ -153,12 +153,6 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
             return false;
     }
 
-    public String getMediumSizedImg() {
-        if (isImgless())
-          return "";
-
-        return "http://trunk.zfin.org/imageLoadUp/250/" + getImages().iterator().next().getZdbID() + ".jpg";
-    }
 
     public Image getImg() {
         if (isImgless())
