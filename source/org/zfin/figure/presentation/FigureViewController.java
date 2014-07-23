@@ -161,8 +161,8 @@ public class FigureViewController {
         model.addAttribute("phenotypeConditionMap", figureViewService.getPhenotypeConditions(figures));
         model.addAttribute("phenotypeSTRMap", figureViewService.getPhenotypeSTRs(figures));
         model.addAttribute("phenotypeEntitiesMap", figureViewService.getPhenotypeEntities(figures));
-        model.addAttribute("phenotypeStartStateMap", figureViewService.getPhenotypeStartStage(figures));
-        model.addAttribute("phenotypeEndStateMap", figureViewService.getPhenotypeEndStage(figures));
+        model.addAttribute("phenotypeStartStageMap", figureViewService.getPhenotypeStartStage(figures));
+        model.addAttribute("phenotypeEndStageMap", figureViewService.getPhenotypeEndStage(figures));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
 
