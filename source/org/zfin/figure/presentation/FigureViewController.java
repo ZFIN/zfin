@@ -155,7 +155,7 @@ public class FigureViewController {
         model.addAttribute("expressionConditionMap", figureViewService.getExpressionConditions(figures));
         model.addAttribute("expressionEntityMap", figureViewService.getExpressionEntities(figures));
         model.addAttribute("expressionStartStageMap", figureViewService.getExpressionStartStages(figures));
-        model.addAttribute("expressionEndStageMap", figureViewService.getExpressionStartStages(figures));
+        model.addAttribute("expressionEndStageMap", figureViewService.getExpressionEndStages(figures));
 
         model.addAttribute("phenotypeFishesAndGenotypeMap",figureViewService.getPhenotypeFishesAndGenotypes(figures));
         model.addAttribute("phenotypeConditionMap", figureViewService.getPhenotypeConditions(figures));
