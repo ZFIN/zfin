@@ -744,5 +744,15 @@ public class FigureViewService {
         return pubZdbIDs.contains(publication.getZdbID());
     }
 
+    /* Same as above, for these pubs we show the errataAndNotes property of the publication */
+    public boolean showErrataAndNotes(Publication publication) {
+        List<String> pubZdbIDs = new ArrayList<>();
+        pubZdbIDs.add("ZDB-PUB-051025-1");
+        pubZdbIDs.add("ZDB-PUB-040907-1");
+        pubZdbIDs.add("ZDB-PUB-010810-1");
+
+        return pubZdbIDs.contains(publication.getZdbID());
+    }
+
 }
 

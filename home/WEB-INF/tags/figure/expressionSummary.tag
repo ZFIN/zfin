@@ -11,6 +11,8 @@
 <%@attribute name="probe" type="org.zfin.marker.Clone" rtexprvalue="true" required="false" %>
 <%@attribute name="probeSuppliers" type="java.util.List" rtexprvalue="true" required="false" %>
 
+<%@attribute name="suppressProbe" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
+
 <%-- We don't want the label to display if there's no data --%>
 
 <c:if test="${!empty start}">
@@ -85,32 +87,33 @@
                 </td>
             </tr>
 
-            <c:if test="${!empty probe}">
-                <tr>
-                    <th>Probe:</th>
-                    <td>
-                        <zfin:link entity="${probe}"/>
-
-                        &nbsp; <strong><a href="/zf_info/stars.html">Quality:</a></strong>
-                        <img src="/images/${probe.rating+1}0stars.gif" alt="Rating ${probe.rating +1}">
-
-                    </td>
-                </tr>
-                <%-- this is deviating from the old figureview, because the nice java tag we have doesn't seem to follow
-                     that format.  Maybe people will like this better? --%>
-                <c:if test="${!empty probeSuppliers}">
+            <c:if test="${!suppressProbe}">
+                <c:if test="${!empty probe}">
                     <tr>
-                        <th>
-                            <zfin:choice choicePattern="0#Suppliers:| 1#Supplier:| 2#Suppliers:" integerEntity="${fn:length(probeSuppliers)}"/>
-                        </th>
-                        <td><c:forEach var="supplier" items="${probeSuppliers}">
-                            ${supplier.linkWithAttributionAndOrderThis}
-                        </c:forEach></td>
+                        <th>Probe:</th>
+                        <td>
+                            <zfin:link entity="${probe}"/>
+
+                            &nbsp; <strong><a href="/zf_info/stars.html">Quality:</a></strong>
+                            <img src="/images/${probe.rating+1}0stars.gif" alt="Rating ${probe.rating +1}">
+
+                        </td>
                     </tr>
+                    <%-- this is deviating from the old figureview, because the nice java tag we have doesn't seem to follow
+                         that format.  Maybe people will like this better? --%>
+                    <c:if test="${!empty probeSuppliers}">
+                        <tr>
+                            <th>
+                                <zfin:choice choicePattern="0#Suppliers:| 1#Supplier:| 2#Suppliers:" integerEntity="${fn:length(probeSuppliers)}"/>
+                            </th>
+                            <td><c:forEach var="supplier" items="${probeSuppliers}">
+                                ${supplier.linkWithAttributionAndOrderThis}
+                            </c:forEach></td>
+                        </tr>
+                    </c:if>
+
                 </c:if>
-
             </c:if>
-
 
 
         </table>

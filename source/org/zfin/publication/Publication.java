@@ -27,6 +27,7 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
     private String doi;
     private String acknowledgment;
     private String status;
+    private String errataAndNotes;
     private GregorianCalendar publicationDate;
     private GregorianCalendar closeDate;
     private Journal journal;
@@ -193,6 +194,14 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getErrataAndNotes() {
+        return errataAndNotes;
+    }
+
+    public void setErrataAndNotes(String errataAndNotes) {
+        this.errataAndNotes = errataAndNotes;
     }
 
     public String getCitation() {

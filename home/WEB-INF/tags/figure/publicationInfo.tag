@@ -3,6 +3,7 @@
 <%@ attribute name="publication" type="org.zfin.publication.Publication" rtexprvalue="true" required="true" %>
 <%@ attribute name="submitters" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@ attribute name="showThisseInSituLink" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
+<%@ attribute name="showErrataAndNotes" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 
 <div class="publication-info">
     <zfin:link entity="${publication}"/>
@@ -26,6 +27,13 @@
            href=/cgi-bin/webdriver?MIval=aa-pubprintable.apg&OID=${publication.zdbID}&printable=yes>(Citing this work)</a>
     </zfin2:subsection>
 </c:if>
+
+<c:if test="${showErrataAndNotes}">
+    <div class="summary">
+        ${publication.errataAndNotes}
+    </div>
+</c:if>
+
 
 <c:if test="${showThisseInSituLink}">
     <div class="summary">

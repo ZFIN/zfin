@@ -16,7 +16,10 @@
     </tiles:insertTemplate>
 </div>
 
-<zfin-figure:publicationInfo publication="${figure.publication}" submitters="${submitters}" showThisseInSituLink="${showThisseInSituLink}"/>
+<zfin-figure:publicationInfo publication="${figure.publication}"
+                             submitters="${submitters}"
+                             showThisseInSituLink="${showThisseInSituLink}"
+                             showErrataAndNotes="${showErrataAndNotes}"/>
 
 <c:if test="${fn:length(figure.publication.figures) > 1}">
     <div style="margin-top: 1em;">

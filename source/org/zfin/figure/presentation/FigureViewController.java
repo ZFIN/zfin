@@ -62,6 +62,7 @@ public class FigureViewController {
 
         model.addAttribute("submitters", figureRepository.getSubmitters(figure.getPublication(), probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(figure.getPublication()));
+        model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(figure.getPublication()));
         model.addAttribute("expressionGenes",figureViewService.getExpressionGenes(figure));
         model.addAttribute("expressionAntibodies",figureViewService.getAntibodies(figure));
         model.addAttribute("expressionFishesAndGenotypes",figureViewService.getExpressionFishesAndGenotypes(figure));
@@ -147,6 +148,7 @@ public class FigureViewController {
 
         model.addAttribute("submitters", figureRepository.getSubmitters(publication, probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
+        model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(publication));
 
         model.addAttribute("expressionGeneMap", figureViewService.getExpressionGenes(figures));
         model.addAttribute("expressionAntibodyMap", figureViewService.getAntibodies(figures));

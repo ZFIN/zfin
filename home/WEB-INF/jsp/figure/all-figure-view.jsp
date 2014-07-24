@@ -3,14 +3,21 @@
 
 <meta name="all-figure-view-page"/> <%-- this is used by the web testing framework to know which page it is --%>
 
-<zfin-figure:publicationInfo publication="${publication}" submitters="${submitters}" showThisseInSituLink="${showThisseInSituLink}"/>
+<zfin-figure:publicationInfo publication="${publication}"
+                             submitters="${submitters}"
+                             showThisseInSituLink="${showThisseInSituLink}"
+                             showErrataAndNotes="${showErrataAndNotes}"/>
 
 <c:if test="${!empty probe}">
+<div class="summary">
     <table class="primary-entity-attributes">
         <tr>
             <th>Probe:</th>
             <td>
                 <zfin:link entity="${probe}"/>
+
+                &nbsp; <strong><a href="/zf_info/stars.html">Quality:</a></strong>
+                <img src="/images/${probe.rating+1}0stars.gif" alt="Rating ${probe.rating +1}">
             </td>
         </tr>
             <%-- this is deviating from the old figureview, because the nice java tag we have doesn't seem to follow
@@ -24,6 +31,7 @@
             </tr>
         </c:if>
     </table>
+</div>
 </c:if>
 
 <c:forEach var="figure" items="${figures}">
@@ -35,7 +43,8 @@
                                        strs="${expressionSTRMap[figure]}"
                                        experiments="${expressionConditionMap[figure]}"
                                        entities="${expressionEntityMap[figure]}"
-                                       start="${expressionStartStageMap[figure]}" end="${expressionEndStageMap[figure]}"/>
+                                       start="${expressionStartStageMap[figure]}" end="${expressionEndStageMap[figure]}"
+                                       suppressProbe="true"/>
         <c:if test="${!empty expressionStartStageMap[figure]}">
             <div style="margin-top: 1em;">
                 <a href="/${figure.zdbID}#expDetail">Expression / Labeling details</a>

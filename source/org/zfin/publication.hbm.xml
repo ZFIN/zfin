@@ -44,6 +44,7 @@
         <property name="indexedDate" column="pub_indexed_date"/>
         <property name="acknowledgment" column="pub_acknowledgment"/>
         <property name="status" column="status"/>
+        <property name="errataAndNotes" column="pub_errata_and_notes"/>
 
         <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" insert="false"
                      update="false"/>
