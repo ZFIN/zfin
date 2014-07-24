@@ -39,7 +39,7 @@
             <c:if test="${!empty fishesAndGenotypes}">
                 <tr>
                     <th>
-                        <span class="fish-label" title="Fish = Genotype + Reagents">Fish:</span>
+                        <zfin:choice choicePattern="0#Genotypes:| 1#Genotype:| 2#Genotypes:" integerEntity="${fn:length(fishAndGenotypes)}"/>
                     </th>
                     <td> <zfin2:toggledPostcomposedList entities="${fishesAndGenotypes}" maxNumber="5"/>  </td>
                 </tr>
