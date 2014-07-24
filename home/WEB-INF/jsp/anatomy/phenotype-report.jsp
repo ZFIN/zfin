@@ -32,7 +32,7 @@
 </table>
 
 <c:if test="${formBean.totalRecords > 0}">
-    <table class="searchresults rowstripes">
+    <table class="searchresults rowstripes">Get_date_from_id
         <tr>
             <th width=20%>Genotype</th>
             <th width=20%>Morpholino</th>
@@ -47,8 +47,11 @@
                 <td>
                     <c:if test="${phenotype.phenotypeExperiment.genotypeExperiment.experiment.experimentConditions ne null}">
                         <c:forEach var="morpholino"
-                                   items="${phenotype.phenotypeExperiment.genotypeExperiment.experiment.experimentConditions}">
-                            ${morpholino.sequenceTargetingReagent.abbreviation},
+                                   items="${phenotype.phenotypeExperiment.genotypeExperiment.experiment.experimentConditions}" varStatus="morphLoop">
+                            <c:if test="${morpholino.sequenceTargetingReagent.abbreviation ne null}">
+                                ${morpholino.sequenceTargetingReagent.abbreviation}
+                            <c:if test="${!morphLoop.isLast()}">,&nbsp;</c:if>
+                            </c:if>
                         </c:forEach>
                     </c:if>
                 </td>
