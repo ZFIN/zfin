@@ -57,7 +57,7 @@ public class FigureViewSmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAllFiguresView() throws IOException {
-                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/figures/all-figure-view/ZDB-PUB-071210-28");
+                HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/figure/all-figure-view/ZDB-PUB-071210-28");
                 assertEquals("ZFIN All Figures, Ochi <i>et al.</i>, 2008", page.getTitleText());
                 List<HtmlSpan> genes = (List<HtmlSpan>) page.getByXPath("//span[@class = 'genedom']");
                 assertNotNull(genes);

@@ -10,6 +10,7 @@ public class UnloadInfo {
     private long id;
     private Date date;
     private String version;
+    private String databaseName;
 
     public long getId() {
         return id;
@@ -35,4 +36,11 @@ public class UnloadInfo {
         this.version = version;
     }
 
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
 }
