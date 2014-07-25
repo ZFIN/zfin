@@ -34,23 +34,21 @@ public class ExternalBlastSequenceController extends AbstractExternalBlastContro
 
     @RequestMapping("/blast/blast-with-sequence")
     protected String showBlastDefinitions(@RequestParam(required = false) String accession,
-                                          @RequestParam(required = false) String blastDBZdbID,
-                                          @ModelAttribute("formBean") BlastInfoBean blastInfoBean) throws Exception {
+                                          @RequestParam(required = false) String blastDB,
+                                          @ModelAttribute("formBean") BlastBean blastBean) throws Exception {
         Database database ;
-        if(blastDBZdbID.startsWith("ZDB-")){
-            database = (Database) HibernateUtil.currentSession().get(Database.class, blastDBZdbID);
+        if(blastDB.startsWith("ZDB-")){
+            database = (Database) HibernateUtil.currentSession().get(Database.class, blastDB);
         }
         else {
-            database = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.getType(blastDBZdbID));
+            database = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.getType(blastDB));
         }
 
         if(database==null){
-            blastDBZdbID = "ZDB-BLASTDB-090929-26";
-            database = (Database) HibernateUtil.currentSession().get(Database.class, blastDBZdbID);
+            blastDB = "ZDB-BLASTDB-090929-26";
+            database = (Database) HibernateUtil.currentSession().get(Database.class, blastDB);
         }
 
-
-        BlastBean blastBean = new BlastBean();
         blastBean.setDatabase(database);
         List<Sequence> sequenceList = new ArrayList<>();
         Sequence sequence = new Sequence();
