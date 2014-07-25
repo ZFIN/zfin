@@ -131,7 +131,7 @@
     <class name="org.zfin.expression.Video" table="video">
         <id name="id" type="long">
             <column name="video_pk_id" not-null="true"/>
-            <generator class="increment"/>
+            <generator class="identity"/>
         </id>
         <property name="videoFilename" not-null="true" column="video_path_to_file"/>
         <many-to-one name="still" class="org.zfin.expression.Image" column="video_image_still_zdb_id"/>
