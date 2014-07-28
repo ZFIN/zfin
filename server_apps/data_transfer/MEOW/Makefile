@@ -8,7 +8,7 @@
 # !! format and conventions used in this makefile.                     !!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# The meow.pl script is run by cron every week.  It invokes the sql script.
+# The meow.pl script is run by Jenkins every week.  It invokes the sql script.
 # The MEOW DB dump uses the FTP directory structure.  See the 
 # ZFIN Documentation for how FTP is handled differently in test versus 
 # production.
