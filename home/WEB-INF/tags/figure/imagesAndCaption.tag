@@ -50,8 +50,10 @@
            logic comes from fxfigureview.apg --%>
       <strong>
           <c:choose>
-              <c:when test="${fn:length(figure.images) > 1}">
-                Description:
+              <c:when test="${ (fn:length(figure.images) > 1)}">
+                <c:if test="{!empty figure.caption}">
+                    Description:
+                </c:if>
               </c:when>
               <c:when test="${figure.type == 'TOD'}">
                 <%-- don't show anything as a label for Text Only --%>
@@ -65,8 +67,7 @@
            <img class="placeholder" src="/images/onlyfrompublisher.jpg">
        </c:if>
        <c:choose>
-           <c:when test="${!figure.publication.canShowImages || empty figure.caption}">
-
+           <c:when test="${!figure.publication.canShowImages || (empty figure.caption && figure.publication.type != 'Unpublished')}">
                ZFIN is incorporating published figure images and captions as part of an ongoing project.
                Figures from some publications have not yet been curated, or are not available for display because of copyright restrictions.
            </c:when>
