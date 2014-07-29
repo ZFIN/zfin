@@ -94,9 +94,10 @@
                         <td>
                             <zfin:link entity="${probe}"/>
 
-                            &nbsp; <strong><a href="/zf_info/stars.html">Quality:</a></strong>
-                            <img src="/images/${probe.rating+1}0stars.gif" alt="Rating ${probe.rating +1}">
-
+                            <c:if test="${!empty probe.rating}">
+                                &nbsp; <strong><a href="/zf_info/stars.html">Quality:</a></strong>
+                                <img src="/images/${probe.rating+1}0stars.gif" alt="Rating ${probe.rating +1}">
+                            </c:if>
                         </td>
                     </tr>
                     <%-- this is deviating from the old figureview, because the nice java tag we have doesn't seem to follow
