@@ -593,29 +593,17 @@ var ENTER_KEY = 13;
         ============================================================
       <?/MICOMMENT>
             
-      <?MISQL SQL="execute function get_id('MRKRSEQ')">
-        <?MIVAR NAME=$newmrkrMrkrSeqId>$1<?/MIVAR>
-      <?/MISQL>
-      <?MISQL SQL="insert into zdb_active_data (zactvd_zdb_id) values ('$newmrkrMrkrSeqId');"><?/MISQL>
       <?MISQL SQL="
         insert into marker_sequence (
-          seq_zdb_id,
           seq_mrkr_zdb_id,
           seq_sequence,
           seq_left_end)
         values (
-          '$newmrkrMrkrSeqId',
           '$new_id',
           '$newmrkrDisplaySequence',
           '5''');">
-
       <?/MISQL>
                  	
-      <?MISQL COND=$(XST,$newmrkrSource) SQL="
-          insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-          values ('$newmrkrMrkrSeqId','$newmrkrSource');">
-      <?/MISQL>
-      
     <?/MIBLOCK>           
     
 
