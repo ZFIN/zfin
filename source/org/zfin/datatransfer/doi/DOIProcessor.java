@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.doi;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.framework.HibernateUtil;
@@ -8,6 +9,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,7 +28,8 @@ public class DOIProcessor {
     private boolean reportAll = false;
     private boolean doisUpdated = false;
 
-    private StringBuilder message;
+    private List<String> messages = new ArrayList<>();
+    private List<String> errors = new ArrayList<>();
 
     public DOIProcessor(boolean reportAll) {
         this(reportAll, Integer.MAX_VALUE);
@@ -39,7 +42,6 @@ public class DOIProcessor {
         } else {
             this.maxAttempts = maxAttempts;
         }
-        message = new StringBuilder();
 
     }
 
@@ -47,7 +49,6 @@ public class DOIProcessor {
         this.reportAll = reportAll;
         this.maxToProcess = (maxToProcess == ALL ? Integer.MAX_VALUE : maxToProcess);
         this.maxAttempts = (maxAttempts == ALL ? Integer.MAX_VALUE : maxAttempts);
-        message = new StringBuilder();
     }
 
 
@@ -59,7 +60,7 @@ public class DOIProcessor {
     private List<Publication> getPubmedIdsWithNoDOIs() {
         List<Publication> publicationList = publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess);
         if (reportAll || CollectionUtils.isNotEmpty(publicationList)) {
-            message.append("number of dois to populate:  ").append(publicationList.size()).append("\n");
+            messages.add("number of dois to populate: " + publicationList.size());
         }
         return publicationList;
     }
@@ -80,13 +81,13 @@ public class DOIProcessor {
             DOIHTTPTester httpTester = new DOIHTTPTester();
             publicationList = httpTester.testDOIList(publicationList);
             for (Publication publication : publicationList) {
-                message.append("added doi[" + publication.getDoi() + "] for publication[" + publication.getZdbID() + "]");
+                messages.add("added doi[" + publication.getDoi() + "] for publication[" + publication.getZdbID() + "]");
             }
             updateDOIs(publicationList);
             HibernateUtil.closeSession();
         } catch (Exception e) {
             logger.error(e);
-            message.append(e);
+            errors.add(ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -99,7 +100,7 @@ public class DOIProcessor {
     private void updateDOIs(List<Publication> publicationList) {
 
         if (publicationList == null || publicationList.size() == 0) {
-            message.append("No sources to udpate");
+            messages.add("No sources to update");
             doisUpdated = false;
             return;
         } else {
@@ -111,14 +112,18 @@ public class DOIProcessor {
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             logger.error(e);
-            message.append(e);
+            errors.add(ExceptionUtils.getFullStackTrace(e));
             HibernateUtil.rollbackTransaction();
         }
 
     }
 
-    public StringBuilder getMessage() {
-        return message;
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public List<String> getErrors() {
+        return errors;
     }
 
     public boolean isDoisUpdated() {

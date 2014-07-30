@@ -229,6 +229,90 @@
         </java>
     </target>
 
+    <target name="set-wiki-page-permissions-to-owner" description="">
+        <java classname="org.zfin.wiki.jobs.SetPermissionsToOwnerJob" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="Set-Wiki-Page-Permissions-To-Owner_h"/>
+        </java>
+    </target>
+
+    <target name="update-dois" description="">
+        <java classname="org.zfin.datatransfer.doi.UpdateDOIJob" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+
+        <fail message="Error caught while updating DOI jobs">
+            <condition>
+                <resourcecontains resource="${validateData}/report_data/${JobName}/${jobName}.errors.txt" substring=","/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="remove-go-terms-from-withdrawn-markers" description="">
+        <java classname="org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+    </target>
+
+    <target name="regenerate-webhost-curated-databases" description="">
+        <java classname="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+
+        <fail message="An exception was thrown while regenerating databases">
+            <condition>
+                <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.errors.txt" substring=","/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="validate-blast-databases" description="">
+        <java classname="org.zfin.sequence.blast.ValidateBlastDatabases" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+
+        <fail message="Some remote databases could not be validated">
+            <condition>
+                <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.errors.txt" substring=","/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="microarray-update" description="">
+        <java classname="org.zfin.datatransfer.microarray.MicroarrayWebserviceJob" fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+
+        <fail message="Error in microarray update">
+            <condition>
+                <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.html" substring="Error"/>
+            </condition>
+        </fail>
+    </target>
+
     <target name="validate-data-report-simple" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>

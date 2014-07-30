@@ -1,63 +1,57 @@
 package org.zfin.datatransfer.doi;
 
 import org.apache.log4j.Logger;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.zfin.framework.ZfinBasicQuartzJob;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
-
-import java.util.Date;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.infrastructure.ant.ReportConfiguration;
 
 /**
  */
-public class UpdateDOIJob extends ZfinBasicQuartzJob {
+public class UpdateDOIJob extends AbstractValidateDataReportTask {
 
-    private Logger logger = Logger.getLogger(UpdateDOIJob.class) ;
+    private static Logger logger = Logger.getLogger(UpdateDOIJob.class) ;
 
-    // defaults are for monthly scheduling
-    private boolean reportAll = true;
-    private int maxToProcess = DOIProcessor.ALL ;
-    private int maxAttempts = DOIProcessor.ALL ;
+    private boolean reportAll;
+    private int maxToProcess;
+    private int maxAttempts;
 
-    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        try {
-            DOIProcessor driver = new DOIProcessor(reportAll,maxAttempts,maxToProcess);
-            driver.findAndUpdateDOIs();
+    @Override
+    public void execute() {
+        setLoggerFile();
+        setReportProperties();
+        clearReportDirectory();
 
-            if (reportAll == true || driver.isDoisUpdated()) {
-                (new IntegratedJavaMailSender()).sendHtmlMail("doi updates for: " + (new Date()).toString()
-                        , driver.getMessage().toString().replaceAll("\n","<br>\n"), ZfinProperties.splitValues(ZfinPropertiesEnum.DOI_EMAIL_REPORT));
-            }
+        DOIProcessor driver = new DOIProcessor(reportAll, maxAttempts, maxToProcess);
+        driver.findAndUpdateDOIs();
+
+        String infoReportName = jobName + ".info";
+        ReportConfiguration infoReport = new ReportConfiguration(jobName, dataDirectory, infoReportName, true);
+        createErrorReport(null, getStringifiedList(driver.getMessages()), infoReport);
+
+        String errorReportName = jobName + ".errors";
+        ReportConfiguration errorReport = new ReportConfiguration(jobName, dataDirectory, errorReportName, true);
+        createErrorReport(null, getStringifiedList(driver.getErrors()), errorReport);
+    }
+
+    public static void main(String[] args) {
+        initLog4J();
+        setLoggerToInfoLevel(logger);
+        UpdateDOIJob job = new UpdateDOIJob();
+        job.setPropertyFilePath(args[0]);
+        job.setBaseDir(args[1]);
+        String jobName = args[2];
+        job.setJobName(jobName);
+        if (jobName.endsWith("_d")) {
+            job.reportAll = false;
+            job.maxToProcess = 20;
+            job.maxAttempts = DOIProcessor.ALL;
+        } else if (jobName.endsWith("_m")) {
+            job.reportAll = true;
+            job.maxToProcess = DOIProcessor.ALL;
+            job.maxToProcess = DOIProcessor.ALL;
+        } else {
+            throw new RuntimeException("Expecting job name to end in `_d` or `_m`, but was: " + jobName);
         }
-        catch (Exception e) {
-            logger.error("Failed to update DOI Job",e);
-        }
-    }
-
-    public boolean isReportAll() {
-        return reportAll;
-    }
-
-    public void setReportAll(boolean reportAll) {
-        this.reportAll = reportAll;
-    }
-
-    public int getMaxAttempts() {
-        return maxAttempts;
-    }
-
-    public void setMaxAttempts(int maxAttempts) {
-        this.maxAttempts = maxAttempts;
-    }
-
-    public int getMaxToProcess() {
-        return maxToProcess;
-    }
-
-    public void setMaxToProcess(int maxToProcess) {
-        this.maxToProcess = maxToProcess;
+        job.init();
+        job.execute();
     }
 }

@@ -1,51 +1,8 @@
-<html>
-<head>
-    <title>Report</title>
-
-    <style>
-        #result {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-            border-collapse: collapse;
-        }
-
-        table, th, td, input, textarea {
-            font-size: 100%;
-            border: 1px solid green;
-            text-align: left;
-            padding: 4px;
-        }
-
-        #result th {
-            font-size: 1em;
-            text-align: left;
-            padding-top: 5px;
-            padding-bottom: 4px;
-            background-color: rgb(167, 201, 66);
-            color: rgb(255, 255, 255);
-            padding: 4px;
-        }
-
-        #result tr.alt td {
-            color: #000;
-            background-color: #EAF2D3;
-        }
-
-        table.rowstripes tr.odd {
-            background-color: #eee;
-        }
-
-        table.rowstripes tr.even {
-            background-color: #fff
-        }
-    </style>
-</head>
-<body>
-
-<b>Report Run:</b> ${dateRun?string("yyyy-MM-dd HH:mm:ss")}
-<p/>
+<#import "report-layout.ftl" as layout>
+<@layout.reportLayout>
 
 Statistics:
-<table id="result" class="rowstripes">
+<table class="result rowstripes">
     <tbody>
     <tr>
         <th>Created Wiki Pages</th>
@@ -62,7 +19,4 @@ Statistics:
     </tbody>
 </table>
 
-<hr>
-
-</body>
-</html>
+</@layout.reportLayout>

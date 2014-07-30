@@ -101,12 +101,12 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 String errorMessage = (String) reportProperties.get(reportConfiguration.getReportName() + "." + ERROR_MESSAGE);
                 String columnHeader = (String) reportProperties.get(reportConfiguration.getReportName() + "." + HEADER_COLUMNS);
                 if (StringUtils.isEmpty(errorMessage)) {
-                    LOG.debug("No value for key " + reportConfiguration.getReportName() + " found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
+                    LOG.warn("No value for key `" + reportConfiguration.getReportName() + "` found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
                     reportConfiguration.getReportFile().delete();
                     return;
                 }
                 if (StringUtils.isEmpty(columnHeader)) {
-                    LOG.debug("No value for key " + reportConfiguration.getReportName() + " found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
+                    LOG.warn("No value for key `" + reportConfiguration.getReportName() + "` found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
                     reportConfiguration.getReportFile().delete();
                     return;
                 }
@@ -125,9 +125,10 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             // add custom variables
             addCustomVariables(root);
             root.put("dateRun", new Date());
-//            root.putAll();
-            if (queryFile != null)
+            root.put("jobName", jobName);
+            if (queryFile != null) {
                 root.put("sqlQuery", getSqlQuery());
+            }
             template.process(root, writer);
             writer.flush();
             // export data

@@ -9,17 +9,9 @@
         <property name="autoStartup" value="${RUN_QUARTZ_JOBS}"/>
         <property name="triggers">
             <list>
-                <ref bean="regenerateWebHostDatabasesDaily"/>
-                <ref bean="validateDatabasesDaily"/>
-                <ref bean="setPermissionsToOwnerTrigger"/>
-                <ref bean="updateDOIDailyTrigger"/>
-                <ref bean="updateDOIMonthlyTrigger"/>
-                <ref bean="microarrayTrigger"/>
-                <ref bean="removeGoTermsFromWithdrawnMarkersWeekly"/>
                 <ref bean="goaGafLoadTrigger"/>
                 <ref bean="fpInferenceGafLoadTrigger"/>
                 <ref bean="paintGafLoadTrigger"/>
-                <ref bean="checkMaxGenoxIdsLengthTrigger"/>
             </list>
         </property>
         <property name="quartzProperties">
@@ -35,111 +27,6 @@
     </bean>
 
     <!--jobs to run-->
-    <bean id="regenerateWebHostDatabasesDaily" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Regenerate WebHost Curated Databases"/>
-                <property name="group" value="Blast Databases"/>
-                <property name="jobClass" value="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob"/>
-            </bean>
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
-        <!--a nice lookup-->
-        <!--fire at 2 am every day-->
-        <property name="cronExpression" value="0 0 2 * * ?"/>
-    </bean>
-
-
-    <bean id="validateDatabasesDaily" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Validate Blast Databases"/>
-                <property name="group" value="Blast Databases"/>
-                <property name="jobClass" value="org.zfin.sequence.blast.ValidateBlastDatabases"/>
-            </bean>
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
-        <!--a nice lookup-->
-        <!--fire at 3 am every day-->
-        <property name="cronExpression" value="0 0 3 * * ?"/>
-    </bean>
-
-    <bean id="removeGoTermsFromWithdrawnMarkersWeekly" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Remove Go Terms From Withdrawn Markers"/>
-                <property name="group" value="GO"/>
-                <property name="jobClass" value="org.zfin.datatransfer.go.service.RemoveGoTermsFromWithdrawnMarkersJob"/>
-            </bean>
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
-        <!--a nice lookup-->
-        <!--fire at 8.12 pm every Friday -->
-        <property name="cronExpression" value="0 12 20 ? * FRI"/>
-    </bean>
-
-    <bean id="setPermissionsToOwnerTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Set Permissions to Owner on Wiki"/>
-                <property name="group" value="Wiki"/>
-                <property name="jobClass" value="org.zfin.wiki.jobs.SetPermissionsToOwnerJob"/>
-            </bean>
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
-        <property name="cronExpression">
-            <!--goes off every 15 minutes -->
-            <value>0 0,15,30,45 * * * ?</value>
-        </property>
-    </bean>
-
-    <bean id="updateDOIDailyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="DOI Daily Update"/>
-                <property name="group" value="DOI"/>
-                <property name="jobClass" value="org.zfin.datatransfer.doi.UpdateDOIJob"/>
-                <property name="jobDataAsMap">
-                    <map>
-                        <entry key="reportAll" value="false"/>
-                        <entry key="maxAttempts" value="20"/>
-                        <!--<entry key="maxToProcess" value="10"/>-->
-                    </map>
-                </property>
-            </bean>
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING"/>
-        <!--goes off every day at 4 am-->
-        <property name="cronExpression" value="0 0 4 * * ?"/>
-    </bean>
-
-
-    <bean id="updateDOIMonthlyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="DOI Monthly Update"/>
-                <property name="group" value="DOI"/>
-                <property name="jobClass" value="org.zfin.datatransfer.doi.UpdateDOIJob"/>
-                <!--just use defaults-->
-            </bean>
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
-        <!--goes off the 21st of each month-->
-        <property name="cronExpression" value="0 50 03 21 * ?"/>
-    </bean>
-
-    <bean id="microarrayTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.JobDetailBean">
-                <property name="name" value="Microarray Update"/>
-                <property name="group" value="Microarray"/>
-                <property name="jobClass" value="org.zfin.datatransfer.microarray.MicroarrayWebserviceJob"/>
-            </bean>
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
-        <!--goes off every Monday at 12.30 am-->
-        <property name="cronExpression" value="0 30 0 ? * Mon"/>
-    </bean>
 
     <!--NOTE: these are both autowired in the zfinapp context-->
     <!--<bean id="downloadService1" class="org.zfin.datatransfer.service.DownloadService"/>-->
@@ -198,17 +85,6 @@
         </property>
     </bean>
 
-    <bean id="checkMaxGenoxIdsLengthBean" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <property name="name" value="Check Maximum Fish Id Length"/>
-        <property name="group" value="Validation"/>
-        <property name="jobClass" value="org.zfin.fish.quartz.CheckGenoxMaxIdsLengthJob"/>
-        <property name="jobDataAsMap">
-            <map>
-                <entry key="jobName" value="Check Maximum Fish Id Length"/>
-            </map>
-        </property>
-    </bean>
-
     <bean id="goaGafLoadTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="goaGafLoadJobBean">
         </property>
@@ -231,14 +107,6 @@
         <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
         <!--goes off the 22nd of each month-->
         <property name="cronExpression" value="0 30 02 22 * ?"/>
-    </bean>
-
-    <bean id="checkMaxGenoxIdsLengthTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="checkMaxGenoxIdsLengthBean">
-        </property>
-        <property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_FIRE_ONCE_NOW"/>
-        <!--goes off the 22nd of each month-->
-        <property name="cronExpression" value="0 0 8 ? * MON"/>
     </bean>
 
 </beans>

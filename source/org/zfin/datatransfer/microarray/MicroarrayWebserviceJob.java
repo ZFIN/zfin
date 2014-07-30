@@ -1,147 +1,120 @@
 package org.zfin.datatransfer.microarray;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.service.ExpressionService;
-import org.zfin.expression.service.MicroarrayWebServiceBean;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.ZfinBasicQuartzJob;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
 /**
  */
-public class MicroarrayWebserviceJob extends ZfinBasicQuartzJob {
-
+public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
 
     public static final String MICROARRAY_PUB = "ZDB-PUB-071218-1";
-    private Logger logger = Logger.getLogger(MicroarrayWebserviceJob.class);
 
-    //    @Autowired
-    private ExpressionService expressionService = new ExpressionService();
+    private static Logger logger = Logger.getLogger(MicroarrayWebserviceJob.class);
 
-    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        try {
-            GeoMicorarrayEntriesBean microEntriesBeans = NCBIEfetch.getMicroarraySequences();
+    private static final ExpressionService expressionService = new ExpressionService();
+    private List<List<String>> addedMarkers;
+    private List<List<String>> removedMarkers;
+    private String errorMessage;
 
-            Set<String> validZdbIDs = new HashSet<String>();
-
-            // abbrev , Marker zdbID
-            Map<String, String> markerAbbrevMap = RepositoryFactory.getMarkerRepository().getGeoMarkerCandidates();
-            Collection<String> validGeoSymbols = CollectionUtils.intersection(microEntriesBeans.getGeneSymbols(), markerAbbrevMap.keySet());
-            for (String validGeoSymbol : validGeoSymbols) {
-                validZdbIDs.add(markerAbbrevMap.get(validGeoSymbol));
-            }
-            validGeoSymbols = null;
-            markerAbbrevMap = null;
-
-            // accession,marker zdbID
-            Map<String, String> possibleDblinkMap = RepositoryFactory.getSequenceRepository().getGeoAccessionCandidates();
-            Collection<String> validGeoAccessions = CollectionUtils.intersection(microEntriesBeans.getAccessions(), possibleDblinkMap.keySet());
-            for (String geoAccession : validGeoAccessions) {
-                validZdbIDs.add(possibleDblinkMap.get(geoAccession));
-            }
-            possibleDblinkMap = null;
-            validGeoAccessions = null;
-
-
-            List<String> currentMarkerZdbIds = RepositoryFactory.getInfrastructureRepository().getPublicationAttributionsForPub(MICROARRAY_PUB);
-
-            Collection<String> markersToAdd = CollectionUtils.subtract(validZdbIDs, currentMarkerZdbIds);
-            Collection<String> markersToRemove = CollectionUtils.subtract(currentMarkerZdbIds, validZdbIDs);
-
-            StringBuilder message = new StringBuilder();
-            message.append("Markers added to Geo (" + markersToAdd.size() + ")\n");
-            message.append("Markers removed from Geo (" + markersToRemove.size() + ")\n\n");
-
-            message.append("Markers added to Geo (" + markersToAdd.size() + "):\n\n");
-            for (String markerZdbID : markersToAdd) {
-                message
-                        .append(markerZdbID)
-                        .append(" ")
-                        .append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID))
-                        .append("\n");
-            }
-
-            message.append("Markers removed from Geo (" + markersToRemove.size() + "):\n\n");
-            for (String markerZdbID : markersToRemove) {
-                message
-                        .append(markerZdbID)
-                        .append(" ")
-                        .append(expressionService.getGeoLinkForMarkerZdbId(markerZdbID))
-                        .append("\n");
-            }
-
-            logger.info("adding: " + markersToAdd.size());
-            logger.info("removing: " + markersToRemove.size());
-
-            HibernateUtil.createTransaction();
-
-            try {
-                int removedAttributionsFromMarkerZdbIds = RepositoryFactory.getInfrastructureRepository().removeAttributionsNotFound(markersToRemove, MICROARRAY_PUB);
-                int addedAttributionMarkerZdbIds = RepositoryFactory.getInfrastructureRepository().addAttributionsNotFound(markersToAdd, MICROARRAY_PUB);
-
-
-                HibernateUtil.flushAndCommitCurrentSession();
-
-                // TODO: email and stuff
-                (new IntegratedJavaMailSender()).sendHtmlMail("microarray updates for: " + (new Date()).toString()
-                        , message.toString().replaceAll("\n","<br>\n"),
-                        ZfinProperties.splitValues(ZfinPropertiesEnum.MICROARRAY_EMAIL));
-
-            } catch (Exception e) {
-                logger.error(e);
-                HibernateUtil.rollbackTransaction();
-
-                // TODO: email and stuff
-                (new IntegratedJavaMailSender()).sendHtmlMail("ERROR in microarray update for: " + (new Date()).toString()
-                        , "ERROR: " + e.fillInStackTrace().toString() + "\n" + message.toString(),
-                        ZfinProperties.splitValues(ZfinPropertiesEnum.MICROARRAY_EMAIL));
-            } finally {
-                if (HibernateUtil.currentSession().isOpen()) {
-                    HibernateUtil.currentSession().close();
-                }
-            }
-
-
-//            // get all genes
-//            MicroarrayWebServiceBean microarrayWebServiceBean ;
-//            microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.GENE);
-//            writeBean(microarrayWebServiceBean);
-//
-//            microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.GENEP);
-//            writeBean(microarrayWebServiceBean);
-//
-//            // get all cdna and clone
-//            microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.CDNA);
-//            writeBean(microarrayWebServiceBean);
-//
-//            microarrayWebServiceBean = expressionService.processMicroarrayRecordAttributionsForType(Marker.Type.EST);
-//            writeBean(microarrayWebServiceBean);
-        } catch (Exception e) {
-            // the error should already be logged
-            logger.error(e);
-        }
-
+    @Override
+    protected void addCustomVariables(Map<String, Object> map) {
+        super.addCustomVariables(map);
+        map.put("addedMarkers", addedMarkers);
+        map.put("removedMarkers", removedMarkers);
+        map.put("errorMessage", errorMessage);
     }
 
-    private void writeBean(MicroarrayWebServiceBean microarrayWebServiceBean) {
+    @Override
+    public void execute() {
+        setLoggerFile();
+        setReportProperties();
+        clearReportDirectory();
+
+
+        GeoMicorarrayEntriesBean microEntriesBeans;
+        try {
+            microEntriesBeans = NCBIEfetch.getMicroarraySequences();
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting Microarray sequences", e);
+        }
+
+        Set<String> validZdbIDs = new HashSet<String>();
+
+        // abbrev , Marker zdbID
+        Map<String, String> markerAbbrevMap = RepositoryFactory.getMarkerRepository().getGeoMarkerCandidates();
+        Collection<String> validGeoSymbols = CollectionUtils.intersection(microEntriesBeans.getGeneSymbols(), markerAbbrevMap.keySet());
+        for (String validGeoSymbol : validGeoSymbols) {
+            validZdbIDs.add(markerAbbrevMap.get(validGeoSymbol));
+        }
+
+        // accession,marker zdbID
+        Map<String, String> possibleDblinkMap = RepositoryFactory.getSequenceRepository().getGeoAccessionCandidates();
+        Collection<String> validGeoAccessions = CollectionUtils.intersection(microEntriesBeans.getAccessions(), possibleDblinkMap.keySet());
+        for (String geoAccession : validGeoAccessions) {
+            validZdbIDs.add(possibleDblinkMap.get(geoAccession));
+        }
+
+        List<String> currentMarkerZdbIds = RepositoryFactory.getInfrastructureRepository().getPublicationAttributionsForPub(MICROARRAY_PUB);
+
+        Collection<String> markersToAdd = CollectionUtils.subtract(validZdbIDs, currentMarkerZdbIds);
+        Collection<String> markersToRemove = CollectionUtils.subtract(currentMarkerZdbIds, validZdbIDs);
+
+        logger.info("adding: " + markersToAdd.size());
+        logger.info("removing: " + markersToRemove.size());
+
         HibernateUtil.createTransaction();
+
         try {
-//            expressionService.writeMicroarrayWebServiceBean(microarrayWebServiceBean);
+            RepositoryFactory.getInfrastructureRepository().removeAttributionsNotFound(markersToRemove, MICROARRAY_PUB);
+            RepositoryFactory.getInfrastructureRepository().addAttributionsNotFound(markersToAdd, MICROARRAY_PUB);
+
             HibernateUtil.flushAndCommitCurrentSession();
+
+            addedMarkers = buildResultTable(markersToAdd);
+            removedMarkers = buildResultTable(markersToRemove);
         } catch (Exception e) {
+            logger.error(e);
             HibernateUtil.rollbackTransaction();
-            logger.error("Failed to write bean out: ", e);
+            errorMessage = "Error in microarray update:\n" + ExceptionUtils.getFullStackTrace(e);
+        } finally {
+            if (HibernateUtil.currentSession().isOpen()) {
+                HibernateUtil.currentSession().close();
+            }
+            ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, jobName, false);
+            createErrorReport(null, null, config);
         }
+
     }
 
+    public static void main(String[] args) {
+        initLog4J();
+        setLoggerToInfoLevel(logger);
+        MicroarrayWebserviceJob job = new MicroarrayWebserviceJob();
+        job.setPropertyFilePath(args[0]);
+        job.setBaseDir(args[1]);
+        job.setJobName(args[2]);
+        job.init();
+        job.execute();
+    }
+
+    private static List<List<String>> buildResultTable(Collection<String> markers) {
+        List<List<String>> table = new ArrayList<>();
+        for (String marker : markers) {
+            List<String> row = new ArrayList<>();
+            row.add(marker);
+            row.add(expressionService.getGeoLinkForMarkerZdbId(marker));
+            table.add(row);
+        }
+        return table;
+    }
 
 }
