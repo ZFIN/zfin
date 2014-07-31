@@ -422,8 +422,10 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="-threads"/>
             <arg value="40"/>
+<!--
             <arg value="-numOfPublication"/>
             <arg value="2000"/>
+-->
         </java>
 
         <echo message="${validateData}/validatedata/${JobName}/${JobName}.faulty-PubMed-IDs.txt"/>
