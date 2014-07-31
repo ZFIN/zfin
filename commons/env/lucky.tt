@@ -59,7 +59,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
-<!--|SOURCEROOT|-->	/research/zusers/mochla/projects/ZFIN_WWW_try
+<!--|SOURCEROOT|-->	/research/zusers/mochla/projects/ZFIN_WWW_a
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	shmoo.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	mochla\@zfin.org
