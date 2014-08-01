@@ -7,7 +7,6 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.figure.service.FigureViewService;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
@@ -59,15 +58,13 @@ public class AntibodyTableRow {
         if (!expressionResult.isExpressionFound())
             setQualifier("Not Detected");
 
-/*
         if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
             FishAnnotation fish = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator().next().getFishAnnotation();
             //todo: needs to be zero-padded
             setFishNameOrder(fish.getName());
         } else {
-*/
-        setFishNameOrder(FigureViewService.buildFishNameOrder(genotypeExperiment));
-//        }
+            setFishNameOrder(genotypeExperiment.getGenotype().getNameOrder());
+        }
 
     }
 

@@ -31,11 +31,27 @@
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>
       <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+            <email>
+                <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+                <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Remove-GO-Terms-From-Withdrawn-Markers_w/Remove-GO-Terms-From-Withdrawn-Markers_w.html&quot;}</body>
+                <sendToDevelopers>false</sendToDevelopers>
+                <sendToRequester>false</sendToRequester>
+                <includeCulprits>false</includeCulprits>
+                <sendToRecipientList>true</sendToRecipientList>
+                <attachmentsPattern></attachmentsPattern>
+                <attachBuildLog>false</attachBuildLog>
+                <compressBuildLog>false</compressBuildLog>
+                <replyTo></replyTo>
+                <contentType>text/html</contentType>
+            </email>
+        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Remove-GO-Terms-From-Withdrawn-Markers_w/results.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Remove-GO-Terms-From-Withdrawn-Markers_w/Remove-GO-Terms-From-Withdrawn-Markers_w.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -52,7 +68,9 @@
       <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
-      <presendScript></presendScript>
+        <presendScript>if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
+    cancel = build.getArtifacts().isEmpty()
+}</presendScript>
       <attachBuildLog>false</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>
       <replyTo>${DB_OWNER}@zfin.org</replyTo>

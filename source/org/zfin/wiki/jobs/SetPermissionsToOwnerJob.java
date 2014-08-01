@@ -2,8 +2,12 @@ package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.wiki.service.WikiWebService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Set permission of pages with the following labels to the original creator if does not already
@@ -15,11 +19,21 @@ public class SetPermissionsToOwnerJob extends AbstractValidateDataReportTask {
 
     @Override
     public void execute() {
+        setLoggerFile();
+        setReportProperties();
+        clearReportDirectory();
+
         try {
             if (ZfinProperties.isPushToWiki()) {
                 WikiWebService wikiService = WikiWebService.getInstance();
-                wikiService.setOwnerForLabel("community_protocol");
-                wikiService.setOwnerForLabel("community_antibody");
+                List<String> pages = new ArrayList<>();
+                pages.addAll(wikiService.setOwnerForLabel("community_protocol"));
+                pages.addAll(wikiService.setOwnerForLabel("community_antibody"));
+
+                if (pages.size() > 0) {
+                    ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, jobName, true);
+                    createErrorReport(null, getStringifiedList(pages), config);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Error while setting wiki page permissions", e);

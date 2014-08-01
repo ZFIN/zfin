@@ -46,7 +46,7 @@ public class RemoveGoTermsFromWithdrawnMarkersJob extends AbstractValidateDataRe
             errors.add(e.getMessage());
         }
 
-        ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, "results", true);
+        ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, jobName, true);
         logger.info(config.getReportFile());
         List<List<String>> resultsDisplay = new ArrayList<>();
         for (MarkerGoTermEvidence evidence : markerGoTermEvidenceRepositoryList) {

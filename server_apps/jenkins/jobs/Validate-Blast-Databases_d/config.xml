@@ -35,7 +35,7 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Validate-Blast-Databases_d/failure_report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Validate-Blast-Databases_d/Validate-Blast-Databases_d.errors.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

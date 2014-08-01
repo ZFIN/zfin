@@ -7,7 +7,9 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.*;
 
 import javax.xml.rpc.ServiceException;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Please see http://confluence.atlassian.com/display/DOC/Remote+API+Specification
@@ -189,11 +191,13 @@ public class WikiWebService {
         }
     }
 
-    public void setOwnerForLabel(String label) throws Exception {
+    public List<String> setOwnerForLabel(String label) throws Exception {
+
+        List<String> modifiedPages = new ArrayList<>();
 
         if (!ZfinProperties.isPushToWiki()) {
             logger.debug("Not configured to update the wiki: WIKI_PUSH_TO_WIKI=false");
-            return;
+            return modifiedPages;
         }
 
         try {
@@ -222,13 +226,15 @@ public class WikiWebService {
                     permissions[1] = permissionForZfinGroup;
 
                     service.setContentPermissions(token, page.getId(), Permission.EDIT.getValue(), permissions);
+
+                    modifiedPages.add(page.getTitle());
                 }
             }  // end of for loop
         } catch (Exception e) {
             logger.error("Unable to set owner for label[" + label + "]", e);
             throw e;
         }
-
+        return modifiedPages;
     }
 
     /**
