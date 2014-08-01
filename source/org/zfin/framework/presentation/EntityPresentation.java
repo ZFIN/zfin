@@ -211,7 +211,7 @@ public abstract class EntityPresentation {
     }
 
     protected static String getViewStartTag(String zdbID) {
-        StringBuilder sb = new StringBuilder("<a href=\"");
+        StringBuilder sb = new StringBuilder("<a href=\"/");
         sb.append(zdbID);
         sb.append("\">");
         return sb.toString();
