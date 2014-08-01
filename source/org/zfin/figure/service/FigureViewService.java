@@ -769,6 +769,9 @@ public class FigureViewService {
     public static String buildFishNameOrder(GenotypeExperiment genotypeExperiment) {
         StringBuilder sb = new StringBuilder();
         sb.append(genotypeExperiment.getGenotype().getNameOrder());
+        //nameOrder must get truncated or something, because it can be identical when it shouldn't be,
+        //so I'm putting the actual name on there too, so that things that aren't the same won't sort as the same..
+        sb.append(genotypeExperiment.getGenotype().getName());
         if (CollectionUtils.isNotEmpty(genotypeExperiment.getExperiment().getExperimentConditions())) {
             for (ExperimentCondition xc : genotypeExperiment.getExperiment().getExperimentConditions()) {
                 if (xc.getSequenceTargetingReagent() != null)
