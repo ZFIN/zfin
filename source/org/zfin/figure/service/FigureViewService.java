@@ -210,6 +210,7 @@ public class FigureViewService {
     /**
      * List of fishes (FishAnnotation) from the phenotype shown in this Figure
      */
+/*
     public List<FishAnnotation> getExpressionFishes(Figure figure) {
         List<FishAnnotation> fishes = new ArrayList<>();
 
@@ -224,10 +225,12 @@ public class FigureViewService {
         Collections.sort(fishes, ComparatorCreator.orderBy("name"));
         return fishes;
     }
+*/
 
     /**
      * Get the list of expression genotypes for each figure in a list
      * */
+/*
     public Map<Figure, List<FishAnnotation>> getExpressionFishes (List<Figure> figures) {
         Map<Figure, List<FishAnnotation>> map = new HashMap<>();
 
@@ -236,6 +239,7 @@ public class FigureViewService {
 
         return map;
     }
+*/
 
     /**
      * This method is created because getExpressionFishes() alone won't display wild-type fish
@@ -249,6 +253,7 @@ public class FigureViewService {
             }
         }
 
+/*
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
             for (GenotypeExperimentFishAnnotation genotypeExperimentFishAnnotation: expressionResult.getExpressionExperiment().getGenotypeExperiment().getGenotypeExperimentFishAnnotations()) {
                 if (!fishesAndGenotypes.contains(genotypeExperimentFishAnnotation.getFishAnnotation())) {
@@ -256,6 +261,7 @@ public class FigureViewService {
                 }
             }
         }
+*/
 
         Collections.sort(fishesAndGenotypes, ComparatorCreator.orderBy("name"));
 
@@ -463,6 +469,7 @@ public class FigureViewService {
     /**
      * List of fishes (FishAnnotation) from the phenotype shown in this Figure
      */
+/*
     public List<FishAnnotation> getPhenotypeFishes(Figure figure) {
         List<FishAnnotation> fishes = new ArrayList<>();
 
@@ -477,10 +484,12 @@ public class FigureViewService {
         Collections.sort(fishes, ComparatorCreator.orderBy("name"));
         return fishes;
     }
+*/
 
     /**
      * Get the list of fishes for each figure in a list
      * */
+/*
     public Map<Figure, List<FishAnnotation>> getPhenotypeFishes(List<Figure> figures) {
         Map<Figure, List<FishAnnotation>> map = new HashMap<>();
 
@@ -489,6 +498,7 @@ public class FigureViewService {
 
         return map;
     }
+*/
 
     /**
      * This method is created because getExpressionFishes() alone won't display wild-type fish
@@ -502,6 +512,7 @@ public class FigureViewService {
             }
         }
 
+/*   Causing Object Not Found errors, I think because of a generation problem with genox_fish_annotation_search
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
             for (GenotypeExperimentFishAnnotation genotypeExperimentFishAnnotation: phenotypeExperiment.getGenotypeExperiment().getGenotypeExperimentFishAnnotations()) {
                 if (!fishesAndGenotypes.contains(genotypeExperimentFishAnnotation.getFishAnnotation())) {
@@ -509,6 +520,7 @@ public class FigureViewService {
                 }
             }
         }
+*/
 
         Collections.sort(fishesAndGenotypes, ComparatorCreator.orderBy("name"));
 
@@ -752,6 +764,19 @@ public class FigureViewService {
         pubZdbIDs.add("ZDB-PUB-010810-1");
 
         return pubZdbIDs.contains(publication.getZdbID());
+    }
+
+    public static String buildFishNameOrder(GenotypeExperiment genotypeExperiment) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(genotypeExperiment.getGenotype().getNameOrder());
+        if (CollectionUtils.isNotEmpty(genotypeExperiment.getExperiment().getExperimentConditions())) {
+            for (ExperimentCondition xc : genotypeExperiment.getExperiment().getExperimentConditions()) {
+                if (xc.getSequenceTargetingReagent() != null)
+                    sb.append(xc.getSequenceTargetingReagent().getAbbreviationOrder());
+            }
+        }
+
+        return sb.toString();
     }
 
 }

@@ -1,9 +1,11 @@
 package org.zfin.figure.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
+import org.zfin.figure.service.FigureViewService;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
@@ -54,13 +56,16 @@ public class ExpressionTableRow{
 
         setGeneGenoxZdbIDs(gene.getZdbID() + genotypeExperiment.getZdbID());
 
+/*
         if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
             FishAnnotation fish = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator().next().getFishAnnotation();
             //todo: needs to be zero-padded
             setFishNameOrder(fish.getName());
         } else {
-            setFishNameOrder(genotypeExperiment.getGenotype().getNameOrder());
-        }
+*/
+
+            setFishNameOrder(FigureViewService.buildFishNameOrder(genotypeExperiment));
+//        }
 
     }
 
