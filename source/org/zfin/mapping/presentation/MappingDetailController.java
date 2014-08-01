@@ -82,7 +82,10 @@ public class MappingDetailController {
             Collections.sort(mappedMarkerList, new ScoringSort());
             model.addAttribute("mappedMarkerList", mappedMarkerList);
         }
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Scoring: " + marker.getAbbreviation() + " on " + panel.getName());
+        if (marker == null)
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Scoring: " + panel.getName());
+        else
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Scoring: " + marker.getAbbreviation() + " on " + panel.getName());
         return "mapping/show-scoring.page";
     }
 
