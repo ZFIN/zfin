@@ -28,7 +28,7 @@ GENERICS = updateunFeatures.pl regen.sh scrubscan.pl unload_production.sh valida
 
 
 STATICS = postloaddb_almost.csh updatePNAS.sql loadDb.sh \
-	  makeDeveloperBlastDbs.sh build.xml set_unload_timestamp.sql delete_dup_alias.sql
+	  makeDeveloperBlastDbs.sh build.xml set_unload_timestamp.sql
 
 
 # ---------------  Production Rules  ------------------------------------
