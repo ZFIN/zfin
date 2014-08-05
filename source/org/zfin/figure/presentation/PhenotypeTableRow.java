@@ -38,13 +38,13 @@ public class PhenotypeTableRow{
         setEnd(phenotypeStatement.getPhenotypeExperiment().getEndStage());
         setPhenotypeStatement(phenotypeStatement);
 
-        if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
+/*        if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
             FishAnnotation fish = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator().next().getFishAnnotation();
             //todo: needs to be zero-padded
             setFishNameOrder(fish.getName());
-        } else {
+        } else {*/
             setFishNameOrder(genotypeExperiment.getGenotype().getNameOrder());
-        }
+/*        }*/
 
     }
 

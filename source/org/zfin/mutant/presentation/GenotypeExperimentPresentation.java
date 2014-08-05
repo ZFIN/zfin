@@ -26,21 +26,19 @@ public class GenotypeExperimentPresentation extends EntityPresentation {
 
     // the last 2 parameters are used only to be passed into ExperimentPresentation.getLink()
     public static String getLink(GenotypeExperiment genotypeExperiment, boolean suppressPopupLink, boolean suppressMoDetails) {
-        if (!genotypeExperiment.getGenotypeExperimentFishAnnotations().isEmpty()) {
+/*        if (!genotypeExperiment.getGenotypeExperimentFishAnnotations().isEmpty()) {
             Iterator<GenotypeExperimentFishAnnotation> it = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator();
             StringBuilder sb = new StringBuilder();
             while (it.hasNext()){
                 FishAnnotation added = it.next().getFishAnnotation();
                 sb.append(FishAnnotationPresentation.getLink(added)).append("   ");
             }
-//            logger.error("is not empty");
             return sb.toString();
-        } else { // fish is absent
-//            logger.error("is empty");
+        } else { // fish is absent*/
             return GenotypePresentation.getLink(genotypeExperiment.getGenotype(), suppressPopupLink) + "   "
                     + ExperimentPresentation.getLinkWithChemicalDetails(genotypeExperiment.getExperiment());
 
-        }
+//        }
 
     }
 
