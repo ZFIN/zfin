@@ -4,7 +4,7 @@ alter table gene_feature_result_view
   drop constraint gfrv_fas_id_foreign_key;
 
 
-delete from genox_fish_annotation_search_backup;
+delete from genox_fish_annotation_search_bkup;
 delete from fish_annotation_Search_backup;
 delete from gene_feature_result_view_backup;
 delete from figure_term_fish_search_backup;
@@ -19,7 +19,7 @@ select * from gene_feature_Result_View;
 insert into figure_term_Fish_Search_backup
 select * from figure_term_Fish_Search;
 
-insert into genox_fish_annotation_search_backup
+insert into genox_fish_annotation_search_bkup
  select * from genox_fish_annotation_search;
 
 delete from genox_fish_annotation_search;
