@@ -384,5 +384,7 @@ public interface MutantRepository {
      * @return list of phenotype statements
      */
     List<PhenotypeStatement> getPhenotypesOnObsoletedTerms(Ontology ontology);
+
+    List<GenotypeFigure> getGenotypeFiguresBySTR(SequenceTargetingReagent str);
 }
 

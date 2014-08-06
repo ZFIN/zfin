@@ -5,6 +5,7 @@ import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFigure;
+import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
@@ -188,75 +189,7 @@ public class AbstractFishViewBean {
         if (phenoStatements == null)
             return null;
 
-        if (phenoDisplays == null || phenoDisplays.size() == 0)
-            createPhenoDisplays();
-
-        return phenoDisplays;
-    }
-
-    /**
-     * Create a list of phenotypeDisplay objects organized by phenotype statement first,
-     * then by the associated experiment.
-     */
-    private void createPhenoDisplays() {
-        if (phenoStatements != null && phenoStatements.size() > 0) {
-
-            // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
-            Map<String, PhenotypeDisplay> phenoMap = new HashMap<String, PhenotypeDisplay>();
-
-            for (PhenotypeStatement pheno : phenoStatements) {
-
-                Figure fig = pheno.getPhenotypeExperiment().getFigure();
-                Publication pub = fig.getPublication();
-
-                Experiment exp = pheno.getPhenotypeExperiment().getGenotypeExperiment().getExperiment();
-
-                String keyPheno = pheno.getPhenoStatementString();
-                String key;
-                if (exp.isStandard())
-                    key = keyPheno + "standard";
-                else if (exp.isChemical())
-                    key = keyPheno + "chemical";
-                else
-                    key = keyPheno + exp.getZdbID();
-
-                PhenotypeDisplay phenoDisplay;
-
-                // if the key not in the map, instantiate a display object and add it to the map
-                // otherwise, get the display object from the map
-                if (!phenoMap.containsKey(key)) {
-                    phenoDisplay = new PhenotypeDisplay(pheno);
-                    phenoDisplay.setPhenoStatement(pheno);
-
-                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<Publication, SortedSet<Figure>>();
-                    SortedSet<Figure> figures = new TreeSet<Figure>();
-                    figures.add(fig);
-                    figuresPerPub.put(pub, figures);
-
-                    phenoDisplay.setFiguresPerPub(figuresPerPub);
-
-                    phenoMap.put(key, phenoDisplay);
-                } else {
-                    phenoDisplay = phenoMap.get(key);
-
-                    if (phenoDisplay.getFiguresPerPub().containsKey(pub)) {
-                        phenoDisplay.getFiguresPerPub().get(pub).add(fig);
-                    } else {
-                        SortedSet<Figure> figures = new TreeSet<Figure>();
-                        figures.add(fig);
-                        phenoDisplay.getFiguresPerPub().put(pub, figures);
-                    }
-                }
-            }
-
-            phenoDisplays = new ArrayList<PhenotypeDisplay>(phenoMap.size());
-
-            if (phenoMap.values().size() > 0) {
-                phenoDisplays.addAll(phenoMap.values());
-                Collections.sort(phenoDisplays);
-            }
-
-        }
+        return PhenotypeService.getPhenotypeDisplays(phenoStatements,"conditon");
     }
 
     public void setPhenoDisplays(List<PhenotypeDisplay> phenoDisplays) {
@@ -268,7 +201,7 @@ public class AbstractFishViewBean {
             return 0;
         } else {
             if (phenoDisplays == null)
-                createPhenoDisplays();
+                phenoDisplays = PhenotypeService.getPhenotypeDisplays(phenoStatements,"condition");
 
             if (phenoDisplays == null)
                 return 0;

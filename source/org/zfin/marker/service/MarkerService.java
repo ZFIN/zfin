@@ -16,7 +16,9 @@ import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -146,10 +148,10 @@ public class MarkerService {
                         MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
                 );
         relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
-                        .getDBLinksForSecondRelatedMarker(marker
-                                , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
-                                , MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                        )
+                .getDBLinksForSecondRelatedMarker(marker
+                        , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
+                        , MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
         );
         relatedLinks.addAll(getTranscriptReferences(marker));
         for (RelatedMarkerDBLinkDisplay relatedLink : relatedLinks) {
@@ -840,5 +842,9 @@ public class MarkerService {
         orthologyPresentationBean.setNotes(RepositoryFactory.getInfrastructureRepository().getExternalOrthologyNoteStrings(gene.getZdbID()));
 
         return orthologyPresentationBean;
+    }
+
+    public static List<GenotypeFigure> getPhenotypeDataForSTR(SequenceTargetingReagent str) {
+        return RepositoryFactory.getMutantRepository().getGenotypeFiguresBySTR(str);
     }
 }

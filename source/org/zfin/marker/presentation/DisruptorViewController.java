@@ -11,8 +11,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
@@ -72,7 +71,16 @@ public class DisruptorViewController {
         disruptorBean.setMarkerRelationshipPresentationList(knockdownRelationships);
 
         // PHENOTYPE
-        disruptorBean.setPhenotypeOnMarkerBeans(MarkerService.getPhenotypeOnGene(disruptor));
+        List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(disruptor);
+        if (genotypeFigures == null || genotypeFigures.size() == 0)  {
+            disruptorBean.setPhenotypeDisplays(null);
+        } else {
+            List<PhenotypeStatement> phenoStatements = new ArrayList<PhenotypeStatement>();
+            for (GenotypeFigure genoFig : genotypeFigures) {
+                phenoStatements.addAll(genoFig.getPhenotypeExperiment().getPhenotypeStatements());
+            }
+            disruptorBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenoStatements,"fish"));
+        }
 
         // GENOTYPE (for CRISPR and TALEN only at this time)
         if (disruptorBean.isTALEN() || disruptorBean.isCRISPR()) {
@@ -83,8 +91,8 @@ public class DisruptorViewController {
                 disruptorBean.setGenotypeData(null);
             } else {
                 for (Genotype geno : genotypes) {
-                  GenotypeInformation genoInfo = new GenotypeInformation(geno);
-                  genoData.add(genoInfo);
+                    GenotypeInformation genoInfo = new GenotypeInformation(geno);
+                    genoData.add(genoInfo);
                 }
                 Collections.sort(genoData);
                 disruptorBean.setGenotypeData(genoData);

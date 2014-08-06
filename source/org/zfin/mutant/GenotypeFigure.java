@@ -17,6 +17,7 @@ public class GenotypeFigure implements Serializable {
     private GenericTerm qualityTerm;
     private String tag;
     private Marker morpholino;
+    private PhenotypeExperiment phenotypeExperiment;
 
     public int getId() {
         return id;
@@ -80,5 +81,13 @@ public class GenotypeFigure implements Serializable {
 
     public void setQualityTerm(GenericTerm qualityTerm) {
         this.qualityTerm = qualityTerm;
+    }
+
+    public PhenotypeExperiment getPhenotypeExperiment() {
+        return phenotypeExperiment;
+    }
+
+    public void setPhenotypeExperiment(PhenotypeExperiment phenotypeExperiment) {
+        this.phenotypeExperiment = phenotypeExperiment;
     }
 }

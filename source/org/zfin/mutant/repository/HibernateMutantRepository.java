@@ -1491,4 +1491,15 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return allPhenotypes;
     }
+
+    public List<GenotypeFigure> getGenotypeFiguresBySTR(SequenceTargetingReagent str) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct genoFig from GenotypeFigure genoFig " +
+                "     where genoFig.morpholino.zdbID = :zdbID";
+        Query query = session.createQuery(hql);
+        query.setParameter("zdbID", str.getZdbID());
+
+        return (List<GenotypeFigure>) query.list();
+    }
 }

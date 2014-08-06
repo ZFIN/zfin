@@ -1,6 +1,6 @@
 create procedure regen_genofig_clean_exp()
   -- ---------------------------------------------------------------------------------------------
-  -- find the clean data and MO data. finding the data in advance avoids exists clauses 
+  -- find the clean data and MO data. finding the data in advance avoids exists clauses
   -- in the main search.
   -- INPUT VARS:
   --   none
@@ -29,15 +29,19 @@ create procedure regen_genofig_clean_exp()
   -- gather the clean environments with sequence-targeting reagents
   insert into regen_genofig_clean_exp_with_morph_temp
       ( rgfcx_clean_exp_zdb_id, rgfcx_morph_zdb_id )
-  select distinct exp_zdb_id, expcond_mrkr_zdb_id 
+  select distinct exp_zdb_id, expcond_mrkr_zdb_id
   from experiment, experiment_condition xc1, marker
   where exp_zdb_id = xc1.expcond_exp_zdb_id
     and xc1.expcond_mrkr_zdb_id = mrkr_zdb_id
     and not exists (select 'x'
                       from experiment_condition xc2 , condition_data_type
-                     where xc1.expcond_exp_zdb_id = xc2.expcond_exp_zdb_id 
+                     where xc1.expcond_exp_zdb_id = xc2.expcond_exp_zdb_id
                        and xc2.expcond_cdt_zdb_id = cdt_zdb_id
-                       and cdt_group not in ("morpholino","TALEN","CRISPR"));
+                       and cdt_group not in ("morpholino","TALEN","CRISPR"))
+    and not exists (select 'x'
+                      from experiment_condition xc3
+                     where exp_zdb_id = xc3.expcond_exp_zdb_id
+                       and xc3.expcond_mrkr_zdb_id != xc1.expcond_mrkr_zdb_id);
 
 
   -- gather the "not normal" phenotype records

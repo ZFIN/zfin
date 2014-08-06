@@ -1,10 +1,14 @@
 package org.zfin.mutant;
 
 import org.apache.commons.lang.StringUtils;
+import org.zfin.expression.Experiment;
+import org.zfin.expression.Figure;
+import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
+import org.zfin.publication.Publication;
 
 import java.util.*;
 
@@ -322,7 +326,80 @@ public class PhenotypeService {
         if (superterm != null)
             if (superterm.getOntology().equals(Ontology.GO_BP)||(superterm.getOntology().equals(Ontology.GO_MF))||(superterm.getOntology().equals(Ontology.GO_CC)))
                 termList.add(superterm);
-           }
+    }
+
+    /**
+     * Create a list of phenotypeDisplay objects organized by phenotype statement first,
+     * then by the associated experiment.
+     */
+    public static List<PhenotypeDisplay> getPhenotypeDisplays(List<PhenotypeStatement> phenotypeStatements, String groupBy) {
+        if (phenotypeStatements != null && phenotypeStatements.size() > 0) {
+
+            // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
+            Map<String, PhenotypeDisplay> phenoMap = new HashMap<String, PhenotypeDisplay>();
+
+            for (PhenotypeStatement pheno : phenotypeStatements) {
+
+                Figure fig = pheno.getPhenotypeExperiment().getFigure();
+                Publication pub = fig.getPublication();
+
+                Experiment exp = pheno.getPhenotypeExperiment().getGenotypeExperiment().getExperiment();
+
+                String key;
+                String keyPheno = pheno.getPhenoStatementString();
+                if(groupBy.equals("condition")) {
+                    if (exp.isStandard())
+                        key = keyPheno + "standard";
+                    else if (exp.isChemical())
+                        key = keyPheno + "chemical";
+                    else
+                        key = keyPheno + exp.getZdbID();
+                } else {
+                    key = keyPheno + pheno.getPhenotypeExperiment().getGenotypeExperiment().getGenotype().getZdbID();
+                }
+
+                PhenotypeDisplay phenoDisplay;
+
+                // if the key not in the map, instantiate a display object and add it to the map
+                // otherwise, get the display object from the map
+                if (!phenoMap.containsKey(key)) {
+                    phenoDisplay = new PhenotypeDisplay(pheno);
+                    phenoDisplay.setPhenoStatement(pheno);
+
+                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<Publication, SortedSet<Figure>>();
+                    SortedSet<Figure> figures = new TreeSet<Figure>();
+                    figures.add(fig);
+                    figuresPerPub.put(pub, figures);
+
+                    phenoDisplay.setFiguresPerPub(figuresPerPub);
+
+                    phenoMap.put(key, phenoDisplay);
+                } else {
+                    phenoDisplay = phenoMap.get(key);
+
+                    if (phenoDisplay.getFiguresPerPub().containsKey(pub)) {
+                        phenoDisplay.getFiguresPerPub().get(pub).add(fig);
+                    } else {
+                        SortedSet<Figure> figures = new TreeSet<Figure>();
+                        figures.add(fig);
+                        phenoDisplay.getFiguresPerPub().put(pub, figures);
+                    }
+                }
+            }
+
+            List<PhenotypeDisplay> phenoDisplays = new ArrayList<PhenotypeDisplay>(phenoMap.size());
+
+            if (phenoMap.values().size() > 0) {
+                phenoDisplays.addAll(phenoMap.values());
+                Collections.sort(phenoDisplays);
+            }
+
+            return phenoDisplays;
+
+        }  else {
+            return null;
+        }
+    }
 }
 
 

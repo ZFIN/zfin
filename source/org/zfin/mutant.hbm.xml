@@ -586,6 +586,9 @@
         <many-to-one name="morpholino" class="org.zfin.marker.Marker">
             <column name="gffs_morph_zdb_id" not-null="false"/>
         </many-to-one>
+        <many-to-one name="phenotypeExperiment" class="org.zfin.mutant.PhenotypeExperiment">
+            <column name="gffs_phenox_pk_id" not-null="true"/>
+        </many-to-one>
     </class>
 
     <class name="org.zfin.mutant.Zygosity" table="zygocity">

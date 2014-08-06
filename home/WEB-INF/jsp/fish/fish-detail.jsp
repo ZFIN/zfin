@@ -119,7 +119,7 @@
     <c:choose>
         <c:when test="${formBean.numberOfPhenoDisplays > 0 }">
             <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="5"
-                                 suppressMoDetails="true"/>
+                                 suppressMoDetails="true" secondColumn="condition"/>
             <c:if test="${formBean.numberOfPhenoDisplays > 5}">
                 <table width="100%">
                     <tr align="left">
