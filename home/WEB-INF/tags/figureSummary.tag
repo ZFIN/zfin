@@ -15,7 +15,7 @@
         <tr>
             <th align="left" width="20%">Publication</th>
             <th align="left" width="5%">Data</th>
-            <th align="left" width="5%"> &nbsp; </th>
+            <th align="left" width="300"> &nbsp; </th>
             <c:if test="${showGenotype}">
                 <%--<th align="left" width="15%">Conditions</th>--%>
                 <th align="left" width="15%">Genotype</th>
@@ -55,9 +55,10 @@
                                 <img border="1" src="/imageLoadUp/${figureExpressionSummaryDisplay.thumbnail}"
                                      height="50"
                                      title="${figureExpressionSummaryDisplay.imgCount} image<c:if test="${figureExpressionSummaryDisplay.imgCount > 1}">s</c:if>"
-                                     alt=""/>
+                                     alt=""
+                                     style="margin:0px -4px"/>
                                 <c:if test="${figureExpressionSummaryDisplay.imgCount > 1}">
-                                    <img border="0" src="/images/multibars.gif" alt="multiple images"/>
+                                    <img border="0" src="/images/multibars.gif" alt="multiple images" />
                                 </c:if>
                             </zfin:link>
                         </c:if>
