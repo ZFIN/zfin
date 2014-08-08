@@ -8,7 +8,7 @@
 /private/ZfinLinks/Commons/bin/reline cur_ens_db.txt
 
 # pick the most recent release
-set cur=`/usr/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
+set cur=`/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
 
 # what is being used as the most current release
 echo "Using Ensembl release: $cur"
@@ -17,12 +17,12 @@ echo "Using Ensembl release: $cur"
 # return in informix's load file format.
 echo " fetch_ensdargOttdarg.sql vs ensembldb.ensembl.org"
 
-/usr/bin/cat fetch_ensdargOttdargTable.mysql | \
+/bin/cat fetch_ensdargOttdargTable.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur >!  ensdargOttdarg.unl;
 
 /bin/expand -t 2 ensdargOttdarg.unl > ensdargOttdarg1.unl
-/usr/bin/sed 's/  /|/g' ensdargOttdarg1.unl > ensdargOttdarg2.unl
-/usr/bin/sed 's/$/|/' ensdargOttdarg2.unl > ensdargOttdarg3.unl
+/bin/sed 's/  /|/g' ensdargOttdarg1.unl > ensdargOttdarg2.unl
+/bin/sed 's/$/|/' ensdargOttdarg2.unl > ensdargOttdarg3.unl
 
 # load the file from Ensembl mysql into the local database
 # rollback if not called with the (first) argument "commit"

@@ -9,7 +9,7 @@
 /private/ZfinLinks/Commons/bin/reline cur_ens_db.txt
 
 # pick the most recent release
-set cur=`/usr/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
+set cur=`/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
 
 # what is being used as the most current release
 echo "Using Ensembl release: $cur"
@@ -18,11 +18,11 @@ echo "Using Ensembl release: $cur"
 # return in informix's load file format.
 echo " fetch_sangerMutantInfo.sql vs ensembldb.ensembl.org"
 
-/usr/bin/cat fetch_sangerMutantInfo.mysql | \
+/bin/cat fetch_sangerMutantInfo.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur >!  sangerMutantData.unl;
 /bin/expand -t 2 sangerMutantData.unl > sangerMutantData1.unl
-/usr/bin/sed 's/  /|/g' sangerMutantData1.unl > sangerMutantData2.unl
-/usr/bin/sed 's/$/|/' sangerMutantData2.unl > sangerMutantData3.unl
+/bin/sed 's/  /|/g' sangerMutantData1.unl > sangerMutantData2.unl
+/bin/sed 's/$/|/' sangerMutantData2.unl > sangerMutantData3.unl
 
 # load the file from Ensembl mysql into the local database
 # rollback if not called with the (first) argument "commit"
@@ -38,11 +38,11 @@ echo "*** loading SangerMutantData into <!--|DB_NAME|--> ***"
 
 /bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/Ensembl/ensdarPMapping*.unl;
 
-/usr/bin/cat fetch_ensdarpInfo.mysql | \
+/bin/cat fetch_ensdarpInfo.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur >!  ensdarPMapping.unl;
 /bin/expand -t 2 ensdarPMapping.unl > ensdarPMapping1.unl
-/usr/bin/sed 's/  /|/g' ensdarPMapping1.unl > ensdarPMapping2.unl
-/usr/bin/sed 's/$/|/' ensdarPMapping2.unl > ensdarPMapping3.unl
+/bin/sed 's/  /|/g' ensdarPMapping1.unl > ensdarPMapping2.unl
+/bin/sed 's/$/|/' ensdarPMapping2.unl > ensdarPMapping3.unl
 
 # load the file from Ensembl mysql into the local database
 # rollback if not called with the (first) argument "commit"

@@ -122,10 +122,17 @@ dblink_linked_recid
      and dblink_zdb_id = id
 and not exists (Select 'x' from ensdar_mapping where ensm_ensdarg_id = dblink_acc_num);
 
+!echo "delete from tmp_drop"
+
 delete from tmp_drop
- where exists (Select 'x' from record_attribution
-       	      	      where recattrib_data_zdb_id = id
-		      and recattrib_source_zdb_id in ('ZDB-PUB-120207-1','ZDB-PUB-130213-1','ZDB-PUB-130211-1','ZDB-PUB-130725-1','ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1','ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1');
+ where exists (select 'x' from record_attribution
+       	       where recattrib_data_zdb_id = id
+		 and recattrib_source_zdb_id in ('ZDB-PUB-120207-1', 'ZDB-PUB-130213-1', 'ZDB-PUB-130211-1',
+                                                 'ZDB-PUB-130725-1', 'ZDB-PUB-130425-4', 'ZDB-PUB-100504-26', 
+                                                 'ZDB-PUB-100504-23', 'ZDB-PUB-100504-24','ZDB-PUB-070315-1',
+                                                 'ZDB-PUB-130211-1','ZDB-PUB-120207-1','ZDB-PUB-130213-1'));
+
+!echo "select from tmp_drop"
 
 select * From tmp_drop
  where id = 'ZDB-DBLINK-120813-30916';

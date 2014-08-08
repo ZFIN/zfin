@@ -7,12 +7,12 @@
 /private/ZfinLinks/Commons/bin/reline cur_ens_db.txt
 
 # pick the most recent release
-set cur=`/usr/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
+set cur=`/bin/sed -n 's/^\(danio_rerio_core_.*\)/\1/gp' < cur_ens_db.txt`
 
 # what is being used as the most current release
 echo "Using Ensembl release: $cur"
 
-/usr/bin/cat fetch_ensdarT_dbacc.mysql | \
+/bin/cat fetch_ensdarT_dbacc.mysql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur |\
 /usr/bin/nawk '{print $1 "|" $2 "|"}' >! ensdarT_dbacc.unl;
 
