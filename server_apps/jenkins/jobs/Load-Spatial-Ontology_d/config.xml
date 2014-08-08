@@ -50,7 +50,10 @@
                     <email>
                         <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>${FILE,path=&quot;server_apps/data_transfer/LoadOntology/Load-Spatial-Ontology_d/statistics.html&quot;}</body>
+                        <body>
+                            ${FILE,path=&quot;server_apps/data_transfer/LoadOntology/Load-Spatial-Ontology_d/statistics.html&quot;}
+                            ${BUILD_LOG_REGEX,regex="Current Version"}
+                        </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
