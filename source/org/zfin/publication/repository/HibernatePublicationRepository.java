@@ -1778,15 +1778,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         resultList = query.list();
         pubList.addAll(resultList);
 
-        hql = "select p.publication " +
-                " from PublicationAttribution p , GenotypeFeature gtf " +
-                " where gtf.feature.zdbID  = p.dataZdbID " +
-                "  and gtf.genotype.zdbID = :genotypeZdbID ";
-        query = session.createQuery(hql);
-        query.setString("genotypeZdbID", genotype.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
         return pubList;
     }
 
