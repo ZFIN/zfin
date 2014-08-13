@@ -138,6 +138,10 @@
 
  <h3>Genomics</h3>
   <ul>
+    <li>Data mining:
+        <a href="http://www.zebrafishmine.org">ZebrafishMine</a>,
+        <a href="http://www.ensembl.org/biomart">BioMart</a>
+    </li>
     <li>Browse genome:
       <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">ZFIN</a>,
       <a href="http://www.ensembl.org/Danio_rerio/">Ensembl</a>,
