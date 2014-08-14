@@ -30,9 +30,10 @@
 
 
     <category name="org.zfin" additivity="true">
-        <priority value="debug"/>
+        <priority value="info"/>
     </category>
 
+<!--
 
     <category name="org.hibernate.SQL" additivity="true">
         <priority value="trace"/>
@@ -45,7 +46,7 @@
     <category name="org.zfin.ontology" additivity="true">
         <priority value="info"/>
     </category>
-
+-->
     <category name="org.zfin.framework.StringCleanInterceptor" additivity="true">
         <priority value="error"/>
     </category>
