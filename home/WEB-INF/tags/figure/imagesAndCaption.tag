@@ -22,17 +22,29 @@
       <%--has permission to show, single image, can be video--%>
     <c:if test="${figure.publication.canShowImages && !empty figure.images && fn:length(figure.images) == 1}">
         <c:forEach var="image" items="${figure.images}">
-            <zfin:link entity="${image}">
-                <c:choose>
-                    <c:when test="${!empty image.imageWithAnnotationsFilename}">
-                        <c:set var="filename" value="${image.imageWithAnnotationsFilename}"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="filename" value="${image.imageFilename}"/>
-                    </c:otherwise>
-                </c:choose>
-                <img class="figure-image medium" src="/imageLoadUp/medium/${filename}"/>
-            </zfin:link>
+            <c:choose>
+                <c:when test="${image.videoStill}">
+                    <video controls ${autoplay} loop height="500" poster="/imageLoadUp/medium/${image.imageFilename}">
+                        <c:forEach var="video" items="${image.videos}">
+                            <source src="/videoLoadUp/${video.videoFilename}"/>
+                        </c:forEach>
+                        This browser does not support embedded videos.
+                    </video>
+                </c:when>
+                <c:otherwise>
+                    <zfin:link entity="${image}">
+                        <c:choose>
+                            <c:when test="${!empty image.imageWithAnnotationsFilename}">
+                                <c:set var="filename" value="${image.imageWithAnnotationsFilename}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="filename" value="${image.imageFilename}"/>
+                            </c:otherwise>
+                        </c:choose>
+                        <img class="figure-image medium" src="/imageLoadUp/medium/${filename}"/>
+                    </zfin:link>
+                </c:otherwise>
+            </c:choose>
         </c:forEach>
     </c:if>
 

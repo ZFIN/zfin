@@ -1,16 +1,8 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use XML::Twig;
 use LWP::Simple;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
-
-#set environment variables
-
-$ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
-$ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
-$ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
-$ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
-
 $dbname = "<!--|DB_NAME|-->";
 
 #print "$dbname\n\n";
@@ -22,7 +14,7 @@ $query = 'zebrafish[mesh]+OR+zebra fish[mesh]+OR+danio rerio';
 #assemble the esearch URL
 $base = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 $retmax = '200';
-$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=60&datetype=edat&retmax=$retmax";
+$url = $base . "esearch.fcgi?db=$db&term=$query&usehistory=y&reldate=80&datetype=edat&retmax=$retmax";
 
 #get the esearch URL
 #the usehistory key creates a url key that we can use to access the return: suggested for larger queries by NCBI
@@ -79,9 +71,7 @@ for ($retstart = 0; $retstart < $count; $retstart += $retmax) {
 	);
     $twig->parseurl($fetch_url);
     
-#add exit here
-#add close here
-#add main doc
+    
 #print "Total Pubs Added: ".$pubCount."\n";
 #print $web."\n";
 #print $key."\n";

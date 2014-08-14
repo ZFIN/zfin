@@ -18,6 +18,7 @@ import org.zfin.feature.FeatureServiceTest;
 import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.figure.repository.FigureRepositorySpec;
 import org.zfin.figure.service.FigureViewServiceSpec;
+import org.zfin.figure.service.ImageServiceSpec;
 import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.framework.presentation.ZfinJSPFunctionsTest;
@@ -93,6 +94,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
         GwtConversionTest.class,
+        ImageServiceSpec.class,
         InfrastructureRepositoryTest.class,
         LinkageRepositoryTest.class,
         MarkerRepositoryTest.class,

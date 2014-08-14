@@ -429,6 +429,16 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 	  <TABLE border=0 cellpadding=20>
 	    <TR>
 	      <TD align=center bgcolor=#000000>
+                <?MIBLOCK COND="$(EC,$fimgview_img_is_video_still,t)">
+                  <?MIVAR>
+                  <video controls loop height="500" poster="<!--|IMAGE_LOAD|-->/medium/$fimgview_fimg_image">
+                    <?MISQL SQL="select video_path_to_file from video where video_image_still_zdb_id='$fimgview_image_zdb_id';">
+                        <source src="<!--|VIDEO_LOAD|-->/$1" />
+                    <?/MISQL>
+                    This browser does not support embedded videos.
+                  </video>
+                  <?/MIVAR>
+                <?MIELSE>
 
 
 		<?MIVAR> 
@@ -456,6 +466,8 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 		    }
 		  </script>
 		<?/MIVAR>
+		<?/MIBLOCK>
+
 		<?MIVAR COND="$(XST,$UPDATE)">
 		  <br>
 		  <INPUT TYPE=button 

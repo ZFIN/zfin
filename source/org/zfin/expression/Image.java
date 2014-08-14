@@ -18,6 +18,7 @@ public class Image implements Serializable {
 
     private String zdbID;
     private Figure figure;
+    private String label;
     private String imageFilename;
     private String imageWithAnnotationsFilename;
     private Integer width;
@@ -43,6 +44,14 @@ public class Image implements Serializable {
 
     public void setFigure(Figure figure) {
         this.figure = figure;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public String getZdbID() {

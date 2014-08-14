@@ -43,8 +43,18 @@
     </macrodef>
 
     <target name="runFigureTests" depends="compile,build-tests">
+        <runBatchTest classNamePattern="**/Image*Spec.class" outfile="figureTests" verbose="true"/>
         <runBatchTest classNamePattern="**/Figure*Spec.class" outfile="figureTests" verbose="true"/>
     </target>
+
+    <target name="runImageTests" depends="compile,build-tests">
+        <runBatchTest classNamePattern="**/Image*Spec.class" outfile="imageTests" verbose="true"/>
+    </target>
+
+    <target name="runVideoTests" depends="compile,build-tests">
+        <runBatchTest classNamePattern="**/Video*Spec.class" outfile="videoTests" verbose="true"/>
+    </target>
+
 
     <macrodef name="runTest">
         <attribute name="verbose"/>
