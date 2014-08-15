@@ -1,4 +1,4 @@
- SELECT zdb_ID,
+SELECT zdb_ID,
        authors,
        title,
        Year(pub_date) AS pyear,
