@@ -490,7 +490,7 @@ $ctAlready = $ctAlready + $ctDiffrentZFgeneNames;
 $subject = "Auto from $dbname: " . "$ctAlready zebrafish gene names already considered for renaming";
 ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","alreadyExamined");
 
-### &doSystemCommand("/bin/cat inconsistentZebrafishGeneNamesReport >> alreadyExamined");
+system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/ORTHO/");
 
 exit;
 
