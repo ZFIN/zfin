@@ -64,16 +64,6 @@ public class GenotypeInformation implements Comparable {
         return 0;
     }
 
-    public Boolean getIsMorpholino() {
-
-        morphfigureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoMorph(genotype);
-        numberOfMorphFigures = morphfigureResults.getTotalCount();
-        if (numberOfMorphFigures != 0) {
-            return isMorpholino = true;
-        }
-        return isMorpholino;
-    }
-
     /**
      * @return There should be a single figure per GenotypeStatistics
      */
@@ -147,14 +137,14 @@ public class GenotypeInformation implements Comparable {
             Feature feature = feat.getFeature();
             Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
             SortedSet<FeatureMarkerRelationship> affectedGenes = new TreeSet<FeatureMarkerRelationship>();
-        for (FeatureMarkerRelationship ftrmrkrRelation : rels) {
-            if (ftrmrkrRelation != null)
-                if (ftrmrkrRelation.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                    affectedGenes.add(ftrmrkrRelation);
-                }
-        }
+            for (FeatureMarkerRelationship ftrmrkrRelation : rels) {
+                if (ftrmrkrRelation != null)
+                    if (ftrmrkrRelation.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                        affectedGenes.add(ftrmrkrRelation);
+                    }
+            }
             for (FeatureMarkerRelationship rel : affectedGenes) {
-                 Marker marker = rel.getMarker();
+                Marker marker = rel.getMarker();
                 // Only add true genes
                 if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                     markers.add(marker);
@@ -216,23 +206,6 @@ public class GenotypeInformation implements Comparable {
         return singleExpPublication;
     }
 
-    public int getNumberOfPubs() {
-        return pubs.size();
-    }
-
-    public Publication getSinglePub() {
-        if (pubs == null || pubs.size() != 1)
-            throw new RuntimeException("Can call this method only when there is exactly one publication");
-        return pubs.iterator().next();
-    }
-
-    public Publication getSingleExpPub() {
-        if (pubs == null || pubs.size() != 1)
-            throw new RuntimeException("Can call this method only when there is exactly one publication");
-        return pubs.iterator().next();
-    }
-
-
     public void addFigure(Figure figure) {
         if (figure == null)
             return;
@@ -247,28 +220,10 @@ public class GenotypeInformation implements Comparable {
         pubs.add(publication);
     }
 
-
-    public int getNumberOfImages() {
-        numberOfImages = images.size();
-        return numberOfImages;
-    }
-
     public Image getImage() {
         if (images == null || images.size() != 1)
             throw new RuntimeException("Can call this method only when there is exactly one image");
         return images.iterator().next();
-    }
-
-    public void addImage(Image image) {
-        if (image == null)
-            return;
-        images.add(image);
-    }
-
-    public void addGene(Marker gene) {
-        if (gene == null)
-            return;
-        genes.add(gene);
     }
 
     public Set<Marker> getGenes() {
