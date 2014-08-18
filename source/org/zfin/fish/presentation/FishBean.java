@@ -2,6 +2,7 @@ package org.zfin.fish.presentation;
 
 import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
+import org.zfin.fish.FeatureGene;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -20,6 +21,7 @@ public class FishBean extends AbstractFishViewBean {
     private int totalNumberOfPublications;
     private int totalNumberOfPhenotypes;
     private List<SequenceTargetingReagent> sequenceTargetingReagents;
+    private List<FeatureGene> genomicFeatures;
 
     public AuditLogItem getLatestUpdate() {
         AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
@@ -34,7 +36,7 @@ public class FishBean extends AbstractFishViewBean {
     /**
      * If the genotype is not set check the list of genotypes which is most likely
      * only one distinct genotype.
-     * // ToDo: cleanup: remove genotypes in liue of genotype.
+     * // ToDo: cleanup: remove genotypes in lieu of genotype.
      * @return Genotype
      */
     public Genotype getGenotype(){
@@ -91,4 +93,13 @@ public class FishBean extends AbstractFishViewBean {
     public void setTotalNumberOfPhenotypes(int totalNumberOfPhenotypes) {
         this.totalNumberOfPhenotypes = totalNumberOfPhenotypes;
     }
+
+    public List<FeatureGene> getGenomicFeatures() {
+        return genomicFeatures;
+    }
+
+    public void setGenomicFeatures(List<FeatureGene> genomicFeatures) {
+        this.genomicFeatures = genomicFeatures;
+    }
+
 }

@@ -1,5 +1,7 @@
 package org.zfin.fish.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.GeneCentricExpressionData;
 import org.zfin.feature.presentation.GenotypeBean;
 import org.zfin.feature.presentation.GenotypeDetailController;
+import org.zfin.fish.FeatureGene;
+import org.zfin.fish.MutationType;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PresentationConverter;
@@ -88,6 +92,32 @@ public class FishDetailController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + fishName);
 
         return "fish/fish-detail.page";
+    }
+
+    @RequestMapping(value = "/fish-detail-popup/{ID}")
+    protected String showFishDetailPopup(Model model, @PathVariable("ID") String fishId) {
+        Fish fish = RepositoryFactory.getFishRepository().getFish(
+                ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishId)
+        );
+        FishBean form = new FishBean();
+        form.setFish(fish);
+        retrieveGenotypeExperiment(form, fish);
+        retrieveGenotypes(form, fish);
+        retrieveSTRData(form, fish);
+        List<FeatureGene> genomicFeatures = new ArrayList<>();
+        // remove any featureGenes that have an STR mutation type and use the resulting list
+        // to populate the form's genomicFeatures field
+        CollectionUtils.select(fish.getFeatureGenes(), new Predicate() {
+            @Override
+            public boolean evaluate(Object featureGene) {
+                MutationType m = ((FeatureGene) featureGene).getMutationTypeDisplay();
+                return m != MutationType.MORPHOLINO && m != MutationType.CRISPR && m != MutationType.TALEN;
+            }
+        }, genomicFeatures);
+        form.setGenomicFeatures(genomicFeatures);
+
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "fish/fish-detail-popup.popup";
     }
 
     private void addExpressionSummaryToForm(Model model, String fishID) {
@@ -187,6 +217,9 @@ public class FishDetailController {
 
 
     private void retrieveGenotypeExperiment(FishBean form, Fish fish) {
+        if (fish.getGenotypeExperimentIDs() == null) {
+            return;
+        }
         List<GenotypeExperiment> genotypeExperiments = new ArrayList<GenotypeExperiment>(fish.getGenotypeExperimentIDs().size());
         for (String genoID : fish.getGenotypeExperimentIDs()) {
             genotypeExperiments.add(getMutantRepository().getGenotypeExperiment(genoID));
@@ -196,8 +229,13 @@ public class FishDetailController {
 
     private void retrieveGenotypes(FishBean form, Fish fish) {
         List<Genotype> genotype = new ArrayList<Genotype>();
-        for (String genoxID : fish.getGenotypeExperimentIDs()) {
-            genotype.add(getMutantRepository().getGenotypeExperiment(genoxID).getGenotype());
+        if (fish.getGenotype() != null) {
+            genotype.add(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));
+        }
+        if (fish.getGenotypeExperimentIDs() != null) {
+            for (String genoxID : fish.getGenotypeExperimentIDs()) {
+                genotype.add(getMutantRepository().getGenotypeExperiment(genoxID).getGenotype());
+            }
         }
         form.setGenotypes(genotype);
     }

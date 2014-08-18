@@ -8,6 +8,7 @@ import org.zfin.framework.presentation.EntityPresentation;
 public class FishPresentation extends EntityPresentation {
 
     private static final String uri = "/action/fish/fish-detail/";
+    private static final String popupUri = "fish/fish-detail-popup/";
 
     /**
      * Generates a Go stage link using the go id
@@ -16,10 +17,10 @@ public class FishPresentation extends EntityPresentation {
      * @return html for marker link
      */
     public static String getLink(Fish fish) {
-        if (fish.getGenotypeID()!=null){
-        return getGeneralHyperLink(uri + fish.getFishID(), getName(fish));
-        }
-        else{
+        if (fish.getGenotypeID() != null) {
+            return getGeneralHyperLink(uri + fish.getFishID(), getName(fish)) +
+                    getTomcatPopupLink(popupUri, fish.getFishID(), "More details about this fish");
+        } else {
             return null;
         }
     }
