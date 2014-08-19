@@ -1,5 +1,7 @@
 #!/usr/bin/perl
+use utf8;
 
+use Encode;
 use XML::Twig;
 use LWP::Simple;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
@@ -107,7 +109,7 @@ sub pubMedArticle {
 			$wordSet = $wordSet.", ".$word;
 		    }
 		}
-			print LOG $wordSet."|";
+			print LOG escape_utf8($wordSet)."|";
 		$wordSet = '';
 	    }
 	}
@@ -118,7 +120,7 @@ sub pubMedArticle {
 	    if (defined $pubMedArticle->first_child('MedlineCitation')->first_child('Article')->first_child('ArticleTitle')){
 		my $ArticleTitle = $pubMedArticle->first_child('MedlineCitation')->first_child('Article')->first_child('ArticleTitle')->text;
 		$ArticleTitle =~ s/\|/\\|/g;
-		print LOG $ArticleTitle."|";
+		print LOG escape_utf8($ArticleTitle)."|";
 	    }
 	    else{
 		print LOG "|";
@@ -134,7 +136,7 @@ sub pubMedArticle {
 		if (defined $pubMedArticle->first_child('MedlineCitation')->first_child('Article')->first_child('Abstract')->first_child('AbstractText')){
 		    my $AbstractText = $pubMedArticle->first_child('MedlineCitation')->first_child('Article')->first_child('Abstract')->first_child('AbstractText')->text;
 		    $AbstractText =~ s/\|/\\|/g;
-		    print LOG $AbstractText."|";
+		    print LOG escape_utf8($AbstractText)."|";
 		    
 		}
 	    }
@@ -192,7 +194,7 @@ sub pubMedArticle {
 			}
 			
 		    }
-		    print LOG $Authors."|";
+		    print LOG escape_utf8($Authors)."|";
 		    print LOG $counter."|";
 		}
 		
@@ -283,6 +285,10 @@ sub pubMedArticle {
 	}
     }
     print LOG "\n";
+}
+
+sub escape_utf8 {
+    return encode("iso-8859-1", $_[0], Encode::FB_HTMLCREF);
 }
 
 close LOG;
