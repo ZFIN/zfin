@@ -69,7 +69,7 @@ sub geno_available_parse($$){
     my $dbh = $_[0];
     my $resourceFile = $_[1];
 
-   open (ZIRCRESOURCEFILE,"$resourceFile") || errorExit ("Failed to open $resourceFile");
+   open (RESOURCEFILE,"$resourceFile") || errorExit ("Failed to open $resourceFile");
 
     my $cur = $dbh->prepare("
           insert into geno_available
@@ -77,15 +77,34 @@ sub geno_available_parse($$){
             values
               ( ? );");
 
-    while ($newGenoAvailableLine = <ZIRCRESOURCEFILE>) {
-	chop($newGenoAvailableLine);
-	($genoId)=split(/\t/,$newGenoAvailableLine);
+    my $lineNumber = 0;
+    my $ctBadRows = 0;
+    my %badInputData = ();
+    while ($newGenoAvailableLine = <RESOURCEFILE>) {
+	  chop($newGenoAvailableLine);
+	  $lineNumber++;
+	  ##($genoId)=split(/\t/,$newGenoAvailableLine);
 
-	$cur->bind_param(1, $genoId);
-	$cur->execute;
-   }
+	  if ($newGenoAvailableLine !~ m/^ZDB\-\w+\-\d{6}\-\d+$/) {
+	    $badInputData{$lineNumber} = $newGenoAvailableLine;
+	    $ctBadRows++;
+	    next;
+	  }
+
+	  $cur->bind_param(1, $newGenoAvailableLine);
+	  $cur->execute;
+    }
     
-    close (ZIRCRESOURCEFILE);
+    close (RESOURCEFILE);
+
+    if($ctBadRows > 0) {
+      &writeReport("$ctBadRows bad rows found in $resourceFile \n");
+      my $badRow;
+      foreach $badRow (keys %badInputData) {
+         &writeReport("$badRow\t$badInputData{$badRow} \n");
+      }
+
+    }
 
     return ();
 }
