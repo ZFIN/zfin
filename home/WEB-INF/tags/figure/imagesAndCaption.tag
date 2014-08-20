@@ -80,8 +80,18 @@
        </c:if>
        <c:choose>
            <c:when test="${!figure.publication.canShowImages || (empty figure.caption && figure.publication.type != 'Unpublished')}">
-               ZFIN is incorporating published figure images and captions as part of an ongoing project.
-               Figures from some publications have not yet been curated, or are not available for display because of copyright restrictions.
+
+               <c:choose>
+                   <c:when test="${figure.comments == 'GELI'}">
+                       This is a summary of gene expression assays reported in this publication.
+                       Associated figures and anatomical structures have not yet been added to ZFIN.
+                   </c:when>
+                   <c:otherwise>
+                       ZFIN is incorporating published figure images and captions as part of an ongoing project.
+                       Figures from some publications have not yet been curated, or are not available for display because of copyright restrictions.
+                   </c:otherwise>
+               </c:choose>
+
            </c:when>
            <c:otherwise>${figure.caption}</c:otherwise>
        </c:choose>
