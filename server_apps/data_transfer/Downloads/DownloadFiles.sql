@@ -1720,13 +1720,14 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 select feature_zdb_id, a.szm_term_ont_id, feature_name, mrkr_abbrev, mrkr_zdb_id, b.szm_term_ont_id, fmrel_type from feature,
 feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b
 where fmrel_ftr_zdb_id = feature_zdb_id and
+feature_zdb_id = "ZDB-ALT-090408-1" and
 mrkr_zdb_id = fmrel_mrkr_zdb_id
 and a.szm_object_type = feature_type
 and b.szm_objecT_type = mrkr_type
-and mrkr_type = 'GENE' and
+and mrkr_type like 'GENE%' and
 (
   (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
-                    'UNSPECIFIED','TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED') AND fmrel_type ='is allele of') OR
+                    'UNSPECIFIED','TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED', 'INDEL') AND fmrel_type ='is allele of') OR
   (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
   (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
 )
