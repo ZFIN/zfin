@@ -4,7 +4,7 @@
 # parses OMIM data on mim2gene.txt and genemap files
 # does some checking for the OMIM data (since at first I doubled why there were only 5K+ records inserted while there are 10K+ gene MIM numbers at ZFIN)
 # calls loadOMIM.sql to do the loading with pre_load_input_omim.txt and reports what have been loaded with whatHaveBeenInsertedIntoOmimPhenotypeTable.txt
-# 
+#
 
 use DBI;
 
@@ -27,15 +27,36 @@ system("rm -f log*");
 
 system("/bin/rm -f geneId_omim_no_pheno");
 
+system("scp /research/zarchive/load_files/OMIM/alreadyReportedHumanOrthologyCandidate <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/")  if (!-e "alreadyReportedHumanOrthologyCandidate");
 system("scp /research/zarchive/load_files/OMIM/alreadyReportedHumanGenes <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/")  if (!-e "alreadyReportedHumanGenes");
+
+open (REPORTEDBEFORE, "alreadyReportedHumanOrthologyCandidate") ||  die "Cannot open alreadyReportedHumanOrthologyCandidate : $!\n";
+
+@linesCandidatesAlreadyReported = <REPORTEDBEFORE>;
+
+close(REPORTEDBEFORE);
+
+# Use the following hash to store the gene records already examined
+
+# %zdbGeneIdsAlreadyExamined
+# key: ZDB gene ID
+# value: gene symbol
+
+%humanGenePossibleOrthAlreadyReported = ();
+
+foreach $line (@linesCandidatesAlreadyReported) {
+
+  if ($line =~ m/(.+)\s+(\d+)/) {
+      $humanGenePossibleOrthAlreadyReported{$1} = $2;
+  }
+
+}
 
 open (ALREADY, "alreadyReportedHumanGenes") ||  die "Cannot open alreadyReportedHumanGenes : $!\n";
 
 @linesAlreadyReported = <ALREADY>;
 
 close(ALREADY);
-
-$ctAlready = 0;
 
 # Use the following hash to store the gene records already examined
 
@@ -49,7 +70,6 @@ foreach $line (@linesAlreadyReported) {
 
   if ($line =~ m/(.+)\s+(\d+)/) {
       $humanGeneAlreadyReported{$1} = $2;
-      $ctAlready++;
   }
 
 }
@@ -59,14 +79,14 @@ open (LOG, ">log1.log") || die "Cannot open log1.log : $!\n";
 
 print LOG "\nDownloading OMIM files ... \n\n";
 
-system("/local/bin/wget ftp://ftp.omim.org/OMIM/mim2gene.txt");                              
-system("/local/bin/wget ftp://ftp.omim.org/OMIM/genemap");    
-##system("/local/bin/wget ftp://ftp.omim.org/OMIM/genemap2.txt");  
+system("/local/bin/wget ftp://ftp.omim.org/OMIM/mim2gene.txt");
+system("/local/bin/wget ftp://ftp.omim.org/OMIM/genemap");
+##system("/local/bin/wget ftp://ftp.omim.org/OMIM/genemap2.txt");
 
 if (!-e "genemap" || !-e "mim2gene.txt") {
    print "One or more required file(s) not exisiting/downloaded. Exit.\n";
-   exit; 
-}  
+   exit;
+}
 
 print "\nDone with downloading OMIM files. \n\n";
 print LOG "\nDone with downloading OMIM files. \n\n";
@@ -83,10 +103,10 @@ close MIM2GENE;
 
 $ctMim2genes = 0;
 
-### key: all OMIM number on mim2gene.txt     
+### key: all OMIM number on mim2gene.txt
 %allMimNums = ();
 
-### key: OMIM Gene number on mim2gene.txt     
+### key: OMIM Gene number on mim2gene.txt
 ### value: human ortholog symbol on mim2gene.txt
 %mimNumsHGNCsymbols = ();
 
@@ -96,11 +116,11 @@ $ctMim2genes = 0;
 ### value: NCBI gene Id on mim2gene.txt
 %HGNCsymbolsNCBIgeneIds = ();
 
-### key: NCBI gene Id on mim2gene.txt  
+### key: NCBI gene Id on mim2gene.txt
 ### value: human ortholog symbol on mim2gene.txt
 %ncbiGeneIdsHGNCsymbols = ();
 
-### key: OMIM Gene number on mim2gene.txt  
+### key: OMIM Gene number on mim2gene.txt
 ### value: NCBI gene Id on mim2gene.txt
 %mimNumsNCBIids = ();
 
@@ -121,45 +141,45 @@ $ctMimHGNCsymbols = $ctHGNCsymbolsNCBIgeneIds = $ctAllDiscontinuedMIMnums = 0;
 foreach $mim2gene (@mim2genes) {
    $ctMim2genes++;
    next if $ctMim2genes < 2;
-   
+
    chop($mim2gene);
-   @fieldsMim2gene = split(/\s+/, $mim2gene); 
-   
+   @fieldsMim2gene = split(/\s+/, $mim2gene);
+
    $mimNum = $fieldsMim2gene[0];
-   $mimNum =~ s/^\s+//; 
-   $mimNum =~ s/\s+$//; 
-   
+   $mimNum =~ s/^\s+//;
+   $mimNum =~ s/\s+$//;
+
    $allMimNums{$mimNum} = 1;
-      
-   $type = $fieldsMim2gene[1];   
-   $type =~ s/^\s+//; 
+
+   $type = $fieldsMim2gene[1];
+   $type =~ s/^\s+//;
    $type =~ s/\s+$//;
-   
-   $NCBIid = $fieldsMim2gene[2];   
-   $NCBIid =~ s/^\s+//; 
-   $NCBIid =~ s/\s+$//;   
-   
+
+   $NCBIid = $fieldsMim2gene[2];
+   $NCBIid =~ s/^\s+//;
+   $NCBIid =~ s/\s+$//;
+
    $HGNCsymbol = $fieldsMim2gene[3];
-   $HGNCsymbol =~ s/^\s+//; 
-   $HGNCsymbol =~ s/\s+$//; 
+   $HGNCsymbol =~ s/^\s+//;
+   $HGNCsymbol =~ s/\s+$//;
 
    if ($type =~ m/removed/) {
      $ctAllDiscontinuedMIMnums++;
      $allDiscontinuedMIMnums{$mimNum} = $type;
    }
-   
+
    next if $HGNCsymbol eq "-";
-   
+
    $ctMimHGNCsymbols++;
    $mimNumsHGNCsymbols{$mimNum} = $HGNCsymbol;
-   
+
    if ($NCBIid ne "-") {
      $ctHGNCsymbolsNCBIgeneIds++;
-     $HGNCsymbolsNCBIgeneIds{$HGNCsymbol} = $NCBIid;   
+     $HGNCsymbolsNCBIgeneIds{$HGNCsymbol} = $NCBIid;
      $ncbiGeneIdsHGNCsymbols{$NCBIid} = $HGNCsymbol;
-     $mimNumsNCBIids{$mimNum} = $NCBIid;     
+     $mimNumsNCBIids{$mimNum} = $NCBIid;
    }
-}   
+}
 
 $ctMim2genes = $ctMim2genes - 1;
 print "total number of records on mim2gene.txt: $ctMim2genes \n\n\n";
@@ -179,7 +199,7 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
+$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 $cur = $dbh->prepare('select distinct omimp_name, omimp_gene_zdb_id from omim_phenotype;');
@@ -219,25 +239,28 @@ print LOG "\nParsing and loading OMIM data ... \n\n";
 %allMIMnumsZDBgeneIdsOnGeneMap = ();
 
 $ctHumanGenePhenoNoOrth = 0;
+$ctHumanGenePhenoPossibleOrth = 0;
 
 %humanGeneMimNumPhenoNoOrth = ();
+%humanGeneMimNumPhenoPossibleOrth = ();
 
 foreach $line (@lines) {
    $ctTotalOnGenmap++;
    %ZDBgeneIdOMIMnums = ();
-   
+
    $matchedGeneOrGenesFound = 0;
-   
+   $matchedSymbolFound = 0;
+
    chop($line);
-   @fields = split(/\|/, $line); 
-   
+   @fields = split(/\|/, $line);
+
    ### not all filed[9] numbers are OMIM numbers for gene; many for phenotype
    $mimNumGene = $fields[9];
-   
-   
+
+
    ### only process those with Gene OMIM numbers having HGNC symbols
    if (exists($mimNumsHGNCsymbols{$mimNumGene})) {
-     
+
      $ctFoundMIMwithSymbolOnGenemap++;
 
      $cur = $dbh->prepare('select distinct c_gene_id from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human" and dblink_acc_num = ?;');
@@ -246,42 +269,55 @@ foreach $line (@lines) {
      $cur->bind_columns(\$ZFINgeneId);
      while ($cur->fetch()) {
         $ZDBgeneIdOMIMnums{$ZFINgeneId} = $mimNumGene;
-      
+
         $allMIMnumsZDBgeneIdsOnGeneMap{$mimNumGene} = $ZFINgeneId;
-      
+
         $matchedGeneOrGenesFound = 1;
         $ctMatchedOMIM++;
      }
-   
+
+     $humanGene = $mimNumsHGNCsymbols{$mimNumGene};
+     $humanGeneSymLowerCase = lc($humanGene);
+     $humanGeneSymLowerCaseA = $humanGeneSymLowerCase . "a";
+     $humanGeneSymLowerCaseB = $humanGeneSymLowerCase . "b";
+
+     $cur = $dbh->prepare('select mrkr_zdb_id from marker where mrkr_zdb_id like "ZDB-GENE%" and (mrkr_abbrev = ? or mrkr_abbrev = ? or mrkr_abbrev = ?);');
+     $cur->execute($humanGeneSymLowerCase,$humanGeneSymLowerCaseA,$humanGeneSymLowerCaseB);
+     my ($ZFINgeneIdSimilarSym);
+     $cur->bind_columns(\$ZFINgeneIdSimilarSym);
+     while ($cur->fetch()) {
+        $matchedSymbolFound = 1;
+     }
+
      ### up to 3 fileds with disorders (including OMIM numbers and Phenotype mapping method - appears in parentheses after a disorder)
      ### example: Cystic fibrosis, 219700 (3); Congenital bilateral absence of vas|deferens, 277180 (3); Sweat chloride elevation without CF (3); {Pancreatitis, idiopathic}, 167800 (3); {Hypertrypsinemia, neonatal} (3);|{Bronchiectasis with or without elevated sweat chloride 1, modifier of}, 211400 (3)|
-     
+
      $phenotypesIn3Fileds = $fields[13] . " " . $fields[14] . " " . $fields[15];
 
      if ($phenotypesIn3Fileds ne "") {
        $ctNotEmptyPheno++;
-   
+
        @phenotypes = split(/;\s+/, $phenotypesIn3Fileds);
-   
+
        $hasPhenotype = 0;
        foreach $phenotype (@phenotypes) {
-         $phenotype =~ s/^\s+//; 
-         $phenotype =~ s/\s+$//; 
-       
+         $phenotype =~ s/^\s+//;
+         $phenotype =~ s/\s+$//;
+
          if($phenotype) {
            $hasPhenotype = 1 if ($phenotype ne "");
          }
-       
+
          ### assuming all OMIM numbers for phenotype are 6 digits, which is the fact as have been confirmed
          ### but there are phenotypes (disorders) lacking OMIM number
          if ($phenotype =~ m/\s+([0-9]{6})\s+\([0-9]\)$/) {
-             $phenotypeOMIMnum = $1;    
+             $phenotypeOMIMnum = $1;
              @disordrTextPlus = split(/\s+([0-9]){6}\s+\([0-9]\)$/, $phenotype);
              $disorder = $disordrTextPlus[0];
-             $disorder =~ s/,$//; 
+             $disorder =~ s/,$//;
              $disorder =~ s/^\s+//;
              $disorder =~ s/\s+$//;
-           
+
              if ($matchedGeneOrGenesFound == 1) {
                  foreach $key (keys %ZDBgeneIdOMIMnums) {
                    ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication
@@ -292,9 +328,13 @@ foreach $line (@lines) {
                    }
                  }
              } else {
-                 $humanGene = $mimNumsHGNCsymbols{$mimNumGene};
-                 $humanGeneMimNumPhenoNoOrth{$humanGene} = $mimNumGene;
-                 $ctHumanGenePhenoNoOrth++;
+                 if ($matchedSymbolFound == 1) {
+                     $humanGeneMimNumPhenoPossibleOrth{$humanGene} = $mimNumGene;
+                     $ctHumanGenePhenoPossibleOrth++;
+                 } else {
+                     $humanGeneMimNumPhenoNoOrth{$humanGene} = $mimNumGene;
+                     $ctHumanGenePhenoNoOrth++;
+                 }
              }
          } elsif ($phenotype =~ m/\s+\([0-9]\)$/) {   ## no phenotype OMIM number
              @disordrTextPlus = split(/\s+\([0-9]\)$/, $phenotype);
@@ -312,23 +352,27 @@ foreach $line (@lines) {
                    }
                  }
              } else {
-                 $humanGene = $mimNumsHGNCsymbols{$mimNumGene};
-                 $humanGeneMimNumPhenoNoOrth{$humanGene} = $mimNumGene;
-                 $ctHumanGenePhenoNoOrth++;
+                 if ($matchedSymbolFound == 1) {
+                     $humanGeneMimNumPhenoPossibleOrth{$humanGene} = $mimNumGene;
+                     $ctHumanGenePhenoPossibleOrth++;
+                 } else {
+                     $humanGeneMimNumPhenoNoOrth{$humanGene} = $mimNumGene;
+                     $ctHumanGenePhenoNoOrth++;
+                 }
              }
          } else {
              print CHECKNOPHENO "$line\n\t$phenotypesIn3Fileds\n";
              $ctNoPhenotype++;
          }
-   
-       } 
-          
-     } 
-    
+
+       }
+
+     }
+
    }
-   
+
    undef %ZDBgeneIdOMIMnums;
-} 
+}
 
 close OMIM;
 close CHECKNOPHENO;
@@ -344,7 +388,7 @@ while ($cur->fetch()) {
       print LOG "$geneId\t$omimNum\n";
    }
 }
-     
+
 print LOG " \n";
 
 $cur = $dbh->prepare('select distinct c_gene_id, dblink_acc_num from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human";');
@@ -385,14 +429,14 @@ while ($cur->fetch()) {
       $ctNotFoundOnGeneMap++;
    }
 }
- 
+
 print "ctNotFoundOnGeneMap : $ctNotFoundOnGeneMap\n";
- 
+
 print LOG "ctNotFoundOnGeneMap : $ctNotFoundOnGeneMap\n";
 
-$cur->finish(); 
+$cur->finish();
 
-$dbh->disconnect(); 
+$dbh->disconnect();
 
 print "\nctFoundMIMwithSymbolOnGenemap:  $ctFoundMIMwithSymbolOnGenemap\ttotal number of records on genemap file:  $ctTotalOnGenmap \tctMatchedOMIM: $ctMatchedOMIM \tctInput: $ctInput\n\n";
 
@@ -407,6 +451,28 @@ print LOG "For all $ctFoundMIMwithSymbolOnGenemap records that found with symbol
 system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadOMIM.sql >log3.log 2> log2.log");
 
 print LOG "\nAll done!\n\n\n";
+
+if ($ctHumanGenePhenoPossibleOrth > 0) {
+   $ctPossibleMatchGeneWithPheno = 0;
+   open (POSSIBLEORTHO, ">human_genes_with_pheno_possible_ortho.txt")  || die "Cannot open human_genes_with_pheno_possible_ortho.txt : $!\n";
+   open (ALREADYREPORTED, ">>alreadyReportedHumanOrthologyCandidate") ||  die "Cannot open alreadyReportedHumanOrthologyCandidate : $!\n";
+   foreach $symbol (sort keys %humanGeneMimNumPhenoPossibleOrth) {
+      if($symbol !~ m/^\d+$/ && !exists($humanGenePossibleOrthAlreadyReported{$symbol})) {
+        print POSSIBLEORTHO "$symbol\t$humanGeneMimNumPhenoPossibleOrth{$symbol}\n";
+        print ALREADYREPORTED "$symbol\t$humanGeneMimNumPhenoPossibleOrth{$symbol}\n";
+        $ctPossibleMatchGeneWithPheno++;
+      }
+   }
+   close POSSIBLEORTHO;
+   close ALREADYREPORTED;
+
+   if ($ctPossibleMatchGeneWithPheno > 0) {
+       $subject = "Auto from $dbname: " . "OMIM.pl :: $ctPossibleMatchGeneWithPheno human genes with phenotype, with no match to ZF gene via OMIM, but with similar symbol";
+       ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","human_genes_with_pheno_possible_ortho.txt");
+   } else {
+       ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","no new human gene with phenotype, with no match to ZF gene via OMIM, but with similar symbol","alreadyReportedHumanOrthologyCandidate");
+   }
+}
 
 if ($ctHumanGenePhenoNoOrth > 0) {
    $ctNoMatchGeneWithPheno = 0;
@@ -423,15 +489,18 @@ if ($ctHumanGenePhenoNoOrth > 0) {
    close PREVIOUSLYREPORTED;
 
    if ($ctNoMatchGeneWithPheno > 0) {
-       $subject = "Auto from $dbname: " . "OMIM.pl :: $ctNoMatchGeneWithPheno human genes with phenotype but without match to ZF gene";
+       $subject = "Auto from $dbname: " . "OMIM.pl :: $ctNoMatchGeneWithPheno human genes with phenotype, with no match to ZF gene via OMIM, and without similar symbol";
        ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","human_genes_with_pheno_but_not_ortho.txt");
    } else {
-       ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","no new human gene with pheno but no match to ZF gene found","alreadyReportedHumanGenes");
+       ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","no new human gene with phenotype, with no match to ZF gene via OMIM, and without similar symbol","alreadyReportedHumanGenes");
    }
 }
 
+print "\nctHumanGenePhenoPossibleOrth = $ctHumanGenePhenoPossibleOrth\n\n";
+print "\nctPossibleMatchGeneWithPheno = $ctPossibleMatchGeneWithPheno\n\n" ;
 print "\nctNoMatchGeneWithPheno = $ctNoMatchGeneWithPheno\n\n" ;
 
+system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHumanOrthologyCandidate /research/zarchive/load_files/OMIM/");
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/OMIM/alreadyReportedHumanGenes /research/zarchive/load_files/OMIM/");
 
 
