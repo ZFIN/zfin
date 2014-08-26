@@ -120,6 +120,7 @@ sub pubMedArticle {
 	    if (defined $pubMedArticle->first_child('MedlineCitation')->first_child('Article')->first_child('ArticleTitle')){
 		my $ArticleTitle = $pubMedArticle->first_child('MedlineCitation')->first_child('Article')->first_child('ArticleTitle')->text;
 		$ArticleTitle =~ s/\|/\\|/g;
+		$ArticleTitle =~ s/\.+$//;
 		print LOG escape_utf8($ArticleTitle)."|";
 	    }
 	    else{
