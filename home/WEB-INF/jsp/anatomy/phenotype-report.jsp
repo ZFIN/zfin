@@ -32,7 +32,7 @@
 </table>
 
 <c:if test="${formBean.totalRecords > 0}">
-    <table class="searchresults rowstripes">Get_date_from_id
+    <table class="searchresults rowstripes">
         <tr>
             <th width=20%>Genotype</th>
             <th width=20%>Morpholino</th>
