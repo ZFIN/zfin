@@ -1875,18 +1875,20 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    select feature_zdb_id, feature_name, mrkr_abbrev, mrkr_zdb_id, fmrel_type from feature,
-                    feature_marker_relationship,marker
-                    where fmrel_ftr_zdb_id = feature_zdb_id and
-                    mrkr_zdb_id = fmrel_mrkr_zdb_id and
-                    mrkr_type = 'GENE' and
-                    (
-                      (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
-                                        'UNSPECIFIED','TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED') AND fmrel_type ='is allele of') OR
-                      (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
-                      (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
-                    )
-                    order by lower( feature_name)
+                   select feature_zdb_id, a.szm_term_ont_id, feature_name, mrkr_abbrev, mrkr_zdb_id, b.szm_term_ont_id, fmrel_type 
+                     from feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b
+                    where fmrel_ftr_zdb_id = feature_zdb_id 
+                      and mrkr_zdb_id = fmrel_mrkr_zdb_id
+                      and a.szm_object_type = feature_type
+                      and b.szm_objecT_type = mrkr_type
+                      and mrkr_type like 'GENE%' and
+                         (
+                            (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
+                                              'UNSPECIFIED','TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED', 'INDEL') AND fmrel_type ='is allele of') OR
+                                              (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
+                                              (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
+                         )
+                      order by lower( feature_name);
                          ]]>
             </Query>
             <Column id="1" unique="true">Genomic Feature ID</Column>
