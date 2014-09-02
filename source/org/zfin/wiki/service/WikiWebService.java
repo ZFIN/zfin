@@ -118,7 +118,7 @@ public class WikiWebService {
             serviceLocator.setConfluenceserviceV2EndpointAddress(wikiServer);
             service = serviceLocator.getConfluenceserviceV2();
             token = service.login(wikiUserName, wikiPassword);
-            logger.info("logging into "+wikiServer);
+            logger.info("logging into " + wikiServer);
 
             if (service == null) {
                 throw new WikiLoginException("service is null, failed to instantiate");
@@ -208,6 +208,10 @@ public class WikiWebService {
             // if there is is editing or view restriction, then add an editing one to the creator
             for (RemoteSearchResult page : pages) {
                 logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]");
+                RemotePage pageSummary = service.getPage(token, page.getId());
+                // do not work on deleted pages
+                if (pageSummary.getContentStatus().equals("deleted"))
+                    continue;
                 if (page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token, page.getId()).length == 0) {
                     logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "] # perm["
                             + service.getContentPermissionSets(token, page.getId()).length + "]");
