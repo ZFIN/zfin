@@ -30,6 +30,8 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
                     RemoteContentPermission[] remoteContentPermissions = WikiWebService.getInstance().getRemoteContentPermissions(result.getId(), Permission.EDIT.getValue());
                     for (RemoteContentPermission remoteContentPermission : remoteContentPermissions) {
                         String groupName = remoteContentPermission.getGroupName();
+                        if (groupName == null)
+                            continue;
                         if (groupName.equals(Group.ZFIN_USERS.getValue())) {
                             isZfinGroup = true;
                         }
