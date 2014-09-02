@@ -29,7 +29,6 @@ public class SetPermissionsToOwnerJob extends AbstractValidateDataReportTask {
                 List<String> pages = new ArrayList<>();
                 pages.addAll(wikiService.setOwnerForLabel("community_protocol"));
                 pages.addAll(wikiService.setOwnerForLabel("community_antibody"));
-                pages.addAll(wikiService.setOwnerForLabel("zebrafish_book"));
 
                 if (pages.size() > 0) {
                     ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, jobName, true);
