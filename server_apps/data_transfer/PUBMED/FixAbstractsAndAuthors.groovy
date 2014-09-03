@@ -65,7 +65,7 @@ pubs.collate(NCBI_BATCH_SIZE).each { pubBatch ->
                 } else {
                     lastName = author.LastName.text()
                     foreName = author.ForeName.text()
-                    initials = author.Initials.text().split("")[1..-1].join(".") + "."
+                    initials = author.Initials.text().toList().join(".") + "."
                     authorNames << "$lastName, $initials"
                 }
             }
