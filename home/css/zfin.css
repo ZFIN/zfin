@@ -641,3 +641,15 @@ label.curation-form-label { font-weight: bold; }
 .figure-image-and-caption img.placeholder { border: 1px solid black }
 .figure-image-and-caption img, video { margin: 2px; }
 .figure-image-and-caption a img { border: 1px solid blue;}
+
+.pub-abstract-section {
+    margin-bottom: 1em;
+}
+
+.pub-abstract-section-label {
+    font-weight: bold;
+}
+
+.pub-abstract-section-label::after {
+    content: ':';
+}
