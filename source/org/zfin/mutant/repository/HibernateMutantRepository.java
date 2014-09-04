@@ -559,6 +559,11 @@ public class HibernateMutantRepository implements MutantRepository {
         // and if it is not used in FX (expression_experiment)
         if (genotypeExperiment.getExpressionExperiments() == null)
             session.delete(genotypeExperiment);
+
+        String hql = "delete GenotypeFigure where phenotypeExperiment = :phenoExp ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("phenoExp", phenoExperiment);
+        query.executeUpdate();
     }
 
 
