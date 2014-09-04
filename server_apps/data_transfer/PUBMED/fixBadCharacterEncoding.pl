@@ -123,7 +123,7 @@ while ($all_pubs->fetchrow_arrayref) {
       print PUBS "$pub{zdb_id}\n";
     }
   };
-  print ERRS "$pub{zdb_id} - $@" if $@;
+  print ERRS "$pub{zdb_id}\n" if $@;
 }
 
 $all_pubs->finish();
@@ -133,6 +133,8 @@ $dbh->disconnect();
 close(ERRS);
 close(PUBS);
 
+# exit with error code if unreplaceable characters were found
+exit 1 if -s "fixCharsErrors.txt";
 
 sub do_replacement {
   # decode the incoming octets as UTF-8
