@@ -76,7 +76,6 @@
 <!--|VALIDATION_EMAIL_MORPHOLINO|-->	informix\@zfin.org
 <!--|VALIDATION_EMAIL_MUTANT|-->	informix\@zfin.org
 <!--|VALIDATION_EMAIL_OTHER|-->	informix\@zfin.org
-<!--|VALIDATION_EMAIL_PUBLICATION|-->	informix\@zfin.org
 <!--|VALIDATION_EMAIL_TRANSCRIPT|-->	informix\@zfin.org
 <!--|VALIDATION_EMAIL_XPAT|-->	informix\@zfin.org
 <!--|VIDEO_LOAD|-->	/videoLoadUp
