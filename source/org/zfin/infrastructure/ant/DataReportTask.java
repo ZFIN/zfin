@@ -3,6 +3,7 @@ package org.zfin.infrastructure.ant;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.zfin.framework.HibernateUtil;
@@ -62,15 +63,16 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         try {
             errorMessages = service.runDbScriptFile(dbQueryFile, null, dataMap);
             List<List<List<String>>> resultList = service.getListOfResultRecords();
-            if (resultList != null)
+            if (CollectionUtils.isNotEmpty(resultList))
                 createReportFile(dataDirectory, resultList.get(0), errorMessages);
             else
                 createErrorReport(errorMessages, null, dataDirectory);
+            HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
             LOG.error(e);
             throw new RuntimeException(e);
         } finally {
-            HibernateUtil.rollbackTransaction();
             HibernateUtil.closeSession();
         }
     }
