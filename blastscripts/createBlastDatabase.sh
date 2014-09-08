@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 TEMPFILE=./fasta1
 touch $TEMPFILE
 echo "xdformat -$1 -I -o $2 $TEMPFILE"
