@@ -27,7 +27,7 @@ $BACKUP		=	"<!--|ROOT_PATH|-->/server_apps/DB_maintenance";
 $DATALINK	=	"data";
 
 $ONTAPE		=	"$INFORMIXDIR/bin/ontape";
-$TOUCH		=	"/usr/bin/touch";
+$TOUCH		=	"/bin/touch";
 $CP		=	"/bin/cp";
 
 @backup_list	=	($ONCONFIG);
