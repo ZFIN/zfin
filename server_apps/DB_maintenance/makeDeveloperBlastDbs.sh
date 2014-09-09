@@ -93,5 +93,5 @@ if [ "${HOST}" == "embryonix" ] || ["${HOST}" == "zygotix" ]; then
 	echo "!!! WARNING !!! : Change env variable WEBHOST_BLAST_DATABASE_PATH " $TO_DIRECTORY
 
 else 
-    echo "no makeDeveloperBlastDbs.sh on helix."
+    echo "no makeDeveloperBlastDbs.sh on zygotix."
 fi
