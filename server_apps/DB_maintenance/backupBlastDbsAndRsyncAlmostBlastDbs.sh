@@ -32,19 +32,19 @@ TO_PRISTINE_DIRECTORY=/research/zblastfiles/zmore/nightly/Current/
 # -v verbose
 
 echo rsync the almost directory
-/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_ALMOST_DIRECTORY
+/usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_ALMOST_DIRECTORY
 
 echo rsync the default directory
-/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_DEFAULT_DIRECTORY
+/usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_DEFAULT_DIRECTORY
 
 echo rsync the pristine directory
-/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_PRISTINE_DIRECTORY
+/usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_PRISTINE_DIRECTORY
 
 echo rsync the pristine directory
-/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_TEST_DIRECTORY
+/usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_TEST_DIRECTORY
 
 echo rsync the pristine directory
-/local/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_TRUNK_DIRECTORY
+/usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_TRUNK_DIRECTORY
 
 # if there are changes, then commit them as informix, most likely.
 if [ <!--|DOMAIN_NAME|--> == almost.zfin.org ]; then
