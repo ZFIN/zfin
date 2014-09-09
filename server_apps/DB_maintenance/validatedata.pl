@@ -1590,44 +1590,6 @@ sub estsWithoutClonesHaveXxGenes ($) {
 # get thier own listing.
 
 
-#============================ Linkage ===================================
-#---------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-sub linkagePairHas2Members ($) {
-	
-  my $routineName = "linkagePairHas2Members";
-	
-  my $sql = ' 
-              select lpmem_linkage_pair_zdb_id
-		     lpmem_member_zdb_id
-
-                from linkage_pair, 
-                     linkage_pair_member
- 
-	       where lnkgpair_zdb_id = lpmem_linkage_pair_zdb_id 
-                     group by lpmem_linkage_pair_zdb_id
-                     having count(*) != 2
-             ';
-
-  my @colDesc = ("Lpmem linkage pair ZDB ID",
-		 "Lpmem member ZDB ID      " );
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-
-    my $sendToAddress = $_[0];
-    my $subject = "linkage pair has one or more than 2 members";
-    my $errMsg = "In linkage_pair table, $nRecords records have less than or"
-                   ." more than two members in linkage_pair_member. ";
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-} 
-
 #=========================== Orthology, DB Link ===========================
 
 #-------------------------------------------------------------
@@ -2592,7 +2554,6 @@ $dbh = DBI->connect("DBI:Informix:$globalDbName",
 my $ceri         = "<!--|COUNT_PATO_ERR|-->";
 my $adEmail      = "<!--|VALIDATION_EMAIL_AD|-->";
 my $xpatEmail    = "<!--|VALIDATION_EMAIL_XPAT|-->";
-my $linkageEmail = "<!--|VALIDATION_EMAIL_LINKAGE|-->";
 my $otherEmail   = "<!--|VALIDATION_EMAIL_OTHER|-->";
 my $estEmail     = "<!--|VALIDATION_EMAIL_EST|-->";
 my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
@@ -2670,7 +2631,6 @@ if($monthly) {
     encodesRelationshipsInBACorPAC($geneEmail);
     mrkrgoevInfgrpDuplicatesFound($goEmail);
     printTop40PostcomposedTerms($aoEmail);
-    linkagePairHas2Members($linkageEmail);
     # for each zfin curator, run phenotypeAnnotationUnspecified() check
     my $sql = " select email, full_name
                 from int_person_lab 
