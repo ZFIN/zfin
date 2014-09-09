@@ -27,7 +27,7 @@ GENERICS = updateunFeatures.pl regen.sh scrubscan.pl unload_production.sh valida
 	   check_undefined_environment.pl checkSOZFINMapping.sh reportLabAddressChanges.sh feature_genotype_association_check.pl
 
 
-STATICS = postloaddb_almost.csh updatePNAS.sql loadDb.sh \
+STATICS = updatePNAS.sql loadDb.sh \
 	  makeDeveloperBlastDbs.sh build.xml set_unload_timestamp.sql
 
 
