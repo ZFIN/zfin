@@ -250,7 +250,6 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getFeaturesByPrefixAndLineNumber() {
-        assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b", "1234"));
         assertNull(featureRepository.getFeatureByPrefixAndLineNumber("notavalidprefix", "1"));
         assertNull(featureRepository.getFeatureByPrefixAndLineNumber("b", "notavalidlinenumber"));
         assertNotNull(featureRepository.getFeatureByPrefixAndLineNumber("b", "1"));
