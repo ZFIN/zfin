@@ -942,8 +942,12 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public List<ExpressionResult> getExpressionResultsViolateStageRanges() {
         Session session = HibernateUtil.currentSession();
         String hql = "select result from ExpressionResult result " +
-                " where result.startStage.hoursStart < result.entity.superterm.start.hoursStart " +
-                " AND result.startStage.name != :excludedStageName ";
+                " where ( result.startStage.hoursStart > result.entity.superterm.end.hoursStart  " +
+                " AND result.entity.superterm.end.name != :excludedStageName " +
+                " AND result.startStage.name != :excludedStageName ) OR " +
+                " (result.endStage.hoursStart < result.entity.superterm.start.hoursStart " +
+                " AND result.entity.superterm.start.name != :excludedStageName " +
+                " AND result.endStage.name != :excludedStageName )  ";
         Query query = session.createQuery(hql);
         query.setParameter("excludedStageName", DevelopmentStage.UNKNOWN);
         return query.list();

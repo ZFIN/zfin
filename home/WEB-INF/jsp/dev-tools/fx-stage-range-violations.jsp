@@ -7,8 +7,8 @@
 <p></p>
 <table class="primary-entity-attributes">
     <tr>
-        <th><span class="name-label">${expressionResultDisplays.size()} FX Stage Range Violations:</span> Term start
-            stage begins after figure start stage.
+        <th><span class="name-label">${expressionResultDisplays.size()} FX Stage Range Violations:</span> Term stage
+            range does not overlap with expression stage range.
         </th>
     </tr>
 </table>
@@ -19,6 +19,7 @@
     <tr>
         <th>Term Name</th>
         <th>Term Start Stage</th>
+        <th>Term End Stage</th>
         <th>Figure Start Stage</th>
         <th>Figure End Stage</th>
         <th>#</th>
@@ -28,6 +29,7 @@
         <tr>
             <td><zfin:link entity="${display.superterm}"/></td>
             <td>${display.superterm.start.name}</td>
+            <td>${display.superterm.end.name}</td>
             <td>${display.start.name}</td>
             <td>${display.end.name}</td>
             <td>${display.expressionResultList.size()}</td>
@@ -36,7 +38,7 @@
     </c:forEach>
     <tfoot>
     <tr>
-        <th colspan="4"> Total violations (Expression Results)</th>
+        <th colspan="5"> Total violations (Expression Results)</th>
         <th colspan="2">${violations.size()}</th>
     </tr>
     </tfoot>
