@@ -26,8 +26,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
-SUBDIRS = MEOW SWISS-PROT GXP GO ResourceCenters Downloads Ensembl GenPept ZGC LoadOntology \
-	  Genbank ORTHO Load BLAST BurgessLin SNP zfishbook SangerMutants \
+SUBDIRS = MEOW SWISS-PROT GXP GO ResourceCenters Downloads Ensembl GenPept LoadOntology \
+	  Genbank ORTHO Load BurgessLin SNP zfishbook SangerMutants \
 	  OMIM PUBMED Dorsky NCBIGENE VegaStartEnd NCBIStartEnd VegaStartEnd
 
 GENERICS = pull.sh
