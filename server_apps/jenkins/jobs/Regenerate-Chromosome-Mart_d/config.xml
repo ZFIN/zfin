@@ -64,7 +64,7 @@
               </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           </configuredTriggers>
           <contentType>default</contentType>
-          <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+          <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
           <defaultContent>$DEFAULT_CONTENT</defaultContent>
           <attachmentsPattern>server_apps/DB_maintenance/warehouse/chromosomeMart/*.txt</attachmentsPattern>
           <presendScript></presendScript>

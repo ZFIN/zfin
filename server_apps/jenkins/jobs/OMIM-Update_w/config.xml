@@ -69,7 +69,7 @@ pre_load_input_omim.txt and reports what have been loaded with whatHaveBeenInser
         </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
       </configuredTriggers>
       <contentType>text/html</contentType>
-      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
+      <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern>server_apps/data_transfer/OMIM/*.txt,server_apps/data_transfer/OMIM/*.log</attachmentsPattern>
       <presendScript></presendScript>
