@@ -29,7 +29,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  * Generic entry point for viewing a term detail page.
  */
 @Controller
-public class OntologyTermDetailController extends OntologyTermDetailControllerAbst {
+public class OntologyTermDetailController {
 
 
     @RequestMapping("/term-detail/term")
@@ -143,7 +143,22 @@ public class OntologyTermDetailController extends OntologyTermDetailControllerAb
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
         Collections.sort(termRelationships);
 
-        testMethod(form, term);
+        SectionVisibility sectionVisibility = form.getSectionVisibility();
+        if (sectionVisibility.isVisible(OntologyBean.Section.EXPRESSION)) {
+            sectionVisibility.setSectionData(OntologyBean.Section.EXPRESSION, true);
+        } else {
+            // check if there are any data in this section.
+            if (term.getOntology().isExpressionData()) {
+                sectionVisibility.setSectionData(OntologyBean.Section.EXPRESSION, hasExpressionData(term));
+            }
+        }
+        if (sectionVisibility.isVisible(OntologyBean.Section.PHENOTYPE)) {
+            sectionVisibility.setSectionData(OntologyBean.Section.PHENOTYPE, true);
+        } else {
+            if (term.getOntology().isPhenotypeData()) {
+                sectionVisibility.setSectionData(OntologyBean.Section.PHENOTYPE, hasPhenotypeData(term));
+            }
+        }
 
         form.setTermRelationships(termRelationships);
         form.setTerm(term);
@@ -259,6 +274,41 @@ public class OntologyTermDetailController extends OntologyTermDetailControllerAb
         return "ontology/post-composed-term-detail-popup.popup";
     }
 
+    private boolean hasExpressionData(Term anatomyTerm) {
+        AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
+        if (statistics == null || statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
+            return true;
+        // check for antibody records including substructures
+        PaginationBean pagination = new PaginationBean();
+        pagination.setMaxDisplayRecords(1);
+        int numOfAntibodies = getAntibodyRepository().getAntibodyCount(anatomyTerm, true);
+        if (numOfAntibodies > 0)
+            return true;
+
+        // check for in situ-probes
+        PaginationResult<HighQualityProbe> hqp = getPublicationRepository().getHighQualityProbeNames(anatomyTerm, 1);
+        if (hqp != null && hqp.getTotalCount() > 0)
+            return true;
+
+        return false;
+    }
+
+    private boolean hasPhenotypeData(Term anatomyTerm) {
+        GenericTerm term = getOntologyRepository().getTermByOboID(anatomyTerm.getOboID());
+        List<PhenotypeStatement> phenotypes = getMutantRepository().getPhenotypeWithEntity(term);
+        if (phenotypes != null && phenotypes.size() > 0) {
+            return true;
+        }
+
+        // check for STRs
+        List<GenotypeExperiment> strPhenotypes =
+                getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(term, null);
+        if (strPhenotypes != null && strPhenotypes.size() > 0) {
+            return true;
+        }
+
+        return false;
+    }
 
 
 }
