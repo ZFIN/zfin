@@ -1877,34 +1877,6 @@ sub tscriptLoadIdMatchesDBLink ($) {
     }
     &recordResult($routineName, $nRecords);
 }
-#----------------------------------------------
-# Parameter
-# $      Email Address for recipients
-#
-# 
-sub allZFINAccessionsHaveRecordsInZFINAccessionTable ($) {
-    my $routineName = "allZFINAccessionsHaveRecordsInZFINAccessionTable";
-    my $sql = 'select dblink_Acc_num
-                 from db_link
-                 where dblink_acc_num like "ZFIN%"
-                 and not exists (Select "x" from zfin_Accession_number
-                                   where za_acc_num = dblink_acc_num) ';
-
-    my @colDesc =("accession number in db_link");
-
-    my $nRecords = execSql ($sql, undef, @colDesc);
-
-    if ( $nRecords > 0 ) {
-
-	my $sendToAddress = $_[0];
-	my $subject = "AutoGen: ZFIN accession number DbLinks without records in zfin_accession_number";
-	my $errMsg = "In db_link, $nRecords ZFIN accession numbers have no records in zfin_accession_number";
-      
-	logError ($errMsg); 
-	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-    }
-    &recordResult($routineName, $nRecords);
-}
 
 #----------------------------------------------
 # Parameter
@@ -2545,7 +2517,6 @@ my $transcriptEmail = "<!--|VALIDATION_EMAIL_TRANSCRIPT|-->";
 
 
 if($daily) {
-    allZFINAccessionsHaveRecordsInZFINAccessionTable($dbaEmail);
     transcriptsOnMoreThanOneGene($transcriptEmail);
     tscriptLoadIdMatchesDBLink($transcriptEmail);
     findWithdrawnMarkerMismatch($transcriptEmail); 
