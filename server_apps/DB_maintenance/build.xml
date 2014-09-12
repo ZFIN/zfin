@@ -48,25 +48,6 @@
         <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${DBNAME}"/>
     </target>
 
-    <target name="report-linkage-has-member" description="">
-        <echo message="Create Validation Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="-a"/>
-            <arg value="${DBNAME}"/>
-            <arg value="${validateData}/validatedata/linkageHasMember.sql"/>
-        </exec>
-        <echo file="${validateData}/column.header" append="false">Linkage ID|Linkage Group|Linkage Source ID</echo>
-        <echo file="${validateData}/description.txt" append="false">
-            There are records in LINKAGE table that do not have a LINKAGE_MEMBER record.
-        </echo>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="reportRecords.txt" substring="ZDB"/>
-            </condition>
-        </fail>
-    </target>
-
     <target name="report-str-gene-abbrev" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
