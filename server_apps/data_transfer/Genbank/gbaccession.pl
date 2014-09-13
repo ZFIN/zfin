@@ -57,7 +57,7 @@ while( !(-e "$newfile") ){
 	  &downloadDailyUpdateFile();
       }
       else {
-	  &emailError("Failed to download GenBank daily update file.")
+	  &writeReport("Failed to download GenBank daily update file.")
 	  }
   }
 }
@@ -79,7 +79,7 @@ while( !(-e "$unzipfile") ) {
 	    system("/local/bin/gunzip -f $newfile");
 	}
 	else{
-	    &emailError("Gunzip failed to extract the file.")
+	    &writeReport("Gunzip failed to extract the file.")
 	    }
     }
 }
@@ -112,14 +112,13 @@ if ($move_blast_files_to_development eq "true") {
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     
     # load the updates into accesson_bank and db_link
-    system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> dailyUpdate.sql >> $report 2>&1");
+    system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> GenBank-Accession-Update_d.sql >> $report 2>&1");
 } else {
     &writeReport("Failed to rename the daily accession file.");
 }
-	
+
 
 &sendReport();
-
 
 ###########################################################
 #
@@ -130,22 +129,19 @@ sub downloadDailyUpdateFile() {
     system("/local/bin/wget -q ftp://ftp.ncbi.nih.gov/genbank/daily-nc/$newfile;");
 }
 
-sub emailError()
-  {
+sub emailError() {
     &writeReport($_[0]);
     &sendReport();
     exit;
-  }
+    }
 
-sub writeReport()
-  {
+sub writeReport() {
     open (REPORT, ">>$report") or die "cannot open report";
     print REPORT "$_[0] \n\n";
     close (REPORT);
   }
 
-sub sendReport()
-  {
+sub sendReport() {
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "$report") || die "cannot open report";
 

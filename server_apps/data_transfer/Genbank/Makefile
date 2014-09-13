@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Genbank
 
 GENERICS = gbaccession.pl
 
-STATICS = parseDaily.pl dailyUpdate.sql README
+STATICS = parseDaily.pl GenBank-Accession-Update_d.sql README
 
 
 # ---------------  Production Rules  ------------------------------------
