@@ -117,6 +117,7 @@
     <class name="org.zfin.sequence.DisplayGroup" table="foreign_db_contains_display_group">
         <id name="id">
             <column name="fdbcdg_pk_id" not-null="true"/>
+            <generator class="identity"/>
         </id>
 
         <property name="groupName" column="fdbcdg_name" not-null="true" type="displayGroupName" />
@@ -175,6 +176,7 @@
         <property name="dataZdbID" column="dblink_linked_recid" insert="false" update="false" not-null="true"/>
         <property name="accessionNumber" column="dblink_acc_num" not-null="true"/>
         <property name="accessionNumberDisplay" column="dblink_acc_num_display" not-null="false" type="string"/>
+        <property name="linkInfo" column="dblink_info" not-null="false" type="string"/>
         <property name="length" column="dblink_length"/>
         <many-to-one name="referenceDatabase" column="dblink_fdbcont_zdb_id"
                      class="org.zfin.sequence.ReferenceDatabase" not-null="true" lazy="no-proxy"/>

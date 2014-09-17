@@ -74,7 +74,8 @@ public class ForeignDB implements Comparable<ForeignDB> {
 
 
     public static enum AvailableName {
-	    CREZOO("CreZoo"),
+        ADDGENE("Addgene"),
+        CREZOO("CreZoo"),
         CURATED_MIRNA_MATURE("Curated miRNA Mature"),
         CURATED_MIRNA_STEM_LOOP("Curated miRNA Stem Loop"),
         DBSNP("dbSNP"),

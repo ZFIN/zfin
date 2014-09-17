@@ -65,8 +65,8 @@ public class GeneViewController {
         // case 7586
 //        geneBean.setOtherMarkerPages(RepositoryFactory.getMarkerRepository().getMarkerDBLinksFast(gene, DisplayGroup.GroupName.SUMMARY_PAGE));
         List<LinkDisplay> otherMarkerDBLinksLinks = geneBean.getOtherMarkerPages();
-        otherMarkerDBLinksLinks.addAll(RepositoryFactory.getMarkerRepository()
-                .getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE));
+        otherMarkerDBLinksLinks.addAll(markerRepository.getVegaGeneDBLinksTranscript(
+                gene, DisplayGroup.GroupName.SUMMARY_PAGE));
         Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator);
         geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
 
@@ -92,16 +92,19 @@ public class GeneViewController {
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
 
         // gene products
-        geneBean.setGeneProductsBean(RepositoryFactory.getMarkerRepository().getGeneProducts(gene.getZdbID()));
+        geneBean.setGeneProductsBean(markerRepository.getGeneProducts(gene.getZdbID()));
 
         // (CONSTRUCTS)
-        if (efgViewController != null)
+        if (efgViewController != null) {
             efgViewController.populateConstructList(geneBean, gene);
+        }
 
         // (Antibodies)
-        geneBean.setRelatedAntibodies(RepositoryFactory.getMarkerRepository()
-                .getRelatedMarkerDisplayForTypes(gene, true
-                        , MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
+        geneBean.setRelatedAntibodies(markerRepository.getRelatedMarkerDisplayForTypes(
+                gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
+
+        geneBean.setPlasmidDBLinks(
+                markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.PLASMIDS));
 
         // ORTHOLOGY
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));

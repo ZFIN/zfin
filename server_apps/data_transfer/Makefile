@@ -28,7 +28,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer
 
 SUBDIRS = MEOW SWISS-PROT GXP GO ResourceCenters Downloads Ensembl GenPept LoadOntology \
 	  Genbank ORTHO Load BurgessLin SNP zfishbook SangerMutants \
-	  OMIM PUBMED Dorsky NCBIGENE VegaStartEnd NCBIStartEnd VegaStartEnd
+	  OMIM PUBMED Dorsky NCBIGENE VegaStartEnd NCBIStartEnd VegaStartEnd Addgene
 
 GENERICS = pull.sh
 

@@ -54,6 +54,18 @@
 <%--Antibodies--%>
 <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}" title="ANTIBODIES" maxNumber="5"/>
 
+<%--Plasmid Links--%>
+<zfin2:subsection title="PLASMIDS" anchor="plasmid_links"
+                  test="${!empty formBean.plasmidDBLinks}" showNoData="true" noDataText="No data available">
+    <table class="summary">
+        <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
+            <tr>
+                <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
+            </tr>
+        </c:forEach>
+    </table>
+</zfin2:subsection>
+
 <%--Constructs--%>
 <zfin2:constructsWithSequences formBean="${formBean}"/>
 

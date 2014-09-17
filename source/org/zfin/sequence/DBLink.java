@@ -27,6 +27,15 @@ public abstract class DBLink implements EntityAttribution {
     private String dataZdbID;
     private Integer version;
     private String accessionNumberDisplay;
+    private String linkInfo;
+
+    public String getLinkInfo() {
+        return linkInfo;
+    }
+
+    public void setLinkInfo(String linkInfo) {
+        this.linkInfo = linkInfo;
+    }
 
     public String getAccessionNumberDisplay() {
         return accessionNumberDisplay;
