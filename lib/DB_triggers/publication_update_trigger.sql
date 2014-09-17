@@ -1,6 +1,6 @@
 create trigger publication_update_trigger update of
-    title,accession_no , pub_doi, pubmed_authors, authors,
-    pub_mini_ref, jtype, pub_pages, zdb_id
+    title, accession_no, pub_doi, pubmed_authors, authors,
+    pub_mini_ref, jtype, pub_pages, zdb_id, pub_date
     on publication referencing new as new_publication
     for each row
         (
