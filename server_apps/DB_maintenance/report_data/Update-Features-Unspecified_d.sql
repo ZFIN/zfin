@@ -32,7 +32,7 @@ SET    feature_name = (SELECT mrkr_abbrev||'_unspecified'
                        WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
                               AND feature_zdb_id = fmrel_ftr_zdb_id
                               AND feature_name LIKE '%_unspecified')
-WHERE  feature_name LIKE '%_unspecified'
+WHERE  feature_name LIKE '%/_unspecified'
        AND feature_type = 'UNSPECIFIED'
        AND NOT EXISTS (SELECT 'x'
                        FROM   feature_marker_relationship,
@@ -49,7 +49,7 @@ SET    feature_abbrev = (SELECT mrkr_abbrev||'_unspecified'
                          WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
                                 AND feature_zdb_id = fmrel_ftr_zdb_id
                                 AND feature_abbrev = mrkr_abbrev||'_unspecified')
-WHERE  feature_name LIKE '%_unspecified'
+WHERE  feature_name LIKE '%/_unspecified'
        AND feature_type = 'UNSPECIFIED'
        AND NOT EXISTS (SELECT 'x'
                        FROM   feature_marker_relationship,
@@ -66,7 +66,7 @@ SET    feature_name = (SELECT mrkr_abbrev||'_unrecovered'
                        WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
                               AND feature_zdb_id = fmrel_ftr_zdb_id
                               AND feature_name = mrkr_abbrev||'_unrecovered')
-WHERE  feature_name LIKE '%_unrecovered'
+WHERE  feature_name LIKE '%/_unrecovered'
        AND NOT EXISTS (SELECT 'x'
                        FROM   feature_marker_relationship,
                               marker
@@ -82,7 +82,7 @@ SET    feature_abbrev = (SELECT mrkr_abbrev||'_unrecovered'
                          WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
                                 AND feature_zdb_id = fmrel_ftr_zdb_id
                                 AND feature_abbrev LIKE '%_unrecovered')
-WHERE  feature_name LIKE '%_unrecovered'
+WHERE  feature_name LIKE '%/_unrecovered'
        AND NOT EXISTS (SELECT 'x'
                        FROM   feature_marker_relationship,
                               marker
