@@ -1967,54 +1967,6 @@ sub syncDbLinkAccBkLength ($) {
 
 
 #======================= ZDB Object Type ================================
-#----------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-#
-
-sub zdbObjectIsSourceDataCorrect($) {
-
-  my $routineName = "zdbObjectIsSourceDataCorrect";
-
-  my $sql = '
-             select zobjtype_name,
-                    zobjtype_is_data,
-                    zobjtype_is_source
-
-               from zdb_object_type
-
-              where (zobjtype_is_data = "t" and
-                     zobjtype_name not in (select get_obj_type(zactvd_zdb_id)
-                                             from zdb_active_data) )
-                 or (zobjtype_is_data = "f" and
-                     zobjtype_name in (select get_obj_type(zactvd_zdb_id)
-                                         from zdb_active_data) )
-                 or (zobjtype_is_source = "t" and
-                     zobjtype_name not in (select get_obj_type(zactvs_zdb_id)
-                                             from zdb_active_source ) )
-                 or (zobjtype_is_source = "f" and
-                     zobjtype_name in (select get_obj_type(zactvs_zdb_id)
-                                             from zdb_active_source ) )          
-               ';
-  
-  my @colDesc = ("Zobjtype name     ",
-		 "Zobjtype is data  ",
-		 "Zobjtype is source" );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = " ZDB Source and Data misdefined";
-    my $errMsg = "In zdb_object_type, $nRecords records are not consistent "
-    	          ."with records in zdb_active_data and zdb_active_source";
-      	
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-}
-
 #---------------------------------------------------------------
 # Each entry in foreign_db should have 1 or more entries in
 # foreign_db_contains.  foreign_db_contains describes what type(s) of
@@ -2483,11 +2435,7 @@ if($daily) {
     syncDbLinkAccBkLength($dbaEmail);
     foreigndbNotInFdbcontains($otherEmail);
     markerCloneHasNoEntryInCloneTable($dbaEmail);
-
-    zdbObjectIsSourceDataCorrect($dbaEmail);
-
     zdbReplacedDataIsReplaced($dbaEmail);
-
     mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
 }
