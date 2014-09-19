@@ -25,7 +25,6 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     private boolean useParameterMap;
 
     public void execute() {
-        LOG.getRootLogger().setLevel(Level.INFO);
         LOG.info("Job Name: " + jobName);
         if (useParameterMap) {
             String[] variables = variableNames.split(delimiter);
@@ -49,14 +48,18 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         runQueryFile(queryFile);
     }
 
+    private void initLogger() {
+        clearReportDirectory();
+        setLoggerFile();
+        LOG.getRootLogger().setLevel(Level.WARN);
+    }
+
     @Override
     protected void addCustomVariables(Map<String, Object> map) {
         map.putAll(dataMap);
     }
 
     private void runQueryFile(File dbQueryFile) {
-        setLoggerFile();
-        clearReportDirectory();
         copyFileToReportDirectory(dbQueryFile);
         HibernateUtil.currentSession().beginTransaction();
         List<String> errorMessages;
@@ -108,11 +111,13 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         task.propertiesFile = "report-data-email.properties";
         String baseDir = commandLine.getOptionValue(baseDirOpt.getOpt());
         String pathname = baseDir + "/" + REPORT_DIRECTORY;
+        task.dataDirectory = new File(pathname);
+        task.initLogger();
         if (baseDir != null) {
             task.propertyFilePath = baseDir + "/" + task.propertyFilePath;
             task.init(pathname);
         }
-        task.dataDirectory = new File(pathname);
+        LOG.getRootLogger().setLevel(Level.INFO);
         task.execute();
     }
 

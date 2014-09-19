@@ -6,6 +6,7 @@ import freemarker.template.TemplateException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
@@ -89,7 +90,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             LOG.error(e);
         }
 
-        LOG.info("Template File being used: " + reportConfiguration.getTemplateDirectory() + "/" + reportConfiguration.getTemplateFileName());
+        LOG.debug("Template File being used: " + reportConfiguration.getTemplateDirectory() + "/" + reportConfiguration.getTemplateFileName());
         FileWriter writer;
         try {
             writer = new FileWriter(reportConfiguration.getReportFile());
@@ -211,6 +212,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
         }
         service.setLoggerFile(logFile);
+        service.setConsoleAppender();
     }
 
     /**

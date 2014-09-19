@@ -13,6 +13,7 @@ import org.zfin.util.DbScriptFileParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
@@ -285,6 +286,13 @@ public class DatabaseService {
         return statement;
     }
 
+    public void setConsoleAppender() {
+        ConsoleAppender ca = new ConsoleAppender();
+        ca.setWriter(new OutputStreamWriter(System.out));
+        ca.setLayout(new PatternLayout("%r %-5p: %m%n"));
+        Logger.getRootLogger().addAppender(ca);
+    }
+
     public static class ForeignKeyResultSort implements Comparator<ForeignKeyResult> {
         public int compare(ForeignKeyResult o1, ForeignKeyResult o2) {
             return o1.getForeignKey().getForeignKeyTable().getTableName().compareToIgnoreCase(o2.getForeignKey().getForeignKeyTable().getTableName());
@@ -412,7 +420,7 @@ public class DatabaseService {
             e.printStackTrace();
             return;
         }
-        LOG.addAppender(appender);
+        LOG.getRootLogger().addAppender(appender);
     }
 
     private final Logger LOG = Logger.getLogger(DatabaseService.class);
