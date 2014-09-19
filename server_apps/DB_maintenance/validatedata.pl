@@ -1967,50 +1967,6 @@ sub syncDbLinkAccBkLength ($) {
 
 
 #======================= ZDB Object Type ================================
-#---------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-#
-sub zdbObjectHomeTableColumnExist ($) {
-
-  my $routineName = "zdbObjectHomeTableColumnExist";
-
-  my $sql = '
-             select zobjtype_name,
-                    zobjtype_home_table,
-                    zobjtype_home_zdb_id_column
-
-               from zdb_object_type
- 
-              where zobjtype_home_table not in 
-                           (select tabname from systables)
-                 or zobjtype_home_zdb_id_column not in
-                           (select colname 
-                              from zdb_object_type a, 
-                                   systables b, 
-                                   syscolumns c
-                             where zobjtype_home_table = b.tabname
-                               and b.tabid = c.tabid) ';
-  
-  my @colDesc = ("Zobjtype name",
-		 "Zobjtype home table",
-		 "Zobjtype home zdb id column" );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-
-    my $sendToAddress = $_[0];
-    my $subject = "Home table or home column not available";
-    my $errMsg = "In zdb_object_type, $nRecords records either has no home "
-    	              ."table or has no home column";
-      
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
 #----------------------------------------------------------
 #Parameter
 # $      Email Address for recipients
@@ -2528,7 +2484,6 @@ if($daily) {
     foreigndbNotInFdbcontains($otherEmail);
     markerCloneHasNoEntryInCloneTable($dbaEmail);
 
-    zdbObjectHomeTableColumnExist($dbaEmail);
     zdbObjectIsSourceDataCorrect($dbaEmail);
 
     zdbReplacedDataIsReplaced($dbaEmail);
