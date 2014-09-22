@@ -18,8 +18,7 @@ public class OrthologyValidationTest {
 /*
         String[] configFiles = {"/home/WEB-INF/zfin-servlet.xml",
                 "/home/WEB-INF/conf/anatomy.xml",
-                "/home/WEB-INF/conf/profile.xml",
-                "/home/WEB-INF/conf/developer-tools.xml"};
+                "/home/WEB-INF/conf/profile.xml"};
         ApplicationContext context = new FileSystemXmlApplicationContext(configFiles);
 */
     }

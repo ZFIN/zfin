@@ -48,6 +48,63 @@
         <run-db-query db-query-file="set_unload_timestamp.sql" instanceName="${DBNAME}"/>
     </target>
 
+    <target name="load-gaf-paint" description="">
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
+              fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/gafLoad"/>
+            <arg value="${jobName}"/>
+            <arg value="PAINT"/>
+            <arg value="http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz"/>
+            <arg value="org.zfin.datatransfer.go.PaintGafParser"/>
+        </java>
+        <fail message="Failed: There was an error while processing the load">
+            <condition>
+                <resourcecontains resource="${validateData}/gafLoad/${jobName}_errors.txt" substring="."/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="load-gaf-goa" description="">
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
+              fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/gafLoad"/>
+            <arg value="${jobName}"/>
+            <arg value="GOA"/>
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz"/>
+            <arg value="org.zfin.datatransfer.go.GoaGafParser"/>
+        </java>
+        <fail message="Failed: There was an error while processing the load">
+            <condition>
+                <resourcecontains resource="${validateData}/gafLoad/${jobName}_errors.txt" substring="."/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="load-gaf-fpinference" description="">
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
+              fork="no"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/gafLoad"/>
+            <arg value="${jobName}"/>
+            <arg value="FP Inferences"/>
+            <arg value="http://build.berkeleybop.org/view/GAF/job/gaf-check-zfin/lastSuccessfulBuild/artifact/gene_association.zfin.inf.gaf"/>
+            <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/>
+        </java>
+        <fail message="Failed: There was an error while processing the load">
+            <condition>
+                <resourcecontains resource="${validateData}/gafLoad/${jobName}_errors.txt" substring="."/>
+            </condition>
+        </fail>
+    </target>
+
     <target name="report-marker-go-duplicate" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>

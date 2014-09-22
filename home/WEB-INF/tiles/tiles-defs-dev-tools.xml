@@ -231,11 +231,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/blast-jobs.jsp"/>
     </definition>
 
-    <definition name="quartz-jobs.page" extends="dev_layout">
-        <put-attribute name="staticTitle" value="Quartz Jobs"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/quartz-jobs.jsp"/>
-    </definition>
-
     <definition name="zfin-properties.page" extends="dev_layout">
         <put-attribute name="staticTitle" value="Zfin Properties Enum Values"/>
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/zfin-properties.jsp"/>

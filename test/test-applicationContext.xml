@@ -4,7 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="../home/WEB-INF/spring/properties.xml"/>
-    <import resource="../home/WEB-INF/spring/quartz-jobs.xml"/>
     <import resource="../home/WEB-INF/spring/security.xml"/>
 
     <import resource="../home/WEB-INF/spring/mvc.xml"/>

@@ -25,10 +25,6 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * Service class facilitating the download files.
- * <p/>
- * Note: Since it is such a hassle to inject the instance of this class into a quartz job the cache is update as follows:
- * the time the last update was done is stored and whenever all download files are requested it is checked
- * if the current time and date is more than 20 hours past the last caching.
  */
 @Service
 public class DownloadFileService extends ArchiveService {

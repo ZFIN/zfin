@@ -3,7 +3,6 @@ package org.zfin.infrastructure ;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.framework.presentation.QuartzJobsBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,21 +51,6 @@ public class EnumValidationTest extends AbstractDatabaseTest {
         errorReport = EnumValidationService.getCollectionDifferenceReport(namesOne, namesTwo, String.class);
         assertNotNull(errorReport );
 
-    }
-
-    @Test
-    public void correctBoolean(){
-        assertTrue(QuartzJobsBean.Action.RESUME.isIndividualAction()) ;
-        assertTrue(QuartzJobsBean.Action.PAUSE.isIndividualAction()) ;
-        assertTrue(QuartzJobsBean.Action.RUN.isIndividualAction()) ;
-        assertFalse(QuartzJobsBean.Action.PAUSE_ALL.isIndividualAction()) ;
-        assertFalse(QuartzJobsBean.Action.RESUME_ALL.isIndividualAction()) ;
-
-        assertFalse(QuartzJobsBean.Action.RESUME.isPauseAction()) ;
-        assertFalse(QuartzJobsBean.Action.RUN.isPauseAction()) ;
-        assertTrue(QuartzJobsBean.Action.PAUSE.isPauseAction()) ;
-        assertTrue(QuartzJobsBean.Action.PAUSE_ALL.isPauseAction()) ;
-        assertFalse(QuartzJobsBean.Action.RESUME_ALL.isPauseAction()) ; 
     }
 
 }

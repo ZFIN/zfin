@@ -6,7 +6,6 @@
        ">
 
     <!--<import resource="reno.xml"/>-->
-    <import resource="developer-tools.xml"/>
 
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">

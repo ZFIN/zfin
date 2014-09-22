@@ -1,23 +1,27 @@
 package org.zfin.datatransfer.go.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.stereotype.Component;
 import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.ZfinBasicQuartzJob;
-import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This is autowired for spring 3, but is not in the correct context yet.
@@ -49,35 +53,31 @@ import java.util.*;
  * - GafService.removeEntries() is called to do a batch removal.
  * - Messages are created and emailed out.
  */
-//@Component
-public class GafLoadJob extends ZfinBasicQuartzJob {
+@Component
+public class GafLoadJob extends AbstractValidateDataReportTask {
 
-    private Logger logger = Logger.getLogger(GafLoadJob.class);
+    private static Logger logger = Logger.getLogger(GafLoadJob.class);
 
-    // these should be autowired, but everything needs to be in the same context, first
-//    @Autowired
-    protected DownloadService downloadService = new DownloadService();
-    //    @Autowired
-    protected GafService gafService ;
-    //    @Autowired
-    protected FpInferenceGafParser gafParser ;
+    @Autowired
+    protected DownloadService downloadService;
+
     private final int BATCH_SIZE = 20;
 
-    protected String downloadUrl ;
-    protected String localDownloadFile ;
-    protected GafOrganization.OrganizationEnum organizationEnum ;
+    protected FpInferenceGafParser gafParser;
+    protected GafService gafService;
+    protected String downloadUrl;
+    protected String localDownloadFile;
+    protected String organization;
 
-    @Override
-    public void run(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void execute() {
 
+        GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
-        StringBuilder message = new StringBuilder();
         try {
-            setFields(jobExecutionContext.getJobDetail().getJobDataMap());
-// 1. download gzipped GAF file
-//        ftp://ftp.geneontology.org/pub/go/gene-associations/submission/gene_association.goa_zebrafish.gz
-//  as described in FB case 10369, changed to:
-//        ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz
+            localDownloadFile = System.getProperty("java.io.tmpdir") + "/" + "gene_association."+organizationEnum.name();
+            gafService = new GafService(organizationEnum);
+
+            // 1. download gzipped GAF file
             File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
@@ -102,74 +102,72 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
             gafService.processEntries(gafEntries, gafJobData);
 
             addAnnotations(gafJobData);
-//            HibernateUtil.createTransaction();
-//            gafService.addAnnotations(gafJobData);
-//            HibernateUtil.flushAndCommitCurrentSession();
 
-            // see FB cases 8455 and 8166
-//            if (GafOrganization.OrganizationEnum.FP_INFERENCES != GafOrganization.OrganizationEnum.getType(gafOrganization.getOrganization())) {
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
-//            }
 
             removeAnnotations(gafJobData);
-            String summary = gafJobData.toString();
-            message.append(summary).append("\n\n");
 
-            message.append("REMOVED").append("\n");
+            FileWriter summary = new FileWriter(new File(baseDir, jobName + "_summary.txt"));
+            FileWriter details = new FileWriter(new File(baseDir, jobName + "_details.txt"));
+
+            summary.append(gafJobData.toString());
+            summary.flush();
+            summary.close();
+
+            details.write("== REMOVED ==\n");
             for (GafJobEntry removed : gafJobData.getRemovedEntries()) {
-                message.append(removed.getEntryString()).append("\n");
+                details.append(removed.getEntryString()).append("\n");
             }
-            message.append("\n\n");
+            details.append("\n\n");
 
-            message.append("ADDED").append("\n");
+            details.append("== ADDED ==").append("\n");
             for (MarkerGoTermEvidence entry : gafJobData.getNewEntries()) {
-                message.append(entry.toString()).append("\n").append("\n");
+                details.append(entry.toString()).append("\n").append("\n");
             }
-            message.append("\n\n");
+            details.append("\n\n");
 
-            message.append("ERRORS").append("\n");
+            details.append("== ERRORS ==").append("\n");
             for (GafValidationError error : gafJobData.getErrors()) {
-                message.append(error.getMessage()).append("\n");
+                details.append(error.getMessage()).append("\n");
             }
-            message.append("\n\n");
+            details.append("\n\n");
 
-            message.append("EXISTING").append("\n");
+            details.append("== EXISTING ==").append("\n");
             for (GafJobEntry entry : gafJobData.getExistingEntries()) {
-                message.append(entry.toString()).append("\n").append("\n");
+                details.append(entry.toString()).append("\n").append("\n");
             }
-            message.append("\n\n");
+            details.append("\n\n");
+            details.flush();
+            details.close();
 
-            (new IntegratedJavaMailSender()).sendMail("Summary of "+organizationEnum + " load: " + (new Date()).toString()
-                    , message.toString() + " from file: " + downloadedFile,
-                    ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_CURATOR));
+//            (new IntegratedJavaMailSender()).sendMail("Summary of "+organizationEnum + " load: " + (new Date()).toString()
+//                    , message.toString() + " from file: " + downloadedFile,
+//                    ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_CURATOR));
 
         } catch (Exception e) {
             logger.error("Failed to process Gaf load job", e);
             if(HibernateUtil.currentSession().getTransaction()!=null){
                 HibernateUtil.rollbackTransaction();
             }
-            (new IntegratedJavaMailSender()).sendMail("Errors in " + organizationEnum + " load: " + (new Date()).toString()
-                    , "Error in " + organizationEnum + " load: " + e.fillInStackTrace().toString() + "\nNotes:\n" + message.toString(),
-                    ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_ERR));
+            try {
+                FileWriter errors = new FileWriter(new File(baseDir, jobName + "_errors.txt"));
+                errors.append("Error in ").append(organizationEnum.toString()).append(" load.\n");
+                errors.append(ExceptionUtils.getStackTrace(e));
+                errors.flush();
+                errors.close();
+            } catch (IOException io) {
+                logger.error("Error writing error report", io);
+            }
+//            (new IntegratedJavaMailSender()).sendMail("Errors in " + organizationEnum + " load: " + (new Date()).toString()
+//                    , "Error in " + organizationEnum + " load: " + e.fillInStackTrace().toString() + "\nNotes:\n" + message.toString(),
+//                    ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_ERR));
+
         } finally {
             downloadService = null;
             gafService = null;
             HibernateUtil.closeSession();
         }
 
-    }
-
-    private void setFields(JobDataMap jobDataMap) {
-        downloadService = (DownloadService) jobDataMap.get("downloadService");
-        String enumString = jobDataMap.get("organization").toString();
-
-        // this sets the localDownloadFile, as well and gafService
-        organizationEnum = GafOrganization.OrganizationEnum.getType(enumString);
-        localDownloadFile = System.getProperty("java.io.tmpdir") + "/" + "gene_association."+organizationEnum.name();
-        gafService = new GafService(organizationEnum);
-
-        downloadUrl = jobDataMap.get("downloadUrl").toString();
-        gafParser = (FpInferenceGafParser) jobDataMap.get("gafParser");
     }
 
     private void addAnnotations(GafJobData gafJobData) {
@@ -185,7 +183,7 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
             }
             try {
                 HibernateUtil.createTransaction();
-                gafService.addAnnotationsBatch(batchToAdd,gafJobData);
+                gafService.addAnnotationsBatch(batchToAdd, gafJobData);
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
@@ -233,4 +231,26 @@ public class GafLoadJob extends ZfinBasicQuartzJob {
         }
     }
 
+    public static void main(String[] args) {
+        initLog4J();
+        setLoggerToInfoLevel(logger);
+        String baseDir = args[1];
+        String configPath = "file:" + baseDir + "/gaf-load.xml";
+        ApplicationContext context = new FileSystemXmlApplicationContext(configPath);
+        GafLoadJob job = context.getBean(GafLoadJob.class);
+        job.setPropertyFilePath(args[0]);
+        job.setBaseDir(baseDir);
+        job.setJobName(args[2]);
+        job.organization = args[3];
+        job.downloadUrl = args[4];
+        String parserClassName = args[5];
+        try {
+            job.gafParser = (FpInferenceGafParser) context.getBean(Class.forName(parserClassName));
+        } catch (ClassNotFoundException e) {
+            logger.error("Could not load parser class " + parserClassName);
+            System.exit(1);
+        }
+        job.init();
+        job.execute();
+    }
 }

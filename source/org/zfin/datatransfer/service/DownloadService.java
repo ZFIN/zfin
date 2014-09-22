@@ -5,7 +5,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,7 +19,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * This class helps download ftp files.
  */
-@Service
+@Component
 public class DownloadService {
 
     private Logger logger = Logger.getLogger(DownloadService.class);

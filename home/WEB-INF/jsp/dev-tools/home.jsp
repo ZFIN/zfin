@@ -16,7 +16,7 @@
         <a href="/action/devtool/ontology/summary">Check Ontology Chache</a>
     </td>
     <td>
-        <a href="/action/dev-tools/quartz-jobs">Quartz Jobs</a>
+        <a href="/action/devtool/blast-jobs">Blast Jobs</a>
     </td>
 </tr>
 <tr>
@@ -24,7 +24,7 @@
         <a href="/action/devtool/gwt/modules">GWT Modules</a>
     </td>
     <td>
-        <a href="/action/devtool/blast-jobs">Blast Jobs</a>
+        <a href="/action/blast/blast-definitions">Blast Contents</a>
     </td>
 </tr>
 <tr>
@@ -32,7 +32,7 @@
         <a href="/action/devtool/view-user-request-tracks">User Request Tracking (Clickstream)</a>
     </td>
     <td>
-        <a href="/action/blast/blast-definitions">Blast Contents</a>
+        <a href="/action/blast/blast-files">Downloadable Blast Files</a>
     </td>
 </tr>
 <tr>
@@ -40,7 +40,7 @@
         <a href="/action/ontology/version-info">Ontology Version Info</a>
     </td>
     <td>
-        <a href="/action/blast/blast-files">Downloadable Blast Files</a>
+        <a href="/action/devtool/display-groups">ReferenceDB/DBLink Display Groups</a>
     </td>
 </tr>
 <tr>
@@ -49,19 +49,13 @@
         &nbsp;
     </td>
     <td>
-        <a href="/action/devtool/display-groups">ReferenceDB/DBLink Display Groups</a>
+        <a href="/action/devtool/blastable-databases">Blast Database Groups</a>
     </td>
 </tr>
 <tr>
     <td>
         <a href="/webapp/dev-tools/request/ZDB-LAB-000114-8">Test jQuery Ajax Lab Page</a>
     </td>
-    <td>
-        <a href="/action/devtool/blastable-databases">Blast Database Groups</a>
-    </td>
-</tr>
-<tr>
-    <td></td>
     <td>
         <a href="/action/devtool/phenotype-curation-history">History: Phenotype Experiments</a>
     </td>

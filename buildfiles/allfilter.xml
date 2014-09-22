@@ -119,7 +119,6 @@
 <filter token="PRODUCTION_NOTIFICATION_EMAIL" value="${PRODUCTION_NOTIFICATION_EMAIL}"/>
 <filter token="REQUEST_NEW_ANATOMY_EMAIL" value="${REQUEST_NEW_ANATOMY_EMAIL}"/>
 <filter token="ROOT_PATH" value="${ROOT_PATH}"/>
-<filter token="RUN_QUARTZ_JOBS" value="${RUN_QUARTZ_JOBS}"/>
 <filter token="SCHEDULE_TRIGGER_FILES" value="${SCHEDULE_TRIGGER_FILES}"/>
 <filter token="SECUREPORT" value="${SECUREPORT}"/>
 <filter token="SECURE_HTTP" value="${SECURE_HTTP}"/>

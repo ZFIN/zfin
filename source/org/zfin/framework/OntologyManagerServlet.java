@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServlet;
  * Background Servlet that should not be called directly.
  * It loads all used ontologies into memory ({@link org.zfin.ontology.OntologyManager} class) upon
  * startup. Typically, this should be done from a serialized file to speed up versus re-loading them
- * from the TERM table. Syncing with the TERM table is done via a Quartz cron job run nightly during the week
+ * from the TERM table. Syncing with the TERM table is done via Jenkins jobs that run nightly during the week
  */
 public class OntologyManagerServlet extends HttpServlet {
 
