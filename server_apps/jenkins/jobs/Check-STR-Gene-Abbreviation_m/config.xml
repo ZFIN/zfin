@@ -2,7 +2,7 @@
 <project>
   <actions/>
   <description>Check that each Sequence Targeting Reagent has a corresponding Gene abbreviation. See
-      <a href="https://wiki.zfin.org/display/doc/MO+Nomenclature">ZFIN nomenclature convention</a>
+      &#xd;&lt;a href=&quot;https://wiki.zfin.org/display/doc/MO+Nomenclature&quot;&gt;ZFIN nomenclature convention&lt;/a&gt;
   for STRs.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
