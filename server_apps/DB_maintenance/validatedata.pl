@@ -1883,42 +1883,6 @@ sub tscriptLoadIdMatchesDBLink ($) {
 # $      Email Address for recipients
 #
 # 
-sub transcriptsOnMoreThanOneGene ($) {
-    my $routineName = "transcriptsOnMoreThanOneGene";
-    my $sql = 'select tscript_mrkr_zdb_id, count(*)
-                 from marker_relationship mrel1, transcript, transcript_type
-                 where tscriptt_pk_id = tscript_type_id
-		 and tscriptt_type != "miRNA"
-                 and tscript_mrkr_zdb_id = mrel1.mrel_mrkr_2_zdb_id
-                 and mrel1.mrel_mrkr_1_zdb_id like "ZDB-GENE%"
-                 and exists (Select "x" 
-                               from marker_relationship mrel2
-                               where mrel2.mrel_mrkr_1_zdb_id != mrel1.mrel_mrkr_1_zdb_id
-                               and mrel2.mrel_mrkr_1_zdb_id like "ZDB-GENE%"
-                               and mrel2.mrel_mrkr_2_zdb_id = mrel1.mrel_mrkr_2_zdb_id)
-                 group by tscript_mrkr_zdb_id
-                 having count(*) > 1';
-
-    my @colDesc =("Data zdb id, counter");
-
-    my $nRecords = execSql ($sql, undef, @colDesc);
-
-    if ( $nRecords > 0 ) {
-
-	my $sendToAddress = $_[0];
-	my $subject = "AutoGen: tscript are associated with more than one gene";
-	my $errMsg = "$nRecords transcripts are associated with more than one gene";
-	
-	logError ($errMsg); 
-	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-    }
-    &recordResult($routineName, $nRecords);
-}
-#----------------------------------------------
-# Parameter
-# $      Email Address for recipients
-#
-# 
 sub syncDbLinkAccBkLength ($) {
     my $routineName = "syncDbLinkAccBkLength";
     my $sql = 'select dblink_acc_num from db_link
@@ -2425,7 +2389,6 @@ my $transcriptEmail = "<!--|VALIDATION_EMAIL_TRANSCRIPT|-->";
 
 
 if($daily) {
-    transcriptsOnMoreThanOneGene($transcriptEmail);
     tscriptLoadIdMatchesDBLink($transcriptEmail);
     findWithdrawnMarkerMismatch($transcriptEmail); 
     onlyProblemClonesHaveArtifactOf($geneEmail); 
