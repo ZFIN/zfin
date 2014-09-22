@@ -1813,35 +1813,6 @@ sub orthologyOrganismMatchesForeignDBContains ($) {
 }
 
 #======================= DB Link =======================================
-#----------------------------------------------
-# Parameter
-# $      Email Address for recipients
-#
-# 
-sub allTranscriptsHaveAtLeastOneDbLink ($) {
-    my $routineName = "allTranscriptsHaveAtLeastOneDbLink";
-    my $sql = 'select tscript_mrkr_zdb_id 
-                 from transcript
-                 where not exists (Select "x"
-                                     from db_link
-                                     where dblink_linked_recid = tscript_mrkr_zdb_id)';
-
-    my @colDesc =("Data zdb id");
-
-    my $nRecords = execSql ($sql, undef, @colDesc);
-
-    if ( $nRecords > 0 ) {
-
-	my $sendToAddress = $_[0];
-	my $subject = "AutoGen: Transcripts with no DbLinks";
-	my $errMsg = "In transcripts, $nRecords have no dblinks";
-	
-	logError ($errMsg); 
-	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-    }
-    &recordResult($routineName, $nRecords);
-}
-#----------------------------------------------
 
 #----------------------------------------------
 # Parameter
@@ -2394,7 +2365,6 @@ if($daily) {
     onlyProblemClonesHaveArtifactOf($geneEmail); 
     checkFigXpatexSourceConsistant($dbaEmail);
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
-    allTranscriptsHaveAtLeastOneDbLink($dbaEmail);
     syncDbLinkAccBkLength($dbaEmail);
     foreigndbNotInFdbcontains($otherEmail);
     markerCloneHasNoEntryInCloneTable($dbaEmail);
