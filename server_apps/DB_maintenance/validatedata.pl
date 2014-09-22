@@ -1819,41 +1819,6 @@ sub orthologyOrganismMatchesForeignDBContains ($) {
 # $      Email Address for recipients
 #
 # 
-sub tscriptLoadIdMatchesDBLink ($) {
-    my $routineName = "tscriptLoadIdMatchesDBLink";
-    my $sql = 'select tscript_mrkr_zdb_id, tscript_load_id, dblink_acc_num
-                 from transcript, db_link
-                 where not exists (Select "x"
-                                     from db_link b
-                                     where b.dblink_linked_recid = tscript_mrkr_zdb_id
-                                       and b.dblink_Acc_num = tscript_load_id)
-                 and tscript_load_id != tscript_mrkr_zdb_id
-                 and dblink_linked_recid = tscript_mrkr_zdb_id
-                 and not exists (Select "x" from data_alias
-                                     where dalias_data_zdb_id = tscript_mrkr_zdb_id
-                                     and dalias_alias like "OTTDAR%")';
-
-    my @colDesc =("tscript zdb id, tscript_load_id, dblink_acc_num");
-
-    my $nRecords = execSql ($sql, undef, @colDesc);
-
-    if ( $nRecords > 0 ) {
-
-	my $sendToAddress = $_[0];
-	my $subject = "AutoGen: Transcripts with mismatched tscript_load_id/dblink records";
-	my $errMsg = "In transcripts, $nRecords have no dblinks with that match tscript_load_id and are missing aliases to their OTTDART ids";
-	
-	logError ($errMsg); 
-	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-    }
-    &recordResult($routineName, $nRecords);
-}
-
-#----------------------------------------------
-# Parameter
-# $      Email Address for recipients
-#
-# 
 sub syncDbLinkAccBkLength ($) {
     my $routineName = "syncDbLinkAccBkLength";
     my $sql = 'select dblink_acc_num from db_link
@@ -2360,8 +2325,7 @@ my $transcriptEmail = "<!--|VALIDATION_EMAIL_TRANSCRIPT|-->";
 
 
 if($daily) {
-    tscriptLoadIdMatchesDBLink($transcriptEmail);
-    findWithdrawnMarkerMismatch($transcriptEmail); 
+    findWithdrawnMarkerMismatch($transcriptEmail);
     onlyProblemClonesHaveArtifactOf($geneEmail); 
     checkFigXpatexSourceConsistant($dbaEmail);
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
