@@ -1,7 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Check that each Sequence Targeting Reagent has a corresponding Gene abbreviation</description>
+  <description>Check that each Sequence Targeting Reagent has a corresponding Gene abbreviation. See
+      <a href="https://wiki.zfin.org/display/doc/MO+Nomenclature">ZFIN nomenclature convention</a>
+  for STRs.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
