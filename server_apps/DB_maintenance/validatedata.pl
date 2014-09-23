@@ -2244,7 +2244,6 @@ my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 
 if($daily) {
     onlyProblemClonesHaveArtifactOf($geneEmail);
-    checkFigXpatexSourceConsistant($dbaEmail);
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     syncDbLinkAccBkLength($dbaEmail);
     foreigndbNotInFdbcontains($otherEmail);
