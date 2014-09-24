@@ -2008,41 +2008,6 @@ sub mrkrgoevObsoleteAnnotationsFound ($) {
 #---------------------------------------------------------------
 # check for obsolete annotations
 
-#---------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub zdbReplacedDataIsReplaced ($) {
-
-  my $routineName = "zdbReplacedDataIsReplaced";
-
-  my $sql = '
-             select zrepld_old_zdb_id,
-                    zrepld_new_zdb_id,
-                    zrepld_old_name  
-               from zdb_replaced_data
-              where zrepld_old_zdb_id in 
-                       (select zactvd_zdb_id 
-                          from zdb_active_data) ';
-  
-  my @colDesc = ("Zrepld old ZDB ID",
-		 "Zrepld new ZDB ID",
-                 "Zrepld old name  " );
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Replaced data not replaced";
-    my $errMsg = "In zdb_replaced_data, $nRecords replaced zdb ids are "
-    	                    ."still in zdb_active_data\n";
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-
 #-------------------
 #Parameter
 # $      Email Address for recipients
@@ -2198,7 +2163,6 @@ $dbh = DBI->connect("DBI:Informix:$globalDbName",
 my $ceri         = "<!--|COUNT_PATO_ERR|-->";
 my $adEmail      = "<!--|VALIDATION_EMAIL_AD|-->";
 my $xpatEmail    = "<!--|VALIDATION_EMAIL_XPAT|-->";
-my $otherEmail   = "<!--|VALIDATION_EMAIL_OTHER|-->";
 my $estEmail     = "<!--|VALIDATION_EMAIL_EST|-->";
 my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
 my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
@@ -2216,7 +2180,6 @@ if($daily) {
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     syncDbLinkAccBkLength($dbaEmail);
     markerCloneHasNoEntryInCloneTable($dbaEmail);
-    zdbReplacedDataIsReplaced($dbaEmail);
     mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
 }
