@@ -1823,37 +1823,6 @@ sub syncDbLinkAccBkLength ($) {
 
 
 #======================= ZDB Object Type ================================
-#---------------------------------------------------------------
-# Each entry in foreign_db should have 1 or more entries in
-# foreign_db_contains.  foreign_db_contains describes what type(s) of
-# data are available in the foreign DB.  If a foreign DB does not have
-# 1 or more entries in foreign_db_contains then several joins in the
-# web pages will fail, and the foreign DB will not show up.
-#
-# Parameter
-#  $     Email Address for recipient
-#
-sub foreigndbNotInFdbcontains ($) {
-
-  my $routineName = "foreigndbNotInFdbcontains";
-
-  my $sql = " select fdb_db_name
-                from foreign_db
-               where fdb_db_pk_id not in (
-                        select fdbcont_fdb_db_id from foreign_db_contains)
-               and fdb_db_name not in ('HAMAP','UniProtKB-SubCell','SP_SL','PANTHER','Ensembl','HTTP','MESH','ISBN','ZFIN')";
-  my @colDesc = ("Db Name    ");
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Foreign db name not in fdbcontains";
-    my $errMsg = "$nRecords foreign db records have no entry in foreign_db_contains.";
-    logError($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
 #----------------------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, inference_groups.
 #
@@ -2246,7 +2215,6 @@ if($daily) {
     onlyProblemClonesHaveArtifactOf($geneEmail);
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     syncDbLinkAccBkLength($dbaEmail);
-    foreigndbNotInFdbcontains($otherEmail);
     markerCloneHasNoEntryInCloneTable($dbaEmail);
     zdbReplacedDataIsReplaced($dbaEmail);
     mrkrgoevGoevflagDuplicatesFound($goEmail);
