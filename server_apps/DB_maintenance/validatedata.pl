@@ -2039,31 +2039,6 @@ sub onlyProblemClonesHaveArtifactOf($) {
     close(RESULTFILE);
 }
 
-#Parameter
-# $      Email Address for recipients
-# 
-sub markerCloneHasNoEntryInCloneTable($) {
-
-    open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write.";
-
-    my $sql = "select mrkr_zdb_id
-                 from marker
-                 where mrkr_type in ('EST','CDNA','BAC','PAC','FOSMID') 
-                 and not exists (Select 'x' from clone where clone_mrkr_zdb_id = mrkr_zdb_id)      
-               ";
-
-    my @colDesc = ("mrkr_zdb_id");
-    my $nRecords = execSql($sql,undef,@colDesc);
-    if($nRecords >0){
-        my $sendToAddress = $_[0];
-        my $subject = "Found $nRecords clones with entry in marker but not in clone tables";
-        my $routineName = "markerCloneHasNoEntryInCloneTable";
-        my $msg = "Found $nRecords clones with 'entry in marker but not in clone tables.";
-        &sendMail($sendToAddress, $subject, $routineName, $msg, );
-    }
-    close(RESULTFILE);
-}
-
 #-------------------
 #Parameter
 # $      Email Address for recipients
@@ -2179,7 +2154,6 @@ if($daily) {
     onlyProblemClonesHaveArtifactOf($geneEmail);
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     syncDbLinkAccBkLength($dbaEmail);
-    markerCloneHasNoEntryInCloneTable($dbaEmail);
     mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
 }
