@@ -433,7 +433,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 ',''), title, replace(accession_no,"none",""),
   	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, substr(pub_date,7,10)
     from publication
-where accession_no not in ('24135484','22615492','22071262','23603293','11581520','22328273');
+where accession_no not in ('24135484','22615492','22071262','23603293','11581520','22328273','19700757');
 
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_journals/1journals.txt"
