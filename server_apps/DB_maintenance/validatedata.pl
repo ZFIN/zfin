@@ -1768,60 +1768,6 @@ sub orthologyOrganismMatchesForeignDBContains ($) {
   &recordResult($routineName, $nRecords); 
 }
 
-#======================= DB Link =======================================
-
-#----------------------------------------------
-# Parameter
-# $      Email Address for recipients
-#
-# 
-sub syncDbLinkAccBkLength ($) {
-    my $routineName = "syncDbLinkAccBkLength";
-    my $sql = 'select dblink_acc_num from db_link
-                 where dblink_length is null
-                 and exists (Select "x" from accession_bank
-                                where accbk_acc_num = dblink_acc_num
-                                and accbk_fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                                and accbk_length is not null)
-               union 
-                 select accbk_acc_num from accession_bank
-                   where accbk_length is null
-                   and exists (Select "x" from db_link
-                                where accbk_acc_num = dblink_acc_num
-                                and accbk_fdbcont_zdb_id = dblink_fdbcont_zdb_id
-                                and dblink_length is not null);';
-    my $ath = $dbh->do('update db_link
-                 set dblink_length = (select accbk_length
-      		      	      from accession_bank
-			      where accbk_acc_num = dblink_acc_num
-			      and dblink_fdbcont_zdb_id = accbk_fdbcont_zdb_id
-                              and accbk_length is not null)
-                 where dblink_length is null;');
-    $ath = $dbh->do('update accession_bank
-                   set accbk_length = (select dblink_length
-      		     	     from db_link
-			     where dblink_acc_num = accbk_acc_num
-			     and dblink_fdbcont_zdb_id = accbk_fdbcont_zdb_id
-                             and dblink_length is not null)
-                   where accbk_length is null');
-
-    my @colDesc =("accession number");
-
-    my $nRecords = execSql ($sql, undef, @colDesc);
-
-    if ( $nRecords > 0 ) {
-
-	my $sendToAddress = $_[0];
-	my $subject = "AutoGen: accession number lengths in db_link or accession_bank out of sync; auto updated";
-	my $errMsg = "In db_link or accession_bank $nRecords had their length's sync'd.";
-	
-	logError ($errMsg); 
-	&sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-    }
-    &recordResult($routineName, $nRecords);
-}
-
-
 #======================= ZDB Object Type ================================
 #----------------------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, inference_groups.
@@ -2074,7 +2020,6 @@ my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 if($daily) {
     onlyProblemClonesHaveArtifactOf($geneEmail);
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
-    syncDbLinkAccBkLength($dbaEmail);
 }
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
