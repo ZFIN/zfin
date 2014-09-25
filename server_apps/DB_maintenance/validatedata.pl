@@ -1929,53 +1929,6 @@ sub subMrkrgoevInfgrpDuplicatesFound($) {
 }
 
 
-#--------------------------------------------------------------------------------------
-# check for duplicate marker_goterm_Evidence, go_evidence_flag.
-
-# Parameter
-#  $     Email Address for recipient
-#
-sub mrkrgoevGoevflagDuplicatesFound ($) {
-
-  my $routineName = "mrkrgoevGoevidenceFlagDuplicatesFound";
-
-  my $sql = 'select count(*),  
-                    mrkrgoev_mrkr_zdb_id, 
-                    mrkrgoev_term_zdb_id, 
-                    mrkrgoev_source_zdb_id, 
-                    mrkrgoev_evidence_code, 
-                    mrkrgoev_gflag_name
-               from marker_go_term_evidence
-               where not exists (select * 
-                                   from inference_group_member
-                                   where mrkrgoev_zdb_id = 
-                                            infgrmem_mrkrgoev_zdb_id)
-               and mrkrgoev_gflag_name is not null
-               group by mrkrgoev_mrkr_zdb_id,
-                        mrkrgoev_term_zdb_id,
-                        mrkrgoev_source_zdb_id,
-                        mrkrgoev_evidence_code,
-                        mrkrgoev_gflag_name
-               having count(*) > 1 ';
-
-  my @colDesc = ("count", 
-		 "mrkrgoev_mrkr_zdb_id" ,
-		 "mrkrgoev_term_zdb_id",
-		 "mrkrgoev_source_zdb_id",
-		 "mrkrgoev_evidence_code",
-         "mrkrgoev_gflag_name");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Possible duplicate records in marker_go_term_evidence";
-    my $errMsg = "$nRecords are possible duplicates in marker_go_term_evidence";
-    logError($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-}
-
 #---------------------------------------------------------------
 # check for obsolete annotations
 
@@ -2154,7 +2107,6 @@ if($daily) {
     onlyProblemClonesHaveArtifactOf($geneEmail);
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     syncDbLinkAccBkLength($dbaEmail);
-    mrkrgoevGoevflagDuplicatesFound($goEmail);
     mrkrgoevObsoleteAnnotationsFound($goEmail);
 }
 if($weekly) {

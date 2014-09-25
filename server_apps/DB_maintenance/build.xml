@@ -105,27 +105,6 @@
         </fail>
     </target>
 
-    <target name="report-marker-go-duplicate" description="">
-        <echo message="Create Validation Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="-a"/>
-            <arg value="${DBNAME}"/>
-            <arg value="${validateData}/validatedata/MarkerGoEvidenceDuplicate.sql"/>
-        </exec>
-        <echo file="${validateData}/column.header" append="false">Count|Marker ID|Term ID|Term OBO ID|Publiction
-            ID|Evidence Code
-        </echo>
-        <echo file="${validateData}/description.txt" append="false">
-            There are duplicate marker_go_term_evidence records.
-        </echo>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="reportRecords.txt" substring="|"/>
-            </condition>
-        </fail>
-    </target>
-
     <target name="report-publication-duplicate" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
