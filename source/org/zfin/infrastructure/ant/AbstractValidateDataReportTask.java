@@ -90,6 +90,15 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             LOG.error(e);
         }
 
+        if (CollectionUtils.isEmpty(resultList)) {
+            File noupdate = new File(reportConfiguration.getReportFile().getParent(), "no-update.txt");
+            try {
+                noupdate.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         LOG.debug("Template File being used: " + reportConfiguration.getTemplateDirectory() + "/" + reportConfiguration.getTemplateFileName());
         FileWriter writer;
         try {

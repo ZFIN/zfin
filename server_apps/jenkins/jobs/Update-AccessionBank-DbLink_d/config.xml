@@ -1,7 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Please add a description</description>
+    <description>This job synchronized the access length info from DB_LINK and ACCESSION_BANK table.
+        If one of them is not null and the other is then the length is pulled over to the other table.
+    </description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
@@ -18,13 +20,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=@JOB_NAME@</targets>
+            <targets>run-data-report -DJobName=Update-AccessionBank-DbLink_d</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/@JOB_NAME@/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/report_data/Update-AccessionBank-DbLink_d/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -32,8 +34,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/@JOB_NAME@</reportDir>
-                    <reportFiles>@JOB_NAME@.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/report_data/Update-AccessionBank-DbLink_d</reportDir>
+                    <reportFiles>Update-AccessionBank-DbLink_d.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -42,12 +44,30 @@
         <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
             <recipientList></recipientList>
             <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+                    <email>
+                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>
+                            ${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-AccessionBank-DbLink_d/Update-AccessionBank-DbLink_d.html&quot;}
+                        </body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>text/html</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/@JOB_NAME@/@JOB_NAME@.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-AccessionBank-DbLink_d/Update-AccessionBank-DbLink_d.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
@@ -65,7 +85,18 @@
             <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
             <defaultContent>$DEFAULT_CONTENT</defaultContent>
             <attachmentsPattern></attachmentsPattern>
-            <presendScript></presendScript>
+            <presendScript>if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
+                boolean noFiles = build.getArtifacts().isEmpty()
+                if(noFiles)
+                    cancel = true;
+                else{
+                            build.getArtifacts().each { artifact ->
+                                   if(artifact.getFileName().equals("no-update.txt"))
+                                         cancel = true
+                            }
+                }
+                }
+            </presendScript>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo>${DB_OWNER}@zfin.org</replyTo>

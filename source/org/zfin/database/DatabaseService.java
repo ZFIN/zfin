@@ -3,7 +3,10 @@ package org.zfin.database;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.*;
+import org.hibernate.mapping.*;
 import org.zfin.database.presentation.*;
+import org.zfin.database.presentation.ForeignKey;
+import org.zfin.database.presentation.Table;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -15,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.util.SqlQueryKeywords.*;
@@ -370,7 +375,8 @@ public class DatabaseService {
             } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
                 List<List<String>> dataReturn;
                 dataReturn = infrastructureRep.executeNativeDynamicQuery(statement);
-                listOfResultRecords.add(dataReturn);
+                if (CollectionUtils.isNotEmpty(dataReturn))
+                    listOfResultRecords.add(dataReturn);
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
                 } else if (statement.getDataKey() == null) {

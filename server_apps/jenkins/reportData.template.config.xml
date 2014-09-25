@@ -18,13 +18,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=@JOB_NAME@</targets>
+            <targets>run-report-data -DJobName=@JOB_NAME@</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/@JOB_NAME@/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/report_data/@JOB_NAME@/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -32,7 +32,7 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/@JOB_NAME@</reportDir>
+                    <reportDir>server_apps/DB_maintenance/report_data/@JOB_NAME@</reportDir>
                     <reportFiles>@JOB_NAME@.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
@@ -42,12 +42,28 @@
         <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
             <recipientList></recipientList>
             <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+                    <email>
+                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/@JOB_NAME@/@JOB_NAME@.html&quot;}</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>text/html</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/@JOB_NAME@/@JOB_NAME@.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/report_data/@JOB_NAME@/@JOB_NAME@.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
