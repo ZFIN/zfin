@@ -1929,38 +1929,6 @@ sub subMrkrgoevInfgrpDuplicatesFound($) {
 }
 
 
-#---------------------------------------------------------------
-# check for obsolete annotations
-
-# Parameter
-#  $     Email Address for recipient
-#
-sub mrkrgoevObsoleteAnnotationsFound ($) {
-
-  my $routineName = "mrkrgoevObsoleteAnnotationsFound";
-
-  my $sql = 'select mrkrgoev_zdb_id, mrkr_abbrev, term_name, mrkrgoev_source_zdb_id
-               from marker_go_term_evidence, term, marker
-               where mrkrgoev_term_zdb_id = term_zdb_id
-               and term_is_obsolete = "t"
-               and mrkrgoev_mrkr_Zdb_id = mrkr_zdb_id'
-              ;
-
-  my @colDesc = ("mrkrgoev_zdb_id","mrkr_abbrev","goterm_name", "mrkrgoev_source_zdb_id");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "obsolete go terms exist with annotations";
-    my $errMsg = "$nRecords annotations exist with obsolete go terms";
-    logError($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-}
-#---------------------------------------------------------------
-# check for obsolete annotations
-
 #-------------------
 #Parameter
 # $      Email Address for recipients
@@ -2107,7 +2075,6 @@ if($daily) {
     onlyProblemClonesHaveArtifactOf($geneEmail);
     #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
     syncDbLinkAccBkLength($dbaEmail);
-    mrkrgoevObsoleteAnnotationsFound($goEmail);
 }
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
