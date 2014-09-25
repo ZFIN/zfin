@@ -1,5 +1,6 @@
 package org.zfin.infrastructure.ant;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateUtil;
@@ -41,8 +42,10 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         try {
             errorMessages = service.runDbScriptFile(dbQueryFile);
             List<List<List<String>>> resultList = service.getListOfResultRecords();
-            if (resultList != null)
+            if (CollectionUtils.isNotEmpty(resultList))
                 createErrorReport(errorMessages, resultList.get(0), new File(baseDir));
+            else
+                createErrorReport(errorMessages, null, new File(baseDir));
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);

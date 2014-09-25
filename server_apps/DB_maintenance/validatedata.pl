@@ -1879,37 +1879,6 @@ sub subMrkrgoevInfgrpDuplicatesFound($) {
 #Parameter
 # $      Email Address for recipients
 # 
-sub onlyProblemClonesHaveArtifactOf($) {
-
-    open RESULTFILE, ">$globalResultFile" or die "Cannot open the result file to write.";
-
-    my $sql = "
-        select m.mrkr_name,m.mrkr_zdb_id,m.mrkr_abbrev
-        from clone c 
-        join marker_relationship mr on c.clone_mrkr_zdb_id=mr.mrel_mrkr_2_zdb_id
-        join marker m on c.clone_mrkr_zdb_id=m.mrkr_zdb_id
-        where
-        c.clone_problem_type is null
-        and
-        mr.mrel_type='gene has artifact' 
-      ";
-
-    my @colDesc = ("mrkr_zdb_id", "mrkr_name","mrkr_abbrev");
-    my $nRecords = execSql($sql,undef,@colDesc);
-    if($nRecords >0){
-        my $sendToAddress = $_[0];
-        my $subject = "Found $nRecords clones with 'has artifact of' relations, but no problem types";
-        my $routineName = "onlyProblemClonesHaveArtifactOf";
-        my $msg = "Found $nRecords clones with 'has artifact of' relations, but no problem types.";
-        &sendMail($sendToAddress, $subject, $routineName, $msg, );
-    }
-    close(RESULTFILE);
-}
-
-#-------------------
-#Parameter
-# $      Email Address for recipients
-# 
 sub printTop40PostcomposedTerms($) {
 
     my $routineName = "printTop40PostcomposedTerms";
@@ -2018,8 +1987,6 @@ my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 
 
 if($daily) {
-    onlyProblemClonesHaveArtifactOf($geneEmail);
-    #pubClosedGenoHandleDoesNotEqualGenoNickname($mutantEmail);
 }
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
