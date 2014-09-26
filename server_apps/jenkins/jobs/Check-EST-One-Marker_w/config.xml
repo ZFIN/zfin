@@ -1,8 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>All ESTs in ZFIN are supposed to be associated with Genes.&#xd;
-        This job checks that those relationships are correctly defined.
+    <description>All ESTs in ZFIN should be associated with one marker. However, some of them may not
+        have any because a relationship may have been dropped in the past (we do not clean that up).
+        This report list all ESTs that have more than one marker associated via a 'gene encodes small segment'
+        relationship
     </description>
     <keepDependencies>false</keepDependencies>
     <properties/>
