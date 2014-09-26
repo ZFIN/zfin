@@ -61,11 +61,13 @@ public class ApplicationContextController {
             else
                 existingDisplay.addExpressionResult(result);
         }
-        ExpressionResultDisplay next = displaySet.values().iterator().next();
-        form.setStartStageOboIDOne(next.getStart().getZdbID());
-        form.setEndStageOboIDOne(next.getEnd().getZdbID());
-        form.setStartStageOboIDTwo(next.getStart().getZdbID());
-        form.setEndStageOboIDTwo(next.getEnd().getZdbID());
+        if (displaySet.size() > 0) {
+            ExpressionResultDisplay next = displaySet.values().iterator().next();
+            form.setStartStageOboIDOne(next.getStart().getZdbID());
+            form.setEndStageOboIDOne(next.getEnd().getZdbID());
+            form.setStartStageOboIDTwo(next.getStart().getZdbID());
+            form.setEndStageOboIDTwo(next.getEnd().getZdbID());
+        }
         model.addAttribute("expressionResultDisplays", displaySet.values());
         model.addAttribute("violations", expressionResultsViolateStageRanges);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
