@@ -126,26 +126,6 @@
         </fail>
     </target>
 
-    <target name="report-probe-gene-relationship" description="">
-        <echo message="Create Validation Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="-a"/>
-            <arg value="${DBNAME}"/>
-            <arg value="${validateData}/validatedata/ProbeGeneRelationship.sql"/>
-        </exec>
-        <echo file="${validateData}/column.header" append="false">ExpressionExperiment ID|Probe ID|Marker ID</echo>
-        <echo file="${validateData}/description.txt" append="false">
-            Check that there is a marker relationship for every probe / gene in expression_experiment table.
-        </echo>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="reportRecords.txt" substring="|"/>
-            </condition>
-        </fail>
-    </target>
-
-
     <target name="report-est-contained-in-relationship" description="">
         <echo message="Create Validation Report"/>
         <echo message="Use database: ${DBNAME}"/>
