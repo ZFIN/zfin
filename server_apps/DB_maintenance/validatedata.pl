@@ -1687,50 +1687,6 @@ sub mouseAndHumanOrthologyHasEntrezAccession ($) {
 
 
 
-#---------------------------------------------------------------
-# orthologyOrganismMatchesForeignDBContains
-#
-# This test identifies any orthology records that doesn't match organism in foreign_db_contains table
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub orthologyOrganismMatchesForeignDBContains ($) {
-
-  my $routineName = "orthologyOrganismMatchesForeignDBContains";
-
-  my $sql = "select c_gene_id, zdb_id, organism, 
-                    dblink_zdb_id, dblink_linked_recid, 
-                    fdbcont_zdb_id, fdbcont_organism_common_name
-             from   orthologue, db_link, foreign_db_contains
-             where  dblink_linked_recid = zdb_id
-             and    dblink_fdbcont_zdb_id = fdbcont_zdb_id
-             and    organism <> fdbcont_organism_common_name";
-             
-  my @colDesc = ("ORTHO ID          ",
-     		 "ORTHO Gene        ",
-     		 "ORTHO Organism    ",
-     		 "DBLINK ID         ",
-     		 "DBLINK-ORTHO ID   ",
-     		 "FDB ID            ",
-       		 "FDB Organism      ");
-               
-  my $nRecords = execSql ($sql, undef, @colDesc);
-             	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Orthologue organism is incorrectly matched with Foreign DB Organism.";
-    my $errMsg = "$nRecords orthologue records need to be reconciled with"
-               . " foreign_db_contains.  The organism types do not match.";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
 #======================= ZDB Object Type ================================
 #----------------------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, inference_groups.
@@ -1982,7 +1938,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    orthologyOrganismMatchesForeignDBContains($geneEmail);
     orthologueHasDblink($geneEmail);
     orthologyHasEvidence($geneEmail);
     mouseOrthologyHasValidMGIAccession($geneEmail);
