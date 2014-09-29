@@ -1502,50 +1502,6 @@ sub estsWithoutClonesHaveXxGenes ($) {
 } 
 
 
-#==================== Detect Gene Merge Candidates ======================
-
-# These tests could be filed under the gene-est tests above, or under the
-# db_link-orthology tests below.  However, they fall in between so they
-# get thier own listing.
-
-
-#=========================== Orthology, DB Link ===========================
-
-#-------------------------------------------------------------
-#Parameter
-# $      Email Address for recipients
-# 
-sub orthologueHasDblink ($) {
-
-  my $routineName = "orthologueHasDblink";
-
-  my $sql = 'select zdb_id,
-                    c_gene_id,
-                    ortho_name
-               from orthologue
-              where zdb_id not in (
-                                select dblink_linked_recid
-                                  from db_link) 
-             ';
- 
-  my @colDesc = ("Ortho ZDB ID",
-		 "Gene ID     ",
-		 "Ortho name  ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Orthologue(s) without links to any other database";
-    my $errMsg = "$nRecords orthologue(s) have 0 links to other databases.  ";
-    logError ($errMsg); 
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-
-
 #---------------------------------------------------------------
 # orthologyHasEvidence
 #
@@ -1938,7 +1894,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    orthologueHasDblink($geneEmail);
     orthologyHasEvidence($geneEmail);
     mouseOrthologyHasValidMGIAccession($geneEmail);
     mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
