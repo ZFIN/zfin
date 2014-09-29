@@ -19,7 +19,7 @@ HOSTNAME=`hostname`
 #on production  the blastdb path is ...
 # not /research/zprodmore/blast/[watson|crick|hapdb|impdb] ...
 # nor /research/zprodmore/blast/hapdb/wu-db/ which links to Current?
-# ... somewhere  /kinetix/zprod/blastdb
+# ... somewhere  /zprod/blastdb
 # but that path in not available from zygotix
 
 # extract the blast paths for  machine  we are on
@@ -31,7 +31,7 @@ eval `grep -i blast /private/ZfinLinks/Commons/env/blast-default.properties | gr
 # keep hardcoding till someone gets it right
 WEBHOST_FASTA_FILE_PATH="/research/zblastfiles/files"
 
-if [ "kinetix" == ${HOSTNAME} ] ; then 
+if [ "watson.zfin.org" == ${HOSTNAME} ] ; then 
 	# idealy, this line by itself would allways do the right thing on any machine
 	eval `grep -i blast /private/ZfinLinks/Commons/env/${HOSTNAME}.properties | grep "/"`
 fi

@@ -142,29 +142,6 @@
     </condition>
 
 
-    <condition property="iszfinonembryonix">
-        <and>
-            <equals arg1="${DBNAME}" arg2="zfindb"/>
-            <equals arg1="${INFORMIX_SERVER}" arg2="wanda"/>
-            <equals arg1="${USER}" arg2="informix"/>
-        </and>
-    </condition>
-
-    <condition property="iszfinonkinetix">
-        <and>
-            <equals arg1="${DBNAME}" arg2="zfindb"/>
-            <equals arg1="${INFORMIX_SERVER}" arg2="whitebread"/>
-            <equals arg1="${USER}" arg2="informix"/>
-        </and>
-    </condition>
-
-    <condition property="isalmostorproduction">
-        <or>
-            <equals arg1="${isalmost}" arg2="true"/>
-            <equals arg1="${iszfinonkinetix}" arg2="true"/>
-        </or>
-    </condition>
-
     <condition property="isalmosthappytrunktest">
         <or>
             <equals arg1="${isalmost}" arg2="true"/>
@@ -200,8 +177,6 @@
         <echo message="INFORMIX_SERVER:      ${INFORMIX_SERVER}"/>
         <echo message="isinformix:           ${isinformix}"/>
         <echo message="isalmost:             ${isalmost}"/>
-        <echo message="iszfinonkinetix:        ${iszfinonkinetix}"/>
-        <echo message="isalmostorproduction: ${isalmostorproduction}"/>
         <echo message="isproduction:         ${isproduction}"/>
         <echo message="notproduction:        ${notproduction}"/>
         <echo message="ismutant:             ${ismutant}"/>

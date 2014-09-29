@@ -25,12 +25,6 @@ given ($ARGV[0]) {
     when ("almost") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start almost";
     }
-    when ("helix") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start helix";
-    }
-    when ("kinetix") {
-        $command="/etc/init.d/tomcat start";
-    }
     when ("trunk") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start trunk";
     }
@@ -74,10 +68,6 @@ given ($ARGV[0]) {
     when ("xray") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start xray";
     }
-    when ("zygotix") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start zygotix";
-    }
-
     
     
     default {

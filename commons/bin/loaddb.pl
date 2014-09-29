@@ -29,7 +29,7 @@
 #  >0  Errors were encountered.  Check error messages.
 #
 #
-# Note also, that this script will only run on kinetix if running as user
+# Note also, that this script will only run on prod if running as user
 #      informix.
 #
 # After running this script you must also make the postloaddb target.
@@ -530,7 +530,7 @@ sub checkDropExclude($) {
  
 
 #------------------------------------------------------------------------
-# Restarts apache.  This is not called on kinetix.
+# Restarts apache.  This is not called on prod.
 #
 # Params
 #  none
@@ -1170,7 +1170,7 @@ my $postLoadSqlFile = "$globalTmpDir/postLoad.sql";
 
 # Accept if on test, or if running on production as informix.
 
-if ($ENV{HOST} =~ /kinetix/ && $ENV{USER} ne "informix") {
+if ($ENV{HOST} =~ /watson/ && $ENV{USER} ne "informix") {
     die("Running on $ENV{HOST} not allowed unless logged in as informix.  " .
 	"This script has the potential to obliterate existing databases " .
 	"and this script will not risk it.");
@@ -1210,7 +1210,7 @@ else  {
     system("/bin/chmod g+w $sharedTmpFile");
 }
 
-if ($ENV{HOST} =~ /kinetix/){
+if ($ENV{HOST} =~ /watson/){
     $ENV{PDQPRIORITY} = "30";    
 }
 else {
@@ -1266,7 +1266,7 @@ if (! createDb($dbName, $schemaFile)) {
 		    logMsg("Enabling indexes, constraints, and triggers...");
 		    if (! postLoad($dbName, $postLoadSqlFile)) {
 		
-		      if ($ENV{HOST} !~ /kinetix/) {
+		      if ($ENV{HOST} !~ /watson/) {
 			  # restart apache here because sometimes between
 			  # the start of the load and here, people accidentally
 			  # access thier web pages
@@ -1275,8 +1275,8 @@ if (! createDb($dbName, $schemaFile)) {
 		      }
 		   
 		      logMsg("Enabling logging...");
-		      if(($ENV{HOST} =~ /kinetix/) && ($ENV{USER} eq "informix")){
-			  system("ontape -s -B $dbName -L 0") or die "can not enable logging as informix on kinetix.";
+		      if(($ENV{HOST} =~ /watson/) && ($ENV{USER} eq "informix")){
+			  system("ontape -s -B $dbName -L 0") or die "can not enable logging as informix on watson.";
 		      }
 		      else {
 			  if (system("$globalBinDir/enableLogging.pl $dbName")){
@@ -1284,11 +1284,11 @@ if (! createDb($dbName, $schemaFile)) {
 			  }
 		      }
 		      logMsg("Fix BTS indexes...");
-		      if ($ENV{HOST} !~ /kinetix/) {
+		      if ($ENV{HOST} !~ /watson/) {
 			  chdir ("$ENV{SOURCEROOT}/server_apps/DB_maintenance/fixBts/") ;
 			  system("$ENV{SOURCEROOT}/server_apps/DB_maintenance/fixBts/reload.sh");
 		      }
-		      if ($opt_b && $ENV{HOST} !~ /kinetix/) {
+		      if ($opt_b && $ENV{HOST} !~ /watson/) {
 			  print "creating developer blastdb copy";
 			  system("$ENV{TARGETROOT}/server_apps/DB_maintenance/makeDeveloperBlastDbs.sh");
 		      }

@@ -25,12 +25,6 @@ given ($ARGV[0]) {
     when ("almost") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop almost";
     }
-    when ("helix") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop helix";
-    }
-    when ("kinetix") {
-        $command="/etc/init.d/tomcat stop";
-    }
     when ("trunk") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop trunk";
     }
@@ -73,10 +67,6 @@ given ($ARGV[0]) {
     when ("xraydb") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh stop xray";
     }
-    when ("zygotix") {
-        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop zygotix";
-    }
-
 
     default {
         die "Incorrect argument '$ARGV[0]'"
