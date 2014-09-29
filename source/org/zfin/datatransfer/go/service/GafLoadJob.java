@@ -140,10 +140,6 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             details.flush();
             details.close();
 
-//            (new IntegratedJavaMailSender()).sendMail("Summary of "+organizationEnum + " load: " + (new Date()).toString()
-//                    , message.toString() + " from file: " + downloadedFile,
-//                    ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_CURATOR));
-
         } catch (Exception e) {
             logger.error("Failed to process Gaf load job", e);
             if(HibernateUtil.currentSession().getTransaction()!=null){
@@ -158,9 +154,6 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             } catch (IOException io) {
                 logger.error("Error writing error report", io);
             }
-//            (new IntegratedJavaMailSender()).sendMail("Errors in " + organizationEnum + " load: " + (new Date()).toString()
-//                    , "Error in " + organizationEnum + " load: " + e.fillInStackTrace().toString() + "\nNotes:\n" + message.toString(),
-//                    ZfinProperties.splitValues(ZfinPropertiesEnum.GO_EMAIL_ERR));
 
         } finally {
             downloadService = null;
