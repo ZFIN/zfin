@@ -1,4 +1,5 @@
 SELECT xpatex_zdb_id,
+       xpatex_source_zdb_id,
        xpatex_probe_feature_zdb_id,
        xpatex_gene_zdb_id
 FROM   expression_experiment
