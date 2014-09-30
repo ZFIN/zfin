@@ -218,11 +218,6 @@
             <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
         </set>
 
-        <set name="genotypeExperimentFishAnnotations" lazy="true">        <!-- name points to an instance of the class -->
-            <key column="genoxfas_genox_zdb_id"/>                         <!-- columnn is the class's attribute's corresponding column in the corresponding table -->
-            <one-to-many class="org.zfin.fish.GenotypeExperimentFishAnnotation"/>    <!-- class points to the class -->
-        </set>
-
     </class>
 
     <class name="org.zfin.mutant.PhenotypeExperiment" table="phenotype_experiment">

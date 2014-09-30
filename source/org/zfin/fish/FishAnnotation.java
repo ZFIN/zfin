@@ -1,6 +1,5 @@
 package org.zfin.fish;
 
-import org.zfin.fish.GenotypeExperimentFishAnnotation;
 import org.zfin.mutant.Genotype;
 
 import java.util.Set;
@@ -21,7 +20,6 @@ public class FishAnnotation {
     private int phenotypeFigureCount;
     private int expressionFigureCount;
     private boolean hasExpressionImages;
-    private Set<GenotypeExperimentFishAnnotation> genotypeExperimentFishAnnotations;
     //todo: probably remove these, they're around mostly to help develop the sorting algorithm
     private String geneOrFeatureText;
     private String scoringText;
@@ -138,14 +136,6 @@ public class FishAnnotation {
 
     public void setHasExpressionImages(boolean hasExpressionImages) {
         this.hasExpressionImages = hasExpressionImages;
-    }
-
-    public Set<GenotypeExperimentFishAnnotation> getGenotypeExperimentFishAnnotations() {
-        return genotypeExperimentFishAnnotations;
-    }
-
-    public void setGenotypeExperimentFishAnnotations(Set<GenotypeExperimentFishAnnotation> genoxFishAnnotations) {
-        this.genotypeExperimentFishAnnotations = genoxFishAnnotations;
     }
 
     public boolean equals(Object other) {

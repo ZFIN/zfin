@@ -2,7 +2,6 @@ package org.zfin.mutant;
 
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
-import org.zfin.fish.GenotypeExperimentFishAnnotation;
 
 import java.util.Set;
 
@@ -17,7 +16,6 @@ public class GenotypeExperiment {
     private Genotype genotype;
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<ExpressionExperiment> expressionExperiments;
-    private Set<GenotypeExperimentFishAnnotation> genotypeExperimentFishAnnotations;
 
     public String getZdbID() {
         return zdbID;
@@ -75,12 +73,5 @@ public class GenotypeExperiment {
         this.phenotypeExperiments = phenotypeExperiments;
     }
 
-    public Set<GenotypeExperimentFishAnnotation> getGenotypeExperimentFishAnnotations() {
-        return genotypeExperimentFishAnnotations;
-    }
-
-    public void setGenotypeExperimentFishAnnotations(Set<GenotypeExperimentFishAnnotation> genotypeExperimentFishAnnotations) {
-        this.genotypeExperimentFishAnnotations = genotypeExperimentFishAnnotations;
-    }
 
 }
