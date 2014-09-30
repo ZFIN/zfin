@@ -1503,48 +1503,6 @@ sub estsWithoutClonesHaveXxGenes ($) {
 
 
 #---------------------------------------------------------------
-# orthologyHasEvidence
-#
-# This test identifies any orthology records without any
-# evidence code.
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub orthologyHasEvidence ($) {
-
-  my $routineName = "orthologyHasEvidence";
-
-  my $sql = "select zdb_id, c_gene_id, organism
-             from  orthologue
-             where  not exists (
-                       select 'x'
-                       from   orthologue_evidence
-                       where  zdb_id = oev_ortho_zdb_id
-                    )";
-
-  my @colDesc = ("Orthology ZDB ID  ",
-		 "Gene ZDB ID       ",
-		 "Organism          ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Orthology is missing evidence code.";
-    my $errMsg = "$nRecords orthology records require an evidence code";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-
-
-#---------------------------------------------------------------
 # mouseOrthologyHasValidMGIAccession
 #
 # This test identifies any mouse orthology records without any
@@ -1894,7 +1852,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    orthologyHasEvidence($geneEmail);
     mouseOrthologyHasValidMGIAccession($geneEmail);
     mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
     encodesRelationshipsInBACorPAC($geneEmail);

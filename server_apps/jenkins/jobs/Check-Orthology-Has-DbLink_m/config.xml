@@ -18,13 +18,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Check-Ortholog-Has-DbLink_m</targets>
+            <targets>validate-data-report-simple -DJobName=Check-Orthology-Has-DbLink_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-Ortholog-Has-DbLink_m/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Orthology-Has-DbLink_m/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -32,8 +32,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Ortholog-Has-DbLink_m</reportDir>
-                    <reportFiles>Check-Ortholog-Has-DbLink_m.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Orthology-Has-DbLink_m</reportDir>
+                    <reportFiles>Check-Orthology-Has-DbLink_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -47,7 +47,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Ortholog-Has-DbLink_m/Check-Ortholog-Has-DbLink_m.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Orthology-Has-DbLink_m/Check-Orthology-Has-DbLink_m.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
