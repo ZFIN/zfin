@@ -1501,54 +1501,6 @@ sub estsWithoutClonesHaveXxGenes ($) {
   &recordResult($routineName, $nRecords);
 } 
 
-#---------------------------------------------------------------
-# mouseAndHumanOrthologyHasEntrezAccession
-#
-# This test identifies any mouse orthology records without any
-# Entrez accession ID.
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub mouseAndHumanOrthologyHasEntrezAccession ($) {
-
-  my $routineName = "mouseAndHumanOrthologyHasEntrezAccession";
-
-  my $sql = "select zdb_id, c_gene_id, organism
-             from   orthologue
-             where  organism = 'Mouse'
-             and    not exists (
-                       select dblink_linked_recid
-                       from   db_link, foreign_db_contains, foreign_db
-                       where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_organism_common_name in ('Mouse', 'Human')
-                       and    fdbcont_fdb_db_id = fdb_db_pk_id
-                       and    fdb_db_name = 'Gene'
-                       and    zdb_id = dblink_linked_recid
-                    )";
-
-  my @colDesc = ("Orthology ZDB ID  ",
-		 "Gene ZDB ID       ",
-		 "Organism          ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Mouse Orthology is missing Entrez Gene accession ID.";
-    my $errMsg = "$nRecords mouse orthology records require a Entrez Gene accession ID";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-
-
-
 #======================= ZDB Object Type ================================
 #----------------------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, inference_groups.
@@ -1800,7 +1752,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
     encodesRelationshipsInBACorPAC($geneEmail);
     mrkrgoevInfgrpDuplicatesFound($goEmail);
     printTop40PostcomposedTerms($aoEmail);
