@@ -16,7 +16,7 @@
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
 <!--|CURATORS_AT_ZFIN|-->	informix\@zfin.org
-<!--|DB_NAME|-->	zfindb
+<!--|DB_NAME|-->	hapdb
 <!--|DB_OWNER|-->	informix
 <!--|DOMAIN_NAME|-->	happy.zfin.org
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/happy

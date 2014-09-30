@@ -41,7 +41,7 @@
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|MACHINE_NAME|-->	zygotix
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
-<!--|MUTANT_NAME|-->	crick
+<!--|MUTANT_NAME|-->	crick_test
 <!--|NOMEN_COORDINATOR|-->	informix\@cs.uoregon.edu
 <!--|NON_SECURE_HTTP|-->	http://
 <!--|ONCONFIG_FILE|-->	onconfig
