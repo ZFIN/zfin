@@ -1501,58 +1501,6 @@ sub estsWithoutClonesHaveXxGenes ($) {
   &recordResult($routineName, $nRecords);
 } 
 
-
-#---------------------------------------------------------------
-# mouseOrthologyHasValidMGIAccession
-#
-# This test identifies any mouse orthology records without any
-# 'valid' MGI accession ID. Due to historic reasons, in ZFIN,
-# only the numerical string part of the MGI:####### is stored  
-# as the accession ID. When the whole string of MGI:####### is 
-# entered, that would generate a broken link to MGI site. Thus
-# before we change the data in the database, we valide the id
-# here.
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub mouseOrthologyHasValidMGIAccession ($) {
-
-  my $routineName = "mouseOrthologyHasMGIAccession";
-
-  my $sql = "select zdb_id, c_gene_id, organism
-             from orthologue
-             where organism = 'Mouse'
-             and zdb_id in  (
-                       select dblink_linked_recid
-                       from   db_link, foreign_db_contains,foreign_db
-                       where  dblink_fdbcont_zdb_id = fdbcont_zdb_id
-                       and    fdbcont_organism_common_name = 'Mouse'
-                       and    fdbcont_fdb_db_id = fdb_db_pk_id
-                       and    fdb_db_name = 'MGI'
-                       and    dblink_acc_num like 'MGI:%'
-                    )";
-
-  my @colDesc = ("Orthology ZDB ID  ",
-		 "Gene ZDB ID       ",
-		 "Organism          ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Mouse Orthology is missing MGI accession ID or the accession ID has the wrong format.";
-    my $errMsg = "$nRecords mouse orthology records require a valid MGI accession ID";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-
-
 #---------------------------------------------------------------
 # mouseAndHumanOrthologyHasEntrezAccession
 #
@@ -1852,7 +1800,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    mouseOrthologyHasValidMGIAccession($geneEmail);
     mouseAndHumanOrthologyHasEntrezAccession($geneEmail);
     encodesRelationshipsInBACorPAC($geneEmail);
     mrkrgoevInfgrpDuplicatesFound($goEmail);
