@@ -64,7 +64,7 @@ include $(TOP)/make.default.rules
 
 start : $(TARGETS)
   ifneq ($(HOST),embryonix)
-	/usr/bin/crontab $(TARGETDIR)/crontab.production
+	/bin/crontab $(TARGETDIR)/crontab.production
   else
 	/bin/cat $(TARGETDIR)/crontab.production $(TARGETDIR)/crontab.development | /bin/crontab
   endif
@@ -82,7 +82,7 @@ startzfishweb : $(TARGETS)
 	sudo -u zfishweb /bin/crontab $(TARGETDIR)/crontab.zfishweb
 
 stop :
-	/usr/bin/crontab -r
+	/bin/crontab -r
 
 # Note: You will need to run this as a user that can sudo to zfishweb
 stopzfishweb :
