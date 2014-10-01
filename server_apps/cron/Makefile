@@ -64,7 +64,7 @@ include $(TOP)/make.default.rules
 
 start : $(TARGETS)
   ifneq ($(HOST),embryonix)
-	/bin/crontab $(TARGETDIR)/crontab.production
+	/usr/bin/crontab $(TARGETDIR)/crontab.production
   else
 	/bin/cat $(TARGETDIR)/crontab.production $(TARGETDIR)/crontab.development | /bin/crontab
   endif
@@ -75,14 +75,14 @@ startdevl : $(TARGETS)
 # as informix src'd test.env, you can combine crons for production and development (keeping those
 # for almost pointing to almost, and the rest pointing to test.
 starttest : $(TARGETS)
-	/bin/crontab $(TARGETDIR)/crontab.informix.test
+	/usr/bin/crontab $(TARGETDIR)/crontab.informix.test
 
 # Note: You will need to run this as a user that can sudo to zfishweb
 startzfishweb : $(TARGETS)
 	sudo -u zfishweb /bin/crontab $(TARGETDIR)/crontab.zfishweb
 
 stop :
-	/bin/crontab -r
+	/usr/bin/crontab -r
 
 # Note: You will need to run this as a user that can sudo to zfishweb
 stopzfishweb :
