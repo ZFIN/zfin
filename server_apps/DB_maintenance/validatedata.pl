@@ -1384,70 +1384,6 @@ sub associatedOrthoEvidenceDataforPUB030905_2 ($) {
 
 
 #======================== Marker Relationships ========================
-#---------------------------------------------------------------
-# encodesRelationshipsInBACorPAC
-#
-# This test identifies segments where "encodes" 
-# relationships are associated with BACs or PACs.
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub encodesRelationshipsInBACorPAC ($) {
-
-  my $routineName = "encodesRelationshipsInBACorPAC";
-
-  my $sql = "select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
-             from   marker, marker_relationship, marker_relationship_type
-             where  mrkr_type = 'BAC'
-             and    (mrkr_zdb_id = mrel_mrkr_2_zdb_id
-                     and    mrel_type = mreltype_name
-                     and    mreltype_2_to_1_comments = 'Is encoded by')
-             union
-             select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
-             from   marker, marker_relationship, marker_relationship_type
-             where  mrkr_type = 'BAC'
-             and    (mrkr_zdb_id = mrel_mrkr_1_zdb_id
-                     and    mrel_type = mreltype_name
-                     and    mreltype_1_to_2_comments = 'Encodes')
-             union
-             select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
-             from   marker, marker_relationship, marker_relationship_type
-             where  mrkr_type = 'PAC'
-             and    (mrkr_zdb_id = mrel_mrkr_2_zdb_id
-                     and    mrel_type = mreltype_name
-                     and    mreltype_2_to_1_comments = 'Is encoded by')
-             union
-             select mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrkr_type, mrel_type
-             from   marker, marker_relationship, marker_relationship_type
-             where  mrkr_type = 'PAC'
-             and    (mrkr_zdb_id = mrel_mrkr_1_zdb_id
-                     and    mrel_type = mreltype_name
-                     and    mreltype_1_to_2_comments = 'Encodes')";
-
-  my @colDesc = ("Marker ID 1       ",
-		 "Marker ID 2       ",
-		 "Marker Type       ",
-		 "Relationship type ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "BACs or PACs have 'encodes' relationships.";
-    my $errMsg = "$nRecords segments with 'encodes' relationships "
-                 . "are associated with either a BAC or PAC.";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-
-
 #======================== Gene - EST relationships =====================
 #---------------------------------------------------------------
 # estsWithoutClonesHaveXxGenes
@@ -1752,7 +1688,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    encodesRelationshipsInBACorPAC($geneEmail);
     mrkrgoevInfgrpDuplicatesFound($goEmail);
     printTop40PostcomposedTerms($aoEmail);
     # for each zfin curator, run phenotypeAnnotationUnspecified() check
