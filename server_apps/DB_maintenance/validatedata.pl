@@ -1383,60 +1383,6 @@ sub associatedOrthoEvidenceDataforPUB030905_2 ($) {
 
 
 
-#======================== Marker Relationships ========================
-#======================== Gene - EST relationships =====================
-#---------------------------------------------------------------
-# estsWithoutClonesHaveXxGenes
-#
-# If an EST does not have a corresponding clone record, then its corresponding
-# gene record must begin with xx.
-# 
-# This test explicitly excludes 6 ESTs from the Thisse's.  ZFIN has these 6 ESTs
-# beacuse ZIRC carries them.  However, we don't have any expression data
-# for them yet.
-#
-#Parameter
-# $      Email Address for recipients
-# 
-sub estsWithoutClonesHaveXxGenes ($) {
-
-  my $routineName = "estsWithoutClonesHaveXxGenes";
-
-  my $sql = 'select mrkr_zdb_id, mrkr_name, mrkr_abbrev
-               from marker est
-               where mrkr_type = "EST"
-                 and not exists 
-                     ( select * 
-                         from clone
-                         where clone_mrkr_zdb_id = est.mrkr_zdb_id )
-                 and not exists
-                     ( select * 
-                         from marker m1, marker_relationship
-                         where mrel_mrkr_1_zdb_id = m1.mrkr_zdb_id
-                           and mrel_mrkr_2_zdb_id = est.mrkr_zdb_id
-                           and mrel_type = "gene encodes small segment"
-                           and m1.mrkr_name like "xx:%" )
-                 and mrkr_name not in ("cb23", "cb42", "cb70", "cb104",
-                                       "cb109", "cb114")
-               order by mrkr_name';
-
-  my @colDesc = ("EST ZDB ID        ",
-		 "EST Name          ",
-		 "EST Abbrev        ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "ESTs without clones missing corresponding xx: gene record";
-    my $errMsg = "$nRecords ESTs without clone records do not have corresponding xx: genes. ";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
 #======================= ZDB Object Type ================================
 #----------------------------------------------------------------------------
 # check for duplicate marker_goterm_Evidence, inference_groups.
@@ -1659,7 +1605,6 @@ if($daily) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
-	estsWithoutClonesHaveXxGenes($estEmail);
 	xpatObjectNotGeneOrEFG ($xpatEmail);
 	constructNameNotSubstringOfFeatureName($dbaEmail);
 
