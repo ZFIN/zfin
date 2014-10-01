@@ -3,7 +3,7 @@
 <!--|AO_EMAIL_CURATOR|-->	yvonne\@uoneuro.uoregon.edu van_slyke\@uoneuro.uoregon.edu
 <!--|AO_EMAIL_ERR|-->	informix\@cs.uoregon.edu
 <!--|BACKGROUND_COLOR|-->	#FFFFFF
-<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/opt/zfin/blastdb
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/watson/blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	staylor\@cs.uoregon.edu
 <!--|COUNT_PATO_OUT|-->	van_slyke\@uoneuro.uoregon.edu
@@ -37,7 +37,7 @@
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waffle
 <!--|INSTANCE|-->	watson
-<!--|INTERNAL_BLAST_PATH|-->	/opt/zfin/blastdb/Current
+<!--|INTERNAL_BLAST_PATH|-->	/research/watson/blastdb/Current
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	zfinadmn\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp
@@ -81,7 +81,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/production
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@cs.uoregon.edu kschaper\@cs.uoregon.edu cmpich\@cs.uoregon.edu
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
-<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/opt/zfin/blastdb
+<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/watson/blastdb
 <!--|WEB_ADMIN_EMAIL|-->	kschaper\@cs.uoregon.edu staylor\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	knight\@uoneuro.uoregon.edu staylor\@cs.uoregon.edu
