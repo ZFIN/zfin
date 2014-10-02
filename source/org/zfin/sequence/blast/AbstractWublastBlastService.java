@@ -792,25 +792,30 @@ public abstract class AbstractWublastBlastService implements BlastService {
             return new ArrayList<Sequence>();
         }
         List<String> commandList = new ArrayList<String>();
+
+        commandList.addAll(getPrefixCommands());
+        commandList.add(getKeyPath() + getBlastGetBinary());
+        commandList.add("-" + blastDatabase.getTypeCharacter());
+        commandList.add(getCurrentDatabasePath(blastDatabase));
+        commandList.add(accession);
+
+        FastaReadProcess execProcess = new FastaReadProcess(commandList, dbLink);
+        logger.info("getSequencesFromSource exec string: " + execProcess);
+
         try {
             getLock(blastDatabase, false);
-            commandList.addAll(getPrefixCommands());
-            commandList.add(getKeyPath() + getBlastGetBinary());
-            commandList.add("-" + blastDatabase.getTypeCharacter());
-            commandList.add(getCurrentDatabasePath(blastDatabase));
-            commandList.add(accession);
 
-            FastaReadProcess execProcess = new FastaReadProcess(commandList, dbLink);
-            logger.info("getSequencesFromSource exec string: " + execProcess);
             execProcess.exec();
 
-
             if (execProcess.getStandardError().toString().length() > 0) {
-                logger.fatal("Failed to xdget: " + execProcess.getStandardError());
+                logger.fatal("Failed to xdget, stderr: " + System.lineSeparator() + execProcess.getStandardError());
+                logger.fatal("Failed to xdget, stdout: " + System.lineSeparator() + execProcess.getStandardOutput());
             }
             return execProcess.getSequences();
         } catch (Exception e) {
-            logger.error("Failed to retrieve sequences with command [" + commandList.toString().toString().replaceAll(",", " ") + "\n", e);
+            logger.error("Failed to xdget, stderr: " + System.lineSeparator() + execProcess.getStandardError());
+            logger.error("Failed to xdget, stdout: " + System.lineSeparator() + execProcess.getStandardOutput());
+            logger.error("Failed to retrieve sequences with command [" + commandList.toString().replaceAll(",", " ") + "\n", e);
             return new ArrayList<Sequence>();
         } finally {
             unlockForce(blastDatabase);
@@ -832,15 +837,18 @@ public abstract class AbstractWublastBlastService implements BlastService {
             return databaseStatistics;
         }
 
-        try {
-            List<String> commandList = new ArrayList<String>();
-            commandList.addAll(getPrefixCommands());
-            commandList.add(getBlastPutBinary());
-            commandList.add("-" + (blastDatabase.getTypeCharacter()));
-            commandList.add("-i");
-            commandList.add(getCurrentDatabasePath(blastDatabase));
 
-            ExecProcess execProcess = new ExecProcess(commandList);
+        List<String> commandList = new ArrayList<String>();
+        commandList.addAll(getPrefixCommands());
+        commandList.add(getBlastPutBinary());
+        commandList.add("-" + (blastDatabase.getTypeCharacter()));
+        commandList.add("-i");
+        commandList.add(getCurrentDatabasePath(blastDatabase));
+
+        ExecProcess execProcess = new ExecProcess(commandList);
+
+        try {
+
 
             logger.info("NumberOfSequences exec string: " + execProcess);
 
@@ -879,6 +887,8 @@ public abstract class AbstractWublastBlastService implements BlastService {
             logger.debug("command std output: " + execProcess.getStandardOutput());
         } catch (Exception e) {
             logger.error(e);
+            logger.error("stderr: " + System.lineSeparator() + execProcess.getStandardError());
+            logger.error("stdout: " + System.lineSeparator() + execProcess.getStandardOutput());
             throw new BlastDatabaseException("Failed to retrieve information for database[" + blastDatabase + "]", e);
         }
         return databaseStatistics;
