@@ -18,13 +18,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>run-data-report -DJobName=@JOB_NAME@</targets>
+            <targets>run-data-report -DJobName=Report-Top-40-Post-Composed-FX-Terms_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/report_data/@JOB_NAME@/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/report_data/Report-Top-40-Post-Composed-FX-Terms_m/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -32,8 +32,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/report_data/@JOB_NAME@</reportDir>
-                    <reportFiles>@JOB_NAME@.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/report_data/Report-Top-40-Post-Composed-FX-Terms_m</reportDir>
+                    <reportFiles>Report-Top-40-Post-Composed-FX-Terms_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -46,7 +46,7 @@
                     <email>
                         <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/@JOB_NAME@/@JOB_NAME@.html&quot;}</body>
+                        <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Report-Top-40-Post-Composed-FX-Terms_m/Report-Top-40-Post-Composed-FX-Terms_m.html&quot;}</body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
@@ -63,7 +63,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/report_data/@JOB_NAME@/@JOB_NAME@.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/report_data/Report-Top-40-Post-Composed-FX-Terms_m/Report-Top-40-Post-Composed-FX-Terms_m.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>

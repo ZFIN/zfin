@@ -1354,36 +1354,6 @@ sub subMrkrgoevInfgrpDuplicatesFound($) {
 }
 
 
-#-------------------
-#Parameter
-# $      Email Address for recipients
-# 
-sub printTop40PostcomposedTerms($) {
-
-    my $routineName = "printTop40PostcomposedTerms";
-    my $sql = "
-     select first 40 termOne.term_name, termTwo.term_name, count(*) as frequency from expression_result, term termOne, term termTwo
-    where xpatres_superterm_zdb_id is not null
-      and xpatres_subterm_zdb_id is not null
-      and termOne.term_zdb_id = xpatres_superterm_zdb_id
-      and termTwo.term_zdb_id = xpatres_subterm_zdb_id
-    group by termOne.term_name, termTwo.term_name
-    order by frequency desc, termOne.term_name
-      ";
-
-    my @colDesc = ("Anatomy Term", "Anatomy Term","Frequency");
-    my $nRecords = executeSqlAndPrint($sql,undef,@colDesc);
-    if($nRecords >0){
-        my $sendToAddress = $_[0];
-        my $subject = "Top 40 post-composed terms";
-        my $msg = "Top 40 post-composed terms.\n\nAnatomy Term : Anatomy Term : Frequency\n";
-        &sendMail($sendToAddress, $subject, $routineName, $msg, $sql);
-    }
-    &recordResult($routineName, $nRecords);
-}
-
-
-
 #######################  Main ###########################################
 #
 # Define Usage 
@@ -1498,7 +1468,6 @@ if($weekly) {
 }
 if($monthly) {
     mrkrgoevInfgrpDuplicatesFound($goEmail);
-    printTop40PostcomposedTerms($aoEmail);
     # for each zfin curator, run phenotypeAnnotationUnspecified() check
     my $sql = " select email, full_name
                 from int_person_lab 
