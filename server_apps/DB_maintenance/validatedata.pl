@@ -350,48 +350,6 @@ sub phenotypeAnnotationUnspecified ($$) {
 
 
 
-#====================== Expression ================================
-# Parameter
-# $      Email Address for recipients
-#
-# Check if any expression annotation has a non-gene & non-EFG
-# object in xpatex_gene_zdb_id field
-
-sub xpatObjectNotGeneOrEFG ($) {
-
-    my $routineName = "xpatObjectNotGeneOrEFG";
-    my $sql = '
-         select xpatex_source_zdb_id, xpatex_gene_zdb_id, mrkr_abbrev
-           from expression_experiment, marker, marker_type_group_member
-          where xpatex_gene_zdb_id = mrkr_zdb_id 
-            and not exists (
-                  select "t"
-                    from marker_type_group_member
-                   where mtgrpmem_mrkr_type_group = "GENEDOM_AND_EFG"
-                     and mtgrpmem_mrkr_type = mrkr_type)' ;
-
-  my @colDesc = (
-		 "Publication ID:     ",
-		 "Xpat object ID:     ",
-		 "Xpat object name:   "
-		);
-
-  my $nRecords = execSql($sql, undef, @colDesc);
-  
-  if ( $nRecords > 0 ) {
-      
-      my $sendToAddress = $_[0];
-      my $subject = "Gene expression object is not GENE or EFG";
-      my $errMsg = "In expression_experiment, $nRecords records with objects  "
-	  ."that are neither gene or engineered foreign gene.";
-      
-      logError ($errMsg);	
-      &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);   
-  }
-  &recordResult($routineName, $nRecords);
-}
-
-
 #---------------------------------------------------------------
 # strAbbrevContainsGeneAbbrev
 #
@@ -1421,17 +1379,11 @@ $dbh = DBI->connect("DBI:Informix:$globalDbName",
 #  endif
 
 my $adEmail      = "<!--|VALIDATION_EMAIL_AD|-->";
-my $xpatEmail    = "<!--|VALIDATION_EMAIL_XPAT|-->";
-my $estEmail     = "<!--|VALIDATION_EMAIL_EST|-->";
 my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
-my $mutantEmail  = "<!--|VALIDATION_EMAIL_MUTANT|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
 my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
-my $aoEmail      = "<!--|AO_EMAIL_CURATOR|-->";
 my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
-my $webAdminEmail = "<!--|WEB_ADMIN_EMAIL|-->";
 my $strEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
-my $genoEmail = "<!--|VALIDATION_EMAIL_GENOCURATOR|-->";
 
 
 if($daily) {
@@ -1439,7 +1391,6 @@ if($daily) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
-	xpatObjectNotGeneOrEFG ($xpatEmail);
 	constructNameNotSubstringOfFeatureName($dbaEmail);
 
 	# each bit of the 030905_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
