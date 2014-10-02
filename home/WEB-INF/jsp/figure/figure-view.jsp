@@ -12,7 +12,6 @@
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
         <tiles:putAttribute name="subjectName" value="${figure.publication.shortAuthorList} - ${figure.label}"/>
-        <tiles:putAttribute name="subjectID" value="${figure.zdbID}"/>
     </tiles:insertTemplate>
 </div>
 

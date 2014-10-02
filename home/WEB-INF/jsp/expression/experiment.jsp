@@ -7,7 +7,6 @@
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
         <tiles:putAttribute name="subjectName" value="${experiment.zdbID}"/>
-        <tiles:putAttribute name="subjectID" value="${experiment.zdbID}"/>
     </tiles:insertTemplate>
 </div>
 

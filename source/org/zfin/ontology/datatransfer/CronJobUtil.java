@@ -6,6 +6,7 @@ import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
+import org.zfin.framework.mail.MailSender;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 
@@ -20,24 +21,11 @@ import java.util.Map;
 public class CronJobUtil {
 
     private String[] recipients;
-    private AbstractZfinMailSender smtpServer = new IntegratedJavaMailSender();
+    private MailSender smtpServer = AbstractZfinMailSender.getInstance();
     private Map<String, Object> objectMap = new HashMap<String, Object>();
 
     public CronJobUtil(String[] recipients) {
         this.recipients = recipients;
-        if(ZfinPropertiesEnum.EMAIL_SENDER_CLASS.value() != null){
-            String className =ZfinPropertiesEnum.EMAIL_SENDER_CLASS.value();
-            try {
-                Class clazz =  Class.forName(className);
-                smtpServer = (AbstractZfinMailSender) clazz.newInstance();
-            } catch (ClassNotFoundException e) {
-                LOG.error(e);
-            } catch (InstantiationException e) {
-                LOG.error(e);
-            } catch (IllegalAccessException e) {
-                LOG.error(e);
-            }
-        }
     }
 
     public void emailReport(String jobName, String message, AbstractScriptWrapper.ScriptExecutionStatus status) {

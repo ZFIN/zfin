@@ -12,7 +12,6 @@
         <span style="float: right">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                 <tiles:putAttribute name="subjectName" value="Expression Summary from Fish search"/>
-                <tiles:putAttribute name="subjectID" value=""/>
             </tiles:insertTemplate>
         </td>
     </tr>

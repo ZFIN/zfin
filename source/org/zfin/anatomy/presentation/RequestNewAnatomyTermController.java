@@ -68,27 +68,9 @@ public class RequestNewAnatomyTermController {
             emailContents.append(formBean.getEmail());
             emailContents.append(NEWLINE);
         }
-        getMailSender().sendMail("Request for new Anatomical Structure", emailContents.toString(),
+        AbstractZfinMailSender.getInstance().sendMail("Request for new Anatomical Structure", emailContents.toString(),
                 ZfinProperties.splitValues(ZfinPropertiesEnum.REQUEST_NEW_ANATOMY_EMAIL));
         return "anatomy/request-term-feedback.page";
     }
 
-    public MailSender getMailSender() {
-        MailSender mailSender = null;
-        if (ZfinPropertiesEnum.EMAIL_SENDER_CLASS.value() != null) {
-            String className = ZfinPropertiesEnum.EMAIL_SENDER_CLASS.value();
-            try {
-                Class clazz = Class.forName(className);
-                mailSender = (AbstractZfinMailSender) clazz.newInstance();
-                return mailSender;
-            } catch (ClassNotFoundException e) {
-                LOG.error(e);
-            } catch (InstantiationException e) {
-                LOG.error(e);
-            } catch (IllegalAccessException e) {
-                LOG.error(e);
-            }
-        }
-        return mailSender;
-    }
 }

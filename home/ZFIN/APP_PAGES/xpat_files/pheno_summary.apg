@@ -331,18 +331,11 @@ DEBUGGING:
 
   <?MIBLOCK COND="$(NXST,$UPDATE)">
      <?MIVAR>
-	  <table width = 15% align=right><tr>	
-           <form method=post 
-                 action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->" 
-                 target=comments>
-           <input type=hidden name=subject value="$page_name">
-           <input type=hidden name=marker_id value="$OID">
-           <input type=hidden name=MIval value="aa-your_input_welcome.apg">
-           <input type=hidden name=page_id value="$OID">
-          <td>
-           <input type=submit value="Your Input Welcome">
-          </td>
-           </form></tr></table>
+      <table width = 15% align=right>
+        <tr>
+          <?MISQL SQL="select WebExplode(object,'subject=$page_name') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
+        </tr>
+      </table>
      <?/MIVAR>
   <?/MIBLOCK>    
         

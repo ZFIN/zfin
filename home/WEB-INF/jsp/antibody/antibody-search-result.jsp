@@ -27,7 +27,6 @@
         <td class="yourinputwelcome" nowrap="nowrap">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                 <tiles:putAttribute name="subjectName" value="Antibody search"/>
-                <tiles:putAttribute name="subjectID" value=""/>
             </tiles:insertTemplate>
         </td>
     </tr>

@@ -38,7 +38,6 @@
                             <td>
                                 <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                                     <tiles:putAttribute name="subjectName" value="Anatomy: All Antibodies"/>
-                                    <tiles:putAttribute name="subjectID" value=""/>
                                 </tiles:insertTemplate>
                             </td>
                         </tr>

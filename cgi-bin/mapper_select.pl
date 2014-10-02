@@ -126,7 +126,7 @@ ENDJS
   a <a href="http://www.java.com/getjava/">Java plugin</a>
   and may not function properly in all browsers. <br><br>
   Try <a href="/genome-browser/">GBrowse</a> to view current genomic annotations. <br><br>
-  If you need data that you can't access here and isn't in GBrowse, <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-your_input_welcome.apg&subject=Mapping%20Data&page=mapviewer">Let us know!</a>
+  If you need data that you can't access here and isn't in GBrowse, <a href="mailto:zfinadmn\@zfin.org">Let us know!</a>
   </div>
   
 OLDCODENOTE

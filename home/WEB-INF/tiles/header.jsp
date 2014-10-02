@@ -3,6 +3,7 @@
 
 
 <script src="/javascript/header-menu.js" type="text/javascript"></script>
+<script src="/javascript/your-input-welcome.js" type="text/javascript"></script>
 
 <script>
 
@@ -85,7 +86,10 @@
 
     jQuery.noConflict();
 
-    jQuery(document).ready(function() { processPopupLinks('body'); });
+    jQuery(document).ready(function() {
+        processPopupLinks('body');
+        initYIW();
+    });
 
 </script>
 

@@ -13,6 +13,8 @@ public interface MailSender {
     boolean sendHtmlMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
                      String[] recipients, String filename);
 
+    boolean sendHtmlMail(String subject, String message, String[] receipients, String filename);
+
     boolean sendMail(String subject, String message, String[] recipients);
 
     String prependSubject(String initialSubject);

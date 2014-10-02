@@ -24,12 +24,12 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/misc_files
 # like an app page.  Treat them like app pages.
 
 GENERICS = data_mgr.apg doc_title.apg \
-	start_select.apg htmlpageheader.apg \
-	your_input_welcome.apg input_button_generic.apg \
-	input_welcome_generic.apg zdb_history.apg new_gene.apg new_line.apg \
-	ZDB_home_leftcolumn.apg ZDB_home_rightcolumn.apg 
+    start_select.apg htmlpageheader.apg zdb_history.apg \
+    new_gene.apg new_line.apg ZDB_home_leftcolumn.apg \
+    ZDB_home_rightcolumn.apg
 
-STATICS=ZDB_home.apg docframes.apg stub.html helpframes.html blast.apg htmlpagefooter.apg
+STATICS=ZDB_home.apg docframes.apg stub.html helpframes.html \
+    blast.apg htmlpagefooter.apg input_button_generic.apg
 
 # --------------------------  Rules  ------------------------------------
 

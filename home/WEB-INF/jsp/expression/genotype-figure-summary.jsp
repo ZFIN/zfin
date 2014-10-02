@@ -7,13 +7,11 @@
         <c:when test="${!empty expressionCriteria.genotypeExperiment}">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">                
                 <tiles:putAttribute name="subjectName" value="${expressionCriteria.genotypeExperiment.genotype.name}"/>
-                <tiles:putAttribute name="subjectID" value="${expressionCriteria.genotypeExperiment.genotype.zdbID}"/>
             </tiles:insertTemplate>
         </c:when>
         <c:when test="${!empty expressionCriteria.genotype}">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                 <tiles:putAttribute name="subjectName" value="${expressionCriteria.genotype.name}"/>
-                <tiles:putAttribute name="subjectID" value="${expressionCriteria.genotype.zdbID}"/>
             </tiles:insertTemplate>
         </c:when>
     </c:choose>

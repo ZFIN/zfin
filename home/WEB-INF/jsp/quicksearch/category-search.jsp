@@ -136,7 +136,6 @@ By default, the JVM is allocated only about 60 Megabytes which is very (too) sma
                         <td width=15% align=right>
                             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                                 <tiles:putAttribute name="subjectName" value="Site search"/>
-                                <tiles:putAttribute name="subjectID" value=""/>
                             </tiles:insertTemplate>
                         </td>
                     </tr>

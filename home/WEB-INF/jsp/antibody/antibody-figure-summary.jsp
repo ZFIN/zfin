@@ -7,7 +7,6 @@
 <div style="float: right; margin: .2em;">
 <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
     <tiles:putAttribute name="subjectName" value="${formBean.antibody.name}"/>
-    <tiles:putAttribute name="subjectID" value="${formBean.antibody.zdbID}"/>
 </tiles:insertTemplate>
 </div>
 

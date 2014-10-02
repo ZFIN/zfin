@@ -11,7 +11,6 @@
             <div style="float: right;">
                 <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                     <tiles:putAttribute name="subjectName" value="Wildtype Lines"/>
-                    <tiles:putAttribute name="subjectID" value=""/>
                 </tiles:insertTemplate>
             </div>
 

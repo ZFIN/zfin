@@ -26,7 +26,6 @@ GENERICS = map-options.pl print_map.cgi runSPL.cgi \
 	   searchwww.cgi send_request.perl \
 	   mapper_select.cgi mapper_select.pl \
 	   view_mapplet.cgi view_zmapplet.cgi \
-	   input_welcome.cgi input_welcome_generic.cgi  \
        internal_wzest.cgi publications_today.cgi \
 	   upload.cgi \
 	   new_gene.cgi new_line.cgi merge_markers.pl 

@@ -17,7 +17,6 @@
         <td align="right" class="titlebarRight">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                 <tiles:putAttribute name="subjectName" value="Mapping Details"/>
-                <tiles:putAttribute name="subjectID" value=""/>
             </tiles:insertTemplate>
         </td>
     </tr>

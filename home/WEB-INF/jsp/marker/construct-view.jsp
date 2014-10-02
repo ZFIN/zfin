@@ -20,7 +20,6 @@
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
         <tiles:putAttribute name="subjectName" value="${formBean.marker.name}"/>
-        <tiles:putAttribute name="subjectID" value="${formBean.marker.zdbID}"/>
     </tiles:insertTemplate>
 </div>
 

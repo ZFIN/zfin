@@ -23,27 +23,11 @@
              <td align="right" width="110" nowrap="nowrap">
                 <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
                     <tiles:putAttribute name="subjectName" value="Mutant / Transgenic Lines"/>
-                    <tiles:putAttribute name="subjectID" value="${formBean.publication.zdbID}"/>
                 </tiles:insertTemplate>
             </td>    
     </TR>
   </TABLE>
 
-            <%--<TD width=10%>
-
-                <table leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" border="0" cellspacing="0"
-                       cellpadding="0">
-                    <form method=post action="/cgi-bin/webdriver" target=comments>
-                        <input type=hidden name=MIval value="aa-input_welcome_generic.apg">
-                        <input type=hidden name=page_name value="ZFIN Marker Search ">
-                        <tr>
-                            <td><input type=submit value="Your Input Welcome"></td>
-                        </tr>
-                    </form>
-                </table>
-            </TD>
-        </TR>
-    </TABLE>--%>
     <c:if test="${formBean.callingPage == null}">
     <table class="summary rowstripes">
         <tbody>

@@ -61,7 +61,6 @@
     <div class="search-form-your-input-welcome">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
             <tiles:putAttribute name="subjectName" value="Construct search"/>
-            <tiles:putAttribute name="subjectID" value=""/>
         </tiles:insertTemplate>
     </div>
 

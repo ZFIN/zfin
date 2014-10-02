@@ -5,7 +5,6 @@
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
         <tiles:putAttribute name="subjectName" value="PostComposed Term ${entity.superterm.zdbID} ${entity.subterm.zdbID}"/>
-        <tiles:putAttribute name="subjectID" value="${entity.superterm.zdbID}  ${entity.subterm.zdbID}"/>
     </tiles:insertTemplate>
 </div>
 

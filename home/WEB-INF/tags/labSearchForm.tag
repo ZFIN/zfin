@@ -14,9 +14,9 @@
 
 
     <div class="search-form-your-input-welcome">
-        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-your_input_welcome.apg&subject=Lab Search&page_id=">
-            <button>Your Input Welcome</button>
-        </a>
+        <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+            <tiles:putAttribute name="subjectName" value="Lab Search"/>
+        </tiles:insertTemplate>
     </div>
 </div>
 

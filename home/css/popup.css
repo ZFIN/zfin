@@ -254,3 +254,53 @@ a.gbrowse_hover:hover .gbrowse_popup{ /*the span will display just on :hover sta
 .sort-column-tooltip {
 
 }
+
+#input-welcome-overlay {
+    text-align: left;
+}
+
+#input-welcome-validate {
+    border: 1px solid #EED3D7;
+    border-radius: 4px;
+    background-color: #F2DEDE;
+    color: #B94A48;
+    text-align: center;
+    margin: 0 auto 1.5em;
+    padding: 1em;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+#input-welcome-form-controls {
+    margin: 0 auto;
+    padding: 30px 0;
+    width: 600px;
+}
+
+#input-welcome-form .control {
+    margin-top: 0.5em;
+}
+
+#input-welcome-form .invalid {
+    box-shadow: 0 0 5px 1px #B94A48;
+}
+
+#input-welcome-form label {
+    display: inline-block;
+    width: 130px;
+    text-align: left;
+    font-weight: bold;
+}
+
+#input-welcome-form textarea {
+    width: 400px;
+    vertical-align: top;
+    height: 6em;
+}
+
+#input-welcome-form input {
+    width: 400px;
+}
+
+#input-welcome-form button {
+    margin-left: 133px;
+}
