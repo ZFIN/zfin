@@ -54,9 +54,7 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>
-                        server_apps/DB_maintenance/validatedata/Check-Marker-Go-Evidence-No-Inference-Duplication_m
-                    </reportDir>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Marker-Go-Evidence-No-Inference-Duplication_m</reportDir>
                     <reportFiles>Check-Marker-Go-Evidence-No-Inference-Duplication_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
