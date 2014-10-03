@@ -1205,113 +1205,6 @@ sub associatedOrthoEvidenceDataforPUB030905_2 ($) {
 
 
 
-#======================= ZDB Object Type ================================
-#----------------------------------------------------------------------------
-# check for duplicate marker_goterm_Evidence, inference_groups.
-#
-# This statement checks for duplicate marker_Go_term_evidence
-# records that have duplicate inference_group_members.
-# 
-# The first query uses 2 copies of the marker_go_term_evidence table
-# each joining with inference_group_member table to find pairs of
-# mrkrgoev records that have identical mrkr, term, source,
-# and evidence_code. And it counts how many same inference members each of
-# the found MRKRGOEV pair has. (we can't put an AK on this table and still avoid
-# a join table between inference_group_member and mrkrgoev--in May 2004 we
-# decided to remove the join table that did this--called inference_group).
-#
-# The MRKRGOEV pair and the count for same inference members are passed 
-# into a sub-routine where it queries the number of inference members
-# for each of the MRKRGOEV id and compares the two numbers with the count
-# If the three counts are equal, then we find duplicates in 
-# marker_go_term_evidence as well as duplicates in 
-# inference_group_members...then this query will return the duplicate
-# pairs of mrkrgoev_zdb_ids to Doug and Informix.
-#
-# Parameter
-#  $     Email Address for recipient
-#
-sub mrkrgoevInfgrpDuplicatesFound ($) {
-
-  my $routineName = "mrkrgoevInfgrpDuplicatesFound";
-
-  my $sql = 'select a.mrkrgoev_zdb_id, 
-                    a.mrkrgoev_mrkr_zdb_id,
-                    b.mrkrgoev_zdb_id,
-                    count(*)
-	       from marker_go_term_evidence a, inference_group_member ia,
-		    marker_go_Term_evidence b, inference_group_member ib
-	      where a.mrkrgoev_mrkr_zdb_id =  b.mrkrgoev_mrkr_zdb_id
-	        and a.mrkrgoev_term_zdb_id = b.mrkrgoev_term_zdb_id
-		and a.mrkrgoev_source_zdb_id = b.mrkrgoev_sourcE_zdb_id
-		and a.mrkrgoev_evidence_code = b.mrkrgoev_evidence_code 
-                and a.mrkrgoev_zdb_id = ia.infgrmem_mrkrgoev_zdb_id
-                and b.mrkrgoev_zdb_id = ib.infgrmem_mrkrgoev_zdb_id
-                and a.mrkrgoev_zdb_id > b.mrkrgoev_zdb_id
-                and ia.infgrmem_inferred_from = ib.infgrmem_inferred_from
-                and
-            (
-               ( a.mrkrgoev_gflag_name is null
-                  and b.mrkrgoev_gflag_name is null)
-               or
-               ( ( a.mrkrgoev_gflag_name is not null or b.mrkrgoev_gflag_name is not null)
-                  and a.mrkrgoev_gflag_name=b.mrkrgoev_gflag_name
-               )
-            )
-             group by a.mrkrgoev_zdb_id, b.mrkrgoev_zdb_id,
-                      a.mrkrgoev_mrkr_zdb_id, b.mrkrgoev_mrkr_zdb_id';
-  
-  my @colDesc = ("mrkrgoev_zdb_id_1",
-                 "mrkrgoev_mrkr_zdb_id_1", 
-		 "mrkrgoev_zdb_id_2",
-                 "mrkrgoev_mrkr_zdb_id_2",
-		 "infgrmem_count   ");
-
-  my $nRecords = execSql ($sql, subMrkrgoevInfgrpDuplicatesFound, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Possible duplicate records in marker_go_term_evidence, inference_group_member";
-    my $errMsg = "$nRecords are possible duplicates in marker_go_term_evidence, inference_group_member";
-    logError($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql); 
-  }
-  &recordResult($routineName, $nRecords);
-} 
-
-#----------------------
-# Parameters
-#     $     mrkrgoev zdb id  1
-#     $     mrkrgoev_mrkr_zdb_id 1
-#     $     mrkrgoev zdb id 2
-#     $     count of how many identical inference members the two mrkrgoev id have
-
-sub subMrkrgoevInfgrpDuplicatesFound($) {
-    my @input = @_;
-    my $mrkrgoev1 = $input[0];
-    my $mrkrgoev1_mrkr = $input[1];
-    my $mrkrgoev2 = $input[2];
-    my $infgrmem_count = $input[3];
-
-    my $sql = "select count(*) 
-               from inference_group_member   
-              where infgrmem_mrkrgoev_zdb_id= '$mrkrgoev1'";
- 
-  
-    my @result_a = $dbh->selectrow_array($sql);
-
-    $sql = "select count(*) 
-               from inference_group_member   
-              where infgrmem_mrkrgoev_zdb_id= '$mrkrgoev2'";
- 
-  
-    my @result_b = $dbh->selectrow_array($sql);
-
-    return ($result_a[0] == $result_b[0] && $result_a[0] == $infgrmem_count) ? 1 : 0 ;
- 
-}
-
-
 #######################  Main ###########################################
 #
 # Define Usage 
@@ -1418,7 +1311,6 @@ if($weekly) {
 
 }
 if($monthly) {
-    mrkrgoevInfgrpDuplicatesFound($goEmail);
     # for each zfin curator, run phenotypeAnnotationUnspecified() check
     my $sql = " select email, full_name
                 from int_person_lab 

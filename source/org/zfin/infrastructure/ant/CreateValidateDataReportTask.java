@@ -34,8 +34,8 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
     }
 
     private void runQueryFile(File dbQueryFile) {
-        setLoggerFile();
         clearReportDirectory();
+        setLoggerFile();
         copyFileToReportDirectory(dbQueryFile);
         HibernateUtil.currentSession().beginTransaction();
         List<String> errorMessages;
