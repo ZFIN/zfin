@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>A feature with an STR (TALEN or CRIPSR) should have more than one feature relationship.
+    <description>A feature with an STR (TALEN or CRISPR) should have more than one feature relationship.
     This job lists all features that have only one relationship. </description>
     <keepDependencies>false</keepDependencies>
     <properties/>
