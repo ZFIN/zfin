@@ -23,69 +23,46 @@ WHERE  feature_zdb_id = fmrel_ftr_zdb_id
        AND feature_name != mrkr_abbrev
            || '_unrecovered' ;
 
--- update feature_name column
-UPDATE feature
-SET    feature_name = (SELECT mrkr_abbrev||'_unspecified'
-
-                       FROM   marker,
-                              feature_marker_relationship
-                       WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
-                              AND feature_zdb_id = fmrel_ftr_zdb_id
-                              AND feature_name LIKE '%\_unspecified')
-WHERE  feature_name LIKE '%\_unspecified'
-       AND feature_type = 'UNSPECIFIED'
-       AND NOT EXISTS (SELECT 'x'
-                       FROM   feature_marker_relationship,
-                              marker
-                       WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
-                              AND feature_zdb_id = fmrel_ftr_zdb_id
-                              AND feature_name = mrkr_abbrev||'_unspecified');
-
--- update feature_abbrev column
 UPDATE feature
 SET    feature_abbrev = (SELECT mrkr_abbrev||'_unspecified'
-                         FROM   marker,
-                                feature_marker_relationship
-                         WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
-                                AND feature_zdb_id = fmrel_ftr_zdb_id
-                                AND feature_abbrev = mrkr_abbrev||'_unspecified')
-WHERE  feature_name LIKE '%\_unspecified'
-       AND feature_type = 'UNSPECIFIED'
-       AND NOT EXISTS (SELECT 'x'
-                       FROM   feature_marker_relationship,
-                              marker
-                       WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
-                              AND feature_zdb_id = fmrel_ftr_zdb_id
-                              AND feature_abbrev = mrkr_abbrev||'_unspecified');
 
--- update feature_name column on unrecovered
-UPDATE feature
-SET    feature_name = (SELECT mrkr_abbrev||'_unrecovered'
                        FROM   marker,
                               feature_marker_relationship
                        WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
                               AND feature_zdb_id = fmrel_ftr_zdb_id
-                              AND feature_name = mrkr_abbrev||'_unrecovered')
-WHERE  feature_name LIKE '%\_unrecovered'
-       AND NOT EXISTS (SELECT 'x'
-                       FROM   feature_marker_relationship,
-                              marker
-                       WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
-                              AND feature_zdb_id = fmrel_ftr_zdb_id
-                              AND feature_name = mrkr_abbrev||'_unrecovered');
+                              AND (feature_abbrev LIKE '%\_unspecified' or feature_name like '%\_unspecified'))
+ where (feature_name like '%\_unspecified' or feature_abbrev like '%\_unspecified')
+ and feature_abbrev != (SELECT mrkr_abbrev||'_unspecified'
 
--- update feature_abbrev column on unrecovered
+                       FROM   marker,
+                              feature_marker_relationship
+                       WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
+                              AND feature_zdb_id = fmrel_ftr_zdb_id);
+
+update feature
+ set feature_name = feature_abbrev
+ where feature_abbrev like '%\_unspecified'
+ and feature_name != feature_abbrev;
+
+
 UPDATE feature
 SET    feature_abbrev = (SELECT mrkr_abbrev||'_unrecovered'
-                         FROM   marker,
-                                feature_marker_relationship
-                         WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
-                                AND feature_zdb_id = fmrel_ftr_zdb_id
-                                AND feature_abbrev LIKE '%\_unrecovered')
-WHERE  feature_name LIKE '%\_unrecovered'
-       AND NOT EXISTS (SELECT 'x'
-                       FROM   feature_marker_relationship,
-                              marker
+
+                       FROM   marker,
+                              feature_marker_relationship
                        WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
                               AND feature_zdb_id = fmrel_ftr_zdb_id
-                              AND feature_abbrev = mrkr_abbrev||'_unrecovered');
+                              AND (feature_abbrev LIKE '%\_unrecovered' or feature_name like '%\_unrecovered'))
+ where (feature_name like '%\_unrecovered' or feature_abbrev like '%\_unrecovered')
+ and feature_abbrev != (SELECT mrkr_abbrev||'_unrecovered'
+
+                       FROM   marker,
+                              feature_marker_relationship
+                       WHERE  mrkr_zdb_id = fmrel_mrkr_zdb_id
+                              AND feature_zdb_id = fmrel_ftr_zdb_id);
+
+
+update feature
+ set feature_name = feature_abbrev
+ where feature_abbrev like '%\_unrecovered'
+ and feature_name != feature_abbrev;
