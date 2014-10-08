@@ -1,11 +1,12 @@
 function initYIW() {
-    var $successMessage = jQuery("#input-welcome-success-message"),
+    var $overlay = jQuery("#input-welcome-overlay"),
+        $successMessage = jQuery("#input-welcome-success-message"),
         $errorMessage = jQuery("#input-welcome-error-message"),
         $triggerButton = jQuery("#input-welcome-button"),
         $form = jQuery("#input-welcome-form"),
         $formInputs = jQuery(":input", $form),
         $formValidate = jQuery("#input-welcome-validate"),
-        url = $form.attr("action"),
+        url = "/action/user-comment",
         stringNotEmpty = function (str) {
             return str.length > 0 && str.trim();
         },
@@ -20,9 +21,14 @@ function initYIW() {
             "#input-welcome-comments": stringNotEmpty
         };
 
+    // move the overlay up to the body tag so that it doesn't get caught up
+    // in other CSS rules
+    $overlay.appendTo(jQuery("body"));
     $successMessage.hide();
     $errorMessage.hide();
     $formValidate.hide();
+    // hide the spam-preventer input
+    jQuery("#input-welcome-email2-ctrl").hide();
 
     $triggerButton.overlay({
         mask: {

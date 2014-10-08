@@ -7,7 +7,7 @@
             Your Input Welcome
         </div>
         <div class="popup-body" id="input-welcome-body">
-            <form id="input-welcome-form" action="/action/user-comment">
+            <form id="input-welcome-form">
                 We welcome your input and comments. Please use this form to recommend updates to the information in ZFIN. We
                 appreciate as much detail as possible and references as appropriate. We will review your comments promptly.
                 <div id="input-welcome-form-controls">
@@ -16,23 +16,29 @@
                     </div>
                     <div class="control">
                         <label for="input-welcome-name">Name:</label>
-                        <input type="text" id="input-welcome-name" name="name" />
+                        <input type="text" id="input-welcome-name" name="yiw-name" />
                     </div>
                     <div class="control">
                         <label for="input-welcome-institution">Institution:</label>
-                        <input type="text" id="input-welcome-institution" name="institution" />
+                        <input type="text" id="input-welcome-institution" name="yiw-institution" />
                     </div>
                     <div class="control">
                         <label for="input-welcome-email">Email address:</label>
-                        <input type="text" id="input-welcome-email" name="email" />
+                        <input type="text" id="input-welcome-email" name="yiw-email" />
+                    </div>
+                    <%-- spam prevention technique. input will be hidden from user by JS. controller will consider
+                         the request as genuine only if the field is blank. --%>
+                    <div class="control" id="input-welcome-email2-ctrl">
+                        <label for="input-welcome-email2">Please leave blank:</label>
+                        <input type="text" id="input-welcome-email2" name="email" autocomplete="off"/>
                     </div>
                     <div class="control">
                         <label for="input-welcome-subject">Subject:</label>
-                        <input type="text" id="input-welcome-subject" name="subject" value="<tiles:getAsString name="subjectName"/>" />
+                        <input type="text" id="input-welcome-subject" name="yiw-subject" value="<tiles:getAsString name="subjectName"/>" />
                     </div>
                     <div class="control">
                         <label for="input-welcome-comments">Comments:</label>
-                        <textarea id="input-welcome-comments" name="comments"></textarea>
+                        <textarea id="input-welcome-comments" name="yiw-comments"></textarea>
                     </div>
                     <div class="control">
                         <button type="submit">Send your comments</button>

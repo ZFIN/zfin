@@ -1,5 +1,6 @@
 package org.zfin.infrastructure.presentation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,29 +29,27 @@ public class UserCommentController {
             "\n" +
             "Comments: %s\n";
 
-    private static final String SUBMITTER_EMAIL_TEMPLATE = "" +
-            "Dear %s:\n" +
-            "\n" +
-            "Thank you for using ZFIN. Your comments and suggestions are very important to us.\n" +
-            "We will respond to them as soon as possible.\n" +
-            "\n" +
-            "Your comments or suggestions are as follows: \n" +
-            "-----------------------------------------------------------------\n" +
-            "%s\n" +
-            "-----------------------------------------------------------------\n" +
-            "\n" +
-            "Regards,\n" +
-            "Zebrafish Model Organism Database\n";
-
-
     @RequestMapping(value = "user-comment", method = RequestMethod.POST)
-    public ResponseEntity<JSONStatusResponse> submitComment(@RequestParam("name") String name,
-                                                            @RequestParam("institution") String institution,
-                                                            @RequestParam("email") String email,
-                                                            @RequestParam("subject") String subject,
-                                                            @RequestParam("comments") String comments,
+    public ResponseEntity<JSONStatusResponse> submitComment(@RequestParam("yiw-name") String name,
+                                                            @RequestParam("yiw-institution") String institution,
+                                                            @RequestParam("yiw-email") String email,
+                                                            @RequestParam("yiw-subject") String subject,
+                                                            @RequestParam("yiw-comments") String comments,
+                                                            @RequestParam("email") String hiddenEmail,
                                                             @RequestHeader(value = "referer", defaultValue = "<none>") String referer) {
         MailSender mailer = AbstractZfinMailSender.getInstance();
+
+        // none of the regular fields should be blank. client-side validation should have prevented that. if any of them
+        // are blank or the *hidden* email input is not blank then this was probably a spammy request, so just stop
+        // here.
+        if (StringUtils.isEmpty(name) ||
+                StringUtils.isEmpty(institution) ||
+                StringUtils.isEmpty(email) ||
+                StringUtils.isEmpty(subject) ||
+                StringUtils.isEmpty(comments) ||
+                !StringUtils.isEmpty(hiddenEmail)) {
+            return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid field"), HttpStatus.BAD_REQUEST);
+        }
 
         // send mail to admin
         mailer.sendMail("Your Input Welcome - " + subject,
@@ -58,13 +57,6 @@ public class UserCommentController {
                 false,
                 email,
                 ZfinPropertiesEnum.ZFIN_ADMIN.value().split(" "));
-
-        // send email to submitter
-        mailer.sendMail("ZFIN Thanks You For Your Input",
-                String.format(SUBMITTER_EMAIL_TEMPLATE, name, comments),
-                false,
-                ZfinPropertiesEnum.CURATORS_AT_ZFIN.value(),
-                new String[] {email});
 
         return new ResponseEntity<>(new JSONStatusResponse("OK", ""), HttpStatus.OK);
     }
