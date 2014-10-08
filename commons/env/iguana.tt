@@ -81,6 +81,7 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	kevin\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
+<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/watson/blastdb
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
 <!--|WEB_ADMIN_EMAIL|-->	kevin\@zfin.org
 <!--|WIKI_HOST|-->	devwiki.zfin.org
