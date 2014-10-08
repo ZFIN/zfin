@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# This scripts pushes newly updated databases to genomix using rsync.
-# change this to a env variable at some point: WEBHOST_BLASTDB_TO_COPY.
-# Right now, this is running from cron, which gets no env variables; we could put this into 
-# the ant build script, or make it a tt variable.  Both seem like overkill for one line of hard-coding.
+# This scripts pushes newly updated databases to VMs using rsync.
 
-FROM_DIRECTORY=/research/zprodmore/blastdb/Current
+FROM_DIRECTORY=<!--|WEBHOST_BLASTDB_TO_COPY|-->
 
 # make three identical copies to the development filesyste. 
 #one for almost:
@@ -22,9 +19,6 @@ TO_TRUNK_DIRECTORY=/research/zblastfiles/zmore/trunk/Current/
 # two above are corrupted through testing, or a developer needs to
 # make a new copy.
 TO_PRISTINE_DIRECTORY=/research/zblastfiles/zmore/nightly/Current/
-
-# rsync the almost directory and the unload directory nightly.
-# the unload directory is the default directory
 
 # rsync command:
 # -c always checksum 
@@ -45,17 +39,6 @@ echo rsync the pristine directory
 
 echo rsync the pristine directory
 /usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_TRUNK_DIRECTORY
-
-# if there are changes, then commit them as informix, most likely.
-if [ <!--|DOMAIN_NAME|--> == almost.zfin.org ]; then
-
-    cd $TO_ALMOST_DIRECTORY
-
-    /private/bin/svn commit -m "updated the curated databases." published*
-    /private/bin/svn commit -m "updated the curated databases." unreleased*
-    /private/bin/svn commit -m "updated the curated databases." Curated*
-
-fi
 
 # establish the write permissions and group.
 /bin/chgrp -R zfishweb $TO_ALMOST_DIRECTORY
