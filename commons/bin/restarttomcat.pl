@@ -68,6 +68,9 @@ given ($ARGV[0]) {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart xray";
     }
 
+   when ("zygotix") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh restart zygotix";
+    }
     default {
 	die "Incorrect argument '$ARGV[0]'"
     }
