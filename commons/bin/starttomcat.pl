@@ -71,7 +71,9 @@ given ($ARGV[0]) {
     when ("xray") {
 	$command="/private/ZfinLinks/Commons/bin/tomcat.sh start xray";
     }
-    
+     when ("zygotix") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop zygotix";
+    }
     
     default {
         die "Incorrect argument '$ARGV[0]'"
