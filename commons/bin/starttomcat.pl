@@ -22,6 +22,9 @@ given ($ARGV[0]) {
     when ("zfin.org") {
         $command="/etc/init.d/tomcat start";
     }
+    when ("sandbox") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh start sandbox";
+    }
     when ("almost") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh start almost";
     }

@@ -25,6 +25,9 @@ given ($ARGV[0]) {
     when ("almost") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop almost";
     }
+ when ("sandbox") {
+        $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop sandbox";
+    }
     when ("trunk") {
         $command="/private/ZfinLinks/Commons/bin/tomcat.sh stop trunk";
     }
