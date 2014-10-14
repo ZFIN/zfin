@@ -39,6 +39,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $remorph_new_line = "\n";
 $remorph_jpg_extension = ".jpg";
+$remorph_png_extension = ".png";
 $remorph_jpeg_extension = ".jpeg";
 $remorph_gif_extension = ".gif";
 $remorph_pdf_extension = ".pdf";
@@ -308,6 +309,7 @@ foreach $remorph_orphan_image_line (@remorph_orphanImageLines) {
     # replace file extensions with nothing--should be left with just a
     # ZDB-id
     $remorph_orphan_image_line =~ s/$remorph_jpg_extension//i;
+    $remorph_orphan_image_line =~ s/$remorph_png_extension//i;
     $remorph_orphan_image_line =~ s/$remorph_jpeg_extension//i;
     $remorph_orphan_image_line =~ s/$remorph_gif_extension//i;
 
