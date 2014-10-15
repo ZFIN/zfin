@@ -93,6 +93,8 @@ sub downloadFiles($$) {
     my $wgetStatusFile = "/tmp/pullFromResourceCenter.<!--|DB_NAME|-->.$filename";
     system("rm -f $wgetStatusFile");
    system("rm -f $wgetStatusFile*");
+   system("rm -f $filename*");
+   system("rm -f $filename");
     my $resourceCenter = $_[1];
 
     if ($resourceCenter eq "ZIRC"){
