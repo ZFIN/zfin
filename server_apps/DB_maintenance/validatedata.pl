@@ -394,81 +394,6 @@ sub strAbbrevContainsGeneAbbrevBasic($) {
 }
 
 
-#----
-
-
-#---------------------------------------------------------------
-# constructNameNotSubstringOfFeatureName
-#
-# Parameter
-# $ Email Address for recipients
-
-sub constructNameNotSubstringOfFeatureName ($) {
-  my $routineName = "constructNameNotSubstringOfFeatureName";
-	
-  my $sql = "select mrkr_zdb_id, mrkr_name, mrkr_abbrev, feature_zdb_id, feature_name
-             from marker, feature_marker_relationship, feature
-              where mrkr_type in ('PTCONSTRCT','ETCONSTRCT','GTCONSTRCT','TGCONSTRCT')
-             and feature_name not like mrkr_name||'%'
-             and feature_zdb_id = fmrel_ftr_zdb_id
-             and mrkr_zdb_id = fmrel_mrkr_zdb_id
-             and fmrel_type like 'contains%'
-             and (feature_name like 'Tg%' or feature_name like 'Pt%' or feature_name like 'Et%' or feature_name like 'Gt%')";
-
-  my @colDesc = ("Marker Zdb ID          ",
-                 "Marker Name          ",
-                 "Marker Abbrev    ",
-                 "Feature Zdb ID         ",
-		 "Feature Name       ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Constructs whose names are not substrings of related features";
-    my $errMsg = "The following constructs names are not substrings of their related feature names";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-
-}
-
-#---------------------------------------------------------------
-# pubClosedGenoHandleDoesNotEqualGenoNickname
-#
-# Parameter
-# $ Email Address for recipients
-
-sub pubClosedGenoHandleDoesNotEqualGenoNickname($) {
-  my $routineName = "pubClosedGenoHandleDoesNotEqualGenoNickname";
-	
-  my $sql = 'select distinct geno_nickname, geno_handle, zdb_id
-               from genotype, publication, record_attribution
-               where geno_handle !=  geno_nickname
-               and geno_zdb_id = recattrib_data_zdb_id
-                            and zdb_id = recattrib_source_zdb_id
-                            and pub_completion_date is not null';
-
-  my @colDesc = ("Genotype nickname         ",
-		 "Genotype handle       ",
-                 "Pub id                ");
-
-  my $nRecords = execSql ($sql, undef, @colDesc);
-
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Genotype(s) have handles that do not equal nicknames";
-    my $errMsg = "There are $nRecords genotype records where handle != nickname and pub is closed . ";
-    
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);
-  }
-  &recordResult($routineName, $nRecords);
-
-}
-
 #======================== PUB Attribution ========================
 
 #---------------------------------------------------------------
@@ -1284,8 +1209,6 @@ if($daily) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
-	constructNameNotSubstringOfFeatureName($dbaEmail);
-
 	# each bit of the 030905_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
 	associatedMrelDataforPUB030905_1($geneEmail);
 	associatedAliasDataforPUB030905_1($geneEmail);
