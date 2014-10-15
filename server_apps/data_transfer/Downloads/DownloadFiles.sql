@@ -926,20 +926,20 @@ select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id,
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/constructComponents.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/constructComponents.txt'
  DELIMITER "	"
-select distinct a.mrkr_zdb_id, 
-                a.mrkr_name, 
-                a.mrkr_type, 
-                b.mrkr_zdb_id, 
-                b.mrkr_name, 
-                b.mrkr_type, 
+select distinct a.mrkr_zdb_id,
+                a.mrkr_name,
+                a.mrkr_type,
+                b.mrkr_zdb_id,
+                b.mrkr_name,
+                b.mrkr_type,
 		mrel_type,
-                c.szm_term_ont_id, 
+                c.szm_term_ont_id,
                 d.szm_term_ont_id
          from marker a, marker b, marker_Relationship, so_zfin_mapping c, so_zfin_mapping d
  	 where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
 	 and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
 	 and get_obj_type(a.mrkr_zdb_id) = c.szm_object_type
-	 and get_obj_type(b.mrkr_zdb_id) = d.szm_object_type 
+	 and get_obj_type(b.mrkr_zdb_id) = d.szm_object_type
 	 and a.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','ETCONSTRCT','PTCONSTRCT')
          order by a.mrkr_zdb_id ;
 
@@ -1275,10 +1275,10 @@ ORDER BY LOWER(mrkr_abbrev)
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
-	sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
-	xpatex_source_zdb_id,
-	nvl(xpatex_probe_feature_zdb_id,'') as probe_id,
-	nvl(xpatex_atb_zdb_id,'')  as antibody_id
+        sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+        xpatex_source_zdb_id,
+        case when xpatex_probe_feature_zdb_id = "" then " " else xpatex_probe_feature_zdb_id end as probe_id,
+        case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id
  from marker
  join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
  join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
@@ -1294,10 +1294,11 @@ select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.ter
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5') -- might help
    and xpatres_expression_found = 't'
  group by mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
-	sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
-	xpatex_source_zdb_id, probe_id, antibody_id
+        sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+        xpatex_source_zdb_id, probe_id, antibody_id
  order by mrkr_zdb_id
 ;
+
 
 --case 8490 and case, 8886. Report of all publications that use an sa allele
 --not for public consumption
@@ -1656,10 +1657,12 @@ select * from tmp_features;
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishMartMembers.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishMartMembers.txt'
  DELIMITER "	"
-select fas_geno_long_name, fas_line_handle, gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
+select case when fas_geno_long_name = "" then " " else fas_geno_long_name end as fishName, 
+  fas_line_handle, gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
   from gene_Feature_result_View, fish_annotation_search
   where gfrv_fas_id = fas_pk_id
-  order by fas_geno_long_name;
+  order by fishName, fas_line_handle, gfrv_affector_id;
+
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/snpData.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/snpData.txt'
@@ -1719,7 +1722,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  DELIMITER "	"
 select feature_zdb_id, a.szm_term_ont_id, feature_name, mrkr_abbrev, mrkr_zdb_id, b.szm_term_ont_id, fmrel_type from feature,
 feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b
-where fmrel_ftr_zdb_id = feature_zdb_id 
+where fmrel_ftr_zdb_id = feature_zdb_id
   and mrkr_zdb_id = fmrel_mrkr_zdb_id
   and a.szm_object_type = feature_type
   and b.szm_objecT_type = mrkr_type
@@ -1741,9 +1744,9 @@ create temp table tmp_pheno_gene (id varchar(50), genox_zdb_id varchar(50), gene
 ! echo "Entity 2 subterms"
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id, mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
-  from all_term_contains, 
+  from all_term_contains,
        genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
-  where mfs_genox_zdb_id = genox_zdb_id	
+  where mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = mrkr_zdb_id
   and mrkr_zdb_id like 'ZDB-GENE%'
   and expcond_exp_zdb_id =exp_zdb_id
@@ -1760,9 +1763,9 @@ select distinct phenos_pk_id, genox_Zdb_id, mrkr_abbrev, mrkr_zdb_id, b.term_ont
 ! echo "Entity 2 superterms"
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
-  from all_term_contains, 
+  from all_term_contains,
        genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
-  where mfs_genox_zdb_id = genox_zdb_id	
+  where mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = mrkr_zdb_id
 and mrkr_zdb_id like 'ZDB-GENE%'
   and expcond_exp_zdb_id =exp_zdb_id
@@ -1778,9 +1781,9 @@ and mrkr_zdb_id like 'ZDB-GENE%'
 ! echo "Entity 1 subterms"
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
-  from all_term_contains, 
+  from all_term_contains,
        genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
-  where mfs_genox_zdb_id = genox_zdb_id	
+  where mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = mrkr_zdb_id
 and mrkr_zdb_id like 'ZDB-GENE%'
   and expcond_exp_zdb_id =exp_zdb_id
@@ -1797,9 +1800,9 @@ and mrkr_zdb_id like 'ZDB-GENE%'
 ! echo "Entity 1 superterms"
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
-  from all_term_contains, 
+  from all_term_contains,
        genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
-  where mfs_genox_zdb_id = genox_zdb_id	
+  where mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = mrkr_zdb_id
   and expcond_exp_zdb_id =exp_zdb_id
   and mrkr_zdb_id like 'ZDB-GENE%'
@@ -1818,11 +1821,11 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 ---ALLELES
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
-  from feature_marker_Relationship, genotype_Feature, all_term_contains, 
+  from feature_marker_Relationship, genotype_Feature, all_term_contains,
        genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
   and genox_geno_Zdb_id = genofeat_geno_zdb_id
-  and mfs_genox_zdb_id = genox_zdb_id	
+  and mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = fmrel_mrkr_Zdb_id
   and fmrel_type = 'is allele of'
   and expcond_exp_zdb_id =exp_zdb_id
@@ -1840,11 +1843,11 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 ! echo "Entity 1 subterms"
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
-  from feature_marker_Relationship, genotype_Feature, all_term_contains, 
+  from feature_marker_Relationship, genotype_Feature, all_term_contains,
        genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
   and genox_geno_Zdb_id = genofeat_geno_zdb_id
-  and mfs_genox_zdb_id = genox_zdb_id	
+  and mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = fmrel_mrkr_Zdb_id
   and expcond_exp_zdb_id =exp_zdb_id
   and exp_zdb_id = genox_exp_zdb_id
@@ -1861,13 +1864,13 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 ! echo "Entity 2 superterm"
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
-  from feature_marker_Relationship, genotype_Feature, all_term_contains, 
+  from feature_marker_Relationship, genotype_Feature, all_term_contains,
        genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b,experiment, experiment_condition
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
   and genox_geno_Zdb_id = genofeat_geno_zdb_id
   and expcond_exp_zdb_id =exp_zdb_id
   and exp_zdb_id = genox_exp_zdb_id
-  and mfs_genox_zdb_id = genox_zdb_id	
+  and mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = fmrel_mrkr_Zdb_id
   and fmrel_type = 'is allele of'
   and alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
@@ -1882,11 +1885,11 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 ! echo "Entity 2 superterms"
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
-  from feature_marker_Relationship, genotype_Feature, all_term_contains, 
+  from feature_marker_Relationship, genotype_Feature, all_term_contains,
        genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b,experiment, experiment_condition
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
   and genox_geno_Zdb_id = genofeat_geno_zdb_id
-  and mfs_genox_zdb_id = genox_zdb_id	
+  and mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = fmrel_mrkr_Zdb_id
   and fmrel_type = 'is allele of'
   and expcond_exp_zdb_id =exp_zdb_id
@@ -1904,15 +1907,15 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 create temp table tmp_dumpPheno (
        phenos_id serial,
        id varchar(50),
-       gene_abbrev varchar(50), 
-       gene_zdb_id varchar(50), 
-       asuperterm_ont_id varchar(30), 
+       gene_abbrev varchar(50),
+       gene_zdb_id varchar(50),
+       asuperterm_ont_id varchar(30),
        asuperterm_name varchar(255),
        arelationship_id varchar(30),
        arelationship_name varchar(30),
        asubterm_ont_id varchar(30),
        asubterm_name varchar(255),
-       bsuperterm_ont_id varchar(30), 
+       bsuperterm_ont_id varchar(30),
        bsuperterm_name varchar(255),
        brelationship_id varchar(30),
        brelationship_name varchar(30),
@@ -1921,9 +1924,9 @@ create temp table tmp_dumpPheno (
        quality_id varchar(30),
        quality_name varchar(255),
        geno_id varchar(50),
-       geno_display_name varchar(255), 
-       mo_id varchar(50), 
-       stage_start_id varchar(50), 
+       geno_display_name varchar(255),
+       mo_id varchar(50),
+       stage_start_id varchar(50),
        stage_end_id varchar(50),
        genox_id varchar(50),
        pub_id varchar(50),
@@ -1968,8 +1971,9 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 	 stage_start_id,stage_end_id,
 	 genox_id,
 	 pub_id,
-	 fig_id 
+	 fig_id
   From tmp_dumpPheno, tmp_phenotype_statement tps
   where tps.phenos_pk_id = phenos_id
   order by gene_abbrev;
+
 
