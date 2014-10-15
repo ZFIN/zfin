@@ -464,73 +464,6 @@ sub associatedDBLinkforPUB030905_1 ($) {
 }
 
 #---------------------------------------------------------------
-# associatedAliasDataforPUB030905_1
-#
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub associatedAliasDataforPUB030905_1 ($) {
-
-  my $routineName = "associatedAliasDataforPUB030905_1";
-
-  my $sql = "select recattrib_data_Zdb_id, dalias_data_zdb_id, dalias_alias
-             from   record_attribution, data_alias
-             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-             and dalias_zdb_id = recattrib_data_zdb_id
-             and    recattrib_data_Zdb_id not in (
-             select oevdisp_gene_zdb_id
-             from   orthologue_evidence_display
-             where  exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
-                    )
-             and    exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
-                    )
-             union
-             select oevdisp_zdb_id
-             from   orthologue_evidence_display
-             where  exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
-                    )
-             and    exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
-                    )
-             )";
-
-  my @colDesc = ("Attributed ZDB ID       ",
-                 "data ZDB ID             ",
-                 "alias        ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Invalid aliases data is associated with ZDB-PUB-030905-1.";
-    my $errMsg = "$nRecords alias data are associated with ZDB-PUB-030905-1"
-               . " that either do not have an attributed GENE or"
-               . " do not have attributed orthologue evidence.";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-#---------------------------------------------------------------
 # associatedMrkrGoevDataforPUB030905_1
 #
 # 
@@ -1141,7 +1074,6 @@ if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
 	# each bit of the 030905_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
-	associatedAliasDataforPUB030905_1($geneEmail);
 	associatedMrkrGoevDataforPUB030905_1($goEmail);
 	associatedDBLinkforPUB030905_1($dbaEmail);
 
