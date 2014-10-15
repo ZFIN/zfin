@@ -170,9 +170,9 @@ sub geno_load($) {
                                         idsup_supplier_zdb_id, 
                                         idsup_acc_num)
            select geno_zdb_id, '$labZdbId', geno_zdb_id
-             from geno_available b
+             from geno_available 
              where exists (Select 'x' from zdb_active_data
-                                 where b.geno_zdb_id = zactvd_zdb_id)
+                                 where geno_zdb_id = zactvd_zdb_id)
              and not exists (select 'x' 
                                  from int_data_supplier
 		                 where idsup_data_zdb_id = geno_zdb_id
@@ -661,7 +661,9 @@ sub geno_main($$$) {
     my $genoFile = "need.txt"; # geno file to download
     my $resourceFile ="resource.txt" ;
     system("rm -f $genoFile");    # remove old downloaded files
-    system ("rm -f $resourceFile"); 
+    system("rm -f $genoFile*");    # remove old downloaded files
+    system ("rm -f $resourceFile");
+   system ("rm -f $resourceFile*"); 
 
 
     if ($resourceCenter eq "ZIRC"){

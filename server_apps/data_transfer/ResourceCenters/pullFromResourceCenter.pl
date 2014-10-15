@@ -92,16 +92,17 @@ sub downloadFiles($$) {
 
     my $wgetStatusFile = "/tmp/pullFromResourceCenter.<!--|DB_NAME|-->.$filename";
     system("rm -f $wgetStatusFile");
+   system("rm -f $wgetStatusFile*");
     my $resourceCenter = $_[1];
 
     if ($resourceCenter eq "ZIRC"){
-	if (system("/local/bin/wget http://zebrafish.org/zirc/zfin/$filename >> $wgetStatusFile 2>&1")) {
+	if (system("/local/bin/wget http://zebrafish.org/zirc/zfin/$filename")) {
 	    &errorExit("Failed to download $filename file from ZIRC.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-991005-53";
     }
     elsif ($resourceCenter eq "EZRC"){
-	if (system("/local/bin/wget http://www.ezrc.kit.edu/downloads/$filename >> $wgetStatusFile 2>&1")) {
+	if (system("/local/bin/wget http://www.ezrc.kit.edu/downloads/$filename")) {
 	    &errorExit("Failed to download $filename file from EZRC.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-130607-1";
@@ -146,7 +147,7 @@ my $labZdbId;
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 
 open(ZIRCREPORT, ">> <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") or die "can't open loadReport.txt";
-system("/bin/chmod ug+w /tmp/loadReport.txt");
+system("/bin/chmod ug+w <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 # Prepare to do some work.
 #  CD into working directory
 #  remove old downloaded files.
@@ -168,14 +169,27 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 #  o parse and prepare the downloaded data into a format that can be used.
 #  o Update the database, reporting as it goes
 
-&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
-&est_main($dbh, $zircZdbId);	        # EST availability ZIRC
+       # EST availability ZIRC
 &geno_main($dbh, $ezrcZdbId,"EZRC");           # Genotype availability EZRC
 # &atb_main($dbh, $zircZdbId);	        # Antibody availability
 
 $dbh->commit();
 $dbh->disconnect();
 
-#&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "/tmp/loadReport.txt") ;
+$dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
+		       '',
+		       '',
+		       {AutoCommit => 0, RaiseError => 1}
+		       )
+  || errorExit("Failed while connecting to <!--|DB_NAME|--> ");
+
+
+&geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
+&est_main($dbh, $zircZdbId);	 
+
+$dbh->commit();
+$dbh->disconnect();
+
+&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
 
 exit 0;
