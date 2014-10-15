@@ -190,6 +190,6 @@ $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 $dbh->commit();
 $dbh->disconnect();
 
-&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
+#&sendLoadReport("Data transfer report","<!--|VALIDATION_EMAIL_DBA|-->", "<!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt") ;
 
 exit 0;
