@@ -48,8 +48,11 @@ update functional_annotation
 				 where fg_geno_Zdb_id = fa_geno_Zdb_id) 
   where fa_feature_group is not null;
 
-drop table tmp_tg;
 drop table tmp_alias;
+drop table tmp_tg;
+commit work;
+begin work;
+
 
 select distinct dalias_alias, cg_Geno_zdb_id, cg_group_name as group_name, cg_group_pk_id as group_id
  from data_alias, construct_group,               
@@ -105,9 +108,10 @@ update functional_annotation
 select max(octet_length(fa_construct_alias))
   from functional_annotation;
 
-drop table tmp_tg;
 drop table tmp_alias;
-
+drop table tmp_tg;
+commit work;
+begin work;
 
 select distinct dalias_alias, afg_group_name as group_name, afg_genox_zdb_id as genox, afg_geno_zdb_id as geno
 from data_alias, affected_gene_group, 
@@ -276,8 +280,11 @@ and fa_gene_alias is null
 --select * from functional_annotation 
 --where fa_geno_Zdb_id = 'ZDB-GENO-110722-21';
 
-drop table tmp_tg;
 drop table tmp_alias;
+drop table tmp_tg;
+commit work;
+begin work;
+
 
 select distinct dalias_alias, strg_group_name as group_name
 from data_alias, str_group, 
@@ -316,8 +323,10 @@ update functional_annotation
 			       where ttg_group_name = fa_str_group)
   where fa_str_group is not null;
 
-drop table tmp_tg;
 drop table tmp_alias;
+drop table tmp_tg;
+commit work;
+begin work;
 
 select distinct dalias_alias, geno_zdb_id as group_name
 from data_alias, genotype
@@ -353,9 +362,11 @@ update functional_annotation
 			      where ttg_group_name = fa_geno_Zdb_id
 			      )
   where fa_geno_Zdb_id is not null;
-
-drop table tmp_tg;
 drop table tmp_alias;
+drop table tmp_tg;
+
+commit work;
+begin work;
 
 --update functional_annotation
 --  set fa_geno_alias = (replace(replace(replace(substr(multiset (select distinct item-

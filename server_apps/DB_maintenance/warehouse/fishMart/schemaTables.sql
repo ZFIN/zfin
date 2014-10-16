@@ -48,9 +48,11 @@ create table functional_annotation(
 create unique index fa_pk_id_index on functional_annotation(fa_pk_id)
   using btree in idxdbs2;
 
-create index fa_geno_handle_index on functional_annotation(fa_geno_handle) using btree in idxdbs2;
-
 create index fa_geno_index on functional_annotation(fa_geno_zdb_id)
+ using btree in idxdbs3;
+
+
+create index fa_geno_handle_index on functional_annotation(fa_geno_handle)
  using btree in idxdbs3;
 
 --create index fa_feature_group_index on functional_annotation(fa_feature_group)
@@ -448,9 +450,9 @@ create index xfigg_geno_handle_index on xpat_Figure_group (xfigg_geno_handle)
 create index fa_genox_zdb_id_index on functional_annotation (fa_genox_zdb_id)
   using btree in idxdbs2;
 
-create index fa_geno_name_index
- on functional_annotation (fa_geno_name)
- using btree in idxdbs2;
+--create index fa_geno_name_index
+-- on functional_annotation (fa_geno_name)
+-- using btree in idxdbs2;
 
 alter table functional_annotation
   add constraint primary key (fa_pk_id)
