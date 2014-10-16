@@ -464,75 +464,6 @@ sub associatedDBLinkforPUB030905_1 ($) {
 }
 
 #---------------------------------------------------------------
-# associatedMrkrGoevDataforPUB030905_1
-#
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub associatedMrkrGoevDataforPUB030905_1 ($) {
-
-  my $routineName = "associatedMrkrGoevDataforPUB030905_1";
-
-  my $sql = "select recattrib_data_Zdb_id, mrkrgoev_mrkr_zdb_id, mrkrgoev_evidence_code, mrkrgoev_term_zdb_id
-             from   record_attribution, marker_go_term_evidence
-             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-             and mrkrgoev_zdb_id = recattrib_data_zdb_id
-             and    recattrib_data_Zdb_id not in (
-             select oevdisp_gene_zdb_id
-             from   orthologue_evidence_display
-             where  exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
-                    )
-             and    exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
-                    )
-             union
-             select oevdisp_zdb_id
-             from   orthologue_evidence_display
-             where  exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
-                    )
-             and    exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
-                    )
-             )";
-
-  my @colDesc = ("Attributed ZDB ID       ",
-                 "marker id            ",
-		 "evidence code           ",
-                 "term zdb_id        ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Invalid mrkrgoev data is associated with ZDB-PUB-030905-1.";
-    my $errMsg = "$nRecords mrkrgoev data are associated with ZDB-PUB-030905-1"
-               . " that either do not have an attributed GENE or"
-               . " do not have attributed orthologue evidence.";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-
-#---------------------------------------------------------------
 # associatedDataforPUB030508_1
 #
 # Only data for gene name, gene symbol
@@ -1060,11 +991,8 @@ $dbh = DBI->connect("DBI:Informix:$globalDbName",
 #    send error message and query results to sb.
 #  endif
 
-my $adEmail      = "<!--|VALIDATION_EMAIL_AD|-->";
 my $geneEmail    = "<!--|VALIDATION_EMAIL_GENE|-->";
 my $dbaEmail     = "<!--|VALIDATION_EMAIL_DBA|-->";
-my $goEmail      = "<!--|GO_EMAIL_CURATOR|-->";
-my $adminEmail   = "<!--|ZFIN_ADMIN|-->";
 my $strEmail = "<!--|VALIDATION_EMAIL_MORPHOLINO|-->";
 
 
@@ -1074,7 +1002,6 @@ if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
 	# each bit of the 030905_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
-	associatedMrkrGoevDataforPUB030905_1($goEmail);
 	associatedDBLinkforPUB030905_1($dbaEmail);
 
 	# each bit of the 030508_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
