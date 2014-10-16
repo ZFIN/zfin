@@ -23,11 +23,15 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
     public void execute() {
         try {
             List<String> pagesWithBadPermissions = new ArrayList<>();
-            RemoteSearchResult[] results = WikiWebService.getInstance().getLabelContent(Label.ZEBRAFISH_BOOK.getValue());
+            WikiWebService webService = WikiWebService.getInstance();
+            RemoteSearchResult[] results = webService.getLabelContent(Label.ZEBRAFISH_BOOK.getValue());
             for (RemoteSearchResult result : results) {
+                // skip if page is deleted
+                if (!webService.getPage(result.getId()).isCurrent())
+                    continue;
                 try {
                     boolean isZfinGroup = false;
-                    RemoteContentPermission[] remoteContentPermissions = WikiWebService.getInstance().getRemoteContentPermissions(result.getId(), Permission.EDIT.getValue());
+                    RemoteContentPermission[] remoteContentPermissions = webService.getRemoteContentPermissions(result.getId(), Permission.EDIT.getValue());
                     for (RemoteContentPermission remoteContentPermission : remoteContentPermissions) {
                         String groupName = remoteContentPermission.getGroupName();
                         if (groupName == null)
