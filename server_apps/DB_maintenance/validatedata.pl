@@ -397,73 +397,6 @@ sub strAbbrevContainsGeneAbbrevBasic($) {
 #======================== PUB Attribution ========================
 
 #---------------------------------------------------------------
-# associatedDBlinkDataforPUB030905_1
-# 
-# 
-#Parameter
-# $      Email Address for recipients
-# 
-
-sub associatedDBLinkforPUB030905_1 ($) {
-
-  my $routineName = "associatedDBLinkDataforPUB030905_1";
-
-  my $sql = "select recattrib_data_Zdb_id, dblink_linked_recid, dblink_acc_num
-             from   record_attribution, db_link
-             where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-             and dblink_zdb_id = recattrib_data_zdb_id
-             and    recattrib_data_Zdb_id not in (
-             select oevdisp_gene_zdb_id
-             from   orthologue_evidence_display
-             where  exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
-                    )
-             and    exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
-                    )
-             union
-             select oevdisp_zdb_id
-             from   orthologue_evidence_display
-             where  exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_gene_zdb_id = recattrib_data_Zdb_id
-                    )
-             and    exists (
-                       select recattrib_data_Zdb_id
-                       from   record_attribution
-                       where  recattrib_source_zdb_id = 'ZDB-PUB-030905-1'
-                       and    oevdisp_zdb_id = recattrib_data_Zdb_id
-                    )
-             )";
-
-  my @colDesc = ("Attributed ZDB ID       ",
-                 "data ZDB ID             ",
-                 "accession number        ");
-  
-  my $nRecords = execSql ($sql, undef, @colDesc);
-	
-  if ( $nRecords > 0 ) {
-    my $sendToAddress = $_[0];
-    my $subject = "Invalid dblink data is associated with ZDB-PUB-030905-1.";
-    my $errMsg = "$nRecords dblink data are associated with ZDB-PUB-030905-1"
-               . " that either do not have an attributed GENE or"
-               . " do not have attributed orthologue evidence.";
-
-    logError ($errMsg);
-    &sendMail($sendToAddress, $subject, $routineName, $errMsg, $sql);  
-  }
-  &recordResult($routineName, $nRecords); 
-}
-
-#---------------------------------------------------------------
 # associatedDataforPUB030508_1
 #
 # Only data for gene name, gene symbol
@@ -1001,9 +934,6 @@ if($daily) {
 if($weekly) {
   # put these here until we get them down to 0 records.  Then move them to 
   # daily.
-	# each bit of the 030905_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
-	associatedDBLinkforPUB030905_1($dbaEmail);
-
 	# each bit of the 030508_1 needs different data report to allow curators to clean up.  the generic one goes to DBA.
 	associatedDataforPUB030508_1($dbaEmail);
 	associatedAltDataforPUB030508_1($geneEmail);
