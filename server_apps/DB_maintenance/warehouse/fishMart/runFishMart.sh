@@ -124,6 +124,9 @@ set fullFishMartScripts=(begin.sql \
 	     addAliasesToFunctionalAnnotation.sql \
 	     commit.sql \
 	     begin.sql \
+	     updateStatsFunctionalAnnotation.sql \
+	     commit.sql \
+	     begin.sql \
 	     addCountsToFunctionalAnnotation.sql \
 	     commit.sql \
 	     begin.sql \
