@@ -14,13 +14,23 @@ set ALL_FISHMART_SCRIPTS=$FISHMARTDIR/allFishMart.sql
 
 set fishMartScripts=(begin.sql \
 	     dropTables.sql \
+	     commit.sql \
+             begin.sql \
 	     schemaTables.sql \
 	     commit.sql \
 	     begin.sql \
 	     geneGroup.sql \
+	     commit.sql \
+	     begin.sql \
 	     environmentGroup.sql \
+	     commit.sql \
+	     begin.sql \
 	     featureGroup.sql \
+	     commit.sql \
+	     begin.sql \
 	     strGroup.sql \
+	     commit.sql \
+	     begin.sql \
 	     constructGroup.sql \
 	     commit.sql \
 	     begin.sql \
@@ -28,6 +38,8 @@ set fishMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     phenoFigs.sql \
+	     commit.sql \
+	     begin.sql \
 	     xpatFigs.sql \
 	     commit.sql \
 	     begin.sql \
@@ -98,13 +110,23 @@ set regenFishMartScripts=(begin.sql \
 
 set fullFishMartScripts=(begin.sql \
 	     dropTables.sql \
+	     commit.sql \
+             begin.sql \
 	     schemaTables.sql \
 	     commit.sql \
 	     begin.sql \
 	     geneGroup.sql \
+	     commit.sql \
+             begin.sql \
 	     environmentGroup.sql \
+	     commit.sql \
+             begin.sql \
 	     featureGroup.sql \
+	     commit.sql \
+             begin.sql \
 	     strGroup.sql \
+	     commit.sql \
+             begin.sql \
 	     constructGroup.sql \
 	     commit.sql \
 	     begin.sql \
@@ -112,6 +134,8 @@ set fullFishMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     phenoFigs.sql \
+	     commit.sql \
+             begin.sql \
 	     xpatFigs.sql \
 	     commit.sql \
 	     begin.sql \
