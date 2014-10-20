@@ -395,3 +395,5 @@ set pdqpriority 80;
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
  where zflag_name = "regen_fishmart_bts_indexes";
+
+!echo "done populateGeneFeatureResultView";

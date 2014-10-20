@@ -24,3 +24,4 @@ insert into phenotype_figure_group_member (pfiggm_group_id, pfiggm_member_name, 
     where phenox_genox_zdb_id = pfigg_genox_zdb_id
     and fig_zdb_id = phenox_fig_zdb_id;
 
+!echo "done phenoFigs";

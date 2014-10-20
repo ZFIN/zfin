@@ -31,3 +31,4 @@ and fas_str_group is null
     ;
 
 
+!echo "done populateNullOrderingColumns";

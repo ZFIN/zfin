@@ -39,3 +39,4 @@ update fish_annotation_search_temp
 update fish_annotation_search_temp
   set fas_affector_type_group = replace(fas_affector_type_group,"_","");
   
+!echo "done translateFeatureTypeForTGs";

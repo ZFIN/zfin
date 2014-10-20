@@ -63,3 +63,4 @@ select max(octet_length(strg_group_name))
  from str_group;
 
 
+!echo "done strGroup";

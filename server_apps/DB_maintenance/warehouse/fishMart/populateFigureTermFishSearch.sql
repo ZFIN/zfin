@@ -75,3 +75,5 @@ update figure_term_fish_search_temp set ftfs_term_group = replace(ftfs_term_grou
 
 update figure_term_fish_search_temp
  set ftfs_term_group = lower(ftfs_term_group);
+
+!echo "done populateFigureTermFishSearch";

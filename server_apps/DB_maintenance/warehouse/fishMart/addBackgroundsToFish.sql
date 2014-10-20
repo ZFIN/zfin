@@ -21,3 +21,5 @@ update fish_annotation_search_temp
 		      end
  where exists (Select 'x' from tmp_fas where tmp_fas.fas_pk_id = fish_annotation_search_temp.fas_pk_id)
   and fas_genotype_group is not null;
+
+!echo "done addBAckgroundsToFish";

@@ -11,3 +11,4 @@ update fish_annotation_search_temp
     where exists (select 'x' from xpat_figure_group
     	  	 	 where xfigg_geno_handle = fas_line_handle);
 
+!echo "done addXpatCounts";

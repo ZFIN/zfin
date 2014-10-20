@@ -122,3 +122,4 @@ select * from feature_group
  where fg_geno_zdb_id = 'ZDB-GENO-120130-345';
 
 
+!echo "done featureGroup"

@@ -446,3 +446,4 @@ update functional_Annotation
 
 --
 
+!echo "done addAliasesToFunctionalAnnoation";

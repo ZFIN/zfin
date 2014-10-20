@@ -261,3 +261,5 @@ drop table tmp_tg;
 
 !echo "check lvarchars for term group name"
 select max(octet_length(tg_group_name)) from term_group;
+
+!echo "done phenoTermGroup";

@@ -41,3 +41,5 @@ select fas_pk_id,
    and d.fmrel_mrkr_zdb_id = b.mrkr_zdb_id
    and d.fmrel_type like 'contains%'
   and feature_abbrev like 'la%';
+
+!echo "done populateBurgessLinGFRV";

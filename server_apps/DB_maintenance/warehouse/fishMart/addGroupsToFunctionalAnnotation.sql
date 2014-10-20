@@ -136,13 +136,9 @@ delete from functional_annotation
   or fa_environment_group like '%temperature%')
   and fa_environment_group_is_standard_or_control = 'f';
 
---update statistics high for table functional_annotation;
---update statistics high for table feature_group;
---update statistics high for table str_group;
---update statistics high for table affected_gene_group;
---update statistics high for table environment_group;
---update statistics high for table term_group;
 
 update functional_annotation
    set fa_affector_type_group = 'zzzzzzzzzzzzzzzzzzzzzz'
    where fa_affector_type_group is null;
+
+!echo "done addGroupsToFunctionalAnnotation";

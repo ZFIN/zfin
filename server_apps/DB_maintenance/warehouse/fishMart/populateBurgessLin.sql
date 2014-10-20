@@ -198,3 +198,4 @@ update fish_annotation_search_temp
 				 where fas_line_handle = f_id) 
 ;
 
+!echo "done populateBurgesLin";

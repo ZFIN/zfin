@@ -88,3 +88,5 @@ update functional_Annotation
   where exists (select 'x' from xpat_figure_group
   	       	       where fa_genox_zdb_id = xfigg_genox_zdb_id
 		       and xfigg_has_images = "t");
+
+!echo "done xpatFigs";

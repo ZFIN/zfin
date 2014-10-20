@@ -163,3 +163,5 @@ update fish_annotation_search_temp
  and fas_line_handle like 'ZDB-ALT%'
  and fas_line_handle in (select f_id from tmp_tg2s)
 ;
+
+!echo "done populateSanger";
