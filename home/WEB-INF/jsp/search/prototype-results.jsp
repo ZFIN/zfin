@@ -91,7 +91,7 @@
                         </c:forEach>
                     </select>
                     <input class="search-form-input input" style="width: 25em;" name="q" id="primary-query-input"
-                           autocomplete="off" type="text" value='${q}'/>
+                           autocomplete="off" type="text" value="${q}"/>
                     <a href="#" id="search-box-clear-link" onclick="jQuery('#primary-query-input').val('');">&times;</a>
 
                     <div class="btn-group search-box-buttons">
