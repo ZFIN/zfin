@@ -436,9 +436,6 @@ jQuery(document).ready(function () {
         }
     });
 
-
-    jQuery('.tippy-cell').tooltip({container: 'body'});
-
     if (!(localStorage.getItem("draft-software-warning-dismissed") == "true"))
         jQuery('#draft-software-warning').modal('show');
 

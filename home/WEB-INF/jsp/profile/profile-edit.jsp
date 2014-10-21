@@ -4,6 +4,7 @@
 <zfin2:errors errorResult="${errors}"/>
 
 <script src="/javascript/jquery.dirtyFields.packed.js"></script>
+<script src="/javascript/tabbify.js"></script>
 
 
 <div align="center">

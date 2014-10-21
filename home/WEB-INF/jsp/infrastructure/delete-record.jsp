@@ -2,7 +2,6 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script src="/javascript/jquery-1.11.0.js"></script>
 <script src="/javascript/jquery-ui-1.10.4.custom.js"></script>
 <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">
 

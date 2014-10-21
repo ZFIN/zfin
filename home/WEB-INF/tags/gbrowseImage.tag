@@ -4,13 +4,14 @@
 
 <%@ attribute name="gbrowseImage" type="org.zfin.gbrowse.presentation.GBrowseImage" required="true"%>
 <%@ attribute name="width" required="false"%>
+<%@ attribute name="domId"%>
 
 
  <c:if test="${empty width}">
      <c:set var="width" value="${gbrowseImage.defaultWidth}"/>
  </c:if>
 
-   <c:set var="imageDomID" value="gbrowse-image-${zfn:generateRandomDomID()}"/>
+   <c:set var="imageDomID" value="gbrowse-image-${domId}"/>
 
    <c:if test="${empty gbrowseImage.linkText}">
     <div class="gbrowse-image-container" style="display: none; margin: .5em; border: 1px solid black ; background: white">

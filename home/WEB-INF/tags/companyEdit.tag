@@ -174,32 +174,10 @@
             }
         });
 
-// on load
         listMembers('${company.zdbID}');
-//            var tabs = jQuery('#companyEdit').tabs('div.panes > div');
     });
-    jQuery('ul.tabs').tabs();
 
-    <c:if test="${not empty selectedTab}">
-    var api = jQuery("ul.tabs").data("tabs");
-
-    switch('${selectedTab}'){
-        case 'information':
-            api.click(0);
-            jQuery('.information-first-field').focus();
-            break;
-        case 'members':
-            api.click(1);
-            jQuery('.members-first-field').focus();
-            break;
-        case 'picture':
-            api.click(2);
-            break;
-        default:
-            console.log('unknown tab selected has error on it') ;
-    }
-    </c:if>
-
+    jQuery('.tabs a').tabbify('.panes > div');
 
 </script>
 

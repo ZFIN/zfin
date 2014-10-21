@@ -7,8 +7,9 @@
 <%@ attribute name="width" required="false"%>
 
 <c:if test="${!empty gbrowseImage}">
-  <a class="gbrowse_hover">GB</a>
-  <div class="gbrowse_popup"><zfin2:gbrowseImageStack gbrowseImage="${gbrowseImage}"/></div>
-  <script> jQuery(document).ready(function() { jQuery('.gbrowse_hover').tooltip().dynamic({ bottom: { direction: 'down'}}); }); </script>
+    <c:set var="domId" value="${zfn:generateRandomDomID()}"/>
+
+    <a class="gbrowse_hover" rel="#popup-${domId}">GB</a>
+    <div class="gbrowse_popup" id="popup-${domId}"><zfin2:gbrowseImageStack gbrowseImage="${gbrowseImage}" domId="${domId}"/></div>
 
 </c:if>

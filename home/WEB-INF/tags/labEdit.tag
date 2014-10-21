@@ -28,7 +28,7 @@
         </li>
     </ul>
 
-<%--    <div class='panes'>--%>
+    <div class='panes'>
         <div id='information'>
             <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"
                        action="/action/profile/lab/edit/${lab.zdbID}" enctype="multipart/form-data"
@@ -155,7 +155,7 @@
         <div id='picture'>
             <zfin2:editSnapshot value='${lab}'/>
         </div>
-    <%--</div>--%>
+    </div>
 
 </div>
 
@@ -167,39 +167,10 @@
                 personToAddZdbID = ui.item.id;
             }
         });
-
-
-        jQuery('#labEdit').tabs();
-
-
-        <c:if test="${not empty selectedTab}">
-        var api = jQuery("ul.tabs").data("tabs");
-
-        switch('${selectedTab}'){
-            case 'information':
-                api.click(0);
-                jQuery('.information-first-field').focus();
-                break;
-            case 'members':
-                api.click(1);
-                jQuery('.members-first-field').focus();
-                break;
-            case 'picture':
-                api.click(2);
-                break;
-
-
-            default:
-                console.log('unknown tab selected has error on it') ;
-        }
-        </c:if>
-
-// on load
         listMembers('${lab.zdbID}');
-
     });
 
-
+    jQuery('.tabs a').tabbify('.panes > div');
 
 </script>
 

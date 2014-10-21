@@ -46,7 +46,7 @@
     <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
 
 
-    <script src="/javascript/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="/javascript/jquery-1.11.0.js" type="text/javascript"></script>
 
 
     <c:if test="${empty suppressHeaderAndFooter || suppressHeaderAndFooter == false}">

@@ -203,7 +203,10 @@ a.gbrowse_hover{
     color:#000;
     text-decoration:none}
 
-.gbrowse_popup{display: none}
+.gbrowse_popup{
+    display: none;
+    position: absolute;
+}
 
 a.gbrowse_hover:hover .gbrowse_popup{ /*the span will display just on :hover state*/
    background-color:#fff; color:#000;

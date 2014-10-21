@@ -64,6 +64,17 @@
             </td>
         </zfin:alternating-tr>
     </c:forEach>
+
+    <script>
+        jQuery(".gbrowse_hover").hover(
+                function () {
+                    jQuery(jQuery(this).attr("rel")).show();
+                },
+                function () {
+                    jQuery(jQuery(this).attr("rel")).hide();
+                }
+        );
+    </script>
 </table>
 
 

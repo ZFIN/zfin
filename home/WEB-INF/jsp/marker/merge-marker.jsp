@@ -137,21 +137,7 @@ jQuery(document).ready(function () {
     </c:if>
 
     // select all desired input fields and attach tooltips to them
-    jQuery('form :input').tooltip({
-
-        // place tooltip on the right edge
-        position: "center right",
-
-        // a little tweaking of the position
-        offset: [-2, 10],
-
-        // use the built-in fadeIn/fadeOut effect
-        effect: "fade",
-
-        // custom opacity setting
-        opacity: 0.7
-
-    });
+    jQuery(':input').tipsy({gravity: 'w'});
 
     jQuery('#sameUnspecifiedAllele').hide();
     jQuery('#renameUnspecifiedAllele').hide();
@@ -851,28 +837,6 @@ function enableMerge() {
     if (unspecifiedAllelesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && ensemblZv9IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored) {
         jQuery('#submitMerge').removeAttr('disabled');
     }
-}
-
-function showExaplanation(formObj) {
-
-    var formObjId =  formObj.id;
-
-    // select all desired input fields and attach tooltips to them
-    jQuery('#' + formObjId).tooltip({
-
-        // place tooltip on the right edge
-        position: "center right",
-
-        // a little tweaking of the position
-        offset: [-2, 10],
-
-        // use the built-in fadeIn/fadeOut effect
-        effect: "fade",
-
-        // custom opacity setting
-        opacity: 0.7
-
-    });
 }
 
 </script>

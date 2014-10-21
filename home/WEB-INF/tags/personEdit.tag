@@ -14,7 +14,7 @@
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 
 
-<div id='personEdit' class="panes">
+<div id='personEdit'>
     <ul class="tabs">
         <li>
             <a href="#information" ${empty person.email and person.emailList ? 'style="color: red;"' : '' }>Information</a>
@@ -247,36 +247,7 @@
 
 <script type="text/javascript">
 
-    jQuery('ul.tabs').tabs();
-
-    <c:if test="${ not empty selectedTab}">
-
-    var api = jQuery("ul.tabs").data("tabs");
-
-    switch ('${selectedTab}') {
-        case 'information':
-            api.click(0);
-            jQuery('.information-first-field').focus();
-            break;
-        case 'biography':
-            api.click(1);
-            jQuery('.biography-first-field').focus();
-            break;
-        case 'publications':
-            api.click(2);
-            jQuery('.publications-first-field').focus();
-            break;
-        case 'login':
-            api.click(3);
-            jQuery('.login-first-field').focus();
-            break;
-        case 'picture':
-            api.click(4);
-            break;
-        default:
-            console.log('unknown tab selected has error on it');
-    }
-    </c:if>
+    jQuery('.tabs a').tabbify('.panes > div');
 
 </script>
 
