@@ -229,6 +229,8 @@ public interface MutantRepository {
 
     List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype);
 
+    PhenotypeExperiment getPhenotypeExperiment(Long id);
+
     PhenotypeStatement getPhenotypeStatementById(Long Id);
 
     /**
@@ -385,6 +387,15 @@ public interface MutantRepository {
      */
     List<PhenotypeStatement> getPhenotypesOnObsoletedTerms(Ontology ontology);
 
+    /**
+     * Retrieve phenotypes for a given marker
+     * @param gene
+     * @return
+     */
+    List<PhenotypeStatement> getPhenotypeStatementsByMarker(Marker gene);
+
+
     List<GenotypeFigure> getGenotypeFiguresBySTR(SequenceTargetingReagent str);
+
 }
 

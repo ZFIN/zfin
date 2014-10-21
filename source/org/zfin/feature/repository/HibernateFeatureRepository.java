@@ -386,6 +386,18 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
         return generateFeaturePrefixes(organizationFeaturePrefixes, assignIfEmpty);
     }
+    public List<FeaturePrefix> getCurrentLabPrefixesById(String labZdbID, boolean assignIfEmpty) {
+        String hqlLab1 = " select lfp from OrganizationFeaturePrefix lfp  " +
+                " join lfp.organization lb " +
+                " where lb.zdbID=:labZdbID " +
+                " and lfp.currentDesignation='t' " +
+                " order by lfp.currentDesignation desc, lfp.featurePrefix.prefixString asc";
+
+        List<OrganizationFeaturePrefix> organizationFeaturePrefixes = HibernateUtil.currentSession().createQuery(hqlLab1)
+                .setParameter("labZdbID",labZdbID).list();
+
+        return generateFeaturePrefixes(organizationFeaturePrefixes, assignIfEmpty);
+    }
 
     /**
      * This is a helper method for getLabPrefixes and getLabPrefixesById

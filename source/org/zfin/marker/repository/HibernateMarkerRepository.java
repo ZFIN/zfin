@@ -173,6 +173,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (Marker) criteria.uniqueResult();
     }
 
+    //this is kind of awful...
+    public List<Marker> getMarkersByZdbIdPrefix(String prefix) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Marker.class);
+        criteria.add(Restrictions.like("zdbID", prefix + "%"));
+        criteria.setFetchMode("aliases", FetchMode.JOIN);
+        List<Marker> markerList = new ArrayList<Marker>();
+        markerList.addAll(criteria.list());
+        return markerList;
+    }
+
     public List<Marker> getMarkersByAbbreviation(String name) {
         List<Marker> markerList = new ArrayList<Marker>();
         Session session = currentSession();
@@ -1586,6 +1597,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
+/*
+    public Map<String,List<String>> getPromotorConstructMap() {
+        String sql = "select mrel_mrkr_1_zdb_id, mrkr_abbrev from marker_relationship, marker " +
+                "where mrel_type = \"promoter of\"  " +
+                "  and mrkr_zdb_id ; ";
+        return Map<String,List<String>> HibernateUtil.currentSession().createSQLQuery(sql).setResultTransformer()
+    }
+*/
+
     @Override
     public List<PreviousNameLight> getPreviousNamesLight(final Marker gene) {
         String sql = "  " +
@@ -2345,6 +2365,51 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 ;
     }
 
+
+    public List<Marker> getMarkersContainedIn(Marker marker, MarkerRelationship.Type... types) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "select m from  Marker as m, MarkerRelationship as rel " +
+                        "where rel.firstMarker = :marker  and rel.secondMarker = m and " +
+                        "rel.type in :relationshipTypes");
+        query.setParameter("marker", marker);
+        query.setParameterList("relationshipTypes", types);
+        List<Marker> list = (List<Marker>) query.list();
+        query = HibernateUtil.currentSession().createQuery(
+                "select m from  Marker as m, MarkerRelationship as rel " +
+                        "where rel.secondMarker = :marker  and rel.firstMarker = m and " +
+                        "rel.type in :relationshipTypes");
+        query.setParameter("marker", marker);
+        query.setParameterList("relationshipTypes", types);
+        list.addAll((List<Marker>) query.list());
+        if (list == null)
+            list = new ArrayList<>();
+        return list;
+    }
+
+    @Override
+    public List<Marker> getRelatedGenesViaTranscript(Marker marker, MarkerRelationship.Type relType1, MarkerRelationship.Type relType2) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "select distinct m from  Marker as m, MarkerRelationship as rel1,MarkerRelationship as rel2 " +
+                        "where rel1.firstMarker = :marker and " +
+                        "rel1.type =:relType1 and "+
+                        "rel1.secondMarker=rel2.secondMarker " +
+                        "and rel2.type=:relType2 and " +
+                        " rel2.firstMarker=m");
+        query.setParameter("marker", marker);
+        query.setParameter("relType1",relType1);
+        query.setParameter("relType2",relType2);
+
+        List<Marker> list = (List<Marker>) query.list();
+        //list.addAll((List<Marker>) query.list());
+        if (list == null)
+            list = new ArrayList<>();
+        return list;
+    }
+
+
+
+
+
     @Override
     public Marker getMarkerByFeature(Feature feature) {
         String hql = "select fmr.marker from FeatureMarkerRelationship as fmr " +
@@ -2496,6 +2561,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (List<Marker>) query.list();
     }
 
+
     @Override
     public PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean) {
         if (marker == null)
@@ -2526,4 +2592,5 @@ public class HibernateMarkerRepository implements MarkerRepository {
         markerPaginationResult.add(markerPaginationResult1);
         return markerPaginationResult;
     }
+
 }

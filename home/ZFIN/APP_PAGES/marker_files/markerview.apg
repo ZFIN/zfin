@@ -42,12 +42,6 @@ for antibody: added meta redirect at the beginning and the end of the file.
 <head>
   <META HTTP-EQUIV="EXPIRES" CONTENT="Wed Sep 11 09:35:25 PDT 1996">
 
-  <script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
-  <script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
-
-  <script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
-  <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">
-
   <script src="/javascript/profile-edit.js"></script>
 
   <link rel=stylesheet type="text/css" href="/css/tabEdit.css">

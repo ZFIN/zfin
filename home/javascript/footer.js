@@ -41,3 +41,83 @@ document.write("</script>");
 <!-- End AWStats -->
 
 
+var jQueryScriptOutputted = false;
+function initJQuery() {
+
+
+
+
+    //if the jQuery object isn't available
+    if (typeof(jQuery) == 'undefined') {
+
+        console.log("jQuery wasn't loaded, loading it now");
+
+        if (! jQueryScriptOutputted) {
+            //only output the script once..
+            jQueryScriptOutputted = true;
+
+            //output the script (load it from google api)
+            document.write("<script type=\"text/javascript\" src=\"/javascript/jquery-1.8.3.min.js\"></script>");
+            document.write("<script type=\"text/javascript\" src=\"/javascript/jquery-ui-1.10.4.custom.js\"></script>");
+            document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/jquery-ui-1.10.4.custom.css\">");
+        }
+        setTimeout("initJQuery()", 50);
+    } else {
+
+        jQuery(function() {
+
+            var autocompleteXhr = null;
+
+            jQuery('#header-search-query-input').autocomplete({
+                source: function(request, response) {
+                    http://stackoverflow.com/questions/4551175/how-to-cancel-abort-jquery-ajax-request
+
+                        if(autocompleteXhr && autocompleteXhr.readyState != 4) {
+                            autocompleteXhr.abort();
+                        }
+                    autocompleteXhr = jQuery.ajax({
+                        url: '/action/quicksearch/autocomplete',
+                        dataType: "json",
+                        data: {
+                            q : request.term
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    var val = ui.item.value;
+                    jQuery('#header-search-query-input').val(val);
+                    var form = jQuery(this).parents('form:first');
+                    jQuery(form).submit();
+
+                },
+                minLength: 1, delay: 50,
+                open: function(event, ui){
+                    jQuery("ul.ui-autocomplete li a").each(function(){
+                        var htmlString = jQuery(this).html().replace(/&lt;/g, '<');
+                        htmlString = htmlString.replace(/&gt;/g, '>');
+                        jQuery(this).html(htmlString);
+                    });
+                }
+            }, {});
+
+
+
+        });
+    }
+
+
+}
+
+initJQuery();
+
+
+if(isLoggedIn()) {
+    document.getElementById('hdr-login-link').style.display = 'none';
+    document.getElementById('hdr-logout-link').style.display = 'inline';
+}
+
+
+

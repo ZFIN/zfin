@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <a href="#" id="input-welcome-button" rel="#input-welcome-overlay"><button>Your Input Welcome</button></a>
-<div class="simple_overlay" id="input-welcome-overlay">
+<div class="modal" id="input-welcome-overlay">
     <div class="popup-content">
         <div class="popup-header">
             Your Input Welcome

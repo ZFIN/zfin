@@ -2,6 +2,7 @@ package org.zfin.publication;
 
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
+import org.zfin.profile.Person;
 import org.zfin.infrastructure.ZdbID;
 
 import java.io.Serializable;
@@ -33,6 +34,8 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
     private Set<Figure> figures;
+    //yes, should be authors, but that conflicts with the string field
+    private Set<Person> people;
 
     private boolean deletable;
     private boolean indexed;
@@ -194,6 +197,14 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Set<Person> getPeople() {
+        return people;
+    }
+
+    public void setPeople(Set<Person> people) {
+        this.people = people;
     }
 
     public String getErrataAndNotes() {

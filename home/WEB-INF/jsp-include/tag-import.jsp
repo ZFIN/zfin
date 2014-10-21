@@ -9,6 +9,7 @@
 <%@ taglib prefix="zfin-mutant" tagdir="/WEB-INF/tags/mutant"%>
 <%@ taglib prefix="zfin-figure" tagdir="/WEB-INF/tags/figure"%>
 <%@ taglib prefix="zfin-dev" tagdir="/WEB-INF/tags/dev"%>
+<%@ taglib prefix="zfin-search" tagdir="/WEB-INF/tags/search"%>
 <%@ taglib prefix="zfn" uri="/WEB-INF/tld/zfin-fn.tld" %>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core' %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>

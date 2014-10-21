@@ -3,12 +3,14 @@ package org.zfin.util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.StringTokenizer;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 
 /**
  * This class is used to create a URL by adding request parameters
@@ -21,8 +23,9 @@ public class URLCreator {
     public static final String QUESTION_MARK = "?";
     private StringBuilder url = new StringBuilder();
     // linked map to retain the order the parameters were originally in.
-    private LinkedHashMap<String, String> nameValuePairs = new LinkedHashMap<String, String>();
     private String urlWithoutParameters;
+    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
 
     private static final Log LOG = LogFactory.getLog(URLCreator.class);
 
@@ -42,9 +45,9 @@ public class URLCreator {
      * @return if name already exists in the hashmap do not add it -> false
      */
     public boolean addNamevaluePair(String name, String value) {
-        if (nameValuePairs.containsKey(name))
-            return false;
-        nameValuePairs.put(name, value);
+        NameValuePair nameValuePair = new BasicNameValuePair(name, value);
+        if (!nameValuePairs.contains(nameValuePair))
+            nameValuePairs.add(nameValuePair);
         return true;
     }
 
@@ -57,9 +60,9 @@ public class URLCreator {
      */
     public String getFullURLPlusSeparator() {
         if (nameValuePairs != null && nameValuePairs.size() >= 1)
-            return getURL(true) + AMPERSAND;
+            return getURL() + AMPERSAND;
         else
-            return getURL(true) + QUESTION_MARK;
+            return getURL() + QUESTION_MARK;
     }
 
     /**
@@ -67,39 +70,21 @@ public class URLCreator {
      * otherwise return query string only.
      * The string is URL-encoded.
      *
-     * @param completeURL boolean
      * @return full url or query string
      */
-    public String getURL(boolean completeURL) {
-        StringBuilder fullUrl = new StringBuilder();
-        if (completeURL)
-            fullUrl = new StringBuilder(urlWithoutParameters);
+    public String getURL() {
+        String queryString = URLEncodedUtils.format(nameValuePairs, HTTP.UTF_8);
 
-        Iterator<String> keys = nameValuePairs.keySet().iterator();
-        boolean start = true;
-        while (keys.hasNext()) {
-            String name = keys.next();
-            String value = nameValuePairs.get(name);
-            if (start) {
-                if (completeURL)
-                    fullUrl.append(QUESTION_MARK);
-                start = false;
-            } else {
-                fullUrl.append(AMPERSAND);
-            }
-            fullUrl.append(name);
-            fullUrl.append("=");
-            String urlEncodedValue;
-            try {
-                urlEncodedValue = URLEncoder.encode(value, "ISO-8859-1");
-            } catch (UnsupportedEncodingException e) {
-                LOG.error(e);
-                urlEncodedValue = URLEncoder.encode(value);
-            }
-            fullUrl.append(urlEncodedValue);
-        }
+        if (StringUtils.isEmpty(queryString))
+            return urlWithoutParameters;
+        else
+            return urlWithoutParameters + QUESTION_MARK + URLEncodedUtils.format(nameValuePairs, HTTP.UTF_8);
 
-        return fullUrl.toString();
+
+    }
+
+    public String getPath() {
+        return urlWithoutParameters;
     }
 
     /**
@@ -108,47 +93,76 @@ public class URLCreator {
      * @param name parameter name
      * @return return true if parameter was found
      */
-    public boolean removeNamevaluePair(String name) {
+    public boolean removeNameValuePair(String name) {
         if (StringUtils.isEmpty(name))
             return true;
-        if (nameValuePairs.containsKey(name)) {
-            nameValuePairs.remove(name);
-            return true;
+
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            if (StringUtils.equals(name, nameValuePair.getName())) {
+                nameValuePairs.remove(nameValuePair);
+                return true;
+            }
         }
         return false;
     }
 
-    private void createMapFromUrl() {
 
-        // Split off the given URL from its query string
+    public boolean removeNameValuePair(String name, String value) {
+        return removeNameValuePair(new BasicNameValuePair(name, value));
+    }
+
+    public boolean removeNameValuePair(NameValuePair pairToRemove) {
+        if (pairToRemove == null)
+            return false;
+
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            if (pairToRemove.equals(nameValuePair)) {
+                nameValuePairs.remove(nameValuePair);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<NameValuePair> getNameValuePairs(String name) {
+        List<NameValuePair> returnList = new ArrayList<NameValuePair>();
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            if (StringUtils.equals(nameValuePair.getName(), name))
+                returnList.add(nameValuePair);
+        }
+        return returnList;
+    }
+
+    /**
+     * This is a convenience method that might cause trouble, it will blindly return
+     * the first value for a given name.  Normally that's all that we want, but
+     * in some situations that might cause a surprise.
+     * @param name
+     * @return
+     */
+    public String getFirstValue(String name) {
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            if (StringUtils.equals(nameValuePair.getName(), name))
+                return nameValuePair.getValue();
+        }
+        return null;
+    }
+
+
+    private void createMapFromUrl() {
         StringTokenizer tokenizerQueryString = new StringTokenizer(url.toString(), QUESTION_MARK);
         if (!tokenizerQueryString.hasMoreElements()) {
             urlWithoutParameters = url.toString();
             return;
         }
-
         urlWithoutParameters = tokenizerQueryString.nextToken();
 
-        // Parse the query string (if any) into name/value pairs
-        if (tokenizerQueryString.hasMoreTokens()) {
-            String strQueryString = tokenizerQueryString.nextToken();
-            if (strQueryString != null) {
-                StringTokenizer tokenizerNameValuePair = new StringTokenizer(strQueryString, AMPERSAND);
-                while (tokenizerNameValuePair.hasMoreTokens()) {
-                    try {
-                        String strNameValuePair = tokenizerNameValuePair.nextToken();
-                        StringTokenizer tokenizerValue = new StringTokenizer(strNameValuePair, "=");
 
-                        String strName = tokenizerValue.nextToken();
-                        String strValue = tokenizerValue.nextToken();
-
-                        nameValuePairs.put(strName, strValue);
-                    } catch (Throwable t) {
-                        // If we cannot parse a parameter, ignore it
-                    }
-                }
-            }
+        try {
+            nameValuePairs.addAll(URLEncodedUtils.parse(new URI(this.url.toString()), HTTP.UTF_8));
+        } catch (URISyntaxException e) {
+            LOG.error(e);
         }
-    }
 
+    }
 }

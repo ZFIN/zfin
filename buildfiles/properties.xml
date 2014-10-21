@@ -58,6 +58,7 @@
 
     <property name="unitTestFile" value="unit-results"/>
     <property name="dbTestFile" value="db-results"/>
+    <property name="solrTestFile" value="solr-results"/>
     <property name="controllerTestFile" value="controller-results"/>
     <property name="blastTestFile" value="blast-results"/>
     <property name="smokeTestFile" value="smoke-results"/>

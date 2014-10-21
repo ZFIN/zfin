@@ -18,7 +18,6 @@ import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
 import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.infrastructure.ActiveData;
@@ -425,6 +424,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
         return (ExpressionExperiment) session.get(ExpressionExperiment.class, experimentID);
     }
+
+    public ExpressionDetailsGenerated getExpressionExperiment2(long id) {
+        return (ExpressionDetailsGenerated) currentSession().get(ExpressionDetailsGenerated.class, id);
+    }
+
 
     /**
      * Retrieve an assay by name.
@@ -1273,7 +1277,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     public List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID) {
-
         String sql2 = "select " +
                 "distinct super_term.term_name as super_name " +
                 ", super_term.term_ont_id as super_id " +

@@ -2,12 +2,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 
-<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
-<script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
-
-<script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
-<link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">
-
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
 <authz:authorize ifAnyGranted="root">
@@ -87,7 +81,7 @@ jQuery(document).ready(function () {
         minLength: 2,
         autoFocus: true,
         open: function () {
-            $(this).data("autocomplete").menu.element.width(dropdownWidth);
+            jQuery(this).data("autocomplete").menu.element.width(dropdownWidth);
         },
         select: function (event, ui) {
             markerAbbrevToMergeInto = ui.item.label;

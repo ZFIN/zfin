@@ -29,44 +29,40 @@ import java.util.Comparator;
 /**
  * This is an updated version with enhancements made by Daniel Migowski,
  * Andre Bogus, and David Koelle
- *
+ * <p/>
  * To convert to use Templates (Java 1.5+):
- *   - Change "implements Comparator" to "implements Comparator<String>"
- *   - Change "compare(Object o1, Object o2)" to "compare(String s1, String s2)"
- *   - Remove the type checking and casting in compare().
- *
+ * - Change "implements Comparator" to "implements Comparator<String>"
+ * - Change "compare(Object o1, Object o2)" to "compare(String s1, String s2)"
+ * - Remove the type checking and casting in compare().
+ * <p/>
  * To use this class:
- *   Use the static "sort" method from the java.util.Collections class:
- *   Collections.sort(your list, new AlphanumComparator());
+ * Use the static "sort" method from the java.util.Collections class:
+ * Collections.sort(your list, new AlphanumComparator());
  */
 public class AlphanumComparator<T extends String> implements Comparator<T> {
 
-    private boolean isDigit(char ch)
-    {
+    private boolean isDigit(char ch) {
         return ch >= 48 && ch <= 57;
     }
 
-    /** Length of string is passed in for improved efficiency (only need to calculate it once) **/
-    private String getChunk(String s, int slength, int marker)
-    {
+    /**
+     * Length of string is passed in for improved efficiency (only need to calculate it once) *
+     */
+    private String getChunk(String s, int length, int marker) {
         StringBuilder chunk = new StringBuilder();
         char c = s.charAt(marker);
         chunk.append(c);
         marker++;
-        if (isDigit(c))
-        {
-            while (marker < slength)
-            {
+        if (isDigit(c)) {
+            while (marker < length) {
                 c = s.charAt(marker);
                 if (!isDigit(c))
                     break;
                 chunk.append(c);
                 marker++;
             }
-        } else
-        {
-            while (marker < slength)
-            {
+        } else {
+            while (marker < length) {
                 c = s.charAt(marker);
                 if (isDigit(c))
                     break;
@@ -77,13 +73,12 @@ public class AlphanumComparator<T extends String> implements Comparator<T> {
         return chunk.toString();
     }
 
-    public int compare(T o1, T o2)
-    {
-        if (o1== null && o2== null)
+    public int compare(T o1, T o2) {
+        if (o1 == null && o2 == null)
             return -1;
-        if (o1== null && o2!= null)
+        if (o1 == null)
             return -1;
-        if (o1!= null && o2== null)
+        if (o2 == null)
             return +1;
 
         int thisMarker = 0;
@@ -91,8 +86,7 @@ public class AlphanumComparator<T extends String> implements Comparator<T> {
         int s1Length = o1.length();
         int s2Length = o2.length();
 
-        while (thisMarker < s1Length && thatMarker < s2Length)
-        {
+        while (thisMarker < s1Length && thatMarker < s2Length) {
             String thisChunk = getChunk(o1, s1Length, thisMarker);
             thisMarker += thisChunk.length();
 
@@ -100,26 +94,21 @@ public class AlphanumComparator<T extends String> implements Comparator<T> {
             thatMarker += thatChunk.length();
 
             // If both chunks contain numeric characters, sort them numerically
-            int result ;
-            if (isDigit(thisChunk.charAt(0)) && isDigit(thatChunk.charAt(0)))
-            {
+            int result;
+            if (isDigit(thisChunk.charAt(0)) && isDigit(thatChunk.charAt(0))) {
                 // Simple chunk comparison by length.
                 int thisChunkLength = thisChunk.length();
                 result = thisChunkLength - thatChunk.length();
                 // If equal, the first different number counts
-                if (result == 0)
-                {
-                    for (int i = 0; i < thisChunkLength; i++)
-                    {
+                if (result == 0) {
+                    for (int i = 0; i < thisChunkLength; i++) {
                         result = thisChunk.charAt(i) - thatChunk.charAt(i);
-                        if (result != 0)
-                        {
+                        if (result != 0) {
                             return result;
                         }
                     }
                 }
-            } else
-            {
+            } else {
                 result = thisChunk.compareTo(thatChunk);
             }
 

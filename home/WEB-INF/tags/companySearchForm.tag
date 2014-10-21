@@ -43,6 +43,7 @@
                         <td>
                             <form:input path="name" size="30" cssClass="default-input"/>
                             <form:hidden path="maxDisplayRecords"/>
+                            <form:hidden path="maxDisplayRecords"/>
                         </TD>
                     </tr>
                     <tr class="optionalSearch">

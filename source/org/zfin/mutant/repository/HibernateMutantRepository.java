@@ -878,6 +878,10 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<GenotypeFigure>) query.list();
     }
 
+    public PhenotypeExperiment getPhenotypeExperiment(Long id) {
+        return (PhenotypeExperiment) currentSession().get(PhenotypeExperiment.class, id);
+    }
+
     /**
      * get a phenotype statement by id
      */
@@ -1497,6 +1501,25 @@ public class HibernateMutantRepository implements MutantRepository {
         return allPhenotypes;
     }
 
+
+    @Override
+    public List<PhenotypeStatement> getPhenotypeStatementsByMarker(Marker gene) {
+
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct phenoStatement from PhenotypeStatement phenoStatement, GeneGenotypeExperiment geneGenox " +
+                "WHERE geneGenox.gene = :gene and " +
+                "phenoStatement.phenotypeExperiment.genotypeExperiment = geneGenox.genotypeExperiment " +
+                "and phenoStatement.tag = :tag";
+        Query query = session.createQuery(hql);
+        query.setParameter("gene", gene);
+        query.setParameter("tag", "abnormal");
+
+        return (List<PhenotypeStatement>) query.list();
+
+    }
+
+
     public List<GenotypeFigure> getGenotypeFiguresBySTR(SequenceTargetingReagent str) {
         Session session = HibernateUtil.currentSession();
 
@@ -1507,4 +1530,5 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return (List<GenotypeFigure>) query.list();
     }
+
 }

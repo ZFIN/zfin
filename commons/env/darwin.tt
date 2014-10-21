@@ -15,7 +15,7 @@
 <!--|COUNT_ZGC_OUT|-->	informix\@cs.uoregon.edu
 <!--|CURATION_DBNAME|-->	false
 <!--|CURATION_INSTANCE|-->	false
-<!--|CURATORS_AT_ZFIN|-->	informix\@cs.uoregon.edu
+<!--|CURATORS_AT_ZFIN|-->	bugz\@uoneuro.uoregon.edu
 <!--|DB_NAME|-->	darwindb
 <!--|DB_OWNER|-->	informix
 <!--|DOMAIN_NAME|-->	darwin.zfin.org
@@ -25,6 +25,7 @@
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	gb2/gbrowse/zfin_ensembl/
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@cs.uoregon.edu
+<!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-5
 <!--|GO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	informix\@cs.uoregon.edu
 <!--|HAS_PARTNER|-->	false
@@ -36,13 +37,14 @@
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waffle
+<!--|INSPECTLET_ID|-->	1101833050
 <!--|INSTANCE|-->	darwin
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	informix\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@cs.uoregon.edu
-<!--|MACHINE_NAME|-->	torso
+<!--|MACHINE_NAME|-->	thorax
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	darwin
 <!--|NOMEN_COORDINATOR|-->	informix\@cs.uoregon.edu
@@ -61,7 +63,7 @@
 <!--|SITE_BACKGROUND|-->	#FFFFFF
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/darwin/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	torso.zfin.org
+<!--|SQLHOSTS_HOST|-->	thorax.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	informix\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	informix\@cs.uoregon.edu

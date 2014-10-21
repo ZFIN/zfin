@@ -1,7 +1,13 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
-<%--<script language="JavaScript" src="/javascript/footer.js" type="text/javascript"></script>--%>
+
+<c:if test="${empty suppressHeaderAndFooter || suppressHeaderAndFooter == false}">
+  <script language="JavaScript" src="/javascript/footer.js" type="text/javascript"></script>
+</c:if>
+<%--
 
 </div>
+
 <div id="footer">
     <div id="footerlinks">
         <a href="/">Home</a><img src="/images/research-dot.png"
@@ -28,6 +34,7 @@
             <small>ZFIN logo design by Kari Pape, <A HREF="http://www.uoregon.edu">University of Oregon</a></small>
     </div>
 </div>
+--%>
 
 <script>
     jQuery(document).ready(function() { jQuery(".default-input").focus(); })

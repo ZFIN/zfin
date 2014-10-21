@@ -30,20 +30,20 @@ function initYIW() {
     // hide the spam-preventer input
     jQuery("#input-welcome-email2-ctrl").hide();
 
-    $triggerButton.overlay({
-        mask: {
-            color: '#000',
-            loadSpeed: 100,
-            opacity: 0.15
-        },
-        onClose: function() {
-            $successMessage.hide();
-            $errorMessage.hide();
-            $form.show();
-            $formInputs.attr("disabled", false);
-            $formValidate.hide();
-            $formInputs.removeClass("invalid");
-        }
+    $overlay.on(jQuery.modal.CLOSE, function() {
+        $successMessage.hide();
+        $errorMessage.hide();
+        $form.show();
+        $formInputs.attr("disabled", false);
+        $formValidate.hide();
+        $formInputs.removeClass("invalid");
+    });
+
+    $triggerButton.click(function(evt) {
+        evt.preventDefault();
+        $overlay.modal({
+            fadeDuration: 100
+        });
     });
 
     $form.submit(function(evt) {

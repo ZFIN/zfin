@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Solr" default="deploySolr" basedir="../">
+
+    <property name="solr" value="${SOURCEROOT}/server_apps/solr"/>
+
+
+    <target name="deploy-solr">
+        <copySolr from="server_apps/solr" to="${env.SOLR_HOME}" overwrite="true"/>
+    </target>
+
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <macrodef name="copySolr">
+        <attribute name="from"/>
+        <attribute name="to"/>
+        <attribute name="overwrite" default="false"/>
+        <sequential>
+            <echo message="@{from}"/>
+            <copy todir="@{to}" overwrite="@{overwrite}">
+                <fileset dir="@{from}">
+                    <include name="**/*.xml"/>
+                    <include name="**/*.conf"/>
+                    <exclude name="start-solr.sh"/>
+                    <exclude name="**/*.svn"/>
+                </fileset>
+                <filterset refid="allfilters"/>
+            </copy>
+            <copy todir="@{to}" overwrite="@{overwrite}">
+                <fileset dir="@{from}">
+                    <include name="**"/>
+                    <exclude name="**/*.xml"/>
+                    <exclude name="**/*.conf"/>
+                    <exclude name="start-solr.sh"/>
+                    <exclude name="**/*.svn"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <target name="build-solr-index-jenkins">
+        <antcall target="build-solr-index"/>
+        <antcall target="check-indexer"/>
+    </target>
+
+
+    <target name="build-solr-index">
+        <echo message="unloading synonym, stopwords and keepwords files"/>
+        <exec dir="${env.SOLR_HOME}/prototype/conf" executable="dbaccess" failifexecutionfails="true">
+            <arg value="-a"/>
+            <arg value="${DBNAME}"/>
+            <arg value="generate-all-term-contains-synonyms-file.sql"/>
+            <arg value="generate-reporter-name-file.sql"/>
+            <arg value="generate-organism-name-file.sql"/>
+        </exec>
+
+        <echo message="Starting Solr index build via http..."/>
+        <exec executable="curl">
+            <arg value="-s"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;optimize=true&amp;wt=json&amp;indent=true"/>
+        </exec>
+        <echo message=" ---- "/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/prototype/dataimport"/>
+    </target>
+
+    <target name="check-indexer">
+        <groovy>
+            import groovy.json.JsonSlurper
+
+            String port = System.getenv('SOLR_PORT')
+            String core = 'prototype';
+            def url = "http://localhost:$port/solr/$core/dataimport?wt=json&amp;indent=true"
+            println url
+            println "Indexing ..."
+            while (true) {
+
+                String linkText = new URL(url).text;
+                def json = new JsonSlurper().parseText(linkText)
+                def elapsedTime = json.statusMessages."Time Elapsed"
+                if (elapsedTime != null)
+                    println "Elapsed time: " + elapsedTime
+
+                if (json.status != "busy") {
+                    println ""
+                    if (json.statusMessages.toString().contains("Indexing completed")) {
+                        println linkText
+                        println "SUCCESS!"
+                        System.exit(0)
+                    } else {
+                        println linkText
+                        println "FAIL!"
+                        System.exit(-1)
+                    }
+                }
+                sleep(60 * 1000)
+            }
+        </groovy>
+    </target>
+
+    <target name="reload-solr-core">
+        <echo message="Reloading solr core via http..."/>
+        <exec executable="curl">
+            <arg value="-s"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/admin/cores?action=RELOAD&amp;core=prototype"/>
+        </exec>
+    </target>
+
+    <!-- Useful cleaning up when upgrading solr, I think -->
+    <target name="remove-solr-lib">
+        <echo message="Removing existing solr libraries..."/>
+        <delete>
+            <fileset dir="${TARGETROOT}/solr/" includes="*solr*war"/>
+            <fileset dir="${TARGETROOT}/solr/prototype/lib/" includes="*solr*jar"/>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="*solr*jar"/>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="httpclient*jar"/>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="httpcore*jar"/>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="httpmine*jar"/>
+
+        </delete>
+
+    </target>
+
+
+    <target name="start-solr" description="Start up Solr ">
+        <echo message="Source: ${solr}"/>
+        <exec executable="${solr}/solr.sh">
+            <arg value="start"/>
+        </exec>
+    </target>
+
+    <target name="stop-solr" description="Stop Solr ">
+        <exec executable="${solr}/solr.sh">
+            <arg value="stop"/>
+        </exec>
+    </target>
+
+    <target name="restart-solr" description="Restart up Solr">
+        <exec executable="${solr}/solr.sh">
+            <arg value="restart"/>
+        </exec>
+    </target>
+
+    <target name="pid-solr" description="Display the PID of Solr server">
+        <loadfile property="solr-pid" srcFile="${SOLR_HOME}/solr.pid"/>
+        <echo>
+            Solr server PID: ${solr-pid}
+        </echo>
+    </target>
+
+    <target name="tail-solr-log" description="tail -f on solr.log file">
+        <exec executable="tail">
+            <arg value="-f"/>
+            <arg value="${SOLR_HOME}/logs/solr.log"/>
+        </exec>
+    </target>
+
+</project>

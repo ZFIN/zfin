@@ -1,3 +1,8 @@
+body {
+    margin-top: 81px;
+}
+
+
 
 #hdr-banner {
         position: absolute;
@@ -62,10 +67,24 @@
     padding-right: 2px;
 }
 
-#feedBox #rss-icon {
+#site-link {
+    margin-left: 0.4rem;
+    font-weight: bold;
+    font-size: 11px;
+    line-height: 6px;
+    color: #066;
+}
+
+#site-link a {
+    text-decoration: none;
+    color: #066;
+}
+
+#feedBox #social-icon {
     height: 18px;
     position: relative;
     top: -1px;
+    vertical-align: middle;
 }
 
 /*******  prototype section start */

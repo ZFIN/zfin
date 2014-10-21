@@ -208,7 +208,7 @@ public class PaginationBean {
             return actionUrl;
         // remove the page=xxx parameter
         URLCreator urlCreator = new URLCreator(requestUrl + "?" + queryString);
-        urlCreator.removeNamevaluePair(PAGE);
+        urlCreator.removeNameValuePair(PAGE);
         return urlCreator.getFullURLPlusSeparator();
 
     }

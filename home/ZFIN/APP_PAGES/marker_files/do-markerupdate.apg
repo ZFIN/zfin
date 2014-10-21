@@ -34,13 +34,6 @@ when name is modified for markers in this group, set abbrev = name.
 <?/MICOMMENTS>
 
 
-<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
-<script type="text/javascript">
-
-//avoid prototype conflicts
-jQuery.noConflict();
-
-</script>
 
 <META HTTP-EQUIV="EXPIRES" CONTENT="-2d">
 <!-- If one of the values was an empty string, it won't get successfully

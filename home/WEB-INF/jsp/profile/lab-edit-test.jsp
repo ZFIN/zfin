@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script type="text/javascript" src="/javascript/jquery-1.4.4.js"></script>
+
 <script type="text/javascript" src="/javascript/jquery.jeditable.mini.js"></script>
 
 <script type="text/javascript">

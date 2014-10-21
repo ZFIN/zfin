@@ -138,6 +138,46 @@
         <many-to-one name="still" class="org.zfin.expression.Image" column="video_image_still_zdb_id"/>
     </class>
 
+
+    <class name="ExpressionDetailsGenerated" table="xpat_exp_details_generated">
+        <id name="id" type="long">
+            <column name="xedg_pk_id" not-null="true"/>
+        </id>
+        <many-to-one name="assay" column="xedg_assay_name" class="org.zfin.expression.ExpressionAssay"/>
+        <many-to-one name="genotypeExperiment" column="xedg_genox_zdb_id" class="org.zfin.mutant.GenotypeExperiment"/>
+
+        <many-to-one name="gene" class="org.zfin.marker.Marker" column="xedg_gene_zdb_id"/>
+        <many-to-one name="figure" class="org.zfin.expression.Figure" column="xedg_fig_zdb_id"/>
+        <many-to-one name="probe" class="org.zfin.marker.Clone" column="xedg_probe_feature_zdb_id"/>
+        <many-to-one name="antibody" column="xedg_atb_zdb_id" class="org.zfin.antibody.Antibody"/>
+        <many-to-one name="markerDBLink" column="xedg_dblink_zdb_id" class="org.zfin.sequence.MarkerDBLink"/>
+
+        <set name="expressionResults" lazy="true" inverse="true">
+            <key column="xrg_xedg_id"/>
+            <one-to-many class="ExpressionResultGenerated"/>
+        </set>
+    </class>
+
+
+    <class name="ExpressionResultGenerated" table="xpat_results_generated">
+        <id name="id" type="long" column="xrg_pk_id"/>
+        <property name="expressionFound" column="xrg_expression_found"/>
+        <property name="comment" column="xrg_comments"/>
+
+        <many-to-one name="expressionExperiment" class="ExpressionDetailsGenerated"
+                     column="xrg_xedg_id" not-null="true"/>
+
+        <component name="entity">
+            <many-to-one name="subterm" column="xrg_subterm_zdb_id"/>
+            <many-to-one name="superterm" column="xrg_superterm_zdb_id"/>
+        </component>
+
+        <many-to-one name="start" class="org.zfin.anatomy.DevelopmentStage" column="xrg_start_stg_zdb_id"/>
+        <many-to-one name="end" class="org.zfin.anatomy.DevelopmentStage" column="xrg_end_stg_zdb_id"/>
+
+    </class>
+
+
     <!-- Make sure only attributes that have changed are updated in teh Query: if no probe is given
          but probe = null is set then a trigger would fail.
          -->

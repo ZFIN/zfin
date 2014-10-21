@@ -59,6 +59,7 @@
 <filter token="GBROWSE_PATH_FROM_ROOT" value="${GBROWSE_PATH_FROM_ROOT}"/>
 <filter token="GC_LOGGING_OPTS" value="${GC_LOGGING_OPTS}"/>
 <filter token="GENBANK_DAILY_EMAIL" value="${GENBANK_DAILY_EMAIL}"/>
+<filter token="GOOGLE_ANALYTICS_ID" value="${GOOGLE_ANALYTICS_ID}"/>
 <filter token="GO_EMAIL_CURATOR" value="${GO_EMAIL_CURATOR}"/>
 <filter token="GO_EMAIL_ERR" value="${GO_EMAIL_ERR}"/>
 <filter token="GROOVY_HOME" value="${GROOVY_HOME}"/>
@@ -82,6 +83,7 @@
 <filter token="INFORMIX_DIR" value="${INFORMIX_DIR}"/>
 <filter token="INFORMIX_PORT" value="${INFORMIX_PORT}"/>
 <filter token="INFORMIX_SERVER" value="${INFORMIX_SERVER}"/>
+<filter token="INSPECTLET_ID" value="${INSPECTLET_ID}"/>
 <filter token="INSTANCE" value="${INSTANCE}"/>
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
@@ -128,6 +130,10 @@
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>
 <filter token="SIDEBAR_COLOR" value="${SIDEBAR_COLOR}"/>
 <filter token="SITE_BACKGROUND" value="${SITE_BACKGROUND}"/>
+<filter token="SOLR_CONTEXT" value="${SOLR_CONTEXT}"/>
+<filter token="SOLR_HOME" value="${SOLR_HOME}"/>
+<filter token="SOLR_HOST" value="${SOLR_HOST}"/>
+<filter token="SOLR_PORT" value="${SOLR_PORT}"/>
 <filter token="SOURCEROOT" value="${SOURCEROOT}"/>
 <filter token="SQLHOSTS_FILE" value="${SQLHOSTS_FILE}"/>
 <filter token="SQLHOSTS_HOST" value="${SQLHOSTS_HOST}"/>

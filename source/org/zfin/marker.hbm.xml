@@ -305,16 +305,6 @@
             <generator class="native"/>
         </id>
     </class>
-    <class name="MarkerFigure" table="construct_figure">
-        <id name="id" column="consfig_pk_id"/>
-        <many-to-one name="construct" class="org.zfin.marker.Marker">
-            <column name="consfig_construct_zdb_id"/>
-        </many-to-one>
-
-        <many-to-one name="figure" class="org.zfin.expression.Figure">
-            <column name="consfig_fig_zdb_id"/>
-        </many-to-one>
-    </class>
 
     <class name="org.zfin.marker.MarkerType" mutable="false" table="marker_types">
         <cache usage="read-only"/>

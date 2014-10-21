@@ -85,6 +85,12 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         assertNotNull(ontologyManager.getTermByName("melanocyte", Ontology.ANATOMY));
     }
 
+    @Test
+    public void getOntologyByTermByOboID() {
+        Ontology ontology = ontologyManager.getOntologyForTerm("ZFA:0009091");
+        assertNotNull(ontology);
+    }
+
 //    @Test
 //    public void testRelatedTerms() {
 //        TermDTO term = ontologyManager.getTermByName("B cell", OntologyDTO.ANATOMY);

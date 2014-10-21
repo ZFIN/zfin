@@ -30,6 +30,7 @@ import java.util.*;
 
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
@@ -340,6 +341,13 @@ public class MutantRepositoryTest {
         String genotypeID = "ZDB-GENO-070215-11";
         Genotype genotype = mutantRepository.getGenotypeByID(genotypeID);
         List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
+        assertNotNull(statements);
+    }
+
+    @Test
+    public void getPhenotypeStatementsByGene() {
+        Marker gene = getMarkerRepository().getMarkerByAbbreviation("bmp4");
+        List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByMarker(gene);
         assertNotNull(statements);
     }
 

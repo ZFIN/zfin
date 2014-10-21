@@ -1,10 +1,14 @@
 a { text-decoration: none; }
 
 .sidebar, .content, .header .acknowledgement {
+/*
     font-family: arial, sans-serif;
+*/
 }
 
 body {
+
+
     font-family: arial, sans-serif;
     min-width: 600px;
     margin-top: 81px;

@@ -19,6 +19,8 @@ public class ImagePresentation extends EntityPresentation {
 
 
     public static String getLink(Image image) {
+        if (image == null)
+            return null;
         StringBuilder thumb = new StringBuilder();
         thumb.append("<img src=\"");
         thumb.append(getThumbnailUri(image));
@@ -28,6 +30,8 @@ public class ImagePresentation extends EntityPresentation {
     }
 
     public static String getThumbnailUri(Image image) {
+        if (image == null)
+            return null;
         return imageLoadUp + image.getThumbnail();
     }
 

@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -742,7 +743,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
     //TODO: change ENSDARP to a real HQL query, or re-write as sql: Christian and Sierra struggled with this for a couple of
     //hours with no easy fix using DisplayGroup and DisplayGroupMember.  The mapping on those classes makes for a
     //very odd query output where hibernate tries to find fdbcont_zdb_ids in a collection of fdbcdgm_pk_ids.
-
     @Override
     public List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType superType) {
         Session session = HibernateUtil.currentSession();

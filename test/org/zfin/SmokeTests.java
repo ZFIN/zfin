@@ -11,17 +11,14 @@ import org.zfin.feature.presentation.FeatureDetailSmokeTest;
 import org.zfin.feature.presentation.GenotypeDetailSmokeTest;
 import org.zfin.figure.presentation.FigureViewWebSpec;
 import org.zfin.fish.smoketest.FishSmokeTest;
-import org.zfin.marker.MarkerselectWebSpec;
 import org.zfin.mutant.smoketest.ConstructSmokeTest;
-import org.zfin.gwt.ExpressionSmokeTest;
+import org.zfin.marker.MarkerselectWebSpec;
 import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.mapping.MappingDetailSmokeTest;
-import org.zfin.mutant.smoketest.ConstructSmokeTest;
 import org.zfin.ontology.presentation.OntologySmokeTest;
 import org.zfin.publication.presentation.PublicationCloseSmokeTest;
 import org.zfin.sequence.blast.smoketest.BlastSmokeTest;
-import org.zfin.uniquery.smoketest.SiteSearchSmokeTest;
 import org.zfin.webservice.MarkerRestSmokeTest;
 import org.zfin.webservice.MarkerSoapClientSmokeTest;
 import org.zfin.webservice.MarkerSoapSmokeTest;
@@ -53,8 +50,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         MarkerViewSmokeTest.class,
         MarkerRestSmokeTest.class,
         OntologySmokeTest.class,
-        PublicationCloseSmokeTest.class,
-        SiteSearchSmokeTest.class
+        PublicationCloseSmokeTest.class
 
 })
 public class SmokeTests {

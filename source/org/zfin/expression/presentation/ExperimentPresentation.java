@@ -16,11 +16,15 @@ public class ExperimentPresentation extends EntityPresentation {
     public static String getLink(Experiment experiment, boolean suppressPopupLink, boolean suppressMoDetails) {
         if (experiment == null)
             return null;
+
+       if (experiment.isChemical())
+            return "chemical";
+        if (experiment.isOnlyStandard())
+            return "standard";
+        if (experiment.isOnlyControl())
+            return "control";
         if (experiment.isStandard())
             return "standard or control";
-        if (experiment.isChemical())
-            return "chemical";
-
         TreeSet<ExperimentCondition> conditions = new TreeSet<ExperimentCondition>();
         conditions.addAll(experiment.getExperimentConditions());
 
@@ -101,6 +105,27 @@ public class ExperimentPresentation extends EntityPresentation {
 
     public static String getName(Experiment experiment) {
         return getName(experiment, true);
+    }
+    public static String getNameForFaceted(Experiment experiment, boolean suppressChemicalDetails) {
+        if (experiment == null)
+            return null;
+
+        if (experiment.isOnlyStandard())
+            return "standard";
+        if (experiment.isOnlyControl())
+            return "control";
+        TreeSet<ExperimentCondition> conditions = new TreeSet<ExperimentCondition>();
+        conditions.addAll(experiment.getExperimentConditions());
+
+        StringBuilder sb = new StringBuilder(50);
+        int i = 0;
+        for (ExperimentCondition experimentCondition : conditions) {
+            if (i > 0)
+                sb.append(", ");
+            sb.append(ExperimentConditionPresentation.getName(experimentCondition));
+            i++;
+        }
+        return sb.toString();
     }
 
     //this is called by getLinkWithChemicalDetails. needs to be refactored so that it shares code with getName()

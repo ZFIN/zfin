@@ -25,6 +25,7 @@
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	gb2/gbrowse/zfin_ensembl/
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@cs.uoregon.edu
+<!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	informix\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	informix\@cs.uoregon.edu
 <!--|HAS_PARTNER|-->	true
@@ -36,6 +37,7 @@
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waldo
+<!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	smith
 <!--|INTERNAL_BLAST_PATH|-->	/research/zblastfiles/zmore/dev_blastdb/Current
 <!--|LINKBAR_COLOR|-->	#006666

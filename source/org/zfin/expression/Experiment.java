@@ -73,7 +73,15 @@ public class Experiment implements Comparable<Experiment> {
     }
 
     public boolean isStandard() {
+
         return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
+    }
+
+    public boolean isOnlyStandard() {
+        return (name.equalsIgnoreCase(Experiment.STANDARD));
+    }
+    public boolean isOnlyControl() {
+        return (name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }
 
     public boolean isChemical() {

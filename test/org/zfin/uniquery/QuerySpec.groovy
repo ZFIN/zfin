@@ -1,0 +1,141 @@
+package org.zfin.uniquery
+
+import org.apache.log4j.Logger
+import org.apache.solr.client.solrj.SolrQuery
+import org.apache.solr.client.solrj.SolrServer
+import org.apache.solr.client.solrj.response.QueryResponse
+import org.springframework.beans.factory.annotation.Autowired
+import org.zfin.ZfinIntegrationSpec
+import org.zfin.search.service.QueryManipulationService
+import spock.lang.Shared
+import spock.lang.Unroll
+import org.zfin.search.service.SolrService
+import org.zfin.search.Category
+
+
+/* Test specific queries that rely on rules of text analysis in the solr schema or setup in solrconfig */
+class QuerySpec extends ZfinIntegrationSpec {
+
+    public static Logger logger = Logger.getLogger(QuerySpec.class)
+
+    @Autowired
+    SolrService solrService
+
+    @Autowired
+    QueryManipulationService queryManipulationService
+
+    @Shared SolrServer server
+    @Shared SolrQuery query
+    @Shared SolrQuery secondQuery
+
+    //sets up for all tests in class
+    def setupSpec() {
+        server = SolrService.getSolrServer("prototype")
+    }
+
+    def cleanSpec() {
+        server = null
+    }
+
+    //sets up for each test
+    def setup() {
+        query = new SolrQuery()
+        secondQuery = new SolrQuery()
+    }
+
+    def clean() {
+        query = null
+        secondQuery = null
+    }
+
+    @Unroll
+    def "a query for '#queryString' in '#category' should find some records according to case #fogbugzCase"() {
+
+        when: "Solr is queried"
+        query.setQuery(queryManipulationService.processQueryString(queryString))
+        query.addFilterQuery("category:\"" + category + "\"")
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = server.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        then: "Query should succeed, result count should be greater than zero"
+        response
+        response.getResults()
+        response.getResults().numFound > 0
+
+        //todo: use category enum
+        where:
+        category                       | queryString                                      | fogbugzCase
+        Category.ANTIBODY.name         | "actin ab1-act"                                  | "11329"
+        Category.ANTIBODY.name         | "fgf Ab1-fgfbp1"                                 | "11209"
+        Category.ANTIBODY.name         | "prk Ab2-prkcz"                                  | "11209"
+        Category.MUTANT.name           | "gz12 ZDB-ALT-090424-3"                          | "11228"
+        Category.MUTANT.name           | "b566 hox"                                       | "11208"
+        Category.MARKER.name           | "hoxa2b DKEY-45E15"                              | "11289"
+        Category.MARKER.name           | "hoxa2b BUSM1-31B14"                             | "11289"
+        Category.MARKER.name           | "tlx1 CH211-103O12"                              | "11289"
+        Category.MARKER.name           | "hoxa2b eu715"                                   | "11289"
+        Category.MARKER.name           | "hoxa2b MGC:193940"                              | "11289"
+        Category.MARKER.name           | "id:ibd5006  MGC:194301"                         | "11289"
+        Category.MARKER.name           | "id:ibd5006  MGC:194262"                         | "11289"
+        Category.MARKER.name           | "id:ibd5006  ibd5006"                            | "11289"
+        Category.MARKER.name           | "id:ibd5006  CH211-96B20 id:ZDB-BAC-100127-972"  | "11289"
+        Category.MARKER.name           | "id:ibd5006  fgf3"                               | "11289"
+        Category.GENE.name             | "OTTDARG00000020346 ZDB-GENE-030131-3445"        | "11331"
+        Category.GENE.name             | "tlx1 CH211-103O12"                              | "11657"
+        Category.GENE.name             | "fgf8 CH211-194I8 id:ZDB-GENE-990415-72"         | "11657"
+      	Category.GENE.name             | "fgf8 CH211-176L1 id:ZDB-GENE-010122-1"          | "11657"
+        Category.FISH.name             | "t24412 MO4-tp53"                                | "11415"
+        Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
+        Category.PUBLICATION.name      | "bohni"                                          | "11699"
+        Category.CONSTRUCT.name        | "4xnr"                                           | "11810"
+        Category.COMMUNITY.name        | "nuss id:ZDB-PERS-960805-412"                    | "11216"
+        Category.COMMUNITY.name        | "Nüss id:ZDB-PERS-960805-412"                    | "11216"
+        Category.PUBLICATION.name      | "Nüss* id:ZDB-PUB-970602-19"                     | "11216"
+        Category.PUBLICATION.name      | "Nuss* id:ZDB-PUB-970602-19"                     | "11216"
+        Category.PUBLICATION.name      | "Nüsslein id:ZDB-PUB-970602-19"                  | "11216"
+        Category.PUBLICATION.name      | "Nusslein id:ZDB-PUB-970602-19"                  | "11216"
+    }
+
+    @Unroll
+    def "a query in category #category for '#queryA' and a query for '#queryB' should return the same results"() {
+        when: "Solr is queried for both queries"
+
+        query.setQuery(queryA)
+        secondQuery.setQuery(queryB)
+        if (category) {
+            query.addFilterQuery("category:\"" + category + "\"")
+            secondQuery.addFilterQuery("category:\"" + category + "\"")
+        }
+
+        QueryResponse response = new QueryResponse()
+        QueryResponse secondResponse = new QueryResponse()
+
+        try {
+            response = server.query(query)
+            secondResponse = server.query(secondQuery)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+    	then: "Result counts of the the two queries should match, as should the first few documents"
+        response
+        response.getResults()
+        secondResponse
+        secondResponse.getResults()
+        response.getResults().numFound == secondResponse.getResults().numFound
+
+        //todo: use category enum
+    	where:
+        category                    | queryA                         |  queryB
+        Category.PHENOTYPE.name     | "small eyes"                   |  "small eye"              //Case 11266
+        Category.PHENOTYPE.name     | "eye ectopic"                  |  "ectopic eyes"           //Case 11266
+        Category.PHENOTYPE.name     | "vasculature torn"             |  "vasculature ruptured"   //Case 11266
+        ""                          | "znf zmp mouse"                |  "znf zmp Mouse"          //Case 11330
+    }
+
+}

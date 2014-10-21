@@ -21,7 +21,6 @@ DEBUGGING:
 
 <?MIERROR>
 <html>
-<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
 <script language="JavaScript" src="/javascript/header.js"></script>
 <script language="JavaScript" src="/javascript/datablade_error.js"></script>
 <div class="datablade-error-contents">

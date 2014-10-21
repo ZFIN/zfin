@@ -36,6 +36,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     private static FishSearchCriteria criteria;
 
+
     @BeforeClass
     public static void initCriteria() {
         criteria = new FishSearchCriteria(new FishSearchFormBean());

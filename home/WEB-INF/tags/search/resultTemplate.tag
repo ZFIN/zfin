@@ -1,0 +1,112 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<%@ tag description="Search result template for faceted search" pageEncoding="UTF-8"%>
+
+<%@attribute name="result" type="org.zfin.search.presentation.SearchResult" required="true" %>
+
+<%@attribute name="metadata" fragment="true" %>
+<%@attribute name="relatedDataLinks" fragment="true" %>
+
+
+<div style="clear:both;" class="span12 search-result ">
+
+    <div class="result-meta-data search-result-category">
+        <jsp:invoke fragment="metadata"/>
+    </div>
+
+    <div class="result-header search-result-name">
+        <zfin:link entity="${result}"/>
+
+        <authz:authorize ifAnyGranted="root">
+          <a title="see everything solr knows about this record"
+             class="solr-document-link"
+             href="/solr/prototype/select?q=id:${result.id}&fl=*&wt=json&indent=true&hl=false&rows=1"><i class="fa fa-file-text-o"></i></a>
+          <c:if test="${not empty result.explain}">
+            <span title="see solr query explain info"
+               class="result-explain-link"><i class="fa fa-list-ol"></i></span>
+          </c:if>
+        </authz:authorize>
+
+        <c:if test="${!empty result.displayedID}">
+            <span class="result-id"> ${result.displayedID}</span>
+        </c:if>
+    </div>
+
+    <div class="result-body">
+        <table style="width: 99%">
+            <tr>
+                <td>
+                    <c:if test="${!empty result.attributes}">
+                        <table class="search-result-entity-attributes">
+                            <c:forEach var="entry" items="${result.attributes}" varStatus="loop">
+                                <tr>
+                                    <th width="5%">${entry.key}</th>
+                                    <td>${entry.value}</td>
+                                </tr>
+                            </c:forEach>
+                        </table>
+                    </c:if>
+                </td>
+                <td align="right" valign="top">
+                    <c:if test="${not empty result.image}">
+                        <zfin-search:imageModal result="${result}"/>
+                    </c:if>
+                    <c:if test="${not empty result.snapshot}">
+                        <div class="pull-right result-thumbnail-container">
+                            <div class="search-result-thumbnail">
+                                <a href="${result.url}">
+                                    <img style="max-width: 150px; max-height: 70px;"
+                                         src="/action/profile/image/view/${result.snapshot}.jpg">
+                                </a>
+                            </div>
+                        </div>
+                    </c:if>
+                </td>
+            </tr>
+        </table>
+
+
+
+            <div class="pull-left result-attributes-container">
+
+            </div>
+
+        <jsp:doBody/>
+    </div>
+
+    <div class="search-result-related-links">
+        <c:choose>
+            <c:when test="${!empty relatedDataLinks}">
+                <jsp:invoke fragment="relatedDataLinks"/>
+            </c:when>
+            <c:when test="${!empty result.relatedLinks}">
+                <ul>
+                <c:forEach var="link" items="${result.relatedLinks}">
+                    <li>${link}</li>
+                </c:forEach>
+                </ul>
+            </c:when>
+        </c:choose>
+
+    </div>
+    <div class="result-matching-text search-result-snippet">
+        ${result.matchingText}
+    </div>
+
+    <c:if test="${not empty result.explain}">
+        <%-- indented this way on puprpose to preserve the indenting in the value --%>
+        <div class="result-explain-container">
+            <div class="result-explain-label">
+            Debug Explain Output
+            </div>
+            <div class="result-explain">
+${result.explain}
+            </div>
+        </div>
+    </c:if>
+
+
+        <div style="clear:both;">&nbsp;</div>
+
+
+</div>

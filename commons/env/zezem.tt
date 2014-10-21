@@ -25,6 +25,7 @@
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	gb2/gbrowse/zfin_ensembl/
 <!--|GENBANK_DAILY_EMAIL|-->	cmpich\@zfin.org
+<!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	cmpich\@zfin.org
 <!--|GO_EMAIL_ERR|-->	cmpich\@zfin.org
 <!--|HAS_PARTNER|-->	false
@@ -36,6 +37,7 @@
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waffle
+<!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	zezem
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666

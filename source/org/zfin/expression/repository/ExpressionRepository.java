@@ -11,7 +11,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.sequence.MarkerDBLink;
@@ -19,7 +18,6 @@ import org.zfin.util.TermFigureStageRange;
 
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -62,6 +60,9 @@ public interface ExpressionRepository {
      * @return ExpressionExperiment
      */
     ExpressionExperiment getExpressionExperiment(String experimentID);
+
+    ExpressionDetailsGenerated getExpressionExperiment2(long id);
+
 
     /**
      * Retrieve an assay by name.

@@ -10,9 +10,6 @@
 <%@ attribute name="prefixes" type="java.util.Collection" required="true" %>
 
 
-<script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
-<link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">
-
 <script src="/javascript/profile-edit.js"></script>
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 
@@ -181,7 +178,7 @@
         listMembers('${company.zdbID}');
 //            var tabs = jQuery('#companyEdit').tabs('div.panes > div');
     });
-    jQuery('ul.tabs').tabs('div.panes > div');
+    jQuery('ul.tabs').tabs();
 
     <c:if test="${not empty selectedTab}">
     var api = jQuery("ul.tabs").data("tabs");

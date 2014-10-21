@@ -10,9 +10,8 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.marker.Talen;
 import org.zfin.mutant.OmimPhenotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.profile.MarkerSupplier;
@@ -21,7 +20,10 @@ import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public interface MarkerRepository {
     Marker getMarker(Marker marker);
@@ -51,6 +53,8 @@ public interface MarkerRepository {
     SequenceTargetingReagent getMorpholinoByAbbreviation(String abbreviation);
 
     Marker getMarkerByName(String name);
+
+    public List<Marker> getMarkersByZdbIdPrefix(String prefix);
 
     //Todo: should this move to another class?
 
@@ -393,6 +397,15 @@ public interface MarkerRepository {
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
 
     /**
+     * Return list of markers that have a specified relationship to the main marker
+     * @param marker
+     * @param types
+     * @return
+     */
+    List<Marker> getMarkersContainedIn(Marker marker, MarkerRelationship.Type... types );
+    List<Marker> getRelatedGenesViaTranscript(Marker marker, MarkerRelationship.Type relType1,MarkerRelationship.Type relType2);
+
+    /**
      *  Retrieve makrer from feature via feature marker relationship
      *  'is allele of', 'markers present', 'markers missing'
      * @param feature
@@ -419,4 +432,5 @@ public interface MarkerRepository {
     List<Marker> getSecondMarkersByFirstMarkerAndMarkerRelationshipType(Marker firstMarker, MarkerRelationship.Type relationshipType);
 
     PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean);
+
 }

@@ -1,10 +1,8 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.expression.Figure;
 import org.zfin.marker.MarkerStatistic;
 
 import java.text.ChoiceFormat;
-import java.util.Set;
 
 /**
  * This business object defines a single gene, the publications and the images.
@@ -35,41 +33,6 @@ public class ExpressedGeneDisplay {
     public String getNumberOfPublications() {
         int numberOfPublication = markerStat.getNumberOfPublications();
         return numberOfPublication + " " + publicationChoice.format(numberOfPublication);
-    }
-
-    /**
-     * Calculates the number of images found in all images from all publications for the gene.
-     *
-     * @return Number of images as a String
-     */
-    public String getNumberOfImages() {
-        Set<Figure> figures = markerStat.getGene().getFigures();
-        // calculate if the number is not set.
-        int numberOfImages = 0;
-        if (figures != null) {
-            for (Figure fig : figures) {
-                numberOfImages += fig.getImages().size();
-            }
-        }
-        return numberOfImages + " " + imageChoice.format(numberOfImages);
-    }
-
-
-    /**
-     * Calculates the number of images found in all images from all publications for the gene.
-     *
-     * @return Number of images as a interger
-     */
-    public int getNumOfImgs() {
-        Set<Figure> figures = markerStat.getGene().getFigures();
-        // calculate if the number is not set.
-        int numberOfImages = 0;
-        if (figures != null) {
-            for (Figure fig : figures) {
-                numberOfImages += fig.getImages().size();
-            }
-        }
-        return numberOfImages;
     }
 
     public MarkerStatistic getMarkerStat() {

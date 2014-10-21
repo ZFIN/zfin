@@ -41,7 +41,6 @@ public class DisruptorAddController {
 
     private static Logger LOG = Logger.getLogger(DisruptorAddController.class);
 
-    @Autowired
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();

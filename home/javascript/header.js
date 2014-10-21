@@ -3,6 +3,40 @@
 
 
 
+window.__insp = window.__insp || [];
+__insp.push(['wid', @INSPECTLET_ID@]);
+(function() {
+    function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+if (window.attachEvent){
+    window.attachEvent('onload', __ldinsp);
+    }else{
+    window.addEventListener('load', __ldinsp, false);
+    }
+})();
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
+function isLoggedIn() {
+    var loginCookie = getCookie('zfin_login');
+    if (loginCookie === undefined || loginCookie == null)
+         return false;
+
+    if (loginCookie.lastIndexOf('GUEST') == 0)
+        return false;
+
+    return true;
+}
+
+
  document.write('<LINK rel=stylesheet type="text/css" href="/css/zfin.css">');
  document.write('<LINK rel=stylesheet type="text/css" href="/css/header.css">'); 
  document.write('<LINK rel=stylesheet type="text/css" href="/css/footer.css">'); 
@@ -13,21 +47,17 @@
  document.write('<link rel=stylesheet type="text/css" href="/css/popup.css">');
  document.write('<link rel=stylesheet type="text/css" href="/css/tipsy.css">');
 
- <!-- Start GOOGLE Analytics -->
- var _gaq = _gaq || [];
- _gaq.push(['_setAccount', 'UA-2417927-1']);
- _gaq.push(['_trackPageview']);
+<!-- Start GOOGLE Analytics -->
+if ('@GOOGLE_ANALYTICS_ID@' != '0') {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
- (function() {
-     var ga = document.createElement('script');
-     ga.type = 'text/javascript';
-     ga.async = true;
-     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-     var s = document.getElementsByTagName('script')[0];
-     s.parentNode.insertBefore(ga, s);
- })();
- <!-- End GOOGLE Analytics -->
-
+    ga('create', '@GOOGLE_ANALYTICS_ID@', 'auto');
+    ga('send', 'pageview');
+}
+<!-- End GOOGLE Analytics -->
 
  function randomUniqueID(prefix) {
   var id = prefix + Math.floor( Math.random()*99999 );
@@ -45,34 +75,30 @@ function processPopupLinks(parent) {
 //for each popup link, create a div to store the popup contents
     var selector = parent + ' .popup-link ';
 
-
     jQuery(selector).each(function() {
         div_id = randomUniqueID("popup-");
         jQuery(this).attr("rel", "#" + div_id);
-        div_html = "<div class=\"simple_overlay\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
+        div_html = "<div class=\"modal\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
 //append to the body so that we don't get unwanted css rules
         jQuery('body').append(div_html);
-        if (jQuery(this).overlay != undefined)
+        if (jQuery(this).modal != undefined) {
             this.style.display = "inline";
+        }
 
     });
 
-
-//use jqueryTOOLS to create popups & use jquery to load via ajax
-    jQuery(selector).overlay({
-        mask: {
-            color: '#000',
-            loadSpeed: 100,
-            opacity: 0.15
-        },
-        onBeforeLoad: function() {
-// grab wrapper element inside content
-            var wrap = this.getOverlay().find(".popup-content");
-
-// load the page specified in the trigger
-            wrap.load(this.getTrigger().attr("href"));
-        }
-
+    jQuery(selector).click(function (event) {
+        event.preventDefault();
+        var overlay = jQuery(jQuery(this).attr("rel"));
+        jQuery.ajax({
+            url: jQuery(this).attr('href'),
+            success: function(data) {
+                jQuery(".popup-content", overlay).html(data);
+                overlay.modal({
+                    fadeDuration: 100
+                });
+            }
+        });
     });
 }
 
@@ -89,13 +115,6 @@ function addScript(url, onloadFunction) {
 }
 
 
-
-
-addScript("/javascript/jquery-1.4.4.min.js", function() {
-    jQuery.noConflict();
-    addScript("/javascript/jquery.tools.min.js", function() { jQuery(document).ready(function() { processPopupLinks('body'); });  });
-    addScript("/javascript/prototype.js");    
-    });
 
 
 
@@ -352,18 +371,31 @@ document.write("      Many ZFIN features require that javascript be enabled.");
 document.write("    </div>");
 document.write("   </noscript>");
 document.write("   <div id=\"quicksearchBox\">");
-document.write("     <form method=\"GET\" action=\"/action/quicksearch/query\" name=\"quicksearch\">");
-document.write("       <label for=\"qsearch\" id=\"quicksearchLabel\">");
-document.write("         <a href=\"/zf_info/syntax_help.html\">");
-document.write("           Site Search:");
-document.write("         </a>");
-document.write("       </label>");
-document.write("       <input type=\"text\" size=\"25\" name=\"query\" id=\"qsearch\">");
-document.write("     </form>");
+document.write("<form method=\"GET\" action=\"/search\" name=\"faceted-search\" accept-charset=\"utf-8\">");
+document.write("    <label for=\"search-query-input\">");
+document.write("    Search");
+document.write("    </label>");
+document.write("<img src=\"/images/new1.gif\" />");
+document.write("    <input class=\"search-form-input input\" style=\"width: 300px;\" name=\"q\" id=\"header-search-query-input\" autocomplete=\"off\" type=\"text\"/>");
+document.write("</form>");
 document.write("   </div>");
-document.write("   <div id=\"feedBox\"> ");
-document.write("      <a href=\"feed:https://@WIKI_HOST@/spaces/createrssfeed.action?types=blogpost&spaces=news&sort=created&title=Zebrafish+News&publicFeed=true&rssType=rss2&maxResults=-1&timeSpan=120\"><img id=\"rss-icon\" src=\"/images/feed-icon-28x28.png\"></a>");
-document.write("      <a href=\"https://twitter.com/ZFINmod\" class=\"twitter-follow-button\" data-show-screen-name=\"false\" data-show-count=\"false\" data-lang=\"en\">Follow</a> ");
+document.write("   <div id=\"feedBox\">");
+document.write("   <span id=\"site-link\">");
+document.write("   <a href=\"/downloads\">Downloads</a> &nbsp; <a id=\"hdr-login-link\" href=\"/action/login\">Login</a> <a id=\"hdr-logout-link\" style=\"display:none\" href=\"/action/logout\">Logout</a>   ");
+
+
+/*
+
+if(getCookie('zfin_login').lastIndexOf('GUEST') == 0)
+    document.write("  <a href=\"/action/login\">Login</a>");
+else
+    document.write("   <a href=\"/action/logout\">Logout</a>");
+*/
+
+
+document.write("                       </span> &nbsp;");
+document.write("      <a href=\"feed:https://@WIKI_HOST@/spaces/createrssfeed.action?types=blogpost&spaces=news&sort=created&title=Zebrafish+News&publicFeed=true&rssType=rss2&maxResults=-1&timeSpan=120\"><img id=\"social-icon\" src=\"/images/feed-icon-28x28.png\"></a>");
+document.write("      <a href=\"https://twitter.com/ZFINmod\" id=\"social-icon\" class=\"twitter-follow-button\" data-show-screen-name=\"false\" data-show-count=\"false\" data-lang=\"en\">Follow</a> ");
 document.write("      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=\"//platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");</script>");
 document.write("   </div> ");
 
@@ -479,3 +511,4 @@ document.write("    </div>");
 document.write("  </div> <!-- navlinks -->");
 document.write("</div>  ");
 document.write("<div class=\"allcontent\">  ");
+

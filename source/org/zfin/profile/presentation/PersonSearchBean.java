@@ -14,27 +14,27 @@ public class PersonSearchBean extends AbstractProfileSearchBean{
         if (StringUtils.isNotEmpty(name)) {
             creator.addNamevaluePair("name", name);
         } else {
-            creator.removeNamevaluePair("name");
+            creator.removeNameValuePair("name");
         }
         if (StringUtils.isNotEmpty(address)) {
             creator.addNamevaluePair("address", address);
         } else {
-            creator.removeNamevaluePair("address");
+            creator.removeNameValuePair("address");
         }
         if (StringUtils.isNotEmpty(contains)) {
             creator.addNamevaluePair("contains", contains);
         } else {
-            creator.removeNamevaluePair("contains");
+            creator.removeNameValuePair("contains");
         }
         if (StringUtils.isNotEmpty(containsType)) {
             creator.addNamevaluePair("containsType", containsType);
         } else {
-            creator.removeNamevaluePair("containsType");
+            creator.removeNameValuePair("containsType");
         }
         if (StringUtils.isNotEmpty(view)) {
             creator.addNamevaluePair("view", view);
         } else {
-            creator.removeNamevaluePair("view");
+            creator.removeNameValuePair("view");
         }
         creator.addNamevaluePair("maxDisplayRecords", String.valueOf(getMaxDisplayRecords()));
         return creator.getFullURLPlusSeparator();

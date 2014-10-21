@@ -25,6 +25,7 @@
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	gb2/gbrowse/zfin_ensembl/
 <!--|GENBANK_DAILY_EMAIL|-->	kschaper\@cs.uoregon.edu
+<!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	kschaper\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	kschaper\@cs.uoregon.edu
 <!--|HAS_PARTNER|-->	false
@@ -36,13 +37,14 @@
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waffle
+<!--|INSPECTLET_ID|-->	74301150
 <!--|INSTANCE|-->	tango
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
 <!--|LN54_CONTACT_EMAIL|-->	kschaper\@cs.uoregon.edu
 <!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
 <!--|LOCUS_REGISTRATION_EMAIL|-->	kschaper\@cs.uoregon.edu
-<!--|MACHINE_NAME|-->	devtest2
+<!--|MACHINE_NAME|-->	bent
 <!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	tango
 <!--|NOMEN_COORDINATOR|-->	kschaper\@cs.uoregon.edu
@@ -59,9 +61,9 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFCCFF
-<!--|SOURCEROOT|-->	/research/zusers/kschaper/tango/ZFIN_WWW
+<!--|SOURCEROOT|-->	/opt/zfin/source_roots/tango/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
-<!--|SQLHOSTS_HOST|-->	devtest2.zfin.org
+<!--|SQLHOSTS_HOST|-->	bent.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	kschaper\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_ERR|-->	kschaper\@cs.uoregon.edu
 <!--|SWISSPROT_EMAIL_REPORT|-->	kschaper\@cs.uoregon.edu

@@ -1,6 +1,7 @@
 package org.zfin.profile.presentation;
 
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.profile.Company;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
@@ -27,5 +28,10 @@ public class ProfilePresentation extends EntityPresentation{
     public static String getLinkEndTag() {
         return "</a>";
     }
+
+    public static String getLinkByZfinEntity(ZfinEntity entity) {
+        return "<a href=\"/" + entity.getID() + "\">" + entity.getName() + "</a>";
+    }
+
 
 }

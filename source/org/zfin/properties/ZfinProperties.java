@@ -228,4 +228,8 @@ public final class ZfinProperties {
         return (secure ? ZfinPropertiesEnum.SECURE_HTTP : ZfinPropertiesEnum.NON_SECURE_HTTP)
                 + ZfinPropertiesEnum.DOMAIN_NAME.value() + "/action" ;
     }
+
+    public static String getInspectletID() {
+        return ZfinPropertiesEnum.INSPECTLET_ID.toString();
+    }
 }

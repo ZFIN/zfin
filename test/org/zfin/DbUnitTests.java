@@ -65,7 +65,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-
         AlignmentsControllerTest.class,
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,

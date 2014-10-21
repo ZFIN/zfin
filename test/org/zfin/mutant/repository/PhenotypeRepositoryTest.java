@@ -20,6 +20,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
+import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.*;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -32,6 +33,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
@@ -413,6 +415,17 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         int numAnatomy = getPhenotypeRepository().getPhenotypeAnatomy(m).size();
         assertTrue(numAnatomy > 10);
         assertTrue(numAnatomy < 40);
+
+        Marker m2 = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-031112-7");
+        int numAnatomy2 = getPhenotypeRepository().getPhenotypeAnatomy(m2).size();
+        assertTrue(numAnatomy2 > 40);
+    }
+
+    @Test
+    public void getPhenotypeForBmp4() {
+        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation("bmp4");
+        List<PostComposedPresentationBean> numAnatomy = getPhenotypeRepository().getPhenotypeAnatomy(m);
+        assertNotNull(numAnatomy);
 
         Marker m2 = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-031112-7");
         int numAnatomy2 = getPhenotypeRepository().getPhenotypeAnatomy(m2).size();

@@ -5,11 +5,6 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.DisruptorAddBean" scope="request"/>
 
 <html>
-<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
-<script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
-
-<script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
-<link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">
 
 <script src="/javascript/profile-edit.js"></script>
 

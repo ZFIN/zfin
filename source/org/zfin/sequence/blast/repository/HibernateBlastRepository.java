@@ -177,7 +177,7 @@ public class HibernateBlastRepository implements BlastRepository {
 
     /**
      * Number of valid accessions.  The other method is too memory intensive.
-     * Must implement in SQL to get a proper union.
+     * Must implement in SQL to get a pSroper union.
      *
      * @param database Database to retrive number of accessions for.
      * @return Number of combined unique accessions between accession bank and dblink.

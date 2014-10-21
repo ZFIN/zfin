@@ -1,141 +1,94 @@
-/* the overlayed element */
-.simple_overlay {
+div.popup-header {
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 3px;
+    background: #eee;
+    padding: 5px;
+    font-weight: bold;
 
-	/* must be initially hidden */
-	display:none;
-
-	/* place overlay on top of other elements */
-	z-index:10000;
-
-	/* styling */
-	background-color:#fff;
-
-	width:675px;
-	min-height:100px;
-
-    
-    border:5px solid #066;
-    
-    /* padding: 10px; */
-    
-
-	/* browser specific */
-    -moz-border-radius:10px;
-    -webkit-border-radius:10px;
-
-	-moz-box-shadow:10px 10px 3px 0px rgba(0, 0, 0, 0.05);
-	-webkit-box-shadow: 10px 10px 3px rgba(0, 0, 0, 0.05);
+    /* browser specific */
+    -moz-border-radius-topleft:5px;
+    -webkit-border-radius-topleft:5px;
+    -moz-border-radius-topright:5px;
+    -webkit-border-radius-topright:5px;
 
     /* CSS3 standard */
-    border-radius: 10px;
-    box-shadow: 10px 10px 3px rgba(0, 0, 0, 0.05);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    border-bottom: 2px solid #ccc;
 
 }
 
+div.popup-body {
 
-/* close button positioned on upper right corner */
-.simple_overlay .close {
-	background-image:url(/images/close.png);
-	position:absolute;
-	right:-15px;
-	top:-15px;
-	cursor:pointer;
-	height:35px;
-	width:35px;
+    max-height:450px;
+    overflow-y: auto;
+
+    /* browser specific */
+    -moz-border-radius-bottomleft:5px;
+    -webkit-border-radius-bottomleft:5px;
+    -moz-border-radius-bottomright:5px;
+    -webkit-border-radius-bottomright:5px;
+
+    /* CSS3 standard */
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    padding: 5px;
+
 }
 
+div.phenotype-figure-popup-body {
 
-    div.popup-header {
-        margin-top: 0px;
-        margin-left: 0px;
-        margin-right: 0px;
-        margin-bottom: 3px;
-        background: #eee;
-        padding: 5px;
-        font-weight: bold;
+    max-height:500px;
+    overflow-y: auto;
 
-        /* browser specific */
-        -moz-border-radius-topleft:5px;
-        -webkit-border-radius-topleft:5px;
-        -moz-border-radius-topright:5px;
-        -webkit-border-radius-topright:5px;
+    /* browser specific */
+    -moz-border-radius-bottomleft:5px;
+    -webkit-border-radius-bottomleft:5px;
+    -moz-border-radius-bottomright:5px;
+    -webkit-border-radius-bottomright:5px;
 
-        /* CSS3 standard */
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+    /* CSS3 standard */
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 
-        border-bottom: 2px solid #ccc;
+    padding: 5px;
 
-    }
+}
 
-    div.popup-body {
+/* Apply padding to td elements that are direct children of the tr element. */
+tr.spaced > td {
+   padding-top: 1em;
+   padding-bottom: 1em;
+}
 
-        max-height:450px;
-        overflow-y: auto;
+td.border-black {
+   border-bottom: 1px solid black;
+}
 
-        /* browser specific */
-        -moz-border-radius-bottomleft:5px;
-        -webkit-border-radius-bottomleft:5px;
-        -moz-border-radius-bottomright:5px;
-        -webkit-border-radius-bottomright:5px;
+td.bottom-alligned {
+  vertical-align: bottom;
+}
 
-        /* CSS3 standard */
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
+span.left {
+width: 100px;
+display: inline-block;
+}
 
-        padding: 5px;
+span.right {
+float:right;
+}
 
-    }
+div.phenotype-popup-body {
+    padding: 0px;
+}
 
-    div.phenotype-figure-popup-body {
-
-        max-height:500px;
-        overflow-y: auto;
-
-        /* browser specific */
-        -moz-border-radius-bottomleft:5px;
-        -webkit-border-radius-bottomleft:5px;
-        -moz-border-radius-bottomright:5px;
-        -webkit-border-radius-bottomright:5px;
-
-        /* CSS3 standard */
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-
-        padding: 5px;
-
-    }
-
-    /* Apply padding to td elements that are direct children of the tr element. */
-    tr.spaced > td {
-       padding-top: 1em;
-       padding-bottom: 1em;
-    }
-
-    td.border-black {
-       border-bottom: 1px solid black;
-    }
-    
-    td.bottom-alligned {
-      vertical-align: bottom;
-    }
-
-    span.left {
-    width: 100px;
-    display: inline-block;
-    }
-    
-    span.right {
-    float:right;
-    }
-
-    div.phenotype-popup-body {
-        padding: 0px;
-    }
-
-    hr.popup-divider {
-        background-color: #ddd; height:2px; width:100%; padding: 0px ; margin: 0px;
-    }
+hr.popup-divider {
+    background-color: #ddd; height:2px; width:100%; padding: 0px ; margin: 0px;
+}
 
 
 .imghover_popup {
@@ -226,6 +179,14 @@
 
     /*for some stupid reason opacity has to be set and < 1.0*/
     /*see case 7376*/
+    opacity: 0.99 ;
+}
+
+.search-help-popup-link:after {
+    padding-top: 2px;
+    margin-left: 2px;
+    margin-right: 25px;
+    /*for some stupid reason opacity has to be set and < 1.0*/
     opacity: 0.99 ;
 }
 

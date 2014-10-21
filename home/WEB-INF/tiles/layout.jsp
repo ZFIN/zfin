@@ -7,6 +7,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <!-- Server: <%=ZfinProperties.getInstance()%> -->
@@ -29,8 +30,11 @@
         <tiles:getAsString ignore="true" name="staticTitle"/> ${dynamicTitle}
     </title>
 
+
     <link rel="stylesheet" type="text/css" href="/css/zfin.css">
-    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <c:if test="${empty suppressHeaderAndFooter || suppressHeaderAndFooter == false}">
+        <link rel="stylesheet" type="text/css" href="/css/header.css">
+    </c:if>
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel=stylesheet type="text/css" href="/css/searchresults.css">
     <link rel=stylesheet type="text/css" href="/css/summary.css">
@@ -39,31 +43,58 @@
     <link rel=stylesheet type="text/css" href="/css/datapage.css">
     <link rel=stylesheet type="text/css" href="/css/popup.css">
     <link rel=stylesheet type="text/css" href="/css/tipsy.css">
+    <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
 
-    <script src="/javascript/jquery-1.4.4.min.js" type="text/javascript"></script>
-    <%--<script src="/javascript/header.js" type="text/javascript"></script>--%>
-    <script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
+
+    <script src="/javascript/jquery-1.8.3.min.js" type="text/javascript"></script>
+
+
+    <c:if test="${empty suppressHeaderAndFooter || suppressHeaderAndFooter == false}">
+      <script src="/javascript/header.js" type="text/javascript"></script>
+    </c:if>
+
+    <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
     <script type="text/javascript" src="/javascript/sorttable.js"></script>
 
-    <script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
-    <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">
+    <%-- todo: replace these with a local file?--%>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <script src="/javascript/jquery-ui-1.10.4.custom.js"></script>
+    <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">
+
+
+
+
+    <!-- Begin Inspectlet Embed Code -->
+    <script type="text/javascript" id="inspectletjs">
+        window.__insp = window.__insp || [];
+        __insp.push(['wid', <%=ZfinProperties.getInspectletID()%>]);
+        (function() {
+            function __ldinsp(){var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); }
+            if (window.attachEvent){
+                window.attachEvent('onload', __ldinsp);
+            }else{
+                window.addEventListener('load', __ldinsp, false);
+            }
+        })();
+    </script>
+    <!-- End Inspectlet Embed Code —>
+
+
 
 
     <!-- Start GOOGLE Analytics -->
-    <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-2417927-1']);
-        _gaq.push(['_trackPageview']);
+    <script>
+        if ('@GOOGLE_ANALYTICS_ID@' != '0') {
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-        (function() {
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript';
-            ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-        })();
+            ga('create', '@GOOGLE_ANALYTICS_ID@', 'auto');
+            ga('send', 'pageview');
+        }
     </script>
     <!-- End GOOGLE Analytics -->
 

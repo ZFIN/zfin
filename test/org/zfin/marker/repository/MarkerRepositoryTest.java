@@ -988,6 +988,18 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(marker);
     }
 
+
+    @Test
+    public void getMarkersContainedIn() {
+        String id = "ZDB-PAC-030616-4";
+        Marker marker = markerRepository.getMarkerByID(id);
+        assertNotNull(marker);
+        List<Marker> list = markerRepository.getMarkersContainedIn(marker, MarkerRelationship.Type.CLONE_CONTAINS_GENE);
+        assertNotNull(list);
+
+    }
+
+
     @Test
     public void getRelatedMarkerEFG() {
         String efgID = "ZDB-EFG-070117-1";
@@ -1001,7 +1013,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         PaginationResult<Marker> relatedMarkerResult = markerRepository.getRelatedMarker(efg, types, new PaginationBean());
         assertNotNull(relatedMarkerResult);
     }
-
 
     @Test
     public void getWeakReferenceMarker() {

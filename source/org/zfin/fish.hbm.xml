@@ -13,10 +13,14 @@
         </id>
 
         <property name="name" column="fas_geno_long_name"/>
+        <property name="uniqueName" column="fas_geno_long_name" insert="false" update="false" />
+
         <property name="featureGroupName" column="fas_feature_group"/>
         <property name="genotypeExperimentIds" column="fas_genox_group"/>
         <property name="genotypeID" column="fas_genotype_group"/>
         <property name="morpholinoGroupName" column="fas_str_group"/>
+        <property name="phenotypeFigureGroupName" column="fas_pheno_figure_group"/>
+        <property name="phenotypeFigureCount" column="fas_pheno_figure_count" />
 
     </class>
 

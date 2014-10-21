@@ -48,38 +48,34 @@
     }
 
     function processPopupLinks(parent) {
-//for each popup link, create a div to store the popup contents
+        //for each popup link, create a div to store the popup contents
         var selector = parent + ' .popup-link ';
-
 
         jQuery(selector).each(function() {
             div_id = randomUniqueID("popup-");
             jQuery(this).attr("rel", "#" + div_id);
-            div_html = "<div class=\"simple_overlay\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
-//append to the body so that we don't get unwanted css rules
+            div_html = "<div class=\"modal\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
+            //append to the body so that we don't get unwanted css rules
             jQuery('body').append(div_html);
-            if (jQuery(this).overlay != undefined)
+            if (jQuery(this).modal != undefined) {
                 this.style.display = "inline";
+            }
 
         });
 
-
-//use jqueryTOOLS to create popups & use jquery to load via ajax
-        jQuery(selector).overlay({
-                    mask: {
-                        color: '#000',
-                        loadSpeed: 100,
-                        opacity: 0.15
-                    },
-                    onBeforeLoad: function() {
-// grab wrapper element inside content
-                        var wrap = this.getOverlay().find(".popup-content");
-
-// load the page specified in the trigger
-                        wrap.load(this.getTrigger().attr("href"));
-                    }
-
-                });
+        jQuery(selector).click(function (event) {
+            event.preventDefault();
+            var overlay = jQuery(jQuery(this).attr("rel"));
+            jQuery.ajax({
+                url: jQuery(this).attr('href'),
+                success: function(data) {
+                    jQuery(".popup-content", overlay).html(data);
+                    overlay.modal({
+                        fadeDuration: 100
+                    });
+                }
+            });
+        });
     }
 
 
@@ -93,7 +89,8 @@
 
 </script>
 
-<body id="body" onload="hdrSetTabs();">
+<body id="body" >
+<%--
 <a href="/">
     <img id="logo-img" src="/images/zfinlogo.png">
     <img id="logo-text" src="/images/zfintxt.png">
@@ -112,6 +109,15 @@
         </label>
         <input type="text" size="25" name="query" id="qsearch">
     </form>
+</div>
+
+<div id="header-extras">
+   <span id="downloads-link">
+      <a href="/downloads">Download Files</a>
+   </span>
+   <span id="login-link">
+          <a href="/action/login">Login</a>
+   </span>
 </div>
 
         <div id="feedBox">
@@ -258,5 +264,6 @@
     </div>
     <!-- navlinks -->
 </div>
-<div class="allcontent">
 
+<div class="allcontent">
+--%>

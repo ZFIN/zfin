@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ZFIN" default="usage" basedir=".">
 
+    <property name="build.sysclasspath" value="ignore"/>
+
     <property name="buildfiles.dir" value="buildfiles"/>
 
 
@@ -105,6 +107,7 @@
     <import file="${buildfiles.dir}/warehouse.xml"/>
     <import file="${buildfiles.dir}/utilities.xml"/>
     <import file="${buildfiles.dir}/jenkins.xml"/>
+    <import file="${buildfiles.dir}/solr-ant.xml"/>
     <import file="${buildfiles.dir}/base-properties.xml"/>
 <!--
     <echo message="property file=${LOG4J_FILE}"/>
@@ -549,7 +552,7 @@
     <target name="deploy" depends="deploy-without-tests,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
-    <target name="deploy-without-tests" depends="pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up"/>
+    <target name="deploy-without-tests" depends="pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up,deploy-solr"/>
 
     <target name="pre-deploy" depends="do,unittests-quiet,notify-deploy,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
@@ -591,6 +594,7 @@
         </sequential>
     </macrodef>
 
+
     <macrodef name="copyWebApp">
         <attribute name="from"/>
         <attribute name="to"/>
@@ -610,6 +614,7 @@
                 <fileset dir="@{from}">
                     <include name="css/*.css"/>
                     <include name="css/images/**"/>
+                    <include name="css/bootstrap/**"/>
                     <include name="WEB-INF/**"/>
                     <include name="javascript/**"/>
                     <exclude name="images/**"/>
@@ -629,6 +634,7 @@
                     <include name="WEB-INF/**/*.zip"/>
                     <include name="WEB-INF/**/*.class"/>
                     <include name="WEB-INF/**/*.ser"/>
+                    <include name="slides/**"/>
                     <exclude name="**/*.svn"/>
                 </fileset>
             </copy>
@@ -646,8 +652,8 @@
     <target name="dirtydeploy" depends="compile"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
-
         <copy-indexer-build-file-with-env-variables />
+        <antcall target="deploy-solr"/>
     </target>
 
 

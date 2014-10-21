@@ -29,6 +29,7 @@ RewriteCond %{HTTPS} =off
   # goes at the end of all but the last one
 RewriteCond %{REQUEST_URI} ^/action/people/edit-user$ [OR]
 #RewriteCond %{REQUEST_URI} ^/build [OR]
+RewriteCond %{REQUEST_URI} ^/solr [OR]
 RewriteCond %{REQUEST_URI} ^/action/login-redirect$
 RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 
@@ -38,10 +39,15 @@ RewriteRule ^/$ /<!--|MUTANT_NAME|-->/webdriver?MIval=aa-ZDB_home.apg [PT]
 RewriteCond <!--|MUTANT_NAME|--> =zfin.org
 RewriteRule ^/$ /cgi-bin/webdriver?MIval=aa-ZDB_home.apg [PT]
 
+
+#RewriteRule ^/$ /action/quicksearch/prototype [PT]
+
+
 # short link to programmer job
 RewriteRule ^/SoftwareEngineer http://jobs.uoregon.edu/unclassified.php?id=4196 [NC]
 # short link to curator job
 RewriteRule ^/ScientificCurator http://jobs.uoregon.edu/unclassified.php?id=4208 [NC]
+
 
 #lab designation page
 RewriteRule ^/zf_info/zfbook/lab_desig.html /action/feature/line-designations [NC,R=301]
@@ -154,6 +160,9 @@ RewriteRule ^/cgi-bin/ZFIN_jump /%1? [NC,R=301]
 # catch the jump-to.apg as well!
 RewriteCond %{QUERY_STRING}     ^Mival=aa-jump_to.apg&record=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+
+RewriteRule ^/search(.*)  /action/quicksearch/prototype$1
+RewriteRule ^/prototype(.*)  /action/quicksearch/prototype$1
 
 
 #download page

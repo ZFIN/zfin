@@ -23,13 +23,15 @@
             <column name="pub_mini_ref" not-null="true"/>
         </property>
 
-        <!-- Do not use this! When retrieving this table in a query with lots of
-             out joins the abstract has so many characters that you will get an  Informix error:
-             maximum output rowsize (32767) exceeded
-                <property name="abstractText" lazy="true" >
-                    <column name="pub_abstract" not-null="false"/>
-                </property>
-        -->
+
+<!-- Do not use this! When retrieving this table in a query with lots of
+     out joins the abstract has so many characters that you will get an  Informix error:
+     maximum output rowsize (32767) exceeded -->
+        <property name="abstractText" lazy="true" >
+            <column name="pub_abstract" not-null="false"/>
+        </property>
+
+
 
         <property name="publicationDate" column="pub_date"/>
         <property name="closeDate" column="pub_completion_date"/>
@@ -58,6 +60,12 @@
             <key column="fig_source_zdb_id" update="false"/>
             <one-to-many class="org.zfin.expression.Figure" />
         </set>
+
+        <set name="people" lazy="true" table="int_person_pub">
+            <key column="target_id"/>
+            <many-to-many class="org.zfin.profile.Person" column="source_id" order-by="full_name asc"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">

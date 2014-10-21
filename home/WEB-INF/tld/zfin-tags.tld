@@ -353,6 +353,74 @@
     </tag>
 
     <tag>
+        <name>facets</name>
+        <tagclass>org.zfin.framework.presentation.tags.ShowFacetLinksTag</tagclass>
+        <info>Show facet links w/structured html</info>
+        <attribute>
+            <name>queryResponse</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>query</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>baseUrl</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>request</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>breadbox</name>
+        <tagclass>org.zfin.framework.presentation.tags.ShowBreadBoxLinksTag</tagclass>
+        <info>Show breadbox for removing selected facets</info>
+        <attribute>
+            <name>queryResponse</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>baseUrl</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>query</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>horizontal-breadbox</name>
+        <tagclass>org.zfin.framework.presentation.tags.ShowHorizontalBreadBoxLinksTag</tagclass>
+        <info>Show breadbox for removing selected facets</info>
+        <attribute>
+            <name>queryResponse</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>baseUrl</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>query</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>link</name>
         <tagclass>org.zfin.framework.presentation.tags.CreateLinkTag</tagclass>
         <info>Create a hyperlink for an object of a given type</info>

@@ -11,11 +11,6 @@
 <script src="/javascript/passwordmeter.js"></script>
 <script src="/javascript/profile-edit.js"></script>
 
-<%--needed for address lookup--%>
-<script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
-<link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">
-
-
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 
 
@@ -252,7 +247,7 @@
 
 <script type="text/javascript">
 
-    jQuery('ul.tabs').tabs('div.panes > div');
+    jQuery('ul.tabs').tabs();
 
     <c:if test="${ not empty selectedTab}">
 

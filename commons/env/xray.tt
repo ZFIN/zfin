@@ -2,7 +2,7 @@
 
 <!--|AO_EMAIL_CURATOR|-->	pkalita\@zfin.org
 <!--|AO_EMAIL_ERR|-->	pkalita\@zfin.org
-<!--|BACKGROUND_COLOR|-->	#CCFFFF
+<!--|BACKGROUND_COLOR|-->	#FFFFFF
 <!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/dev_blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	pkalita\@zfin.org
@@ -25,6 +25,7 @@
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	gb2/gbrowse/zfin_ensembl/
 <!--|GENBANK_DAILY_EMAIL|-->	pkalita\@zfin.org
+<!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	pkalita\@zfin.org
 <!--|GO_EMAIL_ERR|-->	pkalita\@zfin.org
 <!--|HAS_PARTNER|-->	false
@@ -36,6 +37,7 @@
 <!--|INFORMIX_DIR|-->	/private/apps/Informix/informix
 <!--|INFORMIX_PORT|-->	2002
 <!--|INFORMIX_SERVER|-->	waffle
+<!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	xray
 <!--|INTERNAL_BLAST_PATH|-->	NEED_TO_SET_A_BLAST_PATH
 <!--|LINKBAR_COLOR|-->	#006666
@@ -58,8 +60,8 @@
 <!--|SECURE_HTTP|-->	https://
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
-<!--|SITE_BACKGROUND|-->	#FFE373
-<!--|SOURCEROOT|-->	/research/zusers/pkalita/xray/ZFIN_WWW
+<!--|SITE_BACKGROUND|-->	#FFFFCC
+<!--|SOURCEROOT|-->	/opt/zfin/source_roots/xray
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	cuboid.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	pkalita\@zfin.org

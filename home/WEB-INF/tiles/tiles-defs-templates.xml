@@ -19,5 +19,6 @@
     <definition name="popup_layout" template="/WEB-INF/tiles/popup_layout.jsp"/>
 
 
+
 </tiles-definitions>
 

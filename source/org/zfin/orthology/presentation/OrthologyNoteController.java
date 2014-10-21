@@ -83,7 +83,7 @@ public class OrthologyNoteController {
         url.addNamevaluePair("MIval", "aa-markerview.apg");
         url.addNamevaluePair("UPDATE", "1");
         url.addNamevaluePair("OID", geneID);
-        return url.getURL(true);
+        return url.getURL();
     }
 
 }

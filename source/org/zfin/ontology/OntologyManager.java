@@ -900,6 +900,26 @@ public class OntologyManager {
         return finalList;
     }
 
+    /**
+     * Retrieve ontology for a given term ID.
+     *
+     * @param id
+     * @return
+     */
+    public Ontology getOntologyForTerm(String id) {
+        if (id == null)
+            return null;
+        TermDTO term = getTermByID(id);
+        if (term == null) {
+            GenericTerm genericTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(id);
+            if (genericTerm == null)
+                return null;
+            return genericTerm.getOntology();
+        }
+
+        return DTOConversionService.convertToOntology(term.getOntology());
+    }
+
     public enum LoadingMode {
         DATABASE, SERIALIZED_FILE
     }

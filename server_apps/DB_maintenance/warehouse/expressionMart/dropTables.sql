@@ -1,0 +1,3 @@
+
+delete from xpat_exp_details_generated_temp;
+delete from xpat_results_generated_temp;

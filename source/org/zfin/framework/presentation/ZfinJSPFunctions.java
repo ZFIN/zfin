@@ -3,6 +3,7 @@ package org.zfin.framework.presentation;
 import com.opensymphony.clickstream.ClickstreamRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
@@ -407,6 +408,11 @@ public class ZfinJSPFunctions {
             builder.append(track.getTrackName());
         }
         return builder.toString();
+    }
+
+    public static String buildFacetedSearchGACategory(String searchCategory, String facetLabel) {
+        String prefix = (StringUtils.isEmpty(searchCategory) || searchCategory.equals("Any")) ? "" : (searchCategory + " : ");
+        return prefix + facetLabel;
     }
 
 }

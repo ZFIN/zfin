@@ -47,6 +47,13 @@
         <runBatchTest classNamePattern="**/Figure*Spec.class" outfile="figureTests" verbose="true"/>
     </target>
 
+
+    <target name="runSolrTests" depends="compile,build-tests" description="Tests against the Solr server">
+        <runTest testclass="org.zfin.SolrUnitTests" outfile="${solrTestFile}" verbose="false"/>
+        <echo message=":SOLR UNIT TESTS SUCCESSFUL:"/>
+    </target>
+
+
     <target name="runImageTests" depends="compile,build-tests">
         <runBatchTest classNamePattern="**/Image*Spec.class" outfile="imageTests" verbose="true"/>
     </target>

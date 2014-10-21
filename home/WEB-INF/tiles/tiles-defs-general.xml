@@ -75,9 +75,12 @@
     </definition>
 
 
-    <definition name="site-search.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN: Site Search: "/>
-        <put-attribute name="body" value="/WEB-INF/jsp/quicksearch/category-search.jsp"/>
+    <definition name="search/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/search/{1}.jsp"/>
+    </definition>
+
+    <definition name="search/*.popup" extends="popup_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/search/{1}.jsp"/>
     </definition>
 
     <!--fish definitions-->
