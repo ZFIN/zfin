@@ -99,10 +99,9 @@
                         <button type="submit" class="btn btn-primary">Go</button>
 
                         <a class="btn" href="/search?q=" onclick="localStorage.clear();">New</a>
-                        <button type="button" class="btn" data-toggle="modal" data-target="#helpContent"
-                                data-remote="/webapp/wiki/view/general/ZFIN+Single+Box+Search+Help">
-                            ?
-                        </button>
+
+                            <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
+                                &nbsp;<img src="/images/help.gif"/>&nbsp;</a>
                         <a class="btn  feedback-link" href="#"
                            onclick="jQuery('.feedback-box').slideToggle(50);">
                             Feedback</a>
