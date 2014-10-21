@@ -3,7 +3,7 @@
 <project name="Solr" default="deploySolr" basedir="../">
 
     <property name="solr" value="${SOURCEROOT}/server_apps/solr"/>
-
+    <property name="solr.backup.dir" value="/research/zunloads/solr"/>
 
     <target name="deploy-solr">
         <copySolr from="server_apps/solr" to="${env.SOLR_HOME}" overwrite="true"/>
@@ -108,6 +108,25 @@
             <arg value="-s"/>
             <arg value="http://localhost:${SOLR_PORT}/solr/admin/cores?action=RELOAD&amp;core=prototype"/>
         </exec>
+    </target>
+
+    <target name="backup-solr-core">
+        <echo message="Backing up solr core..."/>
+        <tstamp>
+            <format property="backup.stamp" pattern="yyyy.dd.MM-hh:mm"/>
+        </tstamp>
+
+        <echo message="Backup time: ${backup.stamp}"/>
+        <property name="this.backup.dir" value="${solr.backup.dir}/${env.DBNAME}/${backup.stamp}"/>
+        <mkdir dir="${this.backup.dir}"/>
+
+        <copy todir="${this.backup.dir}" overwrite="false">
+            <fileset dir="${env.SOLR_HOME}/prototype">
+                <include name="**"/>
+            </fileset>
+        </copy>
+
+
     </target>
 
     <!-- Useful cleaning up when upgrading solr, I think -->
