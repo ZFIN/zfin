@@ -328,12 +328,16 @@ jQuery(document).ready(function () {
 
     // add GA click handlers for sort options
     jQuery('.sort-controls .dropdown-menu a').click(function () {
-        ga('send', 'event', 'Search', 'Sort By', jQuery(this).text());
+        var category = '${empty category ? 'Any' : category}',
+            label = jQuery(this).text();
+        ga('send', 'event', 'Search', 'Sort By', category + " : " + label);
     });
 
     jQuery('.search-result-related-links a').click(function () {
-        // send a Related Link event with the link text minus the number in parenthesis
-        ga('send', 'event', 'Search', 'Related Link', jQuery(this).text().replace(/\s+\(\d+\)\s+$/g, ""))
+        // send a Related Link event with the category and link text minus the number in parenthesis
+        var category = jQuery(this).closest(".search-result").find(".search-result-category").text().trim(),
+            label = jQuery(this).text().replace(/\s+\(\d+\)\s+$/g, "");
+        ga('send', 'event', 'Search', 'Related Link', category + " : " + label);
     });
 
     //if this gets converted from tipsy to bootstrap, need to handle the jquery-ui collision:

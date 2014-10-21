@@ -7,7 +7,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.RangeFacet;
 import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -17,11 +16,13 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.search.*;
-import org.zfin.search.service.*;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
+import org.zfin.search.FacetCategoryComparator;
+import org.zfin.search.FacetValueAlphanumComparator;
+import org.zfin.search.service.*;
 import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -268,7 +269,6 @@ public class SearchPrototypeController {
         //these are used to decide which search result template jsp tag to use
         model.addAttribute("geneCategoryName", Category.GENE.getName());
         model.addAttribute("fishCategoryName", Category.FISH.getName());
-//        model.addAttribute("suppressHeaderAndFooter", true);
 
 
         return "search/prototype-results.page";

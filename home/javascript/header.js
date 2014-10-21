@@ -49,10 +49,7 @@ function isLoggedIn() {
 
 <!-- Start GOOGLE Analytics -->
 if ('@GOOGLE_ANALYTICS_ID@' != '0') {
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    !function(z,b,r,f,i,s,h){z.GoogleAnalyticsObject=i,z[i]=z[i]||function(){(z[i].q=z[i].q||[]).push(arguments)},z[i].l=+new Date,s=b.createElement(r),h=b.getElementsByTagName(r)[0],s.src=f,h.parentNode.insertBefore(s,h)}(this,document,"script","//www.google-analytics.com/analytics.js","ga");
 
     ga('create', '@GOOGLE_ANALYTICS_ID@', 'auto');
     ga('send', 'pageview');

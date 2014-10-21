@@ -32,9 +32,7 @@
 
 
     <link rel="stylesheet" type="text/css" href="/css/zfin.css">
-    <c:if test="${empty suppressHeaderAndFooter || suppressHeaderAndFooter == false}">
-        <link rel="stylesheet" type="text/css" href="/css/header.css">
-    </c:if>
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
     <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel=stylesheet type="text/css" href="/css/searchresults.css">
     <link rel=stylesheet type="text/css" href="/css/summary.css">
@@ -47,12 +45,7 @@
 
 
     <script src="/javascript/jquery-1.11.0.js" type="text/javascript"></script>
-
-
-    <c:if test="${empty suppressHeaderAndFooter || suppressHeaderAndFooter == false}">
-      <script src="/javascript/header.js" type="text/javascript"></script>
-    </c:if>
-
+    <script src="/javascript/header.js" type="text/javascript"></script>
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
     <script type="text/javascript" src="/javascript/sorttable.js"></script>
@@ -79,24 +72,7 @@
             }
         })();
     </script>
-    <!-- End Inspectlet Embed Code —>
-
-
-
-
-    <!-- Start GOOGLE Analytics -->
-    <script>
-        if ('@GOOGLE_ANALYTICS_ID@' != '0') {
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-            ga('create', '@GOOGLE_ANALYTICS_ID@', 'auto');
-            ga('send', 'pageview');
-        }
-    </script>
-    <!-- End GOOGLE Analytics -->
+    <!-- End Inspectlet Embed Code -->
 
 </head>
 

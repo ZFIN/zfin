@@ -1,9 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 
-<c:if test="${empty suppressHeaderAndFooter || suppressHeaderAndFooter == false}">
-  <script language="JavaScript" src="/javascript/footer.js" type="text/javascript"></script>
-</c:if>
+<script language="JavaScript" src="/javascript/footer.js" type="text/javascript"></script>
 <%--
 
 </div>
