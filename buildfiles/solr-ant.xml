@@ -126,7 +126,22 @@
             </fileset>
         </copy>
 
+    </target>
 
+    <target name="restore-solr-core">
+        <antcall target="stop-solr"/>
+        <echo message="restoring from ${RESTORE_FROM}"/>
+        <delete>
+            <fileset dir="${env.SOLR_HOME}/prototype/">
+                <include name="**"/>
+            </fileset>
+        </delete>
+        <copy todir="${env.SOLR_HOME}/prototype">
+            <fileset dir="${RESTORE_FROM}">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <antcall target="start-solr"/>
     </target>
 
     <!-- Useful cleaning up when upgrading solr, I think -->
