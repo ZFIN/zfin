@@ -57,7 +57,7 @@ function initJQuery() {
             jQueryScriptOutputted = true;
 
             //output the script (load it from google api)
-            document.write("<script type=\"text/javascript\" src=\"/javascript/jquery-1.8.3.min.js\"></script>");
+            document.write("<script type=\"text/javascript\" src=\"/javascript/jquery-1.11.1.min.js\"></script>");
             document.write("<script type=\"text/javascript\" src=\"/javascript/jquery-ui-1.10.4.custom.js\"></script>");
             document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/jquery-ui-1.10.4.custom.css\">");
         }
