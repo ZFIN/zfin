@@ -119,9 +119,6 @@ public class ResultService {
                 injectLabAttributes(result);
             else if (StringUtils.equals(result.getType(), "Company"))
                 injectCompanyAttributes(result);
-        } else {
-            result.addAttribute("Label:", "value");
-            result.addAttribute("Other Label:", "value, value, value");
         }
 
     }
@@ -609,10 +606,10 @@ public class ResultService {
                 sb.append(publication.getPublicationDate().get(Calendar.YEAR));
 
             result.addAttribute(JOURNAL, sb.toString());
-
-            if (StringUtils.isNotEmpty(publication.getAbstractText()))
-                result.addAttribute(ABSTRACT, collapsible(publication.getAbstractText()));
-
+            String abstractText = RepositoryFactory.getPublicationRepository().getAbstractText(publication.getZdbID());
+            if (StringUtils.isNotEmpty(abstractText)) {
+                result.addAttribute(ABSTRACT, collapsible(abstractText));
+            }
 
         }
 

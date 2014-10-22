@@ -1793,4 +1793,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return pubIDs;
     }
 
+
+    public String getAbstractText(String publicationZdbID) {
+        String sql = " select pub_abstract from publication where zdb_id = :zdbID";
+        SQLQuery query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("zdbID", publicationZdbID);
+
+        List<String> abstracts = query.list();
+        String abstractText = abstracts.get(0);
+
+        return abstractText;
+    }
 }

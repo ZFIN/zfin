@@ -501,4 +501,7 @@ public interface PublicationRepository extends PaginationParameter {
     SortedSet<Publication> getAllPublicationsForGenotype(Genotype genotype);
 
     List<String> getPublicationIDsForGOwithField(String zdbID);
+
+    String getAbstractText(String publicationZdbID);
+
 }
