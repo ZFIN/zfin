@@ -91,7 +91,7 @@
                         </c:forEach>
                     </select>
                     <input class="search-form-input input" style="width: 25em;" name="q" id="primary-query-input"
-                           autocomplete="off" type="text" value="${q}"/>
+                           autocomplete="off" type="text" value="<c:out value="${q}" escapeXml="true"/>"/>
                     <a href="#" id="search-box-clear-link" onclick="jQuery('#primary-query-input').val('');">&times;</a>
 
                     <div class="btn-group search-box-buttons">
@@ -323,7 +323,7 @@ function toggleLocalStorage(field) {
 jQuery(document).ready(function () {
 
     if (!${numFound}) {
-        ga('send', 'event', 'Search', 'Zero Results', '${q}', {'nonInteraction': 1});
+        ga('send', 'event', 'Search', 'Zero Results', "<c:out value="${q}" escapeXml="true"/>", {'nonInteraction': 1});
     }
 
     // add GA click handlers for sort options
@@ -355,7 +355,7 @@ jQuery(document).ready(function () {
     jQuery(".modal").on("show",function () {
         jQuery("body").addClass("modal-open");
     }).on("hidden", function () {
-        jQuery("body").removeClass("modal-open")
+        jQuery("body").removeClass("modal-open");
         jQuery('.modal-backdrop').remove();
     });
 
