@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions
 
-SUBDIRS = SPL zextend
+SUBDIRS = SPL
 
 
 # ---------------  Production Rules  ------------------------------------
