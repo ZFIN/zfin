@@ -25,7 +25,7 @@
 <!--|GBROWSE_IMG_PATH_FROM_ROOT|-->	gb2/gbrowse_img/zfin_ensembl/
 <!--|GBROWSE_PATH_FROM_ROOT|-->	gb2/gbrowse/zfin_ensembl/
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@zfin.org
-<!--|GOOGLE_ANALYTICS_ID|-->	0
+<!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-1
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@cs.uoregon.edu staylor\@cs.uoregon.edu xshao\@cs.uoregon.edu
 <!--|GO_EMAIL_ERR|-->	staylor\@cs.uoregon.edu xshao\@cs.uoregon.edu dhowe\@cs.uoregon.edu
 <!--|HAS_PARTNER|-->	false
