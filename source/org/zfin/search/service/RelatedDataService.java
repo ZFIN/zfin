@@ -46,7 +46,7 @@ public class RelatedDataService {
     private String[] antibodyRelatedDataCategories = {EXPRESSION, Category.PUBLICATION.getName()};
     private String[] anatomyGoRelatedDataCategories = {GENES_WITH_GO, GENES_CAUSING_PHENOTYPE, GENES_EXPRESSED};
     private String[] geneRelatedDataCategories = {EXPRESSION, PHENOTYPE, Category.MUTANT.getName(), SEQUENCES, GENOME_BROWSER, ORTHOLOGY, Category.PUBLICATION.getName()};
-
+    private String[] pubRelatedDataCategories = {Category.GENE.getName(), EXPRESSION,PHENOTYPE, Category.MUTANT.getName(), Category.CONSTRUCT.getName(),Category.SEQUENCE_TARGETING_REAGENT.getName(),Category.ANTIBODY.getName()};
     public static final String GENES_WITH_GO = "Genes Annotated with this GO Term";
     public static final String GENES_CAUSING_PHENOTYPE = "Genes Causing Phenotype";
     public static final String GENES_EXPRESSED = "Genes Expressed in this Structure";
@@ -136,6 +136,8 @@ public class RelatedDataService {
             links = sortLinks(links, geneRelatedDataCategories);
         if (StringUtils.equals(category, Category.ANTIBODY.getName()))
             links = sortLinks(links, antibodyRelatedDataCategories);
+        if (StringUtils.equals(category, Category.PUBLICATION.getName()))
+             links = sortLinks(links, pubRelatedDataCategories);
         if (StringUtils.equals(category, Category.ANATOMY.getName())) {
             getRelatedDataForAnatomyGO(links, id);
             links = sortLinks(links, anatomyGoRelatedDataCategories);
