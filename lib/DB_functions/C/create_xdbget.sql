@@ -5,7 +5,7 @@ create function xdbget(
 	accession varchar(50)
 )	returning lvarchar
   with (class = 'UDR')
-  external name "<!--|ROOT_PATH|-->/lib/DB_functions/xdbget.so"
+  external name "/private/lib/c_functions/xdbget.so"
   language c
   end function;
 

@@ -5,7 +5,7 @@ create function xdbput(
 	accession varchar(50)
 )	returning lvarchar
   with (class = 'UGP')
-  external name "<!--|ROOT_PATH|-->/lib/DB_functions/xdbput.so"
+  external name "/private/lib/c_functions/xdbput.so"
   language c
   end function;
 
