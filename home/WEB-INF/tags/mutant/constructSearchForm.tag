@@ -257,7 +257,14 @@ jQuery(document).ready(function () {
         submitForm(1)
     });
     jQuery('#searchTerm').attr('placeholder','heart, kidney, otic vesicle');
-    jQuery('#max-display-records-top, #max-display-records-bottom').val(jQuery('#max-display-records-hidden').val());
+
+    // set the results per page pulldowns on top and bottom, but don't do it if the value is empty because
+    // that result in no option being selected at all (i.e. selectedIndex == -1)
+    var maxResults = jQuery('#max-display-records-hidden').val();
+    if (maxResults) {
+        jQuery('.max-results').val(maxResults);
+    }
+
     decorateTermList();
     setTimeout(function () {
         jQuery('#searchTerm').attr('placeholder','heart, kidney, otic vesicle');

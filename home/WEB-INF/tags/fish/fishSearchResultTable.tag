@@ -21,32 +21,15 @@
         Sort by
         <label for="sort-by-pulldown">
             <select name="sortByPulldown" id="sort-by-pulldown">
-                <option value="<%= SortBy.BEST_MATCH %>" id="sort-by-best-match">Fish (Best Match)
-                </option>
-                <option value="<%= SortBy.GENES %>" id="sort-by-genes">Affected Gene
-                </option>
-                <%--
-                        <option value="<%= SortBy.GENES_REVERSE %>" id="sort-by-genes-reverse"
-                                onclick="setSortingOption('<%= SortBy.GENES_REVERSE %>');">Affected Genes (Reversed)
-                        </option>
-                --%>
-                <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/Reagent
-                </option>
-                <%--
-                        <option value="<%= SortBy.FEATURES_REVERSE %>" id="sort-by-features-reverse"
-                                onclick="setSortingOption('<%= SortBy.FEATURES_REVERSE %>');">Genomic Features (Reversed)
-                        </option>
-                --%>
+                <option value="<%= SortBy.BEST_MATCH %>" id="sort-by-best-match">Fish (Best Match)</option>
+                <option value="<%= SortBy.GENES %>" id="sort-by-genes">Affected Gene</option>
+                <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/Reagent</option>
             </select>
         </label>
     </div>
 
     <div style="float:right ; margin-top: 2px;">
-<%--
-        <form:select path="maxDisplayRecords" items="${formBean.recordsPerPageList}"
-                     onchange="submitFishSearchWithNumOfRecords(50);return true;"></form:select>
---%>
-        <select name="maxDisplayRecordsTop" id="max-display-records-top" >
+        <select name="maxDisplayRecordsTop" id="max-display-records-top" class="max-results">
             <c:forEach items="${formBean.recordsPerPageList}" var="option">
                 <option>${option}</option>
             </c:forEach>
@@ -54,54 +37,6 @@
         <label for="max-display-records-top">results per page</label>
 
     </div>
-
-
-    <script>
-
-        jQuery('#max-display-records-top').val(${formBean.maxDisplayRecords});
-        jQuery('#max-display-records-bottom').val(${formBean.maxDisplayRecords});
-
-        function setMaxDisplayRecords(value) {
-            jQuery('#max-display-records-hidden').val(value);
-            jQuery('#max-display-records-hidden').change();
-        }
-
-        jQuery('#max-display-records-top').change(function () {
-            setMaxDisplayRecords(jQuery('#max-display-records-top option:selected').val());
-        });
-
-        jQuery('#sort-by-pulldown').change(function () {
-            setSortingOption(jQuery('#sort-by-pulldown option:selected').attr('value'))
-        });
-
-    </script>
-
-    <script language="JavaScript">
-        function setSortingOption(value) {
-            document.getElementById("sort-by").value = value;
-            submitForm(1);
-
-        }
-        function setSortingPulldown(value) {
-            jQuery('#sort-by-pulldown option[value="' + value + '"]').attr('selected', 'selected');
-        }
-
-        function showAll() {
-            jQuery('.showAll').each(function () {
-                jQuery(this).click();
-            });
-            jQuery('#showAllLink').hide();
-            jQuery('#hideAllLink').show();
-        }
-
-        function hideAll() {
-            jQuery('.hideAll').each(function () {
-                jQuery(this).click();
-            });
-            jQuery('#showAllLink').show();
-            jQuery('#hideAllLink').hide();
-        }
-    </script>
 
     <zfin2:pagination paginationBean="${formBean}"/>
 </div>
@@ -174,10 +109,10 @@
         <th></th>
         <th width="18%">
             <div id="showAllLink" style="float: right; font-size:small; font-weight:normal;">
-                <a href="javascript:showAll();">All Matching Details</a>
+                <a href="#">All Matching Details</a>
             </div>
             <div id="hideAllLink" style="float: right; display: none;font-size:small; font-weight:normal;">
-                <a href="javascript:hideAll();">Hide Matching Details</a>
+                <a href="#">Hide Matching Details</a>
             </div>
         </th>
     </tr>
@@ -291,7 +226,7 @@
 <input name="page" type="hidden" value="1" id="page"/>
 
 <div style="float:right ; margin-top: 2px;">
-    <select name="maxDisplayRecordsBottom" id="max-display-records-bottom">
+    <select name="maxDisplayRecordsBottom" id="max-display-records-bottom" class="max-results">
         <c:forEach items="${formBean.recordsPerPageList}" var="option">
             <option>${option}</option>
         </c:forEach>
@@ -304,8 +239,34 @@
 
 
 <script type="text/javascript">
-    jQuery('#max-display-records-bottom').change(function () {
-        setMaxDisplayRecords(jQuery('#max-display-records-bottom option:selected').val());
+
+    jQuery('#showAllLink').click( function(evt) {
+        evt.preventDefault();
+        jQuery('.showAll').each(function () {
+            jQuery(this).click();
+        });
+        jQuery('#showAllLink').hide();
+        jQuery('#hideAllLink').show();
+    });
+
+    jQuery('#hideAllLink').click( function(evt) {
+        evt.preventDefault();
+        jQuery('.hideAll').each(function () {
+            jQuery(this).click();
+        });
+        jQuery('#showAllLink').show();
+        jQuery('#hideAllLink').hide();
+    });
+
+    jQuery('.max-results').change(function () {
+        var $maxDisplayHidden = jQuery('#max-display-records-hidden');
+        $maxDisplayHidden.val(jQuery(this).val());
+        $maxDisplayHidden.change();
+    });
+
+    jQuery('#sort-by-pulldown').change(function () {
+        jQuery("#sort-by").val((jQuery(this).val()));
+        submitForm(1);
     });
 
 </script>

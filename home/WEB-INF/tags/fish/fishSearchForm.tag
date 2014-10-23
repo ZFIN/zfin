@@ -193,8 +193,13 @@
         });
         jQuery('input[name=filter1]:checked + label').addClass('selected-radio-label');
 
-        //set the results per page pulldowns on top and bottom
-        jQuery('#max-display-records-top, #max-display-records-bottom').val(jQuery('#max-display-records-hidden').val());
+        // set the results per page pulldowns on top and bottom, but don't do it if the value is empty because
+        // that result in no option being selected at all (i.e. selectedIndex == -1)
+        var maxResults = jQuery('#max-display-records-hidden').val();
+        if (maxResults) {
+            jQuery('.max-results').val(maxResults);
+        }
+
         jQuery('#searchTerm').attr('placeholder','kidney, mitosis, nucleus');
         //handle display details of the term list
         //this is hacky - delay a tad so that it'll be after GWT has loaded.  yuck.
@@ -324,22 +329,3 @@
 
 <div id="fish-search-results"/>
 
-<%--
-<script type="text/javascript">
-    function submitFishSearchWithNumOfRecordsTop(id) {
-        document.getElementById("max-display-records-hidden").value = jQuery('#' + id).val();
-        var params = jQuery("#fish-search-form").serialize();
-
-        jQuery('#fish-search-results').load('/action/fish/do-search?' + params);
-    }
-    function submitFishSearchByPage(page) {
-        document.getElementById("page").value = page;
-        var params = jQuery("#fish-search-form").serialize();
-        //alert('j: ' + params);
-        jQuery('#fish-search-results').load('/action/fish/do-search?' + params);
-    }
-
-
-
-</script>
---%>
