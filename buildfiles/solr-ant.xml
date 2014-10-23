@@ -46,6 +46,12 @@
     <target name="build-solr-index-jenkins">
         <antcall target="build-solr-index"/>
         <antcall target="check-indexer"/>
+        <if>
+            <equals arg1="${SOLR_CREATE_BACKUPS}" arg2="true"/>
+            <then>
+                <antcall target="backup-solr-core"/>
+            </then>
+        </if>
     </target>
 
 
@@ -125,7 +131,8 @@
                 <include name="**"/>
             </fileset>
         </copy>
-
+        <echo message="Moving db-data-config.xml aside, contains site-specific jdbc connect info"/>
+        <move file="${this.backup.dir}/conf/db-data-config.xml" tofile="${this.backup.dir}/conf/archived-db-data-config.xml"/>
     </target>
 
     <target name="restore-solr-core">
@@ -141,6 +148,14 @@
                 <include name="**"/>
             </fileset>
         </copy>
+        <echo message="Copying correct db-data-config.xml into place, it may not match your data, but allows for indexing after doing a restore"/>
+        <copy todir="${env.SOLR_HOME}/prototype/conf/" overwrite="false">
+            <fileset dir="server_apps/solr/prototype/conf/">
+                <include name="db-data-config.xml"/>
+            </fileset>
+            <filterset refid="allfilters"/>
+        </copy>
+
         <antcall target="start-solr"/>
     </target>
 

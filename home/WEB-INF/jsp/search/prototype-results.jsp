@@ -102,15 +102,10 @@
 
                             <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                                 &nbsp;<img src="/images/help.gif"/>&nbsp;</a>
-                        <a class="btn  feedback-link" href="#"
+                        <a class="btn feedback-link " href="#"
                            onclick="jQuery('.feedback-box').slideToggle(50);">
                             Feedback</a>
 
-                        <div id="helpContent" class="modal fade" style="max-width: 800px; width: 800px">
-                            <div class="modal-body" style="max-width: 780px; width: 780px;">
-                                <!-- remote content will be inserted here via jQuery load() -->
-                            </div>
-                        </div>
                     </div>
                 </div>
 
