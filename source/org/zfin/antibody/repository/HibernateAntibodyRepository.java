@@ -408,9 +408,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
             if (hasOneWhereClause)
                 hql.append(" AND ");
-            hql.append("    rel.secondMarker = antibody AND ");
-            hql.append("   (mapGene.marker =  rel.firstMarker AND mapGene.nameLowerCase like :markerName ) " +
-                    "       AND mapGene.precedence in (:genePrecedence) )");
+            hql.append("    rel.secondMarker = antibody ");
+            hql.append("    AND mapGene.marker =  rel.firstMarker ");
+            hql.append("    AND mapGene.nameLowerCase like :markerName ");
+            hql.append("    AND mapGene.precedence in (:genePrecedence) ");
             hasOneWhereClause = true;
         }
         if (searchCriteria.isAssaySearch()) {
