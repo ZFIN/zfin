@@ -10,6 +10,7 @@
 <script type="text/javascript" src="/css/bootstrap/js/bootstrap.js"></script>
 
 
+
 <script src="/javascript/purl.js"></script>
 <script src="/javascript/jquery.validate.min.js"></script>
 
@@ -297,6 +298,7 @@
 <script>
 
 function resetYourInputWelcome() {
+
     jQuery(".your-input-welcome-form input[type=text]").val('');
     jQuery(".your-input-welcome-form textarea").val('');
 }
@@ -316,6 +318,7 @@ function toggleLocalStorage(field) {
 }
 
 jQuery(document).ready(function () {
+
 
     if (!${numFound}) {
         ga('send', 'event', 'Search', 'Zero Results', "<c:out value="${q}" escapeXml="true"/>", {'nonInteraction': 1});
@@ -367,13 +370,16 @@ jQuery(document).ready(function () {
 
 
     jQuery('#feedback-form').validate({
+
         submitHandler: function (form) {
-            jQuery.post('/cgi-bin/input_welcome_generic.cgi',
+
+            jQuery.post('/action/user-comment',
                             jQuery('.your-input-welcome-form').serialize())
                     .done(function () {
 
                         jQuery('.secondary-action-box').hide();
                         jQuery('#feedback-thanks-message').show();
+
                         resetYourInputWelcome();
 
                     })

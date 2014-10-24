@@ -1,38 +1,40 @@
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+
 <div class="span8 offset2 secondary-action-box feedback-box well" style="display: none;">
-    <%-- I'm sure the relative positioning I'm doing here is a side effect of something else dumb I've done... --%>
+    <%--&lt;%&ndash; I'm sure the relative positioning I'm doing here is a side effect of something else dumb I've done... &ndash;%&gt;--%>
     <a href="#" class="close" data-dismiss="alert" style="position:relative; top: -3px; left:0px">&times;</a>
 
     <div>
 
         <form class="your-input-welcome-form" NAME="your-input-welcome" id="feedback-form"
               METHOD="post"
-              ACTION="/cgi-bin/input_welcome_generic.cgi">
+              ACTION="/action/user-comment">
 
 
             <div class="your-input-requied-box">
 
 
                 <div>
-                    <input NAME="firstname" type="text" class="input-large required" placeholder="First Name"/>
-                    <input NAME="lastname" type="text" class="input-large required" placeholder="Last Name"/>
-                    <input NAME="institution" type="text" class="input-xxlarge required" placeholder="Institution"/>
-                    <input id="feedback-email-input" class="input-xxlarge required email" type="text" name="email"
+                    <input NAME="yiw-name" type="text" class="input-large required" placeholder="Name" SIZE=45/>
+                   
+                    <input NAME="yiw-institution" type="text" class="input-xxlarge required" placeholder="Institution"/>
+                    <input id="feedback-email-input" class="input-xxlarge required email" type="text" name="yiw-email"
                            placeholder="Email Address">
-
+                    <input type="hidden" id="input-welcome-email2" name="email" autocomplete="off"/>
                 </div>
+
                 <div>
 
-                    <INPUT class="input-xxlarge required" TYPE=text NAME="subject" SIZE=45 placeholder="Subject">
+                    <INPUT class="input-xxlarge required" TYPE=text NAME="yiw-subject" SIZE=45 placeholder="Subject">
                     <input TYPE=hidden NAME="page_name"
                            VALUE="http://<%=ZfinPropertiesEnum.INSTANCE%>.zfin.org${baseUrl}">
                 </div>
                 <div>
 
-                    <TEXTAREA class="input-xxlarge required" NAME="comments"
-                              ROWS=7 <%--placeholder="Wow, great work!"--%>></TEXTAREA>
+                    <TEXTAREA class="input-xxlarge required" NAME="yiw-comments"
+                              ROWS=7 &lt;placeholder="Wow, great work!"&gt;></TEXTAREA>
                 </div>
 
 
@@ -40,7 +42,7 @@
             <div>
                 <input type="submit" value="Send" class="btn btn-primary" id="feedback-send-button"/>
                 <button class="btn" onclick="jQuery('.secondary-action-box').hide();" aria-hidden="true">Close</button>
-                <span style="padding-left: 3.5em;">send screenshots to <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a></span>
+                <span style="padding-left: 3.5em;">Screenshots can be sent to <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a></span>
 
             </div>
 
