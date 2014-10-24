@@ -8,13 +8,13 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is used to create a URL by adding request parameters
- * (name-value pairs). I tuses URLEncoder to ensure proper
+ * (name-value pairs). It uses URLEncoder to ensure proper
  * encoding.
  */
 public class URLCreator {
@@ -30,8 +30,9 @@ public class URLCreator {
     private static final Log LOG = LogFactory.getLog(URLCreator.class);
 
     public URLCreator(String url) {
-        if (url == null)
+        if (url == null) {
             throw new NullPointerException("No URL provided in constructor");
+        }
         this.url.append(url);
         createMapFromUrl();
     }
@@ -46,8 +47,9 @@ public class URLCreator {
      */
     public boolean addNamevaluePair(String name, String value) {
         NameValuePair nameValuePair = new BasicNameValuePair(name, value);
-        if (!nameValuePairs.contains(nameValuePair))
+        if (!nameValuePairs.contains(nameValuePair)) {
             nameValuePairs.add(nameValuePair);
+        }
         return true;
     }
 
@@ -59,10 +61,11 @@ public class URLCreator {
      * @return full url or query string
      */
     public String getFullURLPlusSeparator() {
-        if (nameValuePairs != null && nameValuePairs.size() >= 1)
+        if (nameValuePairs != null && nameValuePairs.size() >= 1) {
             return getURL() + AMPERSAND;
-        else
+        } else {
             return getURL() + QUESTION_MARK;
+        }
     }
 
     /**
@@ -75,10 +78,11 @@ public class URLCreator {
     public String getURL() {
         String queryString = URLEncodedUtils.format(nameValuePairs, HTTP.UTF_8);
 
-        if (StringUtils.isEmpty(queryString))
+        if (StringUtils.isEmpty(queryString)) {
             return urlWithoutParameters;
-        else
+        } else {
             return urlWithoutParameters + QUESTION_MARK + URLEncodedUtils.format(nameValuePairs, HTTP.UTF_8);
+        }
 
 
     }
@@ -94,8 +98,9 @@ public class URLCreator {
      * @return return true if parameter was found
      */
     public boolean removeNameValuePair(String name) {
-        if (StringUtils.isEmpty(name))
+        if (StringUtils.isEmpty(name)) {
             return true;
+        }
 
         for (NameValuePair nameValuePair : nameValuePairs) {
             if (StringUtils.equals(name, nameValuePair.getName())) {
@@ -112,8 +117,9 @@ public class URLCreator {
     }
 
     public boolean removeNameValuePair(NameValuePair pairToRemove) {
-        if (pairToRemove == null)
+        if (pairToRemove == null) {
             return false;
+        }
 
         for (NameValuePair nameValuePair : nameValuePairs) {
             if (pairToRemove.equals(nameValuePair)) {
@@ -127,8 +133,9 @@ public class URLCreator {
     public List<NameValuePair> getNameValuePairs(String name) {
         List<NameValuePair> returnList = new ArrayList<NameValuePair>();
         for (NameValuePair nameValuePair : nameValuePairs) {
-            if (StringUtils.equals(nameValuePair.getName(), name))
+            if (StringUtils.equals(nameValuePair.getName(), name)) {
                 returnList.add(nameValuePair);
+            }
         }
         return returnList;
     }
@@ -142,27 +149,21 @@ public class URLCreator {
      */
     public String getFirstValue(String name) {
         for (NameValuePair nameValuePair : nameValuePairs) {
-            if (StringUtils.equals(nameValuePair.getName(), name))
+            if (StringUtils.equals(nameValuePair.getName(), name)) {
                 return nameValuePair.getValue();
+            }
         }
         return null;
     }
 
 
     private void createMapFromUrl() {
-        StringTokenizer tokenizerQueryString = new StringTokenizer(url.toString(), QUESTION_MARK);
-        if (!tokenizerQueryString.hasMoreElements()) {
+        String[] tokens = StringUtils.split(url.toString(), QUESTION_MARK, 2);
+        if (tokens.length == 2) {
+            urlWithoutParameters = tokens[0];
+            nameValuePairs.addAll(URLEncodedUtils.parse(tokens[1], Charset.forName("UTF-8")));
+        } else {
             urlWithoutParameters = url.toString();
-            return;
         }
-        urlWithoutParameters = tokenizerQueryString.nextToken();
-
-
-        try {
-            nameValuePairs.addAll(URLEncodedUtils.parse(new URI(this.url.toString()), HTTP.UTF_8));
-        } catch (URISyntaxException e) {
-            LOG.error(e);
-        }
-
     }
 }

@@ -9,8 +9,10 @@ import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Test class for anatomy search results.
@@ -173,8 +175,22 @@ public class UrlCreatorTest {
 
     }
 
+    @Test
+    public void parseParameterWithPipeCharacter() {
+        // the | character used in some urls can be problematic with some URL-handling classes
+        String url = "http://zfin.org/do-something?a=1&b=2|3&c=4";
+        URLCreator urlCreator = new URLCreator(url);
+        assertThat(urlCreator.getFirstValue("a"), is("1"));
+        assertThat(urlCreator.getFirstValue("b"), is("2|3"));
+        assertThat(urlCreator.getFirstValue("c"), is("4"));
+    }
 
-
-
+    @Test
+    public void addParameterWithPipeCharacter() {
+        String url = "http://zfin.org/do-something?a=1";
+        URLCreator urlCreator = new URLCreator(url);
+        urlCreator.addNamevaluePair("b", "lorem|ipsum");
+        assertThat(urlCreator.getURL(), is(url + "&b=lorem%7Cipsum"));
+    }
 
 }
