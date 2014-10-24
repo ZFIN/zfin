@@ -54,6 +54,9 @@ if ('@GOOGLE_ANALYTICS_ID@' != '0') {
     ga('create', '@GOOGLE_ANALYTICS_ID@', 'auto');
     ga('send', 'pageview');
 }
+else{
+    window.ga = window.ga || function () {};
+}
 <!-- End GOOGLE Analytics -->
 
  function randomUniqueID(prefix) {
