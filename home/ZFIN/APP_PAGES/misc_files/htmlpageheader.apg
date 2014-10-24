@@ -302,6 +302,9 @@ function hdrSetTabs() {
         ga('create', '<!--|GOOGLE_ANALYTICS_ID|-->', 'auto');
         ga('send', 'pageview');
     }
+    else{
+        window.ga = window.ga || function () {};
+    }
 </script>
 
 
