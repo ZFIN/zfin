@@ -185,7 +185,7 @@ public class SolrService {
         //loop, even though only one is expected back
         for (FacetField.Count count : response.getFacetField("category").getValues()) {
             link.append(getSearchLinkPrefix());
-            link.append("fq=category:Expression");
+            link.append("?fq=category:Expression");
             link.append("&fq=zebrafish_gene%3A%22");
             link.append(geneSymbol);
             link.append("%22");
@@ -238,7 +238,7 @@ public class SolrService {
 
             StringBuilder link = new StringBuilder();
             link.append(getSearchLinkPrefix());
-            link.append("fq=category:Expression");
+            link.append("?fq=category:Expression");
             link.append("&fq=zebrafish_gene:");
             link.append(geneSymbol);
 
@@ -287,7 +287,7 @@ public class SolrService {
         for (FacetField.Count count : response.getFacetField("category").getValues()) {
             link.append(getSearchLinkPrefix());
 
-            link.append("fq=category:Expression");
+            link.append("?fq=category:Expression");
 
             link.append("&fq=zebrafish_gene%3A%22");
             link.append(geneSymbol);
@@ -319,7 +319,7 @@ public class SolrService {
         for (FacetField.Count entry : phenotypeStatementList) {
             StringBuilder link = new StringBuilder();
             link.append(getSearchLinkPrefix());
-            link.append("fq=category:Phenotype");
+            link.append("?fq=category:Phenotype");
             link.append("&fq=gene%3A%22");
             link.append(geneSymbol);
             link.append("%22");
@@ -702,7 +702,7 @@ public class SolrService {
         QueryResponse response = getGenePhenotypeQuery(geneSymbol, isMonogenic);
         StringBuilder link = new StringBuilder();
         link.append(getSearchLinkPrefix());
-        link.append("fq=category:Phenotype");
+        link.append("?fq=category:Phenotype");
         link.append("&fq=gene%3A%22");
         link.append(geneSymbol);
         link.append("%22");

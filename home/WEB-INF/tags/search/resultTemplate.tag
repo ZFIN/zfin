@@ -65,12 +65,6 @@
             </tr>
         </table>
 
-
-
-            <div class="pull-left result-attributes-container">
-
-            </div>
-
         <jsp:doBody/>
     </div>
 
