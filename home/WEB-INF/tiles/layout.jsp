@@ -30,6 +30,8 @@
         <tiles:getAsString ignore="true" name="staticTitle"/> ${dynamicTitle}
     </title>
 
+    <%-- todo: replace these with a local file?--%>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="/css/zfin.css">
     <link rel="stylesheet" type="text/css" href="/css/header.css">
@@ -49,9 +51,6 @@
     <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
     <script type="text/javascript" src="/javascript/sorttable.js"></script>
-
-    <%-- todo: replace these with a local file?--%>
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
     <script src="/javascript/jquery-ui-1.10.4.custom.js"></script>
     <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">

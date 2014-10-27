@@ -101,8 +101,9 @@
 
                         <a class="btn" href="/search?q=" onclick="localStorage.clear();">New</a>
 
-                            <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
-                                &nbsp;<img src="/images/help.gif"/>&nbsp;</a>
+                        <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
+                            <i class="fa fa-question-circle"></i>
+                        </a>
                         <a class="btn feedback-link " href="#"
                            onclick="jQuery('.feedback-box').slideToggle(50);">
                             Feedback</a>

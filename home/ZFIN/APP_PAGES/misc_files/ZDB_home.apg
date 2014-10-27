@@ -44,58 +44,56 @@
 
   <table id="zdbhome-container-inner">
    <tr>
-      <td colspan="2" style="background-color: #ECF1EC; border-bottom: 1px solid #a0afa0;"> <!-- color was #A8ADA8 -->
-        <div style="padding-left: 40px;">
-            <form method="GET" action="/search" name="search" accept-charset="utf-8">
-              <label for="search-query-input" style="font-weight: bold; opacity: 0.6" >Search ZFIN</label><img src="/images/new1.gif" />
+      <td colspan="2" id="zdbhome-search">
+        <div class="centered">
+          <form method="GET" action="/search" name="search" accept-charset="utf-8">
+            <label for="search-query-input">Search ZFIN</label><img src="/images/new1.gif" />
+            <input class="search-form-input input"
+                   placeholder="bmp2a, hindbrain development disrupted, pax morpholino"
+                   name="q" id="search-query-input" autocomplete="off" type="text"/>
+            <button type="submit"">Go</button>
+            <a href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
+                <i class="fa fa-question-circle fa-lg"></i>
+            </a>
+          </form>
+          <script>
 
-              <input class="search-form-input input"
-                     style="margin-left: 5px; line-height: 20px; width: 400px; padding: 2px"
-                     placeholder="bmp2a, hindbrain development disrupted, pax morpholino"
-                     name="q" id="search-query-input" autocomplete="off" type="text"/>
-              <button type="submit"">Go</button>
-                    <a href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow"><img src="/images/help.gif"/></a>
+                  jQuery(document).ready(function() {
+                    var autocompleteXhr = null;
+                    jQuery('#search-query-input').autocomplete({
+                        source: function(request, response) {
+                            if(autocompleteXhr && autocompleteXhr.readyState != 4) {
+                                        autocompleteXhr.abort();
+                            }
+                            autocompleteXhr = jQuery.ajax({
+                              url: '/action/quicksearch/autocomplete',
+                              dataType: "json",
+                              data: {
+                                q : request.term
+                              },
+                              success: function(data) {
+                                response(data);
+                              }
+                            });
+                        },
+                        select: function(event, ui) {
+                            var val = ui.item.value;
+                            jQuery('#search-query-input').val(val);
+                            var form = jQuery(this).parents('form:first');
+                            jQuery(form).submit();
 
-            </form>
-                  <script>
-
-                          jQuery(document).ready(function() {
-                            var autocompleteXhr = null;
-                            jQuery('#search-query-input').autocomplete({
-                                        source: function(request, response) {
-                                            /* http://stackoverflow.com/questions/4551175/how-to-cancel-abort-jquery-ajax-request */
-                                            if(autocompleteXhr && autocompleteXhr.readyState != 4) {
-                                                        autocompleteXhr.abort();
-                                            }
-                                            autocompleteXhr = jQuery.ajax({
-                                              url: '/action/quicksearch/autocomplete',
-                                              dataType: "json",
-                                              data: {
-                                                q : request.term
-                                              },
-                                              success: function(data) {
-                                                response(data);
-                                              }
-                                            });
-                                        },
-                                        select: function(event, ui) {
-                                            var val = ui.item.value;
-                                            jQuery('#search-query-input').val(val);
-                                            var form = jQuery(this).parents('form:first');
-                                            jQuery(form).submit();
-
-                                        },
-                                        minLength: 1, delay: 50,
-                                        open: function(event, ui){
-                                            jQuery("ul.ui-autocomplete li a").each(function(){
-                                            var htmlString = jQuery(this).html().replace(/&lt;/g, '<');
-                                            htmlString = htmlString.replace(/&gt;/g, '>');
-                                            jQuery(this).html(htmlString);
-                                        });
-                                     }
-                            }, {});
-                          });
-                  </script>
+                        },
+                        minLength: 1, delay: 50,
+                        open: function(event, ui){
+                            jQuery("ul.ui-autocomplete li a").each(function(){
+                            var htmlString = jQuery(this).html().replace(/&lt;/g, '<');
+                            htmlString = htmlString.replace(/&gt;/g, '>');
+                            jQuery(this).html(htmlString);
+                        });
+                     }
+                    }, {});
+                  });
+          </script>
         </div>
       </td>
    </tr>

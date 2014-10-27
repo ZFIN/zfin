@@ -17,6 +17,8 @@ INPUT VARS:
 <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">
 <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
 
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
 <link rel="stylesheet" type="text/css" href="/css/zfin.css">
 <link rel="stylesheet" type="text/css" href="/css/header.css">
 <link rel="stylesheet" type="text/css" href="/css/footer.css">

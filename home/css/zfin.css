@@ -657,3 +657,7 @@ label.curation-form-label { font-weight: bold; }
 .pub-abstract-section-label::after {
     content: ':';
 }
+
+.fa {
+    line-height: inherit;
+}

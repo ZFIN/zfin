@@ -118,7 +118,30 @@
    padding-left: .5em;
 }
 
+#zdbhome-search {
+    background-color: #ECF1EC;
+    border-bottom: 1px solid #a0afa0;
+}
 
+#zdbhome-search .fa-question-circle {
+    color: #006666;
+}
+
+#zdbhome-search label {
+    font-weight: bold;
+    opacity: 0.6;
+}
+
+.search-form-input {
+    margin-left: 5px;
+    height: 20px;
+    width: 400px;
+    padding: 2px;
+}
+
+.centered {
+    text-align: center;
+}
 
 /*** end primary ***/
 
