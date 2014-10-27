@@ -44,9 +44,9 @@ function ImageBox() {
 
     this.generateImageAnchor = function(image) {
         var anchor = document.createElement('a');
-        anchor.hoverHref = this.POPUP_URL + image.imgZdbId + "?imgpop_displayed_width=670";
+        anchor.href = this.POPUP_URL + image.imgZdbId + "?imgpop_displayed_width=670";
         anchor.id = image.imgZdbId;
-        anchor.href=this.IMG_PAGE_URL + image.imgZdbId;
+
         var img = document.createElement('img');
         img.src = this.IMG_URL + image.imgThumb;
         img.className = "xpresimg_img";
@@ -157,19 +157,8 @@ function ImageBox() {
         //j is a position counter within the 10 being displayed
         var j = 0;
         for(var i = this.firstVisibleImage ; i <= this.getLastVisibleImageIndex() ; i++) {
-            var wrapper = document.createElement('span');
-            wrapper.className = "imagebox-image-wrapper";
-
-
             anchor = this.generateImageAnchor(this.images[i]);
-            wrapper.appendChild(anchor);
-
-            var popupDiv = document.createElement('div');
-            popupDiv.className = "imagebox-popup";
-            wrapper.appendChild(popupDiv);
-
-            this.imageDiv.appendChild(wrapper);
-
+            this.imageDiv.appendChild(anchor);
             var popup_width = 550;
 
             //for images on the right, we have to push the popup to the left
@@ -183,49 +172,16 @@ function ImageBox() {
                 var myOffsetLeft = -1 * j/this.MAX_VISIBLE * popup_width;
             } else { var myOffsetLeft = 0; }
 
-            myOffsetTop = 45;
-
-            jQuery(anchor).hover(
-                function() {
-                    jQuery('.imagebox-popup').hide();
-                    var $popupDiv = jQuery(jQuery(this).siblings('.imagebox-popup'));
-                    console.log(this.hoverHref);
-                    //if ($popupDiv.html == '') {
-                        $popupDiv.load(this.hoverHref);
-                    //}
-
-                    $popupDiv.fadeIn(50);
-
-                },
-                function() {
-                    document.popupTimeout = setTimeout(function() {
-                        jQuery(this).siblings('.imagebox-popup').fadeOut(50);
-                    } , 500);
-
-                }
-            );
-
-            jQuery(popupDiv).hover(
-                function() { clearTimeout(document.popupTimeout);
-                             jQuery(this).show(); },
-                function() { jQuery(this).hide(); }
-            );
-
-            popupDiv.offsetTop = popupDiv.offsetTop - 20;
-            
-
-/*
-            jQuery().hover(
-                function() { jQuery(this).siblings('.imagebox-popup').show(); },
-                function() { jQuery(this).siblings('.imagebox-popup').hide(); }
-            );
-*/
-
-            //new Control.Modal(anchor, {opacity: 0.7, hover: true, position: 'relative', offsetTop: myOffsetTop, offsetLeft: myOffsetLeft , width: popup_width, height: 600});
+            myOffsetTop = 0;
+            if (Prototype.Browser.IE) {
+                myOffsetTop = 45;
+                popup_width = popup_width + 15;
+            }
+            new Control.Modal(anchor, {opacity: 0.7, hover: true, position: 'relative', offsetTop: myOffsetTop, offsetLeft: myOffsetLeft , width: popup_width, height: 600});
 
             //this is sneaky - after Control.modal uses the initial href value to generate the hover popup,
             //once the Control.modal object exists, I can set it to where I want a click action to go
-            //anchor.href=this.IMG_PAGE_URL + this.images[i].imgZdbId;
+            anchor.href=this.IMG_PAGE_URL + this.images[i].imgZdbId;
 
             j++;
         }

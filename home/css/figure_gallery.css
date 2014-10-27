@@ -21,17 +21,6 @@
        font-size: .7em;
    }
 
-.imagebox-popup {
-    display: none;
-    position: absolute;
-    left: 200px;
-    background-color: white;
-    border: 1px solid #666;
-    height: 500px;
-    width: 550px;
-    z-index: 2000;
-}
-
 #figpop_top {
        color: #333;
        padding: .5em;
@@ -63,9 +52,7 @@
  display: none;
 }
   #xpresimg_box {
-      overflow: visible;
-/*    overflow-x: auto;
-    overflow-y:visible;*/
+    overflow: auto;
     white-space: nowrap;
     height: 88px;
  }
