@@ -17,7 +17,7 @@ OUTPUT:
 
 INCOMPLETE ...
 
-<?/MICOMMENT> 
+<?/MICOMMENT>
 
 
 <?MIERROR>
@@ -31,6 +31,18 @@ INCOMPLETE ...
 <?/MIERROR>
 <html>
   <head>
+
+
+<?MICOMMENT>
+   !!!!!!! URGENT FIX !!!!!!!!!!!!!!!
+
+   if anon1 is pub_abstract, just clear out anon1 and anon1text
+
+<?/MICOMMENT>
+
+<?MIBLOCK COND="$(AND,$(XST,$anon1),$(EC,$anon1,pub_abstract))">
+    <?MIVAR NAME="anon1">keywords<?/MIVAR>
+<?/MIBLOCK>
 
 
 <?MIVAR Name=page_name>ZFIN Publication $(IF,$(XST,$query_results),List,Select)<?/MIVAR>
@@ -64,7 +76,7 @@ INCOMPLETE ...
 <?MICOMMENT>
     =====================
     =    DATE VALUES    =
-    =====================    
+    =====================
 <?/MICOMMENT>
 
 <?MISQL SQL="SELECT DISTINCT MIN(pub_arrival_date) FROM publication;"><?/MISQL>
@@ -106,7 +118,7 @@ document.critform.titltype.selectedIndex = 0;
 document.critform.WINSIZE.value = 10;
 document.critform.START.value = "";
 if (user_access != 'root') {document.critform.anon1.selectedIndex = 0;}
-   else { 
+   else {
      document.critform.anon1.value = "zdb_id";
      document.critform.curator.value = "anyone";
      document.critform.cur_status.value = "Any";
@@ -134,7 +146,7 @@ function list_all(user_access) {
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-identify.apg';">$1<?/MISQL>
 
-<?MIBLOCK COND="$(NC,$ZDB_access,root)"> 
+<?MIBLOCK COND="$(NC,$ZDB_access,root)">
   <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>pub_abstract<?/MIVAR>
 <?MIELSE>
   <?MIVAR COND="$(NXST,$anon1)" NAME=$anon1>zdb_id<?/MIVAR>
@@ -158,28 +170,28 @@ function list_all(user_access) {
 
 <?MIBLOCK COND="$(XST,$clear_all)">
   <?MIVAR  NAME=constraint COND="$(NXST,$constraint)"><?/MIVAR>
-  <?MIVAR NAME=constraint>status = 'active'<?/MIVAR> 
-  <?MIVAR>  
+  <?MIVAR NAME=constraint>status = 'active'<?/MIVAR>
+  <?MIVAR>
     $(VECAPPEND,$constraint,"pub_jrnl_zdb_id = jrnl_zdb_id")
   <?/MIVAR>
-  
+
 <?MIELSE COND="$(XST,$pub_acc_constraint)">
-  <?MIVAR>  
+  <?MIVAR>
     $(VECAPPEND,$constraint,$pub_acc_constraint)
   <?/MIVAR>
- <?MIVAR>  
+ <?MIVAR>
     $(VECAPPEND,$constraint,"pub_jrnl_zdb_id = jrnl_zdb_id")
  <?/MIVAR>
 
-  
+
 <?MIELSE>
-     <?MIVAR>  
+     <?MIVAR>
     $(VECAPPEND,$constraint,"pub_jrnl_zdb_id = jrnl_zdb_id")
     <?/MIVAR>
 
   <?MIBLOCK COND="$(XST,$authors)">
     <!-- First filter authors for apostrophes! -->
-   
+
     <?MIVAR NAME=$authors DELIMIT="'" REPLACE="''">$authors<?/MIVAR>
 
     <?MIVAR NAME=$substrauthors>$(REPLACE,$authors," ",",")<?/MIVAR>
@@ -188,14 +200,14 @@ function list_all(user_access) {
     <?/MIVAR>
     <?MIVAR NAME=$commapos>$(POSITION,$substrauthors,",")<?/MIVAR>
     <?MIBLOCK WHILE=$commapos>
-        <?MIVAR>$(SETVAR,$substrauthors,$(SUBSTR,$substrauthors,$(+,$commapos,1)))<?/MIVAR> 
+        <?MIVAR>$(SETVAR,$substrauthors,$(SUBSTR,$substrauthors,$(+,$commapos,1)))<?/MIVAR>
 	<?MIVAR COND="$(NC,$(INDEX,0,$substrauthors),)">
 	  $(VECAPPEND,$constraint,"lower(authors) like '"$(IF,$(EC,$authtype,anyauth),%)$(LOWER,$(INDEX,0,$substrauthors))"%'")
-	<?/MIVAR> 
+	<?/MIVAR>
 
-	<?MIVAR>$(SETVAR,$commapos,$(POSITION,$substrauthors,","))<?/MIVAR> 
+	<?MIVAR>$(SETVAR,$commapos,$(POSITION,$substrauthors,","))<?/MIVAR>
 
-    <?/MIBLOCK>		
+    <?/MIBLOCK>
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(XST,$title)">
@@ -211,25 +223,25 @@ function list_all(user_access) {
         <?/MIVAR>
         <?MIVAR NAME=$commapos>$(POSITION,$substrtitle,",")<?/MIVAR>
         <?MIBLOCK WHILE=$commapos>
-          <?MIVAR>$(SETVAR,$substrtitle,$(SUBSTR,$substrtitle,$(+,$commapos,1)))<?/MIVAR> 
+          <?MIVAR>$(SETVAR,$substrtitle,$(SUBSTR,$substrtitle,$(+,$commapos,1)))<?/MIVAR>
 	  <?MIVAR COND="$(NC,$(INDEX,0,$substrtitle),)">
 	    $(VECAPPEND,$constraint,"lower(title) like '%"$(LOWER,$(INDEX,0,$substrtitle))"%'")
-	  <?/MIVAR> 
-	  <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substrtitle,","))<?/MIVAR> 
+	  <?/MIVAR>
+	  <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substrtitle,","))<?/MIVAR>
         <?/MIBLOCK>
-    <?/MIBLOCK> 		
+    <?/MIBLOCK>
   <?/MIBLOCK>
-  
+
   <!-- glue together the year clause if specified -->
   <?MIVAR COND="$(XST,$year)">
     $(VECAPPEND,$constraint,"year(pub_date) "$yr_cmpr" conc('"$century"','"$year"')")
   <?/MIVAR>
 
   <!-- NOW  DEAL WITH THE ADDITIONAL CRITERIA -->
-  
+
   <?MIBLOCK COND="$(XST,$anon1text)">
-     <?MICOMMENT>in case $anon1text is not explicitly set to be all one word and $anon1 is either pub_abstract or keywords, split out each word and implement an AND search. <?/MICOMMENT> 
-     <?MIBLOCK COND="$(AND,$(NOT,$anon1textAllOneWord),$(OR,$(EC,$anon1,pub_abstract), $(EC,$anon1,keywords)))">	
+     <?MICOMMENT>in case $anon1text is not explicitly set to be all one word and $anon1 is either pub_abstract or keywords, split out each word and implement an AND search. <?/MICOMMENT>
+     <?MIBLOCK COND="$(AND,$(NOT,$anon1textAllOneWord),$(OR,$(EC,$anon1,pub_abstract), $(EC,$anon1,keywords)))">
        <?MIVAR NAME=anon1text DELIMIT="'" REPLACE="''">$anon1text<?/MIVAR>
        <?MIVAR NAME=substranon1text>$(REPLACE,$anon1text," ",",")<?/MIVAR>
        <?MIVAR NAME=anon1textcontraint>lower($anon1) like '%$(LOWER,$(INDEX,0,$substranon1text))%'<?/MIVAR>
@@ -239,12 +251,12 @@ function list_all(user_access) {
        <?/MIVAR>
        <?MIVAR NAME=$commapos>$(POSITION,$substranon1text,",")<?/MIVAR>
        <?MIBLOCK WHILE=$commapos>
-          <?MIVAR>$(SETVAR,$substranon1text,$(SUBSTR,$substranon1text,$(+,$commapos,1)))<?/MIVAR> 
+          <?MIVAR>$(SETVAR,$substranon1text,$(SUBSTR,$substranon1text,$(+,$commapos,1)))<?/MIVAR>
 	      <?MIVAR COND="$(NC,$(INDEX,0,$substranon1text),)">
 	      $(SETVAR,$anon1textcontraint,"lower("$anon1") like '%"$(LOWER,$(INDEX,0,$substranon1text))"%'")
 	      $(VECAPPEND,$constraint,$anon1textcontraint)
-	      <?/MIVAR> 
-	      <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substranon1text,","))<?/MIVAR> 
+	      <?/MIVAR>
+	      <?MIVAR>$(SETVAR,$commapos,$(POSITION,$substranon1text,","))<?/MIVAR>
        <?/MIBLOCK>
      <?MIELSE>
 	<?MIVAR NAME=anon1text DELIMIT="'" REPLACE="''">$anon1text<?/MIVAR>
@@ -255,24 +267,24 @@ function list_all(user_access) {
   <?MIVAR COND="$(NC,$jtype,any)">
     $(VECAPPEND,$constraint,jtype='$jtype')
   <?/MIVAR>
-  
+
   <?MIBLOCK COND="$(EC,$ZDB_access,root)">
-  
+
     <?MIVAR>
       $(VECAPPEND,$constraint,"DATE('"$Fmonth"/"$Fday"/"$Fyear"') <= pub_arrival_date")
       $(VECAPPEND,$constraint,"pub_arrival_date <= DATE('"$Tmonth/$Tday/$Tyear"')")
     <?/MIVAR>
-    
+
     <?MIVAR COND="$(NC,$pub_status,Any)">
       $(VECAPPEND,$constraint,status = '$pub_status')
     <?/MIVAR>
-    
+
     <?MIBLOCK COND="$(AND,$(NC,$cur_status,Any),$(NC,$cur_status,indexed))">
       <?MIVAR>$(VECAPPEND,$constraint,pub_completion_date $cur_status NULL)<?/MIVAR>
     <?MIELSE COND="$(AND,$(NC,$cur_status,Any),$(EC,$cur_status,indexed))">
       <?MIVAR>$(VECAPPEND,$constraint, "pub_is_indexed = 't'")<?/MIVAR>
     <?/MIBLOCK>
-  
+
     <?MIBLOCK COND="$(OR,$(NC,$curator,Anyone),
                          $(NC,$cur_topic,Any),
                          $(EC,$topic_found,t),
@@ -280,33 +292,33 @@ function list_all(user_access) {
                                $(NC,$cur_topic,Any)
                           )
                       )">
-      
+
       <?MIVAR COND="$(NC,$curator,Anyone)">
-        $(VECAPPEND,$curation_constraint,"cur_curator_zdb_id ='"$curator"' 
+        $(VECAPPEND,$curation_constraint,"cur_curator_zdb_id ='"$curator"'
               and (cur_closed_date is not NULL or cur_data_found = 't')")
       <?/MIVAR>
-      
+
       <?MIVAR COND="$(NC,$cur_topic,Any)">
         $(VECAPPEND,$curation_constraint,cur_topic = '$cur_topic')
       <?/MIVAR>
-      
+
       <?MIVAR COND="$(EC,$topic_found,t)">
         $(VECAPPEND,$curation_constraint,cur_data_found = '$topic_found')
       <?/MIVAR>
-      
+
       <?MIVAR COND="$(AND,$(EC,$topic_found,f),$(NC,$cur_topic,Any))">
         $(VECAPPEND,$curation_constraint,
             "not exists (select * from curation where cur_pub_zdb_id = '$OID')")
       <?/MIVAR>
-      
+
       <?MIVAR>$(SETVAR,$curation_constraint,$(SEPARATE,$curation_constraint, AND ))<?/MIVAR>
-      <?MIVAR NAME=curation_constraint> 
+      <?MIVAR NAME=curation_constraint>
           zdb_id in
-            (SELECT cur_pub_zdb_id 
+            (SELECT cur_pub_zdb_id
              FROM curation
              WHERE $curation_constraint)
       <?/MIVAR>
-    
+
       <?MIVAR>$(VECAPPEND,$constraint,$curation_constraint)<?/MIVAR>
     <?/MIBLOCK>
   <?/MIBLOCK>
@@ -314,14 +326,14 @@ function list_all(user_access) {
 <?/MIBLOCK> <?MICOMMENT> end of three way choice, xst $clear_all, xst $pub_acc_constraint, or the rest <?/MICOMMENT>
 
 <?MIBLOCK COND="$(NXST,$constraint)">
-	<?MIVAR NAME=constraint><?/MIVAR>     
+	<?MIVAR NAME=constraint><?/MIVAR>
 <?MIELSE>
     <?MIVAR>
 	$(SETVAR,$constraint,$(SEPARATE,$constraint, AND ))
 	$(SETVAR,$constraint, where $constraint)
    <?/MIVAR>
 <?/MIBLOCK>
-  
+
 
 <?MIVAR NAME=$order_clause COND="$(AND,$(XST,$order_pref),$(EC,$order_pref,name))">
 	order by authors,pyear desc
@@ -344,7 +356,7 @@ function list_all(user_access) {
 <!-- UserInput is used by walking windows to move through the data set -->
 <!-- SearchInput remembers the search that was used to get here - need this infor to return to the correct search page from process-pub -->
 
-<!-- this is all needed to support I.E., the history button and frames are not compatible so we must save variables and pass them around also history.go is not implemented the same in I.E. and Netscape  --> 
+<!-- this is all needed to support I.E., the history button and frames are not compatible so we must save variables and pass them around also history.go is not implemented the same in I.E. and Netscape  -->
 
 <!--- WALKING WINDOW --->
 <!--- Initialization --->
@@ -390,15 +402,15 @@ function list_all(user_access) {
 <TABLE width=100%>
 	<TR>
 		<TD align=center>
-			<input type=submit name=printable value="Format into a printable listing">  
-			<input type=submit name=refer value="Output as REFER format file">  
+			<input type=submit name=printable value="Format into a printable listing">
+			<input type=submit name=refer value="Output as REFER format file">
 			<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-REFERinfo.apg">REFER&nbsp;Instructions</A>
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 
-  <input type=button name=printable value="Add new Pub" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&rtype=publication$UserInput');">  
+  <input type=button name=printable value="Add new Pub" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&rtype=publication$UserInput');">
 <?/MIVAR>
-		</TD> 
+		</TD>
 	</TR>
 </TABLE>
 
@@ -422,10 +434,10 @@ function list_all(user_access) {
   <TR>
     <TD width=20%>&nbsp;</TD>
     <TD align=center width=60%>
-      <font size="+1">Publication Search Results   
+      <font size="+1">Publication Search Results
       <br>
-      <?MISQL SQL="select count(distinct zdb_id)::integer 
-                   from $target_tables 
+      <?MISQL SQL="select count(distinct zdb_id)::integer
+                   from $target_tables
                    $constraint;"><?/MISQL>
 
       <?MIVAR NAME=$num_recs>$1<?/MIVAR>
@@ -436,7 +448,7 @@ function list_all(user_access) {
     </TD>
     <TD width=20% align=center>
       <a href="#modify">Modify Search</a>
-      
+
       <!-- Insert a form with one button. Label button Your Input Welcome -->
         <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
     </TD>
@@ -447,14 +459,14 @@ function list_all(user_access) {
 </form>
 
 
-<!-- NOW do slightly different displays, depending on whether you are selecting a value, or merely browsing. 
+<!-- NOW do slightly different displays, depending on whether you are selecting a value, or merely browsing.
 -->
 
 
 <!--- WALKING WINDOW --->
 
 <!--- DEFINITION OF RANGES --->
-<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR> 
+<?MIVAR NAME=BEGIN>$(IF,$(<,$BEGIN,1),1,$BEGIN)<?/MIVAR>
 <?MIVAR NAME=END>$(+,$BEGIN,$WINSIZE)<?/MIVAR>
 <?MIVAR NAME=$rowNUM>$BEGIN<?/MIVAR>
 
@@ -468,7 +480,7 @@ function list_all(user_access) {
 <?MIVAR NAME=PUB_INDEXED>$11<?/MIVAR>
 <TR>
 <?MIVAR><TD valign=top>&nbsp;</TD><?/MIVAR>
-<TD valign=top> 
+<TD valign=top>
 <?MIVAR NAME=$pubsel2_title>$1<?/MIVAR>
 <?MIVAR NAME=$pubsel2_authors>$2<?/MIVAR>
 <?MIVAR NAME=$pubsel2_zdb_id>$3<?/MIVAR>
@@ -499,7 +511,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 <?/MIVAR>
 </TD>
 
-<TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A> 
+<TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A>
 </TD>
 <?MIBLOCK COND="$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root))">
   <TD><?MIVAR>$(IF,$(NE,$PUB_COMPLETION,),CLOSED,OPEN)<?/MIVAR><?MIVAR>$(IF,$(EQ,$PUB_INDEXED,t),$comma&nbsp;INDEXED)<?/MIVAR></TD>
@@ -521,7 +533,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 
 <!--- Return to the previous set of Rows --->
 <?MIBLOCK COND="$(>,$BEGIN,1)">
-	
+
 <?MIVAR>
 	<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?START=$(-,$BEGIN,$WINSIZE)&BEGIN=$BEGIN&$selector$UserInput">Prev</A>&nbsp;&nbsp;&nbsp;&nbsp;<br>
 
@@ -577,12 +589,12 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 
         </td>
         <td class=titlebar align=right>
-        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>          
+        <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-input_button_generic.apg';">$1<?/MISQL>
         </td>
       </tr>
 
   <form name="critform"
-	method="get" 
+	method="get"
 	action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->">
   <input type=hidden name=MIval value=aa-pubselect2.apg>
 
@@ -594,22 +606,22 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 	<option $(IF,$(EC,$authtype, anyauth),SELECTED) value=anyauth>Author contains
 	<option $(IF,$(EC,$authtype,firstauth),SELECTED) value=firstauth>First Author begins with
 	</select>:</b> <input type=text class="default-input" name=authors size=30 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$authors),$authors)">
-      </TD> 
+      </TD>
   <?/MIVAR>
   <?MIVAR>
       <TD class=halfwidth>
-	<b>Year: </b> 
+	<b>Year: </b>
 	<SELECT NAME=yr_cmpr onChange='document.critform.START.value = "";'>
 	<option  $(IF,$(EC,$yr_cmpr,=),SELECTED) value="=">equals
 	<option  $(IF,$(EC,$yr_cmpr,<),SELECTED) value="<">before
 	<option  $(IF,$(EC,$yr_cmpr,">"),SELECTED) value=">">after</SELECT>
 	<SELECT name=century onChange='document.critform.START.value = "";'>
-	<option  $(IF,$(EC,$century,19),SELECTED) value=19>19 
+	<option  $(IF,$(EC,$century,19),SELECTED) value=19>19
 	<option  $(IF,$(EC,$century,20),SELECTED) value=20>20
 	<option  $(IF,$(EC,$century,18),SELECTED) value=18>18 </SELECT>
 	<input type=text name=year size=2 maxlength=2 onChange='document.critform.START.value = "";' $(IF,$(XST,$year),value='$year')>
       </TD>
-  <?/MIVAR> 
+  <?/MIVAR>
     </tr>
 
  <?MIVAR>
@@ -622,15 +634,15 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
     </tr>
     <tr>
       <TD class=halfwidth>
-	<b>Title 
+	<b>Title
 	<SELECT NAME=titltype onChangecontains='document.critform.START.value = "";'>
 	 <option $(IF,$(EC,$titltype,tcontain),SELECTED) value=tcontain>contains
 	 <option $(IF,$(EC,$titltype,tequal),SELECTED) value=tequal>equals
 	</select>:</b>
-	<input type=text name=title size=30 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$title),$title)"> 
+	<input type=text name=title size=30 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$title),$title)">
       </TD>
       <td class=halfwidth>
- 
+
 	<b>Type:</b>
 	<SELECT NAME=jtype onChange='document.critform.START.value = "";'>
 	<option $(IF,$(EC,$jtype,any),SELECTED) value=any>ALL
@@ -647,7 +659,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 	<?MIVAR COND="$(EC,$ZDB_access,root)"><option value=Unknown>Unknown<?/MIVAR>
 	</SELECT>
   <?/MIVAR>
-      </TD> 
+      </TD>
     </tr>
 
 
@@ -655,7 +667,9 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
     <tr>
       <TD class=halfwidth>
 	<SELECT NAME=anon1 onChange='document.critform.START.value = "";'>
-	<option $(IF,$(EC,$anon1,pub_abstract),SELECTED) value=pub_abstract>Abstract 
+<?MICOMMENT>  !!! COMMENTED OUT FOR URGENT FIX !!! 
+	<option $(IF,$(EC,$anon1,pub_abstract),SELECTED) value=pub_abstract>Abstract
+<?/MICOMMENT>
 	<option $(IF,$(EC,$anon1,jrnl_abbrev),SELECTED) value=jrnl_abbrev>Journal Abbrev.
 	<option $(IF,$(EC,$anon1,keywords),SELECTED) value=keywords>Keywords
 	<option $(IF,$(EC,$anon1,accession_no),SELECTED) value=accession_no>PubMed acc#
@@ -664,10 +678,10 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 	<b>contains:</b> <input type=text name=anon1text size=25 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$anon1text),$anon1text)">
       </TD>
       <TD class=halfwidth>
-	<b>Order results by:</b> 
-	<SELECT NAME=order_pref onChange='document.critform.START.value = "";'> 
-	<option $(IF,$(EC,$order_pref,date),SELECTED) value=date>Pub Date 
-	<option $(IF,$(EC,$order_pref,name),SELECTED) value=name>Author 
+	<b>Order results by:</b>
+	<SELECT NAME=order_pref onChange='document.critform.START.value = "";'>
+	<option $(IF,$(EC,$order_pref,date),SELECTED) value=date>Pub Date
+	<option $(IF,$(EC,$order_pref,name),SELECTED) value=name>Author
 	</SELECT>
       </td>
     </tr>
@@ -685,9 +699,9 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 	<?MISQL SQL="
         SELECT p.name, p.zdb_id
         FROM person p, lab l, int_person_lab ipl, lab_position lp
-                     WHERE p.zdb_id = source_id 
+                     WHERE p.zdb_id = source_id
         AND ipl.position_id = lp.labpos_pk_id
-        AND ipl.target_id = l.zdb_id 
+        AND ipl.target_id = l.zdb_id
                        AND l.zdb_id = 'ZDB-LAB-000914-1'
         AND (   lp.labpos_position = 'Research Staff'
                             or
@@ -696,16 +710,16 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
                      ">
             <OPTION VALUE="$2" $(IF,$(EC,$2,$curator),SELECTED)> $1
         <?/MISQL>
-	</SELECT>  
+	</SELECT>
       </TD>
       <TD class=halfwidth rowspan=2>
         <table border=0>
           <tr>
             <td>
-	<b><a href="" onClick="alert('P u b l i c a t i o n s  \nE n t e r e d  \nT o d a y'); return false;">PET</a> Date:</b> 
+	<b><a href="" onClick="alert('P u b l i c a t i o n s  \nE n t e r e d  \nT o d a y'); return false;">PET</a> Date:</b>
 	    </td>
 	    <td>
-	From:      
+	From:
 	    </td>
 	    <td>
         <SELECT NAME=Fmonth onChange='document.critform.START.value = "";'>
@@ -715,8 +729,8 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
         <?MIBLOCK INDEX=$i FROM=10 TO=12 STEP=1>
           <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Fmonth,$i),SELECTED)> $i<?/MIVAR>
         <?/MIBLOCK>
-        </SELECT> /    
-        
+        </SELECT> /
+
         <SELECT NAME=Fday onChange='document.critform.START.value = "";'>
         <?MIBLOCK INDEX=$i FROM=1 TO=9 STEP=1>
           <?MIVAR><OPTION VALUE="0$i" $(IF,$(=,$Fday,$i),SELECTED)> 0$i<?/MIVAR>
@@ -724,20 +738,20 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
         <?MIBLOCK INDEX=$i FROM=10 TO=31 STEP=1>
           <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Fday,$i),SELECTED)> $i<?/MIVAR>
         <?/MIBLOCK>
-        </SELECT> /    
-        
+        </SELECT> /
+
         <SELECT NAME=Fyear onChange='document.critform.START.value = "";'>
         <?MIBLOCK INDEX=$i FROM=$MIN_PUB_YEAR TO=$MAX_PUB_YEAR STEP=1>
           <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Fyear,$i),SELECTED)> $i<?/MIVAR>
         <?/MIBLOCK>
-        </SELECT> 
+        </SELECT>
             </td>
           </tr>
           <tr>
             <td>
         &nbsp;
             </td>
-            <td>        
+            <td>
         To:
             </td>
             <td>
@@ -748,8 +762,8 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
         <?MIBLOCK INDEX=$i FROM=10 TO=12 STEP=1>
           <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Tmonth,$i),SELECTED)> $i<?/MIVAR>
         <?/MIBLOCK>
-        </SELECT> /    
-        
+        </SELECT> /
+
         <SELECT NAME=Tday onChange='document.critform.START.value = "";'>
         <?MIBLOCK INDEX=$i FROM=1 TO=9 STEP=1>
           <?MIVAR><OPTION VALUE="0$i" $(IF,$(=,$Tday,$i),SELECTED)> 0$i<?/MIVAR>
@@ -757,20 +771,20 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
         <?MIBLOCK INDEX=$i FROM=10 TO=31 STEP=1>
           <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Tday,$i),SELECTED)> $i<?/MIVAR>
         <?/MIBLOCK>
-        </SELECT> /    
-        
+        </SELECT> /
+
         <SELECT NAME=Tyear onChange='document.critform.START.value = "";'>
         <?MIBLOCK INDEX=$i FROM=$MIN_PUB_YEAR TO=$MAX_PUB_YEAR STEP=1>
           <?MIVAR><OPTION VALUE="$i" $(IF,$(=,$Tyear,$i),SELECTED)> $i<?/MIVAR>
         <?/MIBLOCK>
-        </SELECT> 
+        </SELECT>
             </td>
           </tr>
         </table>
-      
+
       </TD>
     </TR>
-    
+
     <tr class=fullwidth>
     <!--
       <td>
@@ -782,10 +796,10 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
           <?/MISQL>
         </SELECT>
         <SELECT NAME=topic_found onChange='document.critform.START.value = "";'>
-          <OPTION VALUE="" $(IF,$(EC,$topic_found,),SELECTED)> 
+          <OPTION VALUE="" $(IF,$(EC,$topic_found,),SELECTED)>
           <OPTION VALUE="t" $(IF,$(EC,$topic_found,t),SELECTED)> curated
           <OPTION VALUE="f" $(IF,$(EC,$topic_found,f),SELECTED)> not curated
-        </SELECT>        
+        </SELECT>
       </td>
     -->
       <td>
@@ -795,7 +809,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
           <OPTION VALUE="is not" $(IF,$(EC,$cur_status,"is not"),SELECTED)>Closed</OPTION>
           <OPTION VALUE="is" $(IF,$(EC,$cur_status,is),SELECTED)>Open</OPTION>
           <OPTION VALUE="indexed" $(IF,$(EC,$cur_status,indexed),SELECTED)>Indexed</OPTION>
-        </SELECT>  
+        </SELECT>
       </td>
     </tr>
     <tr class=fullwidth>
@@ -808,7 +822,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
           <OPTION VALUE="Epub ahead of print" $(IF,$(EC,$pub_status,Epub ahead of print),SELECTED)>Epub ahead of print
 	<OPTION VALUE="in press" $(IF,$(EC,$pub_status,in press),SELECTED)>in press
 
-        </SELECT>  
+        </SELECT>
       </td>
     </tr>
   <?/MIVAR>
@@ -817,22 +831,22 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
     <tr>
   <?MIVAR>
       <TD class=resultcount>
-	Display results in groups of 
+	Display results in groups of
 	<input type="text" name="WINSIZE" size="3" onChange='document.critform.START.value = "";' $(IF,$(XST,$WINSIZE),value='$WINSIZE',value="10")>
 	<?MIBLOCK COND="$(AND,$(NOT,$(ISNULL,$WINSIZE)),$(XST,$WINSIZE))">
-	  <?MIVAR> 
-	    <SCRIPT> 
-	      document.critform.WINSIZE.value = "$WINSIZE" 
+	  <?MIVAR>
+	    <SCRIPT>
+	      document.critform.WINSIZE.value = "$WINSIZE"
 	    </SCRIPT>
-	  <?/MIVAR> 
+	  <?/MIVAR>
 	<?/MIBLOCK>
       </td>
- 
+
     </tr>
     <tr>
       <td class=submitbar colspan=2 align="right">
-	<input type=submit name=action value="Search" onSubmit="document.critform.submit();"> 
-	<input type=button name=action value="Reset" onClick="call_reset('$ZDB_access');"> 
+	<input type=submit name=action value="Search" onSubmit="document.critform.submit();">
+	<input type=button name=action value="Reset" onClick="call_reset('$ZDB_access');">
 	<input type=button name=clear_all value="List all publications" onClick="list_all('$ZDB_access');">
       </td>
     </tr>
