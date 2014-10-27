@@ -710,11 +710,9 @@
 
 
     <requestHandler name="/replication" class="solr.ReplicationHandler" >
-        <lst name="master">
-            <str name="enable">${enable.master:false}</str>
-            <str name="pollInterval">00:00:20</str>
-            <str name="replicateAfter">commit</str>
-            <str name="confFiles">
+            <lst name="master">
+              <str name="enable">${enable.master:false}</str>
+              <str name="confFiles">
                 schema.xml,
                 db-data-config.xml,
                 all-term-contains-synonyms-reversed.txt,
@@ -739,8 +737,9 @@
             </str>
         </lst>
         <lst name="slave">
-            <str name="enable">${enable.slave:true}</str>
-            <str name="masterUrl">http://devtest2.zfin.org:8983/solr/prototype</str>
+	    <str name="enable">${enable.slave:false}</str>
+           <!-- <str name="masterUrl">http://localhost:9520/solr/prototype/replication</str> -->
+           <!-- <str name="pollInterval">00:00:20</str> -->
         </lst>
     </requestHandler>
   
