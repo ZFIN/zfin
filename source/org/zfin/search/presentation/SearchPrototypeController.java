@@ -86,9 +86,9 @@ public class SearchPrototypeController {
         }
 
         Boolean redirectToFirstResult = false;
-        if (StringUtils.startsWith(q,"!")) {
+        if (StringUtils.startsWith(q,"!!")) {
             redirectToFirstResult = true;
-            q = q.substring(1);
+            q = q.substring(2);
         }
 
         if (StringUtils.isNotEmpty(q) && q.trim().startsWith("-")) {
