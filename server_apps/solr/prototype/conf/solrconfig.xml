@@ -512,31 +512,31 @@
          <!--  less indented values are the keyword version of text fields for highlighting when adding fq's to the q -->
 
          <str name="qf">proper_name^10.0
-                        name
-                        category_t
-                        type_t
-                        name_t
+             name
+             category_t
+             type_t
+             name_t
 
-                        full_name^2.0
+             full_name^2.0
 
-                        id_t
-                        alias^4.0
-                        alias_t^4.0
+             id_t
+             alias^4.0
+             alias_t^4.0
 
-                        orthologue_abbrev^2.0
-                        orthologue_abbrev_t^2.0
+             orthologue_abbrev^2.0
+             orthologue_abbrev_t^2.0
              construct_name^2.0
              construct_alias
 
              full_name_ac^0.1
              alias_ac^0.1
 
-	     marker_abbrev^4.0
+             marker_abbrev^4.0
 
-                        orthologue_name
-                        orthologue_organism
-                        orthologue_name_t
-                        orthologue_organism_t
+             orthologue_name
+             orthologue_organism
+             orthologue_name_t
+             orthologue_organism_t
              disease_model
              disease_model_t
              omim_id
@@ -552,9 +552,9 @@
              author_string
              author_year
 
-                        related_accession
-                        related_marker
-                        affected_gene_t
+             related_accession
+             related_marker
+             affected_gene_t
 
              term_t
              labeled_anatomy_direct^1.1
@@ -607,55 +607,55 @@
              affected_gene_full_name^0.8
              affected_gene_previous_name^0.7
              affected_gene
-                        expressed_gene_t
+             expressed_gene_t
              expressed_gene_full_name^0.8
              expressed_gene_previous_name^0.7
              expressed_gene
              inserted_in_gene_full_name^0.8
              inserted_in_gene_previous_name^0.7
-                        inserted_in_gene_t
+             inserted_in_gene_t
              inserted_in_gene
-                        regulatory_region_t
+             regulatory_region_t
              regulatory_region
-                        coding_sequence_t
+             coding_sequence_t
              coding_sequence
-                        promoter_full_name
-                        coding_sequence_full_name
-                        engineered_region_full_name
+             promoter_full_name
+             coding_sequence_full_name
+             engineered_region_full_name
              targeted_gene
-                        targeted_gene_full_name
-                        targeted_gene_previous_name
+             targeted_gene_full_name
+             targeted_gene_previous_name
 
              clone
              probe
-	     related_gene_symbol
+             related_gene_symbol
 
              prefix
              institution
              institution_t
              lab_of_origin
-                        related_accession
-                        related_marker
-                        allele_t
+             related_accession
+             related_marker
+             allele_t
              background background_t
              sequence_alteration sequence_alteration_t
              probe
              mutagen
              allele
-                        expression_observation
-                        chromosome
+             expression_observation
+             chromosome
 
              experimental_conditions
 
              person_name
              lab_member_name
-                        email_address
-                        postal_address
-                        note^0.5
-                        caption^0.5
-                        abstract^0.5
-                        biography^0.5
-                        definition^0.5
+             email_address
+             postal_address
+             note^0.5
+             caption^0.5
+             abstract^0.5
+             biography^0.5
+             definition^0.5
          </str>
 
 
