@@ -85,6 +85,12 @@ public class SearchPrototypeController {
             }
         }
 
+        Boolean redirectToFirstResult = false;
+        if (StringUtils.startsWith(q,"!")) {
+            redirectToFirstResult = true;
+            q = q.substring(1);
+        }
+
         if (StringUtils.isNotEmpty(q) && q.trim().startsWith("-")) {
             model.addAttribute("isDashQuery", true);
             model.addAttribute("newQuery", q.trim().substring(1));
@@ -203,6 +209,10 @@ public class SearchPrototypeController {
 
         List<SearchResult> results = response.getBeans(SearchResult.class);
 
+        //Easter Egg!  If the query starts with !, just go right to the first result
+        if (redirectToFirstResult && !CollectionUtils.isEmpty(results)) {
+            return "redirect:" + results.get(0).getUrl();
+        }
 
         //if the category is Any, and we only get one value back in the category facet,
         //set it and do everything again...
