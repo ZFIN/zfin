@@ -2,7 +2,7 @@
 
 # This scripts pushes newly updated databases to VMs using rsync.
 
-FROM_DIRECTORY=<!--|WEBHOST_BLASTDB_TO_COPY|-->
+FROM_DIRECTORY=<!--|WEBHOST_BLASTDB_TO_COPY|-->/Current/
 
 # make three identical copies to the development filesyste. 
 #one for almost:
