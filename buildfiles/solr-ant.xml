@@ -68,7 +68,7 @@
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;optimize=true&amp;wt=json&amp;indent=true"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;optimize=true&amp;commit=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
         <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/prototype/dataimport"/>
