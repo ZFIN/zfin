@@ -211,6 +211,7 @@ public class SearchPrototypeController {
 
         //Easter Egg!  If the query starts with !, just go right to the first result
         if (redirectToFirstResult && !CollectionUtils.isEmpty(results)) {
+            model.asMap().clear();
             return "redirect:" + results.get(0).getUrl();
         }
 
