@@ -99,6 +99,8 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PUBLICATION.name      | "Nuss* id:ZDB-PUB-970602-19"                     | "11216"
         Category.PUBLICATION.name      | "Nüsslein id:ZDB-PUB-970602-19"                  | "11216"
         Category.PUBLICATION.name      | "Nusslein id:ZDB-PUB-970602-19"                  | "11216"
+        Category.GENE.name             | "expressed_in_tf:\"medulla oblongata\" type:Gene id:ZDB-GENE-000616-13"      | "0" //todo: update w/case number
+        Category.GENE.name             | "expressed_in_tf:\"enteric nervous system\" type:Gene id:ZDB-GENE-980526-90" | "0" //todo: update w/case number
     }
 
     @Unroll

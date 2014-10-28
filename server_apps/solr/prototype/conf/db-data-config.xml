@@ -105,12 +105,11 @@ where mrkr_type in ('GENE','GENEP','EFG')
                             join genotype_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
                             join genotype g on g.geno_zdb_id=ge.genox_geno_zdb_id
                             join term on er.xpatres_superterm_zdb_id=term_zdb_id
-                        where ge.genox_is_standard='t'
+                        where ge.genox_is_std_or_generic_control='t'
                             and er.xpatres_expression_found='t'
                             and g.geno_is_wildtype='t'
                             and ee.xpatex_gene_zdb_id is not null
                             and term_ontology='zebrafish_anatomy'
-
                         union
                         select
                            term_ont_id as xref, term_name as expressed_in_direct,
@@ -120,7 +119,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                 join genotype_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
                                 join genotype g on g.geno_zdb_id=ge.genox_geno_zdb_id
                                 join term  on er.xpatres_subterm_zdb_id=term_zdb_id
-                            where ge.genox_is_standard='t'
+                            where ge.genox_is_std_or_generic_control='t'
                                 and er.xpatres_expression_found='t'
                                 and g.geno_is_wildtype='t'
                                 and ee.xpatex_gene_zdb_id is not null
