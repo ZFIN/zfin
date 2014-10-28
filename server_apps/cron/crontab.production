@@ -75,6 +75,8 @@
 # ------------------------------------------------------------------------
 #
 # Nights   When      Comments
+# MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
+00 23 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
 #
 # F        9:20pm   weekly update of chromosome position and orthology for
 #                    mouse, human, fly
