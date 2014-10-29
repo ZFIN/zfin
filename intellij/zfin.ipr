@@ -79,20 +79,7 @@
       </profile>
     </annotationProcessing>
   </component>
-  <component name="CopyrightManager" default="">
-    <module2copyright />
-  </component>
-  <component name="DataSourceManagerImpl" format="xml" hash="3659126255">
-    <data-source source="LOCAL" name="Informix -" uuid="8217faf8-56fd-49af-8442-6000164fad38">
-      <driver-ref>java.sql.Driver</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.informix.jdbc.IfxDriver</jdbc-driver>
-      <jdbc-url>jdbc:informix-sqli://localhost:2002/swrdb:INFORMIXSERVER=waffle</jdbc-url>
-      <user-name>staylor</user-name>
-      <user-password>dfd0dfccdfc3dfc4df98dfc7dfcbdfdedf9adfcfdfd9</user-password>
-      <libraries />
-    </data-source>
-  </component>
+  <component name="CopyrightManager" default="" />
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
@@ -142,7 +129,6 @@
         <inspection_tool class="GwtInconsistentSerializableClass" enabled="false" level="ERROR" enabled_by_default="false" />
         <inspection_tool class="HibernateMappingDatasourceDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
         <inspection_tool class="HibernateMappingDomInspection" enabled="false" level="ERROR" enabled_by_default="false" />
-        <inspection_tool class="JpaQlInspection" enabled="false" level="ERROR" enabled_by_default="false" />
         <inspection_tool class="NonJREEmulationClassesInClientCode" enabled="false" level="ERROR" enabled_by_default="false" />
         <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="myAdditionalRequiredHtmlAttributes" value="type" />
@@ -325,24 +311,6 @@
       </value>
     </option>
   </component>
-  <component name="SqlDataSourceStorage">
-    <option name="dataSources">
-      <list>
-        <State>
-          <option name="id" value="76b4d38b-3cf1-4f24-9f6e-2090f5c3bacc" />
-          <option name="name" value="DDL data source" />
-          <option name="urls">
-            <array>
-              <option value="file://$PROJECT_DIR$/../schemaFile.sql" />
-            </array>
-          </option>
-        </State>
-      </list>
-    </option>
-  </component>
-  <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/../schemaFile.sql" dialect="DB2" />
-  </component>
   <component name="SvnBranchConfigurationManager">
     <option name="myConfigurationMap">
       <map>
@@ -401,6 +369,13 @@
     </library>
     <library name="hibernate3 (2)">
       <CLASSES />
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="ifxjdbc-3.70.JC1">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/Desktop/ifxjdbc-3.70.JC1.jar!/" />
+      </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
