@@ -119,7 +119,7 @@
     <target name="backup-solr-core">
         <echo message="Backing up solr core..."/>
         <tstamp>
-            <format property="backup.stamp" pattern="yyyy.dd.MM-hh:mm"/>
+            <format property="backup.stamp" pattern="yyyy.MM.dd-hh:mm"/>
         </tstamp>
 
         <echo message="Backup time: ${backup.stamp}"/>
