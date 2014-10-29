@@ -5,6 +5,10 @@
     <property name="solr" value="${SOURCEROOT}/server_apps/solr"/>
     <property name="solr.backup.dir" value="/research/zunloads/solr"/>
 
+    <condition property="backup.solr">
+        <equals arg1="${BACKUP_SOLR_CORE}" arg2="true"/>
+    </condition>
+
     <target name="deploy-solr">
         <copySolr from="server_apps/solr" to="${env.SOLR_HOME}" overwrite="true"/>
     </target>
@@ -49,7 +53,7 @@
         <if>
             <equals arg1="${SOLR_CREATE_BACKUPS}" arg2="true"/>
             <then>
-                <antcall target="backup-solr-core"/>
+                <antcall target="backup-solr-core-jenkins"/>
             </then>
         </if>
     </target>
@@ -114,6 +118,10 @@
             <arg value="-s"/>
             <arg value="http://localhost:${SOLR_PORT}/solr/admin/cores?action=RELOAD&amp;core=prototype"/>
         </exec>
+    </target>
+
+    <target name="backup-solr-core-jenkins" if="backup.solr">
+        <antcall target="backup-solr-core"/>
     </target>
 
     <target name="backup-solr-core">
