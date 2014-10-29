@@ -84,6 +84,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     private String personalBio;
 
     private Boolean emailList;
+    private Boolean deceased;
 //    private String ownerID;
     private Set<Lab> labs;
     private Set<Company> companies;
@@ -289,6 +290,14 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
     public void setEmailList(Boolean emailList) {
         this.emailList = emailList;
+    }
+
+    public Boolean getDeceased() {
+        return deceased;
+    }
+
+    public void setDeceased(Boolean deceased) {
+        this.deceased = deceased;
     }
 
     public String getPersonalBio() {

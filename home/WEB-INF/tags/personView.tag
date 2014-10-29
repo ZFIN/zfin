@@ -23,8 +23,10 @@
 
 <table>
     <tr>
-        <td width="60%" style="vertical-align: top;">
-            <span class="entity-header">${person.fullName}</span>
+        <td width="60%" style="vertical-align: middle;">
+            <span class="entity-header">${person.fullName}
+            </span>
+            <c:if test="${person.deceased}"> (Deceased) </c:if>
             <table class="primary-entity-attributes">
                 <authz:authorize ifAnyGranted="root">
                     <tr style="background-color: #a9a9a9;">
@@ -33,7 +35,7 @@
                             - ${person.shortName}
                             <br> Access - ${person.accountInfo.role}
                             <br> Last Login - ${person.accountInfo.previousLoginDate}
-                            <c:if test="${person.emailList==true}">
+                            <c:if test="${person.emailList}">
                                 <div>Is on email distribution list</div>
                             </c:if>
                         </td>

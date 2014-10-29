@@ -5,6 +5,7 @@
 
 <%@ attribute name="person" type="org.zfin.profile.Person" required="true" %>
 <%@ attribute name="securityPersonZdbID" type="java.lang.String" required="true" %>
+<%@ attribute name="showDeceasedCheckBox" type="java.lang.Boolean" required="true" %>
 <%@ attribute name="selected" type="java.lang.String" required="false" %>
 
 
@@ -117,6 +118,14 @@
                         </td>
                         <td>
                             <form:checkbox size="50" path="emailList"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <form:label path="deceased">Deceased:</form:label>
+                        </td>
+                        <td>
+                            <form:checkbox size="50" path="deceased"/>
                         </td>
                     </tr>
                 </table>

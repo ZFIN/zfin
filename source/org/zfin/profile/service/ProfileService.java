@@ -122,7 +122,7 @@ public class ProfileService {
 
     /**
      * Copies attributes from the new onto the old, noting what is updated.
-     * Updated fields are fullName, name, address, phone, fax, email, url, emailList, bio, nonZfinPubs.
+     * Updated fields are fullName, name, address, phone, fax, email, url, emailList, bio, nonZfinPubs, deceased.
      *
      * @param oldPerson
      * @param newPerson
@@ -141,6 +141,11 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("orcidID", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailList", oldPerson, newPerson, Boolean.class));
+
+        if (getCurrentSecurityUser() != null   // it's a logged-in user
+                && isCurrentSecurityUserRoot()) {  //  the user logged in as root
+            CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("deceased", oldPerson, newPerson, Boolean.class));
+        }
 
 
         return fieldUpdateList;
@@ -476,6 +481,7 @@ public class ProfileService {
         accountInfo.setPassword(encodePassword(person.getPass1()));
         accountInfo.setCookie(Math.random() + "-" + login);
 
+        person.setDeceased(false);
         person.setAccountInfo(accountInfo);
         person.setUrl(processUrl(person.getUrl()));
 

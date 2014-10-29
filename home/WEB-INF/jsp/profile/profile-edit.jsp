@@ -15,7 +15,7 @@
 
 <c:choose>
     <c:when test="${fn:startsWith(formBean.zdbID,'ZDB-PERS')}">
-        <zfin2:personEdit person="${formBean}" securityPersonZdbID="${securityPersonZdbID}"/>
+        <zfin2:personEdit person="${formBean}" securityPersonZdbID="${securityPersonZdbID}" showDeceasedCheckBox="${showDeceasedCheckBox}"/>
     </c:when>
     <c:when test="${fn:startsWith(formBean.zdbID,'ZDB-COMPANY')}">
         <zfin2:companyEdit company="${formBean}" members="${members}"  prefixes="${prefixes}" positions="${positions}"/>

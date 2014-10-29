@@ -86,6 +86,13 @@ public class PersonController {
         model.addAttribute(LookupStrings.FORM_BEAN, person);
         model.addAttribute("securityPersonZdbID", securityPersonZdbID);
 
+        boolean showDeceasedCheckBox = false;
+        if (profileService.getCurrentSecurityUser() != null   // it's a logged-in user
+                && profileService.isCurrentSecurityUserRoot()) {  //  the user logged in as root
+            showDeceasedCheckBox = true;
+        }
+        model.addAttribute("showDeceasedCheckBox", showDeceasedCheckBox);
+
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
         return "profile/profile-edit.page";
     }
