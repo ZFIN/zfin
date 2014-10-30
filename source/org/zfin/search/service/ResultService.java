@@ -12,6 +12,8 @@ import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
+import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -88,37 +90,42 @@ public class ResultService {
     }
 
     public void injectAttributes(SearchResult result) {
-        if (StringUtils.equals(result.getCategory(), Category.GENE.getName())) {
-            injectGeneAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.FISH.getName())) {
-            injectFishAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.FIGURE.getName())) {
-            injectFigureAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.MUTANT.getName())) {
-            injectFeatureAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.CONSTRUCT.getName())) {
-            injectConstructAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.SEQUENCE_TARGETING_REAGENT.getName())) {
-            injectSTRAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.MARKER.getName())) {
-            injectMarkerCloneAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.EXPRESSIONS.getName())) {
-            injectExpressionAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.PHENOTYPE.getName())) {
-            injectPhenotypeAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.ANATOMY.getName())) {
-            injectAnatomyGO(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.PUBLICATION.getName())) {
-            injectPublicationAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.ANTIBODY.getName())) {
-            injectAntibodyAttributes(result);
-        } else if (StringUtils.equals(result.getCategory(), Category.COMMUNITY.getName())) {
-            if (StringUtils.equals(result.getType(), "Person"))
-                injectPersonAttributes(result);
-            else if (StringUtils.equals(result.getType(), "Lab"))
-                injectLabAttributes(result);
-            else if (StringUtils.equals(result.getType(), "Company"))
-                injectCompanyAttributes(result);
+        if (RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(result.getId()) == null) {
+            if (StringUtils.equals(result.getCategory(), Category.GENE.getName())) {
+                injectGeneAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.FISH.getName())) {
+                injectFishAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.FIGURE.getName())) {
+                injectFigureAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.MUTANT.getName())) {
+                injectFeatureAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.CONSTRUCT.getName())) {
+                injectConstructAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.SEQUENCE_TARGETING_REAGENT.getName())) {
+                injectSTRAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.MARKER.getName())) {
+                injectMarkerCloneAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.EXPRESSIONS.getName())) {
+                injectExpressionAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.PHENOTYPE.getName())) {
+                injectPhenotypeAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.ANATOMY.getName())) {
+                injectAnatomyGO(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.PUBLICATION.getName())) {
+                injectPublicationAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.ANTIBODY.getName())) {
+                injectAntibodyAttributes(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.COMMUNITY.getName())) {
+                if (StringUtils.equals(result.getType(), "Person"))
+                    injectPersonAttributes(result);
+                else if (StringUtils.equals(result.getType(), "Lab"))
+                    injectLabAttributes(result);
+                else if (StringUtils.equals(result.getType(), "Company"))
+                    injectCompanyAttributes(result);
+            }
+        } else {
+            injectMergedAttributes(result);
+
         }
 
     }
@@ -313,7 +320,9 @@ public class ResultService {
         }
     }
 
-
+  public void injectMergedAttributes(SearchResult result) {
+    result.addAttribute(NOTE,"This record has been merged or deleted");
+}
     public void injectSTRAttributes(SearchResult result) {
         result.setDisplayedID(result.getId());
 
