@@ -200,6 +200,7 @@ public class WikiWebService {
             return modifiedPages;
         }
 
+        RemotePage pageSummary = null;
         try {
             RemoteSearchResult[] pages = service.getLabelContentByName(token, label);
             logger.debug("pages to process: " + pages.length + " for label: " + label);
@@ -208,10 +209,15 @@ public class WikiWebService {
             // if there is is editing or view restriction, then add an editing one to the creator
             for (RemoteSearchResult page : pages) {
                 logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]");
-                RemotePage pageSummary = service.getPage(token, page.getId());
+                // don't no why but this page throws an exception: should have the id: 131090 but
+                // has 131089 which does not exist. Must be a bug in Confluence
+                if (page.getUrl().equals("https://wiki.zfin.org/display/AB"))
+                    continue;
+                pageSummary = service.getPage(token, page.getId());
                 // do not work on deleted pages
                 if (pageSummary.getContentStatus().equals("deleted"))
                     continue;
+                logger.info(page.getTitle());
                 if (page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token, page.getId()).length == 0) {
                     logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "] # perm["
                             + service.getContentPermissionSets(token, page.getId()).length + "]");
@@ -235,7 +241,7 @@ public class WikiWebService {
                 }
             }  // end of for loop
         } catch (Exception e) {
-            logger.error("Unable to set owner for label[" + label + "]", e);
+            logger.error("Unable to set owner for label[" + label + "] and page title: " + pageSummary.getTitle(), e);
             throw e;
         }
         return modifiedPages;
