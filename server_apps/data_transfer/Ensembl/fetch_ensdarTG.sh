@@ -26,7 +26,7 @@ echo "running fetch_ensdarg.sql vs ensembldb.ensembl.org  ->  ensdarG.unl"
 /bin/cat fetch_ensdarG.mysql | \
  /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur|\
  /bin/sed 's/\(ZDB-GENE-[0-9\-]*\).*\(ENSDARG[0-9]*\).*/\1|\2|/g'|\
- /bin/tr '\011' \| >  ensdarG.unl;
+ /usr/bin/tr '\011' \| >  ensdarG.unl;
 
 # send a query to the current database returning ensdarTs associated with ottdarTs
 # return in informix's load file format.

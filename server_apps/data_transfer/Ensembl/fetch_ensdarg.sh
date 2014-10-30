@@ -20,7 +20,7 @@ echo " fetch_ensdarg.sql vs ensembldb.ensembl.org"
 /bin/cat fetch_ensdarg.sql | \
 /local/bin/mysql -A -P5306 -u anonymous -h ensembldb.ensembl.org -si -D $cur |\
 /bin/sed 's/\(ZDB-GENE-[0-9\-]*\).*\(ENSDARG[0-9]*\).*/\1|\2|/g' |\
-/bin/tr '\011' \| >!  ensdarg.unl;
+/usr/bin/tr '\011' \| >!  ensdarg.unl;
 
 # load the file from Ensembl mysql into the local database
 # rollback if not called with the (first) argument "commit"
