@@ -12,84 +12,6 @@ use MIME::Lite;
 use DBI;
 
 
-#------------------ Send Checking Result ----------------
-# No parameter
-#
-
-sub sendReport1($) {
-		
-  my $SUBJECT="Auto from " . $_[0] . " : publications that have been updated";
-  my $MAILTO="<!--|COUNT_PATO_OUT|-->";
-  my $TXTFILE="./report.txt";
- 
-  # Create a new multipart message:
-  my $msg1 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
- 
-  attach $msg1 
-   Type     => 'text/plain',   
-   Path     => "$TXTFILE";
-
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg1->print(\*SENDMAIL);
-
-  close(SENDMAIL);
-}
-
-sub sendReport2($) {
-
-  my $SUBJECT="Auto from " . $_[0] . " : publications not updated";
-  my $MAILTO="<!--|COUNT_PATO_OUT|-->";
-  my $TXTFILE="./notupdated.txt";
- 
-  # Create a new multipart message:
-  my $msg2 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
- 
-  attach $msg2 
-   Type     => 'text/plain',   
-   Path     => "$TXTFILE";
-
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg2->print(\*SENDMAIL);
-  close(SENDMAIL);
-}
-
-sub sendReport3($) {
-
-  my $SUBJECT="Auto from " . $_[0] . " : publications with bad DOI that have been updated";
-  my $MAILTO="<!--|COUNT_PATO_OUT|-->";
-  my $TXTFILE="./doi.txt";
-  # Create a new multipart message:
-  my $msg3 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
- 
-  attach $msg3 
-   Type     => 'text/plain',   
-   Path     => "$TXTFILE";
-
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg3->print(\*SENDMAIL);
-
-  close(SENDMAIL);
-}
-
-
 #=======================================================
 #
 #   Main
@@ -103,6 +25,11 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 print "processing the publication checking and would add missing vol and page numbers ... \n";
 
+print "remove and re-create Update-Publication-Volume-And-Pages_w directory";
+system("/bin/rm -rf Update-Publication-Volume-And-Pages_w");
+system("/bin/mkdir Update-Publication-Volume-And-Pages_w"); 
+
+
 my $dir = "<!--|ROOT_PATH|-->";
 
 my @dirPieces = split(/www_homes/,$dir);
@@ -110,7 +37,7 @@ my @dirPieces = split(/www_homes/,$dir);
 my $databasename = $dirPieces[1];
 $databasename =~ s/\///;
 
-print "$databasename\n\n";
+print "\n$databasename\n";
 
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
@@ -147,8 +74,9 @@ while ($cur->fetch()) {
 
 $cur->finish(); 
 
-open (REPORT, ">report.txt") || die "Cannot open report.txt : $!\n";
-open (NOTUPDATED, ">notupdated.txt") || die "Cannot open notupdated.txt : $!\n";
+my $directory = "./Update-Publication-Volume-And-Pages_w/";
+open (REPORT, ">", $directory . "updated-publications.txt") || die "Cannot open update-publications.txt : $!\n";
+open (NOTUPDATED, ">", $directory . "not-updated-publications.txt") || die "Cannot open not-updated-publications.txt : $!\n";
 
 $sql = 'select zdb_id
           from publication 
@@ -181,7 +109,7 @@ foreach $key (sort keys %nopubmedidPubZdbIds) {
 
 my $cmdPart1 = "/private/bin/perl -MLWP::Simple -e ";
 my $cmdPart2 = '"getprint ';
-my $cmdPart3 = '" > pubXml 2> err';
+my $cmdPart3 = '" > publications.xml 2> err';
 my $singleQuote = '\'';
 my $ctTotal = 0;
 my $updated = 0;
@@ -215,7 +143,7 @@ foreach $key (sort keys %pmids) {
   
   system("$cmd");
 
-  open(XMLFILE, "pubXml") || die("Could not open pubXml !");
+  open(XMLFILE,"publications.xml") || die("Could not open publications.ml !");
   @lines=<XMLFILE>;
   close(XMLFILE);
 
@@ -306,10 +234,6 @@ close (NOTUPDATED);
 
 print "$updated pubs fixed with vol and/or page numbers\n\n\n";
 
-sendReport1("$databasename") if $updated > 0;
-
-sendReport2("$databasename") if $ctNoPubmedId > 0 || $notupdated > 0;
-
 ############################################################################
 # This part deals with bad pub_doi field
 ###########################################################################
@@ -338,7 +262,7 @@ $cur->finish();
 my $correctDOI = "";
 
 my $ctTotalBadDOIs = 0;
-open (DOI, ">doi.txt") || die "Cannot open doi.txt : $!\n";
+open (DOI, ">", $directory . "doi.txt") || die "Cannot open doi.txt : $!\n";
 foreach $key (sort keys %dois) {
    $pubDOI = $dois{$key};
    $correctDOI = $pubDOI;
@@ -360,7 +284,7 @@ close (DOI);
 
 print "$ctTotalBadDOIs bad dois found and fixed\n";
 
-sendReport3("$databasename") if $ctTotalBadDOIs > 0;
+system("mv publications.xml Update-Publication-Volume-And-Pages_w/.");
+system("mv err Update-Publication-Volume-And-Pages_w/.");
 
-  
 exit;

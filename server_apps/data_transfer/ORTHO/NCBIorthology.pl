@@ -23,7 +23,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dbname = "<!--|DB_NAME|-->";
 
-system("/bin/rm -f logOthologyUpdateName");
+system("/bin/rm -f logOrthologyUpdateName");
 system("/bin/rm -f orthNamesUpdatedReport");
 system("/bin/rm -f updateGeneNamesReport");
 system("/bin/rm -f inconsistentZebrafishGeneNamesReport");
@@ -37,7 +37,7 @@ system("/bin/rm -f Homo_sapiens.gene_info");
 system("/bin/rm -f Mus_musculus.gene_info");
 system("/bin/rm -f Drosophila_melanogaster.gene_info");
 
-open LOG, '>', "logOthologyUpdateName" or die "can not open logOthologyUpdateName: $! \n";
+open LOG, '>', "logOrthologyUpdateName" or die "can not open logOrthologyUpdateName: $! \n";
 
 &doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
 
@@ -474,7 +474,7 @@ $subject = "Auto from $dbname: " . "NCBIorthology.pl :: updateOrthologyNameSQLlo
 ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","updateOrthologyNameSQLlog1");
 
 $subject = "Auto from $dbname: " . "NCBIorthology.pl :: updateOrthologyNamePerlLog";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","logOthologyUpdateName");
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","logOrthologyUpdateName");
 
 $subject = "Auto from $dbname: " . "$ctUpdatedOrthNames orthologue names have been updated by the script";
 ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","orthNamesUpdatedReport") if $ctUpdatedOrthNames > 0;
@@ -484,11 +484,6 @@ ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$s
 
 $subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for renaming";
 ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","inconsistentZebrafishGeneNamesReport");
-
-$ctAlready = $ctAlready + $ctDiffrentZFgeneNames;
-
-$subject = "Auto from $dbname: " . "$ctAlready zebrafish gene names already considered for renaming";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","alreadyExamined");
 
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/ORTHO/");
 
@@ -514,7 +509,7 @@ sub doSystemCommand {
 
 sub reportErrAndExit {
   $subjectError = $_[0];
-  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subjectError","logOthologyUpdateName");
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subjectError","logOrthologyUpdateName");
   close LOG;
   exit;
 }

@@ -78,14 +78,6 @@
 # MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
 00 23 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
 #
-# F        9:20pm   weekly update of chromosome position and orthology for
-#                    mouse, human, fly
-20 21 * * 5 cd <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/ && update_orthology.sh
-#
-# M        10:50pm   weekly check and update of publication table for missing volume and/or page numbers
-#                    the missing data will be pulled from pubmed
-50 22 * * 1 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/pub_check_and_addback_volpg.pl
-
 # F        10:55pm   weekly pull down of pub activation status from pubmed
 #
 50 22 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/updatepubstatus.pl

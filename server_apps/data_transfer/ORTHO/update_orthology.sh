@@ -9,6 +9,10 @@ echo ""
 echo "`pwd`/$0"
 echo ""
 
+echo "remove and re-create log directory"
+rm -rf log
+mkdir log
+
 # run the following script to update orthologue names and make a list of zebrafish genes that may need to update the gene names
 NCBIorthology.pl
 
@@ -108,8 +112,13 @@ echo "Finish fly update `date +'%Y-%m-%d %H:%M:%S'`"
 echo ""
 echo "###############################################################"
 
-# send the logs/reports via email
-emailOrthologyReports.pl
+cp updateFly* log/.
+cp updateHuman* log/.
+cp updateMouse* log/.
+cp orthNames* log/.
+cp inconsistent* log/.
+cp logOrthology* log/.
+cp updateOrthology* log/.
 
 
 # note this regen generates a lot of locks (~149,192)
