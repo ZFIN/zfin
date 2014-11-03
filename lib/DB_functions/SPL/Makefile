@@ -21,7 +21,7 @@ TOP = ../../..
 include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/lib/DB_functions/SPL
-SUBDIRS = Regen_names Regen_genox
+SUBDIRS = Regen_names Regen_genox regen_clean_expression
 
 # Group the SPLs according to these characteristcs
 # 1. General area the SPL is for.  This is basically a comment.
