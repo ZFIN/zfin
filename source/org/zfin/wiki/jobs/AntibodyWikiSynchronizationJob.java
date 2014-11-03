@@ -3,12 +3,14 @@ package org.zfin.wiki.jobs;
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
+import org.zfin.util.ReportGenerator;
 import org.zfin.wiki.WikiLoginException;
 import org.zfin.wiki.WikiSynchronizationReport;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 import org.zfin.wiki.service.WikiWebService;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,32 +32,23 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
         job.setPropertyFilePath(propertyFilePath);
         job.setJobName(args[2]);
         job.init(jobDirectoryString);
-        job.execute();
-    }
-
-
-    @Override
-    protected void addCustomVariables(Map<String, Object> map) {
-        if (report == null)
-            return;
-        map.put("updatedAntibodies", report.getUpdatedPages());
-        map.put("createdAntibodies", report.getCreatedPages());
-        map.put("droppedAntibodies", report.getDroppedPages());
+        System.exit(job.execute());
     }
 
     private void createReportFiles(WikiSynchronizationReport report) {
-        if (report == null)
+        if (report == null) {
             return;
-        String templateName = jobName + ".updated-antibodies";
-        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        }
+        String reportName = jobName + ".updated-antibodies";
+        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, reportName, true);
         createErrorReport(null, getStringifiedList(report.getUpdatedPages()), reportConfiguration);
 
-        templateName = jobName + ".created-antibodies";
-        reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        reportName = jobName + ".created-antibodies";
+        reportConfiguration = new ReportConfiguration(jobName, dataDirectory, reportName, true);
         createErrorReport(null, getStringifiedList(report.getCreatedPages()), reportConfiguration);
 
-        templateName = jobName + ".dropped-antibodies";
-        reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
+        reportName = jobName + ".dropped-antibodies";
+        reportConfiguration = new ReportConfiguration(jobName, dataDirectory, reportName, true);
         createErrorReport(null, getStringifiedList(report.getDroppedPages()), reportConfiguration);
 
         System.out.print(report);
@@ -64,19 +57,30 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
     private WikiSynchronizationReport report = null;
 
     @Override
-    public void execute() {
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
+        int exitCode = 0;
         try {
             report = AntibodyWikiWebService.getInstance().synchronizeAntibodiesOnWikiWithZFIN();
         } catch (FileNotFoundException | WikiLoginException e) {
             logger.error(e);
+            exitCode = 1;
         }
-        if (report != null && report.hasChanges())
+        if (report != null && report.hasChanges()) {
             createReportFiles(report);
+        }
 
-        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName + ".statistics", false);
-        createErrorReport(null, null, reportConfiguration);
+        ReportGenerator statistics = new ReportGenerator();
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("Created Wiki Pages", report.getCreatedPages().size());
+        summary.put("Updated Wiki Pages", report.getUpdatedPages().size());
+        summary.put("Dropped Wiki Pages", report.getDroppedPages().size());
+        statistics.setReportTitle("Report for " + jobName);
+        statistics.includeTimestamp();
+        statistics.addSummaryTable(summary);
+        statistics.writeFiles(dataDirectory, jobName + ".statistics");
+        return exitCode;
     }
 }

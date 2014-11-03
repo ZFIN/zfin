@@ -1,15 +1,15 @@
 package org.zfin.datatransfer.microarray;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.ReportGenerator;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -21,20 +21,9 @@ public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
     private static Logger logger = Logger.getLogger(MicroarrayWebserviceJob.class);
 
     private static final ExpressionService expressionService = new ExpressionService();
-    private List<List<String>> addedMarkers;
-    private List<List<String>> removedMarkers;
-    private String errorMessage;
 
     @Override
-    protected void addCustomVariables(Map<String, Object> map) {
-        super.addCustomVariables(map);
-        map.put("addedMarkers", addedMarkers);
-        map.put("removedMarkers", removedMarkers);
-        map.put("errorMessage", errorMessage);
-    }
-
-    @Override
-    public void execute() {
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
@@ -72,27 +61,39 @@ public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
         logger.info("removing: " + markersToRemove.size());
 
         HibernateUtil.createTransaction();
-
+        ReportGenerator rg = new ReportGenerator();
+        rg.setReportTitle("Report for " + jobName);
+        rg.includeTimestamp();
+        int exitCode = 0;
         try {
             RepositoryFactory.getInfrastructureRepository().removeAttributionsNotFound(markersToRemove, MICROARRAY_PUB);
             RepositoryFactory.getInfrastructureRepository().addAttributionsNotFound(markersToAdd, MICROARRAY_PUB);
 
             HibernateUtil.flushAndCommitCurrentSession();
 
-            addedMarkers = buildResultTable(markersToAdd);
-            removedMarkers = buildResultTable(markersToRemove);
+            List<List<String>> addedMarkers = buildResultTable(markersToAdd);
+            List<List<String>> removedMarkers = buildResultTable(markersToRemove);
+
+            rg.addDataTable(addedMarkers.size() + " Markers Added to Geo",
+                    Arrays.asList("Marker", "Geo Link"),
+                    addedMarkers);
+            rg.addDataTable(removedMarkers.size() + " Markers Removed from Geo",
+                    Arrays.asList("Marker", "Geo Link"),
+                    removedMarkers);
         } catch (Exception e) {
             logger.error(e);
             HibernateUtil.rollbackTransaction();
-            errorMessage = "Error in microarray update:\n" + ExceptionUtils.getFullStackTrace(e);
+            rg.addErrorMessage("Error in microarray update");
+            rg.addErrorMessage(e);
+            exitCode = 1;
         } finally {
             if (HibernateUtil.currentSession().isOpen()) {
                 HibernateUtil.currentSession().close();
             }
-            ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, jobName, false);
-            createErrorReport(null, null, config);
         }
-
+        File reportDirectory = new File(dataDirectory, jobName);
+        rg.writeFiles(reportDirectory, jobName);
+        return exitCode;
     }
 
     public static void main(String[] args) {
@@ -103,7 +104,7 @@ public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
         job.setBaseDir(args[1]);
         job.setJobName(args[2]);
         job.init();
-        job.execute();
+        System.exit(job.execute());
     }
 
     private static List<List<String>> buildResultTable(Collection<String> markers) {

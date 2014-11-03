@@ -36,7 +36,7 @@
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Report</reportName>
                     <reportDir>server_apps/data_transfer/LoadOntology/Load-Anatomy-Ontology</reportDir>
-                    <reportFiles>*.html</reportFiles>
+                    <reportFiles>statistics.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>true</allowMissing>
                     <wrapperName>htmlpublisher-wrapper.html</wrapperName>

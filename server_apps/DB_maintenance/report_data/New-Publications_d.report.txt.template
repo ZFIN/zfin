@@ -1,8 +1,0 @@
-${numberOfRecords} ZFIN Publications added or activated on: ${YEAR}-${MONTH}-${DAY}
-
-<#list recordList as resultObject>
-<#list resultObject as record><#if record??><#if record_index == 0>[</#if>${record}<#if record_index == 0>]
-</#if></#if></#list>
-
-
-</#list>

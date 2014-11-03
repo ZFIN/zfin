@@ -17,7 +17,7 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
     protected boolean useDynamicQuery;
     private DatabaseService service = new DatabaseService();
 
-    public void execute() {
+    public int execute() {
         LOG.info("Job Name: " + jobName);
         LOG.info("Running SQLQueryTask on instance: " + instance);
         if (useDynamicQuery)
@@ -30,22 +30,24 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
             throw new RuntimeException(message);
         }
         LOG.info("Handling file : " + queryFile.getAbsolutePath());
-        runQueryFile(queryFile);
+        return runQueryFile(queryFile);
     }
 
-    private void runQueryFile(File dbQueryFile) {
+    private int runQueryFile(File dbQueryFile) {
         clearReportDirectory();
         setLoggerFile();
         copyFileToReportDirectory(dbQueryFile);
         HibernateUtil.currentSession().beginTransaction();
+        List<List<List<String>>> resultList;
         List<String> errorMessages;
         try {
             errorMessages = service.runDbScriptFile(dbQueryFile);
-            List<List<List<String>>> resultList = service.getListOfResultRecords();
-            if (CollectionUtils.isNotEmpty(resultList))
-                createErrorReport(errorMessages, resultList.get(0), new File(baseDir));
-            else
-                createErrorReport(errorMessages, null, new File(baseDir));
+            resultList = service.getListOfResultRecords();
+            if (CollectionUtils.isNotEmpty(resultList)) {
+                createErrorReport(errorMessages, resultList.get(0));
+            } else {
+                createErrorReport(errorMessages, null);
+            }
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);
@@ -53,6 +55,7 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
             HibernateUtil.rollbackTransaction();
             HibernateUtil.closeSession();
         }
+        return CollectionUtils.isNotEmpty(resultList) ? resultList.get(0).size() : 0;
     }
 
     public static void main(String[] args) {
@@ -67,6 +70,6 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         if (args.length > 4)
             task.useDynamicQuery = Boolean.parseBoolean(args[4]);
         task.init(directory);
-        task.execute();
+        System.exit(task.execute());
     }
 }

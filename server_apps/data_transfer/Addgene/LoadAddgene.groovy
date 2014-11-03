@@ -1,7 +1,6 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$SOURCEROOT/home/WEB-INF/lib*:$SOURCEROOT/lib/Java/*:$SOURCEROOT/home/WEB-INF/classes:$CATALINA_HOME/endorsed/*" "$0" $@; exit $?
 
-import freemarker.template.Configuration
 import groovy.json.JsonSlurper
 import org.hibernate.Session
 import org.zfin.framework.HibernateSessionCreator
@@ -13,6 +12,7 @@ import org.zfin.sequence.ForeignDB
 import org.zfin.sequence.ForeignDBDataType
 import org.zfin.sequence.MarkerDBLink
 import org.zfin.sequence.ReferenceDatabase
+import org.zfin.util.ReportGenerator
 
 import java.util.zip.GZIPInputStream
 
@@ -128,15 +128,14 @@ if (options.report) {
     count = query.uniqueResult()
 
     print "Generating report ... "
-    config = new Configuration()
-    template = config.getTemplate("addgene-email.ftl")
-    root = [jobName: options.jobName ?: "",
-            dateRun: new Date(),
-            deletedLinks: linksToDelete,
-            addedLinks: addedLinks,
-            totalLinks: count]
+    ReportGenerator rg = new ReportGenerator();
+    rg.setReportTitle("Report for $options.jobName")
+    rg.includeTimestamp();
+    rg.addIntroParagraph("With this load there are now $count Addgene links in total.")
+    rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
+    rg.addDataTable("${addedLinks.size()} Links Added", ["Gene", "Accession Number"], addedLinks.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
     new File("addgene-report.html").withWriter { writer ->
-        template.process(root, writer)
+        rg.write(writer, "html")
     }
     println "done"
 }

@@ -110,6 +110,10 @@
         </sequential>
     </macrodef>
 
+    <target name="runTest" depends="compile,build-tests" description="Run a single test class">
+        <runTest testClass="${testClass}" outfile="${testClass}" verbose="true"/>
+    </target>
+
     <target name="unittests" depends="compile,build-tests" description="Unit tests.">
         <runTest testClass="org.zfin.framework.GroovyTest" outfile="groovy-${unitTestFile}" verbose="true"/>
         <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="true"/>

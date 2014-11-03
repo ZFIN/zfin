@@ -2,7 +2,7 @@ package org.zfin.publication;
 
 import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
@@ -47,7 +47,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
             numOfThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
 
         task.init(commandLine.getOptionValue("baseDir"));
-        task.execute();
+        System.exit(task.execute());
     }
 
     protected static void initializeLog4J() {
@@ -56,7 +56,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
@@ -76,7 +76,7 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         }
         createReports();
         LOG.info("Finished");
-
+        return (pubInfoMismatchList.size() > 0 || pubMedIdNotFoundList.size() > 0) ? 1 : 0;
     }
 
     private static class CheckPublications implements Runnable {
@@ -93,8 +93,9 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     private synchronized static Publication getPublication() {
         if (publicationList.size() > 0) {
-            if (publicationList.size() % 1000 == 0)
+            if (publicationList.size() % 1000 == 0) {
                 LOG.info(publicationList.size() + " left");
+            }
             return publicationList.remove(0);
         }
         return null;
@@ -111,9 +112,11 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
 
 
-        if (pubMedIdNotFoundList.size() > 0)
-            for (String error : errorList)
+        if (pubMedIdNotFoundList.size() > 0) {
+            for (String error : errorList) {
                 System.out.println(error);
+            }
+        }
     }
 
     private static void checkValidPubMedRecord(Publication publication) {
@@ -181,8 +184,9 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
                 mismatch.setVolume(publication.getVolume());
                 mismatch.setVolumeExternal(fullVolumeString);
             }
-            if (mismatch.hasValues())
+            if (mismatch.hasValues()) {
                 pubInfoMismatchList.add(mismatch.createPublicationMismatchElements(publication.getZdbID(), publication.getShortAuthorList(), publication.getAccessionNumber()));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

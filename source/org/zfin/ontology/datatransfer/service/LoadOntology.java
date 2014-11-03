@@ -2,7 +2,6 @@ package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -27,16 +26,12 @@ import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.ontology.datatransfer.CronJobReport;
 import org.zfin.ontology.datatransfer.CronJobUtil;
-import org.zfin.ontology.datatransfer.GenericCronJobReport;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.DatabaseJdbcStatement;
-import org.zfin.util.DateUtil;
-import org.zfin.util.DbScriptFileParser;
-import org.zfin.util.FileUtil;
+import org.zfin.util.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -168,8 +163,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             loader.debugMode = Boolean.parseBoolean(debugOptionValue);
         LOG.info("Property: " + ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL.value());
         CronJobUtil cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
-        if (loader.initialize(oboFile, cronJobUtil))
+        if (loader.initialize(oboFile, cronJobUtil)) {
             loader.runOntologyUpdateProcess();
+        }
     }
 
     public void runOntologyUpdateProcess() {
@@ -199,6 +195,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 HibernateUtil.rollbackTransaction();
                 LOG.error(e);
                 report.error(e);
+                throw new RuntimeException(e);
             } finally {
                 HibernateUtil.closeSession();
             }
@@ -208,14 +205,13 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             // need to reverse it. A bit of a hack!                                                                                                                                                    zx
             TermPresentation.domain = null;
         } else {
-            // copy no-update found file into reports directory
-            try {
-                File srcFile = new File(loadDirectory, "no-update.html");
-                File file = FileUtils.getFile(loadDirectory, jobName, "statistics.html");
-                FileUtils.copyFile(srcFile, file);
-            } catch (IOException e) {
-                LOG.error(e);
-            }
+            // create "no update" report
+            ReportGenerator rg = new ReportGenerator();
+            rg.setReportTitle("Report for " + jobName);
+            rg.includeTimestamp();
+            rg.addIntroParagraph("No update found for " + ontology.getOntologyName() + " load. Current version saved " +
+                    "by " + oboMetadata.getSavedBy() + " on " + oboMetadata.getDate() + ".");
+            rg.writeFiles(new File(loadDirectory, jobName), "statistics");
         }
         LOG.info("Total Execution Time: " + DateUtil.getTimeDuration(sectionTime));
         closeTraceFile();
@@ -481,8 +477,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     }
 
     private void createAllReportFiles() {
-        if (CollectionUtils.isEmpty(dataMap.keySet()))
+        if (CollectionUtils.isEmpty(dataMap.keySet())) {
             return;
+        }
 
         // check every key from the data map to see if there is a report defined.
         for (String key : dataMap.keySet()) {
@@ -491,9 +488,21 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 createErrorReport(null, dataMap.get(key), reportConfiguration);
             }
         }
-        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, loadDirectory, "statistics", false);
-        createErrorReport(null, null, reportConfiguration);
-
+        ReportGenerator stats = new ReportGenerator();
+        stats.setReportTitle("Report for " + jobName);
+        stats.includeTimestamp();
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("New Terms", getDataSize("new_terms"));
+        summary.put("Updated Term Names", getDataSize("updated_term_names"));
+        summary.put("New Definitions", getDataSize("new_term_definitions"));
+        summary.put("Updated Term Definitions", getDataSize("updated_definitions"));
+        summary.put("Updated Term Comments", getDataSize("updated_term_comments"));
+        summary.put("New Aliases", getDataSize("new_aliases"));
+        summary.put("Removed Aliases", getDataSize("removed_aliases"));
+        summary.put("New Relationships", getDataSize("removed_relationships"));
+        summary.put("Removed Relationships", getDataSize("removed_relationships"));
+        stats.addSummaryTable("Statistics", summary);
+        stats.writeFiles(new File(loadDirectory, jobName), "statistics");
     }
 
     @Override
@@ -516,6 +525,11 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 return list.get(0);
         }
         return null;
+    }
+
+    private int getDataSize(String key) {
+        List<List<String>> data = dataMap.get(key);
+        return data == null ? 0 : data.size();
     }
 
     private void unloadData() {
@@ -920,9 +934,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     }
 
     @Override
-    public void execute() {
-
-    }
+    public int execute() { return 0; }
 
     class RelationshipsValidator {
 

@@ -1,22 +1,19 @@
 package org.zfin.infrastructure.ant;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinProperties;
+import org.zfin.util.ReportGenerator;
 
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -40,7 +37,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     // contains key-value pairs that are used in the report generation.
     protected Map<String, String> dataMap = new HashMap<>(5);
 
-    public abstract void execute();
+    public abstract int execute();
 
     protected void init(String baseDir) {
         this.baseDir = baseDir;
@@ -76,19 +73,12 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         }
     }
 
-    protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, File directory) {
+    protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList) {
         ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName, true);
         createErrorReport(errorMessages, resultList, reportConfiguration);
     }
 
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, ReportConfiguration reportConfiguration) {
-
-        Configuration configuration = new Configuration();
-        try {
-            configuration.setDirectoryForTemplateLoading(reportConfiguration.getTemplateDirectory());
-        } catch (IOException e) {
-            LOG.error(e);
-        }
 
         if (CollectionUtils.isEmpty(resultList)) {
             File noupdate = new File(reportConfiguration.getReportFile().getParent(), "no-update.txt");
@@ -99,67 +89,38 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             }
         }
 
-        LOG.debug("Template File being used: " + reportConfiguration.getTemplateDirectory() + "/" + reportConfiguration.getTemplateFileName());
-        FileWriter writer;
-        try {
-            writer = new FileWriter(reportConfiguration.getReportFile());
-            Template template = configuration.getTemplate(reportConfiguration.getTemplateFileName());
-            Map<String, Object> root = new HashMap<>();
+        ReportGenerator report = new ReportGenerator();
+        report.setReportTitle("Report for " + jobName);
+        report.includeTimestamp();
 
-
-            if (reportConfiguration.isUseDefaultReportTemplate()) {
-                String errorMessage = (String) reportProperties.get(reportConfiguration.getReportName() + "." + ERROR_MESSAGE);
-                String columnHeader = (String) reportProperties.get(reportConfiguration.getReportName() + "." + HEADER_COLUMNS);
-                if (StringUtils.isEmpty(errorMessage)) {
-                    LOG.warn("No value for key `" + reportConfiguration.getReportName() + "` found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
-                    reportConfiguration.getReportFile().delete();
-                    return;
-                }
-                if (StringUtils.isEmpty(columnHeader)) {
-                    LOG.warn("No value for key `" + reportConfiguration.getReportName() + "` found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
-                    reportConfiguration.getReportFile().delete();
-                    return;
-                }
-                root.put("errorMessage", errorMessage);
-                // header columns
-                String[] headerCols = columnHeader.split("\\|");
-                root.put("headerColumns", headerCols);
+        if (reportConfiguration.isUseDefaultReportTemplate()) {
+            String errorMessage = (String) reportProperties.get(reportConfiguration.getReportName() + "." + ERROR_MESSAGE);
+            String columnHeader = (String) reportProperties.get(reportConfiguration.getReportName() + "." + HEADER_COLUMNS);
+            if (StringUtils.isEmpty(errorMessage)) {
+                LOG.warn("No value for key `" + reportConfiguration.getReportName() + "` found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
+                reportConfiguration.getReportFile().delete();
+                return;
             }
-            if (CollectionUtils.isEmpty(resultList) || CollectionUtils.isEmpty(resultList)) {
-                root.put("recordList", new ArrayList<List<String>>());
-                root.put("numberOfRecords", 0);
+            if (StringUtils.isEmpty(columnHeader)) {
+                LOG.warn("No value for key `" + reportConfiguration.getReportName() + "` found in file " + reportConfiguration.getTemplateDirectory() + "/" + propertiesFile);
+                reportConfiguration.getReportFile().delete();
+                return;
+            }
+            if (resultList != null) {
+                report.addIntroParagraph(resultList.size() + " " + errorMessage);
+                report.addDataTable(Arrays.asList(columnHeader.split("\\|")), resultList);
             } else {
-                root.put("recordList", resultList);
-                root.put("numberOfRecords", resultList.size());
+                report.addIntroParagraph("0 " + errorMessage);
             }
-            // add custom variables
-            addCustomVariables(root);
-            root.put("dateRun", new Date());
-            root.put("jobName", jobName);
-            if (queryFile != null) {
-                root.put("sqlQuery", getSqlQuery());
-            }
-            template.process(root, writer);
-            writer.flush();
-            // export data
-            StringBuilder lines = new StringBuilder();
-            if (CollectionUtils.isNotEmpty(resultList)) {
-                for (List<String> record : resultList) {
-                    for (String element : record) {
-                        lines.append(element);
-                        lines.append(",");
-                    }
-                    lines.append("\n");
-                }
-            }
-            FileUtils.writeStringToFile(reportConfiguration.getPlainReportFile(), lines.toString());
-        } catch (IOException e) {
-            LOG.error(e);
-            throw new RuntimeException("Error finding template file.", e);
-        } catch (TemplateException e) {
-            LOG.error(e);
-            throw new RuntimeException("Error while creating email body", e);
         }
+        if (queryFile != null) {
+            try {
+                report.addCodeSnippet(getSqlQuery());
+            } catch (IOException e) {
+                LOG.error("Unable to load SQL query for report", e);
+            }
+        }
+        report.writeFiles(reportConfiguration.getReportDirectory(), reportConfiguration.getReportName());
 
         if (CollectionUtils.isEmpty(errorMessages))
             return;
@@ -175,24 +136,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     // Override this in your sub class...
     protected void addCustomVariables(Map<String, Object> map) {
 
-    }
-
-    protected void createReportFile(File directory, List<List<String>> resultList, List<String> errorMessages) {
-        File[] templateFileList = directory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(TEMPLATE) && name.startsWith(jobName);
-            }
-        });
-        if (templateFileList != null && templateFileList.length > 0) {
-            for (File templateFile : templateFileList) {
-                ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, templateFile, jobName, false);
-                createErrorReport(errorMessages, resultList, reportConfiguration);
-            }
-        } else {
-            ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, directory, jobName, true);
-            createErrorReport(errorMessages, resultList, reportConfiguration);
-        }
     }
 
     protected String getSqlQuery() throws IOException {

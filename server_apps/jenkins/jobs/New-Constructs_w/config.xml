@@ -33,7 +33,7 @@
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Error Report</reportName>
           <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-          <reportFiles>New-Constructs_w.report.html</reportFiles>
+          <reportFiles>New-Constructs_w.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>false</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -47,7 +47,7 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/New-Constructs_w.report.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/New-Constructs_w.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

@@ -1,13 +1,11 @@
 package org.zfin.sequence.blast;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.infrastructure.ant.ReportConfiguration;
+import org.zfin.util.ReportGenerator;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
 
 /**
  */
@@ -16,25 +14,31 @@ public class RegenerateWebHostCuratedDatabasesJob extends AbstractValidateDataRe
     private static Logger logger = Logger.getLogger(RegenerateWebHostCuratedDatabasesJob.class);
 
     @Override
-    public void execute() {
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
 
         logger.info("validating curated webhost database");
+        int exitCode = 0;
         try {
             if (MountedWublastBlastService.getInstance().validateCuratedDatabases()) {
                 MountedWublastBlastService.getInstance().regenerateCuratedDatabases();
             }
         } catch (BlastDatabaseException e) {
             logger.error("failed to validate curated database", e);
-            List<String> failure = Arrays.asList(ExceptionUtils.getFullStackTrace(e));
             String reportName = jobName + ".errors";
-            ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, reportName, true);
-            createErrorReport(null, getStringifiedList(failure), config);
+            ReportGenerator rg = new ReportGenerator();
+            rg.setReportTitle("Report for " + jobName);
+            rg.includeTimestamp();
+            rg.addErrorMessage("Failed to validate curated databases");
+            rg.addErrorMessage(e);
+            rg.writeFiles(new File(dataDirectory, jobName), reportName);
+            exitCode = 1;
         } finally {
             HibernateUtil.closeSession();
         }
+        return exitCode;
     }
 
     public static void main(String[] args) {
@@ -45,6 +49,6 @@ public class RegenerateWebHostCuratedDatabasesJob extends AbstractValidateDataRe
         job.setBaseDir(args[1]);
         job.setJobName(args[2]);
         job.init();
-        job.execute();
+        System.exit(job.execute());
     }
 }

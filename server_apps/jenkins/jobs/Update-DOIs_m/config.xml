@@ -33,7 +33,7 @@
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Updated DOIs Report</reportName>
           <reportDir>server_apps/DB_maintenance/report_data/Update-DOIs_m</reportDir>
-          <reportFiles>Update-DOIs_m.info.html</reportFiles>
+          <reportFiles>Update-DOIs_m.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>true</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -47,7 +47,7 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-DOIs_m/Update-DOIs_m.info.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-DOIs_m/Update-DOIs_m.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -63,7 +63,7 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-DOIs_m/Update-DOIs_m.errors.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-DOIs_m/Update-DOIs_m.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

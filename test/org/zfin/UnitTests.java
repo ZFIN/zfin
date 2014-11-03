@@ -129,6 +129,7 @@ import org.zfin.util.*;
         PubMedValidationReportTest.class,
         RelationshipTypeSortingTest.class,
         ReportConfigurationTest.class,
+        ReportGeneratorSpec.class,
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,
         SectionVisibilityTest.class,

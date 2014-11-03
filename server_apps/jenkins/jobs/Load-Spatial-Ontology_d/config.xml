@@ -36,7 +36,7 @@
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Report</reportName>
                     <reportDir>server_apps/data_transfer/LoadOntology/Load-Spatial-Ontology_d</reportDir>
-                    <reportFiles>*.html</reportFiles>
+                    <reportFiles>statistics.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>true</allowMissing>
                     <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -52,7 +52,6 @@
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
                             ${FILE,path=&quot;server_apps/data_transfer/LoadOntology/Load-Spatial-Ontology_d/statistics.html&quot;}
-                            ${BUILD_LOG_REGEX,regex="Current Version"}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>

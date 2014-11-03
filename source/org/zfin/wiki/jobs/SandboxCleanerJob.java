@@ -16,12 +16,14 @@ public class SandboxCleanerJob extends AbstractValidateDataReportTask {
 
     private static final Logger logger = Logger.getLogger(SandboxCleanerJob.class);
 
-    public void execute() {
+    public int execute() {
         try {
             WikiWebService.getInstance(ZfinPropertiesEnum.WIKI_HOST.value()).cleanSandbox();
         } catch (Exception e) {
             e.printStackTrace();
+            return 1;
         }
+        return 0;
     }
 
     public static void main(String[] args) throws WikiLoginException, FileNotFoundException, InterruptedException {
@@ -38,6 +40,6 @@ public class SandboxCleanerJob extends AbstractValidateDataReportTask {
         job.setBaseDir(jobDirectoryString);
         job.setJobName(args[2]);
         job.init(false);
-        job.execute();
+        System.exit(job.execute());
     }
 }

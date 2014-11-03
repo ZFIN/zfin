@@ -82,6 +82,10 @@ public class ReportConfiguration {
         init();
     }
 
+    public ReportConfiguration(String jobName, File reportDirectory, String reportName) {
+        this(jobName, reportDirectory, reportName, true);
+    }
+
     private void init() {
         initReportFile();
         initTemplateFile();
@@ -168,4 +172,9 @@ public class ReportConfiguration {
     public String getTemplateFileName() {
         return templateFileName;
     }
+
+    public File getReportDirectory() {
+        return reportDirectory;
+    }
+
 }

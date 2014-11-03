@@ -60,11 +60,6 @@
             <arg value="http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz"/>
             <arg value="org.zfin.datatransfer.go.PaintGafParser"/>
         </java>
-        <fail message="Failed: There was an error while processing the load">
-            <condition>
-                <resourcecontains resource="${validateData}/gafLoad/${jobName}_errors.txt" substring="."/>
-            </condition>
-        </fail>
     </target>
 
     <target name="load-gaf-goa" description="">
@@ -79,11 +74,6 @@
             <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/gene_association.goa_zebrafish.gz"/>
             <arg value="org.zfin.datatransfer.go.GoaGafParser"/>
         </java>
-        <fail message="Failed: There was an error while processing the load">
-            <condition>
-                <resourcecontains resource="${validateData}/gafLoad/${jobName}_errors.txt" substring="."/>
-            </condition>
-        </fail>
     </target>
 
     <target name="load-gaf-fpinference" description="">
@@ -98,11 +88,6 @@
             <arg value="http://build.berkeleybop.org/view/GAF/job/gaf-check-zfin/lastSuccessfulBuild/artifact/gene_association.zfin.inf.gaf"/>
             <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/>
         </java>
-        <fail message="Failed: There was an error while processing the load">
-            <condition>
-                <resourcecontains resource="${validateData}/gafLoad/${jobName}_errors.txt" substring="."/>
-            </condition>
-        </fail>
     </target>
 
     <target name="report-publication-duplicate" description="">
@@ -189,11 +174,6 @@
             <arg value="Set-Permissions-Zebrafish-Book-Wiki_d"/>
         </java>
         <echo message="Check file: ${validateData}/validatedata/${JobName}/${JobName}.faulty-pages.txt"/>
-        <fail message="Failed: There are records that indicate a problem">
-            <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}/${JobName}.faulty-pages.txt" substring=","/>
-            </condition>
-        </fail>
     </target>
 
     <target name="clean-wiki-sandbox" description="">
@@ -225,12 +205,6 @@
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
         </java>
-
-        <fail message="Error caught while updating DOI jobs">
-            <condition>
-                <resourcecontains resource="${validateData}/report_data/${JobName}/${jobName}.errors.txt" substring=","/>
-            </condition>
-        </fail>
     </target>
 
     <target name="remove-go-terms-from-withdrawn-markers" description="">
@@ -251,12 +225,6 @@
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
         </java>
-
-        <fail message="An exception was thrown while regenerating databases">
-            <condition>
-                <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.errors.txt" substring=","/>
-            </condition>
-        </fail>
     </target>
 
     <target name="validate-blast-databases" description="">
@@ -267,12 +235,6 @@
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
         </java>
-
-        <fail message="Some remote databases could not be validated">
-            <condition>
-                <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.errors.txt" substring=","/>
-            </condition>
-        </fail>
     </target>
 
     <target name="microarray-update" description="">
@@ -302,13 +264,6 @@
             <arg value="${validateData}/validatedata"/>
             <arg value="${web-inf.dir}/zfin.properties"/>
         </java>
-
-        <echo message="${validateData}/validatedata/${JobName}.txt"/>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}/${JobName}.txt" substring=","/>
-            </condition>
-        </fail>
     </target>
 
     <target name="run-data-report-param" description="">
@@ -327,20 +282,9 @@
             <arg value="${ParameterVariables}"/>
             <arg value="-parameterValues"/>
             <arg value="${ParameterValues}"/>
-            <!--
-                        <arg value="-delimiter"/>
-                        <arg value="${Delimiter}"/>
-            -->
             <arg value="-baseDir"/>
             <arg value="${basedir}"/>
         </java>
-
-        <echo message="${validateData}/validatedata/${JobName}.txt"/>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.txt" substring=","/>
-            </condition>
-        </fail>
     </target>
 
     <target name="run-data-report" description="">
@@ -355,13 +299,6 @@
             <arg value="-baseDir"/>
             <arg value="${basedir}"/>
         </java>
-
-        <echo message="${validateData}/validatedata/${JobName}.txt"/>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}.txt" substring=","/>
-            </condition>
-        </fail>
     </target>
 
     <target name="validate-data-report-dynamic" description="">
@@ -376,13 +313,6 @@
             <arg value="${web-inf.dir}/zfin.properties"/>
             <arg value="true"/>
         </java>
-
-        <echo message="${validateData}/validatedata/${JobName}.txt"/>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}/${JobName}.txt" substring=","/>
-            </condition>
-        </fail>
     </target>
 
     <target name="validate-publications-with-PubMed" description="">
@@ -405,22 +335,8 @@
             <arg value="2000"/>
 -->
         </java>
-
-        <echo message="${validateData}/validatedata/${JobName}/${JobName}.faulty-PubMed-IDs.txt"/>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}/${JobName}.faulty-PubMed-IDs.txt"
-                                  substring=","/>
-            </condition>
-        </fail>
-        <echo message="${validateData}/validatedata/${JobName}/${JobName}.faulty-Pub-Info.txt"/>
-        <fail message="Failed: There are records in violation">
-            <condition>
-                <resourcecontains resource="${validateData}/validatedata/${JobName}/${JobName}.faulty-Pub-Info.txt"
-                                  substring=","/>
-            </condition>
-        </fail>
     </target>
+
     <target name="fetch-publications-from-ncbi" description="">
         <echo message="Create get-publication-from-ncbi Report"/>
         <echo message="Use database: ${DBNAME}"/>

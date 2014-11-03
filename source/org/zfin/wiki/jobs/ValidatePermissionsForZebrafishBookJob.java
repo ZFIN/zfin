@@ -20,7 +20,7 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
     private static final Logger logger = Logger.getLogger(ValidatePermissionsForZebrafishBookJob.class);
 
     @Override
-    public void execute() {
+    public int execute() {
         try {
             List<String> pagesWithBadPermissions = new ArrayList<>();
             WikiWebService webService = WikiWebService.getInstance();
@@ -53,8 +53,10 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
             clearReportDirectory();
             setReportProperties();
             createReport(pagesWithBadPermissions);
+            return pagesWithBadPermissions.size();
         } catch (Exception e) {
             logger.error("Failed out validate permissions for zebrafish book job", e);
+            return 1;
         }
     }
 
@@ -85,7 +87,7 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
         job.setJobName(args[2]);
         job.init(false);
         job.setLoggerFile();
-        job.execute();
+        System.exit(job.execute());
     }
 
 }

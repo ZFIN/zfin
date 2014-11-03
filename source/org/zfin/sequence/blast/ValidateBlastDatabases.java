@@ -15,7 +15,7 @@ public class ValidateBlastDatabases extends AbstractValidateDataReportTask {
     private static Logger logger = Logger.getLogger(ValidateBlastDatabases.class);
 
     @Override
-    public void execute() {
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
@@ -29,6 +29,7 @@ public class ValidateBlastDatabases extends AbstractValidateDataReportTask {
             logger.info("No failed databases found.");
         }
         HibernateUtil.closeSession();
+        return failures.size();
     }
 
     public static void main(String[] args) {
@@ -39,7 +40,7 @@ public class ValidateBlastDatabases extends AbstractValidateDataReportTask {
         job.setBaseDir(args[1]);
         job.setJobName(args[2]);
         job.init();
-        job.execute();
+        System.exit(job.execute());
     }
 
 }

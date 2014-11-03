@@ -10,6 +10,7 @@ import org.zfin.publication.repository.HibernatePublicationRepository;
 import org.zfin.publication.repository.PublicationRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -29,6 +30,7 @@ public class DOIProcessor {
     private boolean doisUpdated = false;
 
     private List<String> messages = new ArrayList<>();
+    private List<List<String>> updated = new ArrayList<>();
     private List<String> errors = new ArrayList<>();
 
     public DOIProcessor(boolean reportAll) {
@@ -60,7 +62,7 @@ public class DOIProcessor {
     private List<Publication> getPubmedIdsWithNoDOIs() {
         List<Publication> publicationList = publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess);
         if (reportAll || CollectionUtils.isNotEmpty(publicationList)) {
-            messages.add("number of dois to populate: " + publicationList.size());
+            messages.add("There were " + publicationList.size() + " publications which still need a DOI.");
         }
         return publicationList;
     }
@@ -81,7 +83,7 @@ public class DOIProcessor {
             DOIHTTPTester httpTester = new DOIHTTPTester();
             publicationList = httpTester.testDOIList(publicationList);
             for (Publication publication : publicationList) {
-                messages.add("added doi[" + publication.getDoi() + "] for publication[" + publication.getZdbID() + "]");
+                updated.add(Arrays.asList(publication.getZdbID(), publication.getDoi()));
             }
             updateDOIs(publicationList);
             HibernateUtil.closeSession();
@@ -99,7 +101,7 @@ public class DOIProcessor {
      */
     private void updateDOIs(List<Publication> publicationList) {
 
-        if (publicationList == null || publicationList.size() == 0) {
+        if (CollectionUtils.isEmpty(publicationList)) {
             messages.add("No sources to update");
             doisUpdated = false;
             return;
@@ -124,6 +126,10 @@ public class DOIProcessor {
 
     public List<String> getErrors() {
         return errors;
+    }
+
+    public List<List<String>> getUpdated() {
+        return updated;
     }
 
     public boolean isDoisUpdated() {

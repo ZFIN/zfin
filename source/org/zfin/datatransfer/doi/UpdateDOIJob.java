@@ -2,7 +2,11 @@ package org.zfin.datatransfer.doi;
 
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.infrastructure.ant.ReportConfiguration;
+import org.zfin.util.ReportGenerator;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  */
@@ -15,7 +19,7 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
     private int maxAttempts;
 
     @Override
-    public void execute() {
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
@@ -23,13 +27,20 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
         DOIProcessor driver = new DOIProcessor(reportAll, maxAttempts, maxToProcess);
         driver.findAndUpdateDOIs();
 
-        String infoReportName = jobName + ".info";
-        ReportConfiguration infoReport = new ReportConfiguration(jobName, dataDirectory, infoReportName, true);
-        createErrorReport(null, getStringifiedList(driver.getMessages()), infoReport);
+        ReportGenerator rg = new ReportGenerator();
+        rg.setReportTitle("Report for " + jobName);
+        rg.includeTimestamp();
+        for (String message : driver.getMessages()) {
+            rg.addIntroParagraph(message);
+        }
+        List<List<String>> updated = driver.getUpdated();
+        rg.addDataTable(updated.size() + " Updated Publications", Arrays.asList("Publication", "DOI"), updated);
+        for (String error : driver.getErrors()) {
+            rg.addErrorMessage(error);
+        }
+        rg.writeFiles(new File(dataDirectory, jobName), jobName);
 
-        String errorReportName = jobName + ".errors";
-        ReportConfiguration errorReport = new ReportConfiguration(jobName, dataDirectory, errorReportName, true);
-        createErrorReport(null, getStringifiedList(driver.getErrors()), errorReport);
+        return driver.getErrors().size();
     }
 
     public static void main(String[] args) {
@@ -52,6 +63,6 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
             throw new RuntimeException("Expecting job name to end in `_d` or `_m`, but was: " + jobName);
         }
         job.init();
-        job.execute();
+        System.exit(job.execute());
     }
 }

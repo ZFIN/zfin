@@ -69,7 +69,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     protected String localDownloadFile;
     protected String organization;
 
-    public void execute() {
+    public int execute() {
+        int exitCode = 0;
 
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
@@ -154,13 +155,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             } catch (IOException io) {
                 logger.error("Error writing error report", io);
             }
-
+            exitCode = 1;
         } finally {
             downloadService = null;
             gafService = null;
             HibernateUtil.closeSession();
         }
-
+        return exitCode;
     }
 
     private void addAnnotations(GafJobData gafJobData) {
@@ -244,6 +245,6 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             System.exit(1);
         }
         job.init();
-        job.execute();
+        System.exit(job.execute());
     }
 }

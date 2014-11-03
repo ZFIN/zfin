@@ -40,7 +40,7 @@
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
                     <reportDir>server_apps/DB_maintenance/validatedata</reportDir>
-                    <reportFiles>Check-Get_Object_Type-Function_d.report.html</reportFiles>
+                    <reportFiles>Check-Get_Object_Type-Function_d.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                     <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -55,7 +55,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.report.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Get_Object_Type-Function_d.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>

@@ -2,7 +2,6 @@ package org.zfin.wiki.jobs;
 
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.wiki.service.WikiWebService;
 
@@ -18,7 +17,7 @@ public class SetPermissionsToOwnerJob extends AbstractValidateDataReportTask {
     private static final Logger logger = Logger.getLogger(SetPermissionsToOwnerJob.class);
 
     @Override
-    public void execute() {
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
@@ -31,13 +30,13 @@ public class SetPermissionsToOwnerJob extends AbstractValidateDataReportTask {
                 pages.addAll(wikiService.setOwnerForLabel("community_antibody"));
 
                 if (pages.size() > 0) {
-                    ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, jobName, true);
-                    createErrorReport(null, getStringifiedList(pages), config);
+                    createErrorReport(null, getStringifiedList(pages));
                 }
             }
         } catch (Exception e) {
             throw new RuntimeException("Error while setting wiki page permissions", e);
         }
+        return 0;
     }
 
     public static void main(String[] args) {
@@ -49,6 +48,6 @@ public class SetPermissionsToOwnerJob extends AbstractValidateDataReportTask {
         job.setBaseDir(args[1]);
         job.setJobName(args[2]);
         job.init(false);
-        job.execute();
+        System.exit(job.execute());
     }
 }

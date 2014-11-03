@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
-import org.zfin.infrastructure.ant.ReportConfiguration;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.repository.RepositoryFactory;
@@ -19,7 +18,7 @@ public class RemoveGoTermsFromWithdrawnMarkersJob extends AbstractValidateDataRe
     private static final Logger logger = Logger.getLogger(RemoveGoTermsFromWithdrawnMarkersJob.class);
 
     @Override
-    public void execute() {
+    public int execute() {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
@@ -29,7 +28,7 @@ public class RemoveGoTermsFromWithdrawnMarkersJob extends AbstractValidateDataRe
 
         if (CollectionUtils.isEmpty(markerGoTermEvidenceRepositoryList)) {
             logger.info("No MarkerGoTermEvidence's are related to a withdrawn marker");
-            return;
+            return 0;
         }
 
         HibernateUtil.createTransaction();
@@ -46,8 +45,6 @@ public class RemoveGoTermsFromWithdrawnMarkersJob extends AbstractValidateDataRe
             errors.add(e.getMessage());
         }
 
-        ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, jobName, true);
-        logger.info(config.getReportFile());
         List<List<String>> resultsDisplay = new ArrayList<>();
         for (MarkerGoTermEvidence evidence : markerGoTermEvidenceRepositoryList) {
             List<String> result = new ArrayList<>();
@@ -57,7 +54,8 @@ public class RemoveGoTermsFromWithdrawnMarkersJob extends AbstractValidateDataRe
             result.add(evidence.getEvidenceCode().getCode());
             resultsDisplay.add(result);
         }
-        createErrorReport(errors, resultsDisplay, config);
+        createErrorReport(errors, resultsDisplay);
+        return errors.size();
     }
 
     public static void main(String[] args) {
@@ -68,7 +66,7 @@ public class RemoveGoTermsFromWithdrawnMarkersJob extends AbstractValidateDataRe
         job.setBaseDir(args[1]);
         job.setJobName(args[2]);
         job.init();
-        job.execute();
+        System.exit(job.execute());
     }
 
 }

@@ -4,12 +4,13 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.zfin.framework.HibernateUtil;
 
 import java.io.File;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     private String valueNames;
     private boolean useParameterMap;
 
-    public void execute() {
+    public int execute() {
         LOG.info("Job Name: " + jobName);
         if (useParameterMap) {
             String[] variables = variableNames.split(delimiter);
@@ -46,6 +47,7 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         }
         LOG.info("Handling file : " + queryFile.getAbsolutePath());
         runQueryFile(queryFile);
+        return 0;
     }
 
     private void initLogger() {
@@ -67,9 +69,9 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             errorMessages = service.runDbScriptFile(dbQueryFile, null, dataMap);
             List<List<List<String>>> resultList = service.getListOfResultRecords();
             if (CollectionUtils.isNotEmpty(resultList))
-                createReportFile(dataDirectory, resultList.get(0), errorMessages);
+                createErrorReport(errorMessages, resultList.get(0));
             else
-                createErrorReport(errorMessages, null, dataDirectory);
+                createErrorReport(errorMessages, null);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
@@ -118,30 +120,21 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             task.init(pathname);
         }
         LOG.getRootLogger().setLevel(Level.INFO);
-        task.execute();
+        System.exit(task.execute());
     }
 
     private static void handleParameterMap(CommandLine commandLine, DataReportTask task) {
         task.variableNames = commandLine.getOptionValue(parameterVariablesOpt.getOpt());
         String values = commandLine.getOptionValue(parameterValuesOpt.getOpt());
         String delimiter = commandLine.getOptionValue(delimiterOpt.getOpt());
-        if (StringUtils.isNotEmpty(delimiter))
+        if (StringUtils.isNotEmpty(delimiter)) {
             task.delimiter = delimiter;
-        if (values.equals("")) {
-            Calendar now = Calendar.getInstance();
-            int year = now.get(Calendar.YEAR);
-            int month = now.get(Calendar.MONTH) + 1;
-            int day = now.get(Calendar.DAY_OF_MONTH);
-            values = year + "__" + getPaddedNumber(month) + "__" + getPaddedNumber(day);
+        }
+        if (StringUtils.isBlank(values)) {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy__MM__dd");
+            values = df.format(new Date());
         }
         task.valueNames = values;
-    }
-
-    private static String getPaddedNumber(int month) {
-        if (month > 9)
-            return String.valueOf(month);
-        else
-            return "0" + String.valueOf(month);
     }
 
 }
