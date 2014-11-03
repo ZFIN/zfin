@@ -193,7 +193,7 @@ create dba function regen_clean_expression() returning integer
     -- -------------------------------------------------------------------
 
     let errorHint = "create genox temp tables";
-    execute procedure regen_cleanExpression_create_temp_tables();
+    execute procedure regen_clean_expression_create_temp_tables();
       
 
     -- -------------------------------------------------------------------
@@ -209,7 +209,7 @@ create dba function regen_clean_expression() returning integer
 
 let errorHint = "clean_expression_fast_search_new_proc";
     -- takes regen_cleanExpression_input_zdb_id_temp as input, adds recs to regen_cleanExpression_temp
-    execute procedure regen_cleanExpression_process();
+    execute procedure regen_clean_expression_process();
 
     delete from regen_genox_input_zdb_id_temp;
 
@@ -354,4 +354,4 @@ let errorHint = "clean_expression_fast_search_new_proc";
 end function;
 
 
-grant execute on function regen_cleanExpression () to "public";
+grant execute on function regen_clean_expression () to "public";
