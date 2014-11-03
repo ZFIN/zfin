@@ -1,4 +1,4 @@
-#! /bin/tcsh
+#! /bin/tcsh -e 
 #--------------
 # Run regen functions from cron.
 # Update statistics for procedures after every invocation.  This avoids 
@@ -32,6 +32,9 @@ echo 'execute function regen_feature_term_fast_search(); update statistics for p
 
 echo "Starting regen_expression_term_fast_search at `date`"
 echo 'execute function regen_expression_term_fast_search(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+
+echo "Starting regen_clean_expression at `date`"
+echo 'execute function regen_clean_expression(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
 echo "Starting regen_pheno_fast_search at `date`"
 dbaccess -a <!--|DB_NAME|--> <!--|TARGETROOT|-->/server_apps/DB_maintenance/pheno/pheno_term_regen.sql 
