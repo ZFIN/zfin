@@ -16,9 +16,10 @@ import java.util.*;
 
 public class ReportGenerator {
 
+    public enum Format { HTML, TXT }
+
     private final static Logger log = Logger.getLogger(ReportGenerator.class);
 
-    private final static String[] ALL_FORMATS = {"html", "txt"};
     private final static String REPORT_TITLE = "reportTitle";
     private final static String TIME_STAMP = "timeStamp";
     private final static String DOMAIN_NAME = "domainName";
@@ -117,11 +118,11 @@ public class ReportGenerator {
         addToList(CODE_SNIPPETS, snippet);
     }
 
-    public void write(Writer output, String format) throws IOException, TemplateException {
+    public void write(Writer output, Format format) throws IOException, TemplateException {
         Configuration config = ZfinProperties.getTemplateConfiguration();
         Template template;
         try {
-            template = config.getTemplate("report-generator." + format + ".ftl");
+            template = config.getTemplate("report-generator." + format.toString().toLowerCase() + ".ftl");
         } catch (IOException e) {
             throw new IOException("Could not find Report Generator template for format: " + format, e);
         }
@@ -129,12 +130,12 @@ public class ReportGenerator {
     }
 
     public void writeFiles(File directory, String baseName) {
-        for (String format : ALL_FORMATS) {
+        for (Format format : Format.values()) {
             try {
                 if (!directory.exists()) {
                     directory.mkdirs();
                 }
-                File outputFile = new File(directory, baseName + "." + format);
+                File outputFile = new File(directory, baseName + "." + format.toString().toLowerCase());
                 FileWriter writer = new FileWriter(outputFile);
                 write(writer, format);
             } catch (TemplateException | IOException e) {

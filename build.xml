@@ -552,9 +552,9 @@
     <target name="deploy" depends="deploy-without-tests,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
-    <target name="deploy-without-tests" depends="pre-deploy,build-properties,advance-build,notify-restart,restart,notify-up,deploy-solr"/>
+    <target name="deploy-without-tests" depends="pre-deploy,build-properties,advance-build,unittests-quiet,notify-restart,restart,notify-up,deploy-solr"/>
 
-    <target name="pre-deploy" depends="do,unittests-quiet,notify-deploy,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
+    <target name="pre-deploy" depends="do,notify-deploy,prepareDeploy,gwt,copy-to-pre-release,generateVersionInfo"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
         <copy-indexer-build-file-with-env-variables />
         <jsp-compile />
@@ -642,7 +642,7 @@
     </macrodef>
 
     <target name="cleandeploy" depends="do"
-            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
+            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <removeWebAppDir dir="${home.target}"/>
         <copyWebApp from="${web.dir}" to="${home.target}"/>
 
@@ -650,7 +650,7 @@
     </target>
 
     <target name="dirtydeploy" depends="compile"
-            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been buil assuming that its already been built">
+            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
         <copy-indexer-build-file-with-env-variables />
         <antcall target="deploy-solr"/>
@@ -676,7 +676,7 @@
     </macrodef>
 
 
-    <target name="prepareDeploy" description="Remove existin pre-release folder">
+    <target name="prepareDeploy" description="Remove existing pre-release folder">
         <delete dir="${pre-web-inf}"/>
         <delete dir="${gwt.pre-target}"/>
         <mkdir dir="${pre-web-inf}"/>

@@ -135,7 +135,7 @@ if (options.report) {
     rg.addDataTable("${linksToDelete.size()} Links Removed", ["Gene", "Accession Number"], linksToDelete.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
     rg.addDataTable("${addedLinks.size()} Links Added", ["Gene", "Accession Number"], addedLinks.collect { link -> [link.getMarker().getZdbID(), link.getAccessionNumber()] })
     new File("addgene-report.html").withWriter { writer ->
-        rg.write(writer, "html")
+        rg.write(writer, ReportGenerator.Format.HTML)
     }
     println "done"
 }

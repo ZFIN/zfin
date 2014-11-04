@@ -14,6 +14,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
     @Shared ReportGenerator rg
     @Shared StringWriter out
+    @Shared ReportGenerator.Format html = ReportGenerator.Format.HTML
+    @Shared ReportGenerator.Format txt = ReportGenerator.Format.TXT
 
     def setup() {
         rg = new ReportGenerator()
@@ -32,8 +34,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings                | unexpectedStrings
-        "html" || ["<html>", "<head>", "<body>"] | ["<h1>"]
-        "txt"  || []                             | ["=", '-']
+        html   || ["<html>", "<head>", "<body>"] | ["<h1>"]
+        txt    || []                             | ["=", '-']
     }
 
     @Unroll
@@ -48,8 +50,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings
-        "html" || ["<title>Hello report</title>", "<h1>Hello report</h1>"]
-        "txt"  || ["Hello report", "============"]
+        html   || ["<title>Hello report</title>", "<h1>Hello report</h1>"]
+        txt    || ["Hello report", "============"]
     }
 
     @Unroll
@@ -63,7 +65,7 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         report =~ /Report generated \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/
 
         where:
-        format << ["html", "txt"]
+        format << [html, txt]
     }
 
     @Unroll
@@ -79,8 +81,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings
-        "html" || ["<p class=\"intro\">first paragraph</p>", "<p class=\"intro\">another paragraph</p>"]
-        "txt"  || ["first paragraph\n", "another paragraph\n"]
+        html   || ["<p class=\"intro\">first paragraph</p>", "<p class=\"intro\">another paragraph</p>"]
+        txt    || ["first paragraph\n", "another paragraph\n"]
     }
 
     @Unroll
@@ -99,12 +101,12 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings
-        "html" || ["<h2>my data!</h2>",
+        html   || ["<h2>my data!</h2>",
                    '<table class="result rowstripes">',
                    "<tr> <th>One</th> <th>Two</th> <th>Three</th> </tr>",
                    "<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>",
                    "<tr> <td> a </td> <td> b </td> <td> c </td> </tr>"]
-        "txt"  || ["== my data! ==",
+        txt    || ["== my data! ==",
                    "| One | Two | Three |",
                    "| 1 | 2 | 3 |",
                    "| a | b | c |"]
@@ -126,11 +128,11 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || unexpectedStrings | expectedStrings
-        "html" || ["<h2>"]          | ['<table class="result rowstripes">',
+        html   || ["<h2>"]          | ['<table class="result rowstripes">',
                                        "<tr> <th>One</th> <th>Two</th> <th>Three</th> </tr>",
                                        "<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>",
                                        "<tr> <td> a </td> <td> b </td> <td> c </td> </tr>"]
-        "txt"  || ["=="]            | ["| One | Two | Three |",
+        txt    || ["=="]            | ["| One | Two | Three |",
                                        "| 1 | 2 | 3 |",
                                        "| a | b | c |"]
     }
@@ -151,11 +153,11 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || unexpectedStrings | expectedStrings
-        "html" || ["<th>"]          | ["<h2>my data!</h2>",
+        html   || ["<th>"]          | ["<h2>my data!</h2>",
                                        '<table class="result rowstripes">',
                                        "<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>",
                                        "<tr> <td> a </td> <td> b </td> <td> c </td> </tr>"]
-        "txt"  || []                | ["| 1 | 2 | 3 |",
+        txt    || []                | ["| 1 | 2 | 3 |",
                                        "| a | b | c |"]
     }
 
@@ -174,10 +176,10 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || unexpectedStrings | expectedStrings
-        "html" || ["<h2>", "<th>"]  | ['<table class="result rowstripes">',
+        html   || ["<h2>", "<th>"]  | ['<table class="result rowstripes">',
                                        "<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>",
                                        "<tr> <td> a </td> <td> b </td> <td> c </td> </tr>"]
-        "txt"  || ["=="]            | ["| 1 | 2 | 3 |",
+        txt    || ["=="]            | ["| 1 | 2 | 3 |",
                                        "| a | b | c |"]
     }
 
@@ -194,8 +196,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings
-        "html" || ["<a href=\"http://${ZfinPropertiesEnum.DOMAIN_NAME}/ZDB-GENE-121212-12\">ZDB-GENE-121212-12</a>"]
-        "txt"  || ['| ZDB-GENE-121212-12 |']
+        html   || ["<a href=\"http://${ZfinPropertiesEnum.DOMAIN_NAME}/ZDB-GENE-121212-12\">ZDB-GENE-121212-12</a>"]
+        txt    || ['| ZDB-GENE-121212-12 |']
     }
 
     @Unroll
@@ -214,8 +216,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings          | unexpectedStrings
-        "html" || ["<h2>the caption</h2>"] | ["<table", "One"]
-        "txt"  || ["== the caption =="]    | ["-", "|", "One"]
+        html   || ["<h2>the caption</h2>"] | ["<table", "One"]
+        txt    || ["== the caption =="]    | ["-", "|", "One"]
     }
 
     @Unroll
@@ -231,8 +233,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings
-        "html" || ['<pre class="error">Oh no! An error!</pre>', 'RuntimeException', 'Something went wrong!']
-        "txt"  || ['=== Errors ===', 'Oh no! An error!', 'RuntimeException', 'Something went wrong!']
+        html   || ['<pre class="error">Oh no! An error!</pre>', 'RuntimeException', 'Something went wrong!']
+        txt    || ['=== Errors ===', 'Oh no! An error!', 'RuntimeException', 'Something went wrong!']
     }
 
     @Unroll
@@ -250,8 +252,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings
-        "html" || ['<pre class="code">', "SELECT *\n", "FROM whatever\n", 'WHERE something LIKE "%another%";', '</pre>']
-        "txt"  || ['=== Code being executed ===', "SELECT *\n", "FROM whatever\n", 'WHERE something LIKE "%another%";']
+        html   || ['<pre class="code">', "SELECT *\n", "FROM whatever\n", 'WHERE something LIKE "%another%";', '</pre>']
+        txt    || ['=== Code being executed ===', "SELECT *\n", "FROM whatever\n", 'WHERE something LIKE "%another%";']
     }
 
     @Unroll
@@ -266,24 +268,16 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
 
         where:
         format || expectedStrings
-        "html" || ['<h2>Here is what happened</h2>',
+        html   || ['<h2>Here is what happened</h2>',
                    '<table class="summary rowstripes">',
                    '<tr> <th>The Good</th> <td>1</td> </tr>',
                    '<tr> <th>The Bad</th> <td>5</td> </tr>',
                    '<tr> <th>The Ugly</th> <td>10</td> </tr>']
-        "txt"  || ['== Here is what happened ==',
+        txt    || ['== Here is what happened ==',
                    '----',
                    '| The Good | 1 |',
                    '| The Bad | 5 |',
                    '| The Ugly | 10 |']
-    }
-
-    def "bad format"() {
-        when:
-        rg.write(out, "not-a-valid-format")
-
-        then:
-        thrown IOException
     }
     
     def "one of everything"() {
