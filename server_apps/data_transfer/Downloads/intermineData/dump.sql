@@ -458,17 +458,6 @@ From source_feature_prefix
  where get_obj_type(sfp_source_zdb_id) = "COMPANY"
  and sfp_current_designation = 't';
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_features/feature-prefix-source.txt"
-select sfp_prefix_id, sfp_source_zdb_id
-From source_feature_prefix
- where get_obj_type(sfp_source_zdb_id) = "LAB"
- and sfp_current_designation = 't';
-
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_features/company-feature-prefix-source.txt"
-select sfp_prefix_id, sfp_source_zdb_id
-From source_feature_prefix
- where get_obj_type(sfp_source_zdb_id) = "COMPANY"
- and sfp_current_designation = 't';
 
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_features/feature-prefix.txt"
