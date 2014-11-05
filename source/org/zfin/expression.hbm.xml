@@ -144,6 +144,7 @@
             <column name="xedg_pk_id" not-null="true"/>
         </id>
         <many-to-one name="assay" column="xedg_assay_name" class="org.zfin.expression.ExpressionAssay"/>
+        <many-to-one name="expressionExperiment" column="xedg_zdb_id" class="org.zfin.expression.ExpressionExperiment"/>
         <many-to-one name="genotypeExperiment" column="xedg_genox_zdb_id" class="org.zfin.mutant.GenotypeExperiment"/>
 
         <many-to-one name="gene" class="org.zfin.marker.Marker" column="xedg_gene_zdb_id"/>

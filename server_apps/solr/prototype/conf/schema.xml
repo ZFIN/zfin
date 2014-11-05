@@ -726,6 +726,10 @@
    <!-- only bringing this in for joining at index time, and maybe debugging... -->
    <field name="internal_id" type="string" indexed="true" stored="true"   />
 
+   <!-- these are used to join expression records by natural key rather than primary key -->
+   <field name="xpat_zdb_id" type="string" indexed="false" stored="true" />
+   <field name="fig_zdb_id" type="string" indexed="false" stored="true" />
+
    <field name="attribution_count" type="sint" indexed="true" stored="true"/>
 
    <field name="xref" type="string" indexed="true" stored="false" multiValued="true"/>

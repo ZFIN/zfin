@@ -46,6 +46,13 @@ public class SearchResult implements ProvidesLink {
     @Field("has_orthology")
     String hasOrthology;
 
+    //these two are used to join to ExpressionDetailsGenerated without using the oft-regenerating primary key
+    @Field("xpat_zdb_id")
+    String xpatZdbId;
+    @Field("fig_zdb_id")
+    String figZdbId;
+
+
     @Field("[explain]")
     String explain;
 
@@ -233,6 +240,14 @@ public class SearchResult implements ProvidesLink {
     public void setScreen(String screen) {
         this.screen = screen;
     }
+
+    public String getXpatZdbId() { return xpatZdbId; }
+
+    public void setXpatZdbId(String xpatZdbId) { this.xpatZdbId = xpatZdbId; }
+
+    public String getFigZdbId() { return figZdbId; }
+
+    public void setFigZdbId(String figZdbId) { this.figZdbId = figZdbId; }
 
     public String getExplain() {
         return explain;

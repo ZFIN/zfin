@@ -2250,6 +2250,8 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                query="select
                         'Expression' as category,
                         'xpatex-' || xedg_pk_id as id,
+                        xedg_zdb_id as xpat_zdb_id,
+                        fig_zdb_id as fig_zdb_id,
                         geno_display_name as genotype,
                         xedg_assay_name as assay,
                         fig_label as figure,

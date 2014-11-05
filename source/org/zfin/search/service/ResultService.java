@@ -444,7 +444,11 @@ public class ResultService {
         //don't show for real, but useful to turn this on to get values for the test
         //result.setDisplayedID(result.getId());
 
-        ExpressionDetailsGenerated xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment2(id);
+        //ExpressionDetailsGenerated xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment2(id);
+//        ExpressionDetailsGenerated xpatex = RepositoryFactory.getExpressionRepository().getExpressionDetailsGenerated(result.getXpatZdbId(), result.getFigZdbId());
+        ExpressionExperiment xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment(result.getXpatZdbId());
+        Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getFigZdbId());
+
         if (xpatex != null) {
             if (xpatex.getGene() != null)
                 result.addAttribute(GENE, MarkerPresentation.getAbbreviation(xpatex.getGene()));
@@ -459,18 +463,18 @@ public class ResultService {
             result.addAttribute(CONDITIONS, conditions);
 
             List<String> results = new ArrayList<>();
-            List<ExpressionResultGenerated> expressionResults = new ArrayList<>();
+            List<ExpressionResult> expressionResults = new ArrayList<>();
             expressionResults.addAll(xpatex.getExpressionResults());
             //Sort expressionResults by start stage, end stage, superterm name, subterm name...
 //            Collections.sort(expressionResults, ComparatorCreator.orderBy("start.hoursStart","end.hoursEnd","entity.superterm.termName"));
             Collections.sort(expressionResults);
 
-            for (ExpressionResultGenerated expressionResult : expressionResults) {
+            for (ExpressionResult expressionResult : expressionResults) {
                 StringBuilder sb = new StringBuilder();
-                if (expressionResult.getStart() == expressionResult.getEnd())
-                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStart(), true));
+                if (expressionResult.getStartStage() == expressionResult.getEndStage())
+                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true));
                 else
-                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStart(), true) + " to " + DevelopmentStagePresentation.getName(expressionResult.getEnd(), true));
+                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true) + " to " + DevelopmentStagePresentation.getName(expressionResult.getEndStage(), true));
 
                 sb.append(" - ");
 
@@ -506,9 +510,9 @@ public class ResultService {
 
                     sb.append(" from ");
 
-                    sb.append(xpatex.getFigure().getPublication().getShortAuthorList());
+                    sb.append(figure.getPublication().getShortAuthorList());
                     sb.append(" ");
-                    sb.append(xpatex.getFigure().getLabel());
+                    sb.append(figure.getLabel());
 
                     result.setName(sb.toString());
 
