@@ -460,7 +460,7 @@ From source_feature_prefix
 
 
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_features/feature-prefix.txt"
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/featurePrefix/feature-prefix.txt"
  select fp_pk_id, fp_prefix,fp_Institute_display
  from feature_prefix;
 
