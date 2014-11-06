@@ -501,6 +501,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         summary.put("Removed Aliases", getDataSize("removed_aliases"));
         summary.put("New Relationships", getDataSize("removed_relationships"));
         summary.put("Removed Relationships", getDataSize("removed_relationships"));
+        summary.put("Obsoleted Terms", getDataSize("obsoleted_terms"));
         stats.addSummaryTable("Statistics", summary);
         stats.writeFiles(new File(loadDirectory, jobName), "statistics");
     }

@@ -448,6 +448,17 @@ delete from tmp_obsoletes
 unload to debug
     select * from tmp_obsoletes;
 
+unload to 'obsoleted_terms'
+SELECT term_zdb_id,
+       term_ont_Id,
+       term_name,
+       term_comment
+FROM   term
+WHERE  EXISTS (SELECT 'x'
+               FROM   tmp_obsoletes
+               WHERE  term_ont_id = term_id)
+       AND term_is_obsolete = 'f';
+
 update term
   set term_is_obsolete = 't'
   where exists (select 'x'
