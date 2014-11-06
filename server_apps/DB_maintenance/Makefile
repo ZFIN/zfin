@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance
 
 SUBDIRS = loadUp/ warehouse/ pheno/ extentMonitoring/ queryMonitoring/ gafLoad/
 
-GENERICS = regen.sh scrubscan.pl unload_production.sh validatedata.pl checkUnloadProduction.sh dumpServer.pl dumpLogsContinuous.pl fx_permission_check.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh check_undefined_environment.pl checkSOZFINMapping.sh reportLabAddressChanges.sh feature_genotype_association_check.pl
+GENERICS = regen.sh scrubscan.pl unload_production.sh checkUnloadProduction.sh dumpServer.pl dumpLogsContinuous.pl fx_permission_check.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh check_undefined_environment.pl checkSOZFINMapping.sh reportLabAddressChanges.sh feature_genotype_association_check.pl
 
 
 STATICS = loadDb.sh makeDeveloperBlastDbs.sh build.xml set_unload_timestamp.sql
@@ -50,16 +50,3 @@ dumpserver : $(TARGETDIR)/dumpServer.pl
 
 dumplogscontinuous : $(TARGETDIR)/dumpLogsContinuous.pl
 	$(TARGETDIR)/dumpLogsContinuous.pl
-
-runorphans : $(TARGETDIR)/validatedata.pl
-	$(TARGETDIR)/validatedata.pl $(DBNAME) -o
-
-rundaily : $(TARGETDIR)/validatedata.pl
-	$(TARGETDIR)/validatedata.pl $(DBNAME) -d
-
-runweekly : $(TARGETDIR)/validatedata.pl
-	$(TARGETDIR)/validatedata.pl $(DBNAME) -w
-
-runmonthly : $(TARGETDIR)/validatedata.pl
-	$(TARGETDIR)/validatedata.pl $(DBNAME) -m
-
