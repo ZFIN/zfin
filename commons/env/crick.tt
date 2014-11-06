@@ -87,7 +87,7 @@
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/crick/blastdb
 <!--|WEB_ADMIN_EMAIL|-->	kschaper\@cs.uoregon.edu staylor\@cs.uoregon.edu
 <!--|WIKI_HOST|-->	wiki.zfin.org
-<!--|ZFIN_ADMIN|-->	knight\@uoneuro.uoregon.edu staylor\@cs.uoregon.edu
+<!--|ZFIN_ADMIN|-->	zfinadmn\@zfin.org
 <!--|ZFIN_COOKIE|-->	st4mwtR
 # ----------------  SANITY CHECKS  -------------
 
