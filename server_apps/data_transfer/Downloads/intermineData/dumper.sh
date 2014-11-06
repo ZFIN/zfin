@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.txt
 rm -rf <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/*/*.obo
