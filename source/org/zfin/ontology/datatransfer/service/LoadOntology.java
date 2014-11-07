@@ -491,7 +491,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         ReportGenerator stats = new ReportGenerator();
         stats.setReportTitle("Report for " + jobName);
         stats.includeTimestamp();
-        Map<String, Object> summary = new HashMap<>();
+        Map<String, Object> summary = new LinkedHashMap<>();
         summary.put("New Terms", getDataSize("new_terms"));
         summary.put("Updated Term Names", getDataSize("updated_term_names"));
         summary.put("New Definitions", getDataSize("new_term_definitions"));
