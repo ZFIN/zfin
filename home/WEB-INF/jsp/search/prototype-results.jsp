@@ -104,9 +104,7 @@
                         <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                             <i class="fa fa-question-circle"></i>
                         </a>
-                        <a class="btn feedback-link " href="#"
-                           onclick="jQuery('.feedback-box').slideToggle(50);">
-                            Feedback</a>
+                        <a class="btn feedback-link" href="#">Feedback</a>
 
                     </div>
                 </div>
@@ -298,12 +296,6 @@
 
 <script>
 
-function resetYourInputWelcome() {
-
-    jQuery(".your-input-welcome-form input[type=text]").val('');
-    jQuery(".your-input-welcome-form textarea").val('');
-}
-
 function scrollToAnchor(aid) {
     aid = aid.replace("#", "");
     var aTag = jQuery("a[name='" + aid + "']");
@@ -368,48 +360,6 @@ jQuery(document).ready(function () {
             jQuery(this).addClass("collapsed-attribute");
         }
     });
-
-
-    jQuery('#feedback-form').validate({
-
-        submitHandler: function (form) {
-
-            jQuery.post('/action/user-comment',
-                            jQuery('.your-input-welcome-form').serialize())
-                    .done(function () {
-
-                        jQuery('.secondary-action-box').hide();
-                        jQuery('#feedback-thanks-message').show();
-
-                        resetYourInputWelcome();
-
-                    })
-                    .error(function () {
-                        jQuery('#feedback-error-message').show();
-                    });
-            return true;
-        }
-
-    });
-
-    jQuery('#help-contents').validate({
-        submitHandler: function (form) {
-            jQuery.get('/webapp/wiki/view/general/ZFIN+Single+Box+Search+Help')
-                    .done(function () {
-
-                        jQuery('.secondary-action-box').hide();
-                        jQuery('#feedback-thanks-message').show();
-                        resetYourInputWelcome();
-
-                    })
-                    .error(function () {
-                        jQuery('#feedback-error-message').show();
-                    });
-            return true;
-        }
-
-    });
-
 
     jQuery('.cross-reference-button').click(function () {
         // Only call notifications when opening the dropdown

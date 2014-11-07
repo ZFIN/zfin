@@ -1,74 +1,105 @@
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-
-<div class="span8 offset2 secondary-action-box feedback-box well" style="display: none;">
-    <%--&lt;%&ndash; I'm sure the relative positioning I'm doing here is a side effect of something else dumb I've done... &ndash;%&gt;--%>
-    <a href="#" class="close" data-dismiss="alert" style="position:relative; top: -3px; left:0px">&times;</a>
-
-    <div>
-
-        <form class="your-input-welcome-form" NAME="your-input-welcome" id="feedback-form"
-              METHOD="post"
-              ACTION="/action/user-comment">
-
-
-            <div class="your-input-requied-box">
-
-
-                <div>
-                    <input NAME="yiw-name" type="text" class="input-large required" placeholder="Name" SIZE=45/>
-                   
-                    <input NAME="yiw-institution" type="text" class="input-xxlarge required" placeholder="Institution"/>
-                    <input id="feedback-email-input" class="input-xxlarge required email" type="text" name="yiw-email"
-                           placeholder="Email Address">
-                    <input type="hidden" id="input-welcome-email2" name="email" autocomplete="off"/>
+<div class="row-fluid">
+    <div class="span6 offset3 feedback-box alert" style="display: none;">
+        <a href="#" class="close" data-hide="feedback-box">&times;</a>
+        <form class="your-input-welcome-form form-horizontal" name="your-input-welcome" id="feedback-form">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="feedbackName">Name</label>
+                    <div class="controls">
+                        <input name="yiw-name" id="feedbackName" type="text" class="input-block-level required"/>
+                    </div>
                 </div>
-
-                <div>
-
-                    <INPUT class="input-xxlarge required" TYPE=text NAME="yiw-subject" SIZE=45 placeholder="Subject">
-                    <input TYPE=hidden NAME="page_name"
-                           VALUE="http://<%=ZfinPropertiesEnum.INSTANCE%>.zfin.org${baseUrl}">
+                <div class="control-group">
+                    <label class="control-label" for="feedbackInstitution">Institution</label>
+                    <div class="controls">
+                        <input name="yiw-institution" id="feedbackInstitution" type="text" class="input-block-level required"/>
+                    </div>
                 </div>
-                <div>
-
-                    <TEXTAREA class="input-xxlarge required" NAME="yiw-comments"
-                              ROWS=7 &lt;placeholder="Wow, great work!"&gt;></TEXTAREA>
+                <div class="control-group">
+                    <label class="control-label" for="feedbackEmail">Email</label>
+                    <div class="controls">
+                        <input name="yiw-email" id="feedbackEmail" class="input-block-level required email" type="text"/>
+                    </div>
                 </div>
-
-
-            </div>
-            <div>
-                <input type="submit" value="Send" class="btn btn-primary" id="feedback-send-button"/>
-                <button class="btn" onclick="jQuery('.secondary-action-box').hide();" aria-hidden="true">Close</button>
-                <span style="padding-left: 3.5em;">Screenshots can be sent to <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a></span>
-
-            </div>
-
-        </FORM>
-
+                <%-- spam preventer --%>
+                <div class="control-group" style="display: none">
+                    <label class="control-label" for="feedbackEmail2">Please leave blank</label>
+                    <div class="controls">
+                        <input type="text" id="feedbackEmail2" name="email" autocomplete="off"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="feedbackSubject">Subject</label>
+                    <div class="controls">
+                        <input class="input-block-level required" id="feedbackSubject" type=text name="yiw-subject"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="feedbackComments">Comments</label>
+                    <div class="controls">
+                        <textarea class="input-block-level required" id="feedbackComments" name="yiw-comments" rows=7></textarea>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input type="submit" value="Send" class="btn btn-primary" id="feedback-send-button"/>
+                        <button class="btn" data-hide="feedback-box">Close</button>
+                    </div>
+                </div>
+                <div class="controls">
+                    <small>Screenshots can be sent to <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a></small>
+                </div>
+            </fieldset>
+        </form>
     </div>
 
-
-
-</div>
-
-
-<div id="feedback-thanks-message" class="row" style="display:none">
-    <div class="offset3 span6 alert alert-success">
-        <a href="#" class="close" data-dismiss="alert" onclick="jQuery('#feedback-thanks-message').hide();">&times;</a>
+    <div id="feedback-thanks-message" class="offset3 span6 alert alert-success feedback-done" style="display: none;">
+        <a href="#" class="close" data-hide="alert">&times;</a>
         Thanks for your feedback!
     </div>
-</div>
 
-<div id="feedback-error-message" class="row" style="display:none">
-    <div class="offset3 span6 alert alert-error">
-        <a href="#" class="close" data-dismiss="alert" onclick="jQuery('#feedback-error-message').hide();">&times;</a>
-        <b>Something went wrong!</b>
-
-        <div style="margin-top:.5em;">Since our feedback script doesn't seem to be working,
-            try sending a direct email to <a href="mailto:cases@zfinlabs.fogbugz.com">cases@zfinlabs.fogbugz.com</a>
-        </div>
+    <div id="feedback-error-message" class="offset3 span6 alert alert-error feedback-done" style="display: none;">
+        <a href="#" class="close" data-hide="alert">&times;</a>
+        <strong>Oh no!</strong>
+        Something went wrong on our end. Please email your feedback
+        <a href="mailto:zfinadmn@zfin.org">directly to us</a> or try again later.
     </div>
 </div>
+
+
+<script>
+    jQuery(function () {
+        jQuery(".feedback-link").click( function (evt) {
+            evt.preventDefault();
+            jQuery(".feedback-done").hide();
+            jQuery(".feedback-box").slideToggle(50);
+        });
+
+        jQuery("[data-hide]").on("click", function (evt) {
+            evt.preventDefault();
+            jQuery(this).closest("." + jQuery(this).data("hide")).hide();
+        });
+
+        jQuery('#feedback-form').validate({
+            submitHandler: function (form) {
+                jQuery.ajax({
+                    url: '/action/user-comment',
+                    type: 'POST',
+                    data: jQuery(form).serialize(),
+                    success: function () {
+                        jQuery(".feedback-box").hide();
+                        jQuery('#feedback-thanks-message').show();
+                        form.reset();
+                    },
+                    error: function ()  {
+                        jQuery(".feedback-box").hide();
+                        jQuery('#feedback-error-message').show();
+                    }
+                });
+            }
+        });
+    });
+</script>

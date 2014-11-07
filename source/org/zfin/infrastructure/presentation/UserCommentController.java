@@ -52,13 +52,17 @@ public class UserCommentController {
         }
 
         // send mail to admin
-        mailer.sendMail("Your Input Welcome - " + subject,
+        boolean sent = mailer.sendMail("Your Input Welcome - " + subject,
                 String.format(ADMIN_EMAIL_TEMPLATE, name, email, institution, referer, comments),
                 false,
                 email,
                 ZfinPropertiesEnum.ZFIN_ADMIN.value().split(" "));
+        if (sent) {
+            return new ResponseEntity<>(new JSONStatusResponse("OK", ""), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new JSONStatusResponse("Error", "Internal error"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        return new ResponseEntity<>(new JSONStatusResponse("OK", ""), HttpStatus.OK);
     }
 
 }
