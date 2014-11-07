@@ -50,12 +50,7 @@
     <target name="build-solr-index-jenkins">
         <antcall target="build-solr-index"/>
         <antcall target="check-indexer"/>
-        <if>
-            <equals arg1="${SOLR_CREATE_BACKUPS}" arg2="true"/>
-            <then>
-                <antcall target="backup-solr-core-jenkins"/>
-            </then>
-        </if>
+        <antcall target="backup-solr-core-jenkins"/>
     </target>
 
 
