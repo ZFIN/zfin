@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -143,6 +144,11 @@ public class GeneViewController {
                                     @ModelAttribute("formBean") GeneBean geneBean,
                                     Model model) {
         logger.info("zdbID: " + pubID);
+
+        if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
+            return "redirect:/" + pubID;
+        }
+
         List<Marker> list = getPublicationRepository().getOrthologyGeneList(pubID);
         Publication publication = getPublicationRepository().getPublication(pubID);
         List<GeneBean> beanList = new ArrayList<>(list.size());

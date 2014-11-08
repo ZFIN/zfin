@@ -92,17 +92,11 @@ public class RelatedDataService {
 
 
 
-
+        //Special case here, so that the ZFIN orthology pub doesn't get an orthlogy link, because the page will take 10 minutes to load!
         if (StringUtils.equals(category, Category.PUBLICATION.getName())
-                && StringUtils.equals(result.getHasOrthology(), "true")) {
-
-/*
-            Publication publication = RepositoryFactory.getPublicationRepository().getPublication(result.getId());
-            if (!publication.getType().equals(publication.CURATION)
-                    && !publication.getType().equals(publication.UNPUBLISHED)) {
-*/
+                && StringUtils.equals(result.getHasOrthology(), "true")
+                && !StringUtils.equals(result.getId(),"ZDB-PUB-030905-1")) {
             links.add(getOrtholistLink(id));
-//            }
         }
 
 
