@@ -10,7 +10,7 @@ class AllFigureViewPage extends Page {
 
     static content = {
         submittedByLinks (required: false) { $(".submitted-by a.person-link") }
-
+        geneLinks (required: false) { $(".genedom") }
     }
 
 }

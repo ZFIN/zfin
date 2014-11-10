@@ -1,13 +1,6 @@
 package org.zfin.figure.presentation
-
-import org.hibernate.SessionFactory
 import org.zfin.AbstractZfinSmokeSpec
-import org.zfin.expression.Figure
 import org.zfin.figure.FigureData
-import org.zfin.figure.service.FigureViewService
-import org.zfin.framework.HibernateSessionCreator
-import org.zfin.framework.HibernateUtil
-import org.zfin.repository.RepositoryFactory
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -32,7 +25,12 @@ class FigureViewWebSpec extends AbstractZfinSmokeSpec {
         additionalFiguresLink.click()
 
         then:
-        at AllFigureViewPage
+        waitFor { at AllFigureViewPage }
+
+        and:
+        if (figZdbID != figures.hasNoData) {
+            geneLinks.size() > 0
+        }
 
         where: "all of the pages, except for the ones that don't have any additional figures... "
         figZdbID << figures.values().findAll{it != figures.hasOnlyPhenotype && it != figures.hasHugeAntibodyTable}
@@ -79,6 +77,23 @@ class FigureViewWebSpec extends AbstractZfinSmokeSpec {
 
         where:
         figZdbID = figures.singleXpatRes
+    }
+
+    @Unroll
+    def '#figZdbID should correct title, gene information'() {
+        when:
+        to FigureViewPage, figZdbID
+
+        then:
+        title == "ZFIN Figure: Ochi et al., 2008, Fig. $figNum"
+        $(id: geneID)
+        $(id: geneID).find('span')
+        $(id: geneID).find('span').attr('title') == geneTitle
+
+        where:
+        figZdbID            | figNum | geneID                | geneTitle
+        'ZDB-FIG-080508-24' | '1'    | 'ZDB-GENE-980526-561' | 'myogenic differentiation 1'
+        'ZDB-FIG-080521-3'  | 'S2'   | 'ZDB-GENE-080509-2'   | 'SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily d, member 3b'
     }
 
 }

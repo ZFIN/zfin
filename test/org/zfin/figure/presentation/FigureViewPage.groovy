@@ -9,9 +9,11 @@ class FigureViewPage extends Page {
     static at = { $("meta", name:"figure-view-page") }
 
     static content = {
-       additionalFiguresLink (required: false) { $("a.additional-figures-link")}
-       submittedByLinks (required: false) { $(".submitted-by a.person-link") }
-       expressionQualifierColumnValues (required: false) { $("td.qualifier")}
+        additionalFiguresLink (required: false) { $("a.additional-figures-link")}
+        submittedByLinks (required: false) { $(".submitted-by a.person-link") }
+        expressionQualifierColumnValues (required: false) { $("td.qualifier")}
+        footer { $('div', id: 'footer') }
+        footerCredits { $('div', id: 'footercredits') }
     }
 
 }
