@@ -480,24 +480,11 @@ div.search-box {
 
 #primary-query-input {
     padding-right: 23px;
+    width: 25em;
 }
-
-#search-box-clear-link {
-    position:relative;
-    left:-28px;
-    top:-3px;
-    font-size: x-large;
-    color: #888;
-    text-decoration: none;
-    z-index:100;
-}
-
-
 
 .search-box-buttons {
-    position: relative;
-    left: -18px;
-    top: -5px;
+    margin-left: 20px;
 }
 
 .facet-filter-form-input {
@@ -541,6 +528,47 @@ body.modal-open {
     color: #333333;
 }
 
+.clear-search {
+    position: relative;
+    display: inline-block;
+}
+
+.clear-search .clear {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    bottom: 0;
+    height: 24px;
+    margin: auto;
+    font-size: 24px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.btn-zfin {
+    color: #FFFFFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #004444;
+    background-image: -moz-linear-gradient(top, #006666, #004444);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#006666), to(#004444));
+    background-image: -webkit-linear-gradient(top, #006666, #004444);
+    background-image: -o-linear-gradient(top, #006666, #004444);
+    background-image: linear-gradient(to bottom, #006666, #004444);
+    background-repeat: repeat-x;
+    border-color: #004444;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#006666', endColorstr='#004444', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.btn-zfin:hover,
+.btn-zfin:focus,
+.btn-zfin:active,
+.btn-zfin.active,
+.btn-zfin.disabled,
+.btn-zfin[disabled] {
+    color: #FFFFFF;
+    background-color: #004444;
+}
 
 /*
 .Antibody-label { background-color: #69658E }

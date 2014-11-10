@@ -45,7 +45,7 @@
                 </div>
                 <div class="control-group">
                     <div class="controls">
-                        <input type="submit" value="Send" class="btn btn-primary" id="feedback-send-button"/>
+                        <input type="submit" value="Send" class="btn btn-zfin" id="feedback-send-button"/>
                         <button class="btn" data-hide="feedback-box">Close</button>
                     </div>
                 </div>

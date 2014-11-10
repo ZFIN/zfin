@@ -75,7 +75,7 @@
 
 <div class="row-fluid">
     <div class="search-box span12">
-        <form id="query-form" method="get" action="/search" style="margin: 0px;">
+        <form id="query-form" class="form-inline" method="get" action="/search">
             <div class="row">
                 <div class="search-input-container offset1 span11">
 
@@ -85,27 +85,26 @@
                     </a>
 
 
-                    <select <%--class="input-medium" --%> name="category">
+                    <select name="category">
                         <option>Any</option>
                         <c:forEach items="${categories}" var="cat">
                             <option <c:if test="${cat eq category}">selected="selected"</c:if>>${cat}</option>
                         </c:forEach>
                     </select>
-                    <input class="search-form-input input" style="width: 25em;" name="q" id="primary-query-input"
-                           autocomplete="off" type="text" value="<c:out value="${q}" escapeXml="true"/>"/>
-                    <a href="#" id="search-box-clear-link" onclick="jQuery('#primary-query-input').val('');">&times;</a>
-
+                    <div class="input-append">
+                        <div class="clear-search">
+                            <input class="search-form-input input input-xxlarge" name="q" id="primary-query-input"
+                                   autocomplete="off" type="text" value="<c:out value="${q}" escapeXml="true"/>"/>
+                            <span class="clear" onclick="jQuery('#primary-query-input').val('');">&times;</span>
+                        </div>
+                        <button type="submit" class="btn btn-zfin">Go</button>
+                    </div>
                     <div class="btn-group search-box-buttons">
-
-                        <button type="submit" class="btn btn-primary">Go</button>
-
                         <a class="btn" href="/search?q=" onclick="localStorage.clear();">New</a>
-
                         <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                             <i class="fa fa-question-circle"></i>
                         </a>
                         <a class="btn feedback-link" href="#">Feedback</a>
-
                     </div>
                 </div>
 
