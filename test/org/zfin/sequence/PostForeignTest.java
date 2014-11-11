@@ -25,7 +25,7 @@ public class PostForeignTest {
     public void queryToNCBI(){
         try {
             // Send data
-            URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=MegaBlast&PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&DBSEARCH=true&QUERY="+
+            URL url = new URL("http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=MegaBlast&PROGRAM=blastn&BLAST_PROGRAMS=megaBlast&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&DBSEARCH=true&QUERY="+
                     SEARCH_TEXT);
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
@@ -68,7 +68,7 @@ public class PostForeignTest {
             data += "&" + URLEncoder.encode("DBSEARCH", "UTF-8") + "=" + URLEncoder.encode("true", "UTF-8");
 
             // Send data
-            URL url = new URL("http://www.ncbi.nlm.nih.gov/blast/Blast.cgi");
+            URL url = new URL("http://blast.ncbi.nlm.nih.gov/Blast.cgi");
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
