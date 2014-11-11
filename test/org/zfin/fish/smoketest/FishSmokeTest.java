@@ -66,7 +66,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testExpressionSummary() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-show-all-expression/ZDB-GENO-030619-2,ZDB-GENOX-070913-1,ZDB-GENOX-080917-1");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-show-all-expression/ZDB-GENO-030619-2,ZDB-GENOX-070913-1,ZDB-GENOX-080917-1,ZDB-GENOX-141110-6");
         // make sure pax6a is listed
         List<?> pubs = page.getByXPath("//a[@id='ZDB-GENE-990415-200']");
         assertEquals(1, pubs.size());
@@ -77,7 +77,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testExpressionSummaryOnFishView() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-GENO-030619-2,ZDB-GENOX-070913-1,ZDB-GENOX-080917-1");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-GENO-030619-2,ZDB-GENOX-070913-1,ZDB-GENOX-080917-1,ZDB-GENOX-141110-6");
         // make sure alcama is listed
         List<?> pubs = page.getByXPath("//a[@id='ZDB-GENE-990415-30']");
         assertEquals(1, pubs.size());
