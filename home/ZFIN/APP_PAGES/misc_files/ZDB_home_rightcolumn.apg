@@ -111,6 +111,7 @@
       <h3> Development </h3>
         <ul>
         <li><a href="/action/devtool/home"><em>Developer Tools</em></a> &bull; <a href="/gmake-deploy-version.html"><em>Deployed Version</em></a></li>
+         &bull; <a href="/jobs"><em>Jenkins Jobs</em></a></li>
         </ul>
 
  <?/MIBLOCK> <?MICOMMENT> ** end if (root) ** <?/MICOMMENT>
