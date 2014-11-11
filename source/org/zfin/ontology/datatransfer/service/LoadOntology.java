@@ -191,6 +191,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 }
                 runValidationChecks();
                 HibernateUtil.flushAndCommitCurrentSession();
+                LOG.info("Committed load...");
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
                 LOG.error(e);
@@ -699,7 +700,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             } else if (statement.isSelectStatement()) {
                 List<List<String>> dataReturn;
                 dataReturn = infrastructureRep.executeNativeQuery(statement);
-                writeToTraceFile(statement, dataReturn);
+                 writeToTraceFile(statement, dataReturn);
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
                 } else if (statement.getDataKey() != null && statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {
@@ -863,7 +864,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             report.addMessageToSection(message, "Check file version");
             return false;
         }
-        parseOboFile();
+         parseOboFile();
         return true;
     }
 
@@ -1072,6 +1073,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             LOG.info("Current Version: " + dbMetadata.toString());
             // update version number on all namespaces found in this obo file.
             updateMetadata(dbMetadata, oboMetadata);
+            HibernateUtil.currentSession().flush();
         } else {
             LOG.info("Current Version: " + dbMetadata.toString());
         }

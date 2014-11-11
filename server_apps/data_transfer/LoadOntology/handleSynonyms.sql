@@ -51,40 +51,49 @@ update data_alias
 
 -- only consider (alias, plural) alias group types
 unload to removed_aliases
-   select distinct dalias_zdb_id, term_ont_id, term.term_name, dalias_alias, aliasscope_scope, aliasgrp_name from data_alias,
-              term as term,
-              alias_group,
-              alias_scope,
-              tmp_term_onto_no_dups
-  	       where term_zdb_id = dalias_data_zdb_id
-  	       and term_id = term_ont_id
-		       and term_ontology = term_onto
-		       and aliasgrp_pk_id = dalias_group_id
-		       and aliasscope_pk_id = dalias_scope_id
-		       and dalias_group_id in (1,4)
-      		 and not exists (
-      		     select 'x' from tmp_syns
-               where dalias_alias = synonym
-      		 );
+SELECT DISTINCT dalias_zdb_id,
+                term_ont_id,
+                term.term_name,
+                dalias_alias,
+                aliasscope_scope,
+                aliasgrp_name
+FROM   data_alias,
+       term AS term,
+       alias_group,
+       alias_scope,
+       tmp_term_onto_no_dups
+WHERE  term_zdb_id = dalias_data_zdb_id
+       AND term_id = term_ont_id
+       AND term_ontology = term_onto
+       AND aliasgrp_pk_id = dalias_group_id
+       AND aliasscope_pk_id = dalias_scope_id
+       AND dalias_group_id IN ( 1, 4 )
+       AND NOT EXISTS (SELECT 'x'
+                       FROM   tmp_syns
+                       WHERE  dalias_alias = synonym) ;
 
 -- delete data_alias records that are not found in the obo file
-delete from data_alias
- where exists ( select 'x' from term as term,
-              alias_group,
-              alias_scope,
-              tmp_term_onto_no_dups
-  	       where term_zdb_id = dalias_data_zdb_id
-  	       and term_id = term_ont_id
-		       and term_ontology = term_onto
-		       and aliasgrp_pk_id = dalias_group_id
-		       and aliasscope_pk_id = dalias_scope_id
-		       and dalias_group_id in (1,4)
-      		 and not exists (
-      		     select 'x' from tmp_syns
-               where dalias_alias = synonym
-               and term_ont_id = term_id
-               and dalias_data_zdb_id = term_zdb_id      		 ));
+DELETE FROM data_alias
+WHERE  EXISTS (SELECT 'x'
+               FROM   term AS term,
+                      alias_group,
+                      alias_scope,
+                      tmp_term_onto_no_dups
+               WHERE  term_zdb_id = dalias_data_zdb_id
+                      AND term_id = term_ont_id
+                      AND term_ontology = term_onto
+                      AND aliasgrp_pk_id = dalias_group_id
+                      AND aliasscope_pk_id = dalias_scope_id
+                      AND dalias_group_id IN ( 1, 4 )
+                      AND NOT EXISTS (SELECT 'x'
+                                      FROM   tmp_syns
+                                      WHERE  dalias_alias = synonym));
 
+DELETE FROM zdb_active_data
+WHERE  Get_obj_type(zactvd_zdb_id) = 'DALIAS'
+       AND NOT EXISTS (SELECT dalias_zdb_id
+                       FROM   data_alias
+                       WHERE  dalias_zdb_id = zactvd_zdb_id);
 
 -- remove aliases from temp table that already exist in data_alias table
 delete from tmp_syns

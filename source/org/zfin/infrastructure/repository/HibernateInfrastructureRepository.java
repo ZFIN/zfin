@@ -1087,7 +1087,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void executeJdbcStatement(DatabaseJdbcStatement statement, List<List<String>> data) {
-        executeJdbcStatement(statement, data, 200);
+        executeJdbcStatement(statement, data, 1000);
     }
 
     /**
