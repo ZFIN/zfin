@@ -23,7 +23,7 @@ select xpatres_zdb_id,xedg_pk_id, xpatres_xpatex_zdb_id, xpatres_start_stg_zdb_i
        	    		       	xpatres_end_stg_zdb_id, xpatres_expression_found,
 				xpatres_comments, xpatres_suggested_anatomy_item,
 				xpatres_superterm_zdb_id, xpatres_subterm_zdb_id
-  from expression_result,expression_pattern_figure,xpat_exp_Details_generated
+  from expression_result,expression_pattern_figure,xpat_exp_Details_generated_temp
   where xpatres_zdb_id = xpatfig_xpatres_zdb_id
   and xpatres_xpatex_zdb_id = xedg_zdb_id
   and xpatfig_fig_zdb_id = xedg_fig_zdb_id;
