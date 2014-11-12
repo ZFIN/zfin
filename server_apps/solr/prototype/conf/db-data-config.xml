@@ -2278,7 +2278,6 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                              else (select mrkr_abbrev_order || ' expression in ' || geno_name_order || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_atb_zdb_id)
                              end as name_sort
                         from xpat_exp_details_generated
-                             join xpat_results_generated on xrg_xedg_id = xedg_pk_id
                              join genotype_experiment on xedg_genox_zdb_id = genox_zdb_id
                              join genotype on genox_geno_zdb_id = geno_zdb_id
                              join figure on xedg_fig_zdb_id = fig_zdb_id
