@@ -62,7 +62,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnGeneAbbreviation() {
-        String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8";
+        String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7";
         Fish fish = FishService.getFish(fishID);
         Assert.assertNotNull("Could not find Fish with fishID: " + fishID, fish);
         FishMatchingService service = new FishMatchingService(fish);
