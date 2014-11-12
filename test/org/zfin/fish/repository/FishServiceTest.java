@@ -88,7 +88,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnGeneName() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8");
+        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
         FishMatchingService service = new FishMatchingService(fish);
 
         criteria.getGeneOrFeatureNameCriteria().setValue("hedgehog");
@@ -98,7 +98,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnGeneAlias() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8");
+        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
         FishMatchingService service = new FishMatchingService(fish);
 
         criteria.getGeneOrFeatureNameCriteria().setValue("you");
@@ -108,7 +108,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnFeatureName() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8");
+        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
         criteria.getGeneOrFeatureNameCriteria().setValue("shha");
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
