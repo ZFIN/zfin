@@ -71,9 +71,9 @@ run_commit: begin  fetch_vega novel_check withdrawn_check blast_transcripts load
 
 VEGADIR = /research/zprod/data/VEGA
 
-DEST = $(VEGADIR)/2013-05
-FTP  = ftp.sanger.ac.uk/pub/users/st3/vega53/
-PREV = $(VEGADIR)/2013-02
+DEST = $(VEGADIR)/2014-11
+FTP  = ftp.sanger.ac.uk/pub/users/st3/vega59/
+PREV = $(VEGADIR)/2013-11
 
 COMMON_BIN = $(TOP)/commons/bin
 
