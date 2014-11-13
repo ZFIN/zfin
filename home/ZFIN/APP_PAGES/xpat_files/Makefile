@@ -30,7 +30,7 @@ xpatselect_detailedresults.apg xpatselect_note.apg xpatselect_summaryresults.apg
 xpatselectanatverify.apg xpatselectrowdisplay.apg
 
 STATICS = xpatexpcdnsummary.apg xpatexpcdnlist.apg xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
-fxfigstgrng.apg fxfigassaylist.apg fxfigfishlist.apg xpatfeatexp.apg \
+fxfigstgrng.apg fxfigfishlist.apg xpatfeatexp.apg \
 fxgenestgrng.apg record_web_update.apg genotypecuration.apg attribupdate.apg \
 genoupdate.apg patocuration.apg xpatcurreset.apg \
 xpatcurupdatecondition.apg gocuration.apg xpatselect_resultsasimages.apg \
