@@ -1,3 +1,5 @@
+begin work ;
+
 create temp table tmp_output (counter int8, section varchar(100))
 with no log;
 
@@ -327,3 +329,5 @@ select count( distinct oevdisp_gene_zdb_id), "Genes with Mouse Orthology"
 
 unload to stats.txt
 select * from tmp_output;
+
+commit work ;
