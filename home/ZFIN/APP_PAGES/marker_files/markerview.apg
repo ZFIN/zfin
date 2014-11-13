@@ -2231,14 +2231,7 @@ union
                     ;">
      <?MIVAR NAME=$mrel_count>$1<?/MIVAR>
 <?/MISQL>
-<?MIVAR NAME=snpexists><?/MIVAR>
-<?MIBLOCK COND="$(OR,$(EQ,$marker_type,BAC),$(EQ,$marker_type,PAC),$(EQ,$marker_type,FOSMID))">
-    <?MISQL SQL="select first 1 snpd_mrkr_zdb_id from snp_download
-                 where snpd_mrkr_zdb_id='$OID'">
-             <?MIVAR NAME=$snpexists>$1<?/MIVAR>
-    <?/MISQL>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE),$(NE,$snpexists,))">
+<?MIBLOCK COND="$(OR,$(NC,$mrel_count,0),$(XST,$UPDATE))">
   <HR width="80%">
   <b>
   <?MIBLOCK COND="$(XST,$type_of_genedom)">
@@ -2310,13 +2303,6 @@ union
              	  where ID='aa-markerrelationship.apg' ;">
        $1
     <?/MISQL>
-    <?MIBLOCK COND="$(NE,$snpexists,)">
-
-	<?MISQL SQL="select WebExplode(object,'snp_mrkr_zdb_id=$OID') from webPages
-             	  where ID='aa-snpdetails.apg' ;">
-       $1
-    <?/MISQL>
-   <?/MIBLOCK>
 </table>
 
 <?MIBLOCK COND="$(XST,$UPDATE)">

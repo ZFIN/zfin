@@ -25,7 +25,7 @@ markergoentry.apg \
 markergoview.apg markerselect.apg markerupdate.apg \
 markerview.apg msegselect.apg newmrkrselect.apg nomeneditor.apg \
 nomenview.apg orthoedit.apg \
-searchform.apg sequence.apg sequence_data_entry.apg snpdetails.apg snpview.apg
+searchform.apg sequence.apg sequence_data_entry.apg snpview.apg
 
 
 STATICS =  dnote_new.apg do-oevdispupdate.apg make_map.apg \
