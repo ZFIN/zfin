@@ -29,7 +29,7 @@ GENERICS = data_mgr.apg doc_title.apg \
     ZDB_home_rightcolumn.apg
 
 STATICS=ZDB_home.apg docframes.apg stub.html helpframes.html \
-    blast.apg htmlpagefooter.apg input_button_generic.apg
+    htmlpagefooter.apg input_button_generic.apg
 
 # --------------------------  Rules  ------------------------------------
 
