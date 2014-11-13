@@ -1,4 +1,4 @@
 #!/bin/bash -e
 
-$INFORMIXDIR/bin/dbaccess -a $DBNAME $SOURCEROOT/server_apps/Reports/AnnualStats/stats.sql
+<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/Reports/AnnualStats/stats.sql
 

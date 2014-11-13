@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/Reports/AnnualStats
 
-GENERICS = 
+GENERICS = runStats.sh
 STATICS  = stats.sql ZFIN_annual_stats.xls
 
 
