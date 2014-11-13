@@ -1,3 +1,6 @@
+create temp table tmp_output (counter int8, section varchar(100))
+with no log;
+
 {
 
 -- shell commmands run against
@@ -21,44 +24,51 @@ grep OTTDART0 db_link | wc -l
 
 -------------------------------------------------------------- Genes --------------------------------------------------------------------------
 -- Genes
-select count(*) gene from marker
+insert into tmp_output(counter, section)
+select count(*), "genes" from marker
  where mrkr_type[1,4] = 'GENE'
 --and mrkr_zdb_id not like "ZDB-%-12____-%"
 ;
 -- Genes on Vega Assembly
-select count(distinct mrel_mrkr_1_zdb_id) gene_on_assembly
+insert into tmp_output(counter, section)
+select count(distinct mrel_mrkr_1_zdb_id), "gene_on_assembly"
  from marker_relationship
  where mrel_type == 'gene produces transcript'
 ;
 
 -- Transcripts
-select count(*) vega_tscript from db_link
+insert into tmp_output(counter, section)
+select count(*), "transcripts" from db_link
  where dblink_acc_num[1,8] = 'OTTDART0'
 ;
 --
 --grep OTTDART0 db_link | wc -l
 
 -- EST/cDNAs
-select count(*) est_cdna from marker
+insert into tmp_output(counter, section)
+select count(*), "EST/cDNA" from marker
  where mrkr_type in ('EST','CDNA')
 --and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 --------------------------------------------------------------------- Genetics----------------------
 -- Features          (Alleles)
-select count(*) feature from feature --alteration -- fish
+insert into tmp_output(counter, section)
+select count(*), "alleles" from feature --alteration -- fish
 --where feature_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 --  Transgenic Features
-select count(*) tg_feat
+insert into tmp_output(counter, section)
+select count(*), "Transgenic Features"
 from feature
 where feature_type = 'TRANSGENIC_INSERTION'
   and feature_name not like "%;%"
 ;
 
 --  Transgenic Construct
-select count(distinct mrkr_zdb_id) tg_const
+insert into tmp_output(counter, section)
+select count(distinct mrkr_zdb_id), "Transgenic Constructs"
 from marker
 where mrkr_type in  ('TGCONSTRCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT')
   and mrkr_abbrev not like "%;%"
@@ -66,64 +76,77 @@ where mrkr_type in  ('TGCONSTRCT','PTCONSTRCT','GTCONSTRCT','ETCONSTRCT')
 
 
 --  Transgenic Genotypes
-select  count(distinct genofeat_geno_zdb_id)  tg_geno
+insert into tmp_output(counter, section)
+select  count(distinct genofeat_geno_zdb_id), "Transgenic Genotypes"
  from genotype_feature, feature
  where genofeat_feature_zdb_id = feature_zdb_id
    and feature_type = 'TRANSGENIC_INSERTION'
 ;
 
 -- Genotypes (non-Wildtype)
-select count(*) geno from genotype where  geno_is_wildtype == 'f'
+insert into tmp_output(counter, section)
+select count(*), "Non-Wildtype, Genotypes"
+ from genotype where  geno_is_wildtype == 'f'
 ;
 
 
 -- Genes with GO annotation
-select count(distinct mrkrgoev_mrkr_zdb_id) go_gene from marker_go_term_evidence
+insert into tmp_output(counter, section)
+select count(distinct mrkrgoev_mrkr_zdb_id), "Genes With GO Annotation" from marker_go_term_evidence
 -- cut -f 2 -d\| < marker_go_term_evidence | sort -u | wc -l
 ;
 
 -- IEA GO annotations
-select count(distinct mrkrgoev_mrkr_zdb_id) go_iea from marker_go_term_evidence
+insert into tmp_output(counter, section)
+select count(distinct mrkrgoev_mrkr_zdb_id), "IEA GO Annotations" from marker_go_term_evidence
 where mrkrgoev_evidence_code = 'IEA'
 -- cut -f 2,5 -d\| < marker_go_term_evidence | grep "|IEA" |sort -u | wc -l
 
 ;
 
 -- Non-IEA GO annotations
-select count(distinct mrkrgoev_mrkr_zdb_id) go_niea from marker_go_term_evidence
+insert into tmp_output(counter, section)
+select count(distinct mrkrgoev_mrkr_zdb_id), "Non-IEA GO Annotations" 
+from marker_go_term_evidence
 where mrkrgoev_evidence_code != 'IEA'
 -- cut -f 2,5 -d\| < marker_go_term_evidence | grep -v "IEA" | cut -f1 -d \|| sort -u | wc -l
 
 ;
 
 -- Total GO annotations
-select count(*) go_all from marker_go_term_evidence
+insert into tmp_output(counter, section)
+select count(*), "All GO Annotations" from marker_go_term_evidence
 -- wc -l marker_go_term_evidence
 
 ;
 
 --Genes with OMIM disease phenotypes
-select count(distinct omimp_gene_zdb_id) as omim
+insert into tmp_output(counter, section)
+select count(distinct omimp_gene_zdb_id), "Genes With OMIM Disease Phenotypes"
  from omim_phenotype ;
 
 
 ---------------------------------------------------------------Reagents ----------------------------
 --Morpholinos
-select count(*) mo from marker
+insert into tmp_output(counter, section)
+select count(*), "morpholinos" from marker
  where mrkr_zdb_id[1,12] = 'ZDB-MRPHLNO-'
 --and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ; --grep 'ZDB-MRPHLNO-' marker | wc -l
 
 --TALEN
-select count(*) as talen from marker
+insert into tmp_output(counter, section)
+select count(*), "talens" from marker
  where mrkr_zdb_id like 'ZDB-TALEN%';
 
 --CRISPR
-select count(*) as crispr from marker
+insert into tmp_output(counter, section)
+select count(*), "crisprs" from marker
   where mrkr_zdb_id like 'ZDB-CRISPR%';
 
 -- Antibodies
-select count(*) ab from marker
+insert into tmp_output(counter, section)
+select count(*), "antibodies" from marker
  where mrkr_zdb_id[1,8] = 'ZDB-ATB-'
 --and mrkr_zdb_id not like 'ZDB-%-12____-%'
 ; --grep 'ZDB-ATB-' marker | wc -l
@@ -139,35 +162,40 @@ select count(*) ab from marker
 
 ------------------------------------------Expression & Phenotypes---------------------------------
 -- Gene expression patterns
-select count(*) as exp_pat from expression_experiment
+insert into tmp_output(counter, section)
+select count(*), "expression patterns" from expression_experiment
 --
 where xpatex_zdb_id not like 'ZDB-%-10____-%'
 ;
 
 -- clean Gene expression patterns
-select count(distinct xpatex_gene_zdb_id) as exp_patClean from expression_experiment, clean_expression_fast_search
+insert into tmp_output(counter, section)
+select count(distinct xpatex_gene_zdb_id), "genes clean expression patterns" from expression_experiment, clean_expression_fast_search
   where xpatex_genox_zdb_id = cefs_genox_zdb_id;
 
 
 --Phenotype Statements
-select count(*) as phenoStatements from phenotype_statement;
+insert into tmp_output(counter, section)
+select count(*), "phenotype statements" from phenotype_statement;
 
 
 --Clean phenotype
-
-select count(*) as phenoStatementsClean from phenotype_statement, phenotype_Experiment, mutant_fast_search
+insert into tmp_output(counter, section)
+select count(*), "clean phenotype statements" from phenotype_statement, phenotype_Experiment, mutant_fast_search
  where phenox_pk_id = phenos_phenox_pk_id 
  and phenox_genox_zdb_id = mfs_genox_zdb_id;
 
 -- Images annotated for expression
-select count(*)fish_img from image
+insert into tmp_output(counter, section)
+select count(*), "fish images" from image
  --fish_image
 --where img_zdb_id not like 'ZDB-%-12____-%'
 ;
 
 
 -- Anatomical structures
-select count(*) as anatomy_item from term
+insert into tmp_output(counter, section)
+select count(*), "anatomical structures" from term
  where term_ontology in ('zebrafish_anatomy','zebrafish_anatomical_ontology');
 --where anatitem_zdb_id not like 'ZDB-%-12____-%'
 
@@ -179,7 +207,8 @@ select count(*) as anatomy_item from term
 --where zdb_id not like 'ZDB-%-12____-%';
 
 -- Mapped markers
-select count(*) map_mrkr from paneled_markers
+insert into tmp_output(counter, section)
+select count(*), "mapped markers" from paneled_markers
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
@@ -204,7 +233,8 @@ select count(*) map_mrkr from paneled_markers
 --  order by 5,1,2,3
 --;
 {***********************************************************************}
-select count(*) db_links from db_link, foreign_db_contains,foreign_db
+insert into tmp_output(counter, section)
+select count(*), "externalLinks" from db_link, foreign_db_contains,foreign_db
  where fdbcont_fdb_db_id == fdb_db_pk_id
    and  dblink_fdbcont_zdb_id = fdbcont_zdb_id
    and  fdb_db_name in (
@@ -255,37 +285,45 @@ select count(*) db_links from db_link, foreign_db_contains,foreign_db
 
 -----------------------Community information-------------------------------------
 -- Publications
-select count(*) pub from publication
+insert into tmp_output(counter, section)
+select count(*), "publications" from publication
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 -- Researchers
-select count(*) person from person
+insert into tmp_output(counter, section)
+select count(*), "researchers" from person
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 -- Laboratories
-select count(*)lab from lab
+insert into tmp_output(counter, section)
+select count(*), "laboratories" from lab
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 -- Companies
-select count(*)company from company
+insert into tmp_output(counter, section)
+select count(*), "companies" from company
 --where zdb_id not like 'ZDB-%-12____-%'
 ;
 
 ---------------------------------------------------------------- Orthology ---------------------
 
 --Genes w/Human Orthology
-select count( distinct oevdisp_gene_zdb_id) human
+insert into tmp_output(counter, section)
+select count( distinct oevdisp_gene_zdb_id), "Genes with Human Orthology"
  from orthologue_evidence_display
   where oevdisp_organism_list like "%Human%"
 ;
 
 
 --Genes w/Mouse Orthology
-select count( distinct oevdisp_gene_zdb_id) mouse
+insert into tmp_output(counter, section)
+select count( distinct oevdisp_gene_zdb_id), "Genes with Mouse Orthology"
  from orthologue_evidence_display
   where oevdisp_organism_list like "%Mouse%"
 ;
 
+unload to stats.txt
+select * from tmp_output;
