@@ -139,14 +139,25 @@ select count(*) ab from marker
 
 ------------------------------------------Expression & Phenotypes---------------------------------
 -- Gene expression patterns
-select count(*) exp_pat from expression_experiment
+select count(*) as exp_pat from expression_experiment
 --
 where xpatex_zdb_id not like 'ZDB-%-10____-%'
 ;
 
+-- clean Gene expression patterns
+select count(distinct xpatex_gene_zdb_id) as exp_patClean from expression_experiment, clean_expression_fast_search
+  where xpatex_genox_zdb_id = cefs_genox_zdb_id;
+
+
 --Phenotype Statements
 select count(*) as phenoStatements from phenotype_statement;
 
+
+--Clean phenotype
+
+select count(*) as phenoStatementsClean from phenotype_statement, phenotype_Experiment, mutant_fast_search
+ where phenox_pk_id = phenos_phenox_pk_id 
+ and phenox_genox_zdb_id = mfs_genox_zdb_id;
 
 -- Images annotated for expression
 select count(*)fish_img from image
