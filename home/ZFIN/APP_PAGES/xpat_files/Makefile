@@ -20,7 +20,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
-GENERICS = anatomy_captures.apg curation.apg experimentcuration.apg \
+GENERICS = curation.apg experimentcuration.apg \
 figurecuration.apg \
 genocurbuilder.apg genocursearch.apg \
 genocursummary.apg genosearchresulttable.apg pheno_summary.apg xpatcurcondition.apg \
