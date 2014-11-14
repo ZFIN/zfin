@@ -183,9 +183,10 @@ select count(*), "phenotype statements" from phenotype_statement;
 
 --Clean phenotype
 insert into tmp_output(counter, section)
-select count(*), "clean phenotype statements" from phenotype_statement, phenotype_Experiment, mutant_fast_search
+select count(distinct (mfs_mrkr_Zdb_id)), "clean phenotype statements" from phenotype_statement, phenotype_Experiment, mutant_fast_search
  where phenox_pk_id = phenos_phenox_pk_id 
- and phenox_genox_zdb_id = mfs_genox_zdb_id;
+ and phenox_genox_zdb_id = mfs_genox_zdb_id
+and mfs_mrkr_zdb_id like 'ZDB-GENE%';
 
 -- Images annotated for expression
 insert into tmp_output(counter, section)
