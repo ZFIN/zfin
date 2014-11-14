@@ -2,7 +2,7 @@
 
 
 <%--Note:  needs to have setInfo(form) function defined and databaseInfoDiv (or some other div) defined.--%>
-<%--See blast.apg and FogBogz 3513.--%>
+<%--See FogBogz 3513.--%>
 <authz:authorize ifNotGranted="root">
     <select name = "dataLibraryString" size=1 onchange="return setInfo(this);">
 </authz:authorize>
