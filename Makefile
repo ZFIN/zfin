@@ -83,7 +83,7 @@
 #
 #  GENERICS 	      List of generic files that the makefile will translate
 # 			into specific files
-#			Example: GENERICS = classify_pubs.apg do_direct.apg ...
+#			Example: GENERICS = classify_pubs.apg ...
 #  STATICS	      List of files that don't need to be translated from
 #			a generic form into a specific form.  These files 
 #			don't contain anything that needs translation.
