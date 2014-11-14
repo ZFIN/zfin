@@ -115,7 +115,7 @@
         </exec>
     </target>
 
-    <target name="backup-solr-core-jenkins" if="backup.solr">
+    <target name="backup-solr-core-jenkins">
         <antcall target="backup-solr-core"/>
     </target>
 
