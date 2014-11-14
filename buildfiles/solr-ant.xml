@@ -49,8 +49,8 @@
 
     <target name="build-solr-index-jenkins">
         <antcall target="build-solr-index"/>
-        <antcall target="check-indexer"/>
         <antcall target="backup-solr-core-jenkins"/>
+        <antcall target="check-indexer"/>
     </target>
 
 
