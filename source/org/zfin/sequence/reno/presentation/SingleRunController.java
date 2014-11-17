@@ -42,7 +42,7 @@ public class SingleRunController {
     @RequestMapping(value = "/candidate/{candidateType}/{runZdbID}", method = RequestMethod.GET)
     public String referenceData(@PathVariable String runZdbID, @PathVariable String candidateType
             , RunBean form, Model model
-            , @RequestParam(required = false, defaultValue = "expectValue") String comparator
+            , @RequestParam(required = false, defaultValue = "lastDoneAsc") String comparator
             , @RequestParam(required = false) String action
     ) {
         Run run = renoRepository.getRunByID(runZdbID);
