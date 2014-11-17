@@ -803,14 +803,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Criteria genox = expression.createCriteria("genotypeExperiment");
         genox.add(Restrictions.eq("genotype", genotype));
         Criteria result = expression.createCriteria("expressionResults");
-
         result.add(Restrictions.isNotEmpty("figures"));
-
-
-        /*
-                Criteria experiment = genox.createCriteria("experiment");
-                experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
-        */
+        expression.add(Restrictions.isNull("antibody"));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return new PaginationResult<Publication>((List<Publication>) pubs.list());
     }
