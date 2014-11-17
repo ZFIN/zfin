@@ -74,7 +74,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
         List<Organization> organizations = profileRep.getOrganizationsByName(query);
 
-        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<>();
         for (Organization organization : organizations) {
             String suggestion = organization.getName();
             String displayName = suggestion.replace(query, "<strong>" + query + "</strong>");
@@ -98,15 +98,10 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
      */
     public TermStatus validateTerm(String term, OntologyDTO ontologyDto) {
 
-        int foundInexactMatch = 0;
-
         if (ActiveData.isValidActiveData(term, ActiveData.Type.TERM)) {
-            //TermDTO termObject = OntologyManager.getInstance().getTermByID(term);
             TermDTO termObject = OntologyManager.getInstance().getTermByID(term, ontologyDto);
             if (termObject != null)
                 return new TermStatus(TermStatus.Status.FOUND_EXACT, termObject.getName(), termObject.getZdbID());
-            else
-                foundInexactMatch = 0;
         } else {
             Ontology ontology = DTOConversionService.convertToOntology(ontologyDto);
             TermDTO termObject = OntologyManager.getInstance().getTermByName(term.trim(), ontology);
@@ -159,7 +154,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             }
         }
 
-        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 2) {
             // We add one in order to add an additional term that is not displayed.
             // When it comes back we can add the '...' implying that there are more.
@@ -207,7 +202,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         String query = req.getQuery();
         highlighter.setMatch(query);
 
-        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<>();
         if (query.length() > 0) {
             for (Antibody antibody : RepositoryFactory.getAntibodyRepository().getAntibodiesByName(query)) {
                 String antibodyAbbreviation = antibody.getAbbreviation();
@@ -232,7 +227,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         String query = req.getQuery();
         highlighter.setMatch(query);
 
-        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
             for (Marker marker : RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(query)) {
                 String markerAbbreviation = marker.getAbbreviation();
@@ -274,7 +269,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         String query = req.getQuery();
         highlighter.setMatch(query);
 
-        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
             List<Marker> markers = markerRepository.getMarkersByAbbreviationAndGroup(query, typeGroup);
@@ -297,7 +292,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         String query = req.getQuery();
         highlighter.setMatch(query);
 
-        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
             List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(query, Marker.TypeGroup.CONSTRUCT, pubZdbID);
@@ -323,7 +318,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         String query = req.getQuery();
         highlighter.setMatch(query);
 
-        List<SuggestOracle.Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>(NUMBER_OF_SUGGESTIONS);
+        List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
             for (Feature feature : RepositoryFactory.getFeatureRepository().getFeaturesByAbbreviation(query)) {
                 String featureAbbreviation = feature.getAbbreviation();
@@ -385,7 +380,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
     public List<PublicationDTO> getRecentPublications(String key) {
         List<Publication> mostRecentPubs = PublicationService.getRecentPublications(getServletContext(), key);
-        List<PublicationDTO> publicationDTOs = new ArrayList<PublicationDTO>();
+        List<PublicationDTO> publicationDTOs = new ArrayList<>();
 
         if (CollectionUtils.isNotEmpty(mostRecentPubs)) {
             for (Publication publication : mostRecentPubs) {
@@ -416,7 +411,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
     @Override
     public List<RelatedEntityDTO> getAttributionsForPub(String publicationZdbID) {
-        List<RelatedEntityDTO> relatedEntityDTOs = new ArrayList<RelatedEntityDTO>();
+        List<RelatedEntityDTO> relatedEntityDTOs = new ArrayList<>();
 
         List<Marker> markers = RepositoryFactory.getMarkerRepository().getMarkersForAttribution(publicationZdbID);
         if (CollectionUtils.isNotEmpty(markers)) {
@@ -457,7 +452,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
 
     public Map<String, String> getAllZfinProperties() {
-        Map<String, String> allZfinProperties = new HashMap<String, String>();
+        Map<String, String> allZfinProperties = new HashMap<>();
         for (ZfinPropertiesEnum zfinProperties : ZfinPropertiesEnum.values()) {
             allZfinProperties.put(zfinProperties.name(), zfinProperties.value());
         }
