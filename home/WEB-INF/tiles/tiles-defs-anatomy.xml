@@ -12,20 +12,5 @@
         <put-attribute name="body" value="/WEB-INF/jsp/auditLog/audit_log_details.jsp"/>
     </definition>
 
-    <definition name="expression-report.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Expression Report"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/expression_report.jsp"/>
-    </definition>
-
-    <definition name="phenotype-report.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Phenotype Report"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/phenotype_report.jsp"/>
-    </definition>
-
-    <definition name="go-evidence-report.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Go Evidence Report"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/go_evidence_report.jsp"/>
-    </definition>
-
 </tiles-definitions>
 
