@@ -6,7 +6,7 @@
               value="http://berkeleybop.org/ontologies/obo-all/zebrafish_anatomy/zebrafish_anatomy.obo"/>
     <property name="qualityOboURL"
               value="http://purl.obolibrary.org/obo/pato.obo"/>
-    <property name="geneOboURL" value="http://www.geneontology.org/ontology/obo_format_1_2/gene_ontology.1_2.obo"/>
+    <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go.obo"/>
     <property name="mpathOboURL" value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/phenotype/mouse_pathology/mouse_pathology.obo"/>
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
