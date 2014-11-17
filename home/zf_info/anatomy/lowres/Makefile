@@ -21,11 +21,11 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/anatomy/lowres
 
-STATICS =  120hrsdorsal.gif 120hrsdorsal.map 120hrslateral.gif \
-	120hrslateral.map 24hrsdorsal.gif 24hrsdorsal.map 24hrslateral.gif \
-	24hrslateral.map 48hrsdorsal.gif 48hrsdorsal.map 48hrslateral.gif \
-	48hrslateral.map 72hrsdorsal.gif 72hrsdorsal.map 72hrslateral.gif \
-	72hrslateral.map S001.gif S002.gif S003.gif S004.gif S005.gif \
+STATICS =  120hrsdorsal.gif 120hrslateral.gif \
+	24hrsdorsal.gif 24hrslateral.gif \
+	48hrsdorsal.gif 48hrslateral.gif \
+	72hrsdorsal.gif 72hrslateral.gif \
+	S001.gif S002.gif S003.gif S004.gif S005.gif \
 	S006.gif S007.gif S008.gif S009.gif S010.gif S011.gif S012.gif \
 	S013.gif S014.gif S015.gif S016.gif S017.gif S018.gif S019.gif \
 	S020.gif S021.gif S022.gif S023.gif S024.gif S025.gif S026.gif \
