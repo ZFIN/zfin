@@ -54,7 +54,7 @@
 </tr>
 <tr>
     <td>
-        <a href="/webapp/dev-tools/request/ZDB-LAB-000114-8">Test jQuery Ajax Lab Page</a>
+        <a href="/webapp/devtool/request/ZDB-LAB-000114-8">Test jQuery Ajax Lab Page</a>
     </td>
     <td>
         <a href="/action/devtool/phenotype-curation-history">History: Phenotype Experiments</a>

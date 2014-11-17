@@ -7,7 +7,7 @@
 
     <tr class="odd"><td colspan="3" class="sectionTitle">
         ${formBean.numberOfGlobalSessions} active Sessions
-        <em>(Current: <a href="/action/dev-tools/view-session-info">${pageContext.session.id}</a>)</em></td></tr>
+        <em>(Current: <a href="/action/devtool/view-session-info">${pageContext.session.id}</a>)</em></td></tr>
     <%--<tr>--%>
     <%--<td colspan="3">--%>
     <%--<table cellpadding="2" cellspacing="5" border="0" width="100%">--%>

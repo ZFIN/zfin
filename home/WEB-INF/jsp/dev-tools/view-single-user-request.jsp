@@ -4,7 +4,7 @@
 
 <c:set var="clickstream" value="${formBean.clickstream}"/>
 
-<p><a href="/action/dev-tools/view-user-request-tracks">Back to all streams</a></p>
+<p><a href="/action/devtool/view-user-request-tracks">Back to all streams</a></p>
 
 
 <h3>User Requests for: ${zfn:getPerson(clickstream.session)}</h3>
