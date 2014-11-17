@@ -6,7 +6,7 @@
     <zfin2:subsection title="Phenotype Details " anchor="phenotype"
                       test="${!empty phenotypeTableRows }" showNoData="true">
 
-        <table class="summary groupstripes phenotype-table">
+        <table class="summary groupstripes">
             <tr>
                 <th><span class="fish-label" title="Fish = Genotype + Reagents">Fish</span></th>
                 <th>Stage</th>
