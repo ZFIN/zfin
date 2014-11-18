@@ -18,6 +18,7 @@
 <!--|CURATORS_AT_ZFIN|-->	informix\@zfin.org
 <!--|DB_NAME|-->	testdb
 <!--|DB_OWNER|-->	informix
+<!--|DEFAULT_EMAIL|-->	informix\@zfin.org
 <!--|DOMAIN_NAME|-->	test.zfin.org
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/test
 <!--|GBROWSE_DB|-->	ensembl_current
@@ -27,7 +28,7 @@
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@zfin.org
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org xshao\@zfin.org
-<!--|GO_EMAIL_ERR|-->	dhowe\@cs.uoregon.edu informix\@zfin.org
+<!--|GO_EMAIL_ERR|-->	dhowe\@zfin.org informix\@zfin.org
 <!--|HAS_PARTNER|-->	false
 <!--|HEADER_COLOR|-->	#99CCCC
 <!--|HIGHLIGHTER_COLOR|-->	#F4F4F4

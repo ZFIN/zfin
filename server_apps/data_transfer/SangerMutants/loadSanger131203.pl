@@ -17,7 +17,7 @@ use DBI;
 sub sendReport {
 		
   my $SUBJECT="Auto: Allele-known zfin gene associations input sent by Sanger";
-  my $MAILTO="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org";
   my $TXTFILE="./alleleZfinKnown.csv";
  
   # Create a new multipart message:
@@ -38,7 +38,7 @@ sub sendReport {
 
 
     my $SUBJECT="Auto: # of alleles-known ZFIN genes sent by Sanger";
-    my $MAILTO="pm\@cs.uoregon.edu,leyla\@zfin.org";
+    my $MAILTO="pm\@zfin.org,leyla\@zfin.org";
     my $TXTFILE="./countSangerKnownInput.txt";
 
     # Create a new multipart message:
@@ -60,7 +60,7 @@ sub sendReport {
 
 
   my $SUBJECT="Auto: 1 allele-multiple ZFIN genes association sent by Sanger";
-  my $MAILTO="pm\@cs.uoregon.edu,leyla\@zfin.org";
+  my $MAILTO="pm\@zfin.org,leyla\@zfin.org";
   my $TXTFILE="./duplicateGenes.unl";
  
   # Create a new multipart message:
@@ -80,7 +80,7 @@ sub sendReport {
   $msg3->print(\*SENDMAIL);
 
   my $SUBJECT="Auto: Ensdarg-ZFIN gene matches made on Sanger allele-ENSDARG file";
-    my $MAILTO="pm\@cs.uoregon.edu,leyla\@zfin.org";
+    my $MAILTO="pm\@zfin.org,leyla\@zfin.org";
     my $TXTFILE="./zfinGeneEnsdargMatches.unl";
 
     # Create a new multipart message:
@@ -105,7 +105,7 @@ sub sendReport {
 
 
 my $SUBJECT="Auto: Final Sanger allele-Known ZFIN genes to be loaded";
-     my $MAILTO="pm\@cs.uoregon.edu";
+     my $MAILTO="pm\@zfin.org";
      my $TXTFILE="./sangerInputWithoutDuplicates.unl";
 
      # Create a new multipart message:
@@ -136,7 +136,7 @@ my $SUBJECT="Auto: Final Sanger allele-Known ZFIN genes to be loaded";
 sub sendPreLoadInput {
 
   my $SUBJECT="Auto: Sanger data new features";
-  my $MAILTO="pm\@cs.uoregon.edu,leyla\@zfin.org";
+  my $MAILTO="pm\@zfin.org,leyla\@zfin.org";
   my $TXTFILE="./pre_feature.unl";
  
   # Create a new multipart message:
@@ -156,7 +156,7 @@ sub sendPreLoadInput {
   $msg7->print(\*SENDMAIL);
   
   my $SUBJECT="Auto: Sanger data new feature-marker relationships";
-  my $MAILTO="pm\@cs.uoregon.edu,leyla\@zfin.org";
+  my $MAILTO="pm\@zfin.org,leyla\@zfin.org";
   my $TXTFILE="./pre_fmrel.unl";
  
   # Create a new multipart message:
@@ -177,7 +177,7 @@ sub sendPreLoadInput {
  
  
   my $SUBJECT="Auto: Sanger data new dblinks";
-  my $MAILTO="pm\@cs.uoregon.edu,leyla\@zfin.org";
+  my $MAILTO="pm\@zfin.org,leyla\@zfin.org";
   my $TXTFILE="./pre_dblink.unl";
  
   # Create a new multipart message:

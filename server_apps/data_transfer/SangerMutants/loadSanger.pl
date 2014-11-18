@@ -17,7 +17,7 @@ use DBI;
 sub sendReport {
 		
   my $SUBJECT="Auto: Sanger sanity checking result";
-  my $MAILTO="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org";
   my $TXTFILE="./report.txt";
  
   # Create a new multipart message:
@@ -37,7 +37,7 @@ sub sendReport {
   $msg1->print(\*SENDMAIL);
 
   my $SUBJECT="Auto: Sanger pre_load_input";
-  my $MAILTO="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org";
   my $TXTFILE="./pre_load_input_known.txt";
  
   # Create a new multipart message:
@@ -65,7 +65,7 @@ sub sendReport {
 sub sendPreLoadInput {
 
   my $SUBJECT="Auto: Sanger data new features";
-  my $MAILTO="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org";
   my $TXTFILE="./pre_feature.unl";
  
   # Create a new multipart message:
@@ -85,7 +85,7 @@ sub sendPreLoadInput {
   $msg4->print(\*SENDMAIL);
   
   my $SUBJECT="Auto: Sanger data new genes";
-  my $MAILTO="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org";
   my $TXTFILE="./pre_gene.unl";
  
   # Create a new multipart message:
@@ -106,7 +106,7 @@ sub sendPreLoadInput {
  
  
   my $SUBJECT="Auto: Sanger data new genotypes";
-  my $MAILTO="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org";
   my $TXTFILE="./pre_geno.unl";
  
   # Create a new multipart message:

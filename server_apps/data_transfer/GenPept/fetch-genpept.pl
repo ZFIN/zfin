@@ -15,7 +15,7 @@ open (OUT,">$out_file");
 #run initial search and get number of records, web environment
 
 $tool="esearch";
-$urlsearch = "$ebase$tool.fcgi?usehistory=n\&db=$db\&term=$term\&retmode=html\&dopt=GenPept\&email=xshao\@cs.uoregon.edu";
+$urlsearch = "$ebase$tool.fcgi?usehistory=n\&db=$db\&term=$term\&retmode=html\&dopt=GenPept\&email=xshao\@zfin.org";
 
 `/local/bin/wget -q "$urlsearch" -O gpresult`;
 

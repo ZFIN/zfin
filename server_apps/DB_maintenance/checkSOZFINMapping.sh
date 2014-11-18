@@ -16,7 +16,7 @@ echo 'unload to /tmp/mismapSOZFIN.txt select * from so_zfin_mapping where not ex
 
 if ( -s /tmp/mismapSOZFIN.txt ) then
 
-    /local/bin/mutt -a /tmp/mismapSOZFIN.txt -s "so term updates created a mismatch in so_zfin_mapping table on <!--|DB_NAME|-->" -- <!--|DB_OWNER|-->@cs.uoregon.edu < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ; 
+    /local/bin/mutt -a /tmp/mismapSOZFIN.txt -s "so term updates created a mismatch in so_zfin_mapping table on <!--|DB_NAME|-->" -- <!--|DEFAULT_EMAIL|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/char ;
 
 endif
 

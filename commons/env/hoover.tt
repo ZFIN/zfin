@@ -18,6 +18,7 @@
 <!--|CURATORS_AT_ZFIN|-->	smoxon\@zfin.org
 <!--|DB_NAME|-->	hoovdb
 <!--|DB_OWNER|-->	staylor
+<!--|DEFAULT_EMAIL|-->	smoxon\@zfin.org
 <!--|DOMAIN_NAME|-->	hoover.zfin.org
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/hoover
 <!--|GBROWSE_DB|-->	ensembl_current

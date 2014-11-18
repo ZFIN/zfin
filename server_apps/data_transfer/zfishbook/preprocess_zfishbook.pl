@@ -14,7 +14,7 @@ use DBI;
 sub sendReport($) {
 		
   my $SUBJECT="Auto from ".$_[0]." : zfishbook sanity checking result";
-  my $MAILTO="xshao\@cs.uoregon.edu";
+  my $MAILTO="xshao\@zfin.org";
   my $TXTFILE="./report";
  
   # Create a new multipart message:
@@ -34,7 +34,7 @@ sub sendReport($) {
   $msg1->print(\*SENDMAIL);
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook pre_load_input";
-  my $MAILTO="xshao\@cs.uoregon.edu";
+  my $MAILTO="xshao\@zfin.org";
   my $TXTFILE="./pre_load_input.txt";
  
   # Create a new multipart message:

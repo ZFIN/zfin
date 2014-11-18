@@ -412,7 +412,7 @@ $remorph_count_images++ while <NO_FS_IMAGE>;
   }
 else {
       &sendLoadReport("No Filesystem Image",
-                      "<!--|DB_OWNER|-->\@cs.uoregon.edu", 
+                      "<!--|DEFAULT_EMAIL|-->",
 		      "/tmp/filesystem_images_not_in_database.unl") ;
   }
 
@@ -433,7 +433,7 @@ $remorph_count_pdfs++ while <NO_FS_PDF>;
       print "No new db pdfs without files count: $remorph_count_images \n" ;
   }
 else {
-      &sendLoadReport("No Filesystem PDF","<!--|DB_OWNER|-->\@cs.uoregon.edu", 
+      &sendLoadReport("No Filesystem PDF","<!--|DEFAULT_EMAIL|-->",
 		      "/tmp/filesystem_pdfs_not_in_database.unl") ;
   }
 
@@ -454,7 +454,7 @@ if ($remorph_count_videos < 1) {
     print "No new db videos without files count: $remorph_count_videos \n" ;
 }
 else {
-      &sendLoadReport("No Filesystem Video","<!--|DB_OWNER|-->\@cs.uoregon.edu",
+      &sendLoadReport("No Filesystem Video","<!--|DEFAULT_EMAIL|-->",
                       "/tmp/filesystem_videos_not_in_database.unl") ;
 }
 
@@ -476,7 +476,7 @@ $remorph_count_images++ while <ORPHAN_IMAGE_FILES>;
       print "No new orphan images count: $remorph_count_images \n" ;
   }
 else {
-      &sendLoadReport("Orphan Images","<!--|DB_OWNER|-->\@cs.uoregon.edu", 
+      &sendLoadReport("Orphan Images","<!--|DEFAULT_EMAIL|-->",
 		      "/tmp/orphan_image_files.unl") ;
   }
 
@@ -494,7 +494,7 @@ $remorph_count_pdfs++ while <ORPHAN_PDF_FILES>;
       print "No new orphan pdfs  count: $remorph_count_pdfs \n" ;
   }
   else {
-    &sendLoadReport("Orphan PDFs","<!--|DB_OWNER|-->\@cs.uoregon.edu", 
+    &sendLoadReport("Orphan PDFs","<!--|DEFAULT_EMAIL|-->",
 		"/tmp/orphan_pdf_files.unl") ;
   }
 
@@ -513,7 +513,7 @@ if ($remorph_count_videos < 1) {
     print "No new orphan videos count: $remorph_count_videos \n" ;
 }
 else {
-    &sendLoadReport("Orphan Videos","<!--|DB_OWNER|-->\@cs.uoregon.edu",
+    &sendLoadReport("Orphan Videos","<!--|DEFAULT_EMAIL|-->",
 		    "/tmp/orphan_video_files.unl") ;
 }
 

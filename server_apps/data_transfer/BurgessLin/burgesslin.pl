@@ -15,8 +15,8 @@ use MIME::Lite;
 sub sendLoadOutput() {
 
   my $SUBJECT="Auto: burgess lin data new features";
-  my $MAILTO="pm\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
-  my $FROM="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org,yvonne\@uoneuro.uoregon.edu";
+  my $FROM="pm\@zfin.org";
   my $TXTFILE="./newfeatures.unl";
  
   # Create a new multipart message:
@@ -36,8 +36,8 @@ sub sendLoadOutput() {
   $msg3->print(\*SENDMAIL);
 
   my $SUBJECT="Auto: features not submitted ";
-  my $MAILTO="pm\@cs.uoregon.edu,yvonne\@uoneuro.uoregon.edu";
-  my $FROM="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org,yvonne\@uoneuro.uoregon.edu";
+  my $FROM="pm\@zfin.org";
   my $TXTFILE="./featuresnotsubmitted.unl";
  
   # Create a new multipart message:
@@ -66,8 +66,8 @@ sub sendLoadOutput() {
 sub sendLoadLogs() {
 
   my $SUBJECT="Auto: bl data load weird accessions ";
-  my $MAILTO="pm\@cs.uoregon.edu";
-  my $FROM="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org";
+  my $FROM="pm\@zfin.org";
   my $TXTFILE="./weirdaccession1.unl";
 
   # Create a new multipart message:
@@ -87,8 +87,8 @@ sub sendLoadLogs() {
   $msg1->print(\*SENDMAIL);
 
   my $SUBJECT="Auto: bl data load log2 genes not in zfin ";
-  my $MAILTO="pm\@cs.uoregon.edu";
-  my $FROM="pm\@cs.uoregon.edu";
+  my $MAILTO="pm\@zfin.org";
+  my $FROM="pm\@zfin.org";
   my $TXTFILE="./genesnotinzfin.unl";
 
   # Create a new multipart message:

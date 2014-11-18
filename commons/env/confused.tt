@@ -18,6 +18,7 @@
 <!--|CURATORS_AT_ZFIN|-->	ryanm\@zfin.org
 <!--|DB_NAME|-->	confudb
 <!--|DB_OWNER|-->	ryanm
+<!--|DEFAULT_EMAIL|-->	ryanm\@zfin.org
 <!--|DOMAIN_NAME|-->	confused.zfin.org
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/confused
 <!--|GBROWSE_DB|-->	ensembl_current

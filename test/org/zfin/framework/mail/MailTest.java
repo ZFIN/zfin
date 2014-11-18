@@ -13,10 +13,10 @@ import static org.junit.Assert.assertFalse;
  */
 public class MailTest extends AbstractZfinPropertiesTest{
 
-    private String unfilteredEmail1 = "informix\\@cs.uoregon.edu" ;
-    private String filteredEmail1 = "informix@cs.uoregon.edu" ;
-    private String unfilteredEmail2 = "informix\\@cs.uoregon.edu" ;
-    private String filteredEmail2 = "informix@cs.uoregon.edu" ;
+    private String unfilteredEmail1 = "informix\\@zfin.org" ;
+    private String filteredEmail1 = "informix@zfin.org" ;
+    private String unfilteredEmail2 = "informix\\@zfin.org" ;
+    private String filteredEmail2 = "informix@zfin.org" ;
 
     private String[] unfilteredEmailList = new String[]{
             unfilteredEmail1, unfilteredEmail2

@@ -572,7 +572,7 @@ sub access_error () { # throws up an error message and sends email
               You must be the owner of an image file to update it,
               and you must have permission to upload new files. <br><br>
               Please contact ZFIN for further information: 
-              staylor\@cs.uoregon.edu !!<br><br>";
+              zfinadmn@zfin.org !!<br><br>";
 
     &emailError ("login confirmation failed: $vHint $ENV{'HTTP_COOKIE'} $person_id $filename <!--|DB_NAME|-->");
     print "</body>";
@@ -626,7 +626,7 @@ sub sendReport() { # does the email creation
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
     open(REPORT, "/tmp/upload_report") || die "cannot open report";
 
-    print MAIL "To: <!--|DB_OWNER|-->\@cs.uoregon.edu\n";
+    print MAIL "To: <!--|DEFAULT_EMAIL|-->\n";
     print MAIL "Subject: Upload Report\n";
     while($line = <REPORT>)
     {

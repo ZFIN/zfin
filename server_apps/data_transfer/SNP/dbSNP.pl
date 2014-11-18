@@ -451,13 +451,13 @@ exit;
 # OUTPUT:
 #    none
 # EFFECT:
-#    error message is sent to xshao@cs.uoregon.edu.
+#    error message is sent to xshao@zfin.org.
 #
 
 sub emailError($)
   {
     open(MAIL, "| $mailprog") || die "Cannot open mailprog $mailprog";
-    print MAIL "To: xshao\@cs.uoregon.edu\n";
+    print MAIL "To: xshao\@zfin.org\n";
     print MAIL "Subject: dbSNP.pl $_[0]\n";
     print MAIL "Error:\n";
     print MAIL "$_[0]";
@@ -469,7 +469,7 @@ sub emailError($)
 sub emailSuccess($)
   {
     open(MAIL, "| $mailprog") || die "Cannot open mailprog $mailprog";
-    print MAIL "To: xshao\@cs.uoregon.edu\n";
+    print MAIL "To: xshao\@zfin.org\n";
     print MAIL "Subject: dbSNP.pl $_[0]\n";
     print MAIL "Error:\n";
     print MAIL "$_[0]";
