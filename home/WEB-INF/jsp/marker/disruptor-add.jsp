@@ -115,7 +115,7 @@
             </tr>
             <tr>
                 <td nowrap>
-                    Reported: &nbsp;5'-   <input id="reportSeq2" name="reportSeq2" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></input> -3'
+                    Reported: &nbsp;5'-   <form:input id="reportSeq2" path="<%= DisruptorAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE%>" name="reportSeq2" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
                 </td>
                 <td width=20></td><!-- spacer column -->
             </tr>
@@ -245,6 +245,7 @@
     }
 
     function preSubmit(type) {
+
         var displayedSeq = document.getElementById('displaySeq');
         var reportSeq = document.getElementById('reportSeq');
         if(!displayedSeq.value || displayedSeq.value.length == 0 || !/^[\s]+$/.test(displayedSeq.value)) {
@@ -255,16 +256,21 @@
         if (type === 'talen') {
             var displayedSeq2 = document.getElementById('displaySeq2');
             var reportSeq2 = document.getElementById('reportSeq2');
+
             if(!displayedSeq2.value || displayedSeq2.value.length == 0 || !/^[\s]+$/.test(displayedSeq2.value)) {
                 if (sequence2Manipulated == "no") {
+
                     displayedSeq2.value = reportSeq2.value;
+
                 }
             }
         }
+
         completePubId();
     }
 
     function completePubId() {
+       
         var pubId = document.getElementById('publicationZdbId');
         var shortId = /^(\d){6}-(\d)+/;
         var shortIdStartWithHyphen = /^-(\d){6}-(\d)+/;
