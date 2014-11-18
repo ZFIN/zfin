@@ -8,7 +8,7 @@
 #
 # It assumes that the following 6 files are in place (copied from a testdb targert directory):
 #
-# zfin.dat
+
 # okfile
 # ok2file
 # spkw2go
@@ -130,9 +130,6 @@ system("rm -f *.unl");
 system("rm -f *.txt");
 system("mkdir ./ccnote");
 
-
-print "WARNING!!! no zfin.dat provided. \n" if (!-e "zfin.dat");
-
 print "WARNING!!! no okfile provided. \n" if (!-e "okfile");
 
 print "WARNING!!! no ok2file provided. \n" if (!-e "ok2file");
@@ -143,7 +140,7 @@ print "WARNING!!! no interpro2go provided. \n" if (!-e "interpro2go");
 
 print "WARNING!!! no ec2go provided. \n" if (!-e "ec2go");
 
-if (!-e "zfin.dat" || !-e "okfile" || !-e "ok2file" || !-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
+if (!-e "okfile" || !-e "ok2file" || !-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
    print "One or more required file(s) not exisiting. Exit.\n";
    exit;
 }

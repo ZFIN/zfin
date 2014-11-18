@@ -16,7 +16,7 @@ echo "Remove old files: okfile, *2go"
 echo "#########################################################################"
 
 echo "Copy new files from /research/zarchive/load_files/UniProt/" 
-/private/bin/scp /research/zarchive/load_files/UniProt/* <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/
+/usr/bin/scp /research/zarchive/load_files/UniProt/* <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/
 
 echo "#########################################################################"
 
