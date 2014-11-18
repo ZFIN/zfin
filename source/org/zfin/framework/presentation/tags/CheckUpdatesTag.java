@@ -1,6 +1,5 @@
 package org.zfin.framework.presentation.tags;
 
-import org.zfin.framework.filter.UpdatesCheckFilter;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.jsp.JspException;
