@@ -410,7 +410,7 @@ else
     document.write("<a href=\"/action/logout\">Logout</a>");
 </script>
 </span> &nbsp;
-        <a href="feed:https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&sort=created&title=Zebrafish+News&publicFeed=true&rssType=rss2&maxResults=-1&timeSpan=120"><img id="social-icon" src="/images/feed-icon-28x28.png"></a>
+        <a href="https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&sort=created&title=Zebrafish+News&publicFeed=true&rssType=rss2&maxResults=-1&timeSpan=120"><img id="social-icon" src="/images/feed-icon-28x28.png"></a>
         <iframe id="social-icon" allowtransparency="true" frameborder="0" scrolling="no"
                 src="//platform.twitter.com/widgets/follow_button.html?screen_name=ZFINmod&show_count=false&show_screen_name=false"
                 style="width:60px; height:20px;"></iframe>
