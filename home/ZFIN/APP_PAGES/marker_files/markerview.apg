@@ -655,9 +655,31 @@ function jump(form_select){
   </tr>
   <?MIVAR COND="$(XST,$type_of_genedom)">
     <tr><td colspan=2>
-      <?MIVAR COND="$(XST,$UPDATE)">
-        <INPUT TYPE=button value=Update onClick="doit('mrkr_abbrev','text','$marker_type_display+Abbrev')">
-      <?/MIVAR>
+     <?MISQL SQL="select count(*) from (
+                  select ra.recattrib_data_zdb_id 
+                    from record_attribution ra 
+                   where ra.recattrib_data_zdb_id = '$OID'
+                     and ra.recattrib_source_zdb_id = 'ZDB-PUB-071218-1'
+                     and ra.recattrib_source_type = 'standard' 
+                 union all  
+                  select mr.mrel_mrkr_1_zdb_id 
+                    from record_attribution ra  
+                    join marker_relationship mr on mr.mrel_mrkr_2_zdb_id = ra.recattrib_data_zdb_id  
+                   where mr.mrel_mrkr_1_zdb_id = '$OID'
+                     and ra.recattrib_source_zdb_id = 'ZDB-PUB-071218-1'
+                     and mr.mrel_type in ('gene encodes small segment','gene contains small segment') 
+                     and ra.recattrib_source_type = 'standard' );   ">
+           <?MIVAR NAME=$num_of_geoPubs>$1<?/MIVAR>
+      <?/MISQL>
+      <?MIBLOCK COND="$(>,$num_of_geoPubs,0)">
+        <?MIVAR COND="$(XST,$UPDATE)">
+          <button title="Can not edit this gene symbol because it is used in GEO link." disabled>Update</button>
+        <?/MIVAR>
+      <?MIELSE>
+        <?MIVAR COND="$(XST,$UPDATE)">
+          <INPUT TYPE=button value=Update onClick="doit('mrkr_abbrev','text','$marker_type_display+Abbrev')">
+        <?/MIVAR>
+      <?/MIBLOCK>
       <FONT size=+1><b>
 	$marker_type_display Symbol:&nbsp;<i>$abbrev</i>
       </b></FONT>
