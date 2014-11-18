@@ -1359,67 +1359,6 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="26">Figure ID</Column>
         </Download>
         <Download orderIndex="2">
-            <Name>
-                Genotypes with Phenotypes
-            </Name>
-            <Category>
-                Phenotype Data
-            </Category>
-            <Description/>
-            <WikiLink/>
-            <FileName>pheno_obo</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                    select "ZFIN:"||geno_zdb_id, geno_display_name,
-                                (select stg_obo_id from stage
-                                   where stg_zdb_id = phenox_start_stg_zdb_id),
-                                (select stg_obo_id from stage
-                                               where stg_zdb_id = phenox_end_stg_zdb_id),
-                                    (select term_ont_id
-                                        from term
-                                        where term_zdb_id = phenos_entity_1_superterm_zdb_id
-                                    ),
-                                    (select term_ont_id
-                                        from term
-                                        where term_zdb_id = phenos_entity_1_subterm_zdb_id
-                                    ),
-                                    (select term_ont_id
-                                        from term
-                                        where term_Zdb_id = phenos_quality_zdb_id),
-                                phenos_tag,
-                                    (select term_ont_id
-                                        from term
-                                        where term_zdb_id = phenos_entity_2_superterm_zdb_id
-                                    ),
-                                    (select term_ont_id
-                                        from term
-                                        where term_zdb_id = phenos_entity_2_subterm_zdb_id
-                                    ),
-                                "ZFIN:"||fig_source_zdb_id,
-                                "ZFIN:"||genox_exp_zdb_id
-                      from phenotype_experiment, phenotype_statement, figure, genotype, genotype_experiment
-                     where phenox_genox_zdb_id = genox_zdb_id
-                       and phenos_phenox_pk_id = phenox_pk_id
-                       and phenox_fig_zdb_id = fig_zdb_id
-                       and genox_geno_zdb_id = geno_zdb_id
-                     order by geno_zdb_id, fig_source_zdb_id
-                          ]]>
-            </Query>
-            <Column id="1" unique="true">Genotype ID</Column>
-            <Column id="2" unique="false">Genotype Name</Column>
-            <Column id="3" unique="true">Start Stage OBO ID</Column>
-            <Column id="4" unique="true">End Stage OBO ID</Column>
-            <Column id="5" unique="true">Affected Structure or Process 1 superterm OBO ID</Column>
-            <Column id="6" unique="true">Affected Structure or Process 1 subterm OBO ID</Column>
-            <Column id="7" unique="true">Phenotype Keyword OBO ID</Column>
-            <Column id="8" unique="true">Phenotype Modifier</Column>
-            <Column id="9" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
-            <Column id="10" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
-            <Column id="11" unique="true">Publication ID</Column>
-            <Column id="12" unique="true">Environment ID</Column>
-        </Download>
         <Download orderIndex="3">
             <Name>
                 Phenotype Environment Description

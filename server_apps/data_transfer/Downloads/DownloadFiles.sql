@@ -487,43 +487,6 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  where genox_zdb_id = phenox_genox_zdb_id
  order by genox_geno_zdb_id;
 
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_obo.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_obo.txt'
- DELIMITER "	"
-select "ZFIN:"||geno_zdb_id, geno_display_name,
-			(select stg_obo_id from stage
-			   where stg_zdb_id = phenox_start_stg_zdb_id),
-			(select stg_obo_id from stage
-                           where stg_zdb_id = phenox_end_stg_zdb_id),
-                (select term_ont_id
-                    from term
-                    where term_zdb_id = phenos_entity_1_superterm_zdb_id
-                ),
-                (select term_ont_id
-                    from term
-                    where term_zdb_id = phenos_entity_1_subterm_zdb_id
-                ),
-                (select term_ont_id
-                    from term
-                    where term_Zdb_id = phenos_quality_zdb_id),
-			phenos_tag,
-                (select term_ont_id
-                    from term
-                    where term_zdb_id = phenos_entity_2_superterm_zdb_id
-                ),
-                (select term_ont_id
-                    from term
-                    where term_zdb_id = phenos_entity_2_subterm_zdb_id
-                ),
-			"ZFIN:"||fig_source_zdb_id,
-			"ZFIN:"||genox_exp_zdb_id
-  from phenotype_experiment, phenotype_statement, figure, genotype, genotype_experiment
- where phenox_genox_zdb_id = genox_zdb_id
-   and phenos_phenox_pk_id = phenox_pk_id
-   and phenox_fig_zdb_id = fig_zdb_id
-   and genox_geno_zdb_id = geno_zdb_id
- order by geno_zdb_id, fig_source_zdb_id ;
-
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'
@@ -1658,7 +1621,7 @@ select * from tmp_features;
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishMartMembers.txt'
  DELIMITER "	"
 select case when fas_geno_long_name = "" then " " else fas_geno_long_name end as fishName, 
-  fas_line_handle, gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
+  case when fas_line_handle = "" then " " else fas_line_handle , gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
   from gene_Feature_result_View, fish_annotation_search
   where gfrv_fas_id = fas_pk_id
   order by fishName, fas_line_handle, gfrv_affector_id;
