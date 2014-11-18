@@ -97,7 +97,7 @@ close(ACTIVATED);
 
 $subject = "Auto from $dbname : " . "updatepubstatus.pl :: " . "$ctUpdated of $ctInactivePubs non-active publications have been activated according to PUBMED";
 
-ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","listOfActivatedPubs");
+#ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","listOfActivatedPubs");
 
 exit;
 
