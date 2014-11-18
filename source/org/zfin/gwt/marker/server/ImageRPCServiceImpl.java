@@ -41,7 +41,7 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
         Image image = publicationRepository.getImageById(zdbID);
         ImageDTO dto = new ImageDTO();
         dto.setZdbID(image.getZdbID());
-        dto.setPublicationZdbID(image.getFigure().getPublication().getZdbID());
+//        dto.setPublicationZdbID(image.getFigure().getPublication().getZdbID());
 
         if (image.getTerms() != null)
             logger.debug(image.getZdbID() +  " has " + image.getTerms().size() + " terms");
@@ -82,11 +82,12 @@ public class ImageRPCServiceImpl extends ZfinRemoteServiceServlet implements Ima
         }
 
         ArrayList<MarkerDTO> constructDTOs = new ArrayList<MarkerDTO>();
-        for (Marker construct : image.getFigure().getConstructs()) {
-            constructDTOs.add(DTOConversionService.convertToMarkerDTO(construct));
+        if (image.getFigure()!=null) {
+            for (Marker construct : image.getFigure().getConstructs()) {
+                constructDTOs.add(DTOConversionService.convertToMarkerDTO(construct));
+            }
+            dto.setConstructs(constructDTOs);
         }
-        dto.setConstructs(constructDTOs);
-        
         return dto;
     }
 
