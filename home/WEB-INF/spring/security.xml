@@ -46,7 +46,7 @@
 
     <bean id="securityContextLogoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
 
-<!--    <bean id="checkUpdates" class="org.zfin.framework.filter.UpdatesCheckFilter">
+    <bean id="checkUpdates" class="org.zfin.framework.filter.UpdatesCheckFilter">
         <property name="logoutSuccessHandler" ref="apgLogoutHandler"/>
         <property name="logoutHandlers">
             <list>
@@ -54,7 +54,7 @@
                 <ref bean="securityContextLogoutHandler"/>
             </list>
         </property>
-    </bean>-->
+    </bean>
 
     <bean id="sessionRegistry"  class="org.springframework.security.core.session.SessionRegistryImpl"/>
 
@@ -93,9 +93,7 @@
         <!--for some reason you have to establish the parentColumn here again, or it uses the default springSecurity -->
         <security:remember-me services-ref="ipRememberMeService" key="ZFIN_KEY"/>
 
-<!--
         <security:custom-filter after="LAST"  ref="checkUpdates"/>
--->
 
 
 
