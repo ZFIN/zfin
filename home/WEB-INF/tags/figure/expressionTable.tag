@@ -37,7 +37,7 @@
                     <td>
                         <zfin:link entity="${row.start}"/>
                         <c:if test="${row.start != row.end}">
-                            - <zfin:link entity="${row.end}"/>
+                            to <zfin:link entity="${row.end}"/>
                         </c:if>
                     </td>
                     <c:if test="${showQualifierColumn}">
