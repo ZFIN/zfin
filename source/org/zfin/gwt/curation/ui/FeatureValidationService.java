@@ -17,6 +17,7 @@ public class FeatureValidationService {
 
         FeatureTypeEnum featureTypeEnum = dtoFromGUI.getFeatureType();
         switch(featureTypeEnum){
+            case INDEL:
             case INSERTION:
             case DELETION:
             case COMPLEX_SUBSTITUTION:
