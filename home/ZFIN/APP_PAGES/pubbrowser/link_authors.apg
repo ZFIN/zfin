@@ -134,7 +134,7 @@ function updateAuthor(strURL) {
                      from person 
                        left outer join int_person_pub
                          on target_id = '$OID' and source_id = person.zdb_id
-                     where get_person_full_name(zdb_id) like '$linkauth_author%'
+                     where UPPER(get_person_full_name(zdb_id)) like UPPER('$linkauth_author%')
                      order by last_name,first_name;">
 
         <?MIVAR NAME="linkauth_pers_zdb_id">$1<?/MIVAR>
