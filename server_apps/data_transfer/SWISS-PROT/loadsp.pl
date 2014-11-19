@@ -1,9 +1,9 @@
-#!/private/bin/perl 
+#!/private/bin/perl
 
 #
 # loadsp.pl
 #
-# Run this script to do SWISS-PROT load. 
+# Run this script to do SWISS-PROT load.
 # It calls many of the subroutine of SWISS-PROT load.
 #
 # It assumes that the following 6 files are in place (copied from a testdb targert directory):
@@ -15,67 +15,20 @@
 # interpro2go
 # ec2go
 
-use DBI;  
-use MIME::Lite;
+use DBI;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 # ----------------- Send Error Report -------------
 # Parameter
-#   $    Error message 
+#   $    Error message
 
 sub sendErrorReport ($) {
-  
-  my $SUBJECT="Auto from $dbname SWISS-PROT:".$_[0];
-  my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
-  my $TXTFILE="./report.txt";
- 
-  # Create a new multipart message:
-  $msg1 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
- 
-  attach $msg1 
-   Type     => 'text/plain',   
-   Path     => "$TXTFILE";
 
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg1->print(\*SENDMAIL);
-  close (SENDMAIL);
+  my $SUBJECT = "Auto from $dbname SWISS-PROT:".$_[0];
+  ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$SUBJECT","report.txt");
 
 }
-
-#------------------ Send statistics of changes of record counts with the load ----------------
-# No parameter
-#
-sub sendStatistics {
-		
-  my $SUBJECT="Auto from $dbname: post UniProt load statistics";
-  my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";     
-  my $ATTFILE = "postUniProtLoadStatistics.txt";
-
-  # Create another new multipart message:
-  $msg6 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
-
-  attach $msg6 
-    Type     => 'application/octet-stream',
-    Encoding => 'base64',
-    Path     => "./$ATTFILE",
-    Filename => "$ATTFILE";
-
-  # Output the message to sendmail
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg6->print(\*SENDMAIL);
-
-  close(SENDMAIL);
-}
-
 
 sub countData {
 
@@ -92,12 +45,12 @@ sub countData {
 
 
   my $sth = $dbh->prepare($ctsql) or die "Prepare fails";
-  
+
   $sth -> execute() or die "Could not execute $sql";
-  
+
   while (my @row = $sth ->fetchrow_array()) {
     $nRecords++;
-  }  
+  }
 
   $dbh->disconnect
     or warn "Disconnection failed: $DBI::errstr\n";
@@ -117,12 +70,12 @@ $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
 $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 $dbname = "<!--|DB_NAME|-->";
-   
+
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
 
 
 #remove old files
- 
+
 system("rm -f ./ccnote/*");
 system("rmdir ./ccnote");
 system("rm -f *.ontology");
@@ -150,11 +103,11 @@ $sql = 'select * from db_link where dblink_info like "%Swiss-Prot%";';
 
 $numDblinkBefore = countData($sql);
 
-$sql = 'select distinct extnote_zdb_id 
-          from external_note, db_link 
-         where extnote_data_zdb_id = dblink_zdb_id 
+$sql = 'select distinct extnote_zdb_id
+          from external_note, db_link
+         where extnote_data_zdb_id = dblink_zdb_id
            and dblink_info like "%Swiss-Prot%";';
-$numExternalNoteBefore = countData($sql); 
+$numExternalNoteBefore = countData($sql);
 
 $sql = 'select distinct dblink_linked_recid
           from external_note note1, db_link
@@ -163,104 +116,104 @@ $sql = 'select distinct dblink_linked_recid
            and exists (select "x" from external_note note2
                         where note2.extnote_data_zdb_id = note1.extnote_data_zdb_id
                           and note2.extnote_zdb_id <> note1.extnote_zdb_id);';
-$numMarkersWithRedundantDblkNoteBefore = countData($sql); 
+$numMarkersWithRedundantDblkNoteBefore = countData($sql);
 
-$sql = 'select mrkrgoev_zdb_id 
-          from marker_go_term_evidence 
+$sql = 'select mrkrgoev_zdb_id
+          from marker_go_term_evidence
          where mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO");';
-$numIEABefore = countData($sql);         
+$numIEABefore = countData($sql);
 
-$sql = 'select mrkrgoev_zdb_id 
-          from marker_go_term_evidence 
-         where mrkrgoev_evidence_code = "IEA" 
+$sql = 'select mrkrgoev_zdb_id
+          from marker_go_term_evidence
+         where mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes = "ZFIN SP keyword 2 GO";';
-           
+
 $numIEASP2GOBefore = countData($sql);
 
-$sql = 'select mrkrgoev_zdb_id 
-          from marker_go_term_evidence 
-         where mrkrgoev_evidence_code = "IEA" 
+$sql = 'select mrkrgoev_zdb_id
+          from marker_go_term_evidence
+         where mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes = "ZFIN InterPro 2 GO";';
-           
+
 $numIEAInterPro2GOBefore = countData($sql);
 
-$sql = 'select mrkrgoev_zdb_id 
-          from marker_go_term_evidence 
-         where mrkrgoev_evidence_code = "IEA" 
+$sql = 'select mrkrgoev_zdb_id
+          from marker_go_term_evidence
+         where mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes = "ZFIN EC acc 2 GO";';
-           
+
 $numIEAEC2GOBefore = countData($sql);
 
 
-$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and mrkrgoev_term_zdb_id = term_zdb_id;';
-$numIEAtermsBefore = countData($sql);           
+$numIEAtermsBefore = countData($sql);
 
-$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
-           and term_ontology = "cellular_component" 
+           and term_ontology = "cellular_component"
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
-$numIEAtermComponentBefore = countData($sql);  
+$numIEAtermComponentBefore = countData($sql);
 
-$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
-           and term_ontology = "molecular_function" 
+           and term_ontology = "molecular_function"
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
-$numIEAtermFunctionBefore = countData($sql);  
+$numIEAtermFunctionBefore = countData($sql);
 
-$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
-           and term_ontology = "biological_process" 
+           and term_ontology = "biological_process"
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
-$numIEAtermProcessBefore = countData($sql);           
+$numIEAtermProcessBefore = countData($sql);
 
-$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
-$numMrkrBefore = countData($sql); 
+$numMrkrBefore = countData($sql);
 
-$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
-           and term_ontology = "cellular_component" 
+           and term_ontology = "cellular_component"
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
-$numMrkrComponentBefore = countData($sql); 
+$numMrkrComponentBefore = countData($sql);
 
-$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
-           and term_ontology = "molecular_function" 
+           and term_ontology = "molecular_function"
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
-$numMrkrFunctionBefore = countData($sql); 
+$numMrkrFunctionBefore = countData($sql);
 
-$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_notes in ("ZFIN SP keyword 2 GO", "ZFIN InterPro 2 GO", "ZFIN EC acc 2 GO")
-           and term_ontology = "biological_process" 
+           and term_ontology = "biological_process"
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
@@ -274,14 +227,14 @@ print "\n delete records source from last SWISS-PROT loading.\n";
 system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete.sql >out 2>deletereport.txt");
 open F, "out" or die "Cannot open out file";
 if (<F>) {
- 
+
    &sendErrorReport("Failed to delete old records");
    exit;
 }
 close F;
- 
+
 # good records for loading
-# concatenate okfile ok2file 
+# concatenate okfile ok2file
 
 system("cat ok2file >> okfile");
 
@@ -293,15 +246,15 @@ system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/sp_parser.pl ok
 $count = 0;
 $retry = 1;
 # wait till parsing is finished
-while( !( -e "dr_dblink.unl" && 
-          -e "ac_dalias.unl" && 
+while( !( -e "dr_dblink.unl" &&
+          -e "ac_dalias.unl" &&
           -e "cc_external.unl" &&
 	  -e "kd_spkeywd.unl" )) {
 
   $count++;
   if ($count > 10)
   {
-    if ($retry) 
+    if ($retry)
     {
       $count = 0;
       $retry = 0;
@@ -313,7 +266,7 @@ while( !( -e "dr_dblink.unl" &&
       &sendErrorReport("Failed to run sp_parser.pl");
       exit;
     }
-  }  
+  }
 }
 
 system("ls *.unl");
@@ -329,7 +282,7 @@ while( !( -e "sp_mrkrgoterm.unl")) {
   $count++;
   if ($count > 10)
   {
-    if ($retry) 
+    if ($retry)
     {
       $count = 0;
       $retry = 0;
@@ -338,10 +291,10 @@ while( !( -e "sp_mrkrgoterm.unl")) {
     }
     else
     {
-      &sendErrorReport("Failed to run sptogo.pl"); 
-      exit; 
+      &sendErrorReport("Failed to run sptogo.pl");
+      exit;
     }
-  }  
+  }
 }
 
 # ------------ Parse interpro2go ---------------
@@ -355,7 +308,7 @@ while( !( -e "ip_mrkrgoterm.unl")) {
   $count++;
   if ($count > 10)
   {
-    if ($retry) 
+    if ($retry)
     {
       $count = 0;
       $retry = 0;
@@ -364,10 +317,10 @@ while( !( -e "ip_mrkrgoterm.unl")) {
     }
     else
     {
-      &sendErrorReport("Failed to run iptogo.pl"); 
-      exit;     
+      &sendErrorReport("Failed to run iptogo.pl");
+      exit;
     }
-  }  
+  }
 }
 
 
@@ -383,7 +336,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
   $count++;
   if ($count > 10)
   {
-    if ($retry) 
+    if ($retry)
     {
       $count = 0;
       $retry = 0;
@@ -392,10 +345,10 @@ while( !( -e "ec_mrkrgoterm.unl")) {
     }
     else
     {
-      &sendErrorReport("Failed to run ectogo.pl"); 
-      exit;     
+      &sendErrorReport("Failed to run ectogo.pl");
+      exit;
     }
-  }  
+  }
 }
 
 
@@ -409,11 +362,11 @@ $sql = 'select * from db_link where dblink_info like "%Swiss-Prot%";';
 
 $numDblinkAfter = countData($sql);
 
-$sql = 'select distinct extnote_zdb_id 
-          from external_note, db_link 
-         where extnote_data_zdb_id = dblink_zdb_id 
+$sql = 'select distinct extnote_zdb_id
+          from external_note, db_link
+         where extnote_data_zdb_id = dblink_zdb_id
            and dblink_info like "%Swiss-Prot%";';
-$numExternalNoteAfter = countData($sql); 
+$numExternalNoteAfter = countData($sql);
 
 $sql = 'select distinct dblink_linked_recid
           from external_note note1, db_link
@@ -422,121 +375,121 @@ $sql = 'select distinct dblink_linked_recid
            and exists (select "x" from external_note note2
                         where note2.extnote_data_zdb_id = note1.extnote_data_zdb_id
                           and note2.extnote_zdb_id <> note1.extnote_zdb_id);';
-$numMarkersWithRedundantDblkNoteAfter = countData($sql); 
+$numMarkersWithRedundantDblkNoteAfter = countData($sql);
 
-$sql = 'select mrkrgoev_zdb_id 
-          from marker_go_term_evidence 
+$sql = 'select mrkrgoev_zdb_id
+          from marker_go_term_evidence
          where mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3");'; 
-           
-$numIEAAfter = countData($sql);         
+           and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3");';
 
-$sql = 'select mrkrgoev_zdb_id 
-          from marker_go_term_evidence 
-         where mrkrgoev_evidence_code = "IEA" 
+$numIEAAfter = countData($sql);
+
+$sql = 'select mrkrgoev_zdb_id
+          from marker_go_term_evidence
+         where mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id = "ZDB-PUB-020723-1";'; 
-           
+           and mrkrgoev_source_zdb_id = "ZDB-PUB-020723-1";';
+
 $numIEASP2GOAfter = countData($sql);
 
-$sql = 'select mrkrgoev_zdb_id 
-          from marker_go_term_evidence 
-         where mrkrgoev_evidence_code = "IEA" 
+$sql = 'select mrkrgoev_zdb_id
+          from marker_go_term_evidence
+         where mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
-           and mrkrgoev_source_zdb_id = "ZDB-PUB-020724-1";'; 
-           
+           and mrkrgoev_source_zdb_id = "ZDB-PUB-020724-1";';
+
 $numIEAInterPro2GOAfter = countData($sql);
 
-$sql = 'select mrkrgoev_zdb_id 
-          from marker_go_term_evidence 
-         where mrkrgoev_evidence_code = "IEA" 
+$sql = 'select mrkrgoev_zdb_id
+          from marker_go_term_evidence
+         where mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id = "ZDB-PUB-031118-3";';
-           
+
 $numIEAEC2GOAfter = countData($sql);
 
 
-$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
            and mrkrgoev_term_zdb_id = term_zdb_id;';
-$numIEAtermsAfter = countData($sql);           
+$numIEAtermsAfter = countData($sql);
 
-$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
-           and term_ontology = "cellular_component" 
+           and term_ontology = "cellular_component"
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
-$numIEAtermComponentAfter = countData($sql);  
+$numIEAtermComponentAfter = countData($sql);
 
-$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
-           and term_ontology = "molecular_function" 
+           and term_ontology = "molecular_function"
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
-$numIEAtermFunctionAfter = countData($sql);  
+$numIEAtermFunctionAfter = countData($sql);
 
-$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct term_zdb_id from marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
-           and term_ontology = "biological_process" 
+           and term_ontology = "biological_process"
            and mrkrgoev_term_zdb_id = term_zdb_id;';
 
-$numIEAtermProcessAfter = countData($sql);           
+$numIEAtermProcessAfter = countData($sql);
 
-$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
-$numMrkrAfter = countData($sql); 
+$numMrkrAfter = countData($sql);
 
-$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
-           and term_ontology = "cellular_component" 
+           and term_ontology = "cellular_component"
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
-$numMrkrComponentAfter = countData($sql); 
+$numMrkrComponentAfter = countData($sql);
 
-$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
-           and term_ontology = "molecular_function" 
+           and term_ontology = "molecular_function"
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
-$numMrkrFunctionAfter = countData($sql); 
+$numMrkrFunctionAfter = countData($sql);
 
-$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term 
-         where term_ont_id like "GO%" 
+$sql = 'select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
+         where term_ont_id like "GO%"
            and mrkrgoev_evidence_code = "IEA"
            and mrkrgoev_annotation_organization = "5"
            and mrkrgoev_source_zdb_id in ("ZDB-PUB-020723-1","ZDB-PUB-020724-1","ZDB-PUB-031118-3")
-           and term_ontology = "biological_process" 
+           and term_ontology = "biological_process"
            and mrkrgoev_term_zdb_id = term_zdb_id
            and mrkr_zdb_id = mrkrgoev_mrkr_zdb_id;';
 
-$numMrkrProcessAfter = countData($sql); 
+$numMrkrProcessAfter = countData($sql);
 
 open (POSTLOADREPORT, '>postUniProtLoadStatistics.txt') or die "Cannot open postUniProtLoadStatistics.txt: $!";
 
@@ -631,7 +584,13 @@ printf POSTLOADREPORT "%.2f\n", ($numMrkrProcessAfter - $numMrkrProcessBefore) /
 print "All done \n";
 close (POSTLOADREPORT);
 
-&sendStatistics();
+#------------------ Send statistics of changes of record counts with the load ----------------
+$subject = "Auto from $dbname: " . "post UniProt load statistics";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_CURATOR|-->","$subject","postUniProtLoadStatistics.txt");
+
+#------------------ Send log of the load ----------------
+$subject = "Auto from $dbname: " . "UniProt load log";
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","report.txt");
 
 print "\n create_file_for_swiss_prot.pl\n";
 system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/create_file_for_swiss_prot.pl");
