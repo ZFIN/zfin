@@ -21,7 +21,7 @@ document.write("     <a href=\"/zf_info/news/committees.html\" title=\"Committee
 document.write("     <a href=\"/zf_info/dbase/db.html#citing\" title=\"Citing ZFIN resources in publications\">Citing ZFIN</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/zf_info/contact_us.html\" title=\"ZFIN contact information\">Contact</A> <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\"> ");
 document.write("     <a href=\"/zf_info/dbase/db.html\" title=\"About ZFIN\">About</A> ");
-document.write("     <a href=\"https://wiki.zfin.org/display/jobs/ZFIN+Jobs\" title=\"Jobs at ZFIN\">Jobs</A> ");
+document.write("     <a href=\"https://wiki.zfin.org/display/jobs/ZFIN+Jobs\" title=\"Jobs at ZFIN\">ZFIN Jobs</A> ");
 document.write("   </div> ");
 document.write("   <div id=\"footercredits\" style=\"text-align: center \"> ");
 document.write("       <span id=\"footer-generous-support\">Development of the Zebrafish Database is generously supported by the National Human Genome Research Institute (HG004838, and HG004834) of the National Institutes of Health. <br></span> ");
