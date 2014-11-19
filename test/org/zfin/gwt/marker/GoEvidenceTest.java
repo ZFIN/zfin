@@ -4,10 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.GoEvidenceQualifier;
-import org.zfin.gwt.root.dto.InferenceCategory;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
@@ -117,7 +114,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         GoEvidenceDTO goEvidenceDTO2 = null;
         try {
             goEvidenceDTO2 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO);
-        } catch (DuplicateEntryException e) {
+        } catch (DuplicateEntryException | TermNotFoundException e) {
             fail(e.toString()) ;
         }
 
@@ -138,7 +135,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
 
         try {
             goEvidenceDTO3 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO2);
-        } catch (DuplicateEntryException e) {
+        } catch (DuplicateEntryException | TermNotFoundException e) {
             fail(e.toString()) ;
         }
 
@@ -177,6 +174,8 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
             //System.out.println("added!: "+ goEvidenceDTOCreated.getZdbID()) ;
         } catch (DuplicateEntryException e) {
             fail("Should have allowed this as it was not duplicate: " + e.toString());
+        } catch (TermNotFoundException e) {
+            fail(e.toString()) ;
         }
         assertEquals(1,goEvidenceDTOCreated.getInferredFrom().size());
 
@@ -207,7 +206,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         try {
             markerRPCService.createMarkerGoTermEvidence(goEvidenceDTO) ;
             fail("Should not allow a duplicate alternate key entry") ;
-        } catch (DuplicateEntryException e) {
+        } catch (DuplicateEntryException | TermNotFoundException e) {
             HibernateUtil.rollbackTransaction();
             // caught error, so that is correct
         }
