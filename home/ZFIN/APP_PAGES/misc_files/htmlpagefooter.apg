@@ -83,7 +83,7 @@ function randomUniqueID(prefix) {
 
     <a href="/zf_info/dbase/db.html" title="About ZFIN">About</A>
       <img src="/images/research-dot.png" class="hdr-linkbar-divider"> 
-    <a href="https://wiki.zfin.org/display/jobs" title="Jobs">Jobs</A>
+    <a href="https://wiki.zfin.org/display/jobs/ZFIN+Jobs" title="Jobs">Jobs</A>
      
   </div>
 
