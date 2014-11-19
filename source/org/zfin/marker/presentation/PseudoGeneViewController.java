@@ -61,6 +61,8 @@ public class PseudoGeneViewController {
 
         // EXPRESSION SECTION
         geneBean.setMarkerExpression(expressionService.getExpressionForGene(gene));
+        // MUTANTS AND TARGETED KNOCKDOWNS
+        geneBean.setMutantOnMarkerBeans(MarkerService.getMutantsOnGene(gene));
 
         // (Transcripts)
         geneBean.setRelatedTranscriptDisplay(TranscriptService.getRelatedTranscriptsForGene(gene));
