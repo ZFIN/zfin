@@ -5,9 +5,6 @@ rebol [
 	usage: {gen-jobs-rss.r  [/path/to/destination/dir]}
 ]
 
-;;; the page the rss feed is for
-feed-link: http://<!--|DOMAIN_NAME|-->/zf_info/news/jobs.html
-
 ;;; url the logo is found
 feed-logo: http://<!--|DOMAIN_NAME|-->/images/zfinlogo.png
 
