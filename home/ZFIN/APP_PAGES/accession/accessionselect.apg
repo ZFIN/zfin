@@ -100,7 +100,7 @@
 
 
     <?MIBLOCK COND="$(AND,$(EC,$pcount,0),$(EC,$mcount,0),$(EC,$gcount,0))">
-      <form><center><font size=4><?MIVAR><b>Requested acession number is not available in ZFIN.</b></font></center> <?/MIVAR>
+      <form><center><font size=4><?MIVAR><b>Requested accession number is not available in ZFIN.</b></font></center> <?/MIVAR>
       </form>
     <?/MIBLOCK>
 
