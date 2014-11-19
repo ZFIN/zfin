@@ -28,12 +28,12 @@ GENERATOR = $(TARGETROOT)/server_apps/WebSiteTools
 
 VARIABLE_GENERICS =  curator.html
 
-GENERICS = siteNews_2005.html siteNews.html jobs.html mtgs.html siteNews.rss jobs.rss mtgs.rss  $(VARIABLE_GENERICS)
+GENERICS = siteNews_2005.html siteNews.html mtgs.html siteNews.rss jobs.rss mtgs.rss  $(VARIABLE_GENERICS)
 
 STATICS =  Newsletter_Summer04.pdf Madison_2004_poster.jpg RegistrationForm.pdf newsgroup.html \
  funding_opps.html ISDB2005.pdf Newsletter_Winter05.pdf Newsletters.html Newsletter_Summer05.pdf \
  Newsletter_Winter06.pdf Newsletter_Summer2006.pdf ANZZFWksp2007RegForm.doc ZFIN_news_Spring_07.pdf  ZNEWS_Winter_09.pdf\
- ZNEWS_Spring_08.pdf ZF_Madisonv3.pdf siteNews_2006.html ZFIN_jobs.html \
+ ZNEWS_Spring_08.pdf ZF_Madisonv3.pdf siteNews_2006.html \
  zebrafish_phenome.pdf committees.html education.html ZNEWS_fall_09.pdf 
 
 
@@ -50,9 +50,6 @@ include $(TOP)/make.default.rules
 
 #------------------ To generate RSS feed pages by default ----------------
 
-#$(TARGETDIR)/jobs.rss : $(TARGETDIR)/jobs.html
-#    $(GENERATOR)/gen-jobs-rss.r $(TARGETDIR)
-#
 #$(TARGETDIR)/siteNews.rss : $(TARGETDIR)/siteNews.html
 #    $(GENERATOR)/gen-news-rss.r $(TARGETDIR)
 #
@@ -60,14 +57,6 @@ include $(TOP)/make.default.rules
 #    $(GENERATOR)/gen-meetings-rss.r $(TARGETDIR)
 
 #------------- HTML page Validating ----------------------------------------
-
-jobs_test : jobs.html
-	echo "Scan for funny chars 'Error 1' if none"
-	egrep -n "[^ -~	]" jobs.html | less
-
-jobs_tidy : jobs.html
-	tidy -eq -ascii jobs.html
-
 
 meetings_test : mtgs.html
 	echo "Scan for funny chars 'Error 1' if none"

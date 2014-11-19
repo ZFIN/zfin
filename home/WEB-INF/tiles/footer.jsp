@@ -23,7 +23,6 @@
             src="/images/research-dot.png" class="hdr-linkbar-divider">
         <a href="/zf_info/dbase/db.html" title="About ZFIN">About</A><img
             src="/images/research-dot.png" class="hdr-linkbar-divider">
-        <a href="/ZFIN/misc_html/jobs.html" title="Jobs at ZFIN">Jobs</A>
     </div>
     <div id="footercredits" style="text-align: center">
             <span id="footer-generous-support">Development of the Zebrafish Database is generously supported by the National Human Genome Research Institute (HG004838, and HG004834) of the National Institutes of Health. <br></span>
