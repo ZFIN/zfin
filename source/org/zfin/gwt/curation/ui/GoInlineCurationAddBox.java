@@ -1,7 +1,9 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
+import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.ui.*;
 
 /**
@@ -62,16 +64,22 @@ public class GoInlineCurationAddBox extends AbstractGoCurationBox {
                 GoEvidenceValidator.validate(goEvidenceDTO);
             } catch (ValidationException ve) {
                 setError(ve.getMessage());
-                return ;
+                return;
             }
             working();
             MarkerGoEvidenceRPCService.App.getInstance().createMarkerGoTermEvidence(goEvidenceDTO,
                     new MarkerEditCallBack<GoEvidenceDTO>("Failed to update GO evidence code:", this) {
                         @Override
                         public void onFailure(Throwable throwable) {
-                            super.onFailure(throwable);
+                            if (throwable instanceof TermNotFoundException) {
+                                displayMessage(throwable.getMessage());
+                            } else {
+                                super.onFailure(throwable);
+                                revertGUI();
+                            }
                             notWorking();
-                            revertGUI();
+                            saveButton.setEnabled(true);
+                            revertButton.setEnabled(true);
                         }
 
                         @Override

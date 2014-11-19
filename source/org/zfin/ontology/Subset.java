@@ -10,7 +10,10 @@ import java.io.Serializable;
 public class Subset implements Serializable {
 
     public static final String RELATIONAL_SLIM = "relational_slim";
-    
+    // from the go ontology
+    public static final String GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS = "gocheck_do_not_annotate";
+    public static final String GO_CHECK_DO_NOT_USE_FOR_MANUAL_ANNOTATIONS = "gocheck_do_not_manually_annotate";
+
     private long id;
     private String internalName;
     // this is also called definition in the database
@@ -48,5 +51,12 @@ public class Subset implements Serializable {
 
     public void setMetaData(OntologyMetadata metaData) {
         this.metaData = metaData;
+    }
+
+    public static boolean isUseForAnnotations(String name){
+        if(name.equals(GO_CHECK_DO_NOT_USE_FOR_MANUAL_ANNOTATIONS) ||
+                name.equals(GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS))
+            return false;
+        return true;
     }
 }

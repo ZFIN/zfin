@@ -26,6 +26,7 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
     private StageDTO startStage;
     private StageDTO endStage;
     private Set<String> subsets;
+    private boolean doNotAnnotateWith;
 
     private String relationshipType; // in the case that this is just a Term in a relationship
     private int significance; // when used as an alias
@@ -266,6 +267,14 @@ public class TermDTO extends RelatedEntityDTO implements Serializable {
 
     public boolean isAliasesExist() {
         return aliases != null && aliases.size() > 0;
+    }
+
+    public boolean isDoNotAnnotateWith() {
+        return doNotAnnotateWith;
+    }
+
+    public void setDoNotAnnotateWith(boolean doNotAnnotateWith) {
+        this.doNotAnnotateWith = doNotAnnotateWith;
     }
 
     @Override

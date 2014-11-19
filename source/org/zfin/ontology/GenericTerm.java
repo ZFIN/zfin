@@ -68,6 +68,16 @@ public class GenericTerm extends AbstractTerm {
         return true;
     }
 
+    @Override
+    public boolean useForAnnotations() {
+        for (Subset subset : getSubsets()) {
+            if (subset.getInternalName().equals(Subset.GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS) ||
+                    subset.getInternalName().equals(Subset.GO_CHECK_DO_NOT_USE_FOR_MANUAL_ANNOTATIONS))
+                return false;
+        }
+        return true;
+    }
+
 
     @Override
     public String toString() {

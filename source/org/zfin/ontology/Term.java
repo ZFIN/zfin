@@ -132,4 +132,6 @@ public interface Term extends Comparable<Term>, Serializable {
     Set<TermDefinitionReference> getDefinitionReferences();
 
     void setDefinitionReferences(Set<TermDefinitionReference> references);
+
+    boolean useForAnnotations();
 }

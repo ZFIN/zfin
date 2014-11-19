@@ -6,10 +6,7 @@ import org.apache.log4j.Logger;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.dto.InferenceCategory;
-import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
@@ -65,12 +62,15 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
 
 
     @Override
-    public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException {
+    public GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException, TermNotFoundException {
         // retrieve
         MarkerGoTermEvidence markerGoTermEvidence = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(goEvidenceDTO.getZdbID());
 
-        if(markerGoTermEvidence == null)
-            throw new RuntimeException("Could not find go evidence for id: "+goEvidenceDTO.getZdbID());
+        if (markerGoTermEvidence == null)
+            throw new RuntimeException("Could not find go evidence for id: " + goEvidenceDTO.getZdbID());
+
+        if (!markerGoTermEvidence.getGoTerm().useForAnnotations())
+            throw new TermNotFoundException("Do not use this term for GO Annotations");
         String oldValueString = markerGoTermEvidence.toString();
 
         HibernateUtil.createTransaction();
@@ -303,13 +303,13 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
     }
 
     @Override
-    public GoEvidenceDTO createMarkerGoTermEvidence(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException {
+    public GoEvidenceDTO createMarkerGoTermEvidence(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException, TermNotFoundException {
+
 
         HibernateUtil.createTransaction();
         // set modified by
         Person person = Person.getCurrentSecurityUser();
         MarkerGoTermEvidence markerGoTermEvidence = new MarkerGoTermEvidence();
-
         markerGoTermEvidence.setExternalLoadDate(null);
         markerGoTermEvidence.setGafOrganization(zfinGafOrganization);
         markerGoTermEvidence.setOrganizationCreatedBy(GafOrganization.OrganizationEnum.ZFIN.name());
@@ -325,6 +325,9 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
 
         markerGoTermEvidence.setMarker(marker);
         GenericTerm goTerm = (GenericTerm) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
+        if (!goTerm.useForAnnotations())
+            throw new TermNotFoundException("Do not use this term for GO Annotations");
+
         markerGoTermEvidence.setGoTerm(goTerm);
 
 //

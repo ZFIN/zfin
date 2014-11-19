@@ -361,7 +361,7 @@ public class DTOConversionService {
         genotypeDTO.setHandle(genotype.getHandle());
 
         List<PublicationDTO> associatedPublications = new ArrayList<PublicationDTO>();
-        for (int i = 0; i < genotype.getAssociatedPublications().size(); i++){
+        for (int i = 0; i < genotype.getAssociatedPublications().size(); i++) {
             associatedPublications.add(DTOConversionService.convertToPublicationDTO(genotype.getAssociatedPublications().get(i)));
         }
         genotypeDTO.setAssociatedPublications(associatedPublications);
@@ -369,7 +369,7 @@ public class DTOConversionService {
     }
 
     public static PublicationDTO convertToPublicationDTO(Publication publication) {
-        PublicationDTO publicationDTO = new PublicationDTO(publication.getTitle(),publication.getZdbID());
+        PublicationDTO publicationDTO = new PublicationDTO(publication.getTitle(), publication.getZdbID());
         publicationDTO.setAuthors(publication.getAuthors());
         publicationDTO.setAbstractText(publication.getAbstractText());
         publicationDTO.setDoi(publication.getDoi());
@@ -737,6 +737,7 @@ public class DTOConversionService {
         dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
         dto.setOntology(ontologyDTO);
+        dto.setDoNotAnnotateWith(term.useForAnnotations());
         return dto;
 
     }

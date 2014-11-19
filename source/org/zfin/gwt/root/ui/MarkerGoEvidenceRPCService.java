@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.dto.TermNotFoundException;
 
 import java.util.List;
 import java.util.Set;
@@ -31,7 +32,7 @@ public interface MarkerGoEvidenceRPCService extends RemoteService {
 
     GoEvidenceDTO getMarkerGoTermEvidenceDTO(String zdbID);
 
-    GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException ;
+    GoEvidenceDTO editMarkerGoTermEvidenceDTO(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException, TermNotFoundException;
 
     List<MarkerDTO> getGenesForGOAttributions(GoEvidenceDTO dto);
 
@@ -43,7 +44,7 @@ public interface MarkerGoEvidenceRPCService extends RemoteService {
 
     boolean validateAccession(String accession, String inferenceCategory);
 
-    GoEvidenceDTO createMarkerGoTermEvidence(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException ;
+    GoEvidenceDTO createMarkerGoTermEvidence(GoEvidenceDTO goEvidenceDTO) throws DuplicateEntryException, TermNotFoundException ;
 
     void deleteMarkerGoTermEvidence(String zdbID);
 

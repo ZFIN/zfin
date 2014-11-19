@@ -2,6 +2,7 @@ package org.zfin.mutant;
 
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.ontology.Subset;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
@@ -147,4 +148,20 @@ public class PhenotypeStructure implements Comparable<PhenotypeStructure> {
         statement.setQuality(qualityTerm);
         return statement;
     }
+
+    public boolean useForAnnotations() {
+        GenericTerm superterm = entity.getSuperterm();
+        if (!superterm.useForAnnotations())
+            return false;
+        if (!entity.getSubterm().useForAnnotations())
+            return false;
+        if (relatedEntity != null) {
+            if (!relatedEntity.getSubterm().useForAnnotations())
+                return false;
+            if (!relatedEntity.getSuperterm().useForAnnotations())
+                return false;
+        }
+        return true;
+    }
+
 }

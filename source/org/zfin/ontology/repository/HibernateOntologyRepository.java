@@ -121,6 +121,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 }
                 subsets.add(result[12].toString().intern());
                 termDTO.setSubsets(subsets);
+                if (subsets.contains(Subset.GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS) ||
+                        subsets.contains(Subset.GO_CHECK_DO_NOT_USE_FOR_MANUAL_ANNOTATIONS))
+                    termDTO.setDoNotAnnotateWith(true);
+                else
+                    termDTO.setDoNotAnnotateWith(false);
             }
 
 

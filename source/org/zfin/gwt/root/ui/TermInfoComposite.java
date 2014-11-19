@@ -105,12 +105,12 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         Map<String, Set<TermDTO>> relatedTermsMap = termInfoDTO.getAllRelatedTerms();
         if (relatedTermsMap != null) {
             for (String type : relatedTermsMap.keySet()) {
-                if(false==RelationshipType.isStage(type)){
-                    rowIndex = createTermEntry(type, rowIndex,relatedTermsMap);
+                if (false == RelationshipType.isStage(type)) {
+                    rowIndex = createTermEntry(type, rowIndex, relatedTermsMap);
                 }
             }
-            rowIndex = createTermEntry(RelationshipType.START_STAGE.getDisplay(),rowIndex,relatedTermsMap);
-            rowIndex = createTermEntry(RelationshipType.END_STAGE.getDisplay(),rowIndex,relatedTermsMap);
+            rowIndex = createTermEntry(RelationshipType.START_STAGE.getDisplay(), rowIndex, relatedTermsMap);
+            rowIndex = createTermEntry(RelationshipType.END_STAGE.getDisplay(), rowIndex, relatedTermsMap);
         }
         // subsets
         if (currentTermInfoDTO.getSubsets() != null && currentTermInfoDTO.getSubsets().size() > 0) {
@@ -144,13 +144,23 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
             label.setStyleName(WidgetUtil.RED);
             setWidget(rowIndex++, 1, label);
         }
+        // Note:
+        if(termInfoDTO.isDoNotAnnotateWith()){
+            addHeaderEntry(TerminfoTableHeader.NOTE.getName(), rowIndex);
+            if (noWrap) {
+                getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
+            }
+            Label label = new Label("Do not use for GO Annotations");
+            label.setStyleName(WidgetUtil.RED);
+            setWidget(rowIndex++, 1, label);
+        }
     }
 
-    private int createTermEntry(String type, int rowIndex, Map<String, Set<TermDTO>> relatedTermsMap){
+    private int createTermEntry(String type, int rowIndex, Map<String, Set<TermDTO>> relatedTermsMap) {
 
         Set<TermDTO> relatedTermDTOs = relatedTermsMap.get(type);
-        if(relatedTermDTOs==null) {
-            return rowIndex ;
+        if (relatedTermDTOs == null) {
+            return rowIndex;
         }
 
         FlowPanel panel = new FlowPanel();
@@ -163,9 +173,9 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
 //            }
 //        }
 
-        TermDTO termDTO ;
-        for ( Iterator<TermDTO> iterator = relatedTermDTOs.iterator() ;
-              iterator.hasNext() ;
+        TermDTO termDTO;
+        for (Iterator<TermDTO> iterator = relatedTermDTOs.iterator();
+             iterator.hasNext();
                 ) {
             termDTO = iterator.next();
             panel.add(createHyperlink(termDTO));
@@ -175,7 +185,7 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         }
         setWidget(rowIndex, 1, panel);
 
-        return rowIndex +1 ;
+        return rowIndex + 1;
     }
 
 
@@ -246,7 +256,8 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         CHILDREN(5, "CHILDREN:"),
         SUBSETS(6, "Subsets:"),
         COMMENT(8, "Comments:"),
-        OBSOLETE(9, "Obsolete:");
+        OBSOLETE(9, "Obsolete:"),
+        NOTE(10, "Note:");
 
         private int index;
         private String value;
