@@ -587,6 +587,7 @@ close (POSTLOADREPORT);
 #------------------ Send statistics of changes of record counts with the load ----------------
 $subject = "Auto from $dbname: " . "post UniProt load statistics";
 ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_CURATOR|-->","$subject","postUniProtLoadStatistics.txt");
+ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","postUniProtLoadStatistics.txt");
 
 #------------------ Send log of the load ----------------
 $subject = "Auto from $dbname: " . "UniProt load log";
