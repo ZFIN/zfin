@@ -21,7 +21,7 @@ $password = "";
 print "$dbname\n\n";
 
 #remove old report and log files
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfUpdatedPubs");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfUpdatedPubs.txt");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/log1");
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/log2");
 
@@ -85,7 +85,7 @@ $cur_insert_update->finish();
 
 $dbh->disconnect();
 
-open (ACTIVATED, ">listOfActivatedPubs") ||  die "Cannot open listOfActivatedPubs : $!\n";
+open (ACTIVATED, ">listOfActivatedPubs.txt") ||  die "Cannot open listOfActivatedPubs.txt : $!\n";
 
 foreach $updatedPubId (sort keys %updatedPublications) {
   $pubmedid = $updatedPublications{$updatedPubId};
@@ -97,7 +97,7 @@ close(ACTIVATED);
 
 $subject = "Auto from $dbname : " . "updatepubstatus.pl :: " . "$ctUpdated of $ctInactivePubs non-active publications have been activated according to PUBMED";
 
-#ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","listOfActivatedPubs");
+#ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","listOfActivatedPubs.txt");
 
 exit;
 

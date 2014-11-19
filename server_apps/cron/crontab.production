@@ -78,10 +78,6 @@
 # MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
 00 23 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
 #
-# F        10:55pm   weekly pull down of pub activation status from pubmed
-#
-50 22 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/updatepubstatus.pl
-#
 #
 # F        11:00pm   weekly download data run, also does DATA TRANSFER OUT
 #                    and BACKUPS (calls unload_production.sh at end)
