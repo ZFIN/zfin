@@ -21,6 +21,9 @@ public class AlleleLineDesignationValidator implements Validator  {
            if (StringUtils.isEmpty(lineDesig)) {
             errors.rejectValue("lineDesig", "code", "Line Designation cannot be null.");
         }
+           if(!StringUtils.isAlpha(lineDesig)){
+               errors.rejectValue("lineDesig", "code", "Line Designation can only contain alphabetical characters.");
+           }
           if (!StringUtils.isEmpty(lineDesig)){
            String newPrefix= RepositoryFactory.getFeatureRepository().getPrefix(lineDesig);
            if (newPrefix != null){
