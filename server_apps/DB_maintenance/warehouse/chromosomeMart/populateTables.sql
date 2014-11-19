@@ -85,6 +85,23 @@ WHERE  lsingle_lnkg_zdb_id = lnkg_zdb_id
        AND mrel_type = 'clone contains gene' 
        AND mrel_mrkr_2_zdb_id = lsingle_member_zdb_id 
        AND mrel_mrkr_1_zdb_id = mrkr_zdb_id
+       AND linkage.lnkg_source_zdb_id in ('ZDB-PUB-030703-1','ZDB-PUB-020822-1')
+
+UNION
+SELECT lnkg_chromosome as chromosome ,
+       mrkr_zdb_id as zdb_id,
+       'other map location' as source,
+       'Clone Location obtained from gene with clone-contains-gene relationship [singleton]' as subsource
+FROM   linkage_single,
+       marker,
+       linkage,
+       marker_relationship
+WHERE  lsingle_lnkg_zdb_id = lnkg_zdb_id
+       AND mrel_type = 'clone contains gene'
+       AND mrel_mrkr_2_zdb_id = lsingle_member_zdb_id
+       AND mrel_mrkr_1_zdb_id = mrkr_zdb_id
+       AND linkage.lnkg_source_zdb_id not in ('ZDB-PUB-030703-1','ZDB-PUB-020822-1')
+
 UNION
 SELECT lnkg_chromosome as chromosome ,
                 mrkr_zdb_id as zdb_id,
