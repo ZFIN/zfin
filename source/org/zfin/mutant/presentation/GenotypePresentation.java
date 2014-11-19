@@ -67,7 +67,7 @@ public class GenotypePresentation extends EntityPresentation {
     public static String getPopupLink(Genotype genotype) {
         StringBuilder sb = new StringBuilder(100);
         sb.append(getTomcatPopupLink(popupUri, String.valueOf(genotype.getZdbID()),
-                "Term definition, synonyms and links"));
+                "More details about this genotype"));
         return sb.toString();
     }
 
