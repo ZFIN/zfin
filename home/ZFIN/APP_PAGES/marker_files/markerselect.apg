@@ -866,7 +866,7 @@ jQuery.ajax({
            <?MIVAR COND="$(AND,$(XST,$marker_type),$(>,$(POSITION,$marker_type,CONSTRCT),0))">
 		$(SETVAR,$mksel_map_col,f)
            <?/MIVAR>
-           <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT)))">
+           <?MIVAR COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(EC,$mksel_map_col,t),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT),$(NE,$marker_type,REGION),$(NE,$marker_type,EFG)))">
        	     <th align-left><b>Location</b></th>
            <?/MIVAR>
 	   <?MIBLOCK COND="$(AND,$(XST,$marker_type),$(EQ,$marker_type,TSCRIPT))">
@@ -1089,7 +1089,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 
 
 	  <?MICOMMENT>------ Map info ------<?/MICOMMENT>
-	  <?MIBLOCK COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT)))">
+	  <?MIBLOCK COND="$(AND,$(EC,$type_of_knockdown_reagent,f),$(AND,$(XST,$marker_type),$(NE,$marker_type,TSCRIPT),$(NE,$marker_type,REGION),$(NE,$marker_type,EFG)))">
  	      <TD width=20%>
 	      <?MIVAR>
             <script type="text/javascript">
