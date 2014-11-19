@@ -1,9 +1,5 @@
 begin work ;
 
- select mrkr_zdb_id as id1, mrkr_abbrev as id2
- from marker
- where mrkr_zdb_id like 'ZDB-GENE%'
-union
  select dalias_data_Zdb_id as id1, dalias_alias as id2
  from marker, data_alias
  where mrkr_zdb_id = dalias_data_zdb_id

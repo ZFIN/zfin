@@ -30,10 +30,6 @@ while ($line = <INDEXFILE>) {
       chomp $line;
       @fields = split /\t/, $line;
       $mrkrgoev=$fields[0];
-      $aliases=$fields[13];
-      $aliases=~s/,/|/g;
-      #print $aliases."\n";
-      $aliases=~s/Sierra/,/g;
       if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
 
 	  print UNL "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\tZFIN:$pubid\t$evidence\t".
@@ -55,6 +51,8 @@ while ($line = <INDEXFILE>) {
       $ev_date=goDate($fields[11]);
       $mod_by=goMod($fields[12]);
       $aliases=$fields[13];
+      $aliases=~s/,/|/g;
+      $aliases=~s/Sierra/,/g;
 
 }
 
