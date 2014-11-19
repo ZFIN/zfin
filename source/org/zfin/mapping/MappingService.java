@@ -77,7 +77,6 @@ public class MappingService {
         if (StringUtils.isNotEmpty(chromosome))
             return chromosome;
 
-/*
         chromosomeList.clear();
         for (GenomeLocation location : list) {
             if (location.getSource().is2ndDegreePhysicalMappingLocation()) {
@@ -85,7 +84,6 @@ public class MappingService {
             }
         }
         chromosome = getChromosomeNumber(chromosomeList);
-*/
         if (StringUtils.isNotEmpty(chromosome)) {
             if (chromosome.equals("0"))
                 return "unknown";
