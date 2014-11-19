@@ -63,15 +63,16 @@ use constant WITH => 7;
 use constant ASPECT => 8;
 use constant DB_OBJECT_NAME => 9;
 use constant DB_OBJECT_SYNONYM => 10;
-use constant DB_OBJECT_TYPE => 11;
-use constant TAXON => 12;
-use constant DATE => 13;
-use constant ASSIGNED_BY => 14;
-use constant ANNOTATION_EXTENSION  => 15;
-use constant GENE_PRODUCT_FORM_ID => 16;
+use constant DB_ALIASES => 11;
+use constant DB_OBJECT_TYPE => 12;
+use constant TAXON => 13;
+use constant DATE => 14;
+use constant ASSIGNED_BY => 15;
+use constant ANNOTATION_EXTENSION  => 16;
+use constant GENE_PRODUCT_FORM_ID => 17;
 
 # Number of TAB delimited columns in file
-use constant COLNUM => 17;
+use constant COLNUM => 18;
 
 #
 # Definition of positions in column array
