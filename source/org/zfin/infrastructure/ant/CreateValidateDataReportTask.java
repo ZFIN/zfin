@@ -1,12 +1,14 @@
 package org.zfin.infrastructure.ant;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateUtil;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  */
@@ -38,13 +40,25 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         setLoggerFile();
         copyFileToReportDirectory(dbQueryFile);
         HibernateUtil.currentSession().beginTransaction();
-        List<List<List<String>>> resultList;
+        Map<String, List<List<String>>> resultMap;
         List<String> errorMessages;
         try {
             errorMessages = service.runDbScriptFile(dbQueryFile);
-            resultList = service.getListOfResultRecords();
-            if (CollectionUtils.isNotEmpty(resultList)) {
-                createErrorReport(errorMessages, resultList.get(0));
+            resultMap = service.getResultMap();
+
+            if (MapUtils.isNotEmpty(resultMap)) {
+                if (resultMap.size() > 1) {
+                    for (String report : resultMap.keySet()) {
+                        String reportName = jobName + "." + report;
+                        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, reportName, true);
+                        createErrorReport(null, resultMap.get(report), reportConfiguration);
+                    }
+                } else {
+                    String key = resultMap.keySet().iterator().next();
+                    List<List<String>> result = resultMap.get(key);
+                    ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName, true);
+                    createErrorReport(null, result, reportConfiguration);
+                }
             } else {
                 createErrorReport(errorMessages, null);
             }
@@ -55,7 +69,17 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
             HibernateUtil.rollbackTransaction();
             HibernateUtil.closeSession();
         }
-        return CollectionUtils.isNotEmpty(resultList) ? resultList.get(0).size() : 0;
+        boolean errorRecordsExist = isErrorRecord(resultMap);
+        return errorRecordsExist ? 1 : 0;
+    }
+
+    private boolean isErrorRecord(Map<String, List<List<String>>> resultMap) {
+        if (MapUtils.isEmpty(resultMap))
+            return false;
+        for (String key : resultMap.keySet())
+            if (CollectionUtils.isNotEmpty(resultMap.get(key)))
+                return true;
+        return false;
     }
 
     public static void main(String[] args) {

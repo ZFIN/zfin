@@ -298,6 +298,10 @@ public class DatabaseService {
         Logger.getRootLogger().addAppender(ca);
     }
 
+    public Map<String, List<List<String>>> getResultMap() {
+        return resultMap;
+    }
+
     public static class ForeignKeyResultSort implements Comparator<ForeignKeyResult> {
         public int compare(ForeignKeyResult o1, ForeignKeyResult o2) {
             return o1.getForeignKey().getForeignKeyTable().getTableName().compareToIgnoreCase(o2.getForeignKey().getForeignKeyTable().getTableName());
@@ -320,6 +324,7 @@ public class DatabaseService {
     }
 
     private List<List<List<String>>> listOfResultRecords = new ArrayList<>(5);
+    private Map<String, List<List<String>>> resultMap = new HashMap<>();
 
     public List<List<List<String>>> getListOfResultRecords() {
         return listOfResultRecords;
@@ -375,8 +380,13 @@ public class DatabaseService {
             } else if (statement.isUnloadStatement() || statement.isReadOnlyStatement()) {
                 List<List<String>> dataReturn;
                 dataReturn = infrastructureRep.executeNativeDynamicQuery(statement);
-                if (CollectionUtils.isNotEmpty(dataReturn))
+                if (CollectionUtils.isNotEmpty(dataReturn)) {
                     listOfResultRecords.add(dataReturn);
+                    if(statement.getDataKey()!= null)
+                        resultMap.put(statement.getDataKey(), dataReturn);
+                    else
+                        resultMap.put("_NO-KEY", dataReturn);
+                }
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
                 } else if (statement.getDataKey() == null) {

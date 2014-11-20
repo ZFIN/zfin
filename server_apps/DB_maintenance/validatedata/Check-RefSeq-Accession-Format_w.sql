@@ -1,4 +1,3 @@
-unload to <!--|ROOT_PATH|-->/server_apps/DB_maintenance/reportRecords.txt
 select dblink_linked_recid, "RefSeq", dblink_acc_num
                  from db_link, foreign_db_contains, foreign_db_data_type,foreign_db
                 where fdbcont_zdb_id = dblink_fdbcont_zdb_id

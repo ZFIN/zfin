@@ -19,13 +19,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Check-STR-Abbreviation-Match-Gene_m</targets>
+            <targets>validate-data-report-simple -DJobName=Check-Nomenclature-Antibody-STR_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-STR-Abbreviation-Match-Gene_m/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Nomenclature-Antibody-STR_m/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -33,8 +33,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Check-STR-Abbreviation-Match-Gene_m</reportDir>
-                    <reportFiles>Check-STR-Abbreviation-Match-Gene_m.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Nomenclature-Antibody-STR_m</reportDir>
+                    <reportFiles>Check-Nomenclature-Antibody-STR_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -48,7 +48,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-STR-Abbreviation-Match-Gene_m/Check-STR-Abbreviation-Match-Gene_m.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Nomenclature-Antibody-STR_m/Check-Nomenclature-Antibody-STR_m.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
