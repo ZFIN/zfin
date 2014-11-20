@@ -73,6 +73,16 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         int rowIndex = 0;
         int headerColumn = 0;
         int dataColumn = 1;
+        // Note:
+        if(termInfoDTO.isDoNotAnnotateWith()){
+            addHeaderEntry(TerminfoTableHeader.NOTE.getName(), rowIndex);
+            if (noWrap) {
+                getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
+            }
+            Label label = new Label("Do not use for GO Annotations");
+            label.setStyleName(WidgetUtil.RED);
+            setWidget(rowIndex++, 1, label);
+        }
         addHeaderEntry(TerminfoTableHeader.TERM.getName(), rowIndex);
         setWidget(rowIndex, dataColumn, new Label(termInfoDTO.getName()));
         getCellFormatter().addStyleName(rowIndex++, headerColumn, WidgetUtil.BOLD);
@@ -141,16 +151,6 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
                 getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
             }
             Label label = new Label("True");
-            label.setStyleName(WidgetUtil.RED);
-            setWidget(rowIndex++, 1, label);
-        }
-        // Note:
-        if(termInfoDTO.isDoNotAnnotateWith()){
-            addHeaderEntry(TerminfoTableHeader.NOTE.getName(), rowIndex);
-            if (noWrap) {
-                getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);
-            }
-            Label label = new Label("Do not use for GO Annotations");
             label.setStyleName(WidgetUtil.RED);
             setWidget(rowIndex++, 1, label);
         }
