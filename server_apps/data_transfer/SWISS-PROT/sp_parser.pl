@@ -23,12 +23,12 @@ open ACC, ">ac_dalias.unl" or die "Cannot open ac_dalias.unl:$!";
 open COMMT, ">cc_external.unl" or die "Cannot open cc_external.unl:$!";
 open KEYWD, ">kd_spkeywd.unl" or die "Cannot open kd_spkeywd.unl:$!";
 
-my $dbname = "<!--|DB_NAME|-->";
+my $zfindbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
 
 
-my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
+my $dbh = DBI->connect ("DBI:Informix:$zfindbname", $username, $password)
           or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 $kwMultLinesConcatenated = " ";
@@ -168,10 +168,9 @@ while (<>) {
 
   ###   The parsing code concatenates all the KW lines and then split with ';' and then strip anything from '{'
 
-  if (/^KW\s+(.*;)$/) {
+  if (/^KW\s+(.*\.)$/)  {
         $kwMultLinesConcatenated = $kwMultLinesConcatenated . $1;
-  } elsif (/^KW\s+(.*\.)$/)  {
-        $kwMultLinesConcatenated = $kwMultLinesConcatenated . $1;
+
         @kws = split(/;/, $kwMultLinesConcatenated);
         while ($kw = shift @kws) {
 	       if ($kw =~ m/(.*)\{/) {
@@ -186,6 +185,8 @@ while (<>) {
         $kwMultLinesConcatenated = " ";
         undef @kws;
         undef $kwToPrint;
+  } elsif (/^KW\s+(.*)/) {
+        $kwMultLinesConcatenated = $kwMultLinesConcatenated . $1;
   }
 
   if(/\/\//) {
