@@ -661,3 +661,23 @@ label.curation-form-label { font-weight: bold; }
 .fa {
     line-height: inherit;
 }
+
+.download-header-row {
+    font-size: smaller;
+    background-color: #066;
+    display: none;
+}
+
+.download-header-row tr {
+    font-weight: bold;
+    background-color: #CCFFFF;
+}
+
+.download-header-row td {
+    /* has to be !important to override the .summary table setting */
+    text-align: center !important;
+}
+
+.download-header-row table {
+    margin: 0 auto;
+}

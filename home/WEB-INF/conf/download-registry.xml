@@ -1358,7 +1358,6 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="25">Publication ID</Column>
             <Column id="26">Figure ID</Column>
         </Download>
-        <Download orderIndex="2">
         <Download orderIndex="3">
             <Name>
                 Phenotype Environment Description
@@ -1601,10 +1600,11 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                  select fas_geno_long_name, fas_line_handle, gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
+                  select case when fas_geno_long_name = "" then " " else fas_geno_long_name end as fishName,
+  case when fas_line_handle = "" then " " else fas_line_handle end, gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
   from gene_Feature_result_View, fish_annotation_search
-  where gfrv_fas_id = fas_pk_id 
-  order by fas_geno_long_name;
+  where gfrv_fas_id = fas_pk_id
+  order by fishName, fas_line_handle, gfrv_affector_id;
                    ]]>
             </Query>
             <Column id="1">Fish Name</Column>

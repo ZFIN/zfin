@@ -1621,7 +1621,7 @@ select * from tmp_features;
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishMartMembers.txt'
  DELIMITER "	"
 select case when fas_geno_long_name = "" then " " else fas_geno_long_name end as fishName, 
-  case when fas_line_handle = "" then " " else fas_line_handle , gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
+  case when fas_line_handle = "" then " " else fas_line_handle end, gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
   from gene_Feature_result_View, fish_annotation_search
   where gfrv_fas_id = fas_pk_id
   order by fishName, fas_line_handle, gfrv_affector_id;

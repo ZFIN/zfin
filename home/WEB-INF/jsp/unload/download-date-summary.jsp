@@ -204,6 +204,15 @@ To obtain previous versions you have to check the archive of the external source
     </c:otherwise>
     </c:choose>
     }
+
+    jQuery(function () {
+        jQuery(".header-toggle").click(function (evt) {
+            evt.preventDefault();
+            var $this = jQuery(this);
+            $this.text($this.text() == "Show" ? "Hide" : "Show");
+            jQuery($this.data("toggle")).slideToggle(200);
+        });
+    });
 </script>
 
 
