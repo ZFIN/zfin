@@ -20,6 +20,7 @@ import org.zfin.profile.Organization;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -58,6 +59,18 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
             assertTrue("has features", features.size() > 0);
         }
 
+    }
+
+    /**
+     * Check that feature list is unique
+     */
+    @Test
+    public void getUniqueFeatureListForPublication() {
+        String pubID = "ZDB-PUB-130710-52";
+        List<Feature> features = featureRepository.getFeaturesByPublication(pubID);
+        assertNotNull("feature list exists", CollectionUtils.isNotEmpty(features));
+        HashSet<Feature> set = new HashSet<>(features);
+        assertTrue("contains duplicate features", features.size() == set.size());
     }
 
     /**

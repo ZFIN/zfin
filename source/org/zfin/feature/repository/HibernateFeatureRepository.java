@@ -70,7 +70,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByPublication(String publicationID) {
         Session session = currentSession();
-        String hql = "select feature from Feature as feature, " +
+        String hql = "select distinct feature from Feature as feature, " +
                 "PublicationAttribution as attribution " +
                 "where  attribution.dataZdbID = feature.zdbID AND " +
                 "      attribution.publication.zdbID = :pubID " +
