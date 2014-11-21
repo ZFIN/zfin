@@ -19,11 +19,9 @@ create function get_mutants_html_link
 	define ftrCount_2	integer;
 	define genoCount	integer;
 	define genoCount_2	integer;
-	define ftrSuffix	char;
 	define genoSuffix	char;
 	define genoZdbId	like genotype.geno_zdb_id;
 
-        let ftrSuffix = '';
  	let genoSuffix = '';
 	let genoZdbId = '';
 
@@ -57,10 +55,6 @@ create function get_mutants_html_link
 	let genoCount = genoCount;
 
  
-	if (ftrCount > 1) then
-		let ftrSuffix = 's';
-	end if;
-
 	if (genoCount > 1) then
 		let genoSuffix = 's';
 	end if 

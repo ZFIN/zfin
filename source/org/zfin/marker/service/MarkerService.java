@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  * Sevice Class that deals with Marker related logic.
@@ -692,8 +693,8 @@ public class MarkerService {
 
     public static MutantOnMarkerBean getMutantsOnGene(Marker gene) {
         MutantOnMarkerBean mutantOnMarkerBean = new MutantOnMarkerBean();
-        mutantOnMarkerBean.setMutantLineDisplay(RepositoryFactory.getMutantRepository().getMutantLinesDisplay(gene.getZdbID()));
-        mutantOnMarkerBean.setAlleles(RepositoryFactory.getMutantRepository().getAllelesForMarker(gene.getZdbID()));
+        mutantOnMarkerBean.setGenotypeList(getMarkerRepository().getMutantsAndTgsByGene(gene.getZdbID()));
+        mutantOnMarkerBean.setAlleles(getMutantRepository().getAllelesForMarker(gene.getZdbID()));
         mutantOnMarkerBean.setKnockdownReagents(getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
 
         return mutantOnMarkerBean;
@@ -845,6 +846,6 @@ public class MarkerService {
     }
 
     public static List<GenotypeFigure> getPhenotypeDataForSTR(SequenceTargetingReagent str) {
-        return RepositoryFactory.getMutantRepository().getGenotypeFiguresBySTR(str);
+        return getMutantRepository().getGenotypeFiguresBySTR(str);
     }
 }

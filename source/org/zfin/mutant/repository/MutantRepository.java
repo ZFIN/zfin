@@ -272,8 +272,6 @@ public interface MutantRepository {
      */
     Map<TermHistogramBean, Long> getTermPhenotypeUsage();
 
-    String getMutantLinesDisplay(String zdbID);
-
     List<FeaturePresentationBean> getAllelesForMarker(String zdbID);
 
     List<Marker> getKnockdownReagents(Marker gene);
@@ -389,6 +387,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve phenotypes for a given marker
+     *
      * @param gene
      * @return
      */

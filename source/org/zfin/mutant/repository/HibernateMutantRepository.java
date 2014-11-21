@@ -1086,14 +1086,6 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public String getMutantLinesDisplay(String zdbID) {
-        return HibernateUtil.currentSession()
-                .createSQLQuery("execute function get_mutants_html_link( :markerZdbId)")
-                .setString("markerZdbId", zdbID)
-                .uniqueResult().toString();
-    }
-
-    @Override
     public List<FeaturePresentationBean> getAllelesForMarker(String zdbID) {
         String sql = "select feature_abbrev,feature_zdb_id from feature, feature_marker_relationship, feature_marker_relationship_type " +
                 "              where fmrel_ftr_zdb_id=feature_zdb_id " +

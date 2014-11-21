@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.FeaturePresentationBean;
 
 import java.util.List;
@@ -9,9 +10,8 @@ import java.util.List;
 public class MutantOnMarkerBean {
 
     private List<FeaturePresentationBean> alleles;
-    private List<MarkerRelationshipPresentation> knockdownReagents ;
-    private String mutantLineDisplay;
-
+    private List<MarkerRelationshipPresentation> knockdownReagents;
+    private List<Genotype> genotypeList;
 
     public List<FeaturePresentationBean> getAlleles() {
         return alleles;
@@ -29,11 +29,11 @@ public class MutantOnMarkerBean {
         this.knockdownReagents = knockdownReagents;
     }
 
-    public String getMutantLineDisplay() {
-        return mutantLineDisplay;
+    public List<Genotype> getGenotypeList() {
+        return genotypeList;
     }
 
-    public void setMutantLineDisplay(String mutantLineDisplay) {
-        this.mutantLineDisplay = mutantLineDisplay;
+    public void setGenotypeList(List<Genotype> genotypeList) {
+        this.genotypeList = genotypeList;
     }
 }

@@ -18,11 +18,19 @@
                         test="${!empty mutantsOnMarkerBean and (!empty mutantsOnMarkerBean.alleles or !empty mutantsOnMarkerBean.knockdownReagents)}" showNoData="true">
     <table class="summary horizontal-solidblock">
 
-        <c:if test="${!empty mutantsOnMarkerBean.mutantLineDisplay}">
+        <c:if test="${!empty mutantsOnMarkerBean.genotypeList}">
             <tr>
                 <td class="data-label"><b>Mutant lines:</b> </td>
                 <td>
-                        ${mutantsOnMarkerBean.mutantLineDisplay}
+                    <c:set var="numberOfGenotypes" value="${mutantsOnMarkerBean.genotypeList.size()}"/>
+                        <c:choose>
+                            <c:when test="${numberOfGenotypes == 1}">
+                                <zfin:link entity="${mutantsOnMarkerBean.genotypeList.get(0)}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="/action/mutant/mutant-list?zdbID=${zdbID}">${numberOfGenotypes} Genotypes</a>
+                            </c:otherwise>
+                        </c:choose>
                 </td>
             </tr>
         </c:if>
