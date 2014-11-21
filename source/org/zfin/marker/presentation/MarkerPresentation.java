@@ -95,6 +95,9 @@ public class MarkerPresentation extends EntityPresentation {
             case GENE:
                 Marker marker = getMarkerFromEntity(entity, Marker.Type.GENE, Marker.TypeGroup.GENEDOM);
                 return MarkerPresentation.getMarkerLink(marker);
+            case GENEP:
+                marker = getMarkerFromEntity(entity, Marker.Type.GENEP, Marker.TypeGroup.GENEDOM);
+                return MarkerPresentation.getMarkerLink(marker);
             case ALT:
                 Feature feature = new Feature();
                 feature.setAbbreviation(entity.getName());
