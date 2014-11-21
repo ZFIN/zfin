@@ -64,7 +64,6 @@ public class ConstructViewController {
                 markerRelationshipPresentation.setMappedMarkerRelationshipType("Engineered Regions:");
             }
         }
-
         Collections.sort(cloneRelationships, new Comparator<MarkerRelationshipPresentation>() {
             @Override
             public int compare(MarkerRelationshipPresentation mr1, MarkerRelationshipPresentation mr2) {

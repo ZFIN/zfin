@@ -56,18 +56,18 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
     @Override
     public List transformList(List collection) {
 
-        Map<String, MarkerRelationshipPresentation> map = new HashMap<String, MarkerRelationshipPresentation>();
+        Map<Integer, MarkerRelationshipPresentation> map = new HashMap<>();
         // compact by supplier first
         for (Object o : collection) {
             MarkerRelationshipPresentation mrp = (MarkerRelationshipPresentation) o;
-            MarkerRelationshipPresentation mrpStored = map.get(mrp.getZdbId());
+            MarkerRelationshipPresentation mrpStored = map.get(mrp.hashCode());
             if (mrpStored!=null) {
                 mrpStored.addAttributionZdbID(mrp.getAttributionZdbID());
                 mrpStored.addOrganizationLinks(mrp.getOrganizationLinks());
-                map.put(mrpStored.getZdbId(), mrpStored);
+                map.put(mrp.hashCode(), mrpStored);
 
             } else {
-                map.put(mrp.getZdbId(), mrp);
+                map.put(mrp.hashCode(), mrp);
             }
         }
 

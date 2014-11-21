@@ -1784,6 +1784,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (types.length > 0) {
             Set<String> typeStrings = new HashSet<String>();
             for (MarkerRelationship.Type type : types) {
+                logger.debug("type: " + type.toString());
                 typeStrings.add(type.toString());
             }
             query.setParameterList("types", typeStrings);
