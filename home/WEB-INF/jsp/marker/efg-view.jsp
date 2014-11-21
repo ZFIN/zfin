@@ -27,9 +27,9 @@
 <%--// EXPRESSION SECTION--%>
 <zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
-<%--Antibodies--%>
+<%--Antibodies
 <zfin2:markerRelationshipsLightSingleType relationships="${formBean.relatedAntibodies}" marker="${formBean.marker}" title="ANTIBODIES" maxNumber="5"/>
-
+--%>
 <%--Constructs--%>
 <zfin2:constructsWithSequences formBean="${formBean}"/>
 

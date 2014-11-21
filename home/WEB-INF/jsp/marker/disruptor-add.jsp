@@ -270,7 +270,7 @@
     }
 
     function completePubId() {
-       
+
         var pubId = document.getElementById('publicationZdbId');
         var shortId = /^(\d){6}-(\d)+/;
         var shortIdStartWithHyphen = /^-(\d){6}-(\d)+/;
