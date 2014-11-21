@@ -277,7 +277,9 @@ public class AntibodyWikiWebService extends WikiWebService {
         if (antibody.getSuppliers() != null) {
             int count = antibody.getSuppliers().size();
             int index = 0;
-            for (MarkerSupplier supplier : antibody.getSuppliers()) {
+            List<MarkerSupplier> suppliers = new ArrayList<>(antibody.getSuppliers());
+            Collections.sort(suppliers);
+            for (MarkerSupplier supplier : suppliers) {
                 String wikiLink = SourcePresentation.getWikiLink(supplier.getOrganization());
                 supplierStringBuilder.append(wikiLink);
                 if (++index < count)
