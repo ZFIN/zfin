@@ -26,7 +26,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     public static final String TEMPLATE = ".template";
 
     protected String instance;
-    protected String baseDir;
     protected String jobName;
     protected String propertyFilePath = "home/WEB-INF/zfin.properties";
     protected File dataDirectory;
@@ -40,19 +39,7 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     public abstract int execute();
 
     protected void init(String baseDir) {
-        this.baseDir = baseDir;
-        init(true);
-    }
-
-    protected void init() {
-        init(true);
-    }
-
-    protected void init(boolean initDatabase) {
         ZfinProperties.init(propertyFilePath);
-        if (initDatabase)
-            new HibernateSessionCreator(false);
-
         if (baseDir != null) {
             dataDirectory = new File(baseDir);
             if (!dataDirectory.exists()) {
@@ -61,6 +48,16 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 throw new RuntimeException(message);
             }
         }
+    }
+
+    protected void init() {
+        init(true);
+    }
+
+    protected void init(boolean initDatabase) {
+        if (initDatabase)
+            new HibernateSessionCreator(false);
+
         setReportProperties();
     }
 
@@ -81,9 +78,9 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList, ReportConfiguration reportConfiguration) {
 
         if (CollectionUtils.isEmpty(resultList)) {
-            File noupdate = new File(reportConfiguration.getReportFile().getParent(), "no-update.txt");
+            File noUpdate = new File(reportConfiguration.getReportFile().getParent(), "no-update.txt");
             try {
-                noupdate.createNewFile();
+                noUpdate.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -131,6 +128,24 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
             System.out.println(error);
         }
         throw new RuntimeException(" Errors in unit test:" + errorMessages.size());
+    }
+
+    protected void generateReports(List<String> errorMessages, Map<String, List<List<String>>> resultMap) {
+        if (MapUtils.isNotEmpty(resultMap)) {
+            if (resultMap.size() > 1) {
+                for (String report : resultMap.keySet()) {
+                    String reportName = jobName + "." + report;
+                    ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, reportName, true);
+                    createErrorReport(null, resultMap.get(report), reportConfiguration);
+                }
+            } else {
+                String key = resultMap.keySet().iterator().next();
+                List<List<String>> result = resultMap.get(key);
+                ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName, true);
+                createErrorReport(errorMessages, result, reportConfiguration);
+            }
+        } else
+            createErrorReport(errorMessages, null);
     }
 
     // Override this in your sub class...
@@ -185,11 +200,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     public void setInstance(String instance) {
         this.instance = instance;
-    }
-
-    public void setBaseDir(String baseDir) {
-        this.baseDir = baseDir;
-
     }
 
     public String getJobName() {

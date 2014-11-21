@@ -36,7 +36,7 @@ public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
             throw new RuntimeException("Error getting Microarray sequences", e);
         }
 
-        Set<String> validZdbIDs = new HashSet<String>();
+        Set<String> validZdbIDs = new HashSet<>();
 
         // abbrev , Marker zdbID
         Map<String, String> markerAbbrevMap = RepositoryFactory.getMarkerRepository().getGeoMarkerCandidates();
@@ -101,7 +101,7 @@ public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
         setLoggerToInfoLevel(logger);
         MicroarrayWebserviceJob job = new MicroarrayWebserviceJob();
         job.setPropertyFilePath(args[0]);
-        job.setBaseDir(args[1]);
+        job.init(args[1]);
         job.setJobName(args[2]);
         job.init();
         System.exit(job.execute());

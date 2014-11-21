@@ -233,7 +233,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         ApplicationContext context = new FileSystemXmlApplicationContext(configPath);
         GafLoadJob job = context.getBean(GafLoadJob.class);
         job.setPropertyFilePath(args[0]);
-        job.setBaseDir(baseDir);
+        job.init(baseDir);
         job.setJobName(args[2]);
         job.organization = args[3];
         job.downloadUrl = args[4];

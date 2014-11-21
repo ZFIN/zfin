@@ -37,7 +37,7 @@ public class SandboxCleanerJob extends AbstractValidateDataReportTask {
         String jobDirectoryString = args[1];
         SandboxCleanerJob job = new SandboxCleanerJob();
         job.setPropertyFilePath(propertyFilePath);
-        job.setBaseDir(jobDirectoryString);
+        job.init(jobDirectoryString);
         job.setJobName(args[2]);
         job.init(false);
         System.exit(job.execute());

@@ -45,23 +45,7 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         try {
             errorMessages = service.runDbScriptFile(dbQueryFile);
             resultMap = service.getResultMap();
-
-            if (MapUtils.isNotEmpty(resultMap)) {
-                if (resultMap.size() > 1) {
-                    for (String report : resultMap.keySet()) {
-                        String reportName = jobName + "." + report;
-                        ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, reportName, true);
-                        createErrorReport(null, resultMap.get(report), reportConfiguration);
-                    }
-                } else {
-                    String key = resultMap.keySet().iterator().next();
-                    List<List<String>> result = resultMap.get(key);
-                    ReportConfiguration reportConfiguration = new ReportConfiguration(jobName, dataDirectory, jobName, true);
-                    createErrorReport(null, result, reportConfiguration);
-                }
-            } else {
-                createErrorReport(errorMessages, null);
-            }
+            generateReports(errorMessages, resultMap);
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);
@@ -94,6 +78,7 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         if (args.length > 4)
             task.useDynamicQuery = Boolean.parseBoolean(args[4]);
         task.init(directory);
+        task.init();
         System.exit(task.execute());
     }
 }

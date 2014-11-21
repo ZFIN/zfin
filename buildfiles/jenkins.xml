@@ -83,10 +83,10 @@
             </filterset>
         </copy>
         <touch file="${report}/${jobName}.sql"/>
-        <echo file="${report}/report-data-email.properties" append="true"><![CDATA[${jobName}.errorMessage=Please add a title of the error page
+        <echo file="${report}/report.properties" append="true"><![CDATA[${jobName}.errorMessage=Please add a title of the error page
 ]]></echo>
-        <echo file="${report}/report-data-email.properties" append="true"><![CDATA[${jobName}.headerColumns=Add column headers]]></echo>
-        <sort-file file-name="${report}/report-data-email.properties"/>
+        <echo file="${report}/report.properties" append="true"><![CDATA[${jobName}.headerColumns=Add column headers]]></echo>
+        <sort-file file-name="${report}/report.properties"/>
         <echo file="${jenkins}/trigger.reports.properties" append="true"><![CDATA[${jobName}=]]></echo>
         <sort-file file-name="${jenkins}/trigger.reports.properties"/>
         <echo file="${jenkins}/email-configuration.reports.properties" append="true"><![CDATA[${jobName}.FAILURE=Please add email addresses]]></echo>
@@ -630,7 +630,7 @@
                         <fileset dir="${reportDirSource}/">
                             <include name="${jobName}.report.html.template"/>
                             <include name="${jobName}.sql*"/>
-                            <include name="report-data-email.properties"/>
+                            <include name="report.properties"/>
                             <include name="report-data-email.template"/>
                         </fileset>
                     </copy>

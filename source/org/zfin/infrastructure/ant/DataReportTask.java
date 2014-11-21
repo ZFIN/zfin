@@ -3,7 +3,7 @@ package org.zfin.infrastructure.ant;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.zfin.framework.HibernateUtil;
@@ -19,7 +19,6 @@ import java.util.Map;
 public class DataReportTask extends AbstractValidateDataReportTask {
 
     private String delimiter = "__";
-    private static final String REPORT_DIRECTORY = "server_apps/DB_maintenance/report_data";
 
     private String variableNames;
     private String valueNames;
@@ -67,12 +66,9 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         List<String> errorMessages;
         try {
             errorMessages = service.runDbScriptFile(dbQueryFile, null, dataMap);
-            List<List<List<String>>> resultList = service.getListOfResultRecords();
-            if (CollectionUtils.isNotEmpty(resultList))
-                createErrorReport(errorMessages, resultList.get(0));
-            else
-                createErrorReport(errorMessages, null);
-            HibernateUtil.flushAndCommitCurrentSession();
+            Map<String, List<List<String>>> resultMap = service.getResultMap();
+            generateReports(errorMessages, resultMap);
+            HibernateUtil.rollbackTransaction();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             LOG.error(e);
@@ -86,7 +82,8 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     public static final Option parameterVariablesOpt = OptionBuilder.withArgName("parameterVariables").hasArg().withDescription("List of parameter variable names").create("parameterVariables");
     public static final Option parameterValuesOpt = OptionBuilder.withArgName("parameterValues").hasArg().withDescription("List of parameter variable names").create("parameterValues");
     public static final Option delimiterOpt = OptionBuilder.withArgName("delimiter").hasArg().withDescription("delimiter used to separate individual parameters").create("delimiter");
-    public static final Option baseDirOpt = OptionBuilder.withArgName("baseDir").hasArg().withDescription("Base directory").create("baseDir");
+    public static final Option dataDirOpt = OptionBuilder.withArgName("dataDir").hasArg().withDescription("Base Data directory").create("dataDir");
+    public static final Option propertyDirOpt = OptionBuilder.withArgName("propertyDir").hasArg().withDescription("Property File directory").create("propertyDir");
     public static final Option useParametersOpt = OptionBuilder.withArgName("useParameters").hasArg().withDescription("Boolean that indicates if the command line options contain a parameter map").create("useParameters");
 
 
@@ -96,7 +93,8 @@ public class DataReportTask extends AbstractValidateDataReportTask {
         options.addOption(parameterVariablesOpt);
         options.addOption(parameterValuesOpt);
         options.addOption(delimiterOpt);
-        options.addOption(baseDirOpt);
+        options.addOption(dataDirOpt);
+        options.addOption(propertyDirOpt);
         options.addOption(useParametersOpt);
     }
 
@@ -110,15 +108,10 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             task.useParameterMap = true;
             handleParameterMap(commandLine, task);
         }
-        task.propertiesFile = "report-data-email.properties";
-        String baseDir = commandLine.getOptionValue(baseDirOpt.getOpt());
-        String pathname = baseDir + "/" + REPORT_DIRECTORY;
-        task.dataDirectory = new File(pathname);
+        task.setPropertyFilePath(commandLine.getOptionValue(propertyDirOpt.getOpt()));
+        task.init(commandLine.getOptionValue(dataDirOpt.getOpt()));
         task.initLogger();
-        if (baseDir != null) {
-            task.propertyFilePath = baseDir + "/" + task.propertyFilePath;
-            task.init(pathname);
-        }
+        task.init();
         LOG.getRootLogger().setLevel(Level.INFO);
         System.exit(task.execute());
     }

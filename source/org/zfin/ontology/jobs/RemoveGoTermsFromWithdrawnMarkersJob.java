@@ -63,7 +63,7 @@ public class RemoveGoTermsFromWithdrawnMarkersJob extends AbstractValidateDataRe
         setLoggerToInfoLevel(logger);
         RemoveGoTermsFromWithdrawnMarkersJob job = new RemoveGoTermsFromWithdrawnMarkersJob();
         job.setPropertyFilePath(args[0]);
-        job.setBaseDir(args[1]);
+        job.init(args[1]);
         job.setJobName(args[2]);
         job.init();
         System.exit(job.execute());

@@ -16,6 +16,7 @@ public class DbScriptFileParser {
     private File dbScriptFile;
     public static final String QUERY_ENDS_SEMICOLON = ";";
     public static final String COMMENTS = "--";
+    public static final String ECHO = "! echo";
     public static final String LOOP = "loop";
     public static final String SUB_QUERY = "subquery";
     public static final String EXISTS = "exists";
@@ -41,8 +42,8 @@ public class DbScriptFileParser {
             boolean inSubQuery = false;
             DatabaseJdbcStatement subQuery = null;
             while ((line = reader.readLine()) != null) {
-                // ignore empty lines or lines with comments
-                if (line.trim().length() == 0 || line.trim().startsWith(COMMENTS))
+                // ignore empty lines or lines with comments or output ! echo
+                if (line.trim().length() == 0 || line.trim().startsWith(COMMENTS)|| line.trim().startsWith(ECHO))
                     continue;
                 if (line.trim().length() == 0 || line.trim().startsWith(SUB_QUERY)) {
                     inSubQuery = true;
@@ -71,8 +72,10 @@ public class DbScriptFileParser {
                     query.addQueryPart(line, reader.getLineNumber());
 
                 if (line.trim().endsWith(QUERY_ENDS_SEMICOLON)) {
-                    if (!inSubQuery)
+                    if (!inSubQuery){
                         queries.add(query);
+                        query.finish();
+                    }
                     query = new DatabaseJdbcStatement(dbScriptFile.getAbsolutePath());
                     queryClosed = true;
                 }

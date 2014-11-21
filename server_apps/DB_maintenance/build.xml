@@ -219,8 +219,10 @@
             <arg value="${ParameterVariables}"/>
             <arg value="-parameterValues"/>
             <arg value="${ParameterValues}"/>
-            <arg value="-baseDir"/>
-            <arg value="${basedir}"/>
+            <arg value="-dataDir"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="-propertyDir"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
         </java>
     </target>
 
@@ -233,8 +235,10 @@
               failonerror="true">
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
-            <arg value="-baseDir"/>
-            <arg value="${basedir}"/>
+            <arg value="-dataDir"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="-propertyDir"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
         </java>
     </target>
 

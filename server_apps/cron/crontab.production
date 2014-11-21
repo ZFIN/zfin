@@ -90,13 +90,6 @@
 00 03 * * 0-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/orphanChecks.pl zfindb
 #
 # ========================================================================
-# ====                   MONTHLY SCRIPTS                              ====
-# ========================================================================
-#
-# monthly delete the marker alias which are the same as marker symbol, but keep the history
-15 06 1 * * <!--|ROOT_PATH|-->/server_apps/DB_maintenance/delete_dup_alias.pl
-#
-# ========================================================================
 # ====                   QUARTERLY SCRIPTS                               ====
 # ========================================================================
 #

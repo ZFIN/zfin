@@ -356,14 +356,18 @@ public class DatabaseService {
             if (statement.isInformixWorkStatement())
                 continue;
             if (statement.isLoadStatement()) {
-                List<List<String>> data = dataMap.get(statement.getDataKey());
-                if (data == null) {
-                    LOG.info("No data found for key: " + statement.getDataKey());
-                    continue;
+                if (statement.isSelectIntoStatement()) {
+                    infrastructureRep.executeJdbcStatement(statement);
+                } else {
+                    List<List<String>> data = dataMap.get(statement.getDataKey());
+                    if (data == null) {
+                        LOG.info("No data found for key: " + statement.getDataKey());
+                        continue;
+                    }
+                    statement = statement.completeInsertStatement(data.get(0).size());
+                    infrastructureRep.executeJdbcStatement(statement, data);
+                    LOG.info(data.size() + " records inserted");
                 }
-                statement = statement.completeInsertStatement(data.get(0).size());
-                infrastructureRep.executeJdbcStatement(statement, data);
-                LOG.info(data.size() + " records inserted");
             } else if (statement.isDebug()) {
                 List<List<String>> dataReturn;
                 if (LOG.isDebugEnabled()) {
@@ -382,7 +386,7 @@ public class DatabaseService {
                 dataReturn = infrastructureRep.executeNativeDynamicQuery(statement);
                 if (CollectionUtils.isNotEmpty(dataReturn)) {
                     listOfResultRecords.add(dataReturn);
-                    if(statement.getDataKey()!= null)
+                    if (statement.getDataKey() != null)
                         resultMap.put(statement.getDataKey(), dataReturn);
                     else
                         resultMap.put("_NO-KEY", dataReturn);

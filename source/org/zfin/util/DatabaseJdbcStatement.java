@@ -41,6 +41,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     public static final String DEBUG = "DEBUG";
     public static final String TEST = "TEST";
     public static final String TRACE = "TRACE";
+    public static final String LOAD_INTO = "INTO";
 
     private String booleanOperator;
     private int comparisonValue;
@@ -53,6 +54,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     private boolean existsSubquery = false;
 
     Map<String, String> dataMap;
+    private boolean selectInto;
 
     public DatabaseJdbcStatement() {
     }
@@ -72,6 +74,9 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     private void parseLoadingInstruction() {
         String statementStart = query.toString().trim();
+        if (statementStart.toUpperCase().startsWith(LOAD)) {
+            checkIfLoadStatement();
+        }
         if (statementStart.toUpperCase().startsWith(LOAD)) {
             checkIfLoadStatement();
         }
@@ -217,7 +222,11 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public boolean isLoadStatement() {
-        return load;
+        return load || selectInto;
+    }
+
+    public boolean isSelectIntoStatement() {
+        return selectInto;
     }
 
     public boolean isSingleLoadStatement() {
@@ -461,5 +470,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
 
     public void setDataMap(Map<String, String> dataMap) {
         this.dataMap = dataMap;
+    }
+
+    public void finish() {
+        if (query.toString().contains(SELECT) && query.toString().contains(INTO))
+            selectInto = true;
     }
 }

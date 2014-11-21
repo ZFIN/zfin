@@ -37,7 +37,7 @@ public class ValidateBlastDatabases extends AbstractValidateDataReportTask {
         setLoggerToInfoLevel(logger);
         ValidateBlastDatabases job = new ValidateBlastDatabases();
         job.setPropertyFilePath(args[0]);
-        job.setBaseDir(args[1]);
+        job.init(args[1]);
         job.setJobName(args[2]);
         job.init();
         System.exit(job.execute());

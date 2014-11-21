@@ -101,8 +101,10 @@ public class ReportConfiguration {
         if (useDefaultReportTemplate)
             templateFileName = defaultTemplateFileName;
         templateFile = FileUtils.getFile(templateDirectory, templateFileName);
+/*
         if (!templateFile.exists())
             LOG.error("Template file not found: " + templateFile.getAbsolutePath());
+*/
     }
 
     private void initReportFile() {

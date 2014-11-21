@@ -83,7 +83,7 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
         String jobDirectoryString = args[1];
         ValidatePermissionsForZebrafishBookJob job = new ValidatePermissionsForZebrafishBookJob();
         job.setPropertyFilePath(propertyFilePath);
-        job.setBaseDir(jobDirectoryString);
+        job.init(jobDirectoryString);
         job.setJobName(args[2]);
         job.init(false);
         job.setLoggerFile();

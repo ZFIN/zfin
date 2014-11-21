@@ -48,7 +48,7 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
         setLoggerToInfoLevel(logger);
         UpdateDOIJob job = new UpdateDOIJob();
         job.setPropertyFilePath(args[0]);
-        job.setBaseDir(args[1]);
+        job.init(args[1]);
         String jobName = args[2];
         job.setJobName(jobName);
         if (jobName.endsWith("_d")) {
