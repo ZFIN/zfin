@@ -31,6 +31,7 @@ import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
+import org.zfin.marker.presentation.DbLinkDisplayComparatorTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.PhenotypeServiceDBTest;
@@ -73,6 +74,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         DTOConversionServiceTest.class,
         CurationRPCTest.class,
         DatabaseServiceDbTest.class,
+        DbLinkDisplayComparatorTest.class,
         DisplayGroupRepositoryTest.class,
         DTOConversionServiceTest.class,
         ExpressionRepositoryTest.class,

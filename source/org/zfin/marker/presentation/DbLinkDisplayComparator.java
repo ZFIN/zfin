@@ -21,33 +21,45 @@ public class DbLinkDisplayComparator implements Comparator<DBLink> {
     @Override
     public int compare(DBLink dbLink1, DBLink dbLink2) {
 
-        if (dbLink1 == null && dbLink2 == null)
+        if (dbLink1 == null && dbLink2 == null) {
             return 0;
-        if (dbLink1 == null)
+        }
+
+        if (dbLink1 == null) {
             return 1;
-        if (dbLink2 == null)
+        }
+
+        if (dbLink2 == null) {
             return -1;
+        }
 
         int comparator;
         comparator = dbLink1.getReferenceDatabase().getForeignDBDataType().getDisplayOrder()
                 - dbLink2.getReferenceDatabase().getForeignDBDataType().getDisplayOrder();
-        if (comparator != 0)
+        if (comparator != 0) {
             return comparator;
+        }
 
         comparator = dbLink1.getReferenceDatabase().getForeignDB().getSignificance()
                 - dbLink2.getReferenceDatabase().getForeignDB().getSignificance();
-        if (comparator != 0)
+        if (comparator != 0) {
             return comparator;
+        }
 
         if (!dbLink1.getReferenceDatabase().isRefSeq()) {
-            return ObjectUtils.compare(dbLink2.getLength(), dbLink1.getLength());
+            comparator = ObjectUtils.compare(dbLink2.getLength(), dbLink1.getLength());
+            if (comparator != 0) {
+                return comparator;
+            }
+            return ObjectUtils.compare(dbLink1.getAccessionNumber(), dbLink2.getAccessionNumber());
         } else {
             String prefix1 = dbLink1.getAccessionNumber().substring(0,2);
             String prefix2 = dbLink2.getAccessionNumber().substring(0,2);
-            if (prefix1.compareTo(prefix2) == 0)
+            if (prefix1.compareTo(prefix2) == 0) {
                 return ObjectUtils.compare(dbLink2.getLength(), dbLink1.getLength());
-            else
+            } else {
                 return prefix1.compareTo(prefix2);
+            }
         }
     }
 }
