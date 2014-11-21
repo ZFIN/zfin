@@ -274,7 +274,7 @@ public class AntibodyWikiWebService extends WikiWebService {
 
         // Supplier page 
         StringBuilder supplierStringBuilder = new StringBuilder();
-        if (antibody.getSuppliers() != null) {
+        if (CollectionUtils.isNotEmpty(antibody.getSuppliers())) {
             int count = antibody.getSuppliers().size();
             int index = 0;
             List<MarkerSupplier> suppliers = new ArrayList<>(antibody.getSuppliers());
