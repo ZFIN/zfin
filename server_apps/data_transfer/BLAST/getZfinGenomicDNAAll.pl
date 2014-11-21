@@ -19,10 +19,10 @@ my $password = "";
 my $outputdir ="";
 
 if ($dbname ne "almdb") {
-    $outputdir = "<!--|WEBHOST_FASTA_FILE_PATH|-->" ;
+    $outputdir = "<!--|WEBHOST_FASTA_FILE_PATH|-->/" ;
 }
 else {
-    $outputdir = "<!--|WEBHOST_FASTA_FILE_PATH|-->" ;    
+    $outputdir = "<!--|WEBHOST_FASTA_FILE_PATH|-->/" ;    
 }
 
 my $accFileRefSeq = $outputdir."zfin_genomic_refseq_acc.unl";

@@ -25,10 +25,10 @@ my $outputdir ="";
 
 # a place on embryonix/zygotix is used to store the fasta files for blast db update.
 if ($dbname ne "almdb") {
-    $outputdir = "<!--|WEBHOST_FASTA_FILE_PATH|-->" ;
+    $outputdir = "<!--|WEBHOST_FASTA_FILE_PATH|-->/" ;
 }
 else {
-    $outputdir = "<!--|WEBHOST_FASTA_FILE_PATH|-->" ;    
+    $outputdir = "<!--|WEBHOST_FASTA_FILE_PATH|-->/" ;    
 }
 
 my $mrphFile = $outputdir."zfin_mrph.fa";
