@@ -86,6 +86,7 @@
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
 <!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/watson/blastdb
 <!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/watson/blastdb
+<!--|WEBHOST_FASTA_FILE_PATH|-->	/research/watson/zblastfiles/files
 <!--|WEB_ADMIN_EMAIL|-->	kevin\@zfin.org smoxon\@zfin.org
 <!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	zfinadmn\@zfin.org
