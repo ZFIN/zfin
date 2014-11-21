@@ -108,8 +108,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             removeAnnotations(gafJobData);
 
-            FileWriter summary = new FileWriter(new File(baseDir, jobName + "_summary.txt"));
-            FileWriter details = new FileWriter(new File(baseDir, jobName + "_details.txt"));
+            FileWriter summary = new FileWriter(new File(dataDirectory, jobName + "_summary.txt"));
+            FileWriter details = new FileWriter(new File(dataDirectory, jobName + "_details.txt"));
 
             summary.append(gafJobData.toString());
             summary.flush();
@@ -147,7 +147,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 HibernateUtil.rollbackTransaction();
             }
             try {
-                FileWriter errors = new FileWriter(new File(baseDir, jobName + "_errors.txt"));
+                FileWriter errors = new FileWriter(new File(dataDirectory, jobName + "_errors.txt"));
                 errors.append("Error in ").append(organizationEnum.toString()).append(" load.\n");
                 errors.append(ExceptionUtils.getStackTrace(e));
                 errors.flush();
