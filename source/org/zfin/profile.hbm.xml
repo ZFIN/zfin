@@ -110,7 +110,7 @@
         <property name="address" column="address"/>
         <property name="status"/>
         <property name="bio"/>
-        <property name="snapshot" column="snapshot"/>
+        <property name="snapshot" column="snapshot" type="blob"/>
         <many-to-one name="contactPerson" column="contact_person" class="org.zfin.profile.Person"/>
 
         <set name="organizationUrls">
