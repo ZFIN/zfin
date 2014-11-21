@@ -39,8 +39,8 @@ public class DbLinkDisplayComparatorTest {
     public void testOrderBySequenceLength() {
         DbLinkDisplayComparator comparator = new DbLinkDisplayComparator();
         // these links are from the same foreign db but have different lengths
-        DBLink link1 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-140923-179491");
-        DBLink link2 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-140923-179490");
+        DBLink link1 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-140923-179490");
+        DBLink link2 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-140923-179491");
         assertThat("DBLinks should be sorted by sequence length",
                 comparator.compare(link1, link2), greaterThan(1));
 
