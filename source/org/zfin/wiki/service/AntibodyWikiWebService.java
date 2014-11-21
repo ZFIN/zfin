@@ -344,6 +344,8 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     public static String getEncodedString(String value) {
+        if(value == null)
+            return null;
         value = value.replace("ü", "&uuml;");
         value = value.replace("ä", "&auml;");
         value = value.replace("ö", "&ouml;");
