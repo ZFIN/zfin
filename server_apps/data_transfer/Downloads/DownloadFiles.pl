@@ -118,32 +118,30 @@ while ($cur->fetch()) {
             
     print MOWITHPUBS "$geneId\t$a_szm_term_ont_id\t$gene\t$MoId\t$b_szm_term_ont_id\t$Mo\t$MoSeq\t";
 
-    %pubIds = ();
-    $numOfPubs = 0;
+    @pubIds = ();
     my ($pub);
-    $innerSql = "select distinct recattrib_source_zdb_id from record_attribution where recattrib_data_zdb_id = " . "\"" . $MoId . "\";";
+    $innerSql = "select ra.recattrib_source_zdb_id
+                 from record_attribution ra
+                 where ra.recattrib_data_zdb_id = ?
+                 union
+                 select ra.recattrib_source_zdb_id
+                 from record_attribution ra , marker_relationship mr
+                 where mr.mrel_mrkr_2_zdb_id = ?
+                 and ra.recattrib_data_zdb_id = mr.mrel_zdb_id
+                 union
+                 select ra.recattrib_source_zdb_id
+                 from record_attribution ra , marker_relationship mr
+                 where mr.mrel_mrkr_1_zdb_id = ?
+                 and ra.recattrib_data_zdb_id = mr.mrel_zdb_id";
         
     $curInner = $dbh->prepare($innerSql);
-    $curInner->execute();
+    $curInner->execute($MoId, $MoId, $MoId);
     $curInner->bind_columns(\$pub);
     while ($curInner->fetch()) {
-         $pubIds{$pub} = 1;
-         $numOfPubs++;
+         push(@pubIds, $pub);
     }
-
-    if ($numOfPubs > 0) {
-        $numOfPubsCt = $numOfPubs;
-        foreach $key (sort keys %pubIds) {
-           $numOfPubsCt--;
-           if ($numOfPubsCt == 0) {
-               print MOWITHPUBS "$key\t$note\n";
-           } else {
-               print MOWITHPUBS "$key,";
-           }
-        }
-    } else {
-        print MOWITHPUBS "$note\n";
-    }    
+    $pubs = join(",", sort(@pubIds));
+    print MOWITHPUBS "$pubs\t$note\n";
 }
 
 close MOWITHPUBS;
