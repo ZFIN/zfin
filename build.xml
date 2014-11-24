@@ -346,7 +346,11 @@
 
         <instrument verbose="true">
             <fileset dir="${classbin.dir}">
-                <include name="org/zfin/profile/Person1.class"/>
+                <include name="org/zfin/profile/Person.class"/>
+                <include name="org/zfin/expression/Figure.class"/>
+                <include name="org/zfin/expression/TextOnlyFigure.class"/>
+                <include name="org/zfin/expression/FigureFigure.class"/>
+                <include name="org/zfin/ontology/**Term.class"/>
             </fileset>
         </instrument>
     </target>
@@ -582,7 +586,7 @@
     </macrodef>
 
 
-    <target name="deploy" depends="deploy-without-tests,test,productionSmokeTests"
+    <target name="deploy" depends="deploy-without-tests,instrument,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
@@ -695,7 +699,7 @@
         <copy-indexer-build-file-with-env-variables/>
     </target>
 
-    <target name="dirtydeploy" depends="compile"
+    <target name="dirtydeploy" depends="compile,instrument"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
         <copy-indexer-build-file-with-env-variables/>

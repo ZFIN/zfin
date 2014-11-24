@@ -473,4 +473,11 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
                 assertNotNull(st);
         assertNotNull(list);
     }
+
+    @Test
+    public void getPhenotypeStatementWarehouse() {
+        String ID = "68641";
+        PhenotypeStatementWarehouse psw = (PhenotypeStatementWarehouse) HibernateUtil.currentSession().get(PhenotypeStatementWarehouse.class, 68641L);
+        assertNotNull(psw);
+    }
 }

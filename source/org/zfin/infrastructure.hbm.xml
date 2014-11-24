@@ -312,7 +312,7 @@
         <property name="root" column="term_is_root"/>
         <property name="secondary" column="term_is_secondary"/>
         <property name="comment" column="term_comment"/>
-        <property name="definition" column="term_definition"/>
+        <property name="definition" column="term_definition" lazy="true"/>
 
         <set name="aliases" lazy="false" batch-size="10">
             <key column="dalias_data_zdb_id"/>

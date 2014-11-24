@@ -21,12 +21,12 @@
                                     ELSE                  'FIG'
                                  END)"/>
 
-        <property name="caption">
+        <property name="caption" lazy="true">
             <column name="fig_caption"/>
         </property>
 
-        <property name="comments">
-            <column name="fig_comments"/>
+        <property name="comments"  lazy="false">
+            <column name="fig_comments" />
         </property>
 
         <property name="label">
