@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -10,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 
-public class DbLinkDisplayComparatorTest {
+public class DbLinkDisplayComparatorTest extends AbstractDatabaseTest {
 
     private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
@@ -42,12 +43,7 @@ public class DbLinkDisplayComparatorTest {
         DBLink link1 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-140923-179490");
         DBLink link2 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-140923-179491");
         assertThat("DBLinks should be sorted by sequence length",
-                comparator.compare(link1, link2), greaterThan(1));
-
-        link1 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-141114-113370");
-        link2 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-141114-113368");
-        assertThat("DBLinks should be sorted by sequence length",
-                comparator.compare(link1, link2), lessThan(1));
+                comparator.compare(link1, link2), greaterThan(0));
     }
 
     @Test
@@ -62,17 +58,18 @@ public class DbLinkDisplayComparatorTest {
     @Test
     public void testNMBeforeXM() {
         DbLinkDisplayComparator comparator = new DbLinkDisplayComparator();
-        DBLink link1 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-141114-113248");
-        DBLink link2 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-141114-120150");
+        DBLink link1 = sequenceRepository.getDBLink("ZDB-GENE-990415-200", "NM_131304", "RefSeq");
+        DBLink link2 = sequenceRepository.getDBLink("ZDB-GENE-990415-200", "XM_009297881", "RefSeq");
         assertThat("NM DBLinks should be sorted before XM links",
                 comparator.compare(link1, link2), lessThan(0));
+
     }
 
     @Test
     public void testXMBeforeGenbank() {
         DbLinkDisplayComparator comparator = new DbLinkDisplayComparator();
-        DBLink link1 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-030708-16");
-        DBLink link2 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-141114-136242");
+        DBLink link1 = sequenceRepository.getDBLink("ZDB-GENE-001030-3", "AF072549", "GenBank");
+        DBLink link2 = sequenceRepository.getDBLink("ZDB-GENE-001030-3", "XM_009299774", "RefSeq");
         assertThat("XM DBLinks should be sorted before Genbank links",
                 comparator.compare(link1, link2), greaterThan(0));
     }
@@ -80,8 +77,8 @@ public class DbLinkDisplayComparatorTest {
     @Test
     public void testRNABeforeGenomic() {
         DbLinkDisplayComparator comparator = new DbLinkDisplayComparator();
-        DBLink link1 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-141114-47180");
-        DBLink link2 = sequenceRepository.getDBLinkByID("ZDB-DBLINK-141114-101531");
+        DBLink link1 = sequenceRepository.getDBLink("ZDB-GENE-001030-3", "AF072549", "GenBank");
+        DBLink link2 = sequenceRepository.getDBLink("ZDB-GENE-001030-3", "CABZ01094912", "GenBank");
         assertThat("RNA DBLinks should be sorted before Genomic links",
                 comparator.compare(link1, link2), lessThan(0));
     }
