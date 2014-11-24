@@ -186,14 +186,6 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void getMutantsOnGene() {
-        Marker m = getMarkerRepository().getGeneByAbbreviation("cdh1");
-        assertNotNull(m);
-        String display = RepositoryFactory.getMutantRepository().getMutantLinesDisplay(m.getZdbID());
-        assertNotNull(display);
-    }
-
-    @Test
     public void getSequenceInfoSummary() {
         Marker m = getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         SequenceInfo sequenceInfo = MarkerService.getSequenceInfoSummary(m);

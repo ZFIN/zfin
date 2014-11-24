@@ -316,12 +316,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getLineForMarker() {
-        String display = mutantRepository.getMutantLinesDisplay("ZDB-GENE-010606-1");
-        assertNotNull(display);
-    }
-
-    @Test
     public void getAllelesForMarker() {
         List<FeaturePresentationBean> featurePresentationBeans = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1");
         assertTrue(featurePresentationBeans.size() > 4);
