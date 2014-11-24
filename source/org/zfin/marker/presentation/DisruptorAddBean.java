@@ -6,11 +6,15 @@ public class DisruptorAddBean {
     public static final String NEW_DISRUPTOR_NAME = "disruptorName";
     public static final String DISRUPTOR_PUBLICATION_ZDB_ID = "disruptorPublicationZdbID";
     public static final String NEW_DISRUPTOR_COMMENT = "disruptorComment";
+
+
+
     public static final String NEW_DISRUPTOR_ALIAS = "disruptorAlias";
     public static final String NEW_DISRUPTOR_CURNOTE = "disruptorCuratorNote";
     public static final String NEW_DISRUPTOR_SEQUENCE = "disruptorSequence";
     public static final String NEW_DISRUPTOR_SECOND_SEQUENCE = "disruptorSecondSequence";
     public static final String NEW_DISRUPTOR_REPORTEDSEQUENCE = "disruptorReportedSequence";
+    public static final String NEW_DISRUPTOR_REPORTEDSEQUENCE2 = "disruptorReportedSequence2";
     public static final String NEW_DISRUPTOR_TARGET = "targetGeneSymbol";
     public static final String NEW_DISRUPTOR_SUPPLIER_NAME = "disruptorSupplierName";
 
@@ -24,6 +28,7 @@ public class DisruptorAddBean {
     private String disruptorSequence;
     private String disruptorSecondSequence;
     private String disruptorReportedSequence;
+    private String disruptorReportedSequence2;
     private String disruptorSupplierName;
 
     public String getDisruptorName() {
@@ -106,6 +111,14 @@ public class DisruptorAddBean {
         this.disruptorReportedSequence = disruptorReportedSequence;
     }
 
+    public String getDisruptorReportedSequence2() {
+        return disruptorReportedSequence2;
+    }
+
+    public void setDisruptorReportedSequence2(String disruptorReportedSequence2) {
+        this.disruptorReportedSequence2 = disruptorReportedSequence2;
+    }
+
     public String getDisruptorSupplierName() {
         return disruptorSupplierName;
     }
@@ -113,6 +126,7 @@ public class DisruptorAddBean {
     public void setDisruptorSupplierName(String disruptorSupplierName) {
         this.disruptorSupplierName = disruptorSupplierName;
     }
+
 
 }
 
