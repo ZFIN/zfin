@@ -115,7 +115,7 @@
             </tr>
             <tr>
                 <td nowrap>
-                    Reported: &nbsp;5'-   <form:input id="reportSeq2" path="<%= DisruptorAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE%>" name="reportSeq2" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                    Reported: &nbsp;5'-   <form:input id="reportSeq2" path="<%= DisruptorAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE2%>" name="reportSeq2" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
                 </td>
                 <td width=20></td><!-- spacer column -->
             </tr>
