@@ -68,19 +68,23 @@ while (<>) {
      next;
   }
 
+
   #DE   Tyrosine-protein kinase Jak1 (EC 2.7.1.112) (Janus kinase 1) (Jak-1).q
   # since Jul 22, 2008:
-  #DE            EC=3.4.24.81;
-  if (/^DE\s+(.*)/) {
-#      if (/.* \(EC ([\d\.\-]*)\)/){ # see http://www.chem.qmul.ac.uk/iubmb/enzyme/
-       if (/.* EC=([\d\.\-]*);/){
-	  $ecnumber=$1;
-
-	  # we want to use the full EC# for link out
-          # comment out the previous expression
-	  #$ecnumber=~s/[\.\-]*$//; # chop trailing dot dash(s) because zfin does not allow -
-      }
-      next;
+  #DE            EC=3.4.24.81;  
+  # see http://www.chem.qmul.ac.uk/iubmb/enzyme/ 
+  if (/^DE\s+EC=(.*);/) {   
+  
+          $ecnumberLine = $1; 
+     
+          if ($ecnumberLine =~ m/\{/) {   ## EC=2.7.4.6 {ECO:0000256|RuleBase:RU004013};   
+             @ecLineSplit = split(/\{/, $ecnumberLine);
+             $ecWithBracket = $ecLineSplit[0];
+             $ecWithBracket =~ s/\s+$//;     ## strip trailing space
+             $ecnumber = $ecWithBracket if $ecWithBracket =~ m/[\d\.\-]*/;                 
+          } else {                            ## EC=2.7.8.2;
+             $ecnumber = $ecnumberLine if $ecnumberLine =~ m/[\d\.\-]*/; 
+          }
   }
 
   #CC   -!- SUBCELLULAR LOCATION: Nuclear (By similarity).
@@ -180,6 +184,13 @@ while (<>) {
 	         foreach $gene (@gene_array) {
 	            print KEYWD "$gene|$kwToPrint|\n";
 	         }
+	       } elsif ($kw =~ m/(.*\w)$/) {     ## some records still with old format that does not contain braces
+           	 $kwToPrint = $1;
+           	 $kwToPrint =~ s/^\s+//;     ## strip leading space
+           	 $kwToPrint =~ s/\s+$//;     ## strip trailing space
+	         foreach $gene (@gene_array) {
+	            print KEYWD "$gene|$kwToPrint|\n";
+	         }
 	       }
         }
         $kwMultLinesConcatenated = " ";
@@ -221,8 +232,8 @@ while (<>) {
 
     # reinitiate the variables for loop
     $cc=''; $kw='';  $prm_ac = '';
-    $gene=''; $single_gene = ''; @gene_array = (); $embl = '';
-    @cc = ();  @dr = ();
+    $gene=''; $single_gene = ''; @gene_array = (); $embl = ''; $ecnumberLine = '';
+    @cc = ();  @dr = ();  @ecLineSplit = ();
     @sp_ac=(); $sp_ac=''; $sp_ac_list=''; $ecnumber = ''; $acc_num = '';
     $first = 1;$one = 1;
   }
