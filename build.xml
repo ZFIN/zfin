@@ -316,6 +316,19 @@
         <!--</fileset>-->
     </path>
 
+    <target name="instrument" depends="compile">
+        <taskdef name="instrument" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
+            <classpath refid="extended.classpath"/>
+            <classpath path="${classbin.dir}"/>
+        </taskdef>
+
+        <instrument verbose="true">
+            <fileset dir="${classbin.dir}">
+                <include name="org/zfin/profile/Person.class"/>
+            </fileset>
+        </instrument>
+    </target>
+
     <target name="compile" depends="prepare"
             description="Target to compile all classes, excluding test files, and moving anything from the source
             folder to the class folder.">
@@ -550,7 +563,7 @@
     </macrodef>
 
 
-    <target name="deploy" depends="deploy-without-tests,test,productionSmokeTests"
+    <target name="deploy" depends="deploy-without-tests,instrument,test,productionSmokeTests"
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests" depends="pre-deploy,build-properties,advance-build,unittests-quiet,notify-restart,restart,notify-up,deploy-solr"/>
@@ -650,7 +663,7 @@
         <copy-indexer-build-file-with-env-variables />
     </target>
 
-    <target name="dirtydeploy" depends="compile"
+    <target name="dirtydeploy" depends="compile,instrument"
             description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
         <copyWebApp from="${web.dir}" to="${home.target}"/>
         <copy-indexer-build-file-with-env-variables />
