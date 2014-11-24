@@ -77,9 +77,6 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         if (statementStart.toUpperCase().startsWith(LOAD)) {
             checkIfLoadStatement();
         }
-        if (statementStart.toUpperCase().startsWith(LOAD)) {
-            checkIfLoadStatement();
-        }
         if (query != null && statementStart.toUpperCase().startsWith(SINGLE_LOAD)) {
             checkIfLoadStatement();
         }
