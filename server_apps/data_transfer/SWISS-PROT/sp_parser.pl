@@ -71,19 +71,19 @@ while (<>) {
 
   #DE   Tyrosine-protein kinase Jak1 (EC 2.7.1.112) (Janus kinase 1) (Jak-1).q
   # since Jul 22, 2008:
-  #DE            EC=3.4.24.81;  
-  # see http://www.chem.qmul.ac.uk/iubmb/enzyme/ 
-  if (/^DE\s+EC=(.*);/) {   
-  
-          $ecnumberLine = $1; 
-     
-          if ($ecnumberLine =~ m/\{/) {   ## EC=2.7.4.6 {ECO:0000256|RuleBase:RU004013};   
+  #DE            EC=3.4.24.81;
+  # see http://www.chem.qmul.ac.uk/iubmb/enzyme/
+  if (/^DE\s+EC=(.*);/) {
+
+          $ecnumberLine = $1;
+
+          if ($ecnumberLine =~ m/\{/) {   ## EC=2.7.4.6 {ECO:0000256|RuleBase:RU004013};
              @ecLineSplit = split(/\{/, $ecnumberLine);
              $ecWithBracket = $ecLineSplit[0];
              $ecWithBracket =~ s/\s+$//;     ## strip trailing space
-             $ecnumber = $ecWithBracket if $ecWithBracket =~ m/[\d\.\-]*/;                 
+             $ecnumber = $ecWithBracket if $ecWithBracket =~ m/[\d\.\-]*/;
           } else {                            ## EC=2.7.8.2;
-             $ecnumber = $ecnumberLine if $ecnumberLine =~ m/[\d\.\-]*/; 
+             $ecnumber = $ecnumberLine if $ecnumberLine =~ m/[\d\.\-]*/;
           }
   }
 
@@ -181,13 +181,15 @@ while (<>) {
            	 $kwToPrint = $1;
            	 $kwToPrint =~ s/^\s+//;     ## strip leading space
            	 $kwToPrint =~ s/\s+$//;     ## strip trailing space
+           	 $kwToPrint =~ s/\.$//;     ## strip trailing period (.)
 	         foreach $gene (@gene_array) {
 	            print KEYWD "$gene|$kwToPrint|\n";
 	         }
-	       } elsif ($kw =~ m/(.*\w)$/) {     ## some records still with old format that does not contain braces
+	       } elsif ($kw =~ m/(.*)$/) {     ## some records still with old format that does not contain braces
            	 $kwToPrint = $1;
            	 $kwToPrint =~ s/^\s+//;     ## strip leading space
            	 $kwToPrint =~ s/\s+$//;     ## strip trailing space
+           	 $kwToPrint =~ s/\.$//;     ## strip trailing period (.)
 	         foreach $gene (@gene_array) {
 	            print KEYWD "$gene|$kwToPrint|\n";
 	         }
@@ -225,9 +227,9 @@ while (<>) {
     }
 
     if (length($ecnumber)>0){
-	foreach $gene (@gene_array) {
+	  foreach $gene (@gene_array) {
 	    print DBLINK "$gene|EC|$ecnumber||\n";
-	}
+	  }
     }
 
     # reinitiate the variables for loop
