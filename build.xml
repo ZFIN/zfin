@@ -324,9 +324,7 @@
 
         <instrument verbose="true">
             <fileset dir="${classbin.dir}">
-<!--
-                <include name="org/zfin/profile/Person.class"/>
--->
+                <include name="org/zfin/profile/Person1.class"/>
             </fileset>
         </instrument>
     </target>
