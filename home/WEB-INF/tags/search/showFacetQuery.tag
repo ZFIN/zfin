@@ -27,7 +27,7 @@
                     <li style="min-height:10px" class="facet-value row-fluid">
                         <span style="min-height:10px" class="span9 selectable-facet-value">
                             <a style="padding-left: 31px; padding-right: 2px; min-height:10px"
-                               onclick="ga('send', 'event', '${gaCategory}', 'include', '${facetQuery.label}')"
+                               onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${facetQuery.label}')"
                                href="${facetQuery.url}">
                                 ${facetQuery.label}
                            </a>

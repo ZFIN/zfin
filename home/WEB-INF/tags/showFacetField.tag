@@ -99,7 +99,7 @@
                 </span>
                 <div>
                     <a class="facet-show-all-facets-link facet-value-modal-link" href="#"
-                       onclick="ga('send', 'event', '${zfn:buildFacetedSearchGACategory(category, facet.label)}', 'show all');"
+                       onclick="ga('send', 'event', '${zfn:buildFacetedSearchGACategory(category, facet.label)} Facet', 'show all');"
                        data-toggle="modal" data-target="#facet-value-modal"
                        category="${category}" field="${facet.facetField.name}" modal-title="${facet.label}">Show All</a>
                 </div>

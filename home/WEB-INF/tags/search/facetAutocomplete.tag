@@ -165,7 +165,7 @@
         };
 
         $scope.sendGAEvent = function(action, value) {
-            ga('send', 'event', $scope.category + " : " + $scope.title, action, value);
+            ga('send', 'event', $scope.category + ' : ' + $scope.title + ' Facet', action, value);
         };
 
     });
