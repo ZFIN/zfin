@@ -25,7 +25,7 @@ public class DbScriptFileParserTest {
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         assertNotNull(queries);
-        assertEquals(6, queries.size());
+        assertEquals(8, queries.size());
         DatabaseJdbcStatement statement = queries.get(0);
         assertTrue(!statement.isLoadStatement());
         assertEquals("terms_missing_obo_id.txt", statement.getDataKey());
@@ -39,7 +39,7 @@ public class DbScriptFileParserTest {
         statement = queries.get(2);
         assertTrue(statement.isInsertStatement());
         assertEquals("select termrel_term_1_id, termrel_term_2_id, termrel_type    from tmp_rels;", statement.getDebugStatement().getQuery());
-        assertEquals("insert into tmp_rels_zdb (ttermrel_ont_id_1, ttermrel_ont_id_2, ttermrel_type)", statement.getDebugStatement().getComment());
+        assertEquals("INSERT  into tmp_rels_zdb (ttermrel_ont_id_1, ttermrel_ont_id_2, ttermrel_type)", statement.getDebugStatement().getComment());
 
         // load statement
         statement = queries.get(5);
@@ -51,6 +51,16 @@ public class DbScriptFileParserTest {
         assertTrue(statement.isDeleteStatement());
         assertEquals("SELECT * from tmp_zfin_rels   where termrel_term_2_zdb_id is null;", statement.getDebugStatement().getQuery());
         assertEquals("SELECT * FROM tmp_zfin_rels", statement.getDebugDeleteStatement().getQuery());
+
+        // DELETE statement
+        statement = queries.get(6);
+        assertTrue(statement.isDeleteStatement());
+        assertEquals("SELECT * from tmp_zfin_rels   where termrel_term_2_zdb_id is null;", statement.getDebugStatement().getQuery());
+
+        // update statement
+        statement = queries.get(7);
+        assertTrue(statement.isUpdateStatement());
+        assertEquals("SELECT *      tmp_syndef      set scoper = trim(scoper);", statement.getDebugStatement().getQuery());
     }
 
 }

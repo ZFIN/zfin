@@ -19,6 +19,10 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
 
     private static final Logger logger = Logger.getLogger(AntibodyWikiSynchronizationJob.class);
 
+    public AntibodyWikiSynchronizationJob(String jobName, String propertyFilePath, String dataDirectoryString) {
+        super(jobName, propertyFilePath, dataDirectoryString);
+    }
+
     public static void main(String[] args) throws WikiLoginException, FileNotFoundException, InterruptedException {
         initLog4J();
         setLoggerToInfoLevel(logger);
@@ -28,11 +32,8 @@ public class AntibodyWikiSynchronizationJob extends AbstractValidateDataReportTa
         logger.info("pushing antibodies to antibody wiki");
         String propertyFilePath = args[0];
         String jobDirectoryString = args[1];
-        AntibodyWikiSynchronizationJob job = new AntibodyWikiSynchronizationJob();
-        job.setPropertyFilePath(propertyFilePath);
-        job.setJobName(args[2]);
-        job.init(jobDirectoryString);
-        job.init();
+        AntibodyWikiSynchronizationJob job = new AntibodyWikiSynchronizationJob(args[2], propertyFilePath, jobDirectoryString);
+        job.initDatabase();
         System.exit(job.execute());
     }
 

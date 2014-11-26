@@ -14,6 +14,8 @@ import org.zfin.util.ReportGenerator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -38,27 +40,38 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     public abstract int execute();
 
-    protected void init(String baseDir) {
+    protected AbstractValidateDataReportTask() {
+    }
+
+    protected AbstractValidateDataReportTask(String jobName, String propertyFilePath, String dataDirectoryString) {
+        super();
+        initBasicInfo(jobName, propertyFilePath, dataDirectoryString);
+    }
+
+    /**
+     * Use if you cannot instantiate class through the non-default constructor, e.g. Autowire
+     * @param jobName
+     * @param propertyFilePath
+     * @param dataDirectoryString
+     */
+    public void initBasicInfo(String jobName, String propertyFilePath, String dataDirectoryString) {
+        this.jobName = jobName;
+        this.propertyFilePath = propertyFilePath;
         ZfinProperties.init(propertyFilePath);
-        if (baseDir != null) {
-            dataDirectory = new File(baseDir);
+        if (dataDirectoryString != null) {
+            dataDirectory = new File(dataDirectoryString);
             if (!dataDirectory.exists()) {
                 String message = "No directory found: " + dataDirectory.getAbsolutePath();
                 LOG.error(message);
                 throw new RuntimeException(message);
             }
         }
-    }
-
-    protected void init() {
-        init(true);
-    }
-
-    protected void init(boolean initDatabase) {
-        if (initDatabase)
-            new HibernateSessionCreator(false);
-
         setReportProperties();
+    }
+
+    protected void initDatabase() {
+        new HibernateSessionCreator(false);
+
     }
 
     protected void setReportProperties() {
@@ -68,6 +81,14 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getPropertyFileFromWebroot(String webrootDirectory) {
+        if(webrootDirectory == null)
+            return null;
+
+        Path path = Paths.get(webrootDirectory, "WEB-INF", "zfin.properties");
+        return path.toString();
     }
 
     protected void createErrorReport(List<String> errorMessages, List<List<String>> resultList) {
@@ -204,14 +225,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
 
     public String getJobName() {
         return jobName;
-    }
-
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
-    }
-
-    public void setPropertyFilePath(String propertyFilePath) {
-        this.propertyFilePath = propertyFilePath;
     }
 
     public static List<List<String>> getStringifiedList(List<String> updatedPages) {

@@ -19,6 +19,10 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
 
     private static final Logger logger = Logger.getLogger(ValidatePermissionsForZebrafishBookJob.class);
 
+    public ValidatePermissionsForZebrafishBookJob(String jobName, String propertyFilePath, String jobDirectoryString) {
+        super(jobName, propertyFilePath, jobDirectoryString);
+    }
+
     @Override
     public int execute() {
         try {
@@ -81,11 +85,8 @@ public class ValidatePermissionsForZebrafishBookJob extends AbstractValidateData
         logger.info("Setting Permissions on Zebrafish Book pages...");
         String propertyFilePath = args[0];
         String jobDirectoryString = args[1];
-        ValidatePermissionsForZebrafishBookJob job = new ValidatePermissionsForZebrafishBookJob();
-        job.setPropertyFilePath(propertyFilePath);
-        job.init(jobDirectoryString);
-        job.setJobName(args[2]);
-        job.init(false);
+        ValidatePermissionsForZebrafishBookJob job =
+                new ValidatePermissionsForZebrafishBookJob(args[2], propertyFilePath, jobDirectoryString);
         job.setLoggerFile();
         System.exit(job.execute());
     }

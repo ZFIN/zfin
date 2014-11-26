@@ -12,11 +12,15 @@ import java.util.List;
  */
 public class UpdateDOIJob extends AbstractValidateDataReportTask {
 
-    private static Logger logger = Logger.getLogger(UpdateDOIJob.class) ;
+    private static Logger logger = Logger.getLogger(UpdateDOIJob.class);
 
     private boolean reportAll;
     private int maxToProcess;
     private int maxAttempts;
+
+    public UpdateDOIJob(String jobName, String propertyPath, String baseDir) {
+        super(jobName, propertyPath, baseDir);
+    }
 
     @Override
     public int execute() {
@@ -46,11 +50,8 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
     public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);
-        UpdateDOIJob job = new UpdateDOIJob();
-        job.setPropertyFilePath(args[0]);
-        job.init(args[1]);
         String jobName = args[2];
-        job.setJobName(jobName);
+        UpdateDOIJob job = new UpdateDOIJob(jobName, args[0], args[1]);
         if (jobName.endsWith("_d")) {
             job.reportAll = false;
             job.maxToProcess = 20;
@@ -62,7 +63,7 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
         } else {
             throw new RuntimeException("Expecting job name to end in `_d` or `_m`, but was: " + jobName);
         }
-        job.init();
+        job.initDatabase();
         System.exit(job.execute());
     }
 }

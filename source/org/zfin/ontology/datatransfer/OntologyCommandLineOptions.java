@@ -16,6 +16,7 @@ public interface OntologyCommandLineOptions {
     public static final Option oboFileURL = OptionBuilder.withArgName("oboFileURL").hasArg().withDescription("The URL from which to " +
             "download the most current OBO file name").create("oboFileURL");
     public static final Option webrootDirectory = OptionBuilder.withArgName("webrootDirectory").hasArg().withDescription("location of webroot directory").create("webrootDirectory");
+    public static final Option loadDir = OptionBuilder.withArgName("loadDir").hasArg().withDescription("location of the load directory").create("loadDir");
     public static final Option productionModeOption = OptionBuilder.withArgName("productionMode").hasArg().withDescription("production mode or dev mode").create("productionMode");
     public static final Option debugModeOption = OptionBuilder.withArgName("debugMode").hasArg().withDescription("include debug rows or not").create("debugMode");
 

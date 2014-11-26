@@ -16,6 +16,10 @@ public class SandboxCleanerJob extends AbstractValidateDataReportTask {
 
     private static final Logger logger = Logger.getLogger(SandboxCleanerJob.class);
 
+    public SandboxCleanerJob(String jobName, String propertyFilePath, String jobDirectoryString) {
+        super(jobName, propertyFilePath, jobDirectoryString);
+    }
+
     public int execute() {
         try {
             WikiWebService.getInstance(ZfinPropertiesEnum.WIKI_HOST.value()).cleanSandbox();
@@ -35,11 +39,7 @@ public class SandboxCleanerJob extends AbstractValidateDataReportTask {
         logger.info("Cleaning sandbox wiki...");
         String propertyFilePath = args[0];
         String jobDirectoryString = args[1];
-        SandboxCleanerJob job = new SandboxCleanerJob();
-        job.setPropertyFilePath(propertyFilePath);
-        job.init(jobDirectoryString);
-        job.setJobName(args[2]);
-        job.init(false);
+        SandboxCleanerJob job = new SandboxCleanerJob(args[2], propertyFilePath, jobDirectoryString);
         System.exit(job.execute());
     }
 }

@@ -16,6 +16,10 @@ public class SetPermissionsToOwnerJob extends AbstractValidateDataReportTask {
 
     private static final Logger logger = Logger.getLogger(SetPermissionsToOwnerJob.class);
 
+    public SetPermissionsToOwnerJob(String jobName, String propertyPath, String baseDir) {
+        super(jobName, propertyPath, baseDir);
+    }
+
     @Override
     public int execute() {
         setLoggerFile();
@@ -43,11 +47,7 @@ public class SetPermissionsToOwnerJob extends AbstractValidateDataReportTask {
         initLog4J();
         setLoggerToInfoLevel(logger);
         setLoggerToInfoLevel(WikiWebService.logger);
-        SetPermissionsToOwnerJob job = new SetPermissionsToOwnerJob();
-        job.setPropertyFilePath(args[0]);
-        job.init(args[1]);
-        job.setJobName(args[2]);
-        job.init(false);
+        SetPermissionsToOwnerJob job = new SetPermissionsToOwnerJob(args[2], args[0], args[1]);
         System.exit(job.execute());
     }
 }

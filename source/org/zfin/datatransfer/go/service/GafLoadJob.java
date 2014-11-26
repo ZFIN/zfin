@@ -75,7 +75,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         GafOrganization.OrganizationEnum organizationEnum = GafOrganization.OrganizationEnum.getType(organization);
 
         try {
-            localDownloadFile = System.getProperty("java.io.tmpdir") + "/" + "gene_association."+organizationEnum.name();
+            localDownloadFile = System.getProperty("java.io.tmpdir") + "/" + "gene_association." + organizationEnum.name();
             gafService = new GafService(organizationEnum);
 
             // 1. download gzipped GAF file
@@ -86,8 +86,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             // 2. parse file
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
 
-            if(CollectionUtils.isEmpty(gafEntries)){
-                throw new GafValidationError("No gaf entries found in file: "+downloadedFile);
+            if (CollectionUtils.isEmpty(gafEntries)) {
+                throw new GafValidationError("No gaf entries found in file: " + downloadedFile);
             }
 
             // 2.5 replace merged ZDB Id
@@ -143,7 +143,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
         } catch (Exception e) {
             logger.error("Failed to process Gaf load job", e);
-            if(HibernateUtil.currentSession().getTransaction()!=null){
+            if (HibernateUtil.currentSession().getTransaction() != null) {
                 HibernateUtil.rollbackTransaction();
             }
             try {
@@ -168,10 +168,10 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         Set<MarkerGoTermEvidence> evidencesToAdd = gafJobData.getNewEntries();
         Iterator<MarkerGoTermEvidence> iteratorToAdd = evidencesToAdd.iterator();
 
-        while(iteratorToAdd.hasNext()){
+        while (iteratorToAdd.hasNext()) {
             // build batch
             List<MarkerGoTermEvidence> batchToAdd = new ArrayList<MarkerGoTermEvidence>();
-            for(int i = 0 ; i < BATCH_SIZE && iteratorToAdd.hasNext() ; ++i){
+            for (int i = 0; i < BATCH_SIZE && iteratorToAdd.hasNext(); ++i) {
                 MarkerGoTermEvidence markerGoTermEvidence = iteratorToAdd.next();
                 batchToAdd.add(markerGoTermEvidence);
             }
@@ -181,16 +181,16 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
-                String error = "Failed to add batch: " ;
-                for(MarkerGoTermEvidence markerGoTermEvidence : batchToAdd ){
+                String error = "Failed to add batch: ";
+                for (MarkerGoTermEvidence markerGoTermEvidence : batchToAdd) {
                     error += markerGoTermEvidence.toString() + "\n";
                 }
-                GafValidationError gafValidationError = new GafValidationError(error,e) ;
+                GafValidationError gafValidationError = new GafValidationError(error, e);
                 logger.error(gafValidationError);
                 gafJobData.addError(gafValidationError);
             }
             // the theory is that these were being left open . . . this should fix that
-            finally{
+            finally {
                 HibernateUtil.closeSession();
             }
         }
@@ -198,13 +198,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     private void removeAnnotations(GafJobData gafJobData) {
         List<GafJobEntry> evidencesToRemove = gafJobData.getRemovedEntries();
-        Iterator<GafJobEntry> iteratorToRemove  = evidencesToRemove.iterator();
+        Iterator<GafJobEntry> iteratorToRemove = evidencesToRemove.iterator();
 
         // create batch
-        while(iteratorToRemove.hasNext()){
+        while (iteratorToRemove.hasNext()) {
             // build batch
             List<GafJobEntry> batchToRemove = new ArrayList<GafJobEntry>();
-            for(int i = 0 ; i < BATCH_SIZE && iteratorToRemove.hasNext() ; ++i){
+            for (int i = 0; i < BATCH_SIZE && iteratorToRemove.hasNext(); ++i) {
                 GafJobEntry removeEntry = iteratorToRemove.next();
                 batchToRemove.add(removeEntry);
             }
@@ -214,11 +214,11 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
-                String error = "Failed to remove batch: " ;
-                for(GafJobEntry evidenceToRemove : batchToRemove ){
+                String error = "Failed to remove batch: ";
+                for (GafJobEntry evidenceToRemove : batchToRemove) {
                     error += evidenceToRemove.toString() + "\n";
                 }
-                GafValidationError gafValidationError = new GafValidationError(error,e) ;
+                GafValidationError gafValidationError = new GafValidationError(error, e);
                 logger.error(gafValidationError);
                 gafJobData.addError(gafValidationError);
             }
@@ -232,9 +232,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         String configPath = "file:" + baseDir + "/gaf-load.xml";
         ApplicationContext context = new FileSystemXmlApplicationContext(configPath);
         GafLoadJob job = context.getBean(GafLoadJob.class);
-        job.setPropertyFilePath(args[0]);
-        job.init(baseDir);
-        job.setJobName(args[2]);
+        job.initBasicInfo(args[2], args[0], baseDir);
         job.organization = args[3];
         job.downloadUrl = args[4];
         String parserClassName = args[5];
@@ -244,7 +242,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             logger.error("Could not load parser class " + parserClassName);
             System.exit(1);
         }
-        job.init();
+        job.initDatabase();
         System.exit(job.execute());
     }
 }

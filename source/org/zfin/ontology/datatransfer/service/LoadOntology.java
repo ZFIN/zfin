@@ -65,6 +65,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
 
     static {
         options.addOption(oboFileNameOption);
+        options.addOption(loadDir);
         options.addOption(log4jFileOption);
         options.addOption(dbScriptFileOption);
         options.addOption(webrootDirectory);
@@ -106,15 +107,10 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
     }
 
-    public LoadOntology(String oboFile, String propertyDirectory, String... scriptFiles) throws IOException {
+    public LoadOntology(String jobName, String propertyDirectory, String baseDir, String oboFile, String... scriptFiles) throws IOException {
+        super(jobName, propertyDirectory, baseDir);
+        initDatabase();
         initializeLoad(oboFile, scriptFiles);
-        if (propertyDirectory == null)
-            initAll();
-        else
-            initAll(propertyDirectory + "/WEB-INF/zfin.properties");
-        if (propertyDirectory == null)
-            throw new RuntimeException("No property file found.");
-        ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue(propertyDirectory);
         cronJobUtil = new CronJobUtil(ZfinProperties.splitValues(ZfinPropertiesEnum.ONTOLOGY_LOADER_EMAIL));
     }
 
@@ -141,14 +137,16 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         initializeLogger(commandLine.getOptionValue(log4jFileOption.getOpt()));
         String oboFile = commandLine.getOptionValue(oboFileNameOption.getOpt());
         String dbScriptFilesNames = commandLine.getOptionValue(dbScriptFileOption.getOpt());
-        String propertyFileName = commandLine.getOptionValue(webrootDirectory.getOpt());
+        String webrootDir = commandLine.getOptionValue(webrootDirectory.getOpt());
         String jobName = commandLine.getOptionValue(DataReportTask.jobNameOpt.getOpt());
+        String loadingDir = commandLine.getOptionValue(loadDir.getOpt());
         String[] dbScriptFiles = dbScriptFilesNames.split(",");
         LOG.info("Loading obo file: " + oboFile);
+        String propertyFileName = getPropertyFileFromWebroot(webrootDir);
 
         LoadOntology loader = null;
         try {
-            loader = new LoadOntology(oboFile, propertyFileName, dbScriptFiles);
+            loader = new LoadOntology(jobName, propertyFileName, loadingDir, oboFile, dbScriptFiles);
         } catch (IOException e) {
             LOG.error(e.getMessage());
             System.exit(-1);
@@ -864,7 +862,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             report.addMessageToSection(message, "Check file version");
             return false;
         }
-         parseOboFile();
+        parseOboFile();
         return true;
     }
 
@@ -936,7 +934,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     }
 
     @Override
-    public int execute() { return 0; }
+    public int execute() {
+        return 0;
+    }
 
     class RelationshipsValidator {
 

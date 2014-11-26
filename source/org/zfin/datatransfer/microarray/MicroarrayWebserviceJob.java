@@ -22,6 +22,10 @@ public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
 
     private static final ExpressionService expressionService = new ExpressionService();
 
+    public MicroarrayWebserviceJob(String jobName, String propertyDirectory, String baseDir) {
+        super(jobName, propertyDirectory, baseDir);
+    }
+
     @Override
     public int execute() {
         setLoggerFile();
@@ -99,11 +103,8 @@ public class MicroarrayWebserviceJob extends AbstractValidateDataReportTask {
     public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);
-        MicroarrayWebserviceJob job = new MicroarrayWebserviceJob();
-        job.setPropertyFilePath(args[0]);
-        job.init(args[1]);
-        job.setJobName(args[2]);
-        job.init();
+        MicroarrayWebserviceJob job = new MicroarrayWebserviceJob(args[2], args[0], args[1]);
+        job.initDatabase();
         System.exit(job.execute());
     }
 

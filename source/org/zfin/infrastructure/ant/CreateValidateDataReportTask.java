@@ -19,6 +19,10 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
     protected boolean useDynamicQuery;
     private DatabaseService service = new DatabaseService();
 
+    public CreateValidateDataReportTask(String jobName, String propertyFilePath, String directory) {
+        super(jobName, propertyFilePath, directory);
+    }
+
     public int execute() {
         LOG.info("Job Name: " + jobName);
         LOG.info("Running SQLQueryTask on instance: " + instance);
@@ -71,14 +75,11 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         String jobName = args[1];
         String directory = args[2];
         String propertyFilePath = args[3];
-        CreateValidateDataReportTask task = new CreateValidateDataReportTask();
+        CreateValidateDataReportTask task = new CreateValidateDataReportTask(jobName, propertyFilePath, directory);
         task.setInstance(instance);
-        task.setJobName(jobName);
-        task.setPropertyFilePath(propertyFilePath);
         if (args.length > 4)
             task.useDynamicQuery = Boolean.parseBoolean(args[4]);
-        task.init(directory);
-        task.init();
+        task.initDatabase();
         System.exit(task.execute());
     }
 }

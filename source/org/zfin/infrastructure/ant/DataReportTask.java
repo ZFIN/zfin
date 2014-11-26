@@ -3,7 +3,6 @@ package org.zfin.infrastructure.ant;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.zfin.framework.HibernateUtil;
@@ -23,6 +22,10 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     private String variableNames;
     private String valueNames;
     private boolean useParameterMap;
+
+    protected DataReportTask(String jobName, String propertyFilePath, String dataDirectoryString) {
+        super(jobName, propertyFilePath, dataDirectoryString);
+    }
 
     public int execute() {
         LOG.info("Job Name: " + jobName);
@@ -68,12 +71,11 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             errorMessages = service.runDbScriptFile(dbQueryFile, null, dataMap);
             Map<String, List<List<String>>> resultMap = service.getResultMap();
             generateReports(errorMessages, resultMap);
-            HibernateUtil.rollbackTransaction();
         } catch (Exception e) {
-            HibernateUtil.rollbackTransaction();
             LOG.error(e);
             throw new RuntimeException(e);
         } finally {
+            HibernateUtil.rollbackTransaction();
             HibernateUtil.closeSession();
         }
     }
@@ -101,17 +103,15 @@ public class DataReportTask extends AbstractValidateDataReportTask {
     public static void main(String[] args) {
         CommandLine commandLine = parseArguments(args, "???");
         String jobName = commandLine.getOptionValue(jobNameOpt.getOpt());
-        DataReportTask task = new DataReportTask();
-        task.setJobName(jobName);
         String useParameterMap = commandLine.getOptionValue(useParametersOpt.getOpt());
+        DataReportTask task = new DataReportTask(jobName, commandLine.getOptionValue(propertyDirOpt.getOpt()),
+                commandLine.getOptionValue(dataDirOpt.getOpt()));
         if (StringUtils.isNotEmpty(useParameterMap) && useParameterMap.equals("true")) {
             task.useParameterMap = true;
             handleParameterMap(commandLine, task);
         }
-        task.setPropertyFilePath(commandLine.getOptionValue(propertyDirOpt.getOpt()));
-        task.init(commandLine.getOptionValue(dataDirOpt.getOpt()));
         task.initLogger();
-        task.init();
+        task.initDatabase();
         LOG.getRootLogger().setLevel(Level.INFO);
         System.exit(task.execute());
     }

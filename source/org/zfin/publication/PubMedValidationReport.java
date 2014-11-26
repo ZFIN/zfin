@@ -34,19 +34,23 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     private static int numOfThreads = 1;
 
+    public PubMedValidationReport(String jobName, String propertyFilePath, String baseDir) {
+        super(jobName, propertyFilePath, baseDir);
+    }
+
     public static void main(String[] arguments) throws Exception {
         initializeLog4J();
         LOG.info("Start Comparing Publications: ZFIN - PubMed");
         CommandLine commandLine = parseArguments(arguments, "comparing publications on ZFIN and PubMed ");
-        PubMedValidationReport task = new PubMedValidationReport();
-        task.jobName = commandLine.getOptionValue("jobName");
-        task.propertyFilePath = commandLine.getOptionValue("propertyFilePath");
+        String jobName1 = commandLine.getOptionValue("jobName");
+        String propertyFilePath1 = commandLine.getOptionValue("propertyFilePath");
+        String baseDir = commandLine.getOptionValue("baseDir");
+        PubMedValidationReport task = new PubMedValidationReport(jobName1, propertyFilePath1, baseDir);
         if (StringUtils.isNotEmpty(commandLine.getOptionValue("numOfPublication")))
             numberOfPublicationsToScan = Integer.parseInt(commandLine.getOptionValue("numOfPublication"));
         if (StringUtils.isNotEmpty(commandLine.getOptionValue("threads")))
             numOfThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
-
-        task.init(commandLine.getOptionValue("baseDir"));
+        task.initDatabase();
         System.exit(task.execute());
     }
 
@@ -109,7 +113,6 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         templateName = jobName + ".faulty-Pub-Info";
         reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
         createErrorReport(null, pubInfoMismatchList, reportConfiguration);
-
 
 
         if (pubMedIdNotFoundList.size() > 0) {

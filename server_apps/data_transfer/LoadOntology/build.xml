@@ -148,6 +148,8 @@
                 <arg value="${scriptFiles}"/>
                 <arg value="-webrootDirectory"/>
                 <arg value="${web.dir}"/>
+                <arg value="-loadDir"/>
+                <arg value="${basedir}"/>
                 <arg value="-jobName"/>
                 <arg value="${JobName}"/>
             </java>
@@ -175,6 +177,8 @@
             <arg value="${dbScriptFiles}"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
+            <arg value="-loadDir"/>
+            <arg value="${basedir}"/>
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
         </java>

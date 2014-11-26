@@ -13,6 +13,10 @@ public class RegenerateWebHostCuratedDatabasesJob extends AbstractValidateDataRe
 
     private static Logger logger = Logger.getLogger(RegenerateWebHostCuratedDatabasesJob.class);
 
+    public RegenerateWebHostCuratedDatabasesJob(String jobName, String propertyFile, String baseDir) {
+        super(jobName, propertyFile, baseDir);
+    }
+
     @Override
     public int execute() {
         setLoggerFile();
@@ -44,11 +48,8 @@ public class RegenerateWebHostCuratedDatabasesJob extends AbstractValidateDataRe
     public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);
-        RegenerateWebHostCuratedDatabasesJob job = new RegenerateWebHostCuratedDatabasesJob();
-        job.setPropertyFilePath(args[0]);
-        job.init(args[1]);
-        job.setJobName(args[2]);
-        job.init();
+        RegenerateWebHostCuratedDatabasesJob job = new RegenerateWebHostCuratedDatabasesJob(args[2], args[0], args[1]);
+        job.initDatabase();
         System.exit(job.execute());
     }
 }

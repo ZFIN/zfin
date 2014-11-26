@@ -14,6 +14,10 @@ public class ValidateBlastDatabases extends AbstractValidateDataReportTask {
 
     private static Logger logger = Logger.getLogger(ValidateBlastDatabases.class);
 
+    public ValidateBlastDatabases(String jobName, String propertyPath, String baseDir) {
+        super(jobName, propertyPath, baseDir);
+    }
+
     @Override
     public int execute() {
         setLoggerFile();
@@ -35,11 +39,8 @@ public class ValidateBlastDatabases extends AbstractValidateDataReportTask {
     public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);
-        ValidateBlastDatabases job = new ValidateBlastDatabases();
-        job.setPropertyFilePath(args[0]);
-        job.init(args[1]);
-        job.setJobName(args[2]);
-        job.init();
+        ValidateBlastDatabases job = new ValidateBlastDatabases(args[2], args[0], args[1]);
+        job.initDatabase();
         System.exit(job.execute());
     }
 

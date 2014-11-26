@@ -352,7 +352,9 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         if (isInsertStatement()) {
             if (isLoadStatement()) {
                 statement.comment = "Load records from file / memory into " + getInsertTable().toUpperCase();
-                statement.query = new StringBuilder(getQuery().replace("insert into", SELECT + " " + STAR + " " + FROM));
+                statement.query = new StringBuilder(
+                        getQuery().replaceFirst("(?i)" + INSERT + "( *)" + INTO, SELECT + " " + STAR + " " + FROM)
+                );
             } else {
                 int startOfSelect = getQuery().indexOf(SELECT.toLowerCase());
                 statement.comment = getQuery().substring(0, startOfSelect).trim();
@@ -360,10 +362,10 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
             }
         } else if (isDeleteStatement()) {
             statement.comment = "DELETE from " + getDeleteTable().toUpperCase();
-            statement.query = new StringBuilder(getQuery().replace("delete", SELECT + " " + STAR));
+            statement.query = new StringBuilder(getQuery().replaceFirst("(?i)" + DELETE, SELECT + " " + STAR));
         } else if (isUpdateStatement()) {
             statement.comment = "UPDATE " + getUpdateTable().toUpperCase();
-            statement.query = new StringBuilder(getQuery().replace("delete", SELECT + " " + STAR));
+            statement.query = new StringBuilder(getQuery().replaceFirst("(?i)" + UPDATE, SELECT + " " + STAR));
         }
         statement.parentStatement = this;
         return statement;
