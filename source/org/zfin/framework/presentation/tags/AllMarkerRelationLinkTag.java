@@ -5,6 +5,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.MarkerDBLink;
 
@@ -12,10 +13,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Creates a hyperlink for any sort of relation from a gene. FB 2385.
@@ -39,7 +37,7 @@ public class AllMarkerRelationLinkTag extends BodyTagSupport {
         StringBuilder sb = new StringBuilder();
         try {
             if (this.accession != null) {
-                Set<MarkerDBLink> markerLinks = accession.getBlastableMarkerDBLinks();
+                Collection<MarkerDBLink> markerLinks = RepositoryFactory.getSequenceRepository().getBlastableDBlinksForAccession(accession);//accession.getBlastableMarkerDBLinks();
                 List<Marker> markers = new ArrayList<Marker>();
                 for (MarkerDBLink link : markerLinks) {
                     if (link.getMarker() != null) {

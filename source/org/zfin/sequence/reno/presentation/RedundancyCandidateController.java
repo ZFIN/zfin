@@ -30,6 +30,7 @@ public class RedundancyCandidateController extends AbstractCandidateController {
 
     @RequestMapping(value = "/redundancy-candidate-view/{zdbID}", method = RequestMethod.GET)
     public String referenceData(@PathVariable String zdbID, CandidateBean candidateBean, Model model) {
+        logger.debug("enter redundancy-candidate-view");
         candidateBean.createRunCandidateForZdbID(zdbID);
         return handleGet(candidateBean, model);
     }

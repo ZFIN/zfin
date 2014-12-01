@@ -1108,6 +1108,61 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 })
                 .list();
     }
+
+    @Override
+    public List<DBLink> getDBLinksForAccession(Accession accession) {
+        return HibernateUtil.currentSession().createCriteria(DBLink.class)
+                .add(Restrictions.eq("accessionNumber",accession.getNumber()))
+                .add(Restrictions.eq("referenceDatabase",accession.getReferenceDatabase())).list();
+
+    }
+
+
+    /*
+     from db_link link
+        join accession_bank acc on link.dblink_acc_num=acc.accbk_acc_num
+        join foreign_db_contains fdbc on fdbc.fdbcont_zdb_id = link.dblink_fdbcont_zdb_id
+        join foreign_db_data_type fdbdt on fdbc.fdbcont_fdbdt_id = fdbdt.fdbdt_pk_id
+        left outer join accession_version av on acc.accbk_acc_num=av.accver_acc_num
+        where acc.accbk_pk_id=?
+        and fdbdt.fdbdt_super_type = 'sequence'
+        and fdbdt.fdbdt_data_type in ( 'RNA','Polypeptide' )
+
+
+    */
+
+    @Override
+    public List<MarkerDBLink> getBlastableDBlinksForAccession(Accession accession) {
+        List<MarkerDBLink> markerDBLinks = new ArrayList<>();
+
+        Session session = HibernateUtil.currentSession();
+
+        markerDBLinks.addAll(
+                session.createCriteria(DBLink.class)
+                .add(Restrictions.eq("accessionNumber",accession.getNumber()))
+                .createAlias("referenceDatabase", "refDB")
+                .createAlias("refDB.foreignDBDataType", "fdbType")
+                .add(Restrictions.eq("referenceDatabase", accession.getReferenceDatabase()))
+                .add(Restrictions.eq("fdbType.superType",ForeignDBDataType.SuperType.SEQUENCE.toString()))
+                .add(Restrictions.or(
+                        Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.RNA.toString()),
+                        Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.POLYPEPTIDE.toString()))
+                )
+                .list()
+        );
+
+        ReferenceDatabase ensembl = (ReferenceDatabase) session.get(ReferenceDatabase.class,"ZDB-FDBCONT-061018-1");
+
+        markerDBLinks.addAll(
+                session.createCriteria(DBLink.class)
+                        .add(Restrictions.eq("accessionNumber",accession.getNumber()))
+                        .createAlias("referenceDatabase", "refDB")
+                        .add(Restrictions.eq("referenceDatabase", ensembl))
+                        .list()
+        );
+
+        return markerDBLinks;
+    }
 }
 
 

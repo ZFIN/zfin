@@ -13,7 +13,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
+import org.zfin.sequence.Accession;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RedundancyRun;
@@ -102,6 +106,7 @@ public class HibernateRenoRepository implements RenoRepository {
         criteria.add(Restrictions.eq("zdbID", zdbID));
         return (Run) criteria.uniqueResult();
     }
+
 
     public List<RunCandidate> getSangerRunCandidatesInQueue(Run run) {
 
@@ -321,7 +326,6 @@ public class HibernateRenoRepository implements RenoRepository {
         query.setParameter("run", run);
         return query.list();
     }
-
 
     public boolean lock(Person newOwner, RunCandidate rc) {
         if (rc.getLockPerson() == null) {

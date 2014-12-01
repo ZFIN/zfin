@@ -73,7 +73,7 @@ VEGADIR = /research/zprod/data/VEGA
 
 DEST = $(VEGADIR)/2014-11
 FTP  = ftp.sanger.ac.uk/pub/users/st3/vega59/
-PREV = $(VEGADIR)/2013-11
+PREV = $(VEGADIR)/2013-10
 
 COMMON_BIN = $(TOP)/commons/bin
 

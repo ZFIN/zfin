@@ -1,9 +1,13 @@
 package org.zfin.sequence.reno.service;
 
+import org.apache.bcel.Repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
@@ -15,6 +19,7 @@ import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Accession;
+import org.zfin.sequence.DBLink;
 import org.zfin.sequence.LinkageGroup;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.blast.Hit;
@@ -38,7 +43,7 @@ public class RenoService {
     private Map<Marker, Set<LinkageGroup>> cachedLinkageGroupMap = new HashMap<Marker, Set<LinkageGroup>>();
 
     public  List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
-        List<Marker> associatedMarkers = rc.getAllSingleAssociatedGenesFromQueries();
+        List<Marker> associatedMarkers = getAllSingleAssociatedGenesFromQueriesForRunCandidate(rc);
         List<Marker> identifiedMarkers = rc.getIdentifiedMarkers();
         List<Marker> smallSegments = getRelatedMarkers(identifiedMarkers);
         candidateBean.setSmallSegments(smallSegments);
@@ -129,20 +134,20 @@ public class RenoService {
             return;
 
         List<Query> queries = rc.getCandidateQueryList();
-        logger.info("popularLinkageGroups rc: " + rc.getZdbID());
-        logger.info("popularLinkageGroups queries.size: " + queries.size());
+        logger.info("populateLinkageGroups rc: " + rc.getZdbID());
+        logger.info("populateLinkageGroups queries.size: " + queries.size());
         for (Query query : queries) {
             Set<Hit> hits = query.getBlastHits();
-            logger.info("popularLinkageGroups hits.size: " + hits.size());
+            logger.info("populateLinkageGroups hits.size: " + hits.size());
             for (Hit hit : hits) {
-                logger.debug("popularLinkageGroups hit: " + hit.getZdbID());
-                logger.debug("popularLinkageGroups hit.getTargetAccession: " + hit.getTargetAccession().getID());
+                logger.debug("populateLinkageGroups hit: " + hit.getZdbID());
+                logger.debug("populateLinkageGroups hit.getTargetAccession: " + hit.getTargetAccession().getID());
                 Set<MarkerDBLink> markerDBLinks = hit.getTargetAccession().getBlastableMarkerDBLinks();
-                logger.debug("popularLinkageGroups markerDBLinks.size: " + markerDBLinks.size());
+                logger.debug("populateLinkageGroups markerDBLinks.size: " + markerDBLinks.size());
 
                 Set<LinkageGroup> hitLinkageGroup = new TreeSet<LinkageGroup>();
                 for (MarkerDBLink markerDBLink : markerDBLinks) {
-                    logger.debug("popularLinkageGroups markerDBLink: " + markerDBLink.getZdbID());
+                    logger.debug("populateLinkageGroups markerDBLink: " + markerDBLink.getZdbID());
                     Marker marker = markerDBLink.getMarker();
                     if (false == cachedLinkageGroupMap.containsKey(marker)) {
                         cachedLinkageGroupMap.put(marker, MarkerService.getLinkageGroups(marker));
@@ -413,4 +418,97 @@ public class RenoService {
                     q.getAccession().getReferenceDatabase(), attributionZdbID);
         }
     }
+
+    public List<Marker> getMarkersForAccession(Accession accession) {
+        List<Marker> markers = new ArrayList<>();
+
+        List<DBLink> links = RepositoryFactory.getSequenceRepository().getDBLinksForAccession(accession);
+
+        for (DBLink link : links ) {
+
+            if (link instanceof MarkerDBLink) {
+                MarkerDBLink markerLink = (MarkerDBLink) link;
+                markers.add(markerLink.getMarker());
+            }
+        }
+        return markers;
+    }
+
+
+    /**
+     * Return all genes found in list of blasthits
+     *
+     * @return Marker objects for genes found in list of blast hits
+     */
+    public List<Marker> getAllSingleAssociatedGenesFromQueriesForRunCandidate(RunCandidate rc) {
+        List<Marker> genes = new ArrayList<Marker>();
+
+        logger.debug("enter getAllAssociatedGenesFromQueries: " + rc.getCandidateQueries().size());
+
+        for (Query q : rc.getCandidateQueries()) {
+            logger.debug("I've got a query: " + q.getAccession().getNumber() + " num hits: " + q.getBlastHits().size());
+            for (Hit h : q.getBlastHits()) {
+                logger.debug("I've got a hit: " + h.getZdbID());
+                logger.debug("I've got a hit accession: " + h.getTargetAccession().getNumber());
+                Accession a = h.getTargetAccession();
+                List<Marker> genesToAdd= new ArrayList<Marker>() ;
+                logger.debug("number of genes for hit: " + genes.size());
+                logger.debug("accession_id: " + a.getID());
+
+                for (Marker m : getMarkersForAccession(a)) {
+                    logger.debug("I've got a Marker: " + m.getAbbreviation()+ " of type: "+ m.getMarkerType().getType());
+                    logger.debug("genes.contains(m): " + genes.contains(m));
+                    logger.debug("is in type group genedom: " + m.isInTypeGroup(Marker.TypeGroup.GENEDOM));
+                    // if the hit is a gene, then add directly
+                    if ((m.isInTypeGroup(Marker.TypeGroup.GENEDOM))
+                            && (!genes.contains(m))) {
+                        logger.debug("ADDING genedom gene: " + m.getAbbreviation());
+                        genesToAdd.add(m) ;
+//                        genes.add(m);
+                    }
+                    // if the hit is not a gene, then add any genes that encode it
+                    else {
+                        Set<MarkerRelationship> secondMarkerRelationships = m.getSecondMarkerRelationships() ;
+                        logger.debug(m.getAbbreviation()+ (secondMarkerRelationships!=null ? " number of second marker relationships: "+ secondMarkerRelationships.size() : "null" ));
+                        for (MarkerRelationship rel : m.getSecondMarkerRelationships()) {
+                            Marker gene = rel.getFirstMarker();
+                            logger.debug("gene: "+ (gene==null ? "null" : gene.getAbbreviation())  ) ;
+                            logger.debug("encoding gene is in type group genedom: " + gene.isInTypeGroup(Marker.TypeGroup.GENEDOM));
+                            logger.debug("genes to add size: " + genesToAdd.size());
+                            logger.debug("genes to add contains: " + genesToAdd.contains(gene));
+
+                            if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !genesToAdd.contains(gene) && rel.getType().equals(
+                                    MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)){
+                                logger.debug("ADDING encoding gene: "+ gene.getAbbreviation());
+                                genesToAdd.add(gene) ;
+                            }
+                            else{
+                                logger.debug("NOT adding encoding gene: "+ gene.getAbbreviation());
+                            }
+                            if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !genesToAdd.contains(gene) && rel.getType().equals(
+                                    MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)){
+                                logger.debug("ADDING encoding gene: "+ gene.getAbbreviation());
+                                genesToAdd.add(gene) ;
+                            }
+                            else{
+                                logger.debug("NOT adding encoding gene: "+ gene.getAbbreviation());
+                            }
+                        }
+                        // only add if a single encoded relationship
+                    }
+                }
+                logger.debug("genes to add "+genesToAdd.size() + " for hit accession " + a.getNumber());
+                if(genesToAdd.size()==1){
+                    logger.debug("adding one gene: " + genesToAdd.get(0).getAbbreviation());
+                    Marker geneToAdd = genesToAdd.get(0) ;
+                    if(!genes.contains(geneToAdd)){
+                        genes.add(genesToAdd.get(0));
+                    }
+                }
+            }
+        }
+        return genes;
+    }
+
+
 }

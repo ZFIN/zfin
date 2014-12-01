@@ -36,8 +36,8 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
     @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}", method = RequestMethod.GET)
     public String referenceData(@PathVariable String zdbID, CandidateBean candidateBean, Model model) {
-        candidateBean.createRunCandidateForZdbID(zdbID);
-        return handleGet(candidateBean, model);
+            candidateBean.createRunCandidateForZdbID(zdbID);
+            return handleGet(candidateBean, model);
     }
 
     @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}", method = RequestMethod.POST)
@@ -69,6 +69,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
      * @param candidateBean bean...with data
      */
     public void handleView(CandidateBean candidateBean) {
+
         //get the runcandidate from the bean and use the repository to populate it
         String runCandidateID = candidateBean.getRunCandidate().getZdbID();
         RunCandidate rc = renoRepository.getRunCandidateByID(runCandidateID);

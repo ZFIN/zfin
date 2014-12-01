@@ -135,6 +135,9 @@ public interface SequenceRepository {
     List<DBLink> getDBLinks(ForeignDB.AvailableName name, int numberOfRecords);
 
     List<AccessionPresentation> getAccessionPresentation(ForeignDB.AvailableName name, Marker marker);
+
+    List<DBLink> getDBLinksForAccession(Accession accesion);
+    List<MarkerDBLink> getBlastableDBlinksForAccession(Accession accession);
 }
 
 

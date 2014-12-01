@@ -3,7 +3,7 @@
 <!--|AO_EMAIL_CURATOR|-->	informix\@zfin.org
 <!--|AO_EMAIL_ERR|-->	informix\@zfin.org
 <!--|BACKGROUND_COLOR|-->	#CCFFFF
-<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zprod/blastdb/
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/almdb/
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|COUNT_PATO_ERR|-->	informix\@zfin.org
 <!--|COUNT_PATO_OUT|-->	informix\@zfin.org
@@ -84,8 +84,8 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/zygotix
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@zfin.org
 <!--|WEBDRIVER_PATH_FROM_ROOT|-->	cgi-bin/webdriver
-<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/zprodmore/blastdb/Current
-<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zprod/blastdb/
+<!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/zblastfiles/zmore/almdb/Current
+<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/zblastfiles/zmore/almdb/Current
 <!--|WEBHOST_FASTA_FILE_PATH|-->	/research/zblastfiles/dev_files
 <!--|WEB_ADMIN_EMAIL|-->	informix\@zfin.org
 <!--|WIKI_HOST|-->	devwiki.zfin.org

@@ -21,11 +21,16 @@ delete from nomenclature_candidate;
 select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
  from marker
  where mrkr_type[1,4] = 'GENE'
- and  mrkr_abbrev like "%:%"  --or mrkr_name like  "% like")
+ and  mrkr_abbrev like "si:%"  --or mrkr_name like  "% like")
+ and get_date_from_id(mrkr_Zdb_id, "YYYYMMDD") > "20131101"
  and not exists (
  	select 1 from orthologue
  	where mrkr_zdb_id  = c_gene_id
  )
+ and not exists ( select 'x' from feature_marker_Relationship, feature
+     	 	  where fmrel_ftr_zdb_id = feature_zdb_id
+		  and fmrel_mrkr_zdb_id = mrkr_zdb_id
+		  and feature_abbrev like 'sa%') 
  into temp tmp_xpat_genes with no log;
 
 ! echo "bump expression pattern priority"
@@ -193,7 +198,6 @@ insert into nomenclature_candidate(
     db_name,
     priority
  from  tmp_can_pp
- where priority between 150  AND 223; -- TWIDDEL THIS
 
  --order by priority DESC
 
@@ -210,8 +214,8 @@ insert into nomenclature_candidate(
 -- #######################################################################
 ---------------------------------------------------------------------------
 
-! echo "select_nomenclature_candidate.sql -> nomenclature_candidate_pp.unl"
-unload to 'nomenclature_candidate_pp.unl'
+
+unload to nomenclature_candidate_pp.unl
  select  *
  --nc_mrkr_zdb_id, nc_priority
  from nomenclature_candidate
