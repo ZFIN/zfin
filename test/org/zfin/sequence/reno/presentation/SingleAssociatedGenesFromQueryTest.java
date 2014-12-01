@@ -14,6 +14,7 @@ import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.blast.Query;
 import org.zfin.sequence.reno.Candidate;
 import org.zfin.sequence.reno.RunCandidate;
+import org.zfin.sequence.reno.service.RenoService;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import static org.junit.Assert.assertEquals;
 public class SingleAssociatedGenesFromQueryTest {
     private final Logger logger = Logger.getLogger(SingleAssociatedGenesFromQueryTest.class) ;
 
+    private RenoService renoService = new RenoService();
     private RunCandidate runCandidate;
     private Marker gene1;
     private Query query = new Query();
@@ -191,7 +193,7 @@ public class SingleAssociatedGenesFromQueryTest {
 
 //        * <li> START est encoded by 1 genes in 1 hit (visible)
         logger.debug("est encoded by 1 genes in 1 hit (visible) getAllSingleAssociatedGenesFromQueries");
-        assertEquals(1,runCandidate.getAllSingleAssociatedGenesFromQueries().size());
+        assertEquals(1, renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 //        * <li> END est encoded by 1 genes in 1 hit (visible)
 
 	}
@@ -207,7 +209,7 @@ public class SingleAssociatedGenesFromQueryTest {
         // need to add gene2 encoding, though this is unnecessary 
 
         logger.debug("est encoded by 2 genes in 1 hit (hide) getAllSingleAssociatedGenesFromQueries");
-        assertEquals(0,runCandidate.getAllSingleAssociatedGenesFromQueries().size());
+        assertEquals(0, renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 //      * <li> END est encoded by 2 genes in 1 hit (hide)
 	}
 
@@ -223,7 +225,7 @@ public class SingleAssociatedGenesFromQueryTest {
 
 
         logger.debug("est encoded by 2 genes in 1 hit, but 1 gene in another (visible)");
-        Collection<Marker> associatedGenes = runCandidate.getAllSingleAssociatedGenesFromQueries() ;
+        Collection<Marker> associatedGenes = renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate);
         assertEquals(1,associatedGenes.size());
         assertEquals("gene2",associatedGenes.iterator().next().getAbbreviation());
 	}
@@ -242,7 +244,7 @@ public class SingleAssociatedGenesFromQueryTest {
         blastHits.add(hit2) ;
 
         logger.debug("est encoded by 2 genes in 1 hit, but 2 gene in another (hidden)");
-        assertEquals(0,runCandidate.getAllSingleAssociatedGenesFromQueries().size());
+        assertEquals(0,renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 	}
 
 	@Test
@@ -254,7 +256,7 @@ public class SingleAssociatedGenesFromQueryTest {
         blastHits.add(hit2) ;
 
         logger.debug("est encoded by 1 gene in 1 hit, and same gene in another hit: hits have different EST(visible once)");
-        Collection<Marker> associatedGenes = runCandidate.getAllSingleAssociatedGenesFromQueries() ;
+        Collection<Marker> associatedGenes = renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate);
         assertEquals(1,associatedGenes.size());
         assertEquals("gene2",associatedGenes.iterator().next().getAbbreviation());
 	}
@@ -265,7 +267,7 @@ public class SingleAssociatedGenesFromQueryTest {
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ;
         blastHits.add(hit2) ;
         logger.debug("est encoded by 1 gene in 1 hit, and another gene in another hit: hits have different EST(visible twice)");
-        assertEquals(2,runCandidate.getAllSingleAssociatedGenesFromQueries().size());
+        assertEquals(2,renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 
 	}
 
@@ -276,7 +278,7 @@ public class SingleAssociatedGenesFromQueryTest {
         blastHits.add(hit2) ;
         hit2.setTargetAccession(hit1Accession);
         logger.debug("2 hits with same EST(visible once)");
-        assertEquals(1,runCandidate.getAllSingleAssociatedGenesFromQueries().size());
+        assertEquals(1,renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 	}
 
 	@Test
@@ -284,7 +286,7 @@ public class SingleAssociatedGenesFromQueryTest {
         est2Gene1MarkerRelationship.setType(MarkerRelationship.Type.GENE_HYBRIDIZED_BY_SMALL_SEGMENT);
         est2SecondMarkerRelationships.add(est2Gene1MarkerRelationship) ;
         logger.debug("est hybridized by in 1 gene (hide)");
-        assertEquals(0,runCandidate.getAllSingleAssociatedGenesFromQueries().size());
+        assertEquals(0,renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 	}
 
 	@Test
@@ -296,7 +298,7 @@ public class SingleAssociatedGenesFromQueryTest {
         est2SecondMarkerRelationships.add(est2Gene1MarkerRelationship) ;
 		blastHits.add(hit2) ; 
         logger.debug("est hybridized by in 1 gene (hide)");
-        Collection<Marker> associatedGenes = runCandidate.getAllSingleAssociatedGenesFromQueries() ;
+        Collection<Marker> associatedGenes = renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate);
         assertEquals(1,associatedGenes.size());
         assertEquals(gene1.getAbbreviation(),associatedGenes.iterator().next().getAbbreviation());
 
