@@ -136,4 +136,4 @@ setenv   INFORMIX_PORT "<!--|INFORMIX_PORT|-->"
 setenv    INFORMIX_DIR "<!--|INFORMIX_DIR|-->"
 
 # double check the load files have content
-<!--|INFORMIX_DIR|-->/bin/dbaccess <!--|DB_NAME|--> load_entrez_orth.sql
+<!--|INFORMIX_DIR|-->/bin/dbaccess -a <!--|DB_NAME|--> load_entrez_orth.sql

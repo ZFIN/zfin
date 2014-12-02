@@ -74,8 +74,8 @@ unload to \"$accFile_xpat\" delimiter \" \"
 #################
 # Execute
 #################
-system ("echo '$sql' | $ENV{INFORMIXDIR}/bin/dbaccess $dbname -") && die "Failure on sql: $sql \n"; 
-system ("echo '$sql_cdna' | $ENV{INFORMIXDIR}/bin/dbaccess $dbname -") && die "Failure on sql: $sql_cdna \n"; 
-system ("echo '$sql_xpat' | $ENV{INFORMIXDIR}/bin/dbaccess $dbname -") && die "Failure on sql: $sql_xpat \n"; 
+system ("echo '$sql' | $ENV{INFORMIXDIR}/bin/dbaccess -a $dbname -") && die "Failure on sql: $sql \n"; 
+system ("echo '$sql_cdna' | $ENV{INFORMIXDIR}/bin/dbaccess -a $dbname -") && die "Failure on sql: $sql_cdna \n"; 
+system ("echo '$sql_xpat' | $ENV{INFORMIXDIR}/bin/dbaccess -a $dbname -") && die "Failure on sql: $sql_xpat \n"; 
 
 exit;

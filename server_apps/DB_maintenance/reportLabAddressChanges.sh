@@ -14,6 +14,6 @@ endif
 echo 'unload to labAddressCheck.txt select * from lab_address_update_tracking' | /private/apps/Informix/informix/bin/dbaccess <!--|DB_NAME|--> ;
 
 if ( -s labAddressCheck.txt ) then
-    echo 'delete from lab_address_update_tracking' | /private/apps/Informix/informix/bin/dbaccess <!--|DB_NAME|--> ;
+    echo 'delete from lab_address_update_tracking' | /private/apps/Informix/informix/bin/dbaccess -a <!--|DB_NAME|--> ;
 endif
 

@@ -247,7 +247,7 @@ sendReport();
 
 exit if ($numErr > 0);
 
-system("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> loadSangerData.sql");
+system("$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> loadSangerData.sql");
 
 sendPreLoadInput();
 

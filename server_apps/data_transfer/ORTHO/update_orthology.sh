@@ -124,6 +124,6 @@ cp updateOrthology* log/.
 # note this regen generates a lot of locks (~149,192)
 
 echo "running Regen ortho edvidence display, should be zero"
-echo 'execute function regen_oevdisp();' | dbaccess $DBNAME
+echo 'execute function regen_oevdisp();' | dbaccess -a $DBNAME
 
 

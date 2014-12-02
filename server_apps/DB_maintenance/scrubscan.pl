@@ -46,7 +46,7 @@ my $tmpDir = "/tmp/scrubscan.$PROCESS_ID";
 my $tablesFile  = "$tmpDir/tables";
 my $columnsBase = "$tmpDir/columns";
 my $resultsBase = "$tmpDir/results";
-my $dbaccess = "<!--|INFORMIX_DIR|-->/bin/dbaccess";
+my $dbaccess = "<!--|INFORMIX_DIR|-->/bin/dbaccess -a";
 
 my $dirPerms = oct(770);
 mkdir($tmpDir, $dirPerms);
