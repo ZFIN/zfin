@@ -472,7 +472,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public void finish() {
-        if (query.toString().contains(SELECT) && query.toString().contains(INTO))
+        if (query.toString().toUpperCase().contains(SELECT) && query.toString().toUpperCase().contains(INTO))
             selectInto = true;
     }
 }

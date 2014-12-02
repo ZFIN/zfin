@@ -16,30 +16,33 @@ WHERE  a.mrkr_zdb_id = c.mrel_mrkr_1_zdb_id
 Length(b.mrkr_abbrev) )) )
 ORDER  BY b.mrkr_abbrev;
 
+-- create temp table of all genes and pseudo genes that have updated symbols within
+-- the last 31 days
+SELECT   rec_id,
+         old_value,
+         new_value,
+         when
+FROM     updates
+WHERE    when > today -31
+AND      Get_obj_type(rec_id) IN ('GENE',
+                                  'GENEP')
+AND      field_name ='mrkr_abbrev'
+ORDER BY when DESC
+INTO temp gene_names_changed_temp;
+
+
 unload to Antibody-Report
-SELECT antibody.mrkr_abbrev AS antibodyName,
-       b.mrkr_abbrev        AS targetGene
+SELECT b.mrkr_zdb_id,
+       up.old_value,
+       b.mrkr_abbrev        AS targetGene,
+       antibody.mrkr_abbrev AS antibodyName,
+       antibody.mrkr_zdb_id AS antibodyID,
+       when AS dateNameChange
 FROM   marker AS antibody,
-       marker b
+       marker b,
+       gene_names_changed_temp up
 WHERE  antibody.mrkr_type = 'ATB'
-       AND EXISTS (SELECT 'x'
-                   FROM   expression_experiment
-                   WHERE  xpatex_atb_zdb_id = antibody.mrkr_zdb_id
-                          AND xpatex_gene_zdb_id = b.mrkr_zdb_id)
-       AND b.mrkr_abbrev != (  Substring( antibody.mrkr_abbrev FROM (
-                                              Length(antibody.mrkr_abbrev) - Length(b.mrkr_abbrev) + 1 )
-                                          FOR ( Length(b.mrkr_abbrev) )
-                                        )
-                             )
-ORDER  BY b.mrkr_abbrev;
-
-unload to Antibody-NoGene-Report
-
-SELECT distinct antibody.mrkr_abbrev AS antibodyName
-FROM   marker AS antibody
-WHERE  not exists (select 'x' from  marker as g
-						where g.mrkr_type = 'GENE'
-							  and	g.mrkr_abbrev = Substring( antibody.mrkr_abbrev FROM (
-                                              Length(antibody.mrkr_abbrev) - Length(g.mrkr_abbrev) + 1 )
-                                          FOR ( Length(g.mrkr_abbrev) ))                                          )
-and antibody.mrkr_type = 'ATB';
+       AND b.mrkr_zdb_id = rec_id
+       AND up.old_value LIKE Substring(antibody.mrkr_abbrev FROM
+                                       Charindex('-', antibody.mrkr_abbrev) + 1
+                                       FOR 20)|| '%';

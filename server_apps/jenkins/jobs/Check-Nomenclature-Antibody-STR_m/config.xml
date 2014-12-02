@@ -2,7 +2,8 @@
 <project>
     <actions/>
     <description>The STR abbreviation should correspond the abbreviation of the target gene minus
-    the prefix. This report lists all STRs that do not match this criterium.</description>
+    the prefix. This report lists all STRs that do not match this criterium. It also checks
+    if there are antibody name matches on old gene symbols that have changed in the last 31 days.</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
