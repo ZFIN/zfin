@@ -49,7 +49,8 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Nomenclature-Antibody-STR_m/Check-Nomenclature-Antibody-STR_m.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Nomenclature-Antibody-STR_m/Check-Nomenclature-Antibody-STR_m.STR-Report.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Nomenclature-Antibody-STR_m/Check-Nomenclature-Antibody-STR_m.Antibody-Report.html&quot;}
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
