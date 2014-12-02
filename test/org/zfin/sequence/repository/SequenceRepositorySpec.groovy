@@ -1,0 +1,26 @@
+package org.zfin.sequence.repository
+
+import org.apache.commons.collections.CollectionUtils
+import org.zfin.AbstractZfinIntegrationSpec
+import org.zfin.repository.RepositoryFactory
+import org.zfin.sequence.Accession
+import spock.lang.Unroll
+
+/**
+ * Created by kschaper on 12/1/14.
+ */
+class SequenceRepositorySpec extends AbstractZfinIntegrationSpec {
+    @Unroll
+    def "should be able to get dblinks from an accession #accessionNumber"() {
+        when:
+        List<Accession> accessions = RepositoryFactory.sequenceRepository.getAccessionsByNumber(accessionNumber)
+
+        then: "either it's empty, or the first record returned should have dblinks"
+        CollectionUtils.isEmpty(accessions) || accessions.get(0).getDbLinks()
+
+        where:
+        accessionNumber << ["ENSDARG00000002898", "OTTDARG00000001297", "NM_131281", "CR925797", "O42278"]
+
+    }
+
+}

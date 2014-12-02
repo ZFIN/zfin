@@ -54,6 +54,7 @@ import org.zfin.sequence.reno.RenoMultiRunTest;
 import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RenoRedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
+import org.zfin.sequence.repository.SequenceRepositorySpec;
 import org.zfin.uniquery.SequenceIdListTest;
 import org.zfin.webservice.MarkerSoapDbTest;
 import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
@@ -122,6 +123,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
 //        NomenclatureCandidateControllerTest.class, // no tests
         RenoRepositoryTest.class,
         SequenceRepositoryTest.class,
+        SequenceRepositorySpec.class,
         TranscriptServiceTest.class,
         SequenceIdListTest.class,
         AntibodyWikiWebServiceTest.class,

@@ -62,6 +62,10 @@
         <runBatchTest classNamePattern="**/Video*Spec.class" outfile="videoTests" verbose="true"/>
     </target>
 
+    <target name="runSequenceSpec" depends="compile,build-tests">
+        <runBatchTest classNamePattern="**/Sequence*Spec.class" outFile="sequenceTests" verbose="true"/>
+    </target>
+
 
     <macrodef name="runTest">
         <attribute name="verbose"/>
