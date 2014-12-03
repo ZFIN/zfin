@@ -27,7 +27,14 @@
             <c:set var="probeUrlPart" value="?probeZdbID=${probe.zdbID}"/>
         </c:if>
 
+    <c:if test="${figure.publication.type == 'Curation'}">
+        <c:if test="${!empty probe}">
         <a class="additional-figures-link" href="/action/figure/all-figure-view/${figure.publication.zdbID}${probeUrlPart}">ADDITIONAL FIGURES</a>
+        </c:if>
+        </c:if>
+    <c:if test="${figure.publication.type != 'Curation'}">
+        <a class="additional-figures-link" href="/action/figure/all-figure-view/${figure.publication.zdbID}${probeUrlPart}">ADDITIONAL FIGURES</a>
+        </c:if>
     </div>
 </c:if>
 
