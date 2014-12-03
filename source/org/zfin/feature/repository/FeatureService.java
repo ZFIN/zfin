@@ -26,7 +26,8 @@ public class FeatureService {
         for (FeatureMarkerRelationship ftrmrkrRelation : fmrelationships) {
             if (ftrmrkrRelation != null)
                 if (ftrmrkrRelation.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                    if (ftrmrkrRelation.getMarker().getMarkerType().getType().toString() == Marker.Type.GENE.toString())
+
+                    if (ftrmrkrRelation.getMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM))
                         affectedGenes.add(ftrmrkrRelation);
                 }
         }
