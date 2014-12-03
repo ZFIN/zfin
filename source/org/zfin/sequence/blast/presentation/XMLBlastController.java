@@ -66,8 +66,6 @@ public class XMLBlastController {
     protected String showBlastSearchPage(@RequestParam(required = false) String previousSearch,
                                          @ModelAttribute("formBean") XMLBlastBean xmlBlastBean,
                                          Model model) throws Exception {
-        boolean isRoot = Person.isCurrentSecurityUserRoot();
-
         // if no database selected, then select RNA/CDNA
         if (StringUtils.isEmpty(xmlBlastBean.getDataLibraryString())) {
             Database defaultDatabase = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.RNASEQUENCES);
@@ -115,9 +113,7 @@ public class XMLBlastController {
             }
         }
 
-        xmlBlastBean.setNucleotideDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.NUCLEOTIDE, !isRoot, true));
-        xmlBlastBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, !isRoot, true));
-
+        setDatabases(xmlBlastBean);
 
         model.addAttribute("sequenceTypes", XMLBlastBean.SequenceType.values());
         model.addAttribute("matrices", XMLBlastBean.Matrix.values());
@@ -286,6 +282,11 @@ public class XMLBlastController {
         return sequence;
     }
 
+    private void setDatabases(XMLBlastBean xmlBlastBean) {
+        boolean isRoot = Person.isCurrentSecurityUserRoot();
+        xmlBlastBean.setNucleotideDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.NUCLEOTIDE, !isRoot, true));
+        xmlBlastBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, !isRoot, true));
+    }
 
     @RequestMapping(value = "/blast/blast", method = RequestMethod.POST)
     protected String initiateBlast(Model model,
@@ -298,8 +299,11 @@ public class XMLBlastController {
         logger.debug("onsubmit enter");
 
         xmlBlastValidator.validate(inputXMLBlastBean, result);
-        if (result.hasErrors())
+        if (result.hasErrors()) {
+            setDatabases(inputXMLBlastBean);
+            model.addAttribute("programs", XMLBlastBean.Program.values());
             return "blast-setup.page";
+        }
         // count the number of sequences put in so we can create the correct number of blast files
         BufferedReader bufferedReader = new BufferedReader(in);
         SymbolTokenization symbolTokenization;
