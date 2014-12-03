@@ -24,6 +24,9 @@ public class AlleleLineDesignationValidator implements Validator  {
            if(!StringUtils.isAlpha(lineDesig)){
                errors.rejectValue("lineDesig", "code", "Line Designation can only contain alphabetical characters.");
            }
+          if(!StringUtils.isAllLowerCase(lineDesig)){
+              errors.rejectValue("lineDesig", "code", "Line Designation can only contain lower case alphabetical characters.");
+          }
           if (!StringUtils.isEmpty(lineDesig)){
            String newPrefix= RepositoryFactory.getFeatureRepository().getPrefix(lineDesig);
            if (newPrefix != null){
