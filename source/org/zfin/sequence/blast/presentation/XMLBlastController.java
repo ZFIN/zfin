@@ -25,6 +25,7 @@ import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.*;
 import org.zfin.sequence.blast.results.BlastOutput;
 import org.zfin.sequence.blast.results.view.BlastResultMapper;
+import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
@@ -290,6 +291,9 @@ public class XMLBlastController {
     protected String initiateBlast(Model model,
                                    @ModelAttribute("formBean") XMLBlastBean inputXMLBlastBean,
                                    BindingResult result) throws Exception {
+        String querySequence = inputXMLBlastBean.getQuerySequence();
+        querySequence = ZfinStringUtils.escapeHighUnicode(querySequence);
+        StringReader in = new StringReader(querySequence);
         onBind(inputXMLBlastBean, result);
         logger.debug("onsubmit enter");
 
@@ -297,7 +301,7 @@ public class XMLBlastController {
         if (result.hasErrors())
             return "blast-setup.page";
         // count the number of sequences put in so we can create the correct number of blast files
-        BufferedReader bufferedReader = new BufferedReader(new StringReader(inputXMLBlastBean.getQuerySequence()));
+        BufferedReader bufferedReader = new BufferedReader(in);
         SymbolTokenization symbolTokenization;
         if (inputXMLBlastBean.getSequenceType() == null ||
                 XMLBlastBean.SequenceType.NUCLEOTIDE == XMLBlastBean.SequenceType.getSequenceType(inputXMLBlastBean.getSequenceType())) {
@@ -308,7 +312,7 @@ public class XMLBlastController {
         RichSequenceIterator iterator = RichSequence.IOTools.readFasta(bufferedReader, symbolTokenization, new SimpleNamespace("fasta-in"));
         // handle populating view object
         if (!iterator.hasNext()) {
-            logger.error("no sequence read from query sequence in submit phase: \n" + inputXMLBlastBean.getQuerySequence());
+            logger.error("no sequence read from query sequence in submit phase: \n" + querySequence);
             result.addError(new FieldError("", "", "No sequences given"));
         }
 

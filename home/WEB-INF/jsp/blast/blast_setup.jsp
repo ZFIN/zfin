@@ -64,6 +64,13 @@
                 </td>
             </TR>
         </TABLE>
+        <script type="text/javascript">
+            function setQueryTypeFASTA(){
+                document.getElementById('queryTypeFASTA').checked=true;
+                jQuery('#querySequence').val(jQuery('#querySequence').val().replace(/\W/gi,''));
+                jQuery('#formBean').submit();
+            }
+        </script>
         <table>
             <tr>
                 <td valign="top">
@@ -86,7 +93,7 @@
                     <br>
                     <p>
                         <input type="hidden" name="isFormSubmission" value="true">
-                        <INPUT TYPE=submit VALUE="Begin Search"> &nbsp; &nbsp;
+                        <INPUT TYPE=button VALUE="Begin Search" onclick="setQueryTypeFASTA();"> &nbsp; &nbsp;
                         <INPUT TYPE=button VALUE="Clear All"
                                onclick="
                             document.getElementById('querySequence').value='' ;
