@@ -145,9 +145,9 @@ sub pubMedArticle {
                             # we are intentionally not handling the Suffix element at this time
                             # because it would complicate author list parsing. it would ideally
                             # be worked out with some databse schema changes
-                            my $AuthorLastName = $author->first_child_text('LastName');
-                            my $AuthorForeName = $author->first_child_text('ForeName');
-                            my $AuthorInitials = $author->first_child_text('Initials');
+                            my $AuthorLastName = $author->first_child_trimmed_text('LastName');
+                            my $AuthorForeName = $author->first_child_trimmed_text('ForeName');
+                            my $AuthorInitials = $author->first_child_trimmed_text('Initials');
                             $AuthorInitials = join('.', split(//, $AuthorInitials)) . '.';
                             push(@authorNames, "$AuthorLastName, $AuthorInitials");
                         }
