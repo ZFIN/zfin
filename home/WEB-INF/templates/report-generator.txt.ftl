@@ -18,7 +18,7 @@ ${paragraph}
 </#if>
 <#if table.data?has_content>
 <#list table.data as row>
-${row?join(",")}
+${row?join("\t")}
 </#list>
 
 </#if>
@@ -30,10 +30,10 @@ ${row?join(",")}
 </#if>
 <#if table.data?has_content>
 <#if table.head?has_content>
-${table.head?join(",")}
+${table.head?join("\t")}
 </#if>
 <#list table.data as row>
-${row?join(",")}
+${row?join("\t")}
 </#list>
 
 </#if>
