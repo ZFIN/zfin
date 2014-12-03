@@ -67,7 +67,7 @@
         <script type="text/javascript">
             function setQueryTypeFASTA(){
                 document.getElementById('queryTypeFASTA').checked=true;
-                jQuery('#querySequence').val(jQuery('#querySequence').val().replace(/\W/gi,''));
+                jQuery('#querySequence').val(jQuery('#querySequence').val().replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g,''));
                 jQuery('#formBean').submit();
             }
         </script>
