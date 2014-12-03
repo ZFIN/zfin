@@ -17,11 +17,9 @@ ${paragraph}
 
 </#if>
 <#if table.data?has_content>
-+<#list table.colWidths as w><#list 1..w+2 as i>-</#list>+</#list>
 <#list table.data as row>
-|<#list table.colWidths as w> ${(row[w_index]!'')?right_pad(w)} |</#list>
+${row?join(",")}
 </#list>
-+<#list table.colWidths as w><#list 1..w+2 as i>-</#list>+</#list>
 
 </#if>
 </#list>
@@ -31,15 +29,12 @@ ${paragraph}
 
 </#if>
 <#if table.data?has_content>
-+<#list table.colWidths as w><#list 1..w+2 as i>-</#list>+</#list>
 <#if table.head?has_content>
-|<#list table.colWidths as w> ${(table.head[w_index]!'')?right_pad(w)} |</#list>
-+<#list table.colWidths as w><#list 1..w+2 as i>-</#list>+</#list>
+${table.head?join(",")}
 </#if>
 <#list table.data as row>
-|<#list table.colWidths as w> ${(row[w_index]!'')?right_pad(w)} |</#list>
+${row?join(",")}
 </#list>
-+<#list table.colWidths as w><#list 1..w+2 as i>-</#list>+</#list>
 
 </#if>
 </#list>
