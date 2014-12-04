@@ -94,7 +94,7 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         rg.addDataTable(caption, header, data)
         rg.write(out, format)
         String report = out.toString()
-        String normalizedSpaceReport = report.replaceAll("\\s+", " ")
+        String normalizedSpaceReport = report.replaceAll("[ \n]+", " ")
 
         then:
         expect normalizedSpaceReport, containsAllStrings(expectedStrings)
@@ -107,9 +107,9 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
                    "<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>",
                    "<tr> <td> a </td> <td> b </td> <td> c </td> </tr>"]
         txt    || ["== my data! ==",
-                   "| One | Two | Three |",
-                   "| 1 | 2 | 3 |",
-                   "| a | b | c |"]
+                   "One\tTwo\tThree",
+                   "1\t2\t3",
+                   "a\tb\tc"]
     }
 
     @Unroll
@@ -120,7 +120,7 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         rg.addDataTable(header, data)
         rg.write(out, format)
         String report = out.toString()
-        String normalizedSpaceReport = report.replaceAll("\\s+", " ")
+        String normalizedSpaceReport = report.replaceAll("[ \n]+", " ")
 
         then:
         expect normalizedSpaceReport, containsAllStrings(expectedStrings)
@@ -132,9 +132,9 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
                                        "<tr> <th>One</th> <th>Two</th> <th>Three</th> </tr>",
                                        "<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>",
                                        "<tr> <td> a </td> <td> b </td> <td> c </td> </tr>"]
-        txt    || ["=="]            | ["| One | Two | Three |",
-                                       "| 1 | 2 | 3 |",
-                                       "| a | b | c |"]
+        txt    || ["=="]            | ["One\tTwo\tThree",
+                                       "1\t2\t3",
+                                       "a\tb\tc"]
     }
 
     @Unroll
@@ -145,7 +145,7 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         rg.addDataTable(caption, data)
         rg.write(out, format)
         String report = out.toString()
-        String normalizedSpaceReport = report.replaceAll("\\s+", " ")
+        String normalizedSpaceReport = report.replaceAll("[ \n]+", " ")
 
         then:
         expect normalizedSpaceReport, containsAllStrings(expectedStrings)
@@ -157,8 +157,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
                                        '<table class="result rowstripes">',
                                        "<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>",
                                        "<tr> <td> a </td> <td> b </td> <td> c </td> </tr>"]
-        txt    || []                | ["| 1 | 2 | 3 |",
-                                       "| a | b | c |"]
+        txt    || []                | ["1\t2\t3",
+                                       "a\tb\tc"]
     }
 
     @Unroll
@@ -168,7 +168,7 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         rg.addDataTable(data)
         rg.write(out, format)
         String report = out.toString()
-        String normalizedSpaceReport = report.replaceAll("\\s+", " ")
+        String normalizedSpaceReport = report.replaceAll("[ \n]+", " ")
 
         then:
         expect normalizedSpaceReport, containsAllStrings(expectedStrings)
@@ -179,8 +179,8 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         html   || ["<h2>", "<th>"]  | ['<table class="result rowstripes">',
                                        "<tr> <td> 1 </td> <td> 2 </td> <td> 3 </td> </tr>",
                                        "<tr> <td> a </td> <td> b </td> <td> c </td> </tr>"]
-        txt    || ["=="]            | ["| 1 | 2 | 3 |",
-                                       "| a | b | c |"]
+        txt    || ["=="]            | ["1\t2\t3",
+                                       "a\tb\tc"]
     }
 
     @Unroll
@@ -197,7 +197,7 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         where:
         format || expectedStrings
         html   || ["<a href=\"http://${ZfinPropertiesEnum.DOMAIN_NAME}/ZDB-GENE-121212-12\">ZDB-GENE-121212-12</a>"]
-        txt    || ['| ZDB-GENE-121212-12 |']
+        txt    || ['\tZDB-GENE-121212-12\t']
     }
 
     @Unroll
@@ -261,7 +261,7 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
         when:
         rg.addSummaryTable("Here is what happened", ["The Good": 1, "The Bad": 5, "The Ugly": 10])
         rg.write(out, format)
-        String report = out.toString().replaceAll(/\s+/, ' ')
+        String report = out.toString().replaceAll(/[ \n]+/, ' ')
 
         then:
         expect report, containsAllStrings(expectedStrings)
@@ -273,11 +273,10 @@ class ReportGeneratorSpec extends AbstractZfinIntegrationSpec {
                    '<tr> <th>The Good</th> <td>1</td> </tr>',
                    '<tr> <th>The Bad</th> <td>5</td> </tr>',
                    '<tr> <th>The Ugly</th> <td>10</td> </tr>']
-        txt    || ['== Here is what happened ==',
-                   '----',
-                   '| The Good | 1 |',
-                   '| The Bad | 5 |',
-                   '| The Ugly | 10 |']
+        txt    || ['=== Here is what happened ===',
+                   'The Good\t1',
+                   'The Bad\t5',
+                   'The Ugly\t10']
     }
     
     def "one of everything"() {
