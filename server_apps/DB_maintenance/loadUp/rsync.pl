@@ -29,13 +29,9 @@
 # we do not need to provide server names in this case because
 # our file systems are nfs mounted on each other.
 
-system ("cd <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->");
-
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
 system("/local/bin/rsync -vab --copy-links <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
-
-system ("cd <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> ");
 
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
