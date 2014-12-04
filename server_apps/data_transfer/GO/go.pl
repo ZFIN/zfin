@@ -23,63 +23,6 @@ sub sendErrorReport ($) {
     exit;
 }
 
-#------------------ Send Result Files----------------
-# No parameter
-#
-sub sendResults {
-
- #----- One mail send out the gene_association file----
-
-  my $SUBJECT="Auto from $dbname: gene_association.zfin.gz file";
-  my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";
-  my $ATTFILE ="gene_association.zfin.gz";
-
-  # Create a new multipart message:
-  $msg1 = new MIME::Lite
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
-
-  attach $msg1
-    Type     => 'application/octet-stream',
-    Encoding => 'base64',
-    Path     => "./$ATTFILE",
-    Filename => "$ATTFILE";
-
-  # Output the message to sendmail
-
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg1->print(\*SENDMAIL);
-
-
- #----- Another mail send out problem files ----
-
-  my $SUBJECT="Auto from $dbname: gp2protein.zfin.gz file";
-  my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";
-  my $ATTFILE = "gp2protein.zfin.gz";
-
-  # Create another new multipart message:
-  $msg2 = new MIME::Lite
-    From    => "$ENV{LOGNAME}",
-    To      => "$MAILTO",
-    Subject => "$SUBJECT",
-    Type    => 'multipart/mixed';
-
-  attach $msg2
-    Type     => 'application/octet-stream',
-    Encoding => 'base64',
-    Path     => "./$ATTFILE",
-    Filename => "$ATTFILE";
-
-  # Output the message to sendmail
-  open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
-  $msg2->print(\*SENDMAIL);
-
-  close(SENDMAIL);
-}
-
-
 #--------------- Main --------------------------------
 
 #set environment variables
@@ -113,7 +56,5 @@ sendErrorReport ("/bin/rm -f gp2protein.zfin.gz") if
 
 sendErrorReport ("/local/bin/gzip gp2protein.zfin failed") if
     system ("/local/bin/gzip gp2protein.zfin");
-
-sendResults();
 
 exit;
