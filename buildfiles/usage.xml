@@ -73,6 +73,7 @@
 	        runBlasttests: Runs all blast tests; have to have ssh keys to genomix set up in order to run these from ant deploy.
             performancetests-quiet: Runs performance test suite and dumps to file.
         </echo>
+      <antcall target="jenkins-usage"/>
     </target>
 
 </project>

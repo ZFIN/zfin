@@ -681,6 +681,8 @@
             create-views creates daily/weekly/monthly job views.
             deploy-plugins deploy jenkins plugins into JENKINS_HOME
             deploy-email-templates deploy the email templates into JENKINS_HOME
+            create-new-validatedata-job -DjobName=[jobName]
+            create-new-report-data-job -DjobName=[jobName]
 
             JENKINS SERVER
             start-jenkins start a Jenkins instance
