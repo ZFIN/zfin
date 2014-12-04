@@ -72,6 +72,8 @@ TRIGGERS = \
 	inference_group_member_insert_trigger.sql \
 	inference_group_member_notes_update_trigger.sql \
 	inference_group_member_inferred_from_update_trigger.sql \
+	linkage_insert_trigger.sql \
+	linkage_update_trigger.sql \
 	marker_relationship_insert_trigger.sql \
 	marker_relationship_mrkr_1_update_trigger.sql \
 	marker_relationship_mrkr_2_update_trigger.sql \
