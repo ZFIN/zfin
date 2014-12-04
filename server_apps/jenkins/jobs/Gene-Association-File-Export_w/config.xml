@@ -23,7 +23,7 @@
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/data_transfer/GO/gene_association.zfin</artifacts>
+            <artifacts>server_apps/data_transfer/GO/*.gz</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -32,7 +32,7 @@
             <configuredTriggers>
                 <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
                     <email>
-                        <recipientList>@SUCCESS_EMAIL@</recipientList>
+                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>$PROJECT_DEFAULT_CONTENT</body>
                         <sendToDevelopers>false</sendToDevelopers>
@@ -48,7 +48,7 @@
                 </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
-                        <recipientList>@FAILURE_EMAIL@</recipientList>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>$PROJECT_DEFAULT_CONTENT</body>
                         <sendToDevelopers>false</sendToDevelopers>
