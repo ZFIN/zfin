@@ -38,8 +38,6 @@ public class DbScriptFileParserTest {
         // insert statement
         statement = queries.get(2);
         assertTrue(statement.isInsertStatement());
-        assertEquals("select termrel_term_1_id, termrel_term_2_id, termrel_type    from tmp_rels;", statement.getDebugStatement().getQuery());
-        assertEquals("INSERT  into tmp_rels_zdb (ttermrel_ont_id_1, ttermrel_ont_id_2, ttermrel_type)", statement.getDebugStatement().getComment());
 
         // load statement
         statement = queries.get(5);
