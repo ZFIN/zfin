@@ -310,7 +310,7 @@
         </set>
         <property name="type" column="feature_type" type="featureType" not-null="true"/>
 
-        <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
+        <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" cascade="all">
             <key column="dalias_data_zdb_id"/>
             <one-to-many class="org.zfin.feature.FeatureAlias"/>
         </set>

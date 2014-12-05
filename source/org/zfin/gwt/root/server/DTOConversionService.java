@@ -505,9 +505,10 @@ public class DTOConversionService {
             logger.debug("Feature does not have a lab: " + feature.getAbbreviation() + " " + feature.getZdbID());
         }
 
-
-        featureDTO.setFeatureAliases(new ArrayList<String>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
-        featureDTO.setFeatureSequences(new ArrayList<String>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
+        if (feature.getAliases() != null)
+            featureDTO.setFeatureAliases(new ArrayList<>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
+        if (feature.getDbLinks() != null)
+            featureDTO.setFeatureSequences(new ArrayList<>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
         return featureDTO;
     }
 

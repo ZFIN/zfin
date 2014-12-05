@@ -18,7 +18,6 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.DuplicateEntryException;
 import org.zfin.gwt.root.ui.ValidationException;
-
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -29,7 +28,6 @@ import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
-import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -37,12 +35,12 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  */
@@ -52,9 +50,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private final MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private final PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private final SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
-    private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-    private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
- private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
+    private static InfrastructureRepository infrastructureRepository = getInfrastructureRepository();
+    private static FeatureRepository featureRepository = getFeatureRepository();
+    private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
     private List<Organization> labsOfOrigin = null;
 
 
@@ -76,7 +74,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
 
 
-              if (featureDTO.getLabPrefix() != null && featureDTO.getLineNumber() != null) {
+        if (featureDTO.getLabPrefix() != null && featureDTO.getLineNumber() != null) {
             existingFeature = featureRepository.getFeatureByPrefixAndLineNumber(featureDTO.getLabPrefix(), featureDTO.getLineNumber());
         }
 
@@ -92,14 +90,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     private void checkDupesinTrackingTable(FeatureDTO featureDTO) throws DuplicateEntryException {
-        String featureInTrackingTable=featureRepository.getFeatureByAbbreviationInTrackingTable(featureDTO.getAbbreviation());
+        String featureInTrackingTable = featureRepository.getFeatureByAbbreviationInTrackingTable(featureDTO.getAbbreviation());
 
 
-         if (featureInTrackingTable != null) {
-                    throw new DuplicateEntryException("Feature exists in the tracking table for this abbreviation: " + featureDTO.getAbbreviation());
-                }
+        if (featureInTrackingTable != null) {
+            throw new DuplicateEntryException("Feature exists in the tracking table for this abbreviation: " + featureDTO.getAbbreviation());
+        }
 
     }
+
     /**
      * Here, we edit everything but the notes (done in-line) and the alias (also done in-line).
      *
@@ -114,8 +113,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, featureDTO.getZdbID());
         FeatureTypeEnum oldFeatureType = feature.getType();
-        String oldFtrName=feature.getName();
-        String newFtrName=featureDTO.getName();
+        String oldFtrName = feature.getName();
+        String newFtrName = featureDTO.getName();
         HibernateUtil.createTransaction();
         feature.setType(featureDTO.getFeatureType());
         if (featureDTO.getPublicNote() != null) {
@@ -130,20 +129,18 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                     infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
                 }
             }
-        }
-        else {
-            RecordAttribution recordAttributions = infrastructureRepository.getRecordAttribution(feature.getZdbID(),featureDTO.getPublicationZdbID(),RecordAttribution.SourceType.FEATURE_TYPE);
+        } else {
+            RecordAttribution recordAttributions = infrastructureRepository.getRecordAttribution(feature.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
             if (recordAttributions == null) {
                 List<RecordAttribution> recordAttribution = infrastructureRepository.getRecAttribforFtrType(feature.getZdbID());
                 if (recordAttribution.size() != 0) {
 
-                        infrastructureRepository.removeRecordAttributionForType(recordAttribution.get(0).getSourceZdbID(), feature.getZdbID());
-                        infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), recordAttribution.get(0).getSourceZdbID());
-                        infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
-                    }
-                else{
-                infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), featureDTO.getPublicationZdbID());
-                infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+                    infrastructureRepository.removeRecordAttributionForType(recordAttribution.get(0).getSourceZdbID(), feature.getZdbID());
+                    infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), recordAttribution.get(0).getSourceZdbID());
+                    infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
+                } else {
+                    infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Feature type attribution", oldFeatureType.name(), featureDTO.getFeatureType().toString(), featureDTO.getPublicationZdbID());
+                    infrastructureRepository.insertPublicAttribution(featureDTO.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
                 }
             }
         }
@@ -153,7 +150,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
        /* if (existingFeatureAbbrev != featureDTO.getAbbreviation())   {
         feature.setAbbreviation(featureDTO.getAbbreviation());
         }*/
-        if (existingFeature == null){
+        if (existingFeature == null) {
             feature.setAbbreviation(featureDTO.getAbbreviation());
         }
         feature.setName(featureDTO.getName());
@@ -171,7 +168,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (StringUtils.isNotEmpty(featureDTO.getLabPrefix())) {
             feature.setFeaturePrefix(featureRepository.getFeatureLabPrefixID(featureDTO.getLabPrefix()));
         }
-      FeatureAssay featureAssay = featureRepository.getFeatureAssay(featureDTO.getZdbID());
+        FeatureAssay featureAssay = featureRepository.getFeatureAssay(featureDTO.getZdbID());
         if (featureDTO.getMutagen() != null) {
             featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
         }
@@ -183,7 +180,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
         if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
             if (false == featureDTO.getLabOfOrigin().equals(existingLabOfOrigin.getZdbID())) {
-                Organization newLabOfOrigin=profileRepository.getOrganizationByZdbID(featureDTO.getLabOfOrigin());
+                Organization newLabOfOrigin = profileRepository.getOrganizationByZdbID(featureDTO.getLabOfOrigin());
                 featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
             }
         } else if (featureDTO.getLabOfOrigin() == null && existingLabOfOrigin != null) {
@@ -192,14 +189,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
         }
         HibernateUtil.currentSession().update(feature);
-        if (!StringUtils.equals(oldFtrName,newFtrName)) {
+        if (!StringUtils.equals(oldFtrName, newFtrName)) {
 
             FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, oldFtrName);
-            if (featureAlias != null){
-            infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
+            if (featureAlias != null) {
+                infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
             }
         }
-            //currentSession().flush();
+        //currentSession().flush();
         //currentSession().refresh(feature);
         HibernateUtil.flushAndCommitCurrentSession();
 
@@ -225,7 +222,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     public List<FeatureDTO> getFeaturesForPub(String pubZdbId) {
-        Publication pub=pubRepository.getPublication(pubZdbId);
+        Publication pub = pubRepository.getPublication(pubZdbId);
         List<FeatureDTO> featureDTOs = new ArrayList<FeatureDTO>();
         List<Feature> features = featureRepository.getFeaturesForStandardAttribution(pub);
         if (CollectionUtils.isNotEmpty(features)) {
@@ -278,21 +275,21 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     }
 
-    public void addFeatureSequence(String sequence, String ftrZdbID, String pubZdbID) {
+    public void addFeatureSequence(String sequence, String ftrZdbID, String pubZdbID) throws ValidationException {
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, ftrZdbID);
         HibernateUtil.createTransaction();
-        FeatureDBLink featureDBLink = new FeatureDBLink();
-        featureDBLink.setFeature(feature);
-        featureDBLink.setAccessionNumber(sequence);
-        featureDBLink.setAccessionNumberDisplay(sequence);
-        ReferenceDatabase genBankRefDB = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
-        featureDBLink.setReferenceDatabase(genBankRefDB);
-        currentSession().save(featureDBLink);
-
-        infrastructureRepository.insertPublicAttribution(featureDBLink.getZdbID(), pubZdbID, RecordAttribution.SourceType.STANDARD);
-        HibernateUtil.flushAndCommitCurrentSession();
-
+        try {
+            saveFeatureSequence(sequence, getPublicationRepository().getPublication(pubZdbID), feature);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ValidationException e) {
+            HibernateUtil.rollbackTransaction();
+            logger.info("Error during Creation ", e);
+            throw e;
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            logger.error("Error during Creation ", e);
+            throw new ValidationException("Error during Creation: " + e.getMessage());
+        }
 
     }
 
@@ -307,16 +304,20 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     public void removeFeatureSequence(String sequence, String featureZdbID) {
 
-        Session session = HibernateUtil.currentSession();
-        Transaction transaction = session.beginTransaction();
-        Feature feature = featureRepository.getFeatureByID(featureZdbID);
-        DBLink featureDBLink = RepositoryFactory.getSequenceRepository().getDBLink(featureZdbID, sequence);
-        infrastructureRepository.deleteRecordAttributionsForData(featureDBLink.getZdbID());
-
-        // remove objects
-        session.delete(featureDBLink);
-        session.flush();
-        HibernateUtil.flushAndCommitCurrentSession();
+        try {
+            Session session = HibernateUtil.currentSession();
+            session.beginTransaction();
+            Feature feature = featureRepository.getFeatureByID(featureZdbID);
+            if (feature == null)
+                throw new ValidationException("no feature found");
+            DBLink featureDBLink = getSequenceRepository().getDBLink(featureZdbID, sequence);
+            infrastructureRepository.deleteRecordAttributionsForData(featureDBLink.getZdbID());
+            session.delete(featureDBLink);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            logger.error(e);
+            HibernateUtil.rollbackTransaction();
+        }
     }
 
 
@@ -339,16 +340,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     public List<FeaturePrefixDTO> getPrefix(String labName) {
         return DTOConversionService.convertToFeaturePrefixDTO(featureRepository.getLabPrefixes(labName));
-//        Session session = HibernateUtil.currentSession();
-//        String hqlLab1 = " select fp.featurePrefix from LabFeaturePrefix lfp, Lab lb, FeaturePrefix fp where lb.name=:labName and lb.zdbID=lfp.labZdbID and lfp.labPkID=fp.featurePkID ";
-//        Query queryLab = session.createQuery(hqlLab1);
-//        queryLab.setParameter("labName", labName);
-//
-//        List<String> labPrefix = (List<String>) queryLab.list();
-//        if (labPrefix == null) {
-//            return null;
-//        }
-//        return labPrefix;
     }
 
     public FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
@@ -358,170 +349,126 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         checkDupesinTrackingTable(featureDTO);
         validateUnspecified(featureDTO);
 
+        FeatureDTO newFeatureDTO = null;
         HibernateUtil.createTransaction();
-        Person person = profileService.getCurrentSecurityUser();
-        Feature feature = DTOConversionService.convertToFeature(featureDTO);
-        HibernateUtil.currentSession().save(feature);
-        currentSession().flush();
-        currentSession().refresh(feature);
+        try {
+            Publication publication = getPublicationRepository().getPublication(featureDTO.getPublicationZdbID());
+            if (publication == null)
+                throw new ValidationException("Could not find publication for: " + featureDTO.getPublicationZdbID());
 
-        Publication publication = pubRepository.getPublication(featureDTO.getPublicationZdbID());
-        String attributionZdbID = publication.getZdbID();
-        RecordAttribution ra = new RecordAttribution();
-        ra.setDataZdbID(feature.getZdbID());
-        ra.setSourceZdbID(attributionZdbID);
-        ra.setSourceType(RecordAttribution.SourceType.STANDARD);
-        currentSession().save(ra);
-        //add another record for "Feature type" source type attribution
+            Feature feature = DTOConversionService.convertToFeature(featureDTO);
 
-        RecordAttribution recatt = new RecordAttribution();
-        recatt.setDataZdbID(feature.getZdbID());
-        recatt.setSourceZdbID(attributionZdbID);
-        recatt.setSourceType(RecordAttribution.SourceType.FEATURE_TYPE);
+            if (StringUtils.isNotEmpty(featureDTO.getAlias())) {
+                FeatureAlias featureAlias = new FeatureAlias();
+                featureAlias.setFeature(feature);
+                String groupName = DataAliasGroup.Group.ALIAS.toString();
+                DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
+                featureAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
+                featureAlias.setAlias(featureDTO.getAlias());
+                featureAlias.setAliasLowerCase(featureDTO.getAlias().toLowerCase());
+                if (feature.getAliases() == null) {
+                    Set<FeatureAlias> featureAliases = new HashSet<>();
+                    featureAliases.add(featureAlias);
+                    feature.setAliases(featureAliases);
+                } else
+                    feature.getAliases().add(featureAlias);
+            }
+            getFeatureRepository().saveFeature(feature, publication);
 
-        currentSession().save(recatt);
 
-        /* if (publication != null) {
+            if (StringUtils.isNotEmpty(featureDTO.getFeatureSequence())) {
+                saveFeatureSequence(featureDTO.getFeatureSequence(), publication, feature);
+            }
+
+            if (featureDTO.getCuratorNotes() != null && featureDTO.getCuratorNotes().size() > 0) {
+                for (NoteDTO noteDTO : featureDTO.getCuratorNotes()) {
+                    DataNote dnote = new DataNote();
+                    dnote.setDataZdbID(feature.getZdbID());
+                    dnote.setDate(new Date());
+                    dnote.setNote(noteDTO.getNoteData());
+                    featureRepository.addFeatureDataNote(feature, dnote.getNote());
+                }
+            }
+
+            if (featureDTO.getLabOfOrigin() != null) {
+                Organization lab = (Organization) HibernateUtil.currentSession().get(Organization.class, featureDTO.getLabOfOrigin());
+                if (lab == null) {
+                    throw new RuntimeException("lab not found: " + featureDTO.getLabOfOrigin());
+                }
+                FeatureSource featureSource = new FeatureSource();
+                featureSource.setOrganization(lab);
+                featureSource.setDataZdbID(feature.getZdbID());
+
+                Set<FeatureSource> featureSources = feature.getSources();
+                if (featureSources == null) {
+                    featureSources = new HashSet<>();
+                    featureSources.add(featureSource);
+                    feature.setSources(featureSources);
+                } else featureSources.add(featureSource);
+                HibernateUtil.currentSession().save(featureSource);
+            }
+
+
+            FeatureAssay featureAssay = new FeatureAssay();
+            featureAssay.setFeatzdbID(feature.getZdbID());
+            if (featureDTO.getMutagen() == null) {
+                featureAssay.setMutagen(Mutagen.NOT_SPECIFIED);
+            } else {
+                featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
+            }
+            if (featureDTO.getMutagee() == null) {
+                featureAssay.setMutagee(Mutagee.NOT_SPECIFIED);
+            } else {
+                featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
+            }
+            feature.setFeatureAssay(featureAssay);
+            HibernateUtil.currentSession().save(featureAssay);
+            feature.setFeatureAssay(featureAssay);
+            HibernateUtil.currentSession().update(feature);
+            HibernateUtil.flushAndCommitCurrentSession();
+            newFeatureDTO = getFeature(feature.getZdbID());
+        } catch (ValidationException e) {
+            HibernateUtil.rollbackTransaction();
+            logger.info("Error during Creation ", e);
+            throw new ValidationException("Error during Creation: " + e.getMessage());
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            logger.error("Error during Creation ", e);
+            throw new ValidationException("Error during Creation: " + e.getMessage());
+        }
+
+        return newFeatureDTO;
+    }
+
+    private void saveFeatureSequence(String sequence, Publication publication, Feature feature) throws ValidationException {
+        // only upper case letters and numerals
+        if (!sequence.matches("[A-Z0-9]*"))
+            throw new ValidationException("Invalid accession number / sequence: Only upper case letters and numerals allowed");
+        FeatureDBLink featureDBLink = new FeatureDBLink();
+        featureDBLink.setFeature(feature);
+        featureDBLink.setAccessionNumber(sequence);
+
+        featureDBLink.setAccessionNumberDisplay(sequence);
+        ReferenceDatabase genBankRefDB = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+        featureDBLink.setReferenceDatabase(genBankRefDB);
+
+        currentSession().save(featureDBLink);
+        //now handle alias attribution
+
+        if (publication != null) {
             PublicationAttribution pa = new PublicationAttribution();
-            pa.setSourceZdbID(attributionZdbID);
-            pa.setDataZdbID(feature.getZdbID());
+            pa.setSourceZdbID(publication.getZdbID());
+            pa.setDataZdbID(featureDBLink.getZdbID());
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             pa.setPublication(publication);
-            Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
+            Set<PublicationAttribution> pubattr = new HashSet<>();
             pubattr.add(pa);
-            feature.setPublications(pubattr);
+
+            featureDBLink.setPublications(pubattr);
             currentSession().save(pa);
-        }*/
-        if (StringUtils.isNotEmpty(featureDTO.getAlias())) {
-            FeatureAlias featureAlias = new FeatureAlias();
-            featureAlias.setFeature(feature);
-            String groupName = DataAliasGroup.Group.ALIAS.toString();
-            DataAliasGroup group = infrastructureRepository.getDataAliasGroupByName(groupName);
-            featureAlias.setAliasGroup(group);  //default for database, hibernate tries to insert null
-            featureAlias.setAlias(featureDTO.getAlias());
-            featureAlias.setAliasLowerCase(featureDTO.getAlias().toLowerCase());
-//            featureAlias.setAliasLowerCase("tests");
-            if (feature.getAliases() == null) {
-                Set<FeatureAlias> featureAliases = new HashSet<FeatureAlias>();
-                featureAliases.add(featureAlias);
-                feature.setAliases(featureAliases);
-            } else
-                feature.getAliases().add(featureAlias);
-            currentSession().save(featureAlias);
-            //now handle alias attribution
-
-            if (publication != null) {
-                PublicationAttribution pa = new PublicationAttribution();
-                pa.setSourceZdbID(attributionZdbID);
-                pa.setDataZdbID(featureAlias.getZdbID());
-                pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-                pa.setPublication(publication);
-                Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
-                pubattr.add(pa);
-
-                featureAlias.setPublications(pubattr);
-                currentSession().save(pa);
-
-            }
 
         }
-
-
-        if (StringUtils.isNotEmpty(featureDTO.getFeatureSequence())) {
-            FeatureDBLink featureDBLink = new FeatureDBLink();
-            featureDBLink.setFeature(feature);
-            featureDBLink.setAccessionNumber(featureDTO.getFeatureSequence());
-
-            featureDBLink.setAccessionNumberDisplay(featureDTO.getFeatureSequence());
-            ReferenceDatabase genBankRefDB = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                    ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
-            featureDBLink.setReferenceDatabase(genBankRefDB);
-
-            currentSession().save(featureDBLink);
-            //now handle alias attribution
-
-            if (publication != null) {
-                PublicationAttribution pa = new PublicationAttribution();
-                pa.setSourceZdbID(attributionZdbID);
-                pa.setDataZdbID(featureDBLink.getZdbID());
-                pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-                pa.setPublication(publication);
-                Set<PublicationAttribution> pubattr = new HashSet<PublicationAttribution>();
-                pubattr.add(pa);
-
-                featureDBLink.setPublications(pubattr);
-                currentSession().save(pa);
-
-            }
-
-        }
-
-
-        if (featureDTO.getCuratorNotes() != null && featureDTO.getCuratorNotes().size() > 0) {
-            for (NoteDTO noteDTO : featureDTO.getCuratorNotes()) {
-                DataNote dnote = new DataNote();
-                dnote.setDataZdbID(feature.getZdbID());
-
-                dnote.setCurator(person);
-                dnote.setDate(new Date());
-                dnote.setNote(noteDTO.getNoteData());
-
-                Set<DataNote> dataNotes = feature.getDataNotes();
-                if (dataNotes == null) {
-                    dataNotes = new HashSet<DataNote>();
-                    dataNotes.add(dnote);
-                    feature.setDataNotes(dataNotes);
-                } else dataNotes.add(dnote);
-
-
-                HibernateUtil.currentSession().save(dnote);
-            }
-
-
-        }
-
-        if (featureDTO.getLabOfOrigin() != null) {
-            Organization lab = (Organization) HibernateUtil.currentSession().get(Organization.class, featureDTO.getLabOfOrigin());
-            if (lab == null) {
-                throw new RuntimeException("lab not found: " + featureDTO.getLabOfOrigin());
-            }
-            FeatureSource featureSource = new FeatureSource();
-            featureSource.setOrganization(lab);
-            featureSource.setDataZdbID(feature.getZdbID());
-
-            Set<FeatureSource> featureSources = feature.getSources();
-            if (featureSources == null) {
-                featureSources = new HashSet<FeatureSource>();
-                featureSources.add(featureSource);
-                feature.setSources(featureSources);
-            } else featureSources.add(featureSource);
-
-
-            HibernateUtil.currentSession().save(featureSource);
-
-        }
-
-
-        FeatureAssay featureAssay = new FeatureAssay();
-        featureAssay.setFeatzdbID(feature.getZdbID());
-        if (featureDTO.getMutagen() == null) {
-            featureAssay.setMutagen(Mutagen.NOT_SPECIFIED);
-        } else {
-            featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
-        }
-        if (featureDTO.getMutagee() == null) {
-            featureAssay.setMutagee(Mutagee.NOT_SPECIFIED);
-        } else {
-            featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
-        }
-        feature.setFeatureAssay(featureAssay);
-        HibernateUtil.currentSession().save(featureAssay);
-        feature.setFeatureAssay(featureAssay);
-        HibernateUtil.currentSession().update(feature);
-
-        HibernateUtil.flushAndCommitCurrentSession();
-
-        return getFeature(feature.getZdbID());
     }
 
     private void validateUnspecified(FeatureDTO featureDTO) throws ValidationException {
@@ -536,7 +483,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                         + MESSAGE_UNSPECIFIED_FEATURE
                 );
             }
-            if (RepositoryFactory.getInfrastructureRepository().getRecordAttribution(m.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD)
+            if (getInfrastructureRepository().getRecordAttribution(m.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD)
                     == null) {
                 throw new ValidationException("The gene [" + featureDTO.getOptionalName() + "] must be attributed to this pub [" + featureDTO.getPublicationZdbID() + "]. "
                         + MESSAGE_UNSPECIFIED_FEATURE);
@@ -617,13 +564,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
-        Person person = profileService.getCurrentSecurityUser();
-
-        // allows debugging
-//        if(person==null){
-//            person = (Person) HibernateUtil.currentSession().createCriteria(Person.class).setMaxResults(1).uniqueResult();
-//        }
-        DataNote dataNote = featureRepository.addFeatureDataNote(feature, noteDTO.getNoteData(), person);
+        DataNote dataNote = featureRepository.addFeatureDataNote(feature, noteDTO.getNoteData());
         infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "curator note", dataNote.getNote(), "added note");
         transaction.commit();
         noteDTO.setZdbID(dataNote.getZdbID());

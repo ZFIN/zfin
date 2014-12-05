@@ -68,7 +68,7 @@ public class RecordAttribution implements Serializable {
     //needs to override String methods for hash & equality
 
     public String getCompositeKey() {
-        return dataZdbID + sourceZdbID;
+        return dataZdbID + sourceZdbID + sourceType.toString();
     }
 
     public boolean equals(Object o) {
@@ -83,15 +83,15 @@ public class RecordAttribution implements Serializable {
         return getCompositeKey().hashCode();
     }
 
-    public String toString(){
-        String returnString = "" ;
-        returnString += getDataZdbID()  ;
-        returnString += " "  ;
-        returnString += getSourceZdbID() ;
-        returnString += " "  ;
-        returnString += getSourceType() ;
+    public String toString() {
+        String returnString = "";
+        returnString += getDataZdbID();
+        returnString += " ";
+        returnString += getSourceZdbID();
+        returnString += " ";
+        returnString += getSourceType();
 
-        return returnString ;
+        return returnString;
     }
 
 }

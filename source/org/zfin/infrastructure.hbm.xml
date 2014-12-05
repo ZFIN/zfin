@@ -32,7 +32,7 @@
             <column name="zactvs_zdb_id" not-null="true"/>
         </id>
     </class>
-    <class name="org.zfin.infrastructure.RecordAttribution" table="record_attribution" >
+    <class name="org.zfin.infrastructure.RecordAttribution" table="record_attribution">
         <id name="id" type="long">
             <column name="recattrib_pk_id" not-null="true"/>
             <generator class="identity"/>
@@ -58,7 +58,7 @@
 
     </class>
 
-    <class name="org.zfin.infrastructure.Updates" mutable="false" table="updates" >
+    <class name="org.zfin.infrastructure.Updates" mutable="false" table="updates">
         <cache usage="read-only"/>
         <id name="ID" type="long">
             <column name="upd_pk_id" not-null="true"/>
@@ -143,8 +143,8 @@
             <many-to-many class="org.zfin.infrastructure.ActiveSource" column="recattrib_source_zdb_id"/>
         </set>
 
-        <set name="publications" lazy="true">
-            <key column="recattrib_data_zdb_id"/>
+        <set name="publications" lazy="true" cascade="all">
+            <key column="recattrib_data_zdb_id" update="false"/>
             <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
         </set>
 
@@ -312,7 +312,7 @@
             <one-to-many class="org.zfin.ontology.GenericTermRelationship"/>
         </set>
 
-        <set name="definitionReferences" lazy="true" table="external_reference" inverse="true" >
+        <set name="definitionReferences" lazy="true" table="external_reference" inverse="true">
             <key column="exref_data_zdb_id"/>
             <one-to-many class="org.zfin.ontology.TermDefinitionReference"/>
         </set>

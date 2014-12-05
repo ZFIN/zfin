@@ -91,7 +91,7 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable {
 
     public Set<PublicationAttribution> getPublications() {
         if (publications == null)
-            return new HashSet<PublicationAttribution>();
+            return new HashSet<>();
         return publications;
     }
 
@@ -101,7 +101,7 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable {
 
     public void addPublication(PublicationAttribution publicationAttribution) {
         if(this.publications==null){
-            this.publications = new HashSet<PublicationAttribution>() ;
+            this.publications = new HashSet<>() ;
         }
         this.publications.add(publicationAttribution) ;
     }
@@ -115,8 +115,7 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable {
 
     public Publication getSinglePublication() {
         if (getPublicationCount() == 1) {
-            for (PublicationAttribution pubAttr : getPublications())
-                return pubAttr.getPublication();
+            return getPublications().iterator().next().getPublication();
         }
         return null;
     }

@@ -113,7 +113,7 @@ public interface FeatureRepository {
     void deleteFeatureAlias(Feature feature, FeatureAlias alias);
     void deleteFeatureDBLink(Feature feature, DBLink sequence);
 
-    DataNote addFeatureDataNote(Feature feature, String noteData, Person person);
+    DataNote addFeatureDataNote(Feature feature, String noteData);
 
     List<String> getAllFeaturePrefixes();
 
@@ -160,4 +160,11 @@ public interface FeatureRepository {
     int deleteFeatureFromTracking(String featureZdbId);
 
     Set<Feature> getFeaturesCreatedBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
+
+    /**
+     * Save a new feature and create a standard pub attribution and a feature type attribution
+     * @param feature
+     * @param publication
+     */
+    void saveFeature(Feature feature, Publication publication);
 }

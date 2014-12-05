@@ -36,6 +36,7 @@ import org.zfin.sequence.DBLink;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 
 /**
@@ -491,24 +492,22 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
 
     @Override
-    public DataNote addFeatureDataNote(Feature feature, String note, Person curator) {
+    public DataNote addFeatureDataNote(Feature feature, String note) {
         logger.debug("enter addMarDataNote");
         DataNote dnote = new DataNote();
         dnote.setDataZdbID(feature.getZdbID());
         logger.debug("markerZdbId for datanote: " + feature.getZdbID());
-        dnote.setCurator(curator);
+        dnote.setCurator(Person.getCurrentSecurityUser());
         dnote.setDate(new Date());
         dnote.setNote(note);
-        logger.debug("data note curator: " + curator);
+        logger.debug("data note curator: " + Person.getCurrentSecurityUser());
         Set<DataNote> dataNotes = feature.getDataNotes();
         if (dataNotes == null) {
-            dataNotes = new HashSet<DataNote>();
+            dataNotes = new HashSet<>();
             dataNotes.add(dnote);
             feature.setDataNotes(dataNotes);
         } else dataNotes.add(dnote);
-
-
-        HibernateUtil.currentSession().save(dnote);
+        currentSession().save(dnote);
         logger.debug("dnote zdb_id: " + dnote.getZdbID());
         return dnote;
     }
@@ -999,6 +998,43 @@ public class HibernateFeatureRepository implements FeatureRepository {
             featuresCreatedBySTR.add(fmr.getFeature());
         }
         return featuresCreatedBySTR;
+    }
+
+    @Override
+    public void saveFeature(Feature feature, Publication publication) {
+
+        currentSession().save(feature);
+        // create standard attribution
+        PublicationAttribution ra = new PublicationAttribution();
+        ra.setPublication(publication);
+        ra.setDataZdbID(feature.getZdbID());
+        ra.setSourceType(RecordAttribution.SourceType.STANDARD);
+
+        //add another record for "Feature type" source type attribution
+        PublicationAttribution featureTypeAttribution = new PublicationAttribution();
+        featureTypeAttribution.setPublication(publication);
+        featureTypeAttribution.setDataZdbID(feature.getZdbID());
+        featureTypeAttribution.setSourceType(RecordAttribution.SourceType.FEATURE_TYPE);
+
+        Set<PublicationAttribution> set = new HashSet<>(2);
+        set.add(ra);
+        set.add(featureTypeAttribution);
+        feature.setPublications(set);
+        currentSession().flush();
+
+        // create Attribution for feature alias
+        if (CollectionUtils.isNotEmpty(feature.getAliases())) {
+            for (FeatureAlias alias : feature.getAliases()) {
+                PublicationAttribution pa = new PublicationAttribution();
+                pa.setPublication(publication);
+                pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+                pa.setDataZdbID(alias.getZdbID());
+                Set<PublicationAttribution> pubattr = new HashSet<>();
+                pubattr.add(pa);
+                alias.setPublications(pubattr);
+            }
+        }
+
     }
 }
 

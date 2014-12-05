@@ -30,26 +30,44 @@ public interface FeatureRPCService extends RemoteService {
 
 
     List<FeatureDTO> getFeaturesForPub(String pubZdbId);
+
     List<OrganizationDTO> getLabsOfOriginWithPrefix();
+
     List<FeaturePrefixDTO> getPrefix(String name);
+
     FeatureDTO createFeature(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException;
+
     FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException;
+
     FeatureDTO getFeature(String featureZdbID);
+
     void deleteFeature(String zdbID);
+
     List<FeatureMarkerRelationshipDTO> getFeaturesMarkerRelationshipsForPub(String publicationZdbID);
-    void addFeatureAlias(String name, String ftrZdbID,String pubZdbID);
+
+    void addFeatureAlias(String name, String ftrZdbID, String pubZdbID);
+
     void removeFeatureAlias(String name, String ftrZdbID);
-     void addFeatureSequence(String name, String ftrZdbID,String pubZdbID);
+
+    void addFeatureSequence(String name, String ftrZdbID, String pubZdbID) throws ValidationException;
+
     void removeFeatureSequence(String name, String ftrZdbID);
+
     void deleteFeatureMarkerRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO);
+
     List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum ftrTypeDisplay);
+
     List<MarkerDTO> getMarkersForFeatureRelationAndSource(String featureTypeName, String publicationZdbID);
+
     void addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO);
 
     // note stuff
     void editPublicNote(NoteDTO noteDTO);
+
     NoteDTO addCuratorNote(NoteDTO noteDTO);
+
     void editCuratorNote(NoteDTO noteDTO);
+
     void removeCuratorNote(NoteDTO noteDTO);
 
 }
