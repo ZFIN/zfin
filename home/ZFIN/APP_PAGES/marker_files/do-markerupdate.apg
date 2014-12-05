@@ -854,6 +854,9 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
         values
 	  ( '$mrkrrel_zdb_id', '$reltype', '$ptnerId', '$OID');">
       <?/MISQL>
+      <?MISQL SQL="select mrel_mrkr_2_zdb_id from marker_relationship where mrel_type = 'knockdown reagent targets gene' and mrel_mrkr_1_zdb_id = '$OID';">
+         <?MISQL SQL="execute procedure regen_genox_marker('$1');"><?/MISQL>
+      <?/MISQL>
     <?MIELSE>
 	<script>
 	window.alert('ERROR: Symbol is not in ZFIN.');
@@ -953,6 +956,9 @@ and fdbcont_fdbdt_id = fdbdt_pk_id;">
 					)
 		       and mrel_type = '$info') ;">
      <?/MISQL>
+     <?MISQL SQL="select mrel_mrkr_2_zdb_id from marker_relationship where mrel_type = 'knockdown reagent targets gene' and mrel_mrkr_1_zdb_id = '$OID';">
+         <?MISQL SQL="execute procedure regen_genox_marker('$1');"><?/MISQL>
+     <?/MISQL>     
   <?/MIBLOCK>
 
   <!-- Special case for deleting a supplier -->
