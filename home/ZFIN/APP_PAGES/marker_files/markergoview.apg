@@ -128,7 +128,7 @@ where ev.mrkrgoev_mrkr_zdb_id='$OID' and ev.mrkrgoev_gflag_name is not null
   <?MIVAR NAME=infername><?/MIVAR>
 
 <?MISQL SQL="
-      select
+      select distinct
 g.gont_ontology_name,
 t.term_name,
 ev.mrkrgoev_evidence_code,
@@ -142,13 +142,15 @@ ev.mrkrgoev_gflag_name,
 ev.mrkrgoev_annotation_organization_created_by,
 org.mrkrgoevcb_name,
 org.mrkrgoevcb_url,
-get_entity_name_html(t.term_zdb_id)
+get_entity_name_html(t.term_zdb_id),
+infgrmem_inferred_from
 from term t
 join marker_go_term_evidence ev on t.term_zdb_id=ev.mrkrgoev_term_zdb_id
 join go_ontology g on t.term_ontology=g.gont_ontology_internal_name
 left join marker_go_term_evidence_annotation_created_by_source org on ev.mrkrgoev_annotation_organization_created_by=org.mrkrgoevcb_name 
+left join inference_group_member on infgrmem_mrkrgoev_zdb_id = mrkrgoev_zdb_id
 where ev.mrkrgoev_mrkr_zdb_id='$OID'
-order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_name
+order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_name, infgrmem_inferred_from desc
       ; ">
 
    <?MIVAR NAME=$ontology>$1<?/MIVAR>
@@ -164,6 +166,7 @@ order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_n
    <?MIVAR NAME="organization_name">$12<?/MIVAR>
    <?MIVAR NAME="organization_url">$13<?/MIVAR>
    <?MIVAR NAME="$goterm_link">$14<?/MIVAR>
+   <?MIVAR NAME="db_inf_name">$15<?/MIVAR>
    <?MIVAR NAME=isnot>f<?/MIVAR>
    <?MIVAR NAME=contribs>f<?/MIVAR>
    <?MIVAR NAME=colocalizeswith>f<?/MIVAR>
@@ -181,7 +184,17 @@ order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_n
    <?MIVAR NAME=infername>$(CONCAT,$infername,$1)<?/MIVAR>
    <?/MISQL>
    <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=has_inf>t<?/MIVAR>
-
+   <?MIBLOCK COND=$(XST,debug)">
+       <?MIVAR>
+           <tr style="background-color: #ffeeff">
+               <td>ontology: $lastonto != $ontology</td>
+               <td>goterm: $lastgoterm != $goterm</td>
+               <td>evidence: $lastevidence != $evidence</td>
+               <td>flag: $lastflag != $flag</td>
+               <td>infername: $lastinfername != $infername</td>
+           </tr>
+       <?/MIVAR>
+   <?/MIBLOCK>
    <!--now displaying annotations-->
    <?MIBLOCK COND="$(OR,$(NC,$ontology,$lastonto),$(NC,$lastgoterm,$goterm),$(NC,$lastevidence,$evidence),$(NE,$flag,$lastflag),$(NE,$infername,$lastinfername))">
      <tr <?MIVAR>$(IF,$(AND,$(NC,$lastonto,),$(NC,$ontology,$lastonto)),class="newgroup")<?/MIVAR>  bgcolor=<?MIVAR>$row_color<?/MIVAR> height=25>
@@ -214,15 +227,15 @@ order by g.gont_order,ev.mrkrgoev_evidence_code,t.term_name, ev.mrkrgoev_gflag_n
      <?MISQL SQL="select infgrmem_inferred_from 
 		    from inference_group_member 
 		   where infgrmem_mrkrgoev_zdb_id='$markergoevid'">
-        <?MIVAR NAME=$infername>$1<?/MIVAR>
+        <?MIVAR NAME=$infername_inner>$1<?/MIVAR>
      	<?MIVAR NAME=$colon>:<?/MIVAR>
      	<?MIVAR NAME=$comma>,<?/MIVAR>
-     	<?MIVAR NAME=$pos>$(POSITION,$infername,$colon)<?/MIVAR>
+     	<?MIVAR NAME=$pos>$(POSITION,$infername_inner,$colon)<?/MIVAR>
      	<?MIVAR NAME=$posn>$(-,$pos,1)<?/MIVAR>
-     	<?MIVAR NAME=$dbase>$(SUBSTR,$infername,1,$posn)<?/MIVAR>
-     	<?MIVAR NAME=$currinflength>$(STRLEN,$infername)<?/MIVAR>
+     	<?MIVAR NAME=$dbase>$(SUBSTR,$infername_inner,1,$posn)<?/MIVAR>
+     	<?MIVAR NAME=$currinflength>$(STRLEN,$infername_inner)<?/MIVAR>
      	<?MIVAR NAME=$position>$(+,$pos,1)<?/MIVAR>
-     	<?MIVAR NAME=$accID>$(SUBSTR,$infername,$position,$currinflength)<?/MIVAR>
+     	<?MIVAR NAME=$accID>$(SUBSTR,$infername_inner,$position,$currinflength)<?/MIVAR>
 
      	<?MIBLOCK COND="$(EC,$dbase,ZFIN)">
 	   <?MIVAR NAME=inf_mem_sym><?/MIVAR>
