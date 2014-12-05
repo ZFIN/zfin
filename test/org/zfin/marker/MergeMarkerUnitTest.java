@@ -5,6 +5,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
@@ -37,6 +38,7 @@ public class MergeMarkerUnitTest {
         Publication pub1 = new Publication() ;
         pub1.setZdbID("A");
         publicationAttribution.setPublication(pub1);
+        publicationAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
         alias1.addPublication(publicationAttribution);
         Set<MarkerAlias> markerToDeleteAliases = new HashSet<MarkerAlias>() ;
         markerToDeleteAliases.add(alias1) ;
@@ -55,6 +57,7 @@ public class MergeMarkerUnitTest {
         Publication pub2 = new Publication() ;
         pub2.setZdbID("B");
         publicationAttribution2.setPublication(pub2);
+        publicationAttribution2.setSourceType(RecordAttribution.SourceType.STANDARD);
         alias2.addPublication(publicationAttribution2);
         markerToMergeIntoAliases.add(alias2) ;
 
