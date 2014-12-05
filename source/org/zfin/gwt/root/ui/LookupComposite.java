@@ -94,7 +94,7 @@ public class LookupComposite extends Composite implements Revertible {
     protected boolean submitOnEnter = false;
 
     // later option
-    private int minLookupLength = 3;
+    private int minLookupLength = 2;
     private static final String TERM_INFO = "term-info";
 
     private LookupRPCServiceAsync lookupRPC = LookupRPCService.App.getInstance();
