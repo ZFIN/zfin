@@ -9,14 +9,10 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import org.zfin.gwt.root.dto.GenotypeDTO;
-import org.zfin.gwt.root.dto.PublicationDTO;
+import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.LookupRPCService;
-import org.zfin.marker.Marker;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.mutant.Genotype;
 
 import java.util.*;
 
@@ -30,7 +26,6 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private ListBoxWrapper removeListBox = new ListBoxWrapper(false);
     private HTML messageBox = new HTML("");
     private boolean working = false ;
-    private String removeAttrPopupPrompt = "";
     private HashMap<String, RelatedEntityDTO> relatedEntityDTOs = new HashMap<String, RelatedEntityDTO>(); // entities in the Remove Attr drop-down list
 
     public static enum RemoveHeader {
@@ -38,14 +33,14 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         FEATURE,
         GENOTYPE,;
 
-        private static final String stars = "**";
+        private static final String STARS = "**";
 
         public String toString() {
-            return stars + name();
+            return STARS + name();
         }
 
         public static boolean isHeader(String value) {
-            return (value.startsWith(stars));
+            return (value.startsWith(STARS));
         }
     }
 
@@ -171,11 +166,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                     return;
                 }
 
-                if (checkGenotypeHasOnlyOneCitation(attributionToRemoveID, attributionToRemoveLabel)) {
-                    return;
-                }
-
-                if(false==Window.confirm(removeAttrPopupPrompt)) {
+                if(!Window.confirm(getConfirmationMessage(attributionToRemoveID, attributionToRemoveLabel))) {
                     return ;
                 }
 
@@ -207,18 +198,47 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         });
     }
 
-    private boolean checkGenotypeHasOnlyOneCitation(String attributionToRemoveID, String attributionToRemoveLabel) {
+    private String getConfirmationMessage(String attributionToRemoveID, String attributionToRemoveLabel) {
+        // the default message
+        String removeAttrPopupPrompt = "Are you sure you want to delete: " + attributionToRemoveLabel;
+
         // when the related entity is a genotype and there is only one publication associated with it
-        if (attributionToRemoveID.startsWith("ZDB-GENO-") && relatedEntityDTOs.get(attributionToRemoveID).getAssociatedPublications().size()==1) {
+        if (attributionToRemoveID.startsWith("ZDB-GENO-") && relatedEntityDTOs.get(attributionToRemoveID).getAssociatedPublications().size() == 1) {
             StringBuilder sb = new StringBuilder();
             sb.append("This is the last publication associated with ").append(attributionToRemoveLabel).append(".\nTo delete ")
                     .append(attributionToRemoveLabel).append(", click Cancel and use the interface on the Genotype tab. To remove pub from genotype, click OK.");
             removeAttrPopupPrompt = sb.toString();
-        } else {
-            removeAttrPopupPrompt = "Are you sure you want to delete: " + attributionToRemoveLabel;
-        }
-        return false;
 
+        // when a morpholino has a targeted gene attribution or an alias attribution in addition to the
+        // direct attribution that is being removed.
+        } else if (relatedEntityDTOs.get(attributionToRemoveID) instanceof MarkerDTO) {
+            boolean stillAttributed = false;
+            MarkerDTO markerDTO = (MarkerDTO) relatedEntityDTOs.get(attributionToRemoveID);
+            if (markerDTO.getTargetedGeneAttributes() != null) {
+                for (MarkerDTO targeted : markerDTO.getTargetedGeneAttributes()) {
+                    if (targeted.getPublicationZdbID().equals(dto.getPublicationZdbID())) {
+                        stillAttributed = true;
+                        break;
+                    }
+                }
+            }
+            if (markerDTO.getAliasAttributes() != null) {
+                for (RelatedEntityDTO alias : markerDTO.getAliasAttributes()) {
+                    if (alias.getPublicationZdbID().equals(dto.getPublicationZdbID())) {
+                        stillAttributed = true;
+                        break;
+                    }
+                }
+            }
+            if (stillAttributed) {
+                removeAttrPopupPrompt = attributionToRemoveLabel + " is being removed from attribution " +
+                        "to this pub, but it is still being used to attribute other data on " +
+                        attributionToRemoveLabel + ". To completely dissociate this pub from " +
+                        attributionToRemoveLabel + ", go to the " + attributionToRemoveLabel + " page " +
+                        "and remove the remaining attributions to this pub.";
+            }
+        }
+        return removeAttrPopupPrompt;
     }
 
     private void addMarkerAttribution(final String value) {

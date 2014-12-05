@@ -15,6 +15,7 @@ import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.*;
@@ -422,6 +423,18 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         for (Marker m : markers) {
             MarkerDTO markerDTO = DTOConversionService.convertToMarkerDTO(m);
             markerDTO.setName(m.getAbbreviation() + "[" + m.getType() + "]");
+            if (m.isInTypeGroup(Marker.TypeGroup.KNOCKDOWN_REAGENT)) {
+                List<MarkerDTO> targetedGenes = new ArrayList<>();
+                for (MarkerRelationship mrel : m.getFirstMarkerRelationships()) {
+                    if (mrel.getType() == MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE) {
+                        Marker gene = mrel.getSecondMarker();
+                        targetedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(gene), mrel.getPublications()));
+                    }
+
+                }
+                markerDTO.setTargetedGeneAttributes(targetedGenes);
+            }
+            markerDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(m));
             relatedEntityDTOs.add(markerDTO);
         }
 
