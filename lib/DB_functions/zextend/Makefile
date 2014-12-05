@@ -94,5 +94,5 @@ $(TARGETDIR_OBJS) : $(TARGETDIR)/% : %
 	$(TARGET_CP) $^ $@		  # put it where DB will find it
 	$(TOUCH) $@
 	$(DBACCESS) $(DBNAME) create_functions.sql  	  # create functions in DB
-	/bin/rm -f create_functions.sql			  # prevent hanky panky
+	/bin/rm -f $(TARGETDIR)/create_functions.sql			  # prevent hanky panky
 
