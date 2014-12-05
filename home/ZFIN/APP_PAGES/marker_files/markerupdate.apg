@@ -20,6 +20,8 @@ target_table -- marker
 
 <?/MICOMMENT>
 
+<?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param><?/MIVAR>
+
 <!-- first double-check permissions.   -->
 <HTML>
 <HEAD>
@@ -58,7 +60,6 @@ function validate(theform) {
 <?MIVAR>     <TITLE>ZFIN Updating $print_name</TITLE>    <?/MIVAR>
 </HEAD>
 
-<?MIVAR COND="$(NXST,$xtra_param)" NAME=$xtra_param><?/MIVAR>
 
 
 <?MIBLOCK COND="$(NC,$AUTHORIZED,false)">
