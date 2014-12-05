@@ -5,9 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.zfin.database.InformixUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -23,6 +27,7 @@ import org.zfin.sequence.blast.Database;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  */
@@ -128,6 +133,23 @@ public class DisruptorViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, disruptorType + ": " + disruptor.getAbbreviation());
 
         return "marker/disruptor-view.page";
+    }
+
+    @RequestMapping(value = "/call-regen-genox", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    int runRegenGenoxForAllTargets(@RequestParam("sequenceTargetingReagentZdbId") String sequenceTargetingReagentZdbId) {
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(sequenceTargetingReagentZdbId);
+        List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<MarkerRelationshipPresentation>();
+        knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
+                sequenceTargetingReagent, true
+                , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
+        ));
+        for (MarkerRelationshipPresentation targetGene: knockdownRelationships) {
+            InformixUtil.runInformixProcedure("regen_genox_marker", targetGene.getZdbId());
+        }
+        return knockdownRelationships.size();
     }
 }
 
