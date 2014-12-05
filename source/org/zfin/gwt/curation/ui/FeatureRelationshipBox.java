@@ -170,10 +170,16 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
         if(name==null) {
             return ;
         }
-        for(int i = 1 ; i < featureTable.getRowCount()-1 ; i++){
-            String text = ((Label) (featureTable.getWidget(i,column))).getText() ;
-            if(  !text.equals(name)){
-                rowFormatter.setVisible(i,false);
+        String text = "";
+        for(int i = 1; i < featureTable.getRowCount()-1; i++) {
+            Widget widget = featureTable.getWidget(i, column);
+            // because the rows are grouped, there may not be a label on every row. if there is
+            // no label on this row, just keep the previous row's label.
+            if (widget != null) {
+                text = ((Label) widget).getText();
+            }
+            if (!text.equals(name)) {
+                rowFormatter.setVisible(i, false);
             }
         }
     }
