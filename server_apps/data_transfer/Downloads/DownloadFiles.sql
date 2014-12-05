@@ -522,11 +522,15 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mappings.txt'
  DELIMITER "	"
-select marker_id, mrkr_abbrev, szm_term_ont_id, p.abbrev,mm_chromosome, mm_chrom_location, p.metric
- from mapped_marker, panels p, marker m, so_zfin_mapping
- where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id
- and  m.mrkr_type = szm_object_type
- order by 1;
+select distinct sfcl_data_zdb_id, mrkr_Abbrev, sfcl_chromosome, sfcl_start, sfcl_end, szm_term_zdb_id, sfcl_location_source
+  from sequence_feature_chromosome_location, marker, so_zfin_mapping
+ where marker_zdb_id = sfcl_data_zdb_id
+and szm_object_type = mrkr_type
+union
+select distinct sfcl_data_zdb_id, mrkr_Abbrev, sfcl_chromosome, sfcl_start, sfcl_end, szm_term_zdb_id, sfcl_location_source
+  from sequence_feature_chromosome_location, feature, so_zfin_mapping
+ where feature_zdb_id = sfcl_data_zdb_id
+and szm_object_type = feature_type;
 
 -- Generate sequence data files for GenBank, RefSeq, Entrez, UniGene, UniProt, Interpro and GenPept
 
