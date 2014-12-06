@@ -332,15 +332,21 @@ public class DeleteRecordController {
         } else if (type.startsWith("LAB")) {
             Organization lab = RepositoryFactory.getProfileRepository().getOrganizationByZdbID(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(lab.getName());
-            List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getLabPrefixesById(zdbIDToDelete, true);
+          //  List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getLabPrefixesById(zdbIDToDelete, true);
+            List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getCurrentLabPrefixesByIdForDelete(zdbIDToDelete, true);
             // Can't delete the lab if it has lab designation
             if (CollectionUtils.isNotEmpty(designations)) {
                 String argString = "";
                 for (FeaturePrefix designation : designations) {
-                    argString = argString + "<a target=_blank href=/action/alleles/" +  designation.getPrefixString() + ">" + designation.getPrefixString() + "</a><br/>";
-                }
-                argString += "<br/>";
-                formBean.addError("Having lab designation: <br/>" + argString);
+
+
+                        argString = argString + "<a target=_blank href=/action/alleles/" + designation.getPrefixString() + ">" + designation.getPrefixString() + "</a><br/>";
+
+
+                        argString += "<br/>";
+                        formBean.addError("Having lab designation: <br/>" + argString);
+                    }
+
             }
             // Can't delete the lab if there are people associated
             List<PersonMemberPresentation> people = RepositoryFactory.getProfileRepository().getLabMembers(zdbIDToDelete);
