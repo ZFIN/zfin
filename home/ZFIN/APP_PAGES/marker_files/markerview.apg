@@ -48,59 +48,6 @@ for antibody: added meta redirect at the beginning and the end of the file.
 
   <SCRIPT>
 
-  jQuery(document).ready(function () {
-
-     jQuery( "#supplier" ).autocomplete({
-       source: '/action/marker/find-suppliers',
-       minLength: 2,
-       autoFocus: true,
-       select: function (event, ui) {
-         jQuery('#supplier').val(ui.item.label);
-         supplierToAddZdbID = ui.item.id;
-       }
-     });
-
-    jQuery( "#supplier" ).keypress(function(event) {
-       if (event.keyCode == 13) {
-	 event.preventDefault();
-	 new_supplier(supplierToAddZdbID);
-       }
-    });
-
-    jQuery( "#targetGeneSymbol" ).autocomplete({
-      source: '/action/marker/find-targetGenes',
-      minLength: 3,
-      autoFocus: true,
-      select: function (event, ui) {
-          jQuery('#targetGeneSymbol').val(ui.item.label);
-      }
-    });
-
-    jQuery( "#targetGeneSymbol" ).keypress(function(event) {
-      if (event.keyCode == 13) {
-         event.preventDefault();
-         return false;
-      }
-    });
-
-    jQuery( "#targetGeneSymbol2" ).autocomplete({
-      source: '/action/marker/find-targetGenes',
-      minLength: 3,
-      autoFocus: true,
-      select: function (event, ui) {
-          jQuery('#targetGeneSymbol2').val(ui.item.label);
-      }
-    });
-
-    jQuery( "#targetGeneSymbol2" ).keypress(function(event) {
-      if (event.keyCode == 13) {
-         event.preventDefault();
-         return false;
-      }
-    });
-
-  });
-
   function updateInnerHTML(element_id,html_to_display) {
     var c1 = document.getElementById(element_id);
     c1.innerHTML = html_to_display;
@@ -2856,11 +2803,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
    <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-orthoedit.apg';">$1<?/MISQL>
  <?/MIBLOCK>
 
-	      <?MIVAR>
-            <script type="text/javascript">
-                jQuery('#orthology').load('/action/marker/$OID/orthology');
-            </script>
-	    <?/MIVAR>
+
             <div id="orthology"></div>
 
 <?/MIBLOCK>
@@ -2898,6 +2841,65 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 <?/MISQL>
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+
+<script>
+  jQuery(document).ready(function () {
+
+     jQuery( "#supplier" ).autocomplete({
+       source: '/action/marker/find-suppliers',
+       minLength: 2,
+       autoFocus: true,
+       select: function (event, ui) {
+         jQuery('#supplier').val(ui.item.label);
+         supplierToAddZdbID = ui.item.id;
+       }
+     });
+
+    <?MIVAR>
+            jQuery('#orthology').load('/action/marker/$OID/orthology');
+    <?/MIVAR>
+
+    jQuery( "#supplier" ).keypress(function(event) {
+       if (event.keyCode == 13) {
+	 event.preventDefault();
+	 new_supplier(supplierToAddZdbID);
+       }
+    });
+
+    jQuery( "#targetGeneSymbol" ).autocomplete({
+      source: '/action/marker/find-targetGenes',
+      minLength: 3,
+      autoFocus: true,
+      select: function (event, ui) {
+          jQuery('#targetGeneSymbol').val(ui.item.label);
+      }
+    });
+
+    jQuery( "#targetGeneSymbol" ).keypress(function(event) {
+      if (event.keyCode == 13) {
+         event.preventDefault();
+         return false;
+      }
+    });
+
+    jQuery( "#targetGeneSymbol2" ).autocomplete({
+      source: '/action/marker/find-targetGenes',
+      minLength: 3,
+      autoFocus: true,
+      select: function (event, ui) {
+          jQuery('#targetGeneSymbol2').val(ui.item.label);
+      }
+    });
+
+    jQuery( "#targetGeneSymbol2" ).keypress(function(event) {
+      if (event.keyCode == 13) {
+         event.preventDefault();
+         return false;
+      }
+    });
+
+  });
+</script>
 
 </BODY>
 
