@@ -389,6 +389,25 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
         return generateFeaturePrefixes(organizationFeaturePrefixes, assignIfEmpty);
     }
+    public List<FeaturePrefix> getCurrentLabPrefixesByIdForDelete(String labZdbID, boolean assignIfEmpty) {
+        String hqlLab1 = " select lfp from OrganizationFeaturePrefix lfp  " +
+                " join lfp.organization lb " +
+                " where lb.zdbID=:labZdbID " +
+                " and lfp.currentDesignation='t' " +
+                " order by lfp.currentDesignation desc, lfp.featurePrefix.prefixString asc";
+
+        List<OrganizationFeaturePrefix> organizationFeaturePrefixes = HibernateUtil.currentSession().createQuery(hqlLab1)
+                .setParameter("labZdbID", labZdbID).list();
+
+        List<FeaturePrefix> featurePrefixes = new ArrayList<FeaturePrefix>();
+        for (OrganizationFeaturePrefix organizationFeaturePrefix : organizationFeaturePrefixes) {
+            FeaturePrefix featurePrefix = organizationFeaturePrefix.getFeaturePrefix();
+            featurePrefix.setCurrentDesignationForSet(organizationFeaturePrefix.getCurrentDesignation());
+            featurePrefixes.add(featurePrefix);
+        }
+
+        return featurePrefixes;
+    }
 
     public List<FeaturePrefix> getCurrentLabPrefixesById(String labZdbID, boolean assignIfEmpty) {
         String hqlLab1 = " select lfp from OrganizationFeaturePrefix lfp  " +

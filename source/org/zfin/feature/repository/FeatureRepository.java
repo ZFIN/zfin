@@ -65,6 +65,7 @@ public interface FeatureRepository {
 
     List<FeaturePrefix> getLabPrefixesById(String labZdbID,boolean assignIfEmpty);
     List<FeaturePrefix> getCurrentLabPrefixesById(String labZdbID,boolean assignIfEmpty);
+    List<FeaturePrefix> getCurrentLabPrefixesByIdForDelete(String labZdbID,boolean assignIfEmpty);
 
     List<Organization> getLabsOfOriginWithPrefix();
 
