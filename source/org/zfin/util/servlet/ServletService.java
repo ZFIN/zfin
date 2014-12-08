@@ -2,7 +2,7 @@ package org.zfin.util.servlet;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -91,7 +91,7 @@ public class ServletService {
     public static RequestBean getRequestBean(HttpServletRequest request) {
         RequestBean bean = new RequestBean();
         bean.setTomcatJSessioncookie(getJSessionCookie(request));
-        bean.setPerson(Person.getCurrentSecurityUser());
+        bean.setPerson(ProfileService.getCurrentSecurityUser());
         bean.setQueryParameter(request.getParameterMap());
         bean.setRequest(request.getRequestURI());
         bean.setQueryRequestString(request.getQueryString());

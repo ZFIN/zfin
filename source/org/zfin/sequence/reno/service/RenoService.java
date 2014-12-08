@@ -1,13 +1,9 @@
 package org.zfin.sequence.reno.service;
 
-import org.apache.bcel.Repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
 import org.zfin.marker.MarkerRelationship;
@@ -16,6 +12,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.OrthoEvidence;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.Accession;
@@ -42,7 +39,7 @@ public class RenoService {
 
     private Map<Marker, Set<LinkageGroup>> cachedLinkageGroupMap = new HashMap<Marker, Set<LinkageGroup>>();
 
-    public  List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
+    public List<Marker> checkForExistingRelationships(CandidateBean candidateBean, RunCandidate rc) {
         List<Marker> associatedMarkers = getAllSingleAssociatedGenesFromQueriesForRunCandidate(rc);
         List<Marker> identifiedMarkers = rc.getIdentifiedMarkers();
         List<Marker> smallSegments = getRelatedMarkers(identifiedMarkers);
@@ -63,7 +60,7 @@ public class RenoService {
         return associatedMarkers;
     }
 
-    public  List<Marker> getRelatedMarkers(List<Marker> identifiedMarkers) {
+    public List<Marker> getRelatedMarkers(List<Marker> identifiedMarkers) {
         List<Marker> segments = getSmallSegementClones(identifiedMarkers);
         if (CollectionUtils.isEmpty(segments)) {
             segments = getTranscriptProducts(identifiedMarkers);
@@ -71,7 +68,7 @@ public class RenoService {
         return segments;
     }
 
-    public  List<Marker> getSmallSegementClones(List<Marker> markers) {
+    public List<Marker> getSmallSegementClones(List<Marker> markers) {
         List<Marker> segments = new ArrayList<Marker>();
 
         //pull the ESTs from the candidate
@@ -86,7 +83,7 @@ public class RenoService {
     }
 
 
-    public  List<Marker> getTranscriptProducts(List<Marker> markers) {
+    public List<Marker> getTranscriptProducts(List<Marker> markers) {
         List<Marker> segments = new ArrayList<Marker>();
 
         //pull the ESTs from the candidate
@@ -107,7 +104,7 @@ public class RenoService {
      * @param orthologyPub      publication
      * @return set of OrthoEvidence codes
      */
-    public  Set<OrthoEvidence> createEvidenceCollection(Set<OrthoEvidence.Code> formEvidenceCodes, Publication orthologyPub) {
+    public Set<OrthoEvidence> createEvidenceCollection(Set<OrthoEvidence.Code> formEvidenceCodes, Publication orthologyPub) {
         HashSet<OrthoEvidence> orthoEvidences = new HashSet<OrthoEvidence>();
         if (formEvidenceCodes != null) {
             for (OrthoEvidence.Code orthoevidence : formEvidenceCodes) {
@@ -129,7 +126,7 @@ public class RenoService {
      *
      * @param rc Runcandidate
      */
-    public  void populateLinkageGroups(RunCandidate rc) {
+    public void populateLinkageGroups(RunCandidate rc) {
         if (rc == null)
             return;
 
@@ -160,13 +157,11 @@ public class RenoService {
         }
     }
 
-    public  void renameGene(Marker gene, String attributionZdbID) {
-        Person currentUser = Person.getCurrentSecurityUser();
+    public void renameGene(Marker gene, String attributionZdbID) {
         Publication pub = new Publication();
         pub.setZdbID(attributionZdbID);
         RepositoryFactory.getMarkerRepository().renameMarker(gene, pub, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
-        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(gene, "data_alias", "", currentUser, "", "");
-//        ir.insertUpdatesTable(geneToRename.getZdbID(),"dalias_alias",geneToRename.getAbbreviation(),"",rc.getLockPerson().getZdbID(),rc.getLockPerson().getName());
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(gene, "data_alias", "", "", "");
 
     }
 
@@ -182,7 +177,7 @@ public class RenoService {
         logger.info("existingGene abbrev: " + gene.getAbbreviation() + " " + gene.getZdbID() + " rc:" + rc.getZdbID());
         if (!StringUtils.isEmpty(rc.getCandidate().getNote())) {
             logger.debug("attach a data note to the gene");
-            RepositoryFactory.getMarkerRepository().addMarkerDataNote(gene, rc.getCandidate().getNote(), rc.getLockPerson());
+            RepositoryFactory.getMarkerRepository().addMarkerDataNote(gene, rc.getCandidate().getNote());
             rc.getCandidate().setNote(null);
         }
         logger.info("exit moveNoteToGene");
@@ -197,10 +192,10 @@ public class RenoService {
      *
      * @param candidateBean Candidate Bean
      */
-    public  void handleLock(CandidateBean candidateBean) {
+    public void handleLock(CandidateBean candidateBean) {
 
         RenoRepository rr = RepositoryFactory.getRenoRepository();
-        Person currentUser = Person.getCurrentSecurityUser();
+        Person currentUser = ProfileService.getCurrentSecurityUser();
         RunCandidate rc = candidateBean.getRunCandidate();
 
         if (StringUtils.equals(candidateBean.getAction(), CandidateBean.LOCK_RECORD)) {
@@ -221,11 +216,11 @@ public class RenoService {
      *
      * @param run Run to finish.
      */
-    public  void finishRemainderRedundancy(Run run) {
+    public void finishRemainderRedundancy(Run run) {
         List<RunCandidate> runCandidates = RepositoryFactory.getRenoRepository().getSangerRunCandidatesInQueue(run);
         RenoRepository rr = RepositoryFactory.getRenoRepository();
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-        Person currentUser = Person.getCurrentSecurityUser();
+        Person currentUser = ProfileService.getCurrentSecurityUser();
 
 
         // these are all unlocked, so must lock all of them first.
@@ -249,7 +244,7 @@ public class RenoService {
     }
 
 
-    public  void handleRedundancyNovelGene(RunCandidate runCandidate) {
+    public void handleRedundancyNovelGene(RunCandidate runCandidate) {
         logger.info("enter handleNovelGene");
 
         if (!runCandidate.getRun().isRedundancy()) {
@@ -317,7 +312,7 @@ public class RenoService {
      * @param rc   the RunCandidate
      * @param gene the gene chosen by the curators (could be newly created)
      */
-    public  void createRedundancyRelationships(RunCandidate rc, Marker gene) {
+    public void createRedundancyRelationships(RunCandidate rc, Marker gene) {
         logger.info("createRelationships gene: " + gene);
         logger.info("createRelationships runCanZdbID: " + rc.getZdbID());
 
@@ -424,7 +419,7 @@ public class RenoService {
 
         List<DBLink> links = RepositoryFactory.getSequenceRepository().getDBLinksForAccession(accession);
 
-        for (DBLink link : links ) {
+        for (DBLink link : links) {
 
             if (link instanceof MarkerDBLink) {
                 MarkerDBLink markerLink = (MarkerDBLink) link;
@@ -451,57 +446,55 @@ public class RenoService {
                 logger.debug("I've got a hit: " + h.getZdbID());
                 logger.debug("I've got a hit accession: " + h.getTargetAccession().getNumber());
                 Accession a = h.getTargetAccession();
-                List<Marker> genesToAdd= new ArrayList<Marker>() ;
+                List<Marker> genesToAdd = new ArrayList<Marker>();
                 logger.debug("number of genes for hit: " + genes.size());
                 logger.debug("accession_id: " + a.getID());
 
                 for (Marker m : getMarkersForAccession(a)) {
-                    logger.debug("I've got a Marker: " + m.getAbbreviation()+ " of type: "+ m.getMarkerType().getType());
+                    logger.debug("I've got a Marker: " + m.getAbbreviation() + " of type: " + m.getMarkerType().getType());
                     logger.debug("genes.contains(m): " + genes.contains(m));
                     logger.debug("is in type group genedom: " + m.isInTypeGroup(Marker.TypeGroup.GENEDOM));
                     // if the hit is a gene, then add directly
                     if ((m.isInTypeGroup(Marker.TypeGroup.GENEDOM))
                             && (!genes.contains(m))) {
                         logger.debug("ADDING genedom gene: " + m.getAbbreviation());
-                        genesToAdd.add(m) ;
+                        genesToAdd.add(m);
 //                        genes.add(m);
                     }
                     // if the hit is not a gene, then add any genes that encode it
                     else {
-                        Set<MarkerRelationship> secondMarkerRelationships = m.getSecondMarkerRelationships() ;
-                        logger.debug(m.getAbbreviation()+ (secondMarkerRelationships!=null ? " number of second marker relationships: "+ secondMarkerRelationships.size() : "null" ));
+                        Set<MarkerRelationship> secondMarkerRelationships = m.getSecondMarkerRelationships();
+                        logger.debug(m.getAbbreviation() + (secondMarkerRelationships != null ? " number of second marker relationships: " + secondMarkerRelationships.size() : "null"));
                         for (MarkerRelationship rel : m.getSecondMarkerRelationships()) {
                             Marker gene = rel.getFirstMarker();
-                            logger.debug("gene: "+ (gene==null ? "null" : gene.getAbbreviation())  ) ;
+                            logger.debug("gene: " + (gene == null ? "null" : gene.getAbbreviation()));
                             logger.debug("encoding gene is in type group genedom: " + gene.isInTypeGroup(Marker.TypeGroup.GENEDOM));
                             logger.debug("genes to add size: " + genesToAdd.size());
                             logger.debug("genes to add contains: " + genesToAdd.contains(gene));
 
                             if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !genesToAdd.contains(gene) && rel.getType().equals(
-                                    MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)){
-                                logger.debug("ADDING encoding gene: "+ gene.getAbbreviation());
-                                genesToAdd.add(gene) ;
-                            }
-                            else{
-                                logger.debug("NOT adding encoding gene: "+ gene.getAbbreviation());
+                                    MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT)) {
+                                logger.debug("ADDING encoding gene: " + gene.getAbbreviation());
+                                genesToAdd.add(gene);
+                            } else {
+                                logger.debug("NOT adding encoding gene: " + gene.getAbbreviation());
                             }
                             if (gene.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !genesToAdd.contains(gene) && rel.getType().equals(
-                                    MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)){
-                                logger.debug("ADDING encoding gene: "+ gene.getAbbreviation());
-                                genesToAdd.add(gene) ;
-                            }
-                            else{
-                                logger.debug("NOT adding encoding gene: "+ gene.getAbbreviation());
+                                    MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)) {
+                                logger.debug("ADDING encoding gene: " + gene.getAbbreviation());
+                                genesToAdd.add(gene);
+                            } else {
+                                logger.debug("NOT adding encoding gene: " + gene.getAbbreviation());
                             }
                         }
                         // only add if a single encoded relationship
                     }
                 }
-                logger.debug("genes to add "+genesToAdd.size() + " for hit accession " + a.getNumber());
-                if(genesToAdd.size()==1){
+                logger.debug("genes to add " + genesToAdd.size() + " for hit accession " + a.getNumber());
+                if (genesToAdd.size() == 1) {
                     logger.debug("adding one gene: " + genesToAdd.get(0).getAbbreviation());
-                    Marker geneToAdd = genesToAdd.get(0) ;
-                    if(!genes.contains(geneToAdd)){
+                    Marker geneToAdd = genesToAdd.get(0);
+                    if (!genes.contains(geneToAdd)) {
                         genes.add(genesToAdd.get(0));
                     }
                 }

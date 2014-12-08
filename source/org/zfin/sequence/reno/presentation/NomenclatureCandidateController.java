@@ -15,6 +15,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerFamilyName;
 import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.reno.NomenclatureRun;
@@ -111,7 +112,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
         handleNote(candidateBean);
 
-        Person currentUser = Person.getCurrentSecurityUser();
+        Person currentUser = ProfileService.getCurrentSecurityUser();
 
         if (rc.getLockPerson() != null && !currentUser.equals(rc.getLockPerson()))
             logger.debug(" Person records are not equal.. ");

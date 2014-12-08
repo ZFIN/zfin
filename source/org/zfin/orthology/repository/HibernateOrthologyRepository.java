@@ -13,6 +13,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.orthology.*;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.presentation.DBLinkPresentation;
@@ -634,6 +635,8 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
     public void saveOrthology(Orthologue orthologue, Publication publication, Updates up) {
 
         currentSession().save(orthologue);
+        up.setSubmitterID(ProfileService.getCurrentSecurityUser().getZdbID());
+        up.setSubmitterName(ProfileService.getCurrentSecurityUser().getUsername());
         currentSession().save(up);
         String orthologyZdbID = orthologue.getZdbID();
         Set<OrthoEvidence> evidences = orthologue.getEvidences();

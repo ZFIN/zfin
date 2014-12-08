@@ -68,11 +68,9 @@ public class ProfileService {
      * This returns a Person object of the current security person.
      * If no authorized Person is found return null.
      *
-     * TODO: when updating this, also update Person.getCurrentSecurityUser()
-     *
      * @return Person object
      */
-    public Person getCurrentSecurityUser() {
+    public static Person getCurrentSecurityUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context == null) {
             return null;

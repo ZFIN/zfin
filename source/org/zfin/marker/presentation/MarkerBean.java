@@ -5,6 +5,7 @@ import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 
 import java.util.List;
 import java.util.Set;
@@ -62,7 +63,7 @@ public class MarkerBean {
     }
 
     public Person getUser() {
-        return Person.getCurrentSecurityUser();
+        return ProfileService.getCurrentSecurityUser();
     }
 
     public MarkerExpression getMarkerExpression() {

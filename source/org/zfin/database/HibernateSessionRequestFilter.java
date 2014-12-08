@@ -10,6 +10,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.SysmasterHibernateUtil;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.util.ZfinSMTPAppender;
 import org.zfin.util.log4j.Log4jService;
 import org.zfin.util.servlet.RequestBean;
@@ -84,9 +85,9 @@ public class HibernateSessionRequestFilter implements Filter {
 
     private String getDebugMessage(String contents) {
         Table output = new Table(2);
-        if (Person.getCurrentSecurityUser() != null) {
+        if (ProfileService.getCurrentSecurityUser() != null) {
             output.addCell("User Name");
-            output.addCell(Person.getCurrentSecurityUser().getShortName());
+            output.addCell(ProfileService.getCurrentSecurityUser().getShortName());
         }
         output.addCell("GWT Data");
         output.addCell("");

@@ -168,12 +168,9 @@ public abstract class AbstractCandidateController {
             LOG.info("Orthology: " + humanOrtholog);
             Updates up = new Updates();
             Date date = new Date();
-            Person currentUser = Person.getCurrentSecurityUser();
             up.setRecID(zebrafishMarker.getZdbID());
             up.setFieldName("orthologue");
             up.setNewValue("Human");
-            up.setSubmitterID(currentUser.getZdbID());
-            up.setSubmitterName(currentUser.getUsername());
             up.setComments("Created a new orthologue record for species=Human for this record.");
             up.setWhenUpdated(date);
             or.saveOrthology(humanOrtholog, orthologyPub, up);
@@ -196,12 +193,9 @@ public abstract class AbstractCandidateController {
             mouseOrtholog.setEvidences(orthoEvidences);
             Updates up = new Updates();
             Date date = new Date();
-            Person currentUser = Person.getCurrentSecurityUser();
             up.setRecID(zebrafishMarker.getZdbID());
             up.setFieldName("orthologue");
             up.setNewValue("Mouse");
-            up.setSubmitterID(currentUser.getZdbID());
-            up.setSubmitterName(currentUser.getUsername());
             up.setComments("Created a new orthologue record for species=Mouse for this record.");
             up.setWhenUpdated(date);
             or.saveOrthology(mouseOrtholog, orthologyPub, up);

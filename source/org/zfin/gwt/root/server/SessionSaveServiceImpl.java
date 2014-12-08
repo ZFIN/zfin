@@ -9,6 +9,7 @@ import org.zfin.gwt.root.ui.SessionSaveService;
 import org.zfin.profile.CuratorSession;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Iterator;
@@ -44,7 +45,7 @@ public class SessionSaveServiceImpl extends ZfinRemoteServiceServlet implements 
      */
     public void updateCuratorSession(CuratorSessionDTO curatorSessionUpdate) {
 
-        Person curator = Person.getCurrentSecurityUser();
+        Person curator = ProfileService.getCurrentSecurityUser();
         if (curator == null)
             throw new RuntimeException("Not logged in.");
         String personZdbID = curator.getZdbID();
@@ -117,7 +118,7 @@ public class SessionSaveServiceImpl extends ZfinRemoteServiceServlet implements 
     }
 
     private String createSessionKey(String prefix, String publicationID) {
-        Person person = Person.getCurrentSecurityUser();
+        Person person = ProfileService.getCurrentSecurityUser();
         if (person == null)
             throw new RuntimeException("Not logged in. No authenticated user found in session.");
         return prefix + ": " + person.getZdbID() + ": " + publicationID;

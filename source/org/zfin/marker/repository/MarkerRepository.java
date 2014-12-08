@@ -78,7 +78,7 @@ public interface MarkerRepository {
 
     void addSmallSegmentToGene(Marker gene, Marker segment, String attributionZdbID);
 
-    DataNote addMarkerDataNote(Marker marker, String note, Person curator);
+    DataNote addMarkerDataNote(Marker marker, String note);
 
     AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourcezdbid);
 

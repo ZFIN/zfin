@@ -2,6 +2,7 @@ package org.zfin.publication.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
 import javax.servlet.ServletContext;
@@ -20,7 +21,7 @@ public class PublicationService {
     }
 
     private static String getUserName() {
-        Person aPerson = Person.getCurrentSecurityUser();
+        Person aPerson = ProfileService.getCurrentSecurityUser();
         String userName;
         if (aPerson == null) {
             userName = "anonymous";

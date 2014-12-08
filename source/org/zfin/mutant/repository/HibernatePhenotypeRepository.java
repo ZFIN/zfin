@@ -15,6 +15,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.FigurePresentation;
@@ -57,7 +58,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         structure.setDate(new Date());
         if (isPhenotypeStructureOnPile(structure))
             return;
-        structure.setPerson(Person.getCurrentSecurityUser());
+        structure.setPerson(ProfileService.getCurrentSecurityUser());
         Session session = HibernateUtil.currentSession();
         session.save(structure);
     }
@@ -444,7 +445,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     private PhenotypeStructure instantiatePhenotypeStructureFromPheno(Publication publication, PhenotypeStatement phenotype) {
         PhenotypeStructure structure = new PhenotypeStructure();
         structure.setDate(new Date());
-        structure.setPerson(Person.getCurrentSecurityUser());
+        structure.setPerson(ProfileService.getCurrentSecurityUser());
         structure.setPublication(publication);
         structure.setEntity(phenotype.getEntity());
         structure.setRelatedEntity(phenotype.getRelatedEntity());

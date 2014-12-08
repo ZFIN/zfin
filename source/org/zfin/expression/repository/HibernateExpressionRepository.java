@@ -33,6 +33,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.FigurePresentation;
@@ -437,9 +438,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ExpressionDetailsGenerated.class);
-        criteria.add(Restrictions.eq("expressionExperiment.zdbID",xpatZdbID));
+        criteria.add(Restrictions.eq("expressionExperiment.zdbID", xpatZdbID));
         criteria.add(Restrictions.eq("figure.zdbID", figZdbID));
-        return (ExpressionDetailsGenerated)criteria.uniqueResult();
+        return (ExpressionDetailsGenerated) criteria.uniqueResult();
     }
 
 
@@ -1158,7 +1159,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     private ExpressionStructure instantiateExpressionStructure(ExpressionResult expressionResult, Publication publication) {
         ExpressionStructure structure = new ExpressionStructure();
         structure.setDate(new Date());
-        structure.setPerson(Person.getCurrentSecurityUser());
+        structure.setPerson(ProfileService.getCurrentSecurityUser());
         structure.setPublication(publication);
         structure.setSuperterm(expressionResult.getSuperTerm());
         GenericTerm subTerm = expressionResult.getSubTerm();

@@ -57,9 +57,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         Marker marker = markerRepository.getMarkerByID(noteDTO.getDataZdbID());
-        Person person = Person.getCurrentSecurityUser();
-        DataNote dataNote = markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData(), person);
-        infrastructureRepository.insertUpdatesTable(marker, "curator notes", "", Person.getCurrentSecurityUser());
+        DataNote dataNote = markerRepository.addMarkerDataNote(marker, noteDTO.getNoteData());
+        infrastructureRepository.insertUpdatesTable(marker, "curator notes", "");
         transaction.commit();
         noteDTO.setZdbID(dataNote.getZdbID());
         return noteDTO;
@@ -939,7 +938,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(noteDTO.getDataZdbID());
         AntibodyExternalNote antibodyExternalNote = markerRepository.addAntibodyExternalNote(antibody, noteDTO.getNoteData(), noteDTO.getPublicationZdbID());
         noteDTO.setZdbID(antibodyExternalNote.getZdbID());
-        infrastructureRepository.insertUpdatesTable(antibody, "notes", "", Person.getCurrentSecurityUser());
+        infrastructureRepository.insertUpdatesTable(antibody, "notes", "");
         HibernateUtil.flushAndCommitCurrentSession();
         return noteDTO;
     }
@@ -949,7 +948,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         HibernateUtil.createTransaction();
         Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(noteDTO.getDataZdbID());
         markerRepository.editAntibodyExternalNote(noteDTO.getZdbID(), noteDTO.getNoteData());
-        infrastructureRepository.insertUpdatesTable(antibody, "updated notes", "", Person.getCurrentSecurityUser());
+        infrastructureRepository.insertUpdatesTable(antibody, "updated notes", "");
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
@@ -963,7 +962,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
                 HibernateUtil.createTransaction();
 
                 infrastructureRepository.deleteActiveDataByZdbID(noteDTO.getZdbID());
-                infrastructureRepository.insertUpdatesTable(antibody, "deleted notes", "", Person.getCurrentSecurityUser());
+                infrastructureRepository.insertUpdatesTable(antibody, "deleted notes", "");
                 HibernateUtil.flushAndCommitCurrentSession();
                 return;
             }

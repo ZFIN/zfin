@@ -96,13 +96,10 @@ public class DisruptorAddController {
             String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
             newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
         }
-        Person currentUser = Person.getCurrentSecurityUser();
 
         newDisruptor.setName(disruptorName);
         newDisruptor.setAbbreviation(disruptorName);
-
         newDisruptor.setPublicComments(formBean.getDisruptorComment());
-        newDisruptor.setOwner(currentUser);
 
         String pubZdbID = formBean.getDisruptorPublicationZdbID().trim();
         if (PublicationValidator.isShortVersion(pubZdbID))
@@ -127,7 +124,7 @@ public class DisruptorAddController {
         try {
             HibernateUtil.createTransaction();
             mr.createMarker(newDisruptor, disruptorPub);
-            ir.insertUpdatesTable(newDisruptor, "new " + formBean.getDisruptorType(), "", currentUser);
+            ir.insertUpdatesTable(newDisruptor, "new " + formBean.getDisruptorType(), "");
             PublicationService.addRecentPublications(request.getSession().getServletContext(), disruptorPub, PublicationSessionKey.GENE) ;
 
             String alias = formBean.getDisruptorAlias();
@@ -137,7 +134,7 @@ public class DisruptorAddController {
 
             String curationNote = formBean.getDisruptorCuratorNote();
             if(!StringUtils.isEmpty(curationNote)) {
-                mr.addMarkerDataNote(newDisruptor, curationNote, currentUser);
+                mr.addMarkerDataNote(newDisruptor, curationNote);
             }
 
             String targetGeneAbbr = formBean.getTargetGeneSymbol();

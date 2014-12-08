@@ -74,7 +74,6 @@ public class TranscriptAddController {
         }
 
         try {
-            formBean.setOwnerZdbID(Person.getCurrentSecurityUser().getZdbID());
             HibernateUtil.createTransaction();
             Marker marker = TranscriptService.createTranscript(formBean);
             String zdbID = marker.getZdbID();

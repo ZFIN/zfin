@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.List;
@@ -86,7 +87,7 @@ public class RedundancyCandidateController extends AbstractCandidateController {
 
         handleNote(candidateBean);
 
-        Person currentUser = Person.getCurrentSecurityUser();
+        Person currentUser = ProfileService.getCurrentSecurityUser();
 
         if (rc.getLockPerson() != null && !currentUser.equals(rc.getLockPerson())) {
             logger.debug(" Person records are not equal.. ");

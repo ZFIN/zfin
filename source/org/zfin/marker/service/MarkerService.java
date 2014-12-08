@@ -22,6 +22,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -584,16 +585,14 @@ public class MarkerService {
         clone.setName(cloneAddBean.getName());
         clone.setAbbreviation(cloneAddBean.getName());
         clone.setProbeLibrary(getMarkerRepository().getProbeLibrary(cloneAddBean.getLibraryZdbID()));
-
-        Person person = RepositoryFactory.getProfileRepository().getPerson(cloneAddBean.getOwnerZdbID());
-        clone.setOwner(person);
+        clone.setOwner(ProfileService.getCurrentSecurityUser());
 
         // set marker types
         Marker.Type markerType = Marker.Type.getType(cloneAddBean.getMarkerType());
         MarkerType realMarkerType = new MarkerType();
         realMarkerType.setName(cloneAddBean.getMarkerType());
         realMarkerType.setType(markerType);
-        Set<Marker.TypeGroup> typeGroup = new HashSet<Marker.TypeGroup>();
+        Set<Marker.TypeGroup> typeGroup = new HashSet<>();
         typeGroup.add(Marker.TypeGroup.getType(cloneAddBean.getMarkerType()));
         realMarkerType.setTypeGroups(typeGroup);
         clone.setMarkerType(realMarkerType);
@@ -604,7 +603,8 @@ public class MarkerService {
     }
 
     public static Set<Publication> getAliasAttributions(Marker marker) {
-        Set<Publication> publications = new HashSet<Publication>();
+        Set<Publication> publications;
+        publications = new HashSet<>();
 
         Set<MarkerAlias> mrkrAliases = marker.getAliases();
         if (mrkrAliases != null && !mrkrAliases.isEmpty()) {

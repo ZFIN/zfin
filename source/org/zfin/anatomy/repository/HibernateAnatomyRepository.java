@@ -17,6 +17,8 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.GenericTermRelationship;
 import org.zfin.ontology.Term;
+import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -214,6 +216,7 @@ public class HibernateAnatomyRepository implements AnatomyRepository {
      * @param structure structure
      */
     public void createPileStructure(ExpressionStructure structure) {
+        structure.setPerson(ProfileService.getCurrentSecurityUser());
         Session session = HibernateUtil.currentSession();
         session.save(structure);
     }

@@ -5,7 +5,7 @@ import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
-
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
 /**
@@ -44,7 +44,7 @@ public class ProfileBean {
     }
 
     public boolean isOwnerOrRoot() {
-        Person securityUser = Person.getCurrentSecurityUser();
+        Person securityUser = ProfileService.getCurrentSecurityUser();
         if (AccountInfo.Role.ROOT.toString().equals(securityUser.getAccountInfo().getRole()))
             return true;
         return securityUser.getAccountInfo().equals(accountInfo);

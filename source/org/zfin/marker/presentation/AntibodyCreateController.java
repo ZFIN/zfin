@@ -18,7 +18,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
@@ -71,12 +70,10 @@ public class AntibodyCreateController {
         if(result.hasErrors())
             return "marker/antibody-add-form.page";
         String antibodyName = formBean.getAntibodyName();
-        Person currentUser = Person.getCurrentSecurityUser();
 
         Antibody newAntibody = new Antibody();
         newAntibody.setAbbreviation(antibodyName.toLowerCase());
         newAntibody.setName(formBean.getAntibodyName());
-        newAntibody.setOwner(currentUser);
 
         String pubZdbID = formBean.getAntibodyPublicationZdbID().trim();
         if (PublicationValidator.isShortVersion(pubZdbID))
@@ -93,7 +90,7 @@ public class AntibodyCreateController {
             HibernateUtil.createTransaction();
 
             mr.createMarker(newAntibody, antibodyPub);
-            ir.insertUpdatesTable(newAntibody, "new Antibody", "", currentUser);
+            ir.insertUpdatesTable(newAntibody, "new Antibody", "");
             PublicationService.addRecentPublications(request.getSession().getServletContext(), antibodyPub, PublicationSessionKey.ANTIBODY) ;
 
             HibernateUtil.flushAndCommitCurrentSession();

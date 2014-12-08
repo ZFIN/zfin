@@ -135,8 +135,7 @@ public class AntibodyFigureSummaryController {
             tx = session.beginTransaction();
             InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
             ir.removeRecordAttributionForData(ab.getZdbID(), bean.getDisassociatedPubId());
-            Person currentUser = Person.getCurrentSecurityUser();
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);
+            ir.insertUpdatesTable(ab, "antibody attribution", "");
             tx.commit();
         } catch (Exception exception) {
             try {
@@ -178,9 +177,7 @@ public class AntibodyFigureSummaryController {
         try {
             tx = HibernateUtil.createTransaction();
             RepositoryFactory.getMarkerRepository().addMarkerPub(ab, publication);
-            Person currentUser = Person.getCurrentSecurityUser();
-            InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-            ir.insertUpdatesTable(ab, "antibody attribution", "", currentUser);
+            getInfrastructureRepository().insertUpdatesTable(ab, "antibody attribution", "");
             tx.commit();
         } catch (Exception e) {
             try {

@@ -24,6 +24,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.repository.PublicationRepository;
@@ -75,7 +76,6 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
 
         HibernateUtil.createTransaction();
         // set modified by
-        Person person = Person.getCurrentSecurityUser();
 
         Marker marker;
         if (StringUtils.isNotEmpty(goEvidenceDTO.getMarkerDTO().getZdbID())) {
@@ -89,10 +89,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
 
         GenericTerm goTerm = (GenericTerm) HibernateUtil.currentSession().get(GenericTerm.class, goEvidenceDTO.getGoTerm().getZdbID());
         markerGoTermEvidence.setGoTerm(goTerm);
-//
-        if (person != null) {
-            markerGoTermEvidence.setModifiedBy(person);
-        }
+        markerGoTermEvidence.setModifiedBy(ProfileService.getCurrentSecurityUser());
         markerGoTermEvidence.setModifiedWhen(new Date());
 
 
@@ -307,8 +304,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
 
 
         HibernateUtil.createTransaction();
-        // set modified by
-        Person person = Person.getCurrentSecurityUser();
+        Person person = ProfileService.getCurrentSecurityUser();
         MarkerGoTermEvidence markerGoTermEvidence = new MarkerGoTermEvidence();
         markerGoTermEvidence.setExternalLoadDate(null);
         markerGoTermEvidence.setGafOrganization(zfinGafOrganization);
@@ -348,10 +344,8 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
         markerGoTermEvidence.setNote(goEvidenceDTO.getNote());
 
 
-        if (person != null) {
-            markerGoTermEvidence.setModifiedBy(person);
-            markerGoTermEvidence.setCreatedBy(person);
-        }
+        markerGoTermEvidence.setModifiedBy(person);
+        markerGoTermEvidence.setCreatedBy(person);
 
         Date rightNow = new Date();
         markerGoTermEvidence.setModifiedWhen(rightNow);

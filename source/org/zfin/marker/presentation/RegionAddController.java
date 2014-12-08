@@ -8,9 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.presentation.CreateAntibodyFormBeanValidator;
-import org.zfin.marker.presentation.RegionAddBeanValidator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
@@ -27,7 +24,6 @@ import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.wiki.service.AntibodyWikiWebService;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,13 +72,11 @@ public class RegionAddController {
             return "marker/region-add.page";
 
         String regionName = formBean.getRegionName();
-        Person currentUser = Person.getCurrentSecurityUser();
 
         Marker newRegion = new Marker();
         newRegion.setAbbreviation(regionName.toLowerCase());
         newRegion.setName(formBean.getRegionName());
         newRegion.setPublicComments(formBean.getRegionComment());
-        newRegion.setOwner(currentUser);
 
         String pubZdbID = formBean.getRegionPublicationZdbID().trim();
         if (PublicationValidator.isShortVersion(pubZdbID))
@@ -99,7 +93,7 @@ public class RegionAddController {
             HibernateUtil.createTransaction();
 
             mr.createMarker(newRegion, regionPub);
-            ir.insertUpdatesTable(newRegion, "new Region", "", currentUser);
+            ir.insertUpdatesTable(newRegion, "new Region", "");
             PublicationService.addRecentPublications(request.getSession().getServletContext(), regionPub, PublicationSessionKey.GENE) ;
 
             HibernateUtil.flushAndCommitCurrentSession();
@@ -126,7 +120,7 @@ public class RegionAddController {
 
         String curationNote = formBean.getRegionCuratorNote();
         if(!StringUtils.isEmpty(curationNote)) {
-          if (!addCuratorNote(createdRegion, curationNote, currentUser).equalsIgnoreCase(curationNote)) {
+          if (!addCuratorNote(createdRegion, curationNote).equalsIgnoreCase(curationNote)) {
             return "redirect:/action/dev-tools/test-error-page";
           }
         }
@@ -155,14 +149,11 @@ public class RegionAddController {
         }
     }
 
-    private String addCuratorNote(Marker marker, String dNote, Person prsn) {
+    private String addCuratorNote(Marker marker, String dNote) {
         try {
             HibernateUtil.createTransaction();
-
-            DataNote dn = mr.addMarkerDataNote(marker,dNote,prsn);
-
+            DataNote dn = mr.addMarkerDataNote(marker,dNote);
             HibernateUtil.flushAndCommitCurrentSession();
-
             return dn.getNote();
         } catch (Exception e) {
             try {

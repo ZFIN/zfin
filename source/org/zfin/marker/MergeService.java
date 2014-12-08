@@ -13,11 +13,9 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.MappedMarker;
 import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.MarkerSupplier;
-import org.zfin.profile.Person;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.service.AntibodyWikiWebService;
@@ -88,7 +86,7 @@ public class MergeService {
 
         infrastructureRepository.insertUpdatesTable(markerToMergeInto, "all"
                 , "Merged in marker: " + markerToDelete.getAbbreviation() + "(" + markerToDelete.getZdbID() + ")"
-                , Person.getCurrentSecurityUser());
+        );
 
 
         // regen
@@ -472,7 +470,7 @@ public class MergeService {
         } catch (Exception e) {
             logger.error("Failed to remove antibody: "+antibody,e);
         }
-        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(antibody, "Antibody", "Antibody Deleted", Person.getCurrentSecurityUser());
+        RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(antibody, "Antibody", "Antibody Deleted");
         RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(antibody.getZdbID());
         // this should force a cascade
         HibernateUtil.currentSession().flush();

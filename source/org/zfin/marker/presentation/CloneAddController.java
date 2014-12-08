@@ -55,7 +55,6 @@ public class CloneAddController {
 
         Clone clone = null;
         try {
-            formBean .setOwnerZdbID(Person.getCurrentSecurityUser().getZdbID());
             HibernateUtil.createTransaction();
             clone = MarkerService.createClone(formBean);
             HibernateUtil.flushAndCommitCurrentSession();

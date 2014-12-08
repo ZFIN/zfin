@@ -7,7 +7,6 @@ import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -28,14 +27,12 @@ public class InfrastructureService {
      */
     public static void insertUpdate(Marker marker, String actionDone) {
         logger.debug("Update: " + marker.getZdbID() + " " + actionDone);
-        Person currentUser = Person.getCurrentSecurityUser();
-        infrastructureRepository.insertUpdatesTable(marker, "", actionDone, currentUser);
+        infrastructureRepository.insertUpdatesTable(marker, "", actionDone);
     }
 
     public static void insertUpdate(Marker marker, String fieldname, String oldValue, String newValue) {
         logger.debug("Update " + fieldname + ": " + marker.getZdbID() + " old: " + oldValue + " new: " + newValue);
-        Person currentUser = Person.getCurrentSecurityUser();
-        infrastructureRepository.insertUpdatesTable(marker, fieldname, "", currentUser, newValue, oldValue);
+        infrastructureRepository.insertUpdatesTable(marker, fieldname, "", newValue, oldValue);
     }
 
     public static Object getEntityById(String entityID) {

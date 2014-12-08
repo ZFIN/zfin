@@ -256,7 +256,6 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
             throw new TermNotFoundException("No superterm [" + expressedTerm.getEntity().getSuperTerm().getTermName() + "] found.");
         ExpressionStructure structure = new ExpressionStructure();
         structure.setSuperterm(superterm);
-        structure.setPerson(Person.getCurrentSecurityUser());
         Publication pub = getPublicationRepository().getPublication(publicationID);
         structure.setPublication(pub);
         structure.setDate(new Date());
@@ -311,7 +310,6 @@ public class StructureRPCImpl extends ZfinRemoteServiceServlet implements PileSt
         ExpressionStructure aoStructure = new ExpressionStructure();
         aoStructure.setSuperterm(superterm);
         aoStructure.setSubterm(subterm);
-        aoStructure.setPerson(Person.getCurrentSecurityUser());
         Publication pub = getPublicationRepository().getPublication(publicationID);
         aoStructure.setPublication(pub);
         aoStructure.setDate(new Date());

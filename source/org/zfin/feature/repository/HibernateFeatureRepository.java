@@ -28,7 +28,11 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.profile.*;
+import org.zfin.profile.FeatureSource;
+import org.zfin.profile.Organization;
+import org.zfin.profile.OrganizationFeaturePrefix;
+import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
@@ -36,7 +40,6 @@ import org.zfin.sequence.DBLink;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 
 /**
@@ -516,10 +519,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
         DataNote dnote = new DataNote();
         dnote.setDataZdbID(feature.getZdbID());
         logger.debug("markerZdbId for datanote: " + feature.getZdbID());
-        dnote.setCurator(Person.getCurrentSecurityUser());
+        dnote.setCurator(ProfileService.getCurrentSecurityUser());
         dnote.setDate(new Date());
         dnote.setNote(note);
-        logger.debug("data note curator: " + Person.getCurrentSecurityUser());
+        logger.debug("data note curator: " + ProfileService.getCurrentSecurityUser());
         Set<DataNote> dataNotes = feature.getDataNotes();
         if (dataNotes == null) {
             dataNotes = new HashSet<>();

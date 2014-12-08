@@ -1,14 +1,12 @@
 package org.zfin.profile;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.infrastructure.ZdbID;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
 import javax.imageio.ImageIO;
@@ -44,11 +42,11 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
 
     // not a hibernate property, just for ease of use
-    private String putativeLoginName ;
+    private String putativeLoginName;
 
     // not a hibernate property, just for ease of use
-    private String pass1 ;
-    private String pass2 ;
+    private String pass1;
+    private String pass2;
 
     // not a hibernate property, just for...using person as a formbean, which is kind of wrong
     private String organizationZdbId;
@@ -85,7 +83,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
     private Boolean emailList;
     private Boolean deceased = new Boolean(false);
-//    private String ownerID;
+    //    private String ownerID;
     private Set<Lab> labs;
     private Set<Company> companies;
     private Set<Publication> publications;
@@ -358,52 +356,10 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
      * This returns a Person object of the current security person.
      * If no authorized Person is found return null.
      *
-     * TODO: move all calls from this to ProfileService.getCurrentSecurityUser()
-     *
-     * @return Person object
-     */
-    public static Person getCurrentSecurityUser() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context == null) {
-            return null;
-        }
-        Authentication authentication = context.getAuthentication();
-        if (authentication == null) {
-            Person person = new Person();
-            person.setShortName("Guest");
-            person.setLastName("User");
-            person.setFirstName("Guest");
-            return person;
-        }
-        Object principal = authentication.getPrincipal();
-        // ToDo: Annonymous user should also be a Person object opposed to a String object
-        if (principal instanceof String)
-            return null;
-
-
-        // for debugging.  Allows using an in-line spring authentication-manager.
-        if(principal instanceof  org.springframework.security.core.userdetails.User) {
-            org.springframework.security.core.userdetails.User user =
-                    ( org.springframework.security.core.userdetails.User) principal ;
-            Person person = new Person();
-            person.setShortName("Guest");
-            person.setLastName("User");
-            person.setFirstName("Guest");
-            return person;
-        }
-
-        return (Person) principal;
-    }
-
-
-    /**
-     * This returns a Person object of the current security person.
-     * If no authorized Person is found return null.
-     *
      * @return Is user root?
      */
     public static boolean isCurrentSecurityUserRoot() {
-        Person person = getCurrentSecurityUser();
+        Person person = ProfileService.getCurrentSecurityUser();
         if (person == null || person.getAccountInfo() == null) {
             return false;
         }
@@ -459,7 +415,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
     @Override
     public String getLink() {
-        return EntityPresentation.getViewLink(zdbID, getFullName(), null,"person-link");
+        return EntityPresentation.getViewLink(zdbID, getFullName(), null, "person-link");
     }
 
     @Override
@@ -474,12 +430,12 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
 
     public void generateNameVariations() {
-        String shortName = getLastName() + "-" ;
+        String shortName = getLastName() + "-";
 
         String[] firstNames = getFirstName().split(" ");
 
-        for(String name : firstNames){
-            shortName += name.substring(0,1)+".";
+        for (String name : firstNames) {
+            shortName += name.substring(0, 1) + ".";
         }
         setShortName(shortName);
 

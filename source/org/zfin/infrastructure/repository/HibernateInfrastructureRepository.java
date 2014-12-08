@@ -30,6 +30,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermAlias;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
@@ -483,7 +484,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         up.setRecID(recID);
         up.setFieldName(fieldName);
 
-        Person person = Person.getCurrentSecurityUser();
+        Person person = ProfileService.getCurrentSecurityUser();
         if (person != null) {
             up.setSubmitterID(person.getZdbID());
             up.setSubmitterName(person.getFullName());
@@ -520,7 +521,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Updates update = new Updates();
         update.setRecID(recID);
         update.setFieldName(fieldName);
-        Person person = Person.getCurrentSecurityUser();
+        Person person = ProfileService.getCurrentSecurityUser();
         if (person != null) {
             update.setSubmitterID(person.getZdbID());
             update.setSubmitterName(person.getFullName());
@@ -533,9 +534,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
 
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person, String newValue, String oldValue) {
+    public void insertUpdatesTable(Marker marker, String fieldName, String comments, String newValue, String oldValue) {
         Session session = HibernateUtil.currentSession();
 
+        Person person = ProfileService.getCurrentSecurityUser();
         Updates up = new Updates();
         up.setRecID(marker.getZdbID());
         up.setFieldName(fieldName);
@@ -557,10 +559,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @param marker
      * @param fieldName
      * @param comments
-     * @param person
      */
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person) {
-        insertUpdatesTable(marker, fieldName, comments, person, marker.getAbbreviation(), "");
+    public void insertUpdatesTable(Marker marker, String fieldName, String comments) {
+        insertUpdatesTable(marker, fieldName, comments, marker.getAbbreviation(), "");
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

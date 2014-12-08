@@ -9,6 +9,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.EntrezProtRelation;
 import org.zfin.sequence.blast.Hit;
@@ -237,7 +238,7 @@ public class RunCandidate {
     }
 
     public boolean isOwner() {
-        Person user = Person.getCurrentSecurityUser();
+        Person user = ProfileService.getCurrentSecurityUser();
         if (user == null)
             return false;
 

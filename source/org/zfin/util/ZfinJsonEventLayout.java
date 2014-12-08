@@ -5,6 +5,7 @@ import org.apache.log4j.MDC;
 import org.apache.log4j.spi.LoggingEvent;
 import org.zfin.framework.filter.AddRequestInfoToLog4j;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class ZfinJsonEventLayout extends JSONEventLayout {
     @Override
     public String format(LoggingEvent loggingEvent) {
         try {
-            Person person = Person.getCurrentSecurityUser();
+            Person person = ProfileService.getCurrentSecurityUser();
             if (person != null && person.getFullName() != null) {
                 Map map = (Map) MDC.get(AddRequestInfoToLog4j.REQUEST_MAP);
                 map.put("user", person.getFullName());

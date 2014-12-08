@@ -15,19 +15,16 @@ import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
-import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.Image;
 import org.zfin.expression.TextOnlyFigure;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
@@ -36,14 +33,13 @@ import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.marker.Talen;
 import org.zfin.mutant.OmimPhenotype;
-import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.PaginationResultFactory;
@@ -350,7 +346,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         //update the two markers with the relationships
         Set<MarkerRelationship> firstMarkerRelationships = gene.getFirstMarkerRelationships();
         if (firstMarkerRelationships == null) {
-            firstMarkerRelationships = new HashSet<MarkerRelationship>();
+            firstMarkerRelationships = new HashSet<>();
             firstMarkerRelationships.add(mrel);
             gene.setFirstMarkerRelationships(firstMarkerRelationships);
         } else
@@ -358,7 +354,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         Set<MarkerRelationship> secondSegmentRelationships = segment.getSecondMarkerRelationships();
         if (secondSegmentRelationships == null) {
-            secondSegmentRelationships = new HashSet<MarkerRelationship>();
+            secondSegmentRelationships = new HashSet<>();
             secondSegmentRelationships.add(mrel);
             segment.setSecondMarkerRelationships(secondSegmentRelationships);
         } else
@@ -369,7 +365,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-    public DataNote addMarkerDataNote(Marker marker, String note, Person curator) {
+    public DataNote addMarkerDataNote(Marker marker, String note) {
+        Person curator = ProfileService.getCurrentSecurityUser();
         logger.debug("enter addMarDataNote");
         DataNote dnote = new DataNote();
         dnote.setDataZdbID(marker.getZdbID());
@@ -394,7 +391,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public AntibodyExternalNote addAntibodyExternalNote(Antibody antibody, String note, String sourceZdbID) {
         logger.debug("enter addExtDataNote");
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        Person currentUser = Person.getCurrentSecurityUser();
         AntibodyExternalNote externalNote = new AntibodyExternalNote();
         externalNote.setAntibody(antibody);
         externalNote.setNote(ZfinStringUtils.escapeHighUnicode(note));
@@ -421,13 +417,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
             addMarkerPub(antibody, publication);
         }
-        ir.insertUpdatesTable(antibody, "notes", "", currentUser, ZfinStringUtils.escapeHighUnicode(note), "");
+        ir.insertUpdatesTable(antibody, "notes", "", ZfinStringUtils.escapeHighUnicode(note), "");
         return externalNote;
     }
 
     public void createOrUpdateOrthologyExternalNote(Marker gene, String note) {
         logger.debug("add orthology note");
-        Person currentUser = Person.getCurrentSecurityUser();
+        Person currentUser = ProfileService.getCurrentSecurityUser();
         if (currentUser == null)
             throw new RuntimeException("Cannot add an orthology note without an authenticated user");
 
@@ -453,7 +449,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             OrthologyNote extNote = gene.getOrthologyNotes().iterator().next();
             String oldNote = gene.getOrthologyNotes().iterator().next().getNote();
             extNote.setNote(note);
-            ir.insertUpdatesTable(gene, "notes", "", currentUser, note, oldNote);
+            ir.insertUpdatesTable(gene, "notes", "", note, oldNote);
         }
     }
 
@@ -574,7 +570,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         RecordAttribution recordAttribution = ir.getRecordAttribution(aliasZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
-        Person currentUser = Person.getCurrentSecurityUser();
         // only add the publication when it is not there
         if (recordAttribution == null) {
             PublicationAttribution pa = new PublicationAttribution();
@@ -590,7 +585,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             currentSession().save(pa);
             addMarkerPub(marker, publication);
         }
-        ir.insertUpdatesTable(marker, "", "new attribution, data alias: " + alias.getAlias() + " with pub: " + attributionZdbID, currentUser, attributionZdbID, "");
+        ir.insertUpdatesTable(marker, "", "new attribution, data alias: " + alias.getAlias() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
     public void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution, Marker marker) {
@@ -603,7 +598,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         RecordAttribution recordAttribution = ir.getRecordAttribution(relZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
-        Person currentUser = Person.getCurrentSecurityUser();
 
         // only add the publication when it is not there
         if (recordAttribution == null) {
@@ -617,7 +611,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             currentSession().refresh(mrel);
             addMarkerPub(marker, publication);
         }
-        ir.insertUpdatesTable(marker, "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, currentUser, attributionZdbID, "");
+        ir.insertUpdatesTable(marker, "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
     public void addMarkerPub(Marker marker, Publication publication) {
@@ -829,6 +823,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (pub == null)
             throw new RuntimeException("Cannot create a new marker without a publication.");
 
+        marker.setOwner(ProfileService.getCurrentSecurityUser());
         currentSession().save(marker);
         // Need to flush here to make the trigger fire as that will
         // create a MarkerHistory record needed.

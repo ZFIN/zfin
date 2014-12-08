@@ -7,6 +7,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.*;
@@ -52,7 +53,7 @@ public class UpdatesCheckFilter implements Filter{
         if (!readOnlyUrl) {
             systemUpdatesDisabled = infrastructureRepository.getDisableUpdatesFlag();
         }
-        Person person = Person.getCurrentSecurityUser();
+        Person person = ProfileService.getCurrentSecurityUser();
 
         // redirect if user is logged in and database is locked
         if (systemUpdatesDisabled && !url.equals(REDIRECT_URL) && person != null) {

@@ -104,10 +104,10 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments);
 
-    void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person, String newValue, String oldValue);
+    void insertUpdatesTable(Marker marker, String fieldName, String comments, String newValue, String oldValue);
 
 
-    void insertUpdatesTable(Marker marker, String fieldName, String comments, Person person);
+    void insertUpdatesTable(Marker marker, String fieldName, String comments);
 
     void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate);
 

@@ -11,6 +11,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -241,8 +242,7 @@ public class TranscriptService {
         transcript.setMarkerType(realMarkerType);
 
         // set owner
-        Person owner = RepositoryFactory.getProfileRepository().getPerson(transcriptAddBean.getOwnerZdbID());
-        transcript.setOwner(owner);
+        transcript.setOwner(ProfileService.getCurrentSecurityUser());
 
         HibernateUtil.currentSession().save(transcript);
         HibernateUtil.currentSession().flush();
