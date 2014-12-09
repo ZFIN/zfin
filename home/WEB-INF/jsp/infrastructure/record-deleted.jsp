@@ -16,6 +16,9 @@
             <c:if test="${formBean.removedFromTracking}">
                 <div class="caution-text">This feature has also been deleted from feature tracking. </div>
             </c:if>
+            <c:if test="${formBean.publicationCurated != null}">
+                <p/><div class="caution-text">Go back to <zfin:link entity="${formBean.publicationCurated}"/>. </div>
+            </c:if>
         </c:otherwise>
     </c:choose>
 </authz:authorize>
