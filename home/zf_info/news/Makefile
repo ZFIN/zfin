@@ -26,8 +26,6 @@ GENERATOR = $(TARGETROOT)/server_apps/WebSiteTools
 # announcements come and go.  Follow that list with files that will disappear
 # when the meetings or jobs they go with will disappear.
 
-VARIABLE_GENERICS =  curator.html
-
 GENERICS = siteNews_2005.html siteNews.html mtgs.html siteNews.rss jobs.rss mtgs.rss  $(VARIABLE_GENERICS)
 
 STATICS =  Newsletter_Summer04.pdf Madison_2004_poster.jpg RegistrationForm.pdf newsgroup.html \
