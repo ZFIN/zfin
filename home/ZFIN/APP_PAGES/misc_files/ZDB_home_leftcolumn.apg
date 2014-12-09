@@ -7,7 +7,7 @@
      <ul>
             <li><a href="https://<!--|WIKI_HOST|-->/display/general/ZFIN+Zebrafish+Nomenclature+Guidelines"
             title="Zebrafish nomenclature guidelines">Nomenclature Conventions</a></li>   
-            <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_gene.apg" 
+            <li><a href="/action/nomenclature/gene-name"
             title="Contact the Nomenclature Committee">Obtain approval for gene names</a>
      </ul>  
   </ul>  
@@ -41,7 +41,7 @@
        <li><a href="/action/feature/wildtype-list"
             title="Zebrafish wild-type lines">Wild-Type Lines</a></li>
 <li><a href="/action/feature/line-designations" title ="Line designation nomenclature and requests">Line Designations</a></li>
-<li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_line.apg" title="Guidelines for proposing and reserving line names">
+<li><a href="/action/nomenclature/line-name" title="Guidelines for proposing and reserving line names">
            Submit mutant/transgenic line names</a>
      </ul>
   </ul>

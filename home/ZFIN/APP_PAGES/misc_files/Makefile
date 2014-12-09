@@ -25,8 +25,7 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/misc_files
 
 GENERICS = data_mgr.apg doc_title.apg \
     start_select.apg htmlpageheader.apg zdb_history.apg \
-    new_gene.apg new_line.apg ZDB_home_leftcolumn.apg \
-    ZDB_home_rightcolumn.apg
+    ZDB_home_leftcolumn.apg ZDB_home_rightcolumn.apg
 
 STATICS=ZDB_home.apg docframes.apg stub.html helpframes.html \
     htmlpagefooter.apg input_button_generic.apg
