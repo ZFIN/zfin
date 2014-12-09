@@ -2,6 +2,7 @@ package org.zfin.infrastructure.presentation;
 
 import org.zfin.feature.Feature;
 import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ public class DeleteRecordBean {
     private String recordToDeleteViewString;
     private List<String> errors ;
     private boolean removedFromTracking;
+    private Publication publicationCurated;
 
     public String getZdbIDToDelete() {
         return zdbIDToDelete;
@@ -62,5 +64,13 @@ public class DeleteRecordBean {
 
     public void setRemovedFromTracking(boolean removedFromTracking) {
         this.removedFromTracking = removedFromTracking;
+    }
+
+    public Publication getPublicationCurated() {
+        return publicationCurated;
+    }
+
+    public void setPublicationCurated(Publication publicationCurated) {
+        this.publicationCurated = publicationCurated;
     }
 }

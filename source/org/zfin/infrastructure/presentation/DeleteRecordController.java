@@ -332,7 +332,7 @@ public class DeleteRecordController {
         } else if (type.startsWith("LAB")) {
             Organization lab = RepositoryFactory.getProfileRepository().getOrganizationByZdbID(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(lab.getName());
-          //  List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getLabPrefixesById(zdbIDToDelete, true);
+            //  List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getLabPrefixesById(zdbIDToDelete, true);
             List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getCurrentLabPrefixesByIdForDelete(zdbIDToDelete, true);
             // Can't delete the lab if it has lab designation
             if (CollectionUtils.isNotEmpty(designations)) {
@@ -340,12 +340,12 @@ public class DeleteRecordController {
                 for (FeaturePrefix designation : designations) {
 
 
-                        argString = argString + "<a target=_blank href=/action/alleles/" + designation.getPrefixString() + ">" + designation.getPrefixString() + "</a><br/>";
+                    argString = argString + "<a target=_blank href=/action/alleles/" + designation.getPrefixString() + ">" + designation.getPrefixString() + "</a><br/>";
 
 
-                        argString += "<br/>";
-                        formBean.addError("Having lab designation: <br/>" + argString);
-                    }
+                    argString += "<br/>";
+                    formBean.addError("Having lab designation: <br/>" + argString);
+                }
 
             }
             // Can't delete the lab if there are people associated
@@ -453,6 +453,10 @@ public class DeleteRecordController {
             Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(zdbID);
             formBean.setRecordToDeleteViewString(feature.getName());
             formBean.setRemovedFromTracking(false);
+            SortedSet<Publication> featurePublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForFeature(feature);
+            // FB case 11678, provide link back to pub.
+            if (CollectionUtils.isNotEmpty(featurePublications) && featurePublications.size() == 1)
+                formBean.setPublicationCurated((Publication) ((TreeSet) featurePublications).first());
         } else if (type.startsWith("COM")) {
             Organization company = RepositoryFactory.getProfileRepository().getOrganizationByZdbID(zdbID);
             formBean.setRecordToDeleteViewString(company.getName());
@@ -465,6 +469,10 @@ public class DeleteRecordController {
         }  else if (type.startsWith("GENO")) {
             Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbID);
             formBean.setRecordToDeleteViewString(genotype.getName());
+            SortedSet<Publication> genoPublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForGenotype(genotype);
+            // FB case 11678, provide link back to pub.
+            if (CollectionUtils.isNotEmpty(genoPublications) && genoPublications.size() == 1)
+                formBean.setPublicationCurated((Publication) ((TreeSet) genoPublications).first());
         }  else if (type.startsWith("JRNL")) {
             Journal journal = RepositoryFactory.getPublicationRepository().getJournalByID(zdbID);
             formBean.setRecordToDeleteViewString(journal.getName());
