@@ -60,11 +60,29 @@ update external_reference_temp
   tdr_foreign_db_id_temp = fdb_db_pk_id AND
   upper(fdb_db_name) = 'HTTP');
 
+-- put the ZFA: in front of the reference back as it was parsed out due to the semicolon
+update external_reference_temp
+ set tdr_reference_temp = 'ZFA:'||tdr_reference_temp
+ where exists (
+  select 'x' from foreign_db where
+  tdr_foreign_db_id_temp = fdb_db_pk_id AND
+  upper(fdb_db_name) = 'ZFA');
+
+-- put the UBERON_ in front of the reference back as it was parsed out
+update external_reference_temp
+ set tdr_reference_temp = 'UBERON_'||tdr_reference_temp
+ where exists (
+  select 'x' from foreign_db where
+  tdr_foreign_db_id_temp = fdb_db_pk_id AND
+  upper(fdb_db_name) = 'UBERON');
+
 -- populate the term_zdb_ids from the obo ids
 update external_reference_temp
  set tdr_term_zdb_id_temp =
    (select term_zdb_id from term where
    term_ont_id = tdr_term_ont_id_temp);
+
+select * From external_reference_temp;
 
 -- remove the records that do not have a foreign_db (non-null query) associated with
 delete from external_reference_temp
@@ -72,6 +90,8 @@ where tdr_foreign_db_id_temp = 0 or not exists (
 select 'x' from foreign_db where
 tdr_foreign_db_id_temp = fdb_db_pk_id
 );
+
+select * From external_reference_temp;
 
 -- remove the records pointing to a TAO foreign db as they should be suppressed
 delete from external_reference_temp

@@ -139,6 +139,9 @@ public class ForeignDB implements Comparable<ForeignDB> {
         ZFISHBOOK_CONSTRUCTS("zfishbook-constructs"),
         HTTP("HTTP"),
         ZFIN("ZFIN"),
+        ZFA("ZFA"),
+        WIKIPEDIA("Wikipedia"),
+        UBERON("UBERON"),
         ISBN("ISBN"),
         ZMP("ZMP");
 
