@@ -43,6 +43,14 @@ where mrkr_type in ('GENE','GENEP','EFG')
             where="dalias_data_zdb_id=gene.id"
             processor="CachedSqlEntityProcessor"/>
 
+   <entity name="gene_replaced_ids"
+             query="select zrepld_old_zdb_id alias, zrepld_old_zdb_id gene_previous_name, zrepld_new_zdb_id from zdb_replaced_data
+                   where zrepld_new_zdb_id[1,8] = 'ZDB-GENE'
+                      or zrepld_new_zdb_id[1,7] = 'ZDB-EFG'"
+            where="zrepld_new_zdb_id=gene.id"
+            processor="CachedSqlEntityProcessor"/>
+
+
 
 <!--  commenting out because these are no longer used, probably should be removed...
 
