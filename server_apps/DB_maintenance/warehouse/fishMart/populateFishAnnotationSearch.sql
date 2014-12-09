@@ -377,8 +377,13 @@ update fish_annotation_search_temp
 select fas_All from fish_Annotation_Search_temp
 where fas_line_handle = 'b380[2,U,U]';
 
+update fish_annotation_Search_temp
+ set fas_fish_name_order = zero_pad(fas_geno_name);
+
 update zdb_flag
   set (zflag_is_on,zflag_last_modified) = ("f",current year to second)
  where zflag_name = "regen_fishmart_bts_indexes";
+
+
 
 !echo "done populateFishAnnotationSearch";
