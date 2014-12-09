@@ -412,7 +412,7 @@ select exp_zdb_id, cdt_group,
  case when expcond_mrkr_zdb_id is not null
 	then expcond_mrkr_zdb_id
 	else cdt_name
- end, expcond_value, expunit_name, expcond_comments
+ end, expcond_value , expunit_name, expcond_comments
  from experiment, experiment_condition, condition_data_type, experiment_unit
  where exp_zdb_id = expcond_exp_zdb_id
    and expcond_cdt_zdb_id = cdt_zdb_id
@@ -526,7 +526,17 @@ select marker_id, mrkr_abbrev, szm_term_ont_id, p.abbrev,mm_chromosome, mm_chrom
  from mapped_marker, panels p, marker m, so_zfin_mapping
  where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id
  and  m.mrkr_type = szm_object_type
- order by 1;
+union
+select marker_id, feature_abbrev, szm_term_ont_id, p.abbrev,mm_chromosome, mm_chrom_location, p.metric
+ from mapped_marker, panels p, feature , so_zfin_mapping
+ where refcross_id = p.zdb_id and marker_id = feature_zdb_id
+ and  feature_type = szm_object_type
+union
+select paneled_markers.zdb_id, mrkr_Abbrev, szm_term_ont_id, p.abbrev,or_lg, lg_location, p.metric
+ from paneled_markers, panels p, marker , so_zfin_mapping
+ where target_id = p.zdb_id and paneled_markers.zdb_id = mrkr_zdb_id
+ and  mrkr_type = szm_object_type
+order by 1;
 
 -- Generate sequence data files for GenBank, RefSeq, Entrez, UniGene, UniProt, Interpro and GenPept
 
