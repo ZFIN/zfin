@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Checks for feature that are created by an STR but the mutagen is not matching that STR type.</description>
+    <description>Checks for features that are created by an STR but where the mutagen is not matching the STR type.</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
