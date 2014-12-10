@@ -38,6 +38,7 @@ public class DbScriptFileParserTest {
         // insert statement
         statement = queries.get(2);
         assertTrue(statement.isInsertStatement());
+        assertTrue(!statement.isLoadStatement());
 
         // load statement
         statement = queries.get(5);
