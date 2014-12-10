@@ -370,7 +370,7 @@ foreach $remorph_orphan_video_line (@remorph_videoLines) {
 
     $remorph_orphan_video_line =~ s/\|//g ;
     $remorph_orphan_video_line =~ s/$remorph_new_line//g ;
-    $remorph_orphan_video_line =~ s/$remorph_video_extension//i;
+#    $remorph_orphan_video_line =~ s/$remorph_video_extension//i;
 
     system ("/bin/mv <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/$remorph_orphan_video_line.* <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/bkup/") and die "can not mv videos";
 
