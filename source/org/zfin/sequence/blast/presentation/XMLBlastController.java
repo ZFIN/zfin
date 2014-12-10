@@ -292,10 +292,10 @@ public class XMLBlastController {
     protected String initiateBlast(Model model,
                                    @ModelAttribute("formBean") XMLBlastBean inputXMLBlastBean,
                                    BindingResult result) throws Exception {
+        onBind(inputXMLBlastBean, result);
         String querySequence = inputXMLBlastBean.getQuerySequence();
         querySequence = ZfinStringUtils.escapeHighUnicode(querySequence);
         StringReader in = new StringReader(querySequence);
-        onBind(inputXMLBlastBean, result);
         logger.debug("onsubmit enter");
 
         xmlBlastValidator.validate(inputXMLBlastBean, result);
