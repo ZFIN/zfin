@@ -12,7 +12,7 @@
 # see man rsync for additional details!
 
 # -a : archive, go through directories recursively
-
+# -u : don't update the reciever if it is newer than the sender.
 # /research/zprod/loadUp/imageLoadUp is production 
 # /research/zcentral/loadUp/imageLoadUp is development
 #
@@ -21,12 +21,12 @@
 
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
-system("/local/bin/rsync -va  <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
+system("/local/bin/rsync -vua  <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/ /research/zcentral/loadUp/imageLoadUp/");
 
 # --backup-dir=/tmp --suffix=uploadbkup --delete 
 
-system("/local/bin/rsync -va <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
+system("/local/bin/rsync -vua <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/ /research/zcentral/loadUp/PDFLoadUp/");
 
-system("/local/bin/rsync -va <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/ /research/zcentral/loadUp/videoLoadUp/");
+system("/local/bin/rsync -vua <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|-->/ /research/zcentral/loadUp/videoLoadUp/");
 
 exit;
