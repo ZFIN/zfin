@@ -185,15 +185,13 @@ EFFECTS
     <?MIVAR NAME=xpcur_G_expcond_insert_columns>
             expcond_zdb_id,
             expcond_exp_zdb_id,
-            expcond_cdt_zdb_id,
-            expcond_expunit_zdb_id
+            expcond_cdt_zdb_id
     <?/MIVAR>
     
     <?MIVAR NAME=xpcur_G_expcond_insert_values>
             '$xpcurup_expcond_zdb_id',
             '$xpcur_G_cond_add_exp',
-            '$xpcur_G_cond_add_cond_type',
-            '$xpcur_G_cond_add_unit'
+            '$xpcur_G_cond_add_cond_type'
     <?/MIVAR>
 
 
@@ -216,6 +214,14 @@ EFFECTS
         <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values ,'$xpcur_G_cond_add_value'<?/MIVAR>
         
     <?/MIBLOCK>
+
+    <?MIBLOCK COND=$(AND,$(XST,$xpcur_G_cond_add_unit),$(NC,$xpcur_G_cond_add_unit,))>
+
+            <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns , expcond_expunit_zdb_id<?/MIVAR>
+
+            <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values ,'$xpcur_G_cond_add_unit'<?/MIVAR>
+
+        <?/MIBLOCK>
 
 
     <?MIVAR COND=$(XST,$xpcur_G_cond_add_attribute)>
