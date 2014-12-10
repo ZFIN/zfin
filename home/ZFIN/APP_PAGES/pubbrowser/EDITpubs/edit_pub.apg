@@ -141,7 +141,29 @@ code added for Bugz 6986<?/MICOMMENT>
 <?MIVAR NAME=pub_jtype>$1<?/MIVAR>
 <?/MISQL>
 
-<?MISQL SQL="select recattrib_source_zdb_id from record_attribution where recattrib_source_zdb_id='$OID'">
+<?MISQL SQL="select recattrib_source_zdb_id 
+               from record_attribution 
+              where recattrib_source_zdb_id = '$OID'
+                and recattrib_source_zdb_id[5,7] != 'FIG'
+             union
+             select recattrib_source_zdb_id 
+               from record_attribution, figure 
+              where recattrib_source_zdb_id = '$OID'
+                and recattrib_data_zdb_id = fig_zdb_id
+                and (exists (select 'x' 
+                               from phenotype_experiment
+                              where phenox_fig_zdb_id = fig_zdb_id)
+                  or exists (select 'x' 
+		               from construct_figure
+                              where consfig_fig_zdb_id = fig_zdb_id)
+                  or exists (select 'x' 
+		               from expression_pattern_figure
+                              where xpatfig_fig_zdb_id = fig_zdb_id)
+                  or exists (select 'x' 
+		               from genotype_figure_fast_search
+                              where gffs_fig_zdb_id = fig_zdb_id)
+                    );
+">
 <?/MISQL>
 
 <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
