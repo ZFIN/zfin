@@ -219,7 +219,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
     }
 
     public boolean isLoadStatement() {
-        return load || selectInto;
+        return load;
     }
 
     public boolean isSelectIntoStatement() {
