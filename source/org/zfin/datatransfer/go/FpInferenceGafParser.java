@@ -122,7 +122,10 @@ public class FpInferenceGafParser {
         );
         gafEntry.setTaxonId(entries[12]);
         gafEntry.setCreatedDate(entries[13]);
-        gafEntry.setCreatedBy(entries[14]);
+        gafEntry.setCreatedBy(entries[14]
+        .replaceAll("Ensembl:", "ENSEMBL")
+                .replaceAll("UniProt", "UniProtKB")
+        );
         return gafEntry;
     }
 
