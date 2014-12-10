@@ -154,7 +154,7 @@ $(TARGETDIR)/update_vega_nomenclature.sql $(TARGETDIR)/gather_alias.awk
 # differences if not, leave the bowtie index alone
 
 #$(STORE)/Vega_Zv9_47: $(STORE)/Danio_rerio.VEGA45.%.dna.toplevel.fa
-#	cd $(STORE) && nice +10 /private/bin/bowtie-build --big -f $< $@
+#	cd $(STORE) && nice +10 /opt/misc/bowtie/bowtie-build --big -f $< $@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 BOWTIE_E_IDX = $(GLOBALSTORE)/Ensembl_Zv9.62
@@ -167,8 +167,8 @@ $(TARGETDIR)/mo_seq.fa_line:  $(TARGETDIR)/get_mo_seq.sql
 $(TARGETDIR)/mo_seq.fa: $(TARGETDIR)/mo_seq.fa_line
 	@cd $(TARGETDIR) && tr \~ '\n' < $< > $@
 
-$(TARGETDIR)/E_mo_seq.sam: $(TARGETDIR)/mo_seq.fa /private/bin/bowtie
-	/private/bin/bowtie --best -strata --sam -f $(BOWTIE_E_IDX) $< > $@
+$(TARGETDIR)/E_mo_seq.sam: $(TARGETDIR)/mo_seq.fa /opt/misc/bowtie/bowtie
+	/opt/misc/bowtie/bowtie --best -strata --sam -f $(BOWTIE_E_IDX) $< > $@
 
 $(TARGETDIR)/E_mo_seq.gff3: $(TARGETDIR)/E_mo_seq.sam $(TARGETDIR)/sam2gff3.awk
 	@cd $(TARGETDIR) && ./sam2gff3.awk < $< > $@ 2> mo_seq_E_miss.fa
@@ -187,7 +187,7 @@ clean_mo_E:
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 $(TARGETDIR)/V_mo_seq.sam: $(TARGETDIR)/mo_seq.fa
-	/private/bin/bowtie --best -strata --sam -f $(BOWTIE_V_IDX) $< > $@
+	/opt/misc/bowtie/bowtie --best -strata --sam -f $(BOWTIE_V_IDX) $< > $@
 
 $(TARGETDIR)/V_mo_seq.gff3: $(TARGETDIR)/V_mo_seq.sam $(TARGETDIR)/sam2gff3.awk
 	@cd $(TARGETDIR) && ./sam2gff3.awk < $< > $@ 2> mo_seq_V_miss.fa
