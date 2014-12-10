@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExperimentCondition;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.framework.HibernateUtil;
@@ -42,6 +39,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.CurationPresentation;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.presentation.DBLinkPresentation;
@@ -502,8 +500,20 @@ public class DeleteRecordController {
             }
 
             if (type.startsWith("COMP") || type.startsWith("JRNL") || type.startsWith("LAB") || type.startsWith("PERS") || type.startsWith("PUB"))  {
-                // this should force a cascade
-                RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(zdbID);
+                if (type.startsWith("PUB")) {
+                    List<Figure> figures = RepositoryFactory.getPublicationRepository().getFiguresByPublication(zdbID);
+                    for (Figure figure : figures) {
+                        Set<Image> images = figure.getImages();
+                        for (Image image : images) {
+                            RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(image.getZdbID());
+                        }
+                        RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(figure.getZdbID());
+                    }
+                    RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(zdbID);
+                } else {
+                    // this should force a cascade
+                    RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(zdbID);
+                }
             } else {
                 // this should force a cascade
                 RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(zdbID);
