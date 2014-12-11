@@ -138,7 +138,7 @@
         </set>
 
 
-        <set name="dataNotes" lazy="true" sort="natural">
+        <set name="dataNotes" lazy="true">
             <key column="dnote_data_zdb_id"/>
             <one-to-many class="org.zfin.infrastructure.DataNote"/>
         </set>
