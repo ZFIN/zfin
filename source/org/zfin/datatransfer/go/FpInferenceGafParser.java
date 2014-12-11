@@ -112,22 +112,27 @@ public class FpInferenceGafParser {
         gafEntry.setQualifier(entries[3]);
         gafEntry.setGoTermId(entries[4]);
         gafEntry.setPubmedId(entries[5]);
-        if(entries[6]==null){
-            logger.error("bad gaf file: "+line);
+        if (entries[6] == null) {
+            logger.error("bad gaf file: " + line);
         }
         gafEntry.setEvidenceCode(entries[6]);
         gafEntry.setInferences(entries[7]
-                .replaceAll("EMBL:", "GenBank:")
-                .replaceAll("protein_id:", "GenPept:")
+                        .replaceAll("EMBL:", "GenBank:")
+                        .replaceAll("protein_id:", "GenPept:")
         );
         gafEntry.setTaxonId(entries[12]);
         gafEntry.setCreatedDate(entries[13]);
 //        for case 10868
+
         gafEntry.setCreatedBy(entries[14]
-                
-        .replaceAll("Ensembl:", "ENSEMBL")
-                .replaceAll("UniProt", "UniProtKB")
+
+                        .replaceAll("Ensembl:", "ENSEMBL")
+
+
         );
+        if (gafEntry.getCreatedBy().equals("UniProt")){
+            gafEntry.setCreatedBy("UniProtKB");
+    }
         return gafEntry;
     }
 
