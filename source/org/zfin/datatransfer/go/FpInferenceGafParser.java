@@ -130,9 +130,8 @@ public class FpInferenceGafParser {
 
 
         );
-        if (gafEntry.getCreatedBy().equals("UniProt")){
-            gafEntry.setCreatedBy("UniProtKB");
-    }
+
+    
         return gafEntry;
     }
 
