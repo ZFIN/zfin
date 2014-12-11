@@ -463,13 +463,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getRecordAttributionsForType() {
-        List<RecordAttribution> recordAttributions = infrastructureRepository.getRecordAttributionsForType("ZDB-MRKRSEQ-070118-1", RecordAttribution.SourceType.STANDARD);
-        assertEquals(1, recordAttributions.size());
-        assertEquals("ZDB-PUB-061010-9", recordAttributions.iterator().next().getSourceZdbID());
-    }
-
-    @Test
     public void getExternalOrthologyNotes() {
         List<String> notes = infrastructureRepository.getExternalOrthologyNoteStrings("ZDB-GENE-030131-2333");
         assertEquals(1, notes.size());
