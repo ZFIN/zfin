@@ -43,8 +43,9 @@ EFFECTS
           }
       
           var reg = new RegExp("^(A|T|C|G|B|D|H|K|M|N|R|S|V|W|Y|U)*$");
+          var regexEmptyString = /^\s+$/;
           
-          if ( ! reg.test(s) )
+          if (! regexEmptyString.test(s) && ! reg.test(s) )
           {
               alert('Sequence Validation:\n\n An invalid character was detected in the sequence field. Please remove non A|T|C|G|B|D|H|K|M|N|R|S|U|V|W|Y letters.');
               return false;
@@ -305,11 +306,11 @@ EFFECTS
           
           <tr>
             <td valign=top> 
-              <?MIBLOCK COND="$(XST,$seqdata_second_sequence)">
+              <?MIBLOCK COND="$(OR,$(XST,$seqdata_second_sequence),$(XST,$isTalen))">
                 Sequence 1:&nbsp;&nbsp;&nbsp;
               <?/MIBLOCK>
-               5'  <input type=text name=seqdata_ReportedSequence size=40 
-                               <?MIVAR COND=$(XST,$seqdata_sequence)>value=$seqdata_sequence<?/MIVAR>
+               5'  <input type=text name=seqdata_ReportedSequence size="40" 
+                               <?MIVAR COND=$(AND,$(XST,$seqdata_sequence),$(NE,$seqdata_sequence,))>value="$seqdata_sequence"<?/MIVAR>
                                onChange="changeSeq(this);"> 
             </td>
             <td> 
@@ -331,10 +332,10 @@ EFFECTS
             </td>
           </tr>
   
-          <?MIBLOCK COND="$(XST,$seqdata_second_sequence)">
+          <?MIBLOCK COND="$(OR,$(XST,$seqdata_second_sequence),$(XST,$isTalen))">
             <tr>
-              <td valign=top>Sequence 2:&nbsp;&nbsp;&nbsp; 5'  <input type=text name=seqdata_2nd_ReportedSequence size=40 
-                                 <?MIVAR COND=$(XST,$seqdata_second_sequence)>value=$seqdata_second_sequence<?/MIVAR>
+              <td valign=top>Sequence 2:&nbsp;&nbsp;&nbsp; 5'  <input type=text name=seqdata_2nd_ReportedSequence size="40" 
+                                 <?MIVAR COND=$(AND,$(XST,$seqdata_second_sequence),$(NE,$seqdata_second_sequence,))>value="$seqdata_second_sequence"<?/MIVAR>
                                  onChange="changeSeq2(this);"> 
               </td>
               <td> 

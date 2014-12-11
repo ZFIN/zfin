@@ -884,26 +884,13 @@ Only need to update clones, etc., which should be the only things that will have
 
       <table border=0 bgcolor="<!--|HIGHLIGHT_COLOR|-->">
         <tr><td>
-        <?MIBLOCK COND="$(XST,$mrkrview_second_sequence)">
-          <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence&seqdata_second_sequence=$mrkrview_second_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>
+        <?MIBLOCK COND="$(EC,$marker_type,TALEN)">
+          <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence&seqdata_second_sequence=$mrkrview_second_sequence&isTalen=yes') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>
         <?MIELSE>
           <?MISQL SQL="select WebExplode(object,'seqdata_sequence=$mrkrview_sequence') from webPages where ID='aa-sequence_data_entry.apg';">$1<?/MISQL>
         <?/MIBLOCK>
-    <?MIBLOCK COND="$(OR,$(NXST,$mrkrview_second_sequence),$(EQ,$mrkrview_second_sequence,))">
-      <INPUT TYPE=button
-        value="Update Sequence"
-        <?MIVAR>
-        onClick="
-        if(document.newdata.seqdata_action.selectedIndex==0){
-            actionSequence(4);
-        }
 
-        if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){
-            update_sequence('$OID','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)
-        }">
-        <?/MIVAR>
-     <?/MIBLOCK>
-    <?MIBLOCK COND="$(AND,$(XST,$mrkrview_second_sequence),$(NE,$mrkrview_second_sequence,))">
+     <?MIBLOCK COND="$(EC,$marker_type,TALEN)">
       <INPUT TYPE=button
         value="Update Sequence"
         <?MIVAR>
@@ -916,7 +903,20 @@ Only need to update clones, etc., which should be the only things that will have
             update_second_sequence('$OID','$mrkrview_second_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value,document.newdata.seqdata_2nd_DisplaySequence.value)
         }">
         <?/MIVAR>
-     <?/MIBLOCK>
+     <?MIELSE>
+      <INPUT TYPE=button
+        value="Update Sequence"
+        <?MIVAR>
+        onClick="
+        if(document.newdata.seqdata_action.selectedIndex==0){
+            actionSequence(4);
+        }
+
+        if (validSequence(document.newdata.seqdata_DisplaySequence.value) ){
+            update_sequence('$OID','$mrkrview_sequence',document.newdata.seqdata_DisplaySequence.value,document.newdata.seqdata_CuratorNote.value)
+        }">
+        <?/MIVAR>
+     <?/MIBLOCK>     
         <br>
         </td></tr>
       </table>
