@@ -1373,7 +1373,8 @@ drop table lamhdi_tmp;
 
 -- download file Case 4200 as reuqested by uniprot
 
-delete from tmp_gene_pubcount;
+create temp table tmp_gene_pubcount (geneid varchar(50), pubcount int)
+with no log;
 
 insert into tmp_gene_pubcount
 select recattrib_data_zdb_id geneid, count(recattrib_source_zdb_id) pubcount
