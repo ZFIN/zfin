@@ -818,12 +818,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
             throw new RuntimeException("No marker object provided.");
         if (marker.getMarkerType() == null)
             throw new RuntimeException("Cannot create a new marker without a type.");
-        if (marker.getOwner() == null)
-            throw new RuntimeException("Cannot create a new marker without an owner.");
         if (pub == null)
             throw new RuntimeException("Cannot create a new marker without a publication.");
 
         marker.setOwner(ProfileService.getCurrentSecurityUser());
+        if (!marker.getOwner().getAccountInfo().getRoot())
+            throw new RuntimeException("Non-root user cannot create a marker");
         currentSession().save(marker);
         // Need to flush here to make the trigger fire as that will
         // create a MarkerHistory record needed.

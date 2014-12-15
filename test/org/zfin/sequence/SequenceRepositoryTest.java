@@ -289,6 +289,12 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         assertTrue(geoMap.containsKey("BI878777"));
 //        assertTrue(geoMap.containsValue("ZDB-GENE-110207-1"));
     }
+
+    @Test
+    public void testSeq(){
+        List<Accession> accessions = RepositoryFactory.getSequenceRepository().getAccessionsByNumber("ENSDARG00000002898");
+        assertNotNull(accessions);
+    }
 }
 
 
