@@ -67,11 +67,6 @@ get_obj_abbrev(zdbId varchar(50))
       into objName
       from stage
       where stg_zdb_id = zdbId;
-  elif (objType = "TEMP") then
-    select abbrev   -- NULL values (odd case ZDB_ID?)
-      into objName
-      from temp_fish
-      where zdb_id = zdbId;
   end if
   
   if (objName is NULL) then

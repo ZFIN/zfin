@@ -314,11 +314,6 @@ get_obj_name(zdbId varchar(50))
 
   -- and finally 2 oddball cases
 
-  elif (objType = "TEMP") then
-    select zdb_id		-- don't return a fish name.  We want to flag 
-      into objName		-- this as odd.
-      from temp_fish
-      where zdb_id = zdbId;
   elif (objType = "sys") then
     select zdb_id		-- not sure why we would ever do this
       into objName
