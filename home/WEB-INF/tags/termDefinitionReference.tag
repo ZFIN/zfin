@@ -8,6 +8,6 @@
         <zfin:link entity="${reference.reference}"/>
     </c:when>
     <c:otherwise>
-        <a href="${term.getReferenceLink(reference)}">${term.getDefinitionDisplay(reference)}</a>
+        ${reference.getForeignDB().getDisplayName()}: <a href="${term.getReferenceLink(reference)}">${reference.reference}</a>
     </c:otherwise>
 </c:choose>

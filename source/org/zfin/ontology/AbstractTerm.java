@@ -283,22 +283,6 @@ public abstract class AbstractTerm implements Term {
         return false;
     }
 
-    public String getDefinitionDisplay() {
-        if (checkIfSingleReference()) return null;
-        TermDefinitionReference reference = definitionReferences.iterator().next();
-        if (reference.getForeignDB().getDbName() == ForeignDB.AvailableName.HTTP)
-            return getReferenceLink();
-        else
-            return reference.getForeignDB().getDbName() + ":" + reference.getReference();
-    }
-
-    public static String getDefinitionDisplay(TermDefinitionReference reference) {
-        if (reference.getForeignDB().getDbName() == ForeignDB.AvailableName.HTTP)
-            return getReferenceLink(reference);
-        else
-            return reference.getForeignDB().getDbName() + ":" + reference.getReference();
-    }
-
     private DevelopmentStage start;
     private DevelopmentStage end;
 

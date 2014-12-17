@@ -12,7 +12,7 @@
                         (<a href="/${reference.reference}">1</a>)
                     </c:when>
                     <c:otherwise>
-                        <a href="${term.getReferenceLink()}">${term.definitionDisplay}</a>
+                        <a href="${term.getReferenceLink()}">${reference.reference}</a>
                     </c:otherwise>
                 </c:choose>
             </c:when>
