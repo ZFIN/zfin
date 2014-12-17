@@ -191,7 +191,7 @@ public class DatabaseJdbcStatement implements SqlQueryKeywords {
         if (query == null)
             return false;
         String queryString = query.toString().trim().toUpperCase();
-        return queryString.startsWith(SELECT);
+        return queryString.startsWith(SELECT) && !queryString.contains(INTO);
     }
 
     public boolean isDebug() {
