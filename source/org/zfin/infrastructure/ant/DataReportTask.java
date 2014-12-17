@@ -71,11 +71,12 @@ public class DataReportTask extends AbstractValidateDataReportTask {
             errorMessages = service.runDbScriptFile(dbQueryFile, null, dataMap);
             Map<String, List<List<String>>> resultMap = service.getResultMap();
             generateReports(errorMessages, resultMap);
+            HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             LOG.error(e);
+            HibernateUtil.rollbackTransaction();
             throw new RuntimeException(e);
         } finally {
-            HibernateUtil.rollbackTransaction();
             HibernateUtil.closeSession();
         }
     }
