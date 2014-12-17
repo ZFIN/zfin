@@ -21,6 +21,7 @@
 
     <div id="${blastLinkPopup}" class="analysis_tools_box_popup_box">
         <c:forEach var="blastDB" items="${databases}">
+          <c:if test="${!(blastDB.abbrev.value eq 'UCSC BLAT' && fn:length(sequence) < 20)}">
             <c:choose>
                 <c:when test="${blastDB.abbrev.value eq 'RNASequences'}">
                     <a style="font-size: small;"
@@ -29,13 +30,14 @@
                 </c:when>
                 <c:when test="${blastDB.abbrev.value ne 'MEGA BLAST'}">
                     <a
-                       href="/action/blast/blast-with-sequence?accession=${sequence}&blastDB=${blastDB.abbrev.toString()}">${blastDB.displayName}</a>
+                            href="/action/blast/blast-with-sequence?accession=${sequence}&blastDB=${blastDB.abbrev.toString()}">${blastDB.displayName}</a>
                     <br>
                 </c:when>
             </c:choose>
             <%--<a style="font-size: small;"--%>
             <%--href="<zfin:blastAccessionURL dbLink="${dbLink}" blastDB="${blastDB}"/>">${blastDB.displayName}</a>--%>
             <%--<option value="${blastDB.abbrev}">${blastDB.displayName}</option>--%>
+          </c:if>
         </c:forEach>
     </div>
 </div>
