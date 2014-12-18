@@ -330,8 +330,8 @@ public class DeleteRecordController {
         } else if (type.startsWith("LAB")) {
             Organization lab = RepositoryFactory.getProfileRepository().getOrganizationByZdbID(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(lab.getName());
-            //  List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getLabPrefixesById(zdbIDToDelete, true);
-            List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getCurrentLabPrefixesByIdForDelete(zdbIDToDelete, true);
+
+            List<FeaturePrefix> designations = RepositoryFactory.getFeatureRepository().getCurrentLabPrefixesById(zdbIDToDelete, false);
             // Can't delete the lab if it has lab designation
             if (CollectionUtils.isNotEmpty(designations)) {
                 String argString = "";
