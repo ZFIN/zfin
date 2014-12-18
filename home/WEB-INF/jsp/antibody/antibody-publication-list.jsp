@@ -35,12 +35,12 @@
         </form>
     </c:when>
     <c:otherwise>
-        <table bgcolor="#eeeeee" border="0" width="100%">
+        <table class="summary rowstripes">
             <tbody>
-            <tr align="center">
+            <tr>
                 <td>
                     <font size="-1"><b>ZFIN ID:</b>
-                            ${formBean.antibody.zdbID}
+                        ${formBean.antibody.zdbID}
                     </font>
                 </td>
                 <authz:authorize ifAnyGranted="root">
@@ -101,15 +101,15 @@
             <c:when test="${formBean.orderBy == 'author'}">
                 <input type=button name=resultOrder
                        onClick="document.location.replace('antibody-publication-list?antibodyID=${formBean.antibody.zdbID}&orderBy=date<c:if test="${formBean.update}">&update=true</c:if>')"
-                       value="Order By Date">
-            </c:when>
-            <c:otherwise>
-                <input type=button name=resultOrder
-                       onClick="document.location.replace('antibody-publication-list?antibodyID=${formBean.antibody.zdbID}&orderBy=author<c:if test="${formBean.update}">&update=true</c:if>')"
-                       value="Order By Author">
-            </c:otherwise>
-        </c:choose>
-        &nbsp;&nbsp;&nbsp;
+    value="Order By Date">
+    </c:when>
+    <c:otherwise>
+        <input type=button name=resultOrder
+               onClick="document.location.replace('antibody-publication-list?antibodyID=${formBean.antibody.zdbID}&orderBy=author<c:if test="${formBean.update}">&update=true</c:if>')"
+        value="Order By Author">
+    </c:otherwise>
+    </c:choose>
+    &nbsp;&nbsp;&nbsp;
     </c:if>
 
         <span id="enter-pub-id" style="display: none;">
@@ -128,9 +128,10 @@
     <form:errors path="*" cssClass="error indented-error"/>
 
     <table class="summary rowstripes">
+        <tbody>
         <c:forEach var="publishedPublication" items="${formBean.sortedPublishedPublications}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
-                <td align=left>
+                <td>
                     <c:if test="${formBean.update && publishedPublication.deletable}">
                         <font size=-1><input type=button value=delete
                                              onclick="disassociatePublication('antibody-citation-disassociate-publication?antibodyID=${formBean.antibody.zdbID}&disassociatedPubId=${publishedPublication.zdbID}<c:if test="${formBean.orderBy == 'author'}">&orderBy=author</c:if><c:if test="${formBean.orderBy == 'date'}">&orderBy=date</c:if>&update=true')"></font>
@@ -146,36 +147,37 @@
                             test="${publishedPublication.indexed}">,&nbsp;INDEXED</c:if></authz:authorize>
                     </div>
                 </td>
-            </zfin:alternating-tr>
+            </zfin:alternating-tr>        
         </c:forEach>
+        </tbody>
+    </table>
 
-        <c:if test="${formBean.numOfUnpublishedPublications > 0}">
-            <tr>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td><b>Other Citations (${formBean.numOfUnpublishedPublications}):</b></td>
-            </tr>
-            <c:forEach var="unpublishedPublication" items="${formBean.sortedUnpublishedPublications}"
+    <c:if test="${formBean.numOfUnpublishedPublications > 0}">
+      <br/>
+      <b>Other Citations (${formBean.numOfUnpublishedPublications}):</b>
+      <table class="summary rowstripes">
+        <tbody>
+        <c:forEach var="unpublishedPublication" items="${formBean.sortedUnpublishedPublications}"
                        varStatus="loop">
-                <zfin:alternating-tr loopName="loop">
-                    <td align=left>
+            <zfin:alternating-tr loopName="loop">
+            <td>
                         <c:if test="${formBean.update && unpublishedPublication.deletable}">
                             <font size=-1><input type=button value=delete
                                                  onclick="disassociatePublication('disassociate-publication?antibodyID=${formBean.antibody.zdbID}&disassociatedPubId=${unpublishedPublication.zdbID}<c:if test="${formBean.orderBy == 'author'}">&orderBy=author</c:if><c:if test="${formBean.orderBy == 'date'}">&orderBy=date</c:if>&update=true')"></font>
                         </c:if>
 
-                        <div class="show_pubs">
-                            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
-                                &nbsp;(${unpublishedPublication.year})&nbsp;${unpublishedPublication.title}
-                            </a><authz:authorize ifAnyGranted="root">&nbsp;&nbsp;&nbsp;<c:if
-                                test="${unpublishedPublication.open}">OPEN</c:if><c:if
-                                test="${!unpublishedPublication.open}">CLOSE</c:if><c:if
-                                test="${publishedPublication.indexed}">,&nbsp;INDEXED</c:if></authz:authorize>
-                        </div>
-                    </td>
-                </zfin:alternating-tr>
-            </c:forEach>
-        </c:if>
-    </table>
+            <div class="show_pubs">
+            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
+                &nbsp;(${unpublishedPublication.year})&nbsp;${unpublishedPublication.title}
+            </a><authz:authorize ifAnyGranted="root">&nbsp;&nbsp;&nbsp;<c:if
+                test="${unpublishedPublication.open}">OPEN</c:if><c:if
+                test="${!unpublishedPublication.open}">CLOSE</c:if><c:if
+                test="${publishedPublication.indexed}">,&nbsp;INDEXED</c:if></authz:authorize>
+             </div>
+             </td>
+          </zfin:alternating-tr>
+        </c:forEach>
+        </tbody>
+      </table>
+    </c:if>
 </form:form>
