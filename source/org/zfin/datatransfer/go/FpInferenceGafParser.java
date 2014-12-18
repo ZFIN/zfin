@@ -126,12 +126,12 @@ public class FpInferenceGafParser {
 
         gafEntry.setCreatedBy(entries[14]
 
-                        .replaceAll("Ensembl:", "ENSEMBL")
-
+                        .replaceAll("Ensembl:", "ENSEMBL:")
+                        .replaceAll("\\bUniProt:\\b", "UniProtKB:")
 
         );
 
-    
+
         return gafEntry;
     }
 
