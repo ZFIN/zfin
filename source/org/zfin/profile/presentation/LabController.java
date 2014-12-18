@@ -188,9 +188,6 @@ public class LabController {
         // a lab could have prefixes while having no features (example as of 2013-01-24: ZDB-LAB-111031-1
         model.addAttribute("featuresForTheLab",RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID)) ;
 
-        model.addAttribute("latestUpdate", RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
-
-
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
         return "profile/profile-view.page";
     }

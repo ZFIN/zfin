@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -7,7 +6,6 @@
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}"
                    deleteURL="none"
-                   latestUpdate="${formBean.latestUpdate}"
                    rtype="marker"/>
 
 <div style="float: right">

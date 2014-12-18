@@ -164,9 +164,6 @@ public class CompanyController {
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes(company.getName(), false);
         model.addAttribute("prefixes", featurePrefixes);
 
-        model.addAttribute("latestUpdate", RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
-
-
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.COMPANY.getTitleString() + company.getName());
         return "profile/profile-view.page";
     }

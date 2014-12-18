@@ -68,11 +68,6 @@ public class ProfileBean {
 
     // Make it reusable: jsp tag definition or
 
-    public AuditLogItem getLatestUpdate() {
-        AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        return alr.getLatestAuditLogItem(person.getZdbID());
-    }
-
     public String getAction() {
         return action;
     }

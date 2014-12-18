@@ -757,8 +757,6 @@ public class MarkerService {
 
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(marker));
 
-        markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
-
         markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // OTHER GENE / MARKER PAGES:

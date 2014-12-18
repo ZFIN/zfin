@@ -103,11 +103,6 @@ public class AntibodyBean extends PublicationListBean {
         this.antibodyStat = antibodyStat;
     }
 
-    public AuditLogItem getLatestUpdate() {
-        AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        return alr.getLatestAuditLogItem(antibody.getZdbID());
-    }
-
     public SortedSet<ExternalNote> getNotesSortedByPubTime() {
         if (antibody == null) {
             return new TreeSet<ExternalNote>();

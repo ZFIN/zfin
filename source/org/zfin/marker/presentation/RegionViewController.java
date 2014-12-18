@@ -52,7 +52,6 @@ public class RegionViewController {
 
         markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(region));
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(region));
-        markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
         markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
 
         // EXPRESSION SECTION

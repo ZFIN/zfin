@@ -2,10 +2,7 @@
 
 <jsp:useBean id="marker" class="org.zfin.marker.Marker" scope="request"/>
 
-<zfin2:dataManager zdbID="${marker.zdbID}"
-                   latestUpdate="${formBean.latestUpdate}"
-                   rtype="marker"/>
-
+<zfin2:dataManager zdbID="${marker.zdbID}" rtype="marker"/>
 <p/>
 <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
@@ -87,8 +84,10 @@
 <authz:authorize ifAnyGranted="root">
     <p/>
 
-    <div id="toggleMartOn"><a href="javascript:toggleOn('mart','toggleMartOff','toggleMartOn')">Show Chromosome Mart (invisible to public)</a></div>
-    <div style="display: none" id="toggleMartOff"><a href="javascript:toggleOf('mart','toggleMartOff','toggleMartOn')">Hide Chromosome
+    <div id="toggleMartOn"><a href="javascript:toggleOn('mart','toggleMartOff','toggleMartOn')">Show Chromosome Mart
+        (invisible to public)</a></div>
+    <div style="display: none" id="toggleMartOff"><a href="javascript:toggleOf('mart','toggleMartOff','toggleMartOn')">Hide
+        Chromosome
         Mart</a></div>
     <div style="display: none" id="mart">
         <table class="summary rowstripes">

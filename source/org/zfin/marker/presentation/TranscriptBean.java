@@ -174,9 +174,4 @@ public class TranscriptBean extends MarkerBean {
         String zdbID = getTranscript().getZdbID();
         return "/action/marker/marker-edit?zdbID=" + zdbID;
     }
-
-    public AuditLogItem getLatestUpdate() {
-        AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        return alr.getLatestAuditLogItem(marker.getZdbID());
-    }
 }

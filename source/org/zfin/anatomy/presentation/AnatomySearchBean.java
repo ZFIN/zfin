@@ -203,11 +203,6 @@ public class AnatomySearchBean extends PaginationBean {
         return statisticItems;
     }
 
-    public AuditLogItem getLatestUpdate() {
-        AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        return alr.getLatestAuditLogItem(aoTerm.getZdbID());
-    }
-
     public void setNumberOfHighQualityProbes(int numberOfHighQualityProbes) {
         this.numberOfHighQualityProbes = numberOfHighQualityProbes;
     }

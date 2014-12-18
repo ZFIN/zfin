@@ -314,8 +314,6 @@ public class PersonController {
         List<LabPresentation> labs = profileRepository.getLabsForPerson(zdbID);
         model.addAttribute("labs", labs);
 
-        model.addAttribute("latestUpdate", RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
-
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
         return "profile/profile-view.page";
     }

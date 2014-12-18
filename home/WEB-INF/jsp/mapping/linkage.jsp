@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<zfin2:dataManager zdbID="${linkage.zdbID}"
-                   rtype="linkage" latestUpdate="${zfn:getLastUpdate(linkage.zdbID)}"/>
+<zfin2:dataManager zdbID="${linkage.zdbID}" rtype="linkage"/>
 
 <p/>
 <table width="100%" cellpadding="0" cellspacing="0">

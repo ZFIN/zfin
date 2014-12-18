@@ -47,9 +47,6 @@ public class SequenceViewController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
-
-//        markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
-
         //setting supporting sequences
         SequencePageInfoBean sequenceInfo = MarkerService.getSequenceInfoFull(marker);
         sequenceInfo.setMarker(marker);

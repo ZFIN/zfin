@@ -51,7 +51,6 @@ public class EfgViewController {
 
         markerBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(efg));
         markerBean.setPreviousNames(markerRepository.getPreviousNamesLight(efg));
-        markerBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
         markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // EXPRESSION SECTION

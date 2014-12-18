@@ -15,9 +15,7 @@
 
 </script>
 
-<zfin2:dataManager zdbID="${formBean.genotype.zdbID}"
-                   latestUpdate="${formBean.latestUpdate}"
-                   rtype="genotype"/>
+<zfin2:dataManager zdbID="${formBean.genotype.zdbID}" rtype="genotype"/>
 
 
 <div style="float: right;">
@@ -117,11 +115,12 @@
                             <c:otherwise>
                                 <a href="/action/profile/view/${supplier.organization.zdbID}"
                                    id="${supplier.organization.zdbID}">
-                                    ${supplier.organization.name}</a>
+                                        ${supplier.organization.name}</a>
                                 <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>
                                 <c:choose>
                                     <c:when test="${supplier.moensLab}">&nbsp;
-                                        <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}"
+                                        <c:forEach var="affectedGene"
+                                                   items="${formBean.genotypeStatistics.affectedMarkers}"
                                                    varStatus="loop">
                                             (<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${affectedGene.abbreviation}"><font size="-1">request this mutant</font></a>)
                                             <c:if test="${!loop.last}">,&nbsp;</c:if>
@@ -185,7 +184,7 @@
         <b>Note:</b>
         <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
             <div>
-                ${extNote.note}
+                    ${extNote.note}
                 <c:if test="${extNote.singlePubAttribution ne null}">
                     &nbsp;(<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${extNote.singlePubAttribution.publication.zdbID}'>1</a>)
                 </c:if>
@@ -219,7 +218,6 @@
                     </th>
 
 
-
                 </tr>
                 <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
                     <zfin:alternating-tr loopName="loop">
@@ -238,16 +236,16 @@
                         <td>
                             <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
                                 <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
-                                    ${source.organization.name}
+                                        ${source.organization.name}
                                 </a>
                                 <c:if test="${!status.last}">,&nbsp;</c:if>
                             </c:forEach>
                         </td>
                         <td>
-                            ${genoFeat.zygosity.name}
+                                ${genoFeat.zygosity.name}
                         </td>
                         <td>
-                            ${genoFeat.parentalZygosityDisplay}
+                                ${genoFeat.parentalZygosityDisplay}
                         </td>
 
 
@@ -304,7 +302,8 @@
                         </td>
                         <td valign="top">
                             <zfin2:toggledPostcomposedList entities="${xp.expressionResults}" maxNumber="3"
-                                                           id="${xp.expressedGene.zdbID}" numberOfEntities="${fn:length(xp.expressionResults)}"/>
+                                                           id="${xp.expressedGene.zdbID}"
+                                                           numberOfEntities="${fn:length(xp.expressionResults)}"/>
                         </td>
                         <td valign="top">
                             <zfin:link entity="${xp.experiment}"/>
@@ -313,15 +312,15 @@
                             <c:choose>
                                 <c:when test="${(xp.numberOfFigures >1) && !xp.experiment.standard && !xp.experiment.chemical}">
                                     <a href='/action/expression/genotype-figure-summary?genoZdbID=${formBean.genotype.zdbID}&expZdbID=${xp.experiment.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                        ${xp.numberOfFigures} figures</a>
+                                            ${xp.numberOfFigures} figures</a>
                                 </c:when>
                                 <c:when test="${(xp.numberOfFigures >1) && xp.experiment.standard && !xp.experiment.chemical}">
                                     <a href='/action/expression/genotype-figure-summary-standard?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                        ${xp.numberOfFigures} figures</a>
+                                            ${xp.numberOfFigures} figures</a>
                                 </c:when>
                                 <c:when test="${(xp.numberOfFigures >1) && !xp.experiment.standard && xp.experiment.chemical}">
                                     <a href='/action/expression/genotype-figure-summary-chemical?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                        ${xp.numberOfFigures} figures</a>
+                                            ${xp.numberOfFigures} figures</a>
                                 </c:when>
                                 <c:otherwise>
                                     <a href='/${xp.singleFigure.zdbID}'>
@@ -379,7 +378,8 @@
     </c:if></b>
     <c:choose>
         <c:when test="${formBean.numberOfPhenoDisplays > 0 }">
-            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="5" secondColumn="condition"/>
+            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="5"
+                                 secondColumn="condition"/>
             <c:if test="${formBean.numberOfPhenoDisplays > 5}">
                 <table width="100%">
                     <tbody>

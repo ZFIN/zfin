@@ -5,9 +5,7 @@
 
 <meta name="feature-detail-page"/>
 
-<zfin2:dataManager zdbID="${formBean.feature.zdbID}"
-                   latestUpdate="${formBean.latestUpdate}"
-                   rtype="feature"/>
+<zfin2:dataManager zdbID="${formBean.feature.zdbID}" rtype="feature"/>
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -281,26 +279,27 @@
 </c:choose>
 
 <div id="short-version" class="summary">
-<c:choose>
-    <c:when test="${formBean.featgenoStats != null && fn:length(formBean.featgenoStats) > 0 }">
-        <zfin2:genotype-information genotypes="${formBean.featgenoStats}" showNumberOfRecords="5" />
-        <c:if test="${fn:length(formBean.featgenoStats) > 5}">
-            <div>
-                <a href="javascript:expand()">
-                    <img src="/images/darrow.gif" alt="expand" border="0">
-                    Show all</a>
-                    ${fn:length(formBean.featgenoStats)} genotypes
-            </div>
-        </c:if>
-    </c:when>
-    <c:otherwise>
-        <span><strong>GENOTYPES</strong></span> <span class="no-data-tag">No data available</span>
-    </c:otherwise>
-</c:choose>
+    <c:choose>
+        <c:when test="${formBean.featgenoStats != null && fn:length(formBean.featgenoStats) > 0 }">
+            <zfin2:genotype-information genotypes="${formBean.featgenoStats}" showNumberOfRecords="5"/>
+            <c:if test="${fn:length(formBean.featgenoStats) > 5}">
+                <div>
+                    <a href="javascript:expand()">
+                        <img src="/images/darrow.gif" alt="expand" border="0">
+                        Show all</a>
+                        ${fn:length(formBean.featgenoStats)} genotypes
+                </div>
+            </c:if>
+        </c:when>
+        <c:otherwise>
+            <span><strong>GENOTYPES</strong></span> <span class="no-data-tag">No data available</span>
+        </c:otherwise>
+    </c:choose>
 </div>
 <div style="display:none" id="long-version" class="summary">
     <c:if test="${formBean.featgenoStats != null && fn:length(formBean.featgenoStats) > 0 }">
-            <zfin2:genotype-information genotypes="${formBean.featgenoStats}" showNumberOfRecords="${fn:length(formBean.featgenoStats)}"/>
+        <zfin2:genotype-information genotypes="${formBean.featgenoStats}"
+                                    showNumberOfRecords="${fn:length(formBean.featgenoStats)}"/>
     </c:if>
     <div>
         <a href="javascript:collapse()">

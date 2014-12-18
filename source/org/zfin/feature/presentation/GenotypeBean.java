@@ -1,7 +1,5 @@
 package org.zfin.feature.presentation;
 
-import org.zfin.audit.AuditLogItem;
-import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.fish.presentation.AbstractFishViewBean;
@@ -12,7 +10,6 @@ import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -278,11 +275,6 @@ public class GenotypeBean  extends AbstractFishViewBean{
 
     public void setExpressionResults(List<ExpressionResult> expressionResults) {
         this.expressionResults = expressionResults;
-    }
-
-    public AuditLogItem getLatestUpdate() {
-        AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        return alr.getLatestAuditLogItem(genotype.getZdbID());
     }
 
     public int getTotalNumberOfPublications() {

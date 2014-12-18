@@ -32,7 +32,6 @@ public class ProfileController {
 
     public String viewProfile(@PathVariable String zdbID, Model model, @RequestHeader("User-Agent") String userAgent) {
         model.addAttribute("deleteURL", "/action/infrastructure/deleteRecord/" + zdbID);
-        model.addAttribute("latestUpdate", RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
         if (zdbID.startsWith("ZDB-LAB")) {
             return labController.viewLab(zdbID, model);
         } else if (zdbID.startsWith("ZDB-COMPANY")) {

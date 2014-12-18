@@ -32,7 +32,6 @@ public class MarkerBean {
     private PhenotypeOnMarkerBean phenotypeOnMarkerBeans; // TODO: replace with presentation object?
     private GeneOntologyOnMarkerBean geneOntologyOnMarkerBeans ; // TODO: replace with presentation object?
     private boolean hasMarkerHistory;
-    private AuditLogItem latestUpdate;
     private List<PreviousNameLight> previousNames;
     private List<GeneProductsBean> geneProductsBean;
     private List<MarkerRelationshipPresentation> relatedAntibodies;
@@ -194,14 +193,6 @@ public class MarkerBean {
 
     public void setHasMarkerHistory(boolean hasMarkerHistory) {
         this.hasMarkerHistory = hasMarkerHistory;
-    }
-
-    public AuditLogItem getLatestUpdate() {
-        return latestUpdate;
-    }
-
-    public void setLatestUpdate(AuditLogItem latestUpdate) {
-        this.latestUpdate = latestUpdate;
     }
 
     public void setPreviousNames(List<PreviousNameLight> previousNames) {

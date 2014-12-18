@@ -14,7 +14,6 @@
                    editURL="${editURL}"
                    deleteURL="none"
                    mergeURL="${mergeURL}"
-                   latestUpdate="${formBean.latestUpdate}"
                    rtype="marker"/>
 
 

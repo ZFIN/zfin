@@ -7,7 +7,6 @@
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="termID" type="java.lang.String" rtexprvalue="true" required="false" %>
-<%@ attribute name="latestUpdate" type="org.zfin.audit.AuditLogItem" rtexprvalue="true" %>
 <%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
 
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" description="Determines if owner."
@@ -36,14 +35,12 @@
 
         <authz:authorize ifAnyGranted="root">
             <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}"
-                                         mergeURL="${mergeURL}" oboID="${oboID}"
-                                         latestUpdate="${latestUpdate}" rtype="${rtype}"/>
+                                         mergeURL="${mergeURL}" oboID="${oboID}" rtype="${rtype}"/>
         </authz:authorize>
         <authz:authorize ifNotGranted="root" ifAnyGranted="submit">
             <c:if test="${isOwner}">
                 <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}"
-                                             mergeURL="${mergeURL}" oboID="${oboID}"
-                                             latestUpdate="${latestUpdate}" rtype="${rtype}"/>
+                                             mergeURL="${mergeURL}" oboID="${oboID}" rtype="${rtype}"/>
             </c:if>
         </authz:authorize>
 

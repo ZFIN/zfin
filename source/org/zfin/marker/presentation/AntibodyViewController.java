@@ -41,7 +41,6 @@ public class AntibodyViewController {
         // set standard stuff
         antibodyBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(antibody));
         antibodyBean.setPreviousNames(markerRepository.getPreviousNamesLight(antibody));
-        antibodyBean.setLatestUpdate(RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(zdbID));
         antibodyBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID)) ;
 
         // set other antibody data

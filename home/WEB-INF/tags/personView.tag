@@ -8,13 +8,11 @@
 
 <%@ attribute name="deleteURL" type="java.lang.String" required="false" %>
 <%@ attribute name="editURL" type="java.lang.String" required="false" %>
-<%@ attribute name="latestUpdate" type="org.zfin.audit.AuditLogItem" required="false" %>
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 
 <zfin2:dataManager zdbID="${person.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   latestUpdate="${latestUpdate}"
                    rtype="person"
                    isOwner="${isOwner}"
         />

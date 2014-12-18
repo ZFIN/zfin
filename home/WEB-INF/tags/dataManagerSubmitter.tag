@@ -8,7 +8,6 @@
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="termID" type="java.lang.String" rtexprvalue="true" required="false" %>
-<%@ attribute name="latestUpdate" type="org.zfin.audit.AuditLogItem" rtexprvalue="true" %>
 <%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
 
 
@@ -76,6 +75,7 @@
                     <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${zdbID}&rtype=${rtype}">
 
                         Last Update:
+                        <c:set var="latestUpdate" value="${zfn:getLastUpdate(zdbID)}"/>
                         <c:choose>
                             <c:when test="${!empty latestUpdate}">
                                 <fmt:formatDate value="${latestUpdate.dateUpdated}" type="date"/>

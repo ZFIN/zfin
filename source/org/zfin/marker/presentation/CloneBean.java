@@ -82,12 +82,6 @@ public class CloneBean extends MarkerBean {
         return "/action/marker/marker-edit?zdbID=" + zdbID;
     }
 
-    public AuditLogItem getLatestUpdate() {
-        AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-        return alr.getLatestAuditLogItem(marker.getZdbID());
-    }
-
-
     public void addFakePubs(ReferenceDatabase ensemblDatabase) {
 
         if(hasRealPubs(ensemblDatabase)) return ;

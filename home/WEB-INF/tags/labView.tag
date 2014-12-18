@@ -10,17 +10,14 @@
 
 <%@ attribute name="deleteURL" type="java.lang.String" required="false" %>
 <%@ attribute name="editURL" type="java.lang.String" required="false" %>
-<%@ attribute name="latestUpdate" type="org.zfin.audit.AuditLogItem" required="false" %>
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 <%@ attribute name="hasCoPi" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
-
 <%@ attribute name="noPrefixes" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 <%@ attribute name="featuresForTheLab" type="java.util.Collection" required="true" %>
 
 <zfin2:dataManager zdbID="${lab.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
-                   latestUpdate="${latestUpdate}"
                    rtype="lab"
                    isOwner="${isOwner}"
         />

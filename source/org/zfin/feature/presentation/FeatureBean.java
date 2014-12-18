@@ -1,17 +1,14 @@
 package org.zfin.feature.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.audit.AuditLogItem;
-import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.presentation.GenoExpStatistics;
-import org.zfin.repository.RepositoryFactory;
+import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.sequence.FeatureDBLink;
 
 import java.util.List;
@@ -171,14 +168,6 @@ public class FeatureBean {
     public String getEditURL() {
 
         return "";
-    }
-
-    public AuditLogItem getLatestUpdate() {
-        if(feature!=null){
-            AuditLogRepository alr = RepositoryFactory.getAuditLogRepository();
-            return alr.getLatestAuditLogItem(feature.getZdbID());
-        }
-        return null ;
     }
 
     public String getZdbID() {

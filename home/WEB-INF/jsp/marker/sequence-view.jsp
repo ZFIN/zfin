@@ -7,7 +7,6 @@
         zdbID="${formBean.marker.zdbID}"
         editURL="${editURL}"
         deleteURL="${deleteURL}"
-        latestUpdate="${lastUpdated}"
         rtype="marker"
         />
 
