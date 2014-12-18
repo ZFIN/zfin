@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.anatomy.service.AnatomyService;
+import org.zfin.audit.AuditLogItem;
 import org.zfin.feature.Feature;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gwt.root.dto.Mutagee;
@@ -17,6 +18,7 @@ import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.GbrowseTrack;
 import org.zfin.mapping.GenomeLocation;
@@ -29,6 +31,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.profile.Person;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
 
@@ -400,7 +403,7 @@ public class ZfinJSPFunctions {
         if (marker == null)
             return null;
         GbrowseTrack[] tracks = GBrowseService.getGBrowseTracks(marker);
-        if(tracks == null)
+        if (tracks == null)
             return null;
         StringBuilder builder = new StringBuilder();
         for (GbrowseTrack track : tracks) {
@@ -415,4 +418,8 @@ public class ZfinJSPFunctions {
         return prefix + facetLabel;
     }
 
+    public static AuditLogItem getLastUpdate(String entityID) {
+        return RepositoryFactory.getAuditLogRepository().getLatestAuditLogItem(entityID);
+
+    }
 }

@@ -355,4 +355,12 @@
         <function-signature>java.lang.String buildFacetedSearchGACategory(java.lang.String,java.lang.String)</function-signature>
     </function>
 
+    <function>
+        <description>
+        </description>
+        <name>getLastUpdate</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>org.zfin.audit.AuditLogItem getLastUpdate(java.lang.String)</function-signature>
+    </function>
+
 </taglib>
