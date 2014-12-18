@@ -234,7 +234,7 @@ public class FacetBuilderService {
         construct.addFacet(buildFacet(CONSTRUCT.getName(), true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(construct);
 
-        FacetGroup sequenceAlteration = new FacetGroup("Mutant / Tg");
+        FacetGroup sequenceAlteration = new FacetGroup("Mutation / Tg");
         sequenceAlteration.addFacet(buildFacet(SEQUENCE_ALTERATION.getName(), true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(sequenceAlteration);
 
@@ -303,7 +303,7 @@ public class FacetBuilderService {
         //gene sequence_alteration author journal keyword publication_type topic
 
         facetGroups.add(buildSingleFacetGroup("Gene", "gene", true, response, filterQuerySelectionMap, baseUrl));
-        facetGroups.add(buildSingleFacetGroup("Mutant / Tg", "sequence_alteration", true, response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("Mutation / Tg", "sequence_alteration", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Registered Author", "registered_author", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Journal", "journal", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Keyword", "keyword", false, response, filterQuerySelectionMap, baseUrl));

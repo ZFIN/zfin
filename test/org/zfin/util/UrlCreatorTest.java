@@ -114,10 +114,10 @@ public class UrlCreatorTest {
 
     @Test
     public void removeUnencodedParamAndValue() {
-        String url = "/prototype?q=&fq=category%3A%22Mutant+%2F+Tg%22";
+        String url = "/prototype?q=&fq=category%3A%22Mutation+%2F+Tg%22";
         String urlAfter = "/prototype?q=";
         URLCreator urlCreator = new URLCreator(url);
-        urlCreator.removeNameValuePair("fq","category:\"Mutant / Tg\"");
+        urlCreator.removeNameValuePair("fq","category:\"Mutation / Tg\"");
         Assert.assertEquals(urlAfter,urlCreator.getURL());
     }
 

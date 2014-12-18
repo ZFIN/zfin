@@ -52,7 +52,7 @@ public enum FieldName {
     REPORTER_COLOR("reporter_color"),
     REPORTER_EXPRESSION_ANATOMY_TF("reporter_expression_anatomy_tf", "Expressed In"),
     REPORTER_GENE("reporter_gene"),
-    SEQUENCE_ALTERATION("sequence_alteration", "Mutant / Tg"),
+    SEQUENCE_ALTERATION("sequence_alteration", "Mutation / Tg"),
 //    SCREEN("screen"),   <!--screen used to be here, removed as a result of case 11323-->
     MUTAGEN("mutagen"),
     SEQUENCE_TARGETING_REAGENT("sequence_targeting_reagent"),

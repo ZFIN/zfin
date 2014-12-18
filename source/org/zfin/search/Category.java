@@ -48,7 +48,7 @@ public enum Category {
             ONTOLOGY,
             OBSOLETE
     ),
-    MUTANT("Mutant / Tg",
+    MUTANT("Mutation / Tg",
             TYPE,
             AFFECTED_GENE,
             PHENOTYPE_STATEMENT,

@@ -2847,7 +2847,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
        <entity name="feature"
                query="select
                         feature_zdb_id as id,
-                        'Mutant / Tg' as category,
+                        'Mutation / Tg' as category,
                         ftrtype_type_display as type,
                         feature_abbrev as name,
                         feature_abbrev as proper_name,
