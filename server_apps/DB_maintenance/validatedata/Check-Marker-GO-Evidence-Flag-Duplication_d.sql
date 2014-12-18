@@ -1,9 +1,9 @@
 SELECT mrkrgoev_mrkr_zdb_id,
        mrkrgoev_term_zdb_id, 
        term_ont_id, 
-       term_ont_id, 
-       mrkrgoev_source_zdb_id, 
+       mrkrgoev_source_zdb_id,
        mrkrgoev_evidence_code,
+       mrkrgoev_gflag_name,
        count(*)
 FROM   marker_go_term_evidence, 
        term 
@@ -16,5 +16,6 @@ GROUP  BY mrkrgoev_mrkr_zdb_id,
           mrkrgoev_term_zdb_id, 
           term_ont_id, 
           mrkrgoev_source_zdb_id, 
-          mrkrgoev_evidence_code 
+          mrkrgoev_evidence_code,
+          mrkrgoev_gflag_name
 HAVING Count(*) > 1 
