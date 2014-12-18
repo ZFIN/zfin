@@ -7,10 +7,13 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -295,6 +298,24 @@ public class HibernateLinkageRepository implements LinkageRepository {
     @Override
     public Linkage getLinkage(String linkageID) {
         return (Linkage) HibernateUtil.currentSession().load(Linkage.class, linkageID);
+    }
+
+    @Override
+    public void saveLinkageComment(Linkage linkage, String newComment) {
+        if (!Person.isCurrentSecurityUserRoot())
+            throw new RuntimeException("No User with permissions found");
+        Updates updates = new Updates();
+        updates.setOldValue(linkage.getComments());
+        updates.setNewValue(newComment);
+        updates.setSubmitterID(ProfileService.getCurrentSecurityUser().getZdbID());
+        updates.setSubmitterName(ProfileService.getCurrentSecurityUser().getFullName());
+        updates.setFieldName("Linkage.comments");
+        updates.setComments("Updated Linkage Comment field");
+        updates.setRecID(linkage.getZdbID());
+        updates.setWhenUpdated(new Date());
+        linkage.setComments(newComment);
+        HibernateUtil.currentSession().save(linkage);
+        HibernateUtil.currentSession().save(updates);
     }
 
     @Override

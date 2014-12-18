@@ -171,4 +171,6 @@ public interface LinkageRepository {
      * @return linkage object
      */
     Linkage getLinkage(String linkageID);
+
+    void saveLinkageComment(Linkage linkage, String newComment);
 }

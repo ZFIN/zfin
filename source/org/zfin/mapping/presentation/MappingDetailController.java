@@ -5,21 +5,21 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureService;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -108,6 +108,11 @@ public class MappingDetailController {
         return "mapping-summary.simple-page";
     }
 
+    @ModelAttribute("linkage")
+    public Linkage getFormBean() {
+        return new Linkage();
+    }
+
     @RequestMapping("/linkage/{linkageID}")
     protected String showLinkageInfo(@PathVariable String linkageID,
                                      Model model) throws Exception {
@@ -121,6 +126,36 @@ public class MappingDetailController {
         model.addAttribute("linkage", linkage);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Linkage: " + linkageID);
         return "mapping/linkage.page";
+    }
+
+    @RequestMapping(value = "/linkage/edit-comment", method = RequestMethod.POST)
+    public String doSearch(Model model,
+                           @ModelAttribute("linkage") Linkage formLinkage,
+                           BindingResult result
+    ) throws Exception {
+
+        if (formLinkage == null || StringUtils.isEmpty(formLinkage.getZdbID())) {
+            model.addAttribute(LookupStrings.ZDB_ID, "No linkageID found");
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+        String linkageID = formLinkage.getZdbID();
+        Linkage linkage = getLinkageRepository().getLinkage(linkageID);
+        if (linkage == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, "No linkage found for " + linkageID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+        try {
+            HibernateUtil.createTransaction();
+            getLinkageRepository().saveLinkageComment(linkage, formLinkage.getComments());
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            String errorMessage = "Could not save comment";
+            model.addAttribute("error", errorMessage);
+            logger.error(errorMessage, e);
+        }
+        return "redirect:" + linkageID;
+
     }
 
 

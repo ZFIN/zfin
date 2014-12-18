@@ -20,9 +20,28 @@
         <td><span class="name-value">${linkage.chromosome}</span></td>
     </tr>
     <tr>
-        <th><span class="name-label">Comment:</span></th>
+        <th><span class="name-label">Comment:</span>
+            <authz:authorize ifAnyGranted="root">
+                <span> (<a href="#" onclick="jQuery('#editComment').show()">Edit</a>)</span>
+            </authz:authorize>
+        </th>
         <td><span class="name-value">${linkage.comments}</span></td>
     </tr>
+    <authz:authorize ifAnyGranted="root">
+        <tr style="display: none" id="editComment">
+            <th><span class="name-label">Edit
+                :</span></th>
+            <td>
+
+                <form:form action="edit-comment" modelAttribute="linkage" method="POST" id="edit-linkage">
+                    <form:textarea path="comments" cols="100" rows="6"/>
+                    <form:hidden path="zdbID"/>
+                    <input value="Save" onclick="this.form.submit()" type="button">
+                </form:form>
+
+            </td>
+        </tr>
+    </authz:authorize>
     <tr>
         <th><span class="name-label">Submitter:</span></th>
         <td><span class="name-value"><zfin:link entity="${linkage.person}"/></span></td>
@@ -38,6 +57,7 @@
 </table>
 
 <p/>
+
 <p/>
 <c:if test="${linkage.linkageMemberSet.size() > 0}">
     <table class="summary rowstripes sortable">
@@ -48,7 +68,7 @@
             <th> Entity Two</th>
             <th> Distance</th>
             <th> Metric</th>
-            <th> LOD</th>
+            <th width="60%"> LOD</th>
         </tr>
         <c:forEach var="member" items="${linkage.linkageMemberSet}">
             <tr>
