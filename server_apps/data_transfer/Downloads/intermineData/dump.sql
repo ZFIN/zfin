@@ -166,7 +166,8 @@ create temp table tmp_pato (id int8,
        tag varchar(20),
        quality varchar(50),
        geno_id varchar(50),
-       exp_id varchar(50))
+       exp_id varchar(50),
+       clean boolean)
 with no log;
 
 insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, quality, startstg, endstg, fig, tag, geno_id, exp_id)
@@ -194,6 +195,15 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
    and phenox_pk_id = phenos_phenox_pk_id
    and genox_zdb_id = phenox_genox_zdb_id
 ;
+
+update tmp_pato
+ set clean = 't'
+ where exists (Select 'x' from mutant_fast_search
+       	      	      where mfs_genox_zdb_id = genox_id);
+
+update tmp_pato
+ set clean = 't'
+ where clean is null;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_phenotypes/1apato.txt"
   select * from tmp_pato;

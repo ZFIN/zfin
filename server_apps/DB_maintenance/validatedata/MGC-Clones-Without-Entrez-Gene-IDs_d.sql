@@ -7,4 +7,5 @@ and a.mrkr_Zdb_id = mrel_mrkr_1_zdb_id
 and not exists (Select 'x' from db_link, foreign_db_contains
                        where dblink_Fdbcont_zdb_id =fdbcont_zdb_id
                        and fdbcont_Zdb_id  = 'ZDB-FDBCONT-040412-1'
-                       and dblink_linked_Recid = a.mrkr_Zdb_id);
+                       and dblink_linked_Recid = a.mrkr_Zdb_id)
+and get_date_from_id(mrkr_zdb_id,"YYYY-MM-DD") > today - 30 units day;
