@@ -1,4 +1,4 @@
-create procedure regen_genofig_genotype(phenoxId like phenotype_experiment.phenox_pk_id)
+create procedure regen_genofig_genotype(phenoxId varchar(100))
 
   -- ---------------------------------------------------------------------------------------------
   -- regenerates records in fast search table genotype_figure_fast_search for a given genotype.
