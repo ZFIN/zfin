@@ -1144,8 +1144,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
 
     <?MICOMMENT>Build the bar for walk window<?/MICOMMENT>
     <?MIBLOCK COND="$(XST,$accession)">
-      <?MIVAR name=selector>MIval=aa-accessionselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
-      <?MIVAR name=$UserInput>&query_results=$query_results&aname=$input_acc<?/MIVAR>
+    Removed accession search...
     <?MIELSE COND="$(XST,$pubId)">
       <?MIVAR name=selector>MIval=aa-markerselect.apg&WINSIZE=$WINSIZE<?/MIVAR>
       <?MIVAR name=$UserInput>&pubId=$pubId&type=$type<?/MIVAR>
