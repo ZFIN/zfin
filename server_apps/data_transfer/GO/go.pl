@@ -39,9 +39,6 @@ sendErrorReport ("gofile.sql failed") if
 
 sendErrorReport ("goparser.pl failed") if system ("./goparser.pl");
 
-sendErrorReport ("check-gene-association.pl reports error") if
-    system ("./check-gene-association.pl -d gene_association.zfin");
-
 sendErrorReport ("/bin/rm -f gene_association.zfin.gz") if
     system ("/bin/rm -f gene_association.zfin.gz");
 
