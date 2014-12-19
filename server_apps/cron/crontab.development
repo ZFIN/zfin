@@ -78,6 +78,3 @@
 # Daily 3:30am   Populate dblink microarrays.
 #35 12 * * * /research/zcentral/www_homes/almost/server_apps/data_transfer/Microarray/microarray.sh
 #
-# several times a year in the middle of a month send email about GenBank TPA
-0 0 15 4,8,12 * /research/zusers/almost/ZFIN_WWW/commons/bin/TPA_nag.sh
-#
