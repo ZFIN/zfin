@@ -128,9 +128,6 @@ marker.<?/MIVAR>
         where mrkr_zdb_id='$OID';
     <?/MIVAR>
 
-
-
-
     <?MISQL SQL="
       SELECT * FROM marker, marker_types, marker_type_group_member
       WHERE mrkr_zdb_id = '$OID'
@@ -383,8 +380,14 @@ marker.<?/MIVAR>
               <SCRIPT>
                 var msg="The GenBank accession is already associated with\n"+
                          "[$markerlist] in another database. Do you want to proceed?";
-	        	if (confirm(msg))
+	        	if (confirm(msg)){
 		   			location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');
+		   			return true;
+		   			}
+		   			else{
+		   			return false;
+		   			}
+
 
 	      	   </SCRIPT>
              <?/MIVAR>
