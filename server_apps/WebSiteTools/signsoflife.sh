@@ -44,7 +44,7 @@ if ($HOST != "embryonix" && $HOST != "zygotix") then
      set mode="`onstat -` | $modeon"
 
 # if the server is in a state other than Online ('On') then we should
-# be notified--send an email to informix@cs.uoregon.edu
+# be notified--send an email to informix@zfin.org
 
   echo $mode | /bin/mailx -s "<!--|INFORMIX_SERVER|-->  ABNORMAL!"  <!--|VALIDATION_EMAIL_OTHER|-->
 
@@ -63,7 +63,7 @@ if ($HOST != "embryonix" && $HOST != "zygotix") then
      sleep 6
      set logon=`ps -ef | grep -c "$INFORMIXDIR/bin/ontape"`
 
-# if ontape is still not in the process list, email informix@cs.uoregon.edu
+# if ontape is still not in the process list, email informix@zfin.org
 
      if ($logon < 2) then
          set logmode="check ontape"

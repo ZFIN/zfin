@@ -174,7 +174,7 @@ public class RunHibernateConfigurationChecks extends HibernateTestCase {
         Configuration config = new Configuration();
         config.setProperty("hibernate.dialect", "org.hibernate.dialect.InformixDialect");
         config.setProperty("hibernate.connection.driver_class", "com.informix.jdbc.IfxDriver");
-        config.setProperty("hibernate.connection.url", "jdbc:informix-sqli://embryonix.cs.uoregon.edu:2002/" + db + ":INFORMIXSERVER=wanda");
+        config.setProperty("hibernate.connection.url", "jdbc:informix-sqli://thorax.zfin.org:2002/" + db + ":INFORMIXSERVER=wanda");
         config.setProperty("hibernate.connection.username", "zfinner");
         config.setProperty("hibernate.connection.password", "Rtwm4ts");
         config.setProperty("hibernate.connection.pool_size", "1");

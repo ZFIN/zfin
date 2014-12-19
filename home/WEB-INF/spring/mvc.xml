@@ -16,7 +16,7 @@
     </bean>
 
     <bean id="zfinMailSender" class="org.zfin.framework.mail.IntegratedJavaMailSender">
-        <property name="mailHost" value="mailhost.cs.uoregon.edu&quot;"/>
+        <property name="mailHost" value="exchange.uoregon.edu&quot;"/>
         <property name="mailSender">
             <bean id="mailSenderImpl" class="org.springframework.mail.javamail.JavaMailSenderImpl"/>
         </property>

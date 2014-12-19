@@ -30,7 +30,6 @@ import static org.junit.Assert.*;
 
 /**
  *  Related to FogBugz 909, 2008, 2009.
- *  Requirements at: https://www.cs.uoregon.edu/~zfinadmn/68f1abb51ad0820a3bb035dfe71007ad/index.cgi?n=Projects.MicroArray
  *   We want to test UpdateMicroArrayMain for the following cases:
     * a new GEO/GenBank Accession appears (tested):
           o an accession refers to a gene marker:

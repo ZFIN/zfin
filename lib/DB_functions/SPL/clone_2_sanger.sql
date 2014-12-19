@@ -6,8 +6,8 @@
 {
 Date: Wed, 21 Apr 2004 17:23:13 +0100
 From: Kerstin Jekosch <kj2@sanger.ac.uk>
-To: Judy Sprague <judys@cs.uoregon.edu>, Monte Westerfield <monte@uoneuro.uoregon.edu>,
-     Tom Conlin <tomc@cs.uoregon.edu>
+To: Judy Sprague , Monte Westerfield,
+     Tom Conlin
 Cc: Mario Jose Caccamo <mc2@sanger.ac.uk>
 Subject: clone libraries
 
