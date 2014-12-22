@@ -19,6 +19,7 @@ import java.util.TreeSet;
  */
 
 @Controller
+@RequestMapping("/expression")
 public class ExperimentDetailController {
 
     @RequestMapping("/experiment")
@@ -60,13 +61,13 @@ public class ExperimentDetailController {
     }
 
     protected Set<ExperimentCondition> getSortedConditions(Experiment experiment) {
-        TreeSet<ExperimentCondition> conditions = new TreeSet<ExperimentCondition>();
+        TreeSet<ExperimentCondition> conditions = new TreeSet<>();
         conditions.addAll(experiment.getExperimentConditions());
         return conditions;
     }
 
     protected List<ExperimentCondition> getMorpholinoConditions(Set<ExperimentCondition> conditions) {
-        List<ExperimentCondition> moConditions = new ArrayList<ExperimentCondition>();
+        List<ExperimentCondition> moConditions = new ArrayList<>();
         for (ExperimentCondition condition : conditions) {
             if (condition.getSequenceTargetingReagent() != null)
                 moConditions.add(condition);
@@ -75,7 +76,7 @@ public class ExperimentDetailController {
     }
 
     protected List<ExperimentCondition> getNonMorpholinoConditions(Set<ExperimentCondition> conditions) {
-        List<ExperimentCondition> nonMoConditions = new ArrayList<ExperimentCondition>();
+        List<ExperimentCondition> nonMoConditions = new ArrayList<>();
         for (ExperimentCondition condition : conditions) {
             if (condition.getSequenceTargetingReagent() == null) {
                 nonMoConditions.add(condition);

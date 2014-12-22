@@ -23,6 +23,7 @@ import java.util.List;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class CloneViewController {
 
     private Logger logger = Logger.getLogger(CloneViewController.class);

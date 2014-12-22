@@ -1,6 +1,5 @@
 package org.zfin.mutant.presentation;
 
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Controller
+@RequestMapping("/phenotype")
 public class PhenotypeStatementDetailController  {
-    private static Logger logger = Logger.getLogger(PhenotypeStatementDetailController.class);
 
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
 
@@ -55,7 +54,7 @@ public class PhenotypeStatementDetailController  {
 
 
     protected Collection<Term> getUniqueTerms(PhenotypeStatement phenotypeStatement) {
-        List<Term> uniqueTerms = new ArrayList<Term>();
+        List<Term> uniqueTerms = new ArrayList<>();
             uniqueTerms.add(phenotypeStatement.getEntity().getSuperterm());
         if (phenotypeStatement.getEntity().getSubterm() != null)
             uniqueTerms.add(phenotypeStatement.getEntity().getSubterm());

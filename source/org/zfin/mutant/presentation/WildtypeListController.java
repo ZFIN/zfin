@@ -12,6 +12,7 @@ import java.util.List;
 
 
 @Controller
+@RequestMapping("/feature")
 public class WildtypeListController {
 
     private static final Logger LOG = Logger.getLogger(WildtypeListController.class);

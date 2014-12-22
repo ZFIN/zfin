@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.fish.presentation.SortBy" %>
 <%@ tag import="org.zfin.framework.presentation.PaginationBean" %>
 <%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ tag import="org.zfin.ontology.Ontology" %>
@@ -8,7 +7,7 @@
 
 
 
-<form:form method="Get" action="construct-do-search" commandName="formBean" name="constructsearchform" id="construct-search-form" onsubmit="return false;">
+<form:form method="Get" action="do-search" commandName="formBean" name="constructsearchform" id="construct-search-form" onsubmit="return false;">
 
 <table width="100%" class="error-box">
     <tr>

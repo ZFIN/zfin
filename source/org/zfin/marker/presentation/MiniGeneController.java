@@ -13,6 +13,7 @@ import org.zfin.repository.RepositoryFactory;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class MiniGeneController {
 
     private static Logger logger = Logger.getLogger(MiniGeneController.class);

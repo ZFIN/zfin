@@ -23,62 +23,63 @@ import java.util.Set;
 
 
 @Controller
+@RequestMapping("/mutant")
 public class MutantListController {
     private static final Logger LOG = Logger.getLogger(MutantListController.class);
     private PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private MarkerRepository mrkrRepository = RepositoryFactory.getMarkerRepository();
     private PhenotypeRepository phenoRepository = RepositoryFactory.getPhenotypeRepository();
 
-    @RequestMapping(value={"/mutant-list"})
-    protected String getMutantList(@RequestParam String zdbID,@RequestParam(value = "callingPage", required = false) String callingPage, Model model) {
+    @RequestMapping(value = {"/mutant-list"})
+    protected String getMutantList(@RequestParam String zdbID, @RequestParam(value = "callingPage", required = false) String callingPage, Model model) {
 
         LOG.debug("Start MutantListController");
 
         if (zdbID.startsWith("ZDB-PUB-")) {
-          Publication pub = pubRepository.getPublication(zdbID);
+            Publication pub = pubRepository.getPublication(zdbID);
 
-          if (pub == null) {
-            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
-            if(replacedZdbID!=null){
-                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
-                pub = pubRepository.getPublication(replacedZdbID);
+            if (pub == null) {
+                String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+                if (replacedZdbID != null) {
+                    LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                    pub = pubRepository.getPublication(replacedZdbID);
+                }
+
             }
 
-          }
+            if (pub == null) {
+                model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                return "record-not-found.page";
+            }
 
-          if (pub == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
-            return "record-not-found.page";
-          }
+            MutantListBean form = new MutantListBean();
+            form.setPublication(pub);
+            if (callingPage != null) {
+                form.setCallingPage(callingPage);
+            }
 
-          MutantListBean form = new MutantListBean();
-          form.setPublication(pub);
-          if (callingPage!=null){
-              form.setCallingPage(callingPage);
-          }
-
-          retrieveMutantListByPub(form, zdbID);
+            retrieveMutantListByPub(form, zdbID);
 
 
-          model.addAttribute(LookupStrings.FORM_BEAN, form);
-          model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mutant and Transgenic Line List");
+            model.addAttribute(LookupStrings.FORM_BEAN, form);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mutant and Transgenic Line List");
 
-          return "mutant/mutant-list.page";
-        }  else if (zdbID.startsWith("ZDB-GENE-")) {
+            return "mutant/mutant-list.page";
+        } else if (zdbID.startsWith("ZDB-GENE-")) {
             Marker gene = mrkrRepository.getMarkerByID(zdbID);
 
             if (gene == null) {
-              String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
-              if(replacedZdbID!=null){
-                  LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
-                  gene = mrkrRepository.getMarkerByID(replacedZdbID);
-              }
+                String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+                if (replacedZdbID != null) {
+                    LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                    gene = mrkrRepository.getMarkerByID(replacedZdbID);
+                }
 
             }
 
             if (gene == null) {
-              model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
-              return "record-not-found.page";
+                model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                return "record-not-found.page";
             }
 
             MutantListBean form = new MutantListBean();
@@ -91,19 +92,18 @@ public class MutantListController {
 
             return "mutant/mutant-list.page";
 
-        }  else {
-              return "record-not-found.page";
+        } else {
+            return "record-not-found.page";
         }
 
     }
 
     private void retrieveMutantListByPub(MutantListBean form, String pubId) {
-        if (form.getCallingPage()==null){
-        List<Genotype> mutantsAndTgs = pubRepository.getMutantsAndTgsByPublication(pubId);
+        if (form.getCallingPage() == null) {
+            List<Genotype> mutantsAndTgs = pubRepository.getMutantsAndTgsByPublication(pubId);
             form.setMutants(mutantsAndTgs);
-        }
-        else {
-            List<FeatureMarkerRelationship> ftrMarkers=pubRepository.getFeatureMarkerRelationshipsByPubID(pubId);
+        } else {
+            List<FeatureMarkerRelationship> ftrMarkers = pubRepository.getFeatureMarkerRelationshipsByPubID(pubId);
             form.setFmRels(ftrMarkers);
         }
 
@@ -112,14 +112,14 @@ public class MutantListController {
     private void retrieveMutantListByGene(MutantListBean form, String geneId) {
         List<Genotype> mutantsAndTgs = mrkrRepository.getMutantsAndTgsByGene(geneId);
         for (Genotype geno : mutantsAndTgs) {
-            List<Figure> figs = phenoRepository.getPhenoFiguresByGenotype(geno.getZdbID()) ;
-            Set<Figure> phenoFigs = new HashSet<Figure> () ;
-            phenoFigs.addAll(figs) ;
+            List<Figure> figs = phenoRepository.getPhenoFiguresByGenotype(geno.getZdbID());
+            Set<Figure> phenoFigs = new HashSet<>();
+            phenoFigs.addAll(figs);
             geno.setPhenotypeFigures(phenoFigs);
-            if(phenoFigs.size() == 1) {
-              for (Figure figure : phenoFigs) {
-                  geno.setPhenotypeSingleFigure(figure);
-              }
+            if (phenoFigs.size() == 1) {
+                for (Figure figure : phenoFigs) {
+                    geno.setPhenotypeSingleFigure(figure);
+                }
             }
         }
         Collections.sort(mutantsAndTgs);

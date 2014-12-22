@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
+@RequestMapping("/antibody")
 public class AntibodyCreateController {
 
     private static Logger LOG = Logger.getLogger(AntibodyCreateController.class);

@@ -14,6 +14,7 @@ import org.zfin.marker.service.MarkerService;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class GenericMarkerViewController {
 
     private Logger logger = Logger.getLogger(GenericMarkerViewController.class);
@@ -21,7 +22,7 @@ public class GenericMarkerViewController {
     @Autowired
     private MarkerRepository markerRepository;
 
-    @RequestMapping("/marker/view/{zdbID}")
+    @RequestMapping("/generic/view/{zdbID}")
     public String getGenericMarkerView(@PathVariable("zdbID") String zdbID,
                                        Model model) {
 

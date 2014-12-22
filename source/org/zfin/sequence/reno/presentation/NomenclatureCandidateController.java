@@ -30,6 +30,7 @@ import java.util.Set;
  * Class CandidateController.
  */
 @Controller
+@RequestMapping(value = "/reno")
 public class NomenclatureCandidateController extends AbstractCandidateController {
 
     private static final Logger logger = Logger.getLogger(NomenclatureCandidateController.class);
@@ -37,8 +38,8 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
     @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}", method = RequestMethod.GET)
     public String referenceData(@PathVariable String zdbID, CandidateBean candidateBean, Model model) {
-            candidateBean.createRunCandidateForZdbID(zdbID);
-            return handleGet(candidateBean, model);
+        candidateBean.createRunCandidateForZdbID(zdbID);
+        return handleGet(candidateBean, model);
     }
 
     @RequestMapping(value = "/nomenclature-candidate-view/{zdbID}", method = RequestMethod.POST)
@@ -71,7 +72,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
      */
     public void handleView(CandidateBean candidateBean) {
 
-        //get the runcandidate from the bean and use the repository to populate it
+        //get the run candidate from the bean and use the repository to populate it
         String runCandidateID = candidateBean.getRunCandidate().getZdbID();
         RunCandidate rc = renoRepository.getRunCandidateByID(runCandidateID);
 
@@ -149,7 +150,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
 
         Marker geneToRename = rc.getIdentifiedMarker();
 
-        // Only rename gene if a name and an abbrevation is provided
+        // Only rename gene if a name and an abbreviation is provided
         String newAbbreviation = candidateBean.getGeneAbbreviation();
         String newGeneName = candidateBean.getGeneName();
 
@@ -166,7 +167,7 @@ public class NomenclatureCandidateController extends AbstractCandidateController
             Marker gene = rc.getIdentifiedMarker();
             MarkerFamilyName mf = new MarkerFamilyName();
             mf.setMarkerFamilyName(candidateBean.getGeneFamilyName());
-            Set<MarkerFamilyName> families = new HashSet<MarkerFamilyName>();
+            Set<MarkerFamilyName> families = new HashSet<>();
             families.add(mf);
             gene.setFamilyName(families);
         }

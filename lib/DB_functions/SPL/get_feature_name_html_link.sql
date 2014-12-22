@@ -32,7 +32,7 @@ create function get_feature_name_html_link( featureZdbId varchar(50) )
 	'<span class="mutant">' || featureName || '</span>';
 
   return 
-    '<a href="/action/feature/feature-detail?zdbID=' ||
+    '<a href="/action/feature/view/' ||
       featureZdbId || '">' ||featureNameHTML || '</a>';
 
 end function;

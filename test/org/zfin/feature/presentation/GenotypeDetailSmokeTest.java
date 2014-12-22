@@ -20,7 +20,7 @@ public class GenotypeDetailSmokeTest extends AbstractSmokeTest {
         this.webClient = webClient;
     }
 
-    private String pageUrl = "/action/genotype/genotype-detail?zdbID=ZDB-GENO-050916-1";
+    private String pageUrl = "/action/genotype/view/ZDB-GENO-050916-1";
 
     @Test
     public void testGenotypeDetailPage() throws IOException {

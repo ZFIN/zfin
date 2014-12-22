@@ -29,6 +29,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  * Generic entry point for viewing a term detail page.
  */
 @Controller
+@RequestMapping("/ontology")
 public class OntologyTermDetailController {
 
 
@@ -40,7 +41,6 @@ public class OntologyTermDetailController {
         if (name == null) {
             model.addAttribute(LookupStrings.ZDB_ID, "No term name provided");
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
-
         }
         // set default ontology
         Ontology ontology = Ontology.ANATOMY;
@@ -49,7 +49,7 @@ public class OntologyTermDetailController {
             ontology = Ontology.getOntology(ontologyName);
         }
 
-        GenericTerm term = null;
+        GenericTerm term;
         // has a wild card
         // check if the term name contains an asterisk at the end of the string, indicating that
         // we are looking for a list of terms matching the name
@@ -82,11 +82,11 @@ public class OntologyTermDetailController {
 
     private Map<String, List<TermDTO>> getAllListMap(List<TermDTO> terms, Ontology ontology) {
         Collection<Ontology> ontologyList = ontology.getIndividualOntologies();
-        Map<String, List<TermDTO>> termGroups = new HashMap<String, List<TermDTO>>(ontologyList.size());
+        Map<String, List<TermDTO>> termGroups = new HashMap<>(ontologyList.size());
         // Add the complete list manually and then add the list of terms per ontology
         termGroups.put("All", terms);
         for (Ontology ont : ontologyList) {
-            List<TermDTO> subList = new ArrayList<TermDTO>(terms.size());
+            List<TermDTO> subList = new ArrayList<>(terms.size());
             for (TermDTO term : terms) {
                 if (term.getOntology().equals(DTOConversionService.convertToOntologyDTO(ont)))
                     subList.add(term);
@@ -98,7 +98,7 @@ public class OntologyTermDetailController {
 
     private Map<String, String> getLabelMap(List<TermDTO> terms) {
         Map<OntologyDTO, Integer> hist = OntologyService.getHistogramOfTerms(terms);
-        Map<String, String> histogram = new HashMap<String, String>(hist.size());
+        Map<String, String> histogram = new HashMap<>(hist.size());
         for (OntologyDTO ontologyDTO : hist.keySet()) {
             histogram.put(ontologyDTO.getOntologyName(), ontologyDTO.getDisplayName());
         }

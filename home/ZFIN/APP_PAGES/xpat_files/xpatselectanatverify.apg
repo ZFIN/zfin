@@ -336,7 +336,7 @@ ORDER BY 3,1
           <FONT size=-1 style="font-family:arial;"> 
             <?MIVAR>
               <B>does not exactly match a dictionary term, or synonym.<br>You can browse the dictionary
-              <A HREF="/action/ontology/ontology-search">by stage</a>
+              <A HREF="/action/ontology/search">by stage</a>
               or see the 
               <A HREF="/action/anatomy/show-all-anatomy-terms">complete list</a>.
             <?/MIVAR>

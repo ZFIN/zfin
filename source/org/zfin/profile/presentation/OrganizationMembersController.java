@@ -1,13 +1,15 @@
 package org.zfin.profile.presentation;
 
-import com.sun.mail.util.LineOutputStream;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.profile.*;
+import org.zfin.profile.Company;
+import org.zfin.profile.Lab;
+import org.zfin.profile.Organization;
+import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 
@@ -17,6 +19,7 @@ import java.util.List;
  * This class is a controller for the ajax that edits members.
  */
 @Controller
+@RequestMapping(value = "/profile")
 public class OrganizationMembersController {
 
     private Logger logger = Logger.getLogger(OrganizationMembersController.class);

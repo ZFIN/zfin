@@ -24,6 +24,7 @@ import java.util.*;
  * Controller that serves the overview page of all loaded ontologies.
  */
 @Controller
+@RequestMapping("/ontology")
 public class OntologyTermController {
 
     private String viewName;
@@ -63,7 +64,7 @@ public class OntologyTermController {
                     // remap so that the list will be sorted
                     Set<Map.Entry<String, Set<TermDTO>>> entries = OntologyManager.getInstance()
                             .getTermOntologyMapCopy(ontology).entrySet();
-                    TreeMap<String, Set<TermDTO>> keys = new TreeMap<String, Set<TermDTO>>();
+                    TreeMap<String, Set<TermDTO>> keys = new TreeMap<>();
                     for (Map.Entry<String, Set<TermDTO>> entry : entries) {
                         keys.put(entry.getKey(), entry.getValue());
                     }
@@ -85,10 +86,10 @@ public class OntologyTermController {
     }
 
     private Map<TermDTO, List<String>> createValueMap(PatriciaTrieMultiMap<TermDTO> termOntologyMap) {
-        Map<TermDTO, List<String>> valueMap = new TreeMap<TermDTO, List<String>>();
+        Map<TermDTO, List<String>> valueMap = new TreeMap<>();
         // add them all by their termName first.
         for (TermDTO t : termOntologyMap.getAllValues()) {
-            List<String> termNames = new ArrayList<String>();
+            List<String> termNames = new ArrayList<>();
             termNames.add(t.getName());
             valueMap.put(t, termNames);
         }

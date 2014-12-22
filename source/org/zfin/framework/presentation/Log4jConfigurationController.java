@@ -6,7 +6,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,14 +13,15 @@ import javax.servlet.ServletException;
 import java.util.*;
 
 /**
- * Controller class to adjust exsisting logger levels or
- * create new appenders.
+ * Controller class to adjust existing logger levels or
+ * create new appender.
  */
 @Controller
+@RequestMapping(value = "/devtool")
 public class Log4jConfigurationController {
 
     @RequestMapping("/log4j-configuration")
-    public String showClassPathInfo(@ModelAttribute("formBean") Log4JConfigurationFormBean form, Model model) throws ServletException {
+    public String showClassPathInfo(@ModelAttribute("formBean") Log4JConfigurationFormBean form) throws ServletException {
 
         if (form.isUpdateExistingLogger()) {
             adjustLoggers(form);
@@ -30,12 +30,12 @@ public class Log4jConfigurationController {
         }
 
         Enumeration enumLoggers = LogManager.getCurrentLoggers();
-        List<Logger> allLoggers = new ArrayList<Logger>();
+        List<Logger> allLoggers = new ArrayList<>();
         CollectionUtils.addAll(allLoggers, enumLoggers);
         Collections.sort(allLoggers, new Log4jComparator());
         form.setAllLoggers(allLoggers);
         Enumeration allAppenders = Logger.getRootLogger().getAllAppenders();
-        List<Appender> appenders = new ArrayList<Appender>(5);
+        List<Appender> appenders = new ArrayList<>(5);
         while( allAppenders.hasMoreElements()){
             appenders.add((Appender) allAppenders.nextElement());
         }

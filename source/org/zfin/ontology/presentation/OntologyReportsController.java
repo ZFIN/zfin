@@ -20,13 +20,14 @@ import java.util.Set;
  * Controller that serves the various reports.
  */
 @Controller
+@RequestMapping("/ontology")
 public class OntologyReportsController {
 
     @Autowired
-    private ExpressionService expressionService ;
+    private ExpressionService expressionService;
 
     @RequestMapping("/reports")
-    private String createTermUsageReport(Model model) {
+    private String createTermUsageReport() {
         return "ontology/reports.page";
     }
 
@@ -36,7 +37,7 @@ public class OntologyReportsController {
         model.addAttribute("formBean", form);
         List<PhenotypeStatement> phenotypesWithSecondaryTerms = RepositoryFactory.getOntologyRepository().getPhenotypesOnSecondaryTerms();
         if (phenotypesWithSecondaryTerms != null) {
-            List<PhenotypeObsoleteTermReport> phenotypeSecondaryTermReports = new ArrayList<PhenotypeObsoleteTermReport>(phenotypesWithSecondaryTerms.size());
+            List<PhenotypeObsoleteTermReport> phenotypeSecondaryTermReports = new ArrayList<>(phenotypesWithSecondaryTerms.size());
             for (PhenotypeStatement phenotypeStatement : phenotypesWithSecondaryTerms) {
                 PhenotypeObsoleteTermReport report = new PhenotypeObsoleteTermReport(phenotypeStatement);
                 Set<GenericTerm> obsoletedTermSet = PhenotypeService.getSecondaryTerm(phenotypeStatement);
@@ -54,7 +55,7 @@ public class OntologyReportsController {
         }
         List<ExpressionResult> expressionsWithSecondaryTerms = RepositoryFactory.getOntologyRepository().getExpressionsOnSecondaryTerms();
         if (expressionsWithSecondaryTerms != null) {
-            List<ExpressionObsoleteTermReport> expressionSecondaryTermReports = new ArrayList<ExpressionObsoleteTermReport>(expressionsWithSecondaryTerms.size());
+            List<ExpressionObsoleteTermReport> expressionSecondaryTermReports = new ArrayList<>(expressionsWithSecondaryTerms.size());
             for (ExpressionResult phenotypeStatement : expressionsWithSecondaryTerms) {
                 ExpressionObsoleteTermReport report = new ExpressionObsoleteTermReport(phenotypeStatement);
                 Set<GenericTerm> obsoletedTermSet = expressionService.getSecondaryTerm(phenotypeStatement);
@@ -72,7 +73,7 @@ public class OntologyReportsController {
         }
         List<MarkerGoTermEvidence> goEvidenceWithSecondaryTerms = RepositoryFactory.getOntologyRepository().getGoEvidenceOnSecondaryTerms();
         if (goEvidenceWithSecondaryTerms != null) {
-            List<GoEvidenceObsoleteTermReport> goEvidenceSecondaryTermReports = new ArrayList<GoEvidenceObsoleteTermReport>(goEvidenceWithSecondaryTerms.size());
+            List<GoEvidenceObsoleteTermReport> goEvidenceSecondaryTermReports = new ArrayList<>(goEvidenceWithSecondaryTerms.size());
             for (MarkerGoTermEvidence goEvidence : goEvidenceWithSecondaryTerms) {
                 GoEvidenceObsoleteTermReport report = new GoEvidenceObsoleteTermReport(goEvidence);
                 report.setReplacementTermList(RepositoryFactory.getOntologyRepository().getReplacedByTerms(goEvidence.getGoTerm()));

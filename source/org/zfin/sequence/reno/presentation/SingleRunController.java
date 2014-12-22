@@ -26,6 +26,7 @@ import org.zfin.sequence.reno.service.RenoService;
  */
 
 @Controller
+@RequestMapping(value = "/reno")
 public class SingleRunController {
 
     private final Logger logger = Logger.getLogger(SingleRunController.class);
@@ -34,10 +35,10 @@ public class SingleRunController {
     private Validator validator = new RunBeanValidator();
 
     @Autowired
-    private RenoService renoService ;
+    private RenoService renoService;
 
     @Autowired
-    private RenoRepository renoRepository ;
+    private RenoRepository renoRepository;
 
     @RequestMapping(value = "/candidate/{candidateType}/{runZdbID}", method = RequestMethod.GET)
     public String referenceData(@PathVariable String runZdbID, @PathVariable String candidateType
@@ -192,7 +193,7 @@ public class SingleRunController {
 
     /**
      * @param form          RunBean that contains form data.
-     * @param redundancyRun Run to manipuluate
+     * @param redundancyRun Run to manipulate
      */
     private void handleRelationUpdate(RunBean form, RedundancyRun redundancyRun) {
         logger.info("form: " + form);

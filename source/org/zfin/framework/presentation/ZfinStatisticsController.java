@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.List;
 
 @Controller
+@RequestMapping(value = "/devtool")
 public class ZfinStatisticsController {
 
     @RequestMapping("/zfin-statistics")

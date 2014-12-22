@@ -26,6 +26,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
  * Controller that obtains the meta data for the database.
  */
 @Controller
+@RequestMapping(value = "/devtool")
 public class ApplicationContextController {
 
     @Autowired
@@ -51,7 +52,7 @@ public class ApplicationContextController {
                                               Model model)
             throws Exception {
         List<ExpressionResult> expressionResultsViolateStageRanges = getOntologyRepository().getExpressionResultsViolateStageRanges();
-        Map<String, ExpressionResultDisplay> displaySet = new HashMap<String, ExpressionResultDisplay>();
+        Map<String, ExpressionResultDisplay> displaySet = new HashMap<>();
         for (ExpressionResult result : expressionResultsViolateStageRanges) {
             ExpressionResultDisplay display = new ExpressionResultDisplay(result);
             String key = display.getUniqueKey();
@@ -100,7 +101,7 @@ public class ApplicationContextController {
                                               Model model)
             throws Exception {
         List<ExpressionResult> expressionResultsViolateStageRanges = getOntologyRepository().getExpressionResultsViolateStageRanges();
-        Map<String, ExpressionResultDisplay> displaySet = new HashMap<String, ExpressionResultDisplay>();
+        Map<String, ExpressionResultDisplay> displaySet = new HashMap<>();
         for (ExpressionResult result : expressionResultsViolateStageRanges) {
             ExpressionResultDisplay display = new ExpressionResultDisplay(result);
             String key = display.getUniqueKey();

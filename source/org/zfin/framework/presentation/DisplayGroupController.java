@@ -18,6 +18,7 @@ import java.util.TreeSet;
 
 
 @Controller
+@RequestMapping(value = "/devtool")
 public class DisplayGroupController {
 
     @RequestMapping("/display-groups")

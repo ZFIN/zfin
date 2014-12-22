@@ -12,6 +12,7 @@ import org.zfin.sequence.blast.Database;
 import java.util.List;
 
 @Controller
+@RequestMapping(value = "/devtool")
 public class BlastableDatabasesController {
 
 

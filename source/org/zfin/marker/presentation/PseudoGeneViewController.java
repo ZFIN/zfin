@@ -22,6 +22,7 @@ import java.util.List;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class PseudoGeneViewController {
 
     private Logger logger = Logger.getLogger(PseudoGeneViewController.class);
@@ -29,16 +30,14 @@ public class PseudoGeneViewController {
     private LinkDisplayOtherComparator linkDisplayOtherComparator = new LinkDisplayOtherComparator();
 
     @Autowired
-    private ExpressionService expressionService ;
+    private ExpressionService expressionService;
 
     @Autowired
-    private MarkerRepository markerRepository ;
+    private MarkerRepository markerRepository;
 
-    @RequestMapping(value ="/pseudogene/view")
-    public String getGeneView(
-            Model model
-            ,@PathVariable("zdbID") String zdbID
-    ) throws Exception {
+    @RequestMapping(value = "/pseudogene/view")
+    public String getGeneView(Model model,
+                              @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
@@ -54,8 +53,8 @@ public class PseudoGeneViewController {
         // case 7586
         List<LinkDisplay> otherMarkerDBLinksLinks = geneBean.getOtherMarkerPages();
         otherMarkerDBLinksLinks.addAll(RepositoryFactory.getMarkerRepository()
-                .getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE)) ;
-        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator) ;
+                .getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE));
+        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator);
         geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
 
 

@@ -17,6 +17,7 @@ import java.util.Map;
  * Controller that obtains the meta data for the database.
  */
 @Controller
+@RequestMapping("/devtool")
 public class UserRequestTrackController {
 
 
@@ -42,7 +43,7 @@ public class UserRequestTrackController {
         if (robotFilter.equals(ShowBot.BOTH))
             return fullClickstreamMap;
 
-        Map<String, Clickstream> clickstreamMap = new HashMap<String, Clickstream>(fullClickstreamMap.size());
+        Map<String, Clickstream> clickstreamMap = new HashMap<>(fullClickstreamMap.size());
         for (String key : fullClickstreamMap.keySet()) {
             Clickstream clickStream = fullClickstreamMap.get(key);
             if (robotFilter.equals(ShowBot.TRUE) && clickStream.isBot())
@@ -56,7 +57,7 @@ public class UserRequestTrackController {
     private Map<String, Clickstream> filterClickstreamByUrl(String urlSearchString, Map<String, Clickstream> fullClickstreamMap) {
         if (fullClickstreamMap == null)
             return null;
-        Map<String, Clickstream> clickstreamMap = new HashMap<String, Clickstream>(fullClickstreamMap.size());
+        Map<String, Clickstream> clickstreamMap = new HashMap<>(fullClickstreamMap.size());
         for (String key : fullClickstreamMap.keySet()) {
             Clickstream clickStream = fullClickstreamMap.get(key);
             if (containsUrlSearchString(clickStream, urlSearchString))

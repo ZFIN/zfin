@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,20 +17,18 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
-
-import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
+@RequestMapping("/marker")
 public class RegionAddController {
 
     private static Logger LOG = Logger.getLogger(RegionAddController.class);
@@ -64,8 +63,7 @@ public class RegionAddController {
     }
 
     @RequestMapping(value = "/region-do-submit", method = RequestMethod.POST)
-    public String addRegion (Model model,
-                              @Valid @ModelAttribute("formBean") RegionAddBean formBean,
+    public String addRegion ( @Valid @ModelAttribute("formBean") RegionAddBean formBean,
                               BindingResult result) throws Exception {
 
         if(result.hasErrors())

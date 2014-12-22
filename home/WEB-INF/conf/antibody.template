@@ -59,7 +59,7 @@
 </tr>
 <tr>
 <th><p> Anatomical structures recognized <br class="atl-forced-newline" />
-(use terms from the <a href="http://zfin.org/action/ontology/ontology-search">ZFIN Anatomical Ontology</a>) </p></th>
+(use terms from the <a href="http://zfin.org/action/ontology/search">ZFIN Anatomical Ontology</a>) </p></th>
 <td><p> {text-data:AnatomicalStructuresRecognized}{text-data} </p></td>
 </tr>
 <tr>

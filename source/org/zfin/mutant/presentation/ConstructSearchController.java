@@ -9,16 +9,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.zfin.fish.FishSearchCriteria;
-import org.zfin.fish.FishSearchResult;
 import org.zfin.fish.WarehouseSummary;
-import org.zfin.fish.presentation.Fish;
-import org.zfin.mutant.presentation.ConstructSearchFormBean;
-import org.zfin.fish.repository.FishMatchingService;
-import org.zfin.fish.repository.FishRepository;
-import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.MatchingText;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.mutant.ConstructSearchCriteria;
 import org.zfin.mutant.ConstructSearchResult;
@@ -27,9 +19,9 @@ import org.zfin.mutant.repository.ConstructService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Set;
 
 @Controller
+@RequestMapping("/construct")
 public class ConstructSearchController {
 
     @ModelAttribute("formBean")
@@ -52,7 +44,7 @@ public class ConstructSearchController {
      * @param result   BindingResult
      * @return view page
      */
-     @RequestMapping(value = "/construct-do-search", method = RequestMethod.GET)
+     @RequestMapping(value = "/do-search", method = RequestMethod.GET)
 protected String search(Model model,
                         @ModelAttribute("formBean")
                         ConstructSearchFormBean formBean, BindingResult result) {
@@ -84,7 +76,7 @@ protected String search(Model model,
      * @param model Model
      * @return view page name
      */
-    @RequestMapping(value = "/construct-search")
+    @RequestMapping(value = "/search")
     protected String showSearchForm(Model model) {
         ConstructSearchFormBean formBean = new ConstructSearchFormBean();
 
@@ -96,32 +88,6 @@ protected String search(Model model,
         return "mutant/construct-search.page";
     }
 
-    /**
-     * Initial search form request when no parameters are submitted
-     *
-     * @param model    Model
-     * @param formBean form bean
-     * @param result   binding errors
-     * @return view page name
-     */
-    /*@RequestMapping(value = "/matching-detail")
-    protected String showMatchingDetails(Model model,
-                                         @ModelAttribute("formBean") FishSearchFormBean formBean,
-                                         BindingResult result) {
-        if (result.getErrorCount() > 0)
-            LOG.error("Errors found during form binding: " + result);
-
-        Fish fish = FishService.getFish(formBean.getFishID());
-        FishSearchCriteria criteria = new FishSearchCriteria(formBean);
-        FishMatchingService service = new FishMatchingService(fish);
-        Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
-        model.addAttribute("matchingTextList", matchingTextList);
-        model.addAttribute(LookupStrings.FORM_BEAN, formBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "");
-
-        return "fish/matching-detail.popup";
-    }
-*/
     private static final Logger LOG = Logger.getLogger(ConstructSearchController.class);
 
 }

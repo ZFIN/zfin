@@ -16,10 +16,8 @@ import org.zfin.sequence.blast.presentation.XMLBlastValidator;
 
 import javax.validation.Valid;
 
-/**
- *
- */
 @Controller
+@RequestMapping("/devtool")
 public class LN54MapperController {
 
     private Logger logger = Logger.getLogger(LN54MapperController.class);

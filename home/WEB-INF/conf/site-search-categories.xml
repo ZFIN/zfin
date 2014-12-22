@@ -24,14 +24,14 @@
     <Category ID="FEATURES" order="15">
         <DisplayName>Features</DisplayName>
         <UrlMapping>
-            <urlPattern type="FeatureView">feature/feature-detail</urlPattern>
+            <urlPattern type="FeatureView">feature/view</urlPattern>
             <urlPattern type="FeatureView">^/ZDB-ALT-\p{ASCII}*</urlPattern>
         </UrlMapping>
     </Category>
     <Category ID="MUTANTS" order="20">
         <DisplayName>Mutants/Transgenics</DisplayName>
         <UrlMapping>
-            <urlPattern type="MutantGenoView">genotype/genotype-detail</urlPattern>
+            <urlPattern type="MutantGenoView">genotype/view</urlPattern>
             <urlPattern type="MutantGenoView">^/ZDB-GENO-\p{ASCII}*</urlPattern>
         </UrlMapping>
     </Category>

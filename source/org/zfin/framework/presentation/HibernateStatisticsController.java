@@ -10,6 +10,7 @@ import org.zfin.framework.HibernateUtil;
  * Controller that obtains the meta data for the database.
  */
 @Controller
+@RequestMapping(value = "/devtool")
 public class HibernateStatisticsController {
 
     @RequestMapping("/view-hibernate-statistics")

@@ -27,7 +27,7 @@
                    title="Search by gene, developmental stage, anatomy and other attributes">
          <strong>Gene Expression</strong></a></li>
 
-      <li><a href="/action/antibody/antibody-search"
+      <li><a href="/action/antibody/search"
                     title="Search for antibodies by gene, labeled anatomy and other attributes"><strong>Antibodies</strong></a></li>
 
     </ul>
@@ -46,13 +46,13 @@
      </ul>
   </ul>
   <ul>
-    <li><a href="/action/mutant/construct-search"
+    <li><a href="/action/construct/search"
                        title="Search for constructs"><strong>Constructs</strong></a></li>
 
   </ul>
                            
   <ul>
-      <li><a href="/action/ontology/ontology-search"
+      <li><a href="/action/ontology/search"
                     title="Search anatomy and gene ontology"><strong>Anatomy / GO</strong></a></li>
       <ul>
         <li><a href="/zf_info/anatomy/dict/sum.html" title="Atlases, anatomical resources and ontology">Anatomy Atlases and Resources</a></li>

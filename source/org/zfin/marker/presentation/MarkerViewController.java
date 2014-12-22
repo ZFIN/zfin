@@ -12,7 +12,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.profile.presentation.ProfileController;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
@@ -23,6 +22,7 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class MarkerViewController {
 
     @Autowired
@@ -42,7 +42,7 @@ public class MarkerViewController {
     @Autowired
     private EfgViewController efgViewController;
     @Autowired
-    private RegionViewController reginoViewController;
+    private RegionViewController regionViewController;
     @Autowired
     private ConstructViewController constructViewController;
     @Autowired
@@ -54,54 +54,46 @@ public class MarkerViewController {
     @Autowired
     private GenericMarkerViewController genericMarkerViewController;
 
-    // for rerouting
-    @Autowired
-    private ProfileController profileController;
-
     @RequestMapping("/view/{key}")
     public String getAnyMarker(Model model
             , @PathVariable String key
             , @RequestHeader("User-Agent") String userAgent) {
 
-        // hack because they all share the same servlet space
-        if (key.startsWith("ZDB-PERS") || key.startsWith("ZDB-LAB") || key.startsWith("ZDB-COMPANY")) {
-            return profileController.viewProfile(key, model, userAgent);
-        } else
-            // first we set the key properly
-            if (key.startsWith("ZDB-")) {
-                if (false == markerRepository.markerExistsForZdbID(key)) {
-                    String replacedZdbID = infrastructureRepository.getReplacedZdbID(key);
-                    logger.debug("trying to find a replaced zdbID for: " + key);
-                    if (replacedZdbID != null) {
-                        if (markerRepository.markerExistsForZdbID(replacedZdbID)) {
-                            logger.debug("found a replaced zdbID for: " + key + "->" + replacedZdbID);
-                            key = replacedZdbID;
-                        }
+        // first we set the key properly
+        if (key.startsWith("ZDB-")) {
+            if (false == markerRepository.markerExistsForZdbID(key)) {
+                String replacedZdbID = infrastructureRepository.getReplacedZdbID(key);
+                logger.debug("trying to find a replaced zdbID for: " + key);
+                if (replacedZdbID != null) {
+                    if (markerRepository.markerExistsForZdbID(replacedZdbID)) {
+                        logger.debug("found a replaced zdbID for: " + key + "->" + replacedZdbID);
+                        key = replacedZdbID;
                     }
-                }
-            } else {
-                Marker marker = markerRepository.getMarkerByAbbreviationIgnoreCase(key);
-                if (marker == null) {
-                    marker = markerRepository.getMarkerByName(key);
-                }
-                if (marker == null) {
-                    List<Marker> markers = markerRepository.getMarkersByAlias(key);
-                    if (markers != null && markers.size() == 1) {
-                        marker = markers.get(0);
-                    } else if (markers.size() != 1) {
-                        //http://quark.zfin.org/quark/webdriver
-                        return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
-//                                "?MIval=aa-newmrkrselect.apg&marker_type=all&query_results=t&input_name="+
-                                "?MIval=aa-newmrkrselect.apg&compare=starts&marker_type=all&query_results=exist&action=SEARCH&input_name=" +
-                                key +
-                                "&compare=starts&WINSIZE=200";
-                    }
-                }
-
-                if (marker != null) {
-                    key = marker.getZdbID();
                 }
             }
+        } else {
+            Marker marker = markerRepository.getMarkerByAbbreviationIgnoreCase(key);
+            if (marker == null) {
+                marker = markerRepository.getMarkerByName(key);
+            }
+            if (marker == null) {
+                List<Marker> markers = markerRepository.getMarkersByAlias(key);
+                if (markers != null && markers.size() == 1) {
+                    marker = markers.get(0);
+                } else if (markers.size() != 1) {
+                    //http://quark.zfin.org/quark/webdriver
+                    return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
+//                                "?MIval=aa-newmrkrselect.apg&marker_type=all&query_results=t&input_name="+
+                            "?MIval=aa-newmrkrselect.apg&compare=starts&marker_type=all&query_results=exist&action=SEARCH&input_name=" +
+                            key +
+                            "&compare=starts&WINSIZE=200";
+                }
+            }
+
+            if (marker != null) {
+                key = marker.getZdbID();
+            }
+        }
 
         if (key == null || key.isEmpty() || false == markerRepository.markerExistsForZdbID(key)) {
             model.addAttribute(LookupStrings.ZDB_ID, key);
@@ -132,7 +124,7 @@ public class MarkerViewController {
             } else if (type.equals(Marker.Type.EFG.name())) {
                 return efgViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.REGION.name())) {
-                return reginoViewController.getView(model, zdbID);
+                return regionViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.ETCONSTRCT.name())
                     || type.equals(Marker.Type.GTCONSTRCT.name())
                     || type.equals(Marker.Type.PTCONSTRCT.name())

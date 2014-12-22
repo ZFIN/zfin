@@ -12,7 +12,6 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.TranscriptType;
-import org.zfin.profile.Person;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.LinkedHashMap;
@@ -21,6 +20,7 @@ import java.util.Map;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class TranscriptAddController {
 
     private static Logger logger = Logger.getLogger(TranscriptAddController.class);
@@ -36,7 +36,7 @@ public class TranscriptAddController {
             ,BindingResult result
     ) {
 
-        Map<String, String> types = new LinkedHashMap<String, String>();
+        Map<String, String> types = new LinkedHashMap<>();
         types.put("", "Choose Type");
 
         TranscriptType.Type[] transcriptTypes = TranscriptType.Type.values();
@@ -44,7 +44,7 @@ public class TranscriptAddController {
             types.put(transcriptType.toString(), transcriptType.toString());
         }
 
-        Map<String, String> statuses = new LinkedHashMap<String, String>();
+        Map<String, String> statuses = new LinkedHashMap<>();
         statuses.put("Choose Status", "");
 
         TranscriptStatus.Status[] transcriptStatuses = TranscriptStatus.Status.values();

@@ -31,6 +31,7 @@ import java.util.List;
 /**
  */
 @Controller
+@RequestMapping(value = "/profile")
 public class CompanyController {
 
     private Logger logger = Logger.getLogger(CompanyController.class);
@@ -127,7 +128,7 @@ public class CompanyController {
             return "profile/profile-edit.page";
         }
 
-        final List<BeanFieldUpdate> fields = new ArrayList<BeanFieldUpdate>();
+        final List<BeanFieldUpdate> fields = new ArrayList<>();
         try {
             fields.addAll(profileService.compareCompanyFields(company, newCompany));
         } catch (Exception e) {

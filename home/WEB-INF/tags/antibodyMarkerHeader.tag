@@ -15,7 +15,7 @@
       <td>
           <script type="text/javascript">
               jQuery(document).ready(function() {
-                  jQuery('#wikiLink').load('/webapp/wiki/wikiLink/${antibodyBean.marker.zdbID}');
+                  jQuery('#wikiLink').load('/action/wiki/wikiLink/${antibodyBean.marker.zdbID}');
               });
           </script>
           <span id="wikiLink"> </span>

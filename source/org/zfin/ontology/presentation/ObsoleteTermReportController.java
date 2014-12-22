@@ -1,6 +1,5 @@
 package org.zfin.ontology.presentation;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,12 +20,11 @@ import java.util.Set;
  * Controller that serves meta information about the ontologies.
  */
 @Controller
+@RequestMapping("/ontology")
 public class ObsoleteTermReportController {
 
     @Autowired
     private ExpressionService expressionService ;
-
-    private static final Logger log = Logger.getLogger(ObsoleteTermReportController.class);
 
     @RequestMapping("/obsolete-term-report")
     private String createObsoleteTermReport(Model model) {
@@ -34,7 +32,7 @@ public class ObsoleteTermReportController {
         model.addAttribute("formBean", form);
         List<PhenotypeStatement> phenotypesWithObsoletes = RepositoryFactory.getMutantRepository().getPhenotypesOnObsoletedTerms();
         if (phenotypesWithObsoletes != null) {
-            List<PhenotypeObsoleteTermReport> phenotypeObsoleteTermReports = new ArrayList<PhenotypeObsoleteTermReport>(phenotypesWithObsoletes.size());
+            List<PhenotypeObsoleteTermReport> phenotypeObsoleteTermReports = new ArrayList<>(phenotypesWithObsoletes.size());
             for (PhenotypeStatement phenotypeStatement : phenotypesWithObsoletes) {
                 PhenotypeObsoleteTermReport report = new PhenotypeObsoleteTermReport(phenotypeStatement);
                 Set<GenericTerm> obsoletedTermSet = PhenotypeService.getObsoleteTerm(phenotypeStatement);
@@ -52,7 +50,7 @@ public class ObsoleteTermReportController {
         }
         List<ExpressionResult> expressionsWithObsoletes = RepositoryFactory.getExpressionRepository().getExpressionOnObsoletedTerms();
         if (expressionsWithObsoletes != null) {
-            List<ExpressionObsoleteTermReport> expressionObsoleteTermReports = new ArrayList<ExpressionObsoleteTermReport>(expressionsWithObsoletes.size());
+            List<ExpressionObsoleteTermReport> expressionObsoleteTermReports = new ArrayList<>(expressionsWithObsoletes.size());
             for (ExpressionResult phenotypeStatement : expressionsWithObsoletes) {
                 ExpressionObsoleteTermReport report = new ExpressionObsoleteTermReport(phenotypeStatement);
                 Set<GenericTerm> obsoletedTermSet = expressionService.getObsoleteTerm(phenotypeStatement);
@@ -70,7 +68,7 @@ public class ObsoleteTermReportController {
         }
         List<MarkerGoTermEvidence> goEvidenceWithObsoletes = RepositoryFactory.getMutantRepository().getGoEvidenceOnObsoletedTerms();
         if (goEvidenceWithObsoletes != null) {
-            List<GoEvidenceObsoleteTermReport> expressionObsoleteTermReports = new ArrayList<GoEvidenceObsoleteTermReport>(goEvidenceWithObsoletes.size());
+            List<GoEvidenceObsoleteTermReport> expressionObsoleteTermReports = new ArrayList<>(goEvidenceWithObsoletes.size());
             for (MarkerGoTermEvidence goEvidence : goEvidenceWithObsoletes) {
                 GoEvidenceObsoleteTermReport report = new GoEvidenceObsoleteTermReport(goEvidence);
                 report.setReplacementTermList(RepositoryFactory.getOntologyRepository().getReplacedByTerms(goEvidence.getGoTerm()));

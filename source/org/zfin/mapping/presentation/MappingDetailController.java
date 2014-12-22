@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureService;
@@ -130,9 +129,7 @@ public class MappingDetailController {
 
     @RequestMapping(value = "/linkage/edit-comment", method = RequestMethod.POST)
     public String doSearch(Model model,
-                           @ModelAttribute("linkage") Linkage formLinkage,
-                           BindingResult result
-    ) throws Exception {
+                           @ModelAttribute("linkage") Linkage formLinkage) throws Exception {
 
         if (formLinkage == null || StringUtils.isEmpty(formLinkage.getZdbID())) {
             model.addAttribute(LookupStrings.ZDB_ID, "No linkageID found");

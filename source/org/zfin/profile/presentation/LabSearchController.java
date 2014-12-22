@@ -13,10 +13,8 @@ import org.zfin.profile.repository.ProfileRepository;
 
 import java.util.List;
 
-/**
- * replaces labselect.apg and labprint.apg
- */
 @Controller
+@RequestMapping(value = "/profile")
 public class LabSearchController {
 
     @Autowired

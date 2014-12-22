@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.database.InformixUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -27,11 +26,11 @@ import org.zfin.sequence.blast.Database;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class DisruptorViewController {
 
     private Logger logger = Logger.getLogger(DisruptorViewController.class);
@@ -68,7 +67,7 @@ public class DisruptorViewController {
         // set targetGenes
 //        Set<Marker> targetGenes = MarkerService.getRelatedMarker(morpholino, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
 //        markerBean.setTargetGenes(targetGenes);
-        List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<MarkerRelationshipPresentation>();
+        List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<>();
         knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
                 disruptor, true
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
@@ -80,7 +79,7 @@ public class DisruptorViewController {
         if (genotypeFigures == null || genotypeFigures.size() == 0)  {
             disruptorBean.setPhenotypeDisplays(null);
         } else {
-            List<PhenotypeStatement> phenoStatements = new ArrayList<PhenotypeStatement>();
+            List<PhenotypeStatement> phenoStatements = new ArrayList<>();
             for (GenotypeFigure genoFig : genotypeFigures) {
                 phenoStatements.addAll(genoFig.getPhenotypeExperiment().getPhenotypeStatements());
             }
@@ -91,7 +90,7 @@ public class DisruptorViewController {
         if (disruptorBean.isTALEN() || disruptorBean.isCRISPR()) {
             List<Genotype> genotypes = markerRepository.getTALENorCRISPRcreatedGenotypes(zdbID);
             disruptorBean.setGenotypes(genotypes);
-            List<GenotypeInformation> genoData = new ArrayList<GenotypeInformation>();
+            List<GenotypeInformation> genoData = new ArrayList<>();
             if (genotypes == null) {
                 disruptorBean.setGenotypeData(null);
             } else {
@@ -139,9 +138,8 @@ public class DisruptorViewController {
     public
     @ResponseBody
     int runRegenGenoxForAllTargets(@RequestParam("sequenceTargetingReagentZdbId") String sequenceTargetingReagentZdbId) {
-        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(sequenceTargetingReagentZdbId);
-        List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<MarkerRelationshipPresentation>();
+        List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<>();
         knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
                 sequenceTargetingReagent, true
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE

@@ -9,6 +9,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
 
 @Controller
+@RequestMapping(value = "/autocomplete")
 public class AutoCompleteController {
 
     private static Logger LOG = Logger.getLogger(AutoCompleteController.class);

@@ -12,7 +12,7 @@ import org.zfin.ontology.Term;
  */
 public class GenotypePresentation extends EntityPresentation {
 
-    private static final String uri = "genotype/genotype-detail?zdbID=";
+    private static final String uri = "genotype/view/";
     private static final String popupUri = "genotype/genotype-detail-popup?zdbID=";
     /**
      * Generates an html formatted Genotype name

@@ -1,7 +1,6 @@
 package org.zfin.mutant.presentation;
 
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,38 +8,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.antibody.Antibody;
-import org.zfin.antibody.AntibodyService;
-import org.zfin.expression.ExpressionSummaryCriteria;
-import org.zfin.expression.Figure;
-import org.zfin.expression.FigureExpressionSummary;
-import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
-import org.zfin.expression.presentation.FigureSummaryDisplay;
-import org.zfin.feature.presentation.GenotypeBean;
-import org.zfin.fish.repository.FishService;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.ConstructSearchCriteria;
-import org.zfin.fish.presentation.Fish;
-import org.zfin.fish.presentation.FishSearchFormBean;
-import org.zfin.fish.presentation.PhenotypeSummaryCriteria;
 import org.zfin.mutant.repository.ConstructService;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PresentationConverter;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.publication.presentation.FigurePresentation;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.Collections;
 import java.util.List;
-
-import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  * This class serves the phenotype summary page.
  */
 @Controller
+@RequestMapping("/construct")
 public class ConstructExpressionController {
 
     @ModelAttribute("formBean")
@@ -81,12 +61,6 @@ public class ConstructExpressionController {
 
 
         return "mutant/construct-expression-figure-summary.page";
-    }
-
-    private String figureViewPage(Figure figure) {
-        String figureUrl = FigurePresentation.getUrl(figure);
-        StringBuilder builder = new StringBuilder("redirect:" + figureUrl);
-        return builder.toString();
     }
 
    @RequestMapping(value = "/construct-expression-image-exist", method = RequestMethod.GET)

@@ -23,6 +23,7 @@ import java.util.List;
  * Controller class that serves the unload history page.
  */
 @Controller
+@RequestMapping("/unload")
 public class UnloadFilesController {
 
     private static final Logger LOG = Logger.getLogger(UnloadFilesController.class);

@@ -21,6 +21,7 @@ import java.util.List;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class ConstructViewController {
 
     private Logger logger = Logger.getLogger(ConstructViewController.class);

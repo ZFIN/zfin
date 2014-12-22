@@ -21,74 +21,41 @@ import java.util.*;
 
 
 @Controller
-//@RequestMapping("/feature") // already provided in the context
+@RequestMapping("/feature")
 public class FeatureDetailController {
     private static final Logger LOG = Logger.getLogger(FeatureDetailController.class);
-    private static final String uri = "?MIval=aa-pubview2.apg&OID=";
 
     private FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
-    @RequestMapping(value = {
-//            "/detail/{zdbID}", // TODO: move to new one once entire context is moved
-//            "/detail?feature.zdbID={zdbID}" // using old link
-            "/detail" // using old link
-    }
-    )
-    protected String getOldFeatureDetailPage(
-            @RequestParam(value = "feature.zdbID", required = false) String featureZdbID,
-            @RequestParam(value = "genotype.zdbID", required = false) String genotypeZdbID,
-            Model model) {
-        if (featureZdbID != null) {
-            return "redirect:/action/feature/feature-detail?zdbID=" + featureZdbID;
-        } else if (genotypeZdbID != null) {
-            return "redirect:/action/genotype/genotype-detail?zdbID=" + genotypeZdbID;
-        } else {
-            model.addAttribute(LookupStrings.ZDB_ID, featureZdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-    }
-
-
-    @RequestMapping(value = {
-//            "/detail/{zdbID}", // TODO: move to new one once entire context is moved
-//            "/detail?feature.zdbID={zdbID}" // using old link
-            "/feature-detail" // using old link
-    }
-    )
-    protected String getFeatureDetail(@RequestParam String zdbID, Model model) {
+    @RequestMapping(value = "view/{zdbID}")
+    protected String getFeatureDetail(@PathVariable String zdbID, Model model) {
         LOG.info("Start Feature Detail Controller");
-        Feature feature=featureRepository.getFeatureByID(zdbID);
+        Feature feature = featureRepository.getFeatureByID(zdbID);
         if (null == feature) {
-            String ftr=featureRepository.getFeatureByIDInTrackingTable(zdbID);
-            if (ftr!=null) {
-                if (zdbID.startsWith("ZDB-ALT-120130")||(zdbID.startsWith("ZDB-ALT-120806"))){
+            String ftr = featureRepository.getFeatureByIDInTrackingTable(zdbID);
+            if (ftr != null) {
+                if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
                     return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
-                }
-                else{
+                } else {
                     //if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
-                    String repldFtr=infrastructureRepository.getReplacedZdbID(zdbID);
-                    if (repldFtr!=null){
-                        feature= featureRepository.getFeatureByID(repldFtr);
+                    String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
+                    if (repldFtr != null) {
+                        feature = featureRepository.getFeatureByID(repldFtr);
 
-                    }
-                    else{
+                    } else {
                         model.addAttribute(LookupStrings.ZDB_ID, zdbID);
                         return LookupStrings.RECORD_NOT_FOUND_PAGE;
                     }
                 }
 
-            }
-
-            else {
+            } else {
                 model.addAttribute(LookupStrings.ZDB_ID, zdbID);
                 return LookupStrings.RECORD_NOT_FOUND_PAGE;
             }
 
         }
-
-
 
 
         FeatureBean form = new FeatureBean();
@@ -108,7 +75,7 @@ public class FeatureDetailController {
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
 
-        LOG.debug("genbank link count "+ form.getGenbankDbLinks().size());
+        LOG.debug("genbank link count " + form.getGenbankDbLinks().size());
         retrieveGenoData(feature, form);
         retrievePubData(feature, form);
 
@@ -119,7 +86,7 @@ public class FeatureDetailController {
     }
 
     @RequestMapping(value = "/feature/view/{zdbID}")
-    public String retrieveFeatureDetail(Model model , @PathVariable("zdbID") String zdbID ) throws Exception {
+    public String retrieveFeatureDetail(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         return getFeatureDetail(zdbID, model);
     }
 
@@ -141,7 +108,7 @@ public class FeatureDetailController {
     private List<GenotypeInformation> createGenotypeStats(List<Genotype> genotypes) {
         if (genotypes == null)
             return null;
-        List<GenotypeInformation> stats = new ArrayList<GenotypeInformation>();
+        List<GenotypeInformation> stats = new ArrayList<>();
         for (Genotype genoType : genotypes) {
             GenotypeInformation stat = new GenotypeInformation(genoType);
             stats.add(stat);
@@ -153,7 +120,7 @@ public class FeatureDetailController {
         if (genotypes == null || fr == null)
             return null;
 
-        List<GenoExpStatistics> stats = new ArrayList<GenoExpStatistics>();
+        List<GenoExpStatistics> stats = new ArrayList<>();
         for (Genotype genoType : genotypes) {
             GenoExpStatistics stat = new GenoExpStatistics(genoType, fr);
             stats.add(stat);

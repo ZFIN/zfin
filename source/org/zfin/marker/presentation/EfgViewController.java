@@ -23,6 +23,7 @@ import java.util.TreeSet;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class EfgViewController {
 
     private Logger logger = Logger.getLogger(EfgViewController.class);

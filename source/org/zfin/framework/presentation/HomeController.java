@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @org.springframework.stereotype.Controller
 public class HomeController {
 
-    @RequestMapping("/home")
+    @RequestMapping("devtool/home")
     public String homePage() throws Exception {
         return "dev-tools/home.page";
     }

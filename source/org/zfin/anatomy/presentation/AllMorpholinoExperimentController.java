@@ -28,6 +28,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  * This Controller serves the all morpholino experiment page.
  */
 @Controller
+@RequestMapping("/ontology")
 public class AllMorpholinoExperimentController {
 
     private static final Logger LOG = RootLogger.getLogger(AllMorpholinoExperimentController.class);
@@ -57,8 +58,10 @@ public class AllMorpholinoExperimentController {
             return LookupStrings.idNotFound(model, termID);
         }
 
-        if (term == null)
-            return "";
+        if (term == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, "No term name provided");
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
 
 
         form.setAoTerm(term);
@@ -66,7 +69,7 @@ public class AllMorpholinoExperimentController {
         if (request.getQueryString() != null)
             form.setQueryString(request.getQueryString());
 
-        retrieveSequenecTargetingReagentData(term, form, isWildtype);
+        retrieveSequenceTargetingReagentData(term, form, isWildtype);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         if (isWildtype)
             return "anatomy/show-all-wildtype-morpholinos.page";
@@ -74,7 +77,7 @@ public class AllMorpholinoExperimentController {
             return "anatomy/show-all-non-wildtype-morpholinos.page";
     }
 
-    protected void retrieveSequenecTargetingReagentData(GenericTerm term, AnatomySearchBean form, boolean wildtype) {
+    protected void retrieveSequenceTargetingReagentData(GenericTerm term, AnatomySearchBean form, boolean wildtype) {
 
         PaginationResult<GenotypeExperiment> wildtypeMorphResults =
                 getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(term, wildtype, form);
@@ -97,7 +100,7 @@ public class AllMorpholinoExperimentController {
         if (morpholinos == null || term == null)
             return null;
 
-        List<SequenceTargetingReagentStatistics> stats = new ArrayList<SequenceTargetingReagentStatistics>();
+        List<SequenceTargetingReagentStatistics> stats = new ArrayList<>();
         for (GenotypeExperiment genoExp : morpholinos) {
             SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, term);
             stats.add(stat);

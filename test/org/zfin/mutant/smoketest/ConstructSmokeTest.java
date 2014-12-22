@@ -23,7 +23,7 @@ public class ConstructSmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testConstructSearchPageOk() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/mutant/construct-search");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/construct/search");
         assertTrue(page.getTitleText().contains("ZFIN Construct Search"));
     }
 

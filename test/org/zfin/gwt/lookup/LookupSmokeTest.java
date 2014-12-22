@@ -18,7 +18,7 @@ public class LookupSmokeTest extends AbstractSmokeTest {
     public void testAnatomyLookupForm() {
              try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
-                HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/antibody-search");
+                HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/search");
                 assertEquals("ZFIN Antibody Search", page.getTitleText());
                 // this is here because the IE clients seems to be too slow otherwise
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
@@ -36,7 +36,7 @@ public class LookupSmokeTest extends AbstractSmokeTest {
     @Test
     public void testAnatomyLookupTyping() {
              try {
-                HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/antibody-search");
+                HtmlPage page = webClient.getPage(secureUrlDomain + "/action/antibody/search");
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
                 assertEquals("ZFIN Antibody Search", page.getTitleText());
                 final HtmlForm form = page.getFormByName("Antibody Search");

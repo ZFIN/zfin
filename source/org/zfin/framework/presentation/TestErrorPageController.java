@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
+@RequestMapping(value = "/devtool")
 public class TestErrorPageController {
 
     private final static transient Logger LOGGER = Logger.getLogger(TestErrorPageController.class);

@@ -1,6 +1,5 @@
 package org.zfin.profile.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -19,7 +18,6 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.Lab;
-import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
@@ -32,12 +30,13 @@ import java.util.List;
 /**
  */
 @Controller
+@RequestMapping("/profile")
 public class LabController {
 
     private Logger logger = Logger.getLogger(LabController.class);
 
     @Autowired
-    private FeatureRepository featureRepository ;
+    private FeatureRepository featureRepository;
 
     @Autowired
     private ProfileRepository profileRepository;
@@ -51,26 +50,23 @@ public class LabController {
     }
 
 
-    public static enum TAB_INDEX{
-        INFORMATION("information",0)
-        ,MEMBERS("members",1)
-        ,PICTURE("picture",2)
-        ;
+    public static enum TAB_INDEX {
+        INFORMATION("information", 0), MEMBERS("members", 1), PICTURE("picture", 2);
 
-        private String label ;
-        private int index ;
+        private String label;
+        private int index;
 
-        TAB_INDEX(String label,int index){
-            this.label = label ;
-            this.index = index ;
+        TAB_INDEX(String label, int index) {
+            this.label = label;
+            this.index = index;
         }
 
-        public String getLabel(){
-            return label ;
+        public String getLabel() {
+            return label;
         }
 
-        public int getIndex(){
-            return index ;
+        public int getIndex() {
+            return index;
         }
 
     }
@@ -79,7 +75,6 @@ public class LabController {
     public String editView(@PathVariable String zdbID, Model model) {
         Lab lab = profileRepository.getLabById(zdbID);
 
-        String ownerZdbId = profileService.isEditableBySecurityPerson(lab.getContactPerson());// will throw runtime otherwise
         boolean isOwner = profileService.isCurrentSecurityUserRoot();
         if (!isOwner && profileService.getCurrentSecurityUser() != null) {
             isOwner = profileService.getCurrentSecurityUser().getZdbID().equals(lab.getContactPerson().getZdbID());
@@ -91,7 +86,7 @@ public class LabController {
         model.addAttribute("members", profileRepository.getLabMembers(zdbID));
         model.addAttribute("positions", profileRepository.getLabPositions());
         List<String> prefixes = featureRepository.getAllFeaturePrefixes();
-        prefixes.add(0,"- None -");
+        prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
         lab.setPrefix(featureRepository.getCurrentPrefixForLab(zdbID));
 
@@ -114,7 +109,7 @@ public class LabController {
         model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.INFORMATION.getLabel());
         model.addAttribute("positions", profileRepository.getLabPositions());
         List<String> prefixes = featureRepository.getAllFeaturePrefixes();
-        prefixes.add(0,"- None -");
+        prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
         lab.setPrefix(featureRepository.getCurrentPrefixForLab(zdbID));
 
@@ -122,14 +117,14 @@ public class LabController {
 
         //convert from none to null
         if (newLab.getContactPerson() != null &&
-                StringUtils.equals(newLab.getContactPerson().getZdbID(),"none"))
+                StringUtils.equals(newLab.getContactPerson().getZdbID(), "none"))
             newLab.setContactPerson(null);
 
         if (errors.hasErrors()) {
             return "profile/profile-edit.page";
         }
 
-        final List<BeanFieldUpdate> fields = new ArrayList<BeanFieldUpdate>();
+        final List<BeanFieldUpdate> fields = new ArrayList<>();
         try {
             fields.addAll(profileService.compareLabFields(lab, newLab));
         } catch (Exception e) {
@@ -142,14 +137,14 @@ public class LabController {
             return "profile/profile-edit.page";
         }
 
-        return profileService.handleInfoUpdate(errors/*,profileTopic*/,lab.getZdbID(),fields,securityPersonZdbId);
+        return profileService.handleInfoUpdate(errors/*,profileTopic*/, lab.getZdbID(), fields, securityPersonZdbId);
 
     }
 
     @RequestMapping(value = "/lab/view/{zdbID}", method = RequestMethod.GET)
     public String viewLab(String zdbID, Model model) {
         Lab lab = profileRepository.getLabById(zdbID);
-        if(lab==null){
+        if (lab == null) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
@@ -163,12 +158,12 @@ public class LabController {
         model.addAttribute(LookupStrings.FORM_BEAN, lab);
         List<PersonMemberPresentation> labMembers = profileRepository.getLabMembers(zdbID);
         model.addAttribute("members", labMembers);
-        int numCoPIs = profileService.findMembersEquals(2,labMembers);
-        model.addAttribute("hasCoPi", numCoPIs>0);
+        int numCoPIs = profileService.findMembersEquals(2, labMembers);
+        model.addAttribute("hasCoPi", numCoPIs > 0);
         List<Publication> publications = profileRepository.getPublicationsForLab(zdbID);
         model.addAttribute("publications", publications);
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixesById(lab.getZdbID(), false);
-        logger.info("featurePrefixCount" +featurePrefixes.size());
+        logger.info("featurePrefixCount" + featurePrefixes.size());
         model.addAttribute("prefixes", featurePrefixes);
 
         boolean noPrefixes = featurePrefixes.isEmpty();
@@ -177,7 +172,7 @@ public class LabController {
             for (FeaturePrefix fpf : featurePrefixes) {
                 logger.info("featurePrefix is:" + fpf.getPrefixString().toString());
                 if (!fpf.isActiveForSet())
-                     ctNoneActiveForSet++;
+                    ctNoneActiveForSet++;
             }
 
             if (ctNoneActiveForSet == featurePrefixes.size())
@@ -186,16 +181,15 @@ public class LabController {
         model.addAttribute("noPrefixes", noPrefixes);
 
         // a lab could have prefixes while having no features (example as of 2013-01-24: ZDB-LAB-111031-1
-        model.addAttribute("featuresForTheLab",RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID)) ;
+        model.addAttribute("featuresForTheLab", RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
         return "profile/profile-view.page";
     }
 
 
-
     @RequestMapping(value = "/lab/create", method = RequestMethod.GET)
-    public String createLabSetup(Model model,Lab lab) {
+    public String createLabSetup(Model model, Lab lab) {
         model.addAttribute(LookupStrings.FORM_BEAN, lab);
         return "profile/create-lab.page";
     }
@@ -206,7 +200,7 @@ public class LabController {
         profileService.createLab(lab);
         HibernateUtil.flushAndCommitCurrentSession();
         HibernateUtil.currentSession().refresh(lab);
-        return "redirect:/action/profile/lab/edit/"+lab.getZdbID();
+        return "redirect:/action/profile/lab/edit/" + lab.getZdbID();
     }
 
 

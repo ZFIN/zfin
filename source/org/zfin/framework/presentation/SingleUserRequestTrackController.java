@@ -17,6 +17,7 @@ import java.util.Map;
  * Controller that obtains the meta data for the database.
  */
 @Controller
+@RequestMapping("/devtool")
 public class SingleUserRequestTrackController {
 
     @RequestMapping(value = "/view-single-user-request-tracking")

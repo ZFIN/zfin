@@ -1,6 +1,5 @@
 package org.zfin.profile.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,11 +7,8 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
@@ -21,20 +17,16 @@ import org.zfin.profile.*;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.io.IOException;
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  */
 @Controller
+@RequestMapping(value = "/profile")
 public class PersonController {
 
     private Logger logger = Logger.getLogger(PersonController.class);
@@ -111,7 +103,7 @@ public class PersonController {
             return "profile/profile-edit.page";
         }
 
-        final List<BeanFieldUpdate> fields = new ArrayList<BeanFieldUpdate>();
+        final List<BeanFieldUpdate> fields = new ArrayList<>();
         try {
             fields.addAll(profileService.compareBiographyField(person, newPerson));
         } catch (Exception e) {
@@ -142,7 +134,7 @@ public class PersonController {
             return "profile/profile-edit.page";
         }
 
-        final List<BeanFieldUpdate> fields = new ArrayList<BeanFieldUpdate>();
+        final List<BeanFieldUpdate> fields = new ArrayList<>();
         try {
 
             fields.addAll(profileService.comparePublicationsField(person, newPerson));
@@ -195,7 +187,7 @@ public class PersonController {
         }
 
 
-        final List<BeanFieldUpdate> fields = new ArrayList<BeanFieldUpdate>();
+        final List<BeanFieldUpdate> fields = new ArrayList<>();
         try {
 
             fields.addAll(profileService.compareAccountInfoFields(oldAccountInfo, newAccountInfo));
@@ -274,7 +266,7 @@ public class PersonController {
             return "profile/profile-edit.page";
         }
 
-        final List<BeanFieldUpdate> fields = new ArrayList<BeanFieldUpdate>();
+        final List<BeanFieldUpdate> fields = new ArrayList<>();
         try {
             newPerson.generateNameVariations();
             fields.addAll(profileService.comparePersonFields(person, newPerson));

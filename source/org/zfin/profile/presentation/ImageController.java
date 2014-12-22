@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.Company;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
@@ -29,9 +28,8 @@ import java.sql.Blob;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- */
 @Controller
+@RequestMapping(value = "/profile")
 public class ImageController {
 
     // Maximum of 10 MB images we will handle.

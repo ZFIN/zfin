@@ -30,6 +30,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class GeneViewController {
 
     private Logger logger = Logger.getLogger(GeneViewController.class);

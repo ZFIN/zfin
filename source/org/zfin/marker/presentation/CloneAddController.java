@@ -16,6 +16,7 @@ import org.zfin.repository.RepositoryFactory;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class CloneAddController {
 
     private static Logger logger = Logger.getLogger(CloneAddController.class);

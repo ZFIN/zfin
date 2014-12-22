@@ -12,6 +12,7 @@ import java.util.List;
 /**
  */
 @Controller
+@RequestMapping("/antibody")
 public class PublicationMarkerViewController {
 
     @RequestMapping("/publication-list/{zdbID}")

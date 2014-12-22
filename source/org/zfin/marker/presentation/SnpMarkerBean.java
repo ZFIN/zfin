@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.zfin.sequence.SNPMarkerSequence;
 
@@ -8,21 +9,22 @@ import java.util.List;
 
 /**
  */
-@Controller
-public class SnpMarkerBean extends MarkerBean{
+@Component
+public class SnpMarkerBean extends MarkerBean {
 
     private Logger logger = Logger.getLogger(SnpMarkerBean.class);
 
-    private String variant ;
+    private String variant;
     private SNPMarkerSequence sequence;
-    private String ncbiBlastUrl ;
-    private String snpBlastUrl ;
+    private String ncbiBlastUrl;
+    private String snpBlastUrl;
 
     /**
      * Most of the time there will only be a single sequence.
+     *
      * @return
      */
-    public SNPMarkerSequence getSequence(){
+    public SNPMarkerSequence getSequence() {
         return sequence;
     }
 

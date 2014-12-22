@@ -1,13 +1,10 @@
 package org.zfin.framework.presentation;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.zfin.database.presentation.Table;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.PhenotypeExperiment;
@@ -17,7 +14,6 @@ import org.zfin.util.InformixLuceneIndexInspection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -31,6 +27,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  * Controller that obtains the meta data for the database.
  */
 @Controller
+@RequestMapping(value = "/devtool")
 public class DatabaseInfoController {
 
 
@@ -58,7 +55,7 @@ public class DatabaseInfoController {
     public String showJavaProperties(Model model) throws ServletException {
         Properties properties = System.getProperties();
         Enumeration propEnum = properties.propertyNames();
-        Map<String, String> props = new TreeMap<String, String>();
+        Map<String, String> props = new TreeMap<>();
         while (propEnum.hasMoreElements()) {
             String key = (String) propEnum.nextElement();
             props.put(key, properties.getProperty(key));
@@ -70,13 +67,9 @@ public class DatabaseInfoController {
 
     @RequestMapping("/view-hibernate-info")
     public String viewHibernateInfo(Model model) throws ServletException {
-        SessionFactory sessionfac = HibernateUtil.getSessionFactory();
-/*
-        Properties properties = sessionfac.getStatistics().;
-*/
         Properties properties = new Properties();
         Enumeration propEnum = properties.propertyNames();
-        Map<String, String> props = new TreeMap<String, String>();
+        Map<String, String> props = new TreeMap<>();
         while (propEnum.hasMoreElements()) {
             String key = (String) propEnum.nextElement();
             props.put(key, properties.getProperty(key));
@@ -86,13 +79,7 @@ public class DatabaseInfoController {
     }
 
     @RequestMapping("/test-browser")
-    protected String showBrowserInfo(HttpServletRequest request, Model model) throws Exception {
-        HashMap map = new HashMap();
-        Enumeration en = request.getHeaderNames();
-        while (en.hasMoreElements()) {
-            String key = (String) en.nextElement();
-            map.put(key, (Object) request.getHeader(key));
-        }
+    protected String showBrowserInfo() throws Exception {
         return "dev-tools/test-browser.page";
     }
 
@@ -157,7 +144,7 @@ public class DatabaseInfoController {
         ThreadMXBean mxbean = ManagementFactory.getThreadMXBean();
         ThreadGroup threadGroup = currentThread.getThreadGroup();
         ThreadGroup parent = threadGroup;
-        List<ThreadGroup> threadGroups = new ArrayList<ThreadGroup>();
+        List<ThreadGroup> threadGroups = new ArrayList<>();
         threadGroups.add(threadGroup);
 
         while (parent.getParent() != null) {
@@ -194,7 +181,7 @@ public class DatabaseInfoController {
                 return threadOne.getThreadGroup().getName().compareToIgnoreCase(threadTwo.getThreadGroup().getName());
             }
         });
-        List<Thread> threadList = new ArrayList<Thread>();
+        List<Thread> threadList = new ArrayList<>();
         if (threads != null) {
             for (int i = 0; i < threads.length; i++) {
                 Thread thread = threads[i];

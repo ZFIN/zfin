@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * passing through to the view handler.
  */
 @Controller
+@RequestMapping("/devtool")
 public class SimplePassThroughController {
 
     @RequestMapping("/gwt/lookup")

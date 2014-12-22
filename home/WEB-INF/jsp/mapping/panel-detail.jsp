@@ -45,7 +45,7 @@
     </tr>
     <c:if test="${panel.abbreviation eq 'LN54'}">
         <th>Interactive Mapping:</th>
-        <td><a href="/action/ln54mapper">Place markers on LN54 panel</a></td>
+        <td><a href="/action/mapping/ln54mapper">Place markers on LN54 panel</a></td>
     </c:if>
 
 </table>

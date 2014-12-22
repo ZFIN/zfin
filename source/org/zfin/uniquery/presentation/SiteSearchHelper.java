@@ -382,7 +382,7 @@ public class SiteSearchHelper {
         if (matchId.length() > 0) {
             String viewPageUrl;
             if (ActiveData.isValidActiveData(matchId, ActiveData.Type.GENO)) {
-                viewPageUrl = "/action/genotype/genotype-detail?zdbID=" + matchId;
+                viewPageUrl = "/action/genotype/view/" + matchId;
             } else if (matchId.startsWith("ZDB-ANAT") || matchId.startsWith("ZDB-TERM")) {
                 viewPageUrl = "/action/anatomy/term-detail?anatomyItem.zdbID=" + matchId;
             } else {

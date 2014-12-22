@@ -37,6 +37,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
+@RequestMapping("/marker")
 public class DisruptorAddController {
 
     private static Logger LOG = Logger.getLogger(DisruptorAddController.class);

@@ -7,6 +7,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.sequence.service.TranscriptService;
 
 @Controller
+@RequestMapping("/marker")
 public class TranscriptDefinitionsController {
 
 

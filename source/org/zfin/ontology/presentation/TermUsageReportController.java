@@ -12,9 +12,8 @@ import java.util.Map;
  * Controller that serves meta information about the ontologies.
  */
 @Controller
+@RequestMapping("/ontology")
 public class TermUsageReportController {
-
-    private static final Logger log = Logger.getLogger(TermUsageReportController.class);
 
     @RequestMapping("/term-usage-report")
     private String createTermUsageReport(Model model) {

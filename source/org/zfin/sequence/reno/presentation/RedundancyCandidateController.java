@@ -23,6 +23,7 @@ import java.util.List;
  * Class CandidateController.
  */
 @Controller
+@RequestMapping(value = "/reno")
 public class RedundancyCandidateController extends AbstractCandidateController {
 
     private static Logger logger = Logger.getLogger(RedundancyCandidateController.class);
@@ -55,7 +56,7 @@ public class RedundancyCandidateController extends AbstractCandidateController {
      * @param candidateBean bean...with data
      */
     public void handleView(CandidateBean candidateBean) {
-        //get the runcandidate from the bean and use the repository to populate it
+        //get the run candidate from the bean and use the repository to populate it
 
         String runCandidateID = candidateBean.getRunCandidate().getZdbID();
         RunCandidate rc = renoRepository.getRunCandidateByID(runCandidateID);

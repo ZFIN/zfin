@@ -19,6 +19,7 @@ import java.util.List;
  * page and genotype expression details page
  */
 @Controller
+@RequestMapping("/expression")
 public class GenotypeExpressionSummaryController   {
 
 
@@ -64,8 +65,7 @@ public class GenotypeExpressionSummaryController   {
 
         Genotype geno = RepositoryFactory.getMutantRepository().getGenotypeByID(genoZdbID);
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
-        boolean isStandardEnvironment = true;
-        
+
         if (geno == null) {
             model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE ;
@@ -87,13 +87,12 @@ public class GenotypeExpressionSummaryController   {
     }
 
     @RequestMapping("/genotype-figure-summary-chemical")
-    protected String getGenotypeExprssionFigureSummary(@RequestParam String genoZdbID,
-                                                       @RequestParam String geneZdbID,
-                                                       @RequestParam boolean imagesOnly,
-                                                       Model model) {
+    protected String getGenotypeExpressionFigureSummaryChemical(@RequestParam String genoZdbID,
+                                                                @RequestParam String geneZdbID,
+                                                                @RequestParam boolean imagesOnly,
+                                                                Model model) {
         Genotype geno = RepositoryFactory.getMutantRepository().getGenotypeByID(genoZdbID);
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
-        boolean isChemicalEnvironment = true;
 
         if (geno == null) {
             model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);

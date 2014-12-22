@@ -20,6 +20,7 @@ import java.util.Set;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class MarkerNotesController {
     private Logger logger = Logger.getLogger(SequenceViewController.class);
 

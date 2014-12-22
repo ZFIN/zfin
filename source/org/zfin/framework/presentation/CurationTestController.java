@@ -12,6 +12,7 @@ import org.zfin.repository.RepositoryFactory;
  * This Controller is used to pass a publication to the jsp page.
  */
 @Controller
+@RequestMapping("/devtool")
 public class CurationTestController {
 
     @RequestMapping("/gwt/modules")

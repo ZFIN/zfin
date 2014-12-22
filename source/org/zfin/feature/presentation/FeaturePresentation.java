@@ -12,7 +12,7 @@ import org.zfin.mutant.repository.FeaturePresentationBean;
  */
 public class FeaturePresentation extends EntityPresentation {
 
-    private static final String uri = "feature/feature-detail?zdbID=";
+    private static final String uri = "feature/view/";
     /**
      * Generates an html formatted Genotype name
      *

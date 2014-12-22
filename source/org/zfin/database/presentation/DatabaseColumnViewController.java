@@ -19,10 +19,10 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  * Controller that displays individual rows for a given db table.
  */
 @Controller
+@RequestMapping(value = "/database")
 public class DatabaseColumnViewController {
 
-    private static final Logger LOG = Logger.getLogger(DatabaseColumnViewController.class);
-    private static final String DELIMITER = "|";
+   private static final String DELIMITER = "|";
 
     @ModelAttribute("formBean")
     private DatabaseQueryFormBean getDefaultSearchForm() {
@@ -51,8 +51,7 @@ public class DatabaseColumnViewController {
     @RequestMapping(value = "/view-records/{table}")
     protected String showRecordsByGeneralNonPkValues(Model model,
                                                      @PathVariable("table") String table,
-                                                     @ModelAttribute("formBean") DatabaseQueryFormBean formBean,
-                                                     BindingResult bindingResult) {
+                                                     @ModelAttribute("formBean") DatabaseQueryFormBean formBean) {
         Table entityTable = Table.getEntityTableByTableName(table);
         Table baseTable = Table.getEntityTableByTableName(formBean.getBaseTable());
         DatabaseJdbcStatement statement = DatabaseService.createQueryFromFullForeignKeyHierarchy(formBean.getFullNodeName(), formBean.getColumnValue().get(0), entityTable, baseTable);
@@ -113,7 +112,7 @@ public class DatabaseColumnViewController {
         if (!table.hasDictionaryColumns() && !table.hasZdbDictionaryColumns())
             return null;
 
-        List<DictionaryValues> list = new ArrayList<DictionaryValues>(2);
+        List<DictionaryValues> list = new ArrayList<>(2);
         if (table.hasDictionaryColumns()) {
             addDictionaryValues(table, list, false);
         }
@@ -129,7 +128,7 @@ public class DatabaseColumnViewController {
         if (!table.hasForeignKeys())
             return null;
 
-        List<DictionaryValues> list = new ArrayList<DictionaryValues>(2);
+        List<DictionaryValues> list = new ArrayList<>(2);
         for (ForeignKey foreignKey : ForeignKey.getForeignTrueKeys(table)) {
             if (!foreignKey.isManyToManyRelationship())
                 addHistogram(foreignKey.getForeignKeyTable(), list, foreignKey.getForeignKey(), false, false);
@@ -138,7 +137,7 @@ public class DatabaseColumnViewController {
     }
 
     private void addDictionaryValues(Table table, List<DictionaryValues> list, boolean isZdbDictionary) {
-        List<String> dictionaryColumns = null;
+        List<String> dictionaryColumns;
         if (isZdbDictionary)
             dictionaryColumns = table.getZdbDictionaryColumns();
         else
@@ -196,7 +195,7 @@ public class DatabaseColumnViewController {
     public List<ForeignKeyResultFlattened> getFlattenedView(List<ForeignKeyResult> foreignKeyResults) {
         if (foreignKeyResults == null)
             return null;
-        List<ForeignKeyResultFlattened> flattenedList = new ArrayList<ForeignKeyResultFlattened>(foreignKeyResults.size());
+        List<ForeignKeyResultFlattened> flattenedList = new ArrayList<>(foreignKeyResults.size());
         addFlattenedRecords(foreignKeyResults, 0, flattenedList, null, null);
         return flattenedList;
     }
@@ -206,7 +205,7 @@ public class DatabaseColumnViewController {
      * ForeignKeyResult have children defined while for presentational purposes it is more convenient to have a
      * flat list with an indentation specifying the level of child relationship
      *
-     * @param foreignKeyResults
+     * @param foreignKeyResults FK result
      * @param level             level in hierarchy
      * @param flattenedList     flattened list
      * @param root              root FK
@@ -313,7 +312,7 @@ public class DatabaseColumnViewController {
     }
 
     private Map<Column, List<String>> createDataMap(List<String> metaData, List<List<String>> result, Table table) {
-        Map<Column, List<String>> dataMap = new TreeMap<Column, List<String>>(new Comparator<Column>() {
+        Map<Column, List<String>> dataMap = new TreeMap<>(new Comparator<Column>() {
             public int compare(Column col1, Column col2) {
                 if (col1.isPrimaryKey() && !col2.isPrimaryKey())
                     return -1;
@@ -328,9 +327,9 @@ public class DatabaseColumnViewController {
         });
         int index = 0;
         for (String columnName : metaData) {
-            List<String> columnData = new ArrayList<String>();
+            List<String> columnData = new ArrayList<>();
             if (result != null) {
-                columnData = new ArrayList<String>(result.size());
+                columnData = new ArrayList<>(result.size());
                 for (List<String> values : result) {
                     columnData.add(values.get(index));
                 }
@@ -400,7 +399,7 @@ public class DatabaseColumnViewController {
         else
             queryBuilder.append("* ");
 
-        List<ForeignKey> joinTables = new ArrayList<ForeignKey>(3);
+        List<ForeignKey> joinTables = new ArrayList<>(3);
         boolean independentJoin = false;
         for (String columnName : formBean.getColumnName()) {
             joinTables.addAll(ForeignKey.getJoinedForeignKeys(columnName, table));
@@ -440,7 +439,7 @@ public class DatabaseColumnViewController {
         else
             queryBuilder.append("* ");
 
-        List<ForeignKey> joinTables = new ArrayList<ForeignKey>(3);
+        List<ForeignKey> joinTables = new ArrayList<>(3);
         boolean independentJoin = false;
         for (String columnName : formBean.getColumnName()) {
             List<ForeignKey> joinedForeignKeys = ForeignKey.getJoinedForeignKeys(columnName, table);
@@ -526,7 +525,7 @@ public class DatabaseColumnViewController {
     private void createFromTableListNonPkQuery(StringBuilder queryBuilder, List<ForeignKey> joinTables) {
         if (joinTables == null || joinTables.size() == 0)
             return;
-        Set<Table> usedTables = new HashSet<Table>(joinTables.size());
+        Set<Table> usedTables = new HashSet<>(joinTables.size());
         for (ForeignKey foreignKey : joinTables) {
             Table foreignKeyTable = foreignKey.getForeignKeyTable();
             queryBuilder.append(foreignKeyTable.getTableName());
@@ -547,7 +546,7 @@ public class DatabaseColumnViewController {
     private void createFromTableList(StringBuilder queryBuilder, List<ForeignKey> joinTables) {
         if (joinTables == null || joinTables.size() == 0)
             return;
-        Set<Table> usedTables = new HashSet<Table>(joinTables.size());
+        Set<Table> usedTables = new HashSet<>(joinTables.size());
         for (ForeignKey foreignKey : joinTables) {
             Table foreignKeyTable = foreignKey.getForeignKeyTable();
             queryBuilder.append(foreignKeyTable.getTableName());

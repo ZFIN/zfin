@@ -25,7 +25,6 @@ import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
-import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.AddPublicationValidator;
 import org.zfin.publication.repository.PublicationRepository;
@@ -33,9 +32,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import javax.validation.Valid;
 
-import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
-import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Controller class that serves a figure summary page for a given antibody and labeling structure,
@@ -43,6 +40,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  * Optionally it serves figures with images only or all.
  */
 @Controller
+@RequestMapping("/antibody")
 public class AntibodyFigureSummaryController {
 
     private static final Logger LOG = Logger.getLogger(AntibodyFigureSummaryController.class);

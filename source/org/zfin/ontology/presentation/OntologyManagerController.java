@@ -12,7 +12,7 @@ import org.zfin.ontology.OntologyManager;
 @Controller
 public class OntologyManagerController {
 
-    @RequestMapping("/ontology/summary")
+    @RequestMapping("/devtool/ontology/summary")
     protected String handle(@ModelAttribute("formBean") OntologyBean form,
                             Model model) throws Exception {
 

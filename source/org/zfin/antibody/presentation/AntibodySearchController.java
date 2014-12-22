@@ -3,7 +3,6 @@ package org.zfin.antibody.presentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +22,7 @@ import javax.validation.Valid;
  * This class serves the antibody search page.
  */
 @Controller
+@RequestMapping("/antibody")
 public class AntibodySearchController {
 
     AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
@@ -48,7 +48,7 @@ public class AntibodySearchController {
         return formBean;
     }
 
-    @RequestMapping("/antibody-search")
+    @RequestMapping("/search")
     protected String showSearchForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Antibody Search");
         return "antibody/antibody-search-form.page";
@@ -60,9 +60,7 @@ public class AntibodySearchController {
 
     @RequestMapping(value = "/antibody-do-search", method = RequestMethod.GET)
     public String doSearch(Model model,
-                           @Valid @ModelAttribute("formBean") AntibodySearchFormBean antibodySearchFormBean,
-                           BindingResult result
-    ) throws Exception {
+                           @Valid @ModelAttribute("formBean") AntibodySearchFormBean antibodySearchFormBean) throws Exception {
         AntibodySearchCriteria antibodySearchCriteria = antibodySearchFormBean.getAntibodyCriteria();
         antibodySearchCriteria.setPaginationBean(antibodySearchFormBean);
         model.addAttribute(LookupStrings.FORM_BEAN, antibodySearchFormBean);

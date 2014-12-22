@@ -5,9 +5,8 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
@@ -16,19 +15,14 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MergeService;
-import org.zfin.infrastructure.presentation.DeleteRecordBean;
 import org.zfin.marker.presentation.MarkerRelationshipPresentation;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
@@ -39,7 +33,6 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.CurationPresentation;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.presentation.DBLinkPresentation;
@@ -53,23 +46,24 @@ import java.util.*;
  * 1. If there is a problem durint the
  */
 @Controller
+@RequestMapping("/infrastructure")
 public class DeleteRecordController {
 
     private Logger logger = Logger.getLogger(DeleteRecordController.class);
 
-    @RequestMapping(value ="/deleteRecord/{zdbIDToDelete}")
-    public String validateDelete (Model model
+    @RequestMapping(value = "/deleteRecord/{zdbIDToDelete}")
+    public String validateDelete(Model model
             , @PathVariable("zdbIDToDelete") String zdbIDToDelete
             , @ModelAttribute("formBean") DeleteRecordBean formBean
     ) throws Exception {
 
         formBean.setZdbIDToDelete(zdbIDToDelete);
 
-        String type = zdbIDToDelete.substring(4,8);
+        String type = zdbIDToDelete.substring(4, 8);
 
-        Marker marker = null;
+        Marker marker;
 
-        if (type.startsWith("ATB"))  {
+        if (type.startsWith("ATB")) {
             marker = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete());
             formBean.setRecordToDeleteViewString(marker.getAbbreviation());
             formBean.setZdbIDToDelete(marker.getZdbID());
@@ -77,11 +71,11 @@ public class DeleteRecordController {
             Set<ExpressionExperiment> expressionExperiments = ((Antibody) marker).getAntibodyLabelings();
             if (CollectionUtils.isNotEmpty(expressionExperiments)) {
                 int numExpression = expressionExperiments.size();
-                Set<String> pubs = new HashSet<String>();
+                Set<String> pubs = new HashSet<>();
                 for (ExpressionExperiment expressionExperiment : expressionExperiments) {
                     pubs.add(CurationPresentation.getLink(
-                            expressionExperiment.getPublication(),
-                            CurationPresentation.CurationTab.FX)
+                                    expressionExperiment.getPublication(),
+                                    CurationPresentation.CurationTab.FX)
                     );
                 }
                 String argString = "";
@@ -94,7 +88,7 @@ public class DeleteRecordController {
                 return "infrastructure/delete-record.page";
             }
 
-        }  else if (type.startsWith("ALT")) {
+        } else if (type.startsWith("ALT")) {
             Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(feature.getAbbreviation());
             formBean.setZdbIDToDelete(feature.getZdbID());
@@ -129,7 +123,7 @@ public class DeleteRecordController {
 
             // Can't delete the feature if it has more than 1 publications
             SortedSet<Publication> featurePublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForFeature(feature);
-            if(CollectionUtils.isNotEmpty(featurePublications) && featurePublications.size() > 1) {
+            if (CollectionUtils.isNotEmpty(featurePublications) && featurePublications.size() > 1) {
                 String argString = "";
                 for (Publication publication : featurePublications) {
                     argString = argString + "<a target=_blank href=/" + publication.getZdbID() + ">" + publication.getShortAuthorList() + "</a><br/>";
@@ -137,12 +131,12 @@ public class DeleteRecordController {
                 argString += "<br/>";
                 formBean.addError("Being associated with more than one publications: <br/>" + argString);
             }
-        }  else if (type.startsWith("COM")) {
+        } else if (type.startsWith("COM")) {
             Organization company = RepositoryFactory.getProfileRepository().getOrganizationByZdbID(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(company.getName());
             // Can't delete the company if it supplies antibody, clone etc.
             List<String> suppliedDataIds = RepositoryFactory.getProfileRepository().getSuppliedDataIds(company);
-            if(CollectionUtils.isNotEmpty(suppliedDataIds)) {
+            if (CollectionUtils.isNotEmpty(suppliedDataIds)) {
                 String argString = "";
                 for (String zdbId : suppliedDataIds) {
                     argString = argString + "<a target=_blank href=/" + zdbId + ">" + zdbId + "</a><br/>";
@@ -152,7 +146,7 @@ public class DeleteRecordController {
             }
             // Can't delete the company if it is a source of genetic feature etc.
             List<String> sourcedDataIds = RepositoryFactory.getProfileRepository().getSourcedDataIds(company);
-            if(CollectionUtils.isNotEmpty(sourcedDataIds)) {
+            if (CollectionUtils.isNotEmpty(sourcedDataIds)) {
                 String argString = "";
                 for (String zdbId : sourcedDataIds) {
                     argString = argString + "<a target=_blank href=/" + zdbId + ">" + zdbId + "</a><br/>";
@@ -160,12 +154,12 @@ public class DeleteRecordController {
                 argString += "<br/>";
                 formBean.addError("Being source of the following: <br/>" + argString);
             }
-        }  else if (type.startsWith("CRIS") || type.startsWith("MRPH") || type.startsWith("TALE")) {
+        } else if (type.startsWith("CRIS") || type.startsWith("MRPH") || type.startsWith("TALE")) {
             SequenceTargetingReagent sequenceTargetingReagent = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(sequenceTargetingReagent.getName());
             Set<Feature> featuresCreatedBySTR = RepositoryFactory.getFeatureRepository().getFeaturesCreatedBySequenceTargetingReagent(sequenceTargetingReagent);
             // Can't delete if used as a mutagen for a feature
-            if(CollectionUtils.isNotEmpty(featuresCreatedBySTR)) {
+            if (CollectionUtils.isNotEmpty(featuresCreatedBySTR)) {
                 String argString = "";
                 for (Feature feature : featuresCreatedBySTR) {
                     argString = argString + "<a target=_blank href=/" + feature.getZdbID() + ">" + feature.getAbbreviation() + "</a><br/>";
@@ -184,8 +178,8 @@ public class DeleteRecordController {
                 formBean.addError("Being used in environment: <br/>" + argString);
             }
             List<String> publicationListGO = RepositoryFactory.getPublicationRepository().getPublicationIDsForGOwithField(zdbIDToDelete);
-            SortedSet<Publication> sortedGOpubs = new TreeSet<Publication>();
-            for (String pubId: publicationListGO) {
+            SortedSet<Publication> sortedGOpubs = new TreeSet<>();
+            for (String pubId : publicationListGO) {
                 Publication publication = RepositoryFactory.getPublicationRepository().getPublication(pubId);
                 sortedGOpubs.add(publication);
             }
@@ -199,7 +193,7 @@ public class DeleteRecordController {
                 formBean.addError("Being used in  \"inferred from\" field of GO annotation in the following: <br/>" + argString);
             }
             List<Publication> publications = RepositoryFactory.getPublicationRepository().getPubsForDisplay(sequenceTargetingReagent.getZdbID());
-            SortedSet<Publication> sortedPublications = new TreeSet<Publication>();
+            SortedSet<Publication> sortedPublications = new TreeSet<>();
             for (Publication publication : publications) {
                 sortedPublications.add(publication);
             }
@@ -207,15 +201,15 @@ public class DeleteRecordController {
             if (CollectionUtils.isNotEmpty(sortedPublications)) {
                 formBean.addError(formatPublicationList(sortedPublications));
             }
-        }  else if (type.startsWith("EFG")) {
+        } else if (type.startsWith("EFG")) {
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             Marker efg = mr.getMarkerByID(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(efg.getAbbreviation());
-            Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
+            Set<MarkerRelationship.Type> types = new HashSet<>();
             types.add(MarkerRelationship.Type.PROMOTER_OF);
             types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
             Set<Marker> constructs = MarkerService.getRelatedMarker(efg, types);
-            SortedSet<Marker> sortedConstructs = new TreeSet<Marker>();
+            SortedSet<Marker> sortedConstructs = new TreeSet<>();
             for (Marker construct : constructs) {
                 sortedConstructs.add(construct);
             }
@@ -245,7 +239,7 @@ public class DeleteRecordController {
                 formBean.addError("Used in expression data: " + expressionFigureCount + " figure(s) of " + expressionPublicationCount + " publication(s) (see " + efg.getAbbreviation() + " page for details)<br/><br/>");
             }
             List<Publication> publications = RepositoryFactory.getPublicationRepository().getPubsForDisplay(efg.getZdbID());
-            SortedSet<Publication> sortedPublications = new TreeSet<Publication>();
+            SortedSet<Publication> sortedPublications = new TreeSet<>();
             for (Publication publication : publications) {
                 sortedPublications.add(publication);
             }
@@ -253,23 +247,23 @@ public class DeleteRecordController {
             if (CollectionUtils.isNotEmpty(sortedPublications)) {
                 formBean.addError(formatPublicationList(sortedPublications));
             }
-        }  else if (type.startsWith("GENO")) {
+        } else if (type.startsWith("GENO")) {
             Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(genotype.getName());
             formBean.setZdbIDToDelete(genotype.getZdbID());
             List<ExpressionResult> genoExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByGenotype(genotype);
             // Can't delete a genotype if it has expression data associated
             if (CollectionUtils.isNotEmpty(genoExpressionResults)) {
-                Set<ExpressionExperiment> expressionExperiments = new HashSet<ExpressionExperiment>();
+                Set<ExpressionExperiment> expressionExperiments = new HashSet<>();
                 for (ExpressionResult genoExpressionResult : genoExpressionResults) {
                     expressionExperiments.add(genoExpressionResult.getExpressionExperiment());
                 }
                 int numExpression = expressionExperiments.size();
-                Set<String> pubs = new HashSet<String>();
+                Set<String> pubs = new HashSet<>();
                 for (ExpressionExperiment expressionExperiment : expressionExperiments) {
                     pubs.add(CurationPresentation.getLink(
-                            expressionExperiment.getPublication(),
-                            CurationPresentation.CurationTab.FX)
+                                    expressionExperiment.getPublication(),
+                                    CurationPresentation.CurationTab.FX)
                     );
                 }
                 String argString = "";
@@ -281,8 +275,8 @@ public class DeleteRecordController {
                 formBean.addError("Being used in " + numExpression + " expression records in the following " + pubs.size() + " publication(s): <br/>" + argString);
             }
             List<String> publicationListGO = RepositoryFactory.getPublicationRepository().getPublicationIDsForGOwithField(zdbIDToDelete);
-            SortedSet<Publication> sortedGOpubs = new TreeSet<Publication>();
-            for (String pubId: publicationListGO) {
+            SortedSet<Publication> sortedGOpubs = new TreeSet<>();
+            for (String pubId : publicationListGO) {
                 Publication publication = RepositoryFactory.getPublicationRepository().getPublication(pubId);
                 sortedGOpubs.add(publication);
             }
@@ -298,7 +292,7 @@ public class DeleteRecordController {
             List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getMutantRepository().getPhenotypeStatementsByGenotype(genotype);
             // Can't delete a genotype if it has phenotypes associated
             if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
-                SortedSet<PhenotypeStatement> sortedPhenotypesForGenotype = new TreeSet<PhenotypeStatement>();
+                SortedSet<PhenotypeStatement> sortedPhenotypesForGenotype = new TreeSet<>();
                 for (PhenotypeStatement pheno : phenotypeStatements) {
                     sortedPhenotypesForGenotype.add(pheno);
                 }
@@ -324,7 +318,7 @@ public class DeleteRecordController {
             formBean.setRecordToDeleteViewString(journal.getName());
             SortedSet<Publication> publications = RepositoryFactory.getPublicationRepository().getPublicationForJournal(journal);
             // Can't delete the journal if there is any publication associated with it
-            if(CollectionUtils.isNotEmpty(publications)) {
+            if (CollectionUtils.isNotEmpty(publications)) {
                 formBean.addError(formatPublicationList(publications));
             }
         } else if (type.startsWith("LAB")) {
@@ -351,14 +345,14 @@ public class DeleteRecordController {
             if (CollectionUtils.isNotEmpty(people)) {
                 String argString = "";
                 for (PersonMemberPresentation labMember : people) {
-                    argString = argString + "<a target=_blank href=/action/alleles/" +  labMember.getZdbID() + ">" + labMember.getName() + "</a><br/>";
+                    argString = argString + "<a target=_blank href=/action/alleles/" + labMember.getZdbID() + ">" + labMember.getName() + "</a><br/>";
                 }
                 argString += "<br/>";
                 formBean.addError("Having lab members: <br/>" + argString);
             }
             // Can't delete the lab if it supplies antibody, clone etc.
             List<String> suppliedDataIds = RepositoryFactory.getProfileRepository().getSuppliedDataIds(lab);
-            if(CollectionUtils.isNotEmpty(suppliedDataIds)) {
+            if (CollectionUtils.isNotEmpty(suppliedDataIds)) {
                 String argString = "";
                 for (String zdbId : suppliedDataIds) {
                     argString = argString + "<a target=_blank href=/" + zdbId + ">" + zdbId + "</a><br/>";
@@ -368,7 +362,7 @@ public class DeleteRecordController {
             }
             // Can't delete the lab if it is a source of genetic feature etc.
             List<String> sourcedDataIds = RepositoryFactory.getProfileRepository().getSourcedDataIds(lab);
-            if(CollectionUtils.isNotEmpty(sourcedDataIds)) {
+            if (CollectionUtils.isNotEmpty(sourcedDataIds)) {
                 String argString = "";
                 for (String zdbId : sourcedDataIds) {
                     argString = argString + "<a target=_blank href=/" + zdbId + ">" + zdbId + "</a><br/>";
@@ -381,7 +375,7 @@ public class DeleteRecordController {
             formBean.setRecordToDeleteViewString(person.getFullName());
             Set<Lab> labs = person.getLabs();
             // Can't delete the person if associated with a lab
-            if(CollectionUtils.isNotEmpty(labs)) {
+            if (CollectionUtils.isNotEmpty(labs)) {
                 String argString = "";
                 for (Lab lab : labs) {
                     argString = argString + "<a target=_blank href=/" + lab.getZdbID() + ">" + lab.getName() + "</a><br/>";
@@ -391,19 +385,19 @@ public class DeleteRecordController {
             }
             Set<Publication> publications = person.getPublications();
             // Can't delete the person if associated with a publication
-            if(CollectionUtils.isNotEmpty(publications)) {
-                SortedSet<Publication> sortedPubs = new TreeSet<Publication>(publications);
+            if (CollectionUtils.isNotEmpty(publications)) {
+                SortedSet<Publication> sortedPubs = new TreeSet<>(publications);
                 formBean.addError(formatPublicationList(sortedPubs));
             }
-        }  else if (type.startsWith("REGI")) {
+        } else if (type.startsWith("REGI")) {
             Marker region = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbIDToDelete);
             formBean.setRecordToDeleteViewString(region.getAbbreviation());
-            Set<MarkerRelationship.Type> types = new HashSet<MarkerRelationship.Type>();
+            Set<MarkerRelationship.Type> types = new HashSet<>();
             types.add(MarkerRelationship.Type.PROMOTER_OF);
             types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
             types.add(MarkerRelationship.Type.CONTAINS_ENGINEERED_REGION);
             Set<Marker> constructs = MarkerService.getRelatedMarker(region, types);
-            SortedSet<Marker> sortedConstructs = new TreeSet<Marker>();
+            SortedSet<Marker> sortedConstructs = new TreeSet<>();
             for (Marker construct : constructs) {
                 sortedConstructs.add(construct);
             }
@@ -417,7 +411,7 @@ public class DeleteRecordController {
                 formBean.addError("Having relationships to construct: <br/>" + argString);
             }
             List<Publication> publications = RepositoryFactory.getPublicationRepository().getPubsForDisplay(region.getZdbID());
-            SortedSet<Publication> sortedPublications = new TreeSet<Publication>();
+            SortedSet<Publication> sortedPublications = new TreeSet<>();
             for (Publication publication : publications) {
                 sortedPublications.add(publication);
             }
@@ -425,7 +419,7 @@ public class DeleteRecordController {
             if (CollectionUtils.isNotEmpty(sortedPublications)) {
                 formBean.addError(formatPublicationList(sortedPublications));
             }
-        }  else {
+        } else {
             formBean.setRecordToDeleteViewString(zdbIDToDelete);
         }
 
@@ -433,17 +427,17 @@ public class DeleteRecordController {
         return "infrastructure/delete-record.page";
     }
 
-    @RequestMapping(value ="/record-deleted")
-    public String doDelete (Model model
-            ,@RequestParam(value = "zdbIDToDelete", required = true) String zdbID
-            ,@RequestParam(value = "removeFromTracking", required = false) String deleteFeatureTracking
-            ,  @ModelAttribute("formBean") DeleteRecordBean formBean
+    @RequestMapping(value = "/record-deleted")
+    public String doDelete(Model model
+            , @RequestParam(value = "zdbIDToDelete", required = true) String zdbID
+            , @RequestParam(value = "removeFromTracking", required = false) String deleteFeatureTracking
+            , @ModelAttribute("formBean") DeleteRecordBean formBean
     ) throws Exception {
-        String type = zdbID.substring(4,8);
+        String type = zdbID.substring(4, 8);
         Marker marker = null;
         Antibody antibody = null;
         String fieldName = "";
-        if (type.startsWith("ATB"))  {
+        if (type.startsWith("ATB")) {
             fieldName = "Antibody";
             marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
             formBean.setRecordToDeleteViewString(marker.getAbbreviation());
@@ -464,14 +458,14 @@ public class DeleteRecordController {
         } else if (type.startsWith("EFG") || type.startsWith("REGI")) {
             marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
             formBean.setRecordToDeleteViewString(marker.getAbbreviation());
-        }  else if (type.startsWith("GENO")) {
+        } else if (type.startsWith("GENO")) {
             Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbID);
             formBean.setRecordToDeleteViewString(genotype.getName());
             SortedSet<Publication> genoPublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForGenotype(genotype);
             // FB case 11678, provide link back to pub.
             if (CollectionUtils.isNotEmpty(genoPublications) && genoPublications.size() == 1)
                 formBean.setPublicationCurated((Publication) ((TreeSet) genoPublications).first());
-        }  else if (type.startsWith("JRNL")) {
+        } else if (type.startsWith("JRNL")) {
             Journal journal = RepositoryFactory.getPublicationRepository().getJournalByID(zdbID);
             formBean.setRecordToDeleteViewString(journal.getName());
         } else if (type.startsWith("LAB")) {
@@ -488,18 +482,18 @@ public class DeleteRecordController {
             HibernateUtil.createTransaction();
 
             // extra step for deleting antibody
-            if (type.startsWith("ATB"))  {
+            if (type.startsWith("ATB")) {
                 antibody = (Antibody) marker;
                 try {
-                    if(ZfinProperties.isPushToWiki()){
+                    if (ZfinProperties.isPushToWiki()) {
                         AntibodyWikiWebService.getInstance().dropPageIndividually(antibody.getAbbreviation());
                     }
                 } catch (Exception e) {
-                    logger.error("Failed to remove antibody: "+antibody,e);
+                    logger.error("Failed to remove antibody: " + antibody, e);
                 }
             }
 
-            if (type.startsWith("COMP") || type.startsWith("JRNL") || type.startsWith("LAB") || type.startsWith("PERS") || type.startsWith("PUB"))  {
+            if (type.startsWith("COMP") || type.startsWith("JRNL") || type.startsWith("LAB") || type.startsWith("PERS") || type.startsWith("PUB")) {
                 if (type.startsWith("PUB")) {
                     List<Figure> figures = RepositoryFactory.getPublicationRepository().getFiguresByPublication(zdbID);
                     for (Figure figure : figures) {
@@ -522,7 +516,7 @@ public class DeleteRecordController {
             HibernateUtil.currentSession().flush();
 
             // need to remove this from the session
-            if (type.startsWith("ATB"))  {
+            if (type.startsWith("ATB")) {
                 HibernateUtil.currentSession().evict(antibody);
             }
 
@@ -542,7 +536,7 @@ public class DeleteRecordController {
         } catch (Exception e) {
             logger.error("Can not delete " + formBean, e);
             HibernateUtil.rollbackTransaction();
-            formBean.addError("Can not delete " + formBean  + "<br>" + e.getMessage());
+            formBean.addError("Can not delete " + formBean + "<br>" + e.getMessage());
         }
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "record deleted");

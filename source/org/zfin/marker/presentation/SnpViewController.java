@@ -19,6 +19,7 @@ import java.util.List;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class SnpViewController {
 
     private Logger logger = Logger.getLogger(SnpViewController.class);

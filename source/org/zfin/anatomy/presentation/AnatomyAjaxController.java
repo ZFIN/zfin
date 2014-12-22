@@ -41,6 +41,7 @@ import java.util.List;
  * for a given anatomy term.
  */
 @Controller
+@RequestMapping("/ontology")
 public class AnatomyAjaxController {
 
     @Autowired
@@ -184,7 +185,7 @@ public class AnatomyAjaxController {
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
-        retrieveSequenecTargetingReagentData(term, form, true);
+        retrieveSequenceTargetingReagentData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "anatomy/show-phenotype-wildtype-morpholinos.ajax";
     }
@@ -256,7 +257,7 @@ public class AnatomyAjaxController {
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
-        retrieveSequenecTargetingReagentData(term, form, false);
+        retrieveSequenceTargetingReagentData(term, form, false);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "anatomy/show-phenotype-non-wildtype-morpholinos.ajax";
     }
@@ -302,7 +303,7 @@ public class AnatomyAjaxController {
 
         List<MarkerStatistic> markers = expressionMarkersResult.getPopulatedResults();
         form.setExpressedGeneCount(expressionMarkersResult.getTotalCount());
-        List<ExpressedGeneDisplay> expressedGenes = new ArrayList<ExpressedGeneDisplay>();
+        List<ExpressedGeneDisplay> expressedGenes = new ArrayList<>();
         if (markers != null) {
             for (MarkerStatistic marker : markers) {
                 ExpressedGeneDisplay expressedGene = new ExpressedGeneDisplay(marker);
@@ -358,7 +359,7 @@ public class AnatomyAjaxController {
         if (genotypes == null || ai == null)
             return null;
 
-        List<GenotypeStatistics> stats = new ArrayList<GenotypeStatistics>();
+        List<GenotypeStatistics> stats = new ArrayList<>();
         for (Genotype genoType : genotypes) {
             GenotypeStatistics stat = new GenotypeStatistics(genoType, ai, includeSubstructures);
             stats.add(stat);
@@ -375,7 +376,7 @@ public class AnatomyAjaxController {
      * @param form     form bean
      * @param wildtype wild type or not
      */
-    protected void retrieveSequenecTargetingReagentData(GenericTerm ai, AnatomySearchBean form, boolean wildtype) {
+    protected void retrieveSequenceTargetingReagentData(GenericTerm ai, AnatomySearchBean form, boolean wildtype) {
 
         PaginationResult<GenotypeExperiment> wildtypeMorphResults =
                 mutantRepository.getGenotypeExperimentSequenceTargetingReagents(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
@@ -396,7 +397,7 @@ public class AnatomyAjaxController {
         if (morpholinos == null || ai == null)
             return null;
 
-        List<SequenceTargetingReagentStatistics> stats = new ArrayList<SequenceTargetingReagentStatistics>();
+        List<SequenceTargetingReagentStatistics> stats = new ArrayList<>();
         for (GenotypeExperiment genoExp : morpholinos) {
             SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, ai);
             stats.add(stat);

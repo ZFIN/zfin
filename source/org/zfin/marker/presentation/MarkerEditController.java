@@ -15,6 +15,7 @@ import org.zfin.repository.RepositoryFactory;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class MarkerEditController {
 
     private static Logger logger = Logger.getLogger(MarkerEditController.class);

@@ -139,51 +139,6 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/expression/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/figure/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/phenotype/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/ontology/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/antibody/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/anatomy/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/marker/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/profile/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/reno/*</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>zfin</servlet-name>
         <servlet-class>org.zfin.framework.ZfinActionServlet</servlet-class>
@@ -376,72 +331,6 @@
     <servlet-mapping>
         <servlet-name>spring-ws</servlet-name>
         <url-pattern>/webservice/*</url-pattern>
-    </servlet-mapping>
-
-    <!--if we want to put additional stuff in, this is where we would put them-->
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/webapp/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/feature/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/quicksearch/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/search/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/genotype/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/mutant/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/unload/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/download/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/database/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/devtool/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/autocomplete/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfin</servlet-name>
-        <url-pattern>/action/dev-tools/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>zfinapp</servlet-name>
-        <url-pattern>/action/infrastructure/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

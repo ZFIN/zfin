@@ -24,6 +24,7 @@ import java.util.List;
  * 3) List all anatomy items.
  */
 @Controller
+@RequestMapping("/ontology")
 public class OntologySearchController {
 
     private static final Logger LOG = Logger.getLogger(OntologySearchController.class);
@@ -31,7 +32,7 @@ public class OntologySearchController {
     @Autowired
     private AnatomyRepository anatomyRepository;
 
-    @RequestMapping("/ontology-search")
+    @RequestMapping("/search")
     protected String showSearchForm(Model model,
                                     AnatomySearchBean form) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "AO / GO Search");

@@ -16,6 +16,7 @@ import org.zfin.repository.RepositoryFactory;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class SequenceViewController {
 
     private Logger logger = Logger.getLogger(SequenceViewController.class);

@@ -3,12 +3,12 @@ package org.zfin.feature.presentation;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.fish.presentation.Fish;
-import org.zfin.fish.presentation.FishBean;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.Genotype;
@@ -28,19 +28,73 @@ import static org.zfin.repository.RepositoryFactory.getFishRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 
-//@RequestMapping(value ="/genotype")
 @Controller
+@RequestMapping(value = "/genotype")
 public class GenotypeDetailController {
     private static final Logger LOG = Logger.getLogger(GenotypeDetailController.class);
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
 
-    @RequestMapping(value = {
-//            "/detail/{zdbID}", // TODO: go to a newer style once context is switched?
-            "/genotype-detail" // this is the current style, have not changed
+    @RequestMapping(value = {"/genotype-detail-popup"})
+    public String getGenotypePopup(@RequestParam String zdbID, Model model) {
+
+        LOG.debug("Start Genotype Detail Controller");
+        GenotypeBean form = new GenotypeBean();
+
+        if (zdbID.contains(",")) {
+            Fish fish = getFishRepository().getFish(zdbID);
+            form.setFishName(fish.getName());
+            ZfinEntity geno = fish.getGenotype();
+            Genotype genotype = mutantRepository.getGenotypeByID(geno.getID());
+            form.setGenotype(genotype);
+            retrieveGenotypeAndFeatureData(form, genotype);
+            retrieveMorpholinoData(form, fish);
+            model.addAttribute(LookupStrings.FORM_BEAN, form);
+            String genotypeName = genotype.getName();
+            genotypeName = genotypeName.replaceAll("<sup>", "^");
+
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
+
+            return "genotype/genotype-detail-popup.popup";
+        } else {
+            Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
+
+            if (genotype == null) {
+                String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+                if (replacedZdbID != null) {
+                    LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                    genotype = mutantRepository.getGenotypeByID(replacedZdbID);
+                } else {
+                    String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(zdbID);
+                    if (newZdbID != null) {
+                        LOG.debug("found a replaced zdbID for: " + zdbID + "->" + newZdbID);
+                        return "redirect:/ZDB-PUB-121121-2";
+                    }
+                }
+            }
+            if (genotype == null) {
+                model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+                return "record-not-found.popup";
+            }
+
+            form.setGenotype(genotype);
+            if (!genotype.isWildtype()) {
+                retrieveGenotypeAndFeatureData(form, genotype);
+
+            }
+
+            model.addAttribute(LookupStrings.FORM_BEAN, form);
+            String genotypeName = genotype.getName();
+            genotypeName = genotypeName.replaceAll("<sup>", "^");
+            genotypeName = genotypeName.replaceAll("</sup>", "");
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
+
+            return "genotype/genotype-detail-popup.popup";
+        }
     }
-    )
-    public String getGenotypeDetail(@RequestParam String zdbID, Model model) {
+
+    @RequestMapping(value = "/view/{zdbID}")
+    public String getGenotypeDetail(@PathVariable String zdbID, Model model) {
 
         LOG.debug("Start Genotype Detail Controller");
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
@@ -79,66 +133,6 @@ public class GenotypeDetailController {
         return "genotype/genotype-detail.page";
     }
 
-    @RequestMapping(value = {"/genotype-detail-popup"})
-    public String getGenotypePopup(@RequestParam String zdbID, Model model) {
-
-        LOG.debug("Start Genotype Detail Controller");
-        GenotypeBean form = new GenotypeBean();
-
-        if (zdbID.contains(",")){
-           Fish fish=getFishRepository().getFish(zdbID);
-            form.setFishName(fish.getName());
-           ZfinEntity geno=fish.getGenotype();
-           Genotype genotype=mutantRepository.getGenotypeByID(geno.getID());
-            form.setGenotype(genotype);
-            retrieveGenotypeAndFeatureData(form, genotype);
-            retrieveMorpholinoData(form,fish);
-            model.addAttribute(LookupStrings.FORM_BEAN, form);
-            String genotypeName = genotype.getName();
-            genotypeName = genotypeName.replaceAll("<sup>", "^");
-
-            model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
-
-            return "genotype/genotype-detail-popup.popup";
-        }
-        else{
-        Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
-
-        if (genotype == null) {
-            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
-            if (replacedZdbID != null) {
-                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
-                genotype = mutantRepository.getGenotypeByID(replacedZdbID);
-            } else {
-                String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(zdbID);
-                if (newZdbID != null) {
-                    LOG.debug("found a replaced zdbID for: " + zdbID + "->" + newZdbID);
-                    return "redirect:/ZDB-PUB-121121-2";
-                }
-            }
-        }
-        if (genotype == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return "record-not-found.popup";
-        }
-
-        form.setGenotype(genotype);
-        if (!genotype.isWildtype()) {
-            retrieveGenotypeAndFeatureData(form, genotype);
-
-        }
-
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        String genotypeName = genotype.getName();
-        genotypeName = genotypeName.replaceAll("<sup>", "^");
-        genotypeName = genotypeName.replaceAll("</sup>", "");
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
-
-        return "genotype/genotype-detail-popup.popup";
-        }
-    }
-
-
 
     @RequestMapping(value = {"/show_all_expression"})
     public String getAllExpressionsPerGenotype(@RequestParam String genoID, Model model) {
@@ -166,6 +160,7 @@ public class GenotypeDetailController {
         GenotypeStatistics genoStat = new GenotypeStatistics(genotype);
         form.setGenotypeStatistics(genoStat);
     }
+
     private void retrieveMorpholinoData(GenotypeBean form, Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return;
@@ -175,10 +170,10 @@ public class GenotypeDetailController {
     private List<SequenceTargetingReagent> getMorpholinos(Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return null;
-        Set<String> moIds = new HashSet<String>(fish.getMorpholinos().size());
+        Set<String> moIds = new HashSet<>(fish.getMorpholinos().size());
         for (ZfinEntity morpholino : fish.getMorpholinos())
             moIds.add(morpholino.getID());
-        List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(2);
+        List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<>(2);
         for (String moID : moIds)
             sequenceTargetingReagents.add(getMutantRepository().getMorpholinosById(moID));
         return sequenceTargetingReagents;

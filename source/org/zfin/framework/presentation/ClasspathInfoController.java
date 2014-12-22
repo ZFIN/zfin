@@ -2,7 +2,6 @@ package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -18,10 +17,11 @@ import java.util.StringTokenizer;
  * Action class retrieve classes used in the application.
  */
 @Controller
+@RequestMapping(value = "/devtool")
 public class ClasspathInfoController {
 
     @RequestMapping("/classpath-info")
-    public String showClassPathInfo(@ModelAttribute("formBean") ClasspathInfoBean formBean, Model model) throws ServletException {
+    public String showClassPathInfo(@ModelAttribute("formBean") ClasspathInfoBean formBean) throws ServletException {
 
         retrieveBootClasses(formBean);
         retrieveExtensionClasses(formBean);
@@ -45,7 +45,7 @@ public class ClasspathInfoController {
                     formBean.setErrorMessage("Class could not be found in the classpath");
                 }
                 if (successful) {
-                    Class<? extends Object> aClass = o.getClass();
+                    Class aClass = o.getClass();
                     formBean.setFullClassName(aClass.getName());
                     ClassLoader classLoader = aClass.getClassLoader();
                     formBean.setClassLoaderName(classLoader.getClass().getName());
@@ -60,7 +60,7 @@ public class ClasspathInfoController {
     }
 
     private List<ClassLibraryWrapper> createClassLoaderParents(ClassLoader classLoader) {
-        List<ClassLibraryWrapper> list = new ArrayList<ClassLibraryWrapper>();
+        List<ClassLibraryWrapper> list = new ArrayList<>();
         while (classLoader != null) {
             ClassLoader cl = classLoader.getParent();
             if (cl == null)
@@ -78,7 +78,7 @@ public class ClasspathInfoController {
         File webInf = new File(webDir, "WEB-INF");
         File classes = new File(webInf, "classes");
         File lib = new File(webInf, "lib");
-        List<ClassLibraryWrapper> fullList = new ArrayList<ClassLibraryWrapper>();
+        List<ClassLibraryWrapper> fullList = new ArrayList<>();
         ClassLibraryWrapper wrapper = new ClassLibraryWrapper();
         wrapper.setLibaryFileName(classes.getAbsolutePath());
         fullList.add(wrapper);
@@ -108,7 +108,7 @@ public class ClasspathInfoController {
     private List<ClassLibraryWrapper> createListOfJars(String bootClasspath) {
         String fileSeparator = System.getProperty("path.separator");
 
-        List<ClassLibraryWrapper> list = new ArrayList<ClassLibraryWrapper>();
+        List<ClassLibraryWrapper> list = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(bootClasspath, fileSeparator);
         while (tokenizer.hasMoreElements()) {
             ClassLibraryWrapper wrapper = new ClassLibraryWrapper();
@@ -124,7 +124,7 @@ public class ClasspathInfoController {
         if (!directory.exists()) {
             return null;
         } else {
-            List<ClassLibraryWrapper> list = new ArrayList<ClassLibraryWrapper>();
+            List<ClassLibraryWrapper> list = new ArrayList<>();
             String[] allFiles = directory.list();
             if (allFiles != null) {
                 for (String allFile : allFiles) {

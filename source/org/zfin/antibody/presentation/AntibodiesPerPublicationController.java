@@ -17,6 +17,7 @@ import java.util.List;
  * Controller to retrieve all antibodies per given publication.
  */
 @Controller
+@RequestMapping("/antibody")
 public class AntibodiesPerPublicationController {
 
 

@@ -13,10 +13,8 @@ import org.zfin.profile.repository.ProfileRepository;
 
 import java.util.List;
 
-/**
- * replaces companyselect.apg and companyprint.apg
- */
 @Controller
+@RequestMapping(value = "/profile")
 public class CompanySearchController {
 
     @Autowired
@@ -71,14 +69,5 @@ public class CompanySearchController {
         return "profile/list-all-organizations.page";
     }
 
-
-//    @RequestMapping(value = "/company/printable", method = RequestMethod.POST)
-//    public String companySearchPrintable(Model model) {
-//
-//        // pass in "type" and organizations
-//        model.addAttribute("type", Area.COMPANY.name());
-//        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Company Search" );
-//        return "profile/company-search.page" ;
-//    }
 
 }

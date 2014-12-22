@@ -12,14 +12,10 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * replaces personselect.apg and personprint.apg
- */
 @Controller
+@RequestMapping(value = "/profile")
 public class PersonSearchController {
 
     @Autowired

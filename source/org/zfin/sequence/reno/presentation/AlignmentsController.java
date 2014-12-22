@@ -14,6 +14,7 @@ import org.zfin.sequence.reno.RunCandidate;
  * Class AlignmentsController.
  */
 @Controller
+@RequestMapping(value = "/reno")
 public class AlignmentsController {
 
     private static Logger logger = Logger.getLogger(AlignmentsController.class);

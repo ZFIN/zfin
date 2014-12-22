@@ -18,6 +18,7 @@ import org.zfin.repository.RepositoryFactory;
 /**
  */
 @Controller
+@RequestMapping("/antibody")
 public class AntibodyViewController {
 
     private Logger logger = Logger.getLogger(AntibodyViewController.class);
@@ -25,7 +26,7 @@ public class AntibodyViewController {
     @Autowired
     private MarkerRepository markerRepository ;
 
-    @RequestMapping(value = "/antibody/view/{zdbID}")
+    @RequestMapping(value = "/view/{zdbID}")
     public String getAntibodyView(Model model
             , @PathVariable("zdbID") String zdbID
     ) throws Exception {

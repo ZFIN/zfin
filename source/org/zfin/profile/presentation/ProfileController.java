@@ -3,17 +3,15 @@ package org.zfin.profile.presentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.marker.presentation.MarkerViewController;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.repository.RepositoryFactory;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  */
 @Controller
+@RequestMapping(value = "/profile")
 public class ProfileController {
 
     @Autowired
@@ -25,12 +23,8 @@ public class ProfileController {
     @Autowired
     private CompanyController companyController;
 
-    @Autowired
-    private MarkerViewController markerViewController;
-
     @RequestMapping(value = "/view/{zdbID}", method = RequestMethod.GET)
-
-    public String viewProfile(@PathVariable String zdbID, Model model, @RequestHeader("User-Agent") String userAgent) {
+    public String viewProfile(@PathVariable String zdbID, Model model) {
         model.addAttribute("deleteURL", "/action/infrastructure/deleteRecord/" + zdbID);
         if (zdbID.startsWith("ZDB-LAB")) {
             return labController.viewLab(zdbID, model);
@@ -38,10 +32,8 @@ public class ProfileController {
             return companyController.viewCompany(zdbID, model);
         } else if (zdbID.startsWith("ZDB-PERS")) {
             return personController.viewPerson(zdbID, model);
-        } else {
-            // TODO: THIS IS HACK as this looks the same as marker in web.xml (and this gets read first).
-            return markerViewController.getAnyMarker(model, zdbID, userAgent);
         }
+        return null;
     }
 
 
@@ -58,8 +50,8 @@ public class ProfileController {
         }
     }
 
-    @RequestMapping(value="/help/international-characters")
-    public String getInternationalCharactersHelp(HttpServletRequest request){
+    @RequestMapping(value = "/help/international-characters")
+    public String getInternationalCharactersHelp() {
         return "international-characters.popup";
     }
 

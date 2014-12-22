@@ -464,14 +464,14 @@ document.write("        <a href=\"/@GBROWSE_PATH_FROM_ROOT@\">GBrowse</a> ");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-xpatselect.apg\" title=\"Search by gene, developmental stage, anatomy and other attributes\">Expression</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/action/antibody/antibody-search\" title=\"Search for antibodies by gene, labeled anatomy and other attributes\">Antibodies</a>");
+document.write("       <a href=\"/action/antibody/search\" title=\"Search for antibodies by gene, labeled anatomy and other attributes\">Antibodies</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 
 document.write("       <a href=\"/action/fish/search\">Mutants / Knockdowns / Tg</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("       <a href=\"/action/mutant/construct-search\">Constructs</a>");
+document.write("       <a href=\"/action/construct/search\">Constructs</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("      <a href=\"/action/ontology/ontology-search\" title=\"Search anatomy and gene ontology\">Anatomy / GO</a>");
+document.write("      <a href=\"/action/ontology/search\" title=\"Search anatomy and gene ontology\">Anatomy / GO</a>");
 document.write("      <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("       <a href=\"/@WEBDRIVER_PATH_FROM_ROOT@?MIval=aa-pubselect2.apg&select_from=PUBLICATION\" title=\"Search for zebrafish research publications by author, title or citation\">Publications</a>");
 document.write("       <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");

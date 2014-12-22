@@ -27,7 +27,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testAntibodySearchPageOk() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/antibody-search");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/antibody/search");
         assertEquals("ZFIN Antibody search", "ZFIN Antibody Search", page.getTitleText());
     }
 

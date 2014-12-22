@@ -30,6 +30,7 @@ import java.util.List;
 /**
  */
 @Controller
+@RequestMapping("/marker")
 public class TranscriptViewController {
 
     private Logger logger = Logger.getLogger(TranscriptViewController.class);

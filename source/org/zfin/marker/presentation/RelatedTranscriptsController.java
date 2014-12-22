@@ -10,6 +10,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.service.TranscriptService;
 
 @Controller
+@RequestMapping("/marker")
 public class RelatedTranscriptsController {
 
 

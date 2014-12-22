@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.ontology.Ontology;
@@ -14,15 +13,12 @@ import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.OntologyMetadata;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.DateUtil;
-import org.zfin.util.TermStageSplitStatement;
-
-import java.util.Date;
 
 /**
  * Controller that serves meta information about the ontologies.
  */
 @Controller
+@RequestMapping("/ontology")
 public class OntologyController {
 
     private static final Logger LOG = Logger.getLogger(OntologyController.class);

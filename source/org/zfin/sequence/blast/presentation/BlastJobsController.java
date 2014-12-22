@@ -8,6 +8,7 @@ import org.zfin.sequence.blast.BlastQueryThreadCollection;
 import org.zfin.sequence.blast.BlastStatistics;
 
 @Controller
+@RequestMapping(value = "/devtool")
 public class BlastJobsController {
 
 

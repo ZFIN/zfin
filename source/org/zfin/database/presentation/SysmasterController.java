@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.database.SysDatabase;
-import org.zfin.database.SysOpenDb;
 import org.zfin.database.SysSession;
 import org.zfin.database.repository.SysmasterRepository;
 
@@ -19,6 +18,7 @@ import java.util.Map;
  * Serves the summary of the database web page
  */
 @Controller
+@RequestMapping(value = "/database")
 public class SysmasterController {
 
     /**
@@ -60,7 +60,7 @@ public class SysmasterController {
     }
 
     public Map<String, String> getDbNameList() {
-        LinkedHashMap<String, String> dateList = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> dateList = new LinkedHashMap<>();
         List<SysDatabase> dbNames = SysmasterRepository.getAllDbNames();
         Collections.sort(dbNames);
         for (SysDatabase dbName : dbNames) {

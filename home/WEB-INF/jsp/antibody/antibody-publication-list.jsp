@@ -59,8 +59,8 @@
                         <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${formBean.antibody.zdbID}&rtype=antibody">
                             <font size=-1><b>Updated:</b>
                                 <c:choose>
-                                    <c:when test="${formBean.latestUpdate != null}">
-                                        <fmt:formatDate value="${formBean.latestUpdate.dateUpdated}"
+                                    <c:when test="${zfn:getLastUpdate(zdbID) != null}">
+                                        <fmt:formatDate value="${zfn:getLastUpdate(zdbID).dateUpdated}"
                                                         type="date"/>
                                     </c:when>
                                     <c:otherwise>

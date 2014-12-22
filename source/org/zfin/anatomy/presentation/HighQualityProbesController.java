@@ -7,7 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -22,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * Action class that serves the Thisse probes pages.
  */
 @Controller
+@RequestMapping("/ontology")
 public class HighQualityProbesController {
 
     private static Logger LOG = Logger.getLogger(HighQualityProbesController.class);
@@ -39,8 +39,10 @@ public class HighQualityProbesController {
 
         LOG.info("Start High Quality Probes Controller");
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return "";
+        if (term == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, "No term name found");
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
 
         anatomyForm.setAoTerm(term);
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
@@ -57,14 +59,16 @@ public class HighQualityProbesController {
 
     @RequestMapping(value = "/show-high-quality-probes-substructures/{zdbID}")
     public String showHighQualityProbesSubstructures(Model model,
-                                        @ModelAttribute("formBean") AnatomySearchBean anatomyForm,
-                                        @PathVariable("zdbID") String termID
+                                                     @ModelAttribute("formBean") AnatomySearchBean anatomyForm,
+                                                     @PathVariable("zdbID") String termID
     ) throws Exception {
 
         LOG.info("Start High Quality Probes Controller");
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return "";
+        if (term == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, "No term name found");
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
 
         anatomyForm.setAoTerm(term);
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
