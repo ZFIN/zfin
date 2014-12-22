@@ -115,15 +115,18 @@ public class RelatedDataService {
         }
         if (StringUtils.equals(category, Category.CONSTRUCT.getName())) {
             Marker marker = getMarkerRepository().getMarkerByID(id);
-            Set<Figure> figures = marker.getFigures();
-            if (CollectionUtils.isNotEmpty(figures)) {
-                Figure markerFigure = figures.iterator().next();
-                Image img = markerFigure.getImg();
-                if (img != null) {
-                    String link = "<a href=/" + img.getZdbID() + ">Construct Map</a>";
-                    links.add(link);
+            if (marker != null) {
+                Set<Figure> figures = marker.getFigures();
+                if (CollectionUtils.isNotEmpty(figures)) {
+                    Figure markerFigure = figures.iterator().next();
+                    Image img = markerFigure.getImg();
+                    if (img != null) {
+                        String link = "<a href=/" + img.getZdbID() + ">Construct Map</a>";
+                        links.add(link);
+                    }
                 }
             }
+
             links = sortLinks(links, constructRelatedDateCategories);
         }
         if (StringUtils.equals(category, Category.GENE.getName()))
