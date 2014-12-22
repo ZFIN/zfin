@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.properties.ZfinProperties;
@@ -54,10 +55,30 @@ public class TestConfiguration {
         SecurityContextHolder.setContext(security);
     }
 
+    public static void setAuthenticatedRootUser() {
+        SecurityContext security = new SecurityContextImpl();
+        AuthenticationManager manager = new MockAuthenticationManager(true);
+        Person person = createSecurityPerson();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(person, null);
+        manager.authenticate(authentication);
+        security.setAuthentication(authentication);
+        SecurityContextHolder.setContext(security);
+    }
+
     private static Person createNonSecurityPerson() {
         Person user = new Person();
         user.setZdbID("ZDB-PERS-060413-1");
         user.setShortName("Authenticated User");
+        return user;
+    }
+
+    private static Person createSecurityPerson() {
+        Person user = new Person();
+        user.setZdbID("ZDB-PERS-060413-1");
+        user.setShortName("Authenticated Root User");
+        AccountInfo info = new AccountInfo();
+        info.setRole(AccountInfo.Role.ROOT.toString());
+        user.setAccountInfo(info);
         return user;
     }
 

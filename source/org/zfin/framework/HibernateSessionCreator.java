@@ -63,7 +63,7 @@ public class HibernateSessionCreator implements FactoryBean {
         }
         // now add the others
         for (File configurationFile : hbmFiles) {
-            if (!configurationFile.getName().startsWith("filter.")) {
+            if (!configurationFile.getName().startsWith("filters.")) {
                 LOG.info("Loading Hibernate mapping file: " + configurationFile.getAbsolutePath());
                 try {
                     config.addFile(configurationFile);

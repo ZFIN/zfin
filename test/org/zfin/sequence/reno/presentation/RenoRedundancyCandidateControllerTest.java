@@ -55,7 +55,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
     @Before
     public void setUp() {
-        TestConfiguration.setAuthenticatedUser();
+        TestConfiguration.setAuthenticatedRootUser();
     }
 
     /**
@@ -425,6 +425,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
         }
 
         catch (Exception e) {
+            e.printStackTrace();
             fail(e.toString());
         }
         finally {
