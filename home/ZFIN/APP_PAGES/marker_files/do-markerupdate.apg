@@ -330,35 +330,9 @@ marker.<?/MIVAR>
   <!-- Special case for checking new sequence db link -->
   <?MIBLOCK COND="$(EC,$attr_type,special-check-newseqnum)">
     <?MIVAR NAME=$MI_NOVALUE><?/MIVAR>
-	<?MISQL SQL="
-	       select dblink_zdb_id
-             from marker_relationship, db_link
-	          where
-            mrel_mrkr_1_zdb_id ='$OID'
-              and
-            mrel_mrkr_2_zdb_id = dblink_linked_recid
-              and
-            dblink_acc_num = '$new_value'
-              and
-	        dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
-              and
-                mrel_type <> 'gene produces transcript'
-	  UNION
-           select dblink_zdb_id
-             from db_link
-	         where
-            dblink_linked_recid = '$OID'
-              and
-            dblink_acc_num = '$new_value'
-              and
-	        dblink_fdbcont_zdb_id = '$fdbcont_zdb_id'
-              ">
-       <?/MISQL>
-       <?MIBLOCK COND="$(NC,$1,)">
-           <SCRIPT>
- 	   			window.alert('The GenBank accession is already associated with this marker, or a marker that is related.');
-	       </SCRIPT>
-       <?MIELSE>
+
+
+
 
           <?MIVAR NAME=markerlist><?/MIVAR>
 	      <?MISQL SQL="
@@ -382,19 +356,18 @@ marker.<?/MIVAR>
                          "[$markerlist] in another database. Do you want to proceed?";
 	        	if (confirm(msg)){
 		   			location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value=$old_value&new_value=$new_value&target_table=$target_table&fdbcont_super=$fdbcont_super&fdbcont_data=$fdbcont_data');
-		   			return true;
+
 		   			}
-		   			else{
-		   			return false;
-		   			}
+
 
 
 	      	   </SCRIPT>
              <?/MIVAR>
+             <?MIVAR NAME=$donecheck><?/MIVAR>
 	  	  <?MIELSE>
              <?MIVAR NAME=$donecheck><?/MIVAR>
 	      <?/MIBLOCK> <?MICOMMENT>end of if markerlist exists<?/MICOMMENT>
-      <?/MIBLOCK>  <?MICOMMENT>end of if dblink_zdb_id exists<?/MICOMMENT>
+
    <?/MIBLOCK>
 
   <!-- Special case for adding new sequence db link -->
