@@ -19,7 +19,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/zf_info/dbase/PAPERS
 
-SUBDIRS = CurrentDataModel WWW6 Web97 Webnet97 ZFIN_DataModel sdb
+SUBDIRS =  WWW6 Web97 Webnet97 sdb
 
 # The chi97_nav_workshop.html file is historic and not linked by anyone.
 
