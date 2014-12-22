@@ -20,7 +20,7 @@ import java.util.List;
  * This class serves the phenotype summary page.
  */
 @Controller
-@RequestMapping("/construct")
+@RequestMapping("/mutant")
 public class ConstructExpressionController {
 
     @ModelAttribute("formBean")

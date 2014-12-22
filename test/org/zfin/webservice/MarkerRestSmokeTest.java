@@ -34,7 +34,7 @@ public class MarkerRestSmokeTest extends AbstractDatabaseTest{
     @Before
     public void setUp(){
         init();
-        BASE_URL = ZfinPropertiesEnum.NON_SECURE_HTTP.toString()+ZfinPropertiesEnum.DOMAIN_NAME.toString() + "/webapp";
+        BASE_URL = ZfinPropertiesEnum.NON_SECURE_HTTP.toString()+ZfinPropertiesEnum.DOMAIN_NAME.toString() + "/action";
         restTemplate = new RestTemplate();
     }
 

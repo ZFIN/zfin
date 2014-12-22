@@ -196,7 +196,7 @@
    </h3>
    <ul>
        <script type="text/javascript">
-        jQuery.get( '/webapp/wiki/summary/news?length=2', {}, function(data){
+        jQuery.get( '/action/wiki/summary/news?length=2', {}, function(data){
             document.getElementById('news').innerHTML = data ;
         });
        </script>

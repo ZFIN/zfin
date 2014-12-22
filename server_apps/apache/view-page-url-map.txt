@@ -11,7 +11,7 @@ EFG	/action/marker/view/ZDB-EFG
 EST	/action/marker/view/ZDB-EST
 ETCONSTRCT	/action/marker/view/ZDB-ETCONSTRCT
 EXP	/action/expression/experiment?id=ZDB-EXP
-FIG	/action/figure/figure-view/ZDB-FIG
+FIG	/action/figure/view/ZDB-FIG
 FOSMID	/action/marker/view/ZDB-FOSMID
 GENE	/action/marker/view/ZDB-GENE
 GENEFAMILY	/action/marker/view/ZDB-GENEFAMILY

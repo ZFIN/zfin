@@ -24,7 +24,7 @@ import java.util.List;
  * Controller class that serves the site search index page.
  */
 @Controller
-
+@RequestMapping("/unload")
 public class DownloadsArchiveController {
 
     private static final Logger LOG = Logger.getLogger(DownloadsArchiveController.class);
