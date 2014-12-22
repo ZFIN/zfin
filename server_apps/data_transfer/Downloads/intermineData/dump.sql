@@ -202,7 +202,7 @@ update tmp_pato
        	      	      where mfs_genox_zdb_id = genox_id);
 
 update tmp_pato
- set clean = 't'
+ set clean = 'f'
  where clean is null;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_phenotypes/1apato.txt"
