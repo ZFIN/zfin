@@ -1604,7 +1604,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<PreviousNameLight> getPreviousNamesLight(final Marker gene) {
         String sql = "  " +
-                " select da.dalias_alias, ra.recattrib_source_zdb_id, da.dalias_zdb_id " +
+                " select '<i>'||da.dalias_alias||'</i>', ra.recattrib_source_zdb_id, da.dalias_zdb_id " +
                 "    from data_alias da " +
                 "    join alias_group ag on da.dalias_group_id=ag.aliasgrp_pk_id " +
                 "    left outer join record_attribution ra on ra.recattrib_data_zdb_id=da.dalias_zdb_id  " +
@@ -2225,7 +2225,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql = " select m.mrkr_abbrev, m.mrkr_zdb_id, m.mrkr_abbrev_order, mt.mrkrtype_type_display, " +
                 "mrt.mreltype_2_to_1_comments, " +
-                "'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
+                "'<i>'||'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>'||'</i>' , " +
                 "ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "src.srcurl_url, src.srcurl_display_text , mrct.mrel_zdb_id   " +
                 "from marker_relationship mrgt " +
@@ -2352,7 +2352,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         Marker targetGene = (Marker) tuple[0];
                         TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
                         targetGeneSuggestionList.setId(targetGene.getZdbID());
-                        targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
+                       targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
                         targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
                         return targetGeneSuggestionList;
                     }

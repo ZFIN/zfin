@@ -25,7 +25,13 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
         returnObject.setAbbreviationOrder(tuple[2].toString());
         returnObject.setMarkerType(tuple[3].toString());
         returnObject.setRelationshipType(tuple[4].toString());
-        returnObject.setLink(tuple[5].toString());
+        if(tuple[3].toString().equalsIgnoreCase("Gene")) {
+            returnObject.setLink("<i>" + tuple[5].toString() + "</i>");
+        }
+        else {
+            returnObject.setLink(tuple[5].toString() );
+        }
+
         if (tuple[6] != null) {
             returnObject.addAttributionZdbID(tuple[6].toString());
         }
