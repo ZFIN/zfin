@@ -49,7 +49,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
 
     @Test
     public void retrieveTermByOboID() throws Exception {
-        request.setRequestURI("/term-detail/GO:0032502");
+        request.setRequestURI("/ontology/term-detail/GO:0032502");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         assertEquals("ontology/ontology-term.page", mav.getViewName());
@@ -58,7 +58,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
     @Test
     public void retrieveTermByTermID() throws Exception {
         // presumptive forebrain midbrain boundary
-        request.setRequestURI("/term-detail/ZDB-TERM-100331-1323");
+        request.setRequestURI("/ontology/term-detail/ZDB-TERM-100331-1323");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         assertEquals("ontology/ontology-term.page", mav.getViewName());
@@ -73,7 +73,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
     @Test
     public void retrieveTermByAnatomyID() throws Exception {
         // Rohon-Beard neuron
-        request.setRequestURI("/term-detail/ZDB-ANAT-010921-407");
+        request.setRequestURI("/ontology/term-detail/ZDB-ANAT-010921-407");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         // redirect to Rohon-Beard neurons
