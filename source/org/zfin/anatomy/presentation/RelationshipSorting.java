@@ -22,8 +22,10 @@ public class RelationshipSorting implements Comparator<String> {
     public static final String IS_A_TYPE_OF = "is a type of";
     public static final String START = "start";
     public static final String END = "end";
+    public static final String START_IN_STAGE = "structure starts during stage";
+    public static final String END_IN_STAGE = "structure ends during stage";
 
-    public static final HashMap<String, Integer> order = new HashMap<String, Integer>(6);
+    public static final HashMap<String, Integer> order = new HashMap<String, Integer>(8);
     {
             order.put(DEVELOPS_FROM, 1);
             order.put(DEVELOPS_INTO, 2);
@@ -31,6 +33,8 @@ public class RelationshipSorting implements Comparator<String> {
             order.put(HAS_PARTS, 4);
             order.put(IS_A_TYPE_OF, 5);
             order.put(HAS_SUBTYPE, 6);
+            order.put(START_IN_STAGE, 7);
+            order.put(END_IN_STAGE, 8);
     }
 
     public int compare(String relationTypeOne, String relationTypeTwo) {

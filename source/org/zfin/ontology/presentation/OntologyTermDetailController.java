@@ -141,7 +141,6 @@ public class OntologyTermDetailController {
         }
 
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
-        Collections.sort(termRelationships);
 
         SectionVisibility sectionVisibility = form.getSectionVisibility();
         if (sectionVisibility.isVisible(OntologyBean.Section.EXPRESSION)) {
@@ -203,14 +202,7 @@ public class OntologyTermDetailController {
             return "record-not-found.popup";
         }
 
-        List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTerms(term);
-        Collections.sort(termRelationships);
-
-        /*form.setTermRelationships(termRelationships);
-        form.setTerm(term);
-        model.addAttribute("formBean", form);*/
-        //model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getTermName());
-
+        List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
 
         model.addAttribute("term", term);
         model.addAttribute("termRelationships", termRelationships);

@@ -65,6 +65,21 @@
             <td id="term-definition">${term.definition}</td>
         </tr>
 
+        <c:if test="${term.ontology.ontologyName == 'zebrafish_anatomy'}">
+            <tr>
+                <th>Appears&nbsp;at:</th>
+                <td>
+                    <zfin:link entity="${term.start}" longVersion="true"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Evident&nbsp;until:</th>
+                <td>
+                    <zfin:link entity="${term.end}" longVersion="true"/>
+                </td>
+            </tr>
+        </c:if>
+
         <tr>
             <th>Ontology:</th>
             <td id="ontology-name">${term.ontology.commonName} [${term.oboID}]
