@@ -847,8 +847,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(geneProductsBean);
         assertEquals(1, geneProductsBean.size());
         assertEquals("Q90477", geneProductsBean.get(0).getAccession());
-        assertTrue(geneProductsBean.get(0).getComment().startsWith("FUNCTION"));
-        assertTrue(geneProductsBean.get(0).getComment().endsWith("domain."));
 
         List<GeneProductsBean> geneProductsBean2 = markerRepository.getGeneProducts("ZDB-GENE-000405-1");
         assertNotNull(geneProductsBean2);
