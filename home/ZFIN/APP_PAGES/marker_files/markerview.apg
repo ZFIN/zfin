@@ -18,7 +18,6 @@ statement.  See discussion of the MIqry2pass variable in the Web
 Datablade documentation.
 
 Recent changes:
-for SNP display
 for antibody: antibody subsection added at the end of gene product section.
 for antibody: added meta redirect at the beginning and the end of the file.
 <?/MICOMMENT>
@@ -181,9 +180,6 @@ function jump(form_select){
   <?/MISQL>
   <?MIVAR COND="$(>,$MI_ROWCOUNT,0)" NAME=type_of_genedom>t<?/MIVAR>
   <?MIVAR COND="$(>,$(POSITION,$marker_type,CONSTRCT),0)" NAME=type_of_construct>t<?/MIVAR>
-
-  <?MICOMMENT>For now, curators are not permitted to update SNP's, so setting a flag here <?/MICOMMENT>
-  <?MIVAR COND="$(EC,$marker_type,SNP)" NAME=mrkrview_no_update>t<?/MIVAR>
 
   <?MISQL SQL="
 	select 't'
@@ -610,17 +606,6 @@ function jump(form_select){
       </b></FONT>
     </td></tr>
  <?/MIVAR>
-<?MICOMMENT>Adding allele variant display for SNP's<?/MICOMMENT>
-<?MIBLOCK COND="$(EC,$marker_type,SNP)">
-       <?MISQL SQL="select seq_variation from snp_sequence where seq_mrkr_zdb_id='$OID'"><?/MISQL>
-        <?MIVAR NAME=$marker_variant>$1<?/MIVAR>
-       <tr><td>
-        <FONT size=+1><b>
-           Variant Allele:<?MIVAR>$marker_variant<?/MIVAR></b></FONT>
-        </td></tr>
-<?/MIBLOCK>
-
-
 </table>
 
 
@@ -940,35 +925,6 @@ Only need to update clones, etc., which should be the only things that will have
           <b>Sequence:</b>
         </td>
 
-    <br> <?MICOMMENT> SNP sequence display is slightly different from others marker types <?/MICOMMENT>
-   <?MIBLOCK COND="$(NC,$marker_type,SNP)">
-        <td>
-          <?MIVAR>&nbsp;5' - $mrkrview_sequence - 3'<?/MIVAR>
-          <?MISQL SQL="select WebExplode(object,'dataId=$OID&type=recattrib') from webPages where ID='aa-miniref_display.apg';">$1<?/MISQL>
-
-          <?MIVAR>
-          <?MICOMMENT>
-          <script type="text/javascript">
-                    <!--new Ajax.Updater('blastDropDown','/action/blast/include-external-blast?zdbID=$OID');-->
-            jQuery('#blastDropDown').load('/action/blast/include-external-blast?zdbID=$OID');
-           </script>
-           <div id="blastDropDown"></div>
-          <?/MICOMMENT>
-             &nbsp;  <input type=button value="BLAST IT" onClick="window.open('$(CONCAT,$ncbi_blast_url,$mrkrview_sequence,$blast_option)');">
-          <?/MIVAR>
-        </td>
-      </tr>
-   <?MIELSE>
-     <?MISQL SQL="
-            select db.blastdb_path from blast_database db
-            where
-            db.blastdb_name like 'SNPBLAST'
-         ">
-       <?MIVAR NAME=fdb_url_snpblast>$1<?/MIVAR>
-     <?/MISQL>
-     <?MICOMMENT>
-     No default snip set here.
-     <?/MICOMMENT>
         <?MIVAR NAME="zfin_url_blastn">/action/blast/blast?&program=blastn&sequenceType=nt&shortAndNearlyExact=true&queryType=FASTA&expectValue=1e-10&dataLibraryString=RNASequences&querySequence=<?/MIVAR>
     <td>&nbsp;</td>
     </tr>
@@ -985,9 +941,6 @@ Only need to update clones, etc., which should be the only things that will have
         <tr bgcolor="#EEEEEE"><td><?MIVAR>$(SUBSTR,$mrkrview_sequence,$(+,$mrkrview_seq_start,1)) <?/MIVAR>
 </td> <td>&nbsp;</td></tr>
          <tr bgcolor="#EEEEEE"><td>
-         <font size=-1>
-           &nbsp<i>(SNP highlighted)</i>
-         </font>
     </td>
     <td><SELECT NAME="select_tool" onChange="return jump(this);">
             <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
@@ -2603,7 +2556,6 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 
   <?MIVAR>$(UNSETVAR,dblink_other)<?/MIVAR>
 
-              <?MIVAR NAME=$snp_ensembl_accnum><?/MIVAR>
               <?MIVAR NAME=$type_of_clone><?/MIVAR>
 
 
@@ -2658,7 +2610,6 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
                        from db_link
                        where dblink_linked_recid='$OID'
                        and dblink_fdbcont_zdb_id='ZDB-FDBCONT-040826-2'">
-              <?MIVAR NAME=$snp_ensembl_accnum>$1<?/MIVAR>
           <?/MISQL>
 
           <?MISQL SQL="select fdb_db_name,fdb_db_query from foreign_db where fdb_db_name ='Ensembl_Clone'">
