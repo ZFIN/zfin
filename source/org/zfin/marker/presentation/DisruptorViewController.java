@@ -44,7 +44,7 @@ public class DisruptorViewController {
     public DisruptorViewController() {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository()
                 .getZebrafishSequenceReferenceDatabase(ForeignDB.AvailableName.PUBRNA, ForeignDBDataType.DataType.RNA);
-        databases = referenceDatabase.getRelatedBlastDbs();
+        databases = referenceDatabase.getOrderedRelatedBlastDB();
     }
 
     @RequestMapping(value = "/disruptor/view/{zdbID}")
