@@ -75,7 +75,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         DTOConversionServiceTest.class,
         CurationRPCTest.class,
         DatabaseServiceDbTest.class,
-        DbLinkDisplayComparatorTest.class,
         DisplayGroupRepositoryTest.class,
         DTOConversionServiceTest.class,
         ExpressionRepositoryTest.class,

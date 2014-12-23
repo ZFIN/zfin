@@ -35,6 +35,7 @@ import org.zfin.infrastructure.SerializationTests;
 import org.zfin.infrastructure.TrieMapTest;
 import org.zfin.infrastructure.ant.ReportConfigurationTest;
 import org.zfin.marker.MergeMarkerUnitTest;
+import org.zfin.marker.presentation.DbLinkDisplayComparatorTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.PhenotypeStatementTest;
@@ -84,6 +85,7 @@ import org.zfin.util.*;
 //        BtsContainsServiceTest.class,
         CurationExperimentTest.class,
         DatabaseServiceTest.class,
+        DbLinkDisplayComparatorTest.class,
         DbScriptFileParserTest.class,
         EntityPresentationTest.class,
         EnvironmentDTOTest.class,
