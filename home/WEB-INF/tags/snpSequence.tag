@@ -56,7 +56,7 @@
                 <div id="${blastLinkPopup}" class="analysis_tools_box_popup_box">
                     <a href="${markerBean.ncbiBlastUrl}${markerBean.sequence.sequence}">NCBI BLAST</a>
                     <br>
-                    <a href="/action/blast/blast?&program=blastn&sequenceType=nt&queryType=FASTA&expectValue=1e-10&dataLibraryString=RNASequences&querySequence=${markerBean.sequence.sequence}">ZFIN
+                    <a href="/action/blast/blast?&program=blastn&sequenceType=nt&queryType=FASTA&shortAndNearlyExact=true&expectValue=1e-10&dataLibraryString=RNASequences&querySequence=${markerBean.sequence.sequence}">ZFIN
                         BLAST</a>
                     <br>
                 </div>

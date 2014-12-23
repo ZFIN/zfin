@@ -969,7 +969,7 @@ Only need to update clones, etc., which should be the only things that will have
      <?MICOMMENT>
      No default snip set here.
      <?/MICOMMENT>
-        <?MIVAR NAME="zfin_url_blastn">/action/blast/blast?&program=blastn&sequenceType=nt&queryType=FASTA&expectValue=1e-10&dataLibraryString=RNASequences&querySequence=<?/MIVAR>
+        <?MIVAR NAME="zfin_url_blastn">/action/blast/blast?&program=blastn&sequenceType=nt&shortAndNearlyExact=true&queryType=FASTA&expectValue=1e-10&dataLibraryString=RNASequences&querySequence=<?/MIVAR>
     <td>&nbsp;</td>
     </tr>
     <tr><td>&nbsp;</td>
