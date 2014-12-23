@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.*;
@@ -166,8 +167,14 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                     return;
                 }
 
-                if(!Window.confirm(getConfirmationMessage(attributionToRemoveID, attributionToRemoveLabel))) {
-                    return ;
+                String cannotRemove = getCannotRemoveMessage(attributionToRemoveID, attributionToRemoveLabel);
+                if (StringUtils.isNotEmpty(cannotRemove)) {
+                    Window.alert(cannotRemove);
+                    return;
+                }
+
+                if (!Window.confirm(getConfirmationMessage(attributionToRemoveID, attributionToRemoveLabel))) {
+                    return;
                 }
 
                 working();
@@ -198,20 +205,12 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         });
     }
 
-    private String getConfirmationMessage(String attributionToRemoveID, String attributionToRemoveLabel) {
-        // the default message
-        String removeAttrPopupPrompt = "Are you sure you want to delete: " + attributionToRemoveLabel;
-
-        // when the related entity is a genotype and there is only one publication associated with it
-        if (attributionToRemoveID.startsWith("ZDB-GENO-") && relatedEntityDTOs.get(attributionToRemoveID).getAssociatedPublications().size() == 1) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("This is the last publication associated with ").append(attributionToRemoveLabel).append(".\nTo delete ")
-                    .append(attributionToRemoveLabel).append(", click Cancel and use the interface on the Genotype tab. To remove pub from genotype, click OK.");
-            removeAttrPopupPrompt = sb.toString();
+    private String getCannotRemoveMessage(String attributionToRemoveID, String attributionToRemoveLabel) {
+        String message = null;
 
         // when a morpholino has a targeted gene attribution or an alias attribution in addition to the
         // direct attribution that is being removed.
-        } else if (relatedEntityDTOs.get(attributionToRemoveID) instanceof MarkerDTO) {
+        if (relatedEntityDTOs.get(attributionToRemoveID) instanceof MarkerDTO) {
             boolean stillAttributed = false;
             MarkerDTO markerDTO = (MarkerDTO) relatedEntityDTOs.get(attributionToRemoveID);
             if (markerDTO.getTargetedGeneAttributes() != null) {
@@ -231,12 +230,26 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                 }
             }
             if (stillAttributed) {
-                removeAttrPopupPrompt = attributionToRemoveLabel + " is being removed from attribution " +
-                        "to this pub, but it is still being used to attribute other data on " +
-                        attributionToRemoveLabel + ". To completely dissociate this pub from " +
-                        attributionToRemoveLabel + ", go to the " + attributionToRemoveLabel + " page " +
-                        "and remove the remaining attributions to this pub.";
+                message = "This pub is still being used to attribute other data on " + attributionToRemoveLabel +
+                        " such as target gene, sequence, or alias, so it cannot be removed from this pub. To" +
+                        " dissociate this pub from " + attributionToRemoveLabel + ", you must first go to the " +
+                        attributionToRemoveLabel + " page and remove those remaining attributions.";
             }
+        }
+
+        return message;
+    }
+
+    private String getConfirmationMessage(String attributionToRemoveID, String attributionToRemoveLabel) {
+        // the default message
+        String removeAttrPopupPrompt = "Are you sure you want to delete: " + attributionToRemoveLabel;
+
+        // when the related entity is a genotype and there is only one publication associated with it
+        if (attributionToRemoveID.startsWith("ZDB-GENO-") && relatedEntityDTOs.get(attributionToRemoveID).getAssociatedPublications().size() == 1) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("This is the last publication associated with ").append(attributionToRemoveLabel).append(".\nTo delete ")
+                    .append(attributionToRemoveLabel).append(", click Cancel and use the interface on the Genotype tab. To remove pub from genotype, click OK.");
+            removeAttrPopupPrompt = sb.toString();
         }
         return removeAttrPopupPrompt;
     }
