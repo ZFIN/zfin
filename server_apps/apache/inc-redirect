@@ -155,6 +155,11 @@ RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-newm
 RewriteCond %{QUERY_STRING}     ^record=JUMPTOXPAT$    [NC]
 RewriteRule ^/cgi-bin/ZFIN_jump /<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-xpatselect.apg [NC,R=301]
 
+RewriteRule ^/action/ontology/ontology-search /action/ontology/search [NC,R=301]
+
+RewriteRule ^/action/mutant/construct-search /action/construct/search [NC,R=301]
+
+RewriteRule ^/action/antibody/antibody-search /action/antibody/search [NC,R=301]
 
 # normal ZFIN_jump requests
 RewriteCond %{QUERY_STRING}     ^record=([\w-0-9:]+)$    [NC]
