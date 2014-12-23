@@ -20,6 +20,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
@@ -1797,5 +1798,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String abstractText = abstracts.get(0);
 
         return abstractText;
+    }
+
+    public void deletePublicationAndFigures(String publicationZdbID) {
+        InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+        List<Figure> figures = getFiguresByPublication(publicationZdbID);
+        for (Figure figure : figures) {
+            Set<Image> images = figure.getImages();
+            for (Image image : images) {
+                infrastructureRepository.deleteActiveDataByZdbID(image.getZdbID());
+            }
+            infrastructureRepository.deleteActiveDataByZdbID(figure.getZdbID());
+        }
+        infrastructureRepository.deleteActiveSourceByZdbID(publicationZdbID);
     }
 }

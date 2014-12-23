@@ -74,8 +74,8 @@ public class DeleteRecordController {
                 Set<String> pubs = new HashSet<>();
                 for (ExpressionExperiment expressionExperiment : expressionExperiments) {
                     pubs.add(CurationPresentation.getLink(
-                                    expressionExperiment.getPublication(),
-                                    CurationPresentation.CurationTab.FX)
+                            expressionExperiment.getPublication(),
+                            CurationPresentation.CurationTab.FX)
                     );
                 }
                 String argString = "";
@@ -262,8 +262,8 @@ public class DeleteRecordController {
                 Set<String> pubs = new HashSet<>();
                 for (ExpressionExperiment expressionExperiment : expressionExperiments) {
                     pubs.add(CurationPresentation.getLink(
-                                    expressionExperiment.getPublication(),
-                                    CurationPresentation.CurationTab.FX)
+                            expressionExperiment.getPublication(),
+                            CurationPresentation.CurationTab.FX)
                     );
                 }
                 String argString = "";
@@ -493,23 +493,11 @@ public class DeleteRecordController {
                 }
             }
 
-            if (type.startsWith("COMP") || type.startsWith("JRNL") || type.startsWith("LAB") || type.startsWith("PERS") || type.startsWith("PUB")) {
-                if (type.startsWith("PUB")) {
-                    List<Figure> figures = RepositoryFactory.getPublicationRepository().getFiguresByPublication(zdbID);
-                    for (Figure figure : figures) {
-                        Set<Image> images = figure.getImages();
-                        for (Image image : images) {
-                            RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(image.getZdbID());
-                        }
-                        RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(figure.getZdbID());
-                    }
-                    RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(zdbID);
-                } else {
-                    // this should force a cascade
-                    RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(zdbID);
-                }
+            if (type.startsWith("COMP") || type.startsWith("JRNL") || type.startsWith("LAB") || type.startsWith("PERS")) {
+                RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(zdbID);
+            } else if (type.startsWith("PUB")) {        // FB case 11129
+                RepositoryFactory.getPublicationRepository().deletePublicationAndFigures(zdbID);
             } else {
-                // this should force a cascade
                 RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(zdbID);
             }
 

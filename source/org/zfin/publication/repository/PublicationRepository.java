@@ -504,4 +504,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     String getAbstractText(String publicationZdbID);
 
+    void deletePublicationAndFigures(String publicationZdbID);
+
 }
