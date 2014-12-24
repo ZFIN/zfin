@@ -86,11 +86,8 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
         zdbIDPanel.add(zdbIDHTML);
         northEastPanel.add(zdbIDPanel);
         eastPanel.add(northEastPanel);
-        ScrollPanel scrollPanel = new ScrollPanel(termInfoComposite);
-        scrollPanel.setAlwaysShowScrollBars(false);
-        scrollPanel.setSize("600px", "700px");
-        eastPanel.add(scrollPanel);
-        eastPanel.setWidth("800px");
+        eastPanel.add(termInfoComposite);
+        eastPanel.setWidth("700px");
 
         mainPanel.add(table);
         mainPanel.add(eastPanel);
@@ -112,7 +109,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
         saveButton.setText("Save");
         revertButton.setText("Cancel");
         zdbIDHTML.setHTML("");
-        termInfoComposite.setWidth("600px");
+        termInfoComposite.setWidth("700px");
     }
 
     @Override

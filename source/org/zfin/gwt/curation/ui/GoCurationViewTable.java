@@ -124,7 +124,7 @@ public class GoCurationViewTable extends AbstractGoViewTable{
 
         // get row
         insertRow(row);
-        formatter.setColSpan(row, 0, 6);
+        formatter.setColSpan(row, 0, HeaderName.values().length);
         Widget newGoFromMarkerWidget = new GoInlineCurationAddBox(this, goEvidenceDTO);
         setWidget(row, 0, newGoFromMarkerWidget);
         newGoRow = row;
