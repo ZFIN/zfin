@@ -3,21 +3,27 @@
 #  goparser.pl
 #
 
-# fetch previous revision
-use lib './';
-use FetchCVSRevision;
+system("/bin/rm -f gaf_from_go");
 
-my $url = "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/submission/gene_association.zfin.gz?rev=";
+my $url = "http://viewvc.geneontology.org/viewvc/GO-SVN/trunk/gene-associations/gene_association.zfin.gz";
 
-my $rev = FetchCVSRevision->fcvsr_get($url);
-if (! $rev) {$rev = "unknown";} else {$rev += 0.001;}
+system("/local/bin/wget $url -O gaf_from_go.gz");
+system("/local/bin/gunzip gaf_from_go.gz");
 
-open (INDEXFILE, "go.zfin") or die "open failed";
+open (GAFFROMGO, "gaf_from_go") or die "Cannot open gaf_from_go : $!\n";
+while ($line = <GAFFROMGO>) {
+   $gaf_version = $line if $line =~ m/!gaf-version/;
+   $versionNumber = $1 if $line =~ m/!Version:\s+([0123456789\.]+)/;
+}
+close GAFFROMGO;
+
+$versionNumber += 0.001;
+
 open (UNL, ">gene_association.zfin") or die "Cannot open exppat.unl";
 
-print UNL "!gaf-version: 2.0\n";
-printf UNL "!Version: %.3f\n", $rev;
-print UNL "!Date: ".`/usr/bin/date +%Y/%m/%d`;
+print UNL "$gaf_version";
+printf UNL "!Version: %.3f\n", $versionNumber;
+print UNL "!Date: ".`/bin/date +%Y/%m/%d`;
 print UNL "!From: ZFIN (zfin.org) \n";
 print UNL "! \n";
 
@@ -26,6 +32,7 @@ $lastmrkrgoev = '';
 @inf_array = ();
 $db='ZFIN';
 
+open (INDEXFILE, "go.zfin") or die "open failed";
 while ($line = <INDEXFILE>) {
       chomp $line;
       @fields = split /\t/, $line;

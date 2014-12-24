@@ -6,15 +6,6 @@
 
 use DBI;
 
-# fetch previous revision
-
-use lib './';
-use FetchCVSRevision;
-
-my $url = "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gp2protein/gp2protein.zfin.gz?rev=";
-my $rev = FetchCVSRevision->fcvsr_get($url);
-if (! $rev) {$rev = "unknown";} else {$rev += 0.001;}
-
 #set environment variables
 $ENV{"INFORMIXDIR"}="<!--|INFORMIX_DIR|-->";
 $ENV{"INFORMIXSERVER"}="<!--|INFORMIX_SERVER|-->";
@@ -45,10 +36,24 @@ exit;
 sub gp2proteinReport()
 {
     system("/bin/rm -f $outFile");
+    system("/bin/rm -f gp2protein_from_go");
+
+    $url = "http://viewvc.geneontology.org/viewvc/GO-SVN/trunk/gp2protein/gp2protein.zfin.gz";
+
+    system("/local/bin/wget $url -O gp2protein_from_go.gz");
+    system("/local/bin/gunzip gp2protein_from_go.gz");
+
+    open (GPFROMGO, "gp2protein_from_go") or die "Cannot open gp2protein_from_go : $!\n";
+    while ($line = <GPFROMGO>) {
+       $versionNumber = $1 if $line =~ m/!Version:\s+([0123456789\.]+)/;
+    }
+    close GPFROMGO;
+
+    $versionNumber += 0.001;    
 
     open (REPORT, ">$outFile") or die "cannot open report";
-    printf REPORT "!Version: %.3f\n",$rev;
-    print REPORT "!Date: ".`/usr/bin/date +%Y/%m/%d`;
+    printf REPORT "!Version: %.3f\n", $versionNumber;
+    print REPORT "!Date: ".`/bin/date +%Y/%m/%d`;
     print REPORT "!From: ZFIN (zfin.org) \n";
     print REPORT "! \n";
 
