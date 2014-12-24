@@ -125,7 +125,7 @@ ENDJS
   The ZFIN Genetic Map Viewer requires that you install
   a <a href="http://www.java.com/getjava/">Java plugin</a>
   and may not function properly in all browsers. <br><br>
-  Try <a href="/genome-browser/">GBrowse</a> to view current genomic annotations. <br><br>
+  Try <a href="/<!--|GBROWSE_PATH_FROM_ROOT|-->">GBrowse</a> to view current genomic annotations. <br><br>
   If you need data that you can't access here and isn't in GBrowse, <a href="mailto:zfinadmn\@zfin.org">Let us know!</a>
   </div>
   

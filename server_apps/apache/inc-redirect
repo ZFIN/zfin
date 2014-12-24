@@ -21,7 +21,8 @@ Redirect /zf_info/news/mtgs.rss https://wiki.zfin.org/spaces/createrssfeed.actio
 Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&title=Zebrafish+News&publicFeed=true&maxResults=-1&sort=created&timeSpan=120
 
 #version independent gbrowse link
-RewriteRule ^/genome-browser    /cgi-perl/gbrowse/current  [NC,PT]
+RewriteRule ^/genome-browser    /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
+RewriteRule ^/cgi-perl/gbrowse  /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
 
 #Require https on some pages
 RewriteCond %{HTTPS} =off
@@ -127,8 +128,6 @@ RewriteRule ^.*$ /action/fish/search [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    MIval=aa-quickfindpers.apg
 RewriteRule ^.*$ /action/profile/person/search? [NC,R=301]
-
-RewriteRule ^/cgi-perl/gbrowse /gb2/gbrowse/ensembl_current?  [NC,R=301]
 
 #RewriteRule /action/anatomy/search    /action/ontology/ontology-search [NC,R=301]
 
