@@ -107,8 +107,6 @@ public class DOITest extends AbstractDatabaseTest{
             assertEquals(maxResults,publications.size());
             pubZdbID2 = publications.get(0).getZdbID() ;
             assertFalse(pubZdbID1.equals(pubZdbID2));
-        } catch (Exception e) {
-            fail(e.toString()) ;
         } finally {
             HibernateUtil.rollbackTransaction();
         }

@@ -1443,7 +1443,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Criteria query = session.createCriteria(Publication.class);
         query.add(Restrictions.isNull("doi"));
         query.add(Restrictions.isNotNull("accessionNumber"));
-        query.add(Restrictions.ne("accessionNumber", "none"));
         query.addOrder(Order.desc("publicationDate"));
         if (maxResults >= 0) {
             query.setMaxResults(maxResults);
@@ -1461,7 +1460,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = " select p from Publication p" +
                 " where p.doi is null  " +
                 " and p.accessionNumber is not null  " +
-                " and p.accessionNumber <> 'none' " +
                 " and ( not exists ( " +
                 "   select 'x' from DOIAttempt da where da.publication.zdbID = p.zdbID " +
                 " ) OR exists ( " +
