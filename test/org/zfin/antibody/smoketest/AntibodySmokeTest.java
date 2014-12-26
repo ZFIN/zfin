@@ -124,7 +124,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         assertEquals("Zebrafish International Resource Center", labPage.getTitleText());
 
         // check alias
-        HtmlSpan span = (HtmlSpan) page.getElementById("zn5");
+        HtmlSpan span = (HtmlSpan) page.getElementById("previous-name-0");
         assertTrue(span.getTextContent().startsWith("zn5 ("));
 
         // check host organism
