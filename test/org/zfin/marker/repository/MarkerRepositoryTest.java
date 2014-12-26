@@ -1,8 +1,9 @@
 package org.zfin.marker.repository;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -33,8 +34,7 @@ import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
@@ -770,17 +770,9 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void getPreviousNamesLightMultipleAttributionTest() {
         Marker m = markerRepository.getGeneByID("ZDB-GENE-010504-1");
         List<PreviousNameLight> previousNames = markerRepository.getPreviousNamesLight(m);
-        int name1Count = 0;
-        int name2Count = 0;
-        for (PreviousNameLight name : previousNames) {
-            if (name.getAlias().equals("ff1b"))
-                name1Count++;
-            if (name.getAlias().equals("nr5a4"))
-                name2Count++;
-        }
-        assertEquals("ff1b should only show up as a previous name once for nr5a1a", 1, name1Count);
-        assertEquals("nr5a4 should only show up as a previous name once for nr5a1a", 1, name2Count);
-
+        Collection<String> aliases = CollectionUtils.collect(previousNames, InvokerTransformer.getInstance("getAlias"));
+        assertThat("ff1b and nr5a4 should show up as a previous names for nr5a1a",
+                aliases, hasItems("<i>ff1b</i>", "<i>nr5a4</i>"));
     }
 
     @Test
