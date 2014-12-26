@@ -15,7 +15,7 @@ import org.zfin.marker.MarkerselectWebSpec;
 import org.zfin.gwt.lookup.LookupSmokeTest;
 import org.zfin.httpunittest.MarkerViewSmokeTest;
 import org.zfin.mapping.MappingDetailSmokeTest;
-import org.zfin.ontology.presentation.OntologySmokeTest;
+import org.zfin.ontology.presentation.OntologyWebSpec;
 import org.zfin.publication.presentation.PublicationCloseSmokeTest;
 import org.zfin.sequence.blast.smoketest.BlastSmokeTest;
 import org.zfin.webservice.MarkerRestSmokeTest;
@@ -47,7 +47,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
         MarkerSoapClientSmokeTest.class,
         MarkerViewSmokeTest.class,
         MarkerRestSmokeTest.class,
-        OntologySmokeTest.class,
+        OntologyWebSpec.class,
         PublicationCloseSmokeTest.class
 
 })
