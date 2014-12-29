@@ -43,6 +43,15 @@
             <arg value="--rollback"/>
         </groovy>
     </target>
+    <target name="loadExpressionCommit">
+        <groovy src="LoadDorskyExpression.groovy"/>
+    </target>
+
+    <target name="loadExpressionRollback">
+        <groovy src="LoadDorskyExpression.groovy">
+            <arg value="--rollback"/>
+        </groovy>
+    </target>
 
 
 </project>
