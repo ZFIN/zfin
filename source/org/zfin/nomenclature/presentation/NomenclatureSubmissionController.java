@@ -22,9 +22,10 @@ import java.util.Collection;
 import java.util.List;
 
 @Controller
+@RequestMapping("/nomenclature")
 public class NomenclatureSubmissionController {
 
-    @RequestMapping(value = "/nomenclature/gene-name", method = RequestMethod.GET)
+    @RequestMapping(value = "/gene-name", method = RequestMethod.GET)
     public String newGeneNameForm(Model model) {
         model.addAttribute("submission", new GeneNameSubmission());
         addOptions(model);
@@ -32,7 +33,7 @@ public class NomenclatureSubmissionController {
         return "nomenclature/gene-name-form.page";
     }
 
-    @RequestMapping(value = "/nomenclature/gene-name", method = RequestMethod.POST)
+    @RequestMapping(value = "/gene-name", method = RequestMethod.POST)
     public String newGeneNameSubmit(@ModelAttribute GeneNameSubmission submission, Model model) {
         model.addAttribute("submission", submission);
 
@@ -54,7 +55,7 @@ public class NomenclatureSubmissionController {
         return "nomenclature/gene-name-submit.page";
     }
 
-    @RequestMapping(value = "/nomenclature/line-name", method = RequestMethod.GET)
+    @RequestMapping(value = "/line-name", method = RequestMethod.GET)
     public String newLineNameForm(Model model) {
         model.addAttribute("submission", new LineNameSubmission());
         addOptions(model);
@@ -62,7 +63,7 @@ public class NomenclatureSubmissionController {
         return "nomenclature/line-name-form.page";
     }
 
-    @RequestMapping(value = "/nomenclature/line-name", method = RequestMethod.POST)
+    @RequestMapping(value = "/line-name", method = RequestMethod.POST)
     public String newLineNameSubmit(@ModelAttribute LineNameSubmission submission, Model model) {
         model.addAttribute("submission", submission);
 

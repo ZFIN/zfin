@@ -18,6 +18,7 @@ import java.util.List;
  * Controller class that takes the orthology search parameters and retrieves all orthologies.
  */
 @Controller
+@RequestMapping("/orthology")
 public class OrthologySearchController {
 
 
@@ -33,12 +34,12 @@ public class OrthologySearchController {
 
     // method that is called on a POST request (from submission).
 
-    @RequestMapping("/orthology/search")
+    @RequestMapping("/search")
     protected String showOrthologyForm(@ModelAttribute("formBean") OrthologySearchBean formBean) throws Exception {
         return "orthology-search.page";
     }
 
-    @RequestMapping("/orthology/do-search")
+    @RequestMapping("/do-search")
     protected String doOrthologySearch(@ModelAttribute("formBean") OrthologySearchBean formBean,
                                        BindingResult bindingResult) throws Exception {
 

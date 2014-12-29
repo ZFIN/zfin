@@ -25,12 +25,13 @@ import javax.servlet.http.HttpServletResponse;
  * Add or update a note for orthology on a given marker.
  */
 @Controller
+@RequestMapping("/orthology")
 public class OrthologyNoteController {
 
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private static Logger LOG = Logger.getLogger(OrthologyNoteController.class);
 
-    @RequestMapping("/orthology/save-note/{zdbID}")
+    @RequestMapping("/save-note/{zdbID}")
     public String updateOrthologyNote(@PathVariable String zdbID,
                                       @ModelAttribute("formBean") OrthologyNoteBean formBean,
                                       Model model,
@@ -61,7 +62,7 @@ public class OrthologyNoteController {
         return null;
     }
 
-    @RequestMapping("/orthology/view-note-form/{zdbID}")
+    @RequestMapping("/view-note-form/{zdbID}")
     public String createOrthologyNote(@PathVariable String zdbID,
                                       @ModelAttribute("formBean") OrthologyNoteBean formBean,
                                       Model model) throws Exception {

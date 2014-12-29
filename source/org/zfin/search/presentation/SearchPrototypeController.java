@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Controller
+@RequestMapping("/quicksearch")
 public class SearchPrototypeController {
 
     @Autowired
