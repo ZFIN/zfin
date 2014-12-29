@@ -925,42 +925,6 @@ Only need to update clones, etc., which should be the only things that will have
           <b>Sequence:</b>
         </td>
 
-        <?MIVAR NAME="zfin_url_blastn">/action/blast/blast?&program=blastn&sequenceType=nt&shortAndNearlyExact=true&queryType=FASTA&expectValue=1e-10&dataLibraryString=RNASequences&querySequence=<?/MIVAR>
-    <td>&nbsp;</td>
-    </tr>
-    <tr><td>&nbsp;</td>
-        <?MIVAR NAME=$mrkrview_seq_length>$(STRLEN,mrkrview_sequence)<?/MIVAR>
-    <td>
-        <table border="0"  CELLSPACING="0">
-        <tr bgcolor="#EEEEEE">
-        <?MIVAR><br><td>$(SUBSTR,$mrkrview_sequence,1,$(-,$mrkrview_seq_start,1)) <?/MIVAR>
-</td> <td>&nbsp;</td></tr>
-        <?MIVAR NAME="mrkrview_ambiguity_code">$(SUBSTR,$mrkrview_sequence,$mrkrview_seq_start,1) <?/MIVAR>
-        <tr bgcolor="#EEEEEE"><td><font color=green><?MIVAR>$(SUBSTR,$mrkrview_sequence,$mrkrview_seq_start,1) <?/MIVAR>
-</td></font><td>&nbsp;</td></tr>
-        <tr bgcolor="#EEEEEE"><td><?MIVAR>$(SUBSTR,$mrkrview_sequence,$(+,$mrkrview_seq_start,1)) <?/MIVAR>
-</td> <td>&nbsp;</td></tr>
-         <tr bgcolor="#EEEEEE"><td>
-    </td>
-    <td><SELECT NAME="select_tool" onChange="return jump(this);">
-            <OPTION VALUE="none" SELECTED>- Select Tool -</OPTION>
-            <?MIVAR>
-            <OPTION VALUE=$(CONCAT,$ncbi_blast_url,$mrkrview_sequence)>NCBI BLAST            </OPTION>
-            <OPTION VALUE=$(CONCAT,$zfin_url_blastn,$mrkrview_sequence)> ZFIN BLAST</OPTION>
-            <?/MIVAR>
-       </SELECT>
-     </td>
-     </tr>
-     <tr bgcolor="#EEEEEE">
-     <td><?MIVAR>$mrkrview_ambiguity_code<?/MIVAR>=<?MIVAR>$marker_variant<?/MIVAR></td>
-     <td>&nbsp;</td>
-     </tr>
-     </table>
-     </td>
-</tr>
-
-<?/MIBLOCK>
-<?MICOMMENT>end of sequence display block<?/MICOMMENT>
 
 
       <tr>
