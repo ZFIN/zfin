@@ -103,7 +103,8 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
             assertNotNull(childTerm.getName());
         }
 
-        TermDTO termToSerialize = ontologyManager.getTermByName("left/right axis", Ontology.SPATIAL);
+        String posterior = "posterior side";
+        TermDTO termToSerialize = ontologyManager.getTermByName(posterior, Ontology.SPATIAL);
         assertNotNull(termToSerialize);
         PatriciaTrieMultiMap<TermDTO> anatomyMap = ontologyManager.getOntologyMap().get(OntologyDTO.SPATIAL);
 
@@ -115,12 +116,12 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
         anatomyMap = ontologyManager.getOntologyMap().get(OntologyDTO.SPATIAL);
         assertEquals(count, anatomyMap.getAllValues().size());
-        TermDTO termDeserialized = ontologyManager.getTermByName("left/right axis", Ontology.SPATIAL);
+        TermDTO termDeserialized = ontologyManager.getTermByName(posterior, Ontology.SPATIAL);
         assertNotNull(termDeserialized);
         assertEquals(termToSerialize, termDeserialized);
 
 
-        Term termFromDatabase = ontologyRepository.getTermByName("left/right axis", Ontology.SPATIAL);
+        Term termFromDatabase = ontologyRepository.getTermByName(posterior, Ontology.SPATIAL);
         assertNotNull(termFromDatabase);
 
         assertEquals(termFromDatabase.getTermName(), termDeserialized.getName());
@@ -128,9 +129,9 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
         assertEquals(termFromDatabase.getParentTerms().size(), termDeserialized.getParentTerms().size());
         assertEquals(termFromDatabase.getChildTerms().size(), termDeserialized.getChildrenTerms().size());
         Map<String, Set<TermDTO>> allRelatedTerms = termDeserialized.getAllRelatedTerms();
-        assertEquals(3, allRelatedTerms.keySet().size()); // starts axis, finishes axis, is_a
-        assertEquals(1, allRelatedTerms.get("inverse starts_axis").size());
-        assertEquals(1, allRelatedTerms.get("inverse finishes_axis").size());
+        assertEquals(6, allRelatedTerms.keySet().size()); // starts axis, finishes axis, is_a
+        assertEquals(1, allRelatedTerms.get("inverse anterior_to").size());
+        assertEquals(1, allRelatedTerms.get("inverse surface_of").size());
         assertEquals(1, allRelatedTerms.get("is a type of").size());
         assertEquals(termFromDatabase.getComment(), termDeserialized.getComment());
         assertEquals(termFromDatabase.getDefinition(), termDeserialized.getDefinition());

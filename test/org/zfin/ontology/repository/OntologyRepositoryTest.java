@@ -43,7 +43,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         GenericTerm term = ontologyRepository.getTermByName(anatomyTermName, Ontology.ANATOMY);
         Assert.assertNotNull(term);
 
-        Term termFromDatabase = ontologyRepository.getTermByName("left/right axis", Ontology.SPATIAL);
+        Term termFromDatabase = ontologyRepository.getTermByName("left side", Ontology.SPATIAL);
         assertNotNull(termFromDatabase);
     }
 
