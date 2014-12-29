@@ -1101,10 +1101,7 @@ SELECT mrkr_abbrev,
            WHEN "Unpublished" THEN "Data Submission"
            ELSE pub.jtype
        END,
-       CASE pub.accession_no
-           WHEN "none" THEN NULL
-           ELSE pub.accession_no
-       END
+       pub.accession_no
 FROM (
   SELECT m.mrkr_zdb_id,
          m.mrkr_abbrev,
