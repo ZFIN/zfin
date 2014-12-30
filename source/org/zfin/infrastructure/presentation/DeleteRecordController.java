@@ -333,11 +333,11 @@ public class DeleteRecordController {
 
 
                     argString = argString + "<a target=_blank href=/action/alleles/" + designation.getPrefixString() + ">" + designation.getPrefixString() + "</a><br/>";
+}
 
 
                     argString += "<br/>";
                     formBean.addError("Having lab designation: <br/>" + argString);
-                }
 
             }
             // Can't delete the lab if there are people associated
