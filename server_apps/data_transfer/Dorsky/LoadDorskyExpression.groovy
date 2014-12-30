@@ -40,9 +40,9 @@ def videosAdded = [:]
 
 //HibernateProfileRepository brings in ProfileService, which requires a validation library that
 //needs to be excluded from the Classpath for this to load up.  Awkward, but easy enough to get a person this way...
-/*Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
+Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
         .add(Restrictions.eq("zdbID", "ZDB-PERS-000912-1"))  //Yvonne
-        .uniqueResult();*/
+        .uniqueResult();
 //Person owner=RepositoryFactory.profileRepository.getPerson("ZDB-PERS-030520-2")
 
 def dorskyVideos = parseCsv(new FileReader("/research/zunloads/projects/Dorsky/DorskyExpression/dorsky-expression-submission.csv"))
@@ -99,16 +99,16 @@ dorskyVideos.each { csv ->
         }
         figure = createFigure(figureLabelIndex, publication,superTerm,figPrefix,feature)
         if (!(csv.file.contains("mov")||(csv.file.contains("mp4")))) {
-            image = ImageService.processImage(figure, mediaDir + csv.file.replace(".jpg", ".jpg"), false)
+            image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".jpg", ".jpg"), false)
             videosAdded.put(csv.file, figure.zdbID)
 
         }
         else {
             if (csv.file.contains("mov")) {
-                image = ImageService.processImage(figure, mediaDir + csv.file.replace(".mov", ".png"), true)
+                image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".mov", ".png"), true)
             }
             if (csv.file.contains("mp4")) {
-                    image = ImageService.processImage(figure, mediaDir + csv.file.replace(".mp4", ".png"), true)
+                    image = ImageService.processImage(figure, owner,mediaDir + csv.file.replace(".mp4", ".png"), true)
             }
 
             videos = []
