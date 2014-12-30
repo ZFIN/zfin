@@ -6,11 +6,13 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.repository.RepositoryFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -21,11 +23,15 @@ public class ImageService {
 
     public static Logger log = Logger.getLogger(ImageService.class);
 
-    public static Image processImage(Figure figure, Person owner, String filePath, Boolean isVideoStill) throws IOException {
+    public static Image processImage(Figure figure,  String filePath, Boolean isVideoStill) throws IOException {
 
         File imageLoadUpDir = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString());
 
         //create an initial image record, file paths and width/height will be wrong
+
+        Person owner = (Person) HibernateUtil.currentSession().createCriteria(Person.class)
+                .add(Restrictions.eq("zdbID", "ZDB-PERS-000912-1"))  //Yvonne
+                .uniqueResult();
         Image image = createPlaceholderImage(figure, owner, isVideoStill);
 
         //get the image file
@@ -43,12 +49,13 @@ public class ImageService {
         image.setThumbnail(thumbnailFilename);
 
         BufferedImage bimg = ImageIO.read(destinationFile);
+
         image.setWidth(bimg.getWidth());
         image.setHeight(bimg.getHeight());
         HibernateUtil.currentSession().save(image);
 
         File scriptDirectory = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/sysexecs/make_thumbnail");
-        CommandLine makeThumbnail = new CommandLine("make_thumbnail.sh");
+        CommandLine makeThumbnail = new CommandLine("./make_thumbnail.sh");
         makeThumbnail.addArgument(destinationFile.getAbsolutePath());
         makeThumbnail.addArgument(thumbnailFile.getAbsolutePath());
         DefaultExecutor executor = new DefaultExecutor();

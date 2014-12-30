@@ -84,6 +84,7 @@ public interface MutantRepository {
      * @return genotype
      */
     Genotype getGenotypeByHandle(String genotypeHandle);
+    Genotype getGenotypeByName(String genotypeName);
 
 
     /*List<Marker> getDeletedMarker(Feature feat);

@@ -413,6 +413,13 @@ public class HibernateMutantRepository implements MutantRepository {
         return (Genotype) criteria.uniqueResult();
     }
 
+    public Genotype getGenotypeByName(String name) {
+        Criteria criteria = currentSession().createCriteria(Genotype.class);
+        criteria.add(Restrictions.eq("name", name));
+
+        return (Genotype) criteria.uniqueResult();
+    }
+
     /* public List<Marker> getDeletedMarker(Feature feat) {
         Session session = HibernateUtil.currentSession();
 
