@@ -30,7 +30,7 @@ import static org.apache.commons.cli.OptionBuilder.withArgName;
 /**
  * This class is an adaptation of the Spider class from the spindle library (www.bitmechanic.com)
  * The original author was James Cooper (pixel@bitmechanic.com) with modifications
- * made by Shad Stafford (staffors@cs.uoregon.edu)
+ * made by Shad Stafford
  * <p/>
  * Originally called "Spider" we have changed the functionality of this code fundamentally to
  * avoid crawling data pages.  Too many redundant and unnecessary HTTP calls were being made
