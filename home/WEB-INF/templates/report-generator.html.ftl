@@ -122,7 +122,7 @@
 </#list>
 
 <#noparse>
-See report on Jenkins dashboard1: <a href="${BUILD_URL}">${BUILD_URL}</a>
+See report on Jenkins dashboard: <a href="${BUILD_URL}">${BUILD_URL}</a>
 </#noparse>
 </body>
 </html>
