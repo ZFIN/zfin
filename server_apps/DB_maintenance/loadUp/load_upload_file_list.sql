@@ -18,7 +18,7 @@ create temp table tmp_image_file_list (
 	filename varchar(65)) 
 with no log ;
 
---use an index to speed this up 
+--use an indx to speed this up 
 
 create unique index tmp_filename_primary_key_index
   on tmp_image_file_list (filename)
@@ -96,7 +96,7 @@ insert into tmp_not_in_image_files
 				   from tmp_image_file_list) ;
 
 
-unload to /tmp/filesystem_images_not_in_database.unl
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.unl"
   select * from tmp_not_in_image_files ;
 
 update statistics high for table tmp_pdf_file_list ;
@@ -114,7 +114,7 @@ insert into tmp_not_in_pub_files
 				where pub_file = filename)
 	and pub_file is not null;
 
-unload to /tmp/filesystem_pdfs_not_in_database.unl
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.unl"
   select * from tmp_not_in_pub_files ;
 
 
@@ -135,18 +135,18 @@ insert into tmp_not_in_video_files
                                 where video_file = filename)
         and video_file is not null;
 
-unload to /tmp/filesystem_videos_not_in_database.unl
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_videos_not_in_database.unl"
   select * from tmp_not_in_video_files ;
 
 --produce the files not in the database
 
-unload to /tmp/orphan_image_files.unl
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_image_files.unl"
   select * from tmp_not_in_images ;
 
-unload to /tmp/orphan_pdf_files.unl
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_pdf_files.unl"
   select * from tmp_not_in_pub ;
 
-unload to /tmp/orphan_video_files.unl
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_video_files.unl"
   select * from tmp_not_in_video ; 
 
 commit work ;

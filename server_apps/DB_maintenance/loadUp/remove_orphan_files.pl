@@ -87,81 +87,81 @@ sub sendLoadReport ($) { # routine to send email to owner of db
 # so, we have to use the 'and' condition to determine if the system
 # call had an error.
 
-system("/bin/rm -f /tmp/filesystem_pdfs_not_in_database.unl") 
-    and die "can not remove /tmp/filesystem_pdfs_not_in_database.unl";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.unl") 
+    and die "can not remove <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.unl";
 
-system("/bin/rm -f /tmp/filesystem_images_not_in_database.unl") 
-    and die "can not remove /tmp/filesystem_images_not_in_database.unl";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.unl") 
+    and die "can not remove <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.unl";
 
-#system("/bin/rm -f /tmp/filesystem_videos_not_in_database.unl")
-#    and die "can not remove /tmp/filesystem_videos_not_in_database.unl";
+#system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_videos_not_in_database.unl")
+#    and die "can not remove <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_videos_not_in_database.unl";
 
-system("/bin/rm -f /tmp/orphan_file_report.txt") and die "can not rm orphan_file_report.txt";
-system("/bin/rm -f /tmp/file_list_image") and die "can not rm file_list_image";
-system("/bin/rm -f /tmp/file_list_pdf") and die "can not rm file_list_pdf";
-#system("/bin/rm -f /tmp/file_list_video") and die "can not rm file_list_video";
-system("/bin/rm -f /tmp/fl_image_modified") and die "can not rm fl_image_modified";
-system("/bin/rm -f /tmp/fl_pdf_modified") and die "can not rm fl_pdf_modified";
-#system("/bin/rm -f /tmp/fl_video_modified") and die "can not rm fl_video_modified";
-system("/bin/rm -f /tmp/moved_image_files.unl") and die "can not rm moved_image_files.unl";
-system("/bin/rm -f /tmp/moved_pdf_files.unl") and die "can not rm moved_pdf_files.un";
-#system("/bin/rm -f /tmp/moved_video_files.unl") and die "can not rm moved_video_files.un";
-system("/bin/rm -f /tmp/orphan_image_files.unl") and die "can not rm orhpan_image_files.unl";
-system("/bin/rm -f /tmp/orphan_pdf_files.unl") and die "can not rm orphan_pdf_files.unl";
-#system("/bin/rm -f /tmp/orphan_video_files.unl") and die "can not rm orphan_video_files.unl";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_file_report.txt") and die "can not rm orphan_file_report.txt";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_image") and die "can not rm file_list_image";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_pdf") and die "can not rm file_list_pdf";
+#system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_video") and die "can not rm file_list_video";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_image_modified") and die "can not rm fl_image_modified";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_pdf_modified") and die "can not rm fl_pdf_modified";
+#system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_video_modified") and die "can not rm fl_video_modified";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_image_files.unl") and die "can not rm moved_image_files.unl";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_pdf_files.unl") and die "can not rm moved_pdf_files.un";
+#system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_video_files.unl") and die "can not rm moved_video_files.un";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_image_files.unl") and die "can not rm orhpan_image_files.unl";
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_pdf_files.unl") and die "can not rm orphan_pdf_files.unl";
+#system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_video_files.unl") and die "can not rm orphan_video_files.unl";
 # make a list of all the image files available for viewing in the filesystem
 # loadup_full_path points to /research/zprod/loadUp (on production)
 # image_load points to /research/zcentral/loadUp/ImageLoadUp (on development)
 
-system ("/bin/ls -1 <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|--> > /tmp/file_list_image") 
-    and die "can not ls -1 /tmp/file_list_image";
+system ("/bin/ls -1 <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|--> > <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_image") 
+    and die "can not ls -1 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_image";
 
-system ("/bin/chmod 644 /tmp/file_list_image") and die "can not chmod on /tmp/file_list_image";
+system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_image") and die "can not chmod on <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_image";
 
 # make a list of all the pdf files available for viewing in the fielsystem
 # loadup_full_path points to /research/zprod/loadUp (on production)
 # pdf_load points to /research/zcentral/loadUp/PDFLoadUp (on development)
 
-system ("/bin/ls -1 <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> > /tmp/file_list_pdf") 
-    and die "can not ls -1 /tmp/file_list_pdf";
+system ("/bin/ls -1 <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|--> > <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_pdf") 
+    and die "can not ls -1 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_pdf";
 
-system ("/bin/chmod 644 /tmp/file_list_pdf") and die "can not chmod /tmp/file_list_pdf";
+system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_pdf") and die "can not chmod <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_pdf";
 
 # make a list of all the video files available for viewing in the fielsystem
 # loadup_full_path points to /research/zprod/loadUp (on production)
 # video_load points to /research/zcentral/loadUp/videoLoadUp (on development)
 
-#system ("/bin/ls -1 <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|--> > /tmp/file_list_video")
-#    and die "can not ls -1 /tmp/file_list_video";
+#system ("/bin/ls -1 <!--|LOADUP_FULL_PATH|--><!--|VIDEO_LOAD|--> > <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_video")
+#    and die "can not ls -1 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_video";
 
-#system ("/bin/chmod 644 /tmp/file_list_video") and die "can not chmod /tmp/file_list_video";
+#system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_video") and die "can not chmod <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_video";
 
 
 # file_list_image is the file of all image files available on filesystem
 
-open (FILE_LIST_IMAGE, "< /tmp/file_list_image")
+open (FILE_LIST_IMAGE, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_image")
     or die "Cannot open the file_list_image file\n";
 
 # fl_image_modified is the file containing all image files with 
 # a pipe seperator added.
 
-open FL_IMAGE_MODIFIED, "> /tmp/fl_image_modified"
+open FL_IMAGE_MODIFIED, "> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_image_modified"
     or die "Cannot open the fl_image_modified file\n";
 
 # same comments as above, except with PDFs.
 
-open (FILE_LIST_PDF, "< /tmp/file_list_pdf")
+open (FILE_LIST_PDF, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_pdf")
     or die "Cannot open the file_list_pdf file\n";
 
-open FL_PDF_MODIFIED, "> /tmp/fl_pdf_modified" 
+open FL_PDF_MODIFIED, "> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_pdf_modified" 
     or die "Cannot open the fl_pdf_modified file\n";
 
 # same comments as above, except with videos.
 
-#open (FILE_LIST_VIDEO, "< /tmp/file_list_video")
+#open (FILE_LIST_VIDEO, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/file_list_video")
 #    or die "Cannot open the file_list_video file\n";
 
-#open FL_VIDEO_MODIFIED, "> /tmp/fl_video_modified"
+#open FL_VIDEO_MODIFIED, "> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_video_modified"
 #    or die "Cannot open the fl_video_modified file\n";
 
 #print "compiling modified file lists\n";
@@ -245,15 +245,19 @@ print "loading...\n";
 # load the files created by the above steps into the database using 
 # the load_upload_file_list.sql script
 
-system ("/private/apps/Informix/informix/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/load_upload_file_list.sql >out 2> /tmp/orphan_file_report.txt");
 
-system ("/bin/chmod 644 /tmp/filesystem_images_not_in_database.unl") 
+system ("/private/apps/Informix/informix/bin/dbaccess <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/load_upload_file_list.sql >out 2> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_file_report.txt");
+
+if (-e "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.unl"){
+    system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.unl") 
     and die "Can not chmod the filesystem_images_not_in_database.unl";
+}
+if (-e "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.unl"){
 
-system ("/bin/chmod 644 /tmp/filesystem_pdfs_not_in_database.unl") 
-    and die "Can not chmod the filesystem_images_not_in_database.unl";
-
-#system ("/bin/chmod 644 /tmp/filesystem_videos_not_in_database.unl")
+    system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.unl") 
+	and die "Can not chmod the filesystem_images_not_in_database.unl";
+}
+#system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_videos_not_in_database.unl")
 #    and die "Can not chmod the filesystem_videos_not_in_database.unl";
 
 close FL_PDF_MODIFIED;
@@ -263,28 +267,30 @@ close FILE_LIST_PDF;
 close FILE_LIST_IMAGE;
 #close FILE_LIST_VIDEO;
 
-system ("/bin/chmod 644 /tmp/fl_image_modified") and die "can not chmod fl_image_modified";
+if (-e "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_image_modified"){
+    system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_image_modified") and die "can not chmod fl_image_modified";
+}
+if (-e "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_pdf_modified"){
+    system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_pdf_modified") and die "can not chmod fl_pdf_modified";
+}
+#system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/fl_video_modified") and die "can not chmod fl_video_modified";
 
-system ("/bin/chmod 644 /tmp/fl_pdf_modified") and die "can not chmod fl_pdf_modified";
-
-#system ("/bin/chmod 644 /tmp/fl_video_modified") and die "can not chmod fl_video_modified";
-
-open (ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl") 
+open (ORPHAN_IMAGE_FILES, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_image_files.unl") 
     or die "Cannot open the orphan_image_file.unl file\n";
 
-open (ORPHAN_PDF_FILES, "< /tmp/orphan_pdf_files.unl") 
+open (ORPHAN_PDF_FILES, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_pdf_files.unl") 
     or die "Cannot open the orphan_image_file.unl file\n";
 
-#open (ORPHAN_VIDEO_FILES, "< /tmp/orphan_video_files.unl")
+#open (ORPHAN_VIDEO_FILES, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_video_files.unl")
 #    or die "Cannot open the orphan_video_file.unl file\n";
 
-open MOVED_IMAGE_FILES, "> /tmp/moved_image_files.unl"
+open MOVED_IMAGE_FILES, "> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_image_files.unl"
     or die "Cannot open the moved_image_files.unl file\n";
 
-open MOVED_PDF_FILES, "> /tmp/moved_pdf_files.unl"
+open MOVED_PDF_FILES, "> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_pdf_files.unl"
     or die "Cannot open the moved_pdf_files.unl file\n";
 
-#open MOVED_VIDEO_FILES, "> /tmp/moved_video_files.unl"
+#open MOVED_VIDEO_FILES, "> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_video_files.unl"
 #    or die "Cannot open the moved_video_files.unl file\n";
 
 print "moving orphan image files... \n";
@@ -342,7 +348,7 @@ and die "can not move image file";
 
 close MOVED_IMAGE_FILES;
 
-system ("/bin/chmod 644 /tmp/moved_image_files.unl") and die "can not chmod moved_image_files";
+system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_image_files.unl") and die "can not chmod moved_image_files";
 
 # do the same thing with pdf files
 
@@ -364,7 +370,7 @@ foreach $remorph_orphan_pdf_line (@remorph_pdfLines) {
 
 close MOVED_PDF_FILES;
 
-system ("/bin/chmod 644 /tmp/moved_pdf_files.unl") and die "can not chmod moved_pdf_files";
+system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_pdf_files.unl") and die "can not chmod moved_pdf_files";
 
 # do the same thing with video files
 
@@ -384,7 +390,7 @@ system ("/bin/chmod 644 /tmp/moved_pdf_files.unl") and die "can not chmod moved_
 
 #close MOVED_VIDEO_FILES;
 
-#system ("/bin/chmod 644 /tmp/moved_video_files.unl") and die "can not chmod moved_video_files";
+#system ("/bin/chmod 644 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/moved_video_files.unl") and die "can not chmod moved_video_files";
 
 
 
@@ -405,7 +411,7 @@ close ORPHAN_PDF_FILES;
 
 #---------------EMAIL DATABSE IMAGES/PDFS WITH NO FILESYSTEM files-----#
 
-open(NO_FS_IMAGE, "< /tmp/filesystem_images_not_in_database.unl") or die "can't open $remorph_file";
+open(NO_FS_IMAGE, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.unl") or die "can't open $remorph_file";
 
 $remorph_count_images++ while <NO_FS_IMAGE>;
 
@@ -418,7 +424,7 @@ $remorph_count_images++ while <NO_FS_IMAGE>;
 #else {
 #      &sendLoadReport("No Filesystem Image",
 #                      "<!--|DEFAULT_EMAIL|-->",
-#		      "/tmp/filesystem_images_not_in_database.unl") ;
+#		      "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.unl") ;
 #  }
 
 close NO_FS_IMAGE;
@@ -427,7 +433,7 @@ $remorph_count_images = 0;
 
 #--
 
-open(NO_FS_PDF, "< /tmp/filesystem_pdfs_not_in_database.unl") or die "can't open $remorph_file";
+open(NO_FS_PDF, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.unl") or die "can't open $remorph_file";
 
 $remorph_count_pdfs++ while <NO_FS_PDF>;
 
@@ -439,7 +445,7 @@ $remorph_count_pdfs++ while <NO_FS_PDF>;
 #  }
 #else {
 #      &sendLoadReport("No Filesystem PDF","<!--|DEFAULT_EMAIL|-->",
-#		      "/tmp/filesystem_pdfs_not_in_database.unl") ;
+#		      "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.unl") ;
 #  }
 
 close NO_FS_PDF;
@@ -448,7 +454,7 @@ $remorph_count_pdfs = 0;
 
 #--
 
-#open(NO_FS_VIDEO, "< /tmp/filesystem_videos_not_in_database.unl") or die "can't open $remorph_file";
+#open(NO_FS_VIDEO, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_videos_not_in_database.unl") or die "can't open $remorph_file";
 
 #$remorph_count_videos++ while <NO_FS_VIDEO>;
 
@@ -460,7 +466,7 @@ $remorph_count_pdfs = 0;
 #}
 #else {
 #      &sendLoadReport("No Filesystem Video","<!--|DEFAULT_EMAIL|-->",
-#                      "/tmp/filesystem_videos_not_in_database.unl") ;
+#                      "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_videos_not_in_database.unl") ;
 #}
 
 #close NO_FS_VIDEO;
@@ -470,7 +476,7 @@ $remorph_count_pdfs = 0;
 
 #----------------EMAIL IMAGES/PDFS/VIDEOS NOT IN DATABASE--------------#
 
-open(ORPHAN_IMAGE_FILES, "< /tmp/orphan_image_files.unl") or die "can't open $remorph_file";
+open(ORPHAN_IMAGE_FILES, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_image_files.unl") or die "can't open $remorph_file";
 
 $remorph_count_images++ while <ORPHAN_IMAGE_FILES>;
 
@@ -482,14 +488,14 @@ $remorph_count_images++ while <ORPHAN_IMAGE_FILES>;
 #  }
 #else {
 #      &sendLoadReport("Orphan Images","<!--|DEFAULT_EMAIL|-->",
-#		      "/tmp/orphan_image_files.unl") ;
+#		      "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_image_files.unl") ;
 #  }
 
 close ORPHAN_IMAGE_FILES;
 
 print "count orphan pdfs \n";
 
-open(ORPHAN_PDF_FILES, "< /tmp/orphan_pdf_files.unl") or die "can't open $remorph_file";
+open(ORPHAN_PDF_FILES, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_pdf_files.unl") or die "can't open $remorph_file";
 
 $remorph_count_pdfs++ while <ORPHAN_PDF_FILES>;
 
@@ -500,7 +506,7 @@ $remorph_count_pdfs++ while <ORPHAN_PDF_FILES>;
 #  }
 #  else {
 #    &sendLoadReport("Orphan PDFs","<!--|DEFAULT_EMAIL|-->",
-#		"/tmp/orphan_pdf_files.unl") ;
+#		"<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_pdf_files.unl") ;
 #  }
 
 close ORPHAN_PDF_FILES;
@@ -508,7 +514,7 @@ close ORPHAN_PDF_FILES;
 
 #print "count orphan videos \n";
 
-#open(ORPHAN_VIDEO_FILES, "< /tmp/orphan_video_files.unl") or die "can't open $remorph_file";
+#open(ORPHAN_VIDEO_FILES, "< <!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_video_files.unl") or die "can't open $remorph_file";
 
 #$remorph_count_videos++ while <ORPHAN_VIDEO_FILES>;
 
@@ -519,7 +525,7 @@ close ORPHAN_PDF_FILES;
 #}
 #else {
 #    &sendLoadReport("Orphan Videos","<!--|DEFAULT_EMAIL|-->",
-#		    "/tmp/orphan_video_files.unl") ;
+#		    "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_video_files.unl") ;
 #}
 
 #close ORPHAN_VIDEO_FILES;
