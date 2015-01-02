@@ -412,14 +412,14 @@ $remorph_count_images++ while <NO_FS_IMAGE>;
 # count_images now holds the number of lines read, want to do count
 # so that email does not get sent unless there is actual output
 
-  if ($remorph_count_images < 1) {
-      print "No new db images without files count: $remorph_count_images \n" ;
-  }
-else {
-      &sendLoadReport("No Filesystem Image",
-                      "<!--|DEFAULT_EMAIL|-->",
-		      "/tmp/filesystem_images_not_in_database.unl") ;
-  }
+#  if ($remorph_count_images < 1) {
+#      print "No new db images without files count: $remorph_count_images \n" ;
+#  }
+#else {
+#      &sendLoadReport("No Filesystem Image",
+#                      "<!--|DEFAULT_EMAIL|-->",
+#		      "/tmp/filesystem_images_not_in_database.unl") ;
+#  }
 
 close NO_FS_IMAGE;
 
@@ -434,13 +434,13 @@ $remorph_count_pdfs++ while <NO_FS_PDF>;
 # count_images now holds the number of lines read, want to do count
 # so that email does not get sent unless there is actual output
 
-  if ($remorph_count_pdfs < 1) {
-      print "No new db pdfs without files count: $remorph_count_images \n" ;
-  }
-else {
-      &sendLoadReport("No Filesystem PDF","<!--|DEFAULT_EMAIL|-->",
-		      "/tmp/filesystem_pdfs_not_in_database.unl") ;
-  }
+#  if ($remorph_count_pdfs < 1) {
+#      print "No new db pdfs without files count: $remorph_count_images \n" ;
+#  }
+#else {
+#      &sendLoadReport("No Filesystem PDF","<!--|DEFAULT_EMAIL|-->",
+#		      "/tmp/filesystem_pdfs_not_in_database.unl") ;
+#  }
 
 close NO_FS_PDF;
 
@@ -477,13 +477,13 @@ $remorph_count_images++ while <ORPHAN_IMAGE_FILES>;
 # count_images now holds the number of lines read, want to do count
 # so that email does not get sent unless there is actual output
 
-  if ($remorph_count_images < 1) {
-      print "No new orphan images count: $remorph_count_images \n" ;
-  }
-else {
-      &sendLoadReport("Orphan Images","<!--|DEFAULT_EMAIL|-->",
-		      "/tmp/orphan_image_files.unl") ;
-  }
+#  if ($remorph_count_images < 1) {
+#      print "No new orphan images count: $remorph_count_images \n" ;
+#  }
+#else {
+#      &sendLoadReport("Orphan Images","<!--|DEFAULT_EMAIL|-->",
+#		      "/tmp/orphan_image_files.unl") ;
+#  }
 
 close ORPHAN_IMAGE_FILES;
 
@@ -495,13 +495,13 @@ $remorph_count_pdfs++ while <ORPHAN_PDF_FILES>;
 
 # count_pdfs now holds the number of lines read from the orphan pdf file
 
-  if ($remorph_count_pdfs < 1) {
-      print "No new orphan pdfs  count: $remorph_count_pdfs \n" ;
-  }
-  else {
-    &sendLoadReport("Orphan PDFs","<!--|DEFAULT_EMAIL|-->",
-		"/tmp/orphan_pdf_files.unl") ;
-  }
+#  if ($remorph_count_pdfs < 1) {
+#      print "No new orphan pdfs  count: $remorph_count_pdfs \n" ;
+#  }
+#  else {
+#    &sendLoadReport("Orphan PDFs","<!--|DEFAULT_EMAIL|-->",
+#		"/tmp/orphan_pdf_files.unl") ;
+#  }
 
 close ORPHAN_PDF_FILES;
 
