@@ -19,6 +19,7 @@ import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.figure.repository.FigureRepositorySpec;
 import org.zfin.figure.service.FigureViewServiceSpec;
 import org.zfin.figure.service.ImageServiceSpec;
+import org.zfin.figure.service.VideoServiceSpec;
 import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.framework.presentation.ZfinJSPFunctionsTest;
@@ -71,23 +72,24 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
         AntibodyServiceTest.class,
+        AntibodyWikiWebServiceTest.class,
         BlastRepositoryTest.class,
-        DTOConversionServiceTest.class,
+        ConstructRepositoryTest.class,
+        ConstructServiceTest.class,
         CurationRPCTest.class,
         DatabaseServiceDbTest.class,
         DisplayGroupRepositoryTest.class,
         DTOConversionServiceTest.class,
+        DTOConversionServiceTest.class,
         ExpressionRepositoryTest.class,
         ExpressionServiceTest.class,
         FeatureRepositoryTest.class,
-        FigureRepositorySpec.class,
         FeatureServiceTest.class,
+        FigureRepositorySpec.class,
         FigureServiceTest.class,
         FigureViewServiceSpec.class,
         FishRepositoryTest.class,
         FishServiceTest.class,
-        ConstructRepositoryTest.class,
-        ConstructServiceTest.class,
         FpInferenceGafServiceTest.class,
         GafParserUnitTest.class,
         GafServiceTest.class,
@@ -98,38 +100,38 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ImageServiceSpec.class,
         InfrastructureRepositoryTest.class,
         LinkageRepositoryTest.class,
-        MarkerRepositoryTest.class,
-        MergeMarkerDBTest.class,
         MapAccessionDbLinkTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
+        MarkerRepositoryTest.class,
         MarkerServiceTest.class,
         MarkerSoapDbTest.class,
+        MergeMarkerDBTest.class,
+//        MicroArrayTest.class,     // Takes 1.5 min to run, but works.
         MutantRepositoryTest.class,
+//        NomenclatureCandidateControllerTest.class, // no tests
         OntologyManagerTest.class,
         OntologyRepositoryTest.class,
         OntologySerializationTest.class,
-        OrthologyTest.class,
         OrthologyRepositoryTest.class,
-        PaintGafServiceTest.class,
+        OrthologyTest.class,
         PaginationResultTest.class,
+        PaintGafServiceTest.class,
         PhenotypeRepositoryTest.class,
+        PhenotypeServiceDBTest.class,
         ProfileRepositoryTest.class,
         ProfileServiceTest.class,
         PublicationRepositoryTest.class,
-        PhenotypeServiceDBTest.class,
-        RenoRedundancyCandidateControllerTest.class,
         RenoMultiRunTest.class,
-//        NomenclatureCandidateControllerTest.class, // no tests
+        RenoRedundancyCandidateControllerTest.class,
         RenoRepositoryTest.class,
-        SequenceRepositoryTest.class,
-        SequenceRepositorySpec.class,
-        TranscriptServiceTest.class,
         SequenceIdListTest.class,
-        AntibodyWikiWebServiceTest.class,
+        SequenceRepositorySpec.class,
+        SequenceRepositoryTest.class,
         SingleCandidateRepositoryTest.class,
         TranscriptRepositoryTest.class,
-        ZfinJSPFunctionsTest.class
-//         MicroArrayTest.class     // Takes 1.5 min to run, but works.
+        TranscriptServiceTest.class,
+        VideoServiceSpec.class,
+        ZfinJSPFunctionsTest.class,
 })
 
 public class DbUnitTests {

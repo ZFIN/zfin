@@ -1,5 +1,6 @@
 package org.zfin.figure.service
 
+import org.apache.commons.io.FileUtils
 import org.hibernate.Transaction
 import org.zfin.AbstractZfinIntegrationSpec
 import org.zfin.expression.Figure
@@ -10,15 +11,23 @@ import org.zfin.properties.ZfinPropertiesEnum
 import org.zfin.repository.RepositoryFactory
 import spock.lang.Shared
 
+import java.nio.file.Files
+
 class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     @Shared Person owner
     @Shared Figure figure
+    @Shared File tempdir
+    @Shared String originalLoadup
     @Shared File imageLoadUp
     @Shared Transaction tx
 
     //these runs once for the whole class
     public def setupSpec() {
+        tempdir = Files.createTempDirectory(this.class.name).toFile()
+        new File(tempdir, "${ZfinPropertiesEnum.IMAGE_LOAD.toString()}/medium").mkdirs()
+        originalLoadup = ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()
+        ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(tempdir.absolutePath)
         imageLoadUp = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString())
     }
 
@@ -34,6 +43,10 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         HibernateUtil.closeSession()
     }
 
+    public def cleanupSpec() {
+        ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(originalLoadup)
+        FileUtils.deleteDirectory(tempdir)
+    }
 
     def "when a new image is created, it should have a zdb_id, zdbID should be part of filename"() {
         when: "a new image is created"
