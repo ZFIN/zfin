@@ -316,24 +316,27 @@ foreach $remorph_orphan_image_line (@remorph_orphanImageLines) {
     # now $remorph_orphan_image_line is like a zdb_id, so we can move all
     # files beginning with that orphan_zdb_id to the bkup directory
     
-
-    system ("/bin/mv -f <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_orphan_image_line.* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
+    if (-e "<!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_orphan_image_line.*"){
+	system ("/bin/mv -f <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_orphan_image_line.* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
 and die "can not move image file";
 
-    # medium images are in a separate directory, so do the same thing for those files as we did for files
-    # in the imageLoadUp directory itself.  medium/ has a bkup dir as well.
-
-    system ("/bin/mv -f <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/medium/$remorph_orphan_image_line.* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/medium/bkup/" )
-and die "can not move medium image file";
-
+	# medium images are in a separate directory, so do the same thing for those files as we did for files
+	# in the imageLoadUp directory itself.  medium/ has a bkup dir as well.
+	if (-e "<!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/medium/$remorph_orphan_image_line.*"){
+	    system ("/bin/mv -f <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/medium/$remorph_orphan_image_line.* <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/medium/bkup/" )
+		and die "can not move medium image file";
+	}
+    }
+    
     $remorph_dash_star = "_*";
     $remorph_image_ext = $remorph_orphan_image_line.$remorph_dash_star;
-
-    system ("/bin/mv -f <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_image_ext <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
-and die "can not move thumb image file";
-
-    # print out the moved files to a report 
-
+    
+    if (-e "<!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_image_ext"){
+	system ("/bin/mv -f <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$remorph_image_ext <!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/bkup/" )
+	    and die "can not move thumb image file";
+	
+	# print out the moved files to a report 
+    }
     print MOVED_IMAGE_FILES "$remorph_orphan_image_line\n";
 }
 
@@ -352,9 +355,11 @@ foreach $remorph_orphan_pdf_line (@remorph_pdfLines) {
     $remorph_orphan_pdf_line =~ s/$remorph_new_line//g ;
     $remorph_orphan_pdf_line =~ s/$remorph_pdf_extension//i;
 
-    system ("/bin/mv -f <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$remorph_orphan_pdf_line.* <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/") and die "can not mv -f pdfs";    
-
-     print MOVED_PDF_FILES "orphan_pdf_line\n";
+    if (-e "<!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$remorph_orphan_pdf_line.*"){
+	system ("/bin/mv -f <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/$remorph_orphan_pdf_line.* <!--|LOADUP_FULL_PATH|--><!--|PDF_LOAD|-->/bkup/") and die "can not mv -f pdfs";    
+	
+	print MOVED_PDF_FILES "orphan_pdf_line\n";
+    }
 }
 
 close MOVED_PDF_FILES;
