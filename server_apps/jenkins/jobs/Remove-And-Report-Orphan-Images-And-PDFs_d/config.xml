@@ -23,7 +23,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/loadUp/*.txt</artifacts>
+      <artifacts>server_apps/DB_maintenance/loadUp/*.txt,server_apps/DB_maintenance/loadUp/*.unl</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
