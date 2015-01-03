@@ -5,8 +5,8 @@
 --OUTPUT: two files that contain filenames that exist in the filesystem
 --    but not in the database.
 --    Also outputs to unload files to the temp directory
---    /tmp/orphan_image_files.unl
---    /tmp/orphan_pdf_files.unl
+--    /tmp/orphan_image_files.txt
+--    /tmp/orphan_pdf_files.txt
 
 
 --wrap all work in a transaction
@@ -96,7 +96,7 @@ insert into tmp_not_in_image_files
 				   from tmp_image_file_list) ;
 
 
-unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.unl"
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_images_not_in_database.txt"
   select * from tmp_not_in_image_files ;
 
 update statistics high for table tmp_pdf_file_list ;
@@ -114,7 +114,7 @@ insert into tmp_not_in_pub_files
 				where pub_file = filename)
 	and pub_file is not null;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.unl"
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_pdfs_not_in_database.txt"
   select * from tmp_not_in_pub_files ;
 
 
@@ -135,18 +135,18 @@ insert into tmp_not_in_video_files
                                 where video_file = filename)
         and video_file is not null;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_videos_not_in_database.unl"
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/filesystem_videos_not_in_database.txt"
   select * from tmp_not_in_video_files ;
 
 --produce the files not in the database
 
-unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_image_files.unl"
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_image_files.txt"
   select * from tmp_not_in_images ;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_pdf_files.unl"
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_pdf_files.txt"
   select * from tmp_not_in_pub ;
 
-unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_video_files.unl"
+unload to "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/loadUp/orphan_video_files.txt"
   select * from tmp_not_in_video ; 
 
 commit work ;
