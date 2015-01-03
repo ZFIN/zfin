@@ -46,7 +46,7 @@ create unique index tmp_filename_video_primary_key_index
 
 load from /tmp/fl_image_modified insert into tmp_image_file_list ;
 load from /tmp/fl_pdf_modified insert into tmp_pdf_file_list ;
-load from /tmp/fl_video_modified insert into tmp_video_file_list ;
+--load from /tmp/fl_video_modified insert into tmp_video_file_list ;
 --create temp tables to store the mismatches (one for pdfs, one for
 --images. )
 
@@ -129,7 +129,7 @@ insert into tmp_not_in_video
                                 where video_path_to_file = filename);
 
 insert into tmp_not_in_video_files
-  select video_file
+  select filename
         from video
         where not exists (select 'x' from tmp_video_file_list
                                 where video_file = filename)
