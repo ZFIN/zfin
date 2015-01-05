@@ -67,7 +67,7 @@
     </target>
 
     <target name="runSpecifiedTest" depends="compile,build-tests">
-        <runBatchTest classNamePattern="${RUN_TEST}" outFile="specifiedTests" verbose="true"/>
+        <runBatchTest classNamePattern="**/${RUN_TEST}*.class" outFile="specifiedTests" verbose="true"/>
     </target>
 
 

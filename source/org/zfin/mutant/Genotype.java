@@ -4,6 +4,7 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.infrastructure.DataNote;
+import org.zfin.infrastructure.EntityNotes;
 import org.zfin.profile.GenotypeSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;

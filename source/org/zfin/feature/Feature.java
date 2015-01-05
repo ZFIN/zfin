@@ -76,6 +76,10 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.dataNotes = dataNotes;
     }
 
+    public SortedSet<DataNote> getSortedDataNotes() {
+        return new TreeSet(this.getDataNotes());
+    }
+
     public Boolean getKnownInsertionSite() {
         return isKnownInsertionSite;
     }

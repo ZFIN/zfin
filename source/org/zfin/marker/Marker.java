@@ -530,6 +530,10 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         this.dataNotes = dataNotes;
     }
 
+    public SortedSet<DataNote> getSortedDataNotes() {
+        return new TreeSet(this.getDataNotes());
+    }
+
     /**
      * Only be used because family names are stored in a separate tabel.
      * Todo: Better to have subclass Gene
