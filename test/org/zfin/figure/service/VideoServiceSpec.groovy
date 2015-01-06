@@ -1,6 +1,7 @@
 package org.zfin.figure.service
 
-import org.apache.commons.io.FileUtils
+import org.junit.ClassRule
+import org.junit.rules.TemporaryFolder
 import org.zfin.AbstractZfinIntegrationSpec
 import org.zfin.expression.Image
 import org.zfin.expression.Video
@@ -9,23 +10,21 @@ import org.zfin.properties.ZfinPropertiesEnum
 import org.zfin.repository.RepositoryFactory
 import spock.lang.Shared
 
-import java.nio.file.Files
-
 /**
  * Created by kschaper on 7/1/14.
  */
 class VideoServiceSpec extends AbstractZfinIntegrationSpec {
 
     @Shared File videoLoadUp
-    @Shared File tempdir
     @Shared String originalLoadup
     @Shared Image image
 
+    @ClassRule @Shared TemporaryFolder tempDir;
+
     //these runs once for the whole class
     public def setupSpec() {
-        tempdir = Files.createTempDirectory(this.class.name).toFile()
         originalLoadup = ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()
-        ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(tempdir.absolutePath)
+        ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(tempDir.getRoot().absolutePath)
         videoLoadUp = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.VIDEO_LOAD.toString())
     }
 
@@ -42,7 +41,6 @@ class VideoServiceSpec extends AbstractZfinIntegrationSpec {
 
     public def cleanupSpec() {
         ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(originalLoadup)
-        FileUtils.deleteDirectory(tempdir)
     }
 
     def "When a video is added, the video should be returned, get an id, and the file should end up in videoLoadUp"() {
