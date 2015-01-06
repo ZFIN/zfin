@@ -16,7 +16,7 @@ public class SectionVisibilityTest {
 
     @Test
     public void simpleSectionVisibilityDefaultFalse() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         int numberOfSections = OntologyBean.Section.values().length;
@@ -37,7 +37,7 @@ public class SectionVisibilityTest {
 
     @Test
     public void simpleSectionVisibilityDefaultTrue() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, true);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class, true);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         int numberOfSections = OntologyBean.Section.values().length;
@@ -61,7 +61,7 @@ public class SectionVisibilityTest {
      */
     @Test
     public void setVisibilityToTrueManually() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, false);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class, false);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         int numberOfSections = OntologyBean.Section.values().length;
@@ -90,7 +90,7 @@ public class SectionVisibilityTest {
      */
     @Test
     public void setVisibilityToTrueManuallyIsVisible() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, false);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class, false);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         List<String> visibleSections = vis.getVisibleSections();
@@ -108,7 +108,7 @@ public class SectionVisibilityTest {
      */
     @Test
     public void setVisibilityToTrueViaShowAll() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, false);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class, false);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         int numberOfSections = OntologyBean.Section.values().length;
@@ -134,7 +134,7 @@ public class SectionVisibilityTest {
      */
     @Test
     public void checkIsVisibleMethod() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         int numberOfSections = OntologyBean.Section.values().length;
@@ -162,7 +162,7 @@ public class SectionVisibilityTest {
      */
     @Test
     public void checkSetHowSectionMethod() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         int numberOfSections = OntologyBean.Section.values().length;
@@ -187,7 +187,7 @@ public class SectionVisibilityTest {
      */
     @Test
     public void checkIsVisibleMethodString() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         int numberOfSections = OntologyBean.Section.values().length;
@@ -205,32 +205,20 @@ public class SectionVisibilityTest {
         assertTrue(!vis.hasData(OntologyBean.Section.PHENOTYPE.toString()));
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testNoClassEnumerationClassProvidedExceptions() {
-        try {
-            new SectionVisibility<OntologyBean.Section>(null);
-        } catch (Exception e) {
-            assertTrue(e.getMessage() != null);
-            return;
-        }
-        fail("Should have thrown a NullPointerException");
+        new SectionVisibility<OntologyBean.Section>(null);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testSetVisibilityNoClassEnumerationClassProvidedExceptions() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
-        try {
-            vis.setVisibility(null, true);
-        } catch (Exception e) {
-            assertTrue(e instanceof NullPointerException);
-            return;
-        }
-        fail("Should have thrown a NullPointerException");
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
+        vis.setVisibility(null, true);
     }
 
     @Test
     public void hasData() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         // no section data available
@@ -242,7 +230,7 @@ public class SectionVisibilityTest {
 
     @Test
     public void getVisibleSectionsWithData() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         String[] data = vis.getVisibleSectionsWithData();
@@ -265,7 +253,7 @@ public class SectionVisibilityTest {
 
     @Test
     public void getSectionsWithData() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         String[] data = vis.getSectionsWithData();
@@ -288,7 +276,7 @@ public class SectionVisibilityTest {
 
     @Test
     public void atLeastOneSectionVisible() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+        SectionVisibility vis = new SectionVisibility<>(OntologyBean.Section.class);
         EnumMap<OntologyBean.Section, Boolean> sections = vis.getSectionVisibilityMap();
         assertTrue(sections != null);
         assertTrue(!vis.isAnySectionVisible());

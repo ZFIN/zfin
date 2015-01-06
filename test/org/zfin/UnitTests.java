@@ -60,7 +60,6 @@ import org.zfin.sequence.blast.SequenceTest;
 import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
 import org.zfin.sequence.reno.presentation.RunPresentationTest;
-import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
 import org.zfin.uniquery.IndexerUtilTest;
 import org.zfin.uniquery.SiteSearchTest;
 import org.zfin.util.*;
@@ -137,7 +136,6 @@ import org.zfin.util.*;
         SequenceTest.class,
         SequenceTargetingReagentStatisticsTest.class,
         SerializationTests.class,
-        SingleAssociatedGenesFromQueryTest.class,
         SiteSearchTest.class,
         SortAnatomyResultsTest.class,
         StagePresentationTest.class,

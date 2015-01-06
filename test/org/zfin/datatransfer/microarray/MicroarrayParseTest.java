@@ -11,7 +11,6 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Tests parsing for microarrays
@@ -119,28 +118,22 @@ public class MicroarrayParseTest {
     }
 
     @Test
-    public void microarrayBeanTest() {
-        try {
-            System.out.println(System.getProperty("java.io.tmpdir"));
-            MicroarrayBean microarrayBean = new MicroarrayBean();
-            File file = microarrayBean.getFile();
-            microarrayBean.addMessage("asdfa");
-            microarrayBean.addNotFound("hhhh");
-            microarrayBean.addNotFound("gggg");
-            microarrayBean.addMessage("bbbbb");
-            String retrieve = microarrayBean.finishReadingAndRetrieve();
-            String validString = "file[" + file.getAbsolutePath() + "]\n" +
-                    "asdfa\n" +
-                    "not found[hhhh]\n" +
-                    "not found[gggg]\n" +
-                    "bbbbb\n";
-            assertEquals(validString, retrieve);
-            String retrieve2 = microarrayBean.finishReadingAndRetrieve();
-            assertEquals(validString, retrieve2);
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
-
+    public void microarrayBeanTest() throws IOException {
+        System.out.println(System.getProperty("java.io.tmpdir"));
+        MicroarrayBean microarrayBean = new MicroarrayBean();
+        File file = microarrayBean.getFile();
+        microarrayBean.addMessage("asdfa");
+        microarrayBean.addNotFound("hhhh");
+        microarrayBean.addNotFound("gggg");
+        microarrayBean.addMessage("bbbbb");
+        String retrieve = microarrayBean.finishReadingAndRetrieve();
+        String validString = "file[" + file.getAbsolutePath() + "]\n" +
+                "asdfa\n" +
+                "not found[hhhh]\n" +
+                "not found[gggg]\n" +
+                "bbbbb\n";
+        assertEquals(validString, retrieve);
+        String retrieve2 = microarrayBean.finishReadingAndRetrieve();
+        assertEquals(validString, retrieve2);
     }
 }

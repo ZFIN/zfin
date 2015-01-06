@@ -1,8 +1,9 @@
 package org.zfin.util;
 
-import org.junit.Assert;
 import org.apache.log4j.Logger;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.util.StringUtils;
 
@@ -12,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -24,6 +24,9 @@ import static org.junit.Assert.assertTrue;
 public class ZfinStringUtilsTest {
 
     public static final Logger logger = Logger.getLogger(ZfinStringUtils.class);
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void splitStringMethod() {
@@ -48,14 +51,6 @@ public class ZfinStringUtilsTest {
         assertNull(truncatedText);
 
         text = "harry der Grosse";
-        maxLength = 0;
-        try {
-            truncatedText = ZfinStringUtils.getTruncatedString(text, maxLength);
-        } catch (Exception e) {
-            assertTrue(e.getMessage().startsWith("The maximum length "));
-        }
-
-        text = "harry der Grosse";
         maxLength = 12;
         truncatedText = ZfinStringUtils.getTruncatedString(text, maxLength);
         assertEquals("harry der ...", truncatedText);
@@ -69,6 +64,15 @@ public class ZfinStringUtilsTest {
         maxLength = 4;
         truncatedText = ZfinStringUtils.getTruncatedString(text, maxLength);
         assertEquals("har...", truncatedText);
+    }
+
+    @Test
+    public void truncateTextMaxLengthZero() {
+        exception.expect(IllegalStateException.class);
+        exception.expectMessage("The maximum length ");
+        String text = "harry der Grosse";
+        int maxLength = 0;
+        ZfinStringUtils.getTruncatedString(text, maxLength);
     }
 
     @Test

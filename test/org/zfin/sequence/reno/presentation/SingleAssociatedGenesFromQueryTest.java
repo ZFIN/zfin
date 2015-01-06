@@ -3,7 +3,9 @@ package org.zfin.sequence.reno.presentation;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
@@ -39,7 +41,7 @@ import static org.junit.Assert.assertEquals;
  *  @link http://zfinwinserver1/FogBUGZ/default.asp?W86
  *  @link http://zfinwinserver1/FogBUGZ/default.asp?2373
  */
-public class SingleAssociatedGenesFromQueryTest {
+public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
     private final Logger logger = Logger.getLogger(SingleAssociatedGenesFromQueryTest.class) ;
 
     private RenoService renoService = new RenoService();
@@ -50,28 +52,28 @@ public class SingleAssociatedGenesFromQueryTest {
     private Hit hit2 = new Hit();
     private Accession hit1Accession = new Accession() ;
     private Accession hit2Accession = new Accession() ;
-	private Set<Hit> blastHits = new HashSet<Hit>() ;
-    private Set<MarkerRelationship> est1SecondMarkerRelationships = new HashSet<MarkerRelationship>() ;
-    private Set<MarkerRelationship> est2SecondMarkerRelationships = new HashSet<MarkerRelationship>() ;
-	private MarkerDBLink gene1DBLink = new MarkerDBLink();
-	private Set<MarkerDBLink> gene1DBLinks = new HashSet<MarkerDBLink>();
-	private Set<DBLink> est1DBLinks = new HashSet<DBLink>() ;
-	private MarkerDBLink est1HitDBLink = new MarkerDBLink() ;
-	private Set<MarkerDBLink> est1MarkerDBLinks = new HashSet<MarkerDBLink>() ;
-	private MarkerDBLink est2HitDBLink = new MarkerDBLink() ;
-	private Set<DBLink> est2DBLinks = new HashSet<DBLink>() ;
-	private Set<MarkerDBLink> est2MarkerDBLinks = new HashSet<MarkerDBLink>() ;
-	private MarkerRelationship est1Gene1MarkerRelationship= new MarkerRelationship() ;
-	private MarkerRelationship est1Gene2MarkerRelationship= new MarkerRelationship() ;
-	private MarkerRelationship est2Gene2MarkerRelationship= new MarkerRelationship() ;
-	private MarkerRelationship est2Gene1MarkerRelationship= new MarkerRelationship() ;
+    private Set<Hit> blastHits = new HashSet<Hit>() ;
+    private Set<MarkerRelationship> est1SecondMarkerRelationships = new HashSet<>() ;
+    private Set<MarkerRelationship> est2SecondMarkerRelationships = new HashSet<>() ;
+    private MarkerDBLink gene1DBLink = new MarkerDBLink();
+    private Set<MarkerDBLink> gene1DBLinks = new HashSet<>();
+    private Set<DBLink> est1DBLinks = new HashSet<>() ;
+    private MarkerDBLink est1HitDBLink = new MarkerDBLink() ;
+    private Set<MarkerDBLink> est1MarkerDBLinks = new HashSet<>() ;
+    private MarkerDBLink est2HitDBLink = new MarkerDBLink() ;
+    private Set<DBLink> est2DBLinks = new HashSet<>() ;
+    private Set<MarkerDBLink> est2MarkerDBLinks = new HashSet<>() ;
+    private MarkerRelationship est1Gene1MarkerRelationship= new MarkerRelationship() ;
+    private MarkerRelationship est1Gene2MarkerRelationship= new MarkerRelationship() ;
+    private MarkerRelationship est2Gene2MarkerRelationship= new MarkerRelationship() ;
+    private MarkerRelationship est2Gene1MarkerRelationship= new MarkerRelationship() ;
 
 
     @Before
     public void setUp() {
         MarkerType geneType = new MarkerType();
         geneType.setType(Marker.Type.GENE);
-        Set<Marker.TypeGroup> groups = new HashSet<Marker.TypeGroup>();
+        Set<Marker.TypeGroup> groups = new HashSet<>();
         groups.add(Marker.TypeGroup.GENEDOM);
         geneType.setTypeGroups(groups);
 
@@ -90,10 +92,10 @@ public class SingleAssociatedGenesFromQueryTest {
 
 
         // set est types
-		MarkerType estType = new MarkerType() ;
-		estType.setType(Marker.Type.EST) ;
-		Set<Marker.TypeGroup> typeGroups = new HashSet<Marker.TypeGroup>() ;
-		estType.setTypeGroups(typeGroups);
+        MarkerType estType = new MarkerType() ;
+        estType.setType(Marker.Type.EST) ;
+        Set<Marker.TypeGroup> typeGroups = new HashSet<>() ;
+        estType.setTypeGroups(typeGroups);
 
         Marker est1=new Marker();
         est1.setAbbreviation("est1");
@@ -142,7 +144,7 @@ public class SingleAssociatedGenesFromQueryTest {
         est2Gene1MarkerRelationship.setType(MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
 
 
-		// implied, but not necessary
+        // implied, but not necessary
         est1.setSecondMarkerRelationships(est1SecondMarkerRelationships);
         est2.setSecondMarkerRelationships(est2SecondMarkerRelationships);
 
@@ -170,7 +172,7 @@ public class SingleAssociatedGenesFromQueryTest {
         query.setBlastHits(blastHits);
 
 
-        Set<Query> queries = new HashSet<Query>();
+        Set<Query> queries = new HashSet<>();
         queries.add(query);
         
         runCandidate.setCandidateQueries(queries);
@@ -178,32 +180,33 @@ public class SingleAssociatedGenesFromQueryTest {
     }
 
 
-	@After
+    @After
     public void cleanUp(){
-		est1SecondMarkerRelationships.clear() ; 
-		est2SecondMarkerRelationships.clear() ; 
-		blastHits.clear() ; 
-	}
+        est1SecondMarkerRelationships.clear() ;
+        est2SecondMarkerRelationships.clear() ;
+        blastHits.clear() ;
+    }
 
-    //@Test
-	public void estEncodedByOneGeneIsVisible(){
+    @Test
+    @Ignore
+    public void estEncodedByOneGeneIsVisible(){
         // defined, but not necessary
 
-		est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
+        est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
 
 //        * <li> START est encoded by 1 genes in 1 hit (visible)
         logger.debug("est encoded by 1 genes in 1 hit (visible) getAllSingleAssociatedGenesFromQueries");
         assertEquals(1, renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 //        * <li> END est encoded by 1 genes in 1 hit (visible)
 
-	}
+    }
 
-	@Test
+    @Test
     public void estEncodedByTwoGenesHidden(){
 //      * <li> START est encoded by 2 genes in 1 hit (hide)
         // est1 is encoded by 2 genes
-		est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
-		est1SecondMarkerRelationships.add(est1Gene2MarkerRelationship) ;
+        est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
+        est1SecondMarkerRelationships.add(est1Gene2MarkerRelationship) ;
         // add this marker relationship to secondMarkerRelationship set (already set)
 
         // need to add gene2 encoding, though this is unnecessary 
@@ -211,15 +214,16 @@ public class SingleAssociatedGenesFromQueryTest {
         logger.debug("est encoded by 2 genes in 1 hit (hide) getAllSingleAssociatedGenesFromQueries");
         assertEquals(0, renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 //      * <li> END est encoded by 2 genes in 1 hit (hide)
-	}
+    }
 
-    //	@Test
-	public void estEncodedByTwoGenesOtherEstByOneGeneVisible(){
-		// setup est1 being encoded by two genes
-		est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
-		est1SecondMarkerRelationships.add(est1Gene2MarkerRelationship) ;
+    @Test
+    @Ignore
+    public void estEncodedByTwoGenesOtherEstByOneGeneVisible(){
+        // setup est1 being encoded by two genes
+        est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
+        est1SecondMarkerRelationships.add(est1Gene2MarkerRelationship) ;
 
-		// setup est2 being encoded by one gene, "gene2"
+        // setup est2 being encoded by one gene, "gene2"
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ; 
         blastHits.add(hit2) ;
 
@@ -228,16 +232,16 @@ public class SingleAssociatedGenesFromQueryTest {
         Collection<Marker> associatedGenes = renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate);
         assertEquals(1,associatedGenes.size());
         assertEquals("gene2",associatedGenes.iterator().next().getAbbreviation());
-	}
+    }
 
 
-    //	@Test
-	public void twoHitsEncodedTwoGenesEachHidden(){
-		// setup est1 being encoded by two genes
-		est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
-		est1SecondMarkerRelationships.add(est1Gene2MarkerRelationship) ;
+    @Test
+    public void twoHitsEncodedTwoGenesEachHidden(){
+        // setup est1 being encoded by two genes
+        est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
+        est1SecondMarkerRelationships.add(est1Gene2MarkerRelationship) ;
 
-		// setup est2 being encoded by one gene, "gene2"
+        // setup est2 being encoded by one gene, "gene2"
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ; 
         est2SecondMarkerRelationships.add(est2Gene1MarkerRelationship) ;
 
@@ -245,10 +249,11 @@ public class SingleAssociatedGenesFromQueryTest {
 
         logger.debug("est encoded by 2 genes in 1 hit, but 2 gene in another (hidden)");
         assertEquals(0,renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
-	}
+    }
 
-    //@Test
-	public void differentEstsEncodeSameGeneVisible(){
+    @Test
+    @Ignore
+    public void differentEstsEncodeSameGeneVisible(){
         est1SecondMarkerRelationships.add(est1Gene2MarkerRelationship) ;
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ;
 
@@ -259,49 +264,52 @@ public class SingleAssociatedGenesFromQueryTest {
         Collection<Marker> associatedGenes = renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate);
         assertEquals(1,associatedGenes.size());
         assertEquals("gene2",associatedGenes.iterator().next().getAbbreviation());
-	}
+    }
 
-    //@Test
-	public void differentEstsEncodeDifferentGeneCount2(){
+    @Test
+    @Ignore
+    public void differentEstsEncodeDifferentGeneCount2(){
         est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ;
         blastHits.add(hit2) ;
         logger.debug("est encoded by 1 gene in 1 hit, and another gene in another hit: hits have different EST(visible twice)");
         assertEquals(2,renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
 
-	}
+    }
 
-    //	@Test
-	public void differentHitsWithSameEstVisible(){
+    @Test
+    @Ignore
+    public void differentHitsWithSameEstVisible(){
         est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ;
         blastHits.add(hit2) ;
         hit2.setTargetAccession(hit1Accession);
         logger.debug("2 hits with same EST(visible once)");
         assertEquals(1,renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
-	}
+    }
 
-	@Test
-	public void estHybridizedInOneGeneHide(){
+    @Test
+    public void estHybridizedInOneGeneHide(){
         est2Gene1MarkerRelationship.setType(MarkerRelationship.Type.GENE_HYBRIDIZED_BY_SMALL_SEGMENT);
         est2SecondMarkerRelationships.add(est2Gene1MarkerRelationship) ;
         logger.debug("est hybridized by in 1 gene (hide)");
         assertEquals(0,renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate).size());
-	}
+    }
 
-    //@Test
-	public void estHybridizedInOneGeneEncodedInAnotherVisible(){
+    @Test
+    @Ignore
+    public void estHybridizedInOneGeneEncodedInAnotherVisible(){
 
         est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ; // encoded
 
         est2Gene1MarkerRelationship.setType(MarkerRelationship.Type.GENE_HYBRIDIZED_BY_SMALL_SEGMENT);
         est2SecondMarkerRelationships.add(est2Gene1MarkerRelationship) ;
-		blastHits.add(hit2) ; 
+        blastHits.add(hit2) ;
         logger.debug("est hybridized by in 1 gene (hide)");
         Collection<Marker> associatedGenes = renoService.getAllSingleAssociatedGenesFromQueriesForRunCandidate(runCandidate);
         assertEquals(1,associatedGenes.size());
         assertEquals(gene1.getAbbreviation(),associatedGenes.iterator().next().getAbbreviation());
 
-	}
+    }
 
 }

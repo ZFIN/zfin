@@ -95,16 +95,12 @@ public class BlastNonDBTest {
     }
 
     @Test
-    public void setBlastResultFile(){
+    public void setBlastResultFile() throws IOException {
         XMLBlastBean xmlBlastBean = new XMLBlastBean() ;
-        try {
-            service.setBlastResultFile(xmlBlastBean);
-            assertNotNull(xmlBlastBean.getResultFile());
-            assertTrue(xmlBlastBean.getResultFile().getName().startsWith("blast"));
-            assertTrue(xmlBlastBean.getResultFile().getName().endsWith(".xml"));
-        } catch (IOException e) {
-            fail(e.fillInStackTrace().toString()) ;
-        }
+        service.setBlastResultFile(xmlBlastBean);
+        assertNotNull(xmlBlastBean.getResultFile());
+        assertTrue(xmlBlastBean.getResultFile().getName().startsWith("blast"));
+        assertTrue(xmlBlastBean.getResultFile().getName().endsWith(".xml"));
     }
 
     @Test
@@ -162,35 +158,24 @@ public class BlastNonDBTest {
     }
 
     @Test
-    public void fixFileName(){
+    public void fixFileName() throws IOException {
         XMLBlastBean xmlBlastBean = new XMLBlastBean();
         XMLBlastViewController xmlBlastViewController = new XMLBlastViewController();
         String ticketNumber = "6347900181946270349";
         xmlBlastBean.setResultFile(new File(ticketNumber));
         assertFalse(xmlBlastViewController.isValidBlastResultLocation(xmlBlastBean));
         xmlBlastBean = xmlBlastViewController.fixFileLocation(xmlBlastBean);
-        try {
-            if(xmlBlastBean.getResultFile().exists()){
-                assertTrue(xmlBlastBean.getResultFile().delete());
-            }
-            assertTrue(xmlBlastBean.getResultFile().createNewFile());
-        } catch (IOException e) {
-            fail(e.toString()) ;
+        if(xmlBlastBean.getResultFile().exists()){
+            assertTrue(xmlBlastBean.getResultFile().delete());
         }
+        assertTrue(xmlBlastBean.getResultFile().createNewFile());
         assertTrue(xmlBlastViewController.isValidBlastResultLocation(xmlBlastBean));
         assertTrue(xmlBlastBean.getResultFile().delete());
     }
 
     @Test
-    public void createBlastTempFile() {
-        try {
-            File localFile = File.createTempFile("test",".fa",new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value())) ;
-            localFile.delete();
-        } catch (IOException e) {
-            String failMessage = String.format("!!!! Couldn't create file! Check permissions for "
-                    + ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value());
-            logger.error(failMessage);
-            fail(failMessage) ;
-        }
+    public void createBlastTempFile() throws IOException {
+        File localFile = File.createTempFile("test",".fa",new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value())) ;
+        localFile.delete();
     }
 }

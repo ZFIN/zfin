@@ -124,15 +124,11 @@ public class UrlCreatorTest {
 
 
     @Test
-    public void roundTripEncodingTest() {
+    public void roundTripEncodingTest() throws UnsupportedEncodingException {
         String initialUrl = "http://zfin.org/search?q=foo&fq=category:gene&fq=anatomy:brain";
         URLCreator urlCreator = new URLCreator(initialUrl);
         String outputUrl = urlCreator.getURL();
-        try {
-            outputUrl = URLDecoder.decode(outputUrl, HTTP.UTF_8);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        outputUrl = URLDecoder.decode(outputUrl, HTTP.UTF_8);
         //this is maybe asking for too much, there may be no guarantee that order will be preserved
         Assert.assertEquals(initialUrl, outputUrl);
     }

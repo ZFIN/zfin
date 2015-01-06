@@ -1,5 +1,6 @@
 package org.zfin.util;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -46,7 +47,8 @@ public class HighlightUtilTest {
         assertEquals(text, highlightString);
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void highlightSpecialCharacter() {
         String text = "mp:zf637-3-001691";
         String highlightString = "300";
@@ -62,7 +64,8 @@ public class HighlightUtilTest {
         assertEquals("m<b>p:zf637-3-0</b>01691", highlightString);
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void highlightSpecialCharacterInQueryString() {
         String text = "B-ACTZF";
         String highlightString = "b-actzf";

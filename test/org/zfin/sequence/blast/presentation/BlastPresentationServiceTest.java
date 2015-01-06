@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -21,7 +20,7 @@ public class BlastPresentationServiceTest {
     private final static Logger logger = Logger.getLogger(BlastPresentationServiceTest.class) ;
 
     @Test
-    public void parentOnlyOrdering(){
+    public void parentOnlyOrdering() throws BlastDatabaseException {
 
         String D1 = "d1" ;
         String D2 = "d2" ;
@@ -34,18 +33,18 @@ public class BlastPresentationServiceTest {
         DatabaseRelationship dr1 = new DatabaseRelationship() ;
         dr1.setChild(d1);
         dr1.setOrder(1);
-        Set<DatabaseRelationship> dr1Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr1Set = new HashSet<>() ;
         dr1Set.add(dr1) ;
         d1.setChildrenRelationships(dr1Set);
 
         DatabaseRelationship dr2 = new DatabaseRelationship() ;
         dr2.setChild(d2);
         dr2.setOrder(2);
-        Set<DatabaseRelationship> dr2Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2Set = new HashSet<>() ;
         dr2Set.add(dr2) ;
         d2.setChildrenRelationships(dr2Set);
 
-        Set<Database> databases = new HashSet<Database>() ;
+        Set<Database> databases = new HashSet<>() ;
         databases.add(d1) ;
         databases.add(d2) ;
 
@@ -57,12 +56,8 @@ public class BlastPresentationServiceTest {
         assertEquals("Second database should have indent 0",returnDatabases.get(0).getIndent(),0) ;
         assertEquals("d1 should have no children",0,BlastPresentationService.getDirectChildren(d1).size());
         assertEquals("d2 should have no children",0,BlastPresentationService.getDirectChildren(d2).size());
-        try {
-            assertEquals("d1 should have no leaved",1,BlastPresentationService.getLeaves(d1).size());
-            assertEquals("d2 should have no leaves",1,BlastPresentationService.getLeaves(d2).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
+        assertEquals("d1 should have no leaved",1,BlastPresentationService.getLeaves(d1).size());
+        assertEquals("d2 should have no leaves",1,BlastPresentationService.getLeaves(d2).size());
 
         dr1.setOrder(2);
         dr2.setOrder(1);
@@ -74,13 +69,8 @@ public class BlastPresentationServiceTest {
         assertEquals("Second database should have indent 0",returnDatabases.get(1).getIndent(),0) ;
         assertEquals("d1 should have no children",0,BlastPresentationService.getDirectChildren(d1).size());
         assertEquals("d2 should have no children",0,BlastPresentationService.getDirectChildren(d2).size());
-        try {
-            assertEquals("d1 should have no leaved",1,BlastPresentationService.getLeaves(d1).size());
-            assertEquals("d2 should have no leaves",1,BlastPresentationService.getLeaves(d2).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
-
+        assertEquals("d1 should have no leaved",1,BlastPresentationService.getLeaves(d1).size());
+        assertEquals("d2 should have no leaves",1,BlastPresentationService.getLeaves(d2).size());
 
     }
 
@@ -88,7 +78,7 @@ public class BlastPresentationServiceTest {
 
 
     @Test
-    public void parentChildOnlyOrdering(){
+    public void parentChildOnlyOrdering() throws BlastDatabaseException {
 
         // (dr1) d1
         // (dr2) -> d2 
@@ -104,7 +94,7 @@ public class BlastPresentationServiceTest {
         DatabaseRelationship dr1 = new DatabaseRelationship() ;
         dr1.setChild(d1);
         dr1.setOrder(1);
-        Set<DatabaseRelationship> dr1Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr1Set = new HashSet<>() ;
         dr1Set.add(dr1) ;
         d1.setChildrenRelationships(dr1Set);
 
@@ -112,12 +102,12 @@ public class BlastPresentationServiceTest {
         dr2.setParent(d1);
         dr2.setChild(d2);
         dr2.setOrder(1);
-        Set<DatabaseRelationship> dr2Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2Set = new HashSet<>() ;
         dr2Set.add(dr2) ;
         d2.setChildrenRelationships(dr2Set);
         d1.setParentRelationships(dr2Set);
 
-        Set<Database> databases = new HashSet<Database>() ;
+        Set<Database> databases = new HashSet<>() ;
         databases.add(d1) ;
         databases.add(d2) ;
 
@@ -129,12 +119,8 @@ public class BlastPresentationServiceTest {
         assertEquals("Second database should have indent 1",1,returnDatabases.get(1).getIndent()) ;
         assertEquals("d1 children",1,BlastPresentationService.getDirectChildren(d1).size());
         assertEquals("d2 children",0,BlastPresentationService.getDirectChildren(d2).size());
-        try {
-            assertEquals("d1 leaves",1,BlastPresentationService.getLeaves(d1).size());
-            assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
+        assertEquals("d1 leaves",1,BlastPresentationService.getLeaves(d1).size());
+        assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
 
         returnDatabases = BlastPresentationService.processFromChild(d1,true) ;
         assertEquals("Should be two databases",2,returnDatabases.size()) ;
@@ -145,17 +131,13 @@ public class BlastPresentationServiceTest {
         
         assertEquals("d1 children",1,BlastPresentationService.getDirectChildren(d1).size());
         assertEquals("d2 children",0,BlastPresentationService.getDirectChildren(d2).size());
-        try {
-            assertEquals("d1 leaves",1,BlastPresentationService.getLeaves(d1).size());
-            assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
+        assertEquals("d1 leaves",1,BlastPresentationService.getLeaves(d1).size());
+        assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
     }
 
 
     @Test
-    public void childrenAreOrderedProperly(){
+    public void childrenAreOrderedProperly() throws BlastDatabaseException {
 
         //parent
         String D1 = "d1" ;
@@ -174,7 +156,7 @@ public class BlastPresentationServiceTest {
         DatabaseRelationship dr1 = new DatabaseRelationship() ;
         dr1.setChild(d1);
         dr1.setOrder(1);
-        Set<DatabaseRelationship> dr1Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr1Set = new HashSet<>() ;
         dr1Set.add(dr1) ;
         d1.setChildrenRelationships(dr1Set);
 
@@ -183,7 +165,7 @@ public class BlastPresentationServiceTest {
         dr2.setParent(d1);
         dr2.setChild(d2);
         dr2.setOrder(2);
-        Set<DatabaseRelationship> dr2Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2Set = new HashSet<>() ;
         dr2Set.add(dr2) ;
         d2.setChildrenRelationships(dr2Set);
 
@@ -191,17 +173,17 @@ public class BlastPresentationServiceTest {
         dr3.setParent(d1);
         dr3.setChild(d3);
         dr3.setOrder(1);
-        Set<DatabaseRelationship> dr3Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr3Set = new HashSet<>() ;
         dr3Set.add(dr3) ;
         d3.setChildrenRelationships(dr3Set);
 
 
-        Set<DatabaseRelationship> dr1ParentRelationships = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr1ParentRelationships = new HashSet<>() ;
         dr1ParentRelationships.add(dr2) ;
         dr1ParentRelationships.add(dr3) ;
         d1.setParentRelationships(dr1ParentRelationships);
 
-        Set<Database> databases = new HashSet<Database>() ;
+        Set<Database> databases = new HashSet<>() ;
         databases.add(d1) ;
         databases.add(d2) ;
         databases.add(d3) ;
@@ -221,13 +203,9 @@ public class BlastPresentationServiceTest {
         assertEquals("d1 children",2,BlastPresentationService.getDirectChildren(d1).size());
         assertEquals("d2 children",0,BlastPresentationService.getDirectChildren(d2).size());
         assertEquals("d3 children",0,BlastPresentationService.getDirectChildren(d3).size());
-        try {
-            assertEquals("d1 leaves",2,BlastPresentationService.getLeaves(d1).size());
-            assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
-            assertEquals("d3 leaves",1,BlastPresentationService.getLeaves(d3).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
+        assertEquals("d1 leaves",2,BlastPresentationService.getLeaves(d1).size());
+        assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
+        assertEquals("d3 leaves",1,BlastPresentationService.getLeaves(d3).size());
 
         returnDatabases = BlastPresentationService.orderDatabasesFromRoot(databases) ;
         assertEquals("Should be three databases",returnDatabases.size(),3) ;
@@ -250,13 +228,9 @@ public class BlastPresentationServiceTest {
         assertEquals("d1 children",2,BlastPresentationService.getDirectChildren(d1).size());
         assertEquals("d2 children",0,BlastPresentationService.getDirectChildren(d2).size());
         assertEquals("d3 children",0,BlastPresentationService.getDirectChildren(d3).size());
-        try {
-            assertEquals("d1 leaves",2,BlastPresentationService.getLeaves(d1).size());
-            assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
-            assertEquals("d3 leaves",1,BlastPresentationService.getLeaves(d3).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
+        assertEquals("d1 leaves",2,BlastPresentationService.getLeaves(d1).size());
+        assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
+        assertEquals("d3 leaves",1,BlastPresentationService.getLeaves(d3).size());
 
     }
 
@@ -264,7 +238,7 @@ public class BlastPresentationServiceTest {
 
 
     @Test
-    public void recursiveIndents(){
+    public void recursiveIndents() throws BlastDatabaseException {
 
         //parent
         String D1 = "d1" ;
@@ -284,7 +258,7 @@ public class BlastPresentationServiceTest {
         DatabaseRelationship dr1 = new DatabaseRelationship() ;
         dr1.setChild(d1);
         dr1.setOrder(1);
-        Set<DatabaseRelationship> dr1Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr1Set = new HashSet<>() ;
         dr1Set.add(dr1) ;
         d1.setChildrenRelationships(dr1Set);
 
@@ -293,7 +267,7 @@ public class BlastPresentationServiceTest {
         dr2.setParent(d1);
         dr2.setChild(d2);
         dr2.setOrder(3);
-        Set<DatabaseRelationship> dr2Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2Set = new HashSet<>() ;
         dr2Set.add(dr2) ;
         d2.setChildrenRelationships(dr2Set);
         d1.setParentRelationships(dr2Set);
@@ -302,13 +276,13 @@ public class BlastPresentationServiceTest {
         dr3.setParent(d2);
         dr3.setChild(d3);
         dr3.setOrder(1);
-        Set<DatabaseRelationship> dr3Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr3Set = new HashSet<>() ;
         dr3Set.add(dr3) ;
         d3.setChildrenRelationships(dr3Set);
         d2.setParentRelationships(dr3Set);
 
 
-        Set<Database> databases = new HashSet<Database>() ;
+        Set<Database> databases = new HashSet<>() ;
         databases.add(d1) ;
         databases.add(d2) ;
         databases.add(d3) ;
@@ -325,13 +299,9 @@ public class BlastPresentationServiceTest {
         assertEquals("d1 children",1,BlastPresentationService.getDirectChildren(d1).size());
         assertEquals("d2 children",1,BlastPresentationService.getDirectChildren(d2).size());
         assertEquals("d3 children",0,BlastPresentationService.getDirectChildren(d3).size());
-        try {
-            assertEquals("d1 leaves",1,BlastPresentationService.getLeaves(d1).size());
-            assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
-            assertEquals("d3 leaves",1,BlastPresentationService.getLeaves(d3).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
+        assertEquals("d1 leaves",1,BlastPresentationService.getLeaves(d1).size());
+        assertEquals("d2 leaves",1,BlastPresentationService.getLeaves(d2).size());
+        assertEquals("d3 leaves",1,BlastPresentationService.getLeaves(d3).size());
 
         returnDatabases = BlastPresentationService.processFromChild(d1,true) ;
         assertEquals("Should be three databases",returnDatabases.size(),3) ;
@@ -345,7 +315,7 @@ public class BlastPresentationServiceTest {
 
 
     @Test
-    public void indentsOrderBeforeChildren(){
+    public void indentsOrderBeforeChildren() throws BlastDatabaseException {
 
         // (dr1) -> d1  #1
         //   (dr1_1) -> d1.1 #4
@@ -378,7 +348,7 @@ public class BlastPresentationServiceTest {
         DatabaseRelationship dr1 = new DatabaseRelationship() ;
         dr1.setChild(d1);
         dr1.setOrder(1);
-        Set<DatabaseRelationship> dr1Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr1Set = new HashSet<>() ;
         dr1Set.add(dr1) ;
         d1.setChildrenRelationships(dr1Set);
 
@@ -386,7 +356,7 @@ public class BlastPresentationServiceTest {
         DatabaseRelationship dr2 = new DatabaseRelationship() ;
         dr2.setChild(d2);
         dr2.setOrder(3);
-        Set<DatabaseRelationship> dr2Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2Set = new HashSet<>() ;
         dr2Set.add(dr2) ;
         d2.setChildrenRelationships(dr2Set);
 
@@ -394,7 +364,7 @@ public class BlastPresentationServiceTest {
         dr1_1.setParent(d1);
         dr1_1.setChild(d1_1);
         dr1_1.setOrder(4);
-        Set<DatabaseRelationship> dr1_1Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr1_1Set = new HashSet<>() ;
         dr1_1Set.add(dr1_1) ;
         d1_1.setChildrenRelationships(dr1_1Set);
         d1.setParentRelationships(dr1_1Set);
@@ -403,7 +373,7 @@ public class BlastPresentationServiceTest {
         dr2_1.setParent(d2);
         dr2_1.setChild(d2_1);
         dr2_1.setOrder(2);
-        Set<DatabaseRelationship> dr2_1ChildSet = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2_1ChildSet = new HashSet<>() ;
         dr2_1ChildSet.add(dr2_1) ;
         d2_1.setChildrenRelationships(dr2_1ChildSet);
 
@@ -411,16 +381,16 @@ public class BlastPresentationServiceTest {
         dr2_2.setParent(d2);
         dr2_2.setChild(d2_2);
         dr2_2.setOrder(7);
-        Set<DatabaseRelationship> dr2_2Set = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2_2Set = new HashSet<>() ;
         dr2_2Set.add(dr2_2) ;
         d2_2.setChildrenRelationships(dr2_2Set);
 
-        Set<DatabaseRelationship> dr2ParentSet = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2ParentSet = new HashSet<>() ;
         dr2ParentSet.add(dr2_1) ;
         dr2ParentSet.add(dr2_2) ;
         d2.setParentRelationships(dr2ParentSet);
 
-        Set<Database> databases = new HashSet<Database>() ;
+        Set<Database> databases = new HashSet<>() ;
         databases.add(d1) ;
         databases.add(d1_1) ;
         databases.add(d2) ;
@@ -440,15 +410,11 @@ public class BlastPresentationServiceTest {
         assertEquals("d2 children",2,BlastPresentationService.getDirectChildren(d2).size());
         assertEquals("d2_1 children",0,BlastPresentationService.getDirectChildren(d2_1).size());
         assertEquals("d2_2 children",0,BlastPresentationService.getDirectChildren(d2_2).size());
-        try {
-            assertEquals("d1 leaves",1,BlastPresentationService.getLeaves(d1).size());
-            assertEquals("d1_1 leaves",1,BlastPresentationService.getLeaves(d1_1).size());
-            assertEquals("d2 leaves",2,BlastPresentationService.getLeaves(d2).size());
-            assertEquals("d2_1 leaves",1,BlastPresentationService.getLeaves(d2_1).size());
-            assertEquals("d2_2 leaves",1,BlastPresentationService.getLeaves(d2_2).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
+        assertEquals("d1 leaves",1,BlastPresentationService.getLeaves(d1).size());
+        assertEquals("d1_1 leaves",1,BlastPresentationService.getLeaves(d1_1).size());
+        assertEquals("d2 leaves",2,BlastPresentationService.getLeaves(d2).size());
+        assertEquals("d2_1 leaves",1,BlastPresentationService.getLeaves(d2_1).size());
+        assertEquals("d2_2 leaves",1,BlastPresentationService.getLeaves(d2_2).size());
 
         returnDatabases = BlastPresentationService.processFromChild(d1,true) ;
         assertEquals("Should be two databases",returnDatabases.size(),2) ;
@@ -471,7 +437,7 @@ public class BlastPresentationServiceTest {
 
 
     @Test
-    public void indentsOrder2Deep(){
+    public void indentsOrder2Deep() throws BlastDatabaseException {
 
         //parent
         String D0 = "d0" ;
@@ -495,7 +461,7 @@ public class BlastPresentationServiceTest {
         DatabaseRelationship dr0 = new DatabaseRelationship() ;
         dr0.setChild(d0);
         dr0.setOrder(0);
-        Set<DatabaseRelationship> dr0ChildSet = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr0ChildSet = new HashSet<>() ;
         dr0ChildSet.add(dr0) ;
         d0.setChildrenRelationships(dr0ChildSet);
 
@@ -503,7 +469,7 @@ public class BlastPresentationServiceTest {
         dr1.setChild(d0_0);
         dr1.setParent(d0);
         dr1.setOrder(0);
-        Set<DatabaseRelationship> dr1ChildSet = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr1ChildSet = new HashSet<>() ;
         dr1ChildSet.add(dr1) ;
         d0_0.setChildrenRelationships(dr1ChildSet);
 
@@ -511,12 +477,12 @@ public class BlastPresentationServiceTest {
         dr2.setChild(d0_1);
         dr2.setParent(d0);
         dr2.setOrder(1);
-        Set<DatabaseRelationship> dr2ChildSet = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr2ChildSet = new HashSet<>() ;
         dr2ChildSet.add(dr2) ;
         d0_1.setChildrenRelationships(dr2ChildSet);
 
         // add parent relationships for d0
-        Set<DatabaseRelationship> dr0ParentSet = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr0ParentSet = new HashSet<>() ;
         dr0ParentSet.add(dr1);
         dr0ParentSet.add(dr2);
         d0.setParentRelationships(dr0ParentSet);
@@ -526,7 +492,7 @@ public class BlastPresentationServiceTest {
         dr3.setParent(d0_0);
         dr3.setChild(d0_0_0);
         dr3.setOrder(0);
-        Set<DatabaseRelationship> dr3ChildSet = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr3ChildSet = new HashSet<>() ;
         dr3ChildSet.add(dr3) ;
         d0_0_0.setChildrenRelationships(dr3ChildSet);
         d0_0.setParentRelationships(dr3ChildSet);
@@ -535,13 +501,13 @@ public class BlastPresentationServiceTest {
         dr4.setParent(d0_1);
         dr4.setChild(d0_1_0);
         dr4.setOrder(0);
-        Set<DatabaseRelationship> dr4ChildSet = new HashSet<DatabaseRelationship>() ;
+        Set<DatabaseRelationship> dr4ChildSet = new HashSet<>() ;
         dr4ChildSet.add(dr4) ;
         d0_1_0.setChildrenRelationships(dr4ChildSet);
         d0_1.setParentRelationships(dr4ChildSet);
 
 
-        Set<Database> databases = new HashSet<Database>() ;
+        Set<Database> databases = new HashSet<>() ;
         databases.add(d0) ;
         databases.add(d0_0) ;
         databases.add(d0_0_0) ;
@@ -566,15 +532,11 @@ public class BlastPresentationServiceTest {
         assertEquals("d0_0_0 children",0,BlastPresentationService.getDirectChildren(d0_0_0).size());
         assertEquals("d0_1 children",1,BlastPresentationService.getDirectChildren(d0_1).size());
         assertEquals("d0_1_0 children",0,BlastPresentationService.getDirectChildren(d0_1_0).size());
-        try {
-            assertEquals("d0 leaves",2,BlastPresentationService.getLeaves(d0).size());
-            assertEquals("d0_0 leaves",1,BlastPresentationService.getLeaves(d0_0).size());
-            assertEquals("d0_0_0 leaves",1,BlastPresentationService.getLeaves(d0_0_0).size());
-            assertEquals("d0_1 leaves",1,BlastPresentationService.getLeaves(d0_1).size());
-            assertEquals("d0_1_0 leaves",1,BlastPresentationService.getLeaves(d0_1_0).size());
-        } catch (BlastDatabaseException e) {
-            fail(e.toString()) ;
-        }
+        assertEquals("d0 leaves",2,BlastPresentationService.getLeaves(d0).size());
+        assertEquals("d0_0 leaves",1,BlastPresentationService.getLeaves(d0_0).size());
+        assertEquals("d0_0_0 leaves",1,BlastPresentationService.getLeaves(d0_0_0).size());
+        assertEquals("d0_1 leaves",1,BlastPresentationService.getLeaves(d0_1).size());
+        assertEquals("d0_1_0 leaves",1,BlastPresentationService.getLeaves(d0_1_0).size());
 
         returnDatabases = BlastPresentationService.processFromChild(d0,true) ;
         assertEquals("Should be five databases",returnDatabases.size(),5) ;

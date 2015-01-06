@@ -69,14 +69,6 @@ public class AlignmentsControllerTest extends AbstractDatabaseTest {
             // assert hits (5)
             List<Hit> hitList = new ArrayList<Hit>(query.getBlastHits());
             assertEquals("Returns 5 hits for this query", 5, hitList.size());
-        } catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            e.printStackTrace();
-            fail(errorString);
         } finally {
             // rollback on success or exception
             session.getTransaction().rollback();
@@ -87,7 +79,7 @@ public class AlignmentsControllerTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void alignments() {
+    public void alignments() throws Exception {
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
 
@@ -111,13 +103,6 @@ public class AlignmentsControllerTest extends AbstractDatabaseTest {
             Query query = formBean.getRunCandidate().getCandidateQueries().iterator().next();
             assertNotNull("Returns a valid query", query);
             assertEquals("Returns 5 hits for this query", 5, query.getBlastHits().size());
-        } catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
         } finally {
             // rollback on success or exception
             session.getTransaction().rollback();

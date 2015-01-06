@@ -37,8 +37,15 @@ public class SiteSearchTest {
     private IndexWriter index;
     private RAMDirectory ramDirectory;
 
+    @Before
+    public void setup() throws Exception {
+        Analyzer analyzer = new StandardAnalyzer();
+        ramDirectory = new RAMDirectory();
+        index = new IndexWriter(ramDirectory, analyzer, true);
+    }
+
     @Test
-    public void indexText() {
+    public void indexText() throws IOException, ParseException {
 
         createIndex();
         String queryString = "Antibody";
@@ -56,45 +63,13 @@ public class SiteSearchTest {
 
             Hits hits = searcher.search(query);
             assertNotNull(hits);
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail();
-        } catch (ParseException pe) {
-            pe.printStackTrace();
-            fail();
         } finally {
-            try {
-                if (reader != null)
-                    reader.close();
-                if (searcher != null)
-                    searcher.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (reader != null) {
+                reader.close();
             }
-        }
-    }
-
-    private void createIndex() {
-        for (int i = 0; i < title.length; i++) {
-            Document doc = new Document();
-
-            doc.add(new Field("url", "/action/marker/view", Field.Store.YES, Field.Index.TOKENIZED)); // store relative URLs
-
-            doc.add(new Field("title", title[i], Field.Store.YES, Field.Index.TOKENIZED));
-            doc.add(new Field("body", text[i], Field.Store.YES, Field.Index.TOKENIZED));
-
-            try {
-                // index the document (the results of parsing URL)
-                index.addDocument(doc);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (searcher != null) {
+                searcher.close();
             }
-        }
-        try {
-            index.optimize();
-            index.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -132,14 +107,6 @@ public class SiteSearchTest {
         directory.close();
     }
 
-    @Before
-    public void setup() throws Exception {
-        Analyzer analyzer = new StandardAnalyzer();
-        ramDirectory = new RAMDirectory();
-        index = new IndexWriter(ramDirectory, analyzer, true);
-
-    }
-
     @Test
     public void fancyExcludeDefinition() {
 //        Pattern  pattern = Pattern.compile("\\p{ASCII}*marker/view\\p{ASCII}*ZDB-(!GENE|!ATB|\\p{ASCII}*)-\\p{ASCII}*") ;
@@ -173,6 +140,20 @@ public class SiteSearchTest {
         assertEquals("/action/marker/sequence/view/ZDB-GENE-990415-72", SiteSearchCategories.getUri(url));
     }
 
+    private void createIndex() throws IOException {
+        for (int i = 0; i < title.length; i++) {
+            Document doc = new Document();
 
+            doc.add(new Field("url", "/action/marker/view", Field.Store.YES, Field.Index.TOKENIZED)); // store relative URLs
+
+            doc.add(new Field("title", title[i], Field.Store.YES, Field.Index.TOKENIZED));
+            doc.add(new Field("body", text[i], Field.Store.YES, Field.Index.TOKENIZED));
+
+            // index the document (the results of parsing URL)
+            index.addDocument(doc);
+        }
+        index.optimize();
+        index.close();
+    }
 
 }

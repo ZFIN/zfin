@@ -32,7 +32,6 @@ import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
-import org.zfin.marker.presentation.DbLinkDisplayComparatorTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.PhenotypeServiceDBTest;
@@ -54,6 +53,7 @@ import org.zfin.sequence.reno.OrthologyTest;
 import org.zfin.sequence.reno.RenoMultiRunTest;
 import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RenoRedundancyCandidateControllerTest;
+import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
 import org.zfin.sequence.repository.SequenceRepositorySpec;
 import org.zfin.uniquery.SequenceIdListTest;
@@ -127,6 +127,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         SequenceIdListTest.class,
         SequenceRepositorySpec.class,
         SequenceRepositoryTest.class,
+        SingleAssociatedGenesFromQueryTest.class,
         SingleCandidateRepositoryTest.class,
         TranscriptRepositoryTest.class,
         TranscriptServiceTest.class,

@@ -1,54 +1,43 @@
 package org.zfin.infrastructure;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.rules.ExpectedException;
 
 /**
  */
 public class ActiveSourceTest {
 
+    private ActiveSource source;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Before
+    public void initialize() {
+        source = new ActiveSource();
+    }
+
     @Test
     public void invalidZdbIDNull() {
-        ActiveSource source = new ActiveSource();
-        try {
-            source.setZdbID(null);
-        } catch (RuntimeException re) {
-            assertTrue(true);
-            assertTrue(re instanceof InvalidZdbID);
-            assertTrue(re.getMessage().contains(InvalidZdbID.NULL_MESSSAGE));
-            return;
-        }
-        fail("Null was accepted as a valid zdb active source");
+        thrown.expect(InvalidZdbID.class);
+        thrown.expectMessage(InvalidZdbID.NULL_MESSSAGE);
+        source.setZdbID(null);
     }
 
     @Test
     public void invalidZdbIDPrefix() {
-        ActiveSource source = new ActiveSource();
-        try {
-            source.setZdbID("AAS");
-        } catch (RuntimeException re) {
-            assertTrue(true);
-            assertTrue(re instanceof InvalidZdbID);
-            assertTrue(re.getMessage().contains(InvalidZdbID.INCORRECT_PREFIX_MESSSAGE));
-            return;
-        }
-        fail("Null was accepted as a valid zdb active source");
+        thrown.expect(InvalidZdbID.class);
+        thrown.expectMessage(InvalidZdbID.INCORRECT_PREFIX_MESSSAGE);
+        source.setZdbID("AAS");
     }
 
     @Test
     public void invalidZdbIDType() {
-        ActiveSource source = new ActiveSource();
-        try {
-            source.setZdbID("ZDB-GENE-");
-        } catch (RuntimeException re) {
-            assertTrue(true);
-            assertTrue(re instanceof InvalidZdbID);
-            assertTrue(re.getMessage().contains(InvalidZdbID.INCORRECT_TYPE_MESSSAGE));
-            return;
-        }
-        fail("Null was accepted as a valid zdb active source");
+        thrown.expect(InvalidZdbID.class);
+        thrown.expectMessage(InvalidZdbID.INCORRECT_TYPE_MESSSAGE);
+        source.setZdbID("ZDB-GENE-");
     }
 
 }

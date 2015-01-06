@@ -3,9 +3,8 @@ package org.zfin.gwt.root.util;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-//import com.google.gwt.junit.client.GWTTestCase;
 
-public class WidgetUtilTest {//extends GWTTestCase {
+public class WidgetUtilTest {
 
     @Test
     public void addCssClass() {
@@ -39,8 +38,4 @@ public class WidgetUtilTest {//extends GWTTestCase {
         assertEquals("", cssClassString);
     }
 
-
-    public String getModuleName() {
-        return "org.zfin.curation.Curation";
-    }
 }

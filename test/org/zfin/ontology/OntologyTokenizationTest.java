@@ -1,6 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -56,7 +57,8 @@ public class OntologyTokenizationTest {
         assertTrue(strings.contains("process")) ;
     }
 
-   /* @Test
+    @Test
+    @Ignore
     public void testBadParens(){
         String matchString = "aerobic (for occurrence)" ;
         Set<String> strings ;
@@ -67,7 +69,7 @@ public class OntologyTokenizationTest {
         assertTrue(strings.contains("aerobic")) ;
         assertTrue(strings.contains("for")) ;
         assertTrue(strings.contains("occurrence")) ;
-    }*/
+    }
 
     @Test
     public void matchterTest2(){

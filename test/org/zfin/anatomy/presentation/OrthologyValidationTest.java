@@ -1,5 +1,6 @@
 package org.zfin.anatomy.presentation;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.orthology.CriteriaType;
 import org.zfin.orthology.Species;
@@ -14,15 +15,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class OrthologyValidationTest {
 
-    public static void main(String args[]) {
-/*
-        String[] configFiles = {"/home/WEB-INF/zfin-servlet.xml",
-                "/home/WEB-INF/conf/anatomy.xml",
-                "/home/WEB-INF/conf/profile.xml"};
-        ApplicationContext context = new FileSystemXmlApplicationContext(configFiles);
-*/
-    }
-
     @Test
     public void testZebrafishFalseSpecies() {
         String species = "zebrafsi";
@@ -35,6 +27,7 @@ public class OrthologyValidationTest {
 
     }
 
+    @Test
     public void testZebrafishFalseCriteriaType() {
         String species = Species.ZEBRAFISH.toString();
         String criteriaType = "symboll";
@@ -46,6 +39,7 @@ public class OrthologyValidationTest {
         assertEquals("Error message", "The criteria type 'symboll' is not supported by this search.", error);
     }
 
+    @Test
     public void testZebrafishFalseFilterType() {
         String species = Species.ZEBRAFISH.toString();
         String criteriaType = CriteriaType.GENE_SYMBOL.getName();
@@ -58,6 +52,7 @@ public class OrthologyValidationTest {
         assertEquals("Error message", "The filter type 'kkk' is not supported by the symbol field for Zebrafish in this search.", error);
     }
 
+    @Test
     public void testZebrafishEmptySymbol() {
         String species = Species.ZEBRAFISH.toString();
         String criteriaType = CriteriaType.GENE_SYMBOL.getName();
@@ -66,6 +61,7 @@ public class OrthologyValidationTest {
         assertTrue(validator.isValid());
     }
 
+    @Test
     public void testZebrafishFalseChromosome() {
         String species = Species.ZEBRAFISH.toString();
         String criteriaType = CriteriaType.CHROMOSOME.getName();
@@ -81,6 +77,7 @@ public class OrthologyValidationTest {
         assertTrue(!validator.isValid());
     }
 
+    @Test
     public void testHumanFalseChromosome() {
         String species = Species.HUMAN.toString();
         String criteriaType = CriteriaType.CHROMOSOME.getName();
@@ -108,6 +105,7 @@ public class OrthologyValidationTest {
         assertTrue(validator.isValid());
     }
 
+    @Test
     public void testMouseFalseChromosome() {
         String species = Species.MOUSE.toString();
         String criteriaType = CriteriaType.CHROMOSOME.getName();
@@ -135,6 +133,7 @@ public class OrthologyValidationTest {
         assertTrue(!validator.isValid());
     }
 
+    @Test
     public void testFlyFalseChromosome() {
         String species = Species.FRUIT_FLY.toString();
         String criteriaType = CriteriaType.CHROMOSOME.getName();
@@ -159,7 +158,9 @@ public class OrthologyValidationTest {
         assertTrue(!validator.isValid());
     }
 
-    public void stestZebrafishFalseCriteria() {
+    @Test
+    @Ignore
+    public void testZebrafishFalseCriteria() {
         String species = "Zebrafish";
         String criteriaType = "chromosome";
         String filterType = "equals";

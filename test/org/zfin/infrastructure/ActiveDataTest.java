@@ -1,77 +1,57 @@
 package org.zfin.infrastructure;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  */
 public class ActiveDataTest {
 
+    private ActiveData data;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Before
+    public void initialize() {
+        data = new ActiveData();
+    }
+
     @Test
     public void invalidZdbIDNull() {
-        ActiveData data = new ActiveData();
-        try {
-            data.setZdbID(null);
-        } catch (RuntimeException re) {
-            assertTrue(true);
-            assertTrue(re instanceof InvalidZdbID);
-            assertTrue(re.getMessage().contains(InvalidZdbID.NULL_MESSSAGE));
-            return;
-        }
-        fail("Null was accepted as a valid zdb active data");
+        thrown.expect(InvalidZdbID.class);
+        thrown.expectMessage(InvalidZdbID.NULL_MESSSAGE);
+        data.setZdbID(null);
     }
 
     @Test
     public void invalidZdbIDPrefix() {
-        ActiveData data = new ActiveData();
-        try {
-            data.setZdbID("AAS");
-        } catch (RuntimeException re) {
-            assertTrue(true);
-            assertTrue(re instanceof InvalidZdbID);
-            assertTrue(re.getMessage().contains(InvalidZdbID.INCORRECT_PREFIX_MESSSAGE));
-            return;
-        }
-        fail("Null was accepted as a valid zdb active data");
+        thrown.expect(InvalidZdbID.class);
+        thrown.expectMessage(InvalidZdbID.INCORRECT_PREFIX_MESSSAGE);
+        data.setZdbID("AAS");
     }
 
     @Test
     public void invalidZdbIDType() {
-        ActiveData data = new ActiveData();
-        try {
-            data.setZdbID("ZDB-PUB-");
-        } catch (RuntimeException re) {
-            assertTrue(true);
-            assertTrue(re instanceof InvalidZdbID);
-            assertTrue(re.getMessage().contains(InvalidZdbID.INCORRECT_TYPE_MESSSAGE));
-            return;
-        }
-        fail("Null was accepted as a valid zdb active data");
+        thrown.expect(InvalidZdbID.class);
+        thrown.expectMessage(InvalidZdbID.INCORRECT_TYPE_MESSSAGE);
+        data.setZdbID("ZDB-PUB-");
     }
 
     @Test
     public void validZdbIDType() {
-        ActiveData data = new ActiveData();
-        try {
-            data.setZdbID("ZDB-GENE-");
-        } catch (RuntimeException re) {
-            fail("ZDB-GENE is a valid active data type");
-            return;
-        }
-        assertTrue(true);
+        data.setZdbID("ZDB-GENE-");
     }
 
     @Test
     public void getTypeForId() {
         String zdbID = "ZDB-TALEN-120304-11";
-        try {
-            boolean isTalen = ActiveData.isValidActiveData(zdbID, ActiveData.Type.TALEN);
-            assertTrue(isTalen);
-        } catch (RuntimeException re) {
-            fail("No ActiveData type found for " + zdbID);
-        }
+        boolean isTalen = ActiveData.isValidActiveData(zdbID, ActiveData.Type.TALEN);
+        assertTrue(zdbID + " should be active talen data", isTalen);
     }
 
 }

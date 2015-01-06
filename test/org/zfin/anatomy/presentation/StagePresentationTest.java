@@ -1,16 +1,20 @@
 package org.zfin.anatomy.presentation;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.zfin.anatomy.DevelopmentStage;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * This is the test class that tests funcionality of the AnatomyPresentation class,
  * a helper class to provide convenience methods for presentation.
  */
 public class StagePresentationTest {
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     /**
      * This tests the formatHourToHourOrDay() method in the AnatomyPresentation class.
@@ -36,19 +40,14 @@ public class StagePresentationTest {
         hour = 1240;
         testString = StagePresentation.formatHourToHourOrDay(hour);
         assertEquals("Day string", "51d", testString);
+    }
 
-        // test negative hours: throws Exception
+    @Test
+    public void invalidHourAndDayConversion() {
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("Hours have to be positive");
 
-        boolean failed = false;
-        try {
-            StagePresentation.formatHourToHourOrDay(-12);
-        } catch (Exception e) {
-            assertEquals("Exception", "Hours have to be positive!", e.getMessage());
-            failed = true;
-        }
-        if (!failed) {
-            fail("Failed to throw Exception");
-        }
+        StagePresentation.formatHourToHourOrDay(-12);
     }
 
     /**
