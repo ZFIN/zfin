@@ -464,9 +464,12 @@ public class ResultService {
 
             List<String> results = new ArrayList<>();
             List<ExpressionResult> expressionResults = new ArrayList<>();
-            expressionResults.addAll(xpatex.getExpressionResults());
+
+            //Surprisngly, it turns out that this actually performs better than a query.  Could be caching, but we like caching.
+            expressionResults.addAll(CollectionUtils.intersection(xpatex.getExpressionResults(), figure.getExpressionResults()));
+
+
             //Sort expressionResults by start stage, end stage, superterm name, subterm name...
-//            Collections.sort(expressionResults, ComparatorCreator.orderBy("start.hoursStart","end.hoursEnd","entity.superterm.termName"));
             Collections.sort(expressionResults);
 
             for (ExpressionResult expressionResult : expressionResults) {
