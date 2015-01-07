@@ -119,6 +119,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 if (subsets == null) {
                     subsets = new TreeSet<String>();
                 }
+
                 subsets.add(result[12].toString().intern());
                 termDTO.setSubsets(subsets);
                 if (subsets.contains(Subset.GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS) ||
@@ -1079,6 +1080,18 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 " where termName != :partOf order by ontology";
         Query query = session.createQuery(hql);
         query.setParameter("partOf", "part_of");
+        return query.list();
+    }
+    public List<GenericTerm> getTermsInSubset(String subsetName){
+        Session session = HibernateUtil.currentSession();
+        String sql = "select distinct term_ont_id " +
+                            "from term, term_subset, ontology_subset" +
+                            "where term_zdb_id = termsub_term_zdb_id" +
+                               "and osubset_pk_id = termsub_subset_id" +
+                               "and osubset_subset_name in ( :subsetN )";
+
+        Query query = session.createSQLQuery(sql);
+        query.setString("subsetN", subsetName);
         return query.list();
     }
 }

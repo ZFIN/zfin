@@ -17,9 +17,6 @@ public class GafEntry {
     private String createdDate; //14
     private String createdBy; //15
 
-    // etc. etc.,
-
-
     public String getEntryId() {
         return entryId;
     }
@@ -116,5 +113,4 @@ public class GafEntry {
         }
         return false;
     }
-
 }

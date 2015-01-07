@@ -131,6 +131,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             for (GafValidationError error : gafJobData.getErrors()) {
                 details.append(error.getMessage()).append("\n");
             }
+
             details.append("\n\n");
 
             details.append("== EXISTING ==").append("\n");

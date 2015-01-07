@@ -14,13 +14,13 @@ import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ReplacementZdbID;
 import org.zfin.marker.Marker;
-import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.Subset;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
@@ -104,46 +104,67 @@ public class GafService {
         int count = 0;
         for (GafEntry gafEntry : gafEntries) {
             ////FB case 8432 prevent GO annotation to GO:0005623 from FP-Inf. GAF load
-            if (!gafEntry.isCell()) {
-                // find genes based on uniprot ID via marker relations
-                try {
-                    Collection<Marker> genes = getGenes(gafEntry.getEntryId());
-                    // for each gene, create an entry
-                    // if no gene is then report error
-                    if (CollectionUtils.isNotEmpty(genes)) {
-                        for (Marker gene : genes) {
-                            MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
-                            if (annotationToAdd != null) {
-                                if (gafJobData.getNewEntries().contains(annotationToAdd)) {
-                                    throw new GafValidationError("A duplicate entry is being added:" +
-                                            FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
-                                            FileUtil.LINE_SEPARATOR + gafEntry);
+            String oboId = gafEntry.getGoTermId();
+            GenericTerm term = ontologyRepository.getTermByOboID(oboId);
+            //FB case 12144 use subsets to restrict the use of some terms in automated and manual annotations.
+            Boolean inRestrictedSubset = false;
+            Set<Subset> subset = term.getSubsets();
+            for (Subset subsetT : subset) {
+                if (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_annotate") || subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_manually_annotate")){
+                    inRestrictedSubset = true;
+                }
+            }
+
+
+            // find genes based on uniprot ID via marker relations
+            try {
+                if (!inRestrictedSubset) {
+                    if (!gafEntry.isCell()) {
+                        Collection<Marker> genes = getGenes(gafEntry.getEntryId());
+                        // for each gene, create an entry
+                        // if no gene is then report error
+                        if (CollectionUtils.isNotEmpty(genes)) {
+                            for (Marker gene : genes) {
+                                MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
+                                if (annotationToAdd != null) {
+                                    if (gafJobData.getNewEntries().contains(annotationToAdd)) {
+                                        throw new GafValidationError("A duplicate entry is being added:" +
+                                                FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
+                                                FileUtil.LINE_SEPARATOR + gafEntry);
+                                    }
+                                    gafJobData.addNewEntry(annotationToAdd);
+                                } else {
+                                    throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
                                 }
-                                gafJobData.addNewEntry(annotationToAdd);
-                            } else {
-                                throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
-                            }
-                        } // end of gene loop
+                            } // end of gene loop
+                        } else {
+                            throw new GafValidationError("Unable to find genes associated with ID[" + gafEntry.getEntryId() + "]", gafEntry);
+                        }
                     } else {
-                        throw new GafValidationError("Unable to find genes associated with ID[" + gafEntry.getEntryId() + "]", gafEntry);
+                        gafJobData.addCellEntry(gafEntry);
+                        throw new GafValidationError("Can not use cell term[" + gafEntry.getEntryId() + "]", gafEntry);
+
                     }
-                } catch (GafAnnotationExistsError gafAnnotationExistsError) {
-                    logger.debug("Existing annotation: " + gafAnnotationExistsError.getMessage() + " for " + gafEntry);
-                    gafJobData.addExistingEntry(gafAnnotationExistsError.getAnnotation());
-                } catch (GafValidationError gafValidationError) {
-                    logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
-                    gafJobData.addError(gafValidationError);
+                } else {
+                    gafJobData.addSubsetFailureEntry(gafEntry);
+                    throw new GafValidationError("Can not use term in a \"Do Not Annotate\" subset[" + gafEntry.getEntryId() + "]", gafEntry);
                 }
 
-                ++count;
-                if (count % 200 == 0) {
-                    logger.info("at " + count + " of " + gafEntries.size() + " done "
-                            + ((float) count / (float) gafEntries.size()) * 100f + "%");
-                }
-            } else
-                gafJobData.addCellEntry(gafEntry);
+            } catch (GafAnnotationExistsError gafAnnotationExistsError) {
+                logger.debug("Existing annotation: " + gafAnnotationExistsError.getMessage() + " for " + gafEntry);
+                gafJobData.addExistingEntry(gafAnnotationExistsError.getAnnotation());
+            } catch (GafValidationError gafValidationError) {
+                logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
+                gafJobData.addError(gafValidationError);
+            }
+
+            ++count;
+            if (count % 200 == 0) {
+                logger.info("at " + count + " of " + gafEntries.size() + " done "
+                        + ((float) count / (float) gafEntries.size()) * 100f + "%");
+            }
+
         } // end of gaf entry for loop
-
 
         gafJobData.markStopTime();
     }

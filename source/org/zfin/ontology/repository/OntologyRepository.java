@@ -341,4 +341,6 @@ public interface OntologyRepository {
      */
     List<GenericTerm> getActiveTermsWithoutRelationships();
 
+    List<GenericTerm> getTermsInSubset(String subsetName);
+
 }

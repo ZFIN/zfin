@@ -13,7 +13,6 @@ public class Subset implements Serializable {
     // from the go ontology
     public static final String GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS = "gocheck_do_not_annotate";
     public static final String GO_CHECK_DO_NOT_USE_FOR_MANUAL_ANNOTATIONS = "gocheck_do_not_manually_annotate";
-
     private long id;
     private String internalName;
     // this is also called definition in the database

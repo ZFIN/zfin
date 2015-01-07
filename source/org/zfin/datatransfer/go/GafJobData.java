@@ -13,6 +13,7 @@ public class GafJobData {
     private List<GafJobEntry> existingEntries = new ArrayList<>();
     private List<GafJobEntry> removedEntries = new ArrayList<>();
     private List<GafEntry> cellEntries = new ArrayList<>();
+    private List<GafEntry> subsetFailureEntries = new ArrayList<>();
     private List<GafValidationError> errors = new ArrayList<>();
     private int gafEntryCount = 0;
     private long startTime;
@@ -33,6 +34,9 @@ public class GafJobData {
 
     public void addCellEntry(GafEntry entry) {
         cellEntries.add(entry);
+    }
+    public void addSubsetFailureEntry(GafEntry entry) {
+        subsetFailureEntries.add(entry);
     }
 
     public void addRemoved(MarkerGoTermEvidence markerGoTermEvidence) {
@@ -65,6 +69,7 @@ public class GafJobData {
                 "errors: " + errors.size() + "" + FileUtil.LINE_SEPARATOR +
                 "existing: " + existingEntries.size() + "" + FileUtil.LINE_SEPARATOR +
                 "cell Terms: " + cellEntries.size() + "" + FileUtil.LINE_SEPARATOR +
+                "subset Failures: " + subsetFailureEntries.size() + "" + FileUtil.LINE_SEPARATOR +
                 "time: " + (stopTime - startTime) / (1000f) + " seconds" + FileUtil.LINE_SEPARATOR
                 ;
     }
