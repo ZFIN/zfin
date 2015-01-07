@@ -61,7 +61,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
 
         assertEquals(0, gafJobData.getErrors().size());
         assertEquals(1, gafJobData.getNewEntries().size() + gafJobData.getExistingEntries().size());
-        assertEquals(1, gafJobData.getRemovedEntries().size());
+        assertEquals(0, gafJobData.getRemovedEntries().size());
 
     }
 
@@ -128,9 +128,9 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafJobData.getErrors().size());
 
 
-        assertEquals(0, gafJobData.getErrors().size());
+        assertEquals(1, gafJobData.getErrors().size());
         assertEquals(0, gafJobData.getExistingEntries().size());
-        assertEquals(23, gafJobData.getNewEntries().size());
+        assertEquals(22, gafJobData.getNewEntries().size());
         assertEquals(0, gafJobData.getRemovedEntries().size());
 
         int count = 0 ;
@@ -139,7 +139,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
                 assertEquals("UniProtKB:P01344",markerGoTermEvidence.getInferredFrom().iterator().next().getInferredFrom());
             }
             if(count==13){
-                assertEquals("ZFIN:ZDB-GENE-980526-290",markerGoTermEvidence.getInferredFrom().iterator().next().getInferredFrom());
+                assertEquals("ZFIN:ZDB-GENE-000201-18",markerGoTermEvidence.getInferredFrom().iterator().next().getInferredFrom());
             }
             ++count ;
         }
