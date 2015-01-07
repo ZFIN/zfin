@@ -59,7 +59,7 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafJobData.getErrors().size());
 
 
-        assertEquals(0, gafJobData.getErrors().size());
+        assertEquals(1, gafJobData.getErrors().size());
         assertEquals(1, gafJobData.getNewEntries().size() + gafJobData.getExistingEntries().size());
         assertEquals(0, gafJobData.getRemovedEntries().size());
 

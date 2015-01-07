@@ -274,7 +274,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             );
         }
 
-        assertEquals(4, gafReport1.getNewEntries().size());
+        assertEquals(2, gafReport1.getNewEntries().size());
         assertEquals(0, gafReport1.getExistingEntries().size());
         assertEquals(11, gafReport1.getErrors().size());
         assertEquals(0, gafReport1.getRemovedEntries().size());
@@ -427,7 +427,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             HibernateUtil.rollbackTransaction();
         }
 
-        assertEquals(8, gafReport1.getNewEntries().size());
+        assertEquals(7, gafReport1.getNewEntries().size());
         assertEquals(0, gafReport1.getExistingEntries().size());
         assertEquals(0, gafReport1.getErrors().size());
         assertEquals(0, gafReport1.getRemovedEntries().size());
