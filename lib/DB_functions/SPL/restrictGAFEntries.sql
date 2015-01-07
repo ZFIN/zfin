@@ -2,7 +2,7 @@ create procedure restrictGAFEntries (vTermZdbId varchar(50))
 
 
 if exists (Select 'x' from term_subset, ontology_subset
-   	  	  where termsub_term_zdb_id = term_Zdb_id
+   	  	  where termsub_term_zdb_id = vTermZdbId
 		  and termsub_subset_id = osubset_pk_id
 		  and osubset_subset_name in ('gocheck_do_not_annotate','gocheck_do_not_manually_annotate'))
 then 
