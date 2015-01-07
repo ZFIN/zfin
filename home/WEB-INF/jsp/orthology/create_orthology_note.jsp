@@ -7,6 +7,6 @@
     <form:errors path="note" cssClass="error indented-error"/>
     <p/>
     <form:hidden path="geneID"/>
-    <input type=submit name="new note" value="Submit new Note">
+    <input type=submit name="new note" value="Save Note">
     </p>
 </form:form>

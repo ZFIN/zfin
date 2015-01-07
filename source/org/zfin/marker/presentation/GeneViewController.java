@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
@@ -128,6 +129,7 @@ public class GeneViewController {
 
     @RequestMapping("/{zdbID}/orthology")
     public String showOrthology(@PathVariable("zdbID") String zdbID,
+                                @RequestParam(value = "update", required = false, defaultValue = "0") String update,
                                 @ModelAttribute("formBean") GeneBean geneBean,
                                 Model model) {
 
@@ -136,6 +138,8 @@ public class GeneViewController {
         logger.info("gene: " + gene);
         geneBean.setMarker(gene);
         geneBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(gene));
+
+        model.addAttribute("update", update.equals("1"));
 
         return "marker-orthology.simple-page";
     }

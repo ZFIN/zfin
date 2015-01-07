@@ -2770,7 +2770,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
      });
 
     <?MIVAR>
-            jQuery('#orthology').load('/action/marker/$OID/orthology');
+            jQuery('#orthology').load('/action/marker/$OID/orthology?update=$UPDATE');
     <?/MIVAR>
 
     jQuery( "#supplier" ).keypress(function(event) {
