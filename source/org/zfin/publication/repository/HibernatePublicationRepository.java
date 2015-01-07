@@ -1798,14 +1798,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public void deletePublicationAndFigures(String publicationZdbID) {
         InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-        List<Figure> figures = getFiguresByPublication(publicationZdbID);
-        for (Figure figure : figures) {
-            Set<Image> images = figure.getImages();
-            for (Image image : images) {
-                infrastructureRepository.deleteActiveDataByZdbID(image.getZdbID());
-            }
-            infrastructureRepository.deleteActiveDataByZdbID(figure.getZdbID());
-        }
         infrastructureRepository.deleteActiveSourceByZdbID(publicationZdbID);
     }
 }
