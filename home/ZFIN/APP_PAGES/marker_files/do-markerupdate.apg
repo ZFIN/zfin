@@ -358,9 +358,11 @@ marker.<?/MIVAR>
               ">
        <?/MISQL>
        <?MIBLOCK COND="$(NC,$1,)">
+       <?MIBLOCK COND="$(=,$(POSITION,$OID,CONSTRCT),0)">
            <SCRIPT>
  	   			window.alert('The GenBank accession is already associated with this marker, or a marker that is related.');
 	       </SCRIPT>
+	    <?/MIBLOCK>
        <?MIELSE>
 
           <?MIVAR NAME=markerlist><?/MIVAR>
@@ -368,7 +370,8 @@ marker.<?/MIVAR>
 	         select mrkr_abbrev
 	           from db_link, marker
 	          where dblink_acc_num = '$new_value'
-	            and dblink_linked_recid=mrkr_zdb_id; ">
+	            and dblink_linked_recid=mrkr_zdb_id
+	            and mrkr_type not like '%CONSTRCT%'; ">
              <?MIBLOCK COND="$(EC,$MI_CURRENTROW,1)">
 	 		    <?MIVAR>$(SETVAR,$markerlist[1],$1)<?/MIVAR>
 	     	 <?MIELSE>
@@ -376,6 +379,7 @@ marker.<?/MIVAR>
 	     	 <?/MIBLOCK>
           <?/MISQL>
 
+       <?MIBLOCK COND="$(=,$(POSITION,$OID,CONSTRCT),0)">
           <?MIBLOCK COND="$(NC,$markerlist,)">
              <?MIVAR>
               $(SETVAR,$markerlist,$(SEPARATE,$markerlist,","))
@@ -391,7 +395,12 @@ marker.<?/MIVAR>
 	  	  <?MIELSE>
              <?MIVAR NAME=$donecheck><?/MIVAR>
 	      <?/MIBLOCK> <?MICOMMENT>end of if markerlist exists<?/MICOMMENT>
+<?/MIBLOCK>
       <?/MIBLOCK>  <?MICOMMENT>end of if dblink_zdb_id exists<?/MICOMMENT>
+      <?MIBLOCK COND="$(>,$(POSITION,$OID,CONSTRCT),0)">
+
+      <?MIVAR NAME=$donecheck><?/MIVAR>
+      	      <?/MIBLOCK>
    <?/MIBLOCK>
 
   <!-- Special case for adding new sequence db link -->
