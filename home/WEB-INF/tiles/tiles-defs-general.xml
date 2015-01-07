@@ -167,5 +167,10 @@
         </put-attribute>
     </definition>
 
+    <!-- gbrowse -->
+    <definition name="gbrowse/*.page" extends="main_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/gbrowse/{1}.jsp" />
+    </definition>
+
 </tiles-definitions>
 

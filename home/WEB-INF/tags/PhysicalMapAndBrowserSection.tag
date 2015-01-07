@@ -1,3 +1,4 @@
+<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="locations" required="true" type="java.util.Collection" %>
@@ -9,7 +10,7 @@
 <c:if test="${not empty locations && not isClone}">
     <table id="meioticPanel" class="summary">
         <tr>
-            <th colspan="3"><a href="/gb2/gbrowse/zfin_ensembl/">ZFIN GBrowse (Zv9)</a></th>
+            <th colspan="3"><a href="/<%= ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value() %>">ZFIN GBrowse (Zv9)</a></th>
         </tr>
         <tr>
             <td>

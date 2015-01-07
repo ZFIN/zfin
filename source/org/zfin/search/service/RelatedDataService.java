@@ -337,7 +337,6 @@ public class RelatedDataService {
 
     //todo: probably this should move to GBrowseService, but I don't want to refactor that in this branch till I can grab trunk again...
     public String getGBrowseLink(String id) {
-        //http://zfin.org/gb2/gbrowse/zfin_ensembl/?name=fgf8a
 
         if (ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
             List<Marker> markerList = getMarkerRepository().getTranscriptByZdbID(id).getAllRelatedMarker();
