@@ -55,9 +55,7 @@
                               start="${phenotypeStartStage}" end="${phenotypeEndStage}" />
 
 
-<zfin-figure:imagesAndCaption figure="${figure}"/>
-
-
+<zfin-figure:imagesAndCaption figure="${figure}" showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"/>
 
 <zfin-figure:expressionTable expressionTableRows="${expressionTableRows}" showQualifierColumn="${showExpressionQualifierColumn}"/>
 

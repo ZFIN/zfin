@@ -3,6 +3,10 @@
 <%@ attribute name="figure" type="org.zfin.expression.Figure" rtexprvalue="true" required="true"  %>
 <%@ attribute name="autoplayVideo" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
 
+<%@attribute name="showMultipleMediumSizedImages" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
+
+
+
 
 <c:set var="autoplay" value=""/>
 <c:if test="${autoplayVideo}">
@@ -18,43 +22,45 @@
           <img class="figure-image placeholder" src="/images/imagenotavailable.gif"/>
       </c:if>
 
-
       <%--has permission to show, single image, can be video--%>
-    <c:if test="${figure.publication.canShowImages && !empty figure.images && fn:length(figure.images) == 1}">
-        <c:forEach var="image" items="${figure.images}">
-            <c:choose>
-                <c:when test="${image.videoStill}">
-                    <video controls ${autoplay} loop height="500" poster="/imageLoadUp/medium/${image.imageFilename}">
-                        <c:forEach var="video" items="${image.videos}">
-                            <source src="/videoLoadUp/${video.videoFilename}"/>
-                        </c:forEach>
-                        This browser does not support embedded videos.
-                    </video>
-                </c:when>
-                <c:otherwise>
-                    <zfin:link entity="${image}">
-                        <c:choose>
-                            <c:when test="${!empty image.imageWithAnnotationsFilename}">
-                                <c:set var="filename" value="${image.imageWithAnnotationsFilename}"/>
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="filename" value="${image.imageFilename}"/>
-                            </c:otherwise>
-                        </c:choose>
-                        <img class="figure-image medium" src="/imageLoadUp/medium/${filename}"/>
-                    </zfin:link>
-                </c:otherwise>
-            </c:choose>
-        </c:forEach>
+
+    <c:if test="${figure.publication.canShowImages && !empty figure.images && (fn:length(figure.images) == 1 || showMultipleMediumSizedImages) }">
+        <div style="max-width: 510px;"> <%-- this div causes multiple medium sized images to stack on top of one another, ZDB-PUB-990628-12 has an example--%>
+            <c:forEach var="image" items="${figure.images}">
+                <c:choose>
+                    <c:when test="${image.videoStill}">
+                        <video controls ${autoplay} loop height="500" poster="/imageLoadUp/medium/${image.imageFilename}">
+                            <c:forEach var="video" items="${image.videos}">
+                                <source src="/videoLoadUp/${video.videoFilename}"/>
+                            </c:forEach>
+                            This browser does not support embedded videos.
+                        </video>
+                    </c:when>
+                    <c:otherwise>
+                        <zfin:link entity="${image}">
+                            <c:choose>
+                                <c:when test="${!empty image.imageWithAnnotationsFilename}">
+                                    <c:set var="filename" value="${image.imageWithAnnotationsFilename}"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="filename" value="${image.imageFilename}"/>
+                                </c:otherwise>
+                            </c:choose>
+                            <img class="figure-image medium" src="/imageLoadUp/medium/${filename}"/>
+
+                        </zfin:link>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+        </div>
     </c:if>
 
-     <%--has permission to show, multiple images--%>
-    <c:if test="${figure.publication.canShowImages && !empty figure.images && fn:length(figure.images) > 1}">
+     <%--has permission to show, multiple images, should show them as thumbnails --%>
+    <c:if test="${figure.publication.canShowImages && !empty figure.images && fn:length(figure.images) > 1 && !showMultipleMediumSizedImages}">
         <c:forEach var="image" items="${figure.images}">
             <zfin:link entity="${image}"/>
         </c:forEach>
     </c:if>
-
 
 
     <p class="fig">
@@ -62,11 +68,6 @@
            logic comes from fxfigureview.apg --%>
       <strong>
           <c:choose>
-              <c:when test="${ (fn:length(figure.images) > 1)}">
-                <c:if test="{!empty figure.caption}">
-                    Description:
-                </c:if>
-              </c:when>
               <c:when test="${figure.type == 'TOD'}">
                 <%-- don't show anything as a label for Text Only --%>
               </c:when>

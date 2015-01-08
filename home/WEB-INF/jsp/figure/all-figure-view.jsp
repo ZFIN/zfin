@@ -37,7 +37,7 @@
 </c:if>
 
 <c:forEach var="figure" items="${figures}">
-    <zfin-figure:imagesAndCaption figure="${figure}" autoplayVideo="false">
+    <zfin-figure:imagesAndCaption figure="${figure}" autoplayVideo="false" showMultipleMediumSizedImages="${showMultipleMediumSizedImages}">
 
         <zfin-figure:expressionSummary genes="${expressionGeneMap[figure]}"
                                        antibodies="${expressionAntibodyMap[figure]}"

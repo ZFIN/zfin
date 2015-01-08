@@ -54,6 +54,7 @@ public class FigureViewController {
         model.addAttribute("submitters", figureRepository.getSubmitters(figure.getPublication(), probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(figure.getPublication()));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(figure.getPublication()));
+        model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(figure.getPublication()));
         model.addAttribute("expressionGenes",figureViewService.getExpressionGenes(figure));
         model.addAttribute("expressionAntibodies",figureViewService.getAntibodies(figure));
         model.addAttribute("expressionFishesAndGenotypes",figureViewService.getExpressionFishesAndGenotypes(figure));
@@ -109,7 +110,7 @@ public class FigureViewController {
         model.addAttribute("publication", publication);
         model.addAttribute("showElsevierMessage",figureViewService.showElsevierMessage(publication));
         model.addAttribute("hasAcknowledgment",figureViewService.hasAcknowledgment(publication));
-
+        model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
         //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
         List<Figure> figures = new ArrayList<>();
 

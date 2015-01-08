@@ -8,13 +8,11 @@ import org.zfin.expression.*;
 import org.zfin.figure.presentation.AntibodyTableRow;
 import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.figure.presentation.PhenotypeTableRow;
-import org.zfin.fish.FishAnnotation;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.PostComposedEntity;
-import org.zfin.publication.Publication;
 import org.zfin.publication.Publication;
 
 import java.util.*;
@@ -661,16 +659,19 @@ public class FigureViewService {
      * This logic was taken from the app page. For these 3 pubs, we show an extra link.
      */
     public boolean showThisseInSituLink(Publication publication) {
-        List<String> pubZdbIDs = new ArrayList<>();
-        pubZdbIDs.add("ZDB-PUB-051025-1");
-        pubZdbIDs.add("ZDB-PUB-040907-1");
-        pubZdbIDs.add("ZDB-PUB-010810-1");
-
-        return pubZdbIDs.contains(publication.getZdbID());
+        return isALargeDirectSubmissionPublication(publication);
     }
 
     /* Same as above, for these pubs we show the errataAndNotes property of the publication */
     public boolean showErrataAndNotes(Publication publication) {
+        return isALargeDirectSubmissionPublication(publication);
+    }
+
+    public boolean showMultipleMediumSizedImages(Publication publication) {
+        return !isALargeDirectSubmissionPublication(publication);
+    }
+
+    public boolean isALargeDirectSubmissionPublication(Publication publication) {
         List<String> pubZdbIDs = new ArrayList<>();
         pubZdbIDs.add("ZDB-PUB-051025-1");
         pubZdbIDs.add("ZDB-PUB-040907-1");
