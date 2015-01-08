@@ -1,14 +1,20 @@
 package org.zfin.fish.repository;
 
+import org.hibernate.Query;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
+import org.zfin.fish.FunctionalAnnotation;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.fish.presentation.Fish;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.fish.presentation.SortBy;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.search.SearchCriterion;
+import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.repository.RepositoryFactory;
 
@@ -16,15 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.zfin.repository.RepositoryFactory.getFishRepository;
 
 public class FishRepositoryTest extends AbstractDatabaseTest {
 
-/*
     @Test
+    @Ignore
     public void fishSearch() {
         FishSearchCriteria criteria = new FishSearchCriteria();
         criteria.setGeneOrFeatureNameCriteria(new SearchCriterion(SearchCriterionType.GENE_OR_FEATURE_NAME, "shha", false));
@@ -35,7 +40,6 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
         assertTrue(result.getResults().size() > 0);
         
     }
-*/
 
     @Test
     public void getPhenotypeFigures() {
@@ -79,13 +83,14 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
         RepositoryFactory.getFishRepository().getFish(genoxIds);
     }
 
-/*    @Test
+    @Test
+    @Ignore
     public void getFishByBtsContainClause() {
         String hql = " FROM FunctionalAnnotation where bts_contains(featureGroupName, \'t4\')";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         List<FunctionalAnnotation> fas = query.list();
         assertNotNull(fas);
-    }*/
+    }
 
     @Test
     public void doubleMutantCountTest() {
@@ -154,8 +159,8 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
         for (int i = 0; i < 2; i++) {
             Fish fish = result.getResults().get(i);
-            if (fish != null)
-                assertTrue("result " + i + ", " + fish.getGeneOrFeatureText() + " should contain 'cz3 '", fish.getGeneOrFeatureText().contains(" cz3 "));
+            assertNotNull(fish);
+            assertTrue("result " + i + ", " + fish.getGeneOrFeatureText() + " should contain 'cz3 '", fish.getGeneOrFeatureText().contains(" cz3 "));
         }
     }
 
@@ -277,8 +282,6 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
     public void fgfTest() {
         genericGeneAlleleBoxTest("fgf");
     }
-
-    ;
 
 
     //double gene

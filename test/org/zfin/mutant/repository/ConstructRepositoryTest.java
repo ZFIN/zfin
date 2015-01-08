@@ -1,15 +1,8 @@
 package org.zfin.mutant.repository;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.fish.FishSearchCriteria;
-import org.zfin.fish.FishSearchResult;
-import org.zfin.fish.WarehouseSummary;
-import org.zfin.fish.presentation.Fish;
-import org.zfin.fish.presentation.FishSearchFormBean;
-import org.zfin.fish.presentation.SortBy;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.ConstructSearchCriteria;
 import org.zfin.mutant.ConstructSearchResult;
@@ -23,7 +16,6 @@ import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.zfin.repository.RepositoryFactory.getConstructRepository;
 
 public class ConstructRepositoryTest extends AbstractDatabaseTest {
 
@@ -40,7 +32,7 @@ public class ConstructRepositoryTest extends AbstractDatabaseTest {
         String termID = "ZDB-TERM-100331-8";
         // WT (unspecified) + MO1-acd
         String constructID = "ZDB-GTCONSTRCT-120209-1";
-        List<String> termList = new ArrayList<String>(1);
+        List<String> termList = new ArrayList<>(1);
         termList.add(termID);
 
         Set<ZfinFigureEntity> zfinFigureEntities = RepositoryFactory.getConstructRepository().getFiguresByConstructAndTerms(constructID, termList);
@@ -55,7 +47,7 @@ public class ConstructRepositoryTest extends AbstractDatabaseTest {
         String eye = "ZDB-TERM-100331-100";
         // gli2aty17a/ty17a
         String constructID = "ZDB-TGCONSTRCT-070117-7";
-        List<String> termList = new ArrayList<String>(2);
+        List<String> termList = new ArrayList<>(2);
         termList.add(brainNucleus);
         termList.add(eye);
 
@@ -81,7 +73,7 @@ public class ConstructRepositoryTest extends AbstractDatabaseTest {
         String eye = "ZDB-TERM-100331-100";
         // gli2aty17a/ty17a
         String constructID = "ZDB-TGCONSTRCT-070117-7";
-        List<String> termList = new ArrayList<String>(2);
+        List<String> termList = new ArrayList<>(2);
         termList.add(brainNucleus);
         termList.add(eye);
         List<ExpressionResult> expResults= RepositoryFactory.getConstructRepository().getExpressionForConstructs(constructID, termList);

@@ -3,8 +3,8 @@ package org.zfin.infrastructure;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.ExternalNote;
@@ -47,7 +47,8 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
 
     private Logger logger = Logger.getLogger(InfrastructureRepositoryTest.class);
 
-    //@Test
+    @Test
+    @Ignore
     public void persistActiveData() {
         try {
             HibernateUtil.createTransaction();
@@ -61,9 +62,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             infrastructureRepository.deleteActiveData(testActiveData);
             testActiveData = infrastructureRepository.getActiveData(testZdbID);
             assertNull("ActiveData found after delete", testActiveData);
-        } catch (HibernateException e) {
-            fail("failed");
-            e.printStackTrace();
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -84,9 +82,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             infrastructureRepository.insertRecordAttribution(dataZdbID, sourceZdbID);
             attribute = infrastructureRepository.getRecordAttribution(dataZdbID, sourceZdbID, null);
             assertNotNull("RecordAttribution found after insert", attribute);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             // rollback on success or exception to leave no new records in the database
             HibernateUtil.rollbackTransaction();
@@ -100,8 +95,8 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(all);
     }
 
-    // infrastructureRepository.getAllNameMarkerMatches(string, type) is not in use
-    //@Test
+    @Test
+    @Ignore("infrastructureRepository.getAllNameMarkerMatches(string, type) is not in use")
     public void allMapNamesGenes() {
         String string = "pdx";
         MarkerType type = RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
@@ -340,8 +335,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         HibernateUtil.createTransaction();
         try {
             infrastructureRepository.executeJdbcStatement(queries.get(0));
-        } catch (Exception e) {
-            fail("error during SQL execution");
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -361,8 +354,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         HibernateUtil.createTransaction();
         try {
             list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
-        } catch (Exception e) {
-            fail("error during SQL execution");
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -383,8 +374,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         HibernateUtil.createTransaction();
         try {
             list = infrastructureRepository.executeNativeDynamicQuery(queries.get(0));
-        } catch (Exception e) {
-            fail("error during SQL execution");
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -448,7 +437,8 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         assertEquals(10, allMarkerGoEvidences.size());
     }
 
-    //    @Test
+    @Test
+    @Ignore
     public void getUpdatesFlagPerformance() {
 
         long startTime = System.currentTimeMillis();
@@ -500,8 +490,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             }
             int removed = infrastructureRepository.removeAttributionsNotFound(datas, MicroarrayWebserviceJob.MICROARRAY_PUB);
             assertEquals(3, removed);
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -521,8 +509,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
             assertEquals(datas.size(), added);
             List<String> numMarkersAttributed = infrastructureRepository.getPublicationAttributionsForPub(MicroarrayWebserviceJob.MICROARRAY_PUB);
             assertEquals(datas.size(), numMarkersAttributed.size());
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }

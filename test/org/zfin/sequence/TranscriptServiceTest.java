@@ -37,13 +37,13 @@ public class TranscriptServiceTest extends AbstractDatabaseTest {
         assertNotNull("A pax6a transcript has a Transcript.transcriptType", transcript.getTranscriptType());
 
         Set<RelatedMarker> relatedGenes = TranscriptService.getRelatedGenes(transcript);
-        Marker relatedGene = ((RelatedMarker)relatedGenes.iterator().next()).getMarker();
+        Marker relatedGene = relatedGenes.iterator().next().getMarker();
         assertNotNull("transcript has at least one gene", relatedGene);
         assertTrue("gene related to transcript is genedom typegroup",
                 relatedGene.isInTypeGroup(Marker.TypeGroup.GENEDOM));
 
         Set<RelatedMarker> siblingRelatedTranscripts = TranscriptService.getRelatedTranscriptsForTranscript(transcript);
-        Marker siblingTranscriptAsMarker = ((RelatedMarker)siblingRelatedTranscripts.iterator().next()).getMarker();
+        Marker siblingTranscriptAsMarker = siblingRelatedTranscripts.iterator().next().getMarker();
         Transcript siblingTranscript = TranscriptService.convertMarkerToTranscript(siblingTranscriptAsMarker);
         assertNotNull("sibling transcript exists", siblingTranscript);
         assertTrue("sibling transcript has typegroup TRANSCRIPT", siblingTranscript.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT));

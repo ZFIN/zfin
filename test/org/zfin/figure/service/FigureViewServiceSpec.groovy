@@ -7,18 +7,12 @@ import org.zfin.figure.FigureData
 import org.zfin.figure.presentation.AntibodyTableRow
 import org.zfin.figure.presentation.ExpressionTableRow
 import org.zfin.figure.presentation.PhenotypeTableRow
-import org.zfin.figure.repository.FigureRepository
 import org.zfin.marker.Marker
 import org.zfin.mutant.Genotype
-import org.zfin.ontology.PostComposedEntity
-import org.zfin.ontology.Term
 import org.zfin.repository.RepositoryFactory
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Unroll
-
-
-
-
 
 class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
 
@@ -315,20 +309,19 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
 
     }
 
-//      for case 10588. wait for Ceri's feedback
+    @Ignore("for case 10588. wait for Ceri's feedback")
+    @Unroll
+    def "#figZdbID should show #count conditions in phenotype summary"() {
+        when: "get the figure condition list"
+        Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
+        def conditions = figureViewService.getPhenotypeCondition(figure)
 
-//    @Unroll
-//    def "#figZdbID should show #count conditions in phenotype summary"() {
-//        when: "get the figure condition list"
-//        Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
-//        def conditions = figureViewService.getPhenotypeCondition(figure)
-//
-//        then:
-//        count == conditions.size()
-//
-//        where:
-//        count | figZdbID
-//
-//    }
+        then:
+        count == conditions.size()
+
+        where:
+        count | figZdbID
+
+    }
 
 }

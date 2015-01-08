@@ -2,6 +2,7 @@ package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -19,7 +20,6 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
@@ -93,14 +93,10 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
      * A leaf should only contain itself.
      */
     @Test
-    public void findAllLeavesForLeaf() {
+    public void findAllLeavesForLeaf() throws BlastDatabaseException {
         Database database = blastRepository.getDatabase(Database.AvailableAbbrev.VEGA_ZFIN);
         List<Database> databases = null;
-        try {
-            databases = BlastPresentationService.getLeaves(database);
-        } catch (BlastDatabaseException e) {
-            fail(e.toString());
-        }
+        databases = BlastPresentationService.getLeaves(database);
         assertNotNull("should be not null", databases);
         assertEquals("should be one", databases.size(), 1);
         assertEquals("should be self", database.getAbbrev(), databases.get(0).getAbbrev());
@@ -110,16 +106,10 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
      * A leaf should contain leaves in an ordered fashion.
      */
     @Test
-    public void findAllLeavesForSmallOne() {
+    public void findAllLeavesForSmallOne() throws BlastDatabaseException {
         Database database = blastRepository.getDatabase(Database.AvailableAbbrev.RNASEQUENCES);
-        List<Database> databaseLeaves = null;
-        List<Database> databaseChildren = null;
-        try {
-            databaseChildren = BlastPresentationService.getDirectChildren(database);
-            databaseLeaves = BlastPresentationService.getLeaves(database);
-        } catch (BlastDatabaseException e) {
-            fail(e.toString());
-        }
+        List<Database> databaseLeaves = BlastPresentationService.getLeaves(database);
+        List<Database> databaseChildren = BlastPresentationService.getDirectChildren(database);
         assertNotNull("should be not null", databaseLeaves);
         assertNotNull("should be not null", databaseChildren);
         assertTrue("database children", databaseChildren.size() > 3);
@@ -131,17 +121,12 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
      * A leaf should contain leaves in an ordered fashion from sub-generated, as well.
      */
     @Test
-    public void findAllLeavesForLots() {
+    public void findAllLeavesForLots() throws BlastDatabaseException {
         Database database = blastRepository.getDatabase(Database.AvailableAbbrev.RNASEQUENCES);
-        List<Database> databaseLeaves = null;
-        List<Database> databaseChildren = null;
-        try {
-            databaseChildren = BlastPresentationService.getDirectChildren(database);
-            databaseLeaves = BlastPresentationService.getLeaves(database);
-            logger.info("Database Leaves here: " + databaseLeaves.get(0));
-        } catch (BlastDatabaseException e) {
-            fail(e.toString());
-        }
+        List<Database> databaseLeaves = BlastPresentationService.getLeaves(database);
+        List<Database> databaseChildren = BlastPresentationService.getDirectChildren(database);
+        logger.info("Database Leaves here: " + databaseLeaves.get(0));
+
         assertNotNull("should be not null", databaseLeaves);
         assertNotNull("should be not null", databaseChildren);
         assertTrue("database children", databaseChildren.size() >= 4);
@@ -222,9 +207,6 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
             assertEquals(previousAccessionSize + accessionsToAdd.size() - accessionsToRemove.size(), previosAcStringList.size());
             MountedWublastBlastService.getInstance().updatePreviousAccessions(database, validAccessions, blastRepository.getPreviousAccessionsForDatabase(database));
             assertTrue(CollectionUtils.isEqualCollection(validAccessions, blastRepository.getPreviousAccessionsForDatabase(database)));
-
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -259,7 +241,8 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         }
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void blastDatabasesProteins() {
         List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession("NP_001071049");
         for (DBLink dbLink : dbLinkList) {

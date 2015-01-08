@@ -22,8 +22,6 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.*;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;
@@ -34,7 +32,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -268,9 +265,6 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         session.beginTransaction();
         try {
             getPhenotypeRepository().createPhenotypePile(publicationID);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
@@ -325,9 +319,6 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
             assertTrue(phenoExperiment.getId() > 0);
             // no default statement is created. 
             assertNull(phenoExperiment.getPhenotypeStatements());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();

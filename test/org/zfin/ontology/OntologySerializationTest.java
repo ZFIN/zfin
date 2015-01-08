@@ -1,10 +1,11 @@
 package org.zfin.ontology;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TemporaryFolder;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.framework.HibernateUtil;
@@ -15,9 +16,6 @@ import org.zfin.infrastructure.PatriciaTrieMultiMap;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,31 +40,22 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
 
-    private static String testTempDirectory = "test-delete";
     private static String oldTempDirectory;
-    private static File testDirectory ;
 
-    @Before
-    public void setTempDirectory() {
-        if (oldTempDirectory == null || false == oldTempDirectory.equals(testTempDirectory)) {
-            oldTempDirectory = System.getProperty("java.io.tmpdir");
-            System.setProperty("java.io.tmpdir", testTempDirectory);
-            testDirectory = new File(testTempDirectory) ;
-            //assertTrue(!testDirectory.exists() || testDirectory.delete());
-            //assertTrue(testDirectory.mkdir());
-	boolean success = testDirectory.mkdir();
-        }
-    }
-
-    @After
-    public void resetTempDirectory() throws IOException {
-        System.setProperty("java.io.tmpdir", oldTempDirectory);
-        try {
-            FileUtils.deleteDirectory(testDirectory);
-        } catch (IOException e) {
+    @ClassRule
+    public static ExternalResource uniqueTempDir = new TemporaryFolder() {
+        @Override
+        protected void before() throws Throwable {
+            super.before();
+            oldTempDirectory = System.setProperty("java.io.tmpdir", getRoot().getAbsolutePath());
         }
 
-    }
+        @Override
+        protected void after() {
+            super.after();
+            System.setProperty("java.io.tmpdir", oldTempDirectory);
+        }
+    };
 
     @Test
     public void serializeStage() throws Exception {
@@ -143,7 +132,8 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 
     }
 
-//        @Test
+    @Test
+    @Ignore
     public void serializeQuality() throws Exception {
         long startTime = System.currentTimeMillis();
         int termCount = ontologyRepository.getNumberTermsForOntology(Ontology.QUALITY);
@@ -235,8 +225,8 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
     }
 
 
-    // typically this is too long to run
-//    @Test
+    @Test
+    @Ignore("typically this is too long to run")
     public void serializeAnatomy() {
         long startTime, endTime;
         OntologyManager ontologyManager = OntologyManager.getEmptyInstance();

@@ -151,6 +151,7 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     // Equals one position
+    @Test
     @Ignore
     public void createChromsomeWhereClauseHumanPosition() {
         HibernateOrthologyRepository ori = new HibernateOrthologyRepository();

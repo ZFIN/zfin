@@ -78,8 +78,9 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
     /**
      * Will only be changing the qualifier, evidence code and pub.  The qualifier can be null and not-null.
      */
-    //@Test
-    public void editGoEvidenceHeader(){
+    @Test
+    @Ignore
+    public void editGoEvidenceHeader() throws TermNotFoundException, DuplicateEntryException {
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
         GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
@@ -111,12 +112,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         String inferenceTestString = InferenceCategory.REFSEQ.prefix()+" test-inference" ;
         inferredFromSet.add(inferenceTestString) ;
 
-        GoEvidenceDTO goEvidenceDTO2 = null;
-        try {
-            goEvidenceDTO2 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO);
-        } catch (DuplicateEntryException | TermNotFoundException e) {
-            fail(e.toString()) ;
-        }
+        GoEvidenceDTO goEvidenceDTO2 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO);
 
         // validate
         assertEquals(GoEvidenceCodeEnum.IC,goEvidenceDTO2.getEvidenceCode());
@@ -131,13 +127,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         inferredFromSet = goEvidenceDTO2.getInferredFrom();
         assertTrue(inferredFromSet.remove(inferenceTestString));
         goEvidenceDTO2.setPublicationZdbID(goEvidenceDTO.getPublicationZdbID());
-        GoEvidenceDTO goEvidenceDTO3 = null ;
-
-        try {
-            goEvidenceDTO3 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO2);
-        } catch (DuplicateEntryException | TermNotFoundException e) {
-            fail(e.toString()) ;
-        }
+        GoEvidenceDTO goEvidenceDTO3 = markerRPCService.editMarkerGoTermEvidenceDTO(goEvidenceDTO2);
 
         // validate same as before
         assertNull(goEvidenceDTO3.getFlag());
@@ -155,7 +145,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
      */
     @Test
     @Ignore
-    public void createGoEvidenceHeader(){
+    public void createGoEvidenceHeader() throws TermNotFoundException, DuplicateEntryException {
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
         GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
@@ -164,20 +154,11 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
 
         // now lets set it to null and create some stuff
         goEvidenceDTO.setZdbID(null);
-        GoEvidenceDTO goEvidenceDTOCreated = null ;
+        GoEvidenceDTO goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidence(goEvidenceDTO);
+        assertEquals(1,goEvidenceDTOCreated.getInferredFrom().size());
 
         // make non-duplicate
         goEvidenceDTO.setEvidenceCode(GoEvidenceCodeEnum.IC);
-
-        try {
-            goEvidenceDTOCreated = markerRPCService.createMarkerGoTermEvidence(goEvidenceDTO) ;
-            //System.out.println("added!: "+ goEvidenceDTOCreated.getZdbID()) ;
-        } catch (DuplicateEntryException e) {
-            fail("Should have allowed this as it was not duplicate: " + e.toString());
-        } catch (TermNotFoundException e) {
-            fail(e.toString()) ;
-        }
-        assertEquals(1,goEvidenceDTOCreated.getInferredFrom().size());
 
         assertEquals(markerGoTermEvidence.getMarker().getZdbID(),goEvidenceDTOCreated.getMarkerDTO().getZdbID());
         assertNull(goEvidenceDTOCreated.getFlag());
@@ -192,9 +173,9 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    @Test
+    @Test(expected = DuplicateEntryException.class)
     @Ignore
-    public void testDuplicateEntry(){
+    public void testDuplicateEntry() throws TermNotFoundException, DuplicateEntryException {
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
         GoEvidenceDTO goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(markerGoTermEvidence.getZdbID()) ;
@@ -204,11 +185,9 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         // now lets set it to null and create some stuff
         goEvidenceDTO.setZdbID(null);
         try {
-            markerRPCService.createMarkerGoTermEvidence(goEvidenceDTO) ;
-            fail("Should not allow a duplicate alternate key entry") ;
-        } catch (DuplicateEntryException | TermNotFoundException e) {
+            markerRPCService.createMarkerGoTermEvidence(goEvidenceDTO);
+        } finally {
             HibernateUtil.rollbackTransaction();
-            // caught error, so that is correct
         }
 
     }

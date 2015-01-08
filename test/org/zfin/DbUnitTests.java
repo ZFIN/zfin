@@ -80,7 +80,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         DatabaseServiceDbTest.class,
         DisplayGroupRepositoryTest.class,
         DTOConversionServiceTest.class,
-        DTOConversionServiceTest.class,
         ExpressionRepositoryTest.class,
         ExpressionServiceTest.class,
         FeatureRepositoryTest.class,

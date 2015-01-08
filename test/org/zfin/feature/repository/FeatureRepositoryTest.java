@@ -22,7 +22,6 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -314,9 +313,6 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
             features = featureRepository.getFeaturesForLab(lab2ZdbID);
             size2 = features.size();
             assertEquals(totalSize, size2);
-
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -346,9 +342,6 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
             assertEquals(0, size1);
-
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -402,9 +395,6 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
             features = featureRepository.getFeaturesForLab(lab1ZdbID);
             size1 = features.size();
             assertEquals(1, size1);
-
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }

@@ -1,7 +1,6 @@
 package org.zfin.mutant.repository;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -194,8 +193,6 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
             assertNotNull(inferenceGroupMemberFound);
             assertEquals("UniProtKB:Q9NXR7", inferenceGroupMemberFound.getInferredFrom());
-        } catch (HibernateException e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -204,8 +201,8 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getEvidenceForMarkerCount(){
-       Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-       int count = markerGoTermEvidenceRepository.getEvidenceForMarkerCount(m);
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
+        int count = markerGoTermEvidenceRepository.getEvidenceForMarkerCount(m);
         assertTrue(count > 20);
         assertTrue(count < 60);
     }

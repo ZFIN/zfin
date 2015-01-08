@@ -1,7 +1,6 @@
 package org.zfin.sequence.reno;
 
 import org.hibernate.Query;
-import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -84,12 +83,7 @@ public class OrthologyTest extends AbstractDatabaseTest {
             OrthoEvidence evid = evids.get(0);
             assertEquals("One evidence code created", evid.getOrthologueEvidenceCode(), OrthoEvidence.Code.AA);
 
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             HibernateUtil.rollbackTransaction();
         }

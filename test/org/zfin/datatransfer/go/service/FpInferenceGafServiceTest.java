@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.go.service;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.datatransfer.go.FpInferenceGafParser;
@@ -145,8 +146,8 @@ public class FpInferenceGafServiceTest extends AbstractDatabaseTest {
         }
     }
 
-    // just makes sure that the service is still there, not something we want to run all of the time.
-//    @Test
+    @Test
+    @Ignore("just makes sure that the service is still there, not something we want to run all of the time")
     public void testDownloadFpInference() throws Exception {
         DownloadService downloadService = new DownloadService();
 //        File downloadedFile = downloadService.downloadFileFtp(new File(System.getProperty("java.io.tmpdir") + "/" + "gene_association.goa_zebrafish")

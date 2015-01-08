@@ -5,11 +5,9 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.*;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.ZfinStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +37,7 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
      * Simulates Monte updating his own record.
      */
     @Test
-    public void updatePersonWithFields() {
+    public void updatePersonWithFields() throws Exception {
 
         HibernateUtil.createTransaction();
 
@@ -47,7 +45,7 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
         try {
             Person p = profileRepository.getPerson("ZDB-PERS-960805-676");
             assertEquals("(541) 346-4607", p.getPhone());
-            List<BeanFieldUpdate> beanFieldUpdateList = new ArrayList<BeanFieldUpdate>();
+            List<BeanFieldUpdate> beanFieldUpdateList = new ArrayList<>();
             BeanFieldUpdate beanFieldUpdate = new BeanFieldUpdate();
             beanFieldUpdate.setField("phone");
             beanFieldUpdate.setFieldType(String.class);
@@ -57,16 +55,13 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             profileService.updateProfileWithFields(p.getZdbID(), beanFieldUpdateList, p.getZdbID());
             p = profileRepository.getPerson("ZDB-PERS-960805-676");
             assertEquals("(541) 346-1234", p.getPhone());
-        } catch (Exception e) {
-            logger.error(e);
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
     }
 
     @Test
-    public void updatePersonAddressWithUtf8Characters() {
+    public void updatePersonAddressWithUtf8Characters() throws Exception {
 
         HibernateUtil.createTransaction();
 
@@ -80,7 +75,7 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
                                 "Am Klopferspitz 18 • D-82152 Martinsried\n" +
                                 "phone +49 89 8578 3263 • fax +49 89 8578 3240";
 
-            List<BeanFieldUpdate> beanFieldUpdateList = new ArrayList<BeanFieldUpdate>();
+            List<BeanFieldUpdate> beanFieldUpdateList = new ArrayList<>();
             BeanFieldUpdate beanFieldUpdate = new BeanFieldUpdate();
             beanFieldUpdate.setField("address");
             beanFieldUpdate.setFieldType(String.class);
@@ -90,12 +85,6 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             beanFieldUpdateList.add(beanFieldUpdate);
             profileService.updateProfileWithFields(p.getZdbID(), beanFieldUpdateList, p.getZdbID());
             HibernateUtil.currentSession().flush();
-
-
-
-        } catch (Exception e) {
-            logger.error(e);
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -116,8 +105,6 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             profileService.setCurrentPrefix(lab1, "ae");
             prefix = featureRepository.getCurrentPrefixForLab("ZDB-LAB-001018-1");
             assertEquals("ae", prefix);
-        } catch (Exception e) {
-            logger.error(e.fillInStackTrace().toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -131,8 +118,6 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             int returnCount = profileService.setMembersToOrganizationAddress("ZDB-LAB-000914-1");
             assertThat(returnCount, greaterThan(1));
             assertThat(returnCount, lessThan(40));
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -148,8 +133,6 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             assertNotNull(lab);
             assertEquals("Bob Jones School of Intelligent Design", lab.getName());
             assertNotNull(lab.getZdbID());
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -166,8 +149,6 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             assertNotNull(company);
             assertEquals("Bob Jones Company of Intelligent Design", company.getName());
             assertNotNull(company.getZdbID());
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -190,8 +171,6 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             assertNotNull(person.getZdbID());
             assertNotNull(person.getAccountInfo());
             assertNotNull(person.getAccountInfo().getZdbID());
-        } catch (Exception e) {
-            fail(e.fillInStackTrace().toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }

@@ -111,16 +111,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             assertTrue("the dateNote data_id is the renoGene", dNoteFound.getDataZdbID().equals(renoGene.getZdbID()));
             //make sure the candidate note is null post moveNoteToGene.
             assertNull(runCandidate.getCandidate().getNote());
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
@@ -179,16 +170,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             assertEquals("recattrib data id is the mrel id", renoMrel.getZdbID(), testData);
             assertEquals("recattrib type is standard", testType, "standard");
 
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
@@ -285,16 +267,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             assertNotNull("record attribution for mhist record exists",mhistRecattribData);
             */
 
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
@@ -312,11 +285,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             redundancyCandidateController.handleDone(candidateBean, new BindException(candidateBean, "targetName"));
             Marker renoGene = markerRepository.getMarkerByAbbreviation("zgc:test");
             assertNull(renoGene);
-        }
-        catch (Exception e) {
-            fail(e.toString());
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
@@ -370,12 +339,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             //the renoGene has a marker_history record, this basically tests the trigger is working.
             assertNotNull("renoGene has marker_history record", mhist);
             assertTrue(mhist.getReason().equals(MarkerHistory.Reason.NOT_SPECIFIED));
-        }
-
-        catch (Exception e) {
-            fail(e.toString());
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
@@ -422,13 +386,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             //the mhist record has a reno reason
             // assertTrue(mhist.getReason().equals(MarkerHistory.RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE));
             assertEquals("Marker history has same reason", mhist.getReason(), (MarkerHistory.Reason.NOT_SPECIFIED));
-        }
-
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.toString());
-        }
-        finally {
+        } finally {
             HibernateUtil.rollbackTransaction();
         }
     }
@@ -461,12 +419,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
             Marker renoGene = markerRepository.getMarkerByAbbreviation("zgc:test");
             assertNull(renoGene);
-        }
-
-        catch (Exception e) {
-            fail(e.toString());
-        }
-        finally {
+        } finally {
             HibernateUtil.rollbackTransaction();
         }
     }
@@ -500,17 +453,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             assertTrue(runCandidate.getCandidate().isProblem());
             assertFalse(runCandidate.isDone());
             assertNotNull(runCandidate.getCandidate().getNote());
-        }
-
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
@@ -538,17 +481,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             //done flag in candidate is set, and that is it.
             assertTrue(runCandidate.isDone());
 
-        }
-
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
@@ -602,17 +535,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
 
             //the mrel has an attribution
             assertNotNull("attribution is created to mrel",renoMrelAttribution);*/
-        }
-
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }
@@ -628,16 +551,7 @@ public class RenoRedundancyCandidateControllerTest extends AbstractDatabaseTest 
             logger.info("assume we have at least one runCandidate for at least 1 redundancy run" + runCandidate.getZdbID());
             assertNotNull("RunCandidate is not null", runCandidate);
             assertTrue("Run is a redundancy run: ", runCandidate.getRun() instanceof RedundancyRun);
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             HibernateUtil.rollbackTransaction();
         }

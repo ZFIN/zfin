@@ -488,8 +488,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-
-
     public void getMarkersPerPublication() {
         String zdbID = "ZDB-PUB-990507-16";
 
@@ -680,11 +678,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getPubByPubmedID() {
         assertEquals(1, publicationRepository.getPublicationByPmid("18056260").size());
-    }
-
-    @Test(expected = org.hibernate.exception.GenericJDBCException.class)
-    public void getPubByPubmedIDInvalidId() {
-        publicationRepository.getPublicationByPmid("asdfasf");
     }
 
     @Test

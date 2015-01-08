@@ -107,28 +107,6 @@ public class MutantRepositoryTest {
 
     }
 
-    // No repository available because matches should be done through the
-    // OntologyManager and MatchingTermService
-/*
-    @Test
-    public void checkGoTerms() {
-        //  ao term: ribosome
-        String name = "ribosome";
-        List<Term> goTerms = getOntologyRepository().getTermByName(name, Ontology.GO);
-        assertNotNull(goTerms);
-        assertTrue(goTerms.size() > 0);
-
-        boolean findKnown = false;
-        for (Term term : goTerms) {
-            if (term.getTermName().equals("polysomal ribosome")) {
-                findKnown = true;
-            }
-        }
-
-        assertTrue(findKnown);
-    }
-*/
-
     @Test
     public void checkQualityTerms() {
         //  quality term: red
@@ -294,7 +272,7 @@ public class MutantRepositoryTest {
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.QUALITY);
     }
 
-    //@Test
+    @Test
     public void getGoEvidenceOnObsoletedTerms() {
         List<MarkerGoTermEvidence> goEvidence = mutantRepository.getGoEvidenceOnObsoletedTerms();
         assertNotNull(goEvidence);

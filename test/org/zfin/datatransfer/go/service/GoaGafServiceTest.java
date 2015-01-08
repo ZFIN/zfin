@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.go.service;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.datatransfer.go.*;
@@ -140,8 +141,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
 
             gafReport2 = new GafJobData();
             gafService.processEntries(gafEntries, gafReport2);
-        } catch (GafValidationError gafValidationError) {
-            fail(gafValidationError.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -180,8 +179,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             gafService.addAnnotations(gafReport1);
 
             gafService.processEntries(gafEntries, gafReport2);
-        } catch (GafValidationError gafValidationError) {
-            fail(gafValidationError.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -227,8 +224,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             logger.debug("entries: " + gafReport2.getNewEntries());
             logger.debug("existing: " + gafReport2.getExistingEntries());
             logger.debug("errors: " + gafReport2.getErrors());
-        } catch (GafValidationError gafValidationError) {
-            fail(gafValidationError.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -310,8 +305,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             logger.debug("entries: " + gafReport2.getNewEntries());
             logger.debug("existing: " + gafReport2.getExistingEntries());
             logger.debug("errors: " + gafReport2.getErrors());
-        } catch (GafValidationError gafValidationError) {
-            fail(gafValidationError.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -421,8 +414,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             logger.debug("entries: " + gafReport2.getNewEntries());
             logger.debug("existing: " + gafReport2.getExistingEntries());
             logger.debug("errors: " + gafReport2.getErrors());
-        } catch (GafValidationError gafValidationError) {
-            fail(gafValidationError.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -441,7 +432,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void ndReplace() {
+    public void ndReplace() throws GafValidationError {
         String hql = " " +
                 " select ev from MarkerGoTermEvidence ev  " +
                 " where ev.evidenceCode.code = :code  " +
@@ -471,8 +462,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             gafService.addAnnotations(gafJobData);
-        } catch (GafValidationError gafValidationError) {
-            fail(gafValidationError.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -532,10 +521,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             Collection<String> outdatedEntries = gafService.findOutdatedEntries(gafReport2, gafOrganization);
 
             assertFalse(outdatedEntries.contains(newZdbID));
-
-
-        } catch (GafValidationError gafValidationError) {
-            fail(gafValidationError.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -653,8 +638,8 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     }
 
 
-    // just makes sure that the service is still there, not something we want to run all of the time.
-//    @Test
+    @Test
+    @Ignore("just makes sure that the service is still there, not something we want to run all of the time")
     public void testDownloadGoaGzip() throws Exception {
         DownloadService downloadService = new DownloadService();
         File downloadedFile = downloadService.downloadFile(new File(System.getProperty("java.io.tmpdir") + "/" + "gene_association.goa_zebrafish")

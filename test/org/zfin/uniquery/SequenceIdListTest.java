@@ -6,14 +6,10 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.springframework.stereotype.Service;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.util.FileUtil;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -25,17 +21,12 @@ public class SequenceIdListTest extends AbstractDatabaseTest {
     private final Logger LOG = Logger.getLogger(SequenceIdListTest.class);
 
     @Test
-    public void getUrlsForSequenceViewPages() {
+    public void getUrlsForSequenceViewPages() throws ConfigurationException {
         SequenceIdList list = new SequenceIdList();
         CompositeConfiguration entityUrlMapping = new CompositeConfiguration();
         entityUrlMapping.addConfiguration(new SystemConfiguration());
         File mappingFile = FileUtil.createFile("server_apps", "quicksearch", GenerateEntityDetailPageUrls.entityMappingFileName);
-        try {
-            entityUrlMapping.addConfiguration(new PropertiesConfiguration(mappingFile.getAbsolutePath()));
-        } catch (ConfigurationException e) {
-            LOG.error("error during configuration file initialization");
-        }
-
+        entityUrlMapping.addConfiguration(new PropertiesConfiguration(mappingFile.getAbsolutePath()));
         list.setEntityUrlMapping(entityUrlMapping);
         List<String> ids = list.getUrlList(20);
         assertNotNull(ids);

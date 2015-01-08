@@ -382,17 +382,7 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
             List<Marker> markers5 = hits5.get(0).getTargetAccession().getMarkers();
             assertEquals("number of marker is 1 via dblinks " + ACCESSION_NUM5, 0, markers5.size());
 
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            e.printStackTrace();
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             session.getTransaction().rollback();
 //            session.getTransaction().commit();
@@ -424,17 +414,7 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
             List<Marker> markers1 = hits1.get(0).getTargetAccession().getMarkers();
             assertEquals("orthologues should not be returned as markers " + ACCESSION_NUM1, 0, markers1.size());
 
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            e.printStackTrace();
-            fail(errorString);
-        }
-        finally {
+        } finally {
             session.getTransaction().rollback();
         }
     }

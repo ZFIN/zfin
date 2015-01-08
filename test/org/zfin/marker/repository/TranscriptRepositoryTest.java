@@ -77,12 +77,7 @@ public class TranscriptRepositoryTest extends AbstractDatabaseTest {
             session.flush();
             Transcript transcript2 = (Transcript) session.createQuery("from Transcript c where c.zdbID = '"+zdbID+"'").uniqueResult() ;
             assertEquals(transcript2.getTranscriptType().getType(), TranscriptType.Type.TRANSPOSABLE_ELEMENT);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             tx.rollback();
         }
     }

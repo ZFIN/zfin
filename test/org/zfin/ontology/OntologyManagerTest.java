@@ -1,6 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.SubsetDTO;
@@ -57,8 +58,6 @@ public class OntologyManagerTest extends AbstractOntologyTest {
             for (TermDTO term : terms) {
                 assertTrue(term.getName().startsWith("a"));
             }
-        } else {
-            assertNull(terms);
         }
 
     }
@@ -90,16 +89,6 @@ public class OntologyManagerTest extends AbstractOntologyTest {
         Ontology ontology = ontologyManager.getOntologyForTerm("ZFA:0009091");
         assertNotNull(ontology);
     }
-
-//    @Test
-//    public void testRelatedTerms() {
-//        TermDTO term = ontologyManager.getTermByName("B cell", OntologyDTO.ANATOMY);
-//        List<TermRelationship> relatedTerms = term.getRelatedTerms();
-//        assertEquals(7, relatedTerms.size());
-//        assertEquals(3, term.getChildrenTerms().size());
-//        Term childTerm = term.getChildrenTerms().get(0);
-//        assertEquals("mature B cell", childTerm.getName());
-//    }
 
     @Test
     public void testAliases() {
@@ -220,8 +209,8 @@ public class OntologyManagerTest extends AbstractOntologyTest {
      * The same pertains to 'decreased rate' which should not be part of the object slim.
      * Just two examples.
      */
-    // This test currently does not work due to FogBugz case 7669
-    //@Test
+    @Test
+    @Ignore("This test currently does not work due to FogBugz case 7669")
     public void noRelativeRelationshipBelowNormalTermInQualityProcessOntology() {
         // 'normal' term should be excluded in the process and object slim of PATO
         TermDTO term = ontologyManager.getTermByID(QUALITY_TERM_DECREASED_AGE, OntologyDTO.QUALITY_PROCESSES);
@@ -253,8 +242,8 @@ public class OntologyManagerTest extends AbstractOntologyTest {
 
     }
 
-    //@Test
-
+    @Test
+    @Ignore
     public void getMatchingAnatomyTerms() {
         String query = "mel";
         MatchingTermService matcher = new MatchingTermService();

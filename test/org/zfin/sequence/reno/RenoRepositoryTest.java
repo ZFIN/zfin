@@ -3,6 +3,7 @@ package org.zfin.sequence.reno;
 import org.hibernate.Criteria;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -57,12 +58,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             // Test Run found
             assertTrue("Added Redundancy Run is found", found);
             assertEquals("Added One Redundancy Run", oldSize + 1, redundancyRuns.size());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             HibernateUtil.rollbackTransaction();
         }
@@ -88,12 +84,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             }
             assertTrue("Added Nomenclature Run is found", found);
             assertEquals("Added One Nomenclature Run", oldSize + 1, nomenclatureRuns.size());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
@@ -132,12 +123,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             assertEquals("No query candidate because locked", 0, repository.getQueueCandidateCount(run));
             repository.unlock(person1, runCandidate);
             assertEquals("One query candidate again", 1, repository.getQueueCandidateCount(run));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
@@ -169,12 +155,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             assertEquals("One pending candidate because locked and not finished", 1, repository.getPendingCandidateCount(run1));
             repository.unlock(person1, runCandidate);
             assertEquals("No pending candidate because unlocked and not finished", 0, repository.getPendingCandidateCount(run1));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
@@ -207,12 +188,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             repository.unlock(person1, runCandidate);
             assertEquals("No finished candidate because unlocked and not finished", 0,
                     repository.getFinishedCandidateCount(run1));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
@@ -256,12 +232,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             assertTrue("RunCandidate is locked", runCandidate.isLocked());
             assertTrue("RunCandidate unlocked by person 2", repository.unlock(person2, runCandidate));
             assertFalse("RunCandidate is unlocked", runCandidate.isLocked());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
@@ -283,12 +254,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
 
             redunRun.setRelationPublication(publication2);
             assertSame("Run attribution update is successful", publication2, redunRun.getRelationPublication());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
@@ -309,12 +275,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
 
             nomenRun.setOrthologyPublication(publication1);
             assertSame("Run orthology attribution update is successful", publication1, nomenRun.getOrthologyPublication());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
@@ -356,92 +317,11 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             bestHit = runCandidate.getBestHit();
             assertEquals(bestHit.getExpectValue(), hit2.getExpectValue(),0.001f);// would work for either hit1 or hit2
             assertEquals(bestHit.getScore(), hit2.getScore());
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             session.getTransaction().rollback();
         }
     }
-
-//    @Test
-//    public void testSortedRunNoZfinCandidates() {
-//        Session session = HibernateUtil.currentSession();
-//        session.beginTransaction();
-//        try {
-//            Map<String, Object> returnMap = insertTestData();
-//
-//
-//
-//            // assume this isn't going away for awhile
-//            Entrez entrez2 = (Entrez) session.get("org.zfin.sequence.Entrez","9") ;
-//            assertNotNull(entrez2);
-//            Entrez entrez3 = (Entrez) session.get("org.zfin.sequence.Entrez","13") ;
-//            assertNotNull(entrez3);
-//
-//            EntrezProtRelation entrezProt2Relation = new EntrezProtRelation() ;
-//            entrezProt2Relation.setOrganism(Species.HUMAN);
-//            Hit hit2 = (Hit) returnMap.get("hit2");
-//            Accession hit2Accession = hit2.getTargetAccession() ;
-//            entrezProt2Relation.setProteinAccNum(hit2Accession.getNumber());
-//            entrezProt2Relation.setEntrezAccession(entrez2);
-//            session.save(entrezProt2Relation);
-//
-//            EntrezProtRelation entrezProt3Relation = new EntrezProtRelation() ;
-//            entrezProt3Relation.setOrganism(Species.HUMAN);
-//            Hit hit3 = (Hit) returnMap.get("hit3");
-//            Accession hit3Accession = hit3.getTargetAccession() ;
-//            entrezProt3Relation.setProteinAccNum(hit3Accession.getNumber());
-//            entrezProt3Relation.setEntrezAccession(entrez3);
-//            session.save(entrezProt3Relation);
-//            session.flush();
-//
-//
-//
-//            List runCandidates ;
-//            Hit bestHit ;
-//            RunCandidate runCandidate ;
-//            Run run1 = (Run) returnMap.get("run1");
-//
-//
-//            runCandidates =  repository.getSortedNonZFRunCandidates( run1.getZdbID(),"other", 3  ) ;
-//            runCandidate = (RunCandidate) runCandidates.get(0) ;
-//            bestHit = runCandidate.getBestHit() ;
-//            assertEquals( bestHit.getExpectValue() , hit2.getExpectValue() );
-//            assertEquals( bestHit.getScore() , hit2.getScore() );
-//
-//            // should choose the same score, because still has the best expect value
-//            hit2.setScore(200);
-//            session.update(hit2);
-//            runCandidates =  repository.getSortedNonZFRunCandidates( run1.getZdbID(),"other", 3  ) ;
-//            runCandidate = (RunCandidate) runCandidates.get(0) ;
-//            bestHit = runCandidate.getBestHit() ;
-//            assertEquals( bestHit.getExpectValue() , hit2.getExpectValue() );
-//            assertEquals( bestHit.getScore() , hit2.getScore() );
-//
-//            // make hit1 and hit2 the same expect value, so now should take hit2 value as 800 > 600
-//            hit2.setExpectValue(0);
-//            hit3.setExpectValue(0);
-//            session.update(hit2);
-//            session.update(hit3);
-//            runCandidates =  repository.getSortedNonZFRunCandidates( run1.getZdbID(),"other", 3  ) ;
-//            runCandidate = (RunCandidate) runCandidates.get(0) ;
-//            bestHit = runCandidate.getBestHit() ;
-//            assertEquals( bestHit.getExpectValue() , hit2.getExpectValue() );// would work for either hit1 or hit2
-//            assertEquals( bestHit.getScore() , hit3.getScore() );  // should be this one
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            fail(e.getMessage());
-//        }
-//        finally {
-//            // rollback on success or exception to leave no new records in the database
-//            session.getTransaction().rollback();
-//        }
-//    }
 
 
     /**
@@ -688,12 +568,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
             );
 
 
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             session.getTransaction().rollback();
         }
 
@@ -715,7 +590,8 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
         renoService.populateLinkageGroups(rc);
     }
 
-//    @Test
+    @Test
+    @Ignore
     public void findReversedStrand(){
 
         ScrollableResults results = HibernateUtil.currentSession().createCriteria(Hit.class).scroll();

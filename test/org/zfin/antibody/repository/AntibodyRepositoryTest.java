@@ -1,9 +1,9 @@
 package org.zfin.antibody.repository;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
@@ -812,8 +812,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertTrue(sup.getOrganization() != null);
     }
 
-    //@Test
-
+    @Test
+    @Ignore
     public void createAntibody() {
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
@@ -828,20 +828,13 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
             antibody.setOwner(TestConfiguration.getPerson());
             session.save(antibody);
             session.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
-            try {
-                tx.rollback();
-            } catch (HibernateException e) {
-                e.printStackTrace();
-            }
+            tx.rollback();
         }
     }
 
-    //@Test
-
+    @Test
+    @Ignore
     public void updateAntibody() {
 
         // anti-DLX3b
@@ -856,20 +849,13 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
             antibody.setAbbreviation("new name");
             session.update(antibody);
             session.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
-            try {
-                tx.rollback();
-            } catch (HibernateException e) {
-                e.printStackTrace();
-            }
+            tx.rollback();
         }
     }
 
-    //@Test
-
+    @Test
+    @Ignore
     public void updateAntibodyViaRenameMarkerMethod() {
 
         // anti-DLX3b
@@ -890,15 +876,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
             marker.setAbbreviation("newman");
             mr.renameMarker(marker, pub, MarkerHistory.Reason.NOT_SPECIFIED);
             session.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
-            try {
-                tx.rollback();
-            } catch (HibernateException e) {
-                e.printStackTrace();
-            }
+            tx.rollback();
         }
     }
 

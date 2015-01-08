@@ -175,8 +175,6 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             // TODO: any validation here?
 //            assertEquals(expressionExperimentAB2_Pre+expressionExperimentAB1_Size,expressionExperimentAB2_Post);
 
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -267,8 +265,6 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             );
 
 
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -572,14 +568,12 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             // BEGIN TESTS
 
             assertEquals(2, antibodyA.getAntibodyLabelings().size());
-            for (Iterator<ExpressionExperiment> iter = antibodyA.getAntibodyLabelings().iterator(); iter.hasNext();) {
-                ExpressionExperiment ee = iter.next();
+            for (ExpressionExperiment ee : antibodyA.getAntibodyLabelings()) {
                 if (ee.getZdbID().equals(eea1.getZdbID())) {
                     assertNull(ee.getExpressionResults());
                 } else if (ee.getZdbID().equals(eeSameZdbID)) {
                     assertEquals(2, ee.getExpressionResults().size());
-                    for (Iterator<ExpressionResult> iterER = ee.getExpressionResults().iterator(); iterER.hasNext();) {
-                        ExpressionResult er = iterER.next();
+                    for (ExpressionResult er : ee.getExpressionResults()) {
                         if (er.getZdbID().equals(era1.getZdbID())) {
                             assertNull(er.getFigures());
                         } else if (er.getZdbID().equals(era2.getZdbID())) {
@@ -588,8 +582,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
                             HibernateUtil.currentSession().evict(er);
                             er = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, er.getZdbID());
                             assertEquals(2, er.getFigures().size());
-                            for (Iterator<Figure> iterFig = er.getFigures().iterator(); iterFig.hasNext();) {
-                                Figure fa = iterFig.next();
+                            for (Figure fa : er.getFigures()) {
                                 if (!fa.getZdbID().equals(fa1.getZdbID()) && !fa.getZdbID().equals(fa2.getZdbID())) {
                                     fail("Did not contain a known figure");
                                 }
@@ -604,22 +597,19 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             }
 
             assertEquals(2, antibodyB.getAntibodyLabelings().size());
-            for (Iterator<ExpressionExperiment> iter = antibodyB.getAntibodyLabelings().iterator(); iter.hasNext();) {
-                ExpressionExperiment ee = iter.next();
+            for (ExpressionExperiment ee : antibodyB.getAntibodyLabelings()) {
                 if (ee.getZdbID().equals(eeb1.getZdbID())) {
                     assertNull(ee.getExpressionResults());
                 } else if (ee.getZdbID().equals(eeb2.getZdbID())) {
                     assertEquals(2, ee.getExpressionResults().size());
-                    for (Iterator<ExpressionResult> iterER = ee.getExpressionResults().iterator(); iterER.hasNext();) {
-                        ExpressionResult er = iterER.next();
+                    for (ExpressionResult er : ee.getExpressionResults()) {
                         if (er.getZdbID().equals(erb1.getZdbID())) {
                             assertNull(er.getFigures());
                         } else if (er.getZdbID().equals(erb2.getZdbID())) {
                             HibernateUtil.currentSession().evict(er);
                             er = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, er.getZdbID());
                             assertEquals(2, er.getFigures().size());
-                            for (Iterator<Figure> iterFig = er.getFigures().iterator(); iterFig.hasNext();) {
-                                Figure fa = iterFig.next();
+                            for (Figure fa : er.getFigures()) {
                                 if (!fa.getZdbID().equals(fb1.getZdbID()) && !fa.getZdbID().equals(fb2.getZdbID())) {
                                     fail("Did not contain a known figure: " + fa.getZdbID());
                                 }
@@ -638,14 +628,14 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             assertNotNull(antibodyB.getMatchingAntibodyLabeling(eea2));
 
 
-//        INIT:
-//        A(EEA1,EEA2(ERA1,ERA2(FA1,FA2))
-//        B(EEB1,EEB2(ERB1,ERB2(FB1,FB2))
+            // INIT:
+            // A(EEA1,EEA2(ERA1,ERA2(FA1,FA2))
+            // B(EEB1,EEB2(ERB1,ERB2(FB1,FB2))
 
             MergeService.mergeAntibodyLabeling(antibodyA, antibodyB);
 
-//        FINAL:
-//        A(EEA2(ERA2(FA2))) // not moved
+            // FINAL:
+            // A(EEA2(ERA2(FA2))) // not moved
 
             assertEquals(1, antibodyA.getAntibodyLabelings().size());
             ExpressionExperiment ea2_final = antibodyA.getAntibodyLabelings().iterator().next();
@@ -659,22 +649,18 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             Figure fa2_final = er2_final.getFigures().iterator().next();
             assertEquals(fa2.getZdbID(), fa2_final.getZdbID());
 
-//        B(EEA1,EEB1,EEB2(ERA1,ERB1,ERB2(FA1,FB1,FB2))) // showing merged first
+            // B(EEA1,EEB1,EEB2(ERA1,ERB1,ERB2(FA1,FB1,FB2))) // showing merged first
             assertEquals(3, antibodyB.getAntibodyLabelings().size());
-            for (Iterator<ExpressionExperiment> iterEE = antibodyB.getAntibodyLabelings().iterator(); iterEE.hasNext();) {
-                ExpressionExperiment expressionExperiment = iterEE.next();
-
+            for (ExpressionExperiment expressionExperiment : antibodyB.getAntibodyLabelings()) {
                 if (expressionExperiment.getZdbID().equals(eeb2.getZdbID())) {
                     assertEquals(3, expressionExperiment.getExpressionResults().size());
-                    for (Iterator<ExpressionResult> iterER = expressionExperiment.getExpressionResults().iterator(); iterER.hasNext();) {
-                        ExpressionResult expressionResult = iterER.next();
+                    for (ExpressionResult expressionResult : expressionExperiment.getExpressionResults()) {
                         if (expressionResult.getZdbID().equals(erb2.getZdbID())) {
                             HibernateUtil.currentSession().evict(expressionResult);
                             expressionResult = (ExpressionResult) HibernateUtil.currentSession()
                                     .get(ExpressionResult.class, expressionResult.getZdbID());
                             assertEquals(3, expressionResult.getFigures().size());
-                            for (Iterator<Figure> iterFig = expressionResult.getFigures().iterator(); iterFig.hasNext();) {
-                                Figure figure = iterFig.next();
+                            for (Figure figure : expressionResult.getFigures()) {
                                 if (!figure.getZdbID().equals(fb2.getZdbID())
                                         && !figure.getZdbID().equals(fa1.getZdbID())
                                         && !figure.getZdbID().equals(fb1.getZdbID())
@@ -692,8 +678,6 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
                     fail("ee not found!" + expressionExperiment.getZdbID());
                 }
             }
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }

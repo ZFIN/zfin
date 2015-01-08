@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -122,11 +123,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             String zdbID = marker.getZdbID();
             assertTrue("non-null ZDB ID", zdbID != null);
             assertTrue("ID contains BAC", zdbID.indexOf(Marker.Type.BAC.toString()) > -1);
+        } finally {
             session.getTransaction().rollback();
-        } catch (RuntimeException e) {
-            session.getTransaction().rollback();
-            e.printStackTrace();
-            fail("failed creating a marker");
         }
     }
 
@@ -135,49 +133,39 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
         // than using the existing genes which might be merged
-        try {
-            MarkerRepository mr = markerRepository;
-            Marker marker1 = mr.getMarkerByID("ZDB-EST-000426-1181");
-            assertTrue("marker lg list contains all self panel mappings", mr.getLG(marker1).contains("13") && mr.getLG(marker1).contains("23"));
-            Marker marker2 = mr.getMarkerByID("ZDB-GENE-990415-72");
-            assertTrue("gene lg list contains its est's panel mapping", mr.getLG(marker2).contains("23"));
-            assertFalse("gene lg list contains no bogus mapping", mr.getLG(marker2).contains("1"));
-            Marker marker3 = mr.getMarkerByID("ZDB-GENE-060526-178");
-            assertTrue("gene lg list contains clone's panel mapping", mr.getLG(marker3).contains("13"));
+        MarkerRepository mr = markerRepository;
+        Marker marker1 = mr.getMarkerByID("ZDB-EST-000426-1181");
+        assertTrue("marker lg list contains all self panel mappings", mr.getLG(marker1).contains("13") && mr.getLG(marker1).contains("23"));
+        Marker marker2 = mr.getMarkerByID("ZDB-GENE-990415-72");
+        assertTrue("gene lg list contains its est's panel mapping", mr.getLG(marker2).contains("23"));
+        assertFalse("gene lg list contains no bogus mapping", mr.getLG(marker2).contains("1"));
+        Marker marker3 = mr.getMarkerByID("ZDB-GENE-060526-178");
+        assertTrue("gene lg list contains clone's panel mapping", mr.getLG(marker3).contains("13"));
 
-            Marker marker4 = mr.getMarkerByID("ZDB-RAPD-980526-288");
-            assertTrue("marker lg list contains self linkage group mapping", mr.getLG(marker4).contains("12"));
-            Marker marker5 = mr.getMarkerByID("ZDB-BAC-030616-45");
-            assertTrue("marker lg list contains linkage mapping of contained marker/segment", mr.getLG(marker5).contains("9"));
-            Marker marker6 = mr.getMarkerByID("ZDB-GENE-061013-119");
-            assertTrue("gene lg list contains clone's linkage mapping", mr.getLG(marker6).contains("19"));
+        Marker marker4 = mr.getMarkerByID("ZDB-RAPD-980526-288");
+        assertTrue("marker lg list contains self linkage group mapping", mr.getLG(marker4).contains("12"));
+        Marker marker5 = mr.getMarkerByID("ZDB-BAC-030616-45");
+        assertTrue("marker lg list contains linkage mapping of contained marker/segment", mr.getLG(marker5).contains("9"));
+        Marker marker6 = mr.getMarkerByID("ZDB-GENE-061013-119");
+        assertTrue("gene lg list contains clone's linkage mapping", mr.getLG(marker6).contains("19"));
 
-            Marker marker7 = mr.getMarkerByID("ZDB-GENE-070117-36");
-            assertTrue("gene lg list contains allele's linkage group mapping", mr.getLG(marker7).contains("23"));
+        Marker marker7 = mr.getMarkerByID("ZDB-GENE-070117-36");
+        assertTrue("gene lg list contains allele's linkage group mapping", mr.getLG(marker7).contains("23"));
 
-            Marker marker8 = mr.getMarkerByID("ZDB-GENE-070117-2287");
-            assertTrue("marker lg list contains allele's panel mapping", mr.getLG(marker8).contains("7"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+        Marker marker8 = mr.getMarkerByID("ZDB-GENE-070117-2287");
+        assertTrue("marker lg list contains allele's panel mapping", mr.getLG(marker8).contains("7"));
     }
 
     @Test
     public void runRegenNamesMarkerProcedure() {
         boolean success = true;
         Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
+        Transaction tx = session.beginTransaction();
         try {
-            tx = session.beginTransaction();
             Marker marker = markerRepository.getGeneByID("ZDB-GENE-990415-8"); // pax2a
             markerRepository.runMarkerNameFastSearchUpdate(marker);
-        } catch (Exception e) {
-            success = false;
         } finally {
-            if (tx != null)
-                tx.rollback();
+            tx.rollback();
         }
         assertTrue("Successful execution of stored procedure", success);
     }
@@ -186,11 +174,9 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void testRenameMarker() {
 
         Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
+        Transaction tx = session.beginTransaction();
 
         try {
-            tx = session.beginTransaction();
-
             Marker marker = insertTestMarker();
             Publication publication = publicationRepository.getPublication("ZDB-PUB-070122-15");
             marker.setName("test1 name");
@@ -203,13 +189,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                     mhist.getMarkerAlias().getZdbID(),
                     publication.getZdbID(), null)
             );
-        } catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
         } finally {
             // rollback on success or exception
             tx.rollback();
@@ -233,17 +212,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
         // than using the exisitng genes which might be merged
-        Transaction tx = null;
+        Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = markerRepository;
             Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
             Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
             assertEquals("Only one gene found", 1, genes.size());
             assertEquals("Found gene", "ZDB-GENE-040426-2113", genes.iterator().next().getZdbID());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             tx.rollback();
         }
@@ -251,18 +226,14 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testGetSpecificMarkerRelationship() {
-        Transaction tx = null;
+        Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = markerRepository;
             Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
             Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
             assertEquals("Only one gene found", 1, genes.size());
             MarkerRelationship mrel = mr.getMarkerRelationship(genes.iterator().next(), clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
             assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             tx.rollback();
         }
@@ -363,9 +334,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             assertEquals("test accession acc2 should have two markers", acc2.getMarkers().size(), 2);
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             session.getTransaction().rollback();
         }
@@ -380,9 +348,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
         // than using the exisitng genes which might be merged
-        Transaction tx = null;
+        Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = markerRepository;
             Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-118");
             Set<LinkageGroup> groups = MarkerService.getLinkageGroups(clone);
@@ -391,9 +358,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             LinkageGroup group = groups.iterator().next();
             assertEquals("First LG", "1", group.getName());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             tx.rollback();
         }
@@ -401,9 +365,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void retrieveLinkageGroupFromGene() {
-        Transaction tx = null;
+        Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            tx = HibernateUtil.currentSession().beginTransaction();
             MarkerRepository mr = markerRepository;
             Marker gene = mr.getMarkerByID("ZDB-GENE-990415-72");
             Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
@@ -412,9 +375,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             //            assertEquals("linkage groups found", 3, groups.size());
             //LinkageGroup group = groups.get(0);
             //assertEquals("First LG", "13", group.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             tx.rollback();
         }
@@ -441,8 +401,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         }
     }
 
-    //    Just used for assessing performance
-//    @Test
+    @Test
+    @Ignore("Just used for assessing performance")
     public void markerLookupPerformance() {
         List<Marker> markers = markerRepository.getMarkersByAbbreviation("fgf");
         System.out.println(markers.size());
@@ -491,10 +451,9 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testClone() {
-        Transaction tx = null;
         Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
         try {
-            tx = session.beginTransaction();
             Marker marker1 = markerRepository.getMarkerByID("ZDB-CDNA-080114-111");
             assertTrue("Marker is a clone", marker1 instanceof Clone);
             Clone clone = (Clone) marker1;
@@ -508,9 +467,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
             Clone clone2 = (Clone) session.createQuery("from Clone c where c.zdbID = 'ZDB-CDNA-080114-111'").uniqueResult();
             assertEquals(clone2.getRating(), rating);
             assertEquals(clone2.getProblem(), Clone.ProblemType.CHIMERIC);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             tx.rollback();
         }
@@ -663,9 +619,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         try {
             HibernateUtil.createTransaction();
             markerRepository.createOrUpdateOrthologyExternalNote(gene, "This is a note");
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -745,8 +698,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         miniGeneController.getMiniGeneView(model, "ZDB-GENE-990603-12", null, null, null);
     }
 
-    // this is a destructive test, so don't want to run
-//    @Test
+    @Test
+    @Ignore("this is a destructive test, so don't want to run")
     public void deleteMarker() throws Exception {
         DeleteMarkerController deleteMarkerController = new DeleteMarkerController();
         DeleteBean deleteBean = new DeleteBean();
@@ -939,7 +892,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Tuebingen", g.getName());
     }
 
-    //    @Test
+    @Test
+    @Ignore
     public void getVegaGeneDBLinksTranscript() {
         Marker m = markerRepository.getMarkerByID("ZDB-GENE-980528-2060");
         List<LinkDisplay> links = markerRepository.getVegaGeneDBLinksTranscript(m, DisplayGroup.GroupName.SUMMARY_PAGE);

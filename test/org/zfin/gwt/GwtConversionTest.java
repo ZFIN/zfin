@@ -1,7 +1,6 @@
 package org.zfin.gwt;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.Feature;
@@ -79,8 +78,6 @@ public class GwtConversionTest extends AbstractDatabaseTest{
             assertNotNull(dataAliasList);
             assertEquals(1,dataAliasList.size());
             assertEquals(DTOConversionService.escapeString(unescapedName), dataAliasList.get(0).getAlias());
-        } catch (HibernateException e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -97,8 +94,6 @@ public class GwtConversionTest extends AbstractDatabaseTest{
             marker.setPublicComments(newNote);
             HibernateUtil.currentSession().save(marker);
             assertEquals(DTOConversionService.escapeString(unescapedNote), marker.getPublicComments());
-        } catch (HibernateException e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -116,8 +111,6 @@ public class GwtConversionTest extends AbstractDatabaseTest{
             ftr.setPublicComments(newNote);
             HibernateUtil.currentSession().save(ftr);
             assertEquals(DTOConversionService.escapeString(unescapedNote), ftr.getPublicComments());
-        } catch (HibernateException e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }

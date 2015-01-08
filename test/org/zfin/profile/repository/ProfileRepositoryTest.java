@@ -52,11 +52,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             assertNotNull("curator session created with PK id", databaseCS.getID());
             assertEquals("curator session value is correct", databaseCS.getValue(), value);
 
-        }
-        catch (Exception e) {
-            fail(e.fillInStackTrace().toString());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             HibernateUtil.rollbackTransaction();
         }
@@ -81,12 +77,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             assertNotNull("curator session created with PK id", databaseCS.getID());
             assertEquals("curator session value is correct", databaseCS.getValue(), value);
 
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-        finally {
+        } finally {
             // rollback on success or exception to leave no new records in the database
             HibernateUtil.rollbackTransaction();
         }
@@ -109,8 +100,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             String personID = person.getZdbID();
             assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
 
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -131,8 +120,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             String personID = person.getZdbID();
             assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
             assertTrue("No user object created", person.getAccountInfo() == null);
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -289,8 +276,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             assertEquals(1,result);
             result = profileRepository.removeMemberFromOrganization("ZDB-PERS-010126-3","ZDB-COMPANY-020115-1") ;
             assertEquals(1,result);
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -308,8 +293,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             HibernateUtil.createTransaction();
             int result = profileRepository.addLabMember("ZDB-PERS-000329-1","ZDB-LAB-000914-1",7) ;
             assertEquals(1,result);
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -321,8 +304,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             HibernateUtil.createTransaction();
             int result = profileRepository.addCompanyMember("ZDB-PERS-000329-1","ZDB-COMPANY-001017-1",2) ;
             assertEquals(1,result);
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -354,8 +335,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             assertEquals(1,result);
             result = profileRepository.removeLabMember("ZDB-PERS-000329-1","ZDB-LAB-000914-1") ;
             assertEquals(1,result);
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -372,8 +351,6 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
             assertEquals(1,result);
             result = profileRepository.removeCompanyMember("ZDB-PERS-000329-1","ZDB-COMPANY-001017-1") ;
             assertEquals(1,result);
-        } catch (Exception e) {
-            fail(e.toString());
         } finally {
             HibernateUtil.rollbackTransaction();
         }

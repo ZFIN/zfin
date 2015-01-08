@@ -145,7 +145,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         assertFalse(dblinks.contains("EE708906"));
     }
 
-    //    @Test
+    @Test
     public void getGenbankXpatCdnaDBLinks() {
         Set<String> dblinks = sequenceRepository.getGenbankXpatCdnaDBLinks();
         assertNotNull(dblinks);
@@ -240,11 +240,11 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getDBLinkAccessionsForMarkerOnly() {
         Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-        Set<String> accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
+        Set<String> accessionNumbers = new HashSet<>(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
         assertThat(accessionNumbers.size(), greaterThan(2));
 
         marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-050208-103");
-        accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
+        accessionNumbers = new HashSet<>(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
         assertThat(accessionNumbers.size(), greaterThan(0));
     }
 
@@ -265,11 +265,11 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getDBLinkAccessionsForMarkerAndEncoding() {
         Marker marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-050208-103");
-        Set<String> accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA));
+        Set<String> accessionNumbers = new HashSet<>(sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA));
         assertThat(accessionNumbers.size(), greaterThan(1));
 
         marker = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-990415-8");
-        accessionNumbers = new HashSet<String>(sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA));
+        accessionNumbers = new HashSet<>(sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA));
         accessionNumbers.addAll(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
         assertThat(accessionNumbers.size(), greaterThan(15));
     }

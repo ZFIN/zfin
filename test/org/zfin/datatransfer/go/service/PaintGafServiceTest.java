@@ -1,6 +1,7 @@
 package org.zfin.datatransfer.go.service;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.datatransfer.go.*;
@@ -11,7 +12,6 @@ import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -84,7 +84,8 @@ public class PaintGafServiceTest extends AbstractDatabaseTest {
     }
 
 
-//        @Test
+    @Test
+    @Ignore
     public void testDownloadPaint() throws Exception {
         DownloadService downloadService = new DownloadService();
 //        File downloadedFile = downloadService.downloadFileHttp(new File(System.getProperty("java.io.tmpdir") + "/" + "gene_association.goa_zebrafish")

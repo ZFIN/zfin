@@ -3,6 +3,7 @@ package org.zfin.ontology.repository;
 import org.apache.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
@@ -54,7 +55,8 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         Assert.assertNotNull(term);
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void getTermWithDefinitionReference() {
         String anatomyRootID = "ZFA:0000089";
         Term term = ontologyRepository.getTermByOboID(anatomyRootID);
@@ -115,7 +117,8 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertEquals("Default name space", "quality", metadata.getDefaultNamespace());
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void getPhenotypesWithSecondaryTerms() throws Exception {
         List<PhenotypeStatement> phenotypesWithSecondaryTerms = ontologyRepository.getPhenotypesWithSecondaryTerms();
         assertNotNull(phenotypesWithSecondaryTerms);
@@ -175,17 +178,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(metadata);
     }
 
-    //    @Test
-//    public void getTermRelationshipsForOntology(){
-//        Map<String,List<TermRelationship>> relationshipStringListMap =
-//                ontologyRepository.getTermRelationshipsForOntology(Ontology.QUALITY);
-////        assertTrue(relationshipStringListMap.containsKey());
-////        assertTrue(relationshipStringListMap.containsKey());
-////        assertTrue(relationshipStringListMap.containsKey());
-//
-//
-//
-//    }
     @Test
     public void getFirst10Terms() {
         List<String> allTerms = ontologyRepository.getAllTerms(10);
@@ -392,7 +384,8 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     // This is a normal condition following an ontology update in which doug receives an email
     // when this condition occurs anyway.
-//    @Test
+    @Test
+    @Ignore
     public void getGoEvidenceOnSecondaryTerms() {
         List<MarkerGoTermEvidence> term = ontologyRepository.getGoEvidenceOnSecondaryTerms();
         assertEquals(0, term.size());
@@ -427,7 +420,8 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(relationshipTypes);
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void getTermsWithInvalidStageDefinition() {
         List<GenericTermRelationship> relationshipTypes = ontologyRepository.getTermsWithInvalidStartStageRange();
         assertNotNull(relationshipTypes);
@@ -437,13 +431,15 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(relationshipTypes);
     }
 
-    // @Test do not include in regular tests as it takes more than a minute.
+    @Test
+    @Ignore("do not include in regular tests as it takes more than a minute")
     public void getExpressionAnnotationStageViolations() {
         List<ExpressionResult> expressionResultList = ontologyRepository.getExpressionResultsViolateStageRanges();
         assertNotNull(expressionResultList);
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void getListOfMergedTermsInTermRelationship() {
         List<GenericTermRelationship> relationshipList = ontologyRepository.getTermRelationshipsWithMergedTerms();
         assertNotNull(relationshipList);

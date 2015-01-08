@@ -1,6 +1,5 @@
 package org.zfin.gwt.root.server;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -12,14 +11,10 @@ import org.zfin.ontology.Term;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Test class for service class.
@@ -154,12 +149,14 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
     public void convertOntologies() {
 
         OntologyDTO[] ontologyDtoList = OntologyDTO.values();
-        for (OntologyDTO ontologyDto : ontologyDtoList)
+        for (OntologyDTO ontologyDto : ontologyDtoList) {
             assertNotNull("Ontology <" + ontologyDto + "> has no counter part OntologyDTO! Please define one in the DTOConversionService class",
                     DTOConversionService.convertToOntology(ontologyDto));
+        }
 
         Ontology[] ontologyList = Ontology.values();
-        for (Ontology ontology : ontologyList)
+        for (Ontology ontology : ontologyList) {
             assertNotNull("OntologyDTO: " + ontology + " has no counter part Ontology!", DTOConversionService.convertToOntologyDTO(ontology));
+        }
     }
 }

@@ -188,7 +188,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
     public void verifyCandidatesAccrossRuns(){
         Session session = HibernateUtil.currentSession();
         session.beginTransaction() ;
-        try{
+        try {
             insert2NomenWithSharedCandidate();
             RunCandidate runCandidate = nomenRun1.getCandidates().iterator().next() ;
             assertNotNull("RunCanidate failed to persist",runCandidate)  ;
@@ -197,16 +197,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
             String zdbId1 = nomenRun1.getCandidates().iterator().next().getCandidate().getZdbID() ;
             String zdbId2 = nomenRun2.getCandidates().iterator().next().getCandidate().getZdbID() ;
             assertEquals("candidate is shared across both runs",zdbId1,zdbId2) ;
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             session.getTransaction().rollback();
         }
@@ -223,7 +214,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
     public void doneUpdatesPropagatedAccrossRuns(){
         Session session = HibernateUtil.currentSession();
         session.beginTransaction() ;
-        try{
+        try {
             insert2NomenWithSharedCandidate();
             session.flush() ;
             // this is the 'problem' code
@@ -261,16 +252,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
             session.refresh(runCandidate1.getCandidate()) ;
             assertEquals("run count should be 2",2,(int) runCandidate1.getCandidate().getRunCount()) ;
             assertEquals("run count should be 2",2,(int) runCandidate1.getCandidate().getRunCount()) ;
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             session.getTransaction().rollback();
         }
@@ -288,7 +270,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
     public void testDelete(){
         Session session = HibernateUtil.currentSession();
         session.beginTransaction() ;
-        try{
+        try {
             insert2NomenWithSharedCandidate();
             session.flush();
 
@@ -332,18 +314,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
 
             candidates = c1.list() ;
             assertEquals("should be one candidate still",candidates.size(),1);
-
-
-        }
-        catch (Exception e) {
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally {
+        } finally {
             // rollback on success or exception
             session.getTransaction().rollback();
         }
@@ -357,7 +328,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
         Publication orthologyPub = publicationRepository.getPublication("ZDB-PUB-030905-1");
 
         session.beginTransaction() ;
-        try{
+        try {
             NomenclatureRun nomenRun = new NomenclatureRun();
             nomenRun.setNomenclaturePublication(nomenclaturePub);
             nomenRun.setOrthologyPublication(orthologyPub);
@@ -398,17 +369,7 @@ public class RenoMultiRunTest extends AbstractDatabaseTest {
 
             RedundancyRun redunRunCast = (RedundancyRun) redunRunCheck;
             assertTrue("nomenRunCast is of NomenclatureRun",redunRunCast instanceof RedundancyRun) ;
-
-
-        }catch(Exception e){
-            java.lang.StackTraceElement[] elements = e.getStackTrace();
-            String errorString = "";
-            for (StackTraceElement element : elements) {
-                errorString += element + "\n";
-            }
-            fail(errorString);
-        }
-        finally{
+        } finally{
             session.getTransaction().rollback();
         }
 

@@ -7,6 +7,7 @@ import org.zfin.marker.Clone
 import org.zfin.profile.Person
 import org.zfin.publication.Publication
 import org.zfin.repository.RepositoryFactory
+import spock.lang.Ignore
 import spock.lang.Shared
 
 
@@ -74,7 +75,7 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
         ["Fig. 1", "Fig. 2", "Fig. 3", "Fig. 4", "Fig. 5", "Fig. 6", "Fig. 7"]== figures*.label
     }
 
-/*
+    @Ignore
     def "#figZdbID should have the correct number of fishes"() {
         when: "we get a figure"
 
@@ -87,7 +88,6 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
         def first = figure.getPhenotypeExperiments().first()
         first.genotypeExperiment.genotypeExperimentFishAnnotations.size() == 1;
     }
-*/
 
 }
 
