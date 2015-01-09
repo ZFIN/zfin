@@ -680,9 +680,6 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         assertNotNull(regulationCiliumMovement);
         assertTrue(ontologyRepository.isParentChildRelationshipExist(regulationCiliumMovement, regulationCiliumMovement));
 
-        assertFalse(ontologyRepository.isParentChildRelationshipExist(regulationCiliumMovement, cellularComponentMovement));
-        // regulates relationships no longer mapped
-        assertFalse(ontologyRepository.isParentChildRelationshipExist(cellularComponentMovement, regulationCiliumMovement));
 
         GenericTerm localization = ontologyRepository.getTermByName("localization", Ontology.GO_BP);
         assertNotNull(localization);
