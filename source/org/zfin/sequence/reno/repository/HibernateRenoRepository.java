@@ -213,19 +213,17 @@ public class HibernateRenoRepository implements RenoRepository {
 
 
         String hql = "SELECT runCandidate.zdbID , hit.expectValue, max(hit.score ), runCandidate.candidate.lastFinishedDate , runCandidate.occurrenceOrder, runCandidate.candidate.problem " +
-                "FROM RunCandidate runCandidate, Query query , Hit hit, Accession accession , EntrezProtRelation  entrezProtRelation " +
+                "FROM RunCandidate runCandidate, Query query , Hit hit, Accession accession  " +
                 "WHERE runCandidate.run = :run" +
                 " and runCandidate.done  = :done" +
                 " and runCandidate= query.runCandidate " +
                 " and runCandidate.lockPerson is null  " +
                 " and hit.query = query " +
                 " and hit.targetAccession  = accession " +
-                " and accession.number  = entrezProtRelation.proteinAccNum " +
                 " and hit.expectValue = (select min(bh.expectValue)" +
-                "                            from Hit bh,Accession ab, EntrezProtRelation ep" +
+                "                            from Hit bh,Accession ab"+
                 "                          where bh.query = query " +
-                "                            and bh.targetAccession.ID  =ab.ID " +
-                "                            and ab.number = ep.proteinAccNum " +
+                "                            and bh.targetAccession.ID  =ab.ID "+
                 "                        ) " +
                 "GROUP BY runCandidate.zdbID , runCandidate.candidate.problem,hit.expectValue , runCandidate.candidate.lastFinishedDate , runCandidate.occurrenceOrder " +
                 "ORDER BY ";
