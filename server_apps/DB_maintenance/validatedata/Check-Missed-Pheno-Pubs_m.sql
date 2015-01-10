@@ -22,7 +22,7 @@ select zdb_id, entry_time, b.mrkr_zdb_id, b.mrkr_abbrev,
 and entry_time >='2009-01-01 00:00:00.000'
 and (pub_completion_date is null or pub_completion_date = '')
 and not exists (Select 'x' from data_reporting
-    	       	       where dr_data_zdb_id = a.mrkr_zdb_id)
+    	       	       where dr_data_zdb_id = zdb_id)
 ;
 
 insert into data_reporting (dr_data_zdb_id, dr_report_generated_date, dr_report_name)
@@ -49,4 +49,4 @@ insert into data_reporting (dr_data_zdb_id, dr_report_generated_date, dr_report_
 and entry_time >='2009-01-01 00:00:00.000'
 and (pub_completion_date is null or pub_completion_date = '')
 and not exists (Select 'x' from data_reporting
-    	       	       where dr_data_zdb_id = a.mrkr_zdb_id); 
+    	       	       where dr_data_zdb_id = zdb_id); 
