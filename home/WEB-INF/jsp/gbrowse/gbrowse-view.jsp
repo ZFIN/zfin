@@ -3,7 +3,7 @@
 <i class="fa fa-spinner fa-spin" id="loading"></i>
 
 <%-- this should be the only place that the raw gbrowse url is used --%>
-<iframe src="/gb2/gbrowse/zfin_ensembl?${requestParams}"
+<iframe src="/gb2/gbrowse/zfin_ensembl?${requestParams}" width="100%"
         id="gbrowseFrame" marginheight="0" frameborder="0"></iframe>
 
 <script>
@@ -13,8 +13,18 @@
         var MutationObserver = window.MutationObserver || window.WebKitMutationObserver,
             iframe = this,
             $iframe = jQuery(this);
-        $iframe.width("100%");
         jQuery("#loading").hide();
+
+        <%-- absolute urls that don't already have a target should get popup out --%>
+        $iframe.contents().on("click", "a", function () {
+            var $this = jQuery(this),
+                url = $this.attr("href"),
+                target = $this.attr("target");
+            if ((url.indexOf('http://') === 0 || url.indexOf('https://') === 0) && target === undefined) {
+                $this.attr("target", "_blank");
+            }
+        });
+
         if (MutationObserver) {
             new MutationObserver(function () {
                 <%-- 20 is a bit of fudge to keep iframe's scroll bars to from showing up --%>
