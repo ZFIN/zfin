@@ -26,7 +26,7 @@ and not exists (Select 'x' from data_reporting
 ;
 
 insert into data_reporting (dr_data_zdb_id, dr_report_generated_date, dr_report_name)
-  select distinct a.mrkr_zdb_id, current year to second, "Check-Missed-Pheno-Pubs"
+  select distinct zdb_id, current year to second, "Check-Missed-Pheno-Pubs"
     from publication,record_attribution,
                         marker a, marker b,marker_relationship
             where recattrib_source_zdb_id = zdb_id
