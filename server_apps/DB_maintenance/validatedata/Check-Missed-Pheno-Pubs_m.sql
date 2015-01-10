@@ -1,4 +1,4 @@
-select zdb_id, entry_time, mrel_mrkr_2_zdb_id, b.mrkr_zdb_id, b.mrkr_abbrev,
+select zdb_id, entry_time, b.mrkr_zdb_id, b.mrkr_abbrev,
   a.mrkr_abbrev, a.mrkr_zdb_id
       from publication,record_attribution,
                         marker a, marker b,marker_relationship
