@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Please add a description</description>
+    <description>Returns genotype names that are generated incorrectly for review</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
