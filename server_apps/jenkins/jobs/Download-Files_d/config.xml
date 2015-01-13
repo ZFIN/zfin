@@ -25,7 +25,7 @@
   </builders>
   <publishers>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
-      <recipientList>${DB_OWNER}@zfin.org</recipientList>
+      <recipientList></recipientList>
       <configuredTriggers>
           <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
               <email>

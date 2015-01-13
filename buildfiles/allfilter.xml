@@ -18,6 +18,8 @@
 <filter token="BLASTSERVER_USER" value="${BLASTSERVER_USER}"/>
 <filter token="BLASTSERVER_XDFORMAT" value="${BLASTSERVER_XDFORMAT}"/>
 <filter token="BLASTSERVER_XDGET" value="${BLASTSERVER_XDGET}"/>
+<filter token="BLAST_ACCESSION_TEMP_DIR_LOCAL" value="${BLAST_ACCESSION_TEMP_DIR_LOCAL}"/>
+<filter token="BLAST_ACCESSION_TEMP_DIR_REMOTE" value="${BLAST_ACCESSION_TEMP_DIR_REMOTE}"/>
 <filter token="BLAST_CACHE_AT_STARTUP" value="${BLAST_CACHE_AT_STARTUP}"/>
 <filter token="BLAST_FILE_DIR" value="${BLAST_FILE_DIR}"/>
 <filter token="BLAST_SCRIPT_DIR" value="${BLAST_SCRIPT_DIR}"/>

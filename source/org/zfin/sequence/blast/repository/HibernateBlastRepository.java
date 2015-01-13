@@ -76,7 +76,7 @@ public class HibernateBlastRepository implements BlastRepository {
     }
 
     public Set<String> getAllValidAccessionNumbers(Database database) {
-        Set<String> returnAccessions = new HashSet<String>();
+        Set<String> returnAccessions = new HashSet<>();
 
         String hql1 = "select dbl.accessionNumber " +
                 " from DBLink dbl join dbl.referenceDatabase rd join rd.primaryBlastDatabase bd " +
@@ -90,8 +90,15 @@ public class HibernateBlastRepository implements BlastRepository {
                 " where bd.zdbID = :databaseZdbID";
         Query query2 = HibernateUtil.currentSession().createQuery(hql2);
         query2.setString("databaseZdbID", database.getZdbID());
-        returnAccessions.addAll(query2.list());
+        List accessionBankList = query2.list();
+        Set<String> onlyAccessionBankList = new HashSet<>();
+        onlyAccessionBankList.addAll((accessionBankList));
+        for (String accFromDbLink : returnAccessions)
+            onlyAccessionBankList.remove(accFromDbLink);
+        if (onlyAccessionBankList.size() > 0)
+            logger.warn("Accession numbers in accession_bank not found in DB_LINK: " + onlyAccessionBankList);
 
+        returnAccessions.addAll(accessionBankList);
         return returnAccessions;
     }
 
@@ -101,8 +108,8 @@ public class HibernateBlastRepository implements BlastRepository {
         String hql = " select brc.accession from BlastRegenerationCache brc" +
                 " where brc.blastDatabase = :database " +
                 " ";
-        Query query = HibernateUtil.currentSession().createQuery(hql) ;
-        query.setParameter("database",database) ;
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("database", database);
         return query.list();
     }
 
@@ -127,11 +134,11 @@ public class HibernateBlastRepository implements BlastRepository {
         if (blastDatabaseCounts == null)
             return null;
 
-        Map<String, Integer> accessionCountMap = new HashMap<String,Integer>();
+        Map<String, Integer> accessionCountMap = new HashMap<>();
 
         for (Object[] o : blastDatabaseCounts) {
-            String blastDatabaseAbbrev = (String)o[0];
-            Integer accessionCount = ((BigDecimal)o[1]).intValue();
+            String blastDatabaseAbbrev = (String) o[0];
+            Integer accessionCount = ((BigDecimal) o[1]).intValue();
             accessionCountMap.put(blastDatabaseAbbrev, accessionCount);
         }
 
@@ -171,15 +178,15 @@ public class HibernateBlastRepository implements BlastRepository {
         }
 
 
-       return accessionCountMap;
+        return accessionCountMap;
 
     }
 
     /**
      * Number of valid accessions.  The other method is too memory intensive.
-     * Must implement in SQL to get a pSroper union.
+     * Must implement in SQL to get a proper union.
      *
-     * @param database Database to retrive number of accessions for.
+     * @param database Database to retrieve number of accessions for.
      * @return Number of combined unique accessions between accession bank and dblink.
      */
     public Integer getNumberValidAccessionNumbers(Database database) {
@@ -211,27 +218,27 @@ public class HibernateBlastRepository implements BlastRepository {
 
     @Override
     public void addPreviousAccessions(Database database, Collection<String> accessionsToAdd) {
-        if(CollectionUtils.isEmpty(accessionsToAdd)){
-            return ;
+        if (CollectionUtils.isEmpty(accessionsToAdd)) {
+            return;
         }
-        for(String accessionToAdd: accessionsToAdd){
+        for (String accessionToAdd : accessionsToAdd) {
             BlastRegenerationCache blastRegenerationCache = new BlastRegenerationCache();
             blastRegenerationCache.setAccession(accessionToAdd);
             blastRegenerationCache.setBlastDatabase(database);
-            HibernateUtil.currentSession().save(blastRegenerationCache) ;
+            HibernateUtil.currentSession().save(blastRegenerationCache);
         }
         HibernateUtil.currentSession().flush();
     }
 
     @Override
     public void removePreviousAccessions(Database database, Collection<String> accessionToRemove) {
-        if(CollectionUtils.isEmpty(accessionToRemove)){
-            return ;
+        if (CollectionUtils.isEmpty(accessionToRemove)) {
+            return;
         }
-        String hql = "delete BlastRegenerationCache brc where brc.accession in (:accessions) " ;
+        String hql = "delete BlastRegenerationCache brc where brc.accession in (:accessions) ";
         HibernateUtil.currentSession().createQuery(hql)
-                .setParameterList("accessions",accessionToRemove)
-                .executeUpdate() ;
+                .setParameterList("accessions", accessionToRemove)
+                .executeUpdate();
     }
 
 }

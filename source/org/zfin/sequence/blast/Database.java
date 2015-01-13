@@ -4,22 +4,25 @@ import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 
 /**
  */
 public class Database {
 
-    private String zdbID ;
-    private String name ;
-    private AvailableAbbrev abbrev ;
-    private String description ;
-    private Type type ;
-    private String location ;
+    private String zdbID;
+    private String name;
+    private AvailableAbbrev abbrev;
+    private String description;
+    private Type type;
+    private String location;
     private boolean publicDatabase;
-    private boolean isLocked ;
-    private Origination origination ;
-    private String displayName ;
+    private boolean isLocked;
+    private Origination origination;
+    private String displayName;
 
 
     private Integer toolDisplayOrder;
@@ -32,14 +35,10 @@ public class Database {
         this.toolDisplayOrder = toolDisplayOrder;
     }
 
-    // unmapped, used only during database regeneration
-    private transient File accessionFile ;
-
-
     // these will be ordered coming out of the database by order
-    private Set<DatabaseRelationship> childrenRelationships ;
+    private Set<DatabaseRelationship> childrenRelationships;
     // these will be ordered coming out of the database by order
-    private Set<DatabaseRelationship> parentRelationships ;
+    private Set<DatabaseRelationship> parentRelationships;
 
     public Set<DatabaseRelationship> getChildrenRelationships() {
         return childrenRelationships;
@@ -74,8 +73,8 @@ public class Database {
         isLocked = locked;
     }
 
-    public String getShortType(){
-        return type.toString().substring(0,1) ;
+    public String getShortType() {
+        return type.toString().substring(0, 1);
     }
 
     public void setExpressionFound(boolean isPublic) {
@@ -111,7 +110,7 @@ public class Database {
     }
 
     public char getTypeCharacter() {
-        return getType()==Database.Type.NUCLEOTIDE ? 'n' : 'p' ;
+        return getType() == Database.Type.NUCLEOTIDE ? 'n' : 'p';
     }
 
     public void setType(Type type) {
@@ -150,35 +149,32 @@ public class Database {
         this.displayName = displayName;
     }
 
-    public File getAccessionFile() throws IOException {
-        if(accessionFile==null){
-            accessionFile = File.createTempFile("accessions",".txt") ;
-        }
-        return accessionFile;
+    public File getTempFile(String prefix, String suffix) throws IOException {
+        Path basedir = FileSystems.getDefault().getPath(ZfinPropertiesEnum.BLAST_ACCESSION_TEMP_DIR_LOCAL.value());
+        Path tempPath = Files.createTempFile(basedir, prefix, suffix);
+        File file = tempPath.toFile();
+        boolean success = file.setReadable(true, false);
+        return file;
     }
 
-    public void setAccessionFile(File accessionFile) {
-        this.accessionFile = accessionFile;
+    public String getBackupWebHostDatabasePath() {
+        return ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH + "/" + BlastService.BACKUP_DIRECTORY + "/" + getAbbrev().toString();
     }
 
-    public String getBackupWebHostDatabasePath(){
-        return ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH  + "/" + BlastService.BACKUP_DIRECTORY + "/" + getAbbrev().toString() ;
+    public String getBackupBlastServerDatabasePath() {
+        return ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH + "/" + BlastService.BACKUP_DIRECTORY + "/" + getAbbrev().toString();
     }
 
-    public String getBackupBlastServerDatabasePath(){
-        return ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH + "/" + BlastService.BACKUP_DIRECTORY + "/" + getAbbrev().toString()  ;
+    public String getCurrentWebHostDatabasePath() {
+        return ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH + "/" + BlastService.CURRENT_DIRECTORY + "/" + getAbbrev().toString();
     }
 
-    public String getCurrentWebHostDatabasePath(){
-        return ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH  + "/" + BlastService.CURRENT_DIRECTORY + "/" + getAbbrev().toString() ;
+    public String getCurrentBlastServerDatabasePath() {
+        return ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH + "/" + BlastService.CURRENT_DIRECTORY + "/" + getAbbrev().toString();
     }
 
-    public String getCurrentBlastServerDatabasePath(){
-        return ZfinPropertiesEnum.BLASTSERVER_BLAST_DATABASE_PATH + "/" + BlastService.CURRENT_DIRECTORY + "/" + getAbbrev().toString()  ;
-    }
-
-    public String getView(){
-        return name + " " + abbrev.toString() + " " + type.toString() ;
+    public String getView() {
+        return name + " " + abbrev.toString() + " " + type.toString();
     }
 
 
@@ -211,9 +207,9 @@ public class Database {
         CURATEDMICRORNAMATURE("CuratedMicroRNAMature"),
         CURATEDMICRORNASTEMLOOP("CuratedMicroRNAStemLoop"),
         ENSEMBL("ENSEMBL"),
-	ZFINENSEMBLTSCRIPT("zfinEnsemblTscript"),
-	ENSEMBL_P("Ensembl_P"),
-	ENSEMBL_ZF("ensembl_zf"),
+        ZFINENSEMBLTSCRIPT("zfinEnsemblTscript"),
+        ENSEMBL_P("Ensembl_P"),
+        ENSEMBL_ZF("ensembl_zf"),
         GBK_EST_HS("gbk_est_hs"),
         GBK_EST_MS("gbk_est_ms"),
         GBK_EST_ZF("gbk_est_zf"),
@@ -259,9 +255,8 @@ public class Database {
         ZFIN_MIRNA_STEMLOOP("zfin_miRNA_stemloop"),
         ZFIN_MIRNA_MATURE("zfin_miRNA_mature"),
         ZFIN_MRPH("zfin_mrph"),
-	    ZFIN_TALEN("zfin_talen"),
-	    ZFIN_CRISPR("zfin_crispr")
-        ;
+        ZFIN_TALEN("zfin_talen"),
+        ZFIN_CRISPR("zfin_crispr");
 
 
         private final String value;
@@ -274,7 +269,7 @@ public class Database {
             return this.value;
         }
 
-        public String getValue(){
+        public String getValue() {
             return value;
         }
 
@@ -310,12 +305,12 @@ public class Database {
             throw new RuntimeException("No blast database of type " + type + " found.");
         }
 
-        public boolean isNucleotide(){
-            return value.equalsIgnoreCase(NUCLEOTIDE.toString()) ;
+        public boolean isNucleotide() {
+            return value.equalsIgnoreCase(NUCLEOTIDE.toString());
         }
 
-        public boolean isProtein(){
-            return value.equalsIgnoreCase(PROTEIN.toString()) ;
+        public boolean isProtein() {
+            return value.equalsIgnoreCase(PROTEIN.toString());
         }
     }
 }

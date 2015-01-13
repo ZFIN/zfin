@@ -99,8 +99,7 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
                 logger.debug("sequence add reply: " + execProcess.getStandardOutput().toString().trim());
             }
             return sequence;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.fatal("Failed to add sequence:", e);
             try {
                 restoreDatabase(database);
@@ -108,8 +107,7 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
                 throw new BlastDatabaseException("Failed to restore database[" + database.getAbbrev() + "]", e);
             }
             throw new BlastDatabaseException("Failed to add sequence", e);
-        }
-        finally {
+        } finally {
             unlockForce(database);
         }
     }
@@ -149,15 +147,9 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
                 logger.warn("problem with exec, may still have worked: " + commandLine, e);
             }
 
-//            ExecProcess execProcess = new ExecProcess(commandList) ;
-//            logger.info("dumpDatabaseAsFastaForAccessions exec string: " + execProcess);
-//
-//            execProcess.exec();
-
             // dump output
             String errorOutput = new String();
             for (String line : byteArrayErrorStream.toString().split("\n")) {
-//                for(String line: execProcess.getStandardError().split("\n")){
                 if (
                         false == line.startsWith("Not found:")
                                 &&
@@ -173,12 +165,10 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
 
             if (errorOutput.trim().length() > 0) {
                 logger.error("Failed to dump sequence correctly: " + errorOutput);
-//                throw new IOException("Failed to dump sequences: "+errorOutput.trim()) ;
             }
 
-            File tmpFastaFile = File.createTempFile("tmp", ".fa");
+            File tmpFastaFile = blastDatabase.getTempFile("fasta", "fa");
             BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFastaFile));
-//            writer.write(execProcess.getStandardOutput().toString());
             writer.write(byteArrayOutputStream.toString());
             writer.close();
             return tmpFastaFile;
@@ -216,8 +206,7 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
                     + database +
                     " and fastaFile " + fastaFile,
                     e);
-        }
-        finally {
+        } finally {
             unlockForce(database);
         }
     }
@@ -315,16 +304,13 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
             if (numberOfSequences != 0) {
                 throw new BlastDatabaseException("the number of blast databases does not equal 0, instead " + numberOfSequences);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.fatal(e);
             throw new BlastDatabaseException("failed to create empty database: " + blastDatabase, e);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             logger.fatal(e);
             throw new BlastDatabaseException("failed to create empty database: " + blastDatabase, e);
-        }
-        finally {
+        } finally {
             unlockForce(blastDatabase);
         }
     }
@@ -347,7 +333,7 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
             // dump out new database to fasta, this is filtered
             Set<String> validNewAccessions = RepositoryFactory.getBlastRepository().getAllValidAccessionNumbers(newDatabase);
             if (validNewAccessions.size() == 0) {
-                File newAccessionsFile = newDatabase.getAccessionFile();
+                File newAccessionsFile = newDatabase.getTempFile("accession", "txt");
                 if (newAccessionsFile != null) {
                     validNewAccessions = getAccessionsFromFile(newAccessionsFile);
                 }
@@ -383,7 +369,7 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
 
 
             // if I have an old set of accessions, then I update those with my new accessions
-            File oldAccessionFile = oldDatabase.getAccessionFile();
+            File oldAccessionFile = oldDatabase.getTempFile("accession", "txt");
             Set<String> oldAccessions = getAccessionsFromFile(oldAccessionFile);
             oldAccessions.addAll(validNewAccessions);
             createAccessionDump(oldAccessions, oldDatabase);
@@ -391,8 +377,7 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
         } catch (Exception e) {
             logger.fatal(e);
             throw new BlastDatabaseException("failed to append database[" + newDatabase + "] to [" + oldDatabase + "]", e);
-        }
-        finally {
+        } finally {
             // will execute even with return statement
             unlockForce(oldDatabase);
         }
@@ -407,7 +392,7 @@ public abstract class WebHostWublastBlastService extends AbstractWublastBlastSer
 
     public List<File> backupDatabase(final Database database) throws IOException {
         File fromDirectory = new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH + "/" + CURRENT_DIRECTORY);
-        File toDirectory = new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH  + "/" + BACKUP_DIRECTORY);
+        File toDirectory = new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH + "/" + BACKUP_DIRECTORY);
         return copyFiles(fromDirectory, toDirectory, database.getAbbrev().toString());
     }
 

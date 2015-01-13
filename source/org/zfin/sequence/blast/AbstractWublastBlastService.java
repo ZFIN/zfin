@@ -1,12 +1,16 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
 import org.zfin.marker.Marker;
@@ -33,7 +37,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
     public final static String BAD_QUERY_SEARCH = "There are no valid contexts in the requested search.";
 
-    protected List<String> prefixCommands = new ArrayList<String>();
+    protected List<String> prefixCommands = new ArrayList<>();
 
     protected final BlastRepository blastRepository = RepositoryFactory.getBlastRepository();
 
@@ -287,7 +291,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
         List<ReferenceDatabase> referenceDatabases = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(groupNames);
         List<DBLink> dbLinks = sequenceRepository.getDBLinks(accession, referenceDatabases.toArray(new ReferenceDatabase[referenceDatabases.size()]));
 
-        List<Sequence> sequences = new ArrayList<Sequence>();
+        List<Sequence> sequences = new ArrayList<>();
         for (DBLink dbLink : dbLinks) {
             sequences.addAll(getSequencesFromSource(dbLink));
         }
@@ -353,7 +357,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
     protected Set<String> getAccessionsFromFile(File accessionFile) throws BlastDatabaseException {
-        Set<String> accessions = new HashSet<String>();
+        Set<String> accessions = new HashSet<>();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(accessionFile));
 
@@ -370,7 +374,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
     /**
-     * Accessions are dumped into a temporrary file, one on each line.
+     * Accessions are dumped into a temporary file, one on each line.
      *
      * @param validAccessions To dump from the database.
      * @param database        Database to dump from.
@@ -378,7 +382,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
      * @throws IOException Failed to write accessions.
      */
     protected File createAccessionDump(Set<String> validAccessions, Database database) throws IOException {
-        File tempFile = database.getAccessionFile();
+        File tempFile = database.getTempFile("accessions", "txt");
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tempFile));
         for (String accession : validAccessions) {
             bufferedWriter.write(accession + "\n");
@@ -387,12 +391,21 @@ public abstract class AbstractWublastBlastService implements BlastService {
         return tempFile;
     }
 
+    // ToDo: need to handle the exceptions better. Too clunky...
     public boolean validateCuratedDatabases() throws BlastDatabaseException {
         List<Database> databases = blastRepository.getDatabaseByOrigination(Origination.Type.CURATED);
+        boolean success = true;
         for (Database database : databases) {
             logger.info("validating: " + database.getName());
-            validateDatabase(database);
+            try {
+                validateDatabase(database);
+            } catch (BlastDatabaseException e) {
+                logger.error(e.getMessage());
+                success = false;
+            }
         }
+        if (!success)
+            throw new BlastDatabaseException("Errors found during validation");
         return true;
     }
 
@@ -401,7 +414,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
         List<Database> databases = blastRepository.getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED, Origination.Type.MARKERSEQUENCE);
         int numDatabases = getDatabaseStaticsCache().clearCache();
         logger.info("cleared cache of " + numDatabases + " databases");
-        List<String> failures = new ArrayList<String>();
+        List<String> failures = new ArrayList<>();
         for (Database database : databases) {
             try {
                 DatabaseStatistics databaseStatistics = getDatabaseStaticsCache().getDatabaseStatistics(database);
@@ -434,7 +447,10 @@ public abstract class AbstractWublastBlastService implements BlastService {
      */
     protected void validateDatabase(Database database) throws BlastDatabaseException {
         // do check 1
-        int numAccessions = blastRepository.getNumberValidAccessionNumbers(database);
+        int numAccessions = 0;
+        Set<String> allValidAccessionNumbers = blastRepository.getAllValidAccessionNumbers(database);
+        if (allValidAccessionNumbers != null)
+            numAccessions = allValidAccessionNumbers.size();
         int numSequences = getDatabaseStatistics(database).getNumSequences();
         if (numAccessions > numSequences) {
             findMissingAccessions(database);
@@ -442,6 +458,66 @@ public abstract class AbstractWublastBlastService implements BlastService {
         }
         if (numAccessions != numSequences) {
             logger.warn(database.getDisplayName() + ": accessions [" + numAccessions + "] and sequences in Blast database [" + numSequences + "]");
+        }
+        try {
+            File accessionFile = createAccessionDump(allValidAccessionNumbers, database);
+            File remoteFile = getRemoteAccessionFile(accessionFile);
+            checkAllAccessionsAreInDatabase(database, remoteFile);
+        } catch (IOException e) {
+            throw new BlastDatabaseException(": ");
+        }
+
+
+    }
+
+    protected void checkAllAccessionsAreInDatabase(Database blastDatabase, File accessionFile) throws BlastDatabaseException {
+        if (blastDatabase == null) {
+            logger.error("failed to define primary blast database: ");
+            return;
+        }
+
+        try {
+            getLock(blastDatabase, false);
+            CommandLine commandLine = new CommandLine(getBlastGetBinary());
+            commandLine.addArgument("-" + (blastDatabase.getTypeCharacter()));
+            commandLine.addArgument("-f");
+            commandLine.addArgument(blastDatabase.getCurrentWebHostDatabasePath());
+            commandLine.addArgument(accessionFile.getAbsolutePath());
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream byteArrayErrorStream = new ByteArrayOutputStream();
+            DefaultExecutor defaultExecutor = new DefaultExecutor();
+            PumpStreamHandler pumpStreamHandler = new PumpStreamHandler(byteArrayOutputStream, byteArrayErrorStream);
+            defaultExecutor.setStreamHandler(pumpStreamHandler);
+            try {
+                defaultExecutor.execute(commandLine);
+            } catch (IOException e) {
+                logger.warn("problem with executing command: \n" + commandLine);
+            }
+
+            // parse output and see if there are errors.
+            String errorOutput = "";
+            for (String line : byteArrayErrorStream.toString().split("\n")) {
+                if (
+                        false == line.startsWith("Identifiers not found:")
+                                &&
+                                false == line.startsWith("FATAL:  Nothing to index!")
+                                &&
+                                false == line.startsWith("FATAL:  Could not retrieve record no.")
+                        ) {
+                    errorOutput += line + "\n";
+                }
+            }
+
+            if (errorOutput.trim().length() > 0) {
+                throw new BlastDatabaseException("Failed to find all sequences in blast database [" + blastDatabase.getDisplayName() + "]: " + errorOutput);
+            }
+
+        } catch (BlastDatabaseException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.fatal(e);
+            throw e;
         }
     }
 
@@ -458,13 +534,16 @@ public abstract class AbstractWublastBlastService implements BlastService {
         try {
             // 1. get the accessions
             Set<String> validAccessions = blastRepository.getAllValidAccessionNumbers(database);
-            Set<String> blastAccessions = new HashSet<String>();
+            Set<String> blastAccessions = new HashSet<>();
             // 2. dump accessions
-            File accessionFile = createAccessionDump(validAccessions, database);
-            logger.debug("dumped accessions into: " + accessionFile.getAbsoluteFile());
+            File accessionFileLocal = createAccessionDump(validAccessions, database);
+            logger.debug("dumped accessions into: " + accessionFileLocal.getAbsoluteFile());
+
+            // get remote file path
+            File accessionFileRemote = getRemoteAccessionFile(accessionFileLocal);
 
             // 3. generate fasta with accessions
-            File fastaFile = dumpDatabaseAsFastaForAccessions(database, accessionFile);
+            File fastaFile = dumpDatabaseAsFastaForAccessions(database, accessionFileRemote);
 
             // 4. get the fasta file and figure out what the accessions are
             BufferedReader br = new BufferedReader(new FileReader(fastaFile));
@@ -488,7 +567,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             logger.info("# of blast accessions: " + blastAccessions.size());
 
             // 5. find what the missing accessions are
-            Set<String> differences = new HashSet<String>(CollectionUtils.disjunction(validAccessions, blastAccessions));
+            Set<String> differences = new HashSet<>(CollectionUtils.disjunction(validAccessions, blastAccessions));
             File accessionDumpFile = createAccessionDump(differences, database);
             logger.error(differences.size() + " accessions missing from blast database written to: " + accessionDumpFile);
         } catch (BioException io) {
@@ -496,6 +575,11 @@ public abstract class AbstractWublastBlastService implements BlastService {
         } catch (IOException io) {
             throw new BlastDatabaseException("database: " + database + " is invalid", io);
         }
+    }
+
+    private File getRemoteAccessionFile(File local) {
+        File remote = new File(ZfinPropertiesEnum.BLAST_ACCESSION_TEMP_DIR_REMOTE.value());
+        return new File(remote, local.getName());
     }
 
 
@@ -543,11 +627,18 @@ public abstract class AbstractWublastBlastService implements BlastService {
     protected void updatePreviousAccessions(Database database, Collection<String> validAccessions,
                                             Collection<String> previousAccession) {
         // nothing to update, just drop the old and add the new
-        Collection<String> accessionToAdd = CollectionUtils.subtract(validAccessions, previousAccession);
-        blastRepository.addPreviousAccessions(database, accessionToAdd);
+        Transaction transaction = HibernateUtil.currentSession().getTransaction();
+        transaction.begin();
+        try {
+            Collection<String> accessionToAdd = CollectionUtils.subtract(validAccessions, previousAccession);
+            blastRepository.addPreviousAccessions(database, accessionToAdd);
 
-        Collection<String> accessionToRemove = CollectionUtils.subtract(previousAccession, validAccessions);
-        blastRepository.removePreviousAccessions(database, accessionToRemove);
+            Collection<String> accessionToRemove = CollectionUtils.subtract(previousAccession, validAccessions);
+            blastRepository.removePreviousAccessions(database, accessionToRemove);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        }
     }
 
 
@@ -678,7 +769,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
     public List<Sequence> getSequencesForAccessionAndReferenceDBs(List<DBLink> dbLinks) throws BlastDatabaseException {
-        List<Sequence> sequences = new ArrayList<Sequence>();
+        List<Sequence> sequences = new ArrayList<>();
         try {
             for (DBLink dbLink : dbLinks) {
                 // if there is a primary blast database, then all is good
@@ -741,7 +832,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
     public List<Sequence> getSequencesForMarker(Marker marker, ReferenceDatabase... referenceDatabases) throws BlastDatabaseException {
         List<MarkerDBLink> markerDBLinks = RepositoryFactory.getSequenceRepository().getDBLinksForMarker(marker, referenceDatabases);
-        List<Sequence> sequences = new ArrayList<Sequence>();
+        List<Sequence> sequences = new ArrayList<>();
         for (MarkerDBLink dbLink : markerDBLinks) {
             sequences.addAll(getSequencesFromSource(dbLink));
         }
@@ -755,7 +846,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
      */
     public List<Sequence> getSequencesForTranscript(Transcript transcript, DisplayGroup.GroupName groupName) throws BlastDatabaseException {
         Set<TranscriptDBLink> links = transcript.getTranscriptDBLinks();
-        List<Sequence> sequences = new ArrayList<Sequence>();
+        List<Sequence> sequences = new ArrayList<>();
         for (TranscriptDBLink transcriptDBLink : links) {
             if (transcriptDBLink.getReferenceDatabase().isInDisplayGroup(groupName)) {
                 List<Sequence> sequenceList = getSequencesFromSource(transcriptDBLink);
@@ -789,9 +880,9 @@ public abstract class AbstractWublastBlastService implements BlastService {
         String accession = dbLink.getAccessionNumber();
         if (blastDatabase == null) {
             logger.error("No primary blast database defined for accession: " + accession);
-            return new ArrayList<Sequence>();
+            return new ArrayList<>();
         }
-        List<String> commandList = new ArrayList<String>();
+        List<String> commandList = new ArrayList<>();
 
         commandList.addAll(getPrefixCommands());
         commandList.add(getKeyPath() + getBlastGetBinary());
@@ -816,7 +907,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
             logger.error("Failed to xdget, stderr: " + System.lineSeparator() + execProcess.getStandardError());
             logger.error("Failed to xdget, stdout: " + System.lineSeparator() + execProcess.getStandardOutput());
             logger.error("Failed to retrieve sequences with command [" + commandList.toString().replaceAll(",", " ") + "\n", e);
-            return new ArrayList<Sequence>();
+            return new ArrayList<>();
         } finally {
             unlockForce(blastDatabase);
         }
@@ -838,7 +929,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
         }
 
 
-        List<String> commandList = new ArrayList<String>();
+        List<String> commandList = new ArrayList<>();
         commandList.addAll(getPrefixCommands());
         commandList.add(getBlastPutBinary());
         commandList.add("-" + (blastDatabase.getTypeCharacter()));
@@ -922,7 +1013,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
      * If the sequence is only a single line (no return after the defline), it looks for the sequence and
      * automatically breaks the line.
      *
-     * @param line Unformatted sequence.
+     * @param line Un-formatted sequence.
      * @return The first string is the defline, the second string is the sequence.
      */
     public String[] fixDeflineNucleotideSequence(String line) {
@@ -942,7 +1033,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
      * If the sequence is only a single line (no return after the defline), it looks for the sequence and
      * automatically breaks the line.
      *
-     * @param line Unformatted sequence.
+     * @param line Un-formatted sequence.
      * @return The first string is the defline, the second string is the sequence.
      */
     public String[] fixDeflineProteinSequence(String line) {
