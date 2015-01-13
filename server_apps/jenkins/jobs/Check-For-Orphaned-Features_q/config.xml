@@ -51,6 +51,8 @@ i.e. no record_attribution record exists for a given feature ID. It also checks 
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-For-Orphaned-Features_q/Check-For-Orphaned-Features_q.html&quot;}
 
+
+                See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
 &lt;hr&gt;
 &lt;h3&gt;
                 Job Description

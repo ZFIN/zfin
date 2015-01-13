@@ -47,7 +47,10 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Gene-Publication-Without-GO-Annotations_m/Gene-Publication-Without-GO-Annotations_m.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Gene-Publication-Without-GO-Annotations_m/Gene-Publication-Without-GO-Annotations_m.html&quot;}
+
+              See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+            </body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

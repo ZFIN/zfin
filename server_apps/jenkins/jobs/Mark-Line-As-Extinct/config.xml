@@ -58,7 +58,10 @@
           <email>
             <recipientList>${DB_OWNER}@zfin.org</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Mark-Line-As-Extinct/Mark-Line-As-Extinct.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Mark-Line-As-Extinct/Mark-Line-As-Extinct.html&quot;}
+
+              See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+            </body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

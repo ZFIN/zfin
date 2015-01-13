@@ -46,7 +46,9 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Transcript-DbLink-Rule_d/Check-Transcript-DbLink-Rule_d.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Transcript-DbLink-Rule_d/Check-Transcript-DbLink-Rule_d.html&quot;}
+              See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+            </body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

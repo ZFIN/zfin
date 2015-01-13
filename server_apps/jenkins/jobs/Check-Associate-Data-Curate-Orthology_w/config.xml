@@ -40,7 +40,10 @@ This test identifies any PUB data that does not fit this criteria.</description>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w/Check-Associate-Data-Curate-Orthology_w.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Associate-Data-Curate-Orthology_w/Check-Associate-Data-Curate-Orthology_w.html&quot;}
+
+              See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+            </body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

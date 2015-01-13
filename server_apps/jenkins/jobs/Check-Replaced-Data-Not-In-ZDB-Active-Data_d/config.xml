@@ -51,6 +51,8 @@
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
                             ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Replaced-Data-Not-In-ZDB-Active-Data_d/Check-Replaced-Data-Not-In-ZDB-Active-Data_d.html&quot;}
+
+                            See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>

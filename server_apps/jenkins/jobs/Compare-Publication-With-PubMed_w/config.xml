@@ -61,7 +61,10 @@ the records at PubMed. Comparison is done on the following attributes:&#xd;
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.html&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Compare-Publication-With-PubMed_w/Compare-Publication-With-PubMed_w.faulty-PubMed-IDs.html&quot;}
+
+              See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+            </body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>

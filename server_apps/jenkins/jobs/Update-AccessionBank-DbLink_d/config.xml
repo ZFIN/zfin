@@ -50,6 +50,8 @@
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
                             ${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-AccessionBank-DbLink_d/Update-AccessionBank-DbLink_d.html&quot;}
+
+                            See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
@@ -68,6 +70,8 @@
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
                             ${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-AccessionBank-DbLink_d/Update-AccessionBank-DbLink_d.html&quot;}
+
+                            See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>

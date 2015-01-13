@@ -48,7 +48,10 @@ not already have an owner: community_protocol, community_antibody</description>
             <email>
                 <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                 <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Set-Wiki-Page-Permissions-To-Owner_h/Set-Wiki-Page-Permissions-To-Owner_h.html&quot;}</body>
+                <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Set-Wiki-Page-Permissions-To-Owner_h/Set-Wiki-Page-Permissions-To-Owner_h.html&quot;}
+
+                    See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+                </body>
                 <sendToDevelopers>false</sendToDevelopers>
                 <sendToRequester>false</sendToRequester>
                 <includeCulprits>false</includeCulprits>

@@ -121,8 +121,5 @@
 <pre class="code">${code}</pre>
 </#list>
 
-<#noparse>
-See report on Jenkins dashboard: <a href="${BUILD_URL}">${BUILD_URL}</a>
-</#noparse>
 </body>
 </html>
