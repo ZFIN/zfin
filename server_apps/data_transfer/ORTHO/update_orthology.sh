@@ -120,6 +120,7 @@ cp inconsistent* log/.
 cp logOrthology* log/.
 cp updateOrthology* log/.
 
+emailOrthologyReports.pl
 
 # note this regen generates a lot of locks (~149,192)
 
