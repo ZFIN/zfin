@@ -19,7 +19,7 @@
       <configuration>
         <setting name="compilerMaxHeapSize" value="128" />
         <setting name="gwtScriptOutputStyle" value="DETAILED" />
-        <setting name="gwtSdkUrl" value="file://$MODULE_DIR$/../../../gwt-toolkit/gwt-windows-1.7.1" />
+        <setting name="gwtSdkUrl" value="file://$USER_HOME$/gwt-toolkit/gwt-windows-1.7.1" />
       </configuration>
     </facet>
     <facet type="web" name="Web">
