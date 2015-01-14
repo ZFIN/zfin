@@ -289,6 +289,26 @@ delete from pre_marker_go_term_evidence p
 		       	   	  	      where a.mrkr_zdb_id = p.mrkr_zdb_id
 					      and a.mrkr_abbrev like 'WITHDRAWN%');
 
+-- if a go term is in one of the two "do not annoate" subsets remove from load and report. see case 12290
+!echo "unload restricted go subset annotations";
+
+unload to droppedAnnotationsViaSubsetViolations.txt
+select mrkr_zdb_id, term_ont_id, mrkrgoev_source
+  from pre_marker_go_Term_evidence, term
+where term.term_zdb_id = pre_marker_go_term_evidence.go_zdb_id
+ and exists (Select 'x' from term_subset, ontology_subset
+       	      	      where termsub_term_zdb_id = term.term_zdb_id
+		      and termsub_subset_id = osubset_pk_id
+		      and osubset_subset_name in ("gocheck_do_not_annotate"));
+
+delete from pre_marker_go_Term_evidence
+ where exists (Select 'x' from term_subset, ontology_subset
+       	      	      where termsub_term_zdb_id = go_zdb_id
+		      and termsub_subset_id = osubset_pk_id
+		      and osubset_subset_name in ("gocheck_do_not_annotate","gocheck_do_not_manually_annotate"));
+
+
+
 update statistics high for table pre_marker_go_term_evidence;
 
 --!echo 'Insert MRKRGOEV into zdb_active_data'

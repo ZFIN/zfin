@@ -12,6 +12,7 @@ echo "Remove old files: okfile, *2go"
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/ec2go
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/interpro2go
 /bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/spkw2go
+/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/*.txt
 
 echo "#########################################################################"
 
