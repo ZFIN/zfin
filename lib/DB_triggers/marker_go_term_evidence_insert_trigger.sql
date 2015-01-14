@@ -4,7 +4,7 @@ create trigger marker_go_term_evidence_insert_trigger insert on
         (
 	execute procedure p_goterm_not_obsolete (
 			new_mrkrgoev.mrkrgoev_term_zdb_id),
-	execute procedure restrictGAFEntries (new_mrkrgoev.mrkrgoev_term_zdb_id),
+	execute procedure restrictGAFEntries (new_mrkrgoev.mrkrgoev_term_zdb_id, new_mrkrgoev.mrkrgoev_evidence_code),
 
 	-- insure root term not be added to marker with non-root term.
 	execute procedure p_marker_has_goterm (

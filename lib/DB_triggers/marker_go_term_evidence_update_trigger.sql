@@ -8,7 +8,7 @@ create trigger marker_go_term_evidence_update_trigger
 	execute procedure p_goterm_not_obsolete (
 		new_mrkrgoev.mrkrgoev_term_zdb_id),	
 		execute procedure restrictGAFEntries (
-		new_mrkrgoev.mrkrgoev_term_zdb_id),
+		new_mrkrgoev.mrkrgoev_term_zdb_id, new_mrkrgoev.mrkrgoev_evidence_code),
         execute function scrub_char ( 
 			new_mrkrgoev.mrkrgoev_notes )
                 into mrkrgoev_notes,
