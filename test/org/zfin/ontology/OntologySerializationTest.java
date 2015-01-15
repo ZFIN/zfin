@@ -118,7 +118,7 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
         assertEquals(termFromDatabase.getParentTerms().size(), termDeserialized.getParentTerms().size());
         assertEquals(termFromDatabase.getChildTerms().size(), termDeserialized.getChildrenTerms().size());
         Map<String, Set<TermDTO>> allRelatedTerms = termDeserialized.getAllRelatedTerms();
-        assertEquals(6, allRelatedTerms.keySet().size()); // starts axis, finishes axis, is_a
+        assertTrue(allRelatedTerms.keySet().size() > 3); // starts axis, finishes axis, is_a
         assertEquals(1, allRelatedTerms.get("inverse anterior_to").size());
         assertEquals(1, allRelatedTerms.get("inverse surface_of").size());
         assertEquals(1, allRelatedTerms.get("is a type of").size());
@@ -196,14 +196,14 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
 //        ontologyManager.initRootOntologyMap(Ontology.QUALITY_PROCESSES,Ontology.QUALITY, "PATO:0001236");
 //        ontologyManager.initQualityProcessesRootOntology();
         ontologyManager.initRootOntologyFast(Ontology.QUALITY_PROCESSES, OntologyManager.QUALITY_PROCESSES_ROOT);
-        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() , lessThan(300) );
-        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size() , greaterThan(94));
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size(), lessThan(300));
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_PROCESSES).getAllValues().size(), greaterThan(94));
 
         ontologyManager.serializeOntology(Ontology.QUALITY_PROCESSES);
 
         ontologyManager.initRootOntologyFast(Ontology.QUALITY_QUALITIES, OntologyManager.QUALITY_QUALITIES_ROOT);
-        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() , lessThan(2000));
-        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size() , greaterThan(1100));
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size(), lessThan(2000));
+        assertThat(ontologyManager.getTermsForOntology(OntologyDTO.QUALITY_QUALITIES).getAllValues().size(), greaterThan(1100));
 
         ontologyManager.serializeOntology(Ontology.QUALITY_QUALITIES);
 

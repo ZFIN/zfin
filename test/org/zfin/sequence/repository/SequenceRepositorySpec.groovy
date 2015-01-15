@@ -14,11 +14,11 @@ import spock.lang.Unroll
 class SequenceRepositorySpec extends AbstractZfinIntegrationSpec {
     @Unroll
     def "should be able to get dblinks from an accession #accessionNumber"() {
-        HibernateUtil.createTransaction();
+        //HibernateUtil.createTransaction();
         when:
         List<Accession> accessions = RepositoryFactory.sequenceRepository.getAccessionsByNumber(accessionNumber)
         Set<DBLink> links = accessions.get(0).getDbLinks();
-        HibernateUtil.rollbackTransaction();
+        //HibernateUtil.rollbackTransaction();
 
         then: "either it's empty, or the first record returned should have dblinks"
         CollectionUtils.isEmpty(accessions) || accessions.get(0).getDbLinks()
