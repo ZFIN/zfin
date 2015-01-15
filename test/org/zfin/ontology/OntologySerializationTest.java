@@ -119,8 +119,6 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
         assertEquals(termFromDatabase.getChildTerms().size(), termDeserialized.getChildrenTerms().size());
         Map<String, Set<TermDTO>> allRelatedTerms = termDeserialized.getAllRelatedTerms();
         assertTrue(allRelatedTerms.keySet().size() > 3); // starts axis, finishes axis, is_a
-        assertEquals(1, allRelatedTerms.get("inverse anterior_to").size());
-        assertEquals(1, allRelatedTerms.get("inverse surface_of").size());
         assertEquals(1, allRelatedTerms.get("is a type of").size());
         assertEquals(termFromDatabase.getComment(), termDeserialized.getComment());
         assertEquals(termFromDatabase.getDefinition(), termDeserialized.getDefinition());
