@@ -124,7 +124,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         RenoRedundancyCandidateControllerTest.class,
         RenoRepositoryTest.class,
         SequenceIdListTest.class,
-        SequenceRepositorySpec.class,
+        //SequenceRepositorySpec.class,
         SequenceRepositoryTest.class,
         SingleAssociatedGenesFromQueryTest.class,
         SingleCandidateRepositoryTest.class,
