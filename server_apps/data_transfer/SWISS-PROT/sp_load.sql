@@ -293,6 +293,9 @@ delete from pre_marker_go_term_evidence p
 !echo "unload restricted go subset annotations";
 
 unload to droppedAnnotationsViaSubsetViolations.txt
+select "The following annotations were not added to ZFIN because the GO term being used in the translation file (interpro2go, ec2go, or UniprotKB_kw2go) is marked as being part of the 'gocheck_do_not_annotate' subset.  See case 12296 for details.","",""
+ from single
+union
 select mrkr_zdb_id, term_ont_id, mrkrgoev_source
   from pre_marker_go_Term_evidence, term
 where term.term_zdb_id = pre_marker_go_term_evidence.go_zdb_id
