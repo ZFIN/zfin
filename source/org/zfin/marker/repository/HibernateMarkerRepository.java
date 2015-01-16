@@ -1604,7 +1604,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<PreviousNameLight> getPreviousNamesLight(final Marker gene) {
         String sql = "  " +
-                " select '<i>'||da.dalias_alias||'</i>', ra.recattrib_source_zdb_id, da.dalias_zdb_id " +
+                " select da.dalias_alias, ra.recattrib_source_zdb_id, da.dalias_zdb_id " +
                 "    from data_alias da " +
                 "    join alias_group ag on da.dalias_group_id=ag.aliasgrp_pk_id " +
                 "    left outer join record_attribution ra on ra.recattrib_data_zdb_id=da.dalias_zdb_id  " +
@@ -1619,7 +1619,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     public Object transformTuple(Object[] tuple, String[] aliases) {
                         PreviousNameLight previousNameLight = new PreviousNameLight(gene.getAbbreviation());
                         previousNameLight.setMarkerZdbID(gene.getZdbID());
+                        if (gene.getZdbID().startsWith("ZDB-GENE")){
+                        previousNameLight.setAlias("<i>"+tuple[0].toString()+"</i>");
+}
+                        else{
                         previousNameLight.setAlias(tuple[0].toString());
+}
                         previousNameLight.setAliasZdbID(tuple[2].toString());
                         if (tuple[1] != null) {
                             previousNameLight.setPublicationZdbID(tuple[1].toString());
@@ -2225,7 +2230,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql = " select m.mrkr_abbrev, m.mrkr_zdb_id, m.mrkr_abbrev_order, mt.mrkrtype_type_display, " +
                 "mrt.mreltype_2_to_1_comments, " +
-                "'<i>'||'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>'||'</i>' , " +
+                "'<a href=\"/action/marker/view/'||mrkr_zdb_id||'\">'|| mrkr_abbrev || '</a>' , " +
                 "ra.recattrib_source_zdb_id, sup.idsup_supplier_zdb_id , sup.idsup_acc_num,  " +
                 "src.srcurl_url, src.srcurl_display_text , mrct.mrel_zdb_id   " +
                 "from marker_relationship mrgt " +

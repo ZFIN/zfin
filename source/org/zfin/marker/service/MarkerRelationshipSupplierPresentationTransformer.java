@@ -29,7 +29,7 @@ public class MarkerRelationshipSupplierPresentationTransformer implements Result
             returnObject.setLink("<i>" + tuple[5].toString() + "</i>");
         }
         else {
-            returnObject.setLink(tuple[5].toString() );
+            returnObject.setLink(tuple[5].toString());
         }
 
         if (tuple[6] != null) {
