@@ -493,6 +493,7 @@
                     <include name="gwt/**"/>
                     <include name="images/**"/>
                     <include name="css/**"/>
+                    <include name="fonts/**"/>
                     <include name="javascript/**"/>
                 </fileset>
             </move>
@@ -580,6 +581,7 @@
         <attribute name="location"/>
         <sequential>
             <delete dir="@{location}/css"/>
+            <delete dir="@{location}/fonts"/>
             <delete dir="@{location}/javascript"/>
             <delete dir="@{location}/images"/>
             <delete dir="@{location}/WEB-INF"/>
@@ -631,6 +633,7 @@
                     <include name="css/bootstrap/**"/>
                     <include name="WEB-INF/**"/>
                     <include name="javascript/**"/>
+                    <exclude name="fonts/**"/>
                     <exclude name="images/**"/>
                     <exclude name="**/*.jar"/>
                     <exclude name="**/*.zip"/>
@@ -644,6 +647,7 @@
             <copy todir="@{to}" overwrite="@{overwrite}" >
                 <fileset dir="@{from}">
                     <include name="images/**"/>
+                    <include name="fonts/**"/>
                     <include name="WEB-INF/**/*.jar"/>
                     <include name="WEB-INF/**/*.zip"/>
                     <include name="WEB-INF/**/*.class"/>
