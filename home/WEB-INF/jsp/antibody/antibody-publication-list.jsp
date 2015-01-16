@@ -154,7 +154,7 @@
 
     <c:if test="${formBean.numOfUnpublishedPublications > 0}">
       <br/>
-      <b>Other Citations (${formBean.numOfUnpublishedPublications}):</b>
+      <b>Additional Citations (${formBean.numOfUnpublishedPublications}):</b>
       <table class="summary rowstripes">
         <tbody>
         <c:forEach var="unpublishedPublication" items="${formBean.sortedUnpublishedPublications}"
