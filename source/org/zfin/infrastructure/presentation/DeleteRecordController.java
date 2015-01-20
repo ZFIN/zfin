@@ -333,11 +333,11 @@ public class DeleteRecordController {
 
 
                     argString = argString + "<a target=_blank href=/action/alleles/" + designation.getPrefixString() + ">" + designation.getPrefixString() + "</a><br/>";
-}
+                }
 
 
-                    argString += "<br/>";
-                    formBean.addError("Having lab designation: <br/>" + argString);
+                argString += "<br/>";
+                formBean.addError("Having lab designation: <br/>" + argString);
 
             }
             // Can't delete the lab if there are people associated
@@ -493,10 +493,8 @@ public class DeleteRecordController {
                 }
             }
 
-            if (type.startsWith("COMP") || type.startsWith("JRNL") || type.startsWith("LAB") || type.startsWith("PERS")) {
+            if (type.startsWith("COMP") || type.startsWith("JRNL") || type.startsWith("LAB") || type.startsWith("PERS") || type.startsWith("PUB")) {
                 RepositoryFactory.getInfrastructureRepository().deleteActiveSourceByZdbID(zdbID);
-            } else if (type.startsWith("PUB")) {        // FB case 11129
-                RepositoryFactory.getPublicationRepository().deletePublicationAndFigures(zdbID);
             } else {
                 RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(zdbID);
             }
