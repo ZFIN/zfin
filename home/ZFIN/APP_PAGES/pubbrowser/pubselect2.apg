@@ -672,7 +672,10 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 <?/MICOMMENT>
 	<option $(IF,$(EC,$anon1,jrnl_abbrev),SELECTED) value=jrnl_abbrev>Journal Abbrev.
 	<option $(IF,$(EC,$anon1,keywords),SELECTED) value=keywords>Keywords
+<?MICOMMENT>
+bugzID:12306, not worth fixing since pubmed id searches can be done using faceted, so just taking option to search by pubmed id out!
 	<option $(IF,$(EC,$anon1,accession_no),SELECTED) value=accession_no>PubMed acc#
+<?/MICOMMENT>
 	<option $(IF,$(EC,$anon1,zdb_id),SELECTED) value=zdb_id>ZFIN ID
 	</SELECT>
 	<b>contains:</b> <input type=text name=anon1text size=25 onChange='document.critform.START.value = "";' value="$(IF,$(XST,$anon1text),$anon1text)">
