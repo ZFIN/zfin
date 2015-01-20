@@ -1795,9 +1795,4 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         return abstractText;
     }
-
-    public void deletePublicationAndFigures(String publicationZdbID) {
-        InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
-        infrastructureRepository.deleteActiveSourceByZdbID(publicationZdbID);
-    }
 }

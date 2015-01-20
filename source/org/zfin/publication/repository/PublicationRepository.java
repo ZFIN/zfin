@@ -503,7 +503,4 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getPublicationIDsForGOwithField(String zdbID);
 
     String getAbstractText(String publicationZdbID);
-
-    void deletePublicationAndFigures(String publicationZdbID);
-
 }
