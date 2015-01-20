@@ -39,15 +39,19 @@ a new or updated existing pub
 
       function validate(theform) 
       {
+       var z=theform.q_accession_no.value;
+       if(!z.match(/^\d+/))
+        {
+        alert("Please only enter numeric characters for PubMed ID!");
+	    return false;
+          }
         
           if (theform.editpub_jrnl_abbrev.value=='' || theform.q_title.value=='' || theform.q_authors.value=='' 
 				|| theform.q_pub_date.value=='') 
           {
   	    alert('You must supply the following: journal, title, authors and date');
 	    return false;
-          }  
-        
-       
+          }
         return true;
       }
 
@@ -190,7 +194,7 @@ code added for Bugz 6986<?/MICOMMENT>
 
     </SELECT>
     </font><br><br>	
-    <b>PubMed ID:</B>
+    <b>PubMed ID:</B> (must be a number!)
     <br>
     Leave it blank if you don't know.
     <input type=text name="q_accession_no" $(IF,$(NC,$q_accession_no,NULL),"value="$q_accession_no) > 
