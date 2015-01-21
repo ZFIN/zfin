@@ -80,7 +80,6 @@ div.search-result-category {
 
 div.search-result-name {
     font-weight: bold;
-    
 }
 
 div.search-result-full-name {
@@ -136,6 +135,14 @@ table.search-result-entity-attributes td {
 /*    padding-top: .1em;
     padding-bottom: .1em; */
 }
+
+
+.btn-pub-actions { visibility: hidden; }
+.search-result:hover .btn-pub-actions {
+    visibility:visible;
+}
+
+
 
 .collapsible-attribute {
     cursor: pointer;
@@ -281,9 +288,6 @@ div.sort-controls li { text-align: left;}
 
 div.facet-container, .breadbox {
     font-size: small;
-/*    border: 1px solid #c0c7c0;
-    border-radius: 3px;*/
-/* MADISON background-color: #e0e7e0;*/
     background-color: white;
 }
 
@@ -514,10 +518,10 @@ body.modal-open {
 }
 
 .solr-document-link { padding-left: 1em; }
-.solr-document-link, .result-explain-link { display: none; }
+.solr-document-link, .result-explain-link { visibility: hidden; }
 .search-result:hover .solr-document-link,
 .search-result:hover .result-explain-link {
-    display: inline;
+    visibility: visible;
     color: red;
     opacity: .8;
     cursor: pointer;

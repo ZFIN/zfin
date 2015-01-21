@@ -6,7 +6,7 @@
 
 <%@attribute name="metadata" fragment="true" %>
 <%@attribute name="relatedDataLinks" fragment="true" %>
-
+<%@attribute name="curatorContent" fragment="true" %>
 
 <div style="clear:both;" class="span12 search-result ">
 
@@ -82,8 +82,11 @@
                 </ul>
             </c:when>
         </c:choose>
-
     </div>
+
+    <authz:authorize ifAnyGranted="root">
+        <jsp:invoke fragment="curatorContent"/>
+    </authz:authorize>
     <div class="result-matching-text search-result-snippet">
         ${result.matchingText}
     </div>
