@@ -148,11 +148,6 @@ code added for Bugz 6986<?/MICOMMENT>
 <?/MISQL>
 
 <?MISQL SQL="select recattrib_source_zdb_id 
-               from record_attribution 
-              where recattrib_source_zdb_id = '$OID'
-                and not exists (select 'x' from figure where recattrib_data_zdb_id = fig_zdb_id)
-             union
-             select recattrib_source_zdb_id 
                from record_attribution, figure 
               where recattrib_source_zdb_id = '$OID'
                 and recattrib_data_zdb_id = fig_zdb_id
