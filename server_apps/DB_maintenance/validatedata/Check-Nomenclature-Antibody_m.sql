@@ -21,9 +21,12 @@ SELECT b.mrkr_zdb_id,
        when AS dateNameChange
 FROM   marker AS antibody,
        marker b,
+       marker_relationship mrel,
        gene_names_changed_temp up
 WHERE  antibody.mrkr_type = 'ATB'
        AND b.mrkr_zdb_id = rec_id
+       AND mrel.mrel_mrkr_2_zdb_id = antibody.mrkr_zdb_id
+       AND mrel.mrel_mrkr_1_zdb_id = b.mrkr_zdb_id
        AND up.old_value LIKE Substring(antibody.mrkr_abbrev FROM
                                        Charindex('-', antibody.mrkr_abbrev) + 1
                                        FOR 20)|| '%';
