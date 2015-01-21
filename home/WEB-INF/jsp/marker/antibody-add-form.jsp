@@ -6,7 +6,7 @@
 
 
 <html>
-<form:form action="antibody-do-submit" commandName="formBean" method="post">
+<form:form action="do-submit" commandName="formBean" method="post">
     <label for="antibodyName" class="indented-label">Antibody name:</label>
     <form:input path="<%= CreateAntibodyFormBean.NEW_AB_NAME%>" size="25"
                 onkeypress="return noenter(event)"></form:input>

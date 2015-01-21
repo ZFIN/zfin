@@ -901,7 +901,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
   &nbsp;  
   <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/disruptor-add?disruptorPublicationZdbID=$OID&disruptorType=CRISPR","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>Add New CRISPR</a>
   &nbsp;    
-  <a class="small-new-link" href="javascript:;" onClick=open("/action/marker/antibody-add-form?antibodyPublicationZdbID=$OID","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Antibody</a>
+  <a class="small-new-link" href="javascript:;" onClick=open("/action/antibody/add?antibodyPublicationZdbID=$OID","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Antibody</a>
   &nbsp;
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=EFG&newmrkrSource='$OID'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New EFG</a>
   &nbsp;

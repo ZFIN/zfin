@@ -48,7 +48,7 @@ public class AntibodyCreateController {
         return abBean;
     }
 
-    @RequestMapping("/antibody-add-form")
+    @RequestMapping("/add")
     protected String showForm(Model model) throws Exception {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Antibody");
@@ -63,7 +63,7 @@ public class AntibodyCreateController {
         binder.setValidator(new CreateAntibodyFormBeanValidator());
     }
 
-    @RequestMapping(value = "/antibody-do-submit", method = RequestMethod.POST)
+    @RequestMapping(value = "/do-submit", method = RequestMethod.POST)
     public String createAntibody (Model model,
                               @Valid @ModelAttribute("formBean") CreateAntibodyFormBean formBean,
                               BindingResult result) throws Exception {
