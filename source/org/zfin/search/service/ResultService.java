@@ -609,7 +609,7 @@ public class ResultService {
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(result.getId());
 
         if (publication != null) {
-
+            result.setDisplayedID(publication.getZdbID());
             result.addAttribute(AUTHORS, collapsible(publication.getAuthors()));
 
             //going null-safe just in case...

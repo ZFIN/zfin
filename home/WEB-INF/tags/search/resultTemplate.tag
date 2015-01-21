@@ -14,6 +14,9 @@
         <jsp:invoke fragment="metadata"/>
     </div>
 
+    <c:if test="${!empty result.displayedID}">
+        <span class="result-id"> ${result.displayedID}</span>
+    </c:if>
     <div class="result-header search-result-name">
         <zfin:link entity="${result}"/>
 
@@ -27,9 +30,7 @@
           </c:if>
         </authz:authorize>
 
-        <c:if test="${!empty result.displayedID}">
-            <span class="result-id"> ${result.displayedID}</span>
-        </c:if>
+
     </div>
 
     <div class="result-body">
