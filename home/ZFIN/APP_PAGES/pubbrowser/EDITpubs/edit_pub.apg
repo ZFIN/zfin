@@ -40,11 +40,13 @@ a new or updated existing pub
       function validate(theform) 
       {
        var z=theform.q_accession_no.value;
+if (z.length>1){
        if(!z.match(/^\d+/))
         {
         alert("Please only enter numeric characters for PubMed ID!");
 	    return false;
-          }
+          
+}}
         
           if (theform.editpub_jrnl_abbrev.value=='' || theform.q_title.value=='' || theform.q_authors.value=='' 
 				|| theform.q_pub_date.value=='') 
