@@ -1,6 +1,5 @@
 package org.zfin.marker.presentation;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,13 +17,13 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.orthology.Orthology;
 import org.zfin.orthology.OrthologyEvidenceService;
-import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.sequence.service.TranscriptService;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
@@ -143,31 +142,6 @@ public class GeneViewController {
 
         return "marker-orthology.simple-page";
     }
-
-    @RequestMapping("/publication/{pubID}/orthology-list")
-    public String showOrthologyList(@PathVariable String pubID,
-                                    @ModelAttribute("formBean") GeneBean geneBean,
-                                    Model model) {
-        logger.info("zdbID: " + pubID);
-
-        if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
-            return "redirect:/" + pubID;
-        }
-
-        List<Marker> list = getPublicationRepository().getOrthologyGeneList(pubID);
-        Publication publication = getPublicationRepository().getPublication(pubID);
-        List<GeneBean> beanList = new ArrayList<>(list.size());
-        for (Marker marker : list) {
-            GeneBean orthologyBean = new GeneBean();
-            orthologyBean.setMarker(marker);
-            orthologyBean.setOrthologyPresentationBean(MarkerService.getOrthologyEvidence(marker, publication));
-            beanList.add(orthologyBean);
-        }
-        model.addAttribute("orthologyBeanList", beanList);
-        model.addAttribute("publication", publication);
-        return "marker/marker-orthology-list.page";
-    }
-
 
     @RequestMapping("/{markerID}/orthology-detail")
     public String showOrthologyDetail(@PathVariable String markerID,
