@@ -295,9 +295,9 @@ public class MutantRepositoryTest {
 
     @Test
     public void getAllelesForMarker() {
-        List<FeaturePresentationBean> featurePresentationBeans = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1");
-        assertTrue(featurePresentationBeans.size() > 4);
-        assertTrue(featurePresentationBeans.size() < 20);
+        List<Feature> features = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1","is allele of");
+        assertTrue(features.size() > 4);
+        assertTrue(features.size() < 20);
     }
 
     @Test

@@ -1093,27 +1093,20 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<FeaturePresentationBean> getAllelesForMarker(String zdbID) {
-        String sql = "select feature_abbrev,feature_zdb_id from feature, feature_marker_relationship, feature_marker_relationship_type " +
-                "              where fmrel_ftr_zdb_id=feature_zdb_id " +
-                "              and fmrel_mrkr_zdb_id=:markerZdbId " +
-                "              and fmrel_type=fmreltype_name " +
-                "              and  fmreltype_produces_affected_marker='t'	" +
-                "              order  by feature_abbrev	" +
-                " ";
-        List<FeaturePresentationBean> list = (List<FeaturePresentationBean>) HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbId", zdbID)
-                .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] aliases) {
-                        FeaturePresentationBean featurePresentationBean = new FeaturePresentationBean();
-                        featurePresentationBean.setAbbrevation(tuple[0].toString());
-                        featurePresentationBean.setFeatureZdbId(tuple[1].toString());
-                        return featurePresentationBean;
-                    }
-                })
-                .list();
-        return list;
+    public List<Feature> getAllelesForMarker(String zdbID, String type){
+        String hql = "select distinct " +
+                "feat from FeatureMarkerRelationship fmrel, Feature feat " +
+                "where fmrel.marker.zdbID= :zdbID "+
+                "and fmrel.type=:type " +
+                "and fmrel.feature = feat " +
+                "order by feat.abbreviationOrder"
+                ;
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("zdbID", zdbID);
+        query.setParameter("type", type);
+        return query.list();
+
     }
 
     @Override

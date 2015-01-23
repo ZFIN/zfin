@@ -21,7 +21,6 @@ import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.MarkerSupplier;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -694,7 +693,7 @@ public class MarkerService {
     public static MutantOnMarkerBean getMutantsOnGene(Marker gene) {
         MutantOnMarkerBean mutantOnMarkerBean = new MutantOnMarkerBean();
         mutantOnMarkerBean.setGenotypeList(getMarkerRepository().getMutantsAndTgsByGene(gene.getZdbID()));
-        mutantOnMarkerBean.setAlleles(getMutantRepository().getAllelesForMarker(gene.getZdbID()));
+        mutantOnMarkerBean.setFeatures(getMutantRepository().getAllelesForMarker(gene.getZdbID(), "is allele of"));
         mutantOnMarkerBean.setKnockdownReagents(getMarkerRepository().getRelatedMarkerDisplayForTypes(gene, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE));
 
         return mutantOnMarkerBean;

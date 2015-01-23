@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.FeaturePresentationBean;
+import org.zfin.feature.Feature;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
  */
 public class MutantOnMarkerBean {
 
+    private List<Feature> features;
     private List<FeaturePresentationBean> alleles;
     private List<MarkerRelationshipPresentation> knockdownReagents;
     private List<Genotype> genotypeList;
@@ -20,7 +22,13 @@ public class MutantOnMarkerBean {
     public void setAlleles(List<FeaturePresentationBean> alleles) {
         this.alleles = alleles;
     }
+    public List<Feature> getFeatures() {
+        return features;
+    }
 
+    public void setFeatures(List<Feature> features) {
+        this.features = features;
+    }
     public List<MarkerRelationshipPresentation> getKnockdownReagents() {
         return knockdownReagents;
     }
