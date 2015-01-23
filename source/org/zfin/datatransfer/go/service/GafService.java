@@ -110,7 +110,7 @@ public class GafService {
             Boolean inRestrictedSubset = false;
             Set<Subset> subset = term.getSubsets();
             for (Subset subsetT : subset) {
-                if (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_annotate") || subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_manually_annotate")){
+                if (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_annotate") || (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_manually_annotate") && !gafEntry.getEvidenceCode().equalsIgnoreCase("IEA"))){
                     inRestrictedSubset = true;
                 }
             }
