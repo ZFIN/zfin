@@ -50,6 +50,8 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
             errorMessages = service.runDbScriptFile(dbQueryFile);
             resultMap = service.getResultMap();
             generateReports(errorMessages, resultMap);
+            if (CollectionUtils.isNotEmpty(resultMap.values()))
+                LOG.warn("Validation Errors found");
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             LOG.error(e);
@@ -58,8 +60,7 @@ public class CreateValidateDataReportTask extends AbstractValidateDataReportTask
         } finally {
             HibernateUtil.closeSession();
         }
-        boolean errorRecordsExist = isErrorRecord(resultMap);
-        return errorRecordsExist ? 1 : 0;
+        return 0;
     }
 
     private boolean isErrorRecord(Map<String, List<List<String>>> resultMap) {

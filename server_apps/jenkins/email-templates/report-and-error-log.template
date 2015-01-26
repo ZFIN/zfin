@@ -1,0 +1,46 @@
+<%
+def projectName = build.getProject().getName();
+def fileName = System.getenv('TARGETROOT')+'/server_apps/DB_maintenance/validatedata/'+projectName+'/'+projectName+'.html';
+
+def file = new File(fileName);
+//println file.absolutePath
+
+// print out the report file if it exists.
+if(file.exists())
+    println file.text;
+%>
+</p>
+
+<%
+// only print out errors. In validate data warnings are the regular reports...
+if(build.result.isWorseThan(hudson.model.Result.UNSTABLE)) {
+%>
+****************  Errors   ***************************
+</p>
+<%
+
+    def publisher = null
+    for(iter in project.getPublishersList()){
+        if(iter.getDescriptor().getDisplayName().equals("Editable Email Notification")){
+            publisher = iter
+            break
+        }
+    }
+
+    if(publisher != null){
+        def logParserResult = null;
+        //Get the LogParserAction from Jenkins
+        for(action in build.getActions()){
+            if(action.toString().contains("LogParserAction")){
+                //Get the LogParserResult from the LogParserAction
+                logParserResult = action.getResult()
+                break
+            }
+        }
+        if(logParserResult != null){
+            def errorLinksFile = new File(logParserResult.getErrorLinksFile())
+            println errorLinksFile.text
+        }
+    }
+}
+%>

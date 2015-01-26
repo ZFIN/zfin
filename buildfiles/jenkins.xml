@@ -65,11 +65,13 @@
         <touch file="${validateDataDirSource}/${jobName}.sql"/>
         <echo file="${validateDataDirSource}/report.properties" append="true"><![CDATA[${jobName}.errorMessage=Please add a title of the error page
 ]]></echo>
-        <echo file="${validateDataDirSource}/report.properties" append="true"><![CDATA[${jobName}.headerColumns=Add column headers]]></echo>
+        <echo file="${validateDataDirSource}/report.properties" append="true">
+            <![CDATA[${jobName}.headerColumns=Add column headers]]></echo>
         <sort-file file-name="${validateDataDirSource}/report.properties"/>
         <echo file="${jenkins}/trigger.reports.properties" append="true"><![CDATA[${jobName}=]]></echo>
         <sort-file file-name="${jenkins}/trigger.reports.properties"/>
-        <echo file="${jenkins}/email-configuration.reports.properties" append="true"><![CDATA[${jobName}.FAILURE=Please add email addresses]]></echo>
+        <echo file="${jenkins}/email-configuration.reports.properties" append="true">
+            <![CDATA[${jobName}.FAILURE=Please add email addresses]]></echo>
         <sort-file file-name="${jenkins}/email-configuration.reports.properties"/>
     </target>
 
@@ -85,11 +87,13 @@
         <touch file="${report}/${jobName}.sql"/>
         <echo file="${report}/report.properties" append="true"><![CDATA[${jobName}.errorMessage=Please add a title of the error page
 ]]></echo>
-        <echo file="${report}/report.properties" append="true"><![CDATA[${jobName}.headerColumns=Add column headers]]></echo>
+        <echo file="${report}/report.properties" append="true">
+            <![CDATA[${jobName}.headerColumns=Add column headers]]></echo>
         <sort-file file-name="${report}/report.properties"/>
         <echo file="${jenkins}/trigger.reports.properties" append="true"><![CDATA[${jobName}=]]></echo>
         <sort-file file-name="${jenkins}/trigger.reports.properties"/>
-        <echo file="${jenkins}/email-configuration.reports.properties" append="true"><![CDATA[${jobName}.FAILURE=Please add email addresses]]></echo>
+        <echo file="${jenkins}/email-configuration.reports.properties" append="true">
+            <![CDATA[${jobName}.FAILURE=Please add email addresses]]></echo>
         <sort-file file-name="${jenkins}/email-configuration.reports.properties"/>
     </target>
 
@@ -116,7 +120,7 @@
 
     <property name="emailTemplates" value="${JENKINS_HOME}/email-templates"/>
 
-    <target name="deploy-email-templates" description="Copy jobs into Jenkins_home">
+    <target name="deploy-email-templates" depends="_deploy-log-parser-rules" description="Copy jobs into Jenkins_home">
         <tstamp/>
         <echo message="Deploy email templates into: ${JENKINS_HOME}/email-templates"/>
         <copy todir="${emailTemplates}">
@@ -267,6 +271,12 @@
                 </copy>
             </else>
         </if>
+    </target>
+
+    <target name="_deploy-log-parser-rules" description="deploy parser rule">
+        <copy todir="${JENKINS_HOME}/">
+            <fileset file="${jenkins}/${logParserValidateDataRule}"/>
+        </copy>
     </target>
 
     <target name="add-triggers">
@@ -505,6 +515,18 @@
         </sequential>
     </target>
 
+    <macrodef name="_add-log-parser-rule-path">
+        <sequential>
+            <replaceregexp match="&lt;parsingRulesPath&gt;&lt;/parsingRulesPath&gt;"
+                           replace="&lt;parsingRulesPath&gt;${JENKINS_HOME}/${logParserValidateDataRule}&lt;/parsingRulesPath&gt;"
+                           flags="g">
+                <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
+            </replaceregexp>
+        </sequential>
+    </macrodef>
+
+    <property name="logParserValidateDataRule" value="validate-data-report-rule.txt"/>
+
     <macrodef name="addTriggerPerJob">
         <sequential>
             <!--
@@ -568,8 +590,10 @@
                 </not>
                 <then>
                     <echo message="${jobName} : Add Failure trigger ${emailConfiguration}"/>
+                    <echo message="${JENKINS_HOME}/jobs"/>
                     <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
-                                   replace="${emailConfiguration}">
+                                   replace="${emailConfiguration}/${jobName}/config.xml"
+                                   flags="gis" byline="false">
                         <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
                     </replaceregexp>
                 </then>
@@ -646,7 +670,8 @@
             </groovy>
             <echo message="${jobName} : Add Failure trigger ${emailConfiguration}"/>
             <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
-                           replace="${emailConfiguration}">
+                           replace="${emailConfiguration}"
+                           flags="gis" byline="false">
                 <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
             </replaceregexp>
 
@@ -655,6 +680,7 @@
                            replace="${emailConfiguration}">
                 <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
             </replaceregexp>
+            <_add-log-parser-rule-path/>
         </sequential>
     </macrodef>
 
@@ -692,6 +718,37 @@
             pid-jenkins
             tail-log do a 'tail -f $JENKINS_HOME/logs/jenkins.log'
         </echo>
+    </target>
+
+    <target name="execute-all-validate-data-jobs">
+        <property name="jobDirectory" value="${basedir}/server_apps/jenkins/jobs"/>
+        <property name="jenkPort" value="${env.JENKINS_PORT}"/>
+        <echo message="${env.JENKINS_PORT}" />
+        <groovy>
+            def dir = new File(properties.jobDirectory)
+            new File(properties.jobDirectory).eachFile {
+                if (!it.name.endsWith(".svn")) {
+                    if (it.name.startsWith("Check")) {
+                        //println it.name
+                        def url = "https://" + properties.DOMAIN_NAME
+                        if (properties.USE_APACHE_FOR_SMOKE_TESTS == "false")
+                            url += ":" + properties.jenkPort
+                        url += "/jobs/job/" + it.name + "/build"
+                        def command = "curl " + url
+                        println command
+                        def proc = command.execute()
+                        proc.waitFor()                               // Wait for the command to finish
+                        // Obtain status and output
+                        if (proc.exitValue() != 0) {
+                            println "return code: ${proc.exitValue()}"
+                            println "stderr: ${proc.err.text}"
+                            println "stdout: ${proc.in.text}"
+                        }
+                    }
+                }
+            }
+        </groovy>
+
     </target>
 
     <taskdef name="groovy"
