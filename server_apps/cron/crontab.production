@@ -89,10 +89,3 @@
 # SMTWT     3am check for orphans in zdb_active_data
 00 03 * * 0-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/orphanChecks.pl zfindb
 #
-# ========================================================================
-# ====                   QUARTERLY SCRIPTS                               ====
-# ========================================================================
-#
-# Nights   When      Comments
-# 1         5:00am   DATA TRANSFER: run quarterly SNP load from dbSNP.
-00 05 1 1,4,9 * <!--|ROOT_PATH|-->/server_apps/data_transfer/SNP/dbSNP.pl <!--|DB_NAME|-->
