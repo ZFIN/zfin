@@ -120,6 +120,11 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     }
 
     @Override
+    public void updateEvidence(MarkerGoTermEvidence markerGoTermEvidence) {
+        HibernateUtil.currentSession().update(markerGoTermEvidence);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<String> getEvidencesForGafOrganization(GafOrganization gafOrganization) {
         String hql = " " +

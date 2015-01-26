@@ -1,15 +1,18 @@
 package org.zfin.datatransfer.go;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  */
@@ -23,53 +26,42 @@ public class FpInferenceGafParser {
     protected static final String ZFIN_CREATED_BY = "ZFIN";
     protected static final String GOC_CREATED_BY = "GOC";
     protected static final String ZEBRAFISH_TAXID = "taxon:7955";
-    protected static Set<String> goRefExcludePubMap = new HashSet<String>();
+    protected static Set<String> goRefExcludePubMap = new HashSet<>();
 
-    public FpInferenceGafParser() {
+    static {
         goRefExcludePubMap.add(GOREF_PREFIX + "0000002");
         goRefExcludePubMap.add(GOREF_PREFIX + "0000003");
         goRefExcludePubMap.add(GOREF_PREFIX + "0000004");
         goRefExcludePubMap.add(GOREF_PREFIX + "0000015");
-        //add the following 2 for FB case 8239, GOA GAF load needs pub filters adjusted
         goRefExcludePubMap.add(GOREF_PREFIX + "0000037");
         goRefExcludePubMap.add(GOREF_PREFIX + "0000038");
     }
 
     public List<GafEntry> parseGafFile(File downloadedFile) throws Exception {
-        List<GafEntry> gafEntries = new ArrayList<GafEntry>();
-        BufferedReader bufferedReader = null;
+        List<GafEntry> gafEntries = new ArrayList<>();
+        LineIterator it = FileUtils.lineIterator(downloadedFile);
         try {
-            bufferedReader = new BufferedReader(new FileReader(downloadedFile));
-            String buffer;
-
-            while ((buffer = bufferedReader.readLine()) != null) {
-                if (!buffer.startsWith("!") && StringUtils.isNotEmpty(buffer)) {
-                    GafEntry gafEntry = parseGafEntry(buffer);
-                    if (isValidGafEntry(gafEntry)) {
-                        gafEntries.add(gafEntry);
-                    } else {
-                        logger.debug("not a valid gaf entry, ignoring: " + gafEntry);
-                    }
+            while (it.hasNext()) {
+                String line = it.nextLine();
+                if (line.startsWith("!") || StringUtils.isBlank(line)) {
+                    continue;
+                }
+                GafEntry gafEntry = parseGafEntry(line);
+                if (isValidGafEntry(gafEntry)) {
+                    gafEntries.add(gafEntry);
+                } else {
+                    logger.debug("not a valid gaf entry, ignoring: " + gafEntry);
                 }
             }
-        } catch (Exception e) {
-            logger.error(e);
-            throw e;
         } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                    bufferedReader = null;
-                }
-            } catch (Exception e) {
-            }
+            it.close();
         }
 
         return gafEntries;
     }
 
     protected boolean isValidGafEntry(GafEntry gafEntry) {
-        if (false == isValidEvidenceCode(gafEntry.getEvidenceCode())) {
+        if (!isValidEvidenceCode(gafEntry.getEvidenceCode())) {
             logger.debug("invalid evidence code[" + gafEntry.getEvidenceCode() + " throwing out: " + gafEntry);
             return false; // just ignore
         }
@@ -82,7 +74,7 @@ public class FpInferenceGafParser {
             logger.debug("created by is zfin[" + gafEntry.getCreatedBy() + " throwing out: " + gafEntry);
             return false; // just ignore
         }
-        if (false == gafEntry.getTaxonId().equals(ZEBRAFISH_TAXID)) {
+        if (!gafEntry.getTaxonId().equals(ZEBRAFISH_TAXID)) {
             logger.debug("taxon id is not zebrafish [" + gafEntry.getTaxonId() + " throwing out: " + gafEntry);
             return false; // just ignore
         }
@@ -95,13 +87,9 @@ public class FpInferenceGafParser {
 
     private boolean isValidEvidenceCode(String evidenceCode) {
         GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(evidenceCode);
-        if (    goEvidenceCodeEnum == GoEvidenceCodeEnum.ND
+        return !(goEvidenceCodeEnum == GoEvidenceCodeEnum.ND
                 || goEvidenceCodeEnum == GoEvidenceCodeEnum.NAS
-                || goEvidenceCodeEnum == GoEvidenceCodeEnum.TAS
-                ) {
-            return false;
-        }
-        return true;
+                || goEvidenceCodeEnum == GoEvidenceCodeEnum.TAS);
     }
 
 
@@ -122,15 +110,12 @@ public class FpInferenceGafParser {
         );
         gafEntry.setTaxonId(entries[12]);
         gafEntry.setCreatedDate(entries[13]);
-//        for case 10868
 
+        // for case 10868
         gafEntry.setCreatedBy(entries[14]
-
                         .replaceAll("Ensembl:", "ENSEMBL:")
                         .replaceAll("\\bUniProt:\\b", "UniProtKB:")
-
         );
-
 
         return gafEntry;
     }

@@ -60,10 +60,8 @@ public class GafService {
 
 
     protected DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    protected Map<String, Publication> goRefPubMap = new HashMap<String, Publication>();
+    protected Map<String, Publication> goRefPubMap = new HashMap<>();
     protected Pattern patternPipe = Pattern.compile("ZFIN:(.*)\\|.*");
-
-    protected Map<String, String> replacedGeneAndMOZDBIds = new HashMap<String, String>();
 
     public GafService(GafOrganization.OrganizationEnum organizationEnum) {
         this.organizationEnum = organizationEnum;
@@ -106,53 +104,58 @@ public class GafService {
             ////FB case 8432 prevent GO annotation to GO:0005623 from FP-Inf. GAF load
             String oboId = gafEntry.getGoTermId();
             GenericTerm term = ontologyRepository.getTermByOboID(oboId);
-            //FB case 12144 use subsets to restrict the use of some terms in automated and manual annotations.
-            Boolean inRestrictedSubset = false;
-            Set<Subset> subset = term.getSubsets();
-            for (Subset subsetT : subset) {
-                if (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_annotate") || (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_manually_annotate") && !gafEntry.getEvidenceCode().equalsIgnoreCase("IEA"))){
-                    inRestrictedSubset = true;
-                }
-            }
-
 
             // find genes based on uniprot ID via marker relations
             try {
-                if (!inRestrictedSubset) {
-                    if (!gafEntry.isCell()) {
-                        Collection<Marker> genes = getGenes(gafEntry.getEntryId());
-                        // for each gene, create an entry
-                        // if no gene is then report error
-                        if (CollectionUtils.isNotEmpty(genes)) {
-                            for (Marker gene : genes) {
-                                MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
-                                if (annotationToAdd != null) {
-                                    if (gafJobData.getNewEntries().contains(annotationToAdd)) {
-                                        throw new GafValidationError("A duplicate entry is being added:" +
-                                                FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
-                                                FileUtil.LINE_SEPARATOR + gafEntry);
-                                    }
-                                    gafJobData.addNewEntry(annotationToAdd);
-                                } else {
-                                    throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
-                                }
-                            } // end of gene loop
-                        } else {
-                            throw new GafValidationError("Unable to find genes associated with ID[" + gafEntry.getEntryId() + "]", gafEntry);
-                        }
-                    } else {
-                        gafJobData.addCellEntry(gafEntry);
-                        throw new GafValidationError("Can not use cell term[" + gafEntry.getEntryId() + "]", gafEntry);
-
-                    }
-                } else {
+                if (isTermInRestrictedSubset(gafEntry.getEvidenceCode(), term)) {
                     gafJobData.addSubsetFailureEntry(gafEntry);
                     throw new GafValidationError("Can not use term in a \"Do Not Annotate\" subset[" + gafEntry.getEntryId() + "]", gafEntry);
                 }
 
+                if (gafEntry.isCell()) {
+                    gafJobData.addCellEntry(gafEntry);
+                    throw new GafValidationError("Can not use cell term[" + gafEntry.getEntryId() + "]", gafEntry);
+                }
+
+                Collection<Marker> genes = getGenes(gafEntry.getEntryId());
+                // if no gene is then report error
+                if (CollectionUtils.isEmpty(genes)) {
+                    throw new GafValidationError("Unable to find genes associated with ID[" + gafEntry.getEntryId() + "]", gafEntry);
+                }
+
+                // for each gene, create an entry
+                for (Marker gene : genes) {
+                    MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
+                    if (annotationToAdd == null) {
+                        throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
+                    }
+                    if (gafJobData.getNewEntries().contains(annotationToAdd)) {
+                        throw new GafValidationError("A duplicate entry is being added:" +
+                                FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
+                                FileUtil.LINE_SEPARATOR + gafEntry);
+                    }
+                    gafJobData.addNewEntry(annotationToAdd);
+                }
             } catch (GafAnnotationExistsError gafAnnotationExistsError) {
-                logger.debug("Existing annotation: " + gafAnnotationExistsError.getMessage() + " for " + gafEntry);
-                gafJobData.addExistingEntry(gafAnnotationExistsError.getAnnotation());
+                /* if the annotation already exists, check to see if the incoming date is newer than
+                 * the stored modified date. If the incoming date is newer, the record needs to be
+                 * updated. Otherwise, just add it to the list of existing entries.
+                 */
+                MarkerGoTermEvidence existing = gafAnnotationExistsError.getAnnotation();
+                Date entryDate;
+                try {
+                    entryDate = dateFormat.parse(gafEntry.getCreatedDate());
+                } catch (ParseException e) {
+                    entryDate = new Date(0);
+                }
+                if (entryDate.after(existing.getModifiedWhen()) &&
+                        !isTermInRestrictedSubset(existing.getEvidenceCode().getCode(), existing.getGoTerm())) {
+                    existing.setModifiedWhen(entryDate);
+                    gafJobData.addUpdateEntry(existing);
+                } else {
+                    logger.debug("Existing annotation: " + gafAnnotationExistsError.getMessage() + " for " + gafEntry);
+                    gafJobData.addExistingEntry(gafAnnotationExistsError.getAnnotation());
+                }
             } catch (GafValidationError gafValidationError) {
                 logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
                 gafJobData.addError(gafValidationError);
@@ -182,7 +185,7 @@ public class GafService {
     }
 
     protected Collection<Marker> getGenes(String entryId) throws GafValidationError {
-        Set<Marker> returnGenes = new HashSet<Marker>();
+        Set<Marker> returnGenes = new HashSet<>();
         if (entryId.startsWith("ZDB-GENE-")) {
             Marker gene = markerRepository.getGeneByID(entryId);
             if (gene == null) {
@@ -222,8 +225,8 @@ public class GafService {
      * @return Collection of zdbids to be removed.
      */
     public Collection<String> findOutdatedEntries(GafJobData gafJobData, GafOrganization gafOrganization) {
-        Set<String> existingZfinZdbIDs = new TreeSet<String>(markerGoTermEvidenceRepository.getEvidencesForGafOrganization(gafOrganization));
-        Set<String> newGafEntryZdbIds = new TreeSet<String>();
+        Set<String> existingZfinZdbIDs = new TreeSet<>(markerGoTermEvidenceRepository.getEvidencesForGafOrganization(gafOrganization));
+        Set<String> newGafEntryZdbIds = new TreeSet<>();
 
         for (GafJobEntry gafJobEntry : gafJobData.getExistingEntries()) {
             newGafEntryZdbIds.add(gafJobEntry.getZdbID());
@@ -231,9 +234,11 @@ public class GafService {
         for (MarkerGoTermEvidence gafReportAnnotation : gafJobData.getNewEntries()) {
             newGafEntryZdbIds.add(gafReportAnnotation.getZdbID());
         }
+        for (MarkerGoTermEvidence updated : gafJobData.getUpdateEntries()) {
+            newGafEntryZdbIds.add(updated.getZdbID());
+        }
 
-        Collection<String> zdbIdsToDrop = CollectionUtils.subtract(existingZfinZdbIDs, newGafEntryZdbIds);
-        return zdbIdsToDrop;
+        return CollectionUtils.subtract(existingZfinZdbIDs, newGafEntryZdbIds);
     }
 
     public void generateRemovedEntries(GafJobData gafJobData, GafOrganization gafOrganization) {
@@ -254,8 +259,8 @@ public class GafService {
 
         // find pubmed ID
         Publication publication = getPublication(gafEntry);
-        // set new object to create
 
+        // set new object to create
         MarkerGoTermEvidence markerGoTermEvidenceToAdd = new MarkerGoTermEvidence();
         markerGoTermEvidenceToAdd.setMarker(gene);
         markerGoTermEvidenceToAdd.setGoTerm(goTerm);
@@ -265,12 +270,12 @@ public class GafService {
         // validate qualifier
         GoEvidenceQualifier goEvidenceQualifier = getQualifier(gafEntry, goTerm);
         markerGoTermEvidenceToAdd.setFlag(goEvidenceQualifier);
+
         // validate evidence code
         GoEvidenceCode goEvidenceCode = markerGoTermEvidenceRepository.getGoEvidenceCode(gafEntry.getEvidenceCode());
         if (goEvidenceCode == null) {
             throw new GafValidationError("invalid evidence code: " + gafEntry.getEvidenceCode(), gafEntry);
         }
-//        GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(goEvidenceCode.getCode());
         markerGoTermEvidenceToAdd.setEvidenceCode(goEvidenceCode);
 
         // validate created date
@@ -280,14 +285,13 @@ public class GafService {
         } catch (ParseException e) {
             throw new GafValidationError("Failed to parse marker go term evidence", gafEntry);
         }
+
         // validate created by
         markerGoTermEvidenceToAdd.setOrganizationCreatedBy(gafEntry.getCreatedBy());
         markerGoTermEvidenceToAdd.setGafOrganization(gafOrganization);
 
-
         // validate inferences
         handleInferences(gafEntry, markerGoTermEvidenceToAdd);
-
 
         List<MarkerGoTermEvidence> existingEvidenceList = markerGoTermEvidenceRepository.getLikeMarkerGoTermEvidencesButGo(markerGoTermEvidenceToAdd);
         /**
@@ -296,8 +300,7 @@ public class GafService {
          */
         for (MarkerGoTermEvidence existingMarkerGoTermEvidence : existingEvidenceList) {
             if (isMoreSpecificAnnotation(existingMarkerGoTermEvidence, markerGoTermEvidenceToAdd)) {
-                markerGoTermEvidenceToAdd.setZdbID(existingMarkerGoTermEvidence.getZdbID());
-                throw new GafAnnotationExistsError(gafEntry, markerGoTermEvidenceToAdd);
+                throw new GafAnnotationExistsError(gafEntry, existingMarkerGoTermEvidence);
             }
         }
         return markerGoTermEvidenceToAdd;
@@ -309,13 +312,12 @@ public class GafService {
         if (StringUtils.isNotEmpty(inferenceEntry)) {
             GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode());
             String publicationZdbId = markerGoTermEvidence.getSource().getZdbID();
-            Set<InferenceGroupMember> inferredFrom = new HashSet<InferenceGroupMember>();
-            Set<String> inferenceSet = new HashSet<String>();
+            Set<InferenceGroupMember> inferredFrom = new HashSet<>();
+            Set<String> inferenceSet = new HashSet<>();
             inferenceSet.addAll(Arrays.asList(inferenceEntry.split("\\|")));
             if (!GoEvidenceValidator.isValidCardinality(goEvidenceCodeEnum, inferenceSet)) {
                 throw new GafValidationError(GoEvidenceValidator.generateErrorString(goEvidenceCodeEnum, publicationZdbId), gafEntry);
             }
-
 
             for (String inference : inferenceSet) {
                 if (goEvidenceCodeEnum == GoEvidenceCodeEnum.IGI) {
@@ -447,8 +449,7 @@ public class GafService {
     protected GenericTerm validateGoTerm(String goTermID, GafEntry gafEntry, String columnName) throws GafValidationError {
         GenericTerm goTerm = ontologyRepository.getTermByOboID(goTermID);
         if (goTerm == null) {
-            throw new GafValidationError("Unable to find GO Term for:" + FileUtil.LINE_SEPARATOR + goTermID,
-                    gafEntry);
+            throw new GafValidationError("Unable to find GO Term for:" + FileUtil.LINE_SEPARATOR + goTermID, gafEntry);
         }
         if (goTerm.isObsolete()) {
             throw new GafValidationError("Go term in column [" + columnName + "] must not be obsolete:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
@@ -468,10 +469,8 @@ public class GafService {
 
     protected boolean isMoreSpecificAnnotation(MarkerGoTermEvidence existingMarkerGoTermEvidence, MarkerGoTermEvidence markerGoTermEvidenceToAdd)
             throws GafValidationError {
-        if (existingMarkerGoTermEvidence.isSameButGo(markerGoTermEvidenceToAdd)) {
-            return ontologyRepository.isParentChildRelationshipExist(markerGoTermEvidenceToAdd.getGoTerm(), existingMarkerGoTermEvidence.getGoTerm());
-        }
-        return false;
+        return existingMarkerGoTermEvidence.isSameButGo(markerGoTermEvidenceToAdd) &&
+                ontologyRepository.isParentChildRelationshipExist(markerGoTermEvidenceToAdd.getGoTerm(), existingMarkerGoTermEvidence.getGoTerm());
     }
 
     public void addAnnotation(MarkerGoTermEvidence markerGoTermEvidenceToAdd, GafJobData gafJobData)
@@ -513,7 +512,7 @@ public class GafService {
     }
 
     public int removeEntriesBatch(List<GafJobEntry> batchToRemove, GafJobData gafJobData) {
-        List<String> zdbIDs = new ArrayList<String>();
+        List<String> zdbIDs = new ArrayList<>();
         for (GafJobEntry gafJobEntry : batchToRemove) {
             zdbIDs.add(gafJobEntry.getZdbID());
         }
@@ -522,6 +521,12 @@ public class GafService {
         RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionByDataZdbIDs(zdbIDs);
 
         return markerGoTermEvidenceRepository.deleteMarkerGoTermEvidenceByZdbIDs(zdbIDs);
+    }
+
+    public void updateEntriesBatch(List<MarkerGoTermEvidence> batchToUpdate) {
+        for (MarkerGoTermEvidence evidence : batchToUpdate) {
+            markerGoTermEvidenceRepository.updateEvidence(evidence);
+        }
     }
 
     /**
@@ -581,11 +586,7 @@ public class GafService {
             String oldFieldValue = (String) PropertyUtils.getProperty(gafEntry, fieldName);
             if (translationMap.containsKey(oldFieldValue))
                 PropertyUtils.setProperty(gafEntry, fieldName, translationMap.get(oldFieldValue));
-        } catch (IllegalAccessException e) {
-            logger.error(e);
-        } catch (InvocationTargetException e) {
-            logger.error(e);
-        } catch (NoSuchMethodException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             logger.error(e);
         }
     }
@@ -593,7 +594,7 @@ public class GafService {
     public Map<String, String> getReplacedDataMapFromEntities(ActiveData.Type... types) {
         if (types == null)
             return null;
-        Map<String, String> oldNewZDBIds = new HashMap<String, String>();
+        Map<String, String> oldNewZDBIds = new HashMap<>();
         for (ActiveData.Type type : types) {
             List<ReplacementZdbID> replacedEntityIds = RepositoryFactory.getInfrastructureRepository().getReplacedZdbIDsByType(type);
             for (ReplacementZdbID replacementZdbID : replacedEntityIds) {
@@ -602,4 +603,17 @@ public class GafService {
         }
         return oldNewZDBIds;
     }
+
+    public boolean isTermInRestrictedSubset(String evidenceCode, GenericTerm term) {
+        Set<Subset> subset = term.getSubsets();
+        for (Subset subsetT : subset) {
+            if (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_annotate") ||
+                    (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_manually_annotate") &&
+                            !evidenceCode.equals("IEA"))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -18,8 +18,12 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
 /**
@@ -53,22 +57,18 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void gafServiceTestInferences() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_inferencetest");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(1, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(1));
         makeTestPub(gafEntries);
 
         GafJobData gafJobData = new GafJobData();
 
         gafService.processEntries(gafEntries, gafJobData);
-        logger.debug("summary: " + gafJobData.toString());
-        logger.debug("entries: " + gafJobData.getNewEntries().size());
-        logger.debug("existing: " + gafJobData.getExistingEntries().size());
-        logger.debug("errors: " + gafJobData.getErrors().size());
 
-
-        assertEquals(0, gafJobData.getErrors().size());
-        assertEquals(0, gafJobData.getExistingEntries().size());
-        assertEquals(1, gafJobData.getNewEntries().size());
-        assertEquals(0, gafJobData.getRemovedEntries().size());
+        assertThat("errors", gafJobData.getErrors(), hasSize(0));
+        assertThat("existing", gafJobData.getExistingEntries(), hasSize(0));
+        assertThat("new", gafJobData.getNewEntries(), hasSize(1));
+        assertThat("updated", gafJobData.getUpdateEntries(), hasSize(0));
+        assertThat("removed", gafJobData.getRemovedEntries(), hasSize(0));
 
         assertTrue(gafJobData.getNewEntries().iterator().next().getInferredFrom().iterator().next().getInferredFrom().equals("UniProtKB:Q9NXR7"));
     }
@@ -78,7 +78,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void gafServiceBadAdd() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_badadd");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(3, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(3));
         makeTestPub(gafEntries);
 
 
@@ -88,9 +88,10 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("entries: " + gafJobData.getNewEntries());
         logger.debug("errors: " + gafJobData.getErrors());
 
-        assertEquals(0, gafJobData.getRemovedEntries().size());
-        assertEquals(3, gafJobData.getNewEntries().size());
-        assertEquals(0, gafJobData.getErrors().size());
+        assertThat("removed", gafJobData.getRemovedEntries(), hasSize(0));
+        assertThat("new", gafJobData.getNewEntries(), hasSize(3));
+        assertThat("errors", gafJobData.getErrors(), hasSize(0));
+        assertThat("updated", gafJobData.getUpdateEntries(), hasSize(0));
 
         Iterator<MarkerGoTermEvidence> iter = gafJobData.getNewEntries().iterator();
 
@@ -103,7 +104,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void badGafEntry() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_badentry");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(13, gafEntries.size()); // 17 - 4 = 13
+        assertThat("gaf entries loaded", gafEntries, hasSize(13)); // 17 - 4 = 13
         makeTestPub(gafEntries);
 
 
@@ -114,17 +115,17 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafJobData.getErrors().size());
         logger.debug("removed: " + gafJobData.getRemovedEntries().size());
 
-        assertEquals(0, gafJobData.getRemovedEntries().size());
-        assertEquals(13, gafJobData.getNewEntries().size());
-        assertEquals(0, gafJobData.getErrors().size());
+        assertThat("removed", gafJobData.getRemovedEntries(), hasSize(0));
+        assertThat("new", gafJobData.getNewEntries(), hasSize(13));
+        assertThat("errors", gafJobData.getErrors(), hasSize(0));
+        assertThat("updated", gafJobData.getUpdateEntries(), hasSize(0));
     }
 
     @Test
     public void alreadyRanOnce() throws Exception {
-//        File file = new File("test/goa_go/gene_association.goa_zebrafish_full");
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_inferencetest");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(1, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(1));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -145,25 +146,26 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             HibernateUtil.rollbackTransaction();
         }
 
-        assertEquals(1, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(1));
+        assertThat("first errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
         assertEquals("UniProtKB:Q9NXR7", gafReport1.getNewEntries().iterator().next().getInferredFrom().iterator().next().getInferredFrom());
 
-        assertEquals(0, gafReport2.getNewEntries().size());
-        assertEquals(0, gafReport2.getErrors().size());
-        assertEquals(1, gafReport2.getExistingEntries().size());
-        assertEquals(0, gafReport2.getRemovedEntries().size());
+        assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+        assertThat("second errors", gafReport2.getErrors(), hasSize(0));
+        assertThat("second existing", gafReport2.getExistingEntries(), hasSize(1));
+        assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
+        assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(0));
     }
 
     @Test
     public void alreadyRanOnce_2() throws Exception {
-//        File file = new File("test/goa_go/gene_association.goa_zebrafish_full");
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_badadd");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(3, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(3));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -184,24 +186,25 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         }
 
 
-        assertEquals(3, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(3));
+        assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("first errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
-        assertEquals(0, gafReport2.getNewEntries().size());
-        assertEquals(3, gafReport2.getExistingEntries().size());
-        assertEquals(0, gafReport2.getErrors().size());
-        assertEquals(0, gafReport2.getRemovedEntries().size());
+        assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+        assertThat("second existing", gafReport2.getExistingEntries(), hasSize(3));
+        assertThat("second errors", gafReport2.getErrors(), hasSize(0));
+        assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
+        assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(0));
     }
 
     // tests null inferences and redundant entries
     @Test
     public void findDupeInferences() throws Exception {
-//        File file = new File("test/goa_go/gene_association.goa_zebrafish_full");
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_dupeinference");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(3, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(3));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -229,15 +232,17 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         }
 
 
-        assertEquals(3, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(3));
+        assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("first errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
-        assertEquals(0, gafReport2.getNewEntries().size());
-        assertEquals(3, gafReport2.getExistingEntries().size());
-        assertEquals(0, gafReport2.getErrors().size());
-        assertEquals(0, gafReport2.getRemovedEntries().size());
+        assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+        assertThat("second existing", gafReport2.getExistingEntries(), hasSize(3));
+        assertThat("second errors", gafReport2.getErrors(), hasSize(0));
+        assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
+        assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(0));
     }
 
     // valid additions, but duplicate within the gaf file
@@ -245,7 +250,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void knowDupesWithAnAdd() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_duplicateentries");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(15, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(15));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -269,10 +274,11 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             );
         }
 
-        assertEquals(2, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(13, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("new", gafReport1.getNewEntries(), hasSize(2));
+        assertThat("existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("errors", gafReport1.getErrors(), hasSize(13));
+        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("updated", gafReport1.getUpdateEntries(), hasSize(0));
 
     }
 
@@ -282,7 +288,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void dontAddDupes() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_redundantadd");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(3, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(3));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -310,23 +316,24 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         }
 
 
-        assertEquals(2, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(1, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(2));
+        assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("first errors", gafReport1.getErrors(), hasSize(1));
+        assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
-        assertEquals(0, gafReport2.getNewEntries().size());
-        assertEquals(3, gafReport2.getExistingEntries().size());
-        assertEquals(0, gafReport2.getErrors().size());
-        assertEquals(0, gafReport2.getRemovedEntries().size());
+        assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+        assertThat("second existing", gafReport2.getExistingEntries(), hasSize(3));
+        assertThat("second errors", gafReport2.getErrors(), hasSize(0));
+        assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
+        assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(0));
     }
 
     @Test
     public void mapQualifiers() throws Exception {
-//        File file = new File("test/goa_go/gene_association.goa_zebrafish_full");
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_qualifiers");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(4, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(4));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -336,10 +343,11 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("errors: " + gafReport1.getErrors());
 
-        assertEquals(0, gafReport1.getErrors().size());
-        assertEquals(4, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("new", gafReport1.getNewEntries(), hasSize(4));
+        assertThat("existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("updated", gafReport1.getUpdateEntries(), hasSize(0));
 
     }
 
@@ -347,7 +355,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void colocalizeOnGoCC() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_gocc_colocalize");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(2, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(2));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -356,17 +364,18 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("entries: " + gafReport1.getNewEntries());
         logger.debug("errors: " + gafReport1.getErrors());
 
-        assertEquals(1, gafReport1.getErrors().size());
-        assertEquals(1, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("errors", gafReport1.getErrors(), hasSize(1));
+        assertThat("new", gafReport1.getNewEntries(), hasSize(1));
+        assertThat("existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("updated", gafReport1.getUpdateEntries(), hasSize(0));
     }
 
     @Test
     public void igiRemap() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_igi_remap");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(2, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(2));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -376,10 +385,11 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafReport1.getErrors());
 
 
-        assertEquals(0, gafReport1.getErrors().size());
-        assertEquals(2, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("new", gafReport1.getNewEntries(), hasSize(2));
+        assertThat("existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("updated", gafReport1.getUpdateEntries(), hasSize(0));
 
         Iterator<MarkerGoTermEvidence> iter = gafReport1.getNewEntries().iterator();
 
@@ -391,7 +401,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void multipleAddExists() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_otherexists");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(8, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(8));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -418,15 +428,17 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             HibernateUtil.rollbackTransaction();
         }
 
-        assertEquals(7, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(1, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(7));
+        assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("first errors", gafReport1.getErrors(), hasSize(1));
+        assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
-        assertEquals(0, gafReport2.getNewEntries().size());
-        assertEquals(7, gafReport2.getExistingEntries().size());
-        assertEquals(1, gafReport2.getErrors().size());
-        assertEquals(0, gafReport2.getRemovedEntries().size());
+        assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+        assertThat("second existing", gafReport2.getExistingEntries(), hasSize(7));
+        assertThat("second errors", gafReport2.getErrors(), hasSize(1));
+        assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
+        assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(0));
 
     }
 
@@ -471,10 +483,11 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("existing: " + gafJobData.getExistingEntries());
         logger.debug("errors: " + gafJobData.getErrors());
 
-        assertEquals(1, gafJobData.getNewEntries().size());
-        assertEquals(0, gafJobData.getExistingEntries().size());
-        assertEquals(0, gafJobData.getErrors().size());
-        assertEquals(1, gafJobData.getRemovedEntries().size());
+        assertThat("new", gafJobData.getNewEntries(), hasSize(1));
+        assertThat("existing", gafJobData.getExistingEntries(), hasSize(0));
+        assertThat("errors", gafJobData.getErrors(), hasSize(0));
+        assertThat("removed", gafJobData.getRemovedEntries(), hasSize(1));
+        assertThat("updated", gafJobData.getUpdateEntries(), hasSize(0));
 
     }
 
@@ -483,7 +496,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void doNotDeleteAdded() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_deleteadded");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(1, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(1));
         makeTestPub(gafEntries);
 
         GafJobData gafReport1 = new GafJobData();
@@ -494,10 +507,11 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("existing: " + gafReport1.getExistingEntries());
         logger.debug("errors: " + gafReport1.getErrors());
 
-        assertEquals(1, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(1));
+        assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("first errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
         GafJobData gafReport2 = null;
         try {
@@ -508,7 +522,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
             gafService.processEntries(gafEntries, gafReport2);
             HibernateUtil.currentSession().flush();
             GafOrganization gafOrganization = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.GOA);
-            Set<String> existingZfinZdbIDs = new TreeSet<String>(RepositoryFactory.getMarkerGoTermEvidenceRepository().getEvidencesForGafOrganization(gafOrganization));
+            Set<String> existingZfinZdbIDs = new TreeSet<>(RepositoryFactory.getMarkerGoTermEvidenceRepository().getEvidencesForGafOrganization(gafOrganization));
 
             // is it in the database currently
             String newZdbID = gafReport1.getNewEntries().iterator().next().getZdbID();
@@ -530,18 +544,19 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("existing: " + gafReport2.getExistingEntries());
         logger.debug("errors: " + gafReport2.getErrors());
 
-        assertEquals(0, gafReport2.getNewEntries().size());
-        assertEquals(1, gafReport2.getExistingEntries().size());
-        assertEquals(0, gafReport2.getErrors().size());
+        assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+        assertThat("second existing", gafReport2.getExistingEntries(), hasSize(1));
+        assertThat("second errors", gafReport2.getErrors(), hasSize(0));
+        assertThat("second updated", gafReport1.getUpdateEntries(), hasSize(0));
         // never processed this
-//        assertEquals(0, gafReport2.getRemovedEntries().size());
+//        assertThat("", gafReport2.getRemovedEntries(), hasSize(0));
     }
 
     @Test
     public void alreadyExistsComparesInference() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_betterinference");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(2, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(2));
 
         GafJobData gafReport1 = new GafJobData();
 
@@ -551,10 +566,11 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("existing: " + gafReport1.getExistingEntries());
         logger.debug("errors: " + gafReport1.getErrors());
 
-        assertEquals(0, gafReport1.getNewEntries().size());
-        assertEquals(2, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("new", gafReport1.getNewEntries(), hasSize(0));
+        assertThat("existing", gafReport1.getExistingEntries(), hasSize(2));
+        assertThat("errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("updated", gafReport1.getUpdateEntries(), hasSize(0));
 
     }
 
@@ -563,9 +579,8 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
 
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_new_iea");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(4, gafEntries.size());
-        // they need to be IEA pubs, so we don't want them to be a test pub
-//        makeTestPub(gafEntries);
+        assertThat("gaf entries loaded", gafEntries, hasSize(4));
+        // they need to be IEA pubs, so we don't call makeTestPub here
 
         GafJobData gafReport1 = new GafJobData();
 
@@ -575,10 +590,48 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("existing: " + gafReport1.getExistingEntries());
         logger.debug("errors: " + gafReport1.getErrors());
 
-        assertEquals(2, gafReport1.getNewEntries().size());
-        assertEquals(0, gafReport1.getExistingEntries().size());
-        assertEquals(2, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("new", gafReport1.getNewEntries(), hasSize(2));
+        assertThat("existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("errors", gafReport1.getErrors(), hasSize(2));
+        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("updated", gafReport1.getUpdateEntries(), hasSize(0));
+    }
+
+    @Test
+    public void updateIeaDates() throws Exception {
+        File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_new_iea");
+        List<GafEntry> gafEntries = gafParser.parseGafFile(file);
+        assertThat("gaf entries loaded", gafEntries, hasSize(4));
+
+        Calendar longAgo = new GregorianCalendar();
+        longAgo.add(Calendar.MONTH, -18);
+        replaceDates(gafEntries, longAgo.getTime());
+
+        GafJobData gafReport1 = new GafJobData();
+        gafService.processEntries(gafEntries, gafReport1);
+
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(2));
+        assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("first errors", gafReport1.getErrors(), hasSize(2));
+        assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
+
+        try {
+            HibernateUtil.createTransaction();
+            gafService.addAnnotations(gafReport1);
+
+            replaceDates(gafEntries);
+            GafJobData gafReport2 = new GafJobData();
+            gafService.processEntries(gafEntries, gafReport2);
+
+            assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+            assertThat("second existing", gafReport2.getExistingEntries(), hasSize(0));
+            assertThat("second errors", gafReport2.getErrors(), hasSize(2));
+            assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
+            assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(2));
+        } finally {
+            HibernateUtil.rollbackTransaction();
+        }
     }
 
     @Test
@@ -654,7 +707,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void dontAddIfMoreSpecificExists() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_morespecific");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(4, gafEntries.size());
+        assertThat("gaf entries loaded", gafEntries, hasSize(4));
 
         GafJobData gafReport1 = new GafJobData();
 
@@ -665,10 +718,34 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("existing: " + gafReport1.getExistingEntries());
         logger.debug("errors: " + gafReport1.getErrors());
 
-        assertEquals(0, gafReport1.getNewEntries().size());
-        assertEquals(4, gafReport1.getExistingEntries().size());
-        assertEquals(0, gafReport1.getErrors().size());
-        assertEquals(0, gafReport1.getRemovedEntries().size());
+        assertThat("new", gafReport1.getNewEntries(), hasSize(0));
+        assertThat("existing", gafReport1.getExistingEntries(), hasSize(4));
+        assertThat("errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
+        assertThat("updated", gafReport1.getUpdateEntries(), hasSize(0));
+    }
+
+    @Test
+    public void updateDateIfOlderThanExisting() throws Exception {
+        File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_morespecific");
+        List<GafEntry> gafEntries = gafParser.parseGafFile(file);
+        replaceDates(gafEntries);
+        assertThat("", gafEntries, hasSize(4));
+
+        GafJobData gafReport1 = new GafJobData();
+
+        gafService.processEntries(gafEntries, gafReport1);
+
+        logger.debug("summary: " + gafReport1.toString());
+        logger.debug("entries: " + gafReport1.getNewEntries());
+        logger.debug("existing: " + gafReport1.getExistingEntries());
+        logger.debug("errors: " + gafReport1.getErrors());
+
+        assertThat("new", gafReport1.getNewEntries(), hasSize(0));
+        assertThat("existing", gafReport1.getExistingEntries(), hasSize(0));
+        assertThat("update", gafReport1.getUpdateEntries(), hasSize(4));
+        assertThat("errors", gafReport1.getErrors(), hasSize(0));
+        assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
     }
 
     /**
@@ -701,9 +778,9 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void getParentTerms() {
         GenericTerm regulationOfCiliumMovement = ontologyRepository.getTermByName("regulation of cilium movement", Ontology.GO_BP);
         // exactly one self record: transitive closure contains a term relating to itself.
-        assertEquals(1, ontologyRepository.getParentTerms(regulationOfCiliumMovement, 0).size());
+        assertThat(ontologyRepository.getParentTerms(regulationOfCiliumMovement, 0), hasSize(1));
         // at least one parent term
-        assertTrue(ontologyRepository.getParentTerms(regulationOfCiliumMovement, 1).size() > 0);
+        assertThat(ontologyRepository.getParentTerms(regulationOfCiliumMovement, 1), hasSize(greaterThan(0)));
     }
 
     @Test
@@ -721,8 +798,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     public void createErrorForValues() throws Exception {
         File file = new File(GOA_DIRECTORY + "gene_association.goa_zebrafish_noerror");
         List<GafEntry> gafEntries = gafParser.parseGafFile(file);
-        assertEquals(12, gafEntries.size());
-//        makeTestPub(gafEntries);
+        assertThat("gaf entries loaded", gafEntries, hasSize(12));
 
         GafJobData gafJobData = new GafJobData();
 
@@ -733,11 +809,23 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafJobData.getErrors().size());
 
 
-        assertEquals(12, gafJobData.getErrors().size());
-        assertEquals(0, gafJobData.getExistingEntries().size());
-        assertEquals(0, gafJobData.getNewEntries().size());
-        assertEquals(0, gafJobData.getRemovedEntries().size());
+        assertThat("errors", gafJobData.getErrors(), hasSize(12));
+        assertThat("existing", gafJobData.getExistingEntries(), hasSize(0));
+        assertThat("new", gafJobData.getNewEntries(), hasSize(0));
+        assertThat("removed", gafJobData.getRemovedEntries(), hasSize(0));
+        assertThat("updated", gafJobData.getUpdateEntries(), hasSize(0));
 
+    }
+
+    private static void replaceDates(List<GafEntry> entries) {
+        replaceDates(entries, new Date());
+    }
+
+    private static void replaceDates(List<GafEntry> entries, Date newDate) {
+        DateFormat gafDateFormat = new SimpleDateFormat("yyyyMMdd");
+        for (GafEntry entry : entries) {
+            entry.setCreatedDate(gafDateFormat.format(newDate));
+        }
     }
 
 }

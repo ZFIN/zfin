@@ -103,6 +103,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService.processEntries(gafEntries, gafJobData);
 
             addAnnotations(gafJobData);
+            updateAnnotations(gafJobData);
 
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
 
@@ -127,11 +128,16 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             }
             details.append("\n\n");
 
+            details.append("== UPDATED ==").append("\n");
+            for (MarkerGoTermEvidence entry : gafJobData.getUpdateEntries()) {
+                details.append(entry.toString()).append("\n").append("\n");
+            }
+            details.append("\n\n");
+
             details.append("== ERRORS ==").append("\n");
             for (GafValidationError error : gafJobData.getErrors()) {
                 details.append(error.getMessage()).append("\n");
             }
-
             details.append("\n\n");
 
             details.append("== EXISTING ==").append("\n");
@@ -139,6 +145,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 details.append(entry.toString()).append("\n").append("\n");
             }
             details.append("\n\n");
+
             details.flush();
             details.close();
 
@@ -171,7 +178,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
         while (iteratorToAdd.hasNext()) {
             // build batch
-            List<MarkerGoTermEvidence> batchToAdd = new ArrayList<MarkerGoTermEvidence>();
+            List<MarkerGoTermEvidence> batchToAdd = new ArrayList<>();
             for (int i = 0; i < BATCH_SIZE && iteratorToAdd.hasNext(); ++i) {
                 MarkerGoTermEvidence markerGoTermEvidence = iteratorToAdd.next();
                 batchToAdd.add(markerGoTermEvidence);
@@ -189,9 +196,37 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 GafValidationError gafValidationError = new GafValidationError(error, e);
                 logger.error(gafValidationError);
                 gafJobData.addError(gafValidationError);
+            } finally {
+                // the theory is that these were being left open . . . this should fix that
+                HibernateUtil.closeSession();
             }
-            // the theory is that these were being left open . . . this should fix that
-            finally {
+        }
+    }
+
+    private void updateAnnotations(GafJobData gafJobData) {
+        Set<MarkerGoTermEvidence> evidencesToUpdate = gafJobData.getUpdateEntries();
+        Iterator<MarkerGoTermEvidence> iteratorToUpdate = evidencesToUpdate.iterator();
+
+        while (iteratorToUpdate.hasNext()) {
+            // build batch
+            List<MarkerGoTermEvidence> batchToUpdate = new ArrayList<>();
+            for (int i = 0; i < BATCH_SIZE && iteratorToUpdate.hasNext(); ++i) {
+                batchToUpdate.add(iteratorToUpdate.next());
+            }
+            try {
+                HibernateUtil.createTransaction();
+                gafService.updateEntriesBatch(batchToUpdate);
+                HibernateUtil.flushAndCommitCurrentSession();
+            } catch (Exception e) {
+                HibernateUtil.rollbackTransaction();
+                String error = "Failed to update batch: ";
+                for (MarkerGoTermEvidence markerGoTermEvidence : batchToUpdate) {
+                    error += markerGoTermEvidence.toString() + "\n";
+                }
+                GafValidationError gafValidationError = new GafValidationError(error, e);
+                logger.error(gafValidationError);
+                gafJobData.addError(gafValidationError);
+            } finally {
                 HibernateUtil.closeSession();
             }
         }
@@ -204,7 +239,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         // create batch
         while (iteratorToRemove.hasNext()) {
             // build batch
-            List<GafJobEntry> batchToRemove = new ArrayList<GafJobEntry>();
+            List<GafJobEntry> batchToRemove = new ArrayList<>();
             for (int i = 0; i < BATCH_SIZE && iteratorToRemove.hasNext(); ++i) {
                 GafJobEntry removeEntry = iteratorToRemove.next();
                 batchToRemove.add(removeEntry);

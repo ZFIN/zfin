@@ -40,6 +40,8 @@ public interface MarkerGoTermEvidenceRepository {
 
     void removeEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
 
+    void updateEvidence(MarkerGoTermEvidence markerGoTermEvidence);
+
     List<String> getEvidencesForGafOrganization(GafOrganization gafOrganization);
 
     List<MarkerGoTermEvidence> getLikeMarkerGoTermEvidencesButGo(MarkerGoTermEvidence markerGoTermEvidenceToAdd);

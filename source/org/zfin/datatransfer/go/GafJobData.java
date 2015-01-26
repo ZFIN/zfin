@@ -1,5 +1,6 @@
 package org.zfin.datatransfer.go;
 
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.util.FileUtil;
 
@@ -10,6 +11,7 @@ import java.util.*;
  */
 public class GafJobData {
     private Set<MarkerGoTermEvidence> newEntries = new LinkedHashSet<>();
+    private Set<MarkerGoTermEvidence> updateEntries = new LinkedHashSet<>();
     private List<GafJobEntry> existingEntries = new ArrayList<>();
     private List<GafJobEntry> removedEntries = new ArrayList<>();
     private List<GafEntry> cellEntries = new ArrayList<>();
@@ -28,6 +30,10 @@ public class GafJobData {
         newEntries.add(entry);
     }
 
+    public void addUpdateEntry(MarkerGoTermEvidence entry) {
+        updateEntries.add(entry);
+    }
+
     public void addExistingEntry(MarkerGoTermEvidence entry) {
         existingEntries.add(new GafJobEntry(entry));
     }
@@ -35,6 +41,7 @@ public class GafJobData {
     public void addCellEntry(GafEntry entry) {
         cellEntries.add(entry);
     }
+
     public void addSubsetFailureEntry(GafEntry entry) {
         subsetFailureEntries.add(entry);
     }
@@ -56,22 +63,29 @@ public class GafJobData {
         return newEntries;
     }
 
+    public Set<MarkerGoTermEvidence> getUpdateEntries() {
+        return updateEntries;
+    }
+
     public List<GafJobEntry> getRemovedEntries() {
         return removedEntries;
     }
 
     @Override
     public String toString() {
-        return "Gaf Entries " + FileUtil.LINE_SEPARATOR +
-                "processed: " + gafEntryCount + " gaf entries " + FileUtil.LINE_SEPARATOR +
-                "added: " + newEntries.size() + "" + FileUtil.LINE_SEPARATOR +
-                "removed: " + removedEntries.size() + "" + FileUtil.LINE_SEPARATOR +
-                "errors: " + errors.size() + "" + FileUtil.LINE_SEPARATOR +
-                "existing: " + existingEntries.size() + "" + FileUtil.LINE_SEPARATOR +
-                "cell Terms: " + cellEntries.size() + "" + FileUtil.LINE_SEPARATOR +
-                "subset Failures: " + subsetFailureEntries.size() + "" + FileUtil.LINE_SEPARATOR +
-                "time: " + (stopTime - startTime) / (1000f) + " seconds" + FileUtil.LINE_SEPARATOR
-                ;
+        return StringUtils.join(
+                new String[] {
+                        "Gaf Entries",
+                        "processed: " + gafEntryCount + " gaf entries ",
+                        "added: " + newEntries.size(),
+                        "updated: " + updateEntries.size(),
+                        "removed: " + removedEntries.size(),
+                        "errors: " + errors.size(),
+                        "existing: " + existingEntries.size(),
+                        "cell Terms: " + cellEntries.size(),
+                        "subset Failures: " + subsetFailureEntries.size(),
+                        "time: " + (stopTime - startTime) / (1000f) + " seconds"},
+                FileUtil.LINE_SEPARATOR);
     }
 
     public void markStartTime() {

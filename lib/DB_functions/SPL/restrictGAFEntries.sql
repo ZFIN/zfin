@@ -7,7 +7,7 @@ then
 		  and termsub_subset_id = osubset_pk_id
 		  and osubset_subset_name in ('gocheck_do_not_annotate','gocheck_do_not_manually_annotate'))
   then 
-    raise exception -746,0,"FAIL!: GO term can not be in do-no-annotate subset";
+    raise exception -746,0,"FAIL!: GO term can not be in do-not-annotate subset";
   end if;
 end if;
 
@@ -18,7 +18,7 @@ then
 		  and termsub_subset_id = osubset_pk_id
 		  and osubset_subset_name in ('gocheck_do_not_annotate'))
   then 
-    raise exception -746,0,"FAIL!: GO term can not be in do-no-annotate subset";
+    raise exception -746,0,"FAIL!: GO term can not be in do-not-annotate subset";
   end if;
 end if;
 end procedure;
