@@ -27,12 +27,15 @@ print "$dir\n";
 system("/bin/rm -f *.xml") and die "can not rm old xml data file";
 system("/bin/rm -f *.gz") and die "can not rm old .gz files";
 system("/bin/rm -f *.bcp") and die "can not rm old .bcp files";
+system("/bin/rm -f *.report.txt") and die "can not rm old .report.txt files";
 print "\nRemoving old data files done.\n";
 
 ### open the text file containing the list of the xml files to be downloaded
 open (INP, "downloadListSNPncbi.txt") || die "Can't open downloadListSNPncbi.txt : $!\n";
 @lines=<INP>;
 close(INP);
+
+open (REPORT,">success.report.txt");
 
 @downloadList = @parseListXML = ();
 foreach $line (@lines) {
@@ -306,7 +309,7 @@ print "\n ctOutSmith: $ctOutSmith \t ctOutJohson: $ctOutJohson\t ctOutTalbot: $c
 
 if ($ctNew > 0) {
   system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPs.sql" ) and &emailError("failed to load snp_download table");
-  &emailSuccess("has added $ctNew new records into snp_download table");
+  &createReport("has added $ctNew new records into snp_download table");
 }
 
 ### open a handle on the db
@@ -430,14 +433,15 @@ print "\n ctJohson = $ctJohson \t ctSmith = $ctSmith \t ctTalbot: $ctTalbot \n\n
 
 if ($ctNew2 > 0) {
   system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} loadNewSNPAttrs.sql" ) and &emailError("failed to load snp_download_attribution table");
-  &emailSuccess("has added $ctNew2 new records into snp_download_attribution table");
+  &createReport("has added $ctNew2 new records into snp_download_attribution table");
 }
 
 if ($ctNew3 > 0) {
   system( "$ENV{'INFORMIXDIR'}/bin/dbaccess -a $ENV{'DATABASE'} addTalbotSNPAttr.sql" ) and &emailError("failed to insert record_attribution table");
-  &emailSuccess("has added $ctNew3 new records into record_attribution table for Talbot SNPs");
+  &createReport("has added $ctNew3 new records into record_attribution table for Talbot SNPs");
 } 
 
+close REPORT;
 
 print "Done\n";
 
@@ -466,12 +470,7 @@ sub emailError($)
   }
 
 
-sub emailSuccess($)
+sub createReport($)
   {
-    open(MAIL, "| $mailprog") || die "Cannot open mailprog $mailprog";
-    print MAIL "To: xshao\@zfin.org\n";
-    print MAIL "Subject: dbSNP.pl $_[0]\n";
-    print MAIL "Error:\n";
-    print MAIL "$_[0]";
-    close MAIL;
+      print REPORT "$_[0]\n";
   }

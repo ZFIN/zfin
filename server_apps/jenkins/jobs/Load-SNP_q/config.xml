@@ -34,7 +34,9 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <body>${FILE,path=&quot;server_apps/data_transfer/SNP/success.report.txt&quot;}
+
+See full report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -67,7 +69,10 @@
         <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
-      <presendScript></presendScript>
+      <presendScript>if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
+	def fileName = System.getenv('TARGETROOT')+'/server_apps/data_transfer/SNP/success.report.txt';
+    File file = new File(fileName);
+    cancel = (file.length() == 0)}</presendScript>
       <attachBuildLog>false</attachBuildLog>
       <compressBuildLog>false</compressBuildLog>
       <replyTo>${DB_OWNER}@zfin.org</replyTo>
