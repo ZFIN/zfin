@@ -72,8 +72,8 @@
                                 value_string = value_string.replace(split_char," ");
                             });
                             var value_list = value_string.split(" ");
-                       	    var query_hit_map = new Array();
-			    query_list.forEach(function(query_component) {
+                            var query_hit_map = [];
+                            query_list.forEach(function(query_component) {
                                 query_hit_map[query_component] = false;
                             });
 
@@ -86,14 +86,15 @@
                             }
 
                             var addToOutput = true;
-                            query_list.forEach(function(query_component) {                                
-                                if (query_hit_map[query_component] == false)
+                            query_list.forEach(function(query_component) {
+                                if (query_hit_map[query_component] == false) {
                                     addToOutput = false;
+                                }
                             });
 
-                            if (addToOutput)
+                            if (addToOutput) {
                                 output.push(facetValue)
-			    
+                            }
                         });
                     } else { //if there was no query, return everything...
                         return input;
@@ -103,8 +104,9 @@
             })
             .filter('paging', function() {
                 return function(input, pageSize, page) {
-                    if (input === undefined)
+                    if (input === undefined) {
                         return;
+                    }
 
                     pageSize = parseInt(pageSize);
                     page = parseInt(page);
@@ -138,8 +140,8 @@
             $scope.field = field;
             $scope.category = category;
 
-//            $scope.url = '/action/search/facet-autocomplete?fq=category%3A%22' + category + '%22&category=' + category + '&field=' + field + '&term=&limit=-1&sort=index';
-            $scope.url = '/action/search/facet-autocomplete?' + jQuery('#query-string').val() + '&field=' + field + '&term=&limit=-1&sort=index';
+//            $scope.url = '/action/quicksearch/facet-autocomplete?fq=category%3A%22' + category + '%22&category=' + category + '&field=' + field + '&term=&limit=-1&sort=index';
+            $scope.url = '/action/quicksearch/facet-autocomplete?' + jQuery('#query-string').val() + '&field=' + field + '&term=&limit=-1&sort=index';
 
             $http.get($scope.url).success(function(data) {
                 $scope.facetValues = data;
@@ -153,15 +155,17 @@
 //            console.log('maxPage: ' + $scope.maxPage + ", nextPage:" + nextPage);
 
 //            $scope.maxPage = $scope.filteredValues.length / $scope.perPage;
-            if (nextPage <= parseInt(Math.ceil($scope.filteredValues.length/$scope.perPage),10))
+            if (nextPage <= parseInt(Math.ceil($scope.filteredValues.length/$scope.perPage),10)) {
                 $scope.page = nextPage;
+            }
 
         };
 
         $scope.prevPage = function() {
             var prevPage = parseInt($scope.page) - 1;
-            if (prevPage > 0)
+            if (prevPage > 0) {
                 $scope.page = prevPage;
+            }
         };
 
         $scope.sendGAEvent = function(action, value) {
