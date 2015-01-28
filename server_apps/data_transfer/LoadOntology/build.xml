@@ -7,6 +7,7 @@
     <property name="qualityOboURL"
               value="http://purl.obolibrary.org/obo/pato.obo"/>
     <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go.obo"/>
+    <property name="diseaseOboURL" value="http://www.berkeleybop.org/ontologies/doid.obo"/>
     <property name="mpathOboURL" value="http://obo.cvs.sourceforge.net/viewvc/obo/obo/ontology/phenotype/mouse_pathology/mouse_pathology.obo"/>
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
@@ -77,6 +78,10 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo" />
     </target>
 
+    <target name="load-disease-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="disease-ontology.obo" />
+    </target>
+
     <target name="load-mpath-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="mouse_pathology.obo" />
     </target>
@@ -84,6 +89,12 @@
     <target name="download-gene-ontology">
         <property name="localOboFile" value="gene-ontology.obo"/>
         <property name="oboFileURL" value="${geneOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-disease-ontology">
+        <property name="localOboFile" value="disease-ontology.obo"/>
+        <property name="oboFileURL" value="${diseaseOboURL}"/>
         <antcall target="download-ontology"/>
     </target>
 
