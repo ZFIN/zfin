@@ -78,13 +78,6 @@
 # MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
 00 23 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
 #
-#
-# F        11:00pm   weekly download data run, also does DATA TRANSFER OUT
-#                    and BACKUPS (calls unload_production.sh at end)
-#
-00 23 * * 5 <!--|ROOT_PATH|-->/server_apps/data_transfer/pull.sh
-#
-#
 # Nights   When      Comments
 # SMTWT     3am check for orphans in zdb_active_data
 00 03 * * 0-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/orphanChecks.pl zfindb

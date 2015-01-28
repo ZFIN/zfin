@@ -30,8 +30,6 @@ SUBDIRS = MEOW SWISS-PROT GXP GO ResourceCenters Downloads Ensembl LoadOntology 
 	  Genbank ORTHO Load BurgessLin SNP zfishbook SangerMutants \
 	  OMIM PUBMED Dorsky NCBIGENE VegaStartEnd NCBIStartEnd VegaStartEnd Addgene BLAST
 
-GENERICS = pull.sh
-
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
 
