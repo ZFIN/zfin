@@ -107,7 +107,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     @Override
     public List<Publication> getExpressionPub(Marker marker) {
-        String sql = "  select p from Publication p " +
+        String sql = "  select distinct p from Publication p " +
                 "join p.expressionExperiments ee " +
                 "where ee.gene = :gene " +
                 "and not exists (from Clone as clone " +
