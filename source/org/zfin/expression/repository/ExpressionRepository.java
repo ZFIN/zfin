@@ -32,6 +32,8 @@ public interface ExpressionRepository {
 
     Publication getExpressionSinglePub(Marker marker);
 
+    List<Publication> getExpressionPub(Marker marker);
+
     int getExpressionFigureCountForEfg(Marker marker);
 
     int getExpressionFigureCountForGene(Marker marker);

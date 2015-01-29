@@ -105,6 +105,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return pubs.get(0);
     }
 
+    @Override
+    public List<Publication> getExpressionPub(Marker marker) {
+        String sql = "  select p from Publication p " +
+                "join p.expressionExperiments ee " +
+                "where ee.gene = :gene " +
+                "and not exists (from Clone as clone " +
+                "where ee.probe = clone and clone.problem = :chimeric)";
+        Query query = HibernateUtil.currentSession().createQuery(sql);
+        query.setString("gene", marker.getZdbID());
+        query.setParameter("chimeric", Clone.ProblemType.CHIMERIC);
+        return query.list();
+    }
+
     public int getExpressionPubCountForGene(Marker marker) {
         String sql = "  select count(distinct xpatex_source_zdb_id) " +
                 "      from expression_experiment join " +
@@ -1758,10 +1771,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "AND er.expressionFound = 't' " +
                 "AND ge.standard = 't' " +
                 "AND g.wildtype= 't' " +
+                "AND not exists (from Clone as clone " +
+                "where ee.probe = clone and clone.problem = :chimeric ) " +
                 "order by er.startStage.hoursStart asc ";
         DevelopmentStage startStage = (DevelopmentStage) HibernateUtil.currentSession()
                 .createQuery(hql)
                 .setString("zdbID", zdbID)
+                .setParameter("chimeric", Clone.ProblemType.CHIMERIC)
                 .setMaxResults(1)
                 .uniqueResult();
 
@@ -1776,10 +1792,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "AND er.expressionFound = 't' " +
                 "AND ge.standard = 't' " +
                 "AND g.wildtype= 't' " +
+                "AND not exists (from Clone as clone " +
+                "where ee.probe = clone and clone.problem = :chimeric ) " +
                 "order by er.endStage.hoursEnd desc  ";
         DevelopmentStage endStage = (DevelopmentStage) HibernateUtil.currentSession()
                 .createQuery(hql2)
                 .setString("zdbID", zdbID)
+                .setParameter("chimeric", Clone.ProblemType.CHIMERIC)
                 .setMaxResults(1)
                 .uniqueResult();
 

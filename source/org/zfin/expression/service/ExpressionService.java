@@ -20,6 +20,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.service.ExpressionResultUpdateRecord;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -221,11 +222,11 @@ public class ExpressionService {
         // all expression
         MarkerExpressionInstance allMarkerExpressionInstance = new MarkerExpressionInstance();
 
-        allMarkerExpressionInstance.setPublicationCount(
-                expressionRepository.getExpressionPubCountForGene(marker));
+        List<Publication> pubs = expressionRepository.getExpressionPub(marker);
+        allMarkerExpressionInstance.setPublicationCount(pubs.size());
 
         if (allMarkerExpressionInstance.getPublicationCount() == 1) {
-            allMarkerExpressionInstance.setSinglePublication(expressionRepository.getExpressionSinglePub(marker));
+            allMarkerExpressionInstance.setSinglePublication(pubs.get(0));
         }
         allMarkerExpressionInstance.setFigureCount(
                 expressionRepository.getExpressionFigureCountForGene(marker));

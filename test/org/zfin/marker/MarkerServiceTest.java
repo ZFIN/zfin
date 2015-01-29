@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.zfin.AbstractDatabaseTest;
+import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.presentation.*;
@@ -348,6 +349,15 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         String accession = MarkerService.getEnsemblAccessionId(marker);
         assertNotNull(accession);
         assertEquals("ENSDARG00000028148", accession);
+    }
+
+    @Test
+    public void getGeneExpression() {
+        String geneAbbreviation = "fus";
+        Marker marker = getMarkerRepository().getMarkerByAbbreviation(geneAbbreviation);
+        ExpressionService expressionService = new ExpressionService();
+        MarkerExpression expressions = expressionService.getExpressionForGene(marker);
+        assertNotNull(expressions);
     }
 
     @Test

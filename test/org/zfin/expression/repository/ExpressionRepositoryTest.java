@@ -477,6 +477,14 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getExpressionPub() {
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-060130-9");
+        assertNotNull(m);
+        List<Publication> p = expRep.getExpressionPub(m);
+        assertNotNull(p);
+    }
+
+    @Test
     public void getExpressionSingleFigure() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-040112-1");
         assertNotNull(m);
