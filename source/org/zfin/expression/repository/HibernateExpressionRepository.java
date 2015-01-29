@@ -1291,7 +1291,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     public List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID) {
-        String sql2 = "select " +
+        String baseSql = "select " +
                 "distinct super_term.term_name as super_name " +
                 ", super_term.term_ont_id as super_id " +
                 ", sub_term.term_name as sub_name " +
@@ -1305,9 +1305,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "where ee.xpatex_gene_zdb_id= :markerZdbID " +
                 "and ge.genox_is_standard='t' " +
                 "and er.xpatres_expression_found='t' " +
-                "and g.geno_is_wildtype='t'";
+                "and g.geno_is_wildtype='t' ";
+        String hql = baseSql + " and ee.xpatex_probe_feature_zdb_id is null";
+        hql += " UNION " + baseSql + " and not exists (select 'x' FROM clone where clone_mrkr_zdb_id = ee.xpatex_probe_feature_zdb_id " +
+                "and clone_problem_type != 'Chimeric')";
 
-        return (List<ExpressedStructurePresentation>) HibernateUtil.currentSession().createSQLQuery(sql2)
+        return (List<ExpressedStructurePresentation>) HibernateUtil.currentSession().createSQLQuery(hql)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] aliases) {
