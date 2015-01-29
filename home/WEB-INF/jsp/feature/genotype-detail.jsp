@@ -123,7 +123,8 @@
                                                    items="${formBean.genotypeStatistics.affectedMarkers}"
                                                    varStatus="loop">
                                             (<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${affectedGene.abbreviation}"><font size="-1">request this mutant</font></a>)
-                                            <c:if test="${!loop.last}">,&nbsp;</c:if>
+                                            <c:if test="${!loop.last}">,&nbsp;
+                                            </c:if>
                                         </c:forEach>
                                     </c:when>
                                     <c:otherwise>
@@ -141,7 +142,7 @@
                                 </c:choose>
                             </c:otherwise>
                         </c:choose>
-                        <c:if test="${!status.last}">,&nbsp;</c:if>
+                        <c:if test="${!status.last}"><br/></c:if>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
