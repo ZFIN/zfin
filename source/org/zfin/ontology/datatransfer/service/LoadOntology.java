@@ -196,6 +196,16 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 report.error(e);
                 throw new RuntimeException(e);
             } finally {
+                try {
+                    // set refresh status file so the new ontology can be loaded into memory
+                    File file = ZfinProperties.getOntologyReloadStatusDirectory().toFile();
+                    File statusFile = new File(file, ontology.getOntologyName());
+                    if (statusFile.exists())
+                        statusFile.delete();
+                    statusFile.createNewFile();
+                } catch (IOException e) {
+                    LOG.error(e);
+                }
                 HibernateUtil.closeSession();
             }
             // needed to allow the generate absolute hyperlinks in emails
@@ -698,7 +708,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             } else if (statement.isSelectStatement()) {
                 List<List<String>> dataReturn;
                 dataReturn = infrastructureRep.executeNativeQuery(statement);
-                 writeToTraceFile(statement, dataReturn);
+                writeToTraceFile(statement, dataReturn);
                 if (dataReturn == null) {
                     LOG.info("  Debug data: No records found.");
                 } else if (statement.getDataKey() != null && statement.getDataKey().toUpperCase().equals(DatabaseJdbcStatement.DEBUG)) {

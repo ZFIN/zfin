@@ -3,11 +3,15 @@ package org.zfin.framework;
 import org.apache.log4j.Logger;
 import org.zfin.ontology.OntologyDataManager;
 import org.zfin.ontology.OntologyManager;
+import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Background Servlet that should not be called directly.
@@ -38,7 +42,12 @@ public class OntologyManagerServlet extends HttpServlet {
             thread.start();
         }
         LOG.info("Ontology Manager Thread started: ");
-
+        Path dir = ZfinProperties.getOntologyReloadStatusDirectory();
+        try {
+            new WatchOntologyRefresh(dir).processEvents();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void reLoadFormDatabase() {

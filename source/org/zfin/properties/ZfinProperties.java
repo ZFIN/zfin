@@ -9,6 +9,8 @@ import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -232,4 +234,10 @@ public final class ZfinProperties {
     public static String getInspectletID() {
         return ZfinPropertiesEnum.INSPECTLET_ID.toString();
     }
+
+    public static Path getOntologyReloadStatusDirectory() {
+        return Paths.get(ZfinPropertiesEnum.TARGETROOT.toString() + "/server_apps/data_transfer/LoadOntology/reload-status");
+    }
+
+
 }
