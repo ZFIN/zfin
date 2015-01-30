@@ -626,8 +626,8 @@
                 </then>
             </if>
             <var name="emailConfiguration" unset="true"/>
+            <_add-log-parser-rule-path/>
         </sequential>
-        <_add-log-parser-rule-path/>
     </macrodef>
 
     <property name="report" value="server_apps/DB_maintenance/report_data"/>
