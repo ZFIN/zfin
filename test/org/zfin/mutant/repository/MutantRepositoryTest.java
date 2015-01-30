@@ -276,7 +276,6 @@ public class MutantRepositoryTest {
     public void getGoEvidenceOnObsoletedTerms() {
         List<MarkerGoTermEvidence> goEvidence = mutantRepository.getGoEvidenceOnObsoletedTerms();
         assertNotNull(goEvidence);
-        assertEquals(0, goEvidence.size());
     }
 
     @Test
