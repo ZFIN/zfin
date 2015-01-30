@@ -9,6 +9,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +44,9 @@ public class OntologyManagerServlet extends HttpServlet {
         }
         LOG.info("Ontology Manager Thread started: ");
         Path dir = ZfinProperties.getOntologyReloadStatusDirectory();
+        File file = dir.toFile();
+        if (!file.exists())
+            file.mkdir();
         try {
             new WatchOntologyRefresh(dir).processEvents();
         } catch (IOException e) {
