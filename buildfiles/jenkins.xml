@@ -592,7 +592,7 @@
                     <echo message="${jobName} : Add Failure trigger ${emailConfiguration}"/>
                     <echo message="${JENKINS_HOME}/jobs"/>
                     <replaceregexp match="@FAILURE-RECIPIENT-LIST@"
-                                   replace="${emailConfiguration}/${jobName}/config.xml"
+                                   replace="${emailConfiguration}"
                                    flags="gis" byline="false">
                         <fileset dir="${JENKINS_HOME}/jobs" includes="${jobName}/config.xml"/>
                     </replaceregexp>
