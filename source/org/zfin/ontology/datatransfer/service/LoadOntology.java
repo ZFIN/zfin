@@ -198,8 +198,10 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             } finally {
                 try {
                     // set refresh status file so the new ontology can be loaded into memory
-                    File file = ZfinProperties.getOntologyReloadStatusDirectory().toFile();
-                    File statusFile = new File(file, ontology.getOntologyName());
+                    File dir = ZfinProperties.getOntologyReloadStatusDirectory().toFile();
+                    if(!dir.exists())
+                        dir.mkdir();
+                    File statusFile = new File(dir, ontology.getOntologyName());
                     if (statusFile.exists())
                         statusFile.delete();
                     statusFile.createNewFile();
