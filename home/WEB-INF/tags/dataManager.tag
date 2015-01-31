@@ -3,6 +3,7 @@
 <%@ attribute name="zdbID" type="java.lang.String"
               rtexprvalue="true" required="false" %>
 <%@ attribute name="editURL" type="java.lang.String" rtexprvalue="true" %>
+<%@ attribute name="editLinkText" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
@@ -34,7 +35,7 @@
         </c:if>
 
         <authz:authorize ifAnyGranted="root">
-            <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}"
+            <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" editLinkText="${editLinkText}" deleteURL="${deleteURL}"
                                          mergeURL="${mergeURL}" oboID="${oboID}" rtype="${rtype}"/>
         </authz:authorize>
         <authz:authorize ifNotGranted="root" ifAnyGranted="submit">

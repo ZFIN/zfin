@@ -162,7 +162,7 @@ public class MarkerGoEvidencePresentation {
                     return MarkerPresentation.getLink(morpholino);
                 } else if (accession.startsWith("ZDB-GENO-")) {
                     Genotype genotype = (Genotype) HibernateUtil.currentSession().get(Genotype.class, accession);
-                    return GenotypePresentation.getLink(genotype);
+                    return GenotypePresentation.getLink(genotype, false);
                 } else {
                     return inferredFrom;
                 }

@@ -7,6 +7,7 @@ import org.zfin.expression.Figure;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarker;
 import org.zfin.mapping.MappedMarkerImpl;
+import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.orthology.Orthologue;
 import org.zfin.profile.MarkerSupplier;
@@ -51,6 +52,8 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     private Set<DataNote> dataNotes;
     private Set<MarkerSupplier> suppliers;
     private String chromosome;
+    private Set<MarkerGoTermEvidence> goTermEvidence;
+
     // cashed attribute
     private transient List<Marker> markers;
     private Set<OrthologyNote> orthologyNotes;
@@ -573,5 +576,13 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
 
     public void setChromosome(String chromosome) {
         this.chromosome = chromosome;
+    }
+
+    public Set<MarkerGoTermEvidence> getGoTermEvidence() {
+        return goTermEvidence;
+    }
+
+    public void setGoTermEvidence(Set<MarkerGoTermEvidence> goTermEvidence) {
+        this.goTermEvidence = goTermEvidence;
     }
 }

@@ -68,9 +68,8 @@
     </table>
 
     <c:if test="${geneOntologyOnMarker.goTermCount>0}">
-        <a href="/${webdriverRoot}?MIval=aa-markergoview.apg&OID=${marker.zdbID}
+        <a href="/action/marker/marker-go-view/${marker.zdbID}
     ">GO Terms (all ${geneOntologyOnMarker.goTermCount})</a>
     </c:if>
-
 </zfin2:subsection>
 

@@ -101,6 +101,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
+	MarkerGoServiceIntegrationSpec.class,
         MarkerRepositoryTest.class,
         MarkerServiceTest.class,
         MarkerSoapDbTest.class,

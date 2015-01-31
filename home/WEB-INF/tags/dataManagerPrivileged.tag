@@ -4,6 +4,7 @@
 <%@ attribute name="zdbID" type="java.lang.String"
               rtexprvalue="true" required="false" %>
 <%@ attribute name="editURL" type="java.lang.String" rtexprvalue="true" %>
+<%@ attribute name="editLinkText" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
@@ -11,7 +12,12 @@
 
 <c:if test="${!empty editURL}">
     <td>
-        <a href="${editURL}" class="root">Edit</a>
+        <a href="${editURL}" class="root">
+            <c:choose>
+                <c:when test="${empty editLinkText}">Edit</c:when>
+                <c:otherwise>${editLinkText}</c:otherwise>
+            </c:choose>
+        </a>
     </td>
 </c:if>
 <c:if test="${!empty deleteURL

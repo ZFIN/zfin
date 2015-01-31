@@ -92,7 +92,7 @@ public class CreateAlternateTRTag extends TagSupport {
                 //if (newGroup)
                     newGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
                 LOG.debug("previousGroupBeanAttribute: " + previousGroupBeanAttribute);
-                LOG.debug("currentGroupBeanAttribute:" + currentGroupBeanAttribute);
+                LOG.debug("currentGroupBeanAttribute: " + currentGroupBeanAttribute);
             } catch (IllegalAccessException e) {
                 LOG.error(e);
             } catch (InvocationTargetException e) {

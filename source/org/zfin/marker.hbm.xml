@@ -153,6 +153,11 @@
             <one-to-many class="org.zfin.mapping.MappedMarker"/>
         </set>
 
+        <set name="goTermEvidence" lazy="true">
+            <key column="mrkrgoev_mrkr_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.MarkerGoTermEvidence"/>
+        </set>
+
         <!-- ToDo: This should be mapped as a many-to-one or even better part of a Gene class -->
         <set name="familyName" lazy="true" table="genedom_family_member">
             <key column="gfammem_mrkr_zdb_id"/>
