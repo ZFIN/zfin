@@ -7,7 +7,7 @@
             <th width="5%">Allele</th>
             <th width="7%">Type</th>
             <th width="10%">Affected Gene</th>
-            <th width="10%">Construct</th>
+            <th width="15%">Construct</th>
         </tr>
         <c:forEach var="feature" items="${features}" varStatus="loop">
             <tr class=${loop.index%2==0 ? "even" : "odd"}>
