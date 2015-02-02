@@ -32,6 +32,7 @@ import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
+import org.zfin.marker.presentation.MarkerGoServiceIntegrationSpec;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.PhenotypeServiceDBTest;
@@ -55,7 +56,6 @@ import org.zfin.sequence.reno.RenoRepositoryTest;
 import org.zfin.sequence.reno.presentation.RenoRedundancyCandidateControllerTest;
 import org.zfin.sequence.reno.presentation.SingleAssociatedGenesFromQueryTest;
 import org.zfin.sequence.reno.repository.SingleCandidateRepositoryTest;
-import org.zfin.sequence.repository.SequenceRepositorySpec;
 import org.zfin.uniquery.SequenceIdListTest;
 import org.zfin.webservice.MarkerSoapDbTest;
 import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
@@ -101,7 +101,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
-	MarkerGoServiceIntegrationSpec.class,
+	    MarkerGoServiceIntegrationSpec.class,
         MarkerRepositoryTest.class,
         MarkerServiceTest.class,
         MarkerSoapDbTest.class,
