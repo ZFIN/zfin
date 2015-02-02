@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/NCBIStartEnd &amp;&amp; ncbistartend.sh</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/NCBIStartEnd &amp;&amp; ./ncbistartend.sh</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
