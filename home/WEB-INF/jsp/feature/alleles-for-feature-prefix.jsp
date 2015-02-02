@@ -18,20 +18,50 @@
 <c:choose>
     <c:when test="${empty formBean.featureLabEntries}">
         <div style="color:gray;">
-        No features associated with this prefix at this time.
+            No features associated with this prefix at this time.
         </div>
     </c:when>
     <c:otherwise>
-
-        <ul>
-            <c:forEach var="featureLabEntry" items="${formBean.featureLabEntries}">
-                <li><zfin:link entity="${featureLabEntry.feature}"/>
-                    <c:if test="${!featureLabEntry.current && !empty featureLabEntry.sourceOrganization}">
-                        (<zfin:link entity="${featureLabEntry.sourceOrganization}"/>)
-                    </c:if>
-                </li>
+        <br/>
+        <table class="summary rowstripes">
+            <tr>
+                <th width="10%">Allele</th>
+                <th width="10%">Type</th>
+                <th width="10%">Affected Gene</th>
+                <th width="10%">Construct</th>
+                <th width="10%">Lab of Origin</th>
+            </tr>
+            <c:forEach var="feature" items="${formBean.featureLabEntries}" varStatus="loop">
+                <tr class=${loop.index%2==0 ? "even" : "odd"}>
+                    <td>
+                        <zfin:link entity="${feature.feature}"/>
+                    </td>
+                    <td>
+                            ${feature.feature.type.display}
+                    </td>
+                    <td>
+                        <c:forEach var="gene" items="${feature.feature.featureMarkerRelations}">
+                            <li style="list-style-type: none;">
+                                <c:if test="${gene.featureMarkerRelationshipType.affectedMarkerFlag eq 'true'}">
+                                    <a href="/${gene.marker.zdbID}"> <i>${gene.marker.abbreviation}</i></a>
+                                </c:if>
+                            </li>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="construct" items="${feature.feature.getConstructs()}">
+                            <li style="list-style-type: none;">
+                                <a href="/${construct.marker.zdbID}"> ${construct.marker.abbreviation}</a>
+                            </li>
+                        </c:forEach>
+                    </td>
+                    <td>
+                            <zfin:link entity="${feature.sourceOrganization}"/>
+                    </td>
+                </tr>
             </c:forEach>
-        </ul>
+        </table>
+
     </c:otherwise>
 
 </c:choose>
