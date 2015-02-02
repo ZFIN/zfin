@@ -26,16 +26,12 @@
                         </li>
                     </c:forEach>
                 </td>
-                <td><c:if test="${feature.type.display eq 'Transgenic Insertion'}">
-                    <c:forEach var="construct" items="${feature.featureMarkerRelations}">
-                        <c:if test="${construct.featureMarkerRelationshipType.name eq 'contains phenotypic sequence feature' || construct.featureMarkerRelationshipType.name eq 'contains innocuous sequence feature'}">
+                <td>
+                    <c:forEach var="construct" items="${feature.getConstructs()}">
                             <li style="list-style-type: none;">
                                 <a href="/${construct.marker.zdbID}"> ${construct.marker.abbreviation}</a>
                             </li>
-                        </c:if>
                     </c:forEach>
-                </c:if>
-
                 </td>
             </tr>
         </c:forEach>
