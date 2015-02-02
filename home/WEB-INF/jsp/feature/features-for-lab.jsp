@@ -7,7 +7,7 @@
             <th width="5%">Allele</th>
             <th width="7%">Type</th>
             <th width="10%">Affected Gene</th>
-            <th width="15%">Construct</th>
+            <th width="10%">Construct</th>
         </tr>
         <c:forEach var="feature" items="${features}" varStatus="loop">
             <tr class=${loop.index%2==0 ? "even" : "odd"}>
@@ -21,7 +21,7 @@
                     <c:forEach var="gene" items="${feature.featureMarkerRelations}">
                         <li style="list-style-type: none;">
                             <c:if test="${gene.featureMarkerRelationshipType.affectedMarkerFlag eq 'true'}">
-                                <a href="/${gene.marker.zdbID}"> ${gene.marker.abbreviation}</a>
+                                <a href="/${gene.marker.zdbID}"> <i>${gene.marker.abbreviation}</i></a>
                             </c:if>
                         </li>
                     </c:forEach>
