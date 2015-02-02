@@ -43,15 +43,8 @@ public class OntologyManagerServlet extends HttpServlet {
             thread.start();
         }
         LOG.info("Ontology Manager Thread started: ");
-        Path dir = ZfinProperties.getOntologyReloadStatusDirectory();
-        File file = dir.toFile();
-        if (!file.exists())
-            file.mkdir();
-        try {
-            new WatchOntologyRefresh(dir).processEvents();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        WatchOntologyDirectoryThread watchThread = new WatchOntologyDirectoryThread();
+        watchThread.start();
     }
 
     private void reLoadFormDatabase() {
@@ -62,6 +55,30 @@ public class OntologyManagerServlet extends HttpServlet {
         }
     }
 
+    private class WatchOntologyDirectoryThread extends Thread {
+
+        /**
+         * Reload the ontology cache: OntologyManager
+         */
+        public WatchOntologyDirectoryThread() {
+            super("Watch Ontology Reload Thread");
+            setDaemon(true);
+        }
+
+        @Override
+        public void run() {
+            Path dir = ZfinProperties.getOntologyReloadStatusDirectory();
+            File file = dir.toFile();
+            if (!file.exists())
+                file.mkdir();
+            try {
+                new WatchOntologyRefresh(dir).processEvents();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
     /**
      * Thread that does the ontology loading.
      */
