@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  */
-public class SequenceTargetingReagentLookupEntry implements Serializable, Comparable<SequenceTargetingReagentLookupEntry> {
+public class AntibodyLookupEntry implements Serializable, Comparable<AntibodyLookupEntry> {
     private String id;
     private String label;
     private String value;
@@ -33,7 +33,7 @@ public class SequenceTargetingReagentLookupEntry implements Serializable, Compar
         this.value = value;
     }
 
-    public int compareTo(SequenceTargetingReagentLookupEntry anotherSequenceTargetingReagentLookupEntry) {
-        return label.compareTo(anotherSequenceTargetingReagentLookupEntry.getLabel());
+    public int compareTo(AntibodyLookupEntry anotherAntibodyEntry) {
+        return label.compareTo(anotherAntibodyEntry.getLabel());
     }
 }

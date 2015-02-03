@@ -38,6 +38,8 @@ function confirmMerge(){
 
 jQuery(document).ready(function () {
     unspecifiedAllelesIgnored = true;
+    sequenceTargetingReagentsIgnored = true;
+    antibodiesIgnored = true;
     ncbiGeneIdsIgnored = true;
     uniGeneIdsIgnored = true;
     vegaIdsIgnored = true;
@@ -141,6 +143,8 @@ jQuery(document).ready(function () {
 
     jQuery('#sameUnspecifiedAllele').hide();
     jQuery('#renameUnspecifiedAllele').hide();
+    jQuery('#ignoreSTR').hide();
+    jQuery('#ignoreAntibody').hide();
     jQuery('#ignoreNCBIGeneId').hide();
     jQuery('#ignoreUniGeneId').hide();
     jQuery('#ignoreVegaId').hide();
@@ -204,6 +208,148 @@ var validateUnspecifiedAlleles = function(geneIDdelete, geneZdbIdMergedInto, gen
     checkUnspecifiedAllelesDone = 1;
 
     if (checkUnspecifiedAllelesDone == 1 && bothHavingUnspecifiedAllels == 0)
+        validateSTRs(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+};
+
+var validateSTRs = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+    var numberOfSTRs = 0;
+    var checkSTRsDone = 0;
+    sequenceTargetingReagentsIgnored = false;
+
+    jQuery.ajax(
+            {
+                url: "/action/marker/get-STR-for-gene?geneZdbID=" + geneIDdelete,
+                type: "GET",
+                success: function(data) {
+                    for (sequenceTargetingReagent in data) {
+                        numberOfSTRs++;
+                        if (numberOfSTRs == 1)
+                            jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following sequence targeting reagents:</h3>');
+
+
+                        jQuery('#validationSequenceTargetingReagentText').append("<div>"
+                                + "<a target='_blank' href='/action/marker/view/"+data[sequenceTargetingReagent].id+"'>"+data[sequenceTargetingReagent].label+"</a>"
+                                + "</div>");
+                    }
+
+                    if (numberOfSTRs > 0) {
+                        sequenceTargetingReagentsIgnored = false;
+
+                        jQuery('#mergedIntoGeneAbbrev').attr("disabled","disabled");
+
+                        jQuery.ajax(
+                                {
+                                    url: "/action/marker/get-STR-for-gene?geneZdbID=" + geneZdbIdMergedInto,
+                                    type: "GET",
+                                    success: function(data) {
+                                        var numberOfSTRsForGene2 = 0;
+                                        for (sequenceTargetingReagent in data) {
+                                            numberOfSTRsForGene2++;
+                                            if (numberOfSTRsForGene2 == 1)
+                                                jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following sequence targeting reagents:</h3>');
+
+                                            jQuery('#validationSequenceTargetingReagentText').append("<div>"
+                                                    + "<a target='_blank' href='/action/marker/view/"+data[sequenceTargetingReagent].id+"'>"+data[sequenceTargetingReagent].label+"</a>"
+                                                    + "</div>");
+                                        }
+                                        if (numberOfSTRsForGene2 == 0)
+                                            jQuery('#validationSequenceTargetingReagentText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no sequence targeting reagent.</h3>');
+
+                                        jQuery('#ignoreSTR').show();
+                                    },
+                                    error: function(data) {
+                                        alert('There was a problem with the second ajax call to get sequence targeting reagent data: ' + data);
+                                    }
+                                }
+                        );
+
+                    }   // end of if (numberOfSTRs > 0)
+
+                    else {
+                        sequenceTargetingReagentsIgnored = true;
+                    }
+
+                },
+                error: function(data) {
+                    alert('There was a problem with the first ajax call to get sequence targeting reagent data: ' + data);
+                }
+            }
+    );
+
+    checkSTRsDone = 1;
+
+    if (checkSTRsDone == 1)
+        validateAntibodies(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
+};
+
+var validateAntibodies = function(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto) {
+    var numberOfAntibodies = 0;
+    var checkAntibodiesDone = 0;
+    antibodiesIgnored = false;
+
+    jQuery.ajax(
+            {
+                url: "/action/marker/get-antibody-for-gene?geneZdbID=" + geneIDdelete,
+                type: "GET",
+                success: function(data) {
+                    for (antibody in data) {
+                        numberOfAntibodies++;
+                        if (numberOfAntibodies == 1)
+                            jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> has the following antibody:</h3>');
+
+
+                        jQuery('#validationAntibodyText').append("<div>"
+                                + "<a target='_blank' href='/action/marker/view/"+data[antibody].id+"'>"+data[antibody].label+"</a>"
+                                + "</div>");
+                    }
+
+                    if (numberOfAntibodies > 0) {
+                        antibodiesIgnored = false;
+
+                        jQuery('#mergedIntoGeneAbbrev').attr("disabled","disabled");
+
+                        jQuery.ajax(
+                                {
+                                    url: "/action/marker/get-antibody-for-gene?geneZdbID=" + geneZdbIdMergedInto,
+                                    type: "GET",
+                                    success: function(data) {
+                                        var numberOfAntibodiesForGene2 = 0;
+                                        for (antibody in data) {
+                                            numberOfAntibodiesForGene2++;
+                                            if (numberOfAntibodiesForGene2 == 1)
+                                                jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto + '">' + geneAbbrevMergedInto + '</a> has the following antibody:</h3>');
+
+                                            jQuery('#validationAntibodyText').append("<div>"
+                                                    + "<a target='_blank' href='/action/marker/view/"+data[antibody].id+"'>"+data[antibody].label+"</a>"
+                                                    + "</div>");
+                                        }
+                                        if (numberOfAntibodiesForGene2 == 0)
+                                            jQuery('#validationAntibodyText').append('<h3><a target="_blank" href="/action/marker/view/' + geneZdbIdMergedInto +'">' + geneAbbrevMergedInto + '</a> has no antibody.</h3>');
+
+                                        jQuery('#ignoreAntibody').show();
+                                    },
+                                    error: function(data) {
+                                        alert('There was a problem with the second ajax call to get antibody data: ' + data);
+                                    }
+                                }
+                        );
+
+                    }   // end of if (numberOfAntibodies > 0)
+
+                    else {
+                        antibodiesIgnored = true;
+                    }
+
+                },
+                error: function(data) {
+                    alert('There was a problem with the first ajax call to get antibody data: ' + data);
+                }
+            }
+    );
+
+    checkAntibodiesDone = 1;
+
+    if (checkAntibodiesDone == 1)
         validateNCBIgeneIds(geneIDdelete, geneZdbIdMergedInto, geneAbbrevMergedInto);
 };
 
@@ -512,7 +658,7 @@ var validateGeneWithTranscript = function(geneIDdelete, geneZdbIdMergedInto, gen
                                         jQuery('#ignoreTranscript').show();
                                     },
                                     error: function(data) {
-                                        alert('There was a problem with your the second ajax call to get transcript data: ' + data);
+                                        alert('There was a problem with the second ajax call to get transcript data: ' + data);
                                     }
                                 }
                         );
@@ -527,7 +673,7 @@ var validateGeneWithTranscript = function(geneIDdelete, geneZdbIdMergedInto, gen
 
                 },
                 error: function(data) {
-                    alert('There was a problem with your the first ajax call to get transcript data: ' + data);
+                    alert('There was a problem with the first ajax call to get transcript data: ' + data);
                 }
             }
     );
@@ -587,7 +733,7 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
                                         jQuery('#ignoreOrth').show();
                                     },
                                     error: function(data) {
-                                        alert('There was a problem with your the second ajax call to get orthology data: ' + data);
+                                        alert('There was a problem with the second ajax call to get orthology data: ' + data);
                                     }
                                 }
                         );
@@ -602,7 +748,7 @@ var validateGeneWithOrthology = function(geneIDdelete, geneZdbIdMergedInto, gene
 
                 },
                 error: function(data) {
-                    alert('There was a problem with your the first ajax call to get orthology data: ' + data);
+                    alert('There was a problem with the first ajax call to get orthology data: ' + data);
                 }
             }
     );
@@ -777,6 +923,23 @@ function ignoreUnspecifiedAlleles(formObj) {
     enableMerge();
 }
 
+function ignoreSTRs(formObj) {
+    sequenceTargetingReagentsIgnored = true;
+    jQuery('#validationSequenceTargetingReagentText').hide();
+    jQuery('#ignoreSTR').hide();
+
+    enableMerge();
+}
+
+
+function ignoreAntibodies(formObj) {
+    antibodiesIgnored = true;
+    jQuery('#validationAntibodyText').hide();
+    jQuery('#ignoreAntibody').hide();
+
+    enableMerge();
+}
+
 function ignoreNCBIgeneIds(formObj) {
     ncbiGeneIdsIgnored = true;
     jQuery('#validationNCBIgeneIdsText').hide();
@@ -834,7 +997,7 @@ function ignoreMappingInfo(formObj) {
 }
 
 function enableMerge() {
-    if (unspecifiedAllelesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && ensemblZv9IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored) {
+    if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && ensemblZv9IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored) {
         jQuery('#submitMerge').removeAttr('disabled');
     }
 }
@@ -862,6 +1025,14 @@ function enableMerge() {
     </form>
     <form id="renameUnspecifiedAllele">
         <input type="button" value="Rename Unspecified Allele And Related Genotypes" onclick="ignoreUnspecifiedAlleles(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the unspecified allele and its related genotypes with ${formBean.markerToDeleteViewString}, if any, will be renamed after the symbol of the gene retained.">
+    </form>
+    <div id="validationSequenceTargetingReagentText"></div>
+    <form id="ignoreSTR">
+        <input type="button" value="Ignore Sequence Targeting Reagent" onclick="ignoreSTRs(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the above sequence targeting reagents with ${formBean.markerToDeleteViewString} will be associated with the gene retained. The names of these sequence targeting reagents will need to be updated manually after the merge.">
+    </form>
+    <div id="validationAntibodyText"></div>
+    <form id="ignoreAntibody">
+        <input type="button" value="Ignore Antibody" onclick="ignoreAntibodies(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the above antibodies with ${formBean.markerToDeleteViewString} will be associated with the gene retained. The names of these antibodies will need to be updated manually after the merge.">
     </form>
     <div id="validationNCBIgeneIdsText"></div>
     <form id="ignoreNCBIGeneId">

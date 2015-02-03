@@ -16,6 +16,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MergeService;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
 import org.zfin.repository.RepositoryFactory;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Collections;
 
 /**
  * Note that this is only for merging markers and does not handle genotypes or features.
@@ -55,7 +57,7 @@ public class MergeMarkerController {
         }
     }
 
-    @RequestMapping(value = "/merge", method = RequestMethod.GET)
+    @RequestMapping( value = "/merge",method = RequestMethod.GET)
     protected String getView(
             Model model
             ,@RequestParam("zdbIDToDelete") String zdbIDToDelete
@@ -66,9 +68,9 @@ public class MergeMarkerController {
 
         Marker markerToDelete;
 
-        if (type.startsWith("ATB") || type.startsWith("GEN") || type.startsWith("MRP") || type.startsWith("TAL") || type.startsWith("CRI")) {
+        if (type.startsWith("ATB") || type.startsWith("GEN") || type.startsWith("MRP") || type.startsWith("TAL") || type.startsWith("CRI"))  {
 
-            markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete());
+            markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean .getZdbIDToDelete());
 
             formBean.setMarkerToDelete(markerToDelete);
             //        model.addAttribute("markerToDeleteId", markerToDelete.getZdbID());
@@ -77,27 +79,27 @@ public class MergeMarkerController {
         return "marker/merge-marker.page";
     }
 
-    @RequestMapping(value = "/merge", method = RequestMethod.POST)
+    @RequestMapping( value = "/merge",method = RequestMethod.POST)
     protected String mergeMarkers(
             Model model
-            , @ModelAttribute("formBean") MergeBean formBean
+            ,@ModelAttribute("formBean") MergeBean formBean
 //            ,@RequestParam("getZdbIDToDelete") String zdbIDToDelete
 //            ,@RequestParam("markerToMergeIntoViewString") String markerToMergeIntoViewString
-            , BindingResult result
+            ,BindingResult result
     ) throws Exception {
         Marker markerTobeMerged = formBean.getMarkerToDelete();
         if (markerTobeMerged == null) {
-            markerTobeMerged = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete());
+            markerTobeMerged = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean .getZdbIDToDelete());
             formBean.setMarkerToDelete(markerTobeMerged);
         }
         if (markerTobeMerged.isInTypeGroup(Marker.TypeGroup.ATB) || markerTobeMerged.isInTypeGroup(Marker.TypeGroup.GENE) || markerTobeMerged.isInTypeGroup(Marker.TypeGroup.MRPHLNO)) {
-            Marker markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete());
+            Marker markerToDelete = RepositoryFactory.getMarkerRepository().getMarkerByID(formBean.getZdbIDToDelete()) ;
             formBean.setMarkerToDelete(markerToDelete);
             // get abbrev
             Marker markerToMergeInto = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(formBean.getMarkerToMergeIntoViewString());
             formBean.setMarkerToMergeInto(markerToMergeInto);
 
-            if (markerToMergeInto == null && markerTobeMerged.isInTypeGroup(Marker.TypeGroup.ATB)) {
+            if (markerToMergeInto == null && markerTobeMerged.isInTypeGroup(Marker.TypeGroup.ATB) ) {
                 Antibody antibodyToMergeInto = RepositoryFactory.getAntibodyRepository().getAntibodyByName(formBean.getMarkerToMergeIntoViewString());
                 if (antibodyToMergeInto == null) {
                     result.rejectValue(null, "nocode", new String[]{formBean.getMarkerToMergeIntoViewString()}, "Bad antibody name [{0}]");
@@ -105,10 +107,10 @@ public class MergeMarkerController {
             }
 
             if (markerTobeMerged.isInTypeGroup(Marker.TypeGroup.ATB))
-                validator.validate(formBean, result);
+                validator.validate(formBean,result);
 
-            if (result.hasErrors()) {
-                return getView(model, formBean.getZdbIDToDelete(), formBean, result);
+            if(result.hasErrors()){
+                return getView(model,formBean.getZdbIDToDelete(),formBean,result);
             }
 
 
@@ -119,14 +121,14 @@ public class MergeMarkerController {
             } catch (Exception e) {
                 logger.error("Error merging marker [" + markerToDelete + "] into [" + markerToMergeInto + "]", e);
                 HibernateUtil.rollbackTransaction();
-                result.reject("no lookup", "Error merging marker [" + markerToDelete + "] into [" + markerToMergeInto + "]:\n" + e);
-                return getView(model, formBean.getZdbIDToDelete(), formBean, result);
+                result.reject("no lookup", "Error merging marker [" + markerToDelete + "] into [" + markerToMergeInto + "]:\n"+ e);
+                return getView(model,formBean.getZdbIDToDelete(),formBean,result);
             }
 //        finally {
 //            HibernateUtil.rollbackTransaction();
 //        }
 
-            model.addAttribute(LookupStrings.FORM_BEAN, formBean);
+            model.addAttribute(LookupStrings.FORM_BEAN, formBean );
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
         }
 
@@ -153,7 +155,7 @@ public class MergeMarkerController {
     public
     @ResponseBody
     List<SequenceTargetingReagentLookupEntry> lookupMOToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
-        List<SequenceTargetingReagentLookupEntry> foundMOlist = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagentForString(lookupString, "MRPHLNO");
+        List<SequenceTargetingReagentLookupEntry> foundMOlist = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagentForString(lookupString,"MRPHLNO");
         List<SequenceTargetingReagentLookupEntry> processedFoundMOlist = new ArrayList<>();
         for (SequenceTargetingReagentLookupEntry mo : foundMOlist) {
             if (!mo.getId().equals(zdbId)) {
@@ -168,7 +170,7 @@ public class MergeMarkerController {
     public
     @ResponseBody
     List<SequenceTargetingReagentLookupEntry> lookupTalenToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
-        List<SequenceTargetingReagentLookupEntry> foundTALENlist = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagentForString(lookupString, "TALEN");
+        List<SequenceTargetingReagentLookupEntry> foundTALENlist = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagentForString(lookupString,"TALEN");
         List<SequenceTargetingReagentLookupEntry> processedFoundTALENlist = new ArrayList<>();
         for (SequenceTargetingReagentLookupEntry talen : foundTALENlist) {
             if (!talen.getId().equals(zdbId)) {
@@ -183,7 +185,7 @@ public class MergeMarkerController {
     public
     @ResponseBody
     List<SequenceTargetingReagentLookupEntry> lookupCrisprToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
-        List<SequenceTargetingReagentLookupEntry> foundCRISPRlist = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagentForString(lookupString, "CRISPR");
+        List<SequenceTargetingReagentLookupEntry> foundCRISPRlist = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagentForString(lookupString,"CRISPR");
         List<SequenceTargetingReagentLookupEntry> processedFoundCRISPRlist = new ArrayList<>();
         for (SequenceTargetingReagentLookupEntry crispr : foundCRISPRlist) {
             if (!crispr.getId().equals(zdbId)) {
@@ -307,5 +309,43 @@ public class MergeMarkerController {
             unspecifiedAllele = allele;
         }
         return unspecifiedAllele;
+    }
+
+    @RequestMapping(value = "/get-STR-for-gene", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<SequenceTargetingReagentLookupEntry> getSTRforGene(@RequestParam("geneZdbID") String geneZdbID) {
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        Marker gene = mr.getMarkerByID(geneZdbID);
+        Set<RelatedMarker> sequenceTargetingReagents = MarkerService.getRelatedMarkers(gene, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        List<SequenceTargetingReagentLookupEntry> sequenceTargetingReagentEntries = new ArrayList<>();
+        for (RelatedMarker str : sequenceTargetingReagents) {
+            SequenceTargetingReagentLookupEntry sequenceTargetingReagentEntry = new SequenceTargetingReagentLookupEntry();
+            sequenceTargetingReagentEntry.setId(str.getMarker().getZdbID());
+            sequenceTargetingReagentEntry.setLabel(str.getMarker().getAbbreviation());
+            sequenceTargetingReagentEntry.setValue(str.getMarker().getAbbreviation());
+            sequenceTargetingReagentEntries.add(sequenceTargetingReagentEntry);
+        }
+        Collections.sort(sequenceTargetingReagentEntries);
+        return sequenceTargetingReagentEntries;
+    }
+
+    @RequestMapping(value = "/get-antibody-for-gene", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<AntibodyLookupEntry> getAntibodyforGene(@RequestParam("geneZdbID") String geneZdbID) {
+        MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+        Marker gene = mr.getMarkerByID(geneZdbID);
+        List<MarkerRelationshipPresentation> relatedAntibodies = mr.getRelatedMarkerDisplayForTypes(gene, true, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY);
+        List<AntibodyLookupEntry> antibodyLookupEntries = new ArrayList<>();
+        for (MarkerRelationshipPresentation antibody : relatedAntibodies) {
+            AntibodyLookupEntry antibodyLookupEntry = new AntibodyLookupEntry();
+            antibodyLookupEntry.setId(antibody.getZdbId());
+            antibodyLookupEntry.setLabel(antibody.getAbbreviation());
+            antibodyLookupEntry.setValue(antibody.getAbbreviation());
+            antibodyLookupEntries.add(antibodyLookupEntry);
+        }
+        Collections.sort(antibodyLookupEntries);
+        return antibodyLookupEntries;
     }
 }
