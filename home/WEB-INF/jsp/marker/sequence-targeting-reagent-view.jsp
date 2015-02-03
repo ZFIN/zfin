@@ -25,6 +25,43 @@
 
 <zfin2:disruptorInfo marker="${disruptor}" markerBean="${formBean}" previousNames="${formBean.previousNames}"/>
 
+<%--// EXPRESSION --%>
+<div class="summary">
+    <b>GENE EXPRESSION</b>
+    <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
+    <br/>
+    <b>Gene expression in ${formBean.marker.name}</b>
+    <div id="expression-short-version" class="summary">
+        <c:choose>
+            <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+                <zfin2:expressionData sequenceTargetingReagentID="${disruptor.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
+                                      showCondition="false" />
+                <c:if test="${fn:length(formBean.expressionDisplays) > 5}">
+                    <div>
+                        <a href="javascript:expandExpression()">
+                            <img src="/images/darrow.gif" alt="expand" border="0">
+                            Show all</a>
+                        ${fn:length(formBean.expressionDisplays)} expressed genes
+                    </div>
+                </c:if>
+            </c:when>
+            <c:otherwise>
+                <span class="no-data-tag">No data available</span>
+            </c:otherwise>
+        </c:choose>
+    </div>
+    <div style="display:none" id="expression-long-version" class="summary">
+        <c:if test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+            <zfin2:expressionData sequenceTargetingReagentID="${disruptor.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="${fn:length(formBean.expressionDisplays)}"
+                                  showCondition="false" />
+        </c:if>
+        <div>
+            <a href="javascript:collapseExpression()">
+                <img src="/images/up.gif" alt="expand" title="Show first 5 expressed genes" border="0">
+                Show first</a> 5 expressed genes
+        </div>
+    </div>
+</div>
 
 <%--// PHENOTYPE --%>
 <div class="summary">
@@ -121,5 +158,15 @@
     function collapsePhenotype() {
         document.getElementById('phenotype-short-version').style.display = 'block';
         document.getElementById('phenotype-long-version').style.display = 'none';
+    }
+
+    function expandExpression() {
+        document.getElementById('expression-short-version').style.display = 'none';
+        document.getElementById('expression-long-version').style.display = 'block';
+    }
+
+    function collapseExpression() {
+        document.getElementById('expression-short-version').style.display = 'block';
+        document.getElementById('expression-long-version').style.display = 'none';
     }
 </script>

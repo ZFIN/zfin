@@ -10,6 +10,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class GenotypeExpressionSummaryController   {
 
         GenotypeExperiment genox = RepositoryFactory.getMutantRepository().getGenotypeExperiment(genoZdbID, expZdbID);
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
-        
+
         //I would prefer the record not found show both ids...maybe it would be best if we just used genox?
         if (genox == null) {
             model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
@@ -114,5 +115,34 @@ public class GenotypeExpressionSummaryController   {
 
     }
 
+    @RequestMapping(value = { "/sequence-targeting-reagent-expression-figure-summary" } )
+    protected String getSequenceTargetingReagentExpressionFigureSummary(@RequestParam String strZdbID,
+                                                        @RequestParam String geneZdbID,
+                                                        @RequestParam boolean imagesOnly,
+                                                        Model model) {
+
+
+        SequenceTargetingReagent sequenceTargetingReagent = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(strZdbID);
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
+
+        if (sequenceTargetingReagent == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, strZdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+        }
+
+        if (gene == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+        }
+
+        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaSTR(sequenceTargetingReagent, gene, imagesOnly);
+        model.addAttribute("expressionCriteria", expressionCriteria);
+        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
+        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, sequenceTargetingReagent.getName() + " Expression Figure Summary");
+        return "expression/genotype-figure-summary.page";
+
+    }
 
 }

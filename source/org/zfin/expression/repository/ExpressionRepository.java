@@ -176,7 +176,7 @@ public interface ExpressionRepository {
      * @param figureID      figure ID
      * @return list of experiment figure stages.
      */
-     List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
+    List<ExperimentFigureStage> getExperimentFigureStagesByGeneAndFish(String publicationID, String geneZdbID, String fishID, String figureID);
 
 
     /**
@@ -300,6 +300,20 @@ public interface ExpressionRepository {
      * @return list of expression results
      */
     List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
+
+    /**
+     * Retrieve all expression results for a given Sequenec Targeting Reagent
+     *
+     * @param sequenceTargetingReagent sequenceTargetingReagent
+     * @return list of expression results
+     */
+    List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
+
+    List<String> getExpressionFigureIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
+
+    List<String> getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene (SequenceTargetingReagent sequenceTargetingReagent, Marker expressedGene);
+
+    List<String> getExpressionPublicationIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent);
 
     List<GenericTerm> getWildTypeAnatomyExpressionForMarker(String zdbID);
 

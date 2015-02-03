@@ -1,16 +1,23 @@
 package org.zfin.marker.presentation;
 
 import org.apache.log4j.Logger;
+import org.zfin.expression.Experiment;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResultTermComparator;
+import org.zfin.expression.Figure;
+import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.MarkerSupplier;
+import org.zfin.publication.Publication;
 import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.blast.Database;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  */
@@ -27,6 +34,13 @@ public class DisruptorBean extends MarkerBean{
     private List<Genotype> genotypes;
     private List<GenotypeInformation> genotypeData;
     private List<PhenotypeDisplay> phenotypeDisplays;
+    private List<ExpressionResult> expressionResults;
+
+    private List<String> expressionFigureIDs;
+
+    private List<String> expressionPublicationIDs;
+
+    private List<ExpressionDisplay> expressionDisplays;
 
     public Set<Marker> getTargetGenes() {
         return targetGenes;
@@ -122,6 +136,142 @@ public class DisruptorBean extends MarkerBean{
 
     public void setPhenotypeDisplays(List<PhenotypeDisplay> phenotypeDisplays) {
         this.phenotypeDisplays = phenotypeDisplays;
+    }
+
+    public List<ExpressionResult> getExpressionResults() {
+        return expressionResults;
+    }
+
+    public void setExpressionResults(List<ExpressionResult> expressionResults) {
+        this.expressionResults = expressionResults;
+    }
+
+    public List<String> getExpressionFigureIDs() {
+        return expressionFigureIDs;
+    }
+
+    public void setExpressionFigureIDs(List<String> expressionFigureIDs) {
+        this.expressionFigureIDs = expressionFigureIDs;
+    }
+
+    public List<String> getExpressionPublicationIDs() {
+        return expressionPublicationIDs;
+    }
+
+    public void setExpressionPublicationIDs(List<String> expressionPublicationIDs) {
+        this.expressionPublicationIDs = expressionPublicationIDs;
+    }
+
+    public List<ExpressionDisplay> getExpressionDisplays() {
+        if (expressionResults == null || expressionResults.size() == 0)
+            return null;
+
+        if (expressionDisplays == null)
+            createExpressionDisplays();
+
+        return expressionDisplays;
+    }
+
+    public void setExpressionDisplays(List<ExpressionDisplay> expressionDisplays) {
+        this.expressionDisplays = expressionDisplays;
+    }
+
+    public int getNumberOfExpressionDisplays() {
+        if (expressionResults == null || expressionResults.size() == 0) {
+            return 0;
+        } else {
+            if (expressionDisplays == null)
+                createExpressionDisplays();
+
+            if (expressionDisplays == null)
+                return 0;
+            else
+                return expressionDisplays.size();
+        }
+    }
+
+    /**
+     * Create a list of expressionDisplay objects organized by expressed gene.
+     */
+    private void createExpressionDisplays() {
+        if (expressionResults == null || expressionResults.size() == 0 || expressionFigureIDs == null || expressionFigureIDs.size() == 0 || expressionPublicationIDs == null || expressionPublicationIDs.size() == 0)
+            return;
+
+        // a map of zdbIDs of expressed genes as keys and display objects as values
+        Map<String, ExpressionDisplay> map = new HashMap<String, ExpressionDisplay>();
+
+        String keySTR = marker.getZdbID();
+
+        for (ExpressionResult xpResult : expressionResults) {
+            Marker expressedGene = xpResult.getExpressionExperiment().getGene();
+            if (expressedGene != null) {
+                Experiment exp = xpResult.getExpressionExperiment().getGenotypeExperiment().getExperiment();
+
+                String key = keySTR + expressedGene.getZdbID();
+
+                Set<Figure> figs = xpResult.getFigures();
+                Set<Figure> qualifiedFigures = new HashSet<Figure>();
+
+                for (Figure fig : figs)  {
+                    if (expressionFigureIDs.contains(fig.getZdbID())) {
+                        qualifiedFigures.add(fig);
+                    }
+                }
+
+                GenericTerm term = xpResult.getSuperTerm();
+                Publication pub = xpResult.getExpressionExperiment().getPublication();
+
+                ExpressionDisplay xpDisplay;
+                // if the key not in the map, instantiate a display object and add it to the map
+                // otherwise, get the display object from the map
+                if (!map.containsKey(key)) {
+                    xpDisplay = new ExpressionDisplay(expressedGene);
+                    xpDisplay.setExpressionResults(new ArrayList<ExpressionResult>());
+                    xpDisplay.setExperiment(exp);
+                    xpDisplay.setExpressionTerms(new HashSet<GenericTerm>());
+
+                    xpDisplay.getExpressionResults().add(xpResult);
+                    xpDisplay.getExpressionTerms().add(term);
+
+                    xpDisplay.setExpressedGene(expressedGene);
+
+                    xpDisplay.setFigures(new HashSet<Figure>());
+                    xpDisplay.getFigures().addAll(qualifiedFigures);
+
+                    xpDisplay.setPublications(new HashSet<Publication>());
+                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                      xpDisplay.getPublications().add(pub);
+
+                      if (!xpDisplay.noFigureOrFigureWithNoLabel()) {
+                          map.put(key, xpDisplay);
+                      }
+                    }
+                } else {
+                    xpDisplay = map.get(key);
+
+                    if (!xpDisplay.getExpressionTerms().contains(term)) {
+                        xpDisplay.getExpressionResults().add(xpResult);
+                        xpDisplay.getExpressionTerms().add(term);
+                    }
+
+                    Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
+
+                    xpDisplay.getFigures().addAll(qualifiedFigures);
+                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                        xpDisplay.getPublications().add(pub);
+                    }
+                }
+
+            }
+        }
+
+        expressionDisplays = new ArrayList<ExpressionDisplay>(map.size());
+
+        if (map.values().size() > 0) {
+            expressionDisplays.addAll(map.values());
+            Collections.sort(expressionDisplays);
+        }
+
     }
 }
 

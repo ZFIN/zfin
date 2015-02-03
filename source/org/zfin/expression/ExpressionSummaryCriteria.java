@@ -5,6 +5,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 
@@ -15,6 +16,7 @@ public class ExpressionSummaryCriteria {
     private GenotypeExperiment genotypeExperiment;
     private Genotype genotype;
     private Antibody antibody;
+    private SequenceTargetingReagent sequenceTargetingReagent;
     private PostComposedEntity entity;
     private Term singleTermEitherPosition;
     private DevelopmentStage start;
@@ -149,5 +151,13 @@ public class ExpressionSummaryCriteria {
 
     public void setChemicalEnvironment(boolean chemicalEnvironment) {
         isChemicalEnvironment = chemicalEnvironment;
+    }
+
+    public SequenceTargetingReagent getSequenceTargetingReagent() {
+        return sequenceTargetingReagent;
+    }
+
+    public void setSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+        this.sequenceTargetingReagent = sequenceTargetingReagent;
     }
 }

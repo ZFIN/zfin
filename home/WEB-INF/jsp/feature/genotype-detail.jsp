@@ -13,6 +13,16 @@
         open(url, "Description", "toolbar=yes,scrollbars=yes,resizable=yes");
     }
 
+    function expandExpression() {
+        document.getElementById('expression-short-version').style.display = 'none';
+        document.getElementById('expression-long-version').style.display = 'block';
+    }
+
+    function collapseExpression() {
+        document.getElementById('expression-short-version').style.display = 'block';
+        document.getElementById('expression-long-version').style.display = 'none';
+    }
+
 </script>
 
 <zfin2:dataManager zdbID="${formBean.genotype.zdbID}" rtype="genotype"/>
@@ -272,98 +282,36 @@
             <c:if test="${!loop.last}">,&nbsp;</c:if>
         </c:forEach>
     </c:if> </b>
-    <c:choose>
-        <c:when test="${formBean.numberOfExpressionDisplays > 0 }">
-            <table width="100%" class="summary rowstripes">
-                <tbody>
-                <tr>
-                    <th width="16%">
-                        Expressed Gene
-                    </th>
-                    <th width="32%">
-                        Structure
-                    </th>
-                    <th width="17%">
-                        Conditions
-                    </th>
-                    <th width="35%">
-                        Figures
-                    </th>
-                </tr>
-                <c:forEach var="xp" items="${formBean.expressionDisplays}" varStatus="loop" end="4">
-                    <zfin:alternating-tr loopName="loop"
-                                         groupBeanCollection="${formBean.expressionDisplays}"
-                                         groupByBean="expressedGene">
-                        <td valign="top">
-                            <zfin:groupByDisplay loopName="loop"
-                                                 groupBeanCollection="${formBean.expressionDisplays}"
-                                                 groupByBean="expressedGene">
-                                <zfin:link entity="${xp.expressedGene}"/>
-                            </zfin:groupByDisplay>
-                        </td>
-                        <td valign="top">
-                            <zfin2:toggledPostcomposedList entities="${xp.expressionResults}" maxNumber="3"
-                                                           id="${xp.expressedGene.zdbID}"
-                                                           numberOfEntities="${fn:length(xp.expressionResults)}"/>
-                        </td>
-                        <td valign="top">
-                            <zfin:link entity="${xp.experiment}"/>
-                        </td>
-                        <td valign="top">
-                            <c:choose>
-                                <c:when test="${(xp.numberOfFigures >1) && !xp.experiment.standard && !xp.experiment.chemical}">
-                                    <a href='/action/expression/genotype-figure-summary?genoZdbID=${formBean.genotype.zdbID}&expZdbID=${xp.experiment.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                            ${xp.numberOfFigures} figures</a>
-                                </c:when>
-                                <c:when test="${(xp.numberOfFigures >1) && xp.experiment.standard && !xp.experiment.chemical}">
-                                    <a href='/action/expression/genotype-figure-summary-standard?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                            ${xp.numberOfFigures} figures</a>
-                                </c:when>
-                                <c:when test="${(xp.numberOfFigures >1) && !xp.experiment.standard && xp.experiment.chemical}">
-                                    <a href='/action/expression/genotype-figure-summary-chemical?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                            ${xp.numberOfFigures} figures</a>
-                                </c:when>
-                                <c:otherwise>
-                                    <a href='/${xp.singleFigure.zdbID}'>
-                                        <zfin2:figureOrTextOnlyLink figure="${xp.singleFigure}"
-                                                                    integerEntity="${xp.numberOfFigures}"/></a>
-                                </c:otherwise>
-                            </c:choose>
-                            <zfin2:showCameraIcon hasImage="${xp.imgInFigure}"/> from
-                            <c:choose>
-                                <c:when test="${xp.numberOfPublications > 1 }">
-                                    ${xp.numberOfPublications} publications
-                                </c:when>
-                                <c:otherwise>
-                                    <zfin:link entity="${xp.singlePublication}"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                    </zfin:alternating-tr>
-                </c:forEach>
-
-                </tbody>
-            </table>
-
-            <c:if test="${formBean.numberOfExpressionDisplays > 5}">
-                <table width="100%">
-                    <tbody>
-                    <tr align="left">
-                        <td>
-                            Show all <a
-                                href="/action/genotype/show_all_expression?genoID=${formBean.genotype.zdbID}">${formBean.totalNumberOfExpressedGenes}&nbsp;expressed
-                            genes</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </c:if>
-        </c:when>
-
-        <c:otherwise>
-            <br>No data available</br>
-        </c:otherwise>
-    </c:choose>
+    <div id="expression-short-version" class="summary">
+        <c:choose>
+            <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+                <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
+                                      showCondition="true" />
+                <c:if test="${fn:length(formBean.expressionDisplays) > 5}">
+                    <div>
+                        <a href="javascript:expandExpression()">
+                            <img src="/images/darrow.gif" alt="expand" border="0">
+                            Show all</a>
+                        ${formBean.totalNumberOfExpressedGenes} expressed genes
+                    </div>
+                </c:if>
+            </c:when>
+            <c:otherwise>
+                <span class="no-data-tag">No data available</span>
+            </c:otherwise>
+        </c:choose>
+    </div>
+    <div style="display:none" id="expression-long-version" class="summary">
+        <c:if test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+            <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="${fn:length(formBean.expressionDisplays)}"
+                                  showCondition="true" />
+        </c:if>
+        <div>
+            <a href="javascript:collapseExpression()">
+                <img src="/images/up.gif" alt="expand" title="Show first 5 expressed genes" border="0">
+                Show first</a> 5 expressed genes
+        </div>
+    </div>
 </div>
 
 <div class="summary">

@@ -9,8 +9,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.database.InformixUtil;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionSummaryCriteria;
+import org.zfin.expression.FigureService;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -47,7 +53,7 @@ public class DisruptorViewController {
         databases = referenceDatabase.getOrderedRelatedBlastDB();
     }
 
-    @RequestMapping(value = "/disruptor/view/{zdbID}")
+    @RequestMapping(value = "/marker/view/{zdbID}")
     public String getView(
             Model model
             , @RequestParam("zdbID") String zdbID
@@ -81,7 +87,11 @@ public class DisruptorViewController {
         } else {
             List<PhenotypeStatement> phenoStatements = new ArrayList<>();
             for (GenotypeFigure genoFig : genotypeFigures) {
-                phenoStatements.addAll(genoFig.getPhenotypeExperiment().getPhenotypeStatements());
+			    if (genoFig.getPhenotypeExperiment() != null) {
+                    if (genoFig.getPhenotypeExperiment().getPhenotypeStatements() != null)  {
+                          phenoStatements.addAll(genoFig.getPhenotypeExperiment().getPhenotypeStatements());
+					}
+				}
             }
             disruptorBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenoStatements,"fish"));
         }
@@ -102,6 +112,14 @@ public class DisruptorViewController {
                 disruptorBean.setGenotypeData(genoData);
             }
         }
+
+        // Expression data
+        List<ExpressionResult> strExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsBySequenceTargetingReagent(disruptor);
+        disruptorBean.setExpressionResults(strExpressionResults);
+        List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagent(disruptor);
+        disruptorBean.setExpressionFigureIDs(expressionFigureIDs);
+        List<String> expressionPublicationIDs = RepositoryFactory.getExpressionRepository().getExpressionPublicationIDsBySequenceTargetingReagent(disruptor);
+        disruptorBean.setExpressionPublicationIDs(expressionPublicationIDs);
 
         // add sequence
         //disruptorBean.setSequences(markerRepository.getMarkerSequences(disruptor));
@@ -131,7 +149,7 @@ public class DisruptorViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, disruptorBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, disruptorType + ": " + disruptor.getAbbreviation());
 
-        return "marker/disruptor-view.page";
+        return "marker/sequence-targeting-reagent-view.page";
     }
 
     @RequestMapping(value = "/call-regen-genox", method = RequestMethod.GET)

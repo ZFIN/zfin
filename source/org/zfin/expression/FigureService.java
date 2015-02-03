@@ -7,6 +7,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -58,6 +59,24 @@ public class FigureService {
     }
 
     /**
+     * This method (parameter set) will be used for str expression display
+     *
+     * @param str         SequenceTargetingReagent
+     * @param gene         gene
+     * @param withImgsOnly require that figures joined in have images
+     * @return ExpressionSummaryCriteria object
+     */
+    public static ExpressionSummaryCriteria createExpressionCriteriaSTR(SequenceTargetingReagent str, Marker gene, boolean withImgsOnly) {
+        //assumed by the method title - we never want to do everything in the genotype *except* standard..
+
+        ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
+        criteria.setSequenceTargetingReagent(str);
+        criteria.setGene(gene);
+        criteria.setWithImagesOnly(withImgsOnly);
+        return criteria;
+    }
+
+    /**
      * This method (parameter set) will be used for genotype expression display of chemical envs
      *
      * @param geno         genotype
@@ -90,7 +109,17 @@ public class FigureService {
         Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
         List<Figure> figures;
 
-        figures = expressionRepository.getFigures(expressionCriteria);
+        if (expressionCriteria.getSequenceTargetingReagent() != null) {
+            List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene(expressionCriteria.getSequenceTargetingReagent(), expressionCriteria.getGene());
+            figures = new ArrayList<Figure>();
+            for (String figId : expressionFigureIDs) {
+                Figure fig = RepositoryFactory.getPublicationRepository().getFigureByID(figId);
+                figures.add(fig);
+            }
+
+        } else {
+            figures = expressionRepository.getFigures(expressionCriteria);
+        }
 
         for (Figure figure : figures) {
 

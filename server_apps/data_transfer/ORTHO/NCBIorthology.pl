@@ -6,7 +6,7 @@
 # ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz
 # ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Invertebrates/Drosophila_melanogaster.gene_info.gz
 # The script then parses data in the above files and store related data in a series of data structures and then compare data stored at ZFIN to decide what
-# should be updated. Updating the orthology name would be done automatically by calling updateOrthologyNames.sql. Report of zebrafish names that may be updated 
+# should be updated. Updating the orthology name would be done automatically by calling updateOrthologyNames.sql. Report of zebrafish names that may be updated
 # is generated and emailed to Ken, who will update the zebrafish names in place on the report. Then that report will be used by another script, updateZebrafishGeneNames.pl.
 
 use DBI;
@@ -72,12 +72,12 @@ $ctAlready = 0;
 %zdbGeneIdsAlreadyExamined = ();
 
 foreach $line (@linesAlreadyDone) {
-       
+
   if ($line =~ m/(ZDB\-GENE\-\d{6}\-\d+)\s+([a-zA-Z0-9_]+)/) {
       $zdbGeneIdsAlreadyExamined{$1} = $2;
-      $ctAlready++; 
-  } 
-  
+      $ctAlready++;
+  }
+
 }
 
 # Use the following 3 hashes to store the human, mouse and fly gene names parsed from NCBI data files
@@ -86,19 +86,19 @@ foreach $line (@linesAlreadyDone) {
 # key: human gene NCBI ID
 # value: human gene name
 
-%NCBIidsAndNamesHuman = (); 
+%NCBIidsAndNamesHuman = ();
 
 # %NCBIidsAndNamesMouse
 # key: mouse gene NCBI ID
 # value: mouse gene name
 
-%NCBIidsAndNamesMouse = (); 
+%NCBIidsAndNamesMouse = ();
 
 # %NCBIidsAndNamesFly
 # key: fly gene NCBI ID
 # value: fly gene name
 
-%NCBIidsAndNamesFly = (); 
+%NCBIidsAndNamesFly = ();
 
 
 open (NCBI, "Homo_sapiens.gene_info") ||  die "Cannot open Homo_sapiens.gene_info : $!\n";
@@ -107,16 +107,16 @@ $ctLines = $ctHumanGenes = $ctMouseGenes = $ctFlyGenes = 0;
 
 while (<NCBI>) {
   chomp;
-  
+
   @fieldsNCBI = split("\t");
 
   $taxId = $fieldsNCBI[0];
-    
+
   ## excluding species other than human, mouse, fly and the documentation lines
   next if $taxId ne "9606" and $taxId ne "10090" and $taxId ne "7227";
-  
+
   $ctLines++;
-  
+
   ## human gene info
   if ($taxId eq "9606") {
     $humanNCBIgeneID = $fieldsNCBI[1];
@@ -131,7 +131,7 @@ while (<NCBI>) {
     }
     $ctHumanGenes++;
   }
-  
+
   ## mouse gene info
   if ($taxId eq "10090") {
     $mouseNCBIgeneID = $fieldsNCBI[1];
@@ -158,10 +158,10 @@ while (<NCBI>) {
         } else {
             print "\nProblematic fly orthologue data: $_\n\n";
         }
-    }    
+    }
     $ctFlyGenes++;
-  }  
-      
+  }
+
 }
 
 print "\ntotal number of lines parsed: $ctLines\nnumber of human genes: $ctHumanGenes\nnumber of mouse genes: $ctMouseGenes  \nnumber of fly genes: $ctFlyGenes\n\n";
@@ -175,12 +175,12 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
+$dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 $sqlGetZFgeneNamesByHumanAndMouseOrth =
-'select distinct organism,ortho_name,ortho_abbrev,dblink_acc_num,c_gene_id,mrkr_abbrev,mrkr_name ' . 
-  'from db_link,orthologue,marker ' . 
+'select distinct organism,ortho_name,ortho_abbrev,dblink_acc_num,c_gene_id,mrkr_abbrev,mrkr_name ' .
+  'from db_link,orthologue,marker ' .
  'where dblink_fdbcont_zdb_id in ("ZDB-FDBCONT-040412-27","ZDB-FDBCONT-040412-28","ZDB-FDBCONT-040412-23") ' .
    'and zdb_id = dblink_linked_recid ' .
    'and c_gene_id = mrkr_zdb_id ' .
@@ -204,14 +204,14 @@ $cur->bind_columns(\$organism,\$orthoName,\$orthoAbbrev,\$ncbiID,\$zdbGeneId,\$z
 %symbolsZFgene = ();
 
 # %choppedNames - for zebrafish gene names with last letter chopped
-# in many cases, there are two(2) copies of zebrafish genes 
+# in many cases, there are two(2) copies of zebrafish genes
 # key: ZF gene ZDB ID
 # value: ZF gene name with last letter chopped
 
 %choppedNames = ();
 
-# %lastLetters - for last letters of zebrafish gene names 
-# in many cases, there are two(2) copies of zebrafish genes 
+# %lastLetters - for last letters of zebrafish gene names
+# in many cases, there are two(2) copies of zebrafish genes
 # key: ZF gene ZDB ID
 # value: last letter of ZF gene name
 
@@ -283,15 +283,15 @@ while ($cur->fetch()) {
 $ct++;
    $namesZFgene{$zdbGeneId} = $zdbGeneName;
    $symbolsZFgene{$zdbGeneId} = $zdbGeneAbbrev;
-   
+
    $choppedName = $zdbGeneName;
-   
+
    $lastLetter = chop($choppedName);
-   
+
    $choppedNames{$zdbGeneId} = $choppedName;
-   
+
    $lastLetters{$zdbGeneId} = $lastLetter;
-   
+
 
    if ($organism eq "Human") {
        $namesHumanOrthZFIN{$zdbGeneId} = $orthoName;
@@ -321,16 +321,16 @@ $ct++;
            $ctNotFound++;
        }
    } else {
-       print LOG "\nError: $organism   $ncbiID   $zdbGeneId   $zdbGeneAbbrev    $zdbGeneName\n"; 
+       print LOG "\nError: $organism   $ncbiID   $zdbGeneId   $zdbGeneAbbrev    $zdbGeneName\n";
    }
-   
+
 }
 
 print "\n\nct = $ct\n\n";
 
 
 
-$cur->finish(); 
+$cur->finish();
 
 $dbh->disconnect();
 
@@ -354,30 +354,30 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
    $geneNameZFnoComma = $geneNameZF;
    $geneNameZFnoComma =~ s/,//g;
    $geneNameZFnoCommaLowerCase = lc($geneNameZFnoComma);
-   
-   $geneNameZFChopped = $choppedNames{$zdbGeneId};
-   $geneNameZFChoppedNoComma = $geneNameZFChopped;
-   $geneNameZFChoppedNoComma =~ s/,//g;   
-   $geneNameZFChoppedNoCommaLowerCase = lc($geneNameZFChoppedNoComma);
-   
+
    $lastLetter = $lastLetters{$zdbGeneId};
-      
+
    if (exists($namesHumanOrthNCBI{$zdbGeneId})) {
        $humanGeneName = $namesHumanOrthNCBI{$zdbGeneId};
        $humanGeneNameNoComma = $humanGeneName;
        $humanGeneNameNoComma =~ s/,//g;
        $humanGeneNameNoCommaLowerCase = lc($humanGeneNameNoComma);
-       
-       if ($geneNameZFnoCommaLowerCase !~ m/\Q$humanGeneNameNoCommaLowerCase/ && $humanGeneNameNoCommaLowerCase !~ m/\Q$geneNameZFChoppedNoCommaLowerCase/) {
-              if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId}) && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) {              
+       $humanGeneNameNoCommaLowerCase =~ s/\s+$//;
+       $humanGeneNameNoCommaLowerCaseA = $humanGeneNameNoCommaLowerCase . 'a';
+       $humanGeneNameNoCommaLowerCaseB = $humanGeneNameNoCommaLowerCase . 'b';
+
+       if (!($geneNameZFnoCommaLowerCase =~ m/\Q$humanGeneNameNoCommaLowerCase\E/
+             || $geneNameZFnoCommaLowerCase =~ m/\Q$humanGeneNameNoCommaLowerCaseA\E/
+             || $geneNameZFnoCommaLowerCase =~ m/\Q$humanGeneNameNoCommaLowerCaseB\E/)) {
+              if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId}) && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) {
                 $zdbGeneIdsAlreadyReported{$zdbGeneId} = $symbolsZFgene{$zdbGeneId};
                 $ctDiffrentZFgeneNames++;
                 print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
                 print PREVIOUSLYREPORTED "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
                 print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
                 print PREVIOUSLYREPORTED "gene name (z): $geneNameZF\n";
-                print ZFNAMEREPORT "gene name (h): $humanGeneName\n"; 
-                print PREVIOUSLYREPORTED "gene name (h): $humanGeneName\n"; 
+                print ZFNAMEREPORT "gene name (h): $humanGeneName\n";
+                print PREVIOUSLYREPORTED "gene name (h): $humanGeneName\n";
                 print ZFNAMEREPORT "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
                 print PREVIOUSLYREPORTED "gene symbol (h): $symbolsHumanOrthZFIN{$zdbGeneId}\n";
                 if (exists($namesMouseOrthNCBI{$zdbGeneId})) {
@@ -392,55 +392,61 @@ foreach $zdbGeneId (sort {$symbolsZFgene{$a} cmp $symbolsZFgene{$b}} (keys %symb
                     print PREVIOUSLYREPORTED "gene symbol (m):\n\n";
                 }
               }
-       } 
-   } elsif (exists($namesMouseOrthNCBI{$zdbGeneId})) { 
-      if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId}) && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) { 
+       }
+   } elsif (exists($namesMouseOrthNCBI{$zdbGeneId})) {
+      if (!exists($zdbGeneIdsAlreadyExamined{$zdbGeneId}) && !exists($zdbGeneIdsAlreadyReported{$zdbGeneId})) {
        $mouseGeneName = $namesMouseOrthNCBI{$zdbGeneId};
        $mouseGeneNameNoComma = $mouseGeneName;
        $mouseGeneNameNoComma =~ s/,//g;
        $mouseGeneNameNoCommaLowerCase = lc($mouseGeneNameNoComma);
-       if ($geneNameZFnoCommaLowerCase !~ m/\Q$mouseGeneNameNoCommaLowerCase/ && $mouseGeneNameNoCommaLowerCase !~ m/\Q$geneNameZFChoppedNoCommaLowerCase/) {                             
+       $mouseGeneNameNoCommaLowerCase =~ s/\s+$//;
+       $mouseGeneNameNoCommaLowerCaseA = $mouseGeneNameNoCommaLowerCase . 'a';
+       $mouseGeneNameNoCommaLowerCaseB = $mouseGeneNameNoCommaLowerCase . 'b';
+
+       if (!$geneNameZFnoCommaLowerCase =~ m/\Q$mouseGeneNameNoCommaLowerCase\E/
+            || $mouseGeneNameNoCommaLowerCase =~ m/\Q$mouseGeneNameNoCommaLowerCaseA\E/
+            || $mouseGeneNameNoCommaLowerCase =~ m/\Q$mouseGeneNameNoCommaLowerCaseB\E/) {
                 $zdbGeneIdsAlreadyReported{$zdbGeneId} = $symbolsZFgene{$zdbGeneId};
                 $ctDiffrentZFgeneNames++;
                 print ZFNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
                 print PREVIOUSLYREPORTED "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
                 print ZFNAMEREPORT "gene name (z): $geneNameZF\n";
                 print PREVIOUSLYREPORTED "gene name (z): $geneNameZF\n";
-                print ZFNAMEREPORT "gene name (h):\n"; 
+                print ZFNAMEREPORT "gene name (h):\n";
                 print PREVIOUSLYREPORTED "gene name (h):\n";
-                print ZFNAMEREPORT "gene symbol (h):\n"; 
-                print PREVIOUSLYREPORTED "gene symbol (h):\n"; 
+                print ZFNAMEREPORT "gene symbol (h):\n";
+                print PREVIOUSLYREPORTED "gene symbol (h):\n";
                 print ZFNAMEREPORT "gene name (m): $mouseGeneName\n";
-                print PREVIOUSLYREPORTED "gene name (m): $mouseGeneName\n";                
+                print PREVIOUSLYREPORTED "gene name (m): $mouseGeneName\n";
                 print ZFNAMEREPORT "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
-                print PREVIOUSLYREPORTED "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";           
-       }      
+                print PREVIOUSLYREPORTED "gene symbol (m): $symbolsMouseOrthZFIN{$zdbGeneId}\n\n";
+       }
      }
-   } 
-   
+   }
+
    if(exists($namesHumanOrthZFIN{$zdbGeneId}) && exists($namesHumanOrthNCBI{$zdbGeneId}) && $namesHumanOrthZFIN{$zdbGeneId} ne $namesHumanOrthNCBI{$zdbGeneId}) {
        $ctUpdatedOrthNames++;
        print ORTHNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
        print ORTHNAMEREPORT "human orthology name at ZFIN: $namesHumanOrthZFIN{$zdbGeneId}\n";
-       print ORTHNAMEREPORT "human orthology name at NCBI: $namesHumanOrthNCBI{$zdbGeneId}\n\n";  
+       print ORTHNAMEREPORT "human orthology name at NCBI: $namesHumanOrthNCBI{$zdbGeneId}\n\n";
        print ORTHNAMEUPDATE "$zdbGeneId|Human|$namesHumanOrthZFIN{$zdbGeneId}|$namesHumanOrthNCBI{$zdbGeneId}|\n";
    }
-   
+
    if(exists($namesMouseOrthZFIN{$zdbGeneId}) && exists($namesMouseOrthNCBI{$zdbGeneId}) && $namesMouseOrthZFIN{$zdbGeneId} ne $namesMouseOrthNCBI{$zdbGeneId}) {
        $ctUpdatedOrthNames++;
        print ORTHNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
        print ORTHNAMEREPORT "mouse orthology name at ZFIN: $namesMouseOrthZFIN{$zdbGeneId}\n";
        print ORTHNAMEREPORT "mouse orthology name at NCBI: $namesMouseOrthNCBI{$zdbGeneId}\n\n";
        print ORTHNAMEUPDATE "$zdbGeneId|Mouse|$namesMouseOrthZFIN{$zdbGeneId}|$namesMouseOrthNCBI{$zdbGeneId}|\n";
-   }   
-   
+   }
+
    if(exists($namesFlyOrthZFIN{$zdbGeneId}) && exists($namesFlyOrthNCBI{$zdbGeneId}) && $namesFlyOrthZFIN{$zdbGeneId} ne $namesFlyOrthNCBI{$zdbGeneId}) {
        $ctUpdatedOrthNames++;
        print ORTHNAMEREPORT "$zdbGeneId     $symbolsZFgene{$zdbGeneId}\n";
        print ORTHNAMEREPORT "fly orthology name at ZFIN: $namesFlyOrthZFIN{$zdbGeneId}\n";
        print ORTHNAMEREPORT "fly orthology name at NCBI: $namesFlyOrthNCBI{$zdbGeneId}\n\n";
        print ORTHNAMEUPDATE "$zdbGeneId|Fruit fly|$namesFlyOrthZFIN{$zdbGeneId}|$namesFlyOrthNCBI{$zdbGeneId}|\n";
-   }      
+   }
 }
 
 print "\n\ntotal = $total  ctDiffrentZFgeneNames = $ctDiffrentZFgeneNames  ctUpdatedOrthNames = $ctUpdatedOrthNames\n\n";
@@ -495,13 +501,13 @@ sub doSystemCommand {
   $systemCommand = $_[0];
 
   print LOG "$0: Executing [$systemCommand] \n";
-    
+
   $returnCode = system( $systemCommand );
 
-  if ( $returnCode != 0 ) { 
+  if ( $returnCode != 0 ) {
      $subjectLine = "Auto from $dbname: " . "NCBIorthology.pl :: failed at: $systemCommand . $! ";
      print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
-     
+
      &reportErrAndExit($subjectLine);
   }
 }

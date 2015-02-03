@@ -2,25 +2,25 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="criteria" type="org.zfin.expression.ExpressionSummaryCriteria"
-    required="true" description="ExpressionSummaryCriteria object used to build the summary table" %>
+              required="true" description="ExpressionSummaryCriteria object used to build the summary table" %>
 
 
 <table class="primary-entity-attributes">
     <c:if test="${!empty criteria.gene}">
-      <tr>
-        <th>Gene:</th>
-        <td><zfin:link entity="${criteria.gene}"/> </td>
-      </tr>
+        <tr>
+            <th>Gene:</th>
+            <td><zfin:link entity="${criteria.gene}"/> </td>
+        </tr>
     </c:if>
     <c:if test="${!empty criteria.genotypeExperiment}">
-      <tr>
-        <th>Genotype:</th>
-        <td><zfin:link entity="${criteria.genotypeExperiment.genotype}"/>
-      </tr>
-      <tr>
-          <th>Conditions:</th>
-          <td><zfin:link entity="${criteria.genotypeExperiment.experiment}"/></td>
-      </tr>
+        <tr>
+            <th>Genotype:</th>
+            <td><zfin:link entity="${criteria.genotypeExperiment.genotype}"/>
+        </tr>
+        <tr>
+            <th>Conditions:</th>
+            <td><zfin:link entity="${criteria.genotypeExperiment.experiment}"/></td>
+        </tr>
     </c:if>
     <%--sometimes rather than a genox, it's just a genotype--%>
     <c:if test="${!empty criteria.genotype}">
@@ -28,12 +28,18 @@
             <th class="genotype-name-label">Genotype:</th>
             <td class="genotype-name-value"><zfin:link entity="${criteria.genotype}"/>
         </tr>
-    </c:if>    
+    </c:if>
     <c:if test="${!empty criteria.antibody}">
-      <tr>
-        <th>Antibody:</th>
-        <td><zfin:link entity="${criteria.antibody}"/> </td>
-      </tr>
+        <tr>
+            <th>Antibody:</th>
+            <td><zfin:link entity="${criteria.antibody}"/> </td>
+        </tr>
+    </c:if>
+    <c:if test="${!empty criteria.sequenceTargetingReagent}">
+        <tr>
+            <th>${criteria.sequenceTargetingReagent.markerType.displayName}:</th>
+            <td><zfin:link entity="${criteria.sequenceTargetingReagent}"/> </td>
+        </tr>
     </c:if>
     <c:if test="${!empty criteria.entity}">
         <tr>
@@ -51,23 +57,23 @@
 
     <c:choose>
         <c:when test="${(!empty criteria.start) && (!empty criteria.end) && (criteria.start == criteria.end)}">
-          <tr>
-            <th>Stage:</th>
-            <td><zfin:link entity="${criteria.start}"/></td>
-          </tr>
+            <tr>
+                <th>Stage:</th>
+                <td><zfin:link entity="${criteria.start}"/></td>
+            </tr>
         </c:when>
         <c:otherwise>
             <c:if test="${!empty criteria.start}">
-              <tr>
-                <th>Start Stage:</th>
-                <td><zfin:link entity="${criteria.start}"/></td>
-              </tr>
+                <tr>
+                    <th>Start Stage:</th>
+                    <td><zfin:link entity="${criteria.start}"/></td>
+                </tr>
             </c:if>
             <c:if test="${!empty criteria.end}">
-              <tr>
-                <th>End Stage:</th>
-                <td><zfin:link entity="${criteria.end}"/></td>
-              </tr>
+                <tr>
+                    <th>End Stage:</th>
+                    <td><zfin:link entity="${criteria.end}"/></td>
+                </tr>
             </c:if>
         </c:otherwise>
     </c:choose>
