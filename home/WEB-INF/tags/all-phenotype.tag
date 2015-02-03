@@ -45,10 +45,7 @@
             <td>
                 <c:forEach var="figsPub" items="${phenotypeDisplay.figuresPerPub}">
                     <c:forEach var="fig" items="${figsPub.value}" varStatus="figloop">
-                        <a href='/${fig.zdbID}'><zfin2:figureOrTextOnlyLink
-                                figure="${fig}" integerEntity="1"/></a>
-                        <zfin2:showCameraIcon hasImage="${!fig.imgless}"/>
-                        <c:if test="${!figloop.last}">,&nbsp;</c:if>
+                        <a href='/${fig.zdbID}'><zfin2:figureOrTextOnlyLink figure="${fig}" integerEntity="1"/></a><zfin2:showCameraIcon hasImage="${!fig.imgless}"/><c:if test="${!figloop.last}">,&nbsp;</c:if>
                     </c:forEach>
                     from <zfin:link entity="${figsPub.key}"/><br/>
                 </c:forEach>
