@@ -22,6 +22,7 @@
         </div>
     </c:when>
     <c:otherwise>
+        <c:if test="${formBean.featureLabEntries.size() < 500}">
         <br/>
         <table class="summary rowstripes">
             <tr>
@@ -61,7 +62,18 @@
                 </tr>
             </c:forEach>
         </table>
-
+    </c:if>
+        <c:if test="${formBean.featureLabEntries.size() > 500}">
+        <ul>
+            <c:forEach var="featureLabEntry" items="${formBean.featureLabEntries}">
+                <li><zfin:link entity="${featureLabEntry.feature}"/>
+                    <c:if test="${!featureLabEntry.current && !empty featureLabEntry.sourceOrganization}">
+                        (<zfin:link entity="${featureLabEntry.sourceOrganization}"/>)
+                    </c:if>
+                </li>
+            </c:forEach>
+        </ul>
+        </c:if>
     </c:otherwise>
 
 </c:choose>
