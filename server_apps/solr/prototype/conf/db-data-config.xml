@@ -1733,12 +1733,14 @@ select
                    processor="CachedSqlEntityProcessor"/>
            <entity name="str_pub_xref"
                    query="select
+                            pub_mini_ref as attributed_publication,
                             mrkr_zdb_id as str_zdb_id,
-                            recattrib_source_zdb_id as xref
-                            from marker, record_Attribution, marker_type_group_member
+                            publication.zdb_id as xref
+                            from marker, record_Attribution, marker_type_group_member, publication
                                  where mrkr_zdb_id=recattrib_data_zdb_id
-                                 and mtgrpmem_mrkr_type = mrkr_type
-                                        and mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT'
+                                   and publication.zdb_id = recattrib_source_zdb_id
+                                   and mtgrpmem_mrkr_type = mrkr_type
+                                   and mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT'
                                  ;"
                    where="str_zdb_id=str.id"
                    processor="CachedSqlEntityProcessor"/>
@@ -2619,9 +2621,12 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                    where="recattrib_data_zdb_id=antibody.id"/>-->
 
            <entity name="antibody_publication_xref"
-                   query="select distinct atb_zdb_id, recattrib_source_zdb_id as xref
-                            from record_attribution, antibody
-                            where recattrib_data_zdb_id = atb_zdb_id;"
+                   query="select distinct atb_zdb_id,
+                                          pub_mini_ref as attributed_publication,
+                                          recattrib_source_zdb_id as xref
+                            from record_attribution, antibody, publication
+                            where recattrib_data_zdb_id = atb_zdb_id
+                              and recattrib_source_zdb_id = publication.zdb_id;"
                    where="atb_zdb_id=antibody.id"
                    processor="CachedSqlEntityProcessor"/>
 

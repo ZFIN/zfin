@@ -386,6 +386,7 @@
                                      abstract^0.5
                                      biography^0.5
                                      definition^0.5
+            attributed_publication^.01
          </str>
          <str name="pf3">
              proper_name^10.0
@@ -473,6 +474,7 @@
                                      abstract^0.5
                                      biography^0.5
                                      definition^0.5
+             attributed_publication^.01
          </str>
 
          <!-- boost function, rord is reverse ordinal value, so the lowest complexity is 0, next is 1, etc, I think,
@@ -656,6 +658,7 @@
              abstract^0.5
              biography^0.5
              definition^0.5
+             attributed_publication^.01
          </str>
 
 

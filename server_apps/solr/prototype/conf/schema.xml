@@ -714,7 +714,7 @@
    <field name="is_monogenic" type="string" indexed="true" stored="true" />
    <field name="has_orthology" type="string" indexed="true" stored="true" />
 
-
+   <field name="attributed_publication" type="text" indexed="true" stored="true" multiValued="true"/>
 
    <field name="person_name" type="simplified-international-text" indexed="true"/>
 
