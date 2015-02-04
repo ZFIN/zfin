@@ -43,7 +43,6 @@ my $sql = 'select distinct zdb_id, accession_no, title
            and jtype in ("Journal", "Review") 
            and (pub_pages is null or pub_volume is null or pub_pages = "" or pub_volume = "") 
            and accession_no is not null 
-           and accession_no not in ("None","none",""," ") 
            and title is not null';
 
 my $cur = $dbh->prepare($sql);
@@ -74,7 +73,7 @@ $sql = 'select zdb_id
          where status = "active" 
            and jtype in ("Journal", "Review") 
            and (pub_pages is null or pub_volume is null) 
-           and (accession_no is null or accession_no in ("None","none",""," "))';
+           and (accession_no is null)';
 
 $cur = $dbh->prepare($sql);
 $cur ->execute();
