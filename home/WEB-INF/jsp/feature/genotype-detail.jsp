@@ -23,6 +23,16 @@
         document.getElementById('expression-long-version').style.display = 'none';
     }
 
+
+    function expandPhenotype() {
+        document.getElementById('phenotype-short-version').style.display = 'none';
+        document.getElementById('phenotype-long-version').style.display = 'block';
+    }
+
+    function collapsePhenotype() {
+        document.getElementById('phenotype-short-version').style.display = 'block';
+        document.getElementById('phenotype-long-version').style.display = 'none';
+    }
 </script>
 
 <zfin2:dataManager zdbID="${formBean.genotype.zdbID}" rtype="genotype"/>
@@ -125,7 +135,7 @@
                             <c:otherwise>
                                 <a href="/action/profile/view/${supplier.organization.zdbID}"
                                    id="${supplier.organization.zdbID}">
-                                        ${supplier.organization.name}</a>
+                                    ${supplier.organization.name}</a>
                                 <c:if test="${supplier.availState ne null}">(${supplier.availState})</c:if>
                                 <c:choose>
                                     <c:when test="${supplier.moensLab}">&nbsp;
@@ -195,7 +205,7 @@
         <b>Note:</b>
         <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
             <div>
-                    ${extNote.note}
+                ${extNote.note}
                 <c:if test="${extNote.singlePubAttribution ne null}">
                     &nbsp;(<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${extNote.singlePubAttribution.publication.zdbID}'>1</a>)
                 </c:if>
@@ -205,151 +215,160 @@
 </c:if>
 
 <c:if test="${!formBean.genotype.wildtype}">
-<div class="summary">
-    <b>GENOTYPE COMPOSITION</b>
-    <c:choose>
-        <c:when test="${formBean.genotypeFeatures ne null && fn:length(formBean.genotypeFeatures) > 0}">
-            <table class="summary rowstripes">
-                <tbody>
-                <tr>
-                    <th width="20%">
-                        Genomic Feature
-                    </th>
-                    <th width="20%">
-                        Construct
-                    </th>
-                    <th width="20%">
-                        Lab of Origin
-                    </th>
-                    <th width="20%">
-                        Zygosity
-                    </th>
-                    <th width="20%">
-                        Parental Genotype
-                    </th>
-
-
-                </tr>
-                <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
-                    <zfin:alternating-tr loopName="loop">
-                        <td>
-                            <zfin:link entity="${genoFeat.feature}"/>
-                        </td>
-                        <td>
-                            <c:forEach var="construct" items="${genoFeat.feature.constructs}"
-                                       varStatus="constructsloop">
-                                <a href="/action/marker/view/${construct.marker.zdbID}">${construct.marker.name}</a>
-                                <c:if test="${!constructsloop.last}">
-                                    ,&nbsp;
-                                </c:if>
-                            </c:forEach>
-                        </td>
-                        <td>
-                            <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
-                                <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
-                                        ${source.organization.name}
-                                </a>
-                                <c:if test="${!status.last}">,&nbsp;</c:if>
-                            </c:forEach>
-                        </td>
-                        <td>
-                                ${genoFeat.zygosity.name}
-                        </td>
-                        <td>
-                                ${genoFeat.parentalZygosityDisplay}
-                        </td>
-
-
-                    </zfin:alternating-tr>
-                </c:forEach>
-
-                </tbody>
-            </table>
-        </c:when>
-        <c:otherwise>
-            <br>No data available</br>
-        </c:otherwise>
-    </c:choose>
-</div>
-<div class="summary">
-    <b>GENE EXPRESSION</b>&nbsp;
-    <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
-    <br/>
-    <b>Gene expression in <zfin:name entity="${formBean.genotype}"/><c:if
-            test="${fn:length(formBean.genotype.associatedGenotypes) ne null && fn:length(formBean.genotype.associatedGenotypes) > 0}">
-        <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}" varStatus="loop">
-            (${background.handle})
-            <c:if test="${!loop.last}">,&nbsp;</c:if>
-        </c:forEach>
-    </c:if> </b>
-    <div id="expression-short-version" class="summary">
+    <div class="summary">
+        <b>GENOTYPE COMPOSITION</b>
         <c:choose>
-            <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-                <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
-                                      showCondition="true" />
-                <c:if test="${fn:length(formBean.expressionDisplays) > 5}">
-                    <div>
-                        <a href="javascript:expandExpression()">
-                            <img src="/images/darrow.gif" alt="expand" border="0">
-                            Show all</a>
-                        ${formBean.totalNumberOfExpressedGenes} expressed genes
-                    </div>
-                </c:if>
+            <c:when test="${formBean.genotypeFeatures ne null && fn:length(formBean.genotypeFeatures) > 0}">
+                <table class="summary rowstripes">
+                    <tbody>
+                    <tr>
+                        <th width="20%">
+                            Genomic Feature
+                        </th>
+                        <th width="20%">
+                            Construct
+                        </th>
+                        <th width="20%">
+                            Lab of Origin
+                        </th>
+                        <th width="20%">
+                            Zygosity
+                        </th>
+                        <th width="20%">
+                            Parental Genotype
+                        </th>
+
+
+                    </tr>
+                    <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
+                        <zfin:alternating-tr loopName="loop">
+                            <td>
+                                <zfin:link entity="${genoFeat.feature}"/>
+                            </td>
+                            <td>
+                                <c:forEach var="construct" items="${genoFeat.feature.constructs}"
+                                           varStatus="constructsloop">
+                                    <a href="/action/marker/view/${construct.marker.zdbID}">${construct.marker.name}</a>
+                                    <c:if test="${!constructsloop.last}">
+                                        ,&nbsp;
+                                    </c:if>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
+                                    <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
+                                        ${source.organization.name}
+                                    </a>
+                                    <c:if test="${!status.last}">,&nbsp;</c:if>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                ${genoFeat.zygosity.name}
+                            </td>
+                            <td>
+                                ${genoFeat.parentalZygosityDisplay}
+                            </td>
+
+
+                        </zfin:alternating-tr>
+                    </c:forEach>
+
+                    </tbody>
+                </table>
             </c:when>
             <c:otherwise>
-                <span class="no-data-tag">No data available</span>
+                <br>No data available</br>
             </c:otherwise>
         </c:choose>
     </div>
-    <div style="display:none" id="expression-long-version" class="summary">
-        <c:if test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-            <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="${fn:length(formBean.expressionDisplays)}"
-                                  showCondition="true" />
-        </c:if>
-        <div>
-            <a href="javascript:collapseExpression()">
-                <img src="/images/up.gif" alt="expand" title="Show first 5 expressed genes" border="0">
-                Show first</a> 5 expressed genes
+    <div class="summary">
+        <b>GENE EXPRESSION</b>&nbsp;
+        <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
+        <br/>
+        <b>Gene expression in <zfin:name entity="${formBean.genotype}"/><c:if
+                test="${fn:length(formBean.genotype.associatedGenotypes) ne null && fn:length(formBean.genotype.associatedGenotypes) > 0}">
+            <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}" varStatus="loop">
+                (${background.handle})
+                <c:if test="${!loop.last}">,&nbsp;</c:if>
+            </c:forEach>
+        </c:if> </b>
+        <div id="expression-short-version" class="summary">
+            <c:choose>
+                <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+                    <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
+                                          showCondition="true" />
+                    <c:if test="${fn:length(formBean.expressionDisplays) > 5}">
+                        <div>
+                            <a href="javascript:expandExpression()">
+                                <img src="/images/darrow.gif" alt="expand" border="0">
+                                Show all</a>
+                            ${formBean.totalNumberOfExpressedGenes} expressed genes
+                        </div>
+                    </c:if>
+                </c:when>
+                <c:otherwise>
+                    <span class="no-data-tag">No data available</span>
+                </c:otherwise>
+            </c:choose>
+        </div>
+        <div style="display:none" id="expression-long-version" class="summary">
+            <c:if test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+                <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="${fn:length(formBean.expressionDisplays)}"
+                                      showCondition="true" />
+            </c:if>
+            <div>
+                <a href="javascript:collapseExpression()">
+                    <img src="/images/up.gif" alt="expand" title="Show first 5 expressed genes" border="0">
+                    Show first</a> 5 expressed genes
+            </div>
         </div>
     </div>
-</div>
 
-<div class="summary">
-    <b>PHENOTYPE</b>&nbsp;
-    <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
-    <br/>
-    <b>Phenotype in <zfin:name entity="${formBean.genotype}"/><c:if
-            test="${fn:length(formBean.genotype.associatedGenotypes) ne null && fn:length(formBean.genotype.associatedGenotypes) > 0}">
-        <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}" varStatus="loop">
-            (${background.handle})
-            <c:if test="${!loop.last}">,&nbsp;</c:if>
-        </c:forEach>
-    </c:if></b>
-    <c:choose>
-        <c:when test="${formBean.numberOfPhenoDisplays > 0 }">
-            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="5"
-                                 secondColumn="condition"/>
-            <c:if test="${formBean.numberOfPhenoDisplays > 5}">
-                <table width="100%">
-                    <tbody>
-                    <tr align="left">
-                        <td>
-                            Show all <a
-                                href="/action/genotype/show_all_phenotype?zdbID=${formBean.genotype.zdbID}">${formBean.numberOfPhenoDisplays}&nbsp;phenotype
-                            statements</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+    <div class="summary">
+        <b>PHENOTYPE</b>&nbsp;
+        <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
+        <br/>
+        <b>Phenotype in <zfin:name entity="${formBean.genotype}"/><c:if
+                test="${fn:length(formBean.genotype.associatedGenotypes) ne null && fn:length(formBean.genotype.associatedGenotypes) > 0}">
+            <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}" varStatus="loop">
+                (${background.handle})
+                <c:if test="${!loop.last}">,&nbsp;</c:if>
+            </c:forEach>
+        </c:if></b>
+
+        <div id="phenotype-short-version" class="summary">
+            <c:choose>
+                <c:when test="${formBean.phenoDisplays != null && fn:length(formBean.phenoDisplays) > 0 }">
+                    <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="5"
+                                         secondColumn="condition"/>
+                    <c:if test="${fn:length(formBean.phenoDisplays) > 5}">
+                        <div>
+                            <a href="javascript:expandPhenotype()">
+                                <img src="/images/darrow.gif" alt="expand" border="0">
+                                Show all</a>
+                            ${fn:length(formBean.phenoDisplays)} phenotypes
+                        </div>
+                    </c:if>
+                </c:when>
+                <c:otherwise>
+                    <span class="no-data-tag">No data available</span>
+                </c:otherwise>
+            </c:choose>
+        </div>
+        <div style="display:none" id="phenotype-long-version" class="summary">
+            <c:if test="${formBean.phenoDisplays != null && fn:length(formBean.phenoDisplays) > 0 }">
+                <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="${fn:length(formBean.phenoDisplays)}"
+                                     secondColumn="condition"/>
             </c:if>
-        </c:when>
-        <c:otherwise>
-            <br>No data available</br>
-        </c:otherwise>
-    </c:choose>
-</div>
-<p/>
-<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.genotype.zdbID}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.totalNumberOfPublications})
+            <div>
+                <a href="javascript:collapsePhenotype()">
+                    <img src="/images/up.gif" alt="expand" title="Show first 5 phenotypes" border="0">
+                    Show first</a> 5 phenotypes
+            </div>
+        </div>
+    </div>
+    <p/>
+    <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.genotype.zdbID}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.totalNumberOfPublications})
 
 </c:if>
 
