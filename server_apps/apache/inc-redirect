@@ -109,6 +109,13 @@ RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=
 RewriteCond %{QUERY_STRING}    ^termID=([\w-:]+)$    [NC]
 RewriteRule ^/action/ontology/term-detail/ /%1? [NC,R=301]
 
+RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
+RewriteRule ^/action/genotype/genotype-detail /%1? [NC,R=301]
+
+
+RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
+RewriteRule ^/action/feature/feature-detail /%1? [NC,R=301]
+
 RewriteCond %{QUERY_STRING}    ^query=(.*)$ [NC]
 RewriteRule ^/action/quicksearch/query  /search?q=%1   [NC,R=301]
 
