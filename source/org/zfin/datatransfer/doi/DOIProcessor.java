@@ -26,19 +26,17 @@ public class DOIProcessor {
     private PublicationRepository publicationRepository = new HibernatePublicationRepository();
     private Logger logger = Logger.getLogger(DOIProcessor.class);
 
-    private boolean reportAll = false;
     private boolean doisUpdated = false;
 
     private List<String> messages = new ArrayList<>();
     private List<List<String>> updated = new ArrayList<>();
     private List<String> errors = new ArrayList<>();
 
-    public DOIProcessor(boolean reportAll) {
-        this(reportAll, Integer.MAX_VALUE);
+    public DOIProcessor() {
+        this(Integer.MAX_VALUE);
     }
 
-    public DOIProcessor(boolean reportAll, int maxAttempts) {
-        this.reportAll = reportAll;
+    public DOIProcessor(int maxAttempts) {
         if (maxAttempts == ALL) {
             this.maxAttempts = Integer.MAX_VALUE;
         } else {
@@ -47,8 +45,7 @@ public class DOIProcessor {
 
     }
 
-    public DOIProcessor(boolean reportAll, int maxAttempts, int maxToProcess) {
-        this.reportAll = reportAll;
+    public DOIProcessor(int maxAttempts, int maxToProcess) {
         this.maxToProcess = (maxToProcess == ALL ? Integer.MAX_VALUE : maxToProcess);
         this.maxAttempts = (maxAttempts == ALL ? Integer.MAX_VALUE : maxAttempts);
     }
@@ -61,7 +58,7 @@ public class DOIProcessor {
      */
     private List<Publication> getPubmedIdsWithNoDOIs() {
         List<Publication> publicationList = publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess);
-        if (reportAll || CollectionUtils.isNotEmpty(publicationList)) {
+        if (CollectionUtils.isNotEmpty(publicationList)) {
             messages.add("There were " + publicationList.size() + " publications which still need a DOI.");
         }
         return publicationList;
@@ -138,7 +135,7 @@ public class DOIProcessor {
 
     public static void main(String[] args) {
         try {
-            DOIProcessor driver = new DOIProcessor(true);
+            DOIProcessor driver = new DOIProcessor();
             driver.findAndUpdateDOIs();
         } catch (Exception e) {
             e.printStackTrace();

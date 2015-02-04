@@ -14,7 +14,6 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
 
     private static Logger logger = Logger.getLogger(UpdateDOIJob.class);
 
-    private boolean reportAll;
     private int maxToProcess;
     private int maxAttempts;
 
@@ -28,7 +27,7 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
         setReportProperties();
         clearReportDirectory();
 
-        DOIProcessor driver = new DOIProcessor(reportAll, maxAttempts, maxToProcess);
+        DOIProcessor driver = new DOIProcessor(maxAttempts, maxToProcess);
         driver.findAndUpdateDOIs();
 
         ReportGenerator rg = new ReportGenerator();
@@ -52,17 +51,7 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
         setLoggerToInfoLevel(logger);
         String jobName = args[2];
         UpdateDOIJob job = new UpdateDOIJob(jobName, args[0], args[1]);
-        if (jobName.endsWith("_d")) {
-            job.reportAll = false;
-            job.maxToProcess = 20;
-            job.maxAttempts = DOIProcessor.ALL;
-        } else if (jobName.endsWith("_m")) {
-            job.reportAll = true;
-            job.maxToProcess = DOIProcessor.ALL;
-            job.maxToProcess = DOIProcessor.ALL;
-        } else {
-            throw new RuntimeException("Expecting job name to end in `_d` or `_m`, but was: " + jobName);
-        }
+        job.maxToProcess = DOIProcessor.ALL;
         job.initDatabase();
         System.exit(job.execute());
     }
