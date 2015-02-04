@@ -53,7 +53,7 @@
                 </c:if>
                     <%-- case of multiple figures --%>
                 <c:if test="${construct.expressionFigureCount > 1}">
-                <a href="construct-expression-summary?constructID=${construct.ID}&<%= request.getQueryString()%>">
+                <a href="/action/mutant/construct-expression-summary?constructID=${construct.ID}&<%= request.getQueryString()%>">
                         <zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
                                      integerEntity="${construct.expressionFigureCount}"/>
                         <%--</a>--%>
