@@ -10,12 +10,18 @@ public class QueryManipulationService {
         if (query == null)
             return null;
         query = processIdIbd(query);
+        query = processConstructDash(query);
         return query;
     }
 
     //Case 11289, id:ibd will search in the id field, escaping as id\: for only id:ibd
     public String processIdIbd(String query) {
         return query.replaceAll("id:ibd","id\\\\:ibd");
+    }
+
+    //Case 12299, '(-' in construct names needs to be scaped
+    public String processConstructDash(String query) {
+        return query.replaceAll("\\(-","\\(\\\\-");
     }
 
 }
