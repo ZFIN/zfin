@@ -1891,7 +1891,7 @@ print LOG "\nStart efetching ... \n\n";
 # Using the above noLength.unl as input, call efetch.r to get the fasta sequences
 # and output to seq.fasta file. This step is time-consuming.
 
-$cmdEfetch = "<!--|SOURCEROOT|-->/commons/bin/efetch.r -t fasta -i noLength.unl -o seq.fasta";
+$cmdEfetch = "/private/bin/efetch.r -t fasta -i noLength.unl -o seq.fasta";
 &doSystemCommand($cmdEfetch);
 
 system("/bin/date");
@@ -1907,7 +1907,7 @@ print LOG "\nDone with efetching.\n\n";
 
 # fasta_len.awk is the script that does the calculation based on fasta sequence
 
-$cmdCalLength = "<!--|SOURCEROOT|-->/commons/bin/fasta_len.awk seq.fasta >length.unl";
+$cmdCalLength = "/private/bin/fasta_len.awk seq.fasta >length.unl";
 &doSystemCommand($cmdCalLength);
 
 if (!-e "length.unl") {
