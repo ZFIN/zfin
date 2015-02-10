@@ -73,6 +73,21 @@
         <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/prototype/dataimport"/>
     </target>
 
+    <target name="build-solr-publication-index">
+        <echo message="Starting Solr index build via http..."/>
+        <exec executable="curl">
+            <arg value="-s"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;commit=true&amp;clean=false&amp;entity=publication&amp;wt=json&amp;indent=true"/>
+        </exec>
+        <echo message=" ---- "/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/prototype/dataimport"/>
+    </target>
+
+    <target name="build-solr-publication-index-jenkins">
+       <antcall target="build-solr-publication-index"/>
+       <antcall target="check-indexer"/>
+    </target>
+
     <target name="check-indexer">
         <groovy>
             import groovy.json.JsonSlurper
