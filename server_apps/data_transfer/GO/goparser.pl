@@ -40,7 +40,7 @@ while ($line = <INDEXFILE>) {
       if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
 
 	  print UNL "$db\t$mrkrid\t$mrkrabb\t$qualifier\t$goid\tZFIN:$pubid\t$evidence\t".
-        join('|',@inf_array)."\t$go_o\t$mrkrname\t$aliases\t\tgene_product\ttaxon:7955\t$ev_date\t$mod_by\t\t\n";
+        join('|',@inf_array)."\t$go_o\t$mrkrname\t$aliases\tgene_product\ttaxon:7955\t$ev_date\t$mod_by\t\t\n";
 
 	  @inf_array = ();
       }
