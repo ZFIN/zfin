@@ -1635,6 +1635,21 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void executeJdbcStatementOneByOne(DatabaseJdbcStatement statement, List<List<String>> data) {
         executeJdbcStatement(statement, data, 1);
     }
+
+    public int getGenotypeExpressionExperimentRecordAttributions(String zdbID, String pubZdbID) {
+        return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
+                "  select count(*)  " +
+                " from record_attribution ra, genotype_experiment ge, expression_experiment ee " +
+                " where ra.recattrib_data_zdb_id = ee.xpatex_zdb_id " +
+                " and ee.xpatex_genox_zdb_id = ge.genox_zdb_id " +
+                " and ge.genox_geno_zdb_id = :zdbID " +
+                " and  ra.recattrib_source_zdb_id = :pubZdbID " +
+                "")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
+        );
+    }
 }
 
 

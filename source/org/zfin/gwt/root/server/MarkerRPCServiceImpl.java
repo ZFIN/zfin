@@ -109,7 +109,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         String newNote = ZfinStringUtils.escapeHighUnicode(noteDTO.getNoteData());
         if (!StringUtils.equals(newNote, oldNote)) {
             marker.setPublicComments(ZfinStringUtils.escapeHighUnicode(noteDTO.getNoteData()));
-           // InfrastructureService.insertUpdate(marker, "Public Note", oldNote, newNote);
+            // InfrastructureService.insertUpdate(marker, "Public Note", oldNote, newNote);
             HibernateUtil.currentSession().update(marker);
             HibernateUtil.flushAndCommitCurrentSession();
         }
@@ -133,7 +133,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         infrastructureRepository.deleteRecordAttribution(markerZdbID, pubZdbID);
         DataAlias dAlias=infrastructureRepository.getDataAliasByID(markerZdbID);
         if (dAlias!=null) {
-        infrastructureRepository.deleteRecordAttribution(dAlias.getZdbID(), pubZdbID);
+            infrastructureRepository.deleteRecordAttribution(dAlias.getZdbID(), pubZdbID);
         }
 
         infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", pubZdbID, "removed", "Removed direct attribution");
@@ -204,6 +204,10 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         if (infrastructureRepository.getGenotypeExperimentRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(genotype.getHandle(),"is used in an experiment that is") ;
+        }
+
+        if (infrastructureRepository.getGenotypeExpressionExperimentRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
+            return createMessage(genotype.getHandle(),"is used in expression that is") ;
         }
 
         if (infrastructureRepository.getGenotypePhenotypeRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {

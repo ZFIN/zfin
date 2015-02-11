@@ -426,6 +426,8 @@ public interface InfrastructureRepository {
      * @return UnloadInfo of the production database.
      */
     UnloadInfo getUnloadInfo();
+
+    int getGenotypeExpressionExperimentRecordAttributions(String zdbID, String pubZdbID);
 }
 
 
