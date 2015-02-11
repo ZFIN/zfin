@@ -23,30 +23,59 @@ update tmp_identifiers
 
 							 )::lvarchar(4000),11),""),"'}",""),"'","");
 
-select first 1  mrkrgoev_zdb_id,
+
+create temp table tmp_go (mv_zdb_id varchar(50),
+       	    	  	 m_zdb_id varchar(50),
+			 m_abbrev lvarchar,
+			 m_name lvarchar,
+			 t_ont_id varchar(50),
+			 mv_source_id varchar(50),
+			 ac_no varchar(100),
+			 mv_ev_code varchar(30),
+			 if_from lvarchar,
+			 mv_flag varchar(50),
+			 t_ont varchar(100),
+			 mv_date_modified datetime year to second,
+			 mv_created_by varchar(100),
+			 id2 lvarchar(4000))
+with no log;
+
+insert into tmp_go (mv_zdb_id,
+       m_zdb_id,
+       m_abbrev,
+       m_name, 
+       t_ont_id,
+       mv_source_id,
+       ac_no,
+       mv_ev_code,
+       if_from,
+       mv_flag,
+       t_ont,
+       mv_date_modified,
+       mv_created_by
+)
+select mrkrgoev_zdb_id,
 				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by, id2
-			   from marker_go_term_evidence, marker, term, publication, tmp_identifiers,
+				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by
+			   from marker_go_term_evidence, marker, term, publication,
 					   outer inference_group_member
 			  where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
 			    and mrkrgoev_term_zdb_id = term_zdb_id
 			    and mrkrgoev_source_zdb_id  = zdb_id
-			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id 
-			    and id = mrkr_zdb_id
- ;
+			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id ;
+
+update tmp_go
+  set id2 = (select id2 from tmp_identifiers
+      	    	    where m_zdb_id = id); 
+
+select first 1 * from tmp_go
+ where m_abbrev = 'pax8';
+
+select first 1 * from tmp_go;
+  
 
 unload to 'go.zfin' delimiter '	' 
-			 select mrkrgoev_zdb_id,
-				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
-				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(term_ontology[1]), mrkrgoev_date_modified, mrkrgoev_annotation_organization_created_by, id2
-			   from marker_go_term_evidence, marker, term, publication, tmp_identifiers,
-					   outer inference_group_member
-			  where mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
-			    and mrkrgoev_term_zdb_id = term_zdb_id
-			    and mrkrgoev_source_zdb_id  = zdb_id
-			    and mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id 
-			    and id = mrkr_zdb_id;
+		select * from tmp_go;
 
 commit work;
