@@ -15,7 +15,7 @@ import org.zfin.webservice.MarkerSoapSmokeTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         AnatomySmokeTest.class,
-        ExpressionSmokeTest.class,
+        //ExpressionSmokeTest.class,
         AntibodySmokeTest.class,
         MarkerSoapSmokeTest.class,
         MarkerSoapClientSmokeTest.class,
