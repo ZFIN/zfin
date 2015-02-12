@@ -15,9 +15,8 @@ import org.zfin.repository.RepositoryFactory;
  * Created by kschaper on 12/16/14.
  */
 @Controller
+@RequestMapping("/marker")
 public class MarkerGoViewController {
-
-    //todo: rename to MarkerGoController
 
     @Autowired
     MarkerGoService markerGoService;
