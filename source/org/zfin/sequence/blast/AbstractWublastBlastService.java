@@ -578,7 +578,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
     private File getRemoteAccessionFile(File local) {
-        File remote = new File(ZfinPropertiesEnum.BLAST_ACCESSION_TEMP_DIR_REMOTE.value());
+        File remote = new File(ZfinPropertiesEnum.BLAST_ACCESSION_TEMP_DIR.value());
         return new File(remote, local.getName());
     }
 

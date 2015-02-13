@@ -150,7 +150,7 @@ public class Database {
     }
 
     public File getTempFile(String prefix, String suffix) throws IOException {
-        Path basedir = FileSystems.getDefault().getPath(ZfinPropertiesEnum.BLAST_ACCESSION_TEMP_DIR_LOCAL.value());
+        Path basedir = FileSystems.getDefault().getPath(ZfinPropertiesEnum.BLAST_ACCESSION_TEMP_DIR.value());
         Path tempPath = Files.createTempFile(basedir, prefix, suffix);
         File file = tempPath.toFile();
         boolean success = file.setReadable(true, false);
