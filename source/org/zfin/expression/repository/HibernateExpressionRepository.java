@@ -1316,7 +1316,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "join term super_term on er.xpatres_superterm_zdb_id=super_term.term_zdb_id " +
                 "left outer join term sub_term on er.xpatres_subterm_zdb_id = sub_term.term_zdb_id " +
                 "where ee.xpatex_gene_zdb_id= :markerZdbID " +
-                "and ge.genox_is_standard='t' " +
+                "and ge.genox_is_std_or_generic_control='t' " +
                 "and er.xpatres_expression_found='t' " +
                 "and g.geno_is_wildtype='t' " +
                 "and (exists (select 'x' from clone where ee.xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id  " +
