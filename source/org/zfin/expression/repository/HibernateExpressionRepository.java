@@ -1878,7 +1878,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 " WHERE " +
                 "ee.gene.zdbID = :zdbID " +
                 "AND er.expressionFound = 't' " +
-                "AND ge.standard = 't' " +
+                "AND ge.standardOrGenericControl = 't' " +
                 "AND g.wildtype= 't' " +
                 "AND not exists (from Clone as clone " +
                 "where ee.probe = clone and clone.problem = :chimeric ) " +

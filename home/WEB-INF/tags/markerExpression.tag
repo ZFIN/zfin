@@ -103,10 +103,12 @@
                             <zfin:link
                                     entity="${markerExpression.wildTypeStageExpression.expressionPresentation.startStage}"
                                     longVersion="true"/>
-                            to
-                            <zfin:link
-                                    entity="${markerExpression.wildTypeStageExpression.expressionPresentation.endStage}"
-                                    longVersion="true"/>
+                            <c:if test="${not empty markerExpression.wildTypeStageExpression.expressionPresentation.endStage }">
+                                to
+                                <zfin:link
+                                        entity="${markerExpression.wildTypeStageExpression.expressionPresentation.endStage}"
+                                        longVersion="true"/>
+                            </c:if>
                         </td>
                     </tr>
                     <tr>
