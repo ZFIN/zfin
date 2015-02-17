@@ -19,7 +19,7 @@ $username = "";
 $password = "";
 
 #remove old report
-system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateUpdated");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateUpdated.txt");
 
 ### open a handle on the db
 my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
@@ -43,12 +43,6 @@ $cur_get_pubs_with_no_date->finish();
 
 print "\nctNoDatePubs = $ctNoDatePubs\n\n";
 
-## if no pub is found without date, quit
-if ($ctNoDatePubs == 0) {
-  $subject = "Auto from " . $dbname . ": updatePublicationDate.pl :: There is no publications found without date.";
-  ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org",$subject,"updatePublicationDate.pl");
-  exit;
-}
 
 $ctUpdated = 0;
 %updatedPublications = ();
@@ -137,7 +131,7 @@ $cur_insert_update->finish();
 
 $dbh->disconnect();
 
-open (UPDATED, ">listOfPubsWithDateUpdated") ||  die "Cannot open listOfPubsWithDateUpdated : $!\n";
+open (UPDATED, ">listOfPubsWithDateUpdated.txt") ||  die "Cannot open listOfPubsWithDateUpdated.txt : $!\n";
 
 foreach $pubId (sort keys %noDatePubAccessions) {
   $pubmedid = $noDatePubAccessions{$pubId};
@@ -150,11 +144,12 @@ foreach $pubId (sort keys %noDatePubAccessions) {
 
 close(UPDATED);
 
-
-$subject = "Auto from $dbname : " . "updatePublicationDate.pl :: " . "$ctUpdated of $ctNoDatePubs publications with no pub_date have been updated with date according to PUBMED";
-
-ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","listOfPubsWithDateUpdated");
-
+if (-s $listOfPubsWithDateUpdated.txt) {
+    # The file is not empty
+}
+else {
+    system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateUpdated.txt");
+}
 exit;
 
 
