@@ -1,31 +1,14 @@
-<ac:macro ac:name="show-if">
-<ac:parameter ac:name="users">@authenticated</ac:parameter>
-<ac:parameter ac:name="spacePermission" />
-<ac:rich-text-body>
+<ac:structured-macro ac:name="show-if"><ac:parameter ac:name="users"><ri:user ri:username="@authenticated" /></ac:parameter><ac:rich-text-body>
 <p>
-<ac:macro ac:name="add-page">
-<ac:parameter ac:name="template">antibody</ac:parameter>
-<ac:parameter ac:name="linkText">Create New Antibody</ac:parameter>
-<ac:parameter ac:name="labels">community_antibody</ac:parameter>
-<ac:parameter ac:name="parent">@home</ac:parameter>
-<ac:parameter ac:name="allowRename">true</ac:parameter>
-<ac:parameter ac:name="live">true</ac:parameter>
-</ac:macro>
+<ac:structured-macro ac:name="add-page"><ac:parameter ac:name="template">antibody</ac:parameter><ac:parameter ac:name="linkText">Create New Antibody</ac:parameter><ac:parameter ac:name="labels">community_antibody</ac:parameter><ac:parameter ac:name="parent">@home</ac:parameter><ac:parameter ac:name="allowRename">true</ac:parameter><ac:parameter ac:name="live">true</ac:parameter></ac:structured-macro>
 </p>
-</ac:rich-text-body>
-</ac:macro>
+</ac:rich-text-body></ac:structured-macro>
 <p />
 
-<ac:macro ac:name="link-to">
-<ac:parameter ac:name="linkText">Add Comment</ac:parameter>
-<ac:default-parameter>add comment</ac:default-parameter>
-</ac:macro>
+<ac:structured-macro ac:name="link-to"><ac:parameter ac:name="">add comment</ac:parameter><ac:parameter ac:name="linkText">Add Comment</ac:parameter></ac:structured-macro>
 <p />
 
-<ac:macro ac:name="table-plus">
-<ac:parameter ac:name="sortIcon">true</ac:parameter>
-<ac:parameter ac:name="columnAttributes">style=width:20%</ac:parameter>
-<ac:rich-text-body>
+<ac:structured-macro ac:name="table-plus"><ac:parameter ac:name="sortIcon">true</ac:parameter><ac:parameter ac:name="columnAttributes">style=width:20%</ac:parameter><ac:rich-text-body>
 <table><tbody>
 <tr>
 <th><p> Antibody&nbsp;Name: </p></th>
@@ -65,12 +48,7 @@
 <tr>
 <th><p> Recognized target molecules (gene names, domains, epitopes ...)  </p></th>
 <td><p />
-<ac:macro ac:name="text-data">
-<ac:parameter ac:name="content">wiki</ac:parameter>
-<ac:parameter ac:name="name">RecognizedTargetMolecules</ac:parameter>
-<ac:parameter ac:name="atlassian-macro-output-type">INLINE</ac:parameter>
-<ac:parameter ac:name="type">line</ac:parameter>
-</ac:macro><p /></td>
+<ac:structured-macro ac:name="text-data"><ac:parameter ac:name="content">wiki</ac:parameter><ac:parameter ac:name="name">RecognizedTargetMolecules</ac:parameter><ac:parameter ac:name="atlassian-macro-output-type">INLINE</ac:parameter><ac:parameter ac:name="type">line</ac:parameter></ac:structured-macro><p /></td>
 </tr>
 <tr>
 <th><p> Recognized ZFIN genes <br class="atl-forced-newline" />
@@ -86,7 +64,7 @@ current ZFIN-gene symbols only <a href="http://zfin.org/cgi-bin/webdriver?MIval=
  </p></td>
 </tr>
 </tbody></table>
-</ac:rich-text-body></ac:macro>
+</ac:rich-text-body></ac:structured-macro>
 <p />
 
 <h3>Assays Tested</h3>

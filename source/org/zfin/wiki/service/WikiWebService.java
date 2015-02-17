@@ -211,7 +211,7 @@ public class WikiWebService {
                 logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]");
                 // don't no why but this page throws an exception: should have the id: 131090 but
                 // has 131089 which does not exist. Must be a bug in Confluence
-                if (page.getUrl().equals("https://wiki.zfin.org/display/AB"))
+                if (page.getUrl().endsWith("wiki.zfin.org/display/AB"))
                     continue;
                 pageSummary = service.getPage(token, page.getId());
                 // do not work on deleted pages

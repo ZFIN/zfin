@@ -344,7 +344,7 @@ public class AntibodyWikiWebService extends WikiWebService {
     }
 
     public static String getEncodedString(String value) {
-        if(value == null)
+        if (value == null)
             return null;
         value = value.replace("ü", "&uuml;");
         value = value.replace("ä", "&auml;");
@@ -399,7 +399,7 @@ public class AntibodyWikiWebService extends WikiWebService {
             } else {
                 String newContent = createWikiPageContentForAntibodyFromTemplate(antibody);
                 // have to handle the "\r" case here, because contents are sometimes stored with the alternate line-endings
-                if (newContent.replaceAll("\n", " ").replaceAll("\r", "").equals(page.getContent().replaceAll(FileUtil.LINE_SEPARATOR, " "))) {
+                if (newContent.equals(page.getContent())) {
                     return ReturnStatus.NOCHANGE;
                 } else {
                     StringBuilder builder = new StringBuilder("Difference for: " + antibody.getName() + "\n");
