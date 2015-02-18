@@ -206,7 +206,7 @@
     <target name="run-data-report-param" description="">
         <echo message="Create Report"/>
         <echo message="Use database: ${DBNAME}"/>
-        <echo message="Use ParameterValues: ${ParameterValues}"/>
+        <echo message="Use ParameterValues: ${DateValues}"/>
         <delete dir="${validateData}/report_data/${JobName}"/>
         <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="no"
               classpathref="extended.classpath"
@@ -219,6 +219,10 @@
             <arg value="${ParameterVariables}"/>
             <arg value="-parameterValues"/>
             <arg value="${ParameterValues}"/>
+            <arg value="-dateVariables"/>
+            <arg value="${DateVariables}"/>
+            <arg value="-dateValues"/>
+            <arg value="${DateValues}"/>
             <arg value="-dataDir"/>
             <arg value="${validateData}/report_data"/>
             <arg value="-propertyDir"/>
