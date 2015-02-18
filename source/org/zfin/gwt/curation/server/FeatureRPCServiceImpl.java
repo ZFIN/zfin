@@ -294,12 +294,30 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     public void removeFeatureAlias(String name, String featureZdbID) {
-        Feature feature = featureRepository.getFeatureByID(featureZdbID);
+        try {
+            Session session = HibernateUtil.currentSession();
+            session.beginTransaction();
+            Feature feature = featureRepository.getFeatureByID(featureZdbID);
+            if (feature == null)
+                throw new ValidationException("no feature found");
+            FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, name);
+           // infrastructureRepository.deleteRecordAttributionsForData(featureDBLink.getZdbID());
+            session.delete(featureAlias);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            logger.error(e);
+            HibernateUtil.rollbackTransaction();
+        }
+    }
+
+
+
+        /*Feature feature = featureRepository.getFeatureByID(featureZdbID);
         FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, name);
         HibernateUtil.createTransaction();
         featureRepository.deleteFeatureAlias(feature, featureAlias);
-        HibernateUtil.flushAndCommitCurrentSession();
-    }
+//        HibernateUtil.flushAndCommitCurrentSession();
+    }*/
 
 
     public void removeFeatureSequence(String sequence, String featureZdbID) {

@@ -122,7 +122,7 @@ public class FeatureSequenceList extends AbstractStackComposite<FeatureDTO> {
 
                 final String value = event.getDTO().getName();
                 FeatureRPCService.App.getInstance().removeFeatureSequence(value, event.getDTO().getZdbID(),
-                        new FeatureEditCallBack<Void>("failed to remove supplier to marker: ") {
+                        new FeatureEditCallBack<Void>("failed to remove sequence from feature: ") {
                             public void onSuccess(Void o) {
                                 removeFromGUI(value);
                             }
