@@ -1,5 +1,6 @@
 package org.zfin.mapping.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -316,6 +317,17 @@ public class HibernateLinkageRepository implements LinkageRepository {
         linkage.setComments(newComment);
         HibernateUtil.currentSession().save(linkage);
         HibernateUtil.currentSession().save(updates);
+    }
+
+    @Override
+    public boolean hasGenomeLocation(Marker gene, GenomeLocation.Source source) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from MarkerGenomeLocation where marker = :marker " +
+                        "AND source = :source ");
+        query.setParameter("marker", gene);
+        query.setParameter("source", source);
+        List list = query.list();
+        return CollectionUtils.isNotEmpty(list);
     }
 
     @Override

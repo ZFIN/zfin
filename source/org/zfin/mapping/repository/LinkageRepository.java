@@ -173,4 +173,6 @@ public interface LinkageRepository {
     Linkage getLinkage(String linkageID);
 
     void saveLinkageComment(Linkage linkage, String newComment);
+
+    boolean hasGenomeLocation(Marker gene, GenomeLocation.Source source);
 }

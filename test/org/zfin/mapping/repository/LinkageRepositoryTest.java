@@ -392,4 +392,12 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(linkage);
         assertEquals("13", linkage.getChromosome());
     }
+
+    @Test
+    public void hasGenomeLocationInfo() {
+        // pax2a
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-990415-8");
+        boolean hasLocation = getLinkageRepository().hasGenomeLocation(marker, GenomeLocation.Source.ENSEMBL);
+        assertTrue(hasLocation);
+    }
 }

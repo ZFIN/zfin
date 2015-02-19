@@ -3,6 +3,8 @@ package org.zfin.sequence.service;
 import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gbrowse.GBrowseService;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
@@ -17,6 +19,8 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
 /**
  * This class
@@ -94,8 +98,9 @@ public class TranscriptService {
             rtd.add(rm);
         }
 
-        if (displayGBrowseImage ) {
-            rtd.setGbrowseImage(GBrowseService.buildTranscriptGBrowseImage(gene, highlightedTranscript));
+        if (displayGBrowseImage) {
+            if (getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL))
+                rtd.setGbrowseImage(GBrowseService.buildTranscriptGBrowseImage(gene, highlightedTranscript));
 
         } else {
             logger.debug("not even trying showing GBrowse image, probably because the indexer is asking for the page");
@@ -159,7 +164,7 @@ public class TranscriptService {
         Collection<DBLink> dbLinks = getSupportingDBLinks(transcript);
         sequenceInfo.addDBLinks(dbLinks);
 
-        logger.debug( (sequenceInfo.getDbLinks() == null ? "none " : sequenceInfo.getDbLinks().size()) + " marker linked sequence dblinks");
+        logger.debug((sequenceInfo.getDbLinks() == null ? "none " : sequenceInfo.getDbLinks().size()) + " marker linked sequence dblinks");
 
         return sequenceInfo;
 
@@ -194,7 +199,7 @@ public class TranscriptService {
      *
      * @param transcript transcript to build object for
      * @return Presentation object containing a single dblink for the predicted
-     *         targets and a collection of RelatedMarkers for published targets
+     * targets and a collection of RelatedMarkers for published targets
      */
     public static TranscriptTargets getTranscriptTargets(Transcript transcript) {
         TranscriptTargets targets = new TranscriptTargets();
@@ -366,7 +371,7 @@ public class TranscriptService {
         return markerRepository.getAllTranscriptTypes();
     }
 
-    public static boolean isSupportingSequence(TranscriptDBLink transcriptDBLink){
+    public static boolean isSupportingSequence(TranscriptDBLink transcriptDBLink) {
         return transcriptDBLink.isInDisplayGroup(DisplayGroup.GroupName.TRANSCRIPT_LINKED_SEQUENCE);
     }
 }
