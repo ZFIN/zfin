@@ -153,7 +153,7 @@ public class MergeService {
 
 
         try {
-            if(ZfinProperties.isPushToWiki()){
+            if (ZfinProperties.isPushToWiki()) {
                 AntibodyWikiWebService.getInstance().mergeAntibody(antibodyToMergeInto, antibodyToDelete);
             }
         } catch (Exception e) {
@@ -412,6 +412,9 @@ public class MergeService {
                             .setString("markerToDeleteZdbID", markerToDelete.getZdbID())
                             .setString("pubZdbID", publicationAttribution.getPublication().getZdbID())
                             .executeUpdate();
+                } else {
+                    // if there exists already a pub record then delete it from the old marker
+                    HibernateUtil.currentSession().delete(publicationAttribution);
                 }
             }
     }
@@ -464,11 +467,11 @@ public class MergeService {
     public static boolean deleteAntibody(Antibody antibody) {
 
         try {
-            if(ZfinProperties.isPushToWiki()){
+            if (ZfinProperties.isPushToWiki()) {
                 AntibodyWikiWebService.getInstance().dropPageIndividually(antibody.getAbbreviation());
             }
         } catch (Exception e) {
-            logger.error("Failed to remove antibody: "+antibody,e);
+            logger.error("Failed to remove antibody: " + antibody, e);
         }
         RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(antibody, "Antibody", "Antibody Deleted");
         RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(antibody.getZdbID());
