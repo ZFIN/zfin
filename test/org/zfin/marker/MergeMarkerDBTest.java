@@ -181,7 +181,9 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
     }
 
 
-    @Test
+   // @Test
+    // ToDo: delete antibody is done through DeleteRecordController
+    // which does not use MergeService.deleteMarker() method....
     public void deleteRealAntibodies() {
 
         try {
