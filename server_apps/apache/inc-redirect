@@ -104,7 +104,7 @@ RewriteCond %{QUERY_STRING} ^anatomyItem.zdbID=([\w-]+)&wildtype=([\w]+)$ [NC]
 RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-morpholinos/%1/%2? [NC,R=301]
 
 RewriteCond %{QUERY_STRING} ^termID=([\w-:]+)$ [NC]
-RewriteRule ^/action/ontology/term-detail /action/ontology/term-detail/%1? [NC,R=301]
+RewriteRule ^/action/ontology/term-detail$ /action/ontology/term-detail/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^antibody.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/antibody/detail /action/marker/view/%1? [NC,R=301]
