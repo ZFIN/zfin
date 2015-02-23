@@ -70,56 +70,64 @@ public class MarkerGoService {
     }
 
     String getReferencesLink(MarkerGoViewTableRow row, Marker marker) {
-        if (CollectionUtils.isEmpty(row.getPublications())) { return null; }
+        if (CollectionUtils.isEmpty(row.getPublications())) {
+            return null;
+        }
 
         StringBuilder sb = new StringBuilder();
 
-        if (CollectionUtils.size(row.getPublications()) == 1) {
-            Publication publication = row.getPublications().iterator().next();
-            String publicationLink = PublicationPresentation.getLink(publication);
-            sb.append(publicationLink);
+        if (row.getPublications().size() > 1) {
+            sb.append(getShowPubsLink(row, marker));
         } else {
-
-            StringBuilder uri = new StringBuilder("/cgi-bin/webdriver?MIval=aa-showpubs.apg");
-            uri.append("&OID=");
-            uri.append(marker.getZdbID());
-
-            uri.append("&rtype=goview");
-            uri.append("&total_count=");
-            uri.append(String.valueOf(row.getPublications().size()));
-
-            uri.append("&goterm=");
-            uri.append(row.getTerm().getZdbID());
-
-            uri.append("&title=Gene+Ontology+Pubs");
-            uri.append("&name=");
-
-            uri.append("&goterm=");
-            uri.append(row.getTerm().getZdbID());
-
-            uri.append("&evidence=");
-            uri.append(row.getEvidenceCode().getCode().toUpperCase());
-
-            uri.append("&goflag=");
-            uri.append(row.getQualifier());
-
-            uri.append("&inf=");
-            uri.append(row.getInferredFromAsString());
-
-            uri.append("&has_inf=");
-            uri.append(StringUtils.isNotEmpty(row.getInferredFromAsString()) ? "t" : "f");
-
-            sb.append("<a href=\"");
-            sb.append(uri.toString());
-            sb.append("\">");
-            sb.append(row.getPublications().size());
-            sb.append(" Publications");
-            sb.append("</a>");
-
+            Publication publication = row.getPublications().iterator().next();
+            sb.append(PublicationPresentation.getLink(publication));
         }
 
+        return sb.toString();
+    }
 
 
+    /* Not working where there's more than one id in &inf */
+    String getShowPubsLink(MarkerGoViewTableRow row, Marker marker) {
+        if (CollectionUtils.isEmpty(row.getPublications())) { return null; }
+
+        StringBuilder sb = new StringBuilder();
+        StringBuilder uri = new StringBuilder("/cgi-bin/webdriver?MIval=aa-showpubs.apg");
+        uri.append("&OID=");
+        uri.append(marker.getZdbID());
+
+        uri.append("&rtype=goview");
+        uri.append("&total_count=");
+        uri.append(String.valueOf(row.getPublications().size()));
+
+        uri.append("&goterm=");
+        uri.append(row.getTerm().getZdbID());
+
+        uri.append("&title=Gene+Ontology+Pubs");
+        uri.append("&name=");
+
+        uri.append("&goterm=");
+        uri.append(row.getTerm().getZdbID());
+
+        uri.append("&evidence=");
+        uri.append(row.getEvidenceCode().getCode().toUpperCase());
+
+        uri.append("&goflag=");
+        uri.append(row.getQualifier());
+
+        uri.append("&inf=");
+        uri.append(row.getFirstInference());
+
+        uri.append("&infer=");
+        uri.append(StringUtils.isNotEmpty(row.getInferredFromAsString()) ? "t" : "f");
+
+
+        sb.append("<a href=\"");
+        sb.append(uri.toString());
+        sb.append("\">");
+        sb.append(row.getPublications().size());
+        sb.append(" Publications");
+        sb.append("</a>");
 
         return sb.toString();
     }

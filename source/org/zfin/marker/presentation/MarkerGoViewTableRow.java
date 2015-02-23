@@ -1,7 +1,8 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.zfin.gwt.root.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.Term;
@@ -24,6 +25,7 @@ public class MarkerGoViewTableRow implements Comparable {
     Set<Publication> publications;
     String referencesLink;
     String inferredFromAsString;
+    String firstInference;
 
     public MarkerGoViewTableRow(MarkerGoTermEvidence evidence) {
         setOntology(evidence.getGoTerm().getOntology().getCommonName().replace("GO: ", ""));
@@ -36,12 +38,10 @@ public class MarkerGoViewTableRow implements Comparable {
         publications = new TreeSet<>();
         publications.add(evidence.getSource());
 
-        StringBuilder sb = new StringBuilder();
-        for (String s : evidence.getInferencesAsString()) {
-            if (StringUtils.isNotEmpty(sb.toString())) { sb.append(", "); }
-            sb.append(s);
+        inferredFromAsString = StringUtils.join(evidence.getInferencesAsString(), ", ");
+        if (CollectionUtils.isNotEmpty(evidence.getInferencesAsString())) {
+            firstInference = evidence.getInferencesAsString().iterator().next();
         }
-        inferredFromAsString = sb.toString();
 
     }
 
@@ -111,6 +111,14 @@ public class MarkerGoViewTableRow implements Comparable {
 
     public void setInferredFromAsString(String inferredFromAsString) {
         this.inferredFromAsString = inferredFromAsString;
+    }
+
+    public String getFirstInference() {
+        return firstInference;
+    }
+
+    public void setFirstInference(String firstInference) {
+        this.firstInference = firstInference;
     }
 
     @Override
