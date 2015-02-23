@@ -25,11 +25,6 @@ end
 # Therefore, to speed up the process from over 4 hours to well under
 # an hour, do the unload to production disk and then copy it.
 
-# moved into Jenkins job: Time-Stamp-Database-Info_d
-# This script should eventually go fully into the
-# Jenkins Job.
-#/private/bin/ant -f  <!--|ROOT_PATH|-->/server_apps/DB_maintenance/build.xml
-
 if ($HOST != "zygotix") then
   /private/ZfinLinks/Commons/bin/unloaddb.pl <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
   #  $? is the return value of the last-executed command.  
