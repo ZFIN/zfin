@@ -17,7 +17,7 @@
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>timestamp-download</targets>
-      <buildFile>cd $TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; unload_production.sh</command>
