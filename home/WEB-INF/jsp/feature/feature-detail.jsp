@@ -101,15 +101,12 @@
                 <c:if test="${mRel.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${mRel.publicationCount == 1}">
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>        
                         </c:when>
                         <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
                         </c:otherwise>
                     </c:choose>
-                </c:if>
-                <c:if test="${!loop.last}">
-                    ,&nbsp;
                 </c:if>
             </c:forEach>
         </td>
@@ -223,7 +220,7 @@
                 <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
                     <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
                        id="${supplier.organization.zdbID}">
-                            ${supplier.organization.name}</a>
+                        ${supplier.organization.name}</a>
                     <c:if test="${supplier.zirc || supplier.ezrc}">&nbsp;
                         <zfin2:orderThis organization="${supplier.organization}"
                                          accessionNumber="${formBean.feature.zdbID}"/>
@@ -287,7 +284,7 @@
                     <a href="javascript:expand()">
                         <img src="/images/darrow.gif" alt="expand" border="0">
                         Show all</a>
-                        ${fn:length(formBean.featgenoStats)} genotypes
+                    ${fn:length(formBean.featgenoStats)} genotypes
                 </div>
             </c:if>
         </c:when>
