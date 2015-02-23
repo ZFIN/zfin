@@ -70,4 +70,6 @@ public interface FeatureRPCService extends RemoteService {
 
     void removeCuratorNote(NoteDTO noteDTO);
 
+    List<String> getMutagensForFeatureType(FeatureTypeEnum ftrType);
+
 }

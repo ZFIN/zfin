@@ -527,7 +527,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                     "Cannot remove such an alias.");
         // remove the ZDB active data record with cascade.
 
-       /* String hql = "delete from FeatureHistory  mh " +
+        /* String hql = "delete from FeatureHistory  mh " +
                 " where mh.featureAlias = :zdbID ";
         Query query = currentSession().createQuery(hql);
         query.setString("zdbID", alias.getZdbID());
@@ -1038,6 +1038,20 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 alias.setPublications(pubattr);
             }
         }
+
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getMutagensForFeatureType(FeatureTypeEnum featureTypeEnum) {
+
+        String sql = "select ftmgm_mutagen from feature_type_mutagen_group_member " +
+                " where ftmgm_feature_type = :featureType " +
+                " order by ftmgm_mutagen";
+
+        return (List<String>) HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("featureType", featureTypeEnum.name())
+                .list();
 
     }
 }

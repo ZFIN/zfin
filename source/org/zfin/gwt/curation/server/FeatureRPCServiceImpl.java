@@ -628,4 +628,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         logger.error("note not found with zdbID: " + noteDTO.getZdbID());
     }
+
+    public List<String> getMutagensForFeatureType(FeatureTypeEnum ftrType) {
+        return featureRepository.getMutagensForFeatureType(ftrType);
+    }
 }

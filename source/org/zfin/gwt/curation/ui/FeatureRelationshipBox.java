@@ -360,10 +360,14 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
                                 if (mutagenForFeature != null) {
                                     if (featureToAddRelationship.getSelectedText().equalsIgnoreCase("created by")) {
                                         if (m.getName().startsWith(mutagenForFeature)) {
-                                           featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                            featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                        } else if (mutagenForFeature.equals("DNA and CRISPR") && m.getName().startsWith("CRISPR"))  {
+                                            featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                        } else if (mutagenForFeature.equals("DNA and TALEN") && m.getName().startsWith("TALEN"))  {
+                                            featureToAddTarget.addItem(m.getName(), m.getZdbID());
                                         }
                                     }  else {
-                                         featureToAddTarget.addItem(m.getName(), m.getZdbID());
+                                        featureToAddTarget.addItem(m.getName(), m.getZdbID());
                                     }
                                 } else {
                                     featureToAddTarget.addItem(m.getName(), m.getZdbID());

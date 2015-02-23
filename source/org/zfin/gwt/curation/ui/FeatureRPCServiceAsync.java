@@ -29,5 +29,6 @@ public interface FeatureRPCServiceAsync {
     void removeCuratorNote(NoteDTO noteDTO, AsyncCallback<Void> async);
     void addFeatureSequence(String name, String ftrZdbID,String pubZdbID ,AsyncCallback<Void> async);
     void removeFeatureSequence(String name, String ftrZdbID, AsyncCallback<Void> async);
+    void getMutagensForFeatureType(FeatureTypeEnum ftrType, AsyncCallback<List<String>> featureEditCallBack);
 }
 

@@ -127,7 +127,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                     featureSuffixBox.setVisible(true);
                     suffixLabel.setVisible(true);
                     constructTextBox.setVisible(false);
-                   // featureNameBox.setValue("testign knwon");
+                    // featureNameBox.setValue("testign knwon");
                     saveButton.setEnabled(true);
                 } else {
                     featureNameBox.setVisible(false);
@@ -209,7 +209,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         labOfOriginBox.setEnabled(true);
         labDesignationBox.setEnabled(true);
         mutageeBox.setEnabled(true);
-        mutagenBox.setEnabled(true);
+        mutagenBox.setEnabled(false);
         suffixLabel.setVisible(false);
         featureSuffixBox.setVisible(false);
         featureAliasBox.setEnabled(true);
@@ -257,7 +257,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 featureSequenceBox.setEnabled(false);
                 labOfOriginBox.setEnabled(false);
                 mutageeBox.setEnabled(false);
-                mutagenBox.setEnabled(false);
+                //mutagenBox.setEnabled(false);
                 constructTextBox.setVisible(false);
                 lineNumberBox.setText("");
                 featureNameBox.setVisible(true);
@@ -273,10 +273,33 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 featureSequenceBox.setEnabled(false);
                 labOfOriginBox.setEnabled(false);
                 mutageeBox.setEnabled(false);
-                mutagenBox.setEnabled(false);
+                //mutagenBox.setEnabled(false);
                 lineNumberBox.setText("");
                 break ;
         }
+
+        mutagenBox.clear();
+
+        FeatureRPCService.App.getInstance().getMutagensForFeatureType(featureTypeSelected,
+                new FeatureEditCallBack<List<String>>("Failed to return mutagen for feature type: " + featureTypeSelected.getName(), this) {
+                    @Override
+                    public void onSuccess(List<String> result) {
+                        if (result != null && result.size() > 0) {
+                            if (result.size() == 1) {
+                                mutagenBox.addItem(result.get(0));
+                            } else {
+                                mutagenBox.addItem("-------");
+                                for (String mut : result) {
+                                    mutagenBox.addItem(mut);
+                                }
+                            }
+                            mutagenBox.setEnabled(true);
+                        }
+                    }
+                }
+        );
+
+
         handleDirty();
 
     }
@@ -339,7 +362,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         featureTypeBox.addNull();
         for(FeatureTypeEnum featureTypeEnum : FeatureTypeEnum.values()){
             if (!featureTypeEnum.name().equalsIgnoreCase("Inversion"))
-                  featureTypeBox.addItem(featureTypeEnum.getDisplay(),featureTypeEnum.name());
+                featureTypeBox.addItem(featureTypeEnum.getDisplay(),featureTypeEnum.name());
         }
         table.setHTML(FeatureTableLayout.TYPE.row(), 0, "<b>Feature type:</b>");
 
@@ -417,7 +440,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
 
     protected void setValues() {
 
-        mutagenBox.addEnumValues(Mutagen.values());
+        //mutagenBox.addEnumValues(Mutagen.values());
         mutageeBox.addEnumValues(Mutagee.values());
         featureSuffixBox.addEnumValues(TransgenicSuffix.values());
 
@@ -491,7 +514,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         mutageeBox.setEnabled(false);
         mutageeBox.setSelectedIndex(0);
         mutagenBox.setEnabled(false);
-        mutagenBox.setSelectedIndex(0);
+        //mutagenBox.setSelectedIndex(0);
         publicNoteBox.setEnabled(false);
         publicNoteBox.setText("");
         curatorNoteBox.setEnabled(false);
