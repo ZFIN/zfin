@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Checks that an unload directoy is complete. If not it will be deleted.</description>
+  <description>Unload database into /research/zunload/databases/'DBNAME'</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
