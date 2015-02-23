@@ -248,8 +248,7 @@
                             <td>
                                 <c:forEach var="construct" items="${genoFeat.feature.constructs}"
                                            varStatus="constructsloop">
-                                    <a href="/action/marker/view/${construct.marker.zdbID}">${construct.marker.name}</a>
-                                    <c:if test="${!constructsloop.last}">,&nbsp;</c:if>
+                                    <a href="/action/marker/view/${construct.marker.zdbID}">${construct.marker.name}</a><c:if test="${!constructsloop.last}">,&nbsp;</c:if>
                                 </c:forEach>
                             </td>
                             <td>
