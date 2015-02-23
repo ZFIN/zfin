@@ -65,11 +65,6 @@
 #
 #  MTWT    10:30pm   unload production using unloaddb.pl.  Also see pull.sh.
 30 22 * * 0-6 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/checkUnloadProduction.sh
-#
-#  Every day at 1.55 am clean out accession files older than 3 days.
-55 01 * * * /bin/find /private/etc/tomcat/zfin.org/temp/ -name "accession*.txt" -mtime +3 -exec rm -f {} \; >> /private/etc/tomcat/zfin.org/temp/clean-accessions-error.txt
-#  Every Tuesday at 2.05 am clean out microarray reports older than 80 days.
-05 02 * * 4 /bin/find /private/etc/tomcat/zfin.org/temp/ -name "microarry*.txt" -mtime +80 -exec rm -f {} \; >> /private/etc/tomcat/zfin.org/temp/clean-microarray-error.txt
 # ------------------------------------------------------------------------
 # ---- 11 PM -  1 AM : DATA TRANSFER IN                               ----
 # ------------------------------------------------------------------------
