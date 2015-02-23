@@ -65,7 +65,7 @@ RewriteCond %{QUERY_STRING}     ^Mival=aa-genotypeview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /action/genotype/genotype-detail?zdbID=%1 [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^genotype.zdbID=([\w-]+)$    [NC]
-RewriteRule ^/action/genotype/detail /%1? [NC,R=301]
+RewriteRule ^/action/genotype/detail$ /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^anatomyItem.zdbID=([\w-:]+)$    [NC]
 RewriteRule ^/action/anatomy/term-detail /%1? [NC,R=301]
@@ -119,7 +119,7 @@ RewriteCond %{QUERY_STRING}    ^termID=([\w-:]+)$    [NC]
 RewriteRule ^/action/ontology/term-detail/ /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
-RewriteRule ^/action/genotype/genotype-detail /%1? [NC,R=301]
+RewriteRule ^/action/genotype/genotype-detail$ /%1? [NC,R=301]
 
 
 RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
