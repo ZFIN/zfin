@@ -33,7 +33,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.BuildTrigger>
-      <childProjects>Index-Faceted-Search_Publication_Category_d</childProjects>
+      <childProjects>Update-Pub-Date_d, Index-Faceted-Search_Publication_Category_d</childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>
@@ -46,7 +46,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+            <recipientList>smoxon@zfin.org</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${SCRIPT, template=&quot;reportBody.template&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
@@ -62,7 +62,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
-            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+            <recipientList>smoxon@zfin.org</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
