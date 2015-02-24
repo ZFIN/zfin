@@ -27,7 +27,11 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <body>$PROJECT_DEFAULT_CONTENT
+
+${SCRIPT,template="console-output.template"}
+
+</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -43,7 +47,11 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
+            <body>$PROJECT_DEFAULT_CONTENT
+
+${SCRIPT,template="console-output.template"}
+
+</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -56,7 +64,7 @@
           </email>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
       </configuredTriggers>
-      <contentType>default</contentType>
+      <contentType>text/html</contentType>
         <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
       <attachmentsPattern></attachmentsPattern>
