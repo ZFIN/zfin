@@ -15,6 +15,7 @@ import org.zfin.sequence.ReferenceDatabase
 import org.zfin.util.ReportGenerator
 
 import java.util.zip.GZIPInputStream
+import java.util.zip.ZipException
 
 
 cli = new CliBuilder(usage: 'LoadAddgene')
@@ -51,12 +52,19 @@ if (options.localData) {
     print "Downloading JSON file from $DOWNLOAD_URL ... "
     // download, gunzip, and parse json from addgene
     DOWNLOAD_URL.toURL().withInputStream { rawInputStream ->
+        rawInputStream.mark(100);
         try {
             gzipInputStream = new GZIPInputStream(rawInputStream)
             gzipInputStream.withReader { gzipReader ->
                 json = new JsonSlurper().parse(gzipReader)
             }
             gzipInputStream.close()
+        } catch (ZipException e) {
+            // possibly not in GZIP format?
+            rawInputStream.reset()
+            rawInputStream.withReader { reader ->
+                json = new JsonSlurper().parse(reader)
+            }
         } catch (IOException e) {
             println "Error downloading or unzipping Addgene JSON file. Please verify download works manually."
             e.printStackTrace()
