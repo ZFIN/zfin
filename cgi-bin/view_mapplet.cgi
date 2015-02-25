@@ -787,7 +787,7 @@
 
 	print "<br><font size=-1><b>&nbsp;&nbsp;".
     "<a href=\"/action/mapping/panel-detail/".
-    "OID=" . $allpanels_id[$order_increment]."\"".
+    $allpanels_id[$order_increment]."\"".
     ">". $panel . "</a>".
     " panel, Chr: " . $lg . ", units: " . $allpanels_metric[$order_increment] .
     "</b></font></td>";
