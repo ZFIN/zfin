@@ -3,12 +3,16 @@ package org.zfin.mutant;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.fish.repository.FishService;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -399,6 +403,34 @@ public class PhenotypeService {
         }  else {
             return null;
         }
+    }
+
+    /**
+     * Create a list of FigureSummaryDisplay objects for a given genotype
+     */
+    public static List<FigureSummaryDisplay> getPhenotypeFigureSummaryForGenotype(Genotype genotype) {
+        List<Figure> phenotypeFigures = RepositoryFactory.getPhenotypeRepository().getPhenotypeFiguresForGenotype(genotype);
+        List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<FigureSummaryDisplay>(phenotypeFigures.size());
+        Set<Figure> figures = new HashSet<Figure>(phenotypeFigures.size());
+
+        for (Figure figure : phenotypeFigures) {
+            FigureSummaryDisplay figureSummaryDisplay = new FigureSummaryDisplay();
+            if (figures.add(figure)) {
+                figureSummaryDisplay.setFigure(figure);
+                figureSummaryDisplay.setPublication(figure.getPublication());
+                List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getPhenotypeStatementsForFigureAndGenotype(figure, genotype);
+               // figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
+                figureSummaryDisplay.setPhenotypeStatementList(phenotypeStatements);
+                figureSummaryDisplays.add(figureSummaryDisplay);
+                if (!figure.isImgless()) {
+                    figureSummaryDisplay.setImgCount(figure.getImages().size());
+                    figureSummaryDisplay.setThumbnail(figure.getImages().iterator().next().getThumbnail());
+                }
+            }
+        }
+
+        return figureSummaryDisplays;
+
     }
 }
 

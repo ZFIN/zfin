@@ -6,102 +6,102 @@
 <%@ attribute name="showNumberOfRecords" type="java.lang.Integer" required="true" %>
 
 <table id="genotypes-table" class="summary rowstripes">
-     <caption>GENOTYPES <c:if test="${sequenceTargetReagen != null}">CREATED WITH ${sequenceTargetReagen}</c:if></caption>
-     <tr>
+    <caption>GENOTYPES <c:if test="${sequenceTargetReagen != null}">CREATED WITH ${sequenceTargetReagen}</c:if></caption>
+    <tr>
         <th width="20%">
-           Genotype (Background)
+            Genotype (Background)
         </th>
         <th width="20%">
-           Affected Genes
+            Affected Genes
         </th>
         <th width="20%">
-           Phenotype
+            Phenotype
         </th>
         <th width="20%">
-           Gene Expression
+            Gene Expression
         </th>
-     </tr>
+    </tr>
 
-     <c:forEach var="genotype" items="${genotypes}" varStatus="loop" end="${showNumberOfRecords-1}">
-          <zfin:alternating-tr loopName="loop">
-               <td>
-                  <zfin:link entity="${genotype.genotype}"/>
-               </td>
-               <td>
-                  <zfin:link entity="${genotype.affectedMarkers}"/>
-               </td>
+    <c:forEach var="genotype" items="${genotypes}" varStatus="loop" end="${showNumberOfRecords-1}">
+        <zfin:alternating-tr loopName="loop">
+            <td>
+                <zfin:link entity="${genotype.genotype}"/>
+            </td>
+            <td>
+                <zfin:link entity="${genotype.affectedMarkers}"/>
+            </td>
 
-               <td>
-                  <c:if test="${genotype.numberOfFigures > 0}">
-                      <c:if test="${genotype.numberOfFigures > 1}">
-                          <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${genotype.genotype.zdbID}&includingMO=yes&split=yes'>
-                              <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                           integerEntity="${genotype.numberOfFigures}"
-                                           includeNumber="true"/></a>
-                      </c:if>
-                      <c:if test="${genotype.numberOfFigures == 1 }">
-                          <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${genotype.figure.zdbID}'>
-                               <zfin2:figureOrTextOnlyLink figure="${genotype.figure}"
-                                           integerEntity="${genotype.numberOfFigures}"/>
-                          </a>
-                      </c:if>
-                  </c:if>
+            <td>
+                <c:if test="${genotype.numberOfFigures > 0}">
+                    <c:if test="${genotype.numberOfFigures > 1}">
+                        <a href='/action/genotype/genotype-phenotype-figure-summary?genoZdbID=${genotype.genotype.zdbID}'>
+                            <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
+                                         integerEntity="${genotype.numberOfFigures}"
+                                         includeNumber="true"/></a>
+                    </c:if>
+                    <c:if test="${genotype.numberOfFigures == 1 }">
+                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${genotype.figure.zdbID}'>
+                            <zfin2:figureOrTextOnlyLink figure="${genotype.figure}"
+                                                        integerEntity="${genotype.numberOfFigures}"/>
+                        </a>
+                    </c:if>
+                </c:if>
 
-                  <c:if test="${genotype.numberOfFigures == 0}">
-                      &nbsp;
-                  </c:if>
+                <c:if test="${genotype.numberOfFigures == 0}">
+                    &nbsp;
+                </c:if>
 
-                  <c:if test="${genotype.numberOfPublications ==1}">
-                       from
-                       <zfin:link entity="${genotype.singlePublication}"/>
-                  </c:if>
+                <c:if test="${genotype.numberOfPublications ==1}">
+                    from
+                    <zfin:link entity="${genotype.singlePublication}"/>
+                </c:if>
 
-                  <c:if test="${genotype.numberOfPublications > 1}">
-                        from
-                        <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
-                                     integerEntity="${genotype.numberOfPublications}"
-                                     includeNumber="true"/>
-                  </c:if>
+                <c:if test="${genotype.numberOfPublications > 1}">
+                    from
+                    <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
+                                 integerEntity="${genotype.numberOfPublications}"
+                                 includeNumber="true"/>
+                </c:if>
 
-                  <zfin2:showCameraIcon hasImage="${genotype.isImage}"/>
+                <zfin2:showCameraIcon hasImage="${genotype.isImage}"/>
 
-               </td>
+            </td>
 
-               <td>
-                  <c:if test="${genotype.numberOfExpFigures > 0}">
-                       <c:if test="${genotype.numberOfExpFigures > 1}">
-                           <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${genotype.genotype.zdbID}'>
-                                 <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
-                                              integerEntity="${genotype.numberOfExpFigures}"
-                                              includeNumber="true"/></a>
-                       </c:if>
+            <td>
+                <c:if test="${genotype.numberOfExpFigures > 0}">
+                    <c:if test="${genotype.numberOfExpFigures > 1}">
+                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${genotype.genotype.zdbID}'>
+                            <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
+                                         integerEntity="${genotype.numberOfExpFigures}"
+                                         includeNumber="true"/></a>
+                    </c:if>
 
-                       <c:if test="${genotype.numberOfExpFigures == 1 }">
-                           <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${genotype.expFigure.zdbID}'>
-                                 <zfin2:figureOrTextOnlyLink figure="${genotype.expFigure}"
-                                                             integerEntity="${genotype.numberOfExpFigures}"/>
-                           </a>
-                       </c:if>
-                  </c:if>
+                    <c:if test="${genotype.numberOfExpFigures == 1 }">
+                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${genotype.expFigure.zdbID}'>
+                            <zfin2:figureOrTextOnlyLink figure="${genotype.expFigure}"
+                                                        integerEntity="${genotype.numberOfExpFigures}"/>
+                        </a>
+                    </c:if>
+                </c:if>
 
-                  <c:if test="${genotype.numberOfExpFigures == 0}">
-                        &nbsp;
-                  </c:if>
+                <c:if test="${genotype.numberOfExpFigures == 0}">
+                    &nbsp;
+                </c:if>
 
-                  <c:if test="${genotype.numberOfExpPublications ==1}">
-                        from
-                        <zfin:link entity="${genotype.singleExpPublication}"/>
-                  </c:if>
+                <c:if test="${genotype.numberOfExpPublications ==1}">
+                    from
+                    <zfin:link entity="${genotype.singleExpPublication}"/>
+                </c:if>
 
-                  <c:if test="${genotype.numberOfExpPublications > 1}">
-                        from
-                        <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
-                                     integerEntity="${genotype.numberOfExpPublications}"
-                                     includeNumber="true"/>
-                  </c:if>
+                <c:if test="${genotype.numberOfExpPublications > 1}">
+                    from
+                    <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
+                                 integerEntity="${genotype.numberOfExpPublications}"
+                                 includeNumber="true"/>
+                </c:if>
 
-                  <zfin2:showCameraIcon hasImage="${genotype.isImageExp}"/>
-               </td>
-          </zfin:alternating-tr>
-     </c:forEach>
- </table>
+                <zfin2:showCameraIcon hasImage="${genotype.isImageExp}"/>
+            </td>
+        </zfin:alternating-tr>
+    </c:forEach>
+</table>

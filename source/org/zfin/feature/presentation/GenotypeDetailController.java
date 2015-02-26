@@ -7,22 +7,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.Figure;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.fish.presentation.Fish;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.ZfinEntity;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getFishRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -201,7 +197,7 @@ public class GenotypeDetailController {
     }
     )
     public String getAllPhenotypesForGenotype(@RequestParam String zdbID, Model model) throws Exception {
-        LOG.debug("Start All Phenotype Controller");
+        LOG.debug("Start Genotype Controller");
         Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
         if (genotype == null) {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
@@ -217,5 +213,27 @@ public class GenotypeDetailController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + genotype.getName());
 
         return "genotype/genotype-all-phenotype.page";
+    }
+
+    @RequestMapping(value = {"genotype-phenotype-figure-summary"})
+    public String getPhenotypeSummaryForGenotype(@RequestParam(value = "genoZdbID", required = true) String genoZdbID, Model model) throws Exception {
+        LOG.debug("Start Genotype Controller");
+        Genotype genotype = mutantRepository.getGenotypeByID(genoZdbID);
+        if (genotype == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+        GenotypeBean form = new GenotypeBean();
+        form.setGenotype(genotype);
+
+        List<FigureSummaryDisplay> figureSummaryDisplayList = PhenotypeService.getPhenotypeFigureSummaryForGenotype(genotype);
+
+        Collections.sort(figureSummaryDisplayList);
+        model.addAttribute("figureSummaryDisplay", figureSummaryDisplayList);
+
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + genotype.getName());
+
+        return "genotype/genotype-phenotype-figure-summary.page";
     }
 }

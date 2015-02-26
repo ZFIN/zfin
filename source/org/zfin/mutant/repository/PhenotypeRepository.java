@@ -212,4 +212,19 @@ public interface PhenotypeRepository {
      * @return list of phenotype statements
      */
     List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID);
+
+    /**
+     * Retrieve phenotype figures for a given genotype.
+     * @param genotype genotype
+     * @return list of figures
+     */
+    List<Figure> getPhenotypeFiguresForGenotype(Genotype genotype);
+
+    /**
+     * Retrieve phenotype statement for a given figure and genotype.
+     * @param figure figure
+     * @param genotype genotype
+     * @return list of phenotype statements
+     */
+    List<PhenotypeStatement> getPhenotypeStatementsForFigureAndGenotype(Figure figure, Genotype genotype);
 }
