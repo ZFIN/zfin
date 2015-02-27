@@ -101,7 +101,7 @@ public class GenotypeExpressionSummaryController   {
         }
 
         if (gene == null) {
-                    model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
+            model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE ;
         }
 
@@ -117,9 +117,9 @@ public class GenotypeExpressionSummaryController   {
 
     @RequestMapping(value = { "/sequence-targeting-reagent-expression-figure-summary" } )
     protected String getSequenceTargetingReagentExpressionFigureSummary(@RequestParam String strZdbID,
-                                                        @RequestParam String geneZdbID,
-                                                        @RequestParam boolean imagesOnly,
-                                                        Model model) {
+                                                                        @RequestParam String geneZdbID,
+                                                                        @RequestParam boolean imagesOnly,
+                                                                        Model model) {
 
 
         SequenceTargetingReagent sequenceTargetingReagent = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(strZdbID);
@@ -141,6 +141,28 @@ public class GenotypeExpressionSummaryController   {
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, sequenceTargetingReagent.getName() + " Expression Figure Summary");
+        return "expression/genotype-figure-summary.page";
+
+    }
+
+    @RequestMapping(value = { "/genotype-expression-figure-summary" } )
+    protected String getExpressionFigureSummaryForGenotype(@RequestParam String genoZdbID,
+                                                        @RequestParam boolean imagesOnly,
+                                                        Model model) {
+
+        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genoZdbID);
+
+        if (genotype == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+        }
+
+        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(genotype, null, imagesOnly);
+        model.addAttribute("expressionCriteria", expressionCriteria);
+        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
+        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotype.getName() + " Expression Figure Summary");
         return "expression/genotype-figure-summary.page";
 
     }
