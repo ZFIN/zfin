@@ -75,15 +75,13 @@ public class DOIProcessor {
     public void findAndUpdateDOIs() {
         try {
             List<Publication> publicationList = getPubmedIdsWithNoDOIs();
-            logger.info(publicationList.size() +" publications without a DOI...");
+            logger.info(publicationList.size() + " publications without a DOI...");
             publicationRepository.addDOIAttempts(publicationList);
             HibernateUtil.currentSession().flush();
             Citexplore wsdlConnect = new Citexplore();
             publicationList = wsdlConnect.getDoisForPubmedID(publicationList);
-            DOIHTTPTester httpTester = new DOIHTTPTester();
-            //publicationList = httpTester.testDOIList(publicationList);
             for (Publication publication : publicationList) {
-                updated.add(Arrays.asList(publication.getZdbID(), publication.getDoi()));
+                updated.add(Arrays.asList(publication.getZdbID(), publication.getAccessionNumber(), publication.getDoi()));
             }
             updateDOIs(publicationList);
             HibernateUtil.closeSession();

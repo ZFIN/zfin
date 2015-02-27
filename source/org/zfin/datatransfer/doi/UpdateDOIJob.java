@@ -38,7 +38,7 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
             rg.addIntroParagraph(message);
         }
         List<List<String>> updated = driver.getUpdated();
-        rg.addDataTable(updated.size() + " Updated Publications", Arrays.asList("Publication", "DOI"), updated);
+        rg.addDataTable(updated.size() + " Updated Publications", Arrays.asList("Publication", "PubMed ID", "DOI"), updated);
         for (String error : driver.getErrors()) {
             rg.addErrorMessage(error);
         }

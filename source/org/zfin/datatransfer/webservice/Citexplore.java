@@ -47,10 +47,10 @@ public class Citexplore {
                 try {
                     ResponseWrapper response = port.searchPublications(publication.getAccessionNumber(), "metadata", "lite", 0, false, "cmpich@zfin.org");
                     if (response.getHitCount() == 0) {
-                        logger.info("No Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
+                        logger.debug("No Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
                     }
                     if (response.getHitCount() > 1)
-                        logger.info("More than one Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
+                        logger.debug("More than one Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
                     hasDOI = false;
                     String doiValue;
                     for (Result publicationBean : response.getResultList().getResult()) {
@@ -63,7 +63,7 @@ public class Citexplore {
                     }
 
                     if (!hasDOI) {
-                        logger.info("doi not found for PubMed ID[" + publication.getAccessionNumber() + "]");
+                        logger.debug("doi not found for PubMed ID[" + publication.getAccessionNumber() + "]");
                         publication.setDoi(null);
                         iter.remove();
                     }
