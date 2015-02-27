@@ -4,6 +4,7 @@ import ebi.ws.client.ResponseWrapper;
 import ebi.ws.client.Result;
 import ebi.ws.client.WSCitationImpl;
 import ebi.ws.client.WSCitationImplService;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.publication.Publication;
@@ -33,6 +34,7 @@ public class Citexplore {
      * @return List<Publication>
      */
     public List<Publication> getDoisForPubmedID(List<Publication> publicationList) {
+        logger.setLevel(Level.INFO);
         try {
             int counter = 0;
             boolean hasDOI;
@@ -44,16 +46,17 @@ public class Citexplore {
                 Publication publication = iter.next();
                 try {
                     ResponseWrapper response = port.searchPublications(publication.getAccessionNumber(), "metadata", "lite", 0, false, "cmpich@zfin.org");
-                    if (response.getHitCount() == 0)
-                        throw new RuntimeException("No Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
+                    if (response.getHitCount() == 0) {
+                        logger.info("No Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
+                    }
                     if (response.getHitCount() > 1)
-                        throw new RuntimeException("More than one Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
+                        logger.info("More than one Publication with accession number " + publication.getAccessionNumber() + " found in Europe PubMed Central");
                     hasDOI = false;
                     String doiValue;
                     for (Result publicationBean : response.getResultList().getResult()) {
                         doiValue = publicationBean.getDOI();
-                        if (StringUtils.isNotEmpty(doiValue)) {
-                            logger.info("added doi[" + doiValue + "]  for pmid[" + publication.getAccessionNumber() + "]");
+                        if (StringUtils.isNotEmpty(doiValue) && publicationBean.getId().equals(publication.getAccessionNumber())) {
+                            logger.debug("added doi[" + doiValue + "]  for pmid[" + publication.getAccessionNumber() + "]");
                             publication.setDoi(doiValue);
                             hasDOI = true;
                         }
