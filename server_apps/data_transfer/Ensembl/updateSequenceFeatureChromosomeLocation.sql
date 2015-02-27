@@ -62,7 +62,7 @@ update tmp_gene
 
 
 update tmp_gene
- set end = (select max(start)
+ set end = (select max(end)
       	      	      from tmp_gff_start_end
 		      where  gene = accnum1 
 		      and chrom = chrom1);
