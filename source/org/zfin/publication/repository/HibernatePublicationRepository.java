@@ -575,9 +575,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         for (Publication publication : publicationList) {
             if (publication.getDoi() != null) {
                 session.update(publication);
+                session.delete(getDoiAttempt(publication));
             }
         }
         return true;
+    }
+
+    private DOIAttempt getDoiAttempt(Publication publication) {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("from DOIAttempt " +
+                "where publication = :pub");
+        query.setParameter("pub", publication);
+        return (DOIAttempt) query.uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -1581,11 +1590,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public int getNumberDirectPublications(String zdbID) {
         return Integer.parseInt(HibernateUtil.currentSession().createSQLQuery("select count(*) " +
-                "from record_attribution ra " +
-                "where ra.recattrib_data_zdb_id=:zdbID ")
-                .setString("zdbID", zdbID)
-                .uniqueResult()
-                .toString()
+                        "from record_attribution ra " +
+                        "where ra.recattrib_data_zdb_id=:zdbID ")
+                        .setString("zdbID", zdbID)
+                        .uniqueResult()
+                        .toString()
         );
     }
 

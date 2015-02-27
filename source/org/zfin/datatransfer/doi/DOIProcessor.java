@@ -78,7 +78,7 @@ public class DOIProcessor {
             Citexplore wsdlConnect = new Citexplore();
             publicationList = wsdlConnect.getDoisForPubmedID(publicationList);
             DOIHTTPTester httpTester = new DOIHTTPTester();
-            publicationList = httpTester.testDOIList(publicationList);
+            //publicationList = httpTester.testDOIList(publicationList);
             for (Publication publication : publicationList) {
                 updated.add(Arrays.asList(publication.getZdbID(), publication.getDoi()));
             }
