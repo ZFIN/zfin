@@ -72,7 +72,8 @@ public class DOIProcessor {
     public void findAndUpdateDOIs() {
         try {
             List<Publication> publicationList = getPubmedIdsWithNoDOIs();
-            logger.info(publicationList.size() + " publications without a DOI...");
+            int totalPublications = publicationList.size();
+            logger.info(totalPublications + " publications without a DOI...");
             publicationRepository.addDOIAttempts(publicationList);
             HibernateUtil.currentSession().flush();
             Citexplore wsdlConnect = new Citexplore();
@@ -81,7 +82,7 @@ public class DOIProcessor {
                 updated.add(Arrays.asList(publication.getZdbID(), publication.getAccessionNumber(), publication.getDoi()));
             }
             if (CollectionUtils.isNotEmpty(publicationList)) {
-                messages.add("There are " + publicationList.size() + " publications for which no DOI was found");
+                messages.add("There are " + (totalPublications - publicationList.size()) + " publications for which no DOI was found");
             }
             updateDOIs(publicationList);
             HibernateUtil.closeSession();
