@@ -217,7 +217,7 @@
        <a 
        style="font-size: large;"
        href="javascript:" 
-        onClick="document.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-sequence.apg&OID=$OID')"
+        onClick="document.location.replace('/action/marker/sequence/view/$OID')"
        >[View Sequences]</a>
       </center>
 
