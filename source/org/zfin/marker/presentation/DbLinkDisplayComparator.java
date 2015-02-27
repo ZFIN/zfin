@@ -56,7 +56,12 @@ public class DbLinkDisplayComparator implements Comparator<DBLink> {
             String prefix1 = dbLink1.getAccessionNumber().substring(0,2);
             String prefix2 = dbLink2.getAccessionNumber().substring(0,2);
             if (prefix1.compareTo(prefix2) == 0) {
-                return ObjectUtils.compare(dbLink2.getLength(), dbLink1.getLength());
+                comparator = ObjectUtils.compare(dbLink2.getLength(), dbLink1.getLength());
+                if (comparator != 0) {
+                    return comparator;
+                } else {
+                    return ObjectUtils.compare(dbLink1.getAccessionNumber(), dbLink2.getAccessionNumber());
+                }
             } else {
                 return prefix1.compareTo(prefix2);
             }

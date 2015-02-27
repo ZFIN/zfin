@@ -139,9 +139,7 @@ public class MarkerService {
      */
     public static SequencePageInfoBean getSequenceInfoFull(Marker marker) {
         SequencePageInfoBean sequenceInfo = new SequencePageInfoBean();
-        List<DBLink> dblinks = RepositoryFactory.getSequenceRepository().getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE);
-
-        sequenceInfo.setDbLinks(dblinks);
+        sequenceInfo.addDBLinks(RepositoryFactory.getSequenceRepository().getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE));
 
         List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
                 .getDBLinksForFirstRelatedMarker(marker,
