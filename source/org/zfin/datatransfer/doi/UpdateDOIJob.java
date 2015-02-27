@@ -51,7 +51,7 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
         setLoggerToInfoLevel(logger);
         String jobName = args[2];
         UpdateDOIJob job = new UpdateDOIJob(jobName, args[0], args[1]);
-        if (args.length > 2)
+        if (args.length > 3)
             job.maxAttempts = Integer.parseInt(args[3]);
         job.maxToProcess = DOIProcessor.ALL;
         job.initDatabase();
