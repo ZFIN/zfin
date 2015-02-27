@@ -198,7 +198,5 @@ sub escape_utf8 {
 
 close LOG;
 
-### call updatePublicationDate.pl to add the pub_date for those missing pub_date
-system("/private/bin/perl updatePublicationDate.pl");
 
 exit;

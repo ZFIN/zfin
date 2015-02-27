@@ -20,6 +20,7 @@ $password = "";
 
 #remove old report
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateUpdated.txt");
+system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateNotUpdated.txt");
 
 ### open a handle on the db
 my $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
@@ -132,24 +133,31 @@ $cur_insert_update->finish();
 $dbh->disconnect();
 
 open (UPDATED, ">listOfPubsWithDateUpdated.txt") ||  die "Cannot open listOfPubsWithDateUpdated.txt : $!\n";
+open (NOTUPDATED, ">listOfPubsWithDateNotUpdated.txt") ||  die "Cannot open listOfPubsWithDateNotUpdated.txt : $!\n";
 
 foreach $pubId (sort keys %noDatePubAccessions) {
   $pubmedid = $noDatePubAccessions{$pubId};
   if (exists($updatedPublications{$pubId})) {
        print UPDATED "$pubId\t$pubmedid\n";
   } else {
-       print UPDATED "Not updated (still missing pub_date): $pubId\t$pubmedid\n";
+       print NOTUPDATED "Not updated (still missing pub_date): $pubId\t$pubmedid\n";
   }
+}
+
+if (-s "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateNotUpdated.txt"){
+}
+else {
+    if (-s "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateUpdated.txt"){
+    }
+    else {
+	system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateUpdated.txt");
+    }
+    
+    system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateNotUpdated.txt");
 }
 
 close(UPDATED);
 
-if (-s $listOfPubsWithDateUpdated.txt) {
-    # The file is not empty
-}
-else {
-    system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfPubsWithDateUpdated.txt");
-}
 exit;
 
 

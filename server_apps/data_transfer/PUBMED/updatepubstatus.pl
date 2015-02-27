@@ -49,8 +49,13 @@ print "\nctInactivePubs = $ctInactivePubs\n\n";
 
 ## if no inactive pub with pubmed id
 if ($ctInactivePubs == 0) {
-  $subjectError = "Auto from " . $dbname . ": updatepubstatus.pl :: There is no non-active publications found with PUBMED accession.";
-  ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org",$subjectError,"updatepubstatus.pl");
+  #$subjectError = "Auto from " . $dbname . ": updatepubstatus.pl :: There is no non-active publications found with PUBMED accession.";
+  #ZFINPerlModules->sendMailWithAttachedReport("xshao\@zfin.org",$subjectError,"updatepubstatus.pl");
+    if (-s "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt"){
+    }
+    else {
+	system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt");
+    }
   exit;
 }
 
@@ -94,8 +99,14 @@ foreach $updatedPubId (sort keys %updatedPublications) {
 
 close(ACTIVATED);
 
+if (-s "<!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt"){
+    }
+    else {
+	system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/listOfActivatedPubs.txt");
+    }
 
-$subject = "Auto from $dbname : " . "updatepubstatus.pl :: " . "$ctUpdated of $ctInactivePubs non-active publications have been activated according to PUBMED";
+
+#$subject = "Auto from $dbname : " . "updatepubstatus.pl :: " . "$ctUpdated of $ctInactivePubs non-active publications have been activated according to PUBMED";
 
 #ZFINPerlModules->sendMailWithAttachedReport("van_slyke\@zfin.org,xshao\@zfin.org","$subject","listOfActivatedPubs.txt");
 
