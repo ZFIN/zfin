@@ -35,6 +35,8 @@ foreach name ($chromosomeMartScripts)
    cat $CHROMOSOMEMARTDIR/$name >> $FULL_SCRIPT_FILE
 end
 
+cat <!--|ROOT_PATH|-->/server_apps/data_transfer/Ensembl/updateSequenceFeatureChromosomeLocation.sql >> $FULL_SCRIPT_FILE
+
 foreach name ($regenChromosomeMartScripts)
    echo $CHROMOSOMEMARTDIR$name
    cat $CHROMOSOMEMARTDIR/$name >> $CONVERT_CHROMOSOMEMART_FILE
