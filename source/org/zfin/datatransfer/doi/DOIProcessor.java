@@ -60,9 +60,6 @@ public class DOIProcessor {
     private List<Publication> getPubmedIdsWithNoDOIs() {
         logger.setLevel(Level.INFO);
         List<Publication> publicationList = publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess);
-        if (CollectionUtils.isNotEmpty(publicationList)) {
-            messages.add("There were " + publicationList.size() + " publications which still need a DOI.");
-        }
         return publicationList;
     }
 
@@ -82,6 +79,9 @@ public class DOIProcessor {
             publicationList = wsdlConnect.getDoisForPubmedID(publicationList);
             for (Publication publication : publicationList) {
                 updated.add(Arrays.asList(publication.getZdbID(), publication.getAccessionNumber(), publication.getDoi()));
+            }
+            if (CollectionUtils.isNotEmpty(publicationList)) {
+                messages.add("There are " + publicationList.size() + " publications for which no DOI was found");
             }
             updateDOIs(publicationList);
             HibernateUtil.closeSession();
