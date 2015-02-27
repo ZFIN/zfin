@@ -27,6 +27,7 @@ public class UpdateDOIJob extends AbstractValidateDataReportTask {
         setReportProperties();
         clearReportDirectory();
 
+        logger.info("Use " + maxAttempts + " max attempts for query");
         DOIProcessor driver = new DOIProcessor(maxAttempts, maxToProcess);
         driver.findAndUpdateDOIs();
 

@@ -2,6 +2,7 @@ package org.zfin.datatransfer.doi;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zfin.datatransfer.webservice.Citexplore;
 import org.zfin.framework.HibernateUtil;
@@ -57,6 +58,7 @@ public class DOIProcessor {
      * @return List<Publication> Returns list of publications without a DOI.
      */
     private List<Publication> getPubmedIdsWithNoDOIs() {
+        logger.setLevel(Level.INFO);
         List<Publication> publicationList = publicationRepository.getPublicationsWithAccessionButNoDOIAndLessAttempts(maxAttempts, maxToProcess);
         if (CollectionUtils.isNotEmpty(publicationList)) {
             messages.add("There were " + publicationList.size() + " publications which still need a DOI.");
@@ -73,6 +75,7 @@ public class DOIProcessor {
     public void findAndUpdateDOIs() {
         try {
             List<Publication> publicationList = getPubmedIdsWithNoDOIs();
+            logger.info(publicationList.size() +" publications without a DOI...");
             publicationRepository.addDOIAttempts(publicationList);
             HibernateUtil.currentSession().flush();
             Citexplore wsdlConnect = new Citexplore();
