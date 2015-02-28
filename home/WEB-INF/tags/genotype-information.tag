@@ -70,7 +70,7 @@
             <td>
                 <c:if test="${genotype.numberOfExpFigures > 0}">
                     <c:if test="${genotype.numberOfExpFigures > 1}">
-                        <a href='/action/expression/genotype-expression-figure-summary?genoZdbID=${genotype.genotype.zdbID}&imagesOnly=false'>
+                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${genotype.genotype.zdbID}'>
                             <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                          integerEntity="${genotype.numberOfExpFigures}"
                                          includeNumber="true"/></a>

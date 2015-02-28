@@ -158,6 +158,7 @@ public class GenotypeExpressionSummaryController   {
         }
 
         ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(genotype, null, imagesOnly);
+        expressionCriteria.setShowCondition(false);
         model.addAttribute("expressionCriteria", expressionCriteria);
         List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);

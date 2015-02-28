@@ -77,7 +77,7 @@
             </c:if>
         </c:otherwise>
     </c:choose>
-    <c:if test="${criteria.standardEnvironment}">
+    <c:if test="${criteria.showCondition && criteria.standardEnvironment}">
         <tr>
             <th>Condition:</th>
             <td>Standard or generic control only</td>

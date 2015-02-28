@@ -27,6 +27,7 @@ public class ExpressionSummaryCriteria {
     private boolean withImagesOnly;
     private boolean isStandardEnvironment;
     private boolean isChemicalEnvironment;
+    private boolean showCondition = true;
 
 
     public ExpressionSummaryCriteria clone() {
@@ -159,5 +160,13 @@ public class ExpressionSummaryCriteria {
 
     public void setSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         this.sequenceTargetingReagent = sequenceTargetingReagent;
+    }
+
+    public boolean isShowCondition() {
+        return showCondition;
+    }
+
+    public void setShowCondition(boolean showCondition) {
+        this.showCondition = showCondition;
     }
 }
