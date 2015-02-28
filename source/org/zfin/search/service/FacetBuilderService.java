@@ -300,7 +300,16 @@ public class FacetBuilderService {
 
     public List<FacetGroup> buildPublicationFacetGroup(QueryResponse response, Map<String, Boolean> filterQuerySelectionMap, String baseUrl) {
         List<FacetGroup> facetGroups = new ArrayList<>();
-        //gene sequence_alteration author journal keyword publication_type topic
+
+        FacetGroup curation = new FacetGroup("Curation", true);
+        curation.setRootOnly(true);
+        curation.addFacet(buildFacet("topic", false, response, filterQuerySelectionMap, baseUrl));
+        curation.addFacet(buildFacet("curator", false, response, filterQuerySelectionMap, baseUrl));
+        curation.addFacet(buildFacet("curation_status", false, response, filterQuerySelectionMap, baseUrl));
+        curation.addFacet(buildFacet("indexing_status", false, response, filterQuerySelectionMap, baseUrl));
+        curation.addFacet(buildFacet("publication_status", false, response, filterQuerySelectionMap, baseUrl));
+
+        facetGroups.add(curation);
 
         facetGroups.add(buildSingleFacetGroup("Gene", "gene", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Mutation / Tg", "sequence_alteration", true, response, filterQuerySelectionMap, baseUrl));
@@ -351,13 +360,6 @@ public class FacetBuilderService {
 
         facetGroups.add(publishedDateGroup);
 
-        FacetGroup topicGroup = buildSingleFacetGroup("Topic", "topic", false, response, filterQuerySelectionMap, baseUrl);
-        topicGroup.setRootOnly(true);
-        facetGroups.add(topicGroup);
-
-        /*FacetGroup statusGroup = buildSingleFacetGroup("Status", "pub_status", false, response, filterQuerySelectionMap, baseUrl);
-        statusGroup.setRootOnly(true);
-        facetGroups.add(statusGroup);*/
 
         return facetGroups;
     }

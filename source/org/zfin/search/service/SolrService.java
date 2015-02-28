@@ -488,6 +488,7 @@ public class SolrService {
         fieldName = StringUtils.replace(fieldName, "-", "NOT ");
 
         //remove fieldType suffix cruft
+        fieldName = fieldName.replaceAll("_t$","");
         fieldName = StringUtils.replace(fieldName, "_tf", "");
         fieldName = StringUtils.replace(fieldName, "_hl", "");
 
@@ -502,6 +503,12 @@ public class SolrService {
         fieldName = WordUtils.capitalize(fieldName);
 
         return fieldName;
+    }
+
+    public static String getPrettyFieldValue(String displayValue) {
+        //Case 12390 - Remove the time from the date display
+        displayValue = StringUtils.replace(displayValue,"T00:00:00Z","");
+        return displayValue;
     }
 
     public static String getSortValueForFacetField(String fieldName, HttpServletRequest request) {
@@ -719,5 +726,6 @@ public class SolrService {
 
         return link.toString();
     }
+
 
 }

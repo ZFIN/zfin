@@ -3582,12 +3582,35 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              'Publication' as category,
                              '/' || zdb_id as url,
                              pub_date as date,
+                             entry_time as pet_date,
                              pub_abstract as abstract,
                              jtype as publication_type,
-			     accession_no as related_accession,
+			                 accession_no as related_accession,
+			                 case when pub_is_indexed = 't' then 'Indexed'
+                                  else 'Not Indexed' end as indexing_status,
+			                 case when status = 'active' then 'Active'
+			                      when status = 'inactive' then 'Inactive'
+                                  else status end as publication_status,
+			                 case when pub_completion_date is null
+                                  then 'Open'
+                                  else 'Closed' end as curation_status,
                              keywords as keyword,
                              authors as author_string
                              from publication">
+
+           <entity name="pub_curators"
+                   query="SELECT p.name as curator, cur_pub_zdb_id as pub_zdb_id
+                            FROM person p, lab l, int_person_lab ipl, lab_position lp, curation
+                            WHERE p.zdb_id = source_id
+                                AND ipl.position_id = lp.labpos_pk_id
+                                AND ipl.target_id = l.zdb_id
+                                           AND l.zdb_id = 'ZDB-LAB-000914-1'
+                                AND (   lp.labpos_position = 'Research Staff'
+                                                        or
+                                            p.zdb_id = 'ZDB-PERS-030612-2')
+                                AND cur_curator_zdb_id = p.zdb_id"
+                   processor="CachedSqlEntityProcessor"
+                   where="pub_zdb_id=publication.id"/>
 
            <entity name="pub_images"
                    query="select

@@ -92,7 +92,8 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         out.append("</span>");
         out.append("<span class=\"breadbox-field-value\">");
         String displayValue = nameValuePair.getValue().replace("\"","");
-        out.append(displayValue);
+
+        out.append(SolrService.getPrettyFieldValue(displayValue));
         out.append("</span>");
         out.append("&nbsp;&times;");
         out.append("</a>");

@@ -1,7 +1,11 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
+<%@ page import="org.zfin.search.Category" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+
+<c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
+<c:set var="constructCategoryName" value="<%=Category.CONSTRUCT.getName()%>"/>
 
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
@@ -9,6 +13,8 @@
 <link rel=stylesheet type="text/css" href="/css/bootstrap/css/bootstrap.css">
 <script type="text/javascript" src="/css/bootstrap/js/bootstrap.js"></script>
 
+<link rel=stylesheet type="text/css" href="/css/datepicker.css">
+<script type="text/javascript" src="/javascript/bootstrap-datepicker.js"></script>
 
 
 <script src="/javascript/purl.js"></script>
@@ -100,6 +106,12 @@
                         <button type="submit" class="btn btn-zfin">Go</button>
                     </div>
                     <div class="btn-group search-box-buttons">
+                        <authz:authorize ifAnyGranted="root">
+                            <c:if test="${category eq publicationCategoryName}">
+                                <a id="advanced-search-button" class="btn" href="#" title="Advanced Search Options"
+                                   onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
+                            </c:if>
+                        </authz:authorize>
                         <a class="btn" href="/search?q=" onclick="localStorage.clear();">New</a>
                         <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                             <i class="fa fa-question-circle"></i>
@@ -117,6 +129,20 @@
             </script>
         </form>
 
+        <div class="container-fluid" id="advanced-container" style="display:none;"  >
+            <div class="row-fluid" >
+                <div class="span10 offset1">
+                    <c:choose>
+                        <c:when test="${category eq publicationCategoryName}">
+                            <zfin-search:publicationAdvanced/>
+                        </c:when>
+                    </c:choose>
+
+
+                </div>
+            </div>
+        </div>
+
         <form style="display:none;">  <%-- packing these away here to be used by javascript --%>
             <input type="hidden" name="queryString" id="query-string" value="${queryString}"/>
             <input type="hidden" name="baseUrl" id="base-url" value="${baseUrl}"/>
@@ -127,6 +153,10 @@
 
         <script>
 
+            var datepicker = jQuery.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
+            jQuery.fn.bootstrapDP = datepicker;
+
+            jQuery('.datepicker').bootstrapDP({format: 'yyyy-mm-dd', autoclose: true});
 
             jQuery('#primary-query-input').autocomplete({
                 source: function (request, response) {
@@ -201,9 +231,11 @@
 
 <div style="margin: .5em ; padding-left: 0px ; padding-right: 0px ; min-width: 700px;" class="container-fluid">
 
+
     <div class="row-fluid">
         <zfin:horizontal-breadbox query="${query}" queryResponse="${response}" baseUrl="${baseUrl}"/>
     </div>
+
 
     <div class="row-fluid">
 
@@ -232,12 +264,36 @@
                 </c:if>
 
                 <div class="row" style="margin-top: 1em;">
-                    <div class="span8 result-count">
+                    <div class="span3 result-actions">
+                        <div class="result-actions">
+                            <a href="${downloadUrl}" class="btn btn-default">
+                                <i class="fa fa-download"></i> Download
+                            </a>
+                        </div>
+                    </div>
+                    <div class="span2 result-count">
                         <fmt:formatNumber value="${numFound}" pattern="##,###"/>
                         results
-
                     </div>
-                    <div class="span4 sort-controls">
+                    <div class="span7 sort-controls pull-right">
+
+                        <authz:authorize ifAnyGranted="root">
+                            <div class="btn-group">
+                                <button id="boxy-result-button" class="btn result-action-tooltip" title="Detailed Results">
+                                    <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
+                                </button>
+                                <button id="table-result-button" class="btn result-action-tooltip" title="Tabular Results">
+                                    <i class="fa fa-table"></i>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=20" class="btn <c:if test="${rows eq 20}">disabled</c:if>">20</a>
+                                <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn <c:if test="${rows eq 50}">disabled</c:if>">50</a>
+                                <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn <c:if test="${rows eq 200}">disabled</c:if>">200</a>
+                            </div>
+                        </authz:authorize>
+
                         <div class="btn-group">
                             <a class="btn dropdown-toggle sort-button" data-toggle="dropdown" href="#">
                                 Sorted ${sortDisplay}
@@ -261,10 +317,21 @@
                     </div>
                 </div>
 
-
                 <c:forEach var="result" items="${results}">
                     <zfin2:searchResult result="${result}"/>
                 </c:forEach>
+
+                <table class="table-results searchresults" style="display: none;">
+                    <th>Name</th> <th>ID</th> <th>Category</th>
+                    <c:forEach var="result" items="${results}" varStatus="loop">
+                        <zfin:alternating-tr loopName="loop" groupBeanCollection="${results}" groupByBean="result.id">
+                            <td>${result.link}</td>
+                            <td style="white-space: nowrap"> <c:if test="${!empty result.displayedID}">${result.id}</c:if> </td>
+                            <td>${result.category}</td>
+                        </zfin:alternating-tr>
+                    </c:forEach>
+                </table>
+
 
                 <div style="clear: both ; width: 80%">
                     <zfin2:pagination paginationBean="${paginationBean}"/>
@@ -309,6 +376,36 @@ function toggleLocalStorage(field) {
     }
 }
 
+function submitAdvancedQuery(fields) {
+    var query = "${baseUrlWithoutQ}";
+
+    var mainQuery = jQuery('#primary-query-input').val();
+
+    if (mainQuery) {
+        query = query + mainQuery;
+    }
+
+
+    for (var i = 0 ; i < fields.length ; i++ ) {
+
+        if (fields[i].type == 'string') {
+            var value = jQuery('#' + fields[i].id).val();
+            if (value) {
+                query = query + "&fq=" + fields[i].field + ":(" + value + ")";
+            }
+        } else if (fields[i].type == 'date') {
+            var start = jQuery('#' + fields[i].startId).val();
+            var end = jQuery('#' + fields[i].endId).val();
+            if (start != "" && end != "") {
+                query = query + "&fq=" + fields[i].field + ':[' + start + 'T00:00:00Z' + ' TO ' + end + 'T00:00:00Z' + ']';
+            }
+        }
+    }
+
+    window.location = query;
+
+}
+
 jQuery(document).ready(function () {
 
 
@@ -335,6 +432,8 @@ jQuery(document).ready(function () {
     jQuery('.facet-value-hover').tipsy({gravity: 'w'});
     jQuery('.facet-include').tipsy({gravity: 'nw'});
     jQuery('.facet-exclude').tipsy({gravity: 'sw'});
+    jQuery('.result-action-tooltip').tipsy({gravity: 's'});
+    jQuery('#advanced-search-button').tipsy({gravity: 'ne'});
 
     jQuery('.result-explain-link').on('click', function () {
         jQuery(this).closest(".search-result").find(".result-explain-container").slideToggle(50);
@@ -360,39 +459,41 @@ jQuery(document).ready(function () {
         }
     });
 
-    jQuery('.cross-reference-button').click(function () {
-        // Only call notifications when opening the dropdown
-        if (!jQuery(this).hasClass('open')) {
-            var list = jQuery(this).siblings('ul');
-            var query = jQuery(this).attr('query');
-            var category = jQuery(this).attr('category');
-            list.html('');
-            list.append('<li><img src="/images/ajax-loader.gif"></li>');
-            jQuery.getJSON('/action/quicksearch/cross-reference',
-                    {
-                        term: query,
-                        category: category
-                    },
-                    function (data) {
-                        list.html('<li style="color: #666; margin-left:1em;margin-right:1em;">This entry has references in...</li>');
+
+    function showBoxyResults() {
+        jQuery('.boxy-search-result').show();
+        jQuery('.table-results').hide();
+        jQuery('#boxy-result-button').prop('disabled', true);
+        jQuery('#boxy-result-button').tipsy('disable');
+        jQuery('#boxy-result-button').tipsy('hide');
+        jQuery('#table-result-button').prop('disabled', false);
+        jQuery('#table-result-button').tipsy('enable');
+        localStorage.setItem("results-type","boxy");
+    }
+    function showTabularResults() {
+        jQuery('.boxy-search-result').hide();
+        jQuery('.table-results').show();
+        jQuery('#boxy-result-button').prop('disabled', false);
+        jQuery('#boxy-result-button').tipsy('enable');
+        jQuery('#table-result-button').prop('disabled', true);
+        jQuery('#table-result-button').tipsy('disable');
+        jQuery('#table-result-button').tipsy('hide');
+        localStorage.setItem("results-type","table");
+    }
 
 
-                        jQuery.each(data, function () {
-                            var url = "/prototype?" + "fq=" + this.fq + "&fq=xref%3A%22" + query + "%22";
-                            var link = '<li><a href="' + url + '">' + this.label + '</a></li>';
-                            list.append(link);
-                        });
+    jQuery('#boxy-result-button').click(function() {
+        showBoxyResults();
+    })
+    jQuery('#table-result-button').click(function() {
+        showTabularResults();
+    })
 
-                        if (data.length == 0)
-                            list.append('<li style="opacity: .5; padding-left: 1em ; padding-right: 1em">None Found</li>');
-                    }
-            );
-
-        }
-    });
-
-    if (!(localStorage.getItem("draft-software-warning-dismissed") == "true"))
-        jQuery('#draft-software-warning').modal('show');
+    if(localStorage.getItem("results-type") == "table") {
+        showTabularResults();
+    } else {
+        showBoxyResults();
+    }
 
 
     for (var i = 0; i < localStorage.length; i++) {

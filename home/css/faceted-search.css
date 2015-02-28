@@ -213,6 +213,8 @@ table.search-result-entity-attributes td {
     margin-right: .5em;
 }
 
+.table-results { margin-left: 15px; margin-top: 8px; /*border: 2px solid #eee; width: 100%*/ }
+
 .result-header {  }
 .search-result-body { clear: both; }
 .search-result-related-links { clear: both; }
@@ -276,6 +278,10 @@ table.search-result-snippet {
 
 div.result-date, div.result-attribution-count { text-align: right; font-size: small ; color: #888; margin-top: .4em;}
 
+div.result-actions {
+    margin-left: 45px;
+    margin-top: 7px;
+}
 div.result-count {
     padding-top: 1em;
     font-weight: bold;
@@ -573,6 +579,10 @@ body.modal-open {
 .btn-zfin[disabled] {
     color: #FFFFFF;
     background-color: #004444;
+}
+
+.advanced-text-input {
+    width:600px;
 }
 
 /*

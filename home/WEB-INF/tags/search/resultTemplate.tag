@@ -7,8 +7,8 @@
 <%@attribute name="metadata" fragment="true" %>
 <%@attribute name="relatedDataLinks" fragment="true" %>
 <%@attribute name="curatorContent" fragment="true" %>
-
-<div style="clear:both;" class="span12 search-result ">
+<%-- Initially set to display:none, document.ready in prototype-results.jsp will make these visible --%>
+<div style="clear:both; display:none;" class="span12 search-result boxy-search-result">
 
     <div class="result-meta-data search-result-category">
         <jsp:invoke fragment="metadata"/>

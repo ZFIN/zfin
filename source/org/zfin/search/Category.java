@@ -80,7 +80,11 @@ public enum Category {
             JOURNAL,
             KEYWORD,
             PUBLICATION_TYPE,
-            TOPIC
+            TOPIC,
+            CURATION_STATUS,
+            PUBLICATION_STATUS,
+            INDEXING_STATUS,
+            CURATOR
     ),
     FIGURE("Figure",
             ZEBRAFISH_GENE,

@@ -1,5 +1,8 @@
 package org.zfin.search.presentation;
 
+import au.com.bytecode.opencsv.CSVWriter;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -27,6 +30,10 @@ import org.zfin.util.URLCreator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.*;
 
 @Controller
@@ -71,6 +78,7 @@ public class SearchPrototypeController {
                               @RequestParam(value = "fq", required = false) String[] filterQuery,
                               @RequestParam(value = "category", required = false) String category,
                               @RequestParam(value = "page", required = false) String pageNumber,
+                              @RequestParam(value = "rows", required = false) Integer rows,
                               @RequestParam(value = "sort", required = false) String sort,
                               @RequestParam(value = "hl", required = false, defaultValue = "false") Boolean highlight,
                               @RequestParam(value = "explain", required = false, defaultValue = "false") Boolean explain,
@@ -122,7 +130,12 @@ public class SearchPrototypeController {
 
         if (page == null)
             page = 1;
-        int rows = 20;
+
+        //default to 20 rows
+        if (rows == null) { rows = 20; }
+        //allow for no more than 500
+        if (rows > 500) { rows = 500; }
+
         query.setRows(rows);
         int start = (page - 1) * rows;
         model.addAttribute("start", start);
@@ -229,7 +242,7 @@ public class SearchPrototypeController {
 
             model.addAttribute("message", "All matching results were in the <strong>" + automaticallySelectedCategory + "</strong> category, so it was automatically selected.");
 
-            return viewResults(q, filterQuery, automaticallySelectedCategory, pageNumber, sort,
+            return viewResults(q, filterQuery, automaticallySelectedCategory, pageNumber, rows, sort,
                     highlight, explain, true, model, request);
         }
 
@@ -250,12 +263,27 @@ public class SearchPrototypeController {
             model.addAttribute("xrefResults", xrefResults);
         }
 
+        //Set up pagination
         PaginationBean paginationBean = new PaginationBean();
-        URLCreator urlCreator = new URLCreator(baseUrl);
-        urlCreator.removeNameValuePair("page");
+        URLCreator paginationUrlCreator = new URLCreator(baseUrl);
+        paginationUrlCreator.removeNameValuePair("page");
+        paginationBean.setActionUrl(paginationUrlCreator.getFullURLPlusSeparator());
+        model.addAttribute("baseUrlWithoutPage", paginationUrlCreator.getFullURLPlusSeparator());
 
-        paginationBean.setActionUrl(urlCreator.getFullURLPlusSeparator());
-        model.addAttribute("baseUrlWithoutPage", urlCreator.getFullURLPlusSeparator());
+        //Set up number of rows
+        URLCreator rowsUrlCreator = new URLCreator(baseUrl);
+        rowsUrlCreator.removeNameValuePair("page");
+        rowsUrlCreator.removeNameValuePair("rows");
+        model.addAttribute("baseUrlWithoutRows", rowsUrlCreator.getFullURLPlusSeparator());
+
+        String rowsUrlSeparator = "?";
+        if (StringUtils.contains(rowsUrlCreator.getURL(), "?")) {
+            rowsUrlSeparator = "&";
+        }
+        model.addAttribute("rowsUrlSeparator", rowsUrlSeparator);
+        model.addAttribute("rows",rows);
+
+        model.addAttribute("downloadUrl", baseUrl.replaceAll("^/search","/action/quicksearch/download"));
         paginationBean.setPage(page.toString());
         paginationBean.setTotalRecords((int) solrDocumentList.getNumFound());
         paginationBean.setQueryString(request.getQueryString());
@@ -478,7 +506,7 @@ public class SearchPrototypeController {
     }
 
     @RequestMapping(value = "/download")
-    public String downloadResults(@RequestParam(value = "q", required = false) String q,
+    public void downloadResults(@RequestParam(value = "q", required = false) String q,
                                   @RequestParam(value = "fq", required = false) String[] filterQuery,
                                   @RequestParam(value = "category", required = false) String category,
                                   @RequestParam(value = "page", required = false) String pageNumber,
@@ -494,12 +522,62 @@ public class SearchPrototypeController {
         //set handler to a csv specific handler?
 
 
+        category = getCategory(filterQuery, category);
+
+
         //this should do everything exactly the same as regular controller method to build the result set,
         //but...
         //  leave facets off
+        query.setFacet(false);
         //  no highlighting
+        query.setHighlight(false);
         //  set the fl to just name, id
+        query.set("fl","id, name");
+
+        if (StringUtils.isNotEmpty(q)) { query.setQuery(q); }
+        if (ArrayUtils.isNotEmpty(filterQuery)) {
+            for (String fq : filterQuery) {
+                query.addFilterQuery(fq);
+            }
+        }
+
+        //set rows to...lots
+        query.setRows(9999999);
+
         //  then connect to solr by http?  or solrj and convert to csv? hmmm..
+
+        QueryResponse queryResponse = new QueryResponse();
+        try {
+            queryResponse = server.query(query);
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+//        SolrDocumentList solrDocumentList = queryResponse.getResults();
+
+        List<SearchResult> results = queryResponse.getBeans(SearchResult.class);
+
+
+        try {
+            OutputStream resOs = response.getOutputStream();
+            OutputStream buffOs = new BufferedOutputStream(resOs);
+            OutputStreamWriter outputwriter = new OutputStreamWriter(buffOs);
+            CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n");
+            CSVPrinter csvPrinter = new CSVPrinter(outputwriter, csvFormat);
+
+
+            csvPrinter.printRecord("id","name");
+
+            for (SearchResult result : results) {
+                csvPrinter.printRecord(result.getId(),result.getName());
+            }
+
+            outputwriter.flush();
+            outputwriter.close();
+
+        } catch (IOException e) {
+            logger.error(e);
+        }
 
 /*
         OutputStream resOs= response.getOutputStream();
@@ -514,7 +592,9 @@ public class SearchPrototypeController {
         outputwriter.flush();
         outputwriter.close();
 */
-        return "";
+
+
+
     }
 
 
