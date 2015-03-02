@@ -7,6 +7,7 @@
     <property name="classbin.dir" value="${web-inf.dir}/classes"/>
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
 
     <property environment="env"/>
 
@@ -16,6 +17,7 @@
         <fileset dir="${web.lib}">
             <include name="*.jar"/>
         </fileset>
+        <pathelement location="${validateData}/lib"/>
     </path>
 
     <taskdef name="loadProperties"
@@ -24,7 +26,6 @@
 
     <loadProperties file="${web-inf.dir}/zfin.properties"/>
 
-    <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
 
 
     <echo message="SOURCEROOT: ${env.SOURCEROOT}"/>

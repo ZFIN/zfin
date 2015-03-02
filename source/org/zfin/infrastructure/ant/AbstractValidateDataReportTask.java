@@ -200,7 +200,6 @@ public abstract class AbstractValidateDataReportTask extends AbstractScriptWrapp
                 LOG.error("Could not delete lgo file " + logFile.getAbsolutePath());
         }
         service.setLoggerFile(logFile);
-        service.setConsoleAppender();
     }
 
     /**

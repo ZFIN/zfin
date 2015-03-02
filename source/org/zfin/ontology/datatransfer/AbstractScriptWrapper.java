@@ -109,9 +109,7 @@ public class AbstractScriptWrapper {
     protected static void initLog4J() {
         Logger rootLogger = RootLogger.getRootLogger();
         rootLogger.setLevel(Level.WARN);
-        rootLogger.removeAppender("stdout");
-        ConsoleAppender appender = new ConsoleAppender(new PatternLayout("%r - %m%n"));
-        rootLogger.addAppender(appender);
+        rootLogger.removeAppender("console");
     }
 
 
