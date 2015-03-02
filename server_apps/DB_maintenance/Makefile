@@ -18,7 +18,7 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/server_apps/DB_maintenance
 
-SUBDIRS = loadUp/ warehouse/ pheno/ extentMonitoring/ queryMonitoring/ gafLoad/
+SUBDIRS = loadUp/ warehouse/ pheno/ extentMonitoring/ queryMonitoring/ gafLoad/ lib/
 
 GENERICS = regen.sh scrubscan.pl unload_production.sh checkUnloadProduction.sh dumpServer.pl dumpLogsContinuous.pl fx_permission_check.pl backupBlastDbsAndRsyncAlmostBlastDbs.sh checkVarcharOctetLength.pl orphanChecks.pl disable_updates.pl pub_check_and_addback_volpg.pl pushDataToPublic.sh check_undefined_environment.pl checkSOZFINMapping.sh reportLabAddressChanges.sh feature_genotype_association_check.pl
 
