@@ -12,7 +12,7 @@ class SearchResultsPage extends Page {
         submitButton { $("button", type: "submit") }
         searchHelp(required: false) { $(class: "search-help-container") }
         searchResults(required: false) { $(class: "search-result") }
-        searchResultNames(required: false) { $(class: "search-result-name") }
+        searchResultNames(required: false, wait: true) { $(class: "search-result-name") }
     }
 
 }

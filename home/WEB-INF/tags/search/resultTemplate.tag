@@ -7,8 +7,9 @@
 <%@attribute name="metadata" fragment="true" %>
 <%@attribute name="relatedDataLinks" fragment="true" %>
 <%@attribute name="curatorContent" fragment="true" %>
-<%-- Initially set to display:none, document.ready in prototype-results.jsp will make these visible --%>
-<div style="clear:both; display:none;" class="span12 search-result boxy-search-result">
+<%-- Initially set to display:none for root users only, since they're the only users that can select the table view,
+    document.ready in prototype-results.jsp will make these visible --%>
+<div style="clear:both; <authz:authorize ifAnyGranted="root">display:none;</authz:authorize>" class="span12 search-result boxy-search-result">
 
     <div class="result-meta-data search-result-category">
         <jsp:invoke fragment="metadata"/>

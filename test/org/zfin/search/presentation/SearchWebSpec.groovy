@@ -21,6 +21,7 @@ class SearchWebSpec extends AbstractZfinSmokeSpec {
         !searchHelp.displayed
         searchResults.size() > 0
         searchResultNames[0].text().startsWith("brain")
+
     }
 
 }
