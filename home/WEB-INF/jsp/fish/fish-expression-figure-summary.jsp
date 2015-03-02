@@ -5,13 +5,13 @@
 <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
         <td width="100%" class="titlebar">
-            <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
+            <span style="font-size: larger; font-weight: bold;">
             Expression Summary
                 </span>
 
         <span style="float: right">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="Phenotype summary from Fish search"/>
+                <tiles:putAttribute name="subjectName" value="Expression summary from Fish search"/>
             </tiles:insertTemplate>
         </td>
     </tr>

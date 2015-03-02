@@ -246,46 +246,7 @@ public class FishService {
         if (CollectionUtils.isEmpty(results))
             return null;
 
-        Map<Figure, Set<ExpressionResult>> figureListMap = new HashMap<Figure, Set<ExpressionResult>>(results.size());
-        for (ExpressionResult result : results) {
-            for (Figure figure : result.getFigures()) {
-                Set<ExpressionResult> expressionResults = figureListMap.get(figure);
-                if (expressionResults == null) {
-                    expressionResults = new HashSet<ExpressionResult>();
-                    figureListMap.put(figure, expressionResults);
-                }
-                expressionResults.add(result);
-            }
-        }
-
-        List<FigureExpressionSummary> figureExpressionSummaries = new ArrayList<FigureExpressionSummary>(figureListMap.keySet().size());
-        List<ExpressionExperiment> expressionExperiments = ExpressionService.getDistinctExpressionExperiments(results);
-        for (Figure figure : figureListMap.keySet()) {
-            FigureExpressionSummary figureExpressionSummary = new FigureExpressionSummary(figure);
-            List<ExpressedGene> expressedGenes = new ArrayList<ExpressedGene>(figureListMap.get(figure).size());
-            for (ExpressionExperiment expressionExperiment : expressionExperiments) {
-                List<ExpressionStatement> expressionStatements = new ArrayList<ExpressionStatement>(figureListMap.get(figure).size());
-                if (!expressionExperiment.getAllFigures().contains(figure))
-                    continue;
-                for (ExpressionResult result : expressionExperiment.getExpressionResults()) {
-                    ExpressionStatement statement = new ExpressionStatement();
-                    if (!result.getFigures().contains(figure))
-                        continue;
-                    statement.setEntity(result.getEntity());
-                    statement.setExpressionFound(result.isExpressionFound());
-                    // ensure distinctness
-                    if (!expressionStatements.contains(statement))
-                        expressionStatements.add(statement);
-                }
-                Collections.sort(expressionStatements);
-                ExpressedGene expressedGene = new ExpressedGene(expressionExperiment.getGene());
-                expressedGene.setExpressionStatements(expressionStatements);
-                expressedGenes.add(expressedGene);
-            }
-            figureExpressionSummary.setExpressedGenes(expressedGenes);
-            figureExpressionSummaries.add(figureExpressionSummary);
-        }
-        return figureExpressionSummaries;
+        return ExpressionService.createExpressionFigureSummaryFromExpressionResults(results);
     }
 
     /**

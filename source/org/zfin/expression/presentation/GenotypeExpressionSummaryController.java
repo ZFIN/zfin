@@ -4,15 +4,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionSummaryCriteria;
+import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.FigureService;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -147,8 +152,8 @@ public class GenotypeExpressionSummaryController   {
 
     @RequestMapping(value = { "/genotype-expression-figure-summary" } )
     protected String getExpressionFigureSummaryForGenotype(@RequestParam String genoZdbID,
-                                                        @RequestParam boolean imagesOnly,
-                                                        Model model) {
+                                                           @RequestParam boolean imagesOnly,
+                                                           Model model) {
 
         Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genoZdbID);
 
@@ -160,11 +165,21 @@ public class GenotypeExpressionSummaryController   {
         ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(genotype, null, imagesOnly);
         expressionCriteria.setShowCondition(false);
         model.addAttribute("expressionCriteria", expressionCriteria);
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
-        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
+
+        List<ExpressionResult> expressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByGenotype(genotype);
+
+        List<FigureExpressionSummary> figureExpressionSummaries = ExpressionService.createExpressionFigureSummaryFromExpressionResults(expressionResults);
+
+        Collections.sort(figureExpressionSummaries);
+
+        List<FigureExpressionSummaryDisplay> figureExpressionSummaryDisplayList = PresentationConverter.getFigureExpressionSummaryDisplay(figureExpressionSummaries);
+
+        model.addAttribute("figureCount", RepositoryFactory.getExpressionRepository().getExpressionFigureCountForGenotype(genotype));
+
+        model.addAttribute("figureSummaryDisplayList", figureExpressionSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotype.getName() + " Expression Figure Summary");
-        return "expression/genotype-figure-summary.page";
+        return "expression/genotype-expression-figure-summary.page";
 
     }
 

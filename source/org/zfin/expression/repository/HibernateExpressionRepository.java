@@ -1296,7 +1296,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, GenotypeExperiment genox " +
                 "      where genox.genotype.zdbID = :genotypeID " +
                 "        and genox = xpExp.genotypeExperiment " +
-                "        and xpRslt.expressionExperiment = xpExp ";
+                "        and xpRslt.expressionExperiment = xpExp " +
+                "        and xpExp.gene != null";
         Query query = session.createQuery(hql);
         query.setString("genotypeID", genotype.getZdbID());
 

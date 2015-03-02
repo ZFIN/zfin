@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.datatransfer.microarray.MicroarrayWebserviceJob;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
 import org.zfin.expression.presentation.*;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.presentation.StageExpressionPresentation;
@@ -16,6 +14,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
+import org.zfin.marker.ExpressedGene;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.GenericTerm;
@@ -525,5 +524,48 @@ public class ExpressionService {
 
     public static ExpressionResultSplitStatement updateExpressionResult(ExpressionResultUpdateRecord statement) {
         return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public static List<FigureExpressionSummary> createExpressionFigureSummaryFromExpressionResults(List<ExpressionResult> results) {
+        Map<Figure, Set<ExpressionResult>> figureListMap = new HashMap<Figure, Set<ExpressionResult>>(results.size());
+        for (ExpressionResult result : results) {
+            for (Figure figure : result.getFigures()) {
+                Set<ExpressionResult> expressionResults = figureListMap.get(figure);
+                if (expressionResults == null) {
+                    expressionResults = new HashSet<ExpressionResult>();
+                    figureListMap.put(figure, expressionResults);
+                }
+                expressionResults.add(result);
+            }
+        }
+
+        List<FigureExpressionSummary> figureExpressionSummaries = new ArrayList<FigureExpressionSummary>(figureListMap.keySet().size());
+        List<ExpressionExperiment> expressionExperiments = ExpressionService.getDistinctExpressionExperiments(results);
+        for (Figure figure : figureListMap.keySet()) {
+            FigureExpressionSummary figureExpressionSummary = new FigureExpressionSummary(figure);
+            List<ExpressedGene> expressedGenes = new ArrayList<ExpressedGene>(figureListMap.get(figure).size());
+            for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+                List<ExpressionStatement> expressionStatements = new ArrayList<ExpressionStatement>(figureListMap.get(figure).size());
+                if (!expressionExperiment.getAllFigures().contains(figure))
+                    continue;
+                for (ExpressionResult result : expressionExperiment.getExpressionResults()) {
+                    ExpressionStatement statement = new ExpressionStatement();
+                    if (!result.getFigures().contains(figure))
+                        continue;
+                    statement.setEntity(result.getEntity());
+                    statement.setExpressionFound(result.isExpressionFound());
+                    // ensure distinctness
+                    if (!expressionStatements.contains(statement))
+                        expressionStatements.add(statement);
+                }
+                Collections.sort(expressionStatements);
+                ExpressedGene expressedGene = new ExpressedGene(expressionExperiment.getGene());
+                expressedGene.setExpressionStatements(expressionStatements);
+                expressedGenes.add(expressedGene);
+            }
+            figureExpressionSummary.setExpressedGenes(expressedGenes);
+            figureExpressionSummaries.add(figureExpressionSummary);
+        }
+        return figureExpressionSummaries;
     }
 }
