@@ -27,7 +27,7 @@ system("/bin/rm -f updateZebrafishGeneNameSQLlog2");
 system("/bin/rm -f namesToUpdate.unl");
 system("/bin/rm -f geneNamesUpdatedReport");
 
-system("scp /research/zarchive/load_files/Orthology/geneNamesToUpdate <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/") if (!-e "geneNamesToUpdate");
+system("scp /research/zarchive/load_files/Orthology/geneNamesToUpdate <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/");
 
 open (INPUTNAMES, "geneNamesToUpdate") ||  die "Cannot open geneNamesToUpdate : $!\n";
 
