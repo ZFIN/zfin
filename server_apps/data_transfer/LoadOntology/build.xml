@@ -177,7 +177,7 @@
         <antcall target="clear-output-directory"/>
         <property name="dbScriptFiles"
                   value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,dropTempTables.sql"/>
-        <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="512m"
+        <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="1024m"
               failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-localOboFileName"/>
