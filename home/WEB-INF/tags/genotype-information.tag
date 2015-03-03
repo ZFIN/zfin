@@ -40,7 +40,7 @@
                                          includeNumber="true"/></a>
                     </c:if>
                     <c:if test="${genotype.numberOfFigures == 1 }">
-                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${genotype.figure.zdbID}'>
+                        <a href='/${genotype.figure.zdbID}'>
                             <zfin2:figureOrTextOnlyLink figure="${genotype.figure}"
                                                         integerEntity="${genotype.numberOfFigures}"/>
                         </a>
@@ -70,14 +70,14 @@
             <td>
                 <c:if test="${genotype.numberOfExpFigures > 0}">
                     <c:if test="${genotype.numberOfExpFigures > 1}">
-                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-xpatselect.apg&query_results=true&mutsearchtype=equals&mutant_id=${genotype.genotype.zdbID}'>
+                        <a href='/action/expression/genotype-expression-figure-summary?genoZdbID=${genotype.genotype.zdbID}&imagesOnly=false'>
                             <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                          integerEntity="${genotype.numberOfExpFigures}"
                                          includeNumber="true"/></a>
                     </c:if>
 
                     <c:if test="${genotype.numberOfExpFigures == 1 }">
-                        <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-fxfigureview.apg&OID=${genotype.expFigure.zdbID}'>
+                        <a href='/${genotype.expFigure.zdbID}'>
                             <zfin2:figureOrTextOnlyLink figure="${genotype.expFigure}"
                                                         integerEntity="${genotype.numberOfExpFigures}"/>
                         </a>
