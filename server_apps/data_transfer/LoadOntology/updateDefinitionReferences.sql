@@ -98,7 +98,7 @@ delete from external_reference_temp
 where tdr_foreign_db_id_temp = 0 or exists (
 select 'x' from foreign_db where
 tdr_foreign_db_id_temp = fdb_db_pk_id
-AND fdb_db_name in ('TAO','ZFIN')
+AND fdb_db_name in ('TAO')
 );
 
 
