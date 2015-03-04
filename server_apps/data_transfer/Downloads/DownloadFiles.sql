@@ -1948,3 +1948,26 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
   order by gene_abbrev;
 
 
+!echo "unload crispr fasta file" 
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/crispr_fasta.fa' 
+DELIMITER " "  select ">lcl|",mrkr_zdb_id,mrkr_name||"|", "
+"||seq_sequence
+from marker, marker_sequence
+ where mrkr_zdb_id = seq_mrkr_zdb_id
+ and mrkr_zdb_id like "ZDB-CRISPR%";
+
+!echo "unload talen fasta file" 
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa' 
+DELIMITER " "  select ">lcl|",mrkr_zdb_id,mrkr_name||"|", "
+"||seq_sequence
+from marker, marker_sequence
+ where mrkr_zdb_id = seq_mrkr_zdb_id
+ and mrkr_zdb_id like "ZDB-TALEN%";
+
+!echo "unload morpholino fasta file" 
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa' 
+DELIMITER " "  select ">lcl|",mrkr_zdb_id,mrkr_name||"|", "
+"||seq_sequence
+from marker, marker_sequence
+ where mrkr_zdb_id = seq_mrkr_zdb_id
+ and mrkr_zdb_id like "ZDB-MRPHLNO%";
