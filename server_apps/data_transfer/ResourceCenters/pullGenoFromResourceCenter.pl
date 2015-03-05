@@ -17,13 +17,14 @@
 #
 # Params
 #  $       DBI Database Handle
-#  $       ZDB **LAB** ID of ZIRC/EZRC.
-#  $       name of file downloaded from ZIRC/EZRC
+#  $       ZDB **LAB** ID of ZIRC/EZRC/CZRC.
+#  $       name of file downloaded from ZIRC/EZRC/CZRC
 #  $       ZDB of the alteration/allele/feature
 #  $       ZDB of the background for the allele/feature
 #  $       zygocity of the allele/feature in the background provided.
 #
 # Returns ()
+use Encode qw(decode encode);
 
 sub geno_parse($$$) {
 
@@ -81,19 +82,29 @@ sub geno_available_parse($$){
     my $ctBadRows = 0;
     my %badInputData = ();
     while ($newGenoAvailableLine = <RESOURCEFILE>) {
-	  chop($newGenoAvailableLine);
+	$newGenoAvailableLine =~ s/\x0//g;
+	$newGenoAvailableLine =~ s/\r$//g;
+	chop($newGenoAvailableLine);
+	
 	  $lineNumber++;
 	  ##($genoId)=split(/\t/,$newGenoAvailableLine);
-
-	  if ($newGenoAvailableLine !~ m/^ZDB\-\w+\-\d{6}\-\d+$/) {
+	if ($newGenoAvailableLine !~ m/^ZDB\-ALT\-\d{6}\-\d+$/ && $resourceFile =~ 'CZRCresource.txt'){
 	    $badInputData{$lineNumber} = $newGenoAvailableLine;
 	    $ctBadRows++;
 	    next;
-	  }
-
-	  $cur->bind_param(1, $newGenoAvailableLine);
-	  $cur->execute;
+	}
+	
+	
+	if ($newGenoAvailableLine !~ m/^ZDB\-\w+\-\d{6}\-\d+$/) {
+	    $badInputData{$lineNumber} = $newGenoAvailableLine;
+	    $ctBadRows++;
+	    next;
+	}
+	
+	$cur->bind_param(1, $newGenoAvailableLine);
+	$cur->execute;
     }
+    
     
     close (RESOURCEFILE);
 
@@ -169,7 +180,7 @@ sub geno_load($) {
 	"insert into int_data_supplier (idsup_data_zdb_id, 
                                         idsup_supplier_zdb_id, 
                                         idsup_acc_num)
-           select geno_zdb_id, '$labZdbId', geno_zdb_id
+           select distinct geno_zdb_id, '$labZdbId', geno_zdb_id
              from geno_available 
              where exists (Select 'x' from zdb_active_data
                                  where geno_zdb_id = zactvd_zdb_id)
@@ -560,7 +571,7 @@ sub geno_GenoSuppliedByZFIN_count($$) {
 
 
 #----------------------------------------------------------------------
-# Report any GENOs/ALTs in the list from ZIRC/EZRC that are not valid ZDB IDs
+# Report any GENOs/ALTs in the list from ZIRC/EZRC/CZRC that are not valid ZDB IDs
 #
 # Params
 #  $       DBI Database Handle
@@ -642,7 +653,7 @@ sub geno_reportSuppliedByZircAlts($) {
 #----------------------------------------------------------------------
 # geno_main
 #
-# download GENO data from ZIRC/EZRC and update ZFIN to reflect what it says.
+# download GENO data from ZIRC/EZRC/CZRC and update ZFIN to reflect what it says.
 #
 # Params
 #  $       DBI Database Handle
@@ -672,6 +683,10 @@ sub geno_main($$$) {
     }
     elsif ($resourceCenter eq "EZRC"){
 	$resourceFile = "EZRCresource.txt"; # which genos supplied from EZRC
+	&downloadFiles ($resourceFile,$resourceCenter); # get Resource file	
+    }
+    elsif ($resourceCenter eq "CZRC"){
+	$resourceFile = "CZRCresource.txt"; # which genos supplied from CZRC
 	&downloadFiles ($resourceFile,$resourceCenter); # get Resource file	
     }
 

@@ -79,6 +79,12 @@ public class FeatureSupplier extends ObjectSupplier implements Serializable, Com
         else
             return false;
     }
+    public boolean isCzrc() {
+        if (this.getOrganization().getZdbID().equals("ZDB-LAB-130226-1"))
+            return true;
+        else
+            return false;
+    }
 
 	public boolean isMoensLab() {
 		if (this.getOrganization().getZdbID().equals("ZDB-LAB-990225-6"))

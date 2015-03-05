@@ -221,7 +221,7 @@
                     <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${supplier.organization.zdbID}"
                        id="${supplier.organization.zdbID}">
                         ${supplier.organization.name}</a>
-                    <c:if test="${supplier.zirc || supplier.ezrc}">&nbsp;
+                    <c:if test="${supplier.zirc || supplier.ezrc || supplier.czrc}">&nbsp;
                         <zfin2:orderThis organization="${supplier.organization}"
                                          accessionNumber="${formBean.feature.zdbID}"/>
                     </c:if>

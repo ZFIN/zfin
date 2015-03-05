@@ -13,7 +13,7 @@
 #     Returns
 #       0    All data was successfully pulled from ZIRC and EZRC and loaded in the DB.
 #      !0    None or only some of the data was successsfully pulled from
-#            EZRC and ZIRC and loaded in the DB.  See output for details.
+#            EZRC, CZRC and ZIRC and loaded in the DB.  See output for details.
 
 use DBI;
 use MIME::Lite;
@@ -109,6 +109,12 @@ sub downloadFiles($$) {
 	}
 	$labZdbId = "ZDB-LAB-130607-1";
     }
+    elsif ($resourceCenter eq "CZRC"){
+	if (system("/local/bin/wget http://zfish.cn/$filename")) {
+	    &errorExit("Failed to download $filename file from CZRC.","  See $wgetStatusFile for details.");
+	}
+	$labZdbId = "ZDB-LAB-130226-1";
+    }
     if (-z $filename) {
 	&errorExit("Downloaded file $filename is empty.  Aborting.",
 		   "  See $wgetStatusFile for details.");
@@ -172,6 +178,8 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 #  o Update the database, reporting as it goes
 
        # EST availability ZIRC
+&geno_main($dbh, $ezrcZdbId,"CZRC");           # Genotype availability CZRC
+
 &geno_main($dbh, $ezrcZdbId,"EZRC");           # Genotype availability EZRC
 # &atb_main($dbh, $zircZdbId);	        # Antibody availability
 
