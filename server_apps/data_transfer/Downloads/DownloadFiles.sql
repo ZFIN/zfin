@@ -1963,11 +1963,3 @@ DELIMITER " "  select ">lcl|",mrkr_zdb_id,mrkr_name||"|", "
 from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like "ZDB-TALEN%";
-
-!echo "unload morpholino fasta file" 
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/talen_fasta.fa' 
-DELIMITER " "  select ">lcl|",mrkr_zdb_id,mrkr_name||"|", "
-"||seq_sequence
-from marker, marker_sequence
- where mrkr_zdb_id = seq_mrkr_zdb_id
- and mrkr_zdb_id like "ZDB-MRPHLNO%";
