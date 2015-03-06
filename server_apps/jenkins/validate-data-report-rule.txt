@@ -3,6 +3,9 @@ ok /not really/
 # match line starting with 'error ', case-insensitive
 error /(?i)error /
 
+# the '-1' for a function call error
+error /(\s{8,10})(-1)/
+
 # list of warnings here...
 warning /Validation Errors found/
 
