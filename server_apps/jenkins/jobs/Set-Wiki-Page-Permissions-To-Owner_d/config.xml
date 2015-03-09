@@ -19,13 +19,13 @@ not already have an owner: community_protocol, community_antibody</description>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>set-wiki-page-permissions-to-owner -DjobName=Set-Wiki-Page-Permissions-To-Owner_h</targets>
+      <targets>set-wiki-page-permissions-to-owner -DjobName=Set-Wiki-Page-permissions-To-Owner_d</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-        <artifacts>server_apps/DB_maintenance/report_data/Set-Wiki-Page-Permissions-To-Owner_h/*</artifacts>
+        <artifacts>server_apps/DB_maintenance/report_data/Set-Wiki-Page-permissions-To-Owner_d/*</artifacts>
         <latestOnly>false</latestOnly>
         <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -33,8 +33,8 @@ not already have an owner: community_protocol, community_antibody</description>
         <reportTargets>
             <htmlpublisher.HtmlPublisherTarget>
                 <reportName>Updated Wiki Pages</reportName>
-                <reportDir>server_apps/DB_maintenance/report_data/Set-Wiki-Page-Permissions-To-Owner_h</reportDir>
-                <reportFiles>Set-Wiki-Page-Permissions-To-Owner_h.html</reportFiles>
+                <reportDir>server_apps/DB_maintenance/report_data/Set-Wiki-Page-permissions-To-Owner_d</reportDir>
+                <reportFiles>Set-Wiki-Page-permissions-To-Owner_d.html</reportFiles>
                 <keepAll>false</keepAll>
                 <allowMissing>true</allowMissing>
                 <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -48,7 +48,7 @@ not already have an owner: community_protocol, community_antibody</description>
             <email>
                 <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                 <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Set-Wiki-Page-Permissions-To-Owner_h/Set-Wiki-Page-Permissions-To-Owner_h.html&quot;}
+                <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Set-Wiki-Page-permissions-To-Owner_d/Set-Wiki-Page-permissions-To-Owner_d.html&quot;}
 
                     See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                 </body>
