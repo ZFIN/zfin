@@ -419,8 +419,7 @@ public class PhenotypeService {
                 figureSummaryDisplay.setFigure(figure);
                 figureSummaryDisplay.setPublication(figure.getPublication());
                 List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getPhenotypeStatementsForFigureAndGenotype(figure, genotype);
-               // figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
-                figureSummaryDisplay.setPhenotypeStatementList(phenotypeStatements);
+                figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
                 figureSummaryDisplays.add(figureSummaryDisplay);
                 if (!figure.isImgless()) {
                     figureSummaryDisplay.setImgCount(figure.getImages().size());
