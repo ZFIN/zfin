@@ -151,6 +151,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 # Hard code the ZDB ID of ZIRC
 my $zircZdbId = "ZDB-LAB-991005-53";
 my $ezrcZdbId = "ZDB-LAB-130607-1";
+my $czrcZdbId = "ZDB-LAB-130226-1";
 my $labZdbId;
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCenters/loadReport.txt");
 
@@ -178,7 +179,7 @@ my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->',
 #  o Update the database, reporting as it goes
 
        # EST availability ZIRC
-&geno_main($dbh, $ezrcZdbId,"CZRC");           # Genotype availability CZRC
+&geno_main($dbh, $czrcZdbId,"CZRC");           # Genotype availability CZRC
 
 &geno_main($dbh, $ezrcZdbId,"EZRC");           # Genotype availability EZRC
 # &atb_main($dbh, $zircZdbId);	        # Antibody availability
