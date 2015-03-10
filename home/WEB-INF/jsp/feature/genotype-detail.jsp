@@ -294,7 +294,7 @@
                 <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
                     <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
                                           showCondition="true" />
-                    <c:if test="${fn:length(formBean.expressionDisplays) > 5}">
+                    <c:if test="${formBean.totalNumberOfExpressedGenes > 5}">
                         <div>
                             <a href="javascript:expandExpression()">
                                 <img src="/images/darrow.gif" alt="expand" border="0">

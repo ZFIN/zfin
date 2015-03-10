@@ -273,5 +273,24 @@ public class DisruptorBean extends MarkerBean{
         }
 
     }
+
+    public int getTotalNumberOfExpressedGenes() {
+        if (expressionResults == null || expressionResults.size() == 0) {
+            return 0;
+        } else {
+            if (expressionDisplays == null)
+                createExpressionDisplays();
+
+            if (expressionDisplays != null) {
+                Set<Marker> allExpressedGenes = new HashSet<Marker>();
+                for (ExpressionDisplay xpDisp : expressionDisplays) {
+                    allExpressedGenes.add(xpDisp.getExpressedGene());
+                }
+                return allExpressedGenes.size();
+            } else {
+                return 0;
+            }
+        }
+    }
 }
 

@@ -36,12 +36,12 @@
             <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
                 <zfin2:expressionData sequenceTargetingReagentID="${disruptor.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
                                       showCondition="false" />
-                <c:if test="${fn:length(formBean.expressionDisplays) > 5}">
+                <c:if test="${formBean.totalNumberOfExpressedGenes > 5}">
                     <div>
                         <a href="javascript:expandExpression()">
                             <img src="/images/darrow.gif" alt="expand" border="0">
                             Show all</a>
-                        ${fn:length(formBean.expressionDisplays)} expressed genes
+                        ${formBean.totalNumberOfExpressedGenes} expressed genes
                     </div>
                 </c:if>
             </c:when>
