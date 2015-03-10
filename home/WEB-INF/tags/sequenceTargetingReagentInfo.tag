@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-<%@ attribute name="markerBean" type="org.zfin.marker.presentation.DisruptorBean"
+<%@ attribute name="markerBean" type="org.zfin.marker.presentation.SequenceTargetingReagentBean"
               rtexprvalue="true" required="true" %>
 <%@ attribute name="marker" type="org.zfin.mutant.SequenceTargetingReagent"
               rtexprvalue="true" required="true" %>

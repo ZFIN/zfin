@@ -8,7 +8,6 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
@@ -21,9 +20,9 @@ import java.util.*;
 
 /**
  */
-public class DisruptorBean extends MarkerBean{
+public class SequenceTargetingReagentBean extends MarkerBean{
 
-    private Logger logger = Logger.getLogger(DisruptorBean.class);
+    private Logger logger = Logger.getLogger(SequenceTargetingReagentBean.class);
 
     private Set<Marker> targetGenes ;
     private List<STRMarkerSequence> sequences;

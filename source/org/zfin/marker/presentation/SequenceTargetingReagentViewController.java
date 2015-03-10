@@ -10,13 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionSummaryCriteria;
-import org.zfin.expression.FigureService;
-import org.zfin.expression.presentation.FigureSummaryDisplay;
-import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -37,9 +32,9 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/marker")
-public class DisruptorViewController {
+public class SequenceTargetingReagentViewController {
 
-    private Logger logger = Logger.getLogger(DisruptorViewController.class);
+    private Logger logger = Logger.getLogger(SequenceTargetingReagentViewController.class);
 
     @Autowired
     private MarkerRepository markerRepository;
@@ -47,7 +42,7 @@ public class DisruptorViewController {
     //    private String ncbiBlastUrl ;
     private List<Database> databases;
 
-    public DisruptorViewController() {
+    public SequenceTargetingReagentViewController() {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository()
                 .getZebrafishSequenceReferenceDatabase(ForeignDB.AvailableName.PUBRNA, ForeignDBDataType.DataType.RNA);
         databases = referenceDatabase.getOrderedRelatedBlastDB();
@@ -59,31 +54,31 @@ public class DisruptorViewController {
             , @RequestParam("zdbID") String zdbID
     ) throws Exception {
         // set base bean
-        DisruptorBean disruptorBean = new DisruptorBean();
+        SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
 
         logger.info("zdbID: " + zdbID);
-        SequenceTargetingReagent disruptor = markerRepository.getSequenceTargetingReagent(zdbID);
-        logger.info("disruptor: " + disruptor);
+        SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(zdbID);
+        logger.info("sequenceTargetingReagent: " + sequenceTargetingReagent);
 
-        disruptorBean.setMarker(disruptor);
-        model.addAttribute("disruptor", disruptor);
+        sequenceTargetingReagentBean.setMarker(sequenceTargetingReagent);
+        model.addAttribute("sequenceTargetingReagent", sequenceTargetingReagent);
 
-        MarkerService.createDefaultViewForMarker(disruptorBean);
+        MarkerService.createDefaultViewForMarker(sequenceTargetingReagentBean);
 
         // set targetGenes
 //        Set<Marker> targetGenes = MarkerService.getRelatedMarker(morpholino, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
 //        markerBean.setTargetGenes(targetGenes);
         List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<>();
         knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
-                disruptor, true
+                sequenceTargetingReagent, true
                 , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
         ));
-        disruptorBean.setMarkerRelationshipPresentationList(knockdownRelationships);
+        sequenceTargetingReagentBean.setMarkerRelationshipPresentationList(knockdownRelationships);
 
         // PHENOTYPE
-        List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(disruptor);
+        List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
         if (genotypeFigures == null || genotypeFigures.size() == 0)  {
-            disruptorBean.setPhenotypeDisplays(null);
+            sequenceTargetingReagentBean.setPhenotypeDisplays(null);
         } else {
             List<PhenotypeStatement> phenoStatements = new ArrayList<>();
             for (GenotypeFigure genoFig : genotypeFigures) {
@@ -93,51 +88,51 @@ public class DisruptorViewController {
 					}
 				}
             }
-            disruptorBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenoStatements,"fish"));
+            sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenoStatements,"fish"));
         }
 
         // GENOTYPE (for CRISPR and TALEN only at this time)
-        if (disruptorBean.isTALEN() || disruptorBean.isCRISPR()) {
+        if (sequenceTargetingReagentBean.isTALEN() || sequenceTargetingReagentBean.isCRISPR()) {
             List<Genotype> genotypes = markerRepository.getTALENorCRISPRcreatedGenotypes(zdbID);
-            disruptorBean.setGenotypes(genotypes);
+            sequenceTargetingReagentBean.setGenotypes(genotypes);
             List<GenotypeInformation> genoData = new ArrayList<>();
             if (genotypes == null) {
-                disruptorBean.setGenotypeData(null);
+                sequenceTargetingReagentBean.setGenotypeData(null);
             } else {
                 for (Genotype geno : genotypes) {
                     GenotypeInformation genoInfo = new GenotypeInformation(geno);
                     genoData.add(genoInfo);
                 }
                 Collections.sort(genoData);
-                disruptorBean.setGenotypeData(genoData);
+                sequenceTargetingReagentBean.setGenotypeData(genoData);
             }
         }
 
         // Expression data
-        List<ExpressionResult> strExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsBySequenceTargetingReagent(disruptor);
-        disruptorBean.setExpressionResults(strExpressionResults);
-        List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagent(disruptor);
-        disruptorBean.setExpressionFigureIDs(expressionFigureIDs);
-        List<String> expressionPublicationIDs = RepositoryFactory.getExpressionRepository().getExpressionPublicationIDsBySequenceTargetingReagent(disruptor);
-        disruptorBean.setExpressionPublicationIDs(expressionPublicationIDs);
+        List<ExpressionResult> strExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
+        sequenceTargetingReagentBean.setExpressionResults(strExpressionResults);
+        List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
+        sequenceTargetingReagentBean.setExpressionFigureIDs(expressionFigureIDs);
+        List<String> expressionPublicationIDs = RepositoryFactory.getExpressionRepository().getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
+        sequenceTargetingReagentBean.setExpressionPublicationIDs(expressionPublicationIDs);
 
         // add sequence
         //disruptorBean.setSequences(markerRepository.getMarkerSequences(disruptor));
 
         // get sequence attribution
-        if (disruptor.getSequence() != null) {
+        if (sequenceTargetingReagent.getSequence() != null) {
             List<RecordAttribution> attributions = RepositoryFactory.getInfrastructureRepository()
-                    .getRecordAttributionsForType(disruptor.getZdbID(), RecordAttribution.SourceType.SEQUENCE);
+                    .getRecordAttributionsForType(sequenceTargetingReagent.getZdbID(), RecordAttribution.SourceType.SEQUENCE);
             // for this particular set, we only ever want the first one
             if (attributions.size() >= 1) {
-                disruptorBean.setSequenceAttribution(PublicationPresentation.getLink(attributions.iterator().next().getSourceZdbID(), "1"));
+                sequenceTargetingReagentBean.setSequenceAttribution(PublicationPresentation.getLink(attributions.iterator().next().getSourceZdbID(), "1"));
             }
         } else {
-            logger.warn("No sequence available for disruptor: " + disruptorBean.getZdbID());
+            logger.warn("No sequence available for disruptor: " + sequenceTargetingReagentBean.getZdbID());
         }
 
-        disruptorBean.setDatabases(databases);
-        String disruptorType = disruptor.getType().toString();
+        sequenceTargetingReagentBean.setDatabases(databases);
+        String disruptorType = sequenceTargetingReagent.getType().toString();
 
         // Todo: there should be a better place to store the display name for the different STR entities
         if (disruptorType.equals("MRPHLNO")) {
@@ -145,9 +140,9 @@ public class DisruptorViewController {
         }
 
         // set source
-        disruptorBean.setSuppliers(markerRepository.getSuppliersForMarker(disruptor.getZdbID()));
-        model.addAttribute(LookupStrings.FORM_BEAN, disruptorBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, disruptorType + ": " + disruptor.getAbbreviation());
+        sequenceTargetingReagentBean.setSuppliers(markerRepository.getSuppliersForMarker(sequenceTargetingReagent.getZdbID()));
+        model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, disruptorType + ": " + sequenceTargetingReagent.getAbbreviation());
 
         return "marker/sequence-targeting-reagent-view.page";
     }

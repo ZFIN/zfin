@@ -46,7 +46,7 @@ public class MarkerViewController {
     @Autowired
     private ConstructViewController constructViewController;
     @Autowired
-    private DisruptorViewController disruptorViewController;
+    private SequenceTargetingReagentViewController sequenceTargetingReagentViewController;
     @Autowired
     private SnpViewController snpViewController;
     @Autowired
@@ -132,7 +132,7 @@ public class MarkerViewController {
                     ) {
                 return constructViewController.getGeneView(model, zdbID);
             } else if (type.equals(Marker.Type.MRPHLNO.name()) || type.equals(Marker.Type.TALEN.name()) || type.equals(Marker.Type.CRISPR.name())) {
-                return disruptorViewController.getView(model, zdbID);
+                return sequenceTargetingReagentViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.SNP.name())) {
                 return snpViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.TSCRIPT.name())) {

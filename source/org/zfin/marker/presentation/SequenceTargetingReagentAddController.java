@@ -19,7 +19,6 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.profile.Organization;
 import org.zfin.profile.repository.*;
@@ -38,9 +37,9 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/marker")
-public class DisruptorAddController {
+public class SequenceTargetingReagentAddController {
 
-    private static Logger LOG = Logger.getLogger(DisruptorAddController.class);
+    private static Logger LOG = Logger.getLogger(SequenceTargetingReagentAddController.class);
 
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
@@ -49,24 +48,24 @@ public class DisruptorAddController {
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
     @ModelAttribute("formBean")
-    private DisruptorAddBean getDefaultSearchForm(@RequestParam(value = "disruptorType", required = false) String type,
-                                                  @RequestParam(value = "disruptorPublicationZdbID", required = false) String pubZdbID) {
-        DisruptorAddBean disruptorBean = new DisruptorAddBean();
+    private SequenceTargetingReagentAddBean getDefaultSearchForm(@RequestParam(value = "sequenceTargetingReagentType", required = false) String type,
+                                                                 @RequestParam(value = "sequenceTargetingReagentPublicationZdbID", required = false) String pubZdbID) {
+        SequenceTargetingReagentAddBean sequenceTargetingReagentBean = new SequenceTargetingReagentAddBean();
 
-        disruptorBean.setDisruptorType(type);
+        sequenceTargetingReagentBean.setSequenecTargetingReagentType(type);
 
         if (StringUtils.isNotEmpty(pubZdbID))
-            disruptorBean.setDisruptorPublicationZdbID(pubZdbID);
+            sequenceTargetingReagentBean.setSequenecTargetingReagentPublicationID(pubZdbID);
 
-        return disruptorBean;
+        return sequenceTargetingReagentBean;
 
     }
 
-    @RequestMapping("/disruptor-add")
+    @RequestMapping("/sequence-targeting-reagent-add")
     protected String showForm(Model model) throws Exception {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Sequence Targeting Reagent");
-        return "marker/disruptor-add.page";
+        return "marker/sequence-targeting-reagent-add.page";
     }
 
     private @Autowired
@@ -74,81 +73,81 @@ public class DisruptorAddController {
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(new DisruptorAddBeanValidator());
+        binder.setValidator(new SequenceTargetingReagentAddBeanValidator());
     }
 
-    @RequestMapping(value = "/disruptor-do-submit", method = RequestMethod.POST)
+    @RequestMapping(value = "/sequence-targeting-reagent-do-submit", method = RequestMethod.POST)
     public String addDisruptor (Model model,
-                                @Valid @ModelAttribute("formBean") DisruptorAddBean formBean,
+                                @Valid @ModelAttribute("formBean") SequenceTargetingReagentAddBean formBean,
                                 BindingResult result) throws Exception {
 
         if(result.hasErrors())
-            return "marker/disruptor-add.page";
+            return "marker/sequence-targeting-reagent-add.page";
 
-        String disruptorName = formBean.getDisruptorName();
+        String sequenceTargetingReagentName = formBean.getSequenecTargetingReagentName();
 
-        STRMarkerSequence newDisruptorSequence = new STRMarkerSequence();
-        SequenceTargetingReagent newDisruptor = new SequenceTargetingReagent() ;
-        newDisruptorSequence.setSequence(formBean.getDisruptorSequence().toUpperCase());
-        newDisruptorSequence.setType("Nucleotide");
-        newDisruptor.setSequence(newDisruptorSequence);
+        STRMarkerSequence newSequenceTargetingReagentSequence = new STRMarkerSequence();
+        SequenceTargetingReagent newSequenceTargetingReagent = new SequenceTargetingReagent() ;
+        newSequenceTargetingReagentSequence.setSequence(formBean.getSequenecTargetingReagentSequence().toUpperCase());
+        newSequenceTargetingReagentSequence.setType("Nucleotide");
+        newSequenceTargetingReagent.setSequence(newSequenceTargetingReagentSequence);
 
-        if (formBean.getDisruptorType().equalsIgnoreCase("TALEN")) {
-            String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
-            newDisruptorSequence.setSecondSequence(disruptorSecondSequence.toUpperCase());
+        if (formBean.getSequenecTargetingReagentType().equalsIgnoreCase("TALEN")) {
+            String sequenceTargetingReagentSecondSequence = formBean.getSequenecTargetingReagentSecondSequence();
+            newSequenceTargetingReagentSequence.setSecondSequence(sequenceTargetingReagentSecondSequence.toUpperCase());
         }
 
-        newDisruptor.setName(disruptorName);
-        newDisruptor.setAbbreviation(disruptorName);
-        newDisruptor.setPublicComments(formBean.getDisruptorComment());
+        newSequenceTargetingReagent.setName(sequenceTargetingReagentName);
+        newSequenceTargetingReagent.setAbbreviation(sequenceTargetingReagentName);
+        newSequenceTargetingReagent.setPublicComments(formBean.getSequenecTargetingReagentComment());
 
-        String pubZdbID = formBean.getDisruptorPublicationZdbID().trim();
+        String pubZdbID = formBean.getSequenecTargetingReagentPublicationID().trim();
         if (PublicationValidator.isShortVersion(pubZdbID))
-            formBean.setDisruptorPublicationZdbID(PublicationValidator.completeZdbID(pubZdbID));
+            formBean.setSequenecTargetingReagentPublicationID(PublicationValidator.completeZdbID(pubZdbID));
         else
-            formBean.setDisruptorPublicationZdbID(pubZdbID);
-        Publication disruptorPub = pr.getPublication(formBean.getDisruptorPublicationZdbID());
+            formBean.setSequenecTargetingReagentPublicationID(pubZdbID);
+        Publication sequenceTargetingReagentPub = pr.getPublication(formBean.getSequenecTargetingReagentPublicationID());
 
         MarkerType mt = new MarkerType();
-        if (formBean.getDisruptorType().equalsIgnoreCase("Morpholino")) {
+        if (formBean.getSequenecTargetingReagentType().equalsIgnoreCase("Morpholino")) {
             mt = mr.getMarkerTypeByName(Marker.Type.MRPHLNO.toString());
-        } else if (formBean.getDisruptorType().equalsIgnoreCase("TALEN")) {
+        } else if (formBean.getSequenecTargetingReagentType().equalsIgnoreCase("TALEN")) {
             mt = mr.getMarkerTypeByName(Marker.Type.TALEN.toString());
-        } else if (formBean.getDisruptorType().equalsIgnoreCase("CRISPR")) {
+        } else if (formBean.getSequenecTargetingReagentType().equalsIgnoreCase("CRISPR")) {
             mt = mr.getMarkerTypeByName(Marker.Type.CRISPR.toString());
         }
-        newDisruptor.setMarkerType(mt);
+        newSequenceTargetingReagent.setMarkerType(mt);
         // set marker sequence component
 
 
 
         try {
             HibernateUtil.createTransaction();
-            mr.createMarker(newDisruptor, disruptorPub);
-            ir.insertUpdatesTable(newDisruptor, "new " + formBean.getDisruptorType(), "");
-            PublicationService.addRecentPublications(request.getSession().getServletContext(), disruptorPub, PublicationSessionKey.GENE) ;
+            mr.createMarker(newSequenceTargetingReagent, sequenceTargetingReagentPub);
+            ir.insertUpdatesTable(newSequenceTargetingReagent, "new " + formBean.getSequenecTargetingReagentType(), "");
+            PublicationService.addRecentPublications(request.getSession().getServletContext(), sequenceTargetingReagentPub, PublicationSessionKey.GENE) ;
 
-            String alias = formBean.getDisruptorAlias();
+            String alias = formBean.getSequenecTargetingReagentAlias();
             if(!StringUtils.isEmpty(alias)) {
-                mr.addMarkerAlias(newDisruptor, alias, disruptorPub);
+                mr.addMarkerAlias(newSequenceTargetingReagent, alias, sequenceTargetingReagentPub);
             }
 
-            String curationNote = formBean.getDisruptorCuratorNote();
+            String curationNote = formBean.getSequenecTargetingReagentCuratorNote();
             if(!StringUtils.isEmpty(curationNote)) {
-                mr.addMarkerDataNote(newDisruptor, curationNote);
+                mr.addMarkerDataNote(newSequenceTargetingReagent, curationNote);
             }
 
             String targetGeneAbbr = formBean.getTargetGeneSymbol();
             Marker targetGene = mr.getGeneByAbbreviation(targetGeneAbbr);
 
             if (targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
-                MarkerService.addMarkerRelationship(newDisruptor, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+                MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
             }
 
-            String supplierName = formBean.getDisruptorSupplierName();
+            String supplierName = formBean.getSequenecTargetingReagentSupplierName();
             if (!StringUtils.isEmpty(supplierName)) {
-                Organization supplier = profileRepository.getOrganizationByName(formBean.getDisruptorSupplierName());
-                profileRepository.addSupplier(supplier, newDisruptor);
+                Organization supplier = profileRepository.getOrganizationByName(formBean.getSequenecTargetingReagentSupplierName());
+                profileRepository.addSupplier(supplier, newSequenceTargetingReagent);
             }
 
             HibernateUtil.flushAndCommitCurrentSession();
@@ -163,7 +162,7 @@ public class DisruptorAddController {
         }
 
         return "redirect:/" + ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() +
-                "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newDisruptor.getZdbID();
+                "?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=" + newSequenceTargetingReagent.getZdbID();
     }
 
     // looks up suppliers

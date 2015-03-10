@@ -4,7 +4,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<jsp:useBean id="formBean" class="org.zfin.marker.presentation.DisruptorBean" scope="request"/>
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
 <c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
@@ -23,7 +23,7 @@
     </tiles:insertTemplate>
 </div>
 
-<zfin2:disruptorInfo marker="${disruptor}" markerBean="${formBean}" previousNames="${formBean.previousNames}"/>
+<zfin2:sequenceTargetingReagentInfo marker="${sequenceTargetingReagent}" markerBean="${formBean}" previousNames="${formBean.previousNames}"/>
 
 <%--// EXPRESSION --%>
 <div class="summary">
@@ -34,7 +34,7 @@
     <div id="expression-short-version" class="summary">
         <c:choose>
             <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-                <zfin2:expressionData sequenceTargetingReagentID="${disruptor.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
+                <zfin2:expressionData sequenceTargetingReagentID="${sequenceTargetingReagent.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
                                       showCondition="false" />
                 <c:if test="${formBean.totalNumberOfExpressedGenes > 5}">
                     <div>
@@ -52,7 +52,7 @@
     </div>
     <div style="display:none" id="expression-long-version" class="summary">
         <c:if test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-            <zfin2:expressionData sequenceTargetingReagentID="${disruptor.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="${fn:length(formBean.expressionDisplays)}"
+            <zfin2:expressionData sequenceTargetingReagentID="${sequenceTargetingReagent.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="${fn:length(formBean.expressionDisplays)}"
                                   showCondition="false" />
         </c:if>
         <div>

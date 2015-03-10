@@ -6,12 +6,12 @@ import org.springframework.validation.Validator;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.Organization;
+import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
-import org.zfin.profile.repository.ProfileRepository;
 
-public class DisruptorAddBeanValidator implements Validator {
+public class SequenceTargetingReagentAddBeanValidator implements Validator {
     private MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private ProfileRepository pr = RepositoryFactory.getProfileRepository();
 
@@ -20,15 +20,15 @@ public class DisruptorAddBeanValidator implements Validator {
     }
 
     public void validate(Object command, Errors errors) {
-        DisruptorAddBean formBean = (DisruptorAddBean) command;
+        SequenceTargetingReagentAddBean formBean = (SequenceTargetingReagentAddBean) command;
 
-        if (!formBean.getDisruptorPublicationZdbID().startsWith("ZDB-PUB-")) {
+        if (!formBean.getSequenecTargetingReagentPublicationID().startsWith("ZDB-PUB-")) {
             errors.rejectValue("disruptorPublicationZdbID", "code", "Please enter the full publication id starting with ZDB-PUB.");
         }
 
-        PublicationValidator.validatePublicationID(formBean.getDisruptorPublicationZdbID(), DisruptorAddBean.DISRUPTOR_PUBLICATION_ZDB_ID, errors);
+        PublicationValidator.validatePublicationID(formBean.getSequenecTargetingReagentPublicationID(), SequenceTargetingReagentAddBean.DISRUPTOR_PUBLICATION_ZDB_ID, errors);
 
-        String disruptorName = formBean.getDisruptorName();
+        String disruptorName = formBean.getSequenecTargetingReagentName();
         if (StringUtils.isEmpty(disruptorName)) {
             errors.rejectValue("disruptorName", "code", "The name of the new sequence-targeting reagent cannot be null.");
         }
@@ -44,7 +44,7 @@ public class DisruptorAddBeanValidator implements Validator {
             }
         }
 
-        String disruptorSequence = formBean.getDisruptorSequence();
+        String disruptorSequence = formBean.getSequenecTargetingReagentSequence();
         if (StringUtils.isEmpty(disruptorSequence)) {
             errors.rejectValue("disruptorSequence", "code", "The sequence of [" + disruptorName + "]  cannot be null.");
         }
@@ -56,7 +56,7 @@ public class DisruptorAddBeanValidator implements Validator {
             errors.rejectValue("targetGeneSymbol", "code", targetGeneSymbol + " cannot be found.");
         }
 
-        String disruptorSupplierName = formBean.getDisruptorSupplierName();
+        String disruptorSupplierName = formBean.getSequenecTargetingReagentSupplierName();
         if (!StringUtils.isEmpty(disruptorSupplierName)) {
             Organization supplier = pr.getOrganizationByName(disruptorSupplierName);
             if (supplier == null) {
@@ -68,10 +68,10 @@ public class DisruptorAddBeanValidator implements Validator {
             errors.rejectValue("disruptorSequence", "code", "The sequence of [" + disruptorName + "]  cannot contain white space or character other than ATGC.");
         }
 
-        String disruptorType = formBean.getDisruptorType();
+        String disruptorType = formBean.getSequenecTargetingReagentType();
 
         if (disruptorType.equalsIgnoreCase("TALEN")) {
-            String disruptorSecondSequence = formBean.getDisruptorSecondSequence();
+            String disruptorSecondSequence = formBean.getSequenecTargetingReagentSecondSequence();
             if (StringUtils.isEmpty(disruptorSecondSequence)) {
                 errors.rejectValue("disruptorSecondSequence", "code", "The second sequence of [" + disruptorName + "]  cannot be null.");
             }
