@@ -1516,7 +1516,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct genoFig from GenotypeFigure genoFig " +
-                "     where genoFig.morpholino.zdbID = :zdbID";
+                "     where genoFig.sequenceTargetingReagent.zdbID = :zdbID";
         Query query = session.createQuery(hql);
         query.setParameter("zdbID", str.getZdbID());
 

@@ -16,7 +16,7 @@ public class GenotypeFigure implements Serializable {
     private GenericTerm subTerm;
     private GenericTerm qualityTerm;
     private String tag;
-    private Marker morpholino;
+    private Marker sequenceTargetingReagent;
     private PhenotypeExperiment phenotypeExperiment;
 
     public int getId() {
@@ -43,12 +43,12 @@ public class GenotypeFigure implements Serializable {
         this.figure = figure;
     }
 
-    public Marker getMorpholino() {
-        return morpholino;
+    public Marker getSequenceTargetingReagent() {
+        return sequenceTargetingReagent;
     }
 
-    public void setMorpholino(Marker morpholino) {
-        this.morpholino = morpholino;
+    public void setSequenceTargetingReagent(Marker sequenceTargetingReagent) {
+        this.sequenceTargetingReagent = sequenceTargetingReagent;
     }
 
     public String getTag() {

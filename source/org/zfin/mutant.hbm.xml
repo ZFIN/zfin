@@ -578,7 +578,7 @@
         <many-to-one name="qualityTerm" column="gffs_quality_zdb_id"/>
 
         <property name="tag" type="string" column="gffs_tag" not-null="true"/>
-        <many-to-one name="morpholino" class="org.zfin.marker.Marker">
+        <many-to-one name="sequenceTargetingReagent" class="org.zfin.marker.Marker">
             <column name="gffs_morph_zdb_id" not-null="false"/>
         </many-to-one>
         <many-to-one name="phenotypeExperiment" class="org.zfin.mutant.PhenotypeExperiment">
