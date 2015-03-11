@@ -60,16 +60,16 @@ public class Experiment implements Comparable<Experiment> {
         this.experimentConditions = experimentConditions;
     }
 
-    public Set<ExperimentCondition> getMorpholinoConditions() {
+    public Set<ExperimentCondition> getSequenecTargetingReagentConditions() {
         if (experimentConditions == null)
             return null;
 
-        Set<ExperimentCondition> morpholinoConditions = new HashSet<ExperimentCondition>(4);
+        Set<ExperimentCondition> strConditions = new HashSet<ExperimentCondition>(4);
         for (ExperimentCondition condition : experimentConditions) {
             if (condition.getSequenceTargetingReagent() != null)
-                morpholinoConditions.add(condition);
+                strConditions.add(condition);
         }
-        return morpholinoConditions;
+        return strConditions;
     }
 
     public boolean isStandard() {
@@ -85,16 +85,16 @@ public class Experiment implements Comparable<Experiment> {
     }
 
     public boolean isChemical() {
-		if (experimentConditions == null || experimentConditions.isEmpty()) {
+        if (experimentConditions == null || experimentConditions.isEmpty()) {
             return false;
-	    }
+        }
 
         boolean allChemical = true;
         for (ExperimentCondition expCdt: experimentConditions) {
             if (!expCdt.isChemicalCondition()) {
                 allChemical = false;
                 break;
-		    }
+            }
         }
         return allChemical;
     }
@@ -105,13 +105,13 @@ public class Experiment implements Comparable<Experiment> {
         }  else if (!this.isStandard() && o.isStandard()) {
             return 1;
         }  else {
-			if (this.isChemical() && !o.isChemical()) {
+            if (this.isChemical() && !o.isChemical()) {
                 return -1;
             }  else if (!this.isChemical() && o.isChemical()) {
                 return 1;
-		    }  else {
+            }  else {
                 return 0;
-		    }
+            }
         }
     }
 }

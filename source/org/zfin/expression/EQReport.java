@@ -158,7 +158,7 @@ public class EQReport {
             buffer = new StringBuffer();
             buffer.append(phenotype.getPhenotypeExperiment().getGenotypeExperiment().getGenotype().getName());
             buffer.append("\t");
-            Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getGenotypeExperiment().getExperiment().getMorpholinoConditions();
+            Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getGenotypeExperiment().getExperiment().getSequenecTargetingReagentConditions();
             if (conditions != null && conditions.size() > 0) {
                 for (ExperimentCondition condition : conditions) {
                     buffer.append(condition.getSequenceTargetingReagent().getName());

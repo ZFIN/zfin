@@ -9,12 +9,10 @@ import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
@@ -282,7 +280,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      */
     public void runRegenGenotypeFigureScript(PhenotypeExperiment phenotypeExperiment) {
         InformixUtil.runInformixProcedure("regen_genofig_genotype", phenotypeExperiment.getId() + "");
-        Set<ExperimentCondition> conditions = phenotypeExperiment.getGenotypeExperiment().getExperiment().getMorpholinoConditions();
+        Set<ExperimentCondition> conditions = phenotypeExperiment.getGenotypeExperiment().getExperiment().getSequenecTargetingReagentConditions();
         if (conditions != null) {
             for (ExperimentCondition condition : conditions) {
                 SequenceTargetingReagent sequenceTargetingReagent = condition.getSequenceTargetingReagent();

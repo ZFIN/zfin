@@ -35,7 +35,7 @@
                         <zfin:link entity="${morpholinoStat.morpholinoMarkers}"/>
                     </td>
                     <td>
-                        <zfin:link entity="${morpholinoStat.genoExperiment.experiment.morpholinoConditions}"/>
+                        <zfin:link entity="${morpholinoStat.genoExperiment.experiment.sequenecTargetingReagentConditions}"/>
                     </td>
                     <td>
                         <zfin:link entity="${morpholinoStat.genoExperiment.genotype}"/>
