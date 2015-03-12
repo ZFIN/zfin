@@ -108,6 +108,7 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.CONSTRUCT.name        | "TgBAC(pax7a:GFP) id:ZDB-TGCONSTRCT-150108-2"    | "12299"
         Category.CONSTRUCT.name        | "Tg2(krt5;EGFP) id:ZDB-TGCONSTRCT-141020-3"      | "12299"
         Category.CONSTRUCT.name        | "Tg(ttna:MA-EGFP) id:ZDB-TGCONSTRCT-121127-1"    | "12299"
+        Category.ANATOMY.name          | "(-)-isopiperitenone reductase activity GO:0052581" | "12299"
 
     }
 

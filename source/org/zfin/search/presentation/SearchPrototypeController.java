@@ -181,6 +181,8 @@ public class SearchPrototypeController {
 
         StringBuilder queryString = new StringBuilder();
 
+
+        String originalQ = q;
         if (!StringUtils.isEmpty(q)) {
 
             //handle a very specific case, id:idb names need to be escaped
@@ -194,7 +196,7 @@ public class SearchPrototypeController {
         query.setQuery(queryString.toString());
         query.addFilterQuery(filterQuery);
 
-        model.addAttribute("q", (q != null ? q : ""));
+        model.addAttribute("q", (originalQ != null ? originalQ : ""));
 
 
         //hide results when no criteria are selected, also don't ask solr for results

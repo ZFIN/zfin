@@ -21,7 +21,10 @@ public class QueryManipulationService {
 
     //Case 12299, '(-' in construct names needs to be scaped
     public String processConstructDash(String query) {
-        return query.replaceAll("\\(-","\\(\\\\-");
+        if (query.startsWith("Tg")) {
+            return query.replaceAll("\\(-", "\\(\\\\-");
+        } else { return query; }
+
     }
 
 }
