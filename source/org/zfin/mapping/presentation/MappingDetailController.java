@@ -164,6 +164,7 @@ public class MappingDetailController {
         // if feature then find associated marker
         boolean isFeature = false;
         Feature feature = null;
+        boolean isOtherMappingDetail = false;
         if (ActiveData.validateID(mutantID).equals(ActiveData.Type.ALT)) {
             feature = getFeatureRepository().getFeatureByID(mutantID);
             if (feature == null) {
@@ -177,13 +178,14 @@ public class MappingDetailController {
             List<SingletonLinkage> singletonLinkage = getLinkageRepository().getSingletonLinkage(feature);
             if (singletonLinkage != null) {
                 putInfoOnModel(model, "singletonFeatureList", singletonLinkage);
-                model.addAttribute("otherMappingDetail", true);
+                isOtherMappingDetail = true;
             }
 
-            setOtherMappingInfoForFeature(model, feature);
+            isOtherMappingDetail = isOtherMappingDetail || setOtherMappingInfoForFeature(model, feature);
             Marker marker = getMarkerRepository().getMarkerByFeature(feature);
             if (marker == null) {
                 model.addAttribute("pureFeature", true);
+                model.addAttribute("otherMappingDetail", isOtherMappingDetail);
                 return "mapping/mapping-detail-pure-feature.page";
             }
             markerID = marker.getZdbID();
@@ -207,7 +209,7 @@ public class MappingDetailController {
         List<Marker> markerList = getLinkageRepository().getMappedClonesContainingGene(marker);
         model.addAttribute("mappedClones", markerList);
 
-        setOtherMappingInfo(model, marker, feature);
+        isOtherMappingDetail = isOtherMappingDetail || setOtherMappingInfo(model, marker, feature);
 
         model.addAttribute("marker", marker);
         if (isFeature) {
@@ -230,10 +232,11 @@ public class MappingDetailController {
         model.addAttribute("markerGenomeLocations", genomeLocation);
         if (isFeature)
             model.addAttribute("featureGenomeLocations", getLinkageRepository().getGenomeLocation(feature));
+        model.addAttribute("otherMappingDetail", isOtherMappingDetail);
         return "mapping/mapping-detail.page";
     }
 
-    private void setOtherMappingInfo(Model model, Marker marker, Feature feature) {
+    private boolean setOtherMappingInfo(Model model, Marker marker, Feature feature) {
         List<Marker> markersEncodedByMarker = getLinkageRepository().getMarkersEncodedByMarker(marker);
         List<Marker> markersContainedIn = getLinkageRepository().getMarkersContainedIn(marker);
         List<Marker> estContainingSNP = getLinkageRepository().getESTContainingSnp(marker);
@@ -245,14 +248,15 @@ public class MappingDetailController {
         hasOtherMappingInfo.add(putInfoOnModel(model, "geneContainingSNP", geneContainingSNP));
         List<PrimerSet> primerSetList = getLinkageRepository().getPrimerSetList(marker);
         hasOtherMappingInfo.add(putInfoOnModel(model, "primerSetList", primerSetList));
-        setOtherMappingInfoForFeature(model, feature);
+        boolean isOtherMapInfo = setOtherMappingInfoForFeature(model, feature);
         hasOtherMappingInfo.add(retrieveAssociatedFeatureMappingData(model, marker));
         hasOtherMappingInfo.add(putInfoOnModel(model, "singletonList", getLinkageRepository().getSingletonLinkage(marker)));
 
-        model.addAttribute("otherMappingDetail", hasOtherMappingInfo.contains(true));
+        isOtherMapInfo = isOtherMapInfo || hasOtherMappingInfo.contains(true);
+        return isOtherMapInfo;
     }
 
-    private void setOtherMappingInfoForFeature(Model model, Feature feature) {
+    private boolean setOtherMappingInfoForFeature(Model model, Feature feature) {
         if (feature != null) {
             List<MappedMarker> mappedMarkers = getLinkageRepository().getMappedMarkers(feature);
             model.addAttribute("mappedFeatures", mappedMarkers);
@@ -262,8 +266,9 @@ public class MappingDetailController {
             model.addAttribute("markerMissingList", missingMarkerList);
             boolean attributeValue = CollectionUtils.isNotEmpty(presentMarkerList) || CollectionUtils.isNotEmpty(missingMarkerList);
             model.addAttribute("deletionMarkersPresent", attributeValue);
-            model.addAttribute("otherMappingDetail", CollectionUtils.isNotEmpty(mappedMarkers) || attributeValue);
+            return CollectionUtils.isNotEmpty(mappedMarkers) || attributeValue;
         }
+        return false;
     }
 
     private boolean putInfoOnModel(Model model, String name, Collection collection) {
