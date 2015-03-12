@@ -10,10 +10,10 @@
 
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 
-<h1>Describe new ${formBean.sequenecTargetingReagentType}</h1>
+<h1>Describe new ${formBean.sequenceTargetingReagentType}</h1>
 
 <c:choose>
-    <c:when test="${formBean.sequenecTargetingReagentType eq 'Morpholino'}">
+    <c:when test="${formBean.sequenceTargetingReagentType eq 'Morpholino'}">
         <c:set var="seqBoxSize">50</c:set>
     </c:when>
     <c:otherwise>
@@ -22,16 +22,16 @@
 </c:choose>
 
 
-<form:form action="sequence-targeting-reagent-do-submit?sequenecTargetingReagentType=${formBean.sequenecTargetingReagentType}" commandName="formBean" method="post">
+<form:form action="sequence-targeting-reagent-do-submit?sequenceTargetingReagentType=${formBean.sequenceTargetingReagentType}" commandName="formBean" method="post">
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" class="curation-form-label">${formBean.sequenecTargetingReagentType} name:</form:label>
+        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" class="curation-form-label">${formBean.sequenceTargetingReagentType} name:</form:label>
         <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" size="80"
                     onkeypress="return noenter(event)"></form:input>
         <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" cssClass="error indented-error"/>
     </div>
     <p/>
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" class="curation-form-label">${formBean.sequenecTargetingReagentType} alias:</form:label>
+        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" class="curation-form-label">${formBean.sequenceTargetingReagentType} alias:</form:label>
         <form:input onkeypress="return noenter(event)" path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" size="50"></form:input>
         <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" cssClass="error indented-error"/>
     </div>
@@ -49,7 +49,7 @@
         <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_TARGET%>" id="targetGeneSymbol" type="text" size="25" />
         <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_TARGET%>" cssClass="error indented-error"/>
     </div>
-    <c:if test="${formBean.sequenecTargetingReagentType eq 'TALEN' || formBean.sequenecTargetingReagentType eq 'CRISPR'}">
+    <c:if test="${formBean.sequenceTargetingReagentType eq 'TALEN' || formBean.sequenceTargetingReagentType eq 'CRISPR'}">
         <br/>
         <div>
             <b>Add Supplier:</b><br/>
@@ -61,13 +61,13 @@
     <table border=0>
         <tr>
             <td valign=top nowrap>
-                <c:if test="${formBean.sequenecTargetingReagentType eq 'Morpholino'}">
+                <c:if test="${formBean.sequenceTargetingReagentType eq 'Morpholino'}">
                     <label class="namesearchLabel">Sequence:</label>
                 </c:if>
-                <c:if test="${formBean.sequenecTargetingReagentType eq 'CRISPR'}">
+                <c:if test="${formBean.sequenceTargetingReagentType eq 'CRISPR'}">
                     <label class="namesearchLabel">Target Sequence:</label>
                 </c:if>
-                <c:if test="${formBean.sequenecTargetingReagentType eq 'TALEN'}">
+                <c:if test="${formBean.sequenceTargetingReagentType eq 'TALEN'}">
                     <label class="namesearchLabel">Target Sequence 1:</label>
                 </c:if>
                 <input type=button value="Reverse" onClick="sequenceManipulated='yes';reverseSequence('reportSeq','displaySeq');">
@@ -83,7 +83,7 @@
             </td>
             <td width=20></td><!-- spacer column -->
             <c:choose>
-                <c:when test="${formBean.sequenecTargetingReagentType eq 'TALEN'}">
+                <c:when test="${formBean.sequenceTargetingReagentType eq 'TALEN'}">
                     <c:set var="curatorNoteRowspanValue">5</c:set>
                     <c:set var="curatorNoteRowValue">7</c:set>
                 </c:when>
@@ -103,7 +103,7 @@
                 <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE%>" cssClass="error indented-error"/>
             </td>
         </tr>
-        <c:if test="${formBean.sequenecTargetingReagentType eq 'TALEN'}">
+        <c:if test="${formBean.sequenceTargetingReagentType eq 'TALEN'}">
             <tr>
                 <td nowrap>
                     <label class="namesearchLabel">Target Sequence 2:</label>
@@ -130,15 +130,15 @@
     <div>
         <form:label path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" class="curation-form-label">Publication:</form:label>
         <form:input path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" size="25" onChange="this.value = this.value.toUpperCase()"
-                    onkeypress="return noenter(event)" value="${formBean.sequenecTargetingReagentPublicationID}" id = "publicationZdbId"></form:input>
+                    onkeypress="return noenter(event)" value="${formBean.sequenceTargetingReagentPublicationID}" id = "publicationZdbId"></form:input>
         <form:errors path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
     </div>
     <p/>
-    <c:if test="${formBean.sequenecTargetingReagentType eq 'TALEN'}">
-        <input type=submit name=s_new value="Submit new ${formBean.sequenecTargetingReagentType}" onclick="preSubmit('talen')">
+    <c:if test="${formBean.sequenceTargetingReagentType eq 'TALEN'}">
+        <input type=submit name=s_new value="Submit new ${formBean.sequenceTargetingReagentType}" onclick="preSubmit('talen')">
     </c:if>
-    <c:if test="${formBean.sequenecTargetingReagentType ne 'TALEN'}">
-        <input type=submit name=s_new value="Submit new ${formBean.sequenecTargetingReagentType}" onclick="preSubmit('nonTalen')">
+    <c:if test="${formBean.sequenceTargetingReagentType ne 'TALEN'}">
+        <input type=submit name=s_new value="Submit new ${formBean.sequenceTargetingReagentType}" onclick="preSubmit('nonTalen')">
     </c:if>
 </form:form>
 

@@ -52,10 +52,10 @@ public class SequenceTargetingReagentAddController {
                                                                  @RequestParam(value = "sequenceTargetingReagentPublicationZdbID", required = false) String pubZdbID) {
         SequenceTargetingReagentAddBean sequenceTargetingReagentBean = new SequenceTargetingReagentAddBean();
 
-        sequenceTargetingReagentBean.setSequenecTargetingReagentType(type);
+        sequenceTargetingReagentBean.setSequenceTargetingReagentType(type);
 
         if (StringUtils.isNotEmpty(pubZdbID))
-            sequenceTargetingReagentBean.setSequenecTargetingReagentPublicationID(pubZdbID);
+            sequenceTargetingReagentBean.setSequenceTargetingReagentPublicationID(pubZdbID);
 
         return sequenceTargetingReagentBean;
 
@@ -84,36 +84,36 @@ public class SequenceTargetingReagentAddController {
         if(result.hasErrors())
             return "marker/sequence-targeting-reagent-add.page";
 
-        String sequenceTargetingReagentName = formBean.getSequenecTargetingReagentName();
+        String sequenceTargetingReagentName = formBean.getSequenceTargetingReagentName();
 
         STRMarkerSequence newSequenceTargetingReagentSequence = new STRMarkerSequence();
         SequenceTargetingReagent newSequenceTargetingReagent = new SequenceTargetingReagent() ;
-        newSequenceTargetingReagentSequence.setSequence(formBean.getSequenecTargetingReagentSequence().toUpperCase());
+        newSequenceTargetingReagentSequence.setSequence(formBean.getSequenceTargetingReagentSequence().toUpperCase());
         newSequenceTargetingReagentSequence.setType("Nucleotide");
         newSequenceTargetingReagent.setSequence(newSequenceTargetingReagentSequence);
 
-        if (formBean.getSequenecTargetingReagentType().equalsIgnoreCase("TALEN")) {
-            String sequenceTargetingReagentSecondSequence = formBean.getSequenecTargetingReagentSecondSequence();
+        if (formBean.getSequenceTargetingReagentType().equalsIgnoreCase("TALEN")) {
+            String sequenceTargetingReagentSecondSequence = formBean.getSequenceTargetingReagentSecondSequence();
             newSequenceTargetingReagentSequence.setSecondSequence(sequenceTargetingReagentSecondSequence.toUpperCase());
         }
 
         newSequenceTargetingReagent.setName(sequenceTargetingReagentName);
         newSequenceTargetingReagent.setAbbreviation(sequenceTargetingReagentName);
-        newSequenceTargetingReagent.setPublicComments(formBean.getSequenecTargetingReagentComment());
+        newSequenceTargetingReagent.setPublicComments(formBean.getSequenceTargetingReagentComment());
 
-        String pubZdbID = formBean.getSequenecTargetingReagentPublicationID().trim();
+        String pubZdbID = formBean.getSequenceTargetingReagentPublicationID().trim();
         if (PublicationValidator.isShortVersion(pubZdbID))
-            formBean.setSequenecTargetingReagentPublicationID(PublicationValidator.completeZdbID(pubZdbID));
+            formBean.setSequenceTargetingReagentPublicationID(PublicationValidator.completeZdbID(pubZdbID));
         else
-            formBean.setSequenecTargetingReagentPublicationID(pubZdbID);
-        Publication sequenceTargetingReagentPub = pr.getPublication(formBean.getSequenecTargetingReagentPublicationID());
+            formBean.setSequenceTargetingReagentPublicationID(pubZdbID);
+        Publication sequenceTargetingReagentPub = pr.getPublication(formBean.getSequenceTargetingReagentPublicationID());
 
         MarkerType mt = new MarkerType();
-        if (formBean.getSequenecTargetingReagentType().equalsIgnoreCase("Morpholino")) {
+        if (formBean.getSequenceTargetingReagentType().equalsIgnoreCase("Morpholino")) {
             mt = mr.getMarkerTypeByName(Marker.Type.MRPHLNO.toString());
-        } else if (formBean.getSequenecTargetingReagentType().equalsIgnoreCase("TALEN")) {
+        } else if (formBean.getSequenceTargetingReagentType().equalsIgnoreCase("TALEN")) {
             mt = mr.getMarkerTypeByName(Marker.Type.TALEN.toString());
-        } else if (formBean.getSequenecTargetingReagentType().equalsIgnoreCase("CRISPR")) {
+        } else if (formBean.getSequenceTargetingReagentType().equalsIgnoreCase("CRISPR")) {
             mt = mr.getMarkerTypeByName(Marker.Type.CRISPR.toString());
         }
         newSequenceTargetingReagent.setMarkerType(mt);
@@ -124,15 +124,15 @@ public class SequenceTargetingReagentAddController {
         try {
             HibernateUtil.createTransaction();
             mr.createMarker(newSequenceTargetingReagent, sequenceTargetingReagentPub);
-            ir.insertUpdatesTable(newSequenceTargetingReagent, "new " + formBean.getSequenecTargetingReagentType(), "");
+            ir.insertUpdatesTable(newSequenceTargetingReagent, "new " + formBean.getSequenceTargetingReagentType(), "");
             PublicationService.addRecentPublications(request.getSession().getServletContext(), sequenceTargetingReagentPub, PublicationSessionKey.GENE) ;
 
-            String alias = formBean.getSequenecTargetingReagentAlias();
+            String alias = formBean.getSequenceTargetingReagentAlias();
             if(!StringUtils.isEmpty(alias)) {
                 mr.addMarkerAlias(newSequenceTargetingReagent, alias, sequenceTargetingReagentPub);
             }
 
-            String curationNote = formBean.getSequenecTargetingReagentCuratorNote();
+            String curationNote = formBean.getSequenceTargetingReagentCuratorNote();
             if(!StringUtils.isEmpty(curationNote)) {
                 mr.addMarkerDataNote(newSequenceTargetingReagent, curationNote);
             }
@@ -144,9 +144,9 @@ public class SequenceTargetingReagentAddController {
                 MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
             }
 
-            String supplierName = formBean.getSequenecTargetingReagentSupplierName();
+            String supplierName = formBean.getSequenceTargetingReagentSupplierName();
             if (!StringUtils.isEmpty(supplierName)) {
-                Organization supplier = profileRepository.getOrganizationByName(formBean.getSequenecTargetingReagentSupplierName());
+                Organization supplier = profileRepository.getOrganizationByName(formBean.getSequenceTargetingReagentSupplierName());
                 profileRepository.addSupplier(supplier, newSequenceTargetingReagent);
             }
 

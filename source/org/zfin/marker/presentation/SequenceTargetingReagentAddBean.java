@@ -3,80 +3,80 @@ package org.zfin.marker.presentation;
 
 public class SequenceTargetingReagentAddBean {
 
-    public static final String NEW_STR_NAME = "sequenecTargetingReagentName";
-    public static final String STR_PUBLICATION_ZDB_ID = "sequenecTargetingReagentPublicationID";
-    public static final String NEW_STR_COMMENT = "sequenecTargetingReagentComment";
+    public static final String NEW_STR_NAME = "sequenceTargetingReagentName";
+    public static final String STR_PUBLICATION_ZDB_ID = "sequenceTargetingReagentPublicationID";
+    public static final String NEW_STR_COMMENT = "sequenceTargetingReagentComment";
 
 
 
-    public static final String NEW_STR_ALLIAS = "sequenecTargetingReagentAlias";
-    public static final String NEW_STR_CURNOTE = "sequenecTargetingReagentCuratorNote";
-    public static final String NEW_STR_SEQUENCE = "sequenecTargetingReagentSequence";
-    public static final String NEW_STR_SECOND_SEQUENCE = "sequenecTargetingReagentSecondSequence";
-    public static final String NEW_STR_REPORTEDSEQUENCE = "sequenecTargetingReagentReportedSequence";
-    public static final String NEW_STR_SECOND_REPORTEDSEQUENCE = "sequenecTargetingReagentSecondReportedSequence";
+    public static final String NEW_STR_ALLIAS = "sequenceTargetingReagentAlias";
+    public static final String NEW_STR_CURNOTE = "sequenceTargetingReagentCuratorNote";
+    public static final String NEW_STR_SEQUENCE = "sequenceTargetingReagentSequence";
+    public static final String NEW_STR_SECOND_SEQUENCE = "sequenceTargetingReagentSecondSequence";
+    public static final String NEW_STR_REPORTEDSEQUENCE = "sequenceTargetingReagentReportedSequence";
+    public static final String NEW_STR_SECOND_REPORTEDSEQUENCE = "sequenceTargetingReagentSecondReportedSequence";
     public static final String NEW_STR_TARGET = "targetGeneSymbol";
-    public static final String NEW_STR_SUPPLIER = "sequenecTargetingReagentSupplierName";
+    public static final String NEW_STR_SUPPLIER = "sequenceTargetingReagentSupplierName";
 
-    private String sequenecTargetingReagentPublicationID;
-    private String sequenecTargetingReagentName;
-    private String sequenecTargetingReagentComment;
-    private String sequenecTargetingReagentAlias;
-    private String sequenecTargetingReagentCuratorNote;
-    private String sequenecTargetingReagentType;
+    private String sequenceTargetingReagentPublicationID;
+    private String sequenceTargetingReagentName;
+    private String sequenceTargetingReagentComment;
+    private String sequenceTargetingReagentAlias;
+    private String sequenceTargetingReagentCuratorNote;
+    private String sequenceTargetingReagentType;
     private String targetGeneSymbol;
-    private String sequenecTargetingReagentSequence;
-    private String sequenecTargetingReagentSecondSequence;
-    private String sequenecTargetingReagentReportedSequence;
-    private String sequenecTargetingReagentSecondReportedSequence;
-    private String sequenecTargetingReagentSupplierName;
+    private String sequenceTargetingReagentSequence;
+    private String sequenceTargetingReagentSecondSequence;
+    private String sequenceTargetingReagentReportedSequence;
+    private String sequenceTargetingReagentSecondReportedSequence;
+    private String sequenceTargetingReagentSupplierName;
 
-    public String getSequenecTargetingReagentName() {
-        return sequenecTargetingReagentName;
+    public String getSequenceTargetingReagentName() {
+        return sequenceTargetingReagentName;
     }
 
-    public void setSequenecTargetingReagentName(String regionName) {
-        this.sequenecTargetingReagentName = regionName;
+    public void setSequenceTargetingReagentName(String regionName) {
+        this.sequenceTargetingReagentName = regionName;
     }
 
-    public String getSequenecTargetingReagentPublicationID() {
-        return sequenecTargetingReagentPublicationID;
+    public String getSequenceTargetingReagentPublicationID() {
+        return sequenceTargetingReagentPublicationID;
     }
 
-    public void setSequenecTargetingReagentPublicationID(String sequenecTargetingReagentPublicationID) {
-        this.sequenecTargetingReagentPublicationID = sequenecTargetingReagentPublicationID;
+    public void setSequenceTargetingReagentPublicationID(String sequenceTargetingReagentPublicationID) {
+        this.sequenceTargetingReagentPublicationID = sequenceTargetingReagentPublicationID;
     }
 
-    public String getSequenecTargetingReagentComment() {
-        return sequenecTargetingReagentComment;
+    public String getSequenceTargetingReagentComment() {
+        return sequenceTargetingReagentComment;
     }
 
-    public void setSequenecTargetingReagentComment(String regionComment) {
-        this.sequenecTargetingReagentComment = regionComment;
+    public void setSequenceTargetingReagentComment(String regionComment) {
+        this.sequenceTargetingReagentComment = regionComment;
     }
 
-    public String getSequenecTargetingReagentAlias() {
-        return sequenecTargetingReagentAlias;
+    public String getSequenceTargetingReagentAlias() {
+        return sequenceTargetingReagentAlias;
     }
 
-    public void setSequenecTargetingReagentAlias(String regionAlias) {
-        this.sequenecTargetingReagentAlias = regionAlias;
+    public void setSequenceTargetingReagentAlias(String regionAlias) {
+        this.sequenceTargetingReagentAlias = regionAlias;
     }
 
-    public String getSequenecTargetingReagentCuratorNote() {
-        return sequenecTargetingReagentCuratorNote;
+    public String getSequenceTargetingReagentCuratorNote() {
+        return sequenceTargetingReagentCuratorNote;
     }
 
-    public void setSequenecTargetingReagentCuratorNote(String regionCuratorNote) {
-        this.sequenecTargetingReagentCuratorNote = regionCuratorNote;
+    public void setSequenceTargetingReagentCuratorNote(String regionCuratorNote) {
+        this.sequenceTargetingReagentCuratorNote = regionCuratorNote;
     }
 
-    public String getSequenecTargetingReagentType() {
-        return sequenecTargetingReagentType;
+    public String getSequenceTargetingReagentType() {
+        return sequenceTargetingReagentType;
     }
 
-    public void setSequenecTargetingReagentType(String sequenecTargetingReagentType) {
-        this.sequenecTargetingReagentType = sequenecTargetingReagentType;
+    public void setSequenceTargetingReagentType(String sequenceTargetingReagentType) {
+        this.sequenceTargetingReagentType = sequenceTargetingReagentType;
     }
 
     public String getTargetGeneSymbol() {
@@ -87,44 +87,44 @@ public class SequenceTargetingReagentAddBean {
         this.targetGeneSymbol = targetGeneSymbol;
     }
 
-    public String getSequenecTargetingReagentSequence() {
-        return sequenecTargetingReagentSequence;
+    public String getSequenceTargetingReagentSequence() {
+        return sequenceTargetingReagentSequence;
     }
 
-    public void setSequenecTargetingReagentSequence(String sequenecTargetingReagentSequence) {
-        this.sequenecTargetingReagentSequence = sequenecTargetingReagentSequence;
+    public void setSequenceTargetingReagentSequence(String sequenceTargetingReagentSequence) {
+        this.sequenceTargetingReagentSequence = sequenceTargetingReagentSequence;
     }
 
-    public String getSequenecTargetingReagentSecondSequence() {
-        return sequenecTargetingReagentSecondSequence;
+    public String getSequenceTargetingReagentSecondSequence() {
+        return sequenceTargetingReagentSecondSequence;
     }
 
-    public void setSequenecTargetingReagentSecondSequence(String sequenecTargetingReagentSecondSequence) {
-        this.sequenecTargetingReagentSecondSequence = sequenecTargetingReagentSecondSequence;
+    public void setSequenceTargetingReagentSecondSequence(String sequenceTargetingReagentSecondSequence) {
+        this.sequenceTargetingReagentSecondSequence = sequenceTargetingReagentSecondSequence;
     }
 
-    public String getSequenecTargetingReagentReportedSequence() {
-        return sequenecTargetingReagentReportedSequence;
+    public String getSequenceTargetingReagentReportedSequence() {
+        return sequenceTargetingReagentReportedSequence;
     }
 
-    public void setSequenecTargetingReagentReportedSequence(String sequenecTargetingReagentReportedSequence) {
-        this.sequenecTargetingReagentReportedSequence = sequenecTargetingReagentReportedSequence;
+    public void setSequenceTargetingReagentReportedSequence(String sequenceTargetingReagentReportedSequence) {
+        this.sequenceTargetingReagentReportedSequence = sequenceTargetingReagentReportedSequence;
     }
 
-    public String getSequenecTargetingReagentSecondReportedSequence() {
-        return sequenecTargetingReagentSecondReportedSequence;
+    public String getSequenceTargetingReagentSecondReportedSequence() {
+        return sequenceTargetingReagentSecondReportedSequence;
     }
 
-    public void setSequenecTargetingReagentSecondReportedSequence(String sequenecTargetingReagentSecondReportedSequence) {
-        this.sequenecTargetingReagentSecondReportedSequence = sequenecTargetingReagentSecondReportedSequence;
+    public void setSequenceTargetingReagentSecondReportedSequence(String sequenceTargetingReagentSecondReportedSequence) {
+        this.sequenceTargetingReagentSecondReportedSequence = sequenceTargetingReagentSecondReportedSequence;
     }
 
-    public String getSequenecTargetingReagentSupplierName() {
-        return sequenecTargetingReagentSupplierName;
+    public String getSequenceTargetingReagentSupplierName() {
+        return sequenceTargetingReagentSupplierName;
     }
 
-    public void setSequenecTargetingReagentSupplierName(String sequenecTargetingReagentSupplierName) {
-        this.sequenecTargetingReagentSupplierName = sequenecTargetingReagentSupplierName;
+    public void setSequenceTargetingReagentSupplierName(String sequenceTargetingReagentSupplierName) {
+        this.sequenceTargetingReagentSupplierName = sequenceTargetingReagentSupplierName;
     }
 
 
