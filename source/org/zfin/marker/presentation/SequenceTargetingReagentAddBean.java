@@ -3,20 +3,20 @@ package org.zfin.marker.presentation;
 
 public class SequenceTargetingReagentAddBean {
 
-    public static final String NEW_DISRUPTOR_NAME = "sequenecTargetingReagentName";
-    public static final String DISRUPTOR_PUBLICATION_ZDB_ID = "sequenecTargetingReagentPublicationID";
-    public static final String NEW_DISRUPTOR_COMMENT = "sequenecTargetingReagentComment";
+    public static final String NEW_STR_NAME = "sequenecTargetingReagentName";
+    public static final String STR_PUBLICATION_ZDB_ID = "sequenecTargetingReagentPublicationID";
+    public static final String NEW_STR_COMMENT = "sequenecTargetingReagentComment";
 
 
 
-    public static final String NEW_DISRUPTOR_ALIAS = "sequenecTargetingReagentAlias";
-    public static final String NEW_DISRUPTOR_CURNOTE = "sequenecTargetingReagentCuratorNote";
-    public static final String NEW_DISRUPTOR_SEQUENCE = "sequenecTargetingReagentSequence";
-    public static final String NEW_DISRUPTOR_SECOND_SEQUENCE = "sequenecTargetingReagentSecondSequence";
-    public static final String NEW_DISRUPTOR_REPORTEDSEQUENCE = "sequenecTargetingReagentReportedSequence";
-    public static final String NEW_DISRUPTOR_REPORTEDSEQUENCE2 = "sequenecTargetingReagentSecondReportedSequence";
-    public static final String NEW_DISRUPTOR_TARGET = "targetGeneSymbol";
-    public static final String NEW_DISRUPTOR_SUPPLIER_NAME = "sequenecTargetingReagentSupplierName";
+    public static final String NEW_STR_ALLIAS = "sequenecTargetingReagentAlias";
+    public static final String NEW_STR_CURNOTE = "sequenecTargetingReagentCuratorNote";
+    public static final String NEW_STR_SEQUENCE = "sequenecTargetingReagentSequence";
+    public static final String NEW_STR_SECOND_SEQUENCE = "sequenecTargetingReagentSecondSequence";
+    public static final String NEW_STR_REPORTEDSEQUENCE = "sequenecTargetingReagentReportedSequence";
+    public static final String NEW_STR_SECOND_REPORTEDSEQUENCE = "sequenecTargetingReagentSecondReportedSequence";
+    public static final String NEW_STR_TARGET = "targetGeneSymbol";
+    public static final String NEW_STR_SUPPLIER = "sequenecTargetingReagentSupplierName";
 
     private String sequenecTargetingReagentPublicationID;
     private String sequenecTargetingReagentName;

@@ -77,7 +77,7 @@ public class SequenceTargetingReagentAddController {
     }
 
     @RequestMapping(value = "/sequence-targeting-reagent-do-submit", method = RequestMethod.POST)
-    public String addDisruptor (Model model,
+    public String addSequenceTargetingReagent (Model model,
                                 @Valid @ModelAttribute("formBean") SequenceTargetingReagentAddBean formBean,
                                 BindingResult result) throws Exception {
 

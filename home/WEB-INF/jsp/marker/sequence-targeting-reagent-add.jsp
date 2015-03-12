@@ -24,37 +24,37 @@
 
 <form:form action="sequence-targeting-reagent-do-submit?sequenecTargetingReagentType=${formBean.sequenecTargetingReagentType}" commandName="formBean" method="post">
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_NAME%>" class="curation-form-label">${formBean.sequenecTargetingReagentType} name:</form:label>
-        <form:input path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_NAME%>" size="80"
+        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" class="curation-form-label">${formBean.sequenecTargetingReagentType} name:</form:label>
+        <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" size="80"
                     onkeypress="return noenter(event)"></form:input>
-        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_NAME%>" cssClass="error indented-error"/>
+        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_NAME%>" cssClass="error indented-error"/>
     </div>
     <p/>
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_ALIAS%>" class="curation-form-label">${formBean.sequenecTargetingReagentType} alias:</form:label>
-        <form:input onkeypress="return noenter(event)" path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_ALIAS%>" size="50"></form:input>
-        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_ALIAS%>" cssClass="error indented-error"/>
+        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" class="curation-form-label">${formBean.sequenecTargetingReagentType} alias:</form:label>
+        <form:input onkeypress="return noenter(event)" path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" size="50"></form:input>
+        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_ALLIAS%>" cssClass="error indented-error"/>
     </div>
     <p/>
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_COMMENT%>" class="curation-form-label">Note:</form:label>
+        <form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_COMMENT%>" class="curation-form-label">Note:</form:label>
     </div>
     <div>
-        <form:textarea path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_COMMENT%>" rows="5" cols="50" />
-        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_COMMENT%>" cssClass="error indented-error"/>
+        <form:textarea path="<%= SequenceTargetingReagentAddBean.NEW_STR_COMMENT%>" rows="5" cols="50" />
+        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_COMMENT%>" cssClass="error indented-error"/>
     </div>
     <p/>
     <div>
         <b>Add Target Gene:</b><br/>
-        <form:input path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_TARGET%>" id="targetGeneSymbol" type="text" size="25" />
-        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_TARGET%>" cssClass="error indented-error"/>
+        <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_TARGET%>" id="targetGeneSymbol" type="text" size="25" />
+        <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_TARGET%>" cssClass="error indented-error"/>
     </div>
     <c:if test="${formBean.sequenecTargetingReagentType eq 'TALEN' || formBean.sequenecTargetingReagentType eq 'CRISPR'}">
         <br/>
         <div>
             <b>Add Supplier:</b><br/>
-            <form:input path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_SUPPLIER_NAME%>" id="supplierName" type="text" size="35" />
-            <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_SUPPLIER_NAME%>" cssClass="error indented-error"/>
+            <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_SUPPLIER%>" id="supplierName" type="text" size="35" />
+            <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_SUPPLIER%>" cssClass="error indented-error"/>
         </div>
     </c:if>
     <p/>
@@ -75,11 +75,11 @@
                 <input type=button value="Reverse & Complement" onClick="sequenceManipulated='yes';reverseComplementSequence('reportSeq','displaySeq');">
             </td>
             <td width=20></td><!-- spacer column -->
-            <td><form:label path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_CURNOTE%>" class="curation-form-label">Curator Note:</form:label></td>
+            <td><form:label path="<%= SequenceTargetingReagentAddBean.NEW_STR_CURNOTE%>" class="curation-form-label">Curator Note:</form:label></td>
         </tr>
         <tr>
             <td nowrap>
-                Reported: &nbsp;5'-   <form:input id="reportSeq" path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE%>" name="reportSeq" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                Reported: &nbsp;5'-   <form:input id="reportSeq" path="<%= SequenceTargetingReagentAddBean.NEW_STR_REPORTEDSEQUENCE%>" name="reportSeq" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
             </td>
             <td width=20></td><!-- spacer column -->
             <c:choose>
@@ -93,14 +93,14 @@
                 </c:otherwise>
             </c:choose>
             <td valign=top rowspan=${curatorNoteRowspanValue}>
-                <form:textarea id="curatorNote" path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_CURNOTE%>" rows="${curatorNoteRowValue}" cols="70" />
-                <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_CURNOTE%>" cssClass="error indented-error"/>
+                <form:textarea id="curatorNote" path="<%= SequenceTargetingReagentAddBean.NEW_STR_CURNOTE%>" rows="${curatorNoteRowValue}" cols="70" />
+                <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_CURNOTE%>" cssClass="error indented-error"/>
             </td>
         </tr>
         <tr>
             <td nowrap>
-                Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_SEQUENCE%>" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_SEQUENCE%>" cssClass="error indented-error"/>
+                Displayed: 5'- <form:input id="displaySeq" name="displaySeq" path="<%= SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE%>" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_SEQUENCE%>" cssClass="error indented-error"/>
             </td>
         </tr>
         <c:if test="${formBean.sequenecTargetingReagentType eq 'TALEN'}">
@@ -115,23 +115,23 @@
             </tr>
             <tr>
                 <td nowrap>
-                    Reported: &nbsp;5'-   <form:input id="reportSeq2" path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_REPORTEDSEQUENCE2%>" name="reportSeq2" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                    Reported: &nbsp;5'-   <form:input id="reportSeq2" path="<%= SequenceTargetingReagentAddBean.NEW_STR_SECOND_REPORTEDSEQUENCE%>" name="reportSeq2" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
                 </td>
                 <td width=20></td><!-- spacer column -->
             </tr>
             <tr>
                 <td nowrap>
-                    Displayed:&nbsp;&nbsp;  5'- <form:input id="displaySeq2" name="displaySeq2" path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
-                    <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_DISRUPTOR_SECOND_SEQUENCE%>" cssClass="error indented-error"/>                </td>
+                    Displayed:&nbsp;&nbsp;  5'- <form:input id="displaySeq2" name="displaySeq2" path="<%= SequenceTargetingReagentAddBean.NEW_STR_SECOND_SEQUENCE%>" size="${seqBoxSize}" onChange="this.value = this.value.toUpperCase()" onkeypress="return noenter(event)"></form:input> -3'
+                    <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_SECOND_SEQUENCE%>" cssClass="error indented-error"/>                </td>
             </tr>
         </c:if>
     </table>
     <p/>
     <div>
-        <form:label path="<%= SequenceTargetingReagentAddBean.DISRUPTOR_PUBLICATION_ZDB_ID%>" class="curation-form-label">Publication:</form:label>
-        <form:input path="<%= SequenceTargetingReagentAddBean.DISRUPTOR_PUBLICATION_ZDB_ID%>" size="25" onChange="this.value = this.value.toUpperCase()"
+        <form:label path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" class="curation-form-label">Publication:</form:label>
+        <form:input path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" size="25" onChange="this.value = this.value.toUpperCase()"
                     onkeypress="return noenter(event)" value="${formBean.sequenecTargetingReagentPublicationID}" id = "publicationZdbId"></form:input>
-        <form:errors path="<%= SequenceTargetingReagentAddBean.DISRUPTOR_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
+        <form:errors path="<%= SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
     </div>
     <p/>
     <c:if test="${formBean.sequenecTargetingReagentType eq 'TALEN'}">

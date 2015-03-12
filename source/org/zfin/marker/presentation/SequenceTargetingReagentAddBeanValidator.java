@@ -23,60 +23,60 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
         SequenceTargetingReagentAddBean formBean = (SequenceTargetingReagentAddBean) command;
 
         if (!formBean.getSequenecTargetingReagentPublicationID().startsWith("ZDB-PUB-")) {
-            errors.rejectValue("disruptorPublicationZdbID", "code", "Please enter the full publication id starting with ZDB-PUB.");
+            errors.rejectValue("strPublicationZdbID", "code", "Please enter the full publication id starting with ZDB-PUB.");
         }
 
-        PublicationValidator.validatePublicationID(formBean.getSequenecTargetingReagentPublicationID(), SequenceTargetingReagentAddBean.DISRUPTOR_PUBLICATION_ZDB_ID, errors);
+        PublicationValidator.validatePublicationID(formBean.getSequenecTargetingReagentPublicationID(), SequenceTargetingReagentAddBean.STR_PUBLICATION_ZDB_ID, errors);
 
-        String disruptorName = formBean.getSequenecTargetingReagentName();
-        if (StringUtils.isEmpty(disruptorName)) {
-            errors.rejectValue("disruptorName", "code", "The name of the new sequence-targeting reagent cannot be null.");
+        String strName = formBean.getSequenecTargetingReagentName();
+        if (StringUtils.isEmpty(strName)) {
+            errors.rejectValue("strName", "code", "The name of the new sequence-targeting reagent cannot be null.");
         }
 
-        if (!StringUtils.isEmpty(disruptorName)) {
-            if (mr.isMarkerExists(disruptorName)) {
-                errors.rejectValue("disruptorName", "code", "The sequence-targeting reagent [" + disruptorName + "] is already at ZFIN");
+        if (!StringUtils.isEmpty(strName)) {
+            if (mr.isMarkerExists(strName)) {
+                errors.rejectValue("strName", "code", "The sequence-targeting reagent [" + strName + "] is already at ZFIN");
                 return;
             }
-            Marker marker = mr.getMarkerByName(disruptorName);
+            Marker marker = mr.getMarkerByName(strName);
             if (marker != null) {
-                errors.rejectValue("disruptorName", "code", "The sequence-targeting reagent [" + disruptorName + "] is already at ZFIN");
+                errors.rejectValue("strName", "code", "The sequence-targeting reagent [" + strName + "] is already at ZFIN");
             }
         }
 
-        String disruptorSequence = formBean.getSequenecTargetingReagentSequence();
-        if (StringUtils.isEmpty(disruptorSequence)) {
-            errors.rejectValue("disruptorSequence", "code", "The sequence of [" + disruptorName + "]  cannot be null.");
+        String strSequence = formBean.getSequenecTargetingReagentSequence();
+        if (StringUtils.isEmpty(strSequence)) {
+            errors.rejectValue("strSequence", "code", "The sequence of [" + strName + "]  cannot be null.");
         }
 
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
-            errors.rejectValue("targetGeneSymbol", "code", "The target gene of [" + disruptorName + "]  cannot be null.");
+            errors.rejectValue("targetGeneSymbol", "code", "The target gene of [" + strName + "]  cannot be null.");
         } else if (mr.getGeneByAbbreviation(targetGeneSymbol) == null) {
             errors.rejectValue("targetGeneSymbol", "code", targetGeneSymbol + " cannot be found.");
         }
 
-        String disruptorSupplierName = formBean.getSequenecTargetingReagentSupplierName();
-        if (!StringUtils.isEmpty(disruptorSupplierName)) {
-            Organization supplier = pr.getOrganizationByName(disruptorSupplierName);
+        String strSupplier = formBean.getSequenecTargetingReagentSupplierName();
+        if (!StringUtils.isEmpty(strSupplier)) {
+            Organization supplier = pr.getOrganizationByName(strSupplier);
             if (supplier == null) {
-                errors.rejectValue("disruptorSupplierName", "code", disruptorSupplierName + " cannot be found.");
+                errors.rejectValue("strSupplier", "code", strSupplier + " cannot be found.");
             }
         }
 
-        if(ZfinStringUtils.containsWhiteSpaceOrNoneATGC(disruptorSequence)) {
-            errors.rejectValue("disruptorSequence", "code", "The sequence of [" + disruptorName + "]  cannot contain white space or character other than ATGC.");
+        if(ZfinStringUtils.containsWhiteSpaceOrNoneATGC(strSequence)) {
+            errors.rejectValue("strSequence", "code", "The sequence of [" + strName + "]  cannot contain white space or character other than ATGC.");
         }
 
-        String disruptorType = formBean.getSequenecTargetingReagentType();
+        String strType = formBean.getSequenecTargetingReagentType();
 
-        if (disruptorType.equalsIgnoreCase("TALEN")) {
-            String disruptorSecondSequence = formBean.getSequenecTargetingReagentSecondSequence();
-            if (StringUtils.isEmpty(disruptorSecondSequence)) {
-                errors.rejectValue("disruptorSecondSequence", "code", "The second sequence of [" + disruptorName + "]  cannot be null.");
+        if (strType.equalsIgnoreCase("TALEN")) {
+            String strSecondSequence = formBean.getSequenecTargetingReagentSecondSequence();
+            if (StringUtils.isEmpty(strSecondSequence)) {
+                errors.rejectValue("strSecondSequence", "code", "The second sequence of [" + strName + "]  cannot be null.");
             }
-            if(ZfinStringUtils.containsWhiteSpaceOrNoneATGC(disruptorSecondSequence)) {
-                errors.rejectValue("disruptorSecondSequence", "code", "The second sequence of [" + disruptorName + "]  cannot contain white space or character other than ATGC.");
+            if(ZfinStringUtils.containsWhiteSpaceOrNoneATGC(strSecondSequence)) {
+                errors.rejectValue("strSecondSequence", "code", "The second sequence of [" + strName + "]  cannot contain white space or character other than ATGC.");
             }
 
         }

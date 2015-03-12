@@ -82,11 +82,11 @@ public class SequenceTargetingReagentViewController {
         } else {
             List<PhenotypeStatement> phenoStatements = new ArrayList<>();
             for (GenotypeFigure genoFig : genotypeFigures) {
-			    if (genoFig.getPhenotypeExperiment() != null) {
+                if (genoFig.getPhenotypeExperiment() != null) {
                     if (genoFig.getPhenotypeExperiment().getPhenotypeStatements() != null)  {
-                          phenoStatements.addAll(genoFig.getPhenotypeExperiment().getPhenotypeStatements());
-					}
-				}
+                        phenoStatements.addAll(genoFig.getPhenotypeExperiment().getPhenotypeStatements());
+                    }
+                }
             }
             sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenoStatements,"fish"));
         }
@@ -116,9 +116,6 @@ public class SequenceTargetingReagentViewController {
         List<String> expressionPublicationIDs = RepositoryFactory.getExpressionRepository().getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
         sequenceTargetingReagentBean.setExpressionPublicationIDs(expressionPublicationIDs);
 
-        // add sequence
-        //disruptorBean.setSequences(markerRepository.getMarkerSequences(disruptor));
-
         // get sequence attribution
         if (sequenceTargetingReagent.getSequence() != null) {
             List<RecordAttribution> attributions = RepositoryFactory.getInfrastructureRepository()
@@ -128,21 +125,21 @@ public class SequenceTargetingReagentViewController {
                 sequenceTargetingReagentBean.setSequenceAttribution(PublicationPresentation.getLink(attributions.iterator().next().getSourceZdbID(), "1"));
             }
         } else {
-            logger.warn("No sequence available for disruptor: " + sequenceTargetingReagentBean.getZdbID());
+            logger.warn("No sequence available for the sequence targeting reagent: " + sequenceTargetingReagentBean.getZdbID());
         }
 
         sequenceTargetingReagentBean.setDatabases(databases);
-        String disruptorType = sequenceTargetingReagent.getType().toString();
+        String strType = sequenceTargetingReagent.getType().toString();
 
         // Todo: there should be a better place to store the display name for the different STR entities
-        if (disruptorType.equals("MRPHLNO")) {
-            disruptorType = "Morpholino";
+        if (strType.equals("MRPHLNO")) {
+            strType = "Morpholino";
         }
 
         // set source
         sequenceTargetingReagentBean.setSuppliers(markerRepository.getSuppliersForMarker(sequenceTargetingReagent.getZdbID()));
         model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, disruptorType + ": " + sequenceTargetingReagent.getAbbreviation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, strType + ": " + sequenceTargetingReagent.getAbbreviation());
 
         return "marker/sequence-targeting-reagent-view.page";
     }
