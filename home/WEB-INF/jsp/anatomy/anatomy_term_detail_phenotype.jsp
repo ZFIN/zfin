@@ -15,13 +15,13 @@
                              displaySectionName="PHENOTYPE"/>
 
     <p/>
-<%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
+    <%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
     <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
             jQuery('#${phenotypeSection}-mutants').load('/action/ontology/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-mutants'); } );
-            jQuery('#${phenotypeSection}-sequence-targeting-reagents').load('/action/ontology/show-phenotype-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-sequence-targeting-reagents'); });
-            jQuery('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents').load('/action/ontology/show-phenotype-non-wildtype-morpholinos/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents'); });
+            jQuery('#${phenotypeSection}-sequence-targeting-reagents').load('/action/ontology/show-phenotype-wildtype-sequence-targeting-reagent/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-sequence-targeting-reagents'); });
+            jQuery('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents').load('/action/ontology/show-phenotype-non-wildtype-sequence-targeting-reagent/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents'); });
             showSection('${phenotypeSection}', true);
         }
     </script>
@@ -39,7 +39,7 @@
         <p></p>
 
         <div id="${phenotypeSection}-non-wildtype-sequence-targeting-reagents" class="indented-section"><span
-                class="search-result-table-header">Non-wildtype Morpholinos</span>
+                class="search-result-table-header">Non-wildtype Sequence Targeting Reagents</span>
             loading <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
     </div>

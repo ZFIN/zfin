@@ -175,8 +175,8 @@ public class AnatomyAjaxController {
         return "anatomy/show-all-phenotype-mutants.page";
     }
 
-    @RequestMapping(value = "/show-phenotype-wildtype-morpholinos/{zdbID}")
-    public String showWildtypePhenotypeMorpholinos(Model model
+    @RequestMapping(value = "/show-phenotype-wildtype-sequence-targeting-reagent/{zdbID}")
+    public String showWildtypePhenotypeSTR(Model model
             , @PathVariable("zdbID") String termID
     ) throws Exception {
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
@@ -187,7 +187,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveSequenceTargetingReagentData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-phenotype-wildtype-morpholinos.ajax";
+        return "anatomy/show-phenotype-wildtype-sequence-targeting-reagent.ajax";
     }
 
     @RequestMapping(value = "/{oboID}/phenotype-summary/{genoypteID}")
@@ -247,8 +247,8 @@ public class AnatomyAjaxController {
         return "anatomy/phenotype-summary.page";
     }
 
-    @RequestMapping(value = "/show-phenotype-non-wildtype-morpholinos/{zdbID}")
-    public String showNonWildtypePhenotypeMorpholinos(Model model
+    @RequestMapping(value = "/show-phenotype-non-wildtype-sequence-targeting-reagent/{zdbID}")
+    public String showNonWildtypePhenotypeSTR(Model model
             , @PathVariable("zdbID") String termID
     ) throws Exception {
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
@@ -259,7 +259,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveSequenceTargetingReagentData(term, form, false);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-phenotype-non-wildtype-morpholinos.ajax";
+        return "anatomy/show-phenotype-non-wildtype-sequence-targeting-reagent.ajax";
     }
 
     private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form) {
@@ -378,27 +378,27 @@ public class AnatomyAjaxController {
      */
     protected void retrieveSequenceTargetingReagentData(GenericTerm ai, AnatomySearchBean form, boolean wildtype) {
 
-        PaginationResult<GenotypeExperiment> wildtypeMorphResults =
+        PaginationResult<GenotypeExperiment> wildtypeSTRresults =
                 mutantRepository.getGenotypeExperimentSequenceTargetingReagents(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        int count = wildtypeMorphResults.getTotalCount();
-        List<GenotypeExperiment> experiments = wildtypeMorphResults.getPopulatedResults();
+        int count = wildtypeSTRresults.getTotalCount();
+        List<GenotypeExperiment> experiments = wildtypeSTRresults.getPopulatedResults();
 
-        List<SequenceTargetingReagentStatistics> morpholinoStats = createMorpholinoStats(experiments, ai);
+        List<SequenceTargetingReagentStatistics> strStats = createSequenceTargetingReagenStats(experiments, ai);
         if (wildtype) {
             form.setWildtypeSTRcount(count);
-            form.setAllSequenceTargetingReagents(morpholinoStats);
+            form.setAllSequenceTargetingReagents(strStats);
         } else {
             form.setMutantSTRcount(count);
-            form.setNonWildtypeSTRs(morpholinoStats);
+            form.setNonWildtypeSTRs(strStats);
         }
     }
 
-    protected static List<SequenceTargetingReagentStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, GenericTerm ai) {
-        if (morpholinos == null || ai == null)
+    protected static List<SequenceTargetingReagentStatistics> createSequenceTargetingReagenStats(List<GenotypeExperiment> strExperiments, GenericTerm ai) {
+        if (strExperiments == null || ai == null)
             return null;
 
         List<SequenceTargetingReagentStatistics> stats = new ArrayList<>();
-        for (GenotypeExperiment genoExp : morpholinos) {
+        for (GenotypeExperiment genoExp : strExperiments) {
             SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, ai);
             stats.add(stat);
         }
