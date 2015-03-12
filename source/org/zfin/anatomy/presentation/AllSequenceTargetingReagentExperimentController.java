@@ -25,13 +25,13 @@ import java.util.List;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
- * This Controller serves the all morpholino experiment page.
+ * This Controller serves the all sequence targeting reagent experiment page.
  */
 @Controller
 @RequestMapping("/ontology")
-public class AllMorpholinoExperimentController {
+public class AllSequenceTargetingReagentExperimentController {
 
-    private static final Logger LOG = RootLogger.getLogger(AllMorpholinoExperimentController.class);
+    private static final Logger LOG = RootLogger.getLogger(AllSequenceTargetingReagentExperimentController.class);
 
     @ModelAttribute("formBean")
     public AnatomySearchBean getDefaultFormBean() {
@@ -43,8 +43,8 @@ public class AllMorpholinoExperimentController {
     @Autowired
     HttpServletRequest request;
 
-    @RequestMapping(value = "/show-all-morpholinos/{zdbID}/{wildtype}")
-    public String showAllMorpholinos(Model model
+    @RequestMapping(value = "/show-all-sequence-targeting-reagents/{zdbID}/{wildtype}")
+    public String showAllSequenceTargetingReagents(Model model
             , @PathVariable("zdbID") String termID
             , @PathVariable("wildtype") boolean isWildtype
             , @ModelAttribute("formBean") AnatomySearchBean form
@@ -72,9 +72,9 @@ public class AllMorpholinoExperimentController {
         retrieveSequenceTargetingReagentData(term, form, isWildtype);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         if (isWildtype)
-            return "anatomy/show-all-wildtype-morpholinos.page";
+            return "anatomy/show-all-wildtype-sequence-targeting-reagents.page";
         else
-            return "anatomy/show-all-non-wildtype-morpholinos.page";
+            return "anatomy/show-all-non-wildtype-sequence-targeting-reagents.page";
     }
 
     protected void retrieveSequenceTargetingReagentData(GenericTerm term, AnatomySearchBean form, boolean wildtype) {
@@ -84,8 +84,8 @@ public class AllMorpholinoExperimentController {
         int count = wildtypeMorphResults.getTotalCount();
         List<GenotypeExperiment> experiments = wildtypeMorphResults.getPopulatedResults();
 
-        List<SequenceTargetingReagentStatistics> morpholinoStats = createMorpholinoStats(experiments, term);
-        Collections.sort(morpholinoStats, new Comparator<SequenceTargetingReagentStatistics>() {
+        List<SequenceTargetingReagentStatistics> sequenceTargetingReagentsStats = createSequenceTargetingReagentStats(experiments, term);
+        Collections.sort(sequenceTargetingReagentsStats, new Comparator<SequenceTargetingReagentStatistics>() {
             public int compare(SequenceTargetingReagentStatistics one, SequenceTargetingReagentStatistics two) {
                 return (one.getTargetGeneOrder().compareTo(two.getTargetGeneOrder()));
             }
@@ -93,15 +93,15 @@ public class AllMorpholinoExperimentController {
         form.setTotalRecords(count);
 
         form.setWildtypeMorpholinoCount(count);
-        form.setAllMorpholinos(morpholinoStats);
+        form.setAllMorpholinos(sequenceTargetingReagentsStats);
     }
 
-    protected List<SequenceTargetingReagentStatistics> createMorpholinoStats(List<GenotypeExperiment> morpholinos, GenericTerm term) {
-        if (morpholinos == null || term == null)
+    protected List<SequenceTargetingReagentStatistics> createSequenceTargetingReagentStats(List<GenotypeExperiment> strExperiments, GenericTerm term) {
+        if (strExperiments == null || term == null)
             return null;
 
         List<SequenceTargetingReagentStatistics> stats = new ArrayList<>();
-        for (GenotypeExperiment genoExp : morpholinos) {
+        for (GenotypeExperiment genoExp : strExperiments) {
             SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, term);
             stats.add(stat);
         }

@@ -2,4 +2,4 @@
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
-<zfin-ontology:show-all-morpholinos formBean="${formBean}" wildtype="true" />
+<zfin-ontology:show-all-sequence-targeting-reagents formBean="${formBean}" wildtype="true" />

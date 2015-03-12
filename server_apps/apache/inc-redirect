@@ -3,10 +3,10 @@ RewriteEngine On
 RewriteMap viewmap txt:<!--|TARGETROOT|-->/server_apps/apache/view-page-url-map.txt
 
 #ZDB-[TYPE]-000000-0 ids
-RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3 
+RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3
 
 #[TYPE]:000000 ids
-RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2 
+RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2
 
 RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+),(.*)$ /action/fish/fish-detail/ZDB-$1-$2-$3,$4
 
@@ -101,7 +101,7 @@ RewriteCond %{QUERY_STRING}     ^Mival=aa-sourceview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING} ^anatomyItem.zdbID=([\w-]+)&wildtype=([\w]+)$ [NC]
-RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-morpholinos/%1/%2? [NC,R=301]
+RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-sequence-targeting-reagents/%1/%2? [NC,R=301]
 
 RewriteCond %{QUERY_STRING} ^termID=([\w-:]+)$ [NC]
 RewriteRule ^/action/ontology/term-detail$ /action/ontology/term-detail/%1? [NC,R=301]
