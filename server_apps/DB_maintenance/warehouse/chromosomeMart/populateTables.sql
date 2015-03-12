@@ -103,17 +103,6 @@ WHERE  lsingle_lnkg_zdb_id = lnkg_zdb_id
        AND linkage.lnkg_source_zdb_id not in ('ZDB-PUB-030703-1','ZDB-PUB-020822-1')
 
 UNION
-SELECT lnkg_chromosome as chromosome ,
-                mrkr_zdb_id as zdb_id,
-                'other map location' as source, 
-                 'Gene location obtained from a feature with is-allele-of relationship to the gene' as subsource
-FROM   marker,
-       linkage_single,
-                          feature_marker_relationship, linkage
-                   WHERE  fmrel_type = 'is allele of'
-                          AND fmrel_ftr_zdb_id = lsingle_member_zdb_id
-                          AND fmrel_mrkr_zdb_id = mrkr_zdb_id
-union
 SELECT  lnkg_chromosome as chromosome ,
                 marker.mrkr_zdb_id as zdb_id,
                 'other map location' as source,
@@ -132,13 +121,13 @@ union
 SELECT lnkg_chromosome as chromosome ,
        mrkr_zdb_id as zdb_id,
        'other map location' as source,
-       'Gene Location obtained from is-allele relationship with feature' as subsource
-FROM   marker, linkage_single, linkage, feature_marker_relationship
+       'Gene Location obtained from is-allele-of relationship with feature '||feature_abbrev||' ['||fmrel_ftr_zdb_id||']' as subsource
+FROM   marker, linkage_single, linkage, feature_marker_relationship, feature
 where mrkr_zdb_id = fmrel_mrkr_zdb_id 
-  and  mrkr_type = 'GENE' 
  and lsingle_member_zdb_id = fmrel_ftr_zdb_id
   and  fmrel_type = 'is allele of' 
 and lnkg_Zdb_id = lsingle_lnkg_zdb_id
+and feature_zdb_id = fmrel_ftr_zdb_id
 union
 SELECT lnkg_chromosome AS chromosome,
        marker.mrkr_zdb_id AS zdb_id,
