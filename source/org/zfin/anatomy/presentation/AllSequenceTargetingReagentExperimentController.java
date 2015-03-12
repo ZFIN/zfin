@@ -92,8 +92,8 @@ public class AllSequenceTargetingReagentExperimentController {
         });
         form.setTotalRecords(count);
 
-        form.setWildtypeMorpholinoCount(count);
-        form.setAllMorpholinos(sequenceTargetingReagentsStats);
+        form.setWildtypeSTRcount(count);
+        form.setAllSequenceTargetingReagents(sequenceTargetingReagentsStats);
     }
 
     protected List<SequenceTargetingReagentStatistics> createSequenceTargetingReagentStats(List<GenotypeExperiment> strExperiments, GenericTerm term) {

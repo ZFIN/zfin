@@ -3,8 +3,6 @@ package org.zfin.anatomy.presentation;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.*;
 import org.zfin.anatomy.service.AnatomyService;
-import org.zfin.audit.AuditLogItem;
-import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -20,7 +18,6 @@ import org.zfin.ontology.Term;
 import org.zfin.ontology.TermRelationship;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
 import java.util.*;
@@ -60,14 +57,14 @@ public class AnatomySearchBean extends PaginationBean {
     private int genotypeCount;
     private int antibodyCount;
     private int expressedGeneCount;
-    private int wildtypeMorpholinoCount;
-    private int mutantMorpholinoCount;
+    private int wildtypeSTRcount;
+    private int mutantSTRcount;
     private int totalNumberOfFiguresPerAnatomyItem;
     private int totalNumberOfImagesPerAnatomyItem;
     private List<GenotypeStatistics> genoStats;
-    private List<SequenceTargetingReagentStatistics> allMorpholinos;
+    private List<SequenceTargetingReagentStatistics> allSequenceTargetingReagents;
     private List<AntibodyStatistics> antibodyStatistics;
-    private List<SequenceTargetingReagentStatistics> nonWildtypeMorpholinos;
+    private List<SequenceTargetingReagentStatistics> nonWildtypeSTRs;
     private Term aoTerm;
     private String ontologyName = Ontology.ANATOMY.getOntologyName();
 
@@ -254,13 +251,13 @@ public class AnatomySearchBean extends PaginationBean {
         return genoStats;
     }
 
-    public void setAllMorpholinos(List<SequenceTargetingReagentStatistics> morphs) {
-        allMorpholinos = morphs;
+    public void setAllSequenceTargetingReagents(List<SequenceTargetingReagentStatistics> sequenceTargetingReagents) {
+        allSequenceTargetingReagents = sequenceTargetingReagents;
     }
 
 
-    public List<SequenceTargetingReagentStatistics> getAllMorpholinos() {
-        return allMorpholinos;
+    public List<SequenceTargetingReagentStatistics> getAllSequenceTargetingReagents() {
+        return allSequenceTargetingReagents;
     }
 
     public List<AntibodyStatistics> getAntibodyStatistics() {
@@ -271,12 +268,12 @@ public class AnatomySearchBean extends PaginationBean {
         this.antibodyStatistics = antibodyStatistics;
     }
 
-    public List<SequenceTargetingReagentStatistics> getNonWildtypeMorpholinos() {
-        return nonWildtypeMorpholinos;
+    public List<SequenceTargetingReagentStatistics> getNonWildtypeSTRs() {
+        return nonWildtypeSTRs;
     }
 
-    public void setNonWildtypeMorpholinos(List<SequenceTargetingReagentStatistics> nonWildtypeMorpholinos) {
-        this.nonWildtypeMorpholinos = nonWildtypeMorpholinos;
+    public void setNonWildtypeSTRs(List<SequenceTargetingReagentStatistics> nonWildtypeSTRs) {
+        this.nonWildtypeSTRs = nonWildtypeSTRs;
     }
 
     public String getOntologyName() {
@@ -416,12 +413,12 @@ public class AnatomySearchBean extends PaginationBean {
         this.genotypeCount = genotypeCount;
     }
 
-    public int getWildtypeMorpholinoCount() {
-        return wildtypeMorpholinoCount;
+    public int getWildtypeSTRcount() {
+        return wildtypeSTRcount;
     }
 
-    public void setWildtypeMorpholinoCount(int wildtypeMorpholinoCount) {
-        this.wildtypeMorpholinoCount = wildtypeMorpholinoCount;
+    public void setWildtypeSTRcount(int wildtypeSTRcount) {
+        this.wildtypeSTRcount = wildtypeSTRcount;
     }
 
     public int getAntibodyCount() {
@@ -440,12 +437,12 @@ public class AnatomySearchBean extends PaginationBean {
         this.id = id;
     }
 
-    public int getMutantMorpholinoCount() {
-        return mutantMorpholinoCount;
+    public int getMutantSTRcount() {
+        return mutantSTRcount;
     }
 
-    public void setMutantMorpholinoCount(int mutantMorpholinoCount) {
-        this.mutantMorpholinoCount = mutantMorpholinoCount;
+    public void setMutantSTRcount(int mutantSTRcount) {
+        this.mutantSTRcount = mutantSTRcount;
     }
 
     public int getExpressedGeneCount() {
@@ -523,12 +520,12 @@ public class AnatomySearchBean extends PaginationBean {
         return numberOfHighQualityProbes <= MAX_NUMBER_GENOTYPES;
     }
 
-    public boolean isAllWildtypeMorpholinosAreDisplayed() {
-        return wildtypeMorpholinoCount <= MAX_NUMBER_GENOTYPES;
+    public boolean isAllWildtypeSTRsDisplayed() {
+        return wildtypeSTRcount <= MAX_NUMBER_GENOTYPES;
     }
 
-    public boolean isAllMutantMorpholinosAreDisplayed() {
-        return mutantMorpholinoCount <= MAX_NUMBER_GENOTYPES;
+    public boolean isAllMutantSTRsDisplayed() {
+        return mutantSTRcount <= MAX_NUMBER_GENOTYPES;
     }
 
     public boolean isExpressedGenesExist() {
@@ -543,16 +540,16 @@ public class AnatomySearchBean extends PaginationBean {
         return !CollectionUtils.isEmpty(highQualityProbeGenes);
     }
 
-    public boolean isMorpholinoExist() {
-        return !CollectionUtils.isEmpty(allMorpholinos);
+    public boolean isSequenceTargetingReagentExist() {
+        return !CollectionUtils.isEmpty(allSequenceTargetingReagents);
     }
 
     public boolean isAntibodiesExist() {
         return !CollectionUtils.isEmpty(antibodyStatistics);
     }
 
-    public boolean isNonWildtypeMorpholinoExist() {
-        return !CollectionUtils.isEmpty(nonWildtypeMorpholinos);
+    public boolean isNonWildtypeSTRExist() {
+        return !CollectionUtils.isEmpty(nonWildtypeSTRs);
     }
 
     public SectionVisibility getSectionVisibility() {

@@ -29,7 +29,7 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
         this.anatomyItem = anatomyItem;
         this.genoExperiment = genoExperiment;
         targetGeneOrder = "";
-        Set<Marker> targetGenes = getMorpholinoMarkers();
+        Set<Marker> targetGenes = getSequenceTargetingReagents();
         int numberOfTargetGenes = targetGenes.size();
         int index = 1;
         for (Marker marker : targetGenes) {
@@ -44,7 +44,7 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
         return genoExperiment;
     }
 
-    public Set<Marker> getMorpholinoMarkers() {
+    public Set<Marker> getSequenceTargetingReagents() {
         Set<ExperimentCondition> experimentConditions = genoExperiment.getExperiment().getExperimentConditions();
         Set<Marker> morpholinoGenes = new TreeSet<Marker>(new Comparator<Marker>() {
             public int compare(Marker one, Marker two) {

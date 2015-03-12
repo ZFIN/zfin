@@ -385,11 +385,11 @@ public class AnatomyAjaxController {
 
         List<SequenceTargetingReagentStatistics> morpholinoStats = createMorpholinoStats(experiments, ai);
         if (wildtype) {
-            form.setWildtypeMorpholinoCount(count);
-            form.setAllMorpholinos(morpholinoStats);
+            form.setWildtypeSTRcount(count);
+            form.setAllSequenceTargetingReagents(morpholinoStats);
         } else {
-            form.setMutantMorpholinoCount(count);
-            form.setNonWildtypeMorpholinos(morpholinoStats);
+            form.setMutantSTRcount(count);
+            form.setNonWildtypeSTRs(morpholinoStats);
         }
     }
 
