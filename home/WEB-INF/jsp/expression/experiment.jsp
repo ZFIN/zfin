@@ -18,6 +18,6 @@
     </tr>
 </table>
 
-<zfin2:experimentConditions nonMorpholinoConditions="${nonMorpholinoConditions}"
-                            morpholinoConditions="${morpholinoConditions}"/>
+<zfin2:experimentConditions nonSequenceTargetingReagentConditions="${nonSequenceTargetingReagentConditions}"
+                            sequenceTargetingReagentConditions="${sequenceTargetingReagentConditions}"/>
 

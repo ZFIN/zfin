@@ -79,10 +79,10 @@ public class AllSequenceTargetingReagentExperimentController {
 
     protected void retrieveSequenceTargetingReagentData(GenericTerm term, AnatomySearchBean form, boolean wildtype) {
 
-        PaginationResult<GenotypeExperiment> wildtypeMorphResults =
+        PaginationResult<GenotypeExperiment> wildtypeSTRgenotypeExperiments =
                 getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(term, wildtype, form);
-        int count = wildtypeMorphResults.getTotalCount();
-        List<GenotypeExperiment> experiments = wildtypeMorphResults.getPopulatedResults();
+        int count = wildtypeSTRgenotypeExperiments.getTotalCount();
+        List<GenotypeExperiment> experiments = wildtypeSTRgenotypeExperiments.getPopulatedResults();
 
         List<SequenceTargetingReagentStatistics> sequenceTargetingReagentsStats = createSequenceTargetingReagentStats(experiments, term);
         Collections.sort(sequenceTargetingReagentsStats, new Comparator<SequenceTargetingReagentStatistics>() {

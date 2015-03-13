@@ -34,8 +34,8 @@ public class ExperimentDetailController {
         model.addAttribute("experiment", experiment);
 
         Set<ExperimentCondition> conditions = getSortedConditions(experiment);
-        model.addAttribute("morpholinoConditions", getMorpholinoConditions(conditions));
-        model.addAttribute("nonMorpholinoConditions", getNonMorpholinoConditions(conditions));
+        model.addAttribute("sequenceTargetingReagentConditions", getSTRconditions(conditions));
+        model.addAttribute("nonSequenceTargetingReagentConditions", getNonSTRconditions(conditions));
 
         return "expression/experiment.page";
     }
@@ -43,7 +43,7 @@ public class ExperimentDetailController {
 
     @RequestMapping("/experiment-popup")
     protected String getExperimentPopup(@RequestParam String id, Model model) {
-                Experiment experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(id);
+        Experiment experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(id);
 
         if (experiment == null) {
             model.addAttribute(LookupStrings.ZDB_ID, id);
@@ -54,8 +54,8 @@ public class ExperimentDetailController {
         model.addAttribute("experiment", experiment);
 
         Set<ExperimentCondition> conditions = getSortedConditions(experiment);
-        model.addAttribute("morpholinoConditions", getMorpholinoConditions(conditions));
-        model.addAttribute("nonMorpholinoConditions", getNonMorpholinoConditions(conditions));
+        model.addAttribute("sequenceTargetingReagentConditions", getSTRconditions(conditions));
+        model.addAttribute("nonSequenceTargetingReagentConditions", getNonSTRconditions(conditions));
 
         return "expression/experiment-popup.popup";
     }
@@ -66,7 +66,7 @@ public class ExperimentDetailController {
         return conditions;
     }
 
-    protected List<ExperimentCondition> getMorpholinoConditions(Set<ExperimentCondition> conditions) {
+    protected List<ExperimentCondition> getSTRconditions(Set<ExperimentCondition> conditions) {
         List<ExperimentCondition> moConditions = new ArrayList<>();
         for (ExperimentCondition condition : conditions) {
             if (condition.getSequenceTargetingReagent() != null)
@@ -75,7 +75,7 @@ public class ExperimentDetailController {
         return moConditions;
     }
 
-    protected List<ExperimentCondition> getNonMorpholinoConditions(Set<ExperimentCondition> conditions) {
+    protected List<ExperimentCondition> getNonSTRconditions(Set<ExperimentCondition> conditions) {
         List<ExperimentCondition> nonMoConditions = new ArrayList<>();
         for (ExperimentCondition condition : conditions) {
             if (condition.getSequenceTargetingReagent() == null) {

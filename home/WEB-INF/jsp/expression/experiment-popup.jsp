@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <div class="popup-header">
-     Environment Description: <zfin:name entity="${experiment}"/>
+    Environment Description: <zfin:name entity="${experiment}"/>
 </div>
 <div class="popup-body">
     <div>
@@ -14,8 +14,8 @@
         </table>
 
 
-        <zfin2:experimentConditions nonMorpholinoConditions="${nonMorpholinoConditions}"
-                                    morpholinoConditions="${morpholinoConditions}"/>
+        <zfin2:experimentConditions nonSequenceTargetingReagentConditions="${nonSequenceTargetingReagentConditions}"
+                                    sequenceTargetingReagentConditions="${sequenceTargetingReagentConditions}"/>
 
 
     </div>
