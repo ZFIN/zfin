@@ -96,12 +96,11 @@ that would be better --%>
 
     <label for="geneFamilyName" class="indented-label">In Family:</label>
     <form:input size="35" path="geneFamilyName" id="geneFamilyName"/>
-    <div style="overflow: auto; height: 400px; width: 400px;" class="auto_complete"
-         id="geneFamilyNameAutoComplete"></div>
 
-    <script type="text/javascript">
-        var geneFamilyNameAutoCompleter = new Ajax.Autocompleter('geneFamilyName', 'geneFamilyNameAutoComplete', '/action/autocomplete/gene-family', {paramName: "query", minChars: 1});
+    <script>
+        jQuery(document).ready(function() { jQuery('#geneFamilyName').autocompletify('/action/autocomplete/gene-family?query=%QUERY') });
     </script>
+
     <form:errors path="geneFamilyName" cssClass="error indented-error"/>
     <br>
     <br>

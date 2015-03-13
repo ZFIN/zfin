@@ -539,6 +539,9 @@ body.modal-open {
     color: #333333;
 }
 
+/* this is breaking the input with typeahead added */
+
+/*
 .clear-search {
     position: relative;
     display: inline-block;
@@ -555,6 +558,7 @@ body.modal-open {
     cursor: pointer;
     color: #ccc;
 }
+*/
 
 .btn-zfin {
     color: #FFFFFF;

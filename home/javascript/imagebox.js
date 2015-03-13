@@ -44,9 +44,9 @@ function ImageBox() {
 
     this.generateImageAnchor = function(image) {
         var anchor = document.createElement('a');
-        anchor.href = this.POPUP_URL + image.imgZdbId + "?imgpop_displayed_width=670";
+        anchor.hoverHref = this.POPUP_URL + image.imgZdbId + "?imgpop_displayed_width=670";
         anchor.id = image.imgZdbId;
-
+        anchor.href=this.IMG_PAGE_URL + image.imgZdbId;
         var img = document.createElement('img');
         img.src = this.IMG_URL + image.imgThumb;
         img.className = "xpresimg_img";
@@ -157,31 +157,49 @@ function ImageBox() {
         //j is a position counter within the 10 being displayed
         var j = 0;
         for(var i = this.firstVisibleImage ; i <= this.getLastVisibleImageIndex() ; i++) {
+            var wrapper = document.createElement('span');
+            wrapper.className = "imagebox-image-wrapper";
+
+
             anchor = this.generateImageAnchor(this.images[i]);
-            this.imageDiv.appendChild(anchor);
+            wrapper.appendChild(anchor);
+
+            var popupDiv = document.createElement('div');
+            popupDiv.className = "imagebox-popup";
+            wrapper.appendChild(popupDiv);
+
+            this.imageDiv.appendChild(wrapper);
+
             var popup_width = 550;
 
-            //for images on the right, we have to push the popup to the left
-            //so that it doesn't end up displaying off the page
-            //this bit of math pushes the box left more and more as you
-            //from right to left.  The final image should be totally to
-            //the left of the cursor.  Applying this to the first few
-            //caused problems with very narrow images, so that's why it's
-            // j > 3
-            if (j > 3) {
-                var myOffsetLeft = -1 * j/this.MAX_VISIBLE * popup_width;
-            } else { var myOffsetLeft = 0; }
 
-            myOffsetTop = 0;
-            if (Prototype.Browser.IE) {
-                myOffsetTop = 45;
-                popup_width = popup_width + 15;
-            }
-            new Control.Modal(anchor, {opacity: 0.7, hover: true, position: 'relative', offsetTop: myOffsetTop, offsetLeft: myOffsetLeft , width: popup_width, height: 600});
+            jQuery(anchor).hover(
+                function() {
+                    jQuery('.imagebox-popup').hide();
+                    clearTimeout(document.popupTimeout);
+                    var $popupDiv = jQuery(jQuery(this).siblings('.imagebox-popup'));
+                    console.log(this.hoverHref);
+                    //if ($popupDiv.html == '') {
+                        $popupDiv.load(this.hoverHref);
+                    //}
 
-            //this is sneaky - after Control.modal uses the initial href value to generate the hover popup,
-            //once the Control.modal object exists, I can set it to where I want a click action to go
-            anchor.href=this.IMG_PAGE_URL + this.images[i].imgZdbId;
+                    $popupDiv.fadeIn(50);
+
+                },
+                function(imageDiv) {
+                    document.popupTimeout = setTimeout(function() {
+                        jQuery('.imagebox-popup').fadeOut(100);
+                    } , 500);
+
+                }
+            );
+
+            jQuery(popupDiv).hover(
+                function() { clearTimeout(document.popupTimeout);
+                             jQuery(this).show(); },
+                function() { jQuery(this).fadeOut(100); }
+            );
+
 
             j++;
         }

@@ -1,30 +1,15 @@
 package org.zfin.search.presentation;
 
+import org.zfin.framework.presentation.LookupEntry;
+
 /**
  * Converted to JSON for use in a facet autocompleter
  */
-public class FacetLookupEntry {
-    String name;
-    String label;
-    String value;
+public class FacetLookupEntry extends LookupEntry {
+
     String count;
     String fq;
 
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     public String getCount() {
         return count;
@@ -42,11 +27,4 @@ public class FacetLookupEntry {
         this.fq = fq;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

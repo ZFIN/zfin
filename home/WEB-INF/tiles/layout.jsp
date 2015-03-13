@@ -43,7 +43,7 @@
     <link rel=stylesheet type="text/css" href="/css/popup.css">
     <link rel=stylesheet type="text/css" href="/css/tipsy.css">
     <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
-
+    <link rel=stylesheet type="text/css" href="/css/typeahead.css">
 
 
     <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
@@ -52,12 +52,10 @@
     <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
     <script type="text/javascript" src="/javascript/sorttable.js"></script>
 
-
-    <script src="/javascript/jquery-ui-1.10.4.custom.js"></script>
-    <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">
+    <script src="/javascript/autocompletify.js"></script>
 
 
-
+    <script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
 
     <!-- Begin Inspectlet Embed Code -->
     <script type="text/javascript" id="inspectletjs">

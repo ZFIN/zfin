@@ -164,20 +164,16 @@
 </div>
 
 <script>
-    jQuery(document).ready(function() {
-        jQuery('#addMemberBox').autocomplete({
-            source:  '/action/profile/find-member'
-            ,minLength:  3
-            ,select: function(event, ui) {
-                jQuery('#add-member-box').val(ui.item.label);
-                personToAddZdbID = ui.item.id;
-            }
+    $(document).ready(function () {
+
+        $('#addMemberBox').autocompletify('/action/profile/find-member?term=%QUERY');
+        $('#addMemberBox').bind('typeahead:selected', function(obj, datum, name) {
+            personToAddZdbID = datum.id;
         });
 
         listMembers('${company.zdbID}');
     });
-
-    jQuery('.tabs a').tabbify('.panes > div');
+    $('.tabs a').tabbify('.panes > div');
 
 </script>
 

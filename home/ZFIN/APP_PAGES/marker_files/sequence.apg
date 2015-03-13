@@ -38,9 +38,9 @@
         from webPages where ID='aa-js-delete_attrib.apg';">$1<?/MISQL>
 
 	function new_attrib_seq() {
-		var seq_acc = document.updater.attrib_seq_acc.value.strip() ;
-		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase().strip() ;
-		var fdb_id = document.updater.attrib_seq_fdb.value.toUpperCase().strip() ;
+		var seq_acc = document.updater.attrib_seq_acc.value.trim() ;
+		var pub_id = document.updater.attrib_seq_pubid.value.toUpperCase().trim() ;
+		var fdb_id = document.updater.attrib_seq_fdb.value.toUpperCase().trim() ;
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=$target_table&info=seqacc&caller=sequence.apg&xtra_param='+fdb_id);
 		}
@@ -51,13 +51,13 @@
 		var dbfull=document.updater.seqdb[dbind].text;
          
         var pattern = /-/ ; 
-        var dbname = dbfull.split(pattern)[0].strip() ; 
-        var seq_type = dbfull.split(pattern)[1].strip() ; 
+        var dbname = dbfull.split(pattern)[0].trim() ;
+        var seq_type = dbfull.split(pattern)[1].trim() ;
 
         // this is required for the form processing for some reason
         seq_type='sequence&fdbcont_data='+seq_type ; 
-		var seq_acc=document.updater.seq_acc.value.strip();
-		var fdb_id =document.updater.seqdb.value.strip();
+		var seq_acc=document.updater.seq_acc.value.trim();
+		var fdb_id =document.updater.seqdb.value.trim();
 
 
         // the following checks enforce correct accession# format
@@ -102,7 +102,7 @@
 	function update_seqnum() {
 		var dbind=document.updater.upd_seq_zdb.selectedIndex;
 		var seq_zdb=document.updater.upd_seq_zdb[dbind].value;
-		var seq_len=document.updater.upd_seq_length.value.strip() ;
+		var seq_len=document.updater.upd_seq_length.value.trim() ;
 		var dbind=document.updater.upd_seq_type.selectedIndex;
 		var seq_type=document.updater.upd_seq_type[dbind].value;
 		if (seq_zdb != '') {

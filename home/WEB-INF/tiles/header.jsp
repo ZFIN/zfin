@@ -79,9 +79,6 @@
     }
 
 
-
-    jQuery.noConflict();
-
     jQuery(document).ready(function() {
         processPopupLinks('body');
         initYIW();

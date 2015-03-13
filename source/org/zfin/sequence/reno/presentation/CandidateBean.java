@@ -64,6 +64,8 @@ public class CandidateBean {
     private ReferenceDatabase mouseReferenceDatabase ;
     private boolean geneAlias;
 
+    private String geneFamilyJson;
+
     public String getRelationPublicationZdbID() {
         return relationPublicationZdbID;
     }
@@ -375,6 +377,14 @@ public class CandidateBean {
 
     public void setGeneAlias(boolean geneAlias) {
         this.geneAlias = geneAlias;
+    }
+
+    public String getGeneFamilyJson() {
+        return geneFamilyJson;
+    }
+
+    public void setGeneFamilyJson(String geneFamilyJson) {
+        this.geneFamilyJson = geneFamilyJson;
     }
 }
        

@@ -2,8 +2,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <div id="figpop_top">
-<a class="close_link" href="javascript://close popup;"
-   onClick="parent.Control.Modal.close();">x</a>
   <strong>
     ${formBean.image.figure.publication.shortAuthorList}
     &nbsp;&nbsp;

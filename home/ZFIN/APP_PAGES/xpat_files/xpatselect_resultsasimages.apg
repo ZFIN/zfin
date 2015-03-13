@@ -52,8 +52,6 @@ OUTPUT VARS:
 <?MIBLOCK COND="$(XST,$xpresimg_query_has_images)">
 
 
-  <script type="text/javascript" src="/javascript/control.modal.js"></script>
-
   <link rel="stylesheet" type="text/css" href="/css/figure_gallery.css">
 
 

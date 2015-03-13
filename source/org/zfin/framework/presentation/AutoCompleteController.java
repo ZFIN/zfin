@@ -5,8 +5,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.zfin.marker.MarkerFamilyName;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.repository.RepositoryFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/autocomplete")
@@ -16,17 +21,16 @@ public class AutoCompleteController {
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
 
     @RequestMapping("/gene-family")
-    protected String geneFamilyHandler(@RequestParam("query") String query,
-                                       @ModelAttribute("formBean") AutoCompleteBean autoCompleteBean) throws Exception {
+    protected @ResponseBody
+    List<LookupEntry> geneFamilyHandler(@RequestParam("query") String query)  {
 
-        autoCompleteBean.setMarkerFamilyNames(mr.getMarkerFamilyNamesBySubstring(query));
+        List<LookupEntry> markerFamilyNames = new ArrayList<>();
 
-        LOG.info("gene family, query: '"
-                + query
-                + "' size: "
-                + autoCompleteBean.getMarkerFamilyNames().size());
+        for (MarkerFamilyName markerFamilyName : mr.getMarkerFamilyNamesBySubstring(query)) {
+            markerFamilyNames.add(new LookupEntry(markerFamilyName.getMarkerFamilyName(), markerFamilyName.getMarkerFamilyName()));
+        }
 
-        return "gene-family-autocomplete.page";
+        return markerFamilyNames;
     }
 
 

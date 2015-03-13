@@ -13,9 +13,12 @@
 <link rel=stylesheet type="text/css" href="/css/bootstrap/css/bootstrap.css">
 <script type="text/javascript" src="/css/bootstrap/js/bootstrap.js"></script>
 
+<%-- Bootstrap 2.3.2 comes with it's own typeahead, we don't want it, this removes it --%>
+<script>
+    $.fn.bootstrapTypeahead = $.fn.typeahead.noConflict();
+</script>
 <link rel=stylesheet type="text/css" href="/css/datepicker.css">
 <script type="text/javascript" src="/javascript/bootstrap-datepicker.js"></script>
-
 
 <script src="/javascript/purl.js"></script>
 <script src="/javascript/jquery.validate.min.js"></script>
@@ -97,21 +100,16 @@
                             <option <c:if test="${cat eq category}">selected="selected"</c:if>>${cat}</option>
                         </c:forEach>
                     </select>
-                    <div class="input-append">
-                        <div class="clear-search">
                             <input class="search-form-input input input-xxlarge" name="q" id="primary-query-input"
                                    autocomplete="off" type="text" value="<c:out value="${q}" escapeXml="true"/>"/>
-                            <span class="clear" onclick="jQuery('#primary-query-input').val('');">&times;</span>
-                        </div>
-                        <button type="submit" class="btn btn-zfin">Go</button>
-                    </div>
                     <div class="btn-group search-box-buttons">
                         <authz:authorize ifAnyGranted="root">
                             <c:if test="${category eq publicationCategoryName}">
                                 <a id="advanced-search-button" class="btn" href="#" title="Advanced Search Options"
-                                   onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
+                                   onClick="$('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
                             </c:if>
                         </authz:authorize>
+                        <button type="submit" class="btn btn-zfin">Go</button>
                         <a class="btn" href="/search?q=" onclick="localStorage.clear();">New</a>
                         <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
                             <i class="fa fa-question-circle"></i>
@@ -123,8 +121,8 @@
             </div>
             <script>
                 function replaceQuery(query) {
-                    jQuery('#primary-query-input').val(query);
-                    jQuery('#query-form').submit();
+                    $('#primary-query-input').val(query);
+                    $('#query-form').submit();
                 }
             </script>
         </form>
@@ -153,42 +151,8 @@
 
         <script>
 
-            var datepicker = jQuery.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
-            jQuery.fn.bootstrapDP = datepicker;
 
-            jQuery('.datepicker').bootstrapDP({format: 'yyyy-mm-dd', autoclose: true});
-
-            jQuery('#primary-query-input').autocomplete({
-                source: function (request, response) {
-                    jQuery.ajax({
-                        url: '/action/quicksearch/autocomplete',
-                        dataType: "json",
-                        data: {
-                            q: request.term /* ,
-                             category : 'Gene'*/
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                select: function (event, ui) {
-                    var val = ui.item.value;
-
-                    jQuery('#primary-query-input').val(val);
-                    var form = jQuery(this).parents('form:first');
-                    jQuery("#query-form").submit();
-
-                },
-                minLength: 1, delay: 50,
-                open: function (event, ui) {
-                    jQuery("ul.ui-autocomplete li a").each(function () {
-                        var htmlString = jQuery(this).html().replace(/&lt;/g, '<');
-                        htmlString = htmlString.replace(/&gt;/g, '>');
-                        jQuery(this).html(htmlString);
-                    });
-                }
-            }, {});
+            $('.datepicker').datepicker({format: 'yyyy-mm-dd', autoclose: true});
 
 
         </script>
@@ -235,7 +199,6 @@
     <div class="row-fluid">
         <zfin:horizontal-breadbox query="${query}" queryResponse="${response}" baseUrl="${baseUrl}"/>
     </div>
-
 
     <div class="row-fluid">
 
@@ -345,7 +308,7 @@
     </div>
 
     <div style="clear:both; width:100%; display:none;">
-        <a style="clear:both; font-size: smaller;" href="#" onclick="jQuery('.debug-output' ).slideToggle();">don't look
+        <a style="clear:both; font-size: smaller;" href="#" onclick="$('.debug-output' ).slideToggle();">don't look
             at my debug output!</a>
     </div>
     <div class="debug-output"
@@ -364,8 +327,8 @@
 
 function scrollToAnchor(aid) {
     aid = aid.replace("#", "");
-    var aTag = jQuery("a[name='" + aid + "']");
-    jQuery('html,body').animate({scrollTop: aTag.offset().top}, 'fast');
+    var aTag = $("a[name='" + aid + "']");
+    $('html,body').animate({scrollTop: aTag.offset().top}, 'fast');
 }
 
 function toggleLocalStorage(field) {
@@ -376,10 +339,11 @@ function toggleLocalStorage(field) {
     }
 }
 
+$(document).ready(function () {
 function submitAdvancedQuery(fields) {
     var query = "${baseUrlWithoutQ}";
 
-    var mainQuery = jQuery('#primary-query-input').val();
+    var mainQuery = $('#primary-query-input').val();
 
     if (mainQuery) {
         query = query + mainQuery;
@@ -389,13 +353,13 @@ function submitAdvancedQuery(fields) {
     for (var i = 0 ; i < fields.length ; i++ ) {
 
         if (fields[i].type == 'string') {
-            var value = jQuery('#' + fields[i].id).val();
+            var value = $('#' + fields[i].id).val();
             if (value) {
                 query = query + "&fq=" + fields[i].field + ":(" + value + ")";
             }
         } else if (fields[i].type == 'date') {
-            var start = jQuery('#' + fields[i].startId).val();
-            var end = jQuery('#' + fields[i].endId).val();
+            var start = $('#' + fields[i].startId).val();
+            var end = $('#' + fields[i].endId).val();
             if (start != "" && end != "") {
                 query = query + "&fq=" + fields[i].field + ':[' + start + 'T00:00:00Z' + ' TO ' + end + 'T00:00:00Z' + ']';
             }
@@ -406,86 +370,97 @@ function submitAdvancedQuery(fields) {
 
 }
 
-jQuery(document).ready(function () {
+$(document).ready(function () {
 
+    $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
+
+    $('#primary-query-input').bind("typeahead:selected", function() {
+        $('#query-form').submit();
+    });
+})
 
     if (!${numFound}) {
         ga('send', 'event', 'Search', 'Zero Results', "<c:out value="${q}" escapeXml="true"/>", {'nonInteraction': 1});
     }
 
     // add GA click handlers for sort options
-    jQuery('.sort-controls .dropdown-menu a').click(function () {
+    $('.sort-controls .dropdown-menu a').click(function () {
         var category = '${empty category ? 'Any' : category}',
-            label = jQuery(this).text();
+            label = $(this).text();
         ga('send', 'event', 'Search', 'Sort By', category + " : " + label);
     });
 
-    jQuery('.search-result-related-links a').click(function () {
+    $('.search-result-related-links a').click(function () {
         // send a Related Link event with the category and link text minus the number in parenthesis
-        var category = jQuery(this).closest(".search-result").find(".search-result-category").text().trim(),
-            label = jQuery(this).text().replace(/\s+\(\d+\)\s+$/g, "");
+        var category = $(this).closest(".search-result").find(".search-result-category").text().trim(),
+            label = $(this).text().replace(/\s+\(\d+\)\s+$/g, "");
         ga('send', 'event', 'Search', 'Related Link', category + " : " + label);
     });
 
     //if this gets converted from tipsy to bootstrap, need to handle the jquery-ui collision:
     //http://stackoverflow.com/questions/13731400/jqueryui-tooltips-are-competing-with-twitter-bootstrap
-    jQuery('.facet-value-hover').tipsy({gravity: 'w'});
-    jQuery('.facet-include').tipsy({gravity: 'nw'});
-    jQuery('.facet-exclude').tipsy({gravity: 'sw'});
-    jQuery('.result-action-tooltip').tipsy({gravity: 's'});
-    jQuery('#advanced-search-button').tipsy({gravity: 'ne'});
+    $('.facet-value-hover').tipsy({gravity: 'w'});
+    $('.facet-include').tipsy({gravity: 'nw'});
+    $('.facet-exclude').tipsy({gravity: 'sw'});
+    $('.facet-value-hover').tipsy({gravity: 'w'});
+    $('.facet-include').tipsy({gravity: 'nw'});
+    $('.facet-exclude').tipsy({gravity: 'sw'});
+    $('.result-action-tooltip').tipsy({gravity: 's'});
+    $('#advanced-search-button').tipsy({gravity: 'ne'});
 
-    jQuery('.result-explain-link').on('click', function () {
-        jQuery(this).closest(".search-result").find(".result-explain-container").slideToggle(50);
+    $('.result-explain-link').on('click', function () {
+        $(this).closest(".search-result").find(".result-explain-container").slideToggle(50);
     });
 
 
     /* this is to get the background to not scroll behind the modals */
-    jQuery(".modal").on("show",function () {
-        jQuery("body").addClass("modal-open");
+    $(".modal").on("show",function () {
+        $("body").addClass("modal-open");
     }).on("hidden", function () {
-        jQuery("body").removeClass("modal-open");
-        jQuery('.modal-backdrop').remove();
+        $("body").removeClass("modal-open");
+        $('.modal-backdrop').remove();
     });
 
 
     /* this provides event handling for results elements that need a show/hide behavior because they're too long */
-    jQuery(".collapsible-attribute").click(function () {
-        if (jQuery(this).hasClass("collapsed-attribute")) {
-            jQuery(this).removeClass("collapsed-attribute");
+    $(".collapsible-attribute").click(function () {
+        if ($(this).hasClass("collapsed-attribute")) {
+            $(this).removeClass("collapsed-attribute");
         }
         else {
-            jQuery(this).addClass("collapsed-attribute");
+            $(this).addClass("collapsed-attribute");
         }
     });
 
+    if (!(localStorage.getItem("draft-software-warning-dismissed") == "true"))
+        $('#draft-software-warning').modal('show');
 
     function showBoxyResults() {
-        jQuery('.boxy-search-result').show();
-        jQuery('.table-results').hide();
-        jQuery('#boxy-result-button').prop('disabled', true);
-        jQuery('#boxy-result-button').tipsy('disable');
-        jQuery('#boxy-result-button').tipsy('hide');
-        jQuery('#table-result-button').prop('disabled', false);
-        jQuery('#table-result-button').tipsy('enable');
+        $('.boxy-search-result').show();
+        $('.table-results').hide();
+        $('#boxy-result-button').prop('disabled', true);
+        $('#boxy-result-button').tipsy('disable');
+        $('#boxy-result-button').tipsy('hide');
+        $('#table-result-button').prop('disabled', false);
+        $('#table-result-button').tipsy('enable');
         localStorage.setItem("results-type","boxy");
     }
     function showTabularResults() {
-        jQuery('.boxy-search-result').hide();
-        jQuery('.table-results').show();
-        jQuery('#boxy-result-button').prop('disabled', false);
-        jQuery('#boxy-result-button').tipsy('enable');
-        jQuery('#table-result-button').prop('disabled', true);
-        jQuery('#table-result-button').tipsy('disable');
-        jQuery('#table-result-button').tipsy('hide');
+        $('.boxy-search-result').hide();
+        $('.table-results').show();
+        $('#boxy-result-button').prop('disabled', false);
+        $('#boxy-result-button').tipsy('enable');
+        $('#table-result-button').prop('disabled', true);
+        $('#table-result-button').tipsy('disable');
+        $('#table-result-button').tipsy('hide');
         localStorage.setItem("results-type","table");
     }
 
 
-    jQuery('#boxy-result-button').click(function() {
+    $('#boxy-result-button').click(function() {
         showBoxyResults();
     })
-    jQuery('#table-result-button').click(function() {
+    $('#table-result-button').click(function() {
         showTabularResults();
     })
 
@@ -500,87 +475,10 @@ jQuery(document).ready(function () {
         var key = localStorage.key(i);
         var value = localStorage.getItem(localStorage.key(i));
         if (value == "open") {
-            jQuery('.' + key + "-toggle").toggle();
+            $('.' + key + "-toggle").toggle();
         }
 
     }
-
-    jQuery('.facet-filter-form').each(
-            function () {
-                var fieldName = jQuery(this).attr('facetfield');
-                jQuery(this).html('<input placeholder="starts with..." autocomplete="off" type="text" id="' + fieldName + '-facet-filter-form-input" class="facet-filter-form-input search-query" name="' + fieldName + '"/>');
-
-                //we don't want to submit this...
-                jQuery(this).submit(function (e) {
-                            /*if (!$('#search').val()) {*/
-                            e.preventDefault();
-                            /*}*/
-                        }
-                );
-            });
-
-
-    jQuery('.facet-filter-form-input').keyup(function () {
-        var fieldName = jQuery(this).attr('name');
-        jQuery.getJSON('/action/quicksearch/facet-autocomplete?' + jQuery('#query-string').val(),
-                {
-                    field: fieldName,
-                    term: jQuery(this).val()
-                },
-                function (data) {
-                    var outputDiv = "#" + fieldName + "-facet-value-container";
-                    jQuery(outputDiv).html('');
-                    jQuery(outputDiv).append('<ol>');
-
-                    //todo: this should remove page=N from the url, but it doesn't yet
-                    jQuery.each(data, function () {
-                        /*
-                         <li style="min-height:10px" class="facet-value row-fluid"><span style="min-height:10px" class="span9 selectable-facet-value"><a title="require in results" style="min-height:10px" class=" " href="/prototype?category=Gene&amp;fq=expression_anatomy_tf%3A%22brain%22"><img class="checkbox-icon" src="/images/icon-check-empty.png">brain</a></span><ul style="min-height:10px" class="facet-count-container span3 unstyled">
-                         <li class="dropdown">
-                         <a class="facet-count dropdown-toggle" data-toggle="dropdown" href="#">
-                         (1612)        <b class="caret"></b>
-                         </a>
-                         <ul class="dropdown-menu">
-                         <li><a href="/prototype?category=Gene&amp;fq=expression_anatomy_tf%3A%22brain%22">Require</a></li>
-                         <li><a href="/prototype?category=Gene&amp;fq=-expression_anatomy_tf%3A%22brain%22">Exclude</a></li>
-                         <li class="divider"></li>
-                         <li><a target="_blank" href="/prototype?q=brain">Search for <strong>brain</strong> in New Window</a></li>
-                         </ul>
-                         </li>
-                         </ul></li>
-
-
-                         var link = '<li class="facet-value"><a href="'
-                         + jQuery('#base-url').val() + '&fq='
-                         + this.fq + '">' + this.name + '</a>'
-                         + '<span class="facet-count">' + this.count + '</span>';
-
-                         */
-                        //this.fq  this.name  this.count  jQuery('#base-url').val() + '&fq='
-                        var link = ' <li style="min-height:10px" class="facet-value row-fluid"><span style="min-height:10px" class="span9 selectable-facet-value"><a title="require in results" style="min-height:10px" class=" " '
-                                + 'href="' + jQuery('#base-url').val() + '&fq=' + this.fq
-                                + '"><img class="checkbox-icon" src="/images/icon-check-empty.png">' + this.name + '</a></span><ul style="min-height:10px" class="facet-count-container span3 unstyled">'
-                                + '<li class="dropdown">'
-                                + ' <a class="facet-count dropdown-toggle" data-toggle="dropdown" href="#">'
-                                + '(' + this.count + ')'
-                                + ' <b class="caret"></b>'
-                                + '   </a>'
-                                + ' <ul class="dropdown-menu">'
-                                + '   <li><a href="' + jQuery('#base-url').val() + '&fq=' + this.fq + '">Require</a></li>'
-                                + '    <li><a href="' + jQuery('#base-url').val() + '&fq=-' + this.fq + '">Exclude</a></li>'
-                                + '    <li class="divider"></li>'
-                                + '    <li><a target="_blank" href="/prototype?q=' + this.name + '">Search for <strong>' + this.name + '</strong> in New Window</a></li>'
-                                + '  </ul>'
-                                + '</li>'
-                                + '</ul></li>';
-                        jQuery(outputDiv).append(link);
-                    });
-
-                    jQuery(outputDiv).append('</ol>');
-
-                }
-        );
-    });
 
 
 });

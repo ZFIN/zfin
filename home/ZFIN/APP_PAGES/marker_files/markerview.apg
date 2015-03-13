@@ -249,13 +249,13 @@ function jump(form_select){
 		var dbfull=document.updateseq.seqdb[dbind].text;
 
         var pattern = /-/ ;
-        var dbname = dbfull.split(pattern)[0].strip() ;
-        var seq_type = dbfull.split(pattern)[1].strip() ;
+        var dbname = dbfull.split(pattern)[0].trim() ;
+        var seq_type = dbfull.split(pattern)[1].trim() ;
 
         // this is required for the form processing for some reason
         seq_type='sequence&fdbcont_data='+seq_type ;
-		var seq_acc=document.updateseq.seq_acc.value.strip();
-		var fdb_id =document.updateseq.seqdb.value.strip();
+		var seq_acc=document.updateseq.seq_acc.value.trim();
+		var fdb_id =document.updateseq.seqdb.value.trim();
         // alert('dbname: '+ dbname+ ' seq_type: '+seq_type) ;
         // alert('fdb_id: '+ fdb_id+ ' seq_acc: '+seq_acc) ;
 
@@ -301,8 +301,8 @@ function jump(form_select){
 
 	function update_seqnum() {
 		var dbind=document.updateseq.upd_seq_zdb.selectedIndex;
-		var seq_zdb=document.updateseq.upd_seq_zdb[dbind].value.strip();
-		var seq_len=document.updateseq.upd_seq_length.value.strip();
+		var seq_zdb=document.updateseq.upd_seq_zdb[dbind].value.trim();
+		var seq_len=document.updateseq.upd_seq_length.value.trim();
 		var dbind=document.updateseq.upd_seq_type.selectedIndex;
 		var seq_type=document.updateseq.upd_seq_type[dbind].value;
 		if (seq_zdb != '') {
@@ -312,9 +312,9 @@ function jump(form_select){
 	function new_othernum() {
 		var dbind=document.updateother.seqdb.selectedIndex;
 		var dbname=document.updateother.seqdb[dbind].value;
-		var seq_acc=document.updateother.seq_acc.value.strip();
+		var seq_acc=document.updateother.seq_acc.value.trim();
 		var dbind=document.updateother.seq_super.selectedIndex;
-		var seq_type=document.updateother.seq_super[dbind].value.strip();
+		var seq_type=document.updateother.seq_super[dbind].value.trim();
 		if (seq_acc != '') {
 		 window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&ancor=other&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super='+seq_type);
 		}
@@ -324,14 +324,14 @@ function jump(form_select){
 	function new_proseqnum() {
 		var dbind=document.updateps.prt_seqdb.selectedIndex;
 		var dbname=document.updateps.prt_seqdb[dbind].value;
-		var seq_acc=document.updateps.prt_seq_acc.value.strip() ;
+		var seq_acc=document.updateps.prt_seq_acc.value.trim() ;
 		if (seq_acc != ''){
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=seqnum&attr_type=special-newseqnum&old_value='+dbname+'&new_value='+seq_acc+'&target_table=marker&fdbcont_super=protein&fdbcont_data=domain');
   		}
 	}
 
 	function new_mrkrrel(mrkrrel_type, mrkr_abbrev_value) {
-		var mrkr_abbrev = escape(mrkr_abbrev_value.strip());
+		var mrkr_abbrev = escape(mrkr_abbrev_value.trim());
 		mrkrrel_type.replace(/ /,"%20");
 		if (mrkr_abbrev != '') {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=mrkrrel&attr_type=special-newmrkrrel&old_value='+mrkrrel_type+'&new_value='+mrkr_abbrev+'&target_table=marker');
@@ -382,15 +382,15 @@ function jump(form_select){
 	}
 
 	function new_attrib_nomen(nomen_zdb,pub_obj) {
-        	var pub_id = escape(pub_obj.value.strip());
+        	var pub_id = escape(pub_obj.value.trim());
 		if ((nomen_zdb != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+nomen_zdb+'&new_value='+pub_id+'&target_table=marker&info=nomen');
   		}
 	}
 
 	function new_attrib_mrel(attrmrelform) {
-		var mrkr_abbrev=escape(attrmrelform.attrib_mrkr_abbrev.value.strip());
-		var pub_id=attrmrelform.attrib_mrel_pubid.value.toUpperCase().strip();
+		var mrkr_abbrev=escape(attrmrelform.attrib_mrkr_abbrev.value.trim());
+		var pub_id=attrmrelform.attrib_mrel_pubid.value.toUpperCase().trim();
                 <?MICOMMENT>
                    Do not allow "clone contains gene" marker_relationship for ZDB-PUB-030703-1.
 
@@ -422,16 +422,16 @@ function jump(form_select){
 	}
 
 	function new_attrib_ssprevname(objform) {
-		var prev_name=escape(objform.attrib_ssprevname.value.strip());
-		var pub_id=objform.attrib_ssprevname_pubid.value.toUpperCase().strip();
+		var prev_name=escape(objform.attrib_ssprevname.value.trim());
+		var pub_id=objform.attrib_ssprevname_pubid.value.toUpperCase().trim();
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
   		}
 	}
 
 	function new_attrib_prevname(objform) {
-		var prev_name=escape(objform.attrib_prevname.value.strip());
-		var pub_id=objform.attrib_prevname_pubid.value.toUpperCase().strip() ;
+		var prev_name=escape(objform.attrib_prevname.value.trim());
+		var pub_id=objform.attrib_prevname_pubid.value.toUpperCase().trim() ;
 
 		if ((prev_name != '') && (pub_id != '')) {
 		  window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+prev_name+'&new_value='+pub_id+'&target_table=marker&info=namealias');
@@ -439,37 +439,37 @@ function jump(form_select){
 	}
 
 	function new_attrib_prtnseq() {
-		var seq_acc = document.updateps.attrib_prtn_seqacc.value.strip() ;
-		var pub_id = document.updateps.attrib_prtn_pubid.value.toUpperCase().strip() ;
+		var seq_acc = document.updateps.attrib_prtn_seqacc.value.trim() ;
+		var pub_id = document.updateps.attrib_prtn_pubid.value.toUpperCase().trim() ;
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
 	}
 	function new_attrib_seq() {
-		var seq_acc = document.updateseq.attrib_seq_acc.value.strip();
-		var pub_id = document.updateseq.attrib_seq_pubid.value.toUpperCase().strip();
-		var fdb_id = document.updateseq.attrib_seq_fdb.value.toUpperCase().strip();
+		var seq_acc = document.updateseq.attrib_seq_acc.value.trim();
+		var pub_id = document.updateseq.attrib_seq_pubid.value.toUpperCase().trim();
+		var fdb_id = document.updateseq.attrib_seq_fdb.value.toUpperCase().trim();
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc&xtra_param='+fdb_id);
 		}
 	}
 	function new_attrib_other() {
-		var seq_acc = document.updateother.attrib_seq_acc.value.strip();
-		var pub_id = document.updateother.attrib_seq_pubid.value.toUpperCase().strip();
+		var seq_acc = document.updateother.attrib_seq_acc.value.trim();
+		var pub_id = document.updateother.attrib_seq_pubid.value.toUpperCase().trim();
 		if((seq_acc != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+seq_acc+'&new_value='+pub_id+'&target_table=marker&info=seqacc');
 		}
 	}
 
 	function new_attrib_mutant(dataid, objform) {
-		var pub_id = objform.attrib_mutant_pubid.value.toUpperCase().strip();
+		var pub_id = objform.attrib_mutant_pubid.value.toUpperCase().trim();
 		if((dataid != '')&&(pub_id != '')) {
 			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=cloned_gene');
 		}
 	}
 
  	function new_attrib_markerseq(dataid) {
- 		var pub_id = document.newdata.mrkrview_seq_pubid.value.toUpperCase().strip();
+ 		var pub_id = document.newdata.mrkrview_seq_pubid.value.toUpperCase().trim();
  		if((dataid != '')&&(pub_id != '')) {
  			window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-do-markerupdate.apg&OID=$OID&attr=recattrib&attr_type=special-newattrib&old_value='+dataid+'&new_value='+pub_id+'&target_table=marker&info=marker_sequence');
  		}
@@ -956,7 +956,7 @@ Only need to update clones, etc., which should be the only things that will have
      <form>
      Add Target Gene:
      Symbol: <input type=text size=15 name=mrkr_abbrev id="targetGeneSymbol">
-     <input type=button value="Add it!" onClick="new_mrkrrel('1to2-knockdown reagent targets gene',this.form.mrkr_abbrev.value)">
+     <input type=button value="Add it!" onClick="new_mrkrrel('1to2-knockdown reagent targets gene',jQuery('#targetGeneSymbol').val())">
      <br>
      Add Reference:
      Gene symbol:<input type=text name=attrib_mrkr_abbrev id="targetGeneSymbol2">
@@ -2146,7 +2146,7 @@ union
              need to send values as parameters. There possibly is nicer
              solution...
  <?/MICOMMENT>
- <input type=button value="Add it!" onClick=new_mrkrrel(this.form.relship.options[this.form.relship.selectedIndex].value,this.form.mrkr_abbrev.value.strip());>
+ <input type=button value="Add it!" onClick=new_mrkrrel(this.form.relship.options[this.form.relship.selectedIndex].value,this.form.mrkr_abbrev.value.trim());>
 
   <?MIVAR COND="$(AND,$(>,$mrel_count,0),$(XST,$UPDATE))">
      <br><b>Add Reference:</b>
@@ -2759,50 +2759,38 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
 <script>
   jQuery(document).ready(function () {
 
-     jQuery( "#supplier" ).autocomplete({
-       source: '/action/marker/find-suppliers',
-       minLength: 2,
-       autoFocus: true,
-       select: function (event, ui) {
-         jQuery('#supplier').val(ui.item.label);
-         supplierToAddZdbID = ui.item.id;
-       }
-     });
+     $('#supplier').autocompletify('/action/marker/find-suppliers?term=%QUERY');
+     $('#supplier').bind('typeahead:selected', function(obj, datum, name) {
+          supplierToAddZdbID = datum.id;
+      });
 
     <?MIVAR>
             jQuery('#orthology').load('/action/marker/$OID/orthology?update=$UPDATE');
     <?/MIVAR>
 
-    jQuery( "#supplier" ).keypress(function(event) {
+    $( "#supplier" ).keypress(function(event) {
        if (event.keyCode == 13) {
 	 event.preventDefault();
 	 new_supplier(supplierToAddZdbID);
        }
     });
 
-    jQuery( "#targetGeneSymbol" ).autocomplete({
-      source: '/action/marker/find-targetGenes',
-      minLength: 3,
-      autoFocus: true,
-      select: function (event, ui) {
-          jQuery('#targetGeneSymbol').val(ui.item.label);
-      }
+    $('#targetGeneSymbol').autocompletify('/action/marker/find-targetGenes?term=%QUERY');
+    $('#targetGeneSymbol').bind('typeahead:selected', function(obj, datum, name) {
+        $('#targetGeneSymbol').val(datum.id);
     });
 
-    jQuery( "#targetGeneSymbol" ).keypress(function(event) {
+    $("#targetGeneSymbol" ).keypress(function(event) {
       if (event.keyCode == 13) {
          event.preventDefault();
          return false;
       }
     });
 
-    jQuery( "#targetGeneSymbol2" ).autocomplete({
-      source: '/action/marker/find-targetGenes',
-      minLength: 3,
-      autoFocus: true,
-      select: function (event, ui) {
-          jQuery('#targetGeneSymbol2').val(ui.item.label);
-      }
+  
+    $('#targetGeneSymbol2').autocompletify('/action/marker/find-targetGenes?term=%QUERY');
+    $('#targetGeneSymbol2').bind('typeahead:selected', function(obj, datum, name) {
+        $('#targetGeneSymbol2').val(datum.id);
     });
 
     jQuery( "#targetGeneSymbol2" ).keypress(function(event) {
