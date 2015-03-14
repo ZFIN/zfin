@@ -69,20 +69,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void checkMorpholinoRecords() {
-
-        //  ao term: optic placode
-        String name = "neural plate";
-        OntologyRepository ar = RepositoryFactory.getOntologyRepository();
-        GenericTerm ai = ar.getTermByName(name, Ontology.ANATOMY);
-        List<SequenceTargetingReagent> morphs =
-                getMutantRepository().getPhenotypeMorpholinos(ai, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        assertNotNull("morphs exist", morphs);
-
-    }
-
-
-    @Test
     public void checkGenotypeRecords() {
 
         String name = "ZDB-ALT-000921-6";
@@ -336,7 +322,7 @@ public class MutantRepositoryTest {
     public void getMorpholinosById() {
         //String genotypeID = "ZDB-GENO-030619-2";
         String moID = "ZDB-MRPHLNO-101014-10";
-        SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getMorpholinosById(moID);
+        SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getSequenceTargetingReagentByID(moID);
         assertNotNull(sequenceTargetingReagent);
         assertNotNull(sequenceTargetingReagent.getTargetGenes());
         assertEquals(2, sequenceTargetingReagent.getTargetGenes().size());

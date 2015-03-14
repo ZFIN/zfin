@@ -229,57 +229,14 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     /**
-     * Retrieve all morpholinos that have a phenotype annotation for a given
-     * anatomical structure. Gene expressions are not included in this list.
-     * ToDo: number of Records is not used yet until an overview page of all
-     * morpholinos is working.
-     *
-     * @param item            anatomical structure
-     * @param numberOfRecords number
-     * @return list of statistics
-     */
-    public List<SequenceTargetingReagent> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords) {
-        Session session = HibernateUtil.currentSession();
-
-        // This returns morpholinos by phenote annotations
-        StringBuilder hql = new StringBuilder("SELECT distinct genotype ");
-        hql.append(getMorpholinoGenotypeByAnatomyTermQueryBlock());
-        hql.append(" order by genotype.name ");
-        Query query = session.createQuery(hql.toString());
-        // ToDo: MOs are not yet linked to an overview page where all all them are listed.
-        //. Thus, we need to list them all here.
-//        query.setMaxResults(numberOfRecords);
-        query.setParameter("aoTerm", item);
-        query.setBoolean("isWildtype", true);
-
-        @SuppressWarnings("unchecked")
-        List<SequenceTargetingReagent> morphs = new ArrayList<SequenceTargetingReagent>();
-        morphs.addAll(getMorpholinoRecords(null));
-
-        //retrieve morpholinos annotated through the expression section
-/*
-        String expressionHql = "select distinct marker FROM  Marker marker, Experiment exp, " +
-                "      ExperimentCondition con, GenotypeExperiment geno, " +
-                "      ExpressionExperiment xpat, ExpressionResult result " +
-                "WHERE   " +
-                "       geno.experiment = exp AND " +
-                "       xpat.genotypeExperiment = geno AND " +
-                "       result.expressionExperiment = xpat AND " +
-                "       result.anatomyTerm = :aoZdbID AND " +
-                "       con.experiment = exp AND " +
-                "       marker = con.morpholino ";
-*/
-        return morphs;
-    }
-
-    /**
-     * Retrieve the genotype objects that are associated to a morpholino.
-     * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
+     * Retrieve the genotype experiment objects that are associated to a str.
+     * Disregard all experiments that have non-str conditions, such as chemical or physical
      * attached.
      *
-     * @param item       anatomy structure
-     * @param isWildtype wildtype of genotype
-     * @return list of genotype object
+     * @param item            anatomy structure
+     * @param isWildtype      wildtype of genotype
+     * @param numberOfRecords defines the first n records to retrieve
+     * @return list of genotype experiment object
      */
     public PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, int numberOfRecords) {
         PaginationBean bean = new PaginationBean();
@@ -341,58 +298,6 @@ public class HibernateMutantRepository implements MutantRepository {
         criteria.add(Restrictions.like("termName", "%" + name + "%"));
         criteria.add(Restrictions.eq("ontology", Ontology.QUALITY));
         return criteria.list();
-    }
-
-    private List<SequenceTargetingReagent> getMorpholinoRecords(List<Marker> markers) {
-        List<SequenceTargetingReagent> morphs = new ArrayList<SequenceTargetingReagent>(5);
-        if (markers != null) {
-            // ToDo: Integrate Morpholinos better in the Marker: Inherit from it an map it better in Hibernate.
-            for (Marker marker : markers) {
-                SequenceTargetingReagent morph = new SequenceTargetingReagent();
-                morph.setMarkerType(marker.getMarkerType());
-                morph.setAbbreviation(marker.getAbbreviation());
-                morph.setZdbID(marker.getZdbID());
-
-                Set<MarkerRelationship> rels = marker.getFirstMarkerRelationships();
-                List<Marker> targetGenes = new ArrayList<Marker>();
-                if (rels != null) {
-                    for (MarkerRelationship rel : rels) {
-                        if (rel.getType() == MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE)
-                            targetGenes.add(rel.getSecondMarker());
-                    }
-                    morph.setTargetGenes(targetGenes);
-                }
-                morphs.add(morph);
-            }
-        }
-        return morphs;
-    }
-
-    // ToDo: See FogBugz 1926: Include morpholinos from expression object.
-
-    private String getMorpholinosByAnatomyTermQueryBlock() {
-        String hql = "FROM  Marker marker, Experiment exp, " +
-                "      Phenotype pheno, ExperimentCondition con, GenotypeExperiment geno " +
-                "WHERE   " +
-                "       geno.experiment = exp AND " +
-                "       pheno.patoSuperTermzdbID = :aoZdbID AND " +
-                "       pheno.genotypeExperiment = geno AND " +
-                "       con.experiment = exp AND " +
-                "       marker = con.morpholino ";
-        return hql;
-    }
-
-    private String getMorpholinoGenotypeByAnatomyTermQueryBlock() {
-        String hql = "FROM  Genotype genotype, Experiment exp, " +
-                "      PhenotypeStatement pheno, ExperimentCondition con, GenotypeExperiment geno " +
-                "WHERE   " +
-                "       geno.experiment = exp AND " +
-                "       (pheno.entity.superterm = :aoTerm OR pheno.entity.subterm = :aoTerm ) AND " +
-                "       pheno.phenotypeExperiment.genotypeExperiment = geno AND " +
-                "       con.experiment = exp AND " +
-                "       geno.genotype = genotype AND" +
-                "       genotype.wildtype = :isWildtype";
-        return hql;
     }
 
     /**
@@ -766,7 +671,6 @@ public class HibernateMutantRepository implements MutantRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<MorpholinoSequence> getMorpholinosWithMarkerRelationships() {
-
 
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
@@ -1232,13 +1136,13 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     /**
-     * Retrieve Morpholinos by mo Ids
+     * Retrieve sequence targeting reagent by its id
      *
-     * @param moId MO id
-     * @return MO
+     * @param sequenceTargetingReagentID equence targeting reagent by its id
+     * @return SequenceTargetingReagent object
      */
-    public SequenceTargetingReagent getMorpholinosById(String moId) {
-        return (SequenceTargetingReagent) HibernateUtil.currentSession().get(SequenceTargetingReagent.class, moId);
+    public SequenceTargetingReagent getSequenceTargetingReagentByID(String sequenceTargetingReagentID) {
+        return (SequenceTargetingReagent) HibernateUtil.currentSession().get(SequenceTargetingReagent.class, sequenceTargetingReagentID);
     }
 
     /**
@@ -1399,18 +1303,6 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<PhenotypeStatement> getPhenotypeStatement(Genotype genotype, boolean includeSubstructures) {
         return getPhenotypeStatement(null, genotype, includeSubstructures);
-    }
-
-    public List<Marker> getMorpholinos(List<String> genotypeExperimentIDs) {
-        String hql = "select expCond.morpholino from ExperimentCondition expCond, GenotypeExperiment genoExp, Experiment exp " +
-                "where genoExp.zdbID in (:genoxIDs)" +
-                "and genoExp.experiment=exp " +
-                "and exp.experimentConditions=expCond ";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameterList("genoxIDs", genotypeExperimentIDs);
-        return query.list();
-
-
     }
 
     public List<Genotype> getGenotypes(List<String> genotypeExperimentIDs) {

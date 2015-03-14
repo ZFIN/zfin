@@ -193,18 +193,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getMorpholinos() {
-        //  locus coeruleus
-        String aoZdbID = "ZDB-ANAT-011113-460";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        List<SequenceTargetingReagent> morphs = mutantRepository.getPhenotypeMorpholinos(item, 4);
-        assertTrue(morphs != null);
-//        assertEquals("13 figures", 3, morphs.size());
-
-    }
-
-    @Test
     public void getFiguresForProbesAndPublication() {
         //  probe eu815
         String probeZdbID = "ZDB-EST-060130-371";
@@ -591,7 +579,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAccessionForAssociatedEst() {
         String zdbID = "ZDB-PUB-990507-16";
-        // kif11 has one EST as a probe 
+        // kif11 has one EST as a probe
         String geneID = "ZDB-GENE-020426-1";
 
         List<MarkerDBLink> cloneDBLinks = publicationRepository.getDBLinksForCloneByGene(zdbID, geneID);

@@ -57,17 +57,6 @@ public interface MutantRepository {
 
     int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(GenericTerm item, Genotype genotype);
 
-
-    /**
-     * Retrieve all genotypes that have a phenotype annotation for a given
-     * anatomical structure. Gene expressions are not included in this list.
-     *
-     * @param item            anatomical structure
-     * @param numberOfRecords number
-     * @return list of statistics
-     */
-    List<SequenceTargetingReagent> getPhenotypeMorpholinos(GenericTerm item, int numberOfRecords);
-
     /**
      * Retrieve a genotype,feature and marker object by PK.
      *
@@ -96,38 +85,38 @@ public interface MutantRepository {
 
 
     /**
-     * Retrieve the genotype objects that are associated to a morpholino.
-     * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
+     * Retrieve the genotype experiment objects that are associated to a str.
+     * Disregard all experiments that have non-str conditions, such as chemical or physical
      * attached.
      *
      * @param item            anatomy structure
      * @param isWildtype      wildtype of genotype
      * @param numberOfRecords defines the first n records to retrieve
-     * @return list of genotype object
+     * @return list of genotype experiment object
      */
     PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, int numberOfRecords);
 
     /**
-     * Retrieve all genotype objects that are associated to a morpholino.
-     * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
+     * Retrieve all genotype experiment objects that are associated to a str.
+     * Disregard all experiments that have non-str conditions, such as chemical or physical
      * attached.
      *
      * @param item       anatomy structure
      * @param isWildtype wildtype of genotype
-     * @return list of genotype object
+     * @return list of genotype experiment object
      */
     List<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype);
 
     /**
-     * Retrieve genotype objects that are associated to a morpholino within the range specified
+     * Retrieve genotype experiment objects that are associated to a str within the range specified
      * in the pagination bean object.
-     * Disregard all experiments that have non-morpholino conditions, such as chemical or physical
+     * Disregard all experiments that have non-str conditions, such as chemical or physical
      * attached.
      *
      * @param item       anatomy structure
      * @param isWildtype wildtype of genotype
      * @param bean       PaginationBean
-     * @return list of genotype object
+     * @return list of genotype experiment object
      */
     PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, PaginationBean bean);
 
@@ -312,12 +301,12 @@ public interface MutantRepository {
     List<Publication> getFishAttributionList(List<String> genotypeExperimentIDs);
 
     /**
-     * Retrieve Morpholinos by mo Ids
+     * Retrieve sequence targeting reagent by its id
      *
-     * @param moIds MO ids
-     * @return list of MOs
+     * @param sequenceTargetingReagentID equence targeting reagent by its id
+     * @return SequenceTargetingReagent object
      */
-    SequenceTargetingReagent getMorpholinosById(String moIds);
+    SequenceTargetingReagent getSequenceTargetingReagentByID(String sequenceTargetingReagentID);
 
     /**
      * Retrieve all wildtype genotypes.

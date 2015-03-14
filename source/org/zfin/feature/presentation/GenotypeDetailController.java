@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.fish.presentation.Fish;
@@ -44,7 +43,7 @@ public class GenotypeDetailController {
             Genotype genotype = mutantRepository.getGenotypeByID(geno.getID());
             form.setGenotype(genotype);
             retrieveGenotypeAndFeatureData(form, genotype);
-            retrieveMorpholinoData(form, fish);
+            retrieveSequenceTargetingReagentData(form, fish);
             model.addAttribute(LookupStrings.FORM_BEAN, form);
             String genotypeName = genotype.getName();
             genotypeName = genotypeName.replaceAll("<sup>", "^");
@@ -157,21 +156,21 @@ public class GenotypeDetailController {
         form.setGenotypeStatistics(genoStat);
     }
 
-    private void retrieveMorpholinoData(GenotypeBean form, Fish fish) {
+    private void retrieveSequenceTargetingReagentData(GenotypeBean form, Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return;
-        form.setSequenceTargetingReagents(getMorpholinos(fish));
+        form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 
-    private List<SequenceTargetingReagent> getMorpholinos(Fish fish) {
+    private List<SequenceTargetingReagent> getSequenceTargetingReagent(Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return null;
-        Set<String> moIds = new HashSet<>(fish.getMorpholinos().size());
-        for (ZfinEntity morpholino : fish.getMorpholinos())
-            moIds.add(morpholino.getID());
+        Set<String> strIDs = new HashSet<>(fish.getMorpholinos().size());
+        for (ZfinEntity str : fish.getMorpholinos())
+            strIDs.add(str.getID());
         List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<>(2);
-        for (String moID : moIds)
-            sequenceTargetingReagents.add(getMutantRepository().getMorpholinosById(moID));
+        for (String strID : strIDs)
+            sequenceTargetingReagents.add(getMutantRepository().getSequenceTargetingReagentByID(strID));
         return sequenceTargetingReagents;
     }
 

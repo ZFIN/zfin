@@ -56,15 +56,15 @@ public class FishDetailController {
         Fish fish = RepositoryFactory.getFishRepository().getFish(fishID);
         if (fish == null)    {
             String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(fishID);
-           if (newZdbID != null) {
-            LOG.debug("found a replaced zdbID for: " + fishID + "->" + newZdbID);
+            if (newZdbID != null) {
+                LOG.debug("found a replaced zdbID for: " + fishID + "->" + newZdbID);
 
-            return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
-           }
-               else{
-               response.setStatus(HttpStatus.NOT_FOUND.value());
-            return LookupStrings.idNotFound(model, fishID);
-           }
+                return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+            }
+            else{
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return LookupStrings.idNotFound(model, fishID);
+            }
         }
         if (fish.getGenotype() != null && fish.getMorpholinos().size() == 0) {
             return genotypeDetailController.getGenotypeDetail(fish.getGenotypeID(), model);
@@ -177,7 +177,7 @@ public class FishDetailController {
             form.setGenotype(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));
         addExpressionSummaryToForm(model, fishID);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute("morpholinos", getMorpholinos(fish));
+        model.addAttribute("morpholinos", getSequenceTargetingReagent(fish));
         model.addAttribute(fish);
         String fishName = fish.getName();
         fishName = fishName.replaceAll("<sup>", "^");
@@ -190,18 +190,18 @@ public class FishDetailController {
     private void retrieveSTRData(FishBean form, Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return;
-        form.setSequenceTargetingReagents(getMorpholinos(fish));
+        form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 
-    private List<SequenceTargetingReagent> getMorpholinos(Fish fish) {
+    private List<SequenceTargetingReagent> getSequenceTargetingReagent(Fish fish) {
         if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
             return null;
-        Set<String> moIds = new HashSet<String>(fish.getMorpholinos().size());
-        for (ZfinEntity morpholino : fish.getMorpholinos())
-            moIds.add(morpholino.getID());
+        Set<String> strIDs = new HashSet<String>(fish.getMorpholinos().size());
+        for (ZfinEntity str : fish.getMorpholinos())
+            strIDs.add(str.getID());
         List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(2);
-        for (String moID : moIds)
-            sequenceTargetingReagents.add(getMutantRepository().getMorpholinosById(moID));
+        for (String moID : strIDs)
+            sequenceTargetingReagents.add(getMutantRepository().getSequenceTargetingReagentByID(moID));
         return sequenceTargetingReagents;
     }
 
@@ -255,7 +255,4 @@ public class FishDetailController {
         }
     }
 }
-
-
-
 
