@@ -68,7 +68,7 @@
         <th width="20%">Reagent</th>
         <th>Targeted Gene</th>
     </tr>
-    <c:if test="${fn:length(formBean.fish.morpholinos) ne null && fn:length(formBean.fish.morpholinos) > 0}">
+    <c:if test="${fn:length(formBean.fish.sequenceTargetingReagents) ne null && fn:length(formBean.fish.sequenceTargetingReagents) > 0}">
         <c:forEach var="morpholino" items="${formBean.sequenceTargetingReagents}" varStatus="loop">
             <jsp:useBean id="morpholino" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
             <tr>

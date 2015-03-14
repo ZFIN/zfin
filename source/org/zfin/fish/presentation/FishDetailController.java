@@ -66,7 +66,7 @@ public class FishDetailController {
                 return LookupStrings.idNotFound(model, fishID);
             }
         }
-        if (fish.getGenotype() != null && fish.getMorpholinos().size() == 0) {
+        if (fish.getGenotype() != null && fish.getSequenceTargetingReagents().size() == 0) {
             return genotypeDetailController.getGenotypeDetail(fish.getGenotypeID(), model);
             //return genotypeDetailController.getGenotypePopup(fish.getGenotypeID(), model);
         }
@@ -139,7 +139,7 @@ public class FishDetailController {
         if (fish == null)
             return LookupStrings.idNotFound(model, fishID);
 
-        if (fish.getGenotypeExperimentIDs() != null && fish.getGenotypeExperimentIDs().size() == 1 && fish.getMorpholinos().size() == 0) {
+        if (fish.getGenotypeExperimentIDs() != null && fish.getGenotypeExperimentIDs().size() == 1 && fish.getSequenceTargetingReagents().size() == 0) {
             String genotypeExperimentIDsString = fish.getGenotypeExperimentIDs().get(0);
             GenotypeExperiment genotypeExperiment = getMutantRepository().getGenotypeExperiment(genotypeExperimentIDsString);
             return genotypeDetailController.getAllPhenotypesForGenotype(genotypeExperiment.getGenotype().getZdbID(), model);
@@ -165,7 +165,7 @@ public class FishDetailController {
         if (fish == null)
             return LookupStrings.idNotFound(model, fishID);
 
-        if (fish.getGenotypeExperimentIDs() != null && fish.getGenotypeExperimentIDs().size() == 1 && fish.getMorpholinos().size() == 0) {
+        if (fish.getGenotypeExperimentIDs() != null && fish.getGenotypeExperimentIDs().size() == 1 && fish.getSequenceTargetingReagents().size() == 0) {
             String genotypeExperimentIDsString = fish.getGenotypeExperimentIDs().get(0);
             GenotypeExperiment genotypeExperiment = getMutantRepository().getGenotypeExperiment(genotypeExperimentIDsString);
             return genotypeDetailController.getAllExpressionsPerGenotype(genotypeExperiment.getGenotype().getZdbID(), model);
@@ -177,7 +177,7 @@ public class FishDetailController {
             form.setGenotype(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));
         addExpressionSummaryToForm(model, fishID);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute("morpholinos", getSequenceTargetingReagent(fish));
+        model.addAttribute("sequenceTargetingReagents", getSequenceTargetingReagent(fish));
         model.addAttribute(fish);
         String fishName = fish.getName();
         fishName = fishName.replaceAll("<sup>", "^");
@@ -188,16 +188,16 @@ public class FishDetailController {
     }
 
     private void retrieveSTRData(FishBean form, Fish fish) {
-        if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
+        if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
             return;
         form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 
     private List<SequenceTargetingReagent> getSequenceTargetingReagent(Fish fish) {
-        if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
+        if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
             return null;
-        Set<String> strIDs = new HashSet<String>(fish.getMorpholinos().size());
-        for (ZfinEntity str : fish.getMorpholinos())
+        Set<String> strIDs = new HashSet<String>(fish.getSequenceTargetingReagents().size());
+        for (ZfinEntity str : fish.getSequenceTargetingReagents())
             strIDs.add(str.getID());
         List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(2);
         for (String moID : strIDs)

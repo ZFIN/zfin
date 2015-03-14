@@ -248,7 +248,7 @@ public class FishMatchingService {
         if (geneNameField == null || StringUtils.isEmpty(geneNameField))
             return;
         geneNameField = geneNameField.toLowerCase().trim();
-        List<ZfinEntity> genes = fish.getMorpholinos();
+        List<ZfinEntity> genes = fish.getSequenceTargetingReagents();
         if (CollectionUtils.isNotEmpty(genes)) {
             // the loop exists for the first match as this is enough!
             for (ZfinEntity entity : genes) {

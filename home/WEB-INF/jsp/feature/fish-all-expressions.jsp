@@ -24,12 +24,12 @@
             <zfin:link entity="${formBean.genotype}"/>
         </td>
     </tr>
-    <c:if test="${!empty morpholinos}">
+    <c:if test="${!empty sequenceTargetingReagents}">
         <tr>
-            <th>Morpholinos:</th>
+            <th>Knockdown Reagents:</th>
             <td>
-                <c:forEach var="morpholino" items="${morpholinos}" varStatus="index">
-                    <zfin:link entity="${morpholino}"/><c:if test="${!index.last}">, </c:if>
+                <c:forEach var="sequenceTargetingReagent" items="${sequenceTargetingReagents}" varStatus="index">
+                    <zfin:link entity="${sequenceTargetingReagent}"/><c:if test="${!index.last}">, </c:if>
 
                 </c:forEach>
             </td>

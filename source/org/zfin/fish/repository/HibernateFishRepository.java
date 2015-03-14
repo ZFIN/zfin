@@ -388,7 +388,7 @@ public class HibernateFishRepository implements FishRepository {
         singleFish.setGeneOrFeatureText(annotation.getGeneOrFeatureText());
         singleFish.setScoringText(annotation.getScoringText());
         //
-        singleFish.setMorpholinos(getMorpholinos(annotation));
+        singleFish.setSequenceTargetingReagents(getMorpholinos(annotation));
         return singleFish;
     }
 

@@ -38,7 +38,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
         assertNotNull(result);
         assertTrue(result.getResults().size() > 0);
-        
+
     }
 
     @Test
@@ -104,7 +104,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
 
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
         for (Fish fish : result.getResults()) {
-            assertTrue(fish.getName() + " should have more than 2 affectors", (fish.getFeatures().size() + fish.getMorpholinos().size()) > 1);
+            assertTrue(fish.getName() + " should have more than 2 affectors", (fish.getFeatures().size() + fish.getSequenceTargetingReagents().size()) > 1);
         }
 
     }
@@ -122,7 +122,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
 
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
         for (Fish fish : result.getResults()) {
-            assertTrue(fish.getName() + " should have no morpolinos", (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0));
+            assertTrue(fish.getName() + " should have no morpolinos", (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0));
         }
 
     }
@@ -140,7 +140,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
 
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
         for (Fish fish : result.getResults()) {
-            assertTrue(fish.getName() + " should have morpolinos", fish.getMorpholinos().size() > 0);
+            assertTrue(fish.getName() + " should have morpolinos", fish.getSequenceTargetingReagents().size() > 0);
         }
 
     }

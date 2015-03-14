@@ -21,7 +21,7 @@ public class Fish extends ZfinEntity {
     private List<String> genotypeExperimentIDs;
     private String genotypeExperimentIDsString;
     private List<ZfinEntity> features;
-    private List<ZfinEntity> morpholinos;
+    private List<ZfinEntity> sequenceTargetingReagents;
     private List<ZfinEntity> affectedGenes;
     private List<FeatureGene> featureGenes = new ArrayList<FeatureGene>();
     private int phenotypeFigureCount;
@@ -78,23 +78,23 @@ public class Fish extends ZfinEntity {
         this.features = features;
     }
 
-    public List<ZfinEntity> getMorpholinos() {
+    public List<ZfinEntity> getSequenceTargetingReagents() {
             if (CollectionUtils.isEmpty(featureGenes))
             return null;
 
-        if (morpholinos != null)
-            return morpholinos;
+        if (sequenceTargetingReagents != null)
+            return sequenceTargetingReagents;
 
-        morpholinos = new ArrayList<ZfinEntity>(featureGenes.size());
+        sequenceTargetingReagents = new ArrayList<ZfinEntity>(featureGenes.size());
         for (FeatureGene featureGene : featureGenes) {
             if (featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO) || featureGene.getMutationTypeDisplay().equals(MutationType.TALEN) || featureGene.getMutationTypeDisplay().equals(MutationType.CRISPR))
-                morpholinos.add(featureGene.getFeature());
+                sequenceTargetingReagents.add(featureGene.getFeature());
         }
-        return morpholinos;
+        return sequenceTargetingReagents;
     }
 
-    public void setMorpholinos(List<ZfinEntity> morpholinos) {
-        this.morpholinos = morpholinos;
+    public void setSequenceTargetingReagents(List<ZfinEntity> sequenceTargetingReagents) {
+        this.sequenceTargetingReagents = sequenceTargetingReagents;
     }
 
     public List<ZfinEntity> getAffectedGenes() {

@@ -157,16 +157,16 @@ public class GenotypeDetailController {
     }
 
     private void retrieveSequenceTargetingReagentData(GenotypeBean form, Fish fish) {
-        if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
+        if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
             return;
         form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 
     private List<SequenceTargetingReagent> getSequenceTargetingReagent(Fish fish) {
-        if (fish.getMorpholinos() == null || fish.getMorpholinos().size() == 0)
+        if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
             return null;
-        Set<String> strIDs = new HashSet<>(fish.getMorpholinos().size());
-        for (ZfinEntity str : fish.getMorpholinos())
+        Set<String> strIDs = new HashSet<>(fish.getSequenceTargetingReagents().size());
+        for (ZfinEntity str : fish.getSequenceTargetingReagents())
             strIDs.add(str.getID());
         List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<>(2);
         for (String strID : strIDs)
