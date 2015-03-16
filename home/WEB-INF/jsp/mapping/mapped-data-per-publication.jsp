@@ -18,13 +18,15 @@
     <caption>Linkage Memberships</caption>
     <tr>
         <th width="100"> Entity Type</th>
-        <th> Entity Symbol</th>
+        <th width="200"> Entity Symbol</th>
+        <th> Location</th>
     </tr>
-    <c:forEach var="entity" items="${mappedEntities}">
-        <tr>
+    <c:forEach var="entity" items="${mappedEntities}" varStatus="loop">
+        <zfin:alternating-tr loopName="loop">
             <td>${entity.entityType}</td>
             <td><zfin:link entity="${entity}"/></td>
-        </tr>
+            <td><zfin2:displayLocation entity="${entity}"/></td>
+        </zfin:alternating-tr>
     </c:forEach>
 </table>
 
