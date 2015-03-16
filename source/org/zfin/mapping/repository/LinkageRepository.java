@@ -1,9 +1,11 @@
 package org.zfin.mapping.repository;
 
 import org.zfin.feature.Feature;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -175,4 +177,6 @@ public interface LinkageRepository {
     void saveLinkageComment(Linkage linkage, String newComment);
 
     boolean hasGenomeLocation(Marker gene, GenomeLocation.Source source);
+
+    List<EntityZdbID> getMappedEntitiesByPub(Publication publication);
 }

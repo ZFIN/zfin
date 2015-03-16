@@ -579,7 +579,7 @@ select count(distinct lms_member_1_zdb_id)
   <?/MISQL>
 
   <?MIVAR COND="$(>,$1,0)">
-  <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markerselect.apg&pubId=$OID&type=pub_mapped">Mapping Data</a> &nbsp; ($(FIX,$1))
+  <li><a href="/action/mapping/publication/$OID">Mapping Data</a> &nbsp; ($(FIX,$1))
   <?/MIVAR>
 
 

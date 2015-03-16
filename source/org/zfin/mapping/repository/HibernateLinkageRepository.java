@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.*;
@@ -15,6 +16,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.publication.Publication;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -328,6 +330,35 @@ public class HibernateLinkageRepository implements LinkageRepository {
         query.setParameter("source", source);
         List list = query.list();
         return CollectionUtils.isNotEmpty(list);
+    }
+
+    @Override
+    public List<EntityZdbID> getMappedEntitiesByPub(Publication publication) {
+        Set<EntityZdbID> list = new HashSet<>();
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from LinkageMember where linkage.publication = :publication ");
+        query.setParameter("publication", publication);
+        List<LinkageMember> linkageMemberList = query.list();
+        for (LinkageMember linkageMember : linkageMemberList) {
+            list.add(linkageMember.getEntityOne());
+        }
+        Query query2 = HibernateUtil.currentSession().createQuery(
+                "from SingletonLinkage where linkage.publication = :publication ");
+        query2.setParameter("publication", publication);
+        List<SingletonLinkage> linkageMemberListSingle = query2.list();
+        for (SingletonLinkage linkage : linkageMemberListSingle) {
+            list.add(linkage.getEntity());
+        }
+        List<EntityZdbID> uniqueList = new ArrayList<>(list);
+        Collections.sort(uniqueList, new Comparator<EntityZdbID>() {
+            @Override
+            public int compare(EntityZdbID o1, EntityZdbID o2) {
+                if (!o1.getEntityType().equals(o2.getEntityType()))
+                    return o1.getEntityType().compareTo(o2.getEntityType());
+                return o1.getAbbreviationOrder().compareTo(o2.getAbbreviationOrder());
+            }
+        });
+        return uniqueList;
     }
 
     @Override

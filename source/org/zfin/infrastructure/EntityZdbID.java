@@ -3,7 +3,7 @@ package org.zfin.infrastructure;
 /**
  * General ZDB ID domain object.
  */
-public interface EntityZdbID extends ZdbID{
+public interface EntityZdbID extends ZdbID, Comparable{
 
     public String getAbbreviation();
 

@@ -47,8 +47,22 @@
             <generator class="native"/>
         </id>
 
-        <property name="zdbID" column="lsingle_member_zdb_id"/>
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(lsingle_member_zdb_id)
+                                  WHEN 'ALT' THEN       'Feature'
+                                  ELSE                  'Marker '
+                                  END)"/>
+
+        <property name="zdbID" column="lsingle_member_zdb_id"  insert="false" update="false"/>
         <many-to-one name="linkage" column="lsingle_lnkg_zdb_id"/>
+
+        <subclass name="FeatureSingletonLinkage" discriminator-value="Feature">
+            <many-to-one name="feature" column="lsingle_member_zdb_id"/>
+        </subclass>
+
+        <subclass name="MarkerSingletonLinkage" discriminator-value="Marker ">
+            <many-to-one name="marker" column="lsingle_member_zdb_id"/>
+        </subclass>
 
     </class>
 
