@@ -1,4 +1,4 @@
-select zdb_id, entry_time
+select zdb_id, entry_time, b.mrkr_zdb_id, b.mrkr_abbrev, a.mrkr_zdb_id, a.mrkr_abbrev
       from publication,record_attribution,
                         marker a, marker b,marker_relationship
             where recattrib_source_zdb_id = zdb_id
@@ -24,7 +24,8 @@ and not exists (Select 'x' from data_reporting
     	       	       where dr_data_zdb_id = zdb_id)
 ;
 
-insert into data_reporting (dr_data_zdb_id, dr_report_generated_date, dr_report_name)
+select * From curation
+--insert into data_reporting (dr_data_zdb_id, dr_report_generated_date, dr_report_name)
   select distinct zdb_id, current year to second, "Check-Missed-Pheno-Pubs"
     from publication,record_attribution,
                         marker a, marker b,marker_relationship
