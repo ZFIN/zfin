@@ -62,7 +62,7 @@ public class HibernateFishRepository implements FishRepository {
 //            annotation.setGenotypeID((String) annotationObj[1]);
             annotation.setUniqueName((String) annotationObj[1]);
             annotation.setGenotypeExperimentIds((String) annotationObj[8]);
-            annotation.setMorpholinoGroupName((String) annotationObj[2]);
+            annotation.setSequenceTargetingReagentGroupName((String) annotationObj[2]);
             annotation.setFeatureGroupName((String) annotationObj[3]);
             annotation.setPhenotypeFigureCount((Integer) annotationObj[4]);
             annotation.setExpressionFigureCount((Integer) annotationObj[10]);
@@ -569,13 +569,13 @@ public class HibernateFishRepository implements FishRepository {
      * @return set of morpholino entities
      */
     public List<ZfinEntity> getMorpholinos(FishAnnotation fishAnnotation) {
-        if (fishAnnotation.getMorpholinoGroupName() == null)
+        if (fishAnnotation.getSequenceTargetingReagentGroupName() == null)
             return null;
         Session session = HibernateUtil.currentSession();
         String sqlFeatures = "select distinct strgm_member_name, strgm_member_id from str_group_member, str_group " +
                 "where strgm_group_id = strg_group_pk_id and strg_group_name = :morphoIds ";
         Query sqlQuery = session.createSQLQuery(sqlFeatures);
-        sqlQuery.setParameter("morphoIds", fishAnnotation.getMorpholinoGroupName());
+        sqlQuery.setParameter("morphoIds", fishAnnotation.getSequenceTargetingReagentGroupName());
         List<Object[]> objs = sqlQuery.list();
         if (objs == null)
             return null;

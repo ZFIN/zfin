@@ -9,7 +9,7 @@ public class FunctionalAnnotation {
     private String genotypeID;
     private String genotypeExperimentName;
     private String featureGroupName;
-    private String morpholinoGroupName;
+    private String sequenceTargetingReagentGroupName;
     private String name;
     private String phenotypeFigureGroupName;
     private int phenotypeFigureCount;
@@ -51,12 +51,12 @@ public class FunctionalAnnotation {
         this.featureGroupName = featureGroupName;
     }
 
-    public String getMorpholinoGroupName() {
-        return morpholinoGroupName;
+    public String getSequenceTargetingReagentGroupName() {
+        return sequenceTargetingReagentGroupName;
     }
 
-    public void setMorpholinoGroupName(String morpholinoGroupName) {
-        this.morpholinoGroupName = morpholinoGroupName;
+    public void setSequenceTargetingReagentGroupName(String sequenceTargetingReagentGroupName) {
+        this.sequenceTargetingReagentGroupName = sequenceTargetingReagentGroupName;
     }
 
     public String getName() {

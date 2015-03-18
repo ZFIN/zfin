@@ -2,8 +2,6 @@ package org.zfin.fish;
 
 import org.zfin.mutant.Genotype;
 
-import java.util.Set;
-
 /**
  * ToDo: ADD DOCUMENTATION!
  */
@@ -13,7 +11,7 @@ public class FishAnnotation {
     private String genotypeID;
     private String genotypeExperimentIds;
     private String featureGroupName;
-    private String morpholinoGroupName;
+    private String sequenceTargetingReagentGroupName;
     private String name;
     private String uniqueName;
     private String phenotypeFigureGroupName;
@@ -66,12 +64,12 @@ public class FishAnnotation {
         this.featureGroupName = featureGroupName;
     }
 
-    public String getMorpholinoGroupName() {
-        return morpholinoGroupName;
+    public String getSequenceTargetingReagentGroupName() {
+        return sequenceTargetingReagentGroupName;
     }
 
-    public void setMorpholinoGroupName(String morpholinoGroupName) {
-        this.morpholinoGroupName = morpholinoGroupName;
+    public void setSequenceTargetingReagentGroupName(String sequenceTargetingReagentGroupName) {
+        this.sequenceTargetingReagentGroupName = sequenceTargetingReagentGroupName;
     }
 
     public String getName() {
