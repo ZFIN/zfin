@@ -24,8 +24,7 @@ and not exists (Select 'x' from data_reporting
     	       	       where dr_data_zdb_id = zdb_id)
 ;
 
-select * From curation
---insert into data_reporting (dr_data_zdb_id, dr_report_generated_date, dr_report_name)
+insert into data_reporting (dr_data_zdb_id, dr_report_generated_date, dr_report_name)
   select distinct zdb_id, current year to second, "Check-Missed-Pheno-Pubs"
     from publication,record_attribution,
                         marker a, marker b,marker_relationship
