@@ -180,7 +180,9 @@ public class MappingDetailController {
             model.addAttribute("singleton", getLinkageRepository().getSingletonLinkage(feature));
             List<SingletonLinkage> singletonLinkage = getLinkageRepository().getSingletonLinkage(feature);
             if (singletonLinkage != null) {
-                putInfoOnModel(model, "singletonFeatureList", singletonLinkage);
+                Map<Feature, List<SingletonLinkage>> map = new HashMap<>();
+                map.put(feature, singletonLinkage);
+                model.addAttribute("singletonFeatureMapList", map);
                 isOtherMappingDetail = true;
             }
 

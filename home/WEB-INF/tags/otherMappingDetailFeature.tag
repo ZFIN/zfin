@@ -1,16 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:if test="${isFeature && (featureHasMappingInfo ne 'true' || deletionMarkersPresent)}">
-    <c:if test="${not pureFeature}">
-        <table class="summary rowstripes">
-            <tr>
-                <th>
-                    Genomic Feature
-                    <zfin:link entity="${feature}"/> is an allele of <zfin:link entity="${marker}"/>
-                </th>
-            </tr>
-        </table>
-    </c:if>
     <c:if test="${markerPresentList.size() > 0 || markerMissingList.size() > 0}">
         <table class="summary rowstripes">
             <tr>
