@@ -1,6 +1,7 @@
 package org.zfin.mapping.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -285,6 +286,7 @@ public class MappingDetailController {
         List<Feature> featureList = getFeatureRepository().getFeaturesByMarker(marker);
         List<List<MappedMarker>> mappedFeatureMarkers = null;
         List<List<LinkageMember>> linkageFeatureList = null;
+        Map<Feature, List<SingletonLinkage>> singletonLinkageMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(featureList)) {
             mappedFeatureMarkers = new ArrayList<>(featureList.size());
             linkageFeatureList = new ArrayList<>(featureList.size());
@@ -295,10 +297,19 @@ public class MappingDetailController {
                 List<LinkageMember> linkageFeatures = getLinkageRepository().getLinkagesForFeature(feat);
                 if (CollectionUtils.isNotEmpty(linkageFeatures))
                     linkageFeatureList.add(linkageFeatures);
+
+                List<SingletonLinkage> singletonLinkage = getLinkageRepository().getSingletonLinkage(feat);
+                if (CollectionUtils.isNotEmpty(singletonLinkage))
+                    singletonLinkageMap.put(feat, singletonLinkage);
             }
         }
+        model.addAttribute("allelicFeatureList", featureList);
         model.addAttribute("mappedFeatureMarkers", mappedFeatureMarkers);
         model.addAttribute("linkageFeatureList", linkageFeatureList);
+        if (MapUtils.isNotEmpty(singletonLinkageMap)) {
+            model.addAttribute("singletonFeatureMapList", singletonLinkageMap);
+            return true;
+        }
         if (CollectionUtils.isNotEmpty(mappedFeatureMarkers))
             return true;
         if (CollectionUtils.isNotEmpty(linkageFeatureList))

@@ -118,7 +118,7 @@
 
 <zfin2:otherMappingDetailFeature/>
 
-<zfin2:showSingletonInfo singleLinkageList="${singletonFeatureList}"/>
+<zfin2:showSingletonInfoWithFeature singleLinkageMap="${singletonFeatureMapList}"/>
 
 <c:if test="${primerSetList.size() >=1}">
     <table class="summary rowstripes">
