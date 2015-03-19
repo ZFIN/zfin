@@ -239,17 +239,17 @@ public interface PublicationRepository extends PaginationParameter {
     boolean updatePublications(List<Publication> publicationList);
 
     /**
-     * Retrieve list of figures for a given morpholino and anatomy term
+     * Retrieve list of figures for a given SequenceTargetingReagent and anatomy term
      *
-     * @param sequenceTargetingReagent morpholino
+     * @param sequenceTargetingReagent SequenceTargetingReagent
      * @param term       anatomy term
      * @return list of figures.
      */
-    List<Figure> getFiguresByMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term);
+    List<Figure> getFiguresBySequenceTargetingReagentAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term);
 
     /**
      * Retrieve list of figures for a given genotype and anatomy term
-     * for mutant genotypes excluding morpholinos.
+     * for mutant genotypes excluding SequenceTargetingReagent.
      *
      * @param geno genotype
      * @param term anatomy term
@@ -259,7 +259,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     /**
      * Retrieve list of figures for a given genotype and anatomy term
-     * for mutant genotypes excluding morpholinos.
+     * for mutant genotypes excluding SequenceTargetingReagent.
      *
      * @param geno genotype
      * @param term anatomy term
@@ -270,8 +270,6 @@ public interface PublicationRepository extends PaginationParameter {
     PaginationResult<Figure> getFiguresByGeno(Genotype geno);
 
     PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
-
-    PaginationResult<Figure> getFiguresByGenoMorph(Genotype geno);
 
     PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype);
 
@@ -301,15 +299,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @return Number of publications with figures per genotype and anatomy
      */
     int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, GenericTerm aoTerm);
-
-    /**
-     * Retrieve the publications for the figures for a given morpholino and anatomy term
-     *
-     * @param sequenceTargetingReagent Morpholino
-     * @param aoTerm     anatomy Term
-     * @return List of publications
-     */
-    List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm aoTerm);
 
     /**
      * Retrieve figures for a given gene and anatomy term.

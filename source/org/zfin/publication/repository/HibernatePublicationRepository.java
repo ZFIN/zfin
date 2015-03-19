@@ -590,7 +590,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresByMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term) {
+    public List<Figure> getFiguresBySequenceTargetingReagentAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term) {
         Session session = HibernateUtil.currentSession();
 
         StringBuilder hql = new StringBuilder("select figure ");
@@ -685,32 +685,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
         return paginationResult;
     }
-
-    public PaginationResult<Figure> getFiguresByGenoMorph(Genotype geno) {
-        Session session = HibernateUtil.currentSession();
-
-        /*String hql = "select distinct figure from Figure figure, Phenotype pheno, " +
-  "GenotypeExperiment exp, Genotype geno, Marker marker, Experiment experiment, ExperimentCondition con " +
-  "where geno.zdbID = :genoID AND " +
-  "      exp.genotype = geno AND " +
-  "      pheno.genotypeExperiment = exp  AND " +
-  "      exp.experiment =experiment AND " +
-  "      con.experiment=experiment AND " +
-  "      marker= con.morpholino AND " +
-  "      figure member of pheno.figures  " +
-  "order by figure.orderingLabel    ";*/
-        String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +
-                "where genofig.genotype.zdbID = :genoID AND " +
-                "      genofig.figure.zdbID=figure.id AND " +
-                " genofig.morpholino.zdbID is not null " +
-                "order by figure.orderingLabel    ";
-
-        Query query = session.createQuery(hql);
-        query.setString("genoID", geno.getZdbID());
-        PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
-        return paginationResult;
-    }
-
 
     public PaginationResult<Figure> getFiguresByGenoExp(Genotype geno) {
         Session session = HibernateUtil.currentSession();
@@ -836,26 +810,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameter("aoTerm", aoTerm);
 
         return ((Number) (query.uniqueResult())).intValue();
-    }
-
-    /**
-     * Retrieve the publications for the figures for a given morpholino and anatomy term
-     *
-     * @param sequenceTargetingReagent Morpholino
-     * @param aoTerm                   anatomy Term
-     * @return List of publications
-     */
-    public List<Publication> getPublicationsWithFiguresPerMorpholinoAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm aoTerm) {
-        Session session = HibernateUtil.currentSession();
-
-        StringBuilder hql = new StringBuilder("select figure ");
-        getBaseQueryForMorpholinoFigureData(hql);
-        hql.append("order by figure.orderingLabel    ");
-        Query query = session.createQuery(hql.toString());
-        query.setString("markerID", sequenceTargetingReagent.getZdbID());
-        query.setParameter("term", aoTerm);
-        List<Publication> publications = query.list();
-        return publications;
     }
 
     /**

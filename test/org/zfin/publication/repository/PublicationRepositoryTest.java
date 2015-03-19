@@ -389,7 +389,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String aoZdbID = "ZDB-TERM-100331-1214";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        List<Figure> figs = publicationRepository.getFiguresByMorpholinoAndAnatomy(sequenceTargetingReagent, item);
+        List<Figure> figs = publicationRepository.getFiguresBySequenceTargetingReagentAndAnatomy(sequenceTargetingReagent, item);
         assertTrue(figs != null);
 //        assertEquals("1 figure", 1, figs.size());
 
