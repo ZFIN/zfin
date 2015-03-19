@@ -28,7 +28,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
-import org.zfin.profile.Person;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -259,16 +258,11 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             }
         }
 
-//        if (infrastructureRepository.getMorpholinoRelatedMarkerAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
-//            return createMessage(marker.getAbbreviation(), "its relation to another marker (second position) is attibuted in this pub");
-//            return marker.getAbbreviation() + " attributed by marker relationship where knocked down by morpholino.";
-//        }
-
         if (infrastructureRepository.getExpressionExperimentMarkerAttributions(marker, publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "has expression data ");
         }
 
-        if (infrastructureRepository.getMorpholinoEnvironmentAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
+        if (infrastructureRepository.getSequenceTargetingReagentEnvironmentAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "is present in an environment");
         }
 

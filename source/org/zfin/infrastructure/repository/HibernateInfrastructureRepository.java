@@ -899,7 +899,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
 
-    public int getMorpholinoRelatedMarkerAttributions(String zdbID, String pubZdbID) {
+    public int getSequenceTargetingReagentRelatedMarkerAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                 "select count(*)" +
                 " from record_attribution, marker_relationship " +
@@ -958,7 +958,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         }
     }
 
-    public int getMorpholinoEnvironmentAttributions(String zdbID, String pubZdbID) {
+    public int getSequenceTargetingReagentEnvironmentAttributions(String zdbID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                 "  select count(*)  " +
                 " from record_attribution ra, experiment_condition ec " +

@@ -281,8 +281,8 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getMorpholinoRelatedMarkerAttributions() {
-        infrastructureRepository.getMorpholinoRelatedMarkerAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
+    public void getSequenceTargetingReagentRelatedMarkerAttributions() {
+        infrastructureRepository.getSequenceTargetingReagentRelatedMarkerAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
     }
 
     @Test

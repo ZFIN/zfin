@@ -304,11 +304,11 @@ public interface InfrastructureRepository {
 
     int getSecondMarkerRelationshipAttributions(String zdbID, String pubZdbID);
 
-    int getMorpholinoRelatedMarkerAttributions(String zdbID, String pubZdbID);
+    int getSequenceTargetingReagentRelatedMarkerAttributions(String zdbID, String pubZdbID);
 
     int getExpressionExperimentMarkerAttributions(Marker marker, String pubZdbID);
 
-    int getMorpholinoEnvironmentAttributions(String zdbID, String pubZdbID);
+    int getSequenceTargetingReagentEnvironmentAttributions(String zdbID, String pubZdbID);
 
     int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID);
 
