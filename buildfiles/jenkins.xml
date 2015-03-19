@@ -116,6 +116,7 @@
         <antcall target="add-triggers"/>
         <antcall target="add-email-notifications"/>
         <antcall target="deploy-email-templates"/>
+        <antcall target="copy-report-files"/>
     </target>
 
     <property name="emailTemplates" value="${JENKINS_HOME}/email-templates"/>
