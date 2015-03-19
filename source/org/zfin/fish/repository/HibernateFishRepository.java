@@ -18,7 +18,6 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
-import org.zfin.marker.MarkerRelationship;
 import org.zfin.repository.PaginationResultFactory;
 
 import java.math.BigInteger;
@@ -388,7 +387,7 @@ public class HibernateFishRepository implements FishRepository {
         singleFish.setGeneOrFeatureText(annotation.getGeneOrFeatureText());
         singleFish.setScoringText(annotation.getScoringText());
         //
-        singleFish.setSequenceTargetingReagents(getMorpholinos(annotation));
+        singleFish.setSequenceTargetingReagents(getSequenceTargetingReagents(annotation));
         return singleFish;
     }
 
@@ -566,32 +565,32 @@ public class HibernateFishRepository implements FishRepository {
      * retrieve all figures for given fish id
      *
      * @param fishAnnotation FishAnnotation
-     * @return set of morpholino entities
+     * @return set of SequenceTargetingReagent entities
      */
-    public List<ZfinEntity> getMorpholinos(FishAnnotation fishAnnotation) {
+    private List<ZfinEntity> getSequenceTargetingReagents(FishAnnotation fishAnnotation) {
         if (fishAnnotation.getSequenceTargetingReagentGroupName() == null)
             return null;
         Session session = HibernateUtil.currentSession();
         String sqlFeatures = "select distinct strgm_member_name, strgm_member_id from str_group_member, str_group " +
-                "where strgm_group_id = strg_group_pk_id and strg_group_name = :morphoIds ";
+                "where strgm_group_id = strg_group_pk_id and strg_group_name = :strGroupName ";
         Query sqlQuery = session.createSQLQuery(sqlFeatures);
-        sqlQuery.setParameter("morphoIds", fishAnnotation.getSequenceTargetingReagentGroupName());
+        sqlQuery.setParameter("strGroupName", fishAnnotation.getSequenceTargetingReagentGroupName());
         List<Object[]> objs = sqlQuery.list();
         if (objs == null)
             return null;
 
-        Set<ZfinEntity> morpholinos = new HashSet<ZfinEntity>(objs.size());
+        Set<ZfinEntity> sequenceTargetingReagents = new HashSet<ZfinEntity>(objs.size());
         if (objs.size() > 0) {
             for (Object[] groupMember : objs) {
-                ZfinEntity morpholino = new ZfinEntity();
-                morpholino.setName((String) groupMember[0]);
-                morpholino.setID((String) groupMember[1]);
-                morpholinos.add(morpholino);
+                ZfinEntity sequenceTargetingReagent = new ZfinEntity();
+                sequenceTargetingReagent.setName((String) groupMember[0]);
+                sequenceTargetingReagent.setID((String) groupMember[1]);
+                sequenceTargetingReagents.add(sequenceTargetingReagent);
             }
         }
-        List<ZfinEntity> morpholinoList = new ArrayList<ZfinEntity>(morpholinos.size());
-        morpholinoList.addAll(morpholinos);
-        return morpholinoList;
+        List<ZfinEntity> sequenceTargetingReagentList = new ArrayList<ZfinEntity>(sequenceTargetingReagents.size());
+        sequenceTargetingReagentList.addAll(sequenceTargetingReagents);
+        return sequenceTargetingReagentList;
     }
 
     private List<FeatureGene> getTransgenicFeature(String featureID) {
@@ -636,30 +635,6 @@ public class HibernateFishRepository implements FishRepository {
             featureGene.setType(relation.getFeature().getType().getDisplay());
             ZfinEntity gene = getZfinEntity(relation.getMarker().getZdbID(), relation.getMarker().getAbbreviation());
             featureGene.setFeature(feature);
-            featureGene.setGene(gene);
-            featureGenes.add(featureGene);
-        }
-        return featureGenes;
-    }
-
-    private List<FeatureGene> getMorpholinoGenes(String morpholinoID) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select relation from MarkerRelationship as relation where " +
-                " relation.firstMarker.zdbID = :featureID and relation.markerRelationshipType = :type";
-        Query query = session.createQuery(hql);
-        query.setParameter("featureID", morpholinoID);
-        query.setString("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString());
-        List<MarkerRelationship> relationships = query.list();
-        if (relationships == null)
-            return null;
-
-        List<FeatureGene> featureGenes = new ArrayList<FeatureGene>();
-        for (MarkerRelationship relation : relationships) {
-            FeatureGene featureGene = new FeatureGene();
-            ZfinEntity morpholino = getZfinEntity(relation.getFirstMarker().getZdbID(), relation.getFirstMarker().getAbbreviation());
-            featureGene.setType("Morpholino");
-            ZfinEntity gene = getZfinEntity(relation.getSecondMarker().getZdbID(), relation.getSecondMarker().getAbbreviation());
-            featureGene.setFeature(morpholino);
             featureGene.setGene(gene);
             featureGenes.add(featureGene);
         }

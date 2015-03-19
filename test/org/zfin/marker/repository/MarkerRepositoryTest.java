@@ -666,8 +666,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveSingleTargetGeneFromMorpholino() {
         // MO1-adam8a has one target gene
         MarkerRepository markerRep = markerRepository;
-        SequenceTargetingReagent sequenceTargetingReagent = markerRep.getMorpholinoByAbbreviation("MO1-adam8a");
-        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(sequenceTargetingReagent);
+        SequenceTargetingReagent sequenceTargetingReagent = markerRep.getSequenceTargetingReagentByAbbreviation("MO1-adam8a");
+        List<Marker> targetGenes = markerRepository.getTargetGenesAsMarkerForSequenceTargetingReagent(sequenceTargetingReagent);
         assertNotNull(targetGenes);
         assertEquals(1, targetGenes.size());
 //        assertEquals("adam8a", targetGenes.iterator().next().getAbbreviation());
@@ -679,8 +679,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void retrieveMultipleTargetGenesFromMorpholino() {
         // MO4-rbpja+rbpjb has two target genes
         MarkerRepository markerRep = markerRepository;
-        SequenceTargetingReagent sequenceTargetingReagent = markerRep.getMorpholinoByAbbreviation("MO4-rbpja,rbpjb");
-        List<Marker> targetGenes = markerRepository.getTargetGenesForMorpholino(sequenceTargetingReagent);
+        SequenceTargetingReagent sequenceTargetingReagent = markerRep.getSequenceTargetingReagentByAbbreviation("MO4-rbpja,rbpjb");
+        List<Marker> targetGenes = markerRepository.getTargetGenesAsMarkerForSequenceTargetingReagent(sequenceTargetingReagent);
         assertNotNull(targetGenes);
         assertEquals(2, targetGenes.size());
         Iterator<Marker> iter = targetGenes.iterator();

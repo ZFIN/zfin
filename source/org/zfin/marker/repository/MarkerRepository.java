@@ -50,7 +50,7 @@ public interface MarkerRepository {
 
     Marker getMarkerByAbbreviation(String abbreviation);
 
-    SequenceTargetingReagent getMorpholinoByAbbreviation(String abbreviation);
+    SequenceTargetingReagent getSequenceTargetingReagentByAbbreviation(String abbreviation);
 
     Marker getMarkerByName(String name);
 
@@ -275,12 +275,12 @@ public interface MarkerRepository {
     List<Marker> getMarkersForAttribution(String publicationZdbID);
 
     /**
-     * Create a gene for a given Morpholino which is targeting it.
+     * Create a gene for a given SequenceTargetingReagent which is targeting it.
      *
-     * @param sequenceTargetingReagent valid Morpholino of Marker object.
-     * @return the target gene of the Morpholino
+     * @param sequenceTargetingReagent valid SequenceTargetingReagent of Marker object.
+     * @return the target gene of the SequenceTargetingReagent
      */
-    List<Marker> getTargetGenesForMorpholino(SequenceTargetingReagent sequenceTargetingReagent);
+    List<Marker> getTargetGenesAsMarkerForSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
 
     /**
      * Checks to see if a marker with the abbreviation given is already in the database.

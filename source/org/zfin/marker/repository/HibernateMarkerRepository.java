@@ -155,7 +155,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (Marker) criteria.uniqueResult();
     }
 
-    public SequenceTargetingReagent getMorpholinoByAbbreviation(String abbreviation) {
+    public SequenceTargetingReagent getSequenceTargetingReagentByAbbreviation(String abbreviation) {
         Session session = currentSession();
         Criteria criteria = session.createCriteria(SequenceTargetingReagent.class);
         criteria.add(Restrictions.eq("abbreviation", abbreviation));
@@ -1471,7 +1471,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
      * @param stReagent valid Morpholino of Marker object.
      * @return the target gene of the Morpholino
      */
-    public List<Marker> getTargetGenesForMorpholino(SequenceTargetingReagent stReagent) {
+    public List<Marker> getTargetGenesAsMarkerForSequenceTargetingReagent(SequenceTargetingReagent stReagent) {
         if (stReagent == null)
             return null;
         Marker sequenceTargetingReagent = (Marker) stReagent;
@@ -1620,11 +1620,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         PreviousNameLight previousNameLight = new PreviousNameLight(gene.getAbbreviation());
                         previousNameLight.setMarkerZdbID(gene.getZdbID());
                         if (gene.getZdbID().startsWith("ZDB-GENE")){
-                        previousNameLight.setAlias("<i>"+tuple[0].toString()+"</i>");
-}
+                            previousNameLight.setAlias("<i>"+tuple[0].toString()+"</i>");
+                        }
                         else{
-                        previousNameLight.setAlias(tuple[0].toString());
-}
+                            previousNameLight.setAlias(tuple[0].toString());
+                        }
                         previousNameLight.setAliasZdbID(tuple[2].toString());
                         if (tuple[1] != null) {
                             previousNameLight.setPublicationZdbID(tuple[1].toString());
@@ -2357,7 +2357,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         Marker targetGene = (Marker) tuple[0];
                         TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
                         targetGeneSuggestionList.setId(targetGene.getZdbID());
-                       targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
+                        targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
                         targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
                         return targetGeneSuggestionList;
                     }
