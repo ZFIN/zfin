@@ -19,17 +19,13 @@ public class GenotypeInformation implements Comparable {
     private Genotype genotype;
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
     private PaginationResult<Figure> expfigureResults = null;
-    private PaginationResult<Figure> morphfigureResults = null;
     private PaginationResult<Figure> imgfigureResults = null;
     private PaginationResult<Figure> expimgfigureResults = null;
     private int numberOfFigures;
-    private int numberOfMorphFigures;
-    private int numberOfImages;
     private Figure figure;
     private Figure expFigure;
     private Publication singlePublication;
     private Publication singleExpPublication;
-    private Boolean isMorpholino;
     protected List<Publication> publications;
     protected List<Publication> exppublications;
     protected int numberOfPublications = -1;
