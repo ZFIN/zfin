@@ -18,9 +18,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
@@ -594,7 +592,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         StringBuilder hql = new StringBuilder("select figure ");
-        getBaseQueryForMorpholinoFigureData(hql);
+        getBaseQueryForSequenceTargetingReagentFigureData(hql);
         hql.append("order by figure.orderingLabel    ");
         Query query = session.createQuery(hql.toString());
         query.setString("markerID", sequenceTargetingReagent.getZdbID());
@@ -602,7 +600,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Figure>) query.list();
     }
 
-    private void getBaseQueryForMorpholinoFigureData(StringBuilder hql) {
+    private void getBaseQueryForSequenceTargetingReagentFigureData(StringBuilder hql) {
         hql.append("from Figure figure, PhenotypeStatement phenotype, ");
         hql.append("GenotypeExperiment geno, Marker marker, Experiment exp, ExperimentCondition con ");
         hql.append("where marker.zdbID = :markerID AND ");
@@ -617,7 +615,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     /**
      * Retrieve list of figures for a given genotype and anatomy term
-     * for mutant genotypes excluding morpholinos.
+     * for mutant genotypes excluding sequenceTargetingReagent.
      *
      * @param geno genotype
      * @param term anatomy term
@@ -649,7 +647,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     /**
      * Retrieve list of figures for a given genotype and anatomy term
-     * for mutant genotypes excluding morpholinos.
+     * for mutant genotypes excluding sequenceTargetingReagent.
      *
      * @param geno genotype
      * @param term anatomy term
@@ -892,14 +890,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                     " from record_attribution ra , marker_relationship mr " +
                     " where :markerZdbID = mr.mrel_mrkr_1_zdb_id " +
                     " and  ra.recattrib_data_zdb_id = mr.mrel_zdb_id " +
-                    // morhpolino marker type ? necessary
+                    // str marker type necessary ?
                     " union " +
                     " select ra.recattrib_source_zdb_id  " +
                     " from record_attribution ra , marker_relationship mr , marker m " +
                     " where :markerZdbID = mr.mrel_mrkr_2_zdb_id " +
                     " and  ra.recattrib_data_zdb_id = mr.mrel_mrkr_1_zdb_id " +
                     " and  mr.mrel_mrkr_1_zdb_id = m.mrkr_zdb_id " +
-                    " and  m.mrkr_type = 'MRPHLNO' " +
+                    " and  m.mrkr_type in ('MRPHLNO', 'TALEN', 'CRISPR') " +
                     // data alias
                     " union " +
                     " select ra.recattrib_source_zdb_id  " +

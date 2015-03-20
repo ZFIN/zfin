@@ -17,7 +17,7 @@ public class ExperimentPresentation extends EntityPresentation {
         if (experiment == null)
             return null;
 
-       if (experiment.isChemical())
+        if (experiment.isChemical())
             return "chemical";
         if (experiment.isOnlyStandard())
             return "standard";
@@ -34,9 +34,9 @@ public class ExperimentPresentation extends EntityPresentation {
         for (ExperimentCondition experimentCondition : conditions) {
             if (i > 0)
                 sb.append(", ");
-            if (experimentCondition.isMoCondition() && suppressMoDetails) {
+            if (experimentCondition.isSequenceTargetingReagentCondition() && suppressMoDetails) {
                 if (!hasMoDefined) {
-                    sb.append("Morpholino");
+                    sb.append("Sequence Targeting Reagent");
                     hasMoDefined = true;
                 } else { // remove comma and white space.
                     if (i > 0)

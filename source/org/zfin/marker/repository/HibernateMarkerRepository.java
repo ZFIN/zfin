@@ -1465,11 +1465,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     /**
-     * Retrieve gene for a given Morpholino which is targeting it.
+     * Retrieve gene for a given sequence targeting reagent which is targeting it.
      * Target genes are ordered by gene abbreviation
      *
-     * @param stReagent valid Morpholino of Marker object.
-     * @return the target gene of the Morpholino
+     * @param stReagent valid sequence targeting reagent of Marker object.
+     * @return the target gene of the sequence targeting reagent
      */
     public List<Marker> getTargetGenesAsMarkerForSequenceTargetingReagent(SequenceTargetingReagent stReagent) {
         if (stReagent == null)
@@ -1477,10 +1477,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Marker sequenceTargetingReagent = (Marker) stReagent;
         Session session = currentSession();
         String hql = "select rel.secondMarker from MarkerRelationship as rel  " +
-                "where rel.firstMarker = :morpholino and rel.type = :type " +
+                "where rel.firstMarker = :sequenceTargetingReagent and rel.type = :type " +
                 "order by rel.secondMarker.abbreviationOrder";
         Query query = session.createQuery(hql);
-        query.setParameter("morpholino", sequenceTargetingReagent);
+        query.setParameter("sequenceTargetingReagent", sequenceTargetingReagent);
         query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
         List<Marker> targetGenes = (List<Marker>) query.list();
         return targetGenes;
@@ -2503,13 +2503,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .setString("type", type)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
-                    public Object transformTuple(Object[] tuple, String[] morpholino) {
-                        Marker mo = (Marker) tuple[0];
-                        SequenceTargetingReagentLookupEntry moSuggestionList = new SequenceTargetingReagentLookupEntry();
-                        moSuggestionList.setId(mo.getZdbID());
-                        moSuggestionList.setLabel(mo.getAbbreviation());
-                        moSuggestionList.setValue(mo.getAbbreviation());
-                        return moSuggestionList;
+                    public Object transformTuple(Object[] tuple, String[] sequenceTargetingReagents) {
+                        Marker str = (Marker) tuple[0];
+                        SequenceTargetingReagentLookupEntry strSuggestionList = new SequenceTargetingReagentLookupEntry();
+                        strSuggestionList.setId(str.getZdbID());
+                        strSuggestionList.setLabel(str.getAbbreviation());
+                        strSuggestionList.setValue(str.getAbbreviation());
+                        return strSuggestionList;
                     }
                 })
                 .list()

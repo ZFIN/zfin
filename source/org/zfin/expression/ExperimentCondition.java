@@ -75,15 +75,15 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
         this.conditionDataType = conditionDataType;
     }
 
-    public boolean isMoCondition() {
-        boolean moCondition = conditionDataType.getGroup().equalsIgnoreCase("morpholino");
-        if (moCondition && sequenceTargetingReagent == null) {
-            String message = "No Morpholino found for experiment " + experiment.getName() + " [" + zdbID + "]. ";
+    public boolean isSequenceTargetingReagentCondition() {
+        boolean strCondition = conditionDataType.getGroup().equalsIgnoreCase("morpholino") || conditionDataType.getGroup().equalsIgnoreCase("CRISPR") || conditionDataType.getGroup().equalsIgnoreCase("TALEN");
+        if (strCondition && sequenceTargetingReagent == null) {
+            String message = "No Sequence Targeting Reagent found for experiment " + experiment.getName() + " [" + zdbID + "]. ";
             message += "Publication: " + experiment.getPublication().getZdbID();
             logger.error(message);
             return false;
         }
-        return moCondition;
+        return strCondition;
     }
 
     public boolean isChemicalCondition() {
@@ -97,7 +97,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
             return -1;
         if (conditionDataType.compareTo(o.getConditionDataType()) != 0)
             return conditionDataType.compareTo(o.getConditionDataType());
-        else if (isMoCondition() && o.isMoCondition())
+        else if (isSequenceTargetingReagentCondition() && o.isSequenceTargetingReagentCondition())
             return sequenceTargetingReagent.compareTo(o.getSequenceTargetingReagent());
         else //even if it's the same condition type, we still want consistent order, so use id..
             return getZdbID().compareTo(o.getZdbID());

@@ -148,7 +148,7 @@ public class EQReport {
         StringBuffer buffer = new StringBuffer();
         buffer.append("Genotype");
         buffer.append("\t");
-        buffer.append("Morpholino");
+        buffer.append("Knockdown Reagent");
         buffer.append("\t");
         buffer.append("Entity");
         buffer.append("\t");

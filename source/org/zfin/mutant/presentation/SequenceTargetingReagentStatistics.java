@@ -46,21 +46,21 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
 
     public Set<Marker> getSequenceTargetingReagents() {
         Set<ExperimentCondition> experimentConditions = genoExperiment.getExperiment().getExperimentConditions();
-        Set<Marker> morpholinoGenes = new TreeSet<Marker>(new Comparator<Marker>() {
+        Set<Marker> sequenceTargetingReagents = new TreeSet<Marker>(new Comparator<Marker>() {
             public int compare(Marker one, Marker two) {
                 return (one.getAbbreviation().compareTo(two.getAbbreviation()));
             }
         });
         for (ExperimentCondition condition : experimentConditions) {
-            Marker morpholino = condition.getSequenceTargetingReagent();
-            if (morpholino != null) {
-                Set<MarkerRelationship> markerRelationshipSet = morpholino.getFirstMarkerRelationships();
+            Marker sequenceTargetingReagent = condition.getSequenceTargetingReagent();
+            if (sequenceTargetingReagent != null) {
+                Set<MarkerRelationship> markerRelationshipSet = sequenceTargetingReagent.getFirstMarkerRelationships();
                 for (MarkerRelationship markerRelation : markerRelationshipSet) {
-                    morpholinoGenes.add(markerRelation.getSecondMarker());
+                    sequenceTargetingReagents.add(markerRelation.getSecondMarker());
                 }
             }
         }
-        return morpholinoGenes;
+        return sequenceTargetingReagents;
     }
 
     public Set<PhenotypeStatement> getPhenotypeStatements() {
