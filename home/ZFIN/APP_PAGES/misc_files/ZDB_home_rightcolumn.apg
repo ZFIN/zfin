@@ -16,9 +16,9 @@
           <a href="/action/marker/clone-add"><em>clone</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/antibody/add"><em>antibody</em></a>,
-          <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=Morpholino"><em>morpholino</em></a>,
-          <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=TALEN"><em>TALEN</em></a>,
-          <a href="/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentType=CRISPR"><em>CRISPR</em></a>,
+          <a href="/action/marker/disruptor-add?disruptorType=Morpholino"><em>morpholino</em></a>,
+          <a href="/action/marker/disruptor-add?disruptorType=TALEN"><em>TALEN</em></a>,
+          <a href="/action/marker/disruptor-add?disruptorType=CRISPR"><em>CRISPR</em></a>,
           <br>&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/action/marker/transcript-add"><em>transcript</em></a>,
           <a href="/action/marker/region-add"><em>engineered region</em></a>
@@ -196,7 +196,7 @@
    </h3>
    <ul>
        <script type="text/javascript">
-        jQuery.get( '/action/wiki/summary/news?length=2', {}, function(data){
+        jQuery.get( '/action/wiki/summary/news__meetings?length=2', {}, function(data){
             document.getElementById('news').innerHTML = data ;
         });
        </script>

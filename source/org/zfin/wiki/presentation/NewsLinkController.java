@@ -57,6 +57,32 @@ public class NewsLinkController {
         return "wiki/news-summary.insert";
     }
 
+    @RequestMapping(value = "/summary/{spaces}")
+    public String getCompbinedSummary(@PathVariable String spaces
+            , @RequestParam(defaultValue = "-1") String length
+            , Model model) {
+        try {
+            model.addAttribute("length", Integer.valueOf(length));
+        } catch (NumberFormatException nfe) {
+            logger.error("Failed to format [" + length + "]", nfe);
+            model.addAttribute("length", -1);
+        }
+
+        String[] spaceToken = spaces.split("__");
+        TreeSet<RemoteBlogEntrySummary> summaries = new TreeSet<RemoteBlogEntrySummary>(newsComparator);
+        for (String space : spaceToken) {
+            try {
+                RemoteBlogEntrySummary[] newsItems = newsWikiWebService.getNewsForSpace(space);
+                summaries.addAll(Arrays.asList(newsItems));
+            } catch (Exception e) {
+                logger.error(e);
+                model.addAttribute("summaries", null);
+            }
+        }
+        model.addAttribute("summaries", summaries);
+        return "wiki/news-summary.insert";
+    }
+
     @RequestMapping(value = "/view/{space}/{pageName}")
     public String getPage(@PathVariable String space,
                           @PathVariable String pageName,
