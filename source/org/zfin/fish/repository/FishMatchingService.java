@@ -185,7 +185,7 @@ public class FishMatchingService {
         if (geneOrFeatureNameCriteria != null) {
             addMatchingGene(geneOrFeatureNameCriteria.getValue());
             addMatchingFeatures(geneOrFeatureNameCriteria.getValue());
-            addMatchingMorpholinos(geneOrFeatureNameCriteria.getValue());
+            addMatchingSequenceTargetingReagents(geneOrFeatureNameCriteria.getValue());
         }
 
     }
@@ -244,7 +244,7 @@ public class FishMatchingService {
         return false;
     }
 
-    private void addMatchingMorpholinos(String geneNameField) {
+    private void addMatchingSequenceTargetingReagents(String geneNameField) {
         if (geneNameField == null || StringUtils.isEmpty(geneNameField))
             return;
         geneNameField = geneNameField.toLowerCase().trim();
@@ -252,11 +252,11 @@ public class FishMatchingService {
         if (CollectionUtils.isNotEmpty(genes)) {
             // the loop exists for the first match as this is enough!
             for (ZfinEntity entity : genes) {
-                Marker morpholino = getMarkerRepository().getMarkerByID(entity.getID());
-                // name and abbreviation is the same for morpholinos
-                if (service.addMatchingText(geneNameField, morpholino.getName(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_NAME).equals(MatchType.EXACT))
+                Marker sequenceTargetingReagent = getMarkerRepository().getMarkerByID(entity.getID());
+                // name and abbreviation is the same for sequenceTargetingReagent
+                if (service.addMatchingText(geneNameField, sequenceTargetingReagent.getName(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_NAME).equals(MatchType.EXACT))
                     break;
-                Set<MarkerAlias> prevNames = morpholino.getAliases();
+                Set<MarkerAlias> prevNames = sequenceTargetingReagent.getAliases();
                 if (prevNames != null) {
                     // loop until the first match is encountered
                     for (MarkerAlias prevName : prevNames) {
