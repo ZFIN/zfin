@@ -4,8 +4,8 @@ public enum MatchingTextType {
 
     AFFECTED_GENE_NAME("Affected Gene Name"),
     GENE_NAME("Gene Name"),
-    MORPHOLINO_NAME("Morpholino Name"),
-    MORPHOLINO_ALIAS("Morpholino Alias [Morpholino]"),
+    SEQUENCE_TARGETING_REAGENT_NAME("Sequence Targeting Reagent Name"),
+    SEQUENCE_TARGETING_REAGENT_ALIAS("Sequence Targeting Reagent Alias [Sequence Targeting Reagent]"),
     GENE_ABBREVIATION("Gene Symbol"),
     AFFECTED_GENE_ABBREVIATION("Affected Gene Symbol"),
     CONSTRUCT_ABBREVIATION("Construct Symbol"),

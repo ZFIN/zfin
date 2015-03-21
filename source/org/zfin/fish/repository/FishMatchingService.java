@@ -254,13 +254,13 @@ public class FishMatchingService {
             for (ZfinEntity entity : genes) {
                 Marker morpholino = getMarkerRepository().getMarkerByID(entity.getID());
                 // name and abbreviation is the same for morpholinos
-                if (service.addMatchingText(geneNameField, morpholino.getName(), MatchingTextType.MORPHOLINO_NAME).equals(MatchType.EXACT))
+                if (service.addMatchingText(geneNameField, morpholino.getName(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_NAME).equals(MatchType.EXACT))
                     break;
                 Set<MarkerAlias> prevNames = morpholino.getAliases();
                 if (prevNames != null) {
                     // loop until the first match is encountered
                     for (MarkerAlias prevName : prevNames) {
-                        if (service.addMatchingText(geneNameField, prevName.getAlias(), MatchingTextType.MORPHOLINO_ALIAS).equals(MatchType.EXACT))
+                        if (service.addMatchingText(geneNameField, prevName.getAlias(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_ALIAS).equals(MatchType.EXACT))
                             break;
                     }
                 }
