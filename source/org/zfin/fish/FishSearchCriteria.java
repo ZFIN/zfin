@@ -19,8 +19,8 @@ public class FishSearchCriteria extends AbstractSearchCriteria {
     SearchCriterion geneOrFeatureNameCriteria;
     SearchCriterion phenotypeAnatomyCriteria;
     SearchCriterion featureTypeCriteria;
-    SearchCriterion excludeMorphantsCriteria;
-    SearchCriterion requireMorphantsCriteria;
+    SearchCriterion excludeSequenceTargetingReagentCriteria;
+    SearchCriterion requireSequenceTargetingReagentCriteria;
     SearchCriterion excludeTransgenicsCriteria;
     SearchCriterion requireTransgenicsCriteria;
     SearchCriterion mutationTypeCriteria;
@@ -54,13 +54,13 @@ public class FishSearchCriteria extends AbstractSearchCriteria {
         featureTypeCriteria.setValue(formBean.getMutationType());
         allCriteria.add(featureTypeCriteria);
 
-        excludeMorphantsCriteria = new SearchCriterion(SearchCriterionType.EXCLUDE_MORPHOLINOS, "false", false);
-        excludeMorphantsCriteria.setValue(formBean.isExcludeMorphants() ? "true" : "false");
-        allCriteria.add(excludeMorphantsCriteria);
+        excludeSequenceTargetingReagentCriteria = new SearchCriterion(SearchCriterionType.EXCLUDE_SEQUENCE_TARGETING_REAGENT, "false", false);
+        excludeSequenceTargetingReagentCriteria.setValue(formBean.isExcludeMorphants() ? "true" : "false");
+        allCriteria.add(excludeSequenceTargetingReagentCriteria);
 
-        requireMorphantsCriteria = new SearchCriterion(SearchCriterionType.REQUIRE_MORPHOLNOS, "false", false);
-        requireMorphantsCriteria.setValue(formBean.isMorphantsOnly() ? "true" : "false");
-        allCriteria.add(requireMorphantsCriteria);
+        requireSequenceTargetingReagentCriteria = new SearchCriterion(SearchCriterionType.REQUIRE_SEQUENCE_TARGETING_REAGENT, "false", false);
+        requireSequenceTargetingReagentCriteria.setValue(formBean.isMorphantsOnly() ? "true" : "false");
+        allCriteria.add(requireSequenceTargetingReagentCriteria);
 
         excludeTransgenicsCriteria = new SearchCriterion(SearchCriterionType.EXCLUDE_TRANSGENICS, "false", false);
         excludeTransgenicsCriteria.setValue(formBean.isExcludeTransgenics() ? "true" : "false");
@@ -131,20 +131,20 @@ public class FishSearchCriteria extends AbstractSearchCriteria {
         this.phenotypeAnatomyCriteria = phenotypeAnatomyCriteria;
     }
 
-    public SearchCriterion getExcludeMorphantsCriteria() {
-        return excludeMorphantsCriteria;
+    public SearchCriterion getExcludeSequenceTargetingReagentCriteria() {
+        return excludeSequenceTargetingReagentCriteria;
     }
 
-    public void setExcludeMorphantsCriteria(SearchCriterion excludeMorphantsCriteria) {
-        this.excludeMorphantsCriteria = excludeMorphantsCriteria;
+    public void setExcludeSequenceTargetingReagentCriteria(SearchCriterion excludeSequenceTargetingReagentCriteria) {
+        this.excludeSequenceTargetingReagentCriteria = excludeSequenceTargetingReagentCriteria;
     }
 
-    public SearchCriterion getRequireMorphantsCriteria() {
-        return requireMorphantsCriteria;
+    public SearchCriterion getRequireSequenceTargetingReagentCriteria() {
+        return requireSequenceTargetingReagentCriteria;
     }
 
-    public void setRequireMorphantsCriteria(SearchCriterion requireMorphantsCriteria) {
-        this.requireMorphantsCriteria = requireMorphantsCriteria;
+    public void setRequireSequenceTargetingReagentCriteria(SearchCriterion requireSequenceTargetingReagentCriteria) {
+        this.requireSequenceTargetingReagentCriteria = requireSequenceTargetingReagentCriteria;
     }
 
     public SearchCriterion getExcludeTransgenicsCriteria() {

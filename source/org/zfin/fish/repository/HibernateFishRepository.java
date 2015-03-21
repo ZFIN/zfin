@@ -138,11 +138,11 @@ public class HibernateFishRepository implements FishRepository {
         fromClauseList.add(" fish_annotation_search ");
 
 
-        if (criteria.getExcludeMorphantsCriteria().isTrue()) {
+        if (criteria.getExcludeSequenceTargetingReagentCriteria().isTrue()) {
             whereClauseList.add(" fas_str_group is null ");
         }
 
-        if (criteria.getRequireMorphantsCriteria().isTrue()) {
+        if (criteria.getRequireSequenceTargetingReagentCriteria().isTrue()) {
             whereClauseList.add(" fas_str_group is not null ");
         }
 

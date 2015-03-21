@@ -81,7 +81,7 @@ public class FishMatchingService {
         // mark as transgenic
         if (criteria.getRequireTransgenicsCriteria().isTrue())
             service.addMatchingOnFilter(MatchingTextType.TRANSGENIC, true);
-        if (criteria.getRequireMorphantsCriteria().isTrue())
+        if (criteria.getRequireSequenceTargetingReagentCriteria().isTrue())
             service.addMatchingOnFilter(MatchingTextType.MORPHANT, true);
         if (criteria.getMutationTypeCriteria().hasValues())
             service.addMatchingOnFilter(MatchingTextType.MUTATION_TYPE, true, criteria.getMutationTypeCriteria().getValue());
