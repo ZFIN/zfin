@@ -118,7 +118,8 @@ sub pubMedArticle {
                         my $nlmCategory = $abstractText->att('NlmCategory');
                         my $label  = $abstractText->att('Label');
                         my $text = $abstractText->text;
-                        if ((defined $label && $label ne 'UNLABELLED') || (defined $nlmCategory && $nlmCategory ne 'UNLABELLED')) {
+                        if ((defined $label && $label ne 'UNLABELLED' && $label ne 'UNASSIGNED') ||
+                            (defined $nlmCategory && $nlmCategory ne 'UNLABELLED' && $nlmCategory ne 'UNASSIGNED')) {
                             # part of a structured abstract
                             my $displayedLabel = ucfirst(lc($label || $nlmCategory));
                             push(@paragraphs, "<div class='pub-abstract-section'><span class='pub-abstract-section-label'>$displayedLabel</span> $text</div>");
