@@ -11,7 +11,7 @@
       <div style="margin: 1em;">
       The "(normal or recovered)" tag is used when the annotation of a normal phenotype is notable
       or when the annotation represents a recovered normal phenotype, such as that
-      resulting from the addition of a morpholino or the creation of a complex
+      resulting from the addition of a sequence targeting reagent or the creation of a complex
       mutant genotype.
       </div>
       <hr class="popup-divider"/>

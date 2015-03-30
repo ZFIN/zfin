@@ -8,6 +8,8 @@ package org.zfin.sequence;
  */
 public class STRMarkerSequence {
 
+    private String zdbID;
+    private String name;
     private String sequence;
     private Long offsetStart;
     private Long offsetStop;
@@ -76,4 +78,19 @@ public class STRMarkerSequence {
         this.offsetStop = offsetStop;
     }
 
+    public String getZdbID() {
+        return zdbID;
+    }
+
+    public void setZdbID(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

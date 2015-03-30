@@ -10,7 +10,7 @@ import org.biojavax.bio.seq.RichSequence;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
-import org.zfin.sequence.MorpholinoSequence;
+import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.ReferenceDatabase;
 
 import java.io.ByteArrayOutputStream;
@@ -30,7 +30,7 @@ public class BlastDownloadService {
         // generates fasta file of the form:
         // > (morpholino zdbID) (morpholino name)
         // sequence
-        List<MorpholinoSequence> morpholinoList = RepositoryFactory.getMutantRepository().getMorpholinosWithMarkerRelationships();
+        List<STRMarkerSequence> strList = RepositoryFactory.getMutantRepository().getSequenceTargetingReagentsWithMarkerRelationships();
 
         // method A
         // this is a slower method
@@ -38,16 +38,16 @@ public class BlastDownloadService {
 
 
         // method B, if there are no weird defline dependencies
-        return getFastaStringFromBioJava(morpholinoList) ;
+        return getFastaStringFromBioJava(strList) ;
 
     }
 
-    private static String getFastaStringFromBioJava(List<MorpholinoSequence> morpholinoList) {
+    private static String getFastaStringFromBioJava(List<STRMarkerSequence> strList) {
         SequenceDB sequenceDB = new HashSequenceDB() ;
-        for(MorpholinoSequence morpholino: morpholinoList){
-            String header = morpholino.getZdbID()+ " "+morpholino.getName() ;
+        for(STRMarkerSequence str: strList){
+            String header = str.getZdbID()+ " "+str.getName() ;
             try {
-                Sequence mrphSeq = DNATools.createDNASequence(morpholino.getSequence(),header) ;
+                Sequence mrphSeq = DNATools.createDNASequence(str.getSequence(),header) ;
                 sequenceDB.addSequence(mrphSeq);
             } catch (BioException e) {
                 logger.error("Failed to add sequence for morpholino: "+ header,e);
@@ -64,12 +64,12 @@ public class BlastDownloadService {
         }
     }
 
-    private static String getFastaStringFromStringBuilder(List<MorpholinoSequence> morpholinoList) {
+    private static String getFastaStringFromStringBuilder(List<STRMarkerSequence> strMarkerSequenceList) {
         StringBuilder stringBuilder = new StringBuilder();
-        for(MorpholinoSequence morpholino: morpholinoList){
-            String header = ">"+morpholino.getZdbID()+ " "+morpholino.getName() ;
+        for(STRMarkerSequence strMarkerSequence: strMarkerSequenceList){
+            String header = ">"+strMarkerSequence.getZdbID()+ " "+strMarkerSequence.getName() ;
             stringBuilder.append(header).append("\n") ;
-            stringBuilder.append(morpholino.getSequence()).append("\n") ;
+            stringBuilder.append(strMarkerSequence.getSequence()).append("\n") ;
         }
 
         return stringBuilder.toString();

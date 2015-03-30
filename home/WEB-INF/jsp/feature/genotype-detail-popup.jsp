@@ -167,12 +167,12 @@
                 <th width=20%>Targeted Gene</th>
             </tr>
 
-                <c:forEach var="morpholino" items="${formBean.sequenceTargetingReagents}" varStatus="loop">
-                    <jsp:useBean id="morpholino" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
+                <c:forEach var="str" items="${formBean.sequenceTargetingReagents}" varStatus="loop">
+                    <jsp:useBean id="str" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
                     <tr>
-                        <td><zfin:link entity="${morpholino}"/></td>
+                        <td><zfin:link entity="${str}"/></td>
                         <td>
-                            <zfin2:listOfAffectedGenes markerCollection="${morpholino.targetGenes}"/>
+                            <zfin2:listOfAffectedGenes markerCollection="${str.targetGenes}"/>
                         </td>
                     </tr>
                 </c:forEach>

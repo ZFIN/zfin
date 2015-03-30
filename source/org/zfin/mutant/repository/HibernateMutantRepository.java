@@ -35,7 +35,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.FeatureDBLink;
-import org.zfin.sequence.MorpholinoSequence;
+import org.zfin.sequence.STRMarkerSequence;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -670,29 +670,32 @@ public class HibernateMutantRepository implements MutantRepository {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<MorpholinoSequence> getMorpholinosWithMarkerRelationships() {
+    public List<STRMarkerSequence> getSequenceTargetingReagentsWithMarkerRelationships() {
 
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
         final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
                 "inner join m.sequence s " +
                 "inner join m.firstMarkerRelationships  " +
-                "where m.markerType =  :markerType ";
+                "where m.markerType in  (:moType, :crisprType, :talenType) ";
 
         final Query query = HibernateUtil.currentSession().createQuery(queryString);
-        query.setString("markerType", Marker.Type.MRPHLNO.toString());
+        query.setString("moType", Marker.Type.MRPHLNO.toString());
+        query.setString("crisprType", Marker.Type.CRISPR.toString());
+        query.setString("talenType", Marker.Type.TALEN.toString());
+
         List<Object[]> sequences = query
                 .list();
 
-        List<MorpholinoSequence> morpholinoSequences = new ArrayList<MorpholinoSequence>();
+        List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
         for (Object[] seqObjects : sequences) {
-            MorpholinoSequence morpholinoSequence = new MorpholinoSequence();
-            morpholinoSequence.setZdbID(seqObjects[0].toString());
-            morpholinoSequence.setName(seqObjects[1].toString());
-            morpholinoSequence.setSequence(seqObjects[2].toString());
-            morpholinoSequences.add(morpholinoSequence);
+            STRMarkerSequence strSequence = new STRMarkerSequence();
+            strSequence.setZdbID(seqObjects[0].toString());
+            strSequence.setName(seqObjects[1].toString());
+            strSequence.setSequence(seqObjects[2].toString());
+            strSequences.add(strSequence);
         }
-        return morpholinoSequences;
+        return strSequences;
     }
 
     /**

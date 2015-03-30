@@ -4,7 +4,7 @@
 
 <div class="summary">
     <div class="summaryTitle">
-        All ${formBean.numberOfPhenoDisplays} phenotypes for Genotype + Morpholinos:
+        All ${formBean.numberOfPhenoDisplays} phenotypes for Genotype + Sequence Targeting Reagents:
         <a href="/action/fish/fish-detail/${formBean.fish.fishID}"><span
                 class="name-value">${formBean.fish.name}</span></a>
     </div>

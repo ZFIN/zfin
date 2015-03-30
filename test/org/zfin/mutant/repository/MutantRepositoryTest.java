@@ -7,7 +7,6 @@ import org.hibernate.Transaction;
 import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
-import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
@@ -23,7 +22,7 @@ import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.MorpholinoSequence;
+import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.util.DateUtil;
 
 import java.util.*;
@@ -230,12 +229,12 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getMorpholinosWithMarkerRelationships() {
-        List<MorpholinoSequence> morpholinos = mutantRepository.getMorpholinosWithMarkerRelationships();
-        assertNotNull(morpholinos);
-        LOG.info("# of morpholinos: " + morpholinos.size());
-        assertTrue(morpholinos.size() > 3000);
-        assertNotNull(morpholinos.get(0).getSequence());
+    public void getSTRsWithMarkerRelationships() {
+        List<STRMarkerSequence> sequenceTargetingReagents = mutantRepository.getSequenceTargetingReagentsWithMarkerRelationships();
+        assertNotNull(sequenceTargetingReagents);
+        LOG.info("# of sequence targeting reagents: " + sequenceTargetingReagents.size());
+        assertTrue(sequenceTargetingReagents.size() > 3000);
+        assertNotNull(sequenceTargetingReagents.get(0).getSequence());
     }
 
     @Test

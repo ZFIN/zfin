@@ -14,7 +14,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.FeatureDBLink;
-import org.zfin.sequence.MorpholinoSequence;
+import org.zfin.sequence.STRMarkerSequence;
 
 import java.util.List;
 import java.util.Map;
@@ -194,7 +194,7 @@ public interface MutantRepository {
 
     int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence);
 
-    List<MorpholinoSequence> getMorpholinosWithMarkerRelationships();
+    List<STRMarkerSequence> getSequenceTargetingReagentsWithMarkerRelationships();
 
     /**
      * Retrieve all distinct marker go evidence objects for a given term.

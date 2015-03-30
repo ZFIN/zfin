@@ -18,7 +18,7 @@
 
 <font size=+1>
     <b>
-        Genotype + Morpholinos:&nbsp;
+        Genotype + Sequence Targeting Reagents:&nbsp;
         <a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.name}</a>  
         <br/>
     </b>
