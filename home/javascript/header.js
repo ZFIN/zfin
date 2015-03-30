@@ -489,7 +489,7 @@ document.write(" <a href=\"https://@WIKI_HOST@/display/jobs\" title=\"Zebrafish-
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write(" <a href=\"https://@WIKI_HOST@/display/meetings\" title=\"Zebrafish-related meeting announcements\">Meetings</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
- document.write("    <a href=\"/zf_info/news/newsgroup.html\" title=\"Moderated, online discussion group for anyone interested in zebrafish research\">Newsgroup</a>");
+ document.write("    <a href=\"https://@WIKI_HOST@/display/general/Zebrafish+Newsgroup+Information\" title=\"Moderated, online discussion group for anyone interested in zebrafish research\">Newsgroup</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("     <a href=\"/action/profile/person/search\" title=\"Search for zebrafish researchers by name or address\">People</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
