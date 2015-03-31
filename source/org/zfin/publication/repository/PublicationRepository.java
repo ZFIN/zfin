@@ -143,6 +143,8 @@ public interface PublicationRepository extends PaginationParameter {
      */
     Publication getPublication(String zdbID);
 
+
+
     /**
      * Retrieve a marker (gene) by its symbol name. If it is not unique a Hibernate runtime exception is thrown.
      *
@@ -492,4 +494,18 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getPublicationIDsForGOwithField(String zdbID);
 
     String getAbstractText(String publicationZdbID);
+
+
+    public Long getMarkerCount(Publication publication);
+    public Long getMorpholinoCount(Publication publication);
+    public Long getTalenCount(Publication publication);
+    public Long getCrisprCount(Publication publication);
+    public Long getAntibodyCount(Publication publication);
+    public Long getEfgCount(Publication publication);
+    public Long getCloneProbeCount(Publication publication);
+    public Long getExpressionCount(Publication publication);
+    public Long getPhenotypeCount(Publication publication);
+    public Long getPhenotypeAlleleCount(Publication publication);
+    public Long getOrthologyCount(Publication publication);
+    public Boolean canDeletePublication(Publication publication);
 }

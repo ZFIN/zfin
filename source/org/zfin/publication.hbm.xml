@@ -5,6 +5,11 @@
 
 <hibernate-mapping package="org.zfin.publication">
 
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="publicationType">
+        <param name="enumClassname">org.zfin.publication.Publication$Type</param>
+    </typedef>
+
     <class name="org.zfin.publication.Publication" table="publication">
         <id name="zdbID" type="string">
             <column name="zdb_id" not-null="true"/>
@@ -39,7 +44,7 @@
         <property name="closeDate" column="pub_completion_date"/>
         <property name="volume" column="pub_volume" lazy="true"/>
         <property name="pages" column="pub_pages" lazy="true"/>
-        <property name="type" column="jtype"/>
+        <property name="type" column="jtype" type="publicationType"/>
         <property name="accessionNumber" column="accession_no" lazy="true"/>
         <property name="fileName" column="pub_file" lazy="true"/>
         <property name="doi" column="pub_doi" lazy="true"/>

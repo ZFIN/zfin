@@ -6,12 +6,19 @@
 <%@ attribute name="editLinkText" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="trackURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="termID" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
+<%@ attribute name="showLastUpdate" type="java.lang.Boolean" rtexprvalue="true" required="false" description="Should the Last Updated link show?" %>
 
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" description="Determines if owner."
               required="false" %>
+
+
+<%-- default showLastUpdate to false --%>
+<c:set var="showLastUpdate" value="${(empty showLastUpdate) ? true : showLastUpdate}" />
+
 
 <table class="data_manager">
     <tbody>
@@ -36,12 +43,12 @@
 
         <authz:authorize ifAnyGranted="root">
             <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" editLinkText="${editLinkText}" deleteURL="${deleteURL}"
-                                         mergeURL="${mergeURL}" oboID="${oboID}" rtype="${rtype}"/>
+                                         mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}" rtype="${rtype}" showLastUpdate="${showLastUpdate}"/>
         </authz:authorize>
         <authz:authorize ifNotGranted="root" ifAnyGranted="submit">
             <c:if test="${isOwner}">
                 <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}"
-                                             mergeURL="${mergeURL}" oboID="${oboID}" rtype="${rtype}"/>
+                                             mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}" rtype="${rtype}" showLastUpdate="${showLastUpdate}"/>
             </c:if>
         </authz:authorize>
 

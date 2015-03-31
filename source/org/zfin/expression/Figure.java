@@ -13,6 +13,8 @@ import java.util.Set;
  */
 public abstract class Figure implements Serializable, Comparable<Figure> {
 
+    public static String GELI = "GELI";
+
     public enum Type {
         FIGURE("figure"),
         TOD("text only");
@@ -179,4 +181,10 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
             return 0;
         return getConciseCaption().length();
     }
+
+    public boolean isGeli() {
+        if (comments != null && comments.equals(GELI)) { return true; }
+        return false;
+    }
+
 }

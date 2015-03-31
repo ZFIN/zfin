@@ -29,7 +29,7 @@ public class AttributionService {
 
         for (RecordAttribution attrib : attribs) {
             Publication pub = publicationRepository.getPublication(attrib.getSourceZdbID());
-            if (!StringUtils.equals(pub.getType(), Publication.CURATION))
+            if (pub.getType() != Publication.Type.CURATION)
                 return false;
         }
         return true;

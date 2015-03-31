@@ -7,8 +7,14 @@
 <%@ attribute name="editLinkText" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="trackURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
+<%@ attribute name="showLastUpdate" type="java.lang.Boolean" rtexprvalue="true" required="false" description="Should the Last Updated: xxxx link show?" %>
+
+<%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" description="Determines if owner."
+              required="false" %>
+
 
 <c:if test="${!empty editURL}">
     <td>
@@ -35,10 +41,16 @@
         <a href="${mergeURL}" class="root">Merge</a>
     </td>
 </c:if>
+<c:if test="${!empty trackURL}">
+    <td>
+        <a href="${trackURL}" class="root">Track Curation</a>
+    </td>
+</c:if>
+
 
 <%-- I'm not sure how sound this logic is, but I'm gonna say if no rtype is passed in, don't
 even try to look for a last update..  (it could also be an explicit flag)--%>
-<c:if test="${!empty rtype}">
+<c:if test="${!empty rtype && showLastUpdate}">
     <td>
         <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${zdbID}&rtype=${rtype}">
 

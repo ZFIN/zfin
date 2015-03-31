@@ -160,6 +160,12 @@ select title, authors, year(pub_date), jrnl_abbrev, keywords, pub_abstract,
 
      <?MISQL COND="$(NXST,$UPDATE)" SQL="select WebExplode(object,'rtype=publication') from webPages where ID='aa-data_mgr.apg';">$1<?/MISQL>
 
+<?MICOMMENT>
+<div style="padding: 1em;">
+  <?MIVAR><a href="/action/publication/view/$OID">New Pub Page</a><?/MIVAR>
+</div>
+<?/MICOMMENT>
+
 <table>
 <tr>
 <td colspan=10 width=80%>&nbsp;           </td>

@@ -398,6 +398,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return pub;
     }
 
+
     public Marker getMarker(String symbol) {
         Session session = HibernateUtil.currentSession();
         Criteria query = session.createCriteria(Marker.class);
@@ -1756,4 +1757,155 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         return abstractText;
     }
+
+    public Long getMarkerCount(Publication publication) {
+        String sql = "select count(*) FROM (\n" +
+                "  SELECT fmrel_mrkr_zdb_id\n" +
+                "  FROM record_attribution, feature_marker_relationship\n" +
+                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
+                "        AND recattrib_data_zdb_id = fmrel_ftr_zdb_id\n" +
+                "        AND fmrel_type = 'is allele of'\n" +
+                "\n" +
+                "  UNION\n" +
+                "\n" +
+                "  SELECT mrkr_zdb_id\n" +
+                "  FROM record_attribution, marker\n" +
+                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
+                "        AND recattrib_data_zdb_id = mrkr_zdb_id\n" +
+                "        AND mrkr_type IN\n" +
+                "            (\n" +
+                "              SELECT mtgrpmem_mrkr_type\n" +
+                "              FROM marker_type_group_member\n" +
+                "              WHERE mtgrpmem_mrkr_type_group = 'SEARCH_MK'\n" +
+                "            )\n" +
+                "        AND (mrkr_type <> 'MRPHLNO' AND mrkr_type <> 'EFG')\n" +
+                "\n" +
+                "  UNION\n" +
+                "\n" +
+                "  SELECT mr.mrel_mrkr_2_zdb_id\n" +
+                "  FROM record_attribution ra, marker m, marker_relationship mr\n" +
+                "  WHERE recattrib_source_zdb_id = :zdbID\n" +
+                "        AND recattrib_data_zdb_id = mrkr_zdb_id\n" +
+                "        AND m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id\n" +
+                "        AND mrkr_type = 'MRPHLNO'\n" +
+                "\n" +
+                ");";
+
+        return getCount(sql, publication.getZdbID());
+    }
+
+
+    public Long getMorpholinoCount(Publication publication) {
+        return getMarkerCountByMarkerType(publication.getZdbID(), Marker.Type.MRPHLNO.toString());
+    }
+
+    public Long getTalenCount(Publication publication) {
+        return getMarkerCountByMarkerType(publication.getZdbID(), Marker.Type.TALEN.toString());
+    }
+
+    public Long getCrisprCount(Publication publication) {
+        return getMarkerCountByMarkerType(publication.getZdbID(), Marker.Type.CRISPR.toString());
+    }
+
+    public Long getAntibodyCount(Publication publication) {
+        return getMarkerCountByMarkerType(publication.getZdbID(), Marker.Type.ATB.toString());
+    }
+
+    public Long getEfgCount(Publication publication) {
+        return getMarkerCountByMarkerType(publication.getZdbID(), Marker.Type.EFG.toString());
+    }
+
+    public Long getCloneProbeCount(Publication publication) {
+        String sql = "\tselect count(recattrib_data_zdb_id)\n" +
+                "\t from  record_attribution, marker\n" +
+                "\t where recattrib_source_zdb_id = :zdbID\n" +
+                "\t  and  recattrib_data_zdb_id   = mrkr_zdb_id\n" +
+                "\t  and  mrkr_type in \n" +
+                "\t\t  (select mtgrpmem_mrkr_type from marker_type_group_member\n" +
+                "                    where mtgrpmem_mrkr_type_group = 'SEARCH_SEG');";
+        return getCount(sql, publication.getZdbID());
+    }
+
+    public Long getExpressionCount(Publication publication) {
+        String sql = "\tselect count(distinct xpatfig_fig_zdb_id)\n" +
+                " \t  from figure, expression_pattern_figure\n" +
+                " \t where fig_source_zdb_id = :zdbID\n" +
+                "         and fig_zdb_id=xpatfig_fig_zdb_id";
+        return getCount(sql, publication.getZdbID());
+    }
+
+    public Long getPhenotypeCount(Publication publication) {
+        String sql = "\tselect count(distinct phenox_fig_zdb_id)\n" +
+                " \t  from figure, phenotype_experiment\n" +
+                " \t where fig_source_zdb_id = :zdbID\n" +
+                "         and phenox_fig_zdb_id = fig_zdb_id";
+        return getCount(sql, publication.getZdbID());
+    }
+
+    public Long getPhenotypeAlleleCount(Publication publication) {
+        String sql = "\tselect count(distinct geno_zdb_id)\n" +
+                "\tfrom   record_attribution, genotype\n" +
+                "\twhere  recattrib_source_zdb_id = :zdbID\n" +
+                "\t  and  recattrib_data_zdb_id = geno_zdb_id\n" +
+                "\t  and  geno_is_wildtype = 'f';";
+        return getCount(sql, publication.getZdbID());
+    }
+
+    public Long getOrthologyCount(Publication publication) {
+        String sql = "\tselect count(recattrib_data_zdb_id)\n" +
+                "\t from  record_attribution\n" +
+                "\t where recattrib_source_zdb_id = :zdbID\n" +
+                "\t  and  recattrib_data_zdb_id like 'ZDB-OEVDISP-%';";
+        return getCount(sql, publication.getZdbID());
+    }
+
+    public Boolean canDeletePublication(Publication publication) {
+
+        String sql = "select count(recattrib_source_zdb_id) \n" +
+                "               from record_attribution, figure \n" +
+                "              where recattrib_source_zdb_id = :zdbID\n" +
+                "                and recattrib_data_zdb_id = fig_zdb_id\n" +
+                "                and (exists (select 'x' \n" +
+                "                               from phenotype_experiment\n" +
+                "                              where phenox_fig_zdb_id = fig_zdb_id)\n" +
+                "                  or exists (select 'x' \n" +
+                "\t\t               from construct_figure\n" +
+                "                              where consfig_fig_zdb_id = fig_zdb_id)\n" +
+                "                  or exists (select 'x' \n" +
+                "\t\t               from expression_pattern_figure\n" +
+                "                              where xpatfig_fig_zdb_id = fig_zdb_id)\n" +
+                "                  or exists (select 'x' \n" +
+                "\t\t               from genotype_figure_fast_search\n" +
+                "                              where gffs_fig_zdb_id = fig_zdb_id)\n" +
+                "                    );";
+
+        Long count = getCount(sql, publication.getZdbID());
+
+        if (count == 0) { return true; }
+
+        return false;
+    }
+
+
+    private Long getMarkerCountByMarkerType(String zdbID, String type) {
+        String sql = "select count(recattrib_data_zdb_id)\n" +
+                "\tfrom  record_attribution, marker\n" +
+                "\twhere recattrib_source_zdb_id = :zdbID\n" +
+                "\t  and recattrib_data_zdb_id = mrkr_zdb_id\n" +
+                "\t  and mrkr_type = :mrkrType\n" +
+                "      ; ";
+
+        SQLQuery query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("zdbID", zdbID);
+        query.setString("mrkrType", type);
+        return ((Number) query.uniqueResult()).longValue();
+    }
+
+
+    private Long getCount(String sql, String zdbID) {
+        SQLQuery query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("zdbID", zdbID);
+        return ((Number) query.uniqueResult()).longValue();
+    }
+
 }

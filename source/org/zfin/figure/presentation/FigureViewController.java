@@ -123,8 +123,7 @@ public class FigureViewController {
             List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
             model.addAttribute("probeSuppliers", suppliers);
         }
-        if (StringUtils.equals(publication.getType(),Publication.UNPUBLISHED)
-                || StringUtils.equals(publication.getType(), Publication.CURATION) ) {
+        if (publication.isUnpublished()) {
             if (StringUtils.isEmpty(probeZdbID)) {
                 return "redirect:/" + publication.getZdbID();
             } else {

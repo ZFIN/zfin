@@ -22,7 +22,7 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
     private String abstractText;
     private String volume;
     private String pages;
-    private String type;
+    private Type type;
     private String accessionNumber;
     private String fileName;
     private String doi;
@@ -46,6 +46,7 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
     //for now I only need one value, so I'll just be quick and dirty
     public static final String CURATION = "Curation";
     public static final String UNPUBLISHED = "Unpublished";
+    public static final String ACTIVE_CURATION = "Active Curation";
 
     public String getZdbID() {
         return zdbID;
@@ -135,11 +136,11 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
         this.volume = volume;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -276,7 +277,7 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
     }
 
     public boolean isUnpublished() {
-        return (type.equalsIgnoreCase(Publication.CURATION) || type.equalsIgnoreCase(Publication.UNPUBLISHED));
+        return (type == Publication.Type.CURATION || type == Publication.Type.UNPUBLISHED);
     }
 
     public boolean isDeletable() {
@@ -334,6 +335,52 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
             return true;
         }
         return false;
+    }
+
+
+    public static enum Type {
+        ABSTRACT("Abstract", false),
+        ACTIVE_CURATION("Active_Curation", false),
+        BOOK("Book", false),
+        CHAPTER("Chapter", false),
+        CURATION("Curation", false),
+        JOURNAL("Journal", true),
+        MOVIE("Movie", false),
+        OTHER("Other", false),
+        REVIEW("Review", false),
+        UNKNOWN("Unknown", false),
+        UNPUBLISHED("Unpublished", false);
+
+        private final String value;
+
+        private Type(String type, Boolean allowCuration) {
+            this.value = type;
+        }
+
+        public String toString() {
+            return this.value;
+        }
+
+        /* Just enough to turn Active_Curation into Active Curation */
+        public String getDisplay() { return this.value.replace("_"," "); }
+
+        public static Type getType(String type) {
+            for (Type t : values()) {
+                if (t.toString().equals(type))
+                    return t;
+            }
+            throw new RuntimeException("No run type of string " + type + " found.");
+        }
+
+        public static boolean isType(String type) {
+            if (type == null)
+                return false;
+            for (Type publicationType : values())
+                if (publicationType.value.equals(type))
+                    return true;
+            return false;
+        }
+
     }
 
 }
