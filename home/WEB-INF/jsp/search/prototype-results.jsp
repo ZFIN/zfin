@@ -10,14 +10,10 @@
 <script src="/javascript/angular/angular.min.js"></script>
 <script src="/javascript/angular/angular-sanitize.js"></script>
 
-<link rel=stylesheet type="text/css" href="/css/bootstrap/css/bootstrap.css">
-<script type="text/javascript" src="/css/bootstrap/js/bootstrap.js"></script>
+<link rel=stylesheet type="text/css" href="/css/bootstrap3/css/bootstrap.css">
+<script type="text/javascript" src="/css/bootstrap3/js/bootstrap.js"></script>
 
-<%-- Bootstrap 2.3.2 comes with it's own typeahead, we don't want it, this removes it --%>
-<script>
-    $.fn.bootstrapTypeahead = $.fn.typeahead.noConflict();
-</script>
-<link rel=stylesheet type="text/css" href="/css/datepicker.css">
+<link rel=stylesheet type="text/css" href="/css/datepicker3.css">
 <script type="text/javascript" src="/javascript/bootstrap-datepicker.js"></script>
 
 <script src="/javascript/purl.js"></script>
@@ -32,7 +28,7 @@
 
     /* necessary because bootstrap overrides our body margin on top */
     body {
-        margin-top: 90px;
+        margin-top: 81px;
     }
 
     /* don't need the left-right magin fixes from all-content */
@@ -40,16 +36,15 @@
         margin: 0px;
     }
 
-    /* remove parts of the header that we don't need */
-    /* #hdr-tabs { display: none; } */
-    #hdr-tabs {
-        line-height: 15px;
-    }
-
     #hdr-navlinks {
         line-height: 15px;
-        height: 15px;
+/*        position: relative;
+        top: 5px;*/
     }
+
+    .tabContent, .selectedTabContent { height: 22px !important; }
+
+    /* remove parts of the header that we don't need */
 
     #quicksearchBox {
         display: none
@@ -61,82 +56,89 @@
         right: 64px;
     }
 
+    html { font-size: 100%; }
+    body { font-size: 16px; }
+    a { color: blue }
 </style>
 
 <script>
     showMotto();
 </script>
 
-<%-- placed this outside of the search container below so that it won't inherit odd css --%>
-<div id="beta-message" class="modal hide fade" tabindex="-1" role="dialog"
-     aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        Welcome to the new ZFIN Search (Beta)!
-    </div>
-    <div class="modal-body">
-        <img src="/images/ajax-loader.gif"/>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+<%-- placed this outside of the search container below so that it won't inherit odd css, content of modal is loaded via remote --%>
+
+<!-- Modal -->
+<div class="modal fade" id="beta-message" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
     </div>
 </div>
 
-<div class="row-fluid">
-    <div class="search-box span12">
-        <form id="query-form" class="form-inline" method="get" action="/search">
-            <div class="row">
-                <div class="search-input-container offset1 span11">
-
-                    <a data-remote="/action/quicksearch/message" data-target="#beta-message" data-toggle="modal"
-                       class="clickable">
-                        <span class="badge alert-success">Beta</span>
-                    </a>
 
 
-                    <select name="category">
-                        <option>Any</option>
-                        <c:forEach items="${categories}" var="cat">
-                            <option <c:if test="${cat eq category}">selected="selected"</c:if>>${cat}</option>
-                        </c:forEach>
-                    </select>
-                            <input class="search-form-input input input-xxlarge" name="q" id="primary-query-input"
-                                   autocomplete="off" type="text" value="<c:out value="${q}" escapeXml="true"/>"/>
-                    <div class="btn-group search-box-buttons">
-                        <authz:authorize ifAnyGranted="root">
-                            <c:if test="${category eq publicationCategoryName}">
-                                <a id="advanced-search-button" class="btn" href="#" title="Advanced Search Options"
-                                   onClick="$('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
-                            </c:if>
-                        </authz:authorize>
-                        <button type="submit" class="btn btn-zfin">Go</button>
-                        <a class="btn" href="/search?q=" onclick="localStorage.clear();">New</a>
-                        <a  class="btn" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
-                            <i class="fa fa-question-circle"></i>
+<div class="container-fluid">
+
+
+    <div class="row">
+        <div class="search-box col-md-12">
+            <form id="query-form" class="form-inline" method="get" action="/search">
+                <div class="search-input-container">
+
+                        <a data-remote="/action/quicksearch/message" data-target="#beta-message" data-toggle="modal"
+                           class="clickable">
+                            <span class="badge alert-success">Beta</span>
                         </a>
-                        <a class="btn feedback-link" href="#">Feedback</a>
+
+
+                        <select class="form-control" name="category">
+                            <option>Any</option>
+                            <c:forEach items="${categories}" var="cat">
+                                <option <c:if test="${cat eq category}">selected="selected"</c:if>>${cat}</option>
+                            </c:forEach>
+                        </select>
+
+
+                        <input class="search-form-input form-control"
+                               name="q"
+                               id="primary-query-input"
+                               autocomplete="off"
+                               type="text"
+                               value="<c:out value="${q}" escapeXml="true"/>"/>
+
+                        <div class="btn btn-group search-box-buttons">
+                            <button type="submit" class="btn btn-default btn-zfin">Go</button>
+                            <authz:authorize ifAnyGranted="root">
+                                <c:if test="${category eq publicationCategoryName}">
+                                    <a id="advanced-search-button" class="btn btn-default" href="#" title="Advanced Search Options"
+                                       onClick="jQuery('#advanced-container').slideToggle(200);"><i class="fa fa-list"></i></a>
+                                </c:if>
+                            </authz:authorize>
+                            <a class="btn btn-default" href="/search?q=" onclick="localStorage.clear();">New</a>
+                            <a  class="btn btn-default" href="http://wiki.zfin.org/display/general/ZFIN+Single+Box+Search+Help" target="newWindow">
+                                <i class="fa fa-question-circle"></i>
+                            </a>
+                            <a class="btn btn-default feedback-link" href="#">Feedback</a>
+                        </div>
                     </div>
-                </div>
 
-            </div>
-            <script>
-                function replaceQuery(query) {
-                    $('#primary-query-input').val(query);
-                    $('#query-form').submit();
-                }
-            </script>
-        </form>
+                <script>
+                    function replaceQuery(query) {
+                        jQuery('#primary-query-input').val(query);
+                        jQuery('#query-form').submit();
+                    }
+                </script>
+            </form>
 
-        <div class="container-fluid" id="advanced-container" style="display:none;"  >
-            <div class="row-fluid" >
-                <div class="span10 offset1">
-                    <c:choose>
-                        <c:when test="${category eq publicationCategoryName}">
-                            <zfin-search:publicationAdvanced/>
-                        </c:when>
-                    </c:choose>
-
-
+            <div id="advanced-container" style="display:none;"  >
+                <div class="row" >
+                    <div class="col-md-10 col-md-offset-1">
+                        <c:choose>
+                            <c:when test="${category eq publicationCategoryName}">
+                                <zfin-search:publicationAdvanced/>
+                            </c:when>
+                        </c:choose>
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,8 +155,7 @@
 
 
             $('.datepicker').datepicker({format: 'yyyy-mm-dd', autoclose: true});
-
-
+                
         </script>
 
     </div>
@@ -162,60 +163,60 @@
 
     <div style="display: block; position: absolute; top: 125px; right: 50px; color: #666; font-size: 9px;">
 
-        <authz:authorize ifAnyGranted="root">
-            <a href="${baseUrl}&hl=true">highlight</a>
-            <a href="${baseUrl}&explain=true">debug</a>
-        </authz:authorize>
+            <authz:authorize ifAnyGranted="root">
+                <a href="${baseUrl}&hl=true">highlight</a>
+                <a href="${baseUrl}&explain=true">debug</a>
+            </authz:authorize>
 
     </div>
 
-</div>
-
-<zfin-search:feedbackModal/>
 
 
-<c:if test="${!empty message}">
-    <div style="margin-top: 1em;" class="row">
-        <div class="offset2 span8 alert alert-info">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                ${message}
+    <zfin-search:feedbackModal/>
+
+
+    <c:if test="${!empty message}">
+        <div style="margin-top: 1em;" class="row">
+            <div class="col-md-offset-2 col-md-8 alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    ${message}
+            </div>
         </div>
-    </div>
-</c:if>
+    </c:if>
 
-<c:if test="${isDashQuery}">
-    <div style="margin-top: 1em;" class="row">
-        <div class="offset2 span8 alert alert-info">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            Did you mean to search for <a href="#" onclick="javascript:replaceQuery('${newQuery}')">${newQuery}</a>?
-            A leading dash means NOT.
+    <c:if test="${isDashQuery}">
+        <div style="margin-top: 1em;" class="row">
+            <div class="col-md-offset-2 col-md-8 alert alert-info">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                Did you mean to search for <a href="#" onclick="javascript:replaceQuery('${newQuery}')">${newQuery}</a>?
+                A leading dash means NOT.
+            </div>
         </div>
-    </div>
-</c:if>
-
-<div style="margin: .5em ; padding-left: 0px ; padding-right: 0px ; min-width: 700px;" class="container-fluid">
+    </c:if>
 
 
-    <div class="row-fluid">
+
+    <div class="row">
         <zfin:horizontal-breadbox query="${query}" queryResponse="${response}" baseUrl="${baseUrl}"/>
     </div>
 
-    <div class="row-fluid">
 
-        <div class="span4 refinement-section">
+    <div class="row">
+
+        <div class="col-md-3 col-sm-5 col-xs-6 refinement-section">
             <c:if test="${!empty facetGroups}">
                 <zfin2:showFacets facetGroups="${facetGroups}"/>
             </c:if>
         </div>
 
-        <div style="margin-left: .5em ; " class="span8">
+        <div class="col-md-9 col-sm-7 col-xs-6">
 
             <c:if test="${showResults eq false}">
                 <zfin-search:searchMessage/>
             </c:if>
 
 
-            <div class="search-result-container row">
+            <div class="search-result-container">
 
                 <c:if test="${!empty xrefResults}">
                     <div>Related Data for</div>
@@ -227,56 +228,49 @@
                 </c:if>
 
                 <div class="row" style="margin-top: 1em;">
-                    <div class="span3 result-actions">
-                        <div class="result-actions">
-                            <a href="${downloadUrl}" class="btn btn-default">
-                                <i class="fa fa-download"></i> Download
-                            </a>
-                        </div>
+                    <div class="col-md-2 col-sm-3 col-xs-4">
+                        <a href="${downloadUrl}" class="btn btn-default">
+                            <i class="fa fa-download"></i> Download
+                        </a>
                     </div>
-                    <div class="span2 result-count">
-                        <fmt:formatNumber value="${numFound}" pattern="##,###"/>
-                        results
-                    </div>
-                    <div class="span7 sort-controls pull-right">
+                    <div class="col-md-10 col-sm-9 col-xs-8">
 
-                        <authz:authorize ifAnyGranted="root">
-                            <div class="btn-group">
-                                <button id="boxy-result-button" class="btn result-action-tooltip" title="Detailed Results">
-                                    <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
-                                </button>
-                                <button id="table-result-button" class="btn result-action-tooltip" title="Tabular Results">
-                                    <i class="fa fa-table"></i>
-                                </button>
+                        <span class="result-count">
+                            <fmt:formatNumber value="${numFound}" pattern="##,###"/> results
+                        </span>
+
+                        <div class="pull-right">
+                            <authz:authorize ifAnyGranted="root">
+                                <div class="btn-group">
+                                    <button id="boxy-result-button" class="btn btn-default result-action-tooltip" title="Detailed Results">
+                                        <i class="fa fa-newspaper-o fa-flip-horizontal"></i>
+                                    </button>
+                                    <button id="table-result-button" class="btn btn-default result-action-tooltip" title="Tabular Results">
+                                        <i class="fa fa-table"></i>
+                                    </button>
+                                </div>
+
+                                <div class="btn-group">
+                                    <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=20" class="btn btn-default <c:if test="${rows eq 20}">btn-selected disabled</c:if>">20</a>
+                                    <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn btn-default <c:if test="${rows eq 50}">btn-selected disabled</c:if>">50</a>
+                                    <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn btn-default <c:if test="${rows eq 200}">btn-selected disabled</c:if>">200</a>
+                                </div>
+                            </authz:authorize>
+
+                            <div class="btn-group sort-controls">
+                                <a class="btn btn-default dropdown-toggle sort-button" data-toggle="dropdown" href="#">
+                                    Sorted ${sortDisplay}
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="${baseUrlWithoutSort}">Relevance</a></li>
+                                    <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=A+to+Z">A to Z</a></li>
+                                    <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Z+to+A">Z to A</a></li>
+                                    <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Newest">Newest</a></li>
+                                    <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Oldest">Oldest</a></li>
+                                </ul>
                             </div>
-
-                            <div class="btn-group">
-                                <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=20" class="btn <c:if test="${rows eq 20}">disabled</c:if>">20</a>
-                                <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=50" class="btn <c:if test="${rows eq 50}">disabled</c:if>">50</a>
-                                <a href="${baseUrlWithoutRows}${rowsUrlSeparator}rows=200" class="btn <c:if test="${rows eq 200}">disabled</c:if>">200</a>
-                            </div>
-                        </authz:authorize>
-
-                        <div class="btn-group">
-                            <a class="btn dropdown-toggle sort-button" data-toggle="dropdown" href="#">
-                                Sorted ${sortDisplay}
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="${baseUrlWithoutSort}">Relevance</a></li>
-                                <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=A+to+Z">A to Z</a></li>
-                                <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Z+to+A">Z to A</a></li>
-                                <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Newest">Newest</a></li>
-                                <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Oldest">Oldest</a></li>
-                                <%--                                <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Most+Attributed">Most
-                                                                    Attributed</a></li>
-                                                                <li><a href="${baseUrlWithoutSort}${sortUrlSeparator}sort=Least+Attributed">Least
-                                                                    Attributed</a></li>--%>
-
-
-                            </ul>
                         </div>
-
                     </div>
                 </div>
 
@@ -325,21 +319,7 @@
 
 <script>
 
-function scrollToAnchor(aid) {
-    aid = aid.replace("#", "");
-    var aTag = $("a[name='" + aid + "']");
-    $('html,body').animate({scrollTop: aTag.offset().top}, 'fast');
-}
 
-function toggleLocalStorage(field) {
-    if (localStorage.getItem(field) == null || localStorage.getItem(field) == "closed") {
-        localStorage.setItem(field, "open");
-    } else {
-        localStorage.setItem(field, "closed");
-    }
-}
-
-$(document).ready(function () {
 function submitAdvancedQuery(fields) {
     var query = "${baseUrlWithoutQ}";
 
@@ -372,12 +352,16 @@ function submitAdvancedQuery(fields) {
 
 $(document).ready(function () {
 
+    $('.image-modal').each( function() {
+        $(this).detach();
+        $('body').append(this);
+    });
+
     $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
 
     $('#primary-query-input').bind("typeahead:selected", function() {
         $('#query-form').submit();
     });
-})
 
     if (!${numFound}) {
         ga('send', 'event', 'Search', 'Zero Results', "<c:out value="${q}" escapeXml="true"/>", {'nonInteraction': 1});
@@ -399,9 +383,6 @@ $(document).ready(function () {
 
     //if this gets converted from tipsy to bootstrap, need to handle the jquery-ui collision:
     //http://stackoverflow.com/questions/13731400/jqueryui-tooltips-are-competing-with-twitter-bootstrap
-    $('.facet-value-hover').tipsy({gravity: 'w'});
-    $('.facet-include').tipsy({gravity: 'nw'});
-    $('.facet-exclude').tipsy({gravity: 'sw'});
     $('.facet-value-hover').tipsy({gravity: 'w'});
     $('.facet-include').tipsy({gravity: 'nw'});
     $('.facet-exclude').tipsy({gravity: 'sw'});
@@ -432,16 +413,16 @@ $(document).ready(function () {
         }
     });
 
-    if (!(localStorage.getItem("draft-software-warning-dismissed") == "true"))
-        $('#draft-software-warning').modal('show');
 
     function showBoxyResults() {
         $('.boxy-search-result').show();
         $('.table-results').hide();
         $('#boxy-result-button').prop('disabled', true);
+        $('#boxy-result-button').addClass('btn-selected');
         $('#boxy-result-button').tipsy('disable');
         $('#boxy-result-button').tipsy('hide');
         $('#table-result-button').prop('disabled', false);
+        $('#table-result-button').removeClass('btn-selected');
         $('#table-result-button').tipsy('enable');
         localStorage.setItem("results-type","boxy");
     }
@@ -449,8 +430,10 @@ $(document).ready(function () {
         $('.boxy-search-result').hide();
         $('.table-results').show();
         $('#boxy-result-button').prop('disabled', false);
+        $('#boxy-result-button').removeClass('btn-selected');
         $('#boxy-result-button').tipsy('enable');
         $('#table-result-button').prop('disabled', true);
+        $('#table-result-button').addClass('btn-selected');
         $('#table-result-button').tipsy('disable');
         $('#table-result-button').tipsy('hide');
         localStorage.setItem("results-type","table");
@@ -470,19 +453,8 @@ $(document).ready(function () {
         showBoxyResults();
     }
 
-
-    for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        var value = localStorage.getItem(localStorage.key(i));
-        if (value == "open") {
-            $('.' + key + "-toggle").toggle();
-        }
-
-    }
-
-
 });
-;
+
 
 
 </script>

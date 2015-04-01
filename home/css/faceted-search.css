@@ -19,9 +19,6 @@ div.search-result {
 .cross-reference-result-container { margin-left: 3em; margin-right: 2em; }
 .cross-reference-result-container .search-result {
     left: 0em;
-/*
-    box-shadow: 5px 5px 7px 5px rgba(0, 0, 0, .1);
-*/
     border-width: 2px;
     background: #efefef;
 }
@@ -282,13 +279,14 @@ div.result-actions {
     margin-left: 45px;
     margin-top: 7px;
 }
-div.result-count {
+.result-count {
     padding-top: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
     font-weight: bold;
     text-align: center
 }
-div.sort-controls { padding-top: 1em; text-align: right ; font-size: small; }
-div.sort-controls li { text-align: left;}
+.sort-controls li { text-align: left;}
 .sort-button .caret { margin-left: 1em;}
 
 
@@ -323,168 +321,6 @@ div.breadbox {
     opacity: 1.0;
 }
 
-div.additional-facet-values {
-    display: none;
-}
-
-div.single-facet-value-container {
-    /*max-height: 150px ; overflow-y: auto;*/
-}
-
-div.facet-expand-contract-links {
-    margin-left: 1.5em;
-    margin-bottom: .5em;
-}
-
-.facet-expand-more-link {
-    font-style:italic;
-    cursor: pointer;
-    color: #606660;
-    display: none;
-}
-
-.facet-expand-less-link {
-    font-style:italic;
-    cursor: pointer;
-    color: #606660;
-    display: none;
-}
-
-.facet-show-all-facets-link {
-    font-style: italic;
-    color: #606660;
-    padding-left: 18px;
-}
-
-div.facet-filter-box {
-    display: none;
-    margin-left: .3em;
-}
-
-
-.selectable-facet-value, .selected-facet-value, .breadbox-link {
-    padding-left: .5em;
-}
-
-.breadbox-link, .breadbox-link:active, .breadbox-link:visited, .breadbox-link:hover {
-    color: #606660;
-}
-
-
-.facet-group li {
-    list-style: none;
-}
-
-.root-only-facet-group .facet-group-label-container { color: red; }
-
-.selectable-facet-value a, .selectable-facet-value a:active, .selectable-facet-value a:hover, .selectable-facet-value a:active {
-    color: #404440;
-}
-
-.selectable-facet-value i.include-exclude-icon, .full-facet-modal-link-icon { color: #707770;  }
-.facet-value i.include-exclude-icon { opacity: 0}
-.facet-value:hover i.include-exclude-icon { opacity: 0.8 }
-
-
-a.not-facet-link {
-    padding-left: 3px;
-    font-weight: bold;
-    color: #a0a7a0;
-    font-style: italic;
-}
-
-
-.a.not-facet-link:active, a.not-facet-link:hover, a.not-facet-link:active {
-    color: #404440;
-}
-
-
-.selectable-facet-value img.checkbox-icon {
-   padding-right: 5px;
-   opacity: 0.70;
-   text-decoration: no-underline;
-   position:relative;
-   top: -2px;
-
-}
-.breadbox-link img.checkbox-icon {
-   padding-right: 5px;
-   opacity: 0.70;
-   text-decoration: no-underline;
-   position:relative;
-   top: -2px;
-   left: 1px;
-
-}
-
-.refinement-section form {
-    margin: 0px
-}
-
-.facet-label, .breadbox-title {
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.facet-values-outer-box { margin-bottom: .3em;}
-
-.facet-group-label-container, .breadbox-title-container {
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-    padding: .25em;
-}
-
-.facet-label-container {
-    color: #666;
-}
-
-.facet-control-widget {
-    padding-left: 5px;
-}
-
-.facet-field-count {
-    color: #999;
-    padding-left: 1em ;
-    padding-right: 1em;}
-
-.facet-value-list, .breadbox-value-list {
-    margin-left: 0em;
-    margin-bottom: 0em;
-}
-
-li.facet-value, li.breadbox-value {
-    list-style: none;
-}
-
-
-.category-facet-group-values li.facet-value { font-size: 15px; }
-
-li.facet-value:hover {
-/*    background-color: #d8e1d8*/
-}
-
-.facet-count, .facet-count:hover, .facet-count:visited, .facet-count:active {
-    color: #888;
-    text-align: right;
-    padding-right: .5em
-}
-
-.facet-count-container { text-align: right}
-.facet-count-container b.caret { opacity: .5 }
-.facet-count-container .dropdown-menu li { text-align: left}
-
-.facet-sort-links {
-    opacity: 0.5;
-    float: right;
-    display: none
-}
-
-div.logo img {
-    position: absolute;
-    top: 5px;
-    left: 10px;
-}
 div.search-box {
     white-space: nowrap;
 }
@@ -560,20 +396,17 @@ body.modal-open {
 }
 */
 
+.btn-selected {
+    background-color: #888 !important;
+    color: #eee !important;
+    border-color: #888 !important;
+}
+
 .btn-zfin {
     color: #FFFFFF;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    background-color: #004444;
-    background-image: -moz-linear-gradient(top, #006666, #004444);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#006666), to(#004444));
-    background-image: -webkit-linear-gradient(top, #006666, #004444);
-    background-image: -o-linear-gradient(top, #006666, #004444);
-    background-image: linear-gradient(to bottom, #006666, #004444);
-    background-repeat: repeat-x;
-    border-color: #004444;
+    background-color: #066;
+    border-color: #066;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#006666', endColorstr='#004444', GradientType=0);
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
 .btn-zfin:hover,
 .btn-zfin:focus,
@@ -589,24 +422,42 @@ body.modal-open {
     width:600px;
 }
 
-/*
-.Antibody-label { background-color: #69658E }
-.Company-label { background-color: #DBC244 }
-.Construct-label { background-color: #DA4935 }
-.Feature-label { background-color: #CE56D9 }
-.Figure-label { background-color: #492E27 }
-.Fish-label { background-color: #DBA983 }
-.Gene-label { background-color: #D64E6F }
-.Lab-label { background-color: #CEBDD0 }
-.Marker-label { background-color: #D58233 }
-.Term-label { background-color: #7B64C7 }
-.Person-label { background-color: #762C50 }
-.Publication-label { background-color: #BE4095 }
-.unused1category-label { background-color: #856C2C }
-.unused2category-label { background-color: #8C3A2A }
-.unused3category-label { background-color: #D289BE }
-.unused4category-label { background-color: #6F92D9 }
-.unused5category-label { background-color: #A07674 }
-.unused6category-label { background-color: #3B2F58 }
 
-*/
+
+.carousel-control {
+    top: 0px !important;
+    font-size: 60px !important;
+    font-weight: bold !important;
+    background-image: none !important;
+    color: black !important;
+}
+
+/***** Facet Layout *****/
+
+/* indentation, layout */
+
+li.facet-value { line-height: 21px !important; }
+.tight-on-the-left { padding-left: 2px !important; margin-left: 0px !important; }
+.tight-on-the-right { padding-right: 2px !important; margin-right: 0px !important; }
+
+
+/* labels, etc */
+.facet-group-label-container { font-size: 18px; font-weight: bold; cursor: pointer; }
+.facet-label { font-size: 15px; font-weight: bold; color: #666; cursor: pointer;}
+.category-facet-group-values li.facet-value { font-size: 15px; }
+.root-only-facet-group .facet-group-label-container { color: red;}
+
+a.facet-link { color: #404440; }
+
+/* a mute the icons and counts */
+.include-exclude-icon, i.facet-selected, .facet-field-count, .facet-value-modal-link { color: #707770;}
+.facet-count { color: #888;}
+
+.facet-value i.include-exclude-icon { visibility: hidden; }
+.facet-value:hover i.include-exclude-icon { visibility: visible; }
+
+
+.facet-value-modal-link { font-style: italic; }
+
+/* This hides the '5th' facet value, one extra is selected so that we'll know if there should be a 'show all' link */
+.additional-facet-values { display: none; }

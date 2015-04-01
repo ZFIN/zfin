@@ -56,8 +56,8 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
         String url = path + "?q=" + q;
 
         StringBuilder out = new StringBuilder();
-        out.append("<div class=\"span12 horizontal-breadbox\">");
-        out.append("<a class=\"btn\" href=\"");
+        out.append("<div class=\"col-md-12 horizontal-breadbox\">");
+        out.append("<a class=\"btn btn-default\" href=\"");
         out.append(url);
         out.append("\">Remove All</a>");
         for (String fq : query.getFilterQueries()) {
@@ -74,7 +74,7 @@ public class ShowHorizontalBreadBoxLinksTag extends TagSupport {
 
         NameValuePair nameValuePair = SolrService.splitFilterQuery(fq);
 
-        out.append("<a class=\"label horizontal-breadbox-label\" href=\"");
+        out.append("<a class=\"btn btn-default btn-zfin horizontal-breadbox-label\" href=\"");
         out.append(SolrService.getBreadBoxUrl(fq, baseUrl));
         out.append("\">");
 

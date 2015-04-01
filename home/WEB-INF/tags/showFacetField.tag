@@ -7,7 +7,7 @@
 
 <c:set var="name" value="${facet.name}"/>
 
-<ol class="facet-value-list" id="${name}-facet-value-list">
+<ol class="facet-value-list list-unstyled" id="${name}-facet-value-list">
 
     <a name="${name}"/></a>
 
@@ -32,23 +32,14 @@
                   id="${name}-facet-label"
                     <c:if test="${addLeftLabelSpacing}">style="padding-left: 16px;"</c:if>
                     >
-
                   ${facet.label}
             </span>
-<%--
-            <c:if test="${!empty facet.nonEmptyDocumentCount}">
---%>
+
                 <span id="${name}-facet-field-count" class="facet-field-count pull-right"
                         <c:if test="${open}">style=" display:none" </c:if>
                         >[${facet.nonEmptyDocumentCount}]
                 </span>
-           <%-- </c:if>--%>
-<%--            <span class="facet-sort-links ${name}-toggle">
-                Sort:
-                <a href="/prototype?fq=category%3A%22Mutant+%2F+Tg%22&category=Mutant+%2F+Tg&f.type.facet.sort=count#type">#</a>
-                |
-                <a href="/prototype?fq=category%3A%22Mutant+%2F+Tg%22&category=Mutant+%2F+Tg&f.type.facet.sort=index#type">A-Z</a>
-            </span>--%>
+
         </div>
     </c:if>
 
@@ -59,11 +50,13 @@
 
         <%-- only make it clickable if there's something inside to display --%>
         <c:if test="${(fn:length(facet.selectedFacetValues) + fn:length(facet.facetValues)) > 0}">
-        <script>jQuery('#${name}-facet-label-container').click(function () {
-            jQuery('#${name}-facet-value-outer-box').slideToggle(100);
-            jQuery('.${name}-outer-toggle').toggle();
-            jQuery('#${name}-facet-field-count').toggle();
-        });  </script>
+        <script>
+            $('#${name}-facet-label-container').click(function () {
+                $('#${name}-facet-value-outer-box').slideToggle(100);
+                $('.${name}-outer-toggle').toggle();
+                $('#${name}-facet-field-count').toggle();
+            });
+        </script>
         </c:if>
 
            <div class="single-facet-value-container" id="${name}-facet-value-container">
@@ -86,17 +79,9 @@
         </div>
 
         <c:if test="${fn:length(facet.facetValues) > 4 && !facet.alwaysShowAllFacets}">
-        <li>
-            <div id="${name}-facet-expand-contract-links" class="facet-expand-contract-links">
-                <span <%--id="${name}"--%>
-                   class="facet-expand-more-link ${name}-toggle "
-                   href="#$<%--{name}--%>"
-                   onClick="jQuery('.${name}-toggle').toggle();">Show More</span>
-                <span <%--id="${name}"--%> class="facet-expand-less-link ${name}-toggle "
-                   href="#<%--${name}--%>"
-                   onClick="jQuery('.${name}-toggle').toggle() ; /*jQuery('html,body').animate({scrollTop:jQuery('#${name}-facet-label').offset().top}, 50);*/  ">
-                    Show Less
-                </span>
+        <li class="row">
+            <div class="col-md-2 col-xs-2"> <%-- this is a placehold because tight-on-the-left breaks the offsets --%></div>
+            <div id="${name}-facet-expand-contract-links" class="col-md-8 col-xs-9 tight-on-the-left facet-expand-contract-links">
                 <div>
                     <a class="facet-show-all-facets-link facet-value-modal-link" href="#"
                        onclick="ga('send', 'event', '${zfn:buildFacetedSearchGACategory(category, facet.label)} Facet', 'show all');"

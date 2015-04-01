@@ -8,7 +8,7 @@
       </td>
     </tr>
   </table>
-  <div class="modal" id="input-welcome-overlay">
+  <div class="jq-modal" id="input-welcome-overlay">
       <div class="popup-content">
           <div class="popup-header">
               Your Input Welcome

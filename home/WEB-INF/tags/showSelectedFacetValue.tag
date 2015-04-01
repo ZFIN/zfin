@@ -2,10 +2,16 @@
 
 <%@attribute name="value" type="org.zfin.search.presentation.FacetValue"%>
 
-<li style="min-height:10px; padding-left: 16px; " class="facet-value row-fluid">
-        <a class="breadbox-link" href="${value.url}">
-<%--            <img class="checkbox-icon" src="/images/icon-checked.png">--%>
-            <i class="fa fa-check-square"></i> ${value.label}
+<li class="facet-value selected-facet-value row">
+    <div class="col-md-2 col-xs-3 tight-on-the-right">
+        <div class="pull-right">
+            <i class="fa fa-check-square facet-selected"></i>
+        </div>
+    </div>
+    <div class="col-md-10 col-xs-9 tight-on-the-left">
+        <a class="facet-link" href="${value.url}">
+            ${value.label}
         </a>
+    </div>
 </li>
 

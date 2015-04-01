@@ -1,67 +1,67 @@
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<div class="row-fluid">
-    <div class="span6 offset3 feedback-box alert" style="display: none;">
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3 feedback-box alert" style="display: none; margin-top: 1em;">
         <a href="#" class="close" data-hide="feedback-box">&times;</a>
-        <form class="your-input-welcome-form form-horizontal" name="your-input-welcome" id="feedback-form">
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label" for="feedbackName">Name</label>
-                    <div class="controls">
-                        <input name="yiw-name" id="feedbackName" type="text" class="input-block-level required"/>
-                    </div>
+        <form style="margin-top: 18px; clear:both;" class="your-input-welcome-form form-horizontal" name="your-input-welcome" id="feedback-form">
+
+            <div class="form-group">
+                <label for="feedbackName" class="control-label col-xs-2">Name</label>
+                <div class="col-xs-10">
+                    <input name="yiw-name" id="feedbackName" type="text" class="form-control required"/>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="feedbackInstitution">Institution</label>
-                    <div class="controls">
-                        <input name="yiw-institution" id="feedbackInstitution" type="text" class="input-block-level required"/>
-                    </div>
+            </div>
+            <div class="form-group">
+                <label for="feedbackInstitution" class="control-label col-xs-2">Institution</label>
+                <div class="col-xs-10">
+                    <input name="yiw-institution" id="feedbackInstitution" type="text" class="form-control required"/>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="feedbackEmail">Email</label>
-                    <div class="controls">
-                        <input name="yiw-email" id="feedbackEmail" class="input-block-level required email" type="text"/>
-                    </div>
+            </div>
+            <div class="form-group">
+                <label for="feedbackEmail" class="control-label col-xs-2">Email</label>
+                <div class="col-xs-10">
+                    <input name="yiw-email" id="feedbackEmail" class="form-control required email" type="text"/>
                 </div>
-                <%-- spam preventer --%>
-                <div class="control-group" style="display: none">
-                    <label class="control-label" for="feedbackEmail2">Please leave blank</label>
-                    <div class="controls">
-                        <input type="text" id="feedbackEmail2" name="email" autocomplete="off"/>
-                    </div>
+            </div>
+            <%-- spam preventer --%>
+            <div class="form-group" style="display: none">
+                <label for="feedbackEmail2" class="control-label col-xs-2">Please leave blank</label>
+                <div class="col-xs-10">
+                    <input type="text" id="feedbackEmail2" name="email" autocomplete="off" class="form-control"/>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="feedbackSubject">Subject</label>
-                    <div class="controls">
-                        <input class="input-block-level required" id="feedbackSubject" type=text name="yiw-subject"/>
-                    </div>
+            </div>
+            <div class="form-group">
+                <label for="feedbackSubject"class="control-label col-xs-2">Subject</label>
+                <div class="col-xs-10">
+                    <input id="feedbackSubject" type=text name="yiw-subject" class="required form-control"/>
                 </div>
-                <div class="control-group">
-                    <label class="control-label" for="feedbackComments">Comments</label>
-                    <div class="controls">
-                        <textarea class="input-block-level required" id="feedbackComments" name="yiw-comments" rows=7></textarea>
-                    </div>
+            </div>
+            <div class="form-group">
+                <label for="feedbackComments" class="control-label col-xs-2">Comments</label>
+                <div class="col-xs-10">
+                    <textarea class="form-control required" id="feedbackComments" name="yiw-comments" rows=7></textarea>
                 </div>
-                <div class="control-group">
-                    <div class="controls">
-                        <input type="submit" value="Send" class="btn btn-zfin" id="feedback-send-button"/>
-                        <button class="btn" data-hide="feedback-box">Close</button>
-                    </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-offset-2 col-xs-10">
+                    <input type="submit" value="Send" class="btn btn-zfin" id="feedback-send-button"/>
+                    <button class="btn btn-default" data-hide="feedback-box">Close</button>
                 </div>
-                <div class="controls">
-                    <small>Screenshots can be sent to <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a></small>
-                </div>
-            </fieldset>
+            </div>
+            <div class="col-xs-offset-2 col-xs-10">
+                <small>Screenshots can be sent to <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a></small>
+            </div>
         </form>
     </div>
 
-    <div id="feedback-thanks-message" class="offset3 span6 alert alert-success feedback-done" style="display: none;">
+    <div id="feedback-thanks-message" class="col-md-offset-3 col-md-6 alert alert-success feedback-done" style="display: none;">
         <a href="#" class="close" data-hide="alert">&times;</a>
         Thanks for your feedback!
     </div>
 
-    <div id="feedback-error-message" class="offset3 span6 alert alert-error feedback-done" style="display: none;">
+    <div id="feedback-error-message" class="col-md-offset-3 col-md-6 alert alert-error feedback-done" style="display: none;">
         <a href="#" class="close" data-hide="alert">&times;</a>
         <strong>Oh no!</strong>
         Something went wrong on our end. Please email your feedback

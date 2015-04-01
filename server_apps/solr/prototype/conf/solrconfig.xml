@@ -224,12 +224,15 @@
 
          <str name="facet">true</str>
          <str name="facet.sort">count</str>
-         <str name="facet.limit">15</str>
+         <str name="facet.limit">5</str>
          <str name="facet.mincount">1</str>
 
          <!-- initial settings for special case facets -->
          <str name="f.category.facet.sort">index</str>
-         <str name="f.chromosome.facet.limit">50</str>
+         <str name="f.curator.facet.limit">50</str>
+         <str name="f.stage.facet.limit">50</str>
+         <str name="f.type.facet.limit">50</str>
+
 
 
           <str name="q.alt">*:*</str>

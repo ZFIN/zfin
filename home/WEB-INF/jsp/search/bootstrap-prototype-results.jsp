@@ -69,10 +69,10 @@
 
     <div class="container-fluid">
       <div class="row">
-		<div class="span12">
+		<div class="col-md-12">
          <form class="form-search">
               <div class="input-append">
-                <input class="span8" id="appendedInputButton" type="text"><button class="btn" type="button">Search</button>
+                <input class="col-md-8" id="appendedInputButton" type="text"><button class="btn" type="button">Search</button>
                 <a href="#" onclick="jQuery('#advanced-search').slideToggle();">Advanced</a>
              </div>
          </form>
@@ -84,7 +84,7 @@
 					 <option>Phenotype Anatomy</option>
 			     </select>
 			     <select><option>Contains</option><option>Starts With</option><option>Equals</option></select>
-			     <input class="span6" type="text">
+			     <input class="col-md-6" type="text">
 			 </div>
 			 <div>
 				 <select>
@@ -93,7 +93,7 @@
 					 <option>Phenotype Anatomy</option>
 				 </select>
 				 <select><option>Contains</option><option>Starts With</option><option>Equals</option></select>
-			     <input class="span6" type="text"></div>
+			     <input class="col-md-6" type="text"></div>
  			 <div>
 				 <select>
 					 <option>Gene Symbol</option>
@@ -101,7 +101,7 @@
 					 <option selected="true">Phenotype Anatomy</option>
 				 </select>
 				 <select><option>Contains</option><option>Starts With</option><option>Equals</option></select>
-				 <input class="span6" type="text">
+				 <input class="col-md-6" type="text">
 				 <button class="btn" type="button">Search</button>
 			 </div>
 
@@ -110,7 +110,7 @@
 
       </div>
       <div class="row">
-          <div class="span3 well sidebar-nav">
+          <div class="col-md-3 well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Sidebar</li>
               <li><a href="#">Link</a></li>
@@ -139,7 +139,7 @@
                   </form></li>
             </ul>
           </div><!--/.well -->
-        <div class="span9 well">
+        <div class="col-md-9 well">
               a place for results or whatever
         </div>
 

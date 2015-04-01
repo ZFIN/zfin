@@ -10,43 +10,49 @@
 
 
 
-<ol class="facet-value-list" id="${name}-facet-value-list">
+<ol class="facet-value-list list-unstyled" id="${name}-facet-value-list">
 
 
     <div class="facet-value-outer-box"
          id="${name}-facet-value-outer-box"
-    <c:if test="${open == false}">style="display: none"</c:if>
+         <c:if test="${open == false}">style="display: none"</c:if>
     >
-
 
         <div class="single-facet-value-container" id="${name}-facet-value-container">
 
             <c:choose>
                 <%-- not selected --%>
                 <c:when test="${!facetQuery.selected}">
-                    <li style="min-height:10px" class="facet-value row-fluid">
-                        <span style="min-height:10px" class="span9 selectable-facet-value">
-                            <a style="padding-left: 31px; padding-right: 2px; min-height:10px"
+                    <li class="facet-value row">
+                        <div class="col-md-2 col-xs-3 tight-on-the-right">
+                        </div>
+                        <div class="col-md-7 col-xs-7 tight-on-the-left">
+                            <a class="facet-link"
                                onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${facetQuery.label}')"
                                href="${facetQuery.url}">
                                 ${facetQuery.label}
                            </a>
-                        </span>
-                        <ul style="min-height:10px"  <%--title="${specialTitle}"--%>
-                            class="facet-count-container span3 unstyled">
-                            <li class="unstyled"><span class="facet-count">
+                        </div>
+                        <div class="col-md-3 col-xs-2 facet-count">
+                            <span class="pull-right">
                                 (<fmt:formatNumber value="${facetQuery.count}" pattern="##,###"/>)
-                            </span></li>
-                        </ul>
+                            </span>
+                        </div>
                     </li>
                 </c:when>
                 <%-- selected --%>
                 <c:otherwise>
-                    <li style="min-height:10px; padding-left: 16px; " class="facet-value row-fluid">
-                        <a class="breadbox-link" href="${facetQuery.url}">
-                                <%--            <img class="checkbox-icon" src="/images/icon-checked.png">--%>
-                            <i class="fa fa-check-square"></i> ${facetQuery.label}
-                        </a>
+                    <li class="facet-value row">
+                        <div class="col-md-2 col-xs-3 tight-on-the-right">
+                            <div class="pull-right">
+                                <i class="fa fa-check-square facet-selected"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-10 col-xs-9 tight-on-the-left">
+                            <a class="facet-link" href="${facetQuery.url}">
+                                    ${facetQuery.label}
+                            </a>
+                        </div>
                     </li>
                 </c:otherwise>
 

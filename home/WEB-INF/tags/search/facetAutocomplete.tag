@@ -11,10 +11,8 @@
             <div>
                 Filter: <input ng-model="query" ng-model-options="{debounce: 300}" ng-change="page = 1">
 
-
-
             </div>
-            <ul>
+            <ul style="padding: 10px;">
                 <li style="clear:both" class="selectable-facet-value facet-value" ng-repeat="value in ( filteredValues = (facetValues | match:query) ) | paging:perPage:page">
                     <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)"><i class="include-exclude-icon facet-include fa fa-plus-circle"></i></a>
                     <a href="${baseUrlWithoutPage}fq=-{{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('exclude', value.name)"><i class="include-exclude-icon facet-exclude fa fa-minus-circle"></i></a>

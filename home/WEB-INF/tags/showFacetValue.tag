@@ -32,46 +32,31 @@
 </c:choose>
 
 
-
-
-<li style="min-height:10px" class="facet-value row-fluid">
-    <span style="min-height:10px"
-          class="span9 selectable-facet-value">
+<li class="facet-value row">
+    <div class="col-md-2 col-xs-3 tight-on-the-right">
         <c:if test="${showIncludeExclude}">
-            <a href="${value.url}" onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
-                <i title="include term" class="include-exclude-icon facet-include fa fa-plus-circle"></i>
-            </a>
-            <a href="${value.excludeUrl}" onclick="ga('send', 'event', '${gaCategory} Facet', 'exclude', '${value.label}')">
-                <i title="exclude term" class="include-exclude-icon facet-exclude fa fa-minus-circle"></i>
-            </a>
+            <div style="white-space: nowrap" class="pull-right">
+                <a href="${value.url}" onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
+                    <i title="include term" class="include-exclude-icon facet-include fa fa-plus-circle"></i>
+                </a>
+                <a href="${value.excludeUrl}" onclick="ga('send', 'event', '${gaCategory} Facet', 'exclude', '${value.label}')">
+                    <i title="exclude term" class="include-exclude-icon facet-exclude fa fa-minus-circle"></i>
+                </a>
+            </div>
         </c:if>
-        <a style="padding-right: 2px; min-height:10px" class=" facet-value-hover <c:if test="${showHover == 'true'}">facet-value-hover</c:if> "
+    </div>
+    <div class="col-md-7 col-xs-7 tight-on-the-left">
+        <a class="facet-value-hover facet-link"
            title="${specialTitle}"
            href="${value.url}"
            onclick="ga('send', 'event', '${gaCategory} Facet', 'include', '${value.label}')">
             ${value.label}
         </a>
-        </span>
-    <ul style="min-height:10px"  <%--title="${specialTitle}"--%>
-        class="facet-count-container span3 unstyled">
-          <li class="unstyled"><span class="facet-count">
-              (<fmt:formatNumber value="${value.count}" pattern="##,###"/>)</span></li>
-<%--        <li class="dropdown">
-
-            <a class="facet-count dropdown-toggle"
-               data-toggle="dropdown"
-               href="#">
-                 <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="${value.url}">Require</a>
-                </li>
-                <li>
-                    <a href="${value.excludeUrl}">Exclude</a>
-                </li>
-            </ul>
-        </li>--%>
-    </ul>
+    </div>
+    <div class="col-md-3 col-xs-2 facet-count">
+        <div class="pull-right">
+          (<fmt:formatNumber value="${value.count}" pattern="##,###"/>)
+        </div>
+    </div>
 </li>
 

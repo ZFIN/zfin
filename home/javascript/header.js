@@ -78,7 +78,7 @@ function processPopupLinks(parent) {
     jQuery(selector).each(function() {
         div_id = randomUniqueID("popup-");
         jQuery(this).attr("rel", "#" + div_id);
-        div_html = "<div class=\"modal\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
+        div_html = "<div class=\"jq-modal\" id=\"" + div_id + "\"><div class=\"popup-content\">Loading... <img src=\"/images/ajax-loader.gif\"/></div></div>";
 //append to the body so that we don't get unwanted css rules
         jQuery('body').append(div_html);
         if (jQuery(this).modal != undefined) {

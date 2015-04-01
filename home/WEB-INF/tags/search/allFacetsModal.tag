@@ -2,21 +2,27 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
-<div id="facet-value-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <%-- todo: need to label the modal--%>
-        <span id="all-facet-modal-title"></span>
-    </div>
-    <div class="modal-body">
+<!-- Modal -->
+<div class="modal fade" id="facet-value-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <%-- todo: need to label the modal--%>
+                <span id="all-facet-modal-title"></span>
+            </div>
+            <div class="modal-body">
 
-        <zfin-search:facetAutocomplete/>
+                <zfin-search:facetAutocomplete/>
 
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <script>
     jQuery(document).ready(function() {

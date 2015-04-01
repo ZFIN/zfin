@@ -225,7 +225,7 @@ public class ShowFacetLinksTag extends TagSupport {
 
             //with respect to 'Show More' - only count facet values that haven't been selected
 
-            facetHtml.append("<span style=\"min-height:10px\" class=\"span9 selectable-facet-value\">");
+            facetHtml.append("<span style=\"min-height:10px\" class=\"col-md-9 selectable-facet-value\">");
             facetHtml.append("<a title=\"require in results\" style=\"min-height:10px\" class=\" ");
             facetHtml.append(categoryCssClasses);
             facetHtml.append("\" href=\"");
@@ -238,7 +238,7 @@ public class ShowFacetLinksTag extends TagSupport {
 
             facetHtml.append("</span>");
 
-/*                            facetHtml.append("<span style=\"min-height:10px\" class=\"span3 facet-count\">");
+/*                            facetHtml.append("<span style=\"min-height:10px\" class=\"col-md-3 facet-count\">");
 
 
                             facetHtml.append("<a class=\"not-facet-link\" title=\"exclude ");
@@ -258,7 +258,7 @@ public class ShowFacetLinksTag extends TagSupport {
 
             String shortenedName = SolrService.shortenFacetValue(count.getName());
 
-            facetHtml.append("<ul style=\"min-height:10px\" class=\"facet-count-container span3 unstyled\">\n" +
+            facetHtml.append("<ul style=\"min-height:10px\" class=\"facet-count-container col-md-3 unstyled\">\n" +
                     "  <li class=\"dropdown\">\n" +
                     "    <a class=\"facet-count dropdown-toggle\"\n" +
                     "       data-toggle=\"dropdown\"\n" +

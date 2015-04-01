@@ -33,17 +33,11 @@
             <i <c:if test="${!open}"> style="display: none" </c:if> class="${name}-icon-toggle fa fa-fw fa-chevron-down"></i>
             <i <c:if test="${open}"> style="display: none" </c:if> class="${name}-icon-toggle fa fa-fw fa-chevron-right"></i>
             ${facetGroup.label}
-            <script>
-                jQuery('#${name}-facet-group-label-container').click(function() {
-                    jQuery('#${name}-facet-group-values').slideToggle(200);
-                    jQuery('.${name}-icon-toggle').toggle();
-                });
-            </script>
         </div>
         <div id="${name}-facet-group-values" class="facet-group-values <c:if test="${facetGroup.label == 'Category'}">category-facet-group-values</c:if> "
                 <c:if test="${!open}"> style="display:none;" </c:if>
                 >
-            <ol class="unstyled">
+            <ol class="facet-field-list list-unstyled">
                 <c:forEach var="facetQuery" items="${facetGroup.facetQueries}" varStatus="loop">
                     <li><zfin-search:showFacetQuery open="true" gaCategory="${zfn:buildFacetedSearchGACategory(category, facetGroup.label)}" facetQuery="${facetQuery}"/></li>
                 </c:forEach>
@@ -53,6 +47,12 @@
             </ol>
         </div>
     </div>
+    <script>
+        jQuery('#${name}-facet-group-label-container').click(function() {
+            jQuery('#${name}-facet-group-values').slideToggle(200);
+            jQuery('.${name}-icon-toggle').toggle();
+        });
+    </script>
 </c:if>
 
 

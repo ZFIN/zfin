@@ -108,7 +108,7 @@ body {
    position: absolute;
    top: 5px;
    right: 5px;
-   height: 1.5em;
+   height: 25px;
    z-index: 4;
 
    margin:0px;
@@ -172,7 +172,7 @@ body {
 	}
 
 #hdr-tabs .tabContent { 
-	height: 1.4em;  /* this controls the height of the tab above the linkbar */
+	height: 18px;  /* this controls the height of the tab above the linkbar */
 	padding-top: 5px;
         padding-bottom: 1px; 
         padding-left: 5px;
@@ -184,7 +184,7 @@ body {
 }
 
 #hdr-tabs .selectedTabContent {
-        height: 1.4em; /* this controls the height of the tab above the linkbar */
+        height: 18px; /* this controls the height of the tab above the linkbar */
         padding-top: 5px;
         padding-bottom: 1px;
         padding-left: 5px;
