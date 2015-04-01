@@ -16,7 +16,6 @@
 
     <!-- Expression section -->
 <%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
-    <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${expressionSection}() {
             jQuery('#${expressionSection}-genes').load('/action/ontology/show-expressed-genes/${formBean.term.zdbID}', function() { processPopupLinks('#${expressionSection}-genes'); });

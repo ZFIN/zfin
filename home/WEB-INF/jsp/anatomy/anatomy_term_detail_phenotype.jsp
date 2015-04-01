@@ -16,7 +16,6 @@
 
     <p/>
     <%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
-    <script type="text/javascript" src="/javascript/prototype.js"></script>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
             jQuery('#${phenotypeSection}-mutants').load('/action/ontology/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-mutants'); } );

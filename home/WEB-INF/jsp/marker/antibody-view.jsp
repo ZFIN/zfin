@@ -3,8 +3,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.AntibodyMarkerBean" scope="request"/>
 
-<script type="text/javascript" src="/javascript/prototype.js"></script>
-
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${formBean.editURL}"
                    deleteURL="${formBean.deleteURL}"
