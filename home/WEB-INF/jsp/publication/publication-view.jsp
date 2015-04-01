@@ -66,6 +66,17 @@
         </td>
     </tr>
     <tr>
+        <th>Keywords:</th>
+        <td>
+            <c:choose>
+                <c:when test="${!empty publication.keywords}">
+                    ${publication.keywords}
+                </c:when>
+                <c:otherwise><span class="no-data-tag">none</span></c:otherwise>
+            </c:choose>
+        </td>
+    </tr>
+    <tr>
         <th>PubMed:</th>
         <td>
             <c:choose>

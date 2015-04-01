@@ -54,6 +54,7 @@
         <property name="acknowledgment" column="pub_acknowledgment"/>
         <property name="status" column="status"/>
         <property name="errataAndNotes" column="pub_errata_and_notes"/>
+        <property name="keywords" column="keywords"/>
 
         <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" insert="false"
                      update="false"/>
