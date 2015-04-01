@@ -437,7 +437,7 @@ DEBUGGING:
     <?MICOMMENT> *** Publication <?/MICOMMENT>
     <td valign=top>
       <?MIVAR COND="$(NC,$phenosum_pub_zdb,$phenosum_prev_pub)">
-        <a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$phenosum_pub_zdb>$phenosum_pub_mini_ref
+        <a href=/$phenosum_pub_zdb>$phenosum_pub_mini_ref
         </a>
       <?/MIVAR>
     </td>

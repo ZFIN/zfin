@@ -511,7 +511,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 <?/MIVAR>
 </TD>
 
-<TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A>
+<TD colspan=1 align=left><font size=3><DIV class="show_pubs"><A HREF="/$3">$pubsel2_authors ($pubsel2_year) $pubsel2_title. $pubsel2_jrnlabbrev$(IF,$(NC,$pubsel2_pvolume,), $pubsel2_pvolume:,)$(IF,$(NC,$pubsel2_ppages,), $pubsel2_ppages.,)$(IF,$(OR,$(EC,$pubsel2_pstatus,Epub ahead of print), $(EC,$pubsel2_pstatus,in press)), $pubsel2_pstatus,)</DIV></A>
 </TD>
 <?MIBLOCK COND="$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root))">
   <TD><?MIVAR>$(IF,$(NE,$PUB_COMPLETION,),CLOSED,OPEN)<?/MIVAR><?MIVAR>$(IF,$(EQ,$PUB_INDEXED,t),$comma&nbsp;INDEXED)<?/MIVAR></TD>

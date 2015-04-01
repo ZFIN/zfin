@@ -388,7 +388,7 @@ OPTIONAL VARS:
       <td colspan=3>
         <?MIVAR>
           <b>Title:</b>
-          <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$title</a>
+          <a href="/$OID">$title</a>
         <?/MIVAR>
       </td>
     </tr>

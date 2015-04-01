@@ -60,7 +60,7 @@ EFFECTS
 <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
       <head>
    	    <?MIVAR>
-   	      <meta http-equiv="Refresh" content="0; url=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">
+   	      <meta http-equiv="Refresh" content="0; url=/$OID">
    	    <?/MIVAR>
       </head>
 <?/MIBLOCK>
@@ -862,7 +862,7 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <div id="subDataManager">
   <ul id="subdatamngr">
   <?MIVAR>
-    <li><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$OID">$pubcur_authors ($pubcur_year)
+    <li><a href="/$OID">$pubcur_authors ($pubcur_year)
           $pubcur_title $pubcur_jrnl_abbrev</a></li>
 
   <?/MIVAR>

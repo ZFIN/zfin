@@ -31,7 +31,7 @@ PATO	/action/ontology/term-detail/PATO
 PERS	/action/profile/view/ZDB-PERS
 PGCONSTRCT	/action/marker/view/ZDB-PGCONSTRCT
 PTCONSTRCT	/action/marker/view/ZDB-PTCONSTRCT
-PUB	/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB
+PUB	/action/publication/view/ZDB-PUB
 RAPD	/action/marker/view/ZDB-RAPD
 REFCROSS	/action/mapping/panel-detail/ZDB-REFCROSS
 REGION	/action/marker/view/ZDB-REGION

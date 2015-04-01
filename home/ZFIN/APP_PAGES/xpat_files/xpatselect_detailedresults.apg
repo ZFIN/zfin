@@ -195,7 +195,7 @@ order by date desc, pub_mini_ref, publication.zdb_id, probe_abbrev_order, fig_fu
       <?MICOMMENT>  *** pub column *** <?/MICOMMENT>
       <td>
         <?MIBLOCK COND="$(NE,$xpdetres_lastPubProbeCombo,$xpdetres_pubZdbId $xpdetres_probeZdbId)">
-          <?MIVAR> <a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpdetres_pubZdbId">$xpdetres_pubMiniRef</a> <?/MIVAR>
+          <?MIVAR> <a href="/$xpdetres_pubZdbId">$xpdetres_pubMiniRef</a> <?/MIVAR>
           <?MIBLOCK COND="$(EC,$xpdetres_isDirectSubmission,t)">
            <?MIBLOCK COND="$(NE,NULL,$xpdetres_probeZdbId)">
             <?MIVAR>

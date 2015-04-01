@@ -123,7 +123,7 @@ EFFECTS
 	<?MIVAR NAME=$xpatselrow_pub_zdb_id>$1<?/MIVAR>
 	<?MIVAR NAME=$xpatselrow_pub_mini_ref>$2<?/MIVAR>
 	<?MIVAR>
-          <a href='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpatselrow_pub_zdb_id'>$xpatselrow_pub_mini_ref</a>
+          <a href='/$xpatselrow_pub_zdb_id'>$xpatselrow_pub_mini_ref</a>
 	<?/MIVAR>
       <?/MISQL>
       <?MIVAR COND=$(XST,$xpatselrow_directSubmissionDate)>

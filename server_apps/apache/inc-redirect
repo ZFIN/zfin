@@ -100,6 +100,9 @@ RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 RewriteCond %{QUERY_STRING}     ^Mival=aa-sourceview.apg&OID=([\w-]+)$    [NC]
 RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
 
+RewriteCond %{QUERY_STRING}     ^Mival=aa-pubview2.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/<!--|WEBDRIVER_PATH_FROM_ROOT|--> /%1? [NC,R=301]
+
 RewriteCond %{QUERY_STRING} ^anatomyItem.zdbID=([\w-]+)&wildtype=([\w]+)$ [NC]
 RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-sequence-targeting-reagents/%1/%2? [NC,R=301]
 

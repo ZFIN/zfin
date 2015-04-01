@@ -20,11 +20,11 @@ public class PublicationPresentation extends EntityPresentation {
      * @return html for Publication link
      */
     public static String getLink(Publication publication) {
-        return getWebdriverLink(uri, publication.getZdbID(), publication.getShortAuthorList(), publication.getZdbID());
+        return getViewLink(publication.getZdbID(), publication.getShortAuthorList(), null, null);
     }
 
     public static String getLink(Publication publication, String linkContent) {
-        return getLink(publication.getZdbID(), linkContent);
+        return getViewLink(publication.getZdbID(), linkContent, null, null);
     }
     /**
      * Per case 8749, an EST could be attributed to a person. So adding this clause to redirect to person page and not pubview
@@ -35,7 +35,7 @@ public class PublicationPresentation extends EntityPresentation {
           return getTomcatLink(person_uri,attributionZdbID,"1");
         }
         else{
-            return getWebdriverLink(uri, attributionZdbID, linkContent);
+            return getViewLink(attributionZdbID, linkContent, null, null);
         }
     }
 

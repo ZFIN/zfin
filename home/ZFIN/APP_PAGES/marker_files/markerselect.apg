@@ -658,7 +658,7 @@ jQuery.ajax({
 
      <?MIBLOCK COND="$(EC,$the_type,MUTANT)">
 	<SCRIPT>
-          <?MICOMMENT> when this page is called by pubview2.apg with parameter $pub_mapped, mutant record could be retrieved.
+          <?MICOMMENT> when this page is called by pubview with parameter $pub_mapped, mutant record could be retrieved.
           May need more work to add the feature name to the search but better to redirect to a view page.
           <?/MICOMMENT>
           <?MIVAR>

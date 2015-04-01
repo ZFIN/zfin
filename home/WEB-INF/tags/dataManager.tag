@@ -7,6 +7,8 @@
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="trackURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="linkURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="curateURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="termID" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
@@ -42,12 +44,12 @@
         </c:if>
 
         <authz:authorize ifAnyGranted="root">
-            <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" editLinkText="${editLinkText}" deleteURL="${deleteURL}"
+            <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" editLinkText="${editLinkText}" deleteURL="${deleteURL}" linkURL="${linkURL}" curateURL="${curateURL}"
                                          mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}" rtype="${rtype}" showLastUpdate="${showLastUpdate}"/>
         </authz:authorize>
         <authz:authorize ifNotGranted="root" ifAnyGranted="submit">
             <c:if test="${isOwner}">
-                <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}"
+                <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" deleteURL="${deleteURL}" linkURL="${linkURL}" curateURL="${curateURL}"
                                              mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}" rtype="${rtype}" showLastUpdate="${showLastUpdate}"/>
             </c:if>
         </authz:authorize>

@@ -8,6 +8,8 @@
 <%@ attribute name="deleteURL" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="mergeURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="trackURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="linkURL" type="java.lang.String" rtexprvalue="true" required="false" %>
+<%@ attribute name="curateURL" type="java.lang.String" rtexprvalue="true" required="false" %>
 <%@ attribute name="oboID" type="java.lang.String" rtexprvalue="true" %>
 <%@ attribute name="rtype" type="java.lang.String" rtexprvalue="true" description="Needed for linking to updates apg" %>
 <%@ attribute name="showLastUpdate" type="java.lang.Boolean" rtexprvalue="true" required="false" description="Should the Last Updated: xxxx link show?" %>
@@ -43,7 +45,17 @@
 </c:if>
 <c:if test="${!empty trackURL}">
     <td>
-        <a href="${trackURL}" class="root">Track Curation</a>
+        <a href="${trackURL}" class="root">Track</a>
+    </td>
+</c:if>
+<c:if test="${!empty linkURL}">
+    <td>
+        <a href="${linkURL}" class="root">Link</a>
+    </td>
+</c:if>
+<c:if test="${!empty curateURL}">
+    <td>
+        <a href="${curateURL}" class="root">Curate</a>
     </td>
 </c:if>
 

@@ -406,7 +406,7 @@ O_ATTRIB_COUNT ::: number of orthology attribution records
                     )
 		  order by 2 desc;">
 		
-		<li><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$6">$1 ($5) $3. $4.</A> $6
+		<li><A HREF="/$6">$1 ($5) $3. $4.</A> $6
 	<?/MISQL>
 	</ul>
   <?/MISQL>

@@ -20,17 +20,17 @@ TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/pubbrowser
 
 SUBDIRS = EDITpubs
 
-GENERICS = citlink.apg curate_ortho_select.apg enterpubs.apg journalselect.apg \
+GENERICS = citlink.apg curate_ortho_select.apg journalselect.apg \
 	journalupdate.apg journalview.apg js-delete_attrib.apg link_authors.apg \
 	miniref_display.apg notif_content.apg notif_frame.apg pnote_editor.apg \
-	pub_rowdisplay.apg pubacknowledgement.apg pubcuration.apg pubselect2.apg \
-	pubview2.apg showpubs.apg showsnppubs.apg
+	pubacknowledgement.apg pubcuration.apg pubselect2.apg \
+	showpubs.apg showsnppubs.apg
 
-STATICS= REFERinfo.apg pubprintable.apg pubtopic_close.apg \
+STATICS= REFERinfo.apg pubprintable.apg enterpubs.apg pubtopic_close.apg \
 	pubtopic_open.apg pubtopic_unclaim.apg pubtopic_found.apg \
 	pubtopic_reassign.apg pnote_new.apg link_authors_update.apg \
-	citselectlist.apg citfish.apg externallink.apg pubmedlink.apg \
-	citjtypeoption.apg citgeneric.apg cittotalcount.apg \
+	citselectlist.apg citfish.apg externallink.apg \
+	citjtypeoption.apg citgeneric.apg cittotalcount.apg pub_rowdisplay.apg \
 
 # use default rules for app page directories.
 

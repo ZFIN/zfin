@@ -1961,7 +1961,7 @@ union
 	   <?MIBLOCK COND="$(=,$mrkrvw_antibody_pub_count,0)">
 	       <?MIVAR NAME=mrkrvw_antibody_pub><?/MIVAR>
 	   <?MIELSE COND="$(=,$mrkrvw_antibody_pub_count,1)">
-	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$mrkrvw_antibody_pub_id>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
+	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/$mrkrvw_antibody_pub_id>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
 	   <?MIELSE>
 	       <?MIVAR NAME=mrkrvw_antibody_pub>(<A HREF=/action/antibody/publication-list?antibody.zdbID=$mrkrvw_antibody_id&orderBy=author>$mrkrvw_antibody_pub_count</A>)<?/MIVAR>
            <?/MIBLOCK>
@@ -2583,7 +2583,7 @@ order by fdb.fdb_db_name,dt.fdbdt_data_type
           <?MIBLOCK COND="$(NE,$snp_ensembl_accnum,)">
              <td><nobr><li>
             <?MIVAR> <A HREF="$snp_db_query$snp_ensembl_accnum">$snp_db_name:$snp_ensembl_accnum</a><?/MIVAR>
-    (<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=ZDB-PUB-080313-1">1</a>)
+    (<a href="/ZDB-PUB-080313-1">1</a>)
 </li></nobr></td>
           <?/MIBLOCK>
         <?/MIBLOCK>

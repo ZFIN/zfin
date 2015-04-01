@@ -10,7 +10,7 @@ Query form and query result page for expression patterns.
 This is called from at least these places:
 1. From the home page, title bar, or jump_to.apg  In these cases the app page 
    is called with no search terms. 
-2. From pubview2.apg page via an href link.  In this case the publication 
+2. From pubview page via an href link.  In this case the publication
    ID is passed in.
 3. From itself, meaning the query form.  In this case, lots of variables 
    can be set.  See below.
@@ -19,7 +19,7 @@ This is called from at least these places:
 6. From markerselect.apg.  A gene name is passed in.
 
 INPUT VARS:
-  From pubview2.apg:
+  From pubview:
     pubId    the ZDB ID of a publication.  All expression patterns attributed
 	     to this publication will be displayed, and the query form will 
 	     not be displayed.

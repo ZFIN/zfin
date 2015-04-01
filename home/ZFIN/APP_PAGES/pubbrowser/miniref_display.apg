@@ -49,7 +49,7 @@ Variables Expected:
       			value=DeleteRef 
       			onClick="Delete_attrib('$type','$dataId','$2','','$3')">
  		<?/MIVAR>
-		<?MIVAR><A HREF='/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2'>$1</A><?/MIVAR>	
+		<?MIVAR><A HREF='/$2'>$1</A><?/MIVAR>
 	      <?/MIBLOCK>
 	 <?/MISQL>
          <?MIVAR>$(IF,$(>,$MI_ROWCOUNT,0),")")<?/MIVAR>
@@ -83,7 +83,7 @@ Variables Expected:
       			value=DeleteRef 
       	        	onClick="Delete_attrib('$type','$dataId','$1','','$2')">
  		  <?/MIVAR>
-		  (<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$1">1</A>)
+		  (<A HREF="/$1">1</A>)
                 <?/MISQL>
 	      <?/MIBLOCK>		
        <?/MISQL>

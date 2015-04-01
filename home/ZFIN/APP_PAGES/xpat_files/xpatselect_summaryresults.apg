@@ -136,7 +136,7 @@ OUTPUT VARS:
                      necessarily follow the scheme of pretending that they're each a different pub. <?/MICOMMENT>
 
           <?MIBLOCK COND="$(EC,$xpsumres_pubCount,1)">
-            <?MIVAR NAME="$xpsumres_figsFrom"><A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$xpsumres_pub_zdb_id>$xpsumres_pubMiniRef</A><?/MIVAR>
+            <?MIVAR NAME="$xpsumres_figsFrom"><A HREF=/$xpsumres_pub_zdb_id>$xpsumres_pubMiniRef</A><?/MIVAR>
           <?MIELSE>
             <?MIVAR NAME="$xpsumres_figsFrom">$xpsumres_pubCount publications<?/MIVAR>
           <?/MIBLOCK>

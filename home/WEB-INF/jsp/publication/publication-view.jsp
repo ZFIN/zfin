@@ -2,21 +2,27 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-edit_pub.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
+<c:set var="editURL">/cgi-bin/webdriver?MIval=aa-edit_pub.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
+
 <c:if test="${allowDelete}">
     <c:set var="deleteURL">/action/infrastructure/deleteRecord/${publication.zdbID}</c:set>
 </c:if>
-<c:set var="trackURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubcuration.apg&OID=${publication.zdbID}</c:set>
+
+<c:set var="trackURL">/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=${publication.zdbID}</c:set>
+
+<c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
+
+<c:if test="${allowCuration}">
+    <c:set var="curateURL">/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${publication.zdbID}</c:set>
+</c:if>
 
 <zfin2:dataManager zdbID="${publication.zdbID}"
                    editURL="${editURL}"
                    deleteURL="${deleteURL}"
                    trackURL="${trackURL}"
+                   linkURL="${linkURL}"
+                   curateURL="${curateURL}"
                    rtype="publication"/>
-
-<div style="padding: 1em;">
-    <a href="/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=${publication.zdbID}">Old Pub Page</a>
-</div>
 
 <div style="float: right">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -119,16 +125,7 @@
 </zfin2:subsection>
 
 <zfin2:subsection title="ADDITIONAL INFORMATION" showNoData="true" test="${showAdditionalData}">
-    <authz:authorize ifAnyGranted="root">
-        <c:if test="${allowCuration}">
-            <%-- todo: this link really could go somewhere better, but this is where it was before...--%>
-            <div style="margin-top: 1em">
-                <%-- no scriptlet here, but we don't really need the webdriver property anymore anyway.. --%>
-                <a class="root" href="/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${publication.zdbID}">Curate</a>
-            </div>
-        </c:if>
-    </authz:authorize>
-
+    
     <ul>
         <c:if test="${markerCount > 0}">
             <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mrkr">Genes / Markers</a> (${markerCount})</li>

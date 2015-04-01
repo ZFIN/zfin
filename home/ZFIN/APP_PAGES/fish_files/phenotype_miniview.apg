@@ -88,7 +88,7 @@
 
   <?MIVAR COND="$(=,$phmview_pato_source_count,1)"> 
     $(SETVAR,$phmview_pato_source_desc,$1)
-    <?MIVAR NAME=$phmview_pato_source_desc><a href=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubview2.apg&OID=$2>$1</a><?/MIVAR>
+    <?MIVAR NAME=$phmview_pato_source_desc><a href=/$2>$1</a><?/MIVAR>
   <?/MIVAR>
   <?MIBLOCK COND="$(=,$phmview_pato_fig_count,1)">      
     <?MIVAR>$(SETVAR,$phmview_pato_link,fxfigureview.apg&OID=$phmview_pato_fig_zdb_id)<?/MIVAR>
