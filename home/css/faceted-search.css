@@ -339,18 +339,14 @@ div.search-box {
 }
 
 
-body .search-result .modal {
-    /* new custom width */
-    width: 700px;
-    /* must be half of the width, minus scrollbar on the left (30px) */
-    margin-left: -320px;
-}
-
+.modal-body-scrolling { height: 500px; overflow-y: scroll; }
 
 body.modal-open {
     overflow: hidden;
 }
 
+.gene-expression-data-modal, .phenotype-data-modal { width: 100%; }
+.gene-expression-data-modal td, .phenotype-data-modal td { font-size: 14px; }
 
 
 .category-label {  }

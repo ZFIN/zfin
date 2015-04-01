@@ -352,11 +352,6 @@ function submitAdvancedQuery(fields) {
 
 $(document).ready(function () {
 
-    $('.image-modal').each( function() {
-        $(this).detach();
-        $('body').append(this);
-    });
-
     $('#primary-query-input').autocompletify('/action/quicksearch/autocomplete?q=%QUERY');
 
     $('#primary-query-input').bind("typeahead:selected", function() {
