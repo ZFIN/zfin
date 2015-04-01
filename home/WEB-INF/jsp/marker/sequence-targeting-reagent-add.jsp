@@ -284,32 +284,18 @@
 
     jQuery(document).ready(function () {
 
-        jQuery( "#supplierName" ).autocomplete({
-            source: '/action/marker/find-suppliers',
-            minLength: 2,
-            autoFocus: true,
-            select: function (event, ui) {
-                jQuery('#supplierName').val(ui.item.label);
-            }
-        });
+        $('#supplierName').autocompletify('/action/marker/find-suppliers?term=%QUERY');
+        $('#targetGeneSymbol').autocompletify('/action/marker/find-targetGenes?term=%QUERY');
 
-        jQuery( "#supplierName" ).keypress(function(event) {
+        $( "#supplierName" ).keypress(function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
                 return false;
             }
         });
 
-        jQuery( "#targetGeneSymbol" ).autocomplete({
-            source: '/action/marker/find-targetGenes',
-            minLength: 3,
-            autoFocus: true,
-            select: function (event, ui) {
-                jQuery('#targetGeneSymbol').val(ui.item.label);
-            }
-        });
 
-        jQuery( "#targetGeneSymbol" ).keypress(function(event) {
+        $( "#targetGeneSymbol" ).keypress(function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
                 return false;
