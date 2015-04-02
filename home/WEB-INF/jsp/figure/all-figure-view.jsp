@@ -1,7 +1,11 @@
-
+<%@ page import="org.zfin.publication.Publication" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <meta name="all-figure-view-page"/> <%-- this is used by the web testing framework to know which page it is --%>
+
+<c:set var="UNPUBLISHED" value="<%=Publication.Type.UNPUBLISHED %>"/>
+<c:set var="CURATION" value="<%=Publication.Type.CURATION %>"/>
+
 
 <zfin-figure:publicationInfo publication="${publication}"
                              submitters="${submitters}"
@@ -70,7 +74,7 @@
 </c:forEach>
 
 <c:choose>
-    <c:when test="${publication.canShowImages && publication.type != 'Unpublished'}">
+    <c:when test="${publication.canShowImages && publication.type != UNPUBLISHED}">
         <zfin2:acknowledgment publication="${publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>
     </c:when>
     <c:otherwise>
