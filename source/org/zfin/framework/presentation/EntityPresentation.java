@@ -101,6 +101,21 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
+    public static String getViewLinkWithID(String zdbID, String linkContent, String domID) {
+        StringBuilder sb = getViewHyperlinkStart();
+        sb.append(zdbID);
+        sb.append("\"");
+
+        sb.append(" id=\"");
+        sb.append(domID);
+        sb.append("\" ");
+
+        sb.append(">");
+        sb.append(linkContent);
+        sb.append("</a>");
+        return sb.toString();
+    }
+
     protected static String getTomcatLink(String uri, String zdbID, String abbreviation, String name) {
         StringBuilder sb = getTomcatHyperLinkStart();
         sb.append(uri);
