@@ -1,3 +1,4 @@
+<%@ page import="org.zfin.publication.Publication" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <meta name="figure-view-page"/> <%-- this is used by the web testing framework to know which page this is--%>
@@ -6,6 +7,8 @@
      Nothing is stored in the updates table for figures, so no lastUpdated date is passed in
 --%>
 
+<c:set var="UNPUBLISHED" value="<%=Publication.Type.UNPUBLISHED %>"/>
+<c:set var="CURATION" value="<%=Publication.Type.CURATION %>"/>
 
 <zfin2:dataManager zdbID="${figure.zdbID}"/>
 
@@ -27,12 +30,12 @@
             <c:set var="probeUrlPart" value="?probeZdbID=${probe.zdbID}"/>
         </c:if>
 
-    <c:if test="${figure.publication.type == 'Curation'}">
+    <c:if test="${figure.publication.type == CURATION}">
         <c:if test="${!empty probe}">
         <a class="additional-figures-link" href="/action/figure/all-figure-view/${figure.publication.zdbID}${probeUrlPart}">ADDITIONAL FIGURES</a>
         </c:if>
         </c:if>
-    <c:if test="${figure.publication.type != 'Curation'}">
+    <c:if test="${figure.publication.type != CURATION}">
         <a class="additional-figures-link" href="/action/figure/all-figure-view/${figure.publication.zdbID}${probeUrlPart}">ADDITIONAL FIGURES</a>
         </c:if>
     </div>
@@ -65,8 +68,9 @@
 
 <zfin-figure:constructLinks figure="${figure}"/>
 
+
 <c:choose>
-    <c:when test="${figure.publication.canShowImages && figure.publication.type != 'Unpublished'}">
+    <c:when test="${figure.publication.canShowImages && figure.publication.type != UNPUBLISHED}">
         <zfin2:acknowledgment publication="${figure.publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>
     </c:when>
     <c:otherwise>
