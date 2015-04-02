@@ -17,9 +17,6 @@
 <zfin2:transcriptHead transcript="${formBean.marker}" previousNames="${formBean.previousNames}"
                       relatedGenes="${formBean.relatedGenes}" strain="${formBean.strain}"/>
 
-
-<script type="text/javascript" src="/javascript/sequenceview.js">
-</script>
 <c:choose>
     <c:when test="${formBean.marker.withdrawn}">
         <authz:authorize ifAllGranted="root">
@@ -75,17 +72,25 @@
     <%--"no siblings" gbrowse image --%>
     <c:if test="${(fn:length(relatedTranscriptDisplay.transcripts) == 1) && (!empty relatedTranscriptDisplay.gbrowseImage) }">
 
-        <div class="summary" id="single-transcript-gbrowse-section" style="display:none;">
+        <script src="/javascript/gbrowse-image.js"></script>
+        <div class="summary" id="single-transcript-gbrowse-section">
             <table class="summary solidblock">
                 <caption>GBrowse:</caption>
                 <tr>
                     <td style="text-align: center">
-                        <zfin2:gbrowseImageStack gbrowseImage="${relatedTranscriptDisplay.gbrowseImage}"
-                                                 width="600"/>
+                        <div class="gbrowse-image" />
                     </td>
                 </tr>
             </table>
         </div>
+        <script>
+            jQuery("#single-transcript-gbrowse-section").gbrowseImage({
+                width: 600,
+                imageTarget: ".gbrowse-image",
+                imageUrl: "${relatedTranscriptDisplay.gbrowseImage.imageUrl}",
+                linkUrl: "${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
+            });
+        </script>
 
 
     </c:if>

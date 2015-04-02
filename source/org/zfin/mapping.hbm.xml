@@ -130,8 +130,8 @@
         <property name="chromosome" column="sfcl_chromosome" type="string"/>
         <property name="entityID" column="sfcl_data_zdb_id" type="string"/>
         <property name="source" column="sfcl_location_source" type="genomeLocationSource"/>
-        <property name="start" column="sfcl_start" type="string"/>
-        <property name="end" column="sfcl_end" type="string"/>
+        <property name="start" column="sfcl_start" type="java.lang.Integer"/>
+        <property name="end" column="sfcl_end" type="java.lang.Integer"/>
         <property name="detailedSource" column="sfcl_location_subsource" type="string"/>
         <property name="accessionNumber" column="sfcl_acc_num" type="string"/>
 

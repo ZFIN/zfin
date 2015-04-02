@@ -122,10 +122,26 @@ public interface LinkageRepository {
     /**
      * Retrieves genome location information.
      *
+     * @param marker
+     * @return
+     */
+    List<MarkerGenomeLocation> getGenomeLocation(Marker marker, GenomeLocation.Source... sources);
+
+    /**
+     * Retrieves genome location information.
+     *
      * @param feature
      * @return
      */
     List<FeatureGenomeLocation> getGenomeLocation(Feature feature);
+
+    /**
+     * Retrieves genome location information.
+     *
+     * @param feature
+     * @return
+     */
+    List<FeatureGenomeLocation> getGenomeLocation(Feature feature, GenomeLocation.Source... sources);
 
     /**
      * Retrieve non-genetic mapping genomic locations.

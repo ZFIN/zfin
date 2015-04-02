@@ -24,6 +24,7 @@ import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.framework.presentation.ZfinJSPFunctionsTest;
 import org.zfin.gbrowse.GBrowseServiceTest;
+import org.zfin.gbrowse.presentation.GBrowseImageSpec;
 import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
@@ -92,6 +93,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         FpInferenceGafServiceTest.class,
         GafParserUnitTest.class,
         GafServiceTest.class,
+        GBrowseImageSpec.class,
         GBrowseServiceTest.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
@@ -101,7 +103,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
-	    MarkerGoServiceIntegrationSpec.class,
+        MarkerGoServiceIntegrationSpec.class,
         MarkerRepositoryTest.class,
         MarkerServiceTest.class,
         MarkerSoapDbTest.class,

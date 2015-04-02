@@ -1,7 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script src="/javascript/jquery.jtruncate.pack.js"></script>
-
 <c:choose>
     <c:when test="${fn:startsWith(formBean.zdbID,'ZDB-PERS')}">
         <zfin2:personView person="${formBean}" companies="${company}" labs="${labs}"

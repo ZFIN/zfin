@@ -1,6 +1,5 @@
 package org.zfin.search.presentation;
 
-import au.com.bytecode.opencsv.CSVWriter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang.StringUtils;

@@ -10,12 +10,9 @@ import java.io.Serializable;
  */
 public class GenomeLocation implements Serializable, Comparable<GenomeLocation> {
 
-    // total length being displayed in gBrowse
-    public static final long TOTAL_LENGTH = 500000L;
-
     protected long ID;
-    protected String start;
-    protected String end;
+    protected Integer start;
+    protected Integer end;
     protected String entityID;
     protected String chromosome;
     protected Source source;
@@ -39,19 +36,19 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         this.chromosome = chromosome;
     }
 
-    public String getEnd() {
+    public Integer getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(Integer end) {
         this.end = end;
     }
 
-    public String getStart() {
+    public Integer getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(Integer start) {
         this.start = start;
     }
 
@@ -97,32 +94,6 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
     public void setDetailedSource(String detailedSource) {
         this.detailedSource = detailedSource;
-    }
-
-    public Long getCenteredStart() {
-        if (start == null)
-            return null;
-        long startLoc = Long.parseLong(start);
-        if (end == null)
-            return null;
-        long endLoc = Long.parseLong(end);
-        long middlePoint = startLoc + (endLoc - startLoc) / 2;
-        if (startLoc < TOTAL_LENGTH) {
-            return 0L;
-        } else {
-            return middlePoint - TOTAL_LENGTH / 2;
-        }
-    }
-
-    public Long getCenteredEnd() {
-        if (start == null)
-            return null;
-        long startLoc = Long.parseLong(start);
-        if (end == null)
-            return null;
-        long endLoc = Long.parseLong(end);
-        long middlePoint = startLoc + (endLoc - startLoc) / 2;
-        return middlePoint + TOTAL_LENGTH / 2;
     }
 
     @Override

@@ -760,3 +760,48 @@ label.curation-form-label { font-weight: bold; }
 .nomenclature input[type=text] {
     width: 200px;
 }
+
+.two-column-info {
+    clear: both;
+    width: 100%;
+}
+
+.two-column-info tr {
+    vertical-align: top;
+}
+
+.sequence-data {
+    background: white;
+    width: 99%;
+    display: none;
+    border: 1px solid #ccc;
+    max-height: 100px;
+    overflow: auto;
+    margin: 4px auto;
+}
+
+.sequence-help {
+    font-size: small;
+    color: #888;
+}
+
+.show-sequence-button {
+    color: #0000ff;
+}
+
+.show-sequence-button .fa {
+    transition-property: transform;
+    transition-duration: 200ms;
+}
+
+.gbrowse-image {
+    margin: .5em;
+    border: 1px solid black;
+    background: white;
+    display: inline-block;
+}
+
+.gbrowse-image img {
+    padding-bottom:10px;
+    border: 0;
+}

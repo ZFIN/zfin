@@ -6,9 +6,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class URLCreator {
     private StringBuilder url = new StringBuilder();
     // linked map to retain the order the parameters were originally in.
     private String urlWithoutParameters;
-    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+    List<NameValuePair> nameValuePairs = new ArrayList<>();
 
 
     private static final Log LOG = LogFactory.getLog(URLCreator.class);
@@ -76,12 +75,12 @@ public class URLCreator {
      * @return full url or query string
      */
     public String getURL() {
-        String queryString = URLEncodedUtils.format(nameValuePairs, HTTP.UTF_8);
+        String queryString = URLEncodedUtils.format(nameValuePairs, StandardCharsets.UTF_8);
 
         if (StringUtils.isEmpty(queryString)) {
             return urlWithoutParameters;
         } else {
-            return urlWithoutParameters + QUESTION_MARK + URLEncodedUtils.format(nameValuePairs, HTTP.UTF_8);
+            return urlWithoutParameters + QUESTION_MARK + URLEncodedUtils.format(nameValuePairs, StandardCharsets.UTF_8);
         }
 
 
@@ -131,7 +130,7 @@ public class URLCreator {
     }
 
     public List<NameValuePair> getNameValuePairs(String name) {
-        List<NameValuePair> returnList = new ArrayList<NameValuePair>();
+        List<NameValuePair> returnList = new ArrayList<>();
         for (NameValuePair nameValuePair : nameValuePairs) {
             if (StringUtils.equals(nameValuePair.getName(), name)) {
                 returnList.add(nameValuePair);
@@ -161,7 +160,7 @@ public class URLCreator {
         String[] tokens = StringUtils.split(url.toString(), QUESTION_MARK, 2);
         if (tokens.length == 2) {
             urlWithoutParameters = tokens[0];
-            nameValuePairs.addAll(URLEncodedUtils.parse(tokens[1], Charset.forName("UTF-8")));
+            nameValuePairs.addAll(URLEncodedUtils.parse(tokens[1], StandardCharsets.UTF_8));
         } else {
             urlWithoutParameters = url.toString();
         }

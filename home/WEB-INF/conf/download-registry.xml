@@ -383,14 +383,14 @@ select geno_zdb_id, geno_display_name, geno_handle, dalias_alias, szm_term_ont_i
         </Download>
         <Download orderIndex="16">
             <Name>
-                ZFIN Morpholinos: Ensembl
+                ZFIN Knockdown Reagents: Ensembl
             </Name>
             <Category>
                 Sequence Coordinates
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>E_zfin_morpholino</FileName>
+            <FileName>E_zfin_knockdown_reagents</FileName>
             <FileExtension>gff3</FileExtension>
             <FileFormat>gff3</FileFormat>
             <Query>

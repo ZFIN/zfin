@@ -1,4 +1,3 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -6,6 +5,8 @@
 
 <c:set var="editURL">/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}</c:set>
 <c:set var="deleteURL">none</c:set>
+
+<script src="/javascript/gbrowse-image.js"></script>
 
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${editURL}"
@@ -24,27 +25,25 @@
 <zfin2:uninformativeCloneName name="${formBean.marker.abbreviation}" chimericClone="${formBean.marker.chimeric}"/>
 
 <div class="summary">
-    <div id="clone_gbrowse_thumbnail_box" style="display: none;">
-        <table class="summary solidblock" id="clone_gbrowse_thumbnail_box">
+    <div id="clone_gbrowse_thumbnail_box">
+        <table class="summary solidblock">
             <caption>GBROWSE</caption>
             <tr>
                 <td style="text-align: center">
-                    <div style="margin: .5em; border: 1px solid black; background: white">
-
-                        <a href="/<%=ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value()%>?name=genomic_clone:${formBean.marker.abbreviation}">
-                            <img
-                                    onload="document.getElementById('clone_gbrowse_thumbnail_box').style.display = 'block';"
-                                    style="padding-bottom:10px; border: 0 "
-                                    src="/<%=ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.value()%>?grid=0&width=600&options=fullclone+0+mRNA+0+genes+0&type=fullclone&type=genes&type=mRNA&name=genomic_clone:${formBean.marker.zdbID}&h_feat=${formBean.marker.abbreviation}">
-
-                        </a>
-
-                    </div>
+                    <div class="gbrowse-image" />
                 </td>
             </tr>
         </table>
     </div>
 </div>
+<script>
+    jQuery("#clone_gbrowse_thumbnail_box").gbrowseImage({
+        width: 600,
+        imageTarget: ".gbrowse-image",
+        imageUrl: "${formBean.image.imageUrl}",
+        linkUrl: "${formBean.image.linkUrl}"
+    });
+</script>
 
 <c:if test="${formBean.clone.rnaClone}">
     <zfin2:markerExpression markerExpression="${formBean.markerExpression}" marker="${formBean.marker}"

@@ -206,6 +206,8 @@ a.gbrowse_hover{
 .gbrowse_popup{
     display: none;
     position: absolute;
+    z-index: 101;
+    border: 1px solid black;
 }
 
 a.gbrowse_hover:hover .gbrowse_popup{ /*the span will display just on :hover state*/

@@ -3,9 +3,16 @@
 
 <%@ attribute name="locations" required="true" type="java.util.Collection" %>
 <%@ attribute name="marker" required="true" type="org.zfin.marker.Marker" %>
+<%@ attribute name="gbrowseImage" required="false" type="org.zfin.gbrowse.presentation.GBrowseImage" %>
 
-<%-- marker to display in gBrowse --%>
-<%@ attribute name="displayMarker" required="false" type="org.zfin.marker.Marker" %>
+<script src="/javascript/gbrowse-image.js"></script>
+
+<style>
+    .gbrowse-image {
+        width: 800px;
+        margin: 0;
+    }
+</style>
 
 <c:if test="${not empty locations && not isClone}">
     <table id="meioticPanel" class="summary">
@@ -14,7 +21,7 @@
         </tr>
         <tr>
             <td>
-                <zfin2:showGbrowseImage location="${locations[0]}" marker="${displayMarker}"/>
+                <div class="gbrowse-image" />
             </td>
         </tr>
         <tr>
@@ -51,6 +58,14 @@
             </td>
         </tr>
     </table>
+
+    <script>
+        jQuery(".gbrowse-image").gbrowseImage({
+            width: 700,
+            imageUrl: "${gbrowseImage.imageUrl}",
+            linkUrl: "${gbrowseImage.linkUrl}"
+        });
+    </script>
 </c:if>
 
 <c:if test="${mappedClones.size() > 0}">

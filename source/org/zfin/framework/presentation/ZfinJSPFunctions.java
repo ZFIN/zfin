@@ -9,8 +9,8 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.audit.AuditLogItem;
-import org.zfin.feature.Feature;
 import org.zfin.gbrowse.GBrowseService;
+import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -18,11 +18,8 @@ import org.zfin.gwt.root.dto.TermNotFoundException;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.EntityZdbID;
-import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.ZdbID;
-import org.zfin.mapping.GbrowseTrack;
 import org.zfin.mapping.GenomeLocation;
-import org.zfin.mapping.LinkageMember;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.PhenotypeService;
@@ -381,36 +378,6 @@ public class ZfinJSPFunctions {
 
     public static String getMappingEntityType(EntityZdbID entity) {
         return entity.getEntityType();
-    }
-
-    public static GenomeLocation getGenomeLocation(Marker marker) {
-        if (marker == null)
-            return null;
-        List<GenomeLocation> genomeLocationList = getLinkageRepository().getPhysicalGenomeLocations(marker);
-        if (CollectionUtils.isEmpty(genomeLocationList))
-            return null;
-        Collections.sort(genomeLocationList);
-        return genomeLocationList.get(0);
-    }
-
-    public static GbrowseTrack[] getGbrowseTracks(Marker marker) {
-        if (marker == null)
-            return null;
-        return GBrowseService.getGBrowseTracks(marker);
-    }
-
-    public static String getGbrowseTrackUrlAddition(Marker marker) {
-        if (marker == null)
-            return null;
-        GbrowseTrack[] tracks = GBrowseService.getGBrowseTracks(marker);
-        if (tracks == null)
-            return null;
-        StringBuilder builder = new StringBuilder();
-        for (GbrowseTrack track : tracks) {
-            builder.append(TYPE);
-            builder.append(track.getTrackName());
-        }
-        return builder.toString();
     }
 
     public static String buildFacetedSearchGACategory(String searchCategory, String facetLabel) {

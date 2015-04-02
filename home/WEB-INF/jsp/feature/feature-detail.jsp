@@ -4,6 +4,7 @@
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
 <meta name="feature-detail-page"/>
+<script src="/javascript/gbrowse-image.js"></script>
 
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}" rtype="feature"/>
 
@@ -13,6 +14,7 @@
     </tiles:insertTemplate>
 </div>
 
+<table class="two-column-info"><tr><td>
 <table class="primary-entity-attributes">
 <tr>
     <th class="genotype-name-label">
@@ -244,6 +246,16 @@
 <zfin2:notesInDiv hasNotes="${formBean.feature}"/>
 
 </table>
+</td><td>
+    <div class="gbrowse-image"></div>
+    <script>
+        jQuery(".gbrowse-image").gbrowseImage({
+            width: 400,
+            imageUrl: "${formBean.gBrowseImage.imageUrl}",
+            linkUrl: "${formBean.gBrowseImage.linkUrl}"
+        });
+    </script>
+</td></tr></table>
 <c:choose>
     <c:when test="${not empty formBean.summaryPageDbLinks}">
         <c:forEach var="featureSummaryDblink" items="${formBean.summaryPageDbLinks}">

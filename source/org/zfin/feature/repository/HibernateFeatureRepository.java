@@ -716,7 +716,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return (List<Marker>) query.list();
     }
 
-    public List<Marker> getMarkerIaAlleleOf(Feature feature) {
+    public List<Marker> getMarkerIsAlleleOf(Feature feature) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct fmrel.marker from  FeatureMarkerRelationship fmrel, Marker m" +

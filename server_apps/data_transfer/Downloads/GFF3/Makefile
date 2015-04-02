@@ -26,14 +26,17 @@ GenerateZFINGFF3.pl unload_zfin_transcript.sql unload_antibody_gff.sql \
 unload_zfin_morpholino.sql unload_vega_chromosome_gff.sql \
 unload_assembly_clone_gff.sql E_unload_alias_scattered.sql \
 E_unload_antibody_gff.sql E_unload_pheno_gff.sql E_unload_xpat_gff.sql \
-LoadVegaGFF3.pl LoadEnsemblGFF3.pl E_unload_zfin_morpholino.sql \
+LoadVegaGFF3.pl LoadEnsemblGFF3.pl E_unload_zfin_knockdown_reagents.sql \
 E_unload_transcript_gff.sql  E_unload_ensembl_contig.sql \
 load_drerio_ensembl.sql  unload_vega_transcripts.sql \
-E_unload_zfin_tginsertion_gff.sql
+E_unload_zfin_tginsertion_gff.sql unload_ZMP.sql
 
 STATICS = gather_alias.awk rollback.sql commit.sql load_drerio_vega_id.sql \
-	 update_vega_nomenclature.sql get_mo_seq.sql sam2gff3.awk increment_id.awk \
-	 E_zfin_ensembl_gene.sql load_BL_gff.sql
+	 update_vega_nomenclature.sql get_mo_and_crispr_seq.sql \
+	 E_zfin_ensembl_gene.sql load_BL_gff.sql load_ZMP.sql get_talen_seq_1.sql \
+	 get_talen_seq_2.sql sam2gff3.groovy merge_gff3.groovy gff32unl.groovy \
+	 load_knockdown_reagents.sql load_burgess_lin.sh load_knockdown_reagents.sh \
+	 load_zmp.sh merge_morpholino.groovy
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.
@@ -99,20 +102,6 @@ load_ensembl_commit: $(TARGETDIR)/load_drerio_ensembl.sql $(TARGETDIR)/commit.sq
 	cd $(TARGETDIR) && LoadEnsemblGFF3.pl commit
 
 
-########################################################################
-### BurgessLin bed file converted to a informix loadable gff3 track
-
-bl_datafile: $(TARGETDIR)/Burgess_Lin.unl
-	cp $(STORE)/Burgess_Lin.unl $(TARGETDIR)/Burgess_Lin.unl
-
-$(TARGETDIR)/Burgess_Lin.unl:  $(GLOBALSTORE)/Burgess_Lin.unl
-	cp $(STORE)/Burgess_Lin.unl $(TARGETDIR)/Burgess_Lin.unl
-
-load_bl:  $(TARGETDIR)/load_BL_gff.sql $(TARGETDIR)/rollback.sql bl_datafile
-	cd $(TARGETDIR) && cat load_BL_gff.sql rollback.sql | dbaccess -a $(DBNAME)
-
-load_bl_commit: $(TARGETDIR)/load_BL_gff.sql $(TARGETDIR)/commit.sql bl_datafile
-	cd $(TARGETDIR) && cat load_BL_gff.sql commit.sql | dbaccess -a $(DBNAME)
 
 ########################################################################
 ###                     daily tracks
@@ -125,7 +114,8 @@ $(TARGETDIR)/unload_xpat_gff.sql          $(TARGETDIR)/E_unload_xpat_gff.sql  \
 $(TARGETDIR)/unload_antibody_gff.sql      $(TARGETDIR)/E_unload_antibody_gff.sql \
 $(TARGETDIR)/unload_vega_transcripts.sql  $(TARGETDIR)/E_unload_transcript_gff.sql \
 $(TARGETDIR)/unload_zfin_morpholino.sql   $(TARGETDIR)/E_unload_zfin_morpholino.sql \
-$(TARGETDIR)/update_vega_nomenclature.sql $(TARGETDIR)/gather_alias.awk
+$(TARGETDIR)/update_vega_nomenclature.sql $(TARGETDIR)/unload_ZMP.sql \
+$(TARGETDIR)/gather_alias.awk
 
 	cd $(TARGETDIR) && GenerateZFINGFF3.pl
 	chmod a+r $(HTTP_DATA_TRANSFER_DIR)/*.gff3
@@ -157,51 +147,30 @@ $(TARGETDIR)/update_vega_nomenclature.sql $(TARGETDIR)/gather_alias.awk
 #	cd $(STORE) && nice +10 /opt/misc/bowtie/bowtie-build --big -f $< $@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-BOWTIE_E_IDX = $(GLOBALSTORE)/Ensembl_Zv9.62
+BOWTIE_E_IDX = $(GLOBALSTORE)/Ensembl_Zv9.78
 BOWTIE_V_IDX = $(GLOBALSTORE)/VEGA45_LG_DNA
 
-$(TARGETDIR)/mo_seq.fa_line:  $(TARGETDIR)/get_mo_seq.sql
-	@cd $(TARGETDIR) && dbaccess -a $(DBNAME) $<
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# BUILD BOWTIE v2 INDEX
 
-# rearange .unl format to fasta format
-$(TARGETDIR)/mo_seq.fa: $(TARGETDIR)/mo_seq.fa_line
-	@cd $(TARGETDIR) && tr \~ '\n' < $< > $@
-
-$(TARGETDIR)/E_mo_seq.sam: $(TARGETDIR)/mo_seq.fa /opt/misc/bowtie/bowtie
-	/opt/misc/bowtie/bowtie --best -strata --sam -f $(BOWTIE_E_IDX) $< > $@
-
-$(TARGETDIR)/E_mo_seq.gff3: $(TARGETDIR)/E_mo_seq.sam $(TARGETDIR)/sam2gff3.awk
-	@cd $(TARGETDIR) && ./sam2gff3.awk < $< > $@ 2> mo_seq_E_miss.fa
-	@echo "\nthe misses could be processed some other way (that allows gaps)"
-	@grep -c "^>"  $(TARGETDIR)/mo_seq_E_miss.fa
-
-$(TARGETDIR)/E_zfin_morpholino.gff3: $(TARGETDIR)/E_mo_seq.gff3 increment_id.awk
-	@sort -k9,9 -k 1,1n -k 4,4n $< | ./increment_id.awk > $@
-
-run_mo_E: $(TARGETDIR)/E_zfin_morpholino.gff3
-
-clean_mo_E:
-	rm -f $(TARGETDIR)/mo_seq.fa_line $(TARGETDIR)/mo_seq.fa \
-	$(TARGETDIR)/E_mo_seq.sam $(TARGETDIR)/E_mo_seq.gff3 $(TARGETDIR)/E_zfin_morpholino.gff3
+bowtie2_idx_E: $(STORE)/Danio_rerio.Zv9.78.dna.toplevel.fa
+	@cd $(STORE) && /home/pkalita/bowtie2-2.2.4/bowtie2-build -f $< $(BOWTIE_E_IDX)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 $(TARGETDIR)/V_mo_seq.sam: $(TARGETDIR)/mo_seq.fa
 	/opt/misc/bowtie/bowtie --best -strata --sam -f $(BOWTIE_V_IDX) $< > $@
 
-$(TARGETDIR)/V_mo_seq.gff3: $(TARGETDIR)/V_mo_seq.sam $(TARGETDIR)/sam2gff3.awk
-	@cd $(TARGETDIR) && ./sam2gff3.awk < $< > $@ 2> mo_seq_V_miss.fa
+$(TARGETDIR)/zfin_morpholino.gff3: $(TARGETDIR)/V_mo_seq.sam $(TARGETDIR)/sam2gff3.groovy
+	@cd $(TARGETDIR) && ./sam2gff3.groovy < $< > $@ 2> mo_seq_V_miss.fa
 	@echo "\nthe misses could be processed some other way (that allows gaps)"
 	@grep -c "^>"  $(TARGETDIR)/mo_seq_V_miss.fa
-
-$(TARGETDIR)/zfin_morpholino.gff3: $(TARGETDIR)/V_mo_seq.gff3 increment_id.awk
-	@sort -k9,9 -k 1,1n -k 4,4n $< | ./increment_id.awk > $@
 
 run_morpholino:  $(TARGETDIR)/zfin_morpholino.gff3
 
 clean_morpholino:
-	rm -f $(TARGETDIR)/zfin_morpholino.gff3 $(TARGETDIR)/V_mo_seq.gff3 \
-	$(TARGETDIR)/V_mo_seq.sam $(TARGETDIR)/mo_seq.fa $(TARGETDIR)/mo_seq.fa_line
+	rm -f $(TARGETDIR)/zfin_morpholino.gff3 $(TARGETDIR)/V_mo_seq.sam \
+	$(TARGETDIR)/mo_seq.fa $(TARGETDIR)/mo_seq.fa_line
 
 ########################################################################
 # not sure about enforcing the existence of the input files

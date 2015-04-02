@@ -1,17 +1,19 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gbrowse.GBrowseService;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -38,6 +40,9 @@ public class SequenceTargetingReagentViewController {
 
     @Autowired
     private MarkerRepository markerRepository;
+
+    @Autowired
+    private LinkageRepository linkageRepository;
 
     //    private String ncbiBlastUrl ;
     private List<Database> databases;
@@ -66,14 +71,7 @@ public class SequenceTargetingReagentViewController {
         MarkerService.createDefaultViewForMarker(sequenceTargetingReagentBean);
 
         // set targetGenes
-//        Set<Marker> targetGenes = MarkerService.getRelatedMarker(morpholino, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
-//        markerBean.setTargetGenes(targetGenes);
-        List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<>();
-        knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
-                sequenceTargetingReagent, true
-                , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
-        ));
-        sequenceTargetingReagentBean.setMarkerRelationshipPresentationList(knockdownRelationships);
+        addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
 
         // PHENOTYPE
         List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
@@ -144,6 +142,20 @@ public class SequenceTargetingReagentViewController {
         return "marker/sequence-targeting-reagent-view.page";
     }
 
+    @RequestMapping(value="/view/{zdbID}/str-targeted-genes")
+    public String showTargetedGenes(Model model, @PathVariable("zdbID") String zdbID) {
+        SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
+        SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(zdbID);
+        sequenceTargetingReagentBean.setMarker(sequenceTargetingReagent);
+
+        addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
+
+        model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, sequenceTargetingReagent.getAbbreviation() + " Target Locations");
+        
+        return "marker/sequence-targeting-reagent-target-view.page";
+    }
+
     @RequestMapping(value = "/call-regen-genox", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -158,6 +170,29 @@ public class SequenceTargetingReagentViewController {
             InformixUtil.runInformixProcedure("regen_genox_marker", targetGene.getZdbId());
         }
         return knockdownRelationships.size();
+    }
+
+    private void addKnockdownRelationships(SequenceTargetingReagent sequenceTargetingReagent,
+                                                  SequenceTargetingReagentBean sequenceTargetingReagentBean) {
+        List<MarkerRelationshipPresentation> knockdownRelationships = new ArrayList<>();
+        knockdownRelationships.addAll(markerRepository.getRelatedMarkerOrderDisplayForTypes(
+                sequenceTargetingReagent, true
+                , MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE
+        ));
+        sequenceTargetingReagentBean.setMarkerRelationshipPresentationList(knockdownRelationships);
+
+        for (MarkerRelationshipPresentation knockdownRelationship : knockdownRelationships) {
+            if (CollectionUtils.isNotEmpty(
+                    linkageRepository.getGenomeLocation(sequenceTargetingReagent, GenomeLocation.Source.ZFIN))) {
+                sequenceTargetingReagentBean.addGBrowseImage(GBrowseImage.builder()
+                                .landmark(markerRepository.getMarkerByID(knockdownRelationship.getZdbId()))
+                                .withPadding(0.1)
+                                .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
+                                .highlight(sequenceTargetingReagent)
+                                .build()
+                );
+            }
+        }
     }
 }
 

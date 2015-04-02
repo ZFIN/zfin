@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.EntityZdbID;
@@ -23,6 +24,7 @@ import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
+@Repository
 public class HibernateLinkageRepository implements LinkageRepository {
 
     private Logger logger = Logger.getLogger(HibernateLinkageRepository.class);
@@ -222,11 +224,27 @@ public class HibernateLinkageRepository implements LinkageRepository {
     }
 
     @Override
+    public List<MarkerGenomeLocation> getGenomeLocation(Marker marker, GenomeLocation.Source... sources) {
+        Criteria query = HibernateUtil.currentSession().createCriteria(MarkerGenomeLocation.class);
+        query.add(Restrictions.eq("marker", marker));
+        query.add(Restrictions.in("source", sources));
+        return query.list();
+    }
+
+    @Override
     public List<FeatureGenomeLocation> getGenomeLocation(Feature feature) {
         Query query = HibernateUtil.currentSession().createQuery(
                 "from FeatureGenomeLocation where feature = :feature ");
         query.setParameter("feature", feature);
         return (List<FeatureGenomeLocation>) query.list();
+    }
+
+    @Override
+    public List<FeatureGenomeLocation> getGenomeLocation(Feature feature, GenomeLocation.Source... sources) {
+        Criteria query = HibernateUtil.currentSession().createCriteria(FeatureGenomeLocation.class);
+        query.add(Restrictions.eq("feature", feature));
+        query.add(Restrictions.in("source", sources));
+        return query.list();
     }
 
     @Override

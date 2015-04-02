@@ -4,6 +4,8 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<script src="/javascript/gbrowse-image.js"></script>
+
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
 <c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
@@ -24,6 +26,35 @@
 </div>
 
 <zfin2:sequenceTargetingReagentInfo marker="${sequenceTargetingReagent}" markerBean="${formBean}" previousNames="${formBean.previousNames}"/>
+
+<div id="gbrowse-images" class="summary">
+    <div class="summaryTitle">
+        TARGET LOCATIONS
+        <small><a class="popup-link info-popup-link" href="/action/marker/note/sequence-targeting-reagent-gbrowse"></a></small>
+    </div>
+
+    <c:forEach items="${formBean.gbrowseImages}" var="image" end="1">
+        <div class="gbrowse-image"
+             data-gbrowse-image='{"imageUrl": "${image.imageUrl}", "linkUrl": "${image.linkUrl}"}'>
+        </div>
+    </c:forEach>
+
+    <c:if test="${fn:length(formBean.gbrowseImages) > 2}">
+        <div>
+            <a href="/action/marker/view/${formBean.marker.zdbID}/str-targeted-genes">View all ${fn:length(formBean.gbrowseImages)} target locations</a>
+        </div>
+    </c:if>
+
+    <span id="gbrowse-no-data" class="no-data-tag">No data available</span>
+</div>
+
+<script>
+    jQuery(".gbrowse-image").gbrowseImage({
+        success: function() {
+            jQuery("#gbrowse-no-data").hide();
+        }
+    });
+</script>
 
 <%--// EXPRESSION --%>
 <div class="summary">

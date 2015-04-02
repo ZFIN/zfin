@@ -6,6 +6,8 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResultTermComparator;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionDisplay;
+import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.gbrowse.presentation.GBrowseImageSimilarComparator;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.GenotypeInformation;
@@ -34,11 +36,9 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     private List<GenotypeInformation> genotypeData;
     private List<PhenotypeDisplay> phenotypeDisplays;
     private List<ExpressionResult> expressionResults;
-
+    private Set<GBrowseImage> gBrowseImages;
     private List<String> expressionFigureIDs;
-
     private List<String> expressionPublicationIDs;
-
     private List<ExpressionDisplay> expressionDisplays;
 
     public Set<Marker> getTargetGenes() {
@@ -290,6 +290,18 @@ public class SequenceTargetingReagentBean extends MarkerBean{
                 return 0;
             }
         }
+    }
+
+    // the b in browse is lowercase in the method name to make JSP happy for some reason
+    public Set<GBrowseImage> getGbrowseImages() {
+        return gBrowseImages;
+    }
+
+    public void addGBrowseImage(GBrowseImage image) {
+        if (gBrowseImages == null) {
+            gBrowseImages = new TreeSet<>(new GBrowseImageSimilarComparator());
+        }
+        gBrowseImages.add(image);
     }
 }
 

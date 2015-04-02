@@ -65,6 +65,7 @@
         </zfin:alternating-tr>
     </c:forEach>
 
+    <script src="/javascript/gbrowse-image.js"></script>
     <script>
         jQuery(".gbrowse_hover").hover(
                 function () {
@@ -74,6 +75,7 @@
                     jQuery(jQuery(this).attr("rel")).hide();
                 }
         );
+        jQuery(".gbrowse_popup").gbrowseImage({width: 300});
     </script>
 </table>
 

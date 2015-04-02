@@ -3,7 +3,8 @@ package org.zfin.sequence.blast.results.view;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zfin.gbrowse.GBrowseService;
+import org.zfin.gbrowse.GBrowseTrack;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -376,7 +377,11 @@ public class BlastResultMapper {
                     //get gbrowse images
                     try {
                         logger.debug("attempting to get GBrowseImage list for blast hit");
-                        hitViewBean.setGbrowseImage(GBrowseService.buildTranscriptGBrowseImage(gene,transcript));
+                        hitViewBean.setGbrowseImage(GBrowseImage.builder()
+                                .landmark(gene)
+                                .highlight(transcript.getAbbreviation())
+                                .tracks(GBrowseTrack.TRANSCRIPTS)
+                                .build());
                     } catch (Exception e) {
                         logger.error("Couldn't get GBrowse Feature " + e.getMessage());
                     }

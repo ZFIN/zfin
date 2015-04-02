@@ -5,7 +5,10 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
 import org.zfin.sequence.service.TranscriptService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 
 public class RelatedTranscriptDisplay  {
 
@@ -17,7 +20,7 @@ public class RelatedTranscriptDisplay  {
 
 
     public RelatedTranscriptDisplay() {
-        transcripts = new TreeSet<RelatedMarker>(new RelatedTranscriptNameSort());
+        transcripts = new TreeSet<>(new RelatedTranscriptNameSort());
     }
 
     public TreeSet<RelatedMarker> getTranscripts() {
@@ -68,7 +71,7 @@ public class RelatedTranscriptDisplay  {
     /* This method is made to make CreateAlternatingTR happy, since it wants a list,
      * it's likely that this method is absurdly wasteful */
     public List<RelatedMarker> getList() {
-        List<RelatedMarker> list = new ArrayList<RelatedMarker>(transcripts.size());
+        List<RelatedMarker> list = new ArrayList<>(transcripts.size());
         list.addAll(transcripts);
         return list;
     }
@@ -82,7 +85,7 @@ public class RelatedTranscriptDisplay  {
                return nonWithdrawnTranscripts;
         }
 
-        nonWithdrawnTranscripts = new TreeSet<RelatedMarker> ();
+        nonWithdrawnTranscripts = new TreeSet<> ();
         for (RelatedMarker marker : transcripts) {
              Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
              if (!transcript.isWithdrawn()) {
@@ -101,7 +104,7 @@ public class RelatedTranscriptDisplay  {
                return withdrawnTranscripts;
          }
 
-         withdrawnTranscripts = new TreeSet<RelatedMarker> ();
+         withdrawnTranscripts = new TreeSet<> ();
          for (RelatedMarker marker : transcripts) {
              Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
              if (transcript.isWithdrawn()) {
@@ -123,7 +126,7 @@ public class RelatedTranscriptDisplay  {
                return null;
          }
 
-         List<RelatedMarker> withdrawnlist = new ArrayList<RelatedMarker>(withdrawnTranscripts.size());
+         List<RelatedMarker> withdrawnlist = new ArrayList<>(withdrawnTranscripts.size());
          withdrawnlist.addAll(withdrawnTranscripts);
          return withdrawnlist;
     }
@@ -141,7 +144,7 @@ public class RelatedTranscriptDisplay  {
                return null;
          }
 
-         List<RelatedMarker> nonWithdrawnlist = new ArrayList<RelatedMarker>(nonWithdrawnTranscripts.size());
+         List<RelatedMarker> nonWithdrawnlist = new ArrayList<>(nonWithdrawnTranscripts.size());
          nonWithdrawnlist.addAll(nonWithdrawnTranscripts);
          return nonWithdrawnlist;
     }

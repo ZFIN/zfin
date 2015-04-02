@@ -3,6 +3,7 @@ package org.zfin.feature.presentation;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
@@ -32,6 +33,7 @@ public class FeatureBean {
     private String zdbID;
     private Set<FeatureDBLink> summaryPageDbLinks;
     private Set<FeatureDBLink> genbankDbLinks;
+    private GBrowseImage gBrowseImage;
 
     public Set<FeatureDBLink> getGenbankDbLinks() {
         return genbankDbLinks;
@@ -184,6 +186,14 @@ public class FeatureBean {
 
     public void setCreatedByRelationship(FeatureMarkerRelationship createdByRelationship) {
         this.createdByRelationship = createdByRelationship;
+    }
+
+    public GBrowseImage getgBrowseImage() {
+        return gBrowseImage;
+    }
+
+    public void setgBrowseImage(GBrowseImage gBrowseImage) {
+        this.gBrowseImage = gBrowseImage;
     }
 }
 

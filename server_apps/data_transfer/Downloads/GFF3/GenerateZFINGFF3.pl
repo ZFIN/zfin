@@ -28,24 +28,13 @@ print "starting here: \n". `pwd`. "\n";
 
 print "generating tracks\n";
 
-#my $cmd = "cat ".
-#    "update_vega_nomenclature.sql " .    # full nomenclature transaction
-#    "unload_zfin_genes_gff.sql " .
-#    "unload_alias_scattered.sql " .
-#    "unload_xpat_gff.sql " .
-#    "unload_pheno_gff.sql " .
-#    "unload_antibody_gff.sql " .
-#    "unload_vega_chromosome_gff.sql " .
-#    "unload_vega_transcripts.sql ".
-#    "unload_zfin_morpholino.sql " .
-	#"";
-###############################################
 ###  Ensembl
 my $cmd = "cat " .
     "E_unload_zfin_tginsertion_gff.sql ".
+    "unload_ZMP.sql " .
     "E_unload_transcript_gff.sql " .
     "E_unload_ensembl_contig.sql " .
-    "E_unload_zfin_morpholino.sql " .
+    "E_unload_zfin_knockdown_reagents.sql " .
     "E_zfin_ensembl_gene.sql " .        # begin gene transaction
     "E_unload_alias_scattered.sql " .
     "E_unload_xpat_gff.sql " .

@@ -12,6 +12,7 @@
 <%@ attribute name="title" required="false" rtexprvalue="true" type="java.lang.String"
               description="optional title, overrides default" %>
 
+<script src="/javascript/gbrowse-image.js"></script>
 
 <script type="text/javascript">
     function showWithdrawnTranscripts(numWithdrawnTranscripts){
@@ -126,8 +127,7 @@
                                     rowspan="${fn:length(relatedTranscriptDisplay.transcripts)}">
 
                                     <c:if test="${!empty relatedTranscriptDisplay.gbrowseImage}">
-
-                                        <zfin2:gbrowseImageStack gbrowseImage="${relatedTranscriptDisplay.gbrowseImage}"/>
+                                        <div class="gbrowse-image" />
                                     </c:if>
                                 </td>
                               </c:when>
@@ -194,3 +194,10 @@
     </c:choose>
 </div>
 
+<script>
+    jQuery(".gbrowse-image").gbrowseImage({
+        width: 300,
+        imageUrl: "${relatedTranscriptDisplay.gbrowseImage.imageUrl}",
+        linkUrl: "${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
+    });
+</script>

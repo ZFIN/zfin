@@ -32,15 +32,6 @@ document.write("   </div> ");
 document.write(" </div>  ");
 
 
-<!-- start AWStats -->
-document.write('<script src="/javascript/awstats_misc_tracker.js" type="text/javascript">') ;
-document.write("</script>");
-document.write('<script type="text/javascript/">');
-document.write('<noscript><img src="/javascript/awstats_misc_tracker.js?nojs=y" height=0 width=0 border=0 style="display: none"></noscript>');
-document.write("</script>");
-<!-- End AWStats -->
-
-
 var jQueryScriptOutputted = false;
 function initJQuery() {
 

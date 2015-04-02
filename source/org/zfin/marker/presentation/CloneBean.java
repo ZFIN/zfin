@@ -1,10 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.audit.AuditLogItem;
-import org.zfin.audit.repository.AuditLogRepository;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.marker.Clone;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLinkList;
 import org.zfin.sequence.ReferenceDatabase;
 
@@ -23,7 +20,7 @@ public class CloneBean extends MarkerBean {
     private boolean isThisseProbe;
     private SummaryDBLinkDisplay summaryDBLinkDisplay;
     private List<OrganizationLink> suppliers;
-
+    private GBrowseImage image;
 
     public SequenceInfo getSequenceInfo() {
         return sequenceInfo;
@@ -116,5 +113,13 @@ public class CloneBean extends MarkerBean {
 
     public void setSuppliers(List<OrganizationLink> suppliers) {
         this.suppliers = suppliers;
+    }
+
+    public GBrowseImage getImage() {
+        return image;
+    }
+
+    public void setImage(GBrowseImage image) {
+        this.image = image;
     }
 }

@@ -42,6 +42,11 @@ public class MarkerNotesController {
         return "marker/omim-phenotype-note.insert";
     }
 
+    @RequestMapping("/note/sequence-targeting-reagent-gbrowse")
+    public String getSTRGbrowseNote() {
+        return "marker/sequence-targeting-reagent-gbrowse-note.insert";
+    }
+
     @RequestMapping("/note/external/{zdbID}")
     public String getExternalNote(
             @PathVariable String zdbID

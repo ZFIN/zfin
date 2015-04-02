@@ -12,16 +12,13 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.profile.Lab;
 import org.zfin.profile.Organization;
 import org.zfin.profile.OrganizationFeaturePrefix;
-import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
 
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 
@@ -86,7 +83,7 @@ public interface FeatureRepository {
 
     List<Marker> getMarkersByFeature(Feature feature);
 
-    List<Marker> getMarkerIaAlleleOf(Feature feature);
+    List<Marker> getMarkerIsAlleleOf(Feature feature);
 
     List<Marker> getMarkersPresentForFeature(Feature feature);
 

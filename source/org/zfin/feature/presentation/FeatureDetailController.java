@@ -1,19 +1,24 @@
 package org.zfin.feature.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gbrowse.GBrowseTrack;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.FeatureGenomeLocation;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.presentation.GenoExpStatistics;
+import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -63,7 +68,32 @@ public class FeatureDetailController {
 
 
         form.setFeature(feature);
-        form.setSortedMarkerRelationships(FeatureService.getSortedMarkerRelationships(feature));
+
+        Set<FeatureMarkerRelationship> markerRelationships = FeatureService.getSortedMarkerRelationships(feature);
+        form.setSortedMarkerRelationships(markerRelationships);
+        Collection<FeatureGenomeLocation> locations = FeatureService.getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN);
+        if (CollectionUtils.isNotEmpty(locations)) {
+            GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder();
+            if (markerRelationships.size() == 1) {
+                imageBuilder.landmark(markerRelationships.iterator().next().getMarker())
+                        .highlight(feature)
+                        .withPadding(0.1);
+            } else {
+                imageBuilder.landmark(feature)
+                        .highlight()
+                        .withPadding(10000);
+            }
+            String subSource = locations.iterator().next().getDetailedSource();
+            if (subSource != null) {
+                if (subSource.equals("BurgessLin")) {
+                    imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.INSERTION, GBrowseTrack.TRANSCRIPTS);
+                } else if (subSource.equals("ZMP")) {
+                    imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.ZMP, GBrowseTrack.TRANSCRIPTS);
+                }
+            }
+            form.setgBrowseImage(imageBuilder.build());
+        }
+
         form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
         form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
         form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));

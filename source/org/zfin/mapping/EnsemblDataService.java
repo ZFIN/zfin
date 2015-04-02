@@ -119,8 +119,8 @@ public class EnsemblDataService implements GenomeBrowserDataService {
         EnsemblGeneLocation release = gson.fromJson(builder.toString(), EnsemblGeneLocation.class);
         GenomeLocation genomeLocation = new GenomeLocation();
         genomeLocation.setChromosome(release.getChromsome());
-        genomeLocation.setStart(release.getStart());
-        genomeLocation.setEnd(release.getEnd());
+        genomeLocation.setStart(Integer.parseInt(release.getStart(), 10));
+        genomeLocation.setEnd(Integer.parseInt(release.getEnd(), 10));
         genomeLocation.setMetaData(getGenomeBrowserMetaData());
         return genomeLocation;
 

@@ -41,18 +41,3 @@
         </table>
     </div>
 </c:if>
-<script type="javascript">
-
-    $(document).ready(function () {
-        $("#textWrapper").dotdotdot({
-            after: "a.readmore"
-        });
-    });
-
-
-    $("#button").click(function () {
-        $("#textWrapper").trigger("update");
-    });
-
-
-</script>

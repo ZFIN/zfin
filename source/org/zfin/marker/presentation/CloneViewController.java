@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gbrowse.GBrowseTrack;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.marker.Clone;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -65,21 +67,12 @@ public class CloneViewController {
         List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(clone.getZdbID());
         cloneBean.setSuppliers(suppliers);
 
-        if(clone.isRnaClone()){
-//            String geneLookupSymbol ;
-//            List<MarkerRelationshipPresentation> markerRelationshipPresentationList = cloneBean.getMarkerRelationshipPresentationList();
-//            for(MarkerRelationshipPresentation markerRelationshipPresentation : markerRelationshipPresentationList){
-//                if( markerRelationshipPresentation.getMarkerType().equals("Gene") ){
-//                    geneLookupSymbol = markerRelationshipPresentation.getAbbreviation();
-//                }
-//            }
+        if (clone.isRnaClone()) {
             cloneBean.setMarkerExpression(expressionService.getExpressionForRnaClone(clone));
         }
 
         // OTHER GENE / MARKER PAGES:
         cloneBean.addFakePubs(ensemblDatabase);
-
-
 
         // iterate through related marker list to add snps to it (if a dna clone)
         // this is technically a small list, so should be cheap
@@ -90,9 +83,16 @@ public class CloneViewController {
             markerRelationshipPresentationList.add(snpPresentation);
         }
 
-
         // check whether we are a thisse probe
         cloneBean.setThisseProbe(expressionService.isThisseProbe(clone));
+
+        // gbrowse image
+        cloneBean.setImage(GBrowseImage.builder()
+                .landmark("genomic_clone:" + clone.getZdbID())
+                .highlight(clone.getAbbreviation())
+                .tracks(GBrowseTrack.COMPLETE_CLONES, GBrowseTrack.GENES, GBrowseTrack.TRANSCRIPTS)
+                .build()
+        );
 
         model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());

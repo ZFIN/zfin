@@ -2,8 +2,8 @@ package org.zfin.sequence.service;
 
 import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gbrowse.GBrowseService;
-import org.zfin.mapping.GenomeLocation;
+import org.zfin.gbrowse.GBrowseTrack;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
@@ -12,7 +12,6 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.Species;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -98,10 +97,14 @@ public class TranscriptService {
             rtd.add(rm);
         }
 
-        if (displayGBrowseImage) {
-            if (getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL))
-                rtd.setGbrowseImage(GBrowseService.buildTranscriptGBrowseImage(gene, highlightedTranscript));
-
+        if (displayGBrowseImage && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)) {
+            GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder()
+                    .landmark(gene)
+                    .tracks(GBrowseTrack.TRANSCRIPTS);
+            if (highlightedTranscript != null) {
+                imageBuilder.highlight(highlightedTranscript.getAbbreviation());
+            }
+            rtd.setGbrowseImage(imageBuilder.build());
         } else {
             logger.debug("not even trying showing GBrowse image, probably because the indexer is asking for the page");
         }

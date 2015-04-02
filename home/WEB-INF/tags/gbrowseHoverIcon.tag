@@ -10,6 +10,8 @@
     <c:set var="domId" value="${zfn:generateRandomDomID()}"/>
 
     <a class="gbrowse_hover" rel="#popup-${domId}">GB</a>
-    <div class="gbrowse_popup" id="popup-${domId}"><zfin2:gbrowseImageStack gbrowseImage="${gbrowseImage}" domId="${domId}"/></div>
+    <div class="gbrowse_popup" id="popup-${domId}"
+            data-gbrowse-image='{"imageUrl": "${gbrowseImage.imageUrl}", "linkUrl": "${gbrowseImage.linkUrl}"}'
+    </div>
 
 </c:if>

@@ -326,30 +326,6 @@
     <function>
         <description>
         </description>
-        <name>getGenomeLocation</name>
-        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>org.zfin.mapping.GenomeLocation getGenomeLocation(org.zfin.marker.Marker)</function-signature>
-    </function>
-
-    <function>
-        <description>
-        </description>
-        <name>getGbrowseTracks</name>
-        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>org.zfin.mapping.GbrowseTrack[] getGbrowseTracks(org.zfin.marker.Marker)</function-signature>
-    </function>
-
-    <function>
-        <description>
-        </description>
-        <name>getGbrowseTrackUrlAddition</name>
-        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>java.lang.String getGbrowseTrackUrlAddition(org.zfin.marker.Marker)</function-signature>
-    </function>
-
-    <function>
-        <description>
-        </description>
         <name>buildFacetedSearchGACategory</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
         <function-signature>java.lang.String buildFacetedSearchGACategory(java.lang.String,java.lang.String)</function-signature>

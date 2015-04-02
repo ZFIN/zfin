@@ -358,7 +358,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getMarkerFromFeature() {
         Feature feature = featureRepository.getFeatureByID("ZDB-ALT-050617-64");
-        List<Marker> markerSet = featureRepository.getMarkerIaAlleleOf(feature);
+        List<Marker> markerSet = featureRepository.getMarkerIsAlleleOf(feature);
         Assert.assertNotNull(markerSet);
     }
 

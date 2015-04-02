@@ -13,6 +13,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
+import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
@@ -70,8 +71,9 @@ public class MappingDetailController {
             marker = getMarkerRepository().getMarkerByID(markerID);
             if (marker == null) {
                 feature = getFeatureRepository().getFeatureByID(markerID);
-                if (feature != null)
+                if (feature != null) {
                     isFeature = true;
+                }
             }
         }
         Panel panel = getLinkageRepository().getPanel(panelID);
@@ -84,10 +86,11 @@ public class MappingDetailController {
             Collections.sort(mappedMarkerList, new ScoringSort());
             model.addAttribute("mappedMarkerList", mappedMarkerList);
         }
-        if (marker == null)
+        if (marker == null) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Scoring: " + panel.getName());
-        else
+        } else {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Scoring: " + marker.getAbbreviation() + " on " + panel.getName());
+        }
         return "mapping/show-scoring.page";
     }
 
@@ -203,7 +206,6 @@ public class MappingDetailController {
 
         Marker marker = markerRepository.getMarkerByID(markerID);
 
-
         // genetic mapping Panels
         List<MappedMarker> mappedMarkers = getLinkageRepository().getMappedMarkers(marker);
 
@@ -217,26 +219,41 @@ public class MappingDetailController {
         isOtherMappingDetail = isOtherMappingDetail || setOtherMappingInfo(model, marker, feature);
 
         model.addAttribute("marker", marker);
-        if (isFeature) {
-            model.addAttribute("gBrowseMarker", GBrowseService.getGbrowseTrackingGene(feature));
-        } else
-            model.addAttribute("gBrowseMarker", GBrowseService.getGbrowseTrackingGene(marker));
         model.addAttribute("locations", MappingService.getGenomeBrowserLocations(marker));
         if (marker.isInTypeGroup(Marker.TypeGroup.CLONE)) {
             List<MarkerGenomeLocation> genomeMarkerLocationList = getLinkageRepository().getGenomeLocation(marker);
             model.addAttribute("locations", genomeMarkerLocationList);
             model.addAttribute("isClone", true);
         }
-        if (isFeature)
+
+        Marker trackingGene;
+        if (isFeature) {
+            trackingGene = GBrowseService.getGbrowseTrackingGene(feature);
+        } else {
+            trackingGene = GBrowseService.getGbrowseTrackingGene(marker);
+        }
+        model.addAttribute("gbrowseImage", GBrowseImage.builder()
+                        .landmark(marker)
+                        .withCenteredRange(500000)
+                        .highlight(trackingGene)
+                        .highlightColor("pink")
+                        .withDefaultTracks()
+                        .build()
+        );
+
+        if (isFeature) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.MAPPING.getTitleString() + feature.getAbbreviation());
-        else
+        } else {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.MAPPING.getTitleString() + marker.getAbbreviation());
+        }
 
         List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(marker);
         Collections.sort(genomeLocation);
         model.addAttribute("markerGenomeLocations", genomeLocation);
-        if (isFeature)
+        if (isFeature) {
             model.addAttribute("featureGenomeLocations", getLinkageRepository().getGenomeLocation(feature));
+        }
+
         model.addAttribute("otherMappingDetail", isOtherMappingDetail);
         return "mapping/mapping-detail.page";
     }
@@ -294,11 +311,13 @@ public class MappingDetailController {
             linkageFeatureList = new ArrayList<>(featureList.size());
             for (Feature feat : featureList) {
                 List<MappedMarker> mappedMarkers1 = getLinkageRepository().getMappedMarkers(feat);
-                if (CollectionUtils.isNotEmpty(mappedMarkers1))
+                if (CollectionUtils.isNotEmpty(mappedMarkers1)) {
                     mappedFeatureMarkers.add(mappedMarkers1);
+                }
                 List<LinkageMember> linkageFeatures = getLinkageRepository().getLinkagesForFeature(feat);
-                if (CollectionUtils.isNotEmpty(linkageFeatures))
+                if (CollectionUtils.isNotEmpty(linkageFeatures)) {
                     linkageFeatureList.add(linkageFeatures);
+                }
 
                 List<SingletonLinkage> singletonLinkage = getLinkageRepository().getSingletonLinkage(feat);
                 if (CollectionUtils.isNotEmpty(singletonLinkage))
@@ -312,10 +331,12 @@ public class MappingDetailController {
             model.addAttribute("singletonFeatureMapList", singletonLinkageMap);
             return true;
         }
-        if (CollectionUtils.isNotEmpty(mappedFeatureMarkers))
+        if (CollectionUtils.isNotEmpty(mappedFeatureMarkers)) {
             return true;
-        if (CollectionUtils.isNotEmpty(linkageFeatureList))
+        }
+        if (CollectionUtils.isNotEmpty(linkageFeatureList)) {
             return true;
+        }
         return false;
     }
 
