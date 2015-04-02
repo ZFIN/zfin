@@ -630,7 +630,7 @@
                 <fileset dir="@{from}">
                     <include name="css/*.css"/>
                     <include name="css/images/**"/>
-                    <include name="css/bootstrap/**"/>
+                    <include name="css/bootstrap3/**"/>
                     <include name="WEB-INF/**"/>
                     <include name="javascript/**"/>
                     <exclude name="fonts/**"/>
