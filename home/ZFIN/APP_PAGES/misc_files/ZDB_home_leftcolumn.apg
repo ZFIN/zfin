@@ -75,7 +75,7 @@
           <li><a href="http://<!--|WIKI_HOST|-->" title="ZFIN-hosted community wiki">Wiki</a>:<a href="http://<!--|WIKI_HOST|-->/display/prot" title="Browse, contribute experimental protocols">&nbsp; Protocols,</a><a href="http://<!--|WIKI_HOST|-->/display/AB" title="Browse, contribute antibody data">&nbsp;Antibodies</a>
 
            <li>
-           <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/jobs" title="Zebrafish-related job announcements">Jobs</a>,
+           <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/jobs/Zebrafish-Related+Job+Announcements" title="Zebrafish-related job announcements">Jobs</a>,
             <!-- <a href="/zf_info/news/mtgs.html" title="Zebrafish-related meeting announcements">Meetings</a>, -->
             <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>,
             <a href="<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/display/general/Zebrafish+Newsgroup+Information" title="Moderated, online discussion group for anyone intested in zebrafish research">Newsgroup</a>       

@@ -231,7 +231,7 @@
             <a href="http://wiki.zfin.org"
                title="ZFIN-hosted community wiki: browse, contribute and export">Wiki</A>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <a href="https://wiki.zfin.org/display/jobs" title="Zebrafish-related job announcements">Jobs</a>
+            <a href="https://wiki.zfin.org/display/jobs/Zebrafish-Related+Job+Announcements" title="Zebrafish-related job announcements">Jobs</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="https://wiki.zfin.org/display/meetings" title="Zebrafish-related meeting announcements">Meetings</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">

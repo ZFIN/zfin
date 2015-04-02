@@ -485,7 +485,7 @@ document.write("     <a href=\"/\">Home</a> ");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write(" <a href=\"https://@WIKI_HOST@/\" title=\"ZFIN-hosted community wiki: browse, contribute and export\">Wiki</A>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write(" <a href=\"https://@WIKI_HOST@/display/jobs\" title=\"Zebrafish-related job announcements\">Jobs</a>");
+document.write(" <a href=\"https://@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements\" title=\"Zebrafish-related job announcements\">Jobs</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write(" <a href=\"https://@WIKI_HOST@/display/meetings\" title=\"Zebrafish-related meeting announcements\">Meetings</a>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
