@@ -3,7 +3,6 @@
 
 <%@ attribute name="genotypes" type="java.util.Collection" required="false" %>
 <%@ attribute name="sequenceTargetReagen" type="java.lang.String" required="false" %>
-<%@ attribute name="showNumberOfRecords" type="java.lang.Integer" required="true" %>
 
 <table id="genotypes-table" class="summary rowstripes">
     <caption>GENOTYPES <c:if test="${sequenceTargetReagen != null}">CREATED WITH ${sequenceTargetReagen}</c:if></caption>
@@ -22,7 +21,7 @@
         </th>
     </tr>
 
-    <c:forEach var="genotype" items="${genotypes}" varStatus="loop" end="${showNumberOfRecords-1}">
+    <c:forEach var="genotype" items="${genotypes}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td>
                 <zfin:link entity="${genotype.genotype}"/>

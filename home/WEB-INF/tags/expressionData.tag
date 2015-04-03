@@ -1,10 +1,8 @@
-<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="sequenceTargetingReagentID" type="java.lang.String" required="false" %>
 <%@ attribute name="expressionDisplays" type="java.util.Collection" required="false" %>
 <%@ attribute name="showCondition" type="java.lang.Boolean" required="false" %>
-<%@ attribute name="showNumberOfRecords" type="java.lang.Integer" required="true" %>
 
 <table width="100%" class="summary rowstripes">
     <thead>
@@ -38,7 +36,7 @@
         </c:choose>
     </tr>
     </thead>
-    <c:forEach var="xp" items="${expressionDisplays}" varStatus="loop" end="${showNumberOfRecords-1}">
+    <c:forEach var="xp" items="${expressionDisplays}" varStatus="loop">
         <zfin:alternating-tr loopName="loop"
                              groupBeanCollection="${formBean.expressionDisplays}"
                              groupByBean="expressedGene">
@@ -100,6 +98,4 @@
             </td>
         </zfin:alternating-tr>
     </c:forEach>
-
-    </tbody>
 </table>

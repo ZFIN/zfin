@@ -3,8 +3,12 @@
 
 <%@ attribute name="phenotypeDisplays" type="java.util.Collection" required="false" %>
 <%@ attribute name="suppressMoDetails" type="java.lang.Boolean" required="false" %>
-<%@ attribute name="showNumberOfRecords" type="java.lang.Integer" required="true" %>
+<%@ attribute name="showNumberOfRecords" type="java.lang.Integer" required="false" %>
 <%@ attribute name="secondColumn" type="java.lang.String" required="true" %>
+
+<c:if test="${empty showNumberOfRecords}">
+    <c:set var="showNumberOfRecords" value="${fn:length(phenotypeDisplays)}" />
+</c:if>
 
 <table class="summary rowstripes">
     <thead>

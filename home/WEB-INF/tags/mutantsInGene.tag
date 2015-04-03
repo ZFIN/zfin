@@ -49,94 +49,34 @@
 
     <c:if test="${!empty mutantsOnMarkerBean.features}">
         <br/>
-        <div id="short-version">
-                <table class="summary rowstripes">
-                    <tr>
-                        <th width="10%">Allele</th>
-                        <th width="13%">Type</th>
-
-
-                        <th width="10%">Mutagen</th>
-                        <th width="50%">Suppliers</th>
-                    </tr>
-
-                    <c:forEach var="feature" items="${mutantsOnMarkerBean.features}" varStatus="loop" end="4">
-                        <tr class=${loop.index%2==0 ? "even" : "odd"}>
-                            <td>
-                                <a href="/${feature.zdbID}">${feature.abbreviation}</a>
-                            </td>
-                            <td>
-                                    ${feature.type.display}
-                            </td>
-                            <td>
-                                <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
-                                <c:choose>
-                                    <c:when test="${mutagen ne zfn:getMutagen('not specified')}">
-                                        ${feature.featureAssay.mutagen}
-                                    </c:when>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <c:forEach var="supplier" items="${feature.suppliers}">
-                                       <li style="list-style-type: none;">
-                                            <a href="/${supplier.organization.zdbID}"> ${supplier.organization.name}</a>
-                                                <c:if test="${!empty supplier.orderURL}"> <a href="${supplier.orderURL}"> (order
-                                                    this)</a>
-                                                </c:if>
-                                       </li>
-                                </c:forEach>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </table>
-
-            </tr>
-            <div>
-
-                <c:if test="${mutantsOnMarkerBean.features.size() > 5}">
-                    &nbsp;&nbsp;
-                    <a href="javascript:expand()">
-                        <img src="/images/darrow.gif" alt="expand" border="0">
-                        Show all</a>
-                    ${mutantsOnMarkerBean.features.size()} alleles
-                </c:if>
-            </div>
-        </div>
-
-        <div style="display:none" id="long-version">
-            <table class="summary rowstripes">
+        <div>
+            <table class="summary rowstripes alleles">
                 <tr>
                     <th width="10%">Allele</th>
                     <th width="13%">Type</th>
-
-
                     <th width="10%">Mutagen</th>
                     <th width="50%">Suppliers</th>
                 </tr>
-
                 <c:forEach var="feature" items="${mutantsOnMarkerBean.features}" varStatus="loop">
                     <tr class=${loop.index%2==0 ? "even" : "odd"}>
                         <td>
                             <a href="/${feature.zdbID}">${feature.abbreviation}</a>
                         </td>
                         <td>
-                                ${feature.type.display}
+                            ${feature.type.display}
                         </td>
                         <td>
                             <c:set var="mutagen" value="${feature.featureAssay.mutagen}"/>
-                            <c:choose>
-                                <c:when test="${mutagen ne zfn:getMutagen('not specified')}">
-                                    ${feature.featureAssay.mutagen}
-
-                                </c:when>
-                            </c:choose>
+                            <c:if test="${mutagen ne zfn:getMutagen('not specified')}">
+                                ${feature.featureAssay.mutagen}
+                            </c:if>
                         </td>
                         <td>
                             <c:forEach var="supplier" items="${feature.suppliers}">
                                 <li style="list-style-type: none;">
                                     <a href="/${supplier.organization.zdbID}"> ${supplier.organization.name}</a>
-                                    <c:if test="${!empty supplier.orderURL}"> <a href="${supplier.orderURL}"> (order
-                                        this)</a>
+                                    <c:if test="${!empty supplier.orderURL}">
+                                        <a href="${supplier.orderURL}"> (order this)</a>
                                     </c:if>
                                 </li>
                             </c:forEach>
@@ -144,27 +84,7 @@
                     </tr>
                 </c:forEach>
             </table>
-            <div>
-                &nbsp;&nbsp;
-                <a href="javascript:collapse()">
-                    <img src="/images/up.gif" alt="expand" title="Show first 5 alleles" border="0">
-                    Show first</a> 5 alleles
-            </div>
         </div>
     </c:if>
-
-    <script type="text/javascript">
-        function expand() {
-            document.getElementById('short-version').style.display = 'none';
-            document.getElementById('long-version').style.display = 'inline';
-        }
-
-        function collapse() {
-            document.getElementById('short-version').style.display = 'inline';
-            document.getElementById('long-version').style.display = 'none';
-            window.scrollTo(0,0);
-
-        }
-    </script>
 </zfin2:subsection>
 

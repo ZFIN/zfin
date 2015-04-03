@@ -5,6 +5,7 @@
 
 <meta name="feature-detail-page"/>
 <script src="/javascript/gbrowse-image.js"></script>
+<script src="/javascript/table-collapse.js"></script>
 
 <zfin2:dataManager zdbID="${formBean.feature.zdbID}" rtype="feature"/>
 
@@ -287,47 +288,20 @@
             </c:otherwise>  --%>
 </c:choose>
 
-<div id="short-version" class="summary">
+<div id="genotype" class="summary">
     <c:choose>
         <c:when test="${formBean.featgenoStats != null && fn:length(formBean.featgenoStats) > 0 }">
-            <zfin2:genotype-information genotypes="${formBean.featgenoStats}" showNumberOfRecords="5"/>
-            <c:if test="${fn:length(formBean.featgenoStats) > 5}">
-                <div>
-                    <a href="javascript:expand()">
-                        <img src="/images/darrow.gif" alt="expand" border="0">
-                        Show all</a>
-                    ${fn:length(formBean.featgenoStats)} genotypes
-                </div>
-            </c:if>
+            <zfin2:genotype-information genotypes="${formBean.featgenoStats}"/>
         </c:when>
         <c:otherwise>
             <span><strong>GENOTYPES</strong></span> <span class="no-data-tag">No data available</span>
         </c:otherwise>
     </c:choose>
 </div>
-<div style="display:none" id="long-version" class="summary">
-    <c:if test="${formBean.featgenoStats != null && fn:length(formBean.featgenoStats) > 0 }">
-        <zfin2:genotype-information genotypes="${formBean.featgenoStats}"
-                                    showNumberOfRecords="${fn:length(formBean.featgenoStats)}"/>
-    </c:if>
-    <div>
-        <a href="javascript:collapse()">
-            <img src="/images/up.gif" alt="expand" title="Show first 5 genotypes" border="0">
-            Show first</a> 5 genotypes
-    </div>
-</div>
 
 <hr width="80%">
 <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}&total_count=${formBean.numPubs}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
-    function expand() {
-        document.getElementById('short-version').style.display = 'none';
-        document.getElementById('long-version').style.display = 'block';
-    }
-
-    function collapse() {
-        document.getElementById('short-version').style.display = 'block';
-        document.getElementById('long-version').style.display = 'none';
-    }
+    jQuery('#genotype').tableCollapse({label: 'genotypes'});
 </script>

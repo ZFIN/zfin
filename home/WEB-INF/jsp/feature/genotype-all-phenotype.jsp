@@ -7,5 +7,5 @@
         All ${formBean.numberOfPhenoDisplays} phenotypes for:
         <zfin:link entity="${formBean.genotype}"/>
     </div>
-    <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="10000" secondColumn="condition"/>
+    <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" secondColumn="condition"/>
 </div>

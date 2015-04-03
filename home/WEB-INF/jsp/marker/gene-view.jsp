@@ -4,6 +4,8 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<script src="/javascript/table-collapse.js"></script>
+
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
 <c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
@@ -32,7 +34,9 @@
 <zfin2:markerExpression marker="${formBean.marker}" markerExpression="${formBean.markerExpression}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
 <%--// MUTANTS AND TARGETED KNOCKDOWNS--%>
-<zfin2:mutantsInGene mutantsOnMarkerBean="${formBean.mutantOnMarkerBeans}" marker="${formBean.marker}"/>
+<div id="mutant-info">
+    <zfin2:mutantsInGene mutantsOnMarkerBean="${formBean.mutantOnMarkerBeans}" marker="${formBean.marker}"/>
+</div>
 
 <%--// PHENOTYPE --%>
 <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
@@ -85,3 +89,8 @@
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
 
+<script>
+    jQuery(function() {
+        jQuery("#mutant-info").find(".alleles").tableCollapse({label: "alleles"});
+    });
+</script>

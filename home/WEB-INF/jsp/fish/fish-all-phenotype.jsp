@@ -8,5 +8,5 @@
         <a href="/action/fish/fish-detail/${formBean.fish.fishID}"><span
                 class="name-value">${formBean.fish.name}</span></a>
     </div>
-    <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="10000" secondColumn="condition"/>
+    <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" secondColumn="condition"/>
 </div>

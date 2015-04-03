@@ -57,110 +57,48 @@
 </script>
 
 <%--// EXPRESSION --%>
-<div class="summary">
+<div class="summary" id="expression">
     <b>GENE EXPRESSION</b>
     <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
     <br/>
     <b>Gene expression in ${formBean.marker.name}</b>
-    <div id="expression-short-version" class="summary">
-        <c:choose>
-            <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-                <zfin2:expressionData sequenceTargetingReagentID="${sequenceTargetingReagent.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
-                                      showCondition="false" />
-                <c:if test="${formBean.totalNumberOfExpressedGenes > 5}">
-                    <div>
-                        <a href="javascript:expandExpression()">
-                            <img src="/images/darrow.gif" alt="expand" border="0">
-                            Show all</a>
-                        ${formBean.totalNumberOfExpressedGenes} expressed genes
-                    </div>
-                </c:if>
-            </c:when>
-            <c:otherwise>
-                <span class="no-data-tag">No data available</span>
-            </c:otherwise>
-        </c:choose>
-    </div>
-    <div style="display:none" id="expression-long-version" class="summary">
-        <c:if test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-            <zfin2:expressionData sequenceTargetingReagentID="${sequenceTargetingReagent.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="${fn:length(formBean.expressionDisplays)}"
-                                  showCondition="false" />
-        </c:if>
-        <div>
-            <a href="javascript:collapseExpression()">
-                <img src="/images/up.gif" alt="expand" title="Show first 5 expressed genes" border="0">
-                Show first</a> 5 expressed genes
-        </div>
-    </div>
+    <c:choose>
+        <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+            <zfin2:expressionData sequenceTargetingReagentID="${sequenceTargetingReagent.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showCondition="false" />
+        </c:when>
+        <c:otherwise>
+            <span class="no-data-tag">No data available</span>
+        </c:otherwise>
+    </c:choose>
 </div>
 
 <%--// PHENOTYPE --%>
-<div class="summary">
+<div class="summary" id="phenotype">
     <b>PHENOTYPE</b>&nbsp;
     <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
     <br/>
     <b>Phenotype resulting from ${formBean.marker.name}</b>
-    <div id="phenotype-short-version" class="summary">
-        <c:choose>
-            <c:when test="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
-                <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" showNumberOfRecords="5"
-                                     suppressMoDetails="true" secondColumn="fish"/>
-                <c:if test="${fn:length(formBean.phenotypeDisplays) > 5}">
-                    <div>
-                        <a href="javascript:expandPhenotype()">
-                            <img src="/images/darrow.gif" alt="expand" border="0">
-                            Show all</a>
-                        ${fn:length(formBean.phenotypeDisplays)} phenotypes
-                    </div>
-                </c:if>
-            </c:when>
-            <c:otherwise>
-                <span class="no-data-tag">No data available</span>
-            </c:otherwise>
-        </c:choose>
-    </div>
-    <div style="display:none" id="phenotype-long-version" class="summary">
-        <c:if test="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
-            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" showNumberOfRecords="${fn:length(formBean.phenotypeDisplays)}"
-                                 suppressMoDetails="true" secondColumn="fish"/>
-        </c:if>
-        <div>
-            <a href="javascript:collapsePhenotype()">
-                <img src="/images/up.gif" alt="expand" title="Show first 5 phenotypes" border="0">
-                Show first</a> 5 phenotypes
-        </div>
-    </div>
+    <c:choose>
+        <c:when test="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
+            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" suppressMoDetails="true" secondColumn="fish"/>
+        </c:when>
+        <c:otherwise>
+            <span class="no-data-tag">No data available</span>
+        </c:otherwise>
+    </c:choose>
 </div>
 
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
-    <div id="genotype-short-version" class="summary">
+    <div id="genotype" class="summary">
         <c:choose>
             <c:when test="${formBean.genotypeData != null && fn:length(formBean.genotypeData) > 0 }">
-                <zfin2:genotype-information genotypes="${formBean.genotypeData}" sequenceTargetReagen="${formBean.marker.name}" showNumberOfRecords="5" />
-                <c:if test="${fn:length(formBean.genotypeData) > 5}">
-                    <div>
-                        <a href="javascript:expandGenotype()">
-                            <img src="/images/darrow.gif" alt="expand" border="0">
-                            Show all</a>
-                        ${fn:length(formBean.genotypeData)} genotypes
-                    </div>
-                </c:if>
+                <zfin2:genotype-information genotypes="${formBean.genotypeData}" sequenceTargetReagen="${formBean.marker.name}" />
             </c:when>
             <c:otherwise>
                 <span><strong>GENOTYPES CREATED WITH ${formBean.marker.name}</strong></span> <span class="no-data-tag">No data available</span>
             </c:otherwise>
         </c:choose>
-    </div>
-    <div style="display:none" id="genotype-long-version" class="summary">
-        <c:if test="${formBean.genotypeData != null && fn:length(formBean.genotypeData) > 0 }">
-            <zfin2:genotype-information genotypes="${formBean.genotypeData}" sequenceTargetReagen="${formBean.marker.name}" showNumberOfRecords="${fn:length(formBean.genotypeData)}"/>
-        </c:if>
-        <div>
-            <a href="javascript:collapseGenotype()">
-                <img src="/images/up.gif" alt="expand" title="Show first 5 genotypes" border="0">
-                Show first</a> 5 genotypes
-        </div>
     </div>
 </c:if>
 
@@ -170,34 +108,11 @@
 <%--CITATIONS--%>
 <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
 
-<script type="text/javascript">
-    function expandGenotype() {
-        document.getElementById('genotype-short-version').style.display = 'none';
-        document.getElementById('genotype-long-version').style.display = 'block';
-    }
-
-    function collapseGenotype() {
-        document.getElementById('genotype-short-version').style.display = 'block';
-        document.getElementById('genotype-long-version').style.display = 'none';
-    }
-
-    function expandPhenotype() {
-        document.getElementById('phenotype-short-version').style.display = 'none';
-        document.getElementById('phenotype-long-version').style.display = 'block';
-    }
-
-    function collapsePhenotype() {
-        document.getElementById('phenotype-short-version').style.display = 'block';
-        document.getElementById('phenotype-long-version').style.display = 'none';
-    }
-
-    function expandExpression() {
-        document.getElementById('expression-short-version').style.display = 'none';
-        document.getElementById('expression-long-version').style.display = 'block';
-    }
-
-    function collapseExpression() {
-        document.getElementById('expression-short-version').style.display = 'block';
-        document.getElementById('expression-long-version').style.display = 'none';
-    }
+<script src="/javascript/table-collapse.js"></script>
+<script>
+    jQuery(function () {
+        jQuery('#expression').tableCollapse({label: 'expressed genes'});
+        jQuery('#phenotype').tableCollapse({label: 'phenotypes'});
+        jQuery('#genotype').tableCollapse({label: 'genotypes'});
+    });
 </script>

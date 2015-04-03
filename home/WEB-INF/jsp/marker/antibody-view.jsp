@@ -3,6 +3,8 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.AntibodyMarkerBean" scope="request"/>
 
+<script src="/javascript/table-collapse.js"></script>
+
 <zfin2:dataManager zdbID="${formBean.marker.zdbID}"
                    editURL="${formBean.editURL}"
                    deleteURL="${formBean.deleteURL}"
@@ -20,10 +22,16 @@
 
 <zfin2:externalNotes notes="${formBean.externalNotes}" />
 
-<zfin2:antibodyLabeling formBean="${formBean}" webdriverPath="<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>"/>
+<div id="antibody-labeling">
+    <zfin2:antibodyLabeling formBean="${formBean}" webdriverPath="<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>"/>
+</div>
 
 <div class="summary">
     <a href="/action/antibody/antibody-publication-list?antibodyID=${formBean.marker.zdbID}&orderBy=author">CITATIONS</a>  (${formBean.numPubs})
 </div>
 
-
+<script>
+    jQuery(function() {
+        jQuery("#antibody-labeling").tableCollapse({label: "labeled structures"});
+    });
+</script>

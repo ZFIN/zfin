@@ -805,3 +805,12 @@ label.curation-form-label { font-weight: bold; }
     padding-bottom:10px;
     border: 0;
 }
+
+.table-collapse-link {
+    color: #0000ff;
+}
+
+.table-collapse-link .fa {
+    transition-property: transform;
+    transition-duration: 300ms;
+}

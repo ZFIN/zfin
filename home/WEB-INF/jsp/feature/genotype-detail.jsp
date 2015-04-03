@@ -3,6 +3,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.GenotypeBean" scope="request"/>
 
+<script src="/javascript/table-collapse.js"></script>
 <script type="text/javascript">
 
     function start_note(ref_page) {
@@ -13,26 +14,10 @@
         open(url, "Description", "toolbar=yes,scrollbars=yes,resizable=yes");
     }
 
-    function expandExpression() {
-        document.getElementById('expression-short-version').style.display = 'none';
-        document.getElementById('expression-long-version').style.display = 'block';
-    }
-
-    function collapseExpression() {
-        document.getElementById('expression-short-version').style.display = 'block';
-        document.getElementById('expression-long-version').style.display = 'none';
-    }
-
-
-    function expandPhenotype() {
-        document.getElementById('phenotype-short-version').style.display = 'none';
-        document.getElementById('phenotype-long-version').style.display = 'block';
-    }
-
-    function collapsePhenotype() {
-        document.getElementById('phenotype-short-version').style.display = 'block';
-        document.getElementById('phenotype-long-version').style.display = 'none';
-    }
+    jQuery(function () {
+        jQuery("#gene-expression").tableCollapse({label: "expressed genes"});
+        jQuery("#phenotype").tableCollapse({label: "phenotypes"});
+    });
 </script>
 
 <zfin2:dataManager zdbID="${formBean.genotype.zdbID}" rtype="genotype"/>
@@ -278,7 +263,7 @@
             </c:otherwise>
         </c:choose>
     </div>
-    <div class="summary">
+    <div id="gene-expression" class="summary">
         <b>GENE EXPRESSION</b>&nbsp;
         <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
         <br/>
@@ -289,39 +274,17 @@
                 <c:if test="${!loop.last}">,&nbsp;</c:if>
             </c:forEach>
         </c:if> </b>
-        <div id="expression-short-version" class="summary">
-            <c:choose>
-                <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-                    <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="5"
-                                          showCondition="true" />
-                    <c:if test="${formBean.totalNumberOfExpressedGenes > 5}">
-                        <div>
-                            <a href="javascript:expandExpression()">
-                                <img src="/images/darrow.gif" alt="expand" border="0">
-                                Show all</a>
-                            ${formBean.totalNumberOfExpressedGenes} expressed genes
-                        </div>
-                    </c:if>
-                </c:when>
-                <c:otherwise>
-                    <span class="no-data-tag">No data available</span>
-                </c:otherwise>
-            </c:choose>
-        </div>
-        <div style="display:none" id="expression-long-version" class="summary">
-            <c:if test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-                <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showNumberOfRecords="${fn:length(formBean.expressionDisplays)}"
-                                      showCondition="true" />
-            </c:if>
-            <div>
-                <a href="javascript:collapseExpression()">
-                    <img src="/images/up.gif" alt="expand" title="Show first 5 expressed genes" border="0">
-                    Show first</a> 5 expressed genes
-            </div>
-        </div>
+        <c:choose>
+            <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+                <zfin2:expressionData expressionDisplays="${formBean.expressionDisplays}" showCondition="true" />
+            </c:when>
+            <c:otherwise>
+                <span class="no-data-tag">No data available</span>
+            </c:otherwise>
+        </c:choose>
     </div>
 
-    <div class="summary">
+    <div id="phenotype" class="summary">
         <b>PHENOTYPE</b>&nbsp;
         <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
         <br/>
@@ -332,37 +295,14 @@
                 <c:if test="${!loop.last}">,&nbsp;</c:if>
             </c:forEach>
         </c:if></b>
-
-        <div id="phenotype-short-version" class="summary">
-            <c:choose>
-                <c:when test="${formBean.phenoDisplays != null && fn:length(formBean.phenoDisplays) > 0 }">
-                    <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="5"
-                                         secondColumn="condition"/>
-                    <c:if test="${fn:length(formBean.phenoDisplays) > 5}">
-                        <div>
-                            <a href="javascript:expandPhenotype()">
-                                <img src="/images/darrow.gif" alt="expand" border="0">
-                                Show all</a>
-                            ${fn:length(formBean.phenoDisplays)} phenotypes
-                        </div>
-                    </c:if>
-                </c:when>
-                <c:otherwise>
-                    <span class="no-data-tag">No data available</span>
-                </c:otherwise>
-            </c:choose>
-        </div>
-        <div style="display:none" id="phenotype-long-version" class="summary">
-            <c:if test="${formBean.phenoDisplays != null && fn:length(formBean.phenoDisplays) > 0 }">
-                <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="${fn:length(formBean.phenoDisplays)}"
-                                     secondColumn="condition"/>
-            </c:if>
-            <div>
-                <a href="javascript:collapsePhenotype()">
-                    <img src="/images/up.gif" alt="expand" title="Show first 5 phenotypes" border="0">
-                    Show first</a> 5 phenotypes
-            </div>
-        </div>
+        <c:choose>
+            <c:when test="${formBean.phenoDisplays != null && fn:length(formBean.phenoDisplays) > 0 }">
+                <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" secondColumn="condition"/>
+            </c:when>
+            <c:otherwise>
+                <span class="no-data-tag">No data available</span>
+            </c:otherwise>
+        </c:choose>
     </div>
     <p/>
     <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.genotype.zdbID}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.totalNumberOfPublications})
