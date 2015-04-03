@@ -120,6 +120,8 @@
 
     <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
 
+    <target name="load-disease" depends="download-disease-ontology,load-disease-ontology"/>
+
     <target name="load-anatomy" depends="load-anatomy-ontology"/>
 
     <target name="load-mpath" depends="download-mpath-ontology,load-mpath-ontology"/>
