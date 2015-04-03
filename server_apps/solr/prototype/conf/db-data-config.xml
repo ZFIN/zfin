@@ -3582,7 +3582,7 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                              'Publication' as category,
                              '/' || zdb_id as url,
                              pub_date as date,
-                             entry_time as pet_date,
+                             pub_arrival_date as pet_date,
                              pub_abstract as abstract,
                              jtype as publication_type,
 			                 accession_no as related_accession,
