@@ -33,7 +33,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.BuildTrigger>
-      <childProjects>Update-Pub-Date_d, Index-Faceted-Search_Publication_Category_d</childProjects>
+      <childProjects>Update-Pub-Date_d</childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>
