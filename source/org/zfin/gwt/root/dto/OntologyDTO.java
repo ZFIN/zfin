@@ -22,6 +22,12 @@ public enum OntologyDTO implements IsSerializable {
             return QUALITY_QUALITIES;
         }
     },
+    DISEASE_ONTOLOGY(20, "Human Disease", "disease_ontology", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
     // full GO ontology
     GO(1, "GO", "cellular_component,molecular_function,biological_process", true) {
         @Override
