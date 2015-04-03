@@ -1037,7 +1037,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                 term.getName(), term.getNamespace().getID(), term.getDefinition(), term.getComment(), obsolete);
         if (term.getDefDbxrefs() != null) {
             for (Dbxref xref : term.getDefDbxrefs()) {
-                appendFormattedRecord(UnloadFile.TERM_REFERENCES, term.getID(), xref.getDatabase(), xref.getDatabaseID());
+                // remove non-printable characters
+                String databaseID =xref.getDatabaseID().replaceAll("\\p{C}", "");
+                appendFormattedRecord(UnloadFile.TERM_REFERENCES, term.getID(), xref.getDatabase(), databaseID);
             }
         }
     }
@@ -1185,16 +1187,18 @@ public class LoadOntology extends AbstractValidateDataReportTask {
 
     }
 
-    private Map<UnloadFile, FileWriter> fileWriters = new HashMap<UnloadFile, FileWriter>(UnloadFile.values().length);
+    private Map<UnloadFile, FileWriter> fileWriters = new HashMap<>(UnloadFile.values().length);
     private FileWriter traceFileWriter;
 
     private void appendFormattedRecord(UnloadFile unloadFile, String... record) {
         //appendRecord(unloadFile, InformixUtil.getUnloadRecord(record));
         List<List<String>> data = dataMap.get(unloadFile.getValue());
         if (data == null) {
-            data = new ArrayList<List<String>>();
+            data = new ArrayList<>();
         }
-        List<String> individualRecord = new ArrayList<String>(record.length);
+
+        List<String> individualRecord;
+        individualRecord = new ArrayList<String>(record.length);
         individualRecord.addAll(Arrays.asList(record));
         data.add(individualRecord);
         dataMap.put(unloadFile.getValue(), data);
