@@ -102,7 +102,7 @@
             <td>
                 <c:choose>
                     <c:when test="${not empty publication.fileName}">
-                        <a href="/<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}">PDF</a>
+                        <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}">PDF</a>
                     </c:when>
                     <c:when test="${empty publication.fileName && allowCuration}">
                         Upload a PDF from the
