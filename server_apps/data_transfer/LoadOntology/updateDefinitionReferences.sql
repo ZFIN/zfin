@@ -38,6 +38,11 @@ create index exreftemp_term_ont_id_index
 
 select count(*) from external_reference_temp;
 
+!echo "update foreign db 'url' to 'HTTP'";
+update external_reference_temp
+ set tdr_database_id_temp = 'HTTP'
+ where upper(tdr_database_id_temp) = 'URL';
+
 -- add the foreign_db ids
 -- populate the tdr_foreign_db_id_temp with fdb_db_pk_id
 update external_reference_temp
@@ -58,7 +63,7 @@ update external_reference_temp
  where exists (
   select 'x' from foreign_db where
   tdr_foreign_db_id_temp = fdb_db_pk_id AND
-  upper(fdb_db_name) = 'HTTP');
+  upper(fdb_db_name) = 'HTTP' and upper(tdr_reference_temp[1,4]) != 'HTTP');
 
 -- put the ZFA: in front of the reference back as it was parsed out due to the semicolon
 update external_reference_temp
