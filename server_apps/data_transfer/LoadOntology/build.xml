@@ -140,7 +140,7 @@
     </target>
 
     <property name="scriptFiles"
-              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,dropTempTables.sql"/>
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
 
     <macrodef name="load-ontology" description="Run the ontology loader">
         <attribute name="oboFileName"/>

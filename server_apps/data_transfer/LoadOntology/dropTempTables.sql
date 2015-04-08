@@ -54,5 +54,9 @@ drop table tmp_term_obsoletes;
 
 drop table tmp_full_term_subset;
 
+drop table tmp_dbxrefs;
+
+drop table tmp_dbxrefs_with_ids
+
 --drop table updated_terms;
 
