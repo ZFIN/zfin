@@ -247,6 +247,7 @@ public class Database {
         VEGA_BLAST("VEGA BLAST"),
         VEGA_BLAST_POST("VEGA BLAST post"),
         VEGAP("VEGAP"),
+	VEGAPROTEIN_ZF("vegaprotein_zf"),
         VEGA_WITHDRAWN("vega_withdrawn"),
         ZFIN_ALL_AA("zfin_all_aa"),
         ZFIN_CDNA_SEQ("zfin_cdna_seq"),
