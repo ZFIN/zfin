@@ -9,112 +9,18 @@ delete from sequence_feature_chromosome_location
 delete from sequence_feature_chromosome_location
  where sfcl_location_source = 'UCSCStartEndLoader';
 
-create temp table tmp_gff_start_end (accnum varchar(50),chrom varchar(20), gene varchar(50), gene_id varchar(50),
+create temp table tmp_gff_start_end (accnum varchar(50),chrom varchar(20), gene varchar(50),
        start int,
        end int
 ) 
 with no log;
 
-insert into tmp_gff_start_end (accnum,chrom, gene, gene_id, start, end)
-select distinct gff_name, gff_seqname, gff_parent, mrel_mrkr_1_zdb_id, gff_start, gff_end
- from gff3, marker_relationship, db_link
- where gff_name like 'OTTDART%'
-and dblink_acc_num = gff_name
-and dblink_linked_recid = mrel_mrkr_2_zdb_id
-and exists (select 'x' from db_link b
-    	   	   where b.dblink_acc_num = gff_parent);
-
-select * from tmp_gff_start_end
- where gene_id = 'ZDB-GENE-040426-847';
-
-insert into tmp_gff_start_end (accnum,chrom, gene, gene_id, start, end)
-select distinct gff_name, gff_seqname, ensm_ensdarg_id, mrel_mrkr_1_zdb_id, gff_start, gff_end
- from gff3, ensdar_mapping, db_link, marker_relationship
- where gff_name like 'ENSDART%' 
-and gff_name = ensm_ensdart_id
-and dblink_acc_num = ensm_ensdarg_id
-and dblink_linked_recid = mrel_mrkr_1_zdb_id
-and not exists (Select 'x' from tmp_gff_start_end
-    	       	       where gene_id = mrel_mrkr_1_zdb_id);
-
-select * from tmp_gff_start_end
- where gene_id = 'ZDB-GENE-040426-847';
-
-
-create index gene1_index on tmp_gff_start_end (accnum)
- using btree in idxdbs2;
-
-create index chrom1_index on tmp_gff_start_end (chrom)
- using btree in idxdbs1;
-
-create temp table tmp_gene (accnum1 varchar(50) , chrom1 varchar(20), start int, end int)
-with no log;
-
-
-
-insert into tmp_gene (accnum1, chrom1)
- select distinct gene, chrom
-  from tmp_gff_start_end;
-
-
-create index gene2_index on tmp_gene (accnum1)
- using btree in idxdbs1;
-
-create index chrom2_index on tmp_gene (chrom1)
- using btree in idxdbs2;
-
-update tmp_gene
- set start = (select min(start)
-      	      	      from tmp_gff_start_end
-		      where  gene = accnum1 
-		      and chrom = chrom1);
-
-
-update tmp_gene
- set end = (select max(end)
-      	      	      from tmp_gff_start_end
-		      where  gene = accnum1 
-		      and chrom = chrom1);
-
-select count(*) from tmp_gene
- where start is null;
-
-select count(*) from tmp_gene
- where end is null;
-
-insert into sequence_feature_chromosome_location (sfcl_data_Zdb_id, 
-       	    			       sfcl_chromosome,
-				       sfcl_start,
-				       sfcl_end,
-				       sfcl_acc_num,
-				       sfcl_location_source,
-				       sfcl_fdb_db_id)
-select distinct mrel_mrkr_1_zdb_id,
-       		chrom1,
-		start,
-		end,
-		accnum1,
-		'ZfinGbrowseStartEndLoader',
-		fdb_db_pk_id
-  from db_link, tmp_gene, foreign_db, foreign_db_contains, marker_relationship
-  where dblink_Fdbcont_zdb_id = fdbcont_Zdb_id
-  and dblink_acc_num = accnum1
-  and mrel_mrkr_2_zdb_id = dblink_linked_recid
-  and fdb_db_pk_id = fdbcont_fdb_db_id
- and start is not null
- and end is not null;
-
-delete from tmp_gff_start_end;
-delete from tmp_gene;
 
 insert into tmp_gff_start_end (accnum,chrom, gene)
 select distinct gff_name, gff_seqname, ensm_ensdarg_id
  from gff3, ensdar_mapping
  where gff_name like 'ENSDART%'
 and gff_name = ensm_ensdart_id;
-
-
-
 
 update tmp_gff_start_end
   set start = (select min(gff_start)
@@ -131,10 +37,22 @@ update tmp_gff_start_end
 select count(*) from tmp_gff_start_end
  where end is null;
 
+create index gene_index on tmp_gff_start_end (gene)
+ using btree in idxdbs2;
+
+create index accnum_index on tmp_gff_start_end (accnum)
+ using btree in idxdbs1;
+
+create temp table tmp_gene (accnum1 varchar(50) , chrom1 varchar(20), start int, end int)
+with no log;
+
 insert into tmp_gene (accnum1, chrom1)
  select distinct gene, chrom
   from tmp_gff_start_end;
 
+
+create index gene2_index on tmp_gene (accnum1)
+ using btree in idxdbs1;
 
 update tmp_gene
  set start = (select min(start)
@@ -210,6 +128,26 @@ select distinct dblink_linked_recid,
  and start is not null
  and end is not null;
 
+insert into sequence_feature_chromosome_location (sfcl_data_Zdb_id, 
+       	    			       sfcl_chromosome,
+				       sfcl_start,
+				       sfcl_end,
+				       sfcl_acc_num,
+				       sfcl_location_source,
+				       sfcl_fdb_db_id)
+select distinct dblink_linked_recid,
+       		chrom1,
+		start,
+		end,
+		accnum1,
+		'ZfinGbrowseStartEndLoader',
+		fdb_db_pk_id
+  from db_link, tmp_gene, foreign_db, foreign_db_contains
+  where dblink_Fdbcont_zdb_id = fdbcont_Zdb_id
+  and dblink_acc_num = accnum1
+  and fdb_db_pk_id = fdbcont_fdb_db_id
+ and start is not null
+ and end is not null;
 
 insert into sequence_feature_chromosome_location (sfcl_chromosome, sfcl_data_zdb_id,
   sfcl_start, sfcl_end, sfcl_location_source, sfcl_location_subsource)
@@ -243,7 +181,6 @@ delete from sequence_feature_chromosome_location
 delete from sequence_feature_chromosome_location
  where sfcl_chromosome in ('AB','U','0')
  and sfcl_location_source = 'EnsemblStartEndLoader';
-
 
 commit work;
 -- commit or rollback is appended externally
