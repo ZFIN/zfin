@@ -89,16 +89,17 @@ insert into sequence_feature_chromosome_location (sfcl_data_Zdb_id,
 				       sfcl_acc_num,
 				       sfcl_location_source,
 				       sfcl_fdb_db_id)
-select distinct dblink_linked_recid,
+select distinct mrel_mrkr_1_zdb_id,
        		chrom1,
 		start,
 		end,
 		accnum1,
 		'ZfinGbrowseStartEndLoader',
 		fdb_db_pk_id
-  from db_link, tmp_gene, foreign_db, foreign_db_contains
+  from db_link, tmp_gene, foreign_db, foreign_db_contains, marker_relationship
   where dblink_Fdbcont_zdb_id = fdbcont_Zdb_id
   and dblink_acc_num = accnum1
+  and mrel_mrkr_2_zdb_id = dblink_linked_recid
   and fdb_db_pk_id = fdbcont_fdb_db_id
  and start is not null
  and end is not null;
