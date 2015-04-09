@@ -64,6 +64,15 @@
             </tr>
         </c:if>
         <tr>
+            <th>References:</th>
+            <td id="term-xrefs">
+                <c:forEach var="xrefs" varStatus="loop" items="${formBean.term.externalReferences}">
+                    <span class="xref-value" ><a href="${xrefs.foreignDB.dbUrlPrefix}${xrefs.reference}">${xrefs.foreignDB.dbName}:${xrefs.reference}</a><c:if test="${!loop.last}"><span
+                            class="xref-separator">,</span></c:if></span>
+                </c:forEach>
+            </td>
+        </tr>
+        <tr>
             <th>Ontology:</th>
             <td id="ontology-name">${formBean.term.ontology.commonName}
                 <zfin2:ontologyTermLinks term="${formBean.term}"/></td>
