@@ -267,6 +267,18 @@
 
     </class>
 
+    <class name="org.zfin.ontology.TermExternalReference" table="term_xref">
+        <cache usage="read-only"/>
+        <id name="ID" type="long">
+            <column name="tx_pk_id" not-null="true"/>
+        </id>
+
+        <many-to-one name="term" column="tx_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
+        <many-to-one name="foreignDB" column="tx_fdb_db_id" class="org.zfin.sequence.ForeignDB"/>
+        <property name="reference" column="tx_xref_id"/>
+
+    </class>
+
     <class name="org.zfin.ontology.GenericTerm" mutable="false" table="TERM" batch-size="10">
         <cache usage="read-only"/>
         <id name="zdbID" type="string">
@@ -315,6 +327,11 @@
         <set name="definitionReferences" lazy="true" table="external_reference" inverse="true">
             <key column="exref_data_zdb_id"/>
             <one-to-many class="org.zfin.ontology.TermDefinitionReference"/>
+        </set>
+
+        <set name="externalReferences" lazy="true" table="term_xref" inverse="true">
+            <key column="tx_term_zdb_id"/>
+            <one-to-many class="org.zfin.ontology.TermExternalReference"/>
         </set>
 
         <join table="term_stage" optional="true">

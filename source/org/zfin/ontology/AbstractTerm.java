@@ -24,9 +24,12 @@ public abstract class AbstractTerm implements Term {
     protected String comment;
     protected Set<TermAlias> synonyms;
     protected String definition;
+
+
     protected Set<Image> images;
     private Set<Subset> subsets;
     private Set<TermDefinitionReference> definitionReferences;
+    private Set<TermExternalReference> externalReferences;
 
     protected Set<TermRelationship> childTermRelationships;
     protected Set<TermRelationship> parentTermRelationships;
@@ -266,6 +269,13 @@ public abstract class AbstractTerm implements Term {
         this.definitionReferences = definitionReferences;
     }
 
+    public Set<TermExternalReference> getExternalReferences() {
+        return externalReferences;
+    }
+
+    public void setExternalReferences(Set<TermExternalReference> externalReferences) {
+        this.externalReferences = externalReferences;
+    }
     public String getReferenceLink() {
         if (checkIfSingleReference()) return null;
         return getReferenceLink(definitionReferences.iterator().next());
