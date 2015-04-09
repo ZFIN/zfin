@@ -244,6 +244,7 @@ delete from sequence_feature_chromosome_location
  where sfcl_chromosome in ('AB','U','0')
  and sfcl_location_source = 'EnsemblStartEndLoader';
 
+
 commit work;
 -- commit or rollback is appended externally
 --rollback work;commit work;
