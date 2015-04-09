@@ -47,8 +47,8 @@ tmp_xref_db_id = fdb_db_pk_id
  where not exists (
   select 'x' from tmp_dbxrefs_with_ids
   where tx_term_zdb_id = tmp_term_zdb_id AND
-        tx_xref_id = tmp_xref_db_id AND
-        tx_xref_accession = tmp_xref_accession
+        tx_fdb_db_id = tmp_xref_db_id AND
+        tx_xref_id = tmp_xref_accession
   ); 
 
 
