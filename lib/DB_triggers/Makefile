@@ -25,6 +25,9 @@ TRIGGERS = \
 	anatomy_display_update_trigger.sql \
 	clone_problem_type_insert_trigger.sql \
 	clone_problem_type_update_trigger.sql \
+	construct_insert_trigger.sql \
+	construct_name_update_trigger.sql \
+	construct_component_update_trigger.sql \
 	data_alias_insert_trigger.sql \
 	dalias_alias_update_trigger.sql \
 	db_link_insert_trigger.sql \

@@ -1,16 +1,17 @@
-create trigger mrkr_abbrev_update_trigger 
-       update of mrkr_abbrev on marker 
-       referencing old as oldM
-                   new as newM
+create trigger mrkr_abbrev_update_trigger update of 
+    mrkr_abbrev on marker referencing old as oldm new 
+    as newm
     for each row
-      (
-	execute function scrub_char ( newM.mrkr_abbrev )
-		into marker.mrkr_abbrev,
-	execute procedure p_check_mrkr_abbrev (newM.mrkr_name, newM.mrkr_abbrev,
-					       newM.mrkr_type),
-        execute function zero_pad(newM.mrkr_abbrev)
-                into marker.mrkr_abbrev_order,
-        execute procedure mhist_event (newM.mrkr_zdb_id,'reassigned',
-                newM.mrkr_abbrev, oldM.mrkr_abbrev),
-        execute procedure p_update_related_names(newm.mrkr_zdb_id, oldm.mrkr_abbrev, newm.mrkr_abbrev)
-      );
+        (
+        execute function scrub_char(newm.mrkr_abbrev 
+    ) into marker.mrkr_abbrev,
+        execute procedure p_check_mrkr_abbrev(newm.mrkr_name 
+    ,newm.mrkr_abbrev ,newm.mrkr_type ),
+        execute function zero_pad(newm.mrkr_abbrev 
+    ) into marker.mrkr_abbrev_order,
+        execute procedure mhist_event(newm.mrkr_zdb_id 
+    ,'reassigned' ,newm.mrkr_abbrev ,oldm.mrkr_abbrev ),
+        execute procedure p_update_related_names(newm.mrkr_zdb_id 
+    ,oldm.mrkr_abbrev ,newm.mrkr_abbrev ),
+    execute procedure update_construct_name_component(newm.mrkr_zdb_id, newm.mrkr_abbrev));
+

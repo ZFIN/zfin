@@ -131,7 +131,8 @@ public class MarkerViewController {
                     || type.equals(Marker.Type.TGCONSTRCT.name())
                     ) {
                 return constructViewController.getGeneView(model, zdbID);
-            } else if (type.equals(Marker.Type.MRPHLNO.name()) || type.equals(Marker.Type.TALEN.name()) || type.equals(Marker.Type.CRISPR.name())) {
+            }
+        else if (type.equals(Marker.Type.MRPHLNO.name()) || type.equals(Marker.Type.TALEN.name()) || type.equals(Marker.Type.CRISPR.name())) {
                 return sequenceTargetingReagentViewController.getView(model, zdbID);
             } else if (type.equals(Marker.Type.SNP.name())) {
                 return snpViewController.getView(model, zdbID);

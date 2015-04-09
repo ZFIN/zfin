@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	jknight
 <!--|DEFAULT_EMAIL|-->	jknight\@zfin.org
 <!--|DOMAIN_NAME|-->	runzel.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/runzel
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

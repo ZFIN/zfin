@@ -1,5 +1,6 @@
 package org.zfin.expression;
 
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Set;
  * Domain object.
  */
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
-public class Experiment implements Comparable<Experiment> {
+public class Experiment implements Comparable<Experiment>, EntityZdbID {
 
     public static final String STANDARD = "_Standard";
     public static final String GENERIC_CONTROL = "_Generic-control";
@@ -113,5 +114,25 @@ public class Experiment implements Comparable<Experiment> {
                 return 0;
             }
         }
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return name;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return name;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Experiment";
+    }
+
+    @Override
+    public String getEntityName() {
+        return "Experiment";
     }
 }

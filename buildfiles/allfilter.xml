@@ -52,6 +52,7 @@
 <filter token="DOWNLOAD_DIRECTORY" value="${DOWNLOAD_DIRECTORY}"/>
 <filter token="ELSEVIER_REPORT" value="${ELSEVIER_REPORT}"/>
 <filter token="EMAIL_SENDER_CLASS" value="${EMAIL_SENDER_CLASS}"/>
+<filter token="ENVIRONMENT" value="${ENVIRONMENT}"/>
 <filter token="FTPROOT_PATH" value="${FTPROOT_PATH}"/>
 <filter token="FTP_ROOT" value="${FTP_ROOT}"/>
 <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>

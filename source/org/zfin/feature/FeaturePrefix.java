@@ -1,12 +1,14 @@
 package org.zfin.feature;
 
 
-public class FeaturePrefix {
+import org.zfin.infrastructure.EntityZdbID;
+
+public class FeaturePrefix implements EntityZdbID {
 
     private int featurePkID;
     private String prefixString;
     // this is a convenience method that says, is this the active prefix of a given set of prefixes
-    private boolean activeForSet ;
+    private boolean activeForSet;
     private String institute;
 
     public int getFeaturePkID() {
@@ -49,5 +51,35 @@ public class FeaturePrefix {
         sb.append(", institute='").append(institute).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return prefixString;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return prefixString;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Feature Prefix";
+    }
+
+    @Override
+    public String getEntityName() {
+        return prefixString;
+    }
+
+    @Override
+    public String getZdbID() {
+        return prefixString;
+    }
+
+    @Override
+    public void setZdbID(String zdbID) {
+
     }
 }

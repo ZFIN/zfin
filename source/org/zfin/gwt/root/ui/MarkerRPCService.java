@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.root.dto.*;
@@ -11,6 +12,9 @@ import java.util.List;
  * Marker related service methods.
  */
 public interface MarkerRPCService extends RemoteService {
+
+
+    void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO);
 
     /**
      */
@@ -78,6 +82,7 @@ public interface MarkerRPCService extends RemoteService {
     MarkerDTO getGeneOnlyForZdbID(String zdbID);
 
     MarkerDTO getGeneForZdbID(String zdbID);
+    List<ConstructRelationshipDTO> getConstructMarkerRelationshipsForPub(String publicationZdbID);
 
     // supplier methods
 
@@ -118,4 +123,9 @@ public interface MarkerRPCService extends RemoteService {
     void addAttributionForMarkerName(String markerAbbrev, String pubZdbID) throws TermNotFoundException, DuplicateEntryException;
 
     void addAttributionForFeatureName(String value, String publicationZdbID) throws TermNotFoundException, DuplicateEntryException;
+    List<ConstructDTO> getConstructsForPub(String pubZdbId);
+    List<MarkerDTO> getMarkersForRelation(String mrkrzdbid,String pubzdbid);
+    String getEditableRelationshipTypesForConstruct();
+    void deleteConstructMarkerRelationship(ConstructRelationshipDTO constructRelationshipDTO);
+
 }

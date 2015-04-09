@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	ryanm
 <!--|DEFAULT_EMAIL|-->	ryanm\@zfin.org
 <!--|DOMAIN_NAME|-->	confused.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/confused
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

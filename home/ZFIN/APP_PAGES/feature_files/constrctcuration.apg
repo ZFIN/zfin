@@ -1,3 +1,6 @@
+
+
+
 <?MICOMMENT>
   Main Construct curation page. Calls the create, edit and relationship
   app pages.
@@ -36,14 +39,23 @@ PREFIX:
     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featcurupdate.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
-
+<?MICOMMENT>
 <?MIVAR NAME=hide><font color=blue size=-1><u>hide</u></font><?/MIVAR>
 <?MIVAR NAME=unhide><font color=blue size=-1><u>show</u></font><?/MIVAR>
+<?/MICOMMENT>
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<?MIVAR NAME=hide><img src="/images/down.gif"><?/MIVAR>
+<?MIVAR NAME=unhide><img src="/images/right.gif"></u></font><?/MIVAR>
+
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-STORE">
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="MUST-REVALIDATE">
 <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
 <META HTTP-EQUIV="EXPIRES" CONTENT="01 Jan 2000 00:00:00 GMT">
+<script type="text/javascript" src="/javascript/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="/javascript/jquery.tools.min.js"></script>
+
+  <script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>
+  <link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">
 
 <?MIVAR NAME=featcur_mrkr_type><?/MIVAR>
 <?MICOMMENT>This comma delimited list of markers is created for use in the 
@@ -124,50 +136,130 @@ FILTERs section
 
         <div id="directAttributionName"></div>
 
+
+
+<?MICOMMENT>
 <a name=featcreation>
 <p><b><font size=3>Construct Builder:</font></b>
 <p><b><font size=3>Create New Construct:</font></b>
+  <div id="markerviewtranscriptdetails">Loading Transcript Data... <img src="/images/ajax-loader.gif"/></div>
+  <?MIVAR>
+  <script type="text/javascript">
+    jQuery('#markerviewtranscriptdetails').load('/action/construct/construct-add?constructPublicationZdbID=$OID');
+  </script>
+
+<?/MICOMMENT>
+
+
+
+<?MIBLOCK COND=$(OR,$(NXST,$featcur_featcreation),$(EC,$featcur_featcreation,hide))>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide
+  <font color="blue"><u>[Create New Construct]</u></font></a><?/MIVAR>
+  <br>
+<?MIELSE>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide
+  <font color="blue"><u>[Create New Construct]</u></font></a><?/MIVAR>
+
+  <div id="constructadd">Loading Form... <img src="/images/ajax-loader.gif"/></div>
+    <?MIVAR>
+    <script type="text/javascript">
+      jQuery('#constructadd').load('/action/construct/construct-add?constructPublicationZdbID=$OID');
+    </script>
+    <?/MIVAR>
+    <?/MIBLOCK>
+
+
+    <?MICOMMENT>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featcreation),$(EC,$featcur_featcreation,hide))>
   <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
   <br>
 <?MIELSE>
   <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
-  <p>
+
+  <div id="constructadd">Loading Form... <img src="/images/ajax-loader.gif"/></div>
+    <?MIVAR>
+    <script type="text/javascript">
+      jQuery('#constructadd').load('/action/construct/construct-add?constructPublicationZdbID=$OID');
+    </script>
+    <?/MIVAR>
+
+
+    <?MICOMMENT>
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_constrct.apg';">$1<?/MISQL>
+  <?/MICOMMENT>
 <?/MIBLOCK>
+<?/MICOMMENT>
+
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Starting Condition
 <?/MISQL>
 
-<?MICOMMENT>
-<hr>
+
+
 <?MICOMMENT> 
 	  ===============
 	  =  Construct Editing  =
 	  ===============
-<?/MICOMMENT>
 
-<a name=featediting>
-<p><b><font size=3>Edit Feature:</font></b>
+
+<p><b><font size=3>Edit Construct:</font></b><?/MICOMMENT>
+    <br>
+
+
+
+<?MICOMMENT>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featediting),$(EC,$featcur_featediting,hide))>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featediting');">$unhide</a><?/MIVAR>
+
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
   <br>
 <?MIELSE>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featediting');">$hide</a><?/MIVAR>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
   <p>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featureedit.apg';">$1<?/MISQL>
-<?/MIBLOCK>
-<hr>
-
+  <?/MIBLOCK>
 <?/MICOMMENT>
 
-<a href="/action/marker/view-all-engineered-regions/" target="_new">Show All Engineered Regions</a>
 <?MICOMMENT>
+<?MIBLOCK COND=$(OR,$(NXST,$featcur_featediting),$(EC,$featcur_featediting,hide))>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide
+    <font color="blue"><u>[Edit Construct]</u></font></a><?/MIVAR>
+    <br>
+  <?MIELSE>
+    <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide
+    <font color="blue"><u> [Edit Construct]</u></font></a><?/MIVAR>
+    <p>
+    <font color=green>Reminder: any constructs generated prior to year/month/day may not render properly,
+               therefore may not be editable. Please file a bug if an update is needed.</font>
+  <div id="constructedit">Loading Form... <img src="/images/ajax-loader.gif"/></div>
+    <?MIVAR>
+    <script type="text/javascript">
+      jQuery('#constructedit').load('/action/construct/construct-update?constructPublicationZdbID=$OID');
+    </script>
+    <?/MIVAR>
+    <?/MIBLOCK>
+<?/MICOMMENT>
+
+    <?MICOMMENT>
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_constrct.apg';">$1<?/MISQL>
+  <?/MICOMMENT>
+
+
+ <?MICOMMENT>
+ -----------------------
+ construct Relationship section
+ -----------------------
+ <?/MICOMMENT>
+ <div id="edit-feature"></div>
+ <br>
+ <div id="construct-relationship-link"></div>
+ <div id="construct-relationship"></div
+
+<?MICOMMENT>
+
 -----------------------
 FILTER  section 
 -----------------------
-<?/MICOMMENT>
+
 
 <form>
 <a name=feature_only>
@@ -220,12 +312,9 @@ FILTER  section
 
 </form>
 
-<?MICOMMENT>
------------------------
-construct Relationship section 
------------------------
-<?/MICOMMENT>
 
+
+<?MICOMMENT>
 <a name=featrelation>
 <br><b><font size=3>Add Relationships:</font> </b>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featrel),$(EC,$featcur_featrel,hide))>
@@ -235,8 +324,9 @@ construct Relationship section
      <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random());">$hide</a><?/MIVAR>
      <br>
      <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-constrctrelationships.apg';">$1<?/MISQL>
-<?/MIBLOCK> 
-
+<?/MIBLOCK>
+<?/MICOMMENT>
+<?/MICOMMENT>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">

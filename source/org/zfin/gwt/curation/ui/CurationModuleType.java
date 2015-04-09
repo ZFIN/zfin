@@ -58,7 +58,7 @@ public enum CurationModuleType {
     CONSTRUCT_CURATION {
         @Override
         public ConstructionZone initializeModule(String publicationID) {
-            BaseCurationModule module = new BaseCurationModule(publicationID);
+            ConstructCurationModule module = new ConstructCurationModule(publicationID);
             return module.getPileConstructionZoneModule();
         }
     },

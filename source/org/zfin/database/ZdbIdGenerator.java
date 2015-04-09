@@ -10,6 +10,8 @@ import org.hibernate.id.Configurable;
 import org.hibernate.id.IdentifierGenerationException;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.type.Type;
+import org.zfin.construct.ConstructCuration;
+
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.marker.Marker;
@@ -28,7 +30,7 @@ import java.util.Set;
 /**
  * Creates a smart ZDB id as in the web datablade implementation.
  * For that call the get_id() function (C) that creates the key by passong in a
- * type identifier, e.g. 'GENE' which then creates a key of the form:
+ * type identifier, e.g. 'GENE' which then creates a key of Nmathe form:
  * ZDB-<type>-YYmmdd-<ID>.
  * <p/>
  * If the object is a Marker then this generator will take the object type from
@@ -43,6 +45,8 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
     private boolean insertActiveData = false;
     private boolean insertActiveSource = false;
     private boolean isMarker = false;
+    private boolean isConstruct = false;
+    private boolean zdbExists=false;
     private String query = null;
 
 
@@ -107,16 +111,27 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
 
         if (isMarker) {
             Marker marker = (Marker) object;
+            if (marker.getZdbID()==null){
             Marker.Type type = marker.getMarkerType().getType();
             if (type == null)
                 throw new HibernateException("No marker type found for Marker: " + marker.getName());
             objectType = type.toString();
             setQueryToRetrieveID();
+            }
+            else{
+                zdbExists=true;
+            }
         } else if (object instanceof Lab) {
             objectType = "LAB";
             setQueryToRetrieveID();
         } else if (object instanceof Company) {
             objectType = "COMPANY";
+            setQueryToRetrieveID();
+        }
+        else if (isConstruct) {
+            ConstructCuration cng= (ConstructCuration) object;
+
+            objectType = cng.getConstructType().getType().toString();
             setQueryToRetrieveID();
         }
 
@@ -125,7 +140,9 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
         }
 
         try {
+            if (!zdbExists){
             String zdbID = (String) doWorkInCurrentTransaction(session.connection(), query);
+
             LOG.debug("Sequence for <" + objectType + "> is [" + zdbID + "]");
             if (insertActiveData) {
                 LOG.debug("insertActiveData: " + insertActiveData + " for ZdbID[" + zdbID + "]");
@@ -139,17 +156,24 @@ public class ZdbIdGenerator extends TransactionHelper implements IdentifierGener
             }
             return zdbID;
         }
+            else{
+                ConstructCuration marker = (ConstructCuration) object;
+               return  marker.getZdbID();
+            }
+        }
         catch (SQLException sqle) {
             LOG.error("Unable to generate a zdbID: " + sqle);
             throw new HibernateException("Failed to generate a zdbID", sqle);
         }
     }
 
+
     public void configure(Type type, Properties params, Dialect d) throws MappingException {
         objectType = params.getProperty("type");
         insertActiveData = Boolean.valueOf(params.getProperty("insertActiveData"));
         insertActiveSource = Boolean.valueOf(params.getProperty("insertActiveSource"));
         isMarker = Boolean.valueOf(params.getProperty("isMarker"));
+        isConstruct = Boolean.valueOf(params.getProperty("isConstruct"));
         setQueryToRetrieveID();
     }
 

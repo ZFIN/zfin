@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	pkalita
 <!--|DEFAULT_EMAIL|-->	pkalita\@zfin.org
 <!--|DOMAIN_NAME|-->	moonshine.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/moonshine
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

@@ -123,4 +123,9 @@ public class Antibody extends Marker {
 
         return false ;
     }
+
+    @Override
+    public String getEntityName() {
+        return getName();
+    }
 }

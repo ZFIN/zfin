@@ -1,5 +1,10 @@
 package org.zfin.infrastructure;
 
+import org.zfin.infrastructure.delete.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  */
 public class ActiveData implements ZdbID {
@@ -60,6 +65,28 @@ public class ActiveData implements ZdbID {
         return type;
     }
 
+    public static Type getType(String id) {
+        if (id == null) {
+            return null;
+        }
+
+        if (!id.startsWith(ActiveSource.ZDB))
+            return null;
+
+        Type type = null;
+        String[] components = id.split("-");
+        for (Type zdbType : Type.values()) {
+            if (components[1].equals(zdbType.name())) {
+                type = zdbType;
+            }
+        }
+
+        if (type == null) {
+            return null;
+        }
+        return type;
+    }
+
     public Type validateID() {
         return validateID(zdbID);
     }
@@ -75,11 +102,11 @@ public class ActiveData implements ZdbID {
     }
 
     public enum Type {
-        ALT,
+        ALT(DeleteFeatureRule.class),
         ANAT,
         ANATCMK,
         API,
-        ATB,
+        ATB(DeleteAntibodyRule.class),
         BAC,
         BAC_END,
         BHIT,
@@ -89,12 +116,12 @@ public class ActiveData implements ZdbID {
         CDT,
         CHROMO,
         CND,
-        CRISPR,
+        CRISPR(DeleteSTRRule.class),
         CUR,
         DALIAS,
         DBLINK,
         DNOTE,
-        EFG,
+        EFG(DeleteEFGRule.class),
         EST,
         ETCONSTRCT,
         EXP,
@@ -109,7 +136,7 @@ public class ActiveData implements ZdbID {
         GENE,
         GENEP,
         GENOX,
-        GENO,
+        GENO(DeleteGenotypeRule.class),
         GENOFE,
         GOTERM,
         GTCONSTRCT,
@@ -119,9 +146,10 @@ public class ActiveData implements ZdbID {
         LINK,
         MAPDEL,
         MREL,
+        CMREL,
         MRKRGOEV,
         MRKRSEQ,
-        MRPHLNO,
+        MRPHLNO(DeleteSTRRule.class),
         NOMEN,
         OEVDISP,
         ORTHO,
@@ -132,17 +160,17 @@ public class ActiveData implements ZdbID {
         PTCONSTRCT,
         RAPD,
         REFCROS,
-        REGION,
+        REGION(DeleteRegionRule.class),
         RUN,
         SNP,
         SSLP,
         STAGE,
         STS,
-        TALEN,
+        TALEN(DeleteSTRRule.class),
         TEMP,
         TERM,
         TERMREL,
-        TGCONSTRCT,
+        TGCONSTRCT(DeleteConstructRule.class),
         TSCRIPT,
         URLREF,
         XPAT,
@@ -150,7 +178,15 @@ public class ActiveData implements ZdbID {
         XPATRES,
         ZYG;
 
+        private Class<? extends DeleteEntityRule> ruleClass;
         private static String allValues;
+
+        Type() {
+        }
+
+        Type(Class<? extends DeleteEntityRule> deleteEntityRuleClass) {
+            this.ruleClass = deleteEntityRuleClass;
+        }
 
         public static String getValues() {
             if (allValues != null)
@@ -177,5 +213,18 @@ public class ActiveData implements ZdbID {
             throw new RuntimeException("No active Data type of string " + type + " found.");
         }
 
+        public DeleteEntityRule getDeleteEntityRule(String zdbID) {
+            DeleteEntityRule rule = null;
+            try {
+                Constructor constructor = ruleClass.getConstructor(String.class);
+                rule = (DeleteEntityRule) constructor.newInstance(zdbID);
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                return null;
+            } catch (NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            return rule;
+        }
     }
 }

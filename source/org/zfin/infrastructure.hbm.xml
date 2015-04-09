@@ -428,4 +428,13 @@
 
     </class>
 
+    <class name="org.zfin.infrastructure.ControlledVocab" table="controlled_vocabulary">
+        <id name="zdbID" type="string">
+            <column name="cv_zdb_id" not-null="true"/>
+
+        </id>
+        <property name="cvTermName" column="cv_term_name"/>
+    </class>
+
+
 </hibernate-mapping>

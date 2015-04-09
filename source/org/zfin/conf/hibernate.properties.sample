@@ -1,0 +1,13 @@
+## copy this file into hibernate.properties and modify according to your needs
+##
+
+### print all generated SQL to the console
+hibernate.show_sql false
+
+### format SQL in log and console
+hibernate.format_sql false
+
+## add comments to the generated SQL
+hibernate.use_sql_comments false
+
+

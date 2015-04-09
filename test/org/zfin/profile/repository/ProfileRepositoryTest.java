@@ -188,7 +188,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
 
     @Test
     public void getCompany(){
-        Company company = profileRepository.getCompanyById("ZDB-COMPANY-000428-1") ;
+        Company company = profileRepository.getCompanyById("ZDB-COMPANY-081009-1") ;
         assertNotNull(company);
     }
 
@@ -358,7 +358,8 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest{
 
     @Test
     public void getOrganizationByZdbID(){
-        assertNotNull(profileRepository.getOrganizationByZdbID("ZDB-LAB-000914-1"));
+        Organization organizationByZdbID = profileRepository.getOrganizationByZdbID("ZDB-LAB-980205-5");
+        assertNotNull(organizationByZdbID);
     }
 
     @Test

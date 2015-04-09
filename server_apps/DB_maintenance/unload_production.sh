@@ -7,6 +7,7 @@ setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
 setenv LD_LIBRARY_PATH ${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql
 setenv PATH <!--|INFORMIX_DIR|-->/bin:/private/ZfinLinks/Commons/bin:$PATH
 setenv INSTANCE 
+setenv ENVIRONMENT <!--|ENVIRONMENT|-->
 set pth=/research/zunloads/databases/<!--|DB_NAME|-->
 set pthLinux=/research/zunloads/databases/<!--|DB_NAME|-->/linux
 set dirname=`date +"%Y.%m.%d.1"`
@@ -25,7 +26,7 @@ end
 # Therefore, to speed up the process from over 4 hours to well under
 # an hour, do the unload to production disk and then copy it.
 
-if ($HOST != "zygotix") then
+if ($ENVIRONMENT != "development") then
   /private/ZfinLinks/Commons/bin/unloaddb.pl <!--|DB_NAME|--> <!--|ROOT_PATH|-->/server_apps/DB_maintenance/$dirname
   #  $? is the return value of the last-executed command.  
   #  When it works correctly, unloaddb.pl returns 0. 

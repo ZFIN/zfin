@@ -59,7 +59,12 @@ FISH_STATS   = get_image_stats.sql \
 	       updateConstructAbbrev.sql \
 	       checkDupFeaturePrefixLineDesignation.sql \
 	       populate_feature_tracking.sql \
-	       p_update_BurgessLinn_genotype_names.sql
+	       p_update_BurgessLinn_genotype_names.sql\
+		update_construct_name.sql \
+		update_construct_name_component.sql \
+		updateAbbrevEqualName.sql \
+		regen_construct_marker.sql \
+		regen_construct.sql
 LOAD_STATS   = p_zgc_load.sql 
 XPAT_STATS   = populate_direct_submission_date.sql p_check_EFG_WT_expression.sql
 MRKR_STATS   = gene_contains_seg.sql mhist_event.sql p_mrel_grpmem_correct.sql \
@@ -82,7 +87,7 @@ PER_STATS    = get_person_full_name.sql
 
 REGEN_GNRCS  = regen_oevdisp.sql regen_genotype_display.sql regen_accession.sql\
 	       regen_panelcount.sql regen_maps.sql regen_feature_term_fast_search.sql regen_anatomy.sql regen_term.sql regen_pheno_term.sql regen_expression_term_fast_search.sql regen_anatomy_counts.sql
-REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql
+REGEN_STATS  = grab_zdb_flag.sql release_zdb_flag.sql add_ab_ao_fast_search.sql  
 ZDB_GNRCS    = table_exists.sql  
 ZDB_AGGR    = concatenate.sql
 ZDB_STATS    = get_obj_name.sql get_obj_abbrev.sql get_date_from_id.sql \

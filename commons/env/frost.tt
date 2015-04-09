@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	cmpich
 <!--|DEFAULT_EMAIL|-->	cmpich\@zfin.org
 <!--|DOMAIN_NAME|-->	frost.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/frost
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

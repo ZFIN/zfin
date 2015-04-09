@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
@@ -20,6 +21,7 @@ import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.presentation.Construct;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
@@ -31,6 +33,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
+import org.zfin.construct.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
@@ -90,6 +93,14 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void testGeneById() {
         assertNull(markerRepository.getGeneByID("ZDB-TSCRIPT-090929-6229"));
         assertNotNull(markerRepository.getGeneByID("ZDB-GENE-990415-200"));
+    }
+
+    @Test
+    public void testConstruct() {
+        ConstructCuration cc = (ConstructCuration) HibernateUtil.currentSession().createCriteria(ConstructCuration.class)
+                .add(Restrictions.eq("zdbID", "ZDB-GTCONSTRCT-110310-1"))
+                .uniqueResult();
+        assertNotNull(cc);
     }
 
     @Test

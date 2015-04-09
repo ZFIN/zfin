@@ -5,6 +5,9 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.construct.ConstructCuration;
+import org.zfin.construct.ConstructRelationship;
+import org.zfin.construct.presentation.ConstructPresentation;
 import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAssay;
@@ -17,10 +20,13 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.*;
+import org.zfin.mutant.presentation.Construct;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
@@ -346,13 +352,30 @@ public class DTOConversionService {
     public static MarkerDTO convertToMarkerDTO(Marker marker) {
         MarkerDTO markerDTO = new MarkerDTO();
         markerDTO.setName(marker.getName());
+        if (marker.getAbbreviation()!=null){
         markerDTO.setName(marker.getAbbreviation());
+        }
         markerDTO.setCompareString(marker.getAbbreviationOrder());
         markerDTO.setZdbID(marker.getZdbID());
+        markerDTO.setMarkerType(marker.getMarkerType().getDisplayName());
         markerDTO.setLink(MarkerPresentation.getLink(marker));
         return markerDTO;
     }
+    public static ConstructDTO convertToConstructDTO(ConstructCuration construct) {
+        ConstructDTO constructDTO = new ConstructDTO();
 
+        Construct constructDisp=new Construct();
+        constructDTO.setName(construct.getName());
+
+            constructDTO.setName(construct.getName());
+
+
+        constructDTO.setZdbID(construct.getZdbID());
+        constructDTO.setConstructType(construct.getConstructType().getDisplayName());
+        constructDisp.setID(construct.getZdbID());
+        constructDTO.setLink(ConstructPresentation.getLink(construct));
+        return constructDTO;
+    }
 
     public static GenotypeDTO convertToGenotypeDTO(Genotype genotype) {
         GenotypeDTO genotypeDTO = new GenotypeDTO();
@@ -1009,6 +1032,26 @@ public class DTOConversionService {
         return featureMarkerRelationshipDTO;
     }
 
+    public static MarkerRelationshipDTO convertToMarkerRelationshipDTO(MarkerRelationship markerRelationship) {
+        MarkerRelationshipDTO markerRelationshipDTO = new MarkerRelationshipDTO();
+
+        markerRelationshipDTO.setZdbID(markerRelationship.getZdbID());
+        markerRelationshipDTO.setRelationshipType(markerRelationship.getMarkerRelationshipType().getName());
+        markerRelationshipDTO.setConstructDTO(convertToMarkerDTO(markerRelationship.getFirstMarker()));
+        markerRelationshipDTO.setMarkerDTO(convertToMarkerDTO(markerRelationship.getSecondMarker()));
+
+        return markerRelationshipDTO;
+    }
+    public static ConstructRelationshipDTO convertToConstructRelationshipDTO(ConstructRelationship constructRelationship) {
+        ConstructRelationshipDTO ConstructRelationshipDTO = new ConstructRelationshipDTO();
+
+        ConstructRelationshipDTO.setZdbID(constructRelationship.getZdbID());
+        ConstructRelationshipDTO.setRelationshipType(constructRelationship.getType().toString());
+        ConstructRelationshipDTO.setConstructDTO(convertToConstructDTO(constructRelationship.getConstruct()));
+        ConstructRelationshipDTO.setMarkerDTO(convertToMarkerDTO(constructRelationship.getMarker()));
+
+        return ConstructRelationshipDTO;
+    }
     public static LabDTO convertToLabDTO(Lab lab) {
         LabDTO labDTO = new LabDTO();
         labDTO.setZdbID(lab.getZdbID());

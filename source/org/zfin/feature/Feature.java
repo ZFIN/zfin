@@ -303,6 +303,11 @@ public class Feature implements EntityNotes, EntityZdbID {
         return MUTANT;
     }
 
+    @Override
+    public String getEntityName() {
+        return getAbbreviation();
+    }
+
     public Set<FeatureDBLink> getDbLinks() {
         return dbLinks;
     }

@@ -44,9 +44,7 @@
       </profile>
     </annotationProcessing>
   </component>
-  <component name="CopyrightManager" default="">
-    <module2copyright />
-  </component>
+  <component name="CopyrightManager" default="" />
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
@@ -331,9 +329,9 @@
         <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.core-sources-3.0.5.RELEASE.jar!/" />
         <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.web.servlet-sources-3.0.5.RELEASE.jar!/" />
         <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.web-sources-3.0.5.RELEASE.jar!/" />
-        <root url="file://E:/projects/tiles-2.2.2/src/tiles-core/src/main/java" />
-        <root url="file://E:/projects/tiles-2.2.2/src/tiles-api/src/main/java" />
-        <root url="file://E:/projects/tiles-2.2.2/src/tiles-servlet/src/main/java" />
+        <root url="file://$PROJECT_DIR$/../../../../../../tiles-2.2.2/src/tiles-core/src/main/java" />
+        <root url="file://$PROJECT_DIR$/../../../../../../tiles-2.2.2/src/tiles-api/src/main/java" />
+        <root url="file://$PROJECT_DIR$/../../../../../../tiles-2.2.2/src/tiles-servlet/src/main/java" />
       </SOURCES>
       <jarDirectory url="file://$PROJECT_DIR$/../../home/WEB-INF/lib" recursive="false" />
     </library>

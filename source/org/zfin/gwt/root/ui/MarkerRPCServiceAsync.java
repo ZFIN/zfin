@@ -99,4 +99,10 @@ public interface MarkerRPCServiceAsync {
     void addAttributionForMarkerName(String value, String pubZdbID, AsyncCallback<Void> markerEditCallBack);
 
     void addAttributionForFeatureName(String value, String publicationZdbID, AsyncCallback<Void> featureEditCallBack);
+    void getConstructMarkerRelationshipsForPub(String publicationZdbID, AsyncCallback<List<ConstructRelationshipDTO>> markerEditCallBack);
+    void getConstructsForPub(String pubZdbID, AsyncCallback<List<ConstructDTO>> async);
+    void getEditableRelationshipTypesForConstruct(AsyncCallback<String> markerEditCallBack);
+    void getMarkersForRelation(String mrkrzdbid,String pubZdbID,AsyncCallback<List<MarkerDTO>> markerEditCallBack);
+    void deleteConstructMarkerRelationship(ConstructRelationshipDTO markerRelationshipDTO, AsyncCallback<Void> markerEditCallBack);
+    void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO, AsyncCallback<Void> markerEditCallBack);
 }

@@ -667,7 +667,17 @@ public class MarkerService {
         typeList.add(Marker.Type.CDNA.toString());
         return typeList;
     }
+    public static List<String> getConstructs() {
+        // set clone marker types
+        List<String> typeList = new ArrayList<String>();
+        typeList.add(Marker.Type.BAC.toString());
+        typeList.add(Marker.Type.PAC.toString());
+        typeList.add(Marker.Type.FOSMID.toString());
 
+        typeList.add(Marker.Type.EST.toString());
+        typeList.add(Marker.Type.CDNA.toString());
+        return typeList;
+    }
 
     public static List<String> getSuppliers(Marker marker) {
         Set<MarkerSupplier> markerSuppliers = marker.getSuppliers();
@@ -717,9 +727,7 @@ public class MarkerService {
 
     public static GeneOntologyOnMarkerBean getGeneOntologyOnMarker(Marker gene) {
         GeneOntologyOnMarkerBean geneOntologyOnMarkerBean = new GeneOntologyOnMarkerBean();
-        geneOntologyOnMarkerBean.setGoTermCount(RepositoryFactory.getMarkerGoTermEvidenceRepository().getEvidenceForMarkerCount(gene));
-        geneOntologyOnMarkerBean.setBiologicalProcessEvidence(
-                RepositoryFactory.getMarkerGoTermEvidenceRepository().getFirstEvidenceForMarkerOntology(gene, Ontology.GO_BP));
+        geneOntologyOnMarkerBean.setBiologicalProcessEvidence(RepositoryFactory.getMarkerGoTermEvidenceRepository().getFirstEvidenceForMarkerOntology(gene, Ontology.GO_BP));
         geneOntologyOnMarkerBean.setCellularComponentEvidence(
                 RepositoryFactory.getMarkerGoTermEvidenceRepository().getFirstEvidenceForMarkerOntology(gene, Ontology.GO_CC));
         geneOntologyOnMarkerBean.setMolecularFunctionEvidence(

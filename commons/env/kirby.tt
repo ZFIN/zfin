@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	pm
 <!--|DEFAULT_EMAIL|-->	pm\@zfin.org
 <!--|DOMAIN_NAME|-->	kirby.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/kirby
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org
@@ -62,7 +63,7 @@
 <!--|SHARED_DOMAIN_NAME|-->	false
 <!--|SIDEBAR_COLOR|-->	#CCCCCC
 <!--|SITE_BACKGROUND|-->	#FFFFCC
-<!--|SOURCEROOT|-->	/opt/zfin/source_roots/kirby/ZFIN_WWW
+<!--|SOURCEROOT|-->	/research/zusers/pm/Projects/releases/Constructs/ConstructCreationbranch/
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	young.zfin.org
 <!--|SWISSPROT_EMAIL_CURATOR|-->	pm\@zfin.org

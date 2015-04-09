@@ -62,7 +62,7 @@ public class ConstructViewController {
                 markerRelationshipPresentation.setMappedMarkerRelationshipType("Coding Sequences:");
             } else if (markerRelationshipPresentation.getRelationshipType().equals("Contains")) {
                 markerRelationshipPresentation.setArbitraryOrder(3);
-                markerRelationshipPresentation.setMappedMarkerRelationshipType("Engineered Regions:");
+                markerRelationshipPresentation.setMappedMarkerRelationshipType("Contains:");
             }
         }
         Collections.sort(cloneRelationships, new Comparator<MarkerRelationshipPresentation>() {
@@ -95,7 +95,7 @@ public class ConstructViewController {
 
 
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getAbbreviation());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());
 
         return "marker/construct-view.page";
     }

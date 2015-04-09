@@ -6,7 +6,7 @@
     <tr>
         <td class="titlebar">
                 <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
-                        Search for Antibodies
+                        Search for xyz
             </span>
 
             <a href="/ZFIN/misc_html/antibody_search_tips.html" class="popup-link help-popup-link"></a>

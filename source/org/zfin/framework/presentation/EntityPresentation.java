@@ -127,7 +127,12 @@ public abstract class EntityPresentation {
             sb.append("\"");
         }
         sb.append(" id='" + zdbID + "'>");
-        sb.append(abbreviation);
+        if (zdbID.contains("CONSTRCT")){
+            sb.append(name);
+        }
+        else {
+            sb.append(abbreviation);
+        }
         sb.append("</a>");
         return sb.toString();
     }

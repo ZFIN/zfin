@@ -12,7 +12,9 @@ public class CurationPresentation extends EntityPresentation {
     }
 
     private static final String uri = "?MIval=aa-curation.apg&OID=";
+    private static final String noteuri="?MIval=aa-curatornote.apg&OID=";
     private static final String cookie = "&cookie=tab";
+    private static String constructID;
 
     /**
      * Generates a Publication link using the name.
@@ -35,4 +37,17 @@ public class CurationPresentation extends EntityPresentation {
         sb.append("</a>");
         return sb.toString();
     }
+
+    public static String getNoteLink(String constructID) {
+        StringBuilder sb = getWebdriverHyperLinkStart();
+        sb.append(noteuri);
+        sb.append(constructID);
+
+        sb.append("\">");
+        sb.append("Add/UpdateCurator Notes");
+        sb.append("</a>");
+        return sb.toString();
+    }
 }
+
+

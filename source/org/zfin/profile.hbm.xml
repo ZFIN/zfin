@@ -18,7 +18,8 @@
         </id>
 
         <!--<property name="ownerID" column="owner"/>-->
-        <property name="nonZfinPublications" column="nonzf_pubs" type="org.hibernate.type.MaterializedClobType" lazy="true"/>
+        <property name="nonZfinPublications" column="nonzf_pubs" type="org.hibernate.type.MaterializedClobType"
+                  lazy="true"/>
         <property name="personalBio" column="pers_bio" lazy="true"/>
 
         <property name="snapshot" column="snapshot" type="blob" lazy="true"/>
@@ -93,7 +94,7 @@
         </class>
     -->
 
-    <class name="org.zfin.profile.Organization" abstract="true" >
+    <class name="org.zfin.profile.Organization" abstract="true">
         <id name="zdbID" column="zdb_id">
             <generator class="org.zfin.database.ZdbIdGenerator">
                 <!--this is ignored -->
@@ -118,10 +119,48 @@
             <one-to-many class="org.zfin.profile.SourceUrl"/>
         </set>
 
+        <set name="markerSourceList" lazy="true" table="int_data_source">
+            <key column="ids_source_zdb_Id"/>
+            <many-to-many class="org.zfin.marker.Marker" column="ids_data_zdb_id"/>
+        </set>
+
+        <set name="markerSupplierList" lazy="true" table="int_data_supplier">
+            <key column="idsup_supplier_zdb_Id"/>
+            <many-to-many class="org.zfin.marker.Marker" column="idsup_data_zdb_id"/>
+        </set>
+
+        <set name="featureSourceList" lazy="true" table="int_data_source">
+            <key column="ids_source_zdb_Id"/>
+            <many-to-many class="org.zfin.feature.Feature" column="ids_data_zdb_id"/>
+        </set>
+
+        <set name="featureSupplierList" lazy="true" table="int_data_supplier">
+            <key column="idsup_supplier_zdb_Id"/>
+            <many-to-many class="org.zfin.feature.Feature" column="idsup_data_zdb_id"/>
+        </set>
+
+        <set name="genotypeSourceList" lazy="true" table="int_data_source">
+            <key column="ids_source_zdb_Id"/>
+            <many-to-many class="org.zfin.mutant.Genotype" column="ids_data_zdb_id"/>
+        </set>
+
+        <set name="genotypeSupplierList" lazy="true" table="int_data_supplier">
+            <key column="idsup_supplier_zdb_Id"/>
+            <many-to-many class="org.zfin.mutant.Genotype" column="idsup_data_zdb_id"/>
+        </set>
+
         <union-subclass name="org.zfin.profile.Lab" table="lab">
+            <set name="memberList" lazy="true" table="int_person_lab">
+                <key column="target_id"/>
+                <many-to-many class="Person" column="source_id"/>
+            </set>
         </union-subclass>
 
         <union-subclass name="org.zfin.profile.Company" table="company">
+            <set name="memberList" lazy="true" table="int_person_company">
+                <key column="target_id"/>
+                <many-to-many class="Person" column="source_id"/>
+            </set>
         </union-subclass>
 
     </class>

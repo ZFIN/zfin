@@ -1,10 +1,11 @@
 package org.zfin.profile;
 
+import java.util.Set;
+
 /**
  * Lab domain model.
  */
 public class Lab extends Organization {
-
 
     public int compareTo(Organization org) {
         if (org == null)
@@ -25,11 +26,12 @@ public class Lab extends Organization {
         return "lab";
     }
 
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Lab{");
-        sb.append(super.toString()) ;
+        sb.append(super.toString());
         sb.append('}');
         return sb.toString();
     }

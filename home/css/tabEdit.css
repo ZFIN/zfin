@@ -27,6 +27,28 @@
     padding: 0;
     height: 30px;
 }
+.promoterTest {
+    display: inline-block;
+    float:left;
+}
+.container {
+    float: left;
+    position: relative;
+    display: inline-block;
+}
+.container2 {
+    float: left;
+
+}
+.hidden {
+    display: none;
+}
+.ui-icon-trash { background-position: -176px -96px; }
+.emptyContainer {
+    /*float: left;
+    position: relative;*/
+    display: inline-block;
+}
 
 /*<%--*//* single tab *//*--%>*/
 .tabs li {

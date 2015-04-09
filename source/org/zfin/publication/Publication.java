@@ -2,6 +2,7 @@ package org.zfin.publication;
 
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.Person;
 import org.zfin.infrastructure.ZdbID;
 
@@ -13,7 +14,7 @@ import java.util.Set;
 /**
  * ToDo:
  */
-public class Publication implements Comparable<Publication>, Serializable, ZdbID {
+public class Publication implements Comparable<Publication>, Serializable, EntityZdbID {
 
     private String zdbID;
     private String title;
@@ -342,6 +343,25 @@ public class Publication implements Comparable<Publication>, Serializable, ZdbID
         return false;
     }
 
+    @Override
+    public String getAbbreviation() {
+        return shortAuthorList;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return shortAuthorList;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Publication";
+    }
+
+    @Override
+    public String getEntityName() {
+        return title;
+    }
 
     public static enum Type {
         ABSTRACT("Abstract", false),

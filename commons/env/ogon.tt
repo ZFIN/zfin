@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	cmpich
 <!--|DEFAULT_EMAIL|-->	cmpich\@zfin.org
 <!--|DOMAIN_NAME|-->	ogon.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/ogon
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

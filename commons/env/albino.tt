@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	staylor
 <!--|DEFAULT_EMAIL|-->	smoxon\@zfin.org
 <!--|DOMAIN_NAME|-->	albino.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/albino
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

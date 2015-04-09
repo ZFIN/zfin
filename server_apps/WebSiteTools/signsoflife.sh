@@ -7,6 +7,7 @@ setenv INFORMIXDIR <!--|INFORMIX_DIR|-->
 setenv INFORMIXSERVER <!--|INFORMIX_SERVER|-->
 setenv ONCONFIG <!--|ONCONFIG_FILE|-->
 setenv INFORMIXSQLHOSTS ${INFORMIXDIR}/etc/<!--|SQLHOSTS_FILE|-->
+setenv ENVIRONMENT <!--|ENVIRONMENT|-->
 
 # onstat - > /dev/null return codes
 # 0 Initalisation
@@ -32,7 +33,7 @@ set modeon=`onstat -| tr -d '\12' | cut -f2- -d\-|cut -c3,4`
 # as '1' so if the process is running just once, then the grep -c will return
 # '2'
 
-if ($HOST != "embryonix" && $HOST != "zygotix") then 
+if ($ENVIRONMENT != "development") then 
 
   set logon=`ps -ef | grep -c "$INFORMIXDIR/bin/ontape"`
 

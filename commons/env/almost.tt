@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	informix
 <!--|DEFAULT_EMAIL|-->	informix\@zfin.org
 <!--|DOMAIN_NAME|-->	almost.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/almost
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

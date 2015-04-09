@@ -25,7 +25,7 @@ import javax.validation.Valid;
 @RequestMapping("/antibody")
 public class AntibodySearchController {
 
-    AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
+        AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
 
     @ModelAttribute("formBean")
     private AntibodySearchFormBean getDefaultSearchForm() {

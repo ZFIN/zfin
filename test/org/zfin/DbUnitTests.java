@@ -30,6 +30,7 @@ import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
+import org.zfin.infrastructure.delete.DeleteRuleTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
@@ -79,6 +80,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ConstructServiceTest.class,
         CurationRPCTest.class,
         DatabaseServiceDbTest.class,
+        DeleteRuleTest.class,
         DisplayGroupRepositoryTest.class,
         DTOConversionServiceTest.class,
         ExpressionRepositoryTest.class,

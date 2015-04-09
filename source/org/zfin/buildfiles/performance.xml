@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="performance" basedir=".">
+    <!-- ====================================================================== -->
+    <!-- PERFORMANCE TASKS                                                          -->
+    <!-- ====================================================================== -->
+
+
+    <target name="blastHeuristics" depends="compile,build-tests"
+            description="Calculates all of the blast heuristics">
+        <runDBTest testclass="org.zfin.sequence.blast.BlastHeuristicsEvaluatorSuite" outfile="blast-heuristics-results" verbose="true"/>
+        <echo message=":BLAST HEURISTICS EVALUATION SUCCESSFUL:"/>
+    </target>
+
+    <target name="blastStressTest" depends="compile,build-tests"
+            description="Calculates all of the blast heuristics">
+        <runDBTest testclass="org.zfin.sequence.blast.BlastStressSuite" outfile="blast-stress-results" verbose="true"/>
+        <echo message=":BLAST STRESS EVALUATION SUCCESSFUL:"/>
+    </target>
+
+    <property name="performanceTestFile" value="performanceTestFile"/>
+
+
+    <target name="performancetests-quiet" if="notproduction" depends="compile,build-tests" description="Runs database and unit tests quietly">
+
+        <junit fork="yes"
+               printsummary="yes"
+               haltonfailure="yes"
+               haltonerror="yes"
+               maxmemory="1024m"
+               showoutput="false">
+
+            <test name="org.zfin.PerformanceTests"
+                  todir="${test.reports.dir}"
+                  outfile="${performanceTestFile}"
+                    >
+                <formatter type="plain"/>
+            </test>
+
+
+            <classpath refid="extended.classpath"/>
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <jvmarg line="${junit.jvmargs}"/>
+            <!-- <arg value="${junit.test.class.name}"/>-->
+
+            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
+            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+        </junit>
+        <antcall target="sendPerformanceResults">
+            <param name="test.output.file" value="${performanceTestFile}"/>
+        </antcall>
+        <echo message=":ALL PERFORMANCE TESTS RUN WITHOUT FAIL:"/>
+    </target>
+
+    <target name="sendPerformanceResults" >
+        <echo message="Performance test results"/>
+        <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
+              fork="yes"
+              classpathref="classpath">
+            <!--subject -->
+            <arg value="Finished Performance Tests.  See ${performanceTestFile} for more detail."/>
+            <!--message-->
+            <arg value="Finished Performance Tests.  See ${test.reports.dir}/${performanceTestFile}.txt for more detail."/>
+        </java>
+    </target>
+
+
+    <target name="ontologyPerformance" depends="compile,build-tests" description="Tests to make sure that the system is alive."  >
+        <junit fork="yes"
+               printsummary="yes"
+               haltonfailure="false"
+               haltonerror="false"
+               maxmemory="1024m"
+               showoutput="true">
+            <jvmarg line="${junit.jvmargs}"/>
+            <classpath refid="extended.classpath"/>
+            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <test name="org.zfin.ontology.OntologyPerformanceTest" todir="${test.reports.dir}" >
+                <formatter type="plain"/>
+            </test>
+        </junit>
+    </target>
+
+
+</project>

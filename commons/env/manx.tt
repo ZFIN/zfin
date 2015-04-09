@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	xshao
 <!--|DEFAULT_EMAIL|-->	xshao\@zfin.org
 <!--|DOMAIN_NAME|-->	manx.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/manx
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

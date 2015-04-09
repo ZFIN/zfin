@@ -24,13 +24,13 @@ import java.util.*;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
-public class Marker implements Serializable, Comparable, EntityAlias, EntityNotes, EntityZdbID {
+public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityZdbID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
     private static Logger LOG = Logger.getLogger(Marker.class);
 
-    private String zdbID;
-    private String name;
+    /*private String zdbID;
+    private String name;*/
     private String abbreviation;
     private String abbreviationOrder;
     private Set<ExpressionExperiment> probeExpressionExperiments;
@@ -60,7 +60,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
 
     private List<OmimPhenotype> omimPhenotypes;
 
-    public String getZdbID() {
+    /*public String getZdbID() {
         return zdbID;
     }
 
@@ -74,7 +74,7 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
 
     public void setName(String name) {
         this.name = name;
-    }
+    }*/
 
     public String getAbbreviation() {
         return abbreviation;
@@ -153,6 +153,11 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
     @Override
     public String getEntityType() {
         return getType().toString();
+    }
+
+    @Override
+    public String getEntityName() {
+        return getAbbreviation();
     }
 
     /**
@@ -429,7 +434,8 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         TGCONSTRCT("TGCONSTRCT"),
         TSCRIPT("TSCRIPT"),
         TALEN("TALEN"),
-        CRISPR("CRISPR");
+        CRISPR("CRISPR"),
+        CNE("CNE");
 
         private final String value;
 
@@ -479,7 +485,6 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         GENE("GENE"),
         GENEDOM("GENEDOM"),
         GENEDOM_AND_EFG("GENEDOM_AND_EFG"),
-        GENEDOM_EFG_REGION("GENEDOM_EFG_REGION"),
         GENEP("GENEP"),
         KNOCKDOWN_REAGENT("KNOCKDOWN_REAGENT"),
         MRPHLNO("MRPHLNO"),
@@ -497,7 +502,8 @@ public class Marker implements Serializable, Comparable, EntityAlias, EntityNote
         STS("STS"),
         TGCONSTRUCT("TGCONSTRUCT"),
         TRANSCRIPT("TRANSCRIPT"),
-        DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK");
+        DEFICIENCY_TLOC_MARK("DEFICIENCY_TLOC_MARK"),
+        GENEDOM_EFG_REGION("GENEDOM_EFG_REGION");
 
         private final String value;
 

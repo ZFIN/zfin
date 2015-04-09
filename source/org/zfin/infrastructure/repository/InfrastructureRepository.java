@@ -277,6 +277,7 @@ public interface InfrastructureRepository {
      * @return DataAliasGroup entity
      */
     DataAliasGroup getDataAliasGroupByName(String name);
+   ControlledVocab getCVZdbIDByTerm(String cvTermName);
 
     /**
      * Retrieve Root of given ontology.
@@ -428,6 +429,12 @@ public interface InfrastructureRepository {
     UnloadInfo getUnloadInfo();
 
     int getGenotypeExpressionExperimentRecordAttributions(String zdbID, String pubZdbID);
+
+    /**
+     * Generic deletion of ActiveData and ActiveSource
+     * @param zdbID
+     */
+    void deleteActiveEntity(String zdbID);
 }
 
 

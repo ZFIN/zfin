@@ -1,12 +1,13 @@
 package org.zfin.expression;
 
 import org.apache.log4j.Logger;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.mutant.SequenceTargetingReagent;
 
 /**
  * Entity class that maps to experiment table.
  */
-public class ExperimentCondition implements Comparable<ExperimentCondition> {
+public class ExperimentCondition implements Comparable<ExperimentCondition>, EntityZdbID {
 
     private String zdbID;
     private Experiment experiment;
@@ -101,5 +102,25 @@ public class ExperimentCondition implements Comparable<ExperimentCondition> {
             return sequenceTargetingReagent.compareTo(o.getSequenceTargetingReagent());
         else //even if it's the same condition type, we still want consistent order, so use id..
             return getZdbID().compareTo(o.getZdbID());
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return experiment.getName();
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return experiment.getName();
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Environment";
+    }
+
+    @Override
+    public String getEntityName() {
+        return experiment.getName();
     }
 }

@@ -2,7 +2,10 @@ package org.zfin.profile;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.zfin.infrastructure.ZdbID;
+import org.zfin.feature.Feature;
+import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.Genotype;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,7 +15,7 @@ import java.util.Set;
 /**
  *
  */
-public abstract class Organization implements Comparable<Organization>, HasUpdateType , HasSnapshot, ZdbID{
+public abstract class Organization implements Comparable<Organization>, HasUpdateType, HasSnapshot, EntityZdbID {
 
     public static final String ACTIVE_STATUS = "active";
 
@@ -22,25 +25,25 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     private String zdbID;
 
     @NotNull
-    @Size(min = 1, max=150,message = "Must not be empty and less than 150 characters.")
+    @Size(min = 1, max = 150, message = "Must not be empty and less than 150 characters.")
     protected String name;
 
-    @Size(max=100,message = "Must be less than 100 characters.")
+    @Size(max = 100, message = "Must be less than 100 characters.")
 //    @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$|^(\\d{3})[\\.](\\d{3})[\\.](\\d{4})$",
 //            message = "Must contain only numbers and appropriate punctuation.")
     private String phone;
 
-    @Size(max=100,message = "Must be less than 100 characters.")
+    @Size(max = 100, message = "Must be less than 100 characters.")
 //    @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$|^(\\d{3})[\\.](\\d{3})[\\.](\\d{4})$",
 //            message = "Must contain only numbers and appropriate punctuation.")
     private String fax;
 
-    @Size(max=150,message = "Must be less than 150 characters.")
+    @Size(max = 150, message = "Must be less than 150 characters.")
 //    @Pattern(regexp = "^[\\w-]+(\\.[\\w-]+)*@([a-z0-9-]+(\\.[a-z0-9-]+)*?\\.[a-z]{2,6}|(\\d{1,3}\\.){3}\\d{1,3})(:\\d{4})?$",
 //            message = "Must be of the format (user)@(domain).(domain)")
     private String email;
 
-    @Size(max=150,message = "Must be less than 150 characters.")
+    @Size(max = 150, message = "Must be less than 150 characters.")
 //    @Pattern(regexp = "^https?://[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?(:?[0-9]++)?$",
 //            message = "Must be of the format http[s]://(domain).(domain)(:port optional)")
     private String url;
@@ -53,11 +56,24 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     protected Set<SourceUrl> sourceUrls;
     private String status;
 
-    @Size(max=12000, message = "Must be less than 12000 characters.")
+    @Size(max = 12000, message = "Must be less than 12000 characters.")
     private String bio;
 
     private Blob snapshot;
-    private Person contactPerson ;
+    private Person contactPerson;
+
+    private Set<Marker> markerSourceList;
+    private Set<Marker> markerSupplierList;
+
+    private Set<Feature> featureSourceList;
+    private Set<Feature> featureSupplierList;
+
+    private Set<Genotype> genotypeSourceList;
+    private Set<Genotype> genotypeSupplierList;
+
+
+    private Set<Person> memberList;
+
 
     // not sure if this is used . . hopefully not
 //    private String contactPersonZdbID ;
@@ -96,6 +112,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     public void setBio(String bio) {
         this.bio = bio;
     }
+
     public Blob getSnapshot() {
         return snapshot;
     }
@@ -115,9 +132,9 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     public String getName() {
         return name;
     }
-    
-    public String getLowerName(){
-        return name.toLowerCase() ;
+
+    public String getLowerName() {
+        return name.toLowerCase();
     }
 
     public void setName(String name) {
@@ -184,6 +201,12 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
         return status.equals(ACTIVE_STATUS);
     }
 
+
+    @Override
+    public String getEntityName() {
+        return name;
+    }
+
     /**
      * Retrieve a particular URL, the order url.
      *
@@ -204,7 +227,7 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
             return false;
         Organization lab = (Organization) o;
         return
-                ObjectUtils.equals(address,lab.getAddress()) &&
+                ObjectUtils.equals(address, lab.getAddress()) &&
                         StringUtils.equals(email, lab.getEmail()) &&
                         StringUtils.equals(fax, lab.getFax()) &&
                         StringUtils.equals(name, lab.getName()) &&
@@ -239,6 +262,78 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
     public abstract boolean getLab();
 
     public abstract boolean getCompany();
+
+
+    public Set<Feature> getFeatureSourceList() {
+        return featureSourceList;
+    }
+
+    public void setFeatureSourceList(Set<Feature> featureSourceList) {
+        this.featureSourceList = featureSourceList;
+    }
+
+    public Set<Feature> getFeatureSupplierList() {
+        return featureSupplierList;
+    }
+
+    public void setFeatureSupplierList(Set<Feature> featureSupplierList) {
+        this.featureSupplierList = featureSupplierList;
+    }
+
+    public Set<Genotype> getGenotypeSourceList() {
+        return genotypeSourceList;
+    }
+
+    public void setGenotypeSourceList(Set<Genotype> genotypeSourceList) {
+        this.genotypeSourceList = genotypeSourceList;
+    }
+
+    public Set<Genotype> getGenotypeSupplierList() {
+        return genotypeSupplierList;
+    }
+
+    public void setGenotypeSupplierList(Set<Genotype> genotypeSupplierList) {
+        this.genotypeSupplierList = genotypeSupplierList;
+    }
+
+    public Set<Marker> getMarkerSourceList() {
+        return markerSourceList;
+    }
+
+    public void setMarkerSourceList(Set<Marker> markerSourceList) {
+        this.markerSourceList = markerSourceList;
+    }
+
+    public Set<Marker> getMarkerSupplierList() {
+        return markerSupplierList;
+    }
+
+    public void setMarkerSupplierList(Set<Marker> markerSupplierList) {
+        this.markerSupplierList = markerSupplierList;
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return name;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return name;
+    }
+
+    public Set<Person> getMemberList() {
+        return memberList;
+    }
+
+    public void setMemberList(Set<Person> memberList) {
+        this.memberList = memberList;
+    }
+
+    @Override
+    public String getEntityType() {
+        return getType();
+    }
 
     @Override
     public String toString() {

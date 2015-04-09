@@ -14,7 +14,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.mutant.ConstructSearchCriteria;
 import org.zfin.mutant.ConstructSearchResult;
-import org.zfin.mutant.repository.ConstructRepository;
+import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.mutant.repository.ConstructService;
 
 import javax.servlet.http.HttpServletRequest;

@@ -5,6 +5,7 @@ import org.zfin.expression.Figure;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityNotes;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.GenotypeSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -20,7 +21,7 @@ import java.util.*;
  * The name of the genotype is a semicolon-delimited list of allele names.
  * Each allele is called a Feature
  */
-public class Genotype implements Comparable {
+public class Genotype implements Comparable, EntityZdbID {
 
     public static final String WT = "WT";
 
@@ -241,6 +242,26 @@ public class Genotype implements Comparable {
 
     public void setComplexity(String complexity) {
         this.complexity = complexity;
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return name;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return nameOrder;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Genotype";
+    }
+
+    @Override
+    public String getEntityName() {
+        return name;
     }
 
 

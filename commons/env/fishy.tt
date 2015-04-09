@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	pm
 <!--|DEFAULT_EMAIL|-->	pm\@zfin.org
 <!--|DOMAIN_NAME|-->	fishy.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/research/zcentral/ftp/test/fishy
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

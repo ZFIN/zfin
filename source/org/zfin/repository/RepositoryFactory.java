@@ -6,6 +6,8 @@ import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.antibody.repository.HibernateAntibodyRepository;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.audit.repository.HibernateAuditLogRepository;
+import org.zfin.construct.repository.ConstructRepository;
+import org.zfin.construct.repository.HibernateConstructRepository;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.repository.ExpressionSummaryRepository;
 import org.zfin.expression.repository.HibernateExpressionRepository;

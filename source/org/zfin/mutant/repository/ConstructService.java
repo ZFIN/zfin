@@ -17,6 +17,7 @@ import org.zfin.fish.presentation.Fish;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.ExpressedGenotype;
 import org.zfin.mutant.presentation.ConstructSearchFormBean;
 import org.zfin.fish.presentation.PhenotypeSummaryCriteria;
@@ -42,6 +43,7 @@ public class ConstructService {
 
     private Marker construct;
     private int numberOfPublications;
+    private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
 
     public int getNumberOfPublications() {
         return numberOfPublications;
@@ -58,6 +60,8 @@ public class ConstructService {
     public void setFigureSummary(List<FigureSummaryDisplay> figureSummary) {
         this.figureSummary = figureSummary;
     }
+
+
 
     private List<FigureSummaryDisplay> figureSummary;
 

@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	pm
 <!--|DEFAULT_EMAIL|-->	pm\@zfin.org
 <!--|DOMAIN_NAME|-->	polka.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/polka
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

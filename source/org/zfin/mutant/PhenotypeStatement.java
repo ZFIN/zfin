@@ -1,5 +1,6 @@
 package org.zfin.mutant;
 
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
@@ -9,7 +10,7 @@ import java.util.Date;
 /**
  * An individual observation of phenotype
  */
-public class PhenotypeStatement implements Comparable<PhenotypeStatement> {
+public class PhenotypeStatement implements Comparable<PhenotypeStatement>, EntityZdbID {
     private long id;
     private PhenotypeExperiment phenotypeExperiment;
     private PostComposedEntity entity;
@@ -131,7 +132,7 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement> {
 
     @Override
     public int compareTo(PhenotypeStatement statement) {
-            return getDisplayNameWithoutTag().compareToIgnoreCase(statement.getDisplayNameWithoutTag());
+        return getDisplayNameWithoutTag().compareToIgnoreCase(statement.getDisplayNameWithoutTag());
     }
 
     @Override
@@ -204,6 +205,36 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement> {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return getDisplayName();
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return getDisplayName();
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Phenotype Statement";
+    }
+
+    @Override
+    public String getEntityName() {
+        return getDisplayName();
+    }
+
+    @Override
+    public String getZdbID() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public void setZdbID(String zdbID) {
+
     }
 
     public static enum Tag {

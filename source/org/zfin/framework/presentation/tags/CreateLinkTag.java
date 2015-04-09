@@ -9,6 +9,8 @@ import org.zfin.expression.presentation.ExperimentConditionPresentation;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.expression.presentation.ExpressionStatementPresentation;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeaturePrefix;
+import org.zfin.feature.presentation.FeaturePrefixPresentation;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.fish.presentation.Fish;
 import org.zfin.fish.presentation.FishPresentation;
@@ -18,6 +20,7 @@ import org.zfin.fish.presentation.ZfinEntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mapping.Panel;
@@ -95,7 +98,7 @@ public class CreateLinkTag extends BodyTagSupport {
             return "";
         }
 
-        String link;
+        String link = null;
         if (o instanceof String) {
             Object entity = InfrastructureService.getEntityById((String) o);
             if (entity != null)
@@ -139,6 +142,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = GenotypePresentation.getLink((Genotype) o, suppressPopupLink);
         else if (o instanceof Feature)
             link = FeaturePresentation.getLink((Feature) o);
+        else if (o instanceof FeaturePrefix)
+            link = FeaturePrefixPresentation.getLink((FeaturePrefix) o);
         else if (o instanceof FeaturePresentationBean)
             link = FeaturePresentation.getLink((FeaturePresentationBean) o);
         else if (o instanceof Experiment)
@@ -169,6 +174,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = PhenotypePresentation.getLink((PhenotypeStatement) o, suppressPopupLink, curationLink);
         else if (o instanceof ZfinEntity)
             link = ZfinEntityPresentation.getLink((ZfinEntity) o);
+        else if (o instanceof EntityZdbID)
+            link = "<a href='/" + ((EntityZdbID) o).getZdbID() + "'>" + ((EntityZdbID) o).getAbbreviation() + "</a>";
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return link;

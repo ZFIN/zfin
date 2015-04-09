@@ -249,7 +249,7 @@ EFFECTS
     <td valign=top colspan=2> Comments:<br>
         <input name="xpcur_G_fig_comments" type=textbox size=20 value="$xpcurfig_fig_comment">
     </td>
-    <td valign=top>
+    <td valign=top width=5>
       <?MISQL SQL="
           select img_thumbnail, img_label, img_zdb_id
           from image
@@ -282,6 +282,25 @@ EFFECTS
       <div id="imageConstructBox"></div>
     <?/MIVAR>
     </td>
+</tr>
+<tr>
+     <td>
+     <?MIVAR>
+     <div>Construct </div>
+           <script type="text/javascript">
+                     var MarkerProperties = { zdbID : "$xpatcurfig_img_zdb_id",
+                                              imageEditDiv : "imageTermBox",
+                                             imageStageEditDiv: "imageStageBox"} ;
+
+                   </script>
+                   <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+                   <script language="javascript"
+                          src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
+                   <div id="imageTermBox"></div>
+
+           <?/MIVAR>
+           </td>
+</tr>
     <?/MIBLOCK>
   </tr> 
   <?/MIVAR>

@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	staylor
 <!--|DEFAULT_EMAIL|-->	smoxon\@zfin.org
 <!--|DOMAIN_NAME|-->	swirl.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/swirl
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

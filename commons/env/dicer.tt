@@ -20,6 +20,7 @@
 <!--|DB_OWNER|-->	kschaper
 <!--|DEFAULT_EMAIL|-->	kevin\@zfin.org
 <!--|DOMAIN_NAME|-->	dicer.zfin.org
+<!--|ENVIRONMENT|-->	development
 <!--|FTP_ROOT|-->	/opt/zfin/ftp/test/dicer
 <!--|GBROWSE_DB|-->	ensembl_current
 <!--|GBROWSE_DB_HOST|-->	gbrowse1.zfin.org

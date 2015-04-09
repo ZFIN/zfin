@@ -97,6 +97,13 @@
             <column name="mrkr_name" not-null="true"/>
         </property>
 
+        <!--<property name="name">
+            <column name="mrkr_name" not-null="true"/>
+        </property>-->
+
+
+
+
         <property name="abbreviation">
             <column name="mrkr_abbrev" not-null="true"/>
         </property>
@@ -243,6 +250,7 @@
         </joined-subclass>
 
 
+
         <joined-subclass name="org.zfin.marker.Clone" table="clone">
             <key column="clone_mrkr_zdb_id"/>
 
@@ -277,9 +285,39 @@
         </joined-subclass>
 
 
-    </class>
 
-    <class name="org.zfin.marker.Vector" table="vector">
+
+
+</class>
+
+   <!-- <class name="Construct" table="construct">
+        <id name="zdbID" column="construct_zdb_id"/>
+
+        <property name="constructGeneratedName" not-null="true" column="construct_generated_name"/>
+
+
+        <many-to-one name="constructType" column="construct_type"
+                     foreign-key="construct_type" not-null="true"
+                     class="org.zfin.marker.MarkerType"/>
+
+       &lt;!&ndash; <property name="abbreviationOrder">
+            <column name="mrkr_abbrev_order"/>
+        </property>
+
+        <property name="publicComments">
+            <column name="mrkr_comments"/>
+        </property>&ndash;&gt;
+        <property name="name">
+            <column name="construct_name" not-null="true"/>
+        </property>
+        <property name="nameOrder">
+            <column name="construct_name_order" not-null="true"/>
+        </property>
+
+
+    </class>-->
+
+<class name="org.zfin.marker.Vector" table="vector">
         <id name="name" type="string">
             <column name="vector_name" not-null="true"/>
         </id>

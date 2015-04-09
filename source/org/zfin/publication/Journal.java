@@ -1,11 +1,13 @@
 package org.zfin.publication;
 
+import org.zfin.infrastructure.EntityZdbID;
+
 import java.io.Serializable;
 
 /**
  * Journal domain object.
  */
-public class Journal implements Serializable {
+public class Journal implements Serializable, EntityZdbID {
 
     private String zdbID;
     private String name;
@@ -30,6 +32,21 @@ public class Journal implements Serializable {
 
     public String getAbbreviation() {
         return abbreviation;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return name;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Journal";
+    }
+
+    @Override
+    public String getEntityName() {
+        return name;
     }
 
     public void setAbbreviation(String abbreviation) {

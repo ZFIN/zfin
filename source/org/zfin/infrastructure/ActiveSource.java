@@ -1,6 +1,10 @@
 package org.zfin.infrastructure;
 
+import org.zfin.infrastructure.delete.*;
+
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  */
@@ -62,14 +66,23 @@ public class ActiveSource implements ZdbID, Serializable {
         return type;
     }
 
-    public enum Type implements Serializable{
-        COMPANY,
-        JRNL,
-        LAB,
-        PERS,
-        PUB;
+    public enum Type implements Serializable {
+        COMPANY(DeleteCompanyRule.class),
+        JRNL(DeleteJournalRule.class),
+        LAB(DeleteLabRule.class),
+        PERS(DeletePersonRule.class),
+        PUB(DeletePublicationRule.class);
 
         private static String allValues;
+        private Class<? extends DeleteEntityRule> ruleClass;
+
+
+        Type() {
+        }
+
+        Type(Class<? extends DeleteEntityRule> ruleClass) {
+            this.ruleClass = ruleClass;
+        }
 
         public static String getValues() {
             if (allValues != null)
@@ -87,5 +100,20 @@ public class ActiveSource implements ZdbID, Serializable {
             allValues = sb.toString();
             return allValues;
         }
+
+        public DeleteEntityRule getDeleteEntityRule(String zdbID) {
+            DeleteEntityRule rule = null;
+            try {
+                Constructor constructor = ruleClass.getConstructor(String.class);
+                rule = (DeleteEntityRule) constructor.newInstance(zdbID);
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                return null;
+            } catch (NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            return rule;
+        }
+
     }
 }

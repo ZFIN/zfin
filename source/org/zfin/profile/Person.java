@@ -5,6 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -26,7 +27,7 @@ import java.util.Set;
  * Domain business object that describes a single person.
  * AccountInfo composite contains login information which is optional.
  */
-public class Person implements UserDetails, Serializable, Comparable<Person>, HasUpdateType, ProvidesLink, HasSnapshot, ZdbID {
+public class Person implements UserDetails, Serializable, Comparable<Person>, HasUpdateType, ProvidesLink, HasSnapshot, EntityZdbID {
 
     @NotNull
     @Size(min = 17, max = 50)
@@ -440,5 +441,25 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         setShortName(shortName);
 
         setFullName(lastName + ", " + firstName);
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return lastName;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return lastName;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Person";
+    }
+
+    @Override
+    public String getEntityName() {
+        return fullName;
     }
 }

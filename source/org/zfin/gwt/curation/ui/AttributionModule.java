@@ -13,7 +13,9 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.LookupRPCService;
+
 import org.zfin.gwt.root.util.StringUtils;
+
 
 import java.util.*;
 
@@ -26,7 +28,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private LookupComposite featureLookupComposite = new LookupComposite();
     private ListBoxWrapper removeListBox = new ListBoxWrapper(false);
     private HTML messageBox = new HTML("");
-    private boolean working = false ;
+    private boolean working = false;
     private HashMap<String, RelatedEntityDTO> relatedEntityDTOs = new HashMap<String, RelatedEntityDTO>(); // entities in the Remove Attr drop-down list
 
     public static enum RemoveHeader {
@@ -57,6 +59,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         if (div != null) {
             RootPanel.get(div).add(this);
         }
+        exposeAttributionMethodsToJavascript(this);
     }
 
 
@@ -256,7 +259,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     private void addMarkerAttribution(final String value) {
         // should cancel second submit (case 5943)
-        if (isWorking()) return ;
+        if (isWorking()) return;
         if (checkAttributionExists(value)) return;
         working();
         MarkerRPCService.App.getInstance().addAttributionForMarkerName(value, dto.getPublicationZdbID(),
@@ -289,7 +292,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     private void addFeatureAttribution(final String value) {
         // should cancel second submit (case 5943)
-        if (isWorking()) return ;
+        if (isWorking()) return;
         if (checkAttributionExists(value)) return;
         working();
         MarkerRPCService.App.getInstance().addAttributionForFeatureName(value, dto.getPublicationZdbID(),
@@ -325,7 +328,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     @Override
     public void working() {
-        working = true ;
+        working = true;
         super.working();
         markerLookupComposite.working();
         featureLookupComposite.working();
@@ -334,7 +337,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     @Override
     public void notWorking() {
-        working = false ;
+        working = false;
         super.notWorking();
         markerLookupComposite.notWorking();
         featureLookupComposite.notWorking();
@@ -344,4 +347,18 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     public boolean isWorking() {
         return working;
     }
+
+
+    private native void exposeAttributionMethodsToJavascript(AttributionModule attributionModule)/*-{
+        $wnd.refreshAttribution = function (pubID) {
+            attributionModule.@org.zfin.gwt.curation.ui.AttributionModule::refreshAttribution(Ljava/lang/String;)(pubID);
+        };
+
+    }-*/;
+
+    public void refreshAttribution(String pubID) {
+        revertGUI();
+    }
+
+
 }
