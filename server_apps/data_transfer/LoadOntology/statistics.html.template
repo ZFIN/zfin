@@ -96,7 +96,7 @@ Statistics:
         <th>New Relationships</th>
         <td>
         <#if new_relationships??>
-        ${removed_relationships?size}
+        ${new_relationships?size}
         </#if>
         </td>
     </tr>
@@ -108,6 +108,22 @@ Statistics:
         </#if>
         </td>
     </tr>
+    <tr>
+    <th>New DB xrefs</th>
+    <td>
+     <#if new_xrefs??>
+     ${new_xrefs?size}
+     </#if>
+    </td>
+    </tr>
+    <tr>
+    <th>Removed DB xrefs</th>
+     <td>
+    <#if removed_xrefs??>
+     ${removed_xrefs?size}
+     </#if>
+    </td>
+        </tr>
     </tbody>
 </table>
 
