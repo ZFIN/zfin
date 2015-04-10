@@ -44,7 +44,7 @@ tmp_xref_db_id = fdb_db_pk_id
 
 --for statistics dump the xrefs that will be deleted from this load
 unload to removed_xrefs
-select tx_term_zdb_id,tx_xref_id,tx_fdb_id from term_xref
+select tx_term_zdb_id,tx_xref_id,tx_fdb_db_id from term_xref
  where not exists (
   select 'x' from tmp_dbxrefs_with_ids
   where tx_term_zdb_id = tmp_term_zdb_id AND
