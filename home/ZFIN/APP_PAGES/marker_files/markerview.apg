@@ -70,7 +70,7 @@ for antibody: added meta redirect at the beginning and the end of the file.
   }
 
   function edit_go(oid) {
-	window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoentry.apg&OID='+oid)
+	window.location.replace('/action/marker/marker-go-edit/'+oid)
   }
 
   function get_spdesc(oid) {
@@ -1810,7 +1810,7 @@ union
 </TABLE>
   <?MIBLOCK COND="$(>,$rowcount,0)">
     <div>
-	<?MIVAR><A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-markergoview.apg&OID=$OID">All GO Terms (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR>
+	<?MIVAR><A HREF="/action/marker/marker-go-view/$OID">All GO Terms (<?MIVAR>$rowcount)</A><?/MIVAR><?/MIVAR>
     </div>
   <?/MIBLOCK>
   </div>
