@@ -74,8 +74,8 @@ where exists (
 
 unload to new_xrefs
 select tmp_term_zdb_id,tmp_xref_accession,fdb_db_name
-rom tmp_dbxrefs_with_ids,foreign_db
-where fdb_db_id=tmp_xref_db_id;
+from tmp_dbxrefs_with_ids,foreign_db
+where fdb_db_pk_id=tmp_xref_db_id;
 
 
 
