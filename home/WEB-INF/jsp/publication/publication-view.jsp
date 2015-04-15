@@ -147,7 +147,7 @@
         <c:if test="${talenCount > 0}">
             <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_talen">TALEN</a> (${talenCount})</li>
         </c:if>
-        <c:if test="${cirsprCount > 0}">
+        <c:if test="${crisprCount > 0}">
             <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_crispr">CRISPR</a> (${crisprCount})</li>
         </c:if>
         <c:if test="${antibodyCount > 0}">
