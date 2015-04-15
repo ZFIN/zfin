@@ -36,8 +36,8 @@ set tmp_xref_db_id =
  select 'x' from foreign_db where
  lower(fdb_db_name) = lower(tmp_xref_db) );
 
-delete from tmp_dbxrefs_with_ids
-where tmp_xref_db_id = 0 or not exists (
+update  tmp_dbxrefs_with_ids
+set tmp_xref_db_id=null where tmp_xref_db_id = 0 or not exists (
 select 'x' from foreign_db where
 tmp_xref_db_id = fdb_db_pk_id
 );
