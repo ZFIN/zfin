@@ -2,6 +2,7 @@ package org.zfin.feature.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,9 @@ import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
+import org.zfin.mapping.repository.LinkageRepository;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.mutant.presentation.GenotypeInformation;
@@ -30,9 +34,17 @@ import java.util.*;
 public class FeatureDetailController {
     private static final Logger LOG = Logger.getLogger(FeatureDetailController.class);
 
-    private FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
-    private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-    private InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    @Autowired
+    private FeatureRepository featureRepository;
+
+    @Autowired
+    private MutantRepository mutantRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
+
+    @Autowired
+    private LinkageRepository linkageRepository;
 
     @RequestMapping(value = "view/{zdbID}")
     protected String getFeatureDetail(@PathVariable String zdbID, Model model) {
@@ -75,12 +87,14 @@ public class FeatureDetailController {
         if (CollectionUtils.isNotEmpty(locations)) {
             GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder();
             if (markerRelationships.size() == 1) {
-                imageBuilder.landmark(markerRelationships.iterator().next().getMarker())
+                Marker related = markerRelationships.iterator().next().getMarker();
+                List<MarkerGenomeLocation> markerLocations = linkageRepository.getGenomeLocation(related, GenomeLocation.Source.ZFIN);
+                imageBuilder.landmark(markerLocations.get(0))
                         .highlight(feature)
                         .withPadding(0.1);
             } else {
-                imageBuilder.landmark(feature)
-                        .highlight()
+                imageBuilder.landmark(locations.iterator().next())
+                        .highlight(feature)
                         .withPadding(10000);
             }
             String subSource = locations.iterator().next().getDetailedSource();

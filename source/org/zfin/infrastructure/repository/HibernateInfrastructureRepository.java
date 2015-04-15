@@ -14,6 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
 import org.zfin.database.DbSystemUtil;
 import org.zfin.database.UnloadInfo;
@@ -42,7 +43,7 @@ import java.util.Date;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
-
+@Repository
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
 
     private static Logger logger = Logger.getLogger(HibernateInfrastructureRepository.class);

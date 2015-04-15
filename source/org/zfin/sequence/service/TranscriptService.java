@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
@@ -21,9 +22,6 @@ import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
-/**
- * This class
- */
 public class TranscriptService {
 
     private final static Logger logger = Logger.getLogger(TranscriptService.class);
@@ -99,7 +97,7 @@ public class TranscriptService {
 
         if (displayGBrowseImage && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)) {
             GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder()
-                    .landmark(gene)
+                    .landmark(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
                     .tracks(GBrowseTrack.TRANSCRIPTS);
             if (highlightedTranscript != null) {
                 imageBuilder.highlight(highlightedTranscript.getAbbreviation());

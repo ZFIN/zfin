@@ -3,18 +3,14 @@ package org.zfin.gbrowse.presentation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.zfin.feature.Feature;
-import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gbrowse.GBrowseTrack;
-import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.GenomeLocation;
-import org.zfin.mapping.MarkerGenomeLocation;
-import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.Marker;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.URLCreator;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class GBrowseImage {
 
@@ -111,83 +107,32 @@ public class GBrowseImage {
         private String highlightColor;
         private boolean grid;
 
-        private Marker landmarkMarker;
-        private Feature landmarkFeature;
-        private String landmarkString;
+        private GenomeLocation landmarkLocation;
         private Integer start;
         private Integer end;
         private Integer centeredRange;
         private Integer startPadding;
         private Integer endPadding;
         private Double relativePadding;
-        private boolean useDefaultTracks;
         private Marker highlightMarker;
         private Feature highlightFeature;
         private String highlightString;
-        private boolean useDefaultHighlight;
-        private Integer chromosome;
-
-        private final LinkageRepository linkageRepository = RepositoryFactory.getLinkageRepository();
 
         public GBrowseImage build() {
 
-            if (useDefaultHighlight) {
-                highlightMarker = landmarkMarker;
-                highlightFeature = landmarkFeature;
-                highlightString = landmarkString;
-            }
-
-            List<? extends GenomeLocation> landmarkLocations = null;
-            if (landmarkMarker != null) {
-                landmarkLocations = linkageRepository.getGenomeLocation(landmarkMarker, GenomeLocation.Source.ZFIN);
-            } else if (landmarkFeature != null) {
-                landmarkLocations = linkageRepository.getGenomeLocation(landmarkFeature, GenomeLocation.Source.ZFIN);
-            }
-
-            if (CollectionUtils.isEmpty(landmarkLocations)) {
-                landmarkMarker = highlightMarker;
-                landmarkFeature = highlightFeature;
-            }
-
-            // setup landmark -- if a marker or feature was given, look up its genome location. if it has genome
-            // location info, use it to set the start and end, otherwise just use the abbreviation. if a string was
-            // given, just use that string.
-            if (landmarkMarker != null) {
-                List<MarkerGenomeLocation> locations = linkageRepository.getGenomeLocation(landmarkMarker, GenomeLocation.Source.ZFIN);
-                if (CollectionUtils.isNotEmpty(locations)) {
-                    processLocations(locations);
-                } else {
-                    landmark = landmarkMarker.getAbbreviation();
-                }
-            } else if (landmarkFeature != null) {
-                List<FeatureGenomeLocation> locations = linkageRepository.getGenomeLocation(landmarkFeature, GenomeLocation.Source.ZFIN);
-                if (CollectionUtils.isNotEmpty(locations)) {
-                    processLocations(locations);
-                } else {
-                    landmark = landmarkFeature.getAbbreviation();
-                }
-            } else if (landmarkString != null) {
-                landmark = landmarkString;
-            }
-
-            // setup highlight -- if start and end were set (via landmark) try looking up the highlight marker/feature
-            // genome location because we may need to adjust the start and end.
             if (highlightMarker != null) {
-                if (start != null && end != null) {
-                    processHighlightLocations(linkageRepository.getGenomeLocation(highlightMarker, GenomeLocation.Source.ZFIN));
-                }
                 highlightLandmark = highlightMarker.getAbbreviation();
             } else if (highlightFeature != null) {
-                if (start != null && end != null) {
-                    processHighlightLocations(linkageRepository.getGenomeLocation(highlightFeature, GenomeLocation.Source.ZFIN));
-                }
                 highlightLandmark = highlightFeature.getAbbreviation();
             } else if (highlightString != null) {
                 highlightLandmark = highlightString;
             }
 
             // setup range
-            if (start != null && end != null) {
+            if (landmarkLocation != null) {
+                start = landmarkLocation.getStart();
+                end = landmarkLocation.getEnd();
+
                 if (centeredRange != null) {
                     int center = (start + end) / 2;
                     start = center - centeredRange / 2;
@@ -201,28 +146,19 @@ public class GBrowseImage {
                     end += padding;
                 }
 
-                landmark += ":" + start + ".." + end;
-            }
-
-            if (useDefaultTracks && landmarkMarker != null) {
-                tracks = Arrays.asList(GBrowseService.getGBrowseTracks(landmarkMarker));
+                landmark = landmarkLocation.getChromosome() + ":" + start + ".." + end;
             }
 
             return new GBrowseImage(this);
         }
 
         public GBrowseImageBuilder landmark(String landmark) {
-            landmarkString = landmark;
+            this.landmark = landmark;
             return this;
         }
 
-        public GBrowseImageBuilder landmark(Marker landmark) {
-            landmarkMarker = landmark;
-            return this;
-        }
-
-        public GBrowseImageBuilder landmark(Feature landmark) {
-            landmarkFeature = landmark;
+        public GBrowseImageBuilder landmark(GenomeLocation landmark) {
+            this.landmarkLocation = landmark;
             return this;
         }
 
@@ -230,7 +166,6 @@ public class GBrowseImage {
             this.centeredRange = range;
             return this;
         }
-
 
         public GBrowseImageBuilder withPadding(int startPadding, int endPadding) {
             this.startPadding = startPadding;
@@ -256,11 +191,6 @@ public class GBrowseImage {
             return this;
         }
 
-        public GBrowseImageBuilder withDefaultTracks() {
-            useDefaultTracks = true;
-            return this;
-        }
-
         public GBrowseImageBuilder highlight(String highlight) {
             highlightString = highlight;
             return this;
@@ -276,11 +206,6 @@ public class GBrowseImage {
             return this;
         }
 
-        public GBrowseImageBuilder highlight() {
-            useDefaultHighlight = true;
-            return this;
-        }
-
         public GBrowseImageBuilder highlightColor(String highlightColor) {
             this.highlightColor = highlightColor;
             return this;
@@ -289,31 +214,6 @@ public class GBrowseImage {
         public GBrowseImageBuilder grid(boolean grid) {
             this.grid = grid;
             return this;
-        }
-
-        private void processLocations(List<? extends GenomeLocation> locations) {
-            Collections.sort(locations);
-            landmark = locations.get(0).getChromosome();
-            chromosome = Integer.parseInt(landmark, 10);
-            List<Integer> starts = new ArrayList<>();
-            List<Integer> ends = new ArrayList<>();
-            for (GenomeLocation location : locations) {
-                starts.add(location.getStart());
-                ends.add(location.getEnd());
-            }
-            start = Collections.min(starts);
-            end = Collections.max(ends);
-        }
-
-        private void processHighlightLocations(List<? extends GenomeLocation> locations) {
-            Collections.sort(locations);
-            for (GenomeLocation location : locations) {
-                if (chromosome != null && chromosome != Integer.parseInt(location.getChromosome(), 10)) {
-                    return;
-                }
-                start = Math.min(start, location.getStart());
-                end = Math.max(end, location.getEnd());
-            }
         }
 
     }

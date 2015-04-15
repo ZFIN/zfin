@@ -5,6 +5,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -377,8 +379,11 @@ public class BlastResultMapper {
                     //get gbrowse images
                     try {
                         logger.debug("attempting to get GBrowseImage list for blast hit");
+                        List<MarkerGenomeLocation> locations = RepositoryFactory
+                                .getLinkageRepository()
+                                .getGenomeLocation(gene, GenomeLocation.Source.ZFIN);
                         hitViewBean.setGbrowseImage(GBrowseImage.builder()
-                                .landmark(gene)
+                                .landmark(locations.get(0))
                                 .highlight(transcript.getAbbreviation())
                                 .tracks(GBrowseTrack.TRANSCRIPTS)
                                 .build());

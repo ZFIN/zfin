@@ -13,7 +13,9 @@ import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.repository.LinkageRepository;
+import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -27,6 +29,7 @@ import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.blast.Database;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -181,18 +184,64 @@ public class SequenceTargetingReagentViewController {
         ));
         sequenceTargetingReagentBean.setMarkerRelationshipPresentationList(knockdownRelationships);
 
+        // get gbrowse genomic location of each targeted gene
+        List<MarkerGenomeLocation> targetedGeneLocations = new ArrayList<>();
         for (MarkerRelationshipPresentation knockdownRelationship : knockdownRelationships) {
-            if (CollectionUtils.isNotEmpty(
-                    linkageRepository.getGenomeLocation(sequenceTargetingReagent, GenomeLocation.Source.ZFIN))) {
+            Marker targetedGene = markerRepository.getGeneByID(knockdownRelationship.getZdbId());
+            List<MarkerGenomeLocation> locations = linkageRepository.getGenomeLocation(targetedGene, GenomeLocation.Source.ZFIN);
+            if (CollectionUtils.isNotEmpty(locations)) {
+                // if we have location(s) for targeted gene, just take the first one... i guess
+                targetedGeneLocations.add(locations.get(0));
+            }
+        }
+
+        // get gbrowse genomic locations of str itself
+        List<MarkerGenomeLocation> strLocations = linkageRepository.getGenomeLocation(sequenceTargetingReagent, GenomeLocation.Source.ZFIN);
+
+        // for talens there should be two location that need to be combined into one. it might be better to do this upstream
+        // in the GFF3 track generation (e.g. with parent-child relationships), but this works for now.
+        if (CollectionUtils.isNotEmpty(strLocations) && sequenceTargetingReagent.getMarkerType().getType() == Marker.Type.TALEN) {
+            MarkerGenomeLocation combinedLocation = null;
+            for (MarkerGenomeLocation location : strLocations) {
+                if (combinedLocation == null) {
+                    combinedLocation = location;
+                } else {
+                    combinedLocation.setStart(Math.min(combinedLocation.getStart(), location.getStart()));
+                    combinedLocation.setEnd(Math.max(combinedLocation.getEnd(), location.getEnd()));
+                }
+            }
+            strLocations = Arrays.asList(combinedLocation);
+        }
+
+        if (targetedGeneLocations.size() == 1 && strLocations.size() == 1 &&
+                targetedGeneLocations.get(0).getChromosome().equals(strLocations.get(0).getChromosome())) {
+            // one STR location + one targeted location on the same chromosome: show the STR in the context of the gene
+
+            // str is not necessarily contained in the gene
+            MarkerGenomeLocation mergedLocation = targetedGeneLocations.get(0);
+            mergedLocation.setStart(Math.min(mergedLocation.getStart(), strLocations.get(0).getStart()));
+            mergedLocation.setEnd(Math.max(mergedLocation.getEnd(), strLocations.get(0).getEnd()));
+
+            sequenceTargetingReagentBean.addGBrowseImage(GBrowseImage.builder()
+                            .landmark(mergedLocation)
+                            .withPadding(0.1)
+                            .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
+                            .highlight(sequenceTargetingReagent)
+                            .build()
+            );
+        } else {
+            // otherwise: just show each STR location with 10kbp padding
+            for (MarkerGenomeLocation location : strLocations) {
                 sequenceTargetingReagentBean.addGBrowseImage(GBrowseImage.builder()
-                                .landmark(markerRepository.getMarkerByID(knockdownRelationship.getZdbId()))
-                                .withPadding(0.1)
+                                .landmark(location)
+                                .withPadding(10000)
                                 .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
                                 .highlight(sequenceTargetingReagent)
                                 .build()
                 );
             }
         }
+
     }
 }
 

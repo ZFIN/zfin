@@ -799,6 +799,7 @@ label.curation-form-label { font-weight: bold; }
     border: 1px solid black;
     background: white;
     display: inline-block;
+    vertical-align: top;
 }
 
 .gbrowse-image img {

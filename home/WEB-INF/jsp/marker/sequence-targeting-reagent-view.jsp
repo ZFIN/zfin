@@ -29,7 +29,7 @@
 
 <div id="gbrowse-images" class="summary">
     <div class="summaryTitle">
-        TARGET LOCATIONS
+        TARGET LOCATION${fn:length(formBean.gbrowseImages) == 1 ? "" : "S"}
         <small><a class="popup-link info-popup-link" href="/action/marker/note/sequence-targeting-reagent-gbrowse"></a></small>
     </div>
 

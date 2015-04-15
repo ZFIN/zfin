@@ -232,14 +232,19 @@ public class MappingDetailController {
         } else {
             trackingGene = GBrowseService.getGbrowseTrackingGene(marker);
         }
-        model.addAttribute("gbrowseImage", GBrowseImage.builder()
-                        .landmark(marker)
-                        .withCenteredRange(500000)
-                        .highlight(trackingGene)
-                        .highlightColor("pink")
-                        .withDefaultTracks()
-                        .build()
-        );
+        List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(marker);
+        for (MarkerGenomeLocation genomeLocation : genomeLocations) {
+            if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
+                model.addAttribute("gbrowseImage", GBrowseImage.builder()
+                                .landmark(genomeLocation)
+                                .withCenteredRange(500000)
+                                .highlight(trackingGene)
+                                .highlightColor("pink")
+                                .tracks(GBrowseService.getGBrowseTracks(marker))
+                                .build()
+                );
+            }
+        }
 
         if (isFeature) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.MAPPING.getTitleString() + feature.getAbbreviation());
@@ -247,9 +252,8 @@ public class MappingDetailController {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.MAPPING.getTitleString() + marker.getAbbreviation());
         }
 
-        List<MarkerGenomeLocation> genomeLocation = getLinkageRepository().getGenomeLocation(marker);
-        Collections.sort(genomeLocation);
-        model.addAttribute("markerGenomeLocations", genomeLocation);
+        Collections.sort(genomeLocations);
+        model.addAttribute("markerGenomeLocations", genomeLocations);
         if (isFeature) {
             model.addAttribute("featureGenomeLocations", getLinkageRepository().getGenomeLocation(feature));
         }

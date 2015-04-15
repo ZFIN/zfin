@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.feature.Feature;
@@ -228,6 +229,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
         Criteria query = HibernateUtil.currentSession().createCriteria(MarkerGenomeLocation.class);
         query.add(Restrictions.eq("marker", marker));
         query.add(Restrictions.in("source", sources));
+        query.addOrder(Order.asc("chromosome"));
         return query.list();
     }
 
