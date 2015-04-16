@@ -162,6 +162,9 @@
         <c:if test="${expressionCount > 0 || phenotypeCount > 0}">
             <li><a href="/action/figure/all-figures/${publication.zdbID}">${expressionAndPhenotypeLabel}</a></li>
         </c:if>
+        <c:if test="${mappingDetailsCount > 0}">
+            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mapped">Mapping Details</a> (${mappingDetailsCount})</li>
+        </c:if>
         <c:if test="${phenotypeAlleleCount > 0}">
             <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Mutants / Transgenic Lines</a> (${phenotypeAlleleCount})
         </c:if>
@@ -174,10 +177,11 @@
 
 </zfin2:subsection>
 
-<zfin2:subsection title="ERRATA and NOTES" test="${not empty publication.errataAndNotes}" showNoData="true">
-    ${publication.errataAndNotes}
-</zfin2:subsection>
-
+<c:if test="${not empty publication.errataAndNotes}">
+    <zfin2:subsection title="ERRATA and NOTES">
+        ${publication.errataAndNotes}
+    </zfin2:subsection>
+</c:if>
 
 
 <script>

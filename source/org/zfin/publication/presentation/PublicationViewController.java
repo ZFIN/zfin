@@ -67,7 +67,7 @@ public class PublicationViewController {
         Long phenotypeCount = publicationRepository.getPhenotypeCount(publication);
         Long phenotypeAlleleCount = publicationRepository.getPhenotypeAlleleCount(publication);
         Long orthologyCount = publicationRepository.getOrthologyCount(publication);
-
+        Long mappingDetailsCount = publicationRepository.getMappingDetailsCount(publication);
 
         model.addAttribute("markerCount", markerCount);
         model.addAttribute("morpholinoCount", morpholinoCount);
@@ -80,6 +80,7 @@ public class PublicationViewController {
         model.addAttribute("phenotypeCount", phenotypeCount);
         model.addAttribute("phenotypeAlleleCount", phenotypeAlleleCount);
         model.addAttribute("orthologyCount", orthologyCount);
+        model.addAttribute("mappingDetailsCount", mappingDetailsCount);
 
         model.addAttribute("expressionAndPhenotypeLabel", PublicationService.getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount));
 

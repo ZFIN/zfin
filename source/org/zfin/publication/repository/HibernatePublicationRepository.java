@@ -1859,6 +1859,24 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return getCount(sql, publication.getZdbID());
     }
 
+    public Long getMappingDetailsCount(Publication publication) {
+        String sql="select (\n" +
+                "select count(distinct lms_member_1_zdb_id)\n" +
+                "    \t  from linkage, linkage_membership_search\n" +
+                "    \t where lnkg_source_zdb_id = :zdbID\n" +
+                "    \t and lms_lnkg_zdb_id = lnkg_zdb_id    \n" +
+                ") +\n" +
+                "(select  count(distinct lsingle_member_zdb_id)\n" +
+                "    \t  from linkage, linkage_single\n" +
+                "    \t where lnkg_source_zdb_id = :zdbID\n" +
+                "    \t and lsingle_lnkg_zdb_id = lnkg_zdb_id\n" +
+                "    \t and not exists (select 'x' from linkage_membership_search \n" +
+                "    \t where lms_lnkg_zdb_id = lnkg_zdb_id)\n" +
+                ") from systables where tabid = 1\n" +
+                "\t  ;";
+        return getCount(sql, publication.getZdbID());
+    }
+
     public Boolean canDeletePublication(Publication publication) {
 
         String sql = "select count(recattrib_source_zdb_id) \n" +

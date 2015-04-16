@@ -507,5 +507,6 @@ public interface PublicationRepository extends PaginationParameter {
     public Long getPhenotypeCount(Publication publication);
     public Long getPhenotypeAlleleCount(Publication publication);
     public Long getOrthologyCount(Publication publication);
+    public Long getMappingDetailsCount(Publication publication);
     public Boolean canDeletePublication(Publication publication);
 }
