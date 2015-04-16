@@ -451,7 +451,10 @@ public class ResultService {
         if (xpatex != null) {
             //Show the gene name if there is one, and the probe isn't chimeric (if there is one)
             if (xpatex.getGene() != null) {
-                if (xpatex.getProbe() == null || (xpatex.getProbe() != null && xpatex.getProbe().isChimeric())) {
+
+                if (xpatex.getProbe() == null) {
+                    result.addAttribute(GENE, MarkerPresentation.getAbbreviation(xpatex.getGene()));
+                } else if (xpatex.getProbe().isChimeric() == false) {
                     result.addAttribute(GENE, MarkerPresentation.getAbbreviation(xpatex.getGene()));
                 }
             }
