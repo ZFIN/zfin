@@ -47,12 +47,9 @@ public class GBrowseImage {
                 url.addNamevaluePair("type", StringUtils.join(tracks, " "));
             }
 
-            if (StringUtils.isNotBlank(highlightFeature)) {
-                String urlHighlight = highlightFeature;
-                if (StringUtils.isNotBlank(highlightColor)) {
-                    urlHighlight += "@" + highlightColor;
-                }
-                url.addNamevaluePair("h_feat", urlHighlight.toLowerCase());
+            String highlight = getHighlightString();
+            if (StringUtils.isNotBlank(highlight)) {
+                url.addNamevaluePair("h_feat", highlight);
             }
 
             url.addNamevaluePair("grid", grid ? "1" : "0");
@@ -70,6 +67,11 @@ public class GBrowseImage {
                 url.addNamevaluePair("name", landmark);
             }
 
+            String highlight = getHighlightString();
+            if (StringUtils.isNotBlank(highlight)) {
+                url.addNamevaluePair("h_feat", highlight);
+            }
+
             linkUrl = "/" + url.getURL();
         }
         return linkUrl;
@@ -77,6 +79,18 @@ public class GBrowseImage {
 
     public String getLandmark() {
         return landmark;
+    }
+
+    private String getHighlightString() {
+        String urlHighlight = "";
+        if (StringUtils.isNotBlank(highlightFeature)) {
+            urlHighlight = highlightFeature;
+            if (StringUtils.isNotBlank(highlightColor)) {
+                urlHighlight += "@" + highlightColor;
+            }
+        }
+        // gbrowse wants the highlight name to be lowercase for some reason!
+        return urlHighlight.toLowerCase();
     }
 
     @Override
