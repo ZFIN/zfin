@@ -5,7 +5,7 @@ import org.zfin.sequence.ForeignDB;
 /**
  * Term definition reference.
  */
-public class TermExternalReference {
+public class TermExternalReference implements Comparable {
 
     private long ID;
     private Term term;
@@ -42,5 +42,8 @@ public class TermExternalReference {
 
     public void setTerm(Term term) {
         this.term = term;
+    }
+    public int compareTo(Object otherReference) {
+        return reference.compareTo(((TermExternalReference) otherReference).getReference());
     }
 }

@@ -67,8 +67,9 @@
             <th>References:</th>
             <td id="term-xrefs">
                 <c:forEach var="xrefs" varStatus="loop" items="${formBean.term.externalReferences}">
-                    <span class="xref-value" ><a href="${xrefs.foreignDB.dbUrlPrefix}${xrefs.reference}">${xrefs.foreignDB.dbName}:${xrefs.reference}</a><c:if test="${!loop.last}"><span
-                            class="xref-separator">,</span></c:if></span>
+                   <%-- <span class="xref-value" ><a href="${xrefs.foreignDB.dbUrlPrefix}${xrefs.reference}">${xrefs.foreignDB.dbName}:${xrefs.reference}</a><c:if test="${!loop.last}"><span
+                            class="xref-separator">,</span></c:if></span>--%>
+                     ${xrefs.reference}<c:if test="${!loop.last}">,</c:if>
                 </c:forEach>
             </td>
         </tr>

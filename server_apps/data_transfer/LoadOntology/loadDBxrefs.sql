@@ -13,8 +13,7 @@ with no log;
 load from term_xref.unl
   insert into tmp_dbxrefs;
 
-unload to test.unl
-        select * from tmp_dbxrefs;
+
 
 create temp table tmp_dbxrefs_with_ids (
 tmp_term_zdb_id varchar(30),
@@ -49,7 +48,7 @@ select tx_term_zdb_id,tx_xref_id,tx_fdb_db_id from term_xref
   select 'x' from tmp_dbxrefs_with_ids
   where tx_term_zdb_id = tmp_term_zdb_id AND
         tx_fdb_db_id = tmp_xref_db_id AND
-        tx_xref_id = tmp_xref_accession
+        tx_xref_id = tmp_xref_db||":"||tmp_xref_accession
   );
 -- delete those records from the base table that are not found in the temp table
  delete from term_xref
@@ -57,30 +56,39 @@ select tx_term_zdb_id,tx_xref_id,tx_fdb_db_id from term_xref
   select 'x' from tmp_dbxrefs_with_ids
   where tx_term_zdb_id = tmp_term_zdb_id AND
         tx_fdb_db_id = tmp_xref_db_id AND
-        tx_xref_id = tmp_xref_accession
-  ); 
+        tx_xref_id = tmp_xref_db||":"||tmp_xref_accession
+  )
+  AND
+  exists (
+   select 'x' from term, ontology, tmp_header
+   	where ont_ontology_name = default_namespace AND
+          ont_pk_Id = term_ontology_id AND
+          term_zdb_id = tx_term_zdb_id
+  );
 
 
-
+-- delete those records from the temp table that are already in base table
 delete from tmp_dbxrefs_with_ids
 where exists (
   select 'x' from term_xref
   where tx_term_zdb_id = tmp_term_zdb_id AND
-        tx_xref_id = tmp_xref_accession AND
+        tx_xref_id = tmp_xref_db||":"||tmp_xref_accession AND
         tx_fdb_db_id = tmp_xref_db_id
-);
+)
+
+;
 
 --for statistics load the new xrefs that will be added
 
 unload to new_xrefs
-select tmp_term_zdb_id,tmp_xref_accession,fdb_db_name
+select tmp_term_zdb_id,tmp_xref_accession
 from tmp_dbxrefs_with_ids,foreign_db
 where fdb_db_pk_id=tmp_xref_db_id;
 
 
 
 insert into term_xref (tx_term_zdb_id,tx_xref_id,tx_fdb_db_id)
-select tmp_term_zdb_id,tmp_xref_accession,tmp_xref_db_id from tmp_dbxrefs_with_ids;
+select tmp_term_zdb_id,tmp_xref_db||":"||tmp_xref_accession,tmp_xref_db_id from tmp_dbxrefs_with_ids;
 
 
 
