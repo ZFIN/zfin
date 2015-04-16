@@ -5,7 +5,7 @@ create procedure p_check_mrkr_abbrev (vMrkrName   like marker.mrkr_name,
 
   define vOK boolean ;
 
-  if vMrkrAbbrev in (select cv_term_name from foreign_species) then
+  if vMrkrAbbrev in (select cv_term_name from controlled_vocabulary) then
    raise exception -746, 0, 
         'FAIL!! abbreviation can not be a foreign species designation ' ;
   end if;
