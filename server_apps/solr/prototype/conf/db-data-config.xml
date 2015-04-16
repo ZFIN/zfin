@@ -2269,24 +2269,33 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                         pub_date as date,
                         fig_zdb_id as xref,
                         pub_mini_ref as publication,
-                        case when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
+                        case
+                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xedg_probe_feature_zdb_id = clone_mrkr_zdb_id)
+                             then (select mrkr_abbrev || ' expression in ' || geno_display_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_probe_feature_zdb_id)
+                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
                              then (select '&lt;i&gt;' || mrkr_abbrev || '&lt;/i&gt; expression in ' || geno_display_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
                              when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] != 'ZDB-GENE'
                              then (select mrkr_abbrev || ' expression in ' || geno_display_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
                              else (select mrkr_abbrev || ' expression in ' || geno_display_name || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_atb_zdb_id)
-                             end as name,
-                         case when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
+                         end as name,
+                         case
+                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xedg_probe_feature_zdb_id = clone_mrkr_zdb_id)
+                             then (select mrkr_abbrev || ' expression in ' || geno_display_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_probe_feature_zdb_id)
+                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
                              then (select '&lt;i&gt;' || mrkr_abbrev || '&lt;/i&gt; expression in ' || geno_display_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
                              when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] != 'ZDB-GENE'
                              then (select mrkr_abbrev || ' expression in ' || geno_display_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
                              else (select mrkr_abbrev || ' expression in ' || geno_display_name || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_atb_zdb_id)
-                             end as full_name,
-                         case when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
+                         end as full_name,
+                         case
+                             when exists (select 'x' from clone where clone_problem_type = 'Chimeric' and xedg_probe_feature_zdb_id = clone_mrkr_zdb_id)
+                             then (select mrkr_abbrev_order || ' expression in ' || geno_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_probe_feature_zdb_id)
+                             when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
                              then (select mrkr_abbrev_order || ' expression in ' || geno_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
                              when xedg_gene_zdb_id is not null and xedg_gene_zdb_id[1,8] != 'ZDB-GENE'
                              then (select mrkr_abbrev_order || ' expression in ' || geno_name_order || ' from ' || pub_mini_ref || ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_gene_zdb_id)
                              else (select mrkr_abbrev_order || ' expression in ' || geno_name_order || ' from ' || pub_mini_ref|| ' ' || nvl(fig_label,'') as full_name from marker where mrkr_zdb_id = xedg_atb_zdb_id)
-                             end as name_sort
+                         end as name_sort
                         from xpat_exp_details_generated
                              join genotype_experiment on xedg_genox_zdb_id = genox_zdb_id
                              join genotype on genox_geno_zdb_id = geno_zdb_id
@@ -2311,7 +2320,12 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             'xpatex-' || xedg_pk_id as xedg_pk_id,
                                              dalias_alias as expressed_gene_previous_name
                                       from xpat_exp_details_generated, data_alias
-                                      where xedg_gene_zdb_id = dalias_data_zdb_id;"
+                                      where xedg_gene_zdb_id = dalias_data_zdb_id
+                                          and not exists (
+                                           select 'x'
+                                           from clone
+                                           where xedg_probe_feature_zdb_id = clone_mrkr_zdb_id
+                                           and clone_problem_type = 'Chimeric' );"
                    where="xedg_pk_id=expression.id"
                    processor="CachedSqlEntityProcessor"/>
 
@@ -2334,6 +2348,11 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             from xpat_exp_details_generated
                                  join marker on xedg_gene_zdb_id = mrkr_zdb_id
                             where xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
+                              and not exists (
+                                           select 'x'
+                                           from clone
+                                           where xedg_probe_feature_zdb_id = clone_mrkr_zdb_id
+                                           and clone_problem_type = 'Chimeric' )
                     ;"
                    where="xedg_pk_id=expression.id"
                    processor="CachedSqlEntityProcessor"/>
@@ -2345,6 +2364,11 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                             from xpat_exp_details_generated
                                  join data_alias on xedg_gene_zdb_id = dalias_data_zdb_id
                             where xedg_gene_zdb_id[1,8] = 'ZDB-GENE'
+                              and not exists (
+                                           select 'x'
+                                           from clone
+                                           where xedg_probe_feature_zdb_id = clone_mrkr_zdb_id
+                                           and clone_problem_type = 'Chimeric' )
                             ;"
                    where="xedg_pk_id=expression.id"
                    processor="CachedSqlEntityProcessor"/>

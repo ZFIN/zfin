@@ -444,14 +444,17 @@ public class ResultService {
         //don't show for real, but useful to turn this on to get values for the test
         //result.setDisplayedID(result.getId());
 
-        //ExpressionDetailsGenerated xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment2(id);
-//        ExpressionDetailsGenerated xpatex = RepositoryFactory.getExpressionRepository().getExpressionDetailsGenerated(result.getXpatZdbId(), result.getFigZdbId());
+
         ExpressionExperiment xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment(result.getXpatZdbId());
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getFigZdbId());
 
         if (xpatex != null) {
-            if (xpatex.getGene() != null)
-                result.addAttribute(GENE, MarkerPresentation.getAbbreviation(xpatex.getGene()));
+            //Show the gene name if there is one, and the probe isn't chimeric (if there is one)
+            if (xpatex.getGene() != null) {
+                if (xpatex.getProbe() == null || (xpatex.getProbe() != null && xpatex.getProbe().isChimeric())) {
+                    result.addAttribute(GENE, MarkerPresentation.getAbbreviation(xpatex.getGene()));
+                }
+            }
             if (xpatex.getAntibody() != null)
                 result.addAttribute(ANTIBODY, MarkerPresentation.getName(xpatex.getAntibody()));
             if (xpatex.getProbe() != null)
@@ -487,37 +490,32 @@ public class ResultService {
                 results.add(sb.toString());
             }
             result.addAttribute(EXPRESSION, withBreaks(results));
-/*
-            result.addAttribute(PUBLICATION, "<a href=\"/" + xpatex.getFigure().getPublication().getZdbID()
-                    + "\">" + xpatex.getFigure().getPublication().getTitle() + "</a>");
-            if (StringUtils.isNotEmpty(xpatex.getFigure().getCaption()))
-                result.addAttribute(CAPTION, collapsible(xpatex.getFigure().getCaption()));
-*/
 
 
-            //if there are interesting conditions, make a more complex title
+            //build a more complex title than the one used in the query
 
-                    StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-                    if (xpatex.getGene() != null)
-                        sb.append(MarkerPresentation.getAbbreviation(xpatex.getGene()));
-                    else if (xpatex.getAntibody() != null)
-                        sb.append(MarkerPresentation.getName(xpatex.getAntibody()));
+            if (xpatex.getProbe() != null && xpatex.getProbe().getProblem() == Clone.ProblemType.CHIMERIC) {
+                sb.append(MarkerPresentation.getAbbreviation(xpatex.getProbe()));
+            } else if (xpatex.getGene() != null) {
+                sb.append(MarkerPresentation.getAbbreviation(xpatex.getGene()));
+            } else if (xpatex.getAntibody() != null) {
+                sb.append(MarkerPresentation.getName(xpatex.getAntibody()));
+            }
+            sb.append(" expression in ");
 
-                    sb.append(" expression in ");
+            sb.append(GenotypePresentation.getName(xpatex.getGenotypeExperiment().getGenotype()));
+            sb.append(" + ");
+            sb.append(ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(),true));
 
-                    sb.append(GenotypePresentation.getName(xpatex.getGenotypeExperiment().getGenotype()));
-                    sb.append(" + ");
-                    sb.append(ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(),true));
-            //sb.append(conditions);
+            sb.append(" from ");
 
-                    sb.append(" from ");
+            sb.append(figure.getPublication().getShortAuthorList());
+            sb.append(" ");
+            sb.append(figure.getLabel());
 
-                    sb.append(figure.getPublication().getShortAuthorList());
-                    sb.append(" ");
-                    sb.append(figure.getLabel());
-
-                    result.setName(sb.toString());
+            result.setName(sb.toString());
 
         }
 

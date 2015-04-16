@@ -67,7 +67,6 @@ class QuerySpec extends ZfinIntegrationSpec {
         response.getResults()
         response.getResults().numFound > 0
 
-        //todo: use category enum
         where:
         category                       | queryString                                      | fogbugzCase
         Category.ANTIBODY.name         | "actin ab1-act"                                  | "11329"
@@ -112,7 +111,33 @@ class QuerySpec extends ZfinIntegrationSpec {
 
     }
 
+
     @Unroll
+    def "a query for '#queryString' in '#category' should find NO records according to case #fogbugzCase"() {
+
+        when: "Solr is queried"
+        query.setQuery(queryManipulationService.processQueryString(queryString))
+        query.addFilterQuery("category:\"" + category + "\"")
+        QueryResponse response = new QueryResponse()
+
+        try {
+            response = server.query(query)
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        then: "Query should succeed, the results should be null/empty"
+        response
+        !response.getResults()
+
+        where:
+        category                  | queryString                          | fogbugzCase
+        Category.EXPRESSIONS.name | "MGC:56505 zebrafish_gene:[* TO *]"  | "12346"
+        Category.EXPRESSIONS.name | "MGC:56505 gcdha"                    | "12346"
+
+    }
+
+        @Unroll
     def "a query in category #category for '#queryA' and a query for '#queryB' should return the same results"() {
         when: "Solr is queried for both queries"
 
@@ -140,7 +165,6 @@ class QuerySpec extends ZfinIntegrationSpec {
         secondResponse.getResults()
         response.getResults().numFound == secondResponse.getResults().numFound
 
-        //todo: use category enum
     	where:
         category                    | queryA                         |  queryB
         Category.PHENOTYPE.name     | "small eyes"                   |  "small eye"              //Case 11266

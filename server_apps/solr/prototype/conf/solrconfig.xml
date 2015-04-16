@@ -229,6 +229,7 @@
 
          <!-- initial settings for special case facets -->
          <str name="f.category.facet.sort">index</str>
+         <str name="f.category.facet.limit">50</str>
          <str name="f.curator.facet.limit">50</str>
          <str name="f.stage.facet.limit">50</str>
          <str name="f.type.facet.limit">50</str>
