@@ -2508,7 +2508,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "and mrkr_type in ('GENE','EFG','REGION','GENEP','TSCRIPT') " +
                 "and mrkr_zdb_id=ra.recattrib_data_zdb_id and ra.recattrib_source_type = :standard and ra.recattrib_source_zdb_id = :pubZdbID " +
                 "UNION " +
-                "select cv_term_name as abbrev,cq_name_definition as type from construct_qualifier " +
+                "select cv_term_name as abbrev,cv_name_definition as type from controlled_vocabulary " +
                 "where lower(cv_term_name) like :lookupString ";
 
 
