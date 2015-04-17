@@ -66,9 +66,7 @@
 
 <div id="displayName">
 </div>
-    <input name="cassette1Promoter" type="hidden"/>
-    <input name="cassette1Coding" type="hidden"/>
-    <input name="constructWrapperString" type="hidden"/>
+
 <%--Area for cassettes--%>
     <div id="cassette1" class="clonable">
     <fieldset>
@@ -102,6 +100,7 @@
 
             <form:errors path="constructDisplayName"  cssClass="error"/>
             <form:hidden name="constructStoredName" path="constructStoredName"/>
+
             <form:hidden name="constructName" path="constructName"/>
     <input type="button" value="DONE" id="submitConstruct" onClick=validateAndSubmit(); />
     &nbsp;&nbsp;   <input type="button" value="CANCEL" id="resetConstruct" onClick=resetFields(); />
