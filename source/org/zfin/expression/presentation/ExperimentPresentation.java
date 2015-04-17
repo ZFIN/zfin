@@ -30,14 +30,14 @@ public class ExperimentPresentation extends EntityPresentation {
 
         StringBuilder sb = new StringBuilder(50);
         int i = 0;
-        boolean hasMoDefined = false;
+        boolean sequenceTargetingReagentFound = false;
         for (ExperimentCondition experimentCondition : conditions) {
             if (i > 0)
                 sb.append(", ");
             if (experimentCondition.isSequenceTargetingReagentCondition() && suppressMoDetails) {
-                if (!hasMoDefined) {
+                if (!sequenceTargetingReagentFound) {
                     sb.append("Sequence Targeting Reagent");
-                    hasMoDefined = true;
+                    sequenceTargetingReagentFound = true;
                 } else { // remove comma and white space.
                     if (i > 0)
                         sb.delete(sb.length() - 2, sb.length() - 1);

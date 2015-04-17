@@ -277,7 +277,7 @@ public interface InfrastructureRepository {
      * @return DataAliasGroup entity
      */
     DataAliasGroup getDataAliasGroupByName(String name);
-   ControlledVocab getCVZdbIDByTerm(String cvTermName);
+    ControlledVocab getCVZdbIDByTerm(String cvTermName);
 
     /**
      * Retrieve Root of given ontology.
@@ -304,8 +304,6 @@ public interface InfrastructureRepository {
     int getFirstMarkerRelationshipAttributions(String zdbID, String pubZdbID);
 
     int getSecondMarkerRelationshipAttributions(String zdbID, String pubZdbID);
-
-    int getSequenceTargetingReagentRelatedMarkerAttributions(String zdbID, String pubZdbID);
 
     int getExpressionExperimentMarkerAttributions(Marker marker, String pubZdbID);
 

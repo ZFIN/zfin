@@ -281,11 +281,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getSequenceTargetingReagentRelatedMarkerAttributions() {
-        infrastructureRepository.getSequenceTargetingReagentRelatedMarkerAttributions("ZDB-GENE-990415-200", "ZDB-PUB-090324-13");
-    }
-
-    @Test
     public void getExpressionExperimentMarkerAttributionsForGene() {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-GENE-990415-200");
         infrastructureRepository.getExpressionExperimentMarkerAttributions(m, "ZDB-PUB-090324-13");
