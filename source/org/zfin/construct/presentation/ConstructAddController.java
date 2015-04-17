@@ -2,10 +2,13 @@ package org.zfin.construct.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.database.InformixUtil;
 import org.zfin.feature.Feature;
@@ -69,35 +72,34 @@ public class ConstructAddController {
     public
     @ResponseBody
         String addConstruct(HttpServletRequest request, HttpServletResponse response) throws Exception {
-  // ConstructDTO addConstruct(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        String validationMessage;
         String constructName = request.getParameter("constructName");
-
         String pubZdbID = request.getParameter("constructPublicationZdbID");
         String constructAlias = request.getParameter("constructAlias");
         String constructComments = request.getParameter("constructComments");
         String constructCuratorNote = request.getParameter("constructCuratorNote");
         String constructStoredName = request.getParameter("constructStoredName");
         String constructType = request.getParameter("chosenType");
+        String constructPrefix = request.getParameter("prefix");
+
+
 
 
         List<Marker> markerList = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(constructName);
         if (markerList.size() > 0) {
-           return "\"" + constructName + "\" is not a unique name";
-        } else if (constructName.contains(".-")){
-        return "\"" + constructName + "\" contains a dot followed by a hyphen, Please check";
+            return "\"" + constructName + "\" is not a unique name";
+        } else if (constructName.contains(".-")) {
+            return "\"" + constructName + "\" contains a dot followed by a hyphen, Please check";
 
-        }
+        } else if (constructName.contains("()")) {
+            return "\"" + "Construct Name" + "\" cannot be blank";
 
-        else{
+        } else {
 
-//                ConstructNameGroup cng = new ConstructNameGroup();
             ConstructCuration newConstruct = new ConstructCuration();
             Person currentUser = ProfileService.getCurrentSecurityUser();
             HibernateUtil.createTransaction();
             newConstruct.setName(constructName);
-//                newConstruct.setAbbreviation(constructName);
+            //TODO use chosenType or any other way to set Construct Type
             if (constructName.startsWith("Tg")) {
 
 
@@ -123,52 +125,60 @@ public class ConstructAddController {
             newConstruct.setModDate(new Date());
             currentSession().save(newConstruct);
             currentSession().flush();
-             String constructZdbID = newConstruct.getZdbID();
-//                newConstruct.setZdbID(cng.getZdbID());
-//                newConstruct.setConstructGeneratedName(constructName);
-//                newConstruct.setName(constructName);
-//                newConstruct.setNameOrder(constructName);
-//                newConstruct.setAbbreviation(constructName);
-//                newConstruct.setAbbreviationOrder(constructName);
 
-//                newConstruct.setOwner(currentUser);
+            String constructZdbID = newConstruct.getZdbID();
+            Publication constructPub = pr.getPublication(pubZdbID);
+
             if (!StringUtils.isEmpty(constructComments)) {
                 newConstruct.setPublicComments(constructComments);
             }
 
+            //storing Construct Components
 
-            ConstructComponentService.setConstructComponents(constructStoredName, pubZdbID, constructZdbID);
+            String constructCassettes[]=ConstructComponentService.getCassettes(constructStoredName);
+                int numCassettes = constructCassettes.length;
 
-           InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
-            Marker latestConstruct = mr.getMarkerByID(constructZdbID);
-            String constructLink = MarkerPresentation.getLink(latestConstruct);
-//             ir.insertRecordAttribution(cng.getZdbID(), pubZdbID);
-            Publication constructPub = pr.getPublication(pubZdbID);
+                ConstructComponentService.setConstructWrapperComponents(constructType, constructPrefix, constructZdbID, 1);
 
-            if (!StringUtils.isEmpty(constructAlias)) {
+                for (int i = 0; i < numCassettes; i++) {
+                    ConstructComponentService.getPromotersAndCoding(constructCassettes[i], i+1, constructZdbID, pubZdbID);
+                }
 
-                mr.addMarkerAlias(latestConstruct, constructAlias, constructPub);
+               /* String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
+                Query query = currentSession().createSQLQuery(sqlCount);
+                query.setString("zdbID", constructZdbID);
+                Session session = HibernateUtil.currentSession();
+                int lastComp = (Integer) query.uniqueResult() + 1;*/
+            int lastComp=ConstructComponentService.getComponentCount(constructZdbID);
+                mr.addConstructComponent(numCassettes, lastComp, constructZdbID, ")", ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT, "construct wrapper component", ir.getCVZdbIDByTerm(")").getZdbID());
+
+                //moving construct record to marker table
+                InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
+
+                Marker latestConstruct = mr.getMarkerByID(constructZdbID);
+                String constructLink = MarkerPresentation.getLink(latestConstruct);
+
+
+                if (!StringUtils.isEmpty(constructAlias)) {
+
+                    mr.addMarkerAlias(latestConstruct, constructAlias, constructPub);
+                }
+
+                if (!StringUtils.isEmpty(constructCuratorNote)) {
+                    mr.addMarkerDataNote(latestConstruct, constructCuratorNote);
+                }
+
+
+                HibernateUtil.flushAndCommitCurrentSession();
+
+
+                
+                return "\"" + constructLink + "\" successfully added ";
+
+
             }
-
-            if (!StringUtils.isEmpty(constructCuratorNote)) {
-                mr.addMarkerDataNote(latestConstruct, constructCuratorNote);
-            }
-
-
-
-            HibernateUtil.flushAndCommitCurrentSession();
-
-
-         // return "\"" + constructName + "\" successfully added";
-           return "\"" + constructLink + "\" successfully added " ;
-
-
 
         }
-        /*ConstructDTO conDTO = getConstruct(constructName);
-        return conDTO;*/
-      // return "\"" + constructLink + "\" successfully added";
-    }
 
 
 

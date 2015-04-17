@@ -244,7 +244,7 @@ public class ConstructEditController {
             //marker.setAbbreviation(constructName);
 
             currentSession().save(construct);
-            ConstructComponentService.setConstructComponents(constructStoredName, pubZdbID, constructID);
+            //ConstructComponentService.setConstructComponents(constructStoredName, pubZdbID, constructID);
             HibernateUtil.flushAndCommitCurrentSession();
             InformixUtil.runInformixProcedure("regen_construct_marker", constructID + "");
 

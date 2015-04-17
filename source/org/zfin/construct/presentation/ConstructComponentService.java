@@ -2,8 +2,11 @@ package org.zfin.construct.presentation;
 
 import com.zerog.common.java.lang.StringUtil;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.zfin.construct.ConstructComponent;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -16,22 +19,28 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.zfin.framework.HibernateUtil.currentSession;
+
 @Service
 public class ConstructComponentService {
     private static ConstructRepository cr = RepositoryFactory.getConstructRepository();
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+    private static String openP="(";
+
+    private static String cassetteSeparator="Cassette";
+    private static String storedComponentSeparator="#";
+    private static String componentSeparator=":";
 
 
-
-    private static String[] getNumCassettes(String constructStoredName) {
+    public static String[] getCassettes(String constructStoredName) {
         if (constructStoredName == null)
             return null;
 
 
         String[] array1;
-        array1 = constructStoredName.split("%");
+        array1 = constructStoredName.split(cassetteSeparator);
         for (int i = 0; i < array1.length; i++) {
             array1[i] = array1[i].trim();
 
@@ -40,158 +49,115 @@ public class ConstructComponentService {
         return array1;
     }
 
+//making assumption that "(" is be construct wrapper
 
-    private  static String[] getComponentsFromName(String constructStoredName) {
-        if (constructStoredName == null)
-            return null;
+    //TODO convert category to Enum
 
-
-        String[] array2;
-        array2 = constructStoredName.split("#");
-        /*String[] array1;
-        array1 = constructStoredName.split("%");*/
-        /*for (int i = 0; i < array1.length; i++) {
-            array1[i] = array1[i].trim();*/
-
-        for (int j = 0; j < array2.length; j++) {
-            if(StringUtils.isNotEmpty(array2[j])) {
-                array2[j] = array2[j].trim();
-            }
+    public  static  void setConstructWrapperComponents(String constructType,String constructPrefix, String constructId,int cassetteNumber) {
+        int numberOfWrapperComponents=3; //count of type, prefix and "("))
+        if (constructPrefix.equals("")){
+            numberOfWrapperComponents=2;
         }
 
-        return array2;
+
+        mr.addConstructComponent(cassetteNumber,1,constructId,constructType,ConstructComponent.Type.TEXT_COMPONENT,"construct wrapper component",null);
+        if (numberOfWrapperComponents==2){
+
+            mr.addConstructComponent(cassetteNumber,2,constructId,openP,ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT,"construct wrapper component",ir.getCVZdbIDByTerm(openP).getZdbID());
+        }
+
+            if (numberOfWrapperComponents==3){
+                mr.addConstructComponent(cassetteNumber,2,constructId,constructPrefix,ConstructComponent.Type.TEXT_COMPONENT,"construct wrapper component",null);
+                mr.addConstructComponent(cassetteNumber,3,constructId,openP,ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT,"construct wrapper component",ir.getCVZdbIDByTerm(openP).getZdbID());
+
+            }
+
+
     }
+    public static void getPromotersAndCoding(String cassetteName,int cassetteNumber,String zdbID,String newPub) {
 
 
-
-    public static void setConstructComponents(String constructStoredName, String newPub, String constructId) {
-
-        int constructLength=constructStoredName.length();
-        String[] cassetteArray = getNumCassettes(constructStoredName);
+        String promString;
+        String codingString;
+        String[] promoterArray;
+        String[] codingArray;
         Set<Marker> promoterMarker = new HashSet<>();
         Set<Marker> codingMarker = new HashSet<>();
 
-        //int lengthOfConstruct = cpt.length;
-        int numCassettes=cassetteArray.length;
 
+        promString=StringUtils.substringBefore(cassetteName,componentSeparator);
+        codingString=StringUtils.substringAfter(cassetteName,componentSeparator);
 
-         int componentOrder=1;
-        for (int k = 0; k < numCassettes; k++) {
-            String[] cassetteComponent= getComponentsFromName(cassetteArray[k]);
-            int lengthOfCassComponent = cassetteComponent.length;
-            for (int i = 0; i < lengthOfCassComponent; i++) {
-                    ConstructComponent ccs = new ConstructComponent();
-                if (k>0) {
-                    if (cassetteComponent[i].startsWith("Cassette")) {
-                        ccs.setComponentCategory("cassette delimiter");
-                        ccs.setType(ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT);
+        promoterArray = promString.split(storedComponentSeparator);
+        codingArray = codingString.split(storedComponentSeparator);
+        for (int i = 0; i < promoterArray.length; i++) {
+            /*String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
+            Query query = currentSession().createSQLQuery(sqlCount);
+            query.setString("zdbID", zdbID);
+            Session session = HibernateUtil.currentSession();
+            int lastComp = (Integer) query.uniqueResult() + 1;*/
+            int lastComp=getComponentCount(zdbID);
+            createComponentRecords(StringUtils.trim(promoterArray[i]),"promoter component", promoterMarker,ConstructComponent.Type.PROMOTER_OF,cassetteNumber,lastComp,newPub,zdbID);
+        }
+        if (codingArray.length!=0) {
+            /*String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
+            Query query = currentSession().createSQLQuery(sqlCount);
+            query.setString("zdbID", zdbID);
+            Session session = HibernateUtil.currentSession();
+            int lastComp = (Integer) query.uniqueResult() + 1;*/
+            int lastComponent=getComponentCount(zdbID);
+            createComponentRecords(componentSeparator, "promoter component", promoterMarker, ConstructComponent.Type.PROMOTER_OF, cassetteNumber, lastComponent, newPub, zdbID);
 
-                        String consctCassette = ",";
-                        ccs.setComponentZdbID(ir.getCVZdbIDByTerm(consctCassette).getZdbID());
-                        ccs.setComponentValue(consctCassette);
-                    }
-                }
-                if (cassetteComponent[i].startsWith("Prefix")) {
-                    ccs.setComponentCategory("prefix component");
-                    ccs.setType(ConstructComponent.Type.TEXT_COMPONENT);
-                    String consctPrefix = StringUtils.substringAfter(cassetteComponent[i], "Prefix");
-                    ccs.setComponentValue(consctPrefix);
-                }
-                if (cassetteComponent[i].startsWith("Prom")) {
-                    ccs.setComponentCategory("promoter component");
+        }
+            for (int i = 0; i < codingArray.length; i++) {
+                /*String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
+                Query query = currentSession().createSQLQuery(sqlCount);
+                query.setString("zdbID", zdbID);
+                Session session = HibernateUtil.currentSession();
+                int lastComp = (Integer) query.uniqueResult() + 1;*/
+                int lastComponent=getComponentCount(zdbID);
+                createComponentRecords(StringUtils.trim(codingArray[i]), "coding component", codingMarker, ConstructComponent.Type.CODING_SEQUENCE_OF, cassetteNumber, lastComponent, newPub, zdbID);
+            }
 
-                    ccs.setType(ConstructComponent.Type.PROMOTER_OF);
-                    String consctComponent = StringUtils.substringAfter(cassetteComponent[i], "Prom");
-                    ccs.setComponentValue(consctComponent);
-                    //Marker mrkr = mr.getMarkerByAbbreviation(consctComponent);
-                    Marker mrkr=mr.getMarkerByAbbreviationAndAttribution(consctComponent,newPub);
-                    if (mrkr != null) {
+        if (!promoterMarker.isEmpty() || !codingMarker.isEmpty()) {
+            cr.addConstructRelationships(promoterMarker, codingMarker, cr.getConstructByID(zdbID), newPub);
+        }
 
-                        ccs.setComponentZdbID(mrkr.getZdbID());
-                        promoterMarker.add(mrkr);
+    }
 
+     public static int getComponentCount(String zdbID){
+        String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
+        Query query = currentSession().createSQLQuery(sqlCount);
+        query.setString("zdbID", zdbID);
+        Session session = HibernateUtil.currentSession();
+        int lastComp = (Integer) query.uniqueResult() + 1;
+        return lastComp;
+    }
 
-                    } else {
-                        ControlledVocab cVocab=ir.getCVZdbIDByTerm(consctComponent);
-                        if (cVocab!=null) {
-                            String cvID = ir.getCVZdbIDByTerm(consctComponent).getZdbID();
-                            if (cvID != null) {
-                                ccs.setComponentZdbID(cvID);
-                                ccs.setType(ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT);
-                            } else {
-                                ccs.setType(ConstructComponent.Type.TEXT_COMPONENT);
+    private static void createComponentRecords(String componentString,String componentCategory,Set<Marker> componentArray,ConstructComponent.Type type,int cassetteNumber,int componentOrder,String constructPub,String constructID) {
+        String componentZdbID = null;
+        if (!(componentString.isEmpty())) {
+            Marker mrkr = mr.getMarkerByAbbreviationAndAttribution(componentString, constructPub);
+            if (mrkr != null) {
 
-                            }
-                        }
-                        else{
-                            ccs.setComponentValue(consctComponent);
-                            ccs.setType(ConstructComponent.Type.TEXT_COMPONENT);
-                        }
-                    }
+                componentZdbID = mrkr.getZdbID();
+
+                componentArray.add(mrkr);
+
+            } else {
+                ControlledVocab cVocab = ir.getCVZdbIDByTerm(componentString);
+                if (cVocab != null) {
+                    componentZdbID = cVocab.getZdbID();
+                    type = ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT;
                 } else {
-                    if (cassetteComponent[i].startsWith("Cassette")) {
-                        ccs.setComponentValue(",");
-                    }
-                    else{
-                        if (cassetteComponent[i].startsWith("Prefix")) {
-                            ccs.setComponentValue(StringUtils.substringAfter(cassetteComponent[i], "Prefix"));
-                        }
-                        else{
-                            ccs.setComponentValue(cassetteComponent[i]);
-                        }
-                    }
 
-                }
-                if (cassetteComponent[i].startsWith("Coding")) {
-                    ccs.setType(ConstructComponent.Type.CODING_SEQUENCE_OF);
-                    ccs.setComponentCategory("coding sequence component");
-                    String consctComponent = StringUtils.substringAfter(cassetteComponent[i], "Coding");
-                    ccs.setComponentValue(consctComponent);
-                    Marker mrkr = mr.getMarkerByAbbreviation(consctComponent);
-                    if (mrkr != null) {
-                        ccs.setComponentZdbID(mrkr.getZdbID());
-                        codingMarker.add(mrkr);
-
-                    } else {
-
-                        ControlledVocab cVocab=ir.getCVZdbIDByTerm(consctComponent);
-                        if (cVocab!=null) {
-                            String cvID = ir.getCVZdbIDByTerm(consctComponent).getZdbID();
-                            if (cvID != null) {
-                                ccs.setComponentZdbID(cvID);
-                                ccs.setType(ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT);
-                            } else {
-                                ccs.setType(ConstructComponent.Type.TEXT_COMPONENT);
-                            }
-                        }
-                        else{
-                            ccs.setComponentValue(consctComponent);
-                            ccs.setType(ConstructComponent.Type.TEXT_COMPONENT);
-                        }
-                    }
-
+                    type = ConstructComponent.Type.TEXT_COMPONENT;
                 }
 
-
-                ccs.setComponentCassetteNum(k+1);
-                ccs.setComponentOrder(componentOrder);
-
-                ccs.setConstructZdbID(constructId);
-                //cns.setCnsConstructID(1);
-
-               mr.addConstructComponent(ccs);
-                componentOrder++;
 
             }
+            mr.addConstructComponent(cassetteNumber, componentOrder, constructID, componentString, type, componentCategory, componentZdbID);
         }
-      //  String promString= org.springframework.util.StringUtils.collectionToDelimitedString(promoterMarker. ",");
-        if (!promoterMarker.isEmpty() || !codingMarker.isEmpty()) {
-            cr.addConstructRelationships(promoterMarker, codingMarker, cr.getConstructByID(constructId), newPub);
-        }
-
-        }
-
-
-
+    }
 }
 
