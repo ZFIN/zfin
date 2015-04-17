@@ -33,12 +33,14 @@ public interface MarkerRepository {
     Marker getMarkerByID(String zdbID);
 
     SNP getSNPByID(String zdbID);
+
     ConstructCuration getConstructByID(String zdbID);
 
     Marker getMarkerOrReplacedByID(String zdbID);
 
     Marker getGeneByID(String zdbID);
-    List<Marker> getMarkersForRelation(String mrkrid,String pubId);
+
+    List<Marker> getMarkersForRelation(String mrkrid, String pubId);
 
     Clone getCloneById(String zdbID);
 
@@ -53,7 +55,8 @@ public interface MarkerRepository {
     Marker getMarkerByAbbreviationIgnoreCase(String abbreviation);
 
     Marker getMarkerByAbbreviation(String abbreviation);
-    Marker getMarkerByAbbreviationAndAttribution(String name,  String pubZdbId);
+
+    Marker getMarkerByAbbreviationAndAttribution(String name, String pubZdbId);
 
     SequenceTargetingReagent getSequenceTargetingReagentByAbbreviation(String abbreviation);
 
@@ -66,6 +69,7 @@ public interface MarkerRepository {
     MarkerRelationship getMarkerRelationship(Marker firstMarker,
                                              Marker secondMarker,
                                              MarkerRelationship.Type type);
+
     List<MarkerRelationship> getMarkerRelationshipsByPublication(String publicationZdbID);
 
     List<Marker> getMarkersByAbbreviation(String name);
@@ -118,6 +122,7 @@ public interface MarkerRepository {
      * @param alias  Marker alias object
      */
     void deleteMarkerAlias(Marker marker, MarkerAlias alias);
+
     void removeCuratorNote(Marker marker, DataNote note);
 
     /**
@@ -126,6 +131,7 @@ public interface MarkerRepository {
      * @param mrel
      */
     void deleteMarkerRelationship(MarkerRelationship mrel);
+
     void deleteConstructComponentByID(String constructID);
 
     void addDataAliasAttribution(DataAlias alias, Publication attribution, Marker marker);
@@ -281,7 +287,9 @@ public interface MarkerRepository {
     List<Marker> getMarkersForStandardAttributionAndType(Publication publication, String type);
 
     List<Marker> getMarkersForAttribution(String publicationZdbID);
+
     List<ConstructCuration> getConstructsForAttribution(String publicationZdbID);
+
     List<ConstructComponent> getConstructComponent(String constructZdbID);
 
     /**
@@ -410,28 +418,30 @@ public interface MarkerRepository {
     List<TargetGeneLookupEntry> getConstructComponentsForString(String lookupString, String pubZdbId);
 
 
+    List<ConstructComponentPresentation> getConstructComponents(String constructZdbID);
 
-   List<ConstructComponentPresentation> getConstructComponents(String constructZdbID);
     ConstructComponentPresentation getConstructComponentsForDisplay(String constructZdbID);
-    void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, Marker marker, String pubID) ;
-    void addConstructComponent(ConstructComponent ccs);
 
+    void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, Marker marker, String pubID);
 
-
+    void addConstructComponent(int cassetteNumber, int ccOrder, String constructId, String ccValue, ConstructComponent.Type type, String ccCategory, String ccZdbID);
 
 
     /**
      * Return list of markers that have a specified relationship to the main marker
+     *
      * @param marker
      * @param types
      * @return
      */
-    List<Marker> getMarkersContainedIn(Marker marker, MarkerRelationship.Type... types );
-    List<Marker> getRelatedGenesViaTranscript(Marker marker, MarkerRelationship.Type relType1,MarkerRelationship.Type relType2);
+    List<Marker> getMarkersContainedIn(Marker marker, MarkerRelationship.Type... types);
+
+    List<Marker> getRelatedGenesViaTranscript(Marker marker, MarkerRelationship.Type relType1, MarkerRelationship.Type relType2);
 
     /**
-     *  Retrieve makrer from feature via feature marker relationship
-     *  'is allele of', 'markers present', 'markers missing'
+     * Retrieve makrer from feature via feature marker relationship
+     * 'is allele of', 'markers present', 'markers missing'
+     *
      * @param feature
      * @return
      */
@@ -439,6 +449,7 @@ public interface MarkerRepository {
 
     /**
      * Retrieve accession number for a given marker and database.
+     *
      * @param marker
      * @param database
      * @return

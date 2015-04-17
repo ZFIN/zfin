@@ -2860,8 +2860,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
     @Override
-    public void addConstructComponent(ConstructComponent ccs) {
+    public void addConstructComponent(int cassetteNumber,int ccOrder,String constructId,String ccValue,ConstructComponent.Type type, String ccCategory,String ccZdbID) {
+        ConstructComponent ccs=new ConstructComponent();
+        ccs.setComponentCassetteNum(cassetteNumber);
+        ccs.setComponentOrder(ccOrder);
+        ccs.setConstructZdbID(constructId);
+        ccs.setComponentValue(ccValue);
+        ccs.setType(type);
+        ccs.setComponentCategory(ccCategory);
+        ccs.setComponentZdbID(ccZdbID);
         currentSession().save(ccs);
+        currentSession().flush();
     }
 
     public void removeCuratorNote(Marker marker, DataNote note) {
