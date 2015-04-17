@@ -2,40 +2,38 @@
  Javascript file to accompany construct Adding.
  */
 
-//anatomy of a construct: Construct TypePrefix(promoter:coding)
-
-//Can I use same variable and div names for Add and update?
-
-//variables declared to hold select list for each cassette.
-
-
-
-
-
-
+//
+/*
+ anatomy of a construct: Construct TypePrefix(promoter1:coding1,promoter2:coding2,promoter3:coding
+ builder is limited to 3 cassettes
+ each cassette may have a promoter or a coding (can either have both,or one of either but has to have at least 1 of either promoter or coding)
+*/
 
 
 var openP='(';
+var cassette1="";
+var cassette2="";
+var cassette3="";
+var cassette1Stored="";
+var cassette2Stored="";
+var cassette3Stored="";
+var finalCname="";
+var finalStoredName="";
+var closeP=")";
+var constructSeparator=":"
+var cassetteSeparator=",";
 
 jQuery(document).ready(function () {
 
     jQuery("#prefix").on("focusout", function (e) {
-        //construct display name changes as soon as a prefix is entered.
-
-       /* jQuery('#constructName').val(jQuery("#chosenType").val() + jQuery("#prefix").val() + openP);
-        jQuery('#cName').val(jQuery('#constructName').val());*/
-        generateConstructName();
+           makeName();
 
     });
 
 
     jQuery("#chosenType")
         .change(function () {
-           /* var constructType = "";
-            constructType += jQuery("#chosenType").val() + " ";
-            jQuery('#constructName').val(constructType + jQuery("#prefix").val() + openP);
-            jQuery('#cName').val(jQuery('#constructName').val());*/
-           generateConstructName();
+                      makeName();
         })
         .change();
 
@@ -43,13 +41,13 @@ jQuery(document).ready(function () {
     /*The following function is to enable all promoter and coding fields be an autocomplete.
      Since all coding and promoter fields have an id starting with "Cassette", the autocomplete works
      for all promoter and coding in all cassettes
-     the autocomplete is on markers attribute to the pub. It also contains foreign species*/
+     the autocomplete is on markers attributed to the pub. It also contains foreign species and other constrolled vocabularies*/
 
     autocompleteSource = '/action/construct/find-constructMarkers';
     var pubId = jQuery('#constructPublicationZdbID').val();
 
     jQuery(document).on("focus keyup", "input", function (event) {
-        //$("input[id^='cassette']").autocompletify('/action/construct/find-constructMarkers?term=%QUERY');
+
        jQuery("input[id^='cassette']").autocomplete({
             source: function (request, response) {
                 jQuery.ajax({
@@ -81,8 +79,7 @@ jQuery(document).ready(function () {
 
 
             }, change: function (event, ui) {
-                //I am not sure how to do this. If a curator overrides the autocomplete, we need to change
-                // the background color of the input box
+                // If a curator overrides the autocomplete, the background color of the input box chnages ot blue indicating that it was "free text"
                 if (ui.item == null) {
                     jQuery(this).css({ "background-color": '#F0FFFF'});
 
@@ -90,16 +87,25 @@ jQuery(document).ready(function () {
                 }
             }
 
-        }).bind("keydown", function (e) {
+        }).keypress(function(event) {
+           if (event.keyCode == 13) {
+               event.preventDefault();
+               return false;
+           }
 
-        });
-
-                        jQuery("input[id^='cassette']").on('focusout', function (event) {
+    });
+        jQuery("input[id^='cassette']").on('focusout', function (event) {
 
             event.preventDefault();
-            generateConstructName();
-
+//
+            makeName();
         });
+        /*jQuery("input[id^='cassette']").keypress(function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });*/
 
 
     })
@@ -112,13 +118,12 @@ jQuery(document).ready(function () {
      if there is a value in between, that value has to eb shifted to the right.*/
 
 
-//    jQuery("button[id^='addPromoter']").live("click", function (event) {
-        jQuery(document).on("click","button[id^='addPromoter']",function (event){
+  jQuery(document).on("click","button[id^='addPromoter']",function (event){
         event.preventDefault();
         var divToAttachTo = jQuery(this).closest("div").attr("id");
         var buttonClassName = jQuery(this).attr('class');
         addComponent(divToAttachTo, this.id, "Promoter", buttonClassName);
-            generateConstructName();
+      makeName();
 
     });
 
@@ -126,7 +131,7 @@ jQuery(document).on("change","select[id^='selectList']",function (event){
 
     event.preventDefault();
 
-    generateConstructName();
+    makeName();
 
 });
 
@@ -137,9 +142,10 @@ jQuery(document).on("click","button[id^='delPromoter']",function (event){
 
         event.preventDefault();
         var divToAttachTo = jQuery(this).closest("div").attr("id");
+
         var buttonClassName = jQuery(this).attr('class');
         deleteComponent(divToAttachTo, this.id, "Promoter", buttonClassName);
-        generateConstructName();
+        makeName();
     });
 
 jQuery(document).on("click","button[id^='addCoding']",function (event){
@@ -149,7 +155,7 @@ jQuery(document).on("click","button[id^='addCoding']",function (event){
     var divToAttachTo = jQuery(this).closest("div").attr("id");
     var buttonClassName = jQuery(this).attr('class');
         addComponent(divToAttachTo, this.id, "Coding", buttonClassName);
-    generateConstructName();
+    makeName();
 
     });
 
@@ -158,7 +164,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
     var divToAttachTo = jQuery(this).closest("div").attr("id");
     var buttonClassName = jQuery(this).attr('class');
         deleteComponent(divToAttachTo, this.id, "Coding", buttonClassName);
-        generateConstructName();
+        makeName();
 
     });
 
@@ -171,7 +177,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
         // meaning if the original form has newly created fields, how do I not clone those
 
         counter++;
-       // alert(counter);
+        // alert(counter);
         var num = jQuery('.clonable').length;
         //alert(num);
         var duplicate = jQuery('#cassette' + num).clone().attr('id', 'cassette' + counter);
@@ -209,6 +215,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
         newSelectList.remove();
     }*/
 
+
         var newInput = duplicate.getElementsByTagName('input');
         for (var i = 0; i < newInput.length; i++) {
 
@@ -235,7 +242,8 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
         }
 
         duplicate.className = 'duplicate';
-        jQuery('input', jQuery('.duplicate')).each(function () {
+
+     /*   jQuery('input', jQuery('.duplicate')).each(function () {
             jQuery(this).css({ "background-color": 'white'});
 
         });
@@ -260,10 +268,10 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
             if (this.id.indexOf("Coding1") == 0) {
                 this.remove();
             }
-        });
+        });*/
 
 
-        //duplicate.classList.remove('promoterControl');
+
         insertAfter(duplicate, original,counter);
     }
 
@@ -274,7 +282,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
     function insertAfter(newElement, targetElement,numCassette) {
         var parent = targetElement.parentNode;
 
-        var child = newElement.parentNode;
+
 
         if (parent.lastChild == targetElement) {
             parent.appendChild(newElement);
@@ -285,12 +293,14 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
             parent.insertBefore(newElement, targetElement.laterSibling);
 
         }
+
         //remove extraneous items  from clone.
         //need to accurately pass className of duplicates here
 
-        var classOfDuplicate = jQuery(counter);
-        //how do I use this is a jQuery variable?
+
+        //only remove extra elements form cassette2 if there is no cassette3
         if (numCassette < 3) {
+
         jQuery('select', jQuery('.2')).each(function () {
 
             jQuery(this).remove();
@@ -316,6 +326,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
             }
         });
     }
+        //add cassette but remove extra elements
 
         jQuery('select',jQuery('.3')).each(function(){
 
@@ -351,10 +362,12 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
         }
         duplicate.parentNode.removeChild(duplicate);
         counter = counter - 1;
-        generateConstructName();
+        makeName();
     }
 
     function addComponent(divToAttachTo, thisId, component,buttonClassName) {
+//the add does not only add fields, (input box, select box and + and - buttons. It also has to remember the vale of the input and select box before it.
+// Curator might choose to insert fields between exisitng fileds an dnot lose values already entered
 
         cassetteNumber = parseInt(buttonClassName);
 
@@ -394,6 +407,8 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
         selectListComponent += "</select>";
         var li = jQuery(selectListComponent + "<input   size=10  class='"+componentInputClass +"'+ name='" + componentInputId + "'+ id='" + componentInputId + "' />" + "<button class='"+cassetteNumber+"'+ id='" + btnAddId + "' >+</button>" + "<button class='"+cassetteNumber+"'+ id='" + btnDelId + "' >-</button>");
         li.appendTo(ul);
+
+        //This work is done to "remember" the input values, if a box gets added in between 2 alreday filled boxes.
         for (var k = nextComponent; k <= countOfComponents + 2; k++) {
             var j = k + 1;  //j is incremented to avoid the select box
             var a = jQuery("#"+"cassette"+cassetteNumber+component + k).val();
@@ -408,29 +423,38 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
         return false;
     }
 
-function deleteComponent(divToAttachTo, thisId, component,buttonClassName){
-    if (component=="Promoter"){
+function deleteComponent(divToAttachTo, thisId, component,buttonClassName) {
+    if (component == "Promoter") {
         var componentNumber = parseInt(thisId.substring(11));
     }
-    else{
+    else {
         var componentNumber = parseInt(thisId.substring(9));
     }
-    var ul = jQuery("#" + divToAttachTo);
-    var i = jQuery("#" + divToAttachTo).find("input").size() ;
 
-    if (i==1){
-        alert("Construct must have at least one component");
-        return;
+    var i = jQuery("#" + divToAttachTo).find("input").size();
+    if (buttonClassName == 1) {
+
+        if (i == 1) {
+            alert("Construct must have at least one component");
+            return;
+        }
     }
+
     jQuery(jQuery("#"+divToAttachTo)).each(function(){
+
+//TODO for code reviewer, this seems to remove buttons always from the first cassette, i dont know why. (meaning if I am in second cassette and the div points to second (or third)cassette, first cassette buttons get deleted).
 
         jQuery("#" + "add" + component + componentNumber).remove();
         jQuery("#" + "del" + component + componentNumber).remove();
-        jQuery("#" + "cassette" + buttonClassName + component + componentNumber).remove();
+       jQuery("#" + "cassette" + buttonClassName + component + componentNumber).remove();
 
         jQuery("#" + "selectList" + component + componentNumber).remove();
+
+
     });
-    //after deleting renumber input, select box and button ids.
+
+
+    //after deleting renumber input, select box and button ids and do not lose values of  alreday entered inputs.
 
     componentCount=1; //counter to increment for each input box
     jQuery('input',jQuery("#"+divToAttachTo)).each(function(){
@@ -465,17 +489,7 @@ function deleteComponent(divToAttachTo, thisId, component,buttonClassName){
 
  }
 function validateAndSubmit(){
-//    the display name always defaults to "Tg"
-//  and if curator clicks on done, the puts the "Tg()" so that is why I am checking for length.
 
-
-
-    /*if (document.getElementById("cName").value.length <=5 ){
-        //jQuery("#add-construct-error").append("<font color=red>Construct Name cannot be blank");
-    }
-    else {
-        jQuery("#cName").removeAttr("disabled", "disabled");
-    }*/
     var param = jQuery("form").serialize();
 var pubID=jQuery('#constructPublicationZdbID').val();
     console.log(param);
@@ -486,7 +500,9 @@ var pubID=jQuery('#constructPublicationZdbID').val();
         type: 'POST',
         data: jQuery("form").serialize(),
         success: function (response) {
-            //alert(response);
+
+            //the 2 functions are for teh GWT to recognixe that new constructs have been added for them to reflect right away in the "Attribute marker" section
+            //as well as the relationships section
             refreshAttribution(pubID);
             refreshRelationship(pubID);
 
@@ -494,12 +510,13 @@ var pubID=jQuery('#constructPublicationZdbID').val();
                 jQuery("#add-construct-error").html(response);
 
                 jQuery("#add-construct-error").show();
+                //need to reset fields upon successful insert.
                 if (response.indexOf("successfully") > 1) {
 
-                    resetFields();
                     jQuery("#add-construct-error").html(response);
-
                     jQuery("#add-construct-error").show();
+                    resetFields();
+
                 }
                 //resetFields();
             }
@@ -527,26 +544,35 @@ function resetFields(){
     jQuery("#constructDisplayName").val("");
     jQuery("#cName").val("");
     jQuery("#constructStoredName").val("");
+    jQuery("#storedCass1").val("");
     jQuery("#constructAlias").val("");
     jQuery("#constructComments").val("");
     jQuery("#constructCuratorNote").val("");
     jQuery(".duplicate").remove();
     jQuery("#cName").attr("disabled", "disabled");
-    jQuery('#add-construct-error').hide();
-    jQuery('select',jQuery('.2')).each(function(){
+    //jQuery('#add-construct-error').hide();
+
+    //The resetting has to remove all extra fields and cassettes, if there is easier way in js to do it will be great
+
+    jQuery('.2').each(function(){
 
         jQuery(this).remove();
     });
-    jQuery('select',jQuery('.1')).each(function(){
+    jQuery('.3').each(function(){
 
         jQuery(this).remove();
     });
-    jQuery('button',jQuery('.1')).each(function(){
+
+       jQuery('button',jQuery('.1')).each(function(){
 
         if (this.id.indexOf("1")==-1) {
 
             jQuery(this).remove();
         }
+    });
+    jQuery('select',jQuery('.1')).each(function(){
+
+        jQuery(this).remove();
     });
     jQuery('input',jQuery('.1')).each(function() {
 
@@ -568,444 +594,90 @@ function resetFields(){
         }
     });
 
-    jQuery('button',jQuery('.2')).each(function(){
 
-        if (this.id.indexOf("1")==-1) {
-
-            jQuery(this).remove();
-        }
-    });
-    jQuery('input',jQuery('.2')).each(function() {
-
-        if (this.id.indexOf("Promoter1") == -1)  {
-            if (this.id.indexOf("Coding1") == -1) {
-
-                jQuery(this).remove();
-            }
-
-        }
-    });
-
-    jQuery('select',jQuery('.3')).each(function(){
-
-        jQuery(this).remove();
-    });
-
-
-    jQuery('button',jQuery('.3')).each(function(){
-
-        if (this.id.indexOf("1")==-1) {
-
-            jQuery(this).remove();
-        }
-    });
-    jQuery('input',jQuery('.3')).each(function() {
-
-        if (this.id.indexOf("Promoter1") == -1)  {
-            if (this.id.indexOf("Coding1") == -1) {
-
-                jQuery(this).remove();
-            }
-
-        }
-    });
-
-
-   /* jQuery('select',$("#promoterCassette1")).each(function(){
-        alert("removing");
-        this.remove();
-    });
-    jQuery('select',$("#codingCassette1")).each(function(){
-        this.remove();
-    });
-    jQuery('input',$("#promoterCassette1")).each(function(){
-        if (this.id.indexOf("Promoter1")==-1) {
-            this.remove();
-        }
-        else {
-            alert("blank out romoters should come here");
-            jQuery(this).attr("value","");
-            jQuery(this).css({"background-color": 'white'});
-        }
-
-    });
-    jQuery('input',$("#codingCassette1")).each(function(){
-        if (this.id.indexOf("Coding1")==-1) {
-            this.remove();
-        }
-        else {
-            alert("should come here");
-            jQuery(this).attr("value","");
-            jQuery(this).css({"background-color": 'white'});
-        }
-    });
-    jQuery('button',$("#promoterCassette1")).each(function(){
-        alert(this.id.indexOf("1"));
-        if (this.id.indexOf("1")==-1) {
-            alert(this.id.indexOf("1"))
-            this.remove();
-        }
-        });
-        jQuery('button',$("#codingCassette1")).each(function(){
-            if (this.id.indexOf("1")==-1) {
-                this.remove();
-            }
-            });
-*/
         counter=1;//reset cassette counter to 1
 
 
 }
+function makeName(){
+    jQuery('#add-construct-error').hide();
+    var cassette1PromoterString="";
+    var cassette1CodingString="";
 
-    function generateConstructName() {
-        //This is the function used to generate the display name
-        //this function also generates a "stored" name to pass to the controller in order to parse
-        //the construct into "components"
-        //In the stored string, the cassettes are separated by a "%" delimiter
-        //Promoters are preceeded by the text "Prom" and coding are preceeded by "Coding"
-        //each element is delimited by a "#"
-        if (jQuery("#prefix").val() != "") {
-            var constructGeneratedName = jQuery("#chosenType").val() + jQuery("#prefix").val() + openP;
-            var constructWrapperString="wrapper"+jQuery("#chosenType").val()+"#"+jQuery("#prefix").val()+"#"+"wrapper"+openP;
-        }
-        else {
-            var constructGeneratedName = jQuery("#chosenType").val() + openP;
-            var constructWrapperString=jQuery("#chosenType").val()+"#"+"wrapper"+openP ;
+    var cassette2PromoterString="";
+    var cassette2CodingString="";
 
-        }
+    var cassette3PromoterString="";
+    var cassette3CodingString="";
 
+    var componentDelim="#"
 
-        var cassetteDelimiter = ",";
-        var promCodingSeparator = ":";
-        var cassette1String = "";
-        var cassette2String = "";
-        var cassette3String = "";
-        var numberOfCassettes=1;
-        var cassette1Promoter="";
-        var cassette1Coding="";
-        var cassette2Promoter="";
-        var cassette2Coding="";
-        var cassette3Promoter="";
-        var cassette3Coding="";
-        var promPrefix="Prom";
-        var codingPrefix="Coding"
+    finalCname=jQuery("#chosenType").val();
+    finalCname+=jQuery("#prefix").val()+openP;
 
-        var partCodingString = "";
-        var partPromoterString = "";
-        var cass2CodingString = "";
-        var cass2PromoterString = "";
-        var cass3CodingString = "";
-        var cass3PromoterString = "";
-        var constructDisplayName = ""
-        var constructDisplayName1 = ""
-        var constructDisplayName2 = ""
-        var consStoreName = ""
-        var consStoreName1 = ""
-        var consStoreName2 = ""
-        var storedPromString = "";
-        var storedCodingString = "";
-        var storedPromString2 = "";
-        var storedCodingString2 = "";
-        var storedPromString3 = "";
-        var storedCodingString3 = "";
-        var prefixStr = "";
-        var closeP = ")";
+    jQuery.each(jQuery('.cassette1Promoter'), function (index) {
+        cassette1PromoterString +=jQuery(this).val()+componentDelim;
 
-        //first deal with default  cassette, cassette1
-        jQuery.each(jQuery('.cassette1Promoter'), function (index) {
-            cassette1String += jQuery(this).attr('value');
-            cassette1Promoter+= promPrefix+jQuery(this).attr('value')+"#";
-        });
-        jQuery.each(jQuery('.cassette1Coding'), function (index) {
-            if (jQuery(this).attr('value') != '') {
-                if (cassette1String != "") {
-                    if (cassette1String.indexOf(promCodingSeparator)==-1) {
-                        cassette1String += promCodingSeparator;
-                        cassette1Promoter+=promPrefix+promCodingSeparator+"#";
-                    }
-                }
+    });
+    jQuery.each(jQuery('.cassette1Coding'), function (index) {
+        cassette1CodingString +=jQuery(this).val()+componentDelim;
 
-            }
-        });
+    });
+    cassette1=((cassette1CodingString!=componentDelim)?cassette1PromoterString+constructSeparator+cassette1CodingString:cassette1PromoterString);
+    cassette1Stored=((cassette1CodingString!="")?cassette1PromoterString+constructSeparator+cassette1CodingString:cassette1PromoterString);
 
-        jQuery.each(jQuery('.cassette1Coding'), function (index) {
-            if (jQuery(this).attr('value') != '')
-                cassette1String += jQuery(this).attr('value');
-                cassette1Coding+= codingPrefix+jQuery(this).attr('value')+"#";
-        });
+    jQuery.each(jQuery('.cassette2Promoter'), function (index) {
+        cassette2PromoterString +=jQuery(this).val()+componentDelim;
+    });
+    jQuery.each(jQuery('.cassette2Coding'), function (index) {
+        cassette2CodingString +=jQuery(this).val()+componentDelim;
+    });
 
-        //second cassette Strings
-        jQuery.each(jQuery('.cassette2Promoter'), function (index) {
-            cassette2String += jQuery(this).attr('value');
-            cassette2Promoter+= promPrefix+jQuery(this).attr('value')+"#";
-        });
-        jQuery.each(jQuery('.cassette2Coding'), function (index) {
-            if (jQuery(this).attr('value') != '') {
-                if (cassette2String != "") {
-                    if (cassette2String.indexOf(promCodingSeparator)==-1) {
-                        cassette2String += promCodingSeparator;
-                        cassette2Promoter+=promPrefix+promCodingSeparator+"#";
-                    }
-                }
+    cassette2=(((cassette2CodingString!="")&&(cassette2CodingString!=componentDelim))?cassette2PromoterString+constructSeparator+cassette2CodingString:cassette2PromoterString);
+    cassette2Stored=((cassette2CodingString!="")?cassette2PromoterString+constructSeparator+cassette2CodingString:cassette2PromoterString);
 
-            }
-        });
-        jQuery.each(jQuery('.cassette2Coding'), function (index) {
-            if (jQuery(this).attr('value') != '')
-                cassette2String += jQuery(this).attr('value');
-                 cassette2Coding+= codingPrefix+jQuery(this).attr('value')+"#";
-        });
+    jQuery.each(jQuery('.cassette3Promoter'), function (index) {
+        cassette3PromoterString +=jQuery(this).val()+componentDelim;
+    });
+    jQuery.each(jQuery('.cassette3Coding'), function (index) {
+        cassette3CodingString +=jQuery(this).val()+componentDelim;
+    });
+    cassette3=(((cassette3CodingString!="")&&(cassette3CodingString!=componentDelim))?cassette3PromoterString+constructSeparator+cassette3CodingString:cassette3PromoterString);
+    cassette3Stored=((cassette3CodingString!="")?cassette3PromoterString+constructSeparator+cassette3CodingString:cassette3PromoterString);
 
-        //third cassette Strings
-        jQuery.each(jQuery('.cassette3Promoter'), function (index) {
-            cassette3String += jQuery(this).attr('value');
-            cassette3Promoter+= promPrefix+jQuery(this).attr('value')+"#";
-        });
-        jQuery.each(jQuery('.cassette3Coding'), function (index) {
-            if (jQuery(this).attr('value') != '') {
-                if (cassette3String != "") {
-                    if (cassette3String.indexOf(promCodingSeparator)==-1) {
-                        cassette3String += promCodingSeparator;
-                        cassette3Promoter+=promPrefix+promCodingSeparator+"#";
-                    }
-
-                }
-
-            }
-        });
-        jQuery.each(jQuery('.cassette3Coding'), function (index) {
-            if (jQuery(this).attr('value') != '')
-                cassette3String += jQuery(this).attr('value');
-                cassette3Coding+= codingPrefix+jQuery(this).attr('value')+"#";
-        });
-        if (cassette2String !== "") {
-            numberOfCassettes++;
-        }
-        cassette2String != "" ? constructGeneratedName += cassette1String + cassetteDelimiter + cassette2String : constructGeneratedName += cassette1String;
-        if (cassette3String !== "") {
-            constructGeneratedName += cassetteDelimiter + cassette3String;
-            numberOfCassettes++;
-        }
-        // cassette3String!=""? constructGeneratedName+=cassetteDelimiter+cassette3String : constructGeneratedName+=cassette1String+cassetteDelimiter+ cassette2String ;
-        constructGeneratedName += closeP;
-        jQuery('#constructName').val(constructGeneratedName);
-        jQuery('#cName').val(constructGeneratedName);
-        jQuery("#constructWrapperString").attr("value","testdd");
-
-        jQuery("#cassette1Promoter").val(cassette1Promoter);
-        jQuery("#cassette2Promoter").val(cassette2Promoter);
-        jQuery("#cassette3Promoter").val(cassette2Promoter);
-        jQuery("#cassette1Coding").val(cassette1Coding);
-        jQuery("#cassette2Coding").val(cassette2Coding);
-        jQuery("#cassette3Coding").val(cassette3Coding);
-        jQuery("#numberOfCassettes").val(numberOfCassettes);
-        jQuery.each(jQuery('.cassette1Promoter'), function (index) {
-
-            // alert(jQuery(this).val());
-            partPromoterString += jQuery(this).val();
-
-            storedPromString = storedPromString + "Prom" + jQuery(this).val() + "#";
-        });
-
-        jQuery.each(jQuery('.cassette1Coding'), function (index) {
-            partCodingString += jQuery(this).val();
-            storedCodingString = storedCodingString + "Coding" + jQuery(this).val() + "#";
-        });
-
-        if (jQuery("#prefix").val() == "") {
-            prefixStr = "";
-        }
-        else {
-            prefixStr = "Prefix" + jQuery("#prefix").val() + "#";
-        }
-
-        if (partCodingString != "") {
-            if (partPromoterString != "") {
-                // jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partPromoterString+":"+partCodingString);
-                constructDisplayName = jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val() + "(" + partPromoterString + ":" + partCodingString;
-                consStoreName = jQuery('#chosenType').find(":selected").text() + "#" + prefixStr + "(" + "#" + storedPromString + "#" + "Prom:" + "#" + storedCodingString;
-                jQuery("#constructStoredName").val(consStoreName);
-                jQuery("#constructDisplayName").val(constructDisplayName);
-                jQuery("#constructName").val(constructDisplayName);
-            } else {
-                //      jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partCodingString);
-                constructDisplayName = jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val() + "(" + partCodingString;
-                consStoreName = jQuery('#chosenType').find(":selected").text() + "#" + prefixStr + "(" + "#" + storedCodingString;
-                jQuery("#constructName").val(constructDisplayName);
-                jQuery("#constructDisplayName").val(constructDisplayName);
-                jQuery("#constructStoredName").val(consStoreName);
-            }
-        }
-        else {
-            //jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partPromoterString);
-            constructDisplayName = jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val() + "(" + partPromoterString;
-            consStoreName = jQuery('#chosenType').find(":selected").text() + "#" + prefixStr + "(" + "#" + storedPromString;
-            jQuery("#constructDisplayName").val(constructDisplayName);
-            jQuery("#constructName").val(constructDisplayName);
-            jQuery("#constructStoredName").val(consStoreName);
-        }
-
-        //for cassette 2
-
-        jQuery.each(jQuery('.cassette2promoter'), function (index) {
-            cass2PromoterString += jQuery(this).val();
-            if (jQuery(this).val()!='') {
-                storedPromString2 = storedPromString2 + "Prom" + jQuery(this).val() + "#";
-            }
-        });
-
-        jQuery.each(jQuery('.cassette2Coding'), function (index) {
-            cass2CodingString += jQuery(this).val();
-            if (jQuery(this).val()!='') {
-                storedCodingString2 = storedCodingString2 + "Coding" + jQuery(this).val() + "#";
-            }
-
-        });
-
-        if (cass2CodingString != "") {
-            if (cass2PromoterString != "") {
-                constructDisplayName1 = cass2PromoterString + ":" + cass2CodingString;
-                consStoreName1 = storedPromString2 + "#" + "Prom:" + "#" + storedCodingString2;
-                if (constructDisplayName1.length == 0) {
-                    jQuery("#constructName").val(constructDisplayName);
-                    jQuery("#constructDisplayName").val(constructDisplayName);
-                }
-                else {
-                    jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1);
-                    jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1);
-                    consStoreName = consStoreName + "#" + "%" + "#" + "Cassette," + "#" + consStoreName1;
-                    jQuery("#constructStoredName").val(consStoreName);
-
-                }
-            } else {
-                constructDisplayName1 = cass2CodingString;
-                if (constructDisplayName1.length == 0) {
-
-                    jQuery("#constructName").val(constructDisplayName);
-                    jQuery("#constructDisplayName").val(constructDisplayName);
-                }
-                else {
-
-                    jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1);
-                    jQuery("#constructdisplayName").val(constructDisplayName + "," + constructDisplayName1);
-                    consStoreName = consStoreName + "%" + "#" + "Cassette," + "#" + consStoreName1;
-                    jQuery("#constructStoredName").val(consStoreName);
-                }
-            }
-        }
-        else {
-            constructDisplayName1 = cass2PromoterString;
-            consStoreName1 = storedPromString2;
-            if (constructDisplayName1.length == 0) {
-                jQuery("#constructName").val(constructDisplayName);
-                jQuery("#constructDisplayName").val(constructDisplayName);
-            }
-            else {
-                jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1);
-                jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1);
-                consStoreName = consStoreName + "%" + "Cassette," + "#" + consStoreName1;
-                jQuery("#constructStoredName").val(consStoreName);
-            }
-        }
-
-        //for cassette 2
-        jQuery.each(jQuery('.cassette3promoter'), function () {
-            cass3PromoterString += jQuery(this).val();
-            if (jQuery(this).val()!='') {
-                storedPromString3 = storedPromString3 + "Prom" + jQuery(this).val() + "#";
-            }
-        });
-        jQuery.each(jQuery('.cassette3coding'), function () {
-            cass3CodingString += jQuery(this).val();
-            if (jQuery(this).val()!='') {
-                storedCodingString3 = storedCodingString3 + "Coding" + jQuery(this).val() + "#";
-            }
-        });
-        if (cass3CodingString != "") {
-            if (cass3PromoterString != "") {
-                constructDisplayName2 = cass3PromoterString + ":" + cass3CodingString;
-                consStoreName2 = storedPromString3 + "#" + "Prom:" + "#" + storedCodingString3;
-                if (constructDisplayName2.length == 0) {
-
-                jQuery("#constructName").val(constructDisplayName);
-                jQuery("#constructDisplayName").val(constructDisplayName);
-            }
-                else
-                {
-                    jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-                    jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-                    //consStoreName = consStoreName + "#" + "%" + "#" + "Cassette," + "#" + consStoreName1+ "#" + "%" + "#" + "Cassette," + "#" + consStoreName2;
-                    consStoreName = consStoreName + "#" + "%" + "#" + "Cassette," + "#" + consStoreName2;
-                    jQuery("#constructStoredName").val(consStoreName);
-                }
-            } else {
-                constructDisplayName2 = cass3CodingString;
-                if (constructDisplayName2.length == 0) {
-
-
-                        jQuery("#constructName").val(constructDisplayName);
-                        jQuery("#constructDisplayName").val(constructDisplayName);
-                    }
-                else {
-                    jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-                    jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-                    consStoreName = consStoreName + "%" + "#" + "Cassette," + "#" + consStoreName1+ "%" + "#" + "Cassette," + "#" + consStoreName2;
-                    jQuery("#constructStoredName").val(consStoreName);
-
-                }
-            }
-        }
-        else {
-
-            constructDisplayName2 = cass3PromoterString;
-            consStoreName2=storedPromString3;
-            if (constructDisplayName2.length == 0) {
-                jQuery("#constructName").val(constructDisplayName);
-                jQuery("#constructDisplayName").val(constructDisplayName);
-            }
-            else {
-                jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-                jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-                consStoreName = consStoreName + "%" + "Cassette," + "#" + consStoreName1 + "%" + "Cassette," + "#" + consStoreName2;
-                jQuery("#constructStoredName").val(consStoreName);
-            }
-        }
-         if (constructDisplayName2.length == 0) {
-            if (constructDisplayName1.length == 0)
-                jQuery("#constructName").val(constructDisplayName);
-            else {
-                jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1);
-            }
-        }
-        jQuery("#constructName").css({ 'color': 'red'});
-        finalConName = jQuery("#constructName").val();
-        finalStoredName = jQuery("#constructStoredName").val();
-
-        constructLength = finalConName.length;
-        if (finalConName.indexOf(closeP) != constructLength) {
-            jQuery('#constructDisplayName').val(finalConName + closeP);
-        }
-        else {
-            jQuery('#constructDisplayName').val(finalConName);
-        }
-        finalDisplayName = jQuery("#constructDisplayName").val();
-        /*if (finalDisplayName.indexOf(".-") > -1){
-            alert("construct name has a dot folowed by a hyphen. Please correct")
-        }*/
-        jQuery('#constructDisplayName').val(finalDisplayName);
-        jQuery('#constructName').val(finalDisplayName);
-        if (finalStoredName.indexOf(closeP) == -1) {
-            jQuery('#constructStoredName').val(finalStoredName + "#" + closeP);
-
-        }
-        else {
-            jQuery('#constructStoredName').val(finalStoredName);
-
-        }
-
+    if (cassette2!=""){
+        finalCname+=cassette1+cassetteSeparator+cassette2;
+        finalStoredName=cassette1Stored+"Cassette"+componentDelim+cassetteSeparator+componentDelim+cassette2Stored;
+    }
+    else{
+        finalCname+=cassette1;
+        finalStoredName=cassette1Stored;
 
 
     }
+    if (cassette3!=""){
+        finalCname+=cassetteSeparator+cassette3;
+        finalStoredName=cassette1Stored+"Cassette"+componentDelim+cassetteSeparator+componentDelim+cassette2Stored+"Cassette"+componentDelim+cassetteSeparator+componentDelim+cassette3Stored;
+
+    }
+  finalCname+=closeP;
+  var finalName=finalCname.split("#").join("");
+    var storedName=finalStoredName.replace("##","#");
+
+
+    jQuery('#constructDisplayName').val(finalName);
+    jQuery('#constructName').val(finalName);
+    jQuery('#constructStoredName').val(storedName);
+
+
+
+
+
+
+
+
+}
+
 
 
 
