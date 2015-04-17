@@ -180,7 +180,7 @@ public class NucleotideSequenceArea<U extends SequenceDTO> extends AbstractRelat
                 MarkerRPCService.App.getInstance().removeDBLink(sequenceDTO,
                         new MarkerEditCallBack<DBLinkDTO>("failed to remove nucleotide sequence: ", nucleotideSequenceArea) {
                             public void onSuccess(DBLinkDTO dbLinkDTO) {
-                                nucleotideSequenceArea.removeRelatedEntityFromGUI(dbLinkDTO);
+                                //nucleotideSequenceArea.removeRelatedEntityFromGUI(dbLinkDTO);
                             }
                         });
             }

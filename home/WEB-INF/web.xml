@@ -195,6 +195,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>CurationDiseaseService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.CurationDiseaseRPCImpl</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>CurationFilterService</servlet-name>
         <servlet-class>org.zfin.gwt.curation.server.CurationFilterRPCImpl</servlet-class>
     </servlet>
@@ -287,6 +292,11 @@
     <servlet-mapping>
         <servlet-name>CurationService</servlet-name>
         <url-pattern>/ajax/curation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationDiseaseService</servlet-name>
+        <url-pattern>/ajax/curation-disease</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

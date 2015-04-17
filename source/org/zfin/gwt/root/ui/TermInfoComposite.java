@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -36,6 +37,12 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         setHandler();
     }
 
+    public TermInfoComposite(OntologyDTO defaultOntology) {
+        super();
+        setDefaultTermInfo(defaultOntology);
+        setHandler();
+    }
+
     public TermInfoComposite(boolean showDefaultRootOntologyTerm) {
         super();
         if (showDefaultRootOntologyTerm)
@@ -49,6 +56,20 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         this.noWrap = noWrap;
     }
 
+    public
+    @UiConstructor
+    TermInfoComposite(String ontologyName) {
+        this(getOntologyDTO(ontologyName));
+    }
+
+    private static OntologyDTO getOntologyDTO(String ontologyName) {
+        OntologyDTO ontology = OntologyDTO.getOntologyByName(ontologyName);
+        if (ontology == null)
+            return OntologyDTO.ANATOMY;
+        return ontology;
+    }
+
+
     private void setHandler() {
         History.addValueChangeHandler(this);
     }
@@ -56,6 +77,10 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
     private void setDefaultTermInfo() {
         String defaultAOTermID = "ZFA:0000037";
         lookupRPC.getTermInfo(OntologyDTO.ANATOMY, defaultAOTermID, new TermInfoCallBack(this, defaultAOTermID));
+    }
+
+    private void setDefaultTermInfo(OntologyDTO defaultOntology) {
+        lookupRPC.getTermInfo(defaultOntology, defaultOntology.getRootTermID(), new TermInfoCallBack(this, defaultOntology.getRootTermID()));
     }
 
     public void setToDefault() {
@@ -74,7 +99,7 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         int headerColumn = 0;
         int dataColumn = 1;
         // Note:
-        if(termInfoDTO.isDoNotAnnotateWith()){
+        if (termInfoDTO.isDoNotAnnotateWith()) {
             addHeaderEntry(TerminfoTableHeader.NOTE.getName(), rowIndex);
             if (noWrap) {
                 getCellFormatter().addStyleName(rowIndex, headerColumn, WidgetUtil.NO_WRAP);

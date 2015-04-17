@@ -24,4 +24,9 @@
     </script>
 <?/MIVAR>
 
-<h3>Coming Soon</h3>
+<h1> Human Disease Curation </h1>
+
+<div id="directAttributionName"></div>
+
+<div id="humanDiseaseZone"></div>
+

@@ -33,6 +33,10 @@
         <pre-gwt-compile module="org.zfin.gwt.marker.Marker"/>
     </target>
 
+    <target name="dirty-disease-gwt" description="Compiles lookup gwt">
+        <dirty-gwt-compile module="org.zfin.gwt.mail.Mail"/>
+    </target>
+
     <target name="dirty-lookup-gwt" description="Compiles lookup gwt">
         <dirty-gwt-compile module="org.zfin.gwt.lookup.Lookup"/>
     </target>
@@ -108,4 +112,38 @@
             </java>
         </sequential>
     </macrodef>
+
+    <target name="devmode" depends="dirty-curation-gwt,dev" description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)"/>
+
+    <target name="devm" depends="" description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)">
+        <java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode" maxmemory="1g">
+            <classpath>
+                <pathelement location="source"/>
+                <path refid="extended.classpath"/>
+            </classpath>
+            <arg value="-war"/>
+            <arg value="@{target}"/>
+            <arg value="-startupUrl"/>
+            <arg value="http://zezem:9126/action/devtool/gwt/human-disease-curation"/>
+            <arg value="org.zfin.gwt.curation.Curation"/>
+<!--
+            <arg value="@{module}"/>
+-->
+        </java>
+    </target>
+
+    <target name="dev" depends="" description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)">
+        <java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode" maxmemory="1g">
+            <classpath>
+                <pathelement location="source"/>
+                <path refid="extended.classpath"/>
+            </classpath>
+            <arg value="-startupUrl"/>
+            <arg value="gwt/Mail.html"/>
+            <arg line="-war"/>
+            <arg value="home"/>
+            <arg value="org.zfin.gwt.curation.Curation"/>
+        </java>
+    </target>
+
 </project>

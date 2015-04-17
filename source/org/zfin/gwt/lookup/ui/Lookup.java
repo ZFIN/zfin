@@ -1,7 +1,6 @@
 package org.zfin.gwt.lookup.ui;
 
 import com.google.gwt.i18n.client.Dictionary;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.ui.LookupComposite;
@@ -32,7 +31,7 @@ public class Lookup extends Composite {
 
     public void onModuleLoad(Dictionary lookupProperties) {
 
-        LookupComposite lookup = new LookupComposite();
+        LookupComposite lookup = new LookupComposite(false);
         // set options
         Set keySet = lookupProperties.keySet();
         if (keySet.contains(JSREF_INPUT_NAME)) {

@@ -42,7 +42,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
     protected final StringListBox evidenceCodeBox = new StringListBox(false);
     protected final RevertibleTextArea noteBox = new RevertibleTextArea();
     protected AbstractInferenceListBox inferenceListBox = new InferenceListBox(null);
-    protected LookupComposite goTermBox = new LookupComposite();
+    protected LookupComposite goTermBox ;
     protected TermDTO temporaryGoTermDTO = null;
     protected final TermInfoComposite termInfoComposite = new TermInfoComposite(false, "&nbsp;&bull;&nbsp;", false);
 
@@ -55,6 +55,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
 
     protected void initGUI() {
 
+        goTermBox = new LookupComposite(true, "GO_TERM");
         inferenceListBox = null;
         inferenceListBox = new GoCurationInferenceListBox();
 
@@ -82,6 +83,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
         pubText.setEnabled(false);
 
         northEastPanel.add(goTermButton);
+
         zdbIDPanel.add(new HTML("<b style=\"font-size: small;\">ZdbID: </b>"));
         zdbIDPanel.add(zdbIDHTML);
         northEastPanel.add(zdbIDPanel);

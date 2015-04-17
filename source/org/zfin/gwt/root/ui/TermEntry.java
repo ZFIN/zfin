@@ -1,9 +1,8 @@
 package org.zfin.gwt.root.ui;
 
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.*;
+import com.google.gwt.uibinder.client.UiConstructor;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -17,6 +16,7 @@ import org.zfin.gwt.root.event.CheckSubsetEventHandler;
 import org.zfin.gwt.root.event.SingleOntologySelectionEventHandler;
 import org.zfin.gwt.root.util.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ public class TermEntry extends HorizontalPanel {
 
     // GUI elements
     private ZfinListBox ontologySelector = new ZfinListBox();
-    private LookupComposite termTextBox = new LookupComposite();
+    private LookupComposite termTextBox;
     private Button copyFromTerminfoToTextButton = new Button("&larr;");
     private TermInfoComposite termInfoComposite = null;
 
@@ -40,8 +40,9 @@ public class TermEntry extends HorizontalPanel {
     public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart, TermInfoComposite termInfoComposite) {
         this(ontologies, termPart);
         this.termInfoComposite = termInfoComposite;
-        addInternalListeners();
         termTextBox.markUnValidateText();
+        termTextBox.setTermInfoTable(termInfoComposite);
+        addInternalListeners();
     }
 
     public TermEntry(List<OntologyDTO> ontologies, EntityPart termPart) {
@@ -51,7 +52,23 @@ public class TermEntry extends HorizontalPanel {
             throw new NullpointerException("no term part provided");
         this.ontologies = ontologies;
         this.termPart = termPart;
+        termTextBox = new LookupComposite(true, termPart.name());
+        ontologySelector.addStyleName(termPart.name());
         init();
+    }
+
+    public
+    @UiConstructor
+    TermEntry(String listOFOntologies, String entityPart) {
+        this(getOntologyDTOs(listOFOntologies, entityPart), EntityPart.valueOf(entityPart));
+    }
+
+    private static List<OntologyDTO> getOntologyDTOs(String listOFOntologies, String entityPart) {
+        String[] ontologyArray = listOFOntologies.split(",");
+        List<OntologyDTO> ontologies = new ArrayList<>(ontologyArray.length);
+        for (String ontologyName : ontologyArray)
+            ontologies.add(OntologyDTO.getOntologyByName(ontologyName));
+        return ontologies;
     }
 
     private void addInternalListeners() {
@@ -95,7 +112,7 @@ public class TermEntry extends HorizontalPanel {
         addOntologySelector();
         addLookupTermBox();
         addCopyFromTermInfoButton();
-        termTextBox.setSingleOntologySelectionEventHandler(new SingleOntologySelectionEventHandler(new SingleOntologySelectionCallBack()));
+        //termTextBox.setSingleOntologySelectionEventHandler(new SingleOntologySelectionEventHandler(new SingleOntologySelectionCallBack()));
     }
 
     private void addCopyFromTermInfoButton() {
@@ -121,6 +138,7 @@ public class TermEntry extends HorizontalPanel {
         termTextBox.setUseIdAsValue(true);
         termTextBox.setAction(new SubmitAction() {
             private boolean isSubmitting = false;
+
             @Override
             public void doSubmit(final String value) {
                 if (isSubmitting) {
@@ -129,7 +147,7 @@ public class TermEntry extends HorizontalPanel {
                 isSubmitting = true;
                 termTextBox.setEnabled(false);
                 termTextBox.setNoteString("Validating [" + value + "]...");
-                LookupRPCService.App.getInstance().getTermByName(defaultOntology, value,
+                LookupRPCService.App.getInstance().getTermByName(getTermTextBox().getOntology(), value,
                         new MarkerEditCallBack<TermDTO>("Failed to retrieve value [" + value + "]") {
 
                             @Override
@@ -187,6 +205,11 @@ public class TermEntry extends HorizontalPanel {
             Widget html = new HTML(ontologies.get(0).getDisplayName() + ": ");
             html.setStyleName(WidgetUtil.BOLD);
             add(html);
+            // hidden field that contains the ontology name used for the term info call
+            Widget hidden = new HTML(ontologies.get(0).getOntologyName());
+            hidden.setStyleName(termPart.name() + "_single");
+            hidden.setVisible(false);
+            add(hidden);
         }
         add(WidgetUtil.getNbsp());
         ontologySelector.addChangeHandler(new OntologyChangeHandler());
@@ -276,9 +299,9 @@ public class TermEntry extends HorizontalPanel {
     // If the ontologies are Quality check if the selection
     // is at least a sub tree of the provided ontology
     public boolean hasOntology(OntologyDTO ontology) {
-        if(ontology == OntologyDTO.QUALITY){
-            for(OntologyDTO ontologyOption: ontologies)
-                if(ontologyOption.isSubtreeOntology(ontology))
+        if (ontology == OntologyDTO.QUALITY) {
+            for (OntologyDTO ontologyOption : ontologies)
+                if (ontologyOption.isSubtreeOntology(ontology))
                     return true;
         }
         return ontologies.contains(ontology);
@@ -300,6 +323,7 @@ public class TermEntry extends HorizontalPanel {
      * Set a given term info on the term entry, i.e.
      * set the term name and select the correct ontology.
      * If successful return true, otherwise false.
+     *
      * @param termInfoDTO term info
      * @return boolean
      */
@@ -364,6 +388,33 @@ public class TermEntry extends HorizontalPanel {
             //Window.alert("Success");
             setOntologySelector(ontologyDTO);
         }
+    }
+
+
+    public void setTermInfoTable(TermInfoComposite termInfoTable) {
+        this.termInfoTable = termInfoTable;
+        copyFromTerminfoToTextButton.addClickHandler(new CopyTermToEntryFieldClickListener());
+    }
+
+    private TermInfoComposite termInfoTable;
+
+    private class CopyTermToEntryFieldClickListener implements ClickHandler {
+        public void onClick(ClickEvent event) {
+            TermDTO termInfo = termInfoTable.getCurrentTermInfoDTO();
+            setTerm(termInfo);
+            // check if the new term name is valid
+            if (termInfo.getOntology() == OntologyDTO.QUALITY) {
+                lookupRPC.getTermByName(getSelectedOntology(), termInfo.getTermName(),
+                        new ZfinAsyncCallback<TermDTO>(
+                                "Failed to find term: " + termInfo.getTermName() + " for ontology: " + getSelectedOntology(), null) {
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                getTermTextBox().setValidationStyle(false);
+                            }
+                        });
+            }
+        }
+
     }
 
 

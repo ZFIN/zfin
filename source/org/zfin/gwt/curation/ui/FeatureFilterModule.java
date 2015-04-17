@@ -73,7 +73,7 @@ public class FeatureFilterModule extends AbstractComposite<FeatureDTO>{
                         if(featureMarkerRelationshipList!=null){
                             Map<String, FeatureTypeEnum> featureTypes = new TreeMap<String,FeatureTypeEnum>() ;
                             featureNameList.clear();
-                            featureNameList.addItem(ALL,null);
+                            featureNameList.addItem(ALL,(String)null);
                             for(FeatureDTO featureDTO : featureMarkerRelationshipList){
 
                                 featureNameList.addItem(featureDTO.getName(),featureDTO.getZdbID());
@@ -81,7 +81,7 @@ public class FeatureFilterModule extends AbstractComposite<FeatureDTO>{
                             }
 
                             featureTypeList.clear();
-                            featureTypeList.addItem(ALL,null);
+                            featureTypeList.addItem(ALL,(String) null);
                             for(String type: featureTypes.keySet()){
                                 featureTypeList.addItem(type,type);
                             }

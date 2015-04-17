@@ -999,7 +999,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
 
                 // rowindex minus the header row
                 displayTableMap.put(rowIndex, expression);
-                CheckBox checkBox = new CheckBox(null);
+                CheckBox checkBox = new CheckBox();
                 checkBox.setTitle(expression.getUniqueID());
                 // if any figure annotations are already selected make sure they stay checked
                 if (selectedExpressions.contains(expression)) {

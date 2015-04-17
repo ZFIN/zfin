@@ -13,6 +13,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
@@ -749,5 +750,20 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("figure", figure);
         query.setParameter("genotype", genotype);
         return (List<PhenotypeStatement>) query.list();
+    }
+
+    @Override
+    public List<GenericTerm> getHumanDiseases(String publicationID) {
+
+        //HibernateUtil.currentSession().
+        String hql = "select term from TermAttribution as termAtt where " +
+                "       termAtt.publication.zdbID = :publicationID " +
+                "     order by termAtt.term.termName";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("publicationID", publicationID);
+
+        return (List<GenericTerm>) query.list();
+
+
     }
 }

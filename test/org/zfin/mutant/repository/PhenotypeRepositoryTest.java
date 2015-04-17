@@ -435,4 +435,10 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         List<PhenotypeStatement> phenotypeStatementList = getPhenotypeRepository().getPhenotypeStatements("ZDB-GENOX-100402-4");
         assertNotNull(phenotypeStatementList);
     }
+
+    @Test
+    public void getHumanDisease() {
+        List<GenericTerm> genericTermList = getPhenotypeRepository().getHumanDiseases("ZDB-PUB-990507-16");
+        assertNotNull(genericTermList);
+    }
 }

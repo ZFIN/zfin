@@ -24,8 +24,8 @@ import java.util.*;
 public class AttributionModule extends AbstractRevertibleComposite<RelatedEntityDTO> {
 
     private HorizontalPanel container = new HorizontalPanel();
-    private LookupComposite markerLookupComposite = new LookupComposite();
-    private LookupComposite featureLookupComposite = new LookupComposite();
+    private LookupComposite markerLookupComposite = new LookupComposite(false);
+    private LookupComposite featureLookupComposite = new LookupComposite(false);
     private ListBoxWrapper removeListBox = new ListBoxWrapper(false);
     private HTML messageBox = new HTML("");
     private boolean working = false;
@@ -351,12 +351,12 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     private native void exposeAttributionMethodsToJavascript(AttributionModule attributionModule)/*-{
         $wnd.refreshAttribution = function (pubID) {
-            attributionModule.@org.zfin.gwt.curation.ui.AttributionModule::refreshAttribution(Ljava/lang/String;)(pubID);
+            attributionModule.@org.zfin.gwt.curation.ui.AttributionModule::refreshAttribution()();
         };
 
     }-*/;
 
-    public void refreshAttribution(String pubID) {
+    public void refreshAttribution() {
         revertGUI();
     }
 

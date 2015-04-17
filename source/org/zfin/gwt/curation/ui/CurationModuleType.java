@@ -65,8 +65,8 @@ public enum CurationModuleType {
     DISEASE_CURATION {
         @Override
         public ConstructionZone initializeModule(String publicationID) {
-            BaseCurationModule module = new BaseCurationModule(publicationID);
-            return module.getPileConstructionZoneModule();
+            new HumanDiseaseModule(publicationID);
+            return null;
         }
     },;
 

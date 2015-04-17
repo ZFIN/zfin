@@ -22,7 +22,7 @@ public class CurationTestController {
 
     @RequestMapping("/gwt/fx-curation")
     protected String fxCuration(@RequestParam(required = false) String publicationID,
-                                          Model model) throws Exception {
+                                Model model) throws Exception {
 
         if (StringUtils.isEmpty(publicationID)) {
             publicationID = "ZDB-PUB-990507-16";
@@ -32,9 +32,21 @@ public class CurationTestController {
         return "dev-tools/gwt/fx-curation.page";
     }
 
+    @RequestMapping("/gwt/human-disease-curation")
+    protected String humanDiseaseCuration(@RequestParam(required = false) String publicationID,
+                                          Model model) throws Exception {
+
+        if (StringUtils.isEmpty(publicationID)) {
+            publicationID = "ZDB-PUB-990507-16";
+        }
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
+        model.addAttribute(publication);
+        return "dev-tools/gwt/human-disease-curation.page";
+    }
+
     @RequestMapping("/gwt/phenotype-curation")
     protected String phenotypeCuration(@RequestParam(required = false) String publicationID,
-                                          Model model) throws Exception {
+                                       Model model) throws Exception {
 
         if (StringUtils.isEmpty(publicationID)) {
             publicationID = "ZDB-PUB-961014-496";
@@ -46,7 +58,7 @@ public class CurationTestController {
 
     @RequestMapping("/gwt/feature-curation")
     protected String featureCuration(@RequestParam(required = false) String publicationID,
-                                          Model model) throws Exception {
+                                     Model model) throws Exception {
 
         if (StringUtils.isEmpty(publicationID)) {
             publicationID = "ZDB-PUB-961014-496";
@@ -58,7 +70,7 @@ public class CurationTestController {
 
     @RequestMapping("/gwt/go-curation")
     protected String goCuration(@RequestParam(required = false) String publicationID,
-                                          Model model) throws Exception {
+                                Model model) throws Exception {
 
         if (StringUtils.isEmpty(publicationID)) {
             publicationID = "ZDB-PUB-961014-496";

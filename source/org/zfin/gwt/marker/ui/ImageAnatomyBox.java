@@ -14,7 +14,7 @@ import org.zfin.gwt.root.util.StringUtils;
 
 public class ImageAnatomyBox extends AbstractStackComposite<ImageDTO> { //RelatedEntityBox {
 
-    private LookupComposite termInput = new LookupComposite();
+    private LookupComposite termInput = new LookupComposite(true);
 
     private VerticalPanel panel = new VerticalPanel();
 

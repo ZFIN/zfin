@@ -225,17 +225,20 @@ public class OntologyManager {
 
 
     private void loadDefaultOntologiesFromDatabase() {
-        initOntologyMapFast(Ontology.SPATIAL);
-        serializeOntology(Ontology.SPATIAL);
-
         initOntologyMapFastNoRelations(Ontology.STAGE);
         serializeOntology(Ontology.STAGE);
 
         initOntologyMapFast(Ontology.ANATOMY);
         serializeOntology(Ontology.ANATOMY);
 
+        initOntologyMapFast(Ontology.DISEASE_ONTOLOGY);
+        serializeOntology(Ontology.DISEASE_ONTOLOGY);
+
         initOntologyMapFast(Ontology.QUALITY);
         serializeOntology(Ontology.QUALITY);
+
+        initOntologyMapFast(Ontology.SPATIAL);
+        serializeOntology(Ontology.SPATIAL);
 
         initOntologyMapFast(Ontology.MPATH);
         serializeOntology(Ontology.MPATH);

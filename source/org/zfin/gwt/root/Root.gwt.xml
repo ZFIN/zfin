@@ -1,6 +1,7 @@
 <module>
-
+    <add-linker name="xsiframe"/>
     <inherits name='com.google.gwt.user.User'/>
+    <inherits name='com.google.gwt.query.Query'/>
     <source path='dto'/>
     <source path='event'/>
     <source path='ui'/>

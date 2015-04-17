@@ -2,6 +2,7 @@
 
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='org.zfin.gwt.root.Root'/>
+    <inherits name='com.google.gwt.query.Query'/>
 
     <source path='dto'/>
     <source path='event'/>
@@ -15,7 +16,7 @@
     <servlet path="/ajax/curation-filter" class='org.zfin.gwt.curation.server.CurationFilterRPCImpl'/>
     <servlet path="/ajax/termservice" class='org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl'/>
     <servlet path="/ajax/markerservice" class="org.zfin.gwt.root.server.MarkerRPCServiceImpl"/>
-     <servlet path="/ajax/featureservice" class="org.zfin.gwt.root.server.FeatureRPCServiceImpl"/>
+    <servlet path="/ajax/featureservice" class="org.zfin.gwt.curation.server.FeatureRPCServiceImpl"/>
 <!--
         <define-property name="user.agent" values="gecko" />
     <define-property name="locale" values="en"/>

@@ -1036,3 +1036,5 @@ and feature_zdb_id=fmrel_ftr_zdb_id
 
 
 <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-htmlpagefooter.apg';">$1<?/MISQL>
+<script type="text/javascript" src="/javascript/zfin-auto-complete.js">
+</script>

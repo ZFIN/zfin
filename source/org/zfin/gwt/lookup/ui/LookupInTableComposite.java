@@ -9,7 +9,7 @@ public class LookupInTableComposite extends LookupComposite {
     LookupTable parentTable;
 
     public LookupInTableComposite(LookupTable parentTable) {
-        super();
+        super(false);
         this.parentTable = parentTable;
     }
 

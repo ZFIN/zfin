@@ -48,7 +48,7 @@ public class CloneBox extends AbstractDataBox<CloneDTO>{
         table.setWidget(4, 1, digestListBox);
 
 
-        cloneRatingListBox.addItem(AbstractListBox.EMPTY_CHOICE, null);
+        cloneRatingListBox.addItem(AbstractListBox.EMPTY_CHOICE, (String) null);
         cloneRatingListBox.addItem("0", "0");
         cloneRatingListBox.addItem("1", "1");
         cloneRatingListBox.addItem("2", "2");

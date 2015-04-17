@@ -1,9 +1,11 @@
 package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.*;
-import com.google.gwt.event.logical.shared.*;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
@@ -11,7 +13,6 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.event.CheckSubsetEventHandler;
 import org.zfin.gwt.root.event.SingleOntologySelectionEventHandler;
-import org.zfin.gwt.root.server.Highlighter;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.gwt.root.util.LookupRPCServiceAsync;
 
@@ -29,6 +30,7 @@ import java.util.Collection;
  */
 public class LookupComposite extends Composite implements Revertible {
 
+    public static final String TERM_INFO_USED = "termInfoUsed";
     // gui components
     private HorizontalPanel lookupPanel = new HorizontalPanel();
     private ItemSuggestOracle oracle = new ItemSuggestOracle(this);
@@ -50,6 +52,7 @@ public class LookupComposite extends Composite implements Revertible {
     private String noteString = "";
     private String errorString = "";
     private boolean suggestBoxHasFocus = true;
+    private boolean useTermInfoUpdates = true;
 
     // lookup types
     public final static String GENEDOM_AND_EFG = "GENEDOM_AND_EFG_LOOKUP";
@@ -103,6 +106,8 @@ public class LookupComposite extends Composite implements Revertible {
     private boolean useTermsWithDataOnly = false;
     private boolean useAnatomyTermsOnly = false;
 
+    private String suggestPopupStyleName = "gwt-SuggestBoxPopup";
+
     public LookupComposite() {
         types.add(TYPE_SUPPLIER);
         types.add(MARKER_LOOKUP);
@@ -114,14 +119,27 @@ public class LookupComposite extends Composite implements Revertible {
         types.add(CONSTRUCT_LOOKUP);
     }
 
+    public LookupComposite(boolean useTermInfoUpdates) {
+        this();
+        this.useTermInfoUpdates = useTermInfoUpdates;
+        if (useTermInfoUpdates)
+            suggestPopupStyleName += " " + TERM_INFO_USED;
+    }
+
+    public LookupComposite(boolean useTermInfoUpdates, String entityName) {
+        this(useTermInfoUpdates);
+        this.useTermInfoUpdates = useTermInfoUpdates;
+        suggestPopupStyleName += " " + entityName;
+    }
+
     public void initGui() {
         textBox.setName(inputName);
         textBox.setTitle(inputName);
 
 
-        DOM.setElementProperty(textBox.getElement(), "id", inputName);
+        textBox.getElement().setPropertyString("id", inputName);
+        textBox.getElement().setPropertyString("autocomplete", "off");
         textBox.setVisibleLength(suggestBoxWidth);
-        DOM.setElementAttribute(textBox.getElement(), "autocomplete", "off");
 
         textBox.addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
@@ -171,7 +189,7 @@ public class LookupComposite extends Composite implements Revertible {
                 textBox.setFocus(true);
             }
         });
-        if(useAnatomyTermsOnly)
+        if (useAnatomyTermsOnly)
             ontologyChecker.setValue(true);
 
         allTermsCheckbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -192,9 +210,10 @@ public class LookupComposite extends Composite implements Revertible {
             }
         }); */
 
-        suggestBox = new SuggestBox(oracle, textBox);
+        SuggestBox.DefaultSuggestionDisplay suggestDisplay = new SuggestBox.DefaultSuggestionDisplay();
+        suggestDisplay.setPopupStyleName(suggestPopupStyleName);
+        suggestBox = new SuggestBox(oracle, textBox, suggestDisplay);
         addSuggestBoxHandlers();
-        //suggestBox.
 
         lookupPanel.add(suggestBox);
 
@@ -209,24 +228,26 @@ public class LookupComposite extends Composite implements Revertible {
         }
         //textBox.setFocus(true);
         initWidget(rootPanel);
-        RootPanel panel = RootPanel.get(TERM_INFO);
-        if (panel != null && termInfoTable == null) {
-            termInfoTable = new TermInfoComposite(false);
-            termInfoTable.clear();
-            panel.add(termInfoTable);
+        //Window.alert("use Term info: "+useTermInfoUpdates);
+        if (useTermInfoUpdates) {
+            RootPanel panel = RootPanel.get(TERM_INFO);
+            if (termInfoTable == null) {
+                termInfoTable = new TermInfoComposite(false);
+                termInfoTable.clear();
+            }
+            if (panel != null)
+                panel.add(termInfoTable);
 
             if (highlightAction == null) {
-                setHighlightAction(new HighlightAction() {
-                    @Override
-                    public void onHighlight(String termID) {
-                        if (termID != null && false == termID.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
-                            lookupRPC.getTermInfo(ontology, termID, new TermInfoCallBack(termInfoTable, termID));
-                        }
-                    }
-                });
+                MyHighlightAction highlightAction1 = new MyHighlightAction();
+                setHighlightAction(highlightAction1);
             }
+            exposeTermInfoUpdateToJavascript(this);
         }
+    }
 
+    public void setTermInfoComposite(TermInfoComposite termInfoComposite) {
+        this.termInfoTable = termInfoComposite;
     }
 
     private void initializeOntologySelector() {
@@ -299,19 +320,6 @@ public class LookupComposite extends Composite implements Revertible {
                 }
             }
         });
-        suggestBox.addSuggestionHandler(new HighlightHandler<SuggestOracle.Suggestion>() {
-            @Override
-            public void onHighlight(HighlightEvent<SuggestOracle.Suggestion> suggestionHighlightEvent) {
-                doOnHighlight(suggestionHighlightEvent.getHighlighted().getReplacementString());
-            }
-        });
-
-        suggestBox.addSuggestionHandler(new HighlightHandler<SuggestOracle.Suggestion>() {
-            @Override
-            public void onHighlight(HighlightEvent<SuggestOracle.Suggestion> suggestionHighlightEvent) {
-                doOnHighlight(suggestionHighlightEvent.getHighlighted().getReplacementString());
-            }
-        });
 
         suggestBox.addKeyDownHandler(new KeyDownHandler() {
             public void onKeyDown(KeyDownEvent keyDownEvent) {
@@ -355,7 +363,6 @@ public class LookupComposite extends Composite implements Revertible {
                 suggestBoxHasFocus = false;
             }
         }));
-
 
     }
 
@@ -420,6 +427,12 @@ public class LookupComposite extends Composite implements Revertible {
 
     private native void runOnclickJavaScriptMethod(String name)/*-{
         $wnd.submitForm(string);
+    }-*/;
+
+    private native void exposeTermInfoUpdateToJavascript(LookupComposite lookupComposite)/*-{
+        $wnd.updateTermInfo = function (termName, ontologyName) {
+            lookupComposite.@org.zfin.gwt.root.ui.LookupComposite::updateTermInfo(Ljava/lang/String;Ljava/lang/String;)(termName, ontologyName);
+        };
     }-*/;
 
     public void setErrorString(String text) {
@@ -736,6 +749,23 @@ public class LookupComposite extends Composite implements Revertible {
             unsetUnValidatedTextMarkup();
         } else {
             markUnValidateText();
+        }
+    }
+
+    public void updateTermInfo(String termName, String ontologyName) {
+        if (termName != null && false == termName.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
+            OntologyDTO ontology = OntologyDTO.getOntologyByName(ontologyName);
+            lookupRPC.getTermByName(ontology, termName, new TermInfoCallBack(termInfoTable, termName));
+        }
+    }
+
+
+    private class MyHighlightAction implements HighlightAction {
+        @Override
+        public void onHighlight(String termID) {
+            if (termID != null && false == termID.startsWith(ItemSuggestCallback.END_ELLIPSIS)) {
+                lookupRPC.getTermInfo(ontology, termID, new TermInfoCallBack(termInfoTable, termID));
+            }
         }
     }
 }

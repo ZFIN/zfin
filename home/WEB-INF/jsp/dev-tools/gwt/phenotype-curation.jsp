@@ -1,4 +1,5 @@
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
+<%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
@@ -232,3 +233,5 @@
         margin-left: 70px;
     }
 </style>
+<script type="text/javascript" src="/javascript/zfin-auto-complete.js">
+</script>

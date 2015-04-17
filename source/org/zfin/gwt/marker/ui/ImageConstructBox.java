@@ -13,7 +13,7 @@ import org.zfin.gwt.root.util.StringUtils;
 
 public class ImageConstructBox extends AbstractStackComposite<ImageDTO> { //RelatedEntityBox {
 
-    private LookupComposite constructInput = new LookupComposite();
+    private LookupComposite constructInput = new LookupComposite(false);
     private VerticalPanel panel = new VerticalPanel();
 
     public ImageConstructBox(String div) {

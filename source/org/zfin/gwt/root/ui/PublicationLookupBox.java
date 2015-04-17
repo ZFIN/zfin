@@ -119,7 +119,7 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
 
     public void clearPublications() {
         defaultPubList.clear();
-        defaultPubList.addItem("Choose Pub:", null);
+        defaultPubList.addItem("Choose Pub:", (String) null);
     }
 
     public void addInitPublications() {

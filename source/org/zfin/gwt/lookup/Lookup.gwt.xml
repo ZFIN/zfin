@@ -1,6 +1,7 @@
 <module>
 
     <inherits name='com.google.gwt.user.User'/>
+    <inherits name='com.google.gwt.query.Query'/>
     <inherits name="org.zfin.gwt.root.Root" />
     <source path='ui'/>
 

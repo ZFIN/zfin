@@ -805,7 +805,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
                 // row index minus the header row
                 displayTableMap.put(rowIndex, expression);
-                CheckBox checkbox = new CheckBox(null);
+                CheckBox checkbox = new CheckBox();
                 checkbox.setTitle(Long.toString(expression.getId()));
                 // if any figure annotations are already selected make sure they stay checked
                 if (selectedExpressions.contains(expression)) {

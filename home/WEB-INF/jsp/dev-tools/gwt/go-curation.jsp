@@ -1,5 +1,7 @@
 <%@ page import="org.zfin.gwt.curation.ui.GoCurationModule" %>
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
+<%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.gwt.root.dto.OntologyDTO" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -41,8 +43,14 @@
 <br>
 
 <div id="<%=GoCurationModule.GO_EVIDENCE_DISPLAY%>"></div>
+<%--
+Add ontology name as a hidden field
+--%>
+<div class="GO_TERM_single" aria-hidden="true" style="display: none;"><%=OntologyDTO.GO.getOntologyName()%></div>
 
 <%--</authz:authorize>--%>
+<script type="text/javascript" src="/javascript/zfin-auto-complete.js">
+</script>
 
 
 

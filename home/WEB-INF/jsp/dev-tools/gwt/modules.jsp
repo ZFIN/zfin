@@ -42,6 +42,12 @@
         </td>
     </tr>
     <tr>
+        <td class="sectionTitle">Human Disease</td>
+        <td>
+            <a href="/action/devtool/gwt/human-disease-curation">Curation: Human Disease</a>
+        </td>
+    </tr>
+    <tr>
         <td class="sectionTitle">Feature Curation Interface</td>
         <td width="120" colspan="2" class="sectionTitle">
             <a href="/action/devtool/gwt/feature-curation">Curation Interface: Feature Section</a>

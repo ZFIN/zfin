@@ -344,7 +344,7 @@
                fork="true"
                encoding="${encoding}"
                includeAntRuntime="no"
-               memoryMaximumSize="256m"
+               memoryMaximumSize="556m"
                debug="true"
                target="1.7"/>
         <echo message=":JAVA COMPILE SUCCESSFUL:"/>

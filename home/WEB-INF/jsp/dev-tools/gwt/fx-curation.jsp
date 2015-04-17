@@ -1,4 +1,5 @@
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
+<%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
@@ -12,6 +13,7 @@
 <div class="error"> Please use only for developmental purposes as this will make changes to the database!!!
 </div>
 <p/>
+
 <div title="Hello">
     <jsp:useBean id="publication" class="org.zfin.publication.Publication" scope="request"/>
     Publication: <zfin:link entity="${publication}"/> &nbsp; ${publication.zdbID}
@@ -76,10 +78,10 @@
 
 <script type="text/javascript">
     var curationProperties = {
-        zdbID : "${publication.zdbID}",
+        zdbID: "${publication.zdbID}",
         moduleType: "FX_CURATION",
         debug: "false"
-    } ;
+    };
     var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16"
 </script>
 
@@ -152,3 +154,5 @@
         </tbody>
     </table>
 </div>
+<script type="text/javascript" src="/javascript/zfin-auto-complete.js">
+</script>

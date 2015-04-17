@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public class PublicationAttribution extends RecordAttribution implements Serializable, Comparable<PublicationAttribution> {
 
-    private Publication publication;
+    protected Publication publication;
 
     public Publication getPublication() {
         return publication;

@@ -1,6 +1,8 @@
 package org.zfin.gwt.lookup.ui;
 
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.util.JavaScriptPropertyReader;
 
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.Set;
  * The structure of this SuggestBox is used in order to capture the extra "Enter" event.
  * As this uses a "GET" encoding we can be a bit more
  */
-public class GeneralLookup extends Lookup {
+public class GeneralLookup extends Lookup implements EntryPoint {
 
     public static final String JSREF_USE_TERM_TABLE = "useTermTable";
 

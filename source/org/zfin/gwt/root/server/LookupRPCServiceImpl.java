@@ -366,14 +366,13 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             logger.error("Encountered an obsoleted anatomy term id: " + termID);
 
         TermDTO term = OntologyManager.getInstance().getTermByID(termID, ontology);
-        if (term.getOntology() == OntologyDTO.MPATH) {
-            term.setOntology(OntologyDTO.MPATH_NEOPLASM);
-        }
-
-
         if (term == null) {
             logger.warn("No term " + termID + " found!");
             return null;
+        }
+
+        if (term.getOntology() == OntologyDTO.MPATH) {
+            term.setOntology(OntologyDTO.MPATH_NEOPLASM);
         }
         return term;
 
@@ -474,7 +473,10 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
 
     public TermDTO getTermByName(OntologyDTO ontologyDTO, String value) throws TermNotFoundException {
+        value = cleanTermName(value);
         Ontology ontology = DTOConversionService.convertToOntology(ontologyDTO);
+        if (ontology == null)
+            throw new TermNotFoundException("No Ontology provided for query term string " + value);
 
         TermDTO term = null;
         // In case the term name is the ZDB_TERM id
@@ -492,15 +494,23 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         // Still null then maybe the Ontology Manager is not yet instantiated with this ontology.
         if (term == null) {
             if (ActiveData.isValidActiveData(value, ActiveData.Type.TERM)) {
-                logger.info("Term [" + value + "] not found in OntologyManager: Trying to retrieve from database.");
+                logger.debug("Term [" + value + "] not found in OntologyManager: Trying to retrieve from database.");
                 term = DTOConversionService.convertToTermDTOWithDirectRelationships(RepositoryFactory.getOntologyRepository().getTermByZdbID(value));
             }
             if (term == null) {
-                logger.info("Failed to find term [" + value + "]");
+                logger.debug("Failed to find term [" + value + "]");
                 throw new TermNotFoundException("Failed to find term [" + value + "] in <" + ontologyDTO.getDisplayName() + ">");
             }
         }
         return term;
+    }
+
+    private String cleanTermName(String value) {
+        int indexOfparen = value.indexOf("[");
+        if (indexOfparen > -1)
+            value = value.substring(0, indexOfparen - 1);
+        value = value.replace(MatchingTerm.OBSOLETE_SUFFIX, "");
+        return value;
     }
 
     /**

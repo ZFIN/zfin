@@ -7,6 +7,7 @@ import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStructure;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;
 
@@ -227,4 +228,7 @@ public interface PhenotypeRepository {
      * @return list of phenotype statements
      */
     List<PhenotypeStatement> getPhenotypeStatementsForFigureAndGenotype(Figure figure, Genotype genotype);
+
+    List<GenericTerm> getHumanDiseases(String publicationID);
+
 }

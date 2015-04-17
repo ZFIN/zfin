@@ -34,8 +34,8 @@ public class CurationEntryPoint implements EntryPoint {
         loadPublicationAndFilterElements();
         exposeSessionSaveMethodsToJavascript();
         // use only the session save module if no pub id is provided.
-        if (publicationID != null){
-            type.initializeModule(publicationID) ;
+        if (publicationID != null && type != null) {
+            type.initializeModule(publicationID);
         }
     }
 
@@ -55,13 +55,13 @@ public class CurationEntryPoint implements EntryPoint {
     }
 
     private native void exposeSessionSaveMethodsToJavascript()/*-{
-      $wnd.storeSession = function (person, publication, field, value) {
-      @org.zfin.gwt.curation.ui.CurationEntryPoint::store(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(person, publication, field, value);
-      };
+        $wnd.storeSession = function (person, publication, field, value) {
+            @org.zfin.gwt.curation.ui.CurationEntryPoint::store(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(person, publication, field, value);
+        };
 
-      $wnd.storeSessionAndRefresh = function (person, publication, field, value, anchor) {
-      @org.zfin.gwt.curation.ui.CurationEntryPoint::storeRefresh(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(person, publication, field, value,anchor);
-      };
+        $wnd.storeSessionAndRefresh = function (person, publication, field, value, anchor) {
+            @org.zfin.gwt.curation.ui.CurationEntryPoint::storeRefresh(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(person, publication, field, value, anchor);
+        };
 
     }-*/;
 

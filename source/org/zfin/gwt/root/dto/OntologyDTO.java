@@ -10,7 +10,7 @@ import java.util.List;
  */
 public enum OntologyDTO implements IsSerializable {
 
-    ANATOMY(0, "AO", "zebrafish_anatomy", false) {
+    ANATOMY(0, "AO", "zebrafish_anatomy", false, "ZFA:0000037") {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return QUALITY_QUALITIES;
@@ -22,7 +22,7 @@ public enum OntologyDTO implements IsSerializable {
             return QUALITY_QUALITIES;
         }
     },
-    DISEASE_ONTOLOGY(20, "Human Disease", "disease_ontology", false) {
+    DISEASE_ONTOLOGY(20, "Human Disease", "disease_ontology", false, "DOID:4") {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
@@ -156,12 +156,21 @@ public enum OntologyDTO implements IsSerializable {
     private String ontologyName;
     private boolean composedOntologies;
     private String subtreeOntology;
+    private String rootTermID;
 
     private OntologyDTO(int index, String value, String name, boolean composedOntology) {
         this.index = index;
         this.displayName = value;
         this.ontologyName = name;
         this.composedOntologies = composedOntology;
+    }
+
+    private OntologyDTO(int index, String value, String name, boolean composedOntology, String rootTermID) {
+        this.index = index;
+        this.displayName = value;
+        this.ontologyName = name;
+        this.composedOntologies = composedOntology;
+        this.rootTermID = rootTermID;
     }
 
     private OntologyDTO(int index, String value, String subtreeOntology, String name, boolean composedOntology) {
@@ -247,6 +256,10 @@ public enum OntologyDTO implements IsSerializable {
 
     public boolean isComposed() {
         return composedOntologies;
+    }
+
+    public String getRootTermID() {
+        return rootTermID;
     }
 }
 

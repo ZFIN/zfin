@@ -1,0 +1,43 @@
+<%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
+<link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
+<script type="text/javascript" language="javascript"
+        src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+<h1> Human Disease Curation </h1>
+
+<div id="show-hide-all-sections"></div>
+
+<div class="error"> Please use only for developmental purposes as this will make changes to the database!!!
+</div>
+<p/>
+
+<div id="title">
+    <jsp:useBean id="publication" class="org.zfin.publication.Publication" scope="request"/>
+    Publication: <zfin:link entity="${publication}"/> &nbsp; ${publication.zdbID}
+    <br>
+    Title: ${publication.title}<br>
+</div>
+<form method="GET">
+    Publication ID: <label>
+    <input name="publicationID" value=""/>
+</label>
+    &nbsp;<input type="submit" value="Submit"/>
+</form>
+
+<div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+
+<div id="humanDiseaseZone"></div>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID: "${publication.zdbID}",
+        moduleType: "DISEASE_CURATION",
+        debug: "false"
+    };
+    var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16";
+</script>
+<script type="text/javascript" src="/javascript/zfin-auto-complete.js">
+</script>
+

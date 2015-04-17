@@ -1,0 +1,38 @@
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <g:FlowPanel>
+        <g:VerticalPanel spacing="10" title="Disease">
+            <g:HorizontalPanel>
+                <g:Label text="Disease Models:" styleName="bold"/>
+                <g:Label text="None" ui:field="diseaseModelTableContent" styleName="summary-title"/>
+            </g:HorizontalPanel>
+            <g:FlexTable ui:field='diseaseModelTable' styleName="searchresults" cellSpacing='0' cellPadding='5'/>
+            <g:HorizontalPanel>
+                <g:Label text="Diseases Reported: " styleName="bold"/>
+                <g:Label text="None" ui:field="diseaseTableContent" styleName="summary-title"/>
+            </g:HorizontalPanel>
+            <g:FlexTable ui:field='diseaseTable' styleName="searchresults" cellSpacing='0' cellPadding='5'/>
+        </g:VerticalPanel>
+        <g:HTMLPanel>
+            <hr/>
+        </g:HTMLPanel>
+        <g:VerticalPanel spacing="10" title="Construction Zone">
+            <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
+                <g:VerticalPanel spacing="10" title="Pile">
+                    <zfin:TermEntry ui:field="termEntry" listOFOntologies="disease_ontology"
+                                    entityPart="ENTITY_SUPERTERM"/>
+                    <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
+                        <g:Button ui:field="addButton" text="Add"/>
+                        <g:Button ui:field="resetButton" text="Reset"/>
+                    </g:HorizontalPanel>
+                </g:VerticalPanel>
+                <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0' cellPadding='5'
+                                        ontologyName="disease_ontology"/>
+            </g:HorizontalPanel>
+        </g:VerticalPanel>
+    </g:FlowPanel>
+</ui:UiBinder>
