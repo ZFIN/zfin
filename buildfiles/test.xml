@@ -497,7 +497,7 @@ test(s) need to be run before committing changes or pushing files to production 
                maxmemory="2024m"
                >
 <!--            <jvmarg line="${junrt.jvmargs}"/>-->
-            <classpath refid="extended.classpath"/>
+            <classpath refid="unittest.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
