@@ -1,11 +1,15 @@
+<%@ page import="org.zfin.publication.Publication" %>
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<c:set var="UNPUBLISHED" value="<%=Publication.Type.UNPUBLISHED %>"/>
+<c:set var="CURATION" value="<%=Publication.Type.CURATION %>"/>
 
 Total: ${fn:length(publications)}
 
 <table>
     <c:forEach var="publication" items="${publications}" varStatus="loop">
-        <c:if test="${publication.type ne 'Unpublished' and publication.type ne 'Curation'}">
+        <c:if test="${publication.type != UNPUBLISHED and publication.type != CURATION}">
             <tr>
                 <%--<td>${loop.index}</td>--%>
                 <td>
@@ -19,7 +23,7 @@ Total: ${fn:length(publications)}
 <h4>Additional Citations</h4>
 <table>
     <c:forEach var="publication" items="${publications}" varStatus="loop">
-        <c:if test="${publication.type eq 'Unpublished' or publication.type eq 'Curation'}">
+        <c:if test="${publication.type != UNPUBLISHED or publication.type != CURATION}">
             <tr>
                 <%--<td>${loop.index}</td>--%>
                 <td>

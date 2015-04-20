@@ -1,11 +1,12 @@
-  <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ tag import="org.zfin.publication.Publication" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="figure" type="org.zfin.expression.Figure" rtexprvalue="true" required="true"  %>
 <%@ attribute name="autoplayVideo" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
 
 <%@attribute name="showMultipleMediumSizedImages" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 
-
+<c:set var="UNPUBLISHED" value="<%=Publication.Type.UNPUBLISHED %>"/>
 
 
 <c:set var="autoplay" value=""/>
@@ -80,7 +81,7 @@
            <img class="placeholder" src="/images/onlyfrompublisher.jpg">
        </c:if>
        <c:choose>
-           <c:when test="${!figure.publication.canShowImages || (empty figure.caption && figure.publication.type != 'Unpublished')}">
+           <c:when test="${!figure.publication.canShowImages || (empty figure.caption && figure.publication.type != UNPUBLISHED)}">
 
                <c:choose>
                    <c:when test="${figure.comments == 'GELI'}">
