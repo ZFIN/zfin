@@ -58,7 +58,8 @@
 
     html { font-size: 100%; }
     body { font-size: 16px; }
-    a { color: blue }
+    a,a:hover { color: blue }
+    
 </style>
 
 <script>
@@ -81,7 +82,7 @@
 
 
     <div class="row">
-        <div class="search-box col-md-12">
+        <div class="search-box col-md-offset-1 col-md-11" style="margin-bottom: 10px; margin-top:10px; ">
             <form id="query-form" class="form-inline" method="get" action="/search">
                 <div class="search-input-container">
 
@@ -106,7 +107,7 @@
                                type="text"
                                value="<c:out value="${q}" escapeXml="true"/>"/>
 
-                        <div class="btn btn-group search-box-buttons">
+                        <div class="btn-group search-box-buttons">
                             <button type="submit" class="btn btn-default btn-zfin">Go</button>
                             <authz:authorize ifAnyGranted="root">
                                 <c:if test="${category eq publicationCategoryName}">

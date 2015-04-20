@@ -443,7 +443,7 @@ li.facet-value { line-height: 21px !important; }
 .category-facet-group-values li.facet-value { font-size: 15px; }
 .root-only-facet-group .facet-group-label-container { color: red;}
 
-a.facet-link { color: #404440; }
+a.facet-link,a.facet-link:hover { color: #404440; }
 
 /* a mute the icons and counts */
 .include-exclude-icon, i.facet-selected, .facet-field-count, .facet-value-modal-link { color: #707770;}

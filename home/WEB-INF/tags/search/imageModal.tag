@@ -20,7 +20,8 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <span class="result-header search-result-name">${result.link}</span>
             </div>
-            <div class="modal-body">
+            <div class="modal-body modal-body-scrolling">
+
 
                 <c:choose>
                     <c:when test="${fn:length(result.images) == 1}">
@@ -41,13 +42,23 @@
                             <div class="carousel-inner">
                                 <c:forEach var="image" items="${result.images}" varStatus="loop">
                                     <div class="<c:if test="${loop.index == 0}">active</c:if> item">
-                                        <img src="/images/ajax-loader.gif" class="img-responsive" realsrc="/imageLoadUp/medium/${image}"/>
+                                        <img src="/images/ajax-loader.gif" class="img-responsive" style="margin-left: auto; margin-right: auto;" realsrc="/imageLoadUp/medium/${image}"/>
                                     </div>
                                 </c:forEach>
                             </div>
                             <!-- Carousel nav, override 'top' to not be vertically centered, but stick to the top  -->
-                            <a style="top: 30px;" class="carousel-control left" href="#${carouselDomID}" data-slide="prev">&lsaquo;</a>
-                            <a style="top: 30px;" class="carousel-control right" href="#${carouselDomID}" data-slide="next">&rsaquo;</a>
+                            <a style="top: 30px;" class="carousel-control left" href="#${carouselDomID}" data-slide="prev">
+                                <span class="fa-stack">
+                                    <i class="fa fa-circle fa-inverse fa-stack-1x"></i>
+                                    <i class="fa fa-arrow-circle-left fa-stack-1x"></i>
+                                </span>
+                            </a>
+                            <a style="top: 30px;" class="carousel-control right" href="#${carouselDomID}" data-slide="next">
+                                <span class="fa-stack">
+                                    <i class="fa fa-circle fa-inverse fa-stack-1x"></i>
+                                    <i class="fa fa-arrow-circle-right fa-stack-1x"></i>
+                                </span>
+                            </a>
                         </div>
                     </c:when>
                 </c:choose>

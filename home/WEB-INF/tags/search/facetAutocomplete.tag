@@ -12,7 +12,7 @@
                 Filter: <input ng-model="query" ng-model-options="{debounce: 300}" ng-change="page = 1">
 
             </div>
-            <ul style="padding: 10px;">
+            <ul class="list-unstyled modal-body-scrolling" style="padding: 10px;">
                 <li style="clear:both" class="selectable-facet-value facet-value" ng-repeat="value in ( filteredValues = (facetValues | match:query) ) | paging:perPage:page">
                     <a href="${baseUrlWithoutPage}fq={{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('include', value.name)"><i class="include-exclude-icon facet-include fa fa-plus-circle"></i></a>
                     <a href="${baseUrlWithoutPage}fq=-{{field}}:%22{{value.name}}%22" ng-click="sendGAEvent('exclude', value.name)"><i class="include-exclude-icon facet-exclude fa fa-minus-circle"></i></a>
@@ -24,9 +24,9 @@
             <div style="margin-top: .5em;">
 
                 <%--Page:--%>
-                <button style="margin-left: 3em;" class="btn" ng-click="prevPage()"><i class="fa fa-angle-left"></i></button>
+                <button style="margin-left: 3em;" class="btn btn-default" ng-click="prevPage()"><i class="fa fa-angle-left"></i></button>
                 {{page}}/{{   Math.ceil(filteredValues.length/perPage)  }}
-                <button class="btn" ng-click="nextPage()"><i class="fa fa-angle-right"></i></button>
+                <button class="btn btn-default" ng-click="nextPage()"><i class="fa fa-angle-right"></i></button>
 
                 <div class="pull-right">
                     Show:
