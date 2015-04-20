@@ -218,6 +218,11 @@ test(s) need to be run before committing changes or pushing files to production 
                haltonerror="yes"
                maxmemory="2024m"
                showoutput="false">
+
+             <classpath>
+ 		<path refid="extended.classpath"/>
+             </classpath>
+
             <test name="org.zfin.UnitTests" todir="${test.reports.dir}"
 		  haltonerror="false" haltonfailure="false"
                   failureproperty="test.failure"
