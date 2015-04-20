@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="gwt" basedir=".">
+<project name="gwt" basedir="../.">
 
 
     <target name="dirty-gwt" description="Compiles all gwt targets">
@@ -113,23 +113,51 @@
         </sequential>
     </macrodef>
 
-    <target name="devmode" depends="dirty-curation-gwt,dev" description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)"/>
+    <property name="gwt.sdk" location="lib/Java/gwt"/>
 
-    <target name="devm" depends="" description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)">
+    <target name="devmode" depends="compile,copy-testing-pages"
+            description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)">
         <java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode" maxmemory="1g">
             <classpath>
                 <pathelement location="source"/>
                 <path refid="extended.classpath"/>
+                <pathelement location="${gwt.sdk}/gwt-codeserver.jar"/>
             </classpath>
-            <arg value="-war"/>
-            <arg value="@{target}"/>
             <arg value="-startupUrl"/>
-            <arg value="http://zezem:9126/action/devtool/gwt/human-disease-curation"/>
-            <arg value="org.zfin.gwt.curation.Curation"/>
+            <arg value="http://zezem-mac.zfin.org:9126/gwt-modules-for-testing.html"/>
+            <arg line="-war"/>
+            <arg value="home"/>
+            <arg line="-logLevel"/>
+            <arg value="INFO"/>
+            <arg line="-noserver"/>
+            <!-- Additional arguments like -style PRETTY, -logLevel DEBUG or -nosuperDevMode -->
 <!--
-            <arg value="@{module}"/>
+            <arg line="${gwt.args}"/>
 -->
+            <arg value="org.zfin.gwt.curation.Curation"/>
+            <arg value="org.zfin.gwt.curation.Curation"/>
         </java>
+    </target>
+
+    <target name="copy-testing-pages" description="Copy libs to WEB-INF/lib">
+        <copy todir="home/" >
+            <fileset dir="test/gwt/" defaultexcludes="true">
+                <include name="*.html"/>
+            </fileset>
+        </copy>
+        <!-- Add any additional server libs that need to be copied -->
+    </target>
+
+
+    <target name="javac"  description="Compile java source to bytecode">
+        <echo >${home}</echo>
+        <javac srcdir="source/org/zfin/gwt" encoding="utf-8"
+               destdir="home/WEB-INF/classes"
+               source="1.7" target="1.7" nowarn="true"
+               debug="true" debuglevel="lines,vars,source">
+            <include name="**/*.java"/>
+            <classpath refid="extended.classpath"/>
+        </javac>
     </target>
 
     <target name="dev" depends="" description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)">
@@ -142,6 +170,7 @@
             <arg value="gwt/Mail.html"/>
             <arg line="-war"/>
             <arg value="home"/>
+            <arg value="org.zfin.gwt.curation.Curation"/>
             <arg value="org.zfin.gwt.curation.Curation"/>
         </java>
     </target>

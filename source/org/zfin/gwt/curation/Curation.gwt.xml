@@ -3,6 +3,7 @@
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='org.zfin.gwt.root.Root'/>
     <inherits name='com.google.gwt.query.Query'/>
+    <add-linker name="xsiframe" />
 
     <source path='dto'/>
     <source path='event'/>
