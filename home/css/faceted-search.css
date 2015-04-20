@@ -21,6 +21,7 @@ div.search-result {
     left: 0em;
     border-width: 2px;
     background: #efefef;
+    margin-bottom: 10px; 
 }
 .cross-reference-result-container .cross-reference-btn-group { display: none }
 .cross-reference-result-container .search-result-category { display: none }
