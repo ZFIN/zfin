@@ -8,6 +8,7 @@
  builder is limited to 3 cassettes
  each cassette may have a promoter or a coding (can either have both,or one of either but has to have at least 1 of either promoter or coding)
 */
+//using variables names for stuff common betweeen all constructs  , like "(" and ")", also for cassette spearators (",") and promoter, coding separators (":")
 
 
 var openP='(';
@@ -100,12 +101,7 @@ jQuery(document).ready(function () {
 //
             makeName();
         });
-        /*jQuery("input[id^='cassette']").keypress(function(event) {
-            if (event.keyCode == 13) {
-                event.preventDefault();
-                return false;
-            }
-        });*/
+
 
 
     })
@@ -243,32 +239,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
 
         duplicate.className = 'duplicate';
 
-     /*   jQuery('input', jQuery('.duplicate')).each(function () {
-            jQuery(this).css({ "background-color": 'white'});
 
-        });
-
-
-        jQuery('button', jQuery("#promoterCassette1")).each(function () {
-            if (this.id.indexOf("1") == 0) {
-                this.remove();
-            }
-        });
-        jQuery('button', jQuery("#codingCassette1")).each(function () {
-            if (this.id.indexOf("1") == 0) {
-                this.remove();
-            }
-        });
-        jQuery('input', jQuery("#promoterCassette1")).each(function () {
-            if (this.id.indexOf("Promoter1") == 0) {
-                this.remove();
-            }
-        });
-        jQuery('button', jQuery("#codingCassette1")).each(function () {
-            if (this.id.indexOf("Coding1") == 0) {
-                this.remove();
-            }
-        });*/
 
 
 
@@ -366,7 +337,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
     }
 
     function addComponent(divToAttachTo, thisId, component,buttonClassName) {
-//the add does not only add fields, (input box, select box and + and - buttons. It also has to remember the vale of the input and select box before it.
+//the add does not only add fields, (input box, select box and + and - buttons. It also has to remember the value of the input and select box before it.
 // Curator might choose to insert fields between exisitng fileds an dnot lose values already entered
 
         cassetteNumber = parseInt(buttonClassName);
@@ -600,6 +571,10 @@ function resetFields(){
 
 }
 function makeName(){
+    //main function to generate construct name on the fly
+    //it also creates a "stored string" to pass on to the controller to store construct components in order
+    //the stored string contains special characters to delimit promoters and coding as wlel as to delimit cassettes.
+
     jQuery('#add-construct-error').hide();
     var cassette1PromoterString="";
     var cassette1CodingString="";
