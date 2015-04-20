@@ -289,7 +289,7 @@ test(s) need to be run before committing changes or pushing files to production 
                 <formatter type="xml"/>
             </test>
 
-            <classpath refid="extended.classpath"/>
+            <classpath refid="unittest.classpath"/>
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <jvmarg line="${junit.jvmargs}"/>
             <!-- <arg value="${junit.test.class.name}"/>-->
