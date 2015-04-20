@@ -43,9 +43,9 @@ public class ConstructAddController {
     private static Logger LOG = Logger.getLogger(ConstructAddController.class);
 
     @Autowired
-    private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-    private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-    private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
+    private MarkerRepository mr;
+    private PublicationRepository pr;
+    private InfrastructureRepository ir;
 
 
     @ModelAttribute("formBean")

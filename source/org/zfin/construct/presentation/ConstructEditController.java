@@ -35,11 +35,11 @@ public class ConstructEditController {
     private static Logger LOG = Logger.getLogger(ConstructEditController.class);
 
     @Autowired
-    private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-    private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-    private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-    private static SequenceRepository sr = RepositoryFactory.getSequenceRepository();
-    private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
+    private MarkerRepository mr;
+    private PublicationRepository pr;
+    private InfrastructureRepository ir ;
+    private SequenceRepository sr;
+    private ProfileRepository profileRepository;
 
 
     private static Logger logger = Logger.getLogger(ConstructEditController.class);
