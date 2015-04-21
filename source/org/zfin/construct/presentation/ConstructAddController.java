@@ -44,7 +44,9 @@ public class ConstructAddController {
 
     @Autowired
     private MarkerRepository mr;
+    @Autowired
     private PublicationRepository pr;
+    @Autowired
     private InfrastructureRepository ir;
 
 
