@@ -233,5 +233,5 @@
         margin-left: 70px;
     }
 </style>
-<script type="text/javascript" src="/javascript/zfin-auto-complete.js">
+<script type="text/javascript" src="/javascript/zfin-gwt-autocomplete-helper.js">
 </script>

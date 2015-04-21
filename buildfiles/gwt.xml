@@ -33,10 +33,6 @@
         <pre-gwt-compile module="org.zfin.gwt.marker.Marker"/>
     </target>
 
-    <target name="dirty-disease-gwt" description="Compiles lookup gwt">
-        <dirty-gwt-compile module="org.zfin.gwt.mail.Mail"/>
-    </target>
-
     <target name="dirty-lookup-gwt" description="Compiles lookup gwt">
         <dirty-gwt-compile module="org.zfin.gwt.lookup.Lookup"/>
     </target>
@@ -124,7 +120,7 @@
                 <pathelement location="${gwt.sdk}/gwt-codeserver.jar"/>
             </classpath>
             <arg value="-startupUrl"/>
-            <arg value="http://zezem-mac.zfin.org:9126/gwt-modules-for-testing.html"/>
+            <arg value="http://${env.DOMAIN_NAME}/gwt-modules-for-testing.html"/>
             <arg line="-war"/>
             <arg value="home"/>
             <arg line="-logLevel"/>
@@ -134,7 +130,6 @@
 <!--
             <arg line="${gwt.args}"/>
 -->
-            <arg value="org.zfin.gwt.curation.Curation"/>
             <arg value="org.zfin.gwt.curation.Curation"/>
         </java>
     </target>
@@ -148,31 +143,5 @@
         <!-- Add any additional server libs that need to be copied -->
     </target>
 
-
-    <target name="javac"  description="Compile java source to bytecode">
-        <echo >${home}</echo>
-        <javac srcdir="source/org/zfin/gwt" encoding="utf-8"
-               destdir="home/WEB-INF/classes"
-               source="1.7" target="1.7" nowarn="true"
-               debug="true" debuglevel="lines,vars,source">
-            <include name="**/*.java"/>
-            <classpath refid="extended.classpath"/>
-        </javac>
-    </target>
-
-    <target name="dev" depends="" description="Run development mode (pass -Dgwt.args=-nosuperDevMode to fallback to classic DevMode)">
-        <java failonerror="true" fork="true" classname="com.google.gwt.dev.DevMode" maxmemory="1g">
-            <classpath>
-                <pathelement location="source"/>
-                <path refid="extended.classpath"/>
-            </classpath>
-            <arg value="-startupUrl"/>
-            <arg value="gwt/Mail.html"/>
-            <arg line="-war"/>
-            <arg value="home"/>
-            <arg value="org.zfin.gwt.curation.Curation"/>
-            <arg value="org.zfin.gwt.curation.Curation"/>
-        </java>
-    </target>
 
 </project>
