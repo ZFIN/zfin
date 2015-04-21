@@ -64,7 +64,18 @@
             <ul>
                 <c:forEach var="error" items="${validationReportList}">
                     <li><span class="error">${error.validationMessage}</span></li>
-                    <zfin2:createExpandCollapse items="${error.entityCollection}" id="${error.entityType}" itemName="items"/>
+                    <%-- This is a hack as the ExperimentPresentation class is abused to display STR info instaed
+                    of experiment detail --%>
+                    <c:choose>
+                        <c:when test="${fn:startsWith(error.entityType, 'Experiment')}">
+                            <c:forEach var="experiment" items="${error.entityCollection}">
+                               <a href="/${experiment.zdbID}"> ${experiment.name}</a> <br/>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <zfin2:createExpandCollapse items="${error.entityCollection}" id="${error.entityType}" itemName="items"/>
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
             </ul>
             <c:choose>
