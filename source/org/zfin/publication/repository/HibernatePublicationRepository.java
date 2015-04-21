@@ -8,6 +8,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
+import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Experiment;
@@ -40,6 +41,7 @@ import java.util.*;
 /**
  * ToDO: include documentation
  */
+@Repository
 public class HibernatePublicationRepository extends PaginationUtil implements PublicationRepository {
 
     Logger logger = Logger.getLogger(HibernatePublicationRepository.class);
