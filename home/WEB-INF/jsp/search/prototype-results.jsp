@@ -38,9 +38,9 @@
 
     #hdr-navlinks {
         line-height: 15px;
-/*        position: relative;
-        top: 5px;*/
     }
+
+    #hdr-banner { height: 77px; }
 
     .tabContent, .selectedTabContent { height: 22px !important; }
 
