@@ -19,7 +19,7 @@
 <table>
     <tr>
         <td>
-            This information was provided by UniProt through a collaboration with ZFIN. (<a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=ZDB-PUB-020723-2">1</a>)
+            This information was provided by UniProt through a collaboration with ZFIN. (<a href="/ZDB-PUB-020723-2">1</a>)
         </td>
     </tr>
 </table>

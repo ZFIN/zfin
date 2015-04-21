@@ -61,7 +61,7 @@ public class PublicationAttributionLabel<U extends RelatedEntityDTO> extends Com
 
         pubLink.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                Window.open("http://zfin.org/cgi-bin/webdriver/?MIval=aa-pubview2.apg&OID=" + pubLink.getText(), "", "");
+                Window.open("http://zfin.org/" + pubLink.getText(), "", "");
             }
         });
 

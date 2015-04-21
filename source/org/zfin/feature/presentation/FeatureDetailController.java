@@ -54,7 +54,7 @@ public class FeatureDetailController {
             String ftr = featureRepository.getFeatureByIDInTrackingTable(zdbID);
             if (ftr != null) {
                 if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
-                    return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+                    return "redirect:/ZDB-PUB-121121-2";
                 } else {
                     //if (!zdbID.startsWith("ZDB-ALT-120130")||!zdbID.startsWith("ZDB-ALT-120806")){
                     String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);

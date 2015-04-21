@@ -59,7 +59,7 @@
             <zfin:alternating-tr loopName="loop">
                 <td align=left>
                     <div class="show_pubs">
-                        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${publication.zdbID}">${publication.authors}
+                        <a href="/${publication.zdbID}">${publication.authors}
                             &nbsp;(${publication.year})&nbsp;${publication.title}
                         </a>
                     </div>

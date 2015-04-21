@@ -181,7 +181,7 @@ public class MarkerNoteBox<T extends MarkerDTO> extends AbstractNoteBox<T> imple
             addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    Window.open("http://zfin.org/cgi-bin/webdriver/?MIval=aa-pubview2.apg&OID=" + publicationZdbID, "", "");
+                    Window.open("http://zfin.org/" + publicationZdbID, "", "");
                 }
             });
         }

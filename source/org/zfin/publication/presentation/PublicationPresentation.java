@@ -10,7 +10,6 @@ import org.zfin.publication.Publication;
  */
 public class PublicationPresentation extends EntityPresentation {
 
-    private static final String uri = "?MIval=aa-pubview2.apg&OID=";
     private static final String person_uri = "profile/view/";
 
     /**

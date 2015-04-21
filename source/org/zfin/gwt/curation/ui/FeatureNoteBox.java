@@ -181,7 +181,7 @@ public class FeatureNoteBox<T extends FeatureDTO> extends AbstractNoteBox<T> imp
             addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    Window.open("http://zfin.org/cgi-bin/webdriver/?MIval=aa-pubview2.apg&OID=" + publicationZdbID, "", "");
+                    Window.open("http://zfin.org/" + publicationZdbID, "", "");
                 }
             });
         }

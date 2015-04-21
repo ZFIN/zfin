@@ -86,7 +86,7 @@
                                     image${directlySubmittedExpression.numImages ne 1 ? 's' : ''})
                                 </a>
                                 from <a
-                                    href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${directlySubmittedExpression.publicationZdbID}">${directlySubmittedExpression.miniAuth}</a>
+                                    href="/${directlySubmittedExpression.publicationZdbID}">${directlySubmittedExpression.miniAuth}</a>
                                 <c:if test="${marker.markerType.type != 'EFG'  }">
                                     [${directlySubmittedExpression.probeFeatureAbbrev}]
                                 </c:if>

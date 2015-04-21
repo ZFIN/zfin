@@ -45,7 +45,7 @@
                 <c:if test="${featureAlias.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${featureAlias.publicationCount == 1}">
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)
+                            (<a href="/${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)
                         </c:when>
                         <c:otherwise>
                             (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)
@@ -69,7 +69,7 @@
                     <c:if test="${fmRel.publicationCount > 0}">
                         <c:choose>
                             <c:when test="${fmRel.publicationCount == 1}">
-                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${fmRel.singlePublication.zdbID}">${fmRel.publicationCount}</a>)
+                                (<a href="/${fmRel.singlePublication.zdbID}">${fmRel.publicationCount}</a>)
                             </c:when>
                             <c:otherwise>
                                 (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${fmRel.zdbID}&rtype=genotype">${fmRel.publicationCount}</a>)
@@ -104,7 +104,7 @@
                 <c:if test="${mRel.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${mRel.publicationCount == 1}">
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>        
+                            (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
                         </c:when>
                         <c:otherwise>
                             (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
@@ -123,7 +123,7 @@
         <c:if test="${fn:length(formBean.featureTypeAttributions) > 0 }">
             <c:choose>
                 <c:when test="${fn:length(formBean.featureTypeAttributions)== 1 }">
-                    (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${formBean.singlePublication}">${1}</a>)
+                    (<a href="/${formBean.singlePublication}">${1}</a>)
                 </c:when>
                 <c:otherwise>
                     (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&rtype=genotype&recattrsrctype=feature+type&OID=${formBean.feature.zdbID}">${fn:length(formBean.featureTypeAttributions)}</a>)
@@ -200,7 +200,7 @@
             <c:if test="${featureGenbankLink.publicationCount > 0}">
                 <c:choose>
                     <c:when test="${featureGenbankLink.publicationCount == 1}">
-                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureGenbankLink.singlePublication.zdbID}">${featureGenbankLink.publicationCount}</a>)
+                        (<a href="/${featureGenbankLink.singlePublication.zdbID}">${featureGenbankLink.publicationCount}</a>)
                     </c:when>
                     <c:otherwise>
                         (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureGenbankLink.zdbID}&rtype=genotype">${featureGenbankLink.publicationCount}</a>)
@@ -270,7 +270,7 @@
                             <c:if test="${featureSummaryDblink.publicationCount > 0}">
                                 <c:choose>
                                     <c:when test="${featureSummaryDblink.publicationCount == 1}">
-                                        (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${featureSummaryDblink.singlePublication.zdbID}">${featureSummaryDblink.publicationCount}</a>)
+                                        (<a href="/${featureSummaryDblink.singlePublication.zdbID}">${featureSummaryDblink.publicationCount}</a>)
                                     </c:when>
                                     <c:otherwise>
                                         (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureSummaryDblink.zdbID}&rtype=genotype">${featureSummaryDblink.publicationCount}</a>)

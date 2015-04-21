@@ -3,7 +3,7 @@
 <%@ attribute name="publication" type="org.zfin.publication.Publication"%>
 <%@ attribute name="webdriverPath" type="java.lang.String" %>
 
-<a href="/${webdriverPath}?MIval=aa-pubview2.apg&OID=${publication.zdbID}">
+<a href="/${publication.zdbID}">
     ${publication.authors} (${publication.year}) ${publication.title}.
     ${publication.journal.abbreviation}
         ${publication.volume}

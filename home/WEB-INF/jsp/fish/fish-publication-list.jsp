@@ -47,7 +47,7 @@
             <zfin:alternating-tr loopName="loop">
                 <td align=left>
                     <div class="show_pubs">
-                        <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${publishedPublication.zdbID}"
+                        <a href="/${publishedPublication.zdbID}"
                                 id="${publishedPublication.zdbID}">${publishedPublication.authors}
                             &nbsp;(${publishedPublication.year})&nbsp;${publishedPublication.title}.&nbsp;${publishedPublication.journal.abbreviation}&nbsp;<c:if
                                     test="${publishedPublication.volume != null}">${publishedPublication.volume}:</c:if>${publishedPublication.pages}
@@ -77,7 +77,7 @@
                         </c:if>
 
                         <div class="show_pubs">
-                            <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
+                            <a href="/${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
                                 &nbsp;(${unpublishedPublication.year})&nbsp;${unpublishedPublication.title}
                             </a><authz:authorize ifAnyGranted="root">&nbsp;&nbsp;&nbsp;<c:if
                                 test="${unpublishedPublication.open}">OPEN</c:if><c:if

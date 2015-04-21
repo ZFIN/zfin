@@ -188,7 +188,7 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
     @Test
     public void testListOfAntibodiesLinkOnPublication() throws IOException {
         // Depletion of Zebrafish Essential and Regulator publication with at last 3 antibodies
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-080326-24");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-PUB-080326-24");
         assertTrue(page.getTitleText().contains("Chen et al"));
 
         HtmlAnchor antibodiesLink = (HtmlAnchor) page.getElementById("list-of-antibodies");

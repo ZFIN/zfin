@@ -59,7 +59,7 @@ public class FishDetailController {
             if (newZdbID != null) {
                 LOG.debug("found a replaced zdbID for: " + fishID + "->" + newZdbID);
 
-                return "redirect:/cgi-bin/webdriver?MIval=aa-pubview2.apg&OID=ZDB-PUB-121121-2";
+                return "redirect:/ZDB-PUB-121121-2";
             }
             else{
                 response.setStatus(HttpStatus.NOT_FOUND.value());

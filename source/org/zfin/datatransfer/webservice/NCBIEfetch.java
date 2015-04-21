@@ -172,9 +172,7 @@ public class NCBIEfetch {
             sb.append("<a href=\"http://www.ncbi.nlm.nih.gov/geoprofiles?term=");
             sb.append(createMicroarrayQuery(accessions, abbreviation));
             sb.append("\">GEO</a> ");
-            sb.append("(<a href=\"/")
-                    .append(ZfinProperties.getWebDriver())
-                    .append("?MIval=aa-pubview2.apg&OID=ZDB-PUB-071218-1\">1</a>)")
+            sb.append("(<a href=\"/ZDB-PUB-071218-1\">1</a>)")
             ;
             return sb.toString();
 //            }

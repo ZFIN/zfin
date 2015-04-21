@@ -192,7 +192,7 @@
             <div>
                 ${extNote.note}
                 <c:if test="${extNote.singlePubAttribution ne null}">
-                    &nbsp;(<a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubview2.apg&OID=${extNote.singlePubAttribution.publication.zdbID}'>1</a>)
+                    &nbsp;(<a href='/${extNote.singlePubAttribution.publication.zdbID}'>1</a>)
                 </c:if>
             </div>
         </c:forEach>

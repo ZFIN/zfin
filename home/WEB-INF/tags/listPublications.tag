@@ -6,7 +6,7 @@
 
 <c:forEach var="publication" items="${publications}">
     <div class="show_pubs">
-        <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubview2.apg&OID=${publication.zdbID}">
+        <a href="/${publication.zdbID}">
             ${publication.authors} (${publication.year}) ${publication.title}
             ${publication.journal.abbreviation}${publication.volume}${!empty publication.pages?":":"."}${publication.pages}${!empty publication.pages ? "." : "" }
         </a>
