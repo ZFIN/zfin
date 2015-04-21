@@ -163,7 +163,7 @@
             <li><a href="/action/figure/all-figure-view/${publication.zdbID}">${expressionAndPhenotypeLabel}</a></li>
         </c:if>
         <c:if test="${mappingDetailsCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mapped">Mapping Details</a> (${mappingDetailsCount})</li>
+            <li><a href="/action/mapping/publication/${publication.zdbID}">Mapping Details</a> (${mappingDetailsCount})</li>
         </c:if>
         <c:if test="${phenotypeAlleleCount > 0}">
             <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Mutants / Transgenic Lines</a> (${phenotypeAlleleCount})
