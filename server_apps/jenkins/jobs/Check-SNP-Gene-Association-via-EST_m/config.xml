@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Please add a description</description>
+    <description>Check and list genes and the associated ESTs with SNPs that do not belong to the gene, and vise versa. Also check and list genes and associated SNPs that belong to ESTs associated with other gene.</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
