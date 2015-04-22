@@ -16,14 +16,14 @@ public class SimpleErrorElement extends Label implements ErrorHandler {
 
     // store all external error handlers that need to be updated when
     // errors should be cleared.
-    private Collection<ErrorHandler> handlesErrorListeners = new ArrayList<ErrorHandler>(5);
+    private Collection<ErrorHandler> handlesErrorListeners = new ArrayList<>(5);
 
     /**
      * Default constructor. Use if no visible error element is used but you
      * still want to manage other error handler that are dependent on it.
      */
     public SimpleErrorElement() {
-
+        addStyleName(WidgetUtil.ERROR);
     }
 
     public SimpleErrorElement(String divElement) {

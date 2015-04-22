@@ -28,7 +28,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     @Override
     public List<TermDTO> saveHumanDisease(TermDTO term, String publicationID) throws TermNotFoundException {
         if (term == null)
-            throw new TermNotFoundException("No term found");
+            throw new TermNotFoundException("No term provided");
         if (publicationID == null)
             throw new TermNotFoundException("No Publication found");
 
@@ -39,6 +39,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             tx.commit();
         } catch (HibernateException e) {
             tx.rollback();
+            throw new TermNotFoundException("Problem saving Human diesease: " + e.getMessage());
         }
         return getHumanDiseaseList(publicationID);
     }

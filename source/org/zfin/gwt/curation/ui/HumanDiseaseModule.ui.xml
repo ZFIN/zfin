@@ -1,3 +1,4 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
@@ -28,6 +29,8 @@
                     <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
                         <g:Button ui:field="addButton" text="Add"/>
                         <g:Button ui:field="resetButton" text="Reset"/>
+                        <g:HTML>&nbsp;</g:HTML>
+                        <zfin:SimpleErrorElement ui:field="diseaseErrorLabel"/>
                     </g:HorizontalPanel>
                 </g:VerticalPanel>
                 <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0' cellPadding='5'

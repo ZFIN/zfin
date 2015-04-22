@@ -8,15 +8,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.TermEntry;
-import org.zfin.gwt.root.ui.TermInfoComposite;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +62,9 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     @UiField
     Button resetButton;
 
+    @UiField
+    SimpleErrorElement diseaseErrorLabel;
+
 
     public HumanDiseaseModule(String publicationID) {
         this.publicationID = publicationID;
@@ -84,18 +83,14 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 termEntry.reset();
+                diseaseErrorLabel.clearError();
             }
         });
         addButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 TermDTO term = termInfoBox.getCurrentTermInfoDTO();
-                diseaseCurationRPCAsync.saveHumanDisease(term, publicationID, new AsyncCallback<List<TermDTO>>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-
-                    }
-
+                diseaseCurationRPCAsync.saveHumanDisease(term, publicationID, new ZfinAsyncCallback<List<TermDTO>>("Could not add a disease", diseaseErrorLabel) {
                     @Override
                     public void onSuccess(List<TermDTO> termDTOs) {
                         updateDiseaseTableContent(termDTOs);
@@ -115,6 +110,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
 
     private void resetUI() {
         termEntry.getTermTextBox().setText("");
+        diseaseErrorLabel.clearAllErrors();
     }
 
     private CurationDiseaseRPCAsync diseaseCurationRPCAsync = CurationDiseaseRPC.App.getInstance();
