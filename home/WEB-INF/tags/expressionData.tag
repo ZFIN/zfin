@@ -67,7 +67,7 @@
                         <c:choose>
                             <c:when test="${showCondition}">
                                 <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && !xp.experiment.chemical}">
-                                    <a href='/action/expression/genotype-figure-summary?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
+                                    <a href='/action/expression/genotype-figure-summary?genoZdbID=${formBean.genotype.zdbID}&expZdbID=${xp.experiment.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
                                         ${xp.numberOfFigures} figures</a>
                                 </c:if>
                                 <c:if test="${(xp.numberOfFigures >1) && xp.experiment.standard && !xp.experiment.chemical}">
