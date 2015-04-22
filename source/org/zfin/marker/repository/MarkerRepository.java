@@ -6,6 +6,7 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.feature.Feature;
+import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
@@ -169,6 +170,7 @@ public interface MarkerRepository {
     void runMarkerNameFastSearchUpdate(Marker marker);
 
     void createMarker(Marker marker, Publication publication);
+
 
 
     /**
@@ -415,7 +417,7 @@ public interface MarkerRepository {
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
 
 
-    List<TargetGeneLookupEntry> getConstructComponentsForString(String lookupString, String pubZdbId);
+    List<LookupEntry> getConstructComponentsForString(String lookupString, String pubZdbId);
 
 
     List<ConstructComponentPresentation> getConstructComponents(String constructZdbID);

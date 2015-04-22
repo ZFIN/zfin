@@ -2,6 +2,7 @@ package org.zfin.construct.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,21 +11,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
+import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
-import org.zfin.feature.Feature;
+
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.curation.ui.AttributionModule;
+
 import org.zfin.gwt.root.dto.ConstructDTO;
-import org.zfin.gwt.root.dto.FeatureDTO;
+
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
-import org.zfin.marker.presentation.TargetGeneLookupEntry;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.profile.Person;
-import org.zfin.profile.service.ProfileService;
+
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -48,6 +49,8 @@ public class ConstructAddController {
     private PublicationRepository pr;
     @Autowired
     private InfrastructureRepository ir;
+    @Autowired
+    private ConstructRepository cr;
 
 
     @ModelAttribute("formBean")
@@ -87,19 +90,18 @@ public class ConstructAddController {
 
 
         List<Marker> markerList = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(constructName);
+        ConstructCuration newConstruct = new ConstructCuration();
+        Publication constructPub = pr.getPublication(pubZdbID);
+
         if (markerList.size() > 0) {
             return "\"" + constructName + "\" is not a unique name";
         } else if (constructName.contains(".-")) {
             return "\"" + constructName + "\" contains a dot followed by a hyphen, Please check";
 
         } else if (constructName.contains("()")) {
-            return "\"" + "Construct Name" + "\" cannot be blank";
+            return " Construct Name cannot be blank";
 
         } else {
-
-            ConstructCuration newConstruct = new ConstructCuration();
-            Person currentUser = ProfileService.getCurrentSecurityUser();
-            HibernateUtil.createTransaction();
             newConstruct.setName(constructName);
             //TODO use chosenType or any other way to set Construct Type
             if (constructName.startsWith("Tg")) {
@@ -121,44 +123,46 @@ public class ConstructAddController {
                 newConstruct.setConstructType(mr.getMarkerTypeByName(Marker.Type.PTCONSTRCT.toString()));
             }
             newConstruct.setName(constructName);
-            newConstruct.setOwner(currentUser);
+
           /*  newConstruct.setRegenDate(new Date());*/
             newConstruct.setCreatedDate(new Date());
             newConstruct.setModDate(new Date());
-            currentSession().save(newConstruct);
-            currentSession().flush();
 
-            String constructZdbID = newConstruct.getZdbID();
-            Publication constructPub = pr.getPublication(pubZdbID);
+            try {
+                HibernateUtil.createTransaction();
+                cr.createConstruct(newConstruct,constructPub);
 
-            if (!StringUtils.isEmpty(constructComments)) {
-                newConstruct.setPublicComments(constructComments);
-            }
 
-            //storing Construct Components
+                String constructZdbID = newConstruct.getZdbID();
+                Marker latestConstruct = mr.getMarkerByID(newConstruct.getZdbID());
+                //ir.insertUpdatesTable(latestConstruct, "new " + newConstruct.getConstructType().getName(), "");
 
-            String constructCassettes[]=ConstructComponentService.getCassettes(constructStoredName);
+
+
+                if (!StringUtils.isEmpty(constructComments)) {
+                    newConstruct.setPublicComments(constructComments);
+                }
+
+                //storing Construct Components
+
+                String constructCassettes[] = ConstructComponentService.getCassettes(constructStoredName);
                 int numCassettes = constructCassettes.length;
 
                 ConstructComponentService.setConstructWrapperComponents(constructType, constructPrefix, constructZdbID, 1);
 
                 for (int i = 0; i < numCassettes; i++) {
-                    ConstructComponentService.getPromotersAndCoding(constructCassettes[i], i+1, constructZdbID, pubZdbID);
+                    ConstructComponentService.getPromotersAndCoding(constructCassettes[i], i + 1, constructZdbID, pubZdbID);
                 }
 
-               /* String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
-                Query query = currentSession().createSQLQuery(sqlCount);
-                query.setString("zdbID", constructZdbID);
-                Session session = HibernateUtil.currentSession();
-                int lastComp = (Integer) query.uniqueResult() + 1;*/
-            int lastComp=ConstructComponentService.getComponentCount(constructZdbID);
+
+                int lastComp = ConstructComponentService.getComponentCount(constructZdbID);
                 mr.addConstructComponent(numCassettes, lastComp, constructZdbID, ")", ConstructComponent.Type.CONTROLLED_VOCAB_COMPONENT, "construct wrapper component", ir.getCVZdbIDByTerm(")").getZdbID());
 
                 //moving construct record to marker table
                 InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
 
-                Marker latestConstruct = mr.getMarkerByID(constructZdbID);
-                String constructLink = MarkerPresentation.getLink(latestConstruct);
+
+
 
 
                 if (!StringUtils.isEmpty(constructAlias)) {
@@ -172,29 +176,36 @@ public class ConstructAddController {
 
 
                 HibernateUtil.flushAndCommitCurrentSession();
+            }
+                catch (Exception e) {
+                    try {
+                        HibernateUtil.rollbackTransaction();
+                    } catch (HibernateException he) {
+                        LOG.error("Error during roll back of transaction", he);
+                    }
+                    LOG.error("Error in Transaction", e);
+                    return " Construct  could not be created";
+                    //throw new RuntimeException("Error during transaction. Rolled back.", e);
+
+                }
 
 
-                
-                return "\"" + constructLink + "\" successfully added ";
 
 
             }
-
-        }
-
-
-
+        Marker latestConstruct = mr.getMarkerByID(newConstruct.getZdbID());
+        String constructLink = MarkerPresentation.getLink(latestConstruct);
+        return "\"" + constructLink + "\" successfully added ";
 
 
-
-
+    }
 
 
 //method to find markers for autocomplete in construct builder
     @RequestMapping(value = "/find-constructMarkers", method = RequestMethod.GET)
     public
     @ResponseBody
-    List<TargetGeneLookupEntry> lookupConstructMarkers(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
+    List<LookupEntry> lookupConstructMarkers(@RequestParam("term") String lookupString, @RequestParam("pub") String zdbId) {
 
         return mr.getConstructComponentsForString(lookupString, zdbId);
     }

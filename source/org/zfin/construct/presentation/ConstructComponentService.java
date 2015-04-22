@@ -49,7 +49,7 @@ public class ConstructComponentService {
         return array1;
     }
 
-//making assumption that "(" is be construct wrapper
+//making assumption that "(" is the construct wrapper
 
     //TODO convert category to Enum
 
@@ -91,31 +91,16 @@ public class ConstructComponentService {
         promoterArray = promString.split(storedComponentSeparator);
         codingArray = codingString.split(storedComponentSeparator);
         for (int i = 0; i < promoterArray.length; i++) {
-            /*String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
-            Query query = currentSession().createSQLQuery(sqlCount);
-            query.setString("zdbID", zdbID);
-            Session session = HibernateUtil.currentSession();
-            int lastComp = (Integer) query.uniqueResult() + 1;*/
             int lastComp=getComponentCount(zdbID);
             createComponentRecords(StringUtils.trim(promoterArray[i]),"promoter component", promoterMarker,ConstructComponent.Type.PROMOTER_OF,cassetteNumber,lastComp,newPub,zdbID);
         }
         if (codingArray.length!=0) {
-            /*String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
-            Query query = currentSession().createSQLQuery(sqlCount);
-            query.setString("zdbID", zdbID);
-            Session session = HibernateUtil.currentSession();
-            int lastComp = (Integer) query.uniqueResult() + 1;*/
             int lastComponent=getComponentCount(zdbID);
             createComponentRecords(componentSeparator, "promoter component", promoterMarker, ConstructComponent.Type.PROMOTER_OF, cassetteNumber, lastComponent, newPub, zdbID);
 
         }
             for (int i = 0; i < codingArray.length; i++) {
-                /*String sqlCount = " select MAX(cc_order) from construct_component where cc_construct_zdb_id=:zdbID ";
-                Query query = currentSession().createSQLQuery(sqlCount);
-                query.setString("zdbID", zdbID);
-                Session session = HibernateUtil.currentSession();
-                int lastComp = (Integer) query.uniqueResult() + 1;*/
-                int lastComponent=getComponentCount(zdbID);
+               int lastComponent=getComponentCount(zdbID);
                 createComponentRecords(StringUtils.trim(codingArray[i]), "coding component", codingMarker, ConstructComponent.Type.CODING_SEQUENCE_OF, cassetteNumber, lastComponent, newPub, zdbID);
             }
 
@@ -153,8 +138,6 @@ public class ConstructComponentService {
 
                     type = ConstructComponent.Type.TEXT_COMPONENT;
                 }
-
-
             }
             mr.addConstructComponent(cassetteNumber, componentOrder, constructID, componentString, type, componentCategory, componentZdbID);
         }

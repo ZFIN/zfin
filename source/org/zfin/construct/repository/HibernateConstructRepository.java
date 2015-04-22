@@ -30,6 +30,7 @@ import org.zfin.construct.repository.ConstructRepository;
 //import org.zfin.mutant.repository.ConstructService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.PaginationResultFactory;
@@ -461,6 +462,8 @@ public class HibernateConstructRepository implements ConstructRepository {
         return construct;
     }
 
+
+
     public WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(WarehouseSummary.class);
@@ -596,6 +599,7 @@ public class HibernateConstructRepository implements ConstructRepository {
             currentSession().save(pa);
         }
     }
+
     public ConstructCuration getConstructByID(String zdbID) {
         Session session = currentSession();
         return (ConstructCuration) session.get(ConstructCuration.class, zdbID);
@@ -603,6 +607,30 @@ public class HibernateConstructRepository implements ConstructRepository {
     public ConstructCuration getConstructByName(String conName) {
         Session session = currentSession();
         return (ConstructCuration) session.get(ConstructCuration.class, conName);
+    }
+    public void createConstruct(ConstructCuration construct, Publication pub) {
+        if (construct.getName() == null)
+            throw new RuntimeException("Cannot create a new construct without a name.");
+        if (construct == null)
+            throw new RuntimeException("No construct object provided.");
+        if (construct.getConstructType() == null)
+            throw new RuntimeException("Cannot create a new construct without a type.");
+        if (pub == null)
+            throw new RuntimeException("Cannot create a new construct without a publication.");
+
+       construct.setOwner(ProfileService.getCurrentSecurityUser());
+        if (!construct.getOwner().getAccountInfo().getRoot())
+            throw new RuntimeException("Non-root user cannot create a construct");
+        currentSession().save(construct);
+        // Need to flush here to make the trigger fire as that will
+        // create a MarkerHistory record needed.
+        //   currentSession().flush();
+
+        //add publication to attribution list.
+        RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(construct.getZdbID(), pub.getZdbID());
+
+        // run procedure for fast search table
+
     }
 
     public void addConstructRelationshipAttribution(ConstructRelationship cmrel, Publication attribution, ConstructCuration construct) {

@@ -22,6 +22,7 @@ import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.ConstructSearchCriteria;
 import org.zfin.mutant.presentation.Construct;
+import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 
 import java.math.BigInteger;
@@ -66,4 +67,5 @@ public interface ConstructRepository {
     public void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, ConstructCuration construct, String pubID);
     public ConstructCuration getConstructByID(String zdbID);
     public ConstructCuration getConstructByName(String conName);
+    void createConstruct(ConstructCuration construct, Publication publication);
 }

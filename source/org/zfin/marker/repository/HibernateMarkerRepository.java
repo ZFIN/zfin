@@ -31,6 +31,7 @@ import org.zfin.expression.TextOnlyFigure;
 import org.zfin.feature.Feature;
 
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -2499,7 +2500,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
 
-    public List<TargetGeneLookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
+    public List<LookupEntry> getConstructComponentsForString(String lookupString, String zdbId) {
 
 
         String sqlQuery = "select mrkr_abbrev as abbrev, mrkr_type as type from marker, record_attribution ra " +
@@ -2518,7 +2519,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
                 .list();
 
-        List<TargetGeneLookupEntry> targetGeneSuggestionList = new ArrayList<>();
+        List<LookupEntry> targetGeneSuggestionList = new ArrayList<>();
         for (Object[] objects : results) {
             TargetGeneLookupEntry probe = new TargetGeneLookupEntry();
             probe.setLabel((String) objects[0] + " (" + (String) objects[1] + ")");
