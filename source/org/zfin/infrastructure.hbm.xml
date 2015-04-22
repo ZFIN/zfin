@@ -285,7 +285,9 @@
 
         <many-to-one name="term" column="tx_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
         <many-to-one name="foreignDB" column="tx_fdb_db_id" class="org.zfin.sequence.ForeignDB"/>
-        <property name="reference" column="tx_xref_id"/>
+        <property name="fullAccession" column="tx_full_accession"/>
+        <property name="xrefPrefix" column="tx_prefix"/>
+        <property name="xrefAccessionNumber" column="tx_accession"/>
 
     </class>
 

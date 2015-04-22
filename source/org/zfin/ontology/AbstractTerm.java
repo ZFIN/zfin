@@ -276,6 +276,9 @@ public abstract class AbstractTerm implements Term {
     public void setExternalReferences(Set<TermExternalReference> externalReferences) {
         this.externalReferences = externalReferences;
     }
+    public SortedSet getSortedExrefs() {
+        return new TreeSet<TermExternalReference>(externalReferences);
+    }
     public String getReferenceLink() {
         if (checkIfSingleReference()) return null;
         return getReferenceLink(definitionReferences.iterator().next());

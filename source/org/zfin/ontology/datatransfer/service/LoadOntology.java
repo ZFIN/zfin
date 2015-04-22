@@ -510,9 +510,11 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         summary.put("Updated Term Comments", getDataSize("updated_term_comments"));
         summary.put("New Aliases", getDataSize("new_aliases"));
         summary.put("Removed Aliases", getDataSize("removed_aliases"));
-        summary.put("New Relationships", getDataSize("removed_relationships"));
+        summary.put("New Relationships", getDataSize("new_relationships"));
         summary.put("Removed Relationships", getDataSize("removed_relationships"));
         summary.put("Obsoleted Terms", getDataSize("obsoleted_terms"));
+        summary.put("New DBXrefs", getDataSize("new_xrefs"));
+        summary.put("Removed DBXrefs", getDataSize("removed_xrefs"));
         stats.addSummaryTable("Statistics", summary);
         stats.writeFiles(new File(loadDirectory, jobName), "statistics");
     }
@@ -920,6 +922,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                     }
                     if (term.getDbxrefs() != null) {
                         for (Dbxref dbxref : term.getDbxrefs()) {
+                          //  appendFormattedRecord(UnloadFile.TERM_XREF, term.getID(), dbxref.getDatabase(), dbxref.getDatabaseID(), "xref");
                             appendFormattedRecord(UnloadFile.TERM_XREF, term.getID(), dbxref.getDatabase(), dbxref.getDatabaseID(), "xref");
                         }
                     }

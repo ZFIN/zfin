@@ -5,12 +5,39 @@ import org.zfin.sequence.ForeignDB;
 /**
  * Term definition reference.
  */
-public class TermExternalReference implements Comparable {
+public class TermExternalReference implements Comparable{
 
     private long ID;
+
+    public String getFullAccession() {
+        return fullAccession;
+    }
+
+    public void setFullAccession(String fullAccession) {
+        this.fullAccession = fullAccession;
+    }
+
+    public String getXrefPrefix() {
+        return xrefPrefix;
+    }
+
+    public void setXrefPrefix(String xrefPrefix) {
+        this.xrefPrefix = xrefPrefix;
+    }
+
+    public String getXrefAccessionNumber() {
+        return xrefAccessionNumber;
+    }
+
+    public void setXrefAccessionNumber(String xrefAccessionNumber) {
+        this.xrefAccessionNumber = xrefAccessionNumber;
+    }
+
     private Term term;
     private ForeignDB foreignDB;
-    private String reference;
+    private String fullAccession;
+    private String xrefPrefix;
+    private String xrefAccessionNumber;
 
     public long getID() {
         return ID;
@@ -28,13 +55,7 @@ public class TermExternalReference implements Comparable {
         this.foreignDB = foreignDB;
     }
 
-    public String getReference() {
-        return reference;
-    }
 
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
 
     public Term getTerm() {
         return term;
@@ -43,7 +64,10 @@ public class TermExternalReference implements Comparable {
     public void setTerm(Term term) {
         this.term = term;
     }
-    public int compareTo(Object otherReference) {
-        return reference.compareTo(((TermExternalReference) otherReference).getReference());
+
+    public int compareTo(Object otherTermExRef) {
+        return fullAccession.compareTo(((TermExternalReference) otherTermExRef).getFullAccession());
     }
+
+
 }
