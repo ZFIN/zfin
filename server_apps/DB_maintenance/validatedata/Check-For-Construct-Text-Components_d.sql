@@ -1,5 +1,5 @@
 select mrkr_zdb_id,mrkr_name, cc_component, recattrib_source_zdb_id
- from construct_component, record_Attribution, construct
+ from controlled_vocabulary, record_Attribution, construct_component, marker
  where cc_construct_zdb_id = mrkr_Zdb_id
 and mrkr_zdb_id = recattrib_Data_zdb_id
  and cc_component_category not in ('construct wrapper component','delimiter component',
