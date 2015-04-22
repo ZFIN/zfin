@@ -56,7 +56,7 @@ jQuery(document).ready(function () {
                     dataType: "json",
                     data: {
                         term: request.term,
-                        exclude: pubId
+                        pub: pubId
 
                     },
                     success: function (data) {
