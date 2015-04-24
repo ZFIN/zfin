@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="publication" type="org.zfin.publication.Publication" rtexprvalue="true" required="true" %>
-<%@ attribute name="submitters" type="java.util.List" rtexprvalue="true" required="true" %>
+<%@ attribute name="submitters" type="java.util.List" rtexprvalue="true" required="false" %>
 <%@ attribute name="showThisseInSituLink" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 <%@ attribute name="showErrataAndNotes" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 

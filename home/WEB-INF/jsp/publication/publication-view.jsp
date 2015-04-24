@@ -171,7 +171,16 @@
         <c:if test="${orthologyCount > 0}">
             <li><a href="/action/publication/${publication.zdbID}/orthology-list">Orthology</a> (${orthologyCount})
         </c:if>
-
+        <c:choose>
+          <c:when test="${diseaseCount > 1}">
+            <li>
+              <a href="/action/publication/${publication.zdbID}/disease">Disease/Models</a>
+              (${diseaseCount})</li>
+          </c:when>
+    	  <c:when test="${diseaseCount == 1}">
+            <li><zfin:link entity="${disease}">Disease/Model (1)</zfin:link></li>
+      	  </c:when>
+        </c:choose>
 
     </ul>
 

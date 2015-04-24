@@ -193,6 +193,8 @@ public class CreateLinkTag extends BodyTagSupport {
             linkStart = ImagePresentation.getLinkStartTag((Image) o);
         else if (o instanceof Publication)
             linkStart = PublicationPresentation.getLinkStartTag((Publication) o);
+        else if (o instanceof Term)
+            linkStart = TermPresentation.getLinkStartTag((Term) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return linkStart;
@@ -208,6 +210,8 @@ public class CreateLinkTag extends BodyTagSupport {
             linkEnd = PublicationPresentation.getLinkEndTag();
         else if (o instanceof Person || o instanceof Organization)
             linkEnd = ProfilePresentation.getLinkEndTag();
+        else if (o instanceof Term)
+            linkEnd = TermPresentation.getLinkEndTag((Term) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
         return linkEnd;

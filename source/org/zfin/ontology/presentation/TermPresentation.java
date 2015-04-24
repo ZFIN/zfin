@@ -223,4 +223,16 @@ public class TermPresentation extends EntityPresentation {
         }
     }
 
+    public static String getLinkStartTag(Term term) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<a href=\"/");
+        sb.append(term.getOboID());
+        sb.append("\">");
+        return sb.toString();
+    }
+
+    public static String getLinkEndTag(Term term) {
+        return "</a>" + getPopupLink(term);
+    }
+
 }

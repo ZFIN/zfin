@@ -12,6 +12,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -82,6 +83,14 @@ public class PublicationViewController {
         model.addAttribute("orthologyCount", orthologyCount);
         model.addAttribute("mappingDetailsCount", mappingDetailsCount);
 
+        List<GenericTerm> diseaseList = RepositoryFactory.getPhenotypeRepository().getHumanDiseases(publication.getZdbID());
+        int diseaseCount = diseaseList.size();
+        model.addAttribute("diseaseCount", diseaseCount);
+
+        if (diseaseCount == 1) {
+            model.addAttribute("disease", diseaseList.get(0));
+        }
+
         model.addAttribute("expressionAndPhenotypeLabel", PublicationService.getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount));
 
         model.addAttribute("allowDelete", publicationRepository.canDeletePublication(publication));
@@ -127,6 +136,33 @@ public class PublicationViewController {
         model.addAttribute("orthologyBeanList", beanList);
         model.addAttribute("publication", publication);
         return "publication/publication-orthology-list.page";
+    }
+
+    @RequestMapping("/{zdbID}/disease")
+    public String disease(@PathVariable String zdbID, Model model, HttpServletResponse response) {
+
+        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+
+        Publication publication = publicationRepository.getPublication(zdbID);
+        //try zdb_replaced data if necessary
+        if (publication == null) {
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+
+        //give up
+        if (publication == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("publication", publication);
+        model.addAttribute("diseases", RepositoryFactory.getPhenotypeRepository().getHumanDiseases(publication.getZdbID()));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getShortAuthorList().replace("<i>","").replace("</i> Disease",""));
+
+        return "publication/publication-disease.page";
     }
 
 }
