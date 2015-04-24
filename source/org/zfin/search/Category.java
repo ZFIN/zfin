@@ -7,6 +7,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.zfin.search.FieldName.*;
+import static org.zfin.search.FieldName.DISEASE;
 
 /**
  * Enumeration of categories used in Faceted search including field names per category
@@ -48,6 +49,8 @@ public enum Category {
             ONTOLOGY,
             OBSOLETE
     ),
+    DISEASE("Disease",
+            FieldName.GENE),  //todo: later will add DISEASE_MODEL and HAS_MODEL
     MUTANT("Mutation / Tg",
             TYPE,
             AFFECTED_GENE,
@@ -76,6 +79,7 @@ public enum Category {
                     FacetQueryEnum.DATE_MORE_THAN_5_YEARS),
             FieldName.GENE,
             SEQUENCE_ALTERATION,
+            FieldName.DISEASE,
             AUTHOR,
             JOURNAL,
             KEYWORD,

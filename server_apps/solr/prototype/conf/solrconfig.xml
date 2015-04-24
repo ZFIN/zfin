@@ -320,6 +320,7 @@
 
              orthologue_name
              disease_model_t
+             disease_t
              phenotype_statement_t
              synonym_phenotype_statement_t
              expression_statement_t
@@ -407,6 +408,7 @@
              construct_alias
              orthologue_name
              disease_model_t
+             disease_t
              phenotype_statement_t
              synonym_phenotype_statement_t
              expression_statement_t
@@ -545,6 +547,8 @@
              orthologue_organism_t
              disease_model
              disease_model_t
+             disease
+             disease_t
              omim_id
 
              phenotype_statement_t

@@ -56,7 +56,7 @@ public interface Term extends Comparable<Term>, Serializable {
 
     void setAliases(Set<TermAlias> aliases);
 
-//    boolean isAliasesExist();
+//    boolean isAliasesExist();gmake
 
     String getDefinition();
 

@@ -487,6 +487,7 @@
    <field name="orthologue_organism" type="keyword" indexed="true" stored="true" multiValued="true"  />
 
    <field name="disease_model" type="keyword" indexed="true" stored="true" multiValued="true"  />
+   <field name="disease" type="keyword" indexed="true" stored="true" multiValued="true"  />
    <field name="omim_id" type="keyword" indexed="true" stored="true" multiValued="true" />
 
    <field name="result_table" type="string" indexed="false" stored="true" multiValued="true"/>
@@ -959,6 +960,7 @@
    <copyField source="id" dest="id_t"/>
    <copyField source="name" dest="name_t"/>
    <copyField source="disease_model" dest="disease_model_t"/>
+   <copyField source="disease" dest="disease_t"/>
    <copyField source="category" dest="category_t"/>
    <copyField source="type" dest="type_t"/>
    <copyField source="source" dest="source_t"/>
@@ -1003,6 +1005,7 @@
     <copyField source="orthologue_organism" dest="orthologue_organism_t"/>
 
     <copyField source="disease_model" dest="text"/>
+    <copyField source="disease" dest="text"/>
     <copyField source="omim_id" dest="text"/>
 
 <!--

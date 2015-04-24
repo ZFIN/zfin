@@ -25,6 +25,7 @@ public enum FieldName {
     CURATION_STATUS("curation_status"),
     CURATOR("curator"),
     DATE("date"),
+    DISEASE("disease"),
     DISEASE_MODEL("disease_model"),
     ENGINEERED_REGION("engineered_region"),
     EXPERIMENTAL_CONDITIONS("experimental_conditions"),

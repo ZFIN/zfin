@@ -3514,6 +3514,7 @@ where feature_zdb_id = ids_data_zdb_id
      </entity>
 
 
+
        <entity name="term"
                query="select term_ont_id as id,
                              term_zdb_id as internal_id,
@@ -3521,18 +3522,20 @@ where feature_zdb_id = ids_data_zdb_id
                              term_name as proper_name,
                              term_name as full_name,
                              zero_pad(term_name) as name_sort,
-                             'Anatomy / GO' as category,
+                             case when term_ontology = 'disease_ontology' then TRIM('Autocomplete')
+                                  else TRIM('Anatomy / GO') end as category,
                              case
                                when term_ontology == 'biological_process' then 'Biological Process'
                                when term_ontology == 'cellular_component' then 'Cellular Component'
                                when term_ontology == 'molecular_function' then 'Molecular Function'
                                when term_ontology == 'zebrafish_anatomy' then 'Zebrafish Anatomy'
+                               when term_ontology == 'disease_ontology' then 'Disease'
                              end as ontology,
                              '/' || term_ont_id as url,
                              term_is_obsolete as obsolete,
                              term_definition as definition
                       from term
-                      where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy');
+                      where term_ontology in ('biological_process', 'cellular_component', 'molecular_function','zebrafish_anatomy','disease_ontology');
  ">
 
            <entity name="term_aliases"
@@ -3543,6 +3546,31 @@ where feature_zdb_id = ids_data_zdb_id
                    processor="CachedSqlEntityProcessor" >
                <field name="alias" column="dalias_alias"/>
            </entity>
+
+           <entity name="term_external_xref"
+                   query="select
+                            tx_full_accession as related_accession,
+                            tx_term_zdb_id as term_zdb_id
+                            from term_xref;"
+                   where="term_zdb_id=term.internal_id"
+                   processor="CachedSqlEntityProcessor"/>
+
+               <!--  disease parent / child relationship stuff.   I think it should be: my id gets found in my parents record
+                     should get commented out & tested once disease_ontology is in all_term_contains
+
+select
+child.term_ont_id as xref,
+alltermcon_container_zdb_id as term_zdb_id
+from all_term_contains
+     join term as child on alltermcon_contained_zdb_id = child.term_zdb_id
+     join term as parent on alltermcon_container_zdb_id = parent.term_zdb_id
+where parent.term_ontology = 'disease_ontology'
+  and child.term_ontology = 'disease_ontology';
+
+               -->
+
+
+
 <!--   *** Pardon me leaving this commented out, the but the value,Any pattern with the splitter is nice...
 
            <entity name="direct_term_usages" transformer="RegexTransformer"
@@ -3838,6 +3866,17 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    processor="CachedSqlEntityProcessor"
                    where="pub_zdb_id=publication.id"/>
 
+
+           <entity name="pub_disease"
+                   query="select
+                               term_name as disease,
+                               term_ont_id as xref,
+                               recattrib_source_zdb_id as pub_zdb_id
+                          from term
+                               join record_attribution on recattrib_data_zdb_id = term_zdb_id
+                         where term_ontology = 'disease_ontology';"
+                   processor="CachedSqlEntityProcessor"
+                   where="pub_zdb_id=publication.id"/>
 
            <!-- this is sort of an experiment, is it reasonable to just reverse this for pubs... ? -->
            <entity name="pub_attribution"

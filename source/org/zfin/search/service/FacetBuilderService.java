@@ -313,6 +313,7 @@ public class FacetBuilderService {
 
         facetGroups.add(buildSingleFacetGroup("Gene", "gene", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Mutation / Tg", "sequence_alteration", true, response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("Disease", "disease", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Registered Author", "registered_author", true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Journal", "journal", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Keyword", "keyword", false, response, filterQuerySelectionMap, baseUrl));

@@ -12,8 +12,6 @@ import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
-import org.zfin.infrastructure.repository.HibernateInfrastructureRepository;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -109,8 +107,9 @@ public class ResultService {
                 injectExpressionAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.PHENOTYPE.getName())) {
                 injectPhenotypeAttributes(result);
-            } else if (StringUtils.equals(result.getCategory(), Category.ANATOMY.getName())) {
-                injectAnatomyGO(result);
+            } else if (StringUtils.equals(result.getCategory(), Category.ANATOMY.getName())
+                    || StringUtils.equals(result.getCategory(), Category.DISEASE.getName())) {
+                injectTermAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.PUBLICATION.getName())) {
                 injectPublicationAttributes(result);
             } else if (StringUtils.equals(result.getCategory(), Category.ANTIBODY.getName())) {
@@ -129,6 +128,7 @@ public class ResultService {
         }
 
     }
+
 
     private void injectAntibodyAttributes(SearchResult result) {
         result.setDisplayedID(result.getId());
@@ -171,7 +171,7 @@ public class ResultService {
             result.addAttribute("Source", withCommas(antibody.getSuppliers(), "organization.name"));
     }
 
-    private void injectAnatomyGO(SearchResult result) {
+    private void injectTermAttributes(SearchResult result) {
         Term term = RepositoryFactory.getOntologyRepository().getTermByOboID(result.getId());
         result.setDisplayedID(result.getId());
         if (term == null)
@@ -182,6 +182,7 @@ public class ResultService {
             result.addAttribute(SYNONYMS, withCommas(term.getAliases(), "alias"));
         if (StringUtils.isNotEmpty(term.getDefinition()))
             result.addAttribute("Definition", term.getDefinition());
+
         if (term.getOntology().equals(Ontology.ANATOMY)) {
             if (term.getStart() != null && term.getEnd() != null && term.getStart().equals(term.getEnd()))
                 result.addAttribute("Exists During:", term.getStart().getNameLong());
@@ -208,6 +209,11 @@ public class ResultService {
                 }
             }
         }
+
+        if (term.getOntology().equals(Ontology.DISEASE_ONTOLOGY)) {
+            //todo:  add disease specific stuff here
+        }
+
     }
 
     public void injectFishAttributes(SearchResult result) {
