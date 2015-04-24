@@ -134,7 +134,7 @@ public class ConstructAddController {
 
 
                 String constructZdbID = newConstruct.getZdbID();
-                Marker latestConstruct = mr.getMarkerByID(newConstruct.getZdbID());
+
                 //ir.insertUpdatesTable(latestConstruct, "new " + newConstruct.getConstructType().getName(), "");
 
 
@@ -160,7 +160,7 @@ public class ConstructAddController {
 
                 //moving construct record to marker table
                 InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
-
+                Marker latestConstruct = mr.getMarkerByID(newConstruct.getZdbID());
 
 
 
