@@ -36,7 +36,7 @@ public class OntologySearchController {
     protected String showSearchForm(Model model,
                                     AnatomySearchBean form) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "AO / GO Search");
-        form.setOntologyName(Ontology.AOGO.getOntologyName());
+        form.setOntologyName(Ontology.AOGODO.getOntologyName());
         model.addAttribute("formBean", form);
         return "ontology/search-form.page";
     }

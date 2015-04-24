@@ -45,7 +45,8 @@ public enum Ontology implements Serializable {
     MPATH("mouse_pathology.ontology", "MPATH", false, "MPATH:"),
     MPATH_NEOPLASM("mpath_neoplasm", "mouse_pathology.ontology", "Mouse Cancer Pathology Ontology-Neoplasm Branch", false, "MPATH:"),
     SO("sequence", "sequence", "Sequence Ontology", false, "SO:"),
-    AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(), "AO and GO", true);
+    AOGO(ANATOMY.getOntologyName() + "," + GO.getOntologyName(), "AO and GO", true),
+    AOGODO(ANATOMY.getOntologyName() + "," + GO.getOntologyName()+ "," + DISEASE_ONTOLOGY.getOntologyName(), "AO, GO and DO", true);
 
     private String ontologyName;
     private String commonName;
