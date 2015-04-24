@@ -232,7 +232,7 @@ public class TermPresentation extends EntityPresentation {
     }
 
     public static String getLinkEndTag(Term term) {
-        return "</a>" + getPopupLink(term);
+        return "</a>";
     }
 
 }
