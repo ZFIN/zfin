@@ -215,7 +215,7 @@
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/action/construct/search">Constructs</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <a href="/action/ontology/search" title="Search anatomy and gene ontology">Anatomy / GO</a>
+            <a href="/action/ontology/search" title="Search anatomy and gene ontology">Anatomy / GO / Disease Ontology</a>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/<%=ZfinProperties.getWebDriver()%>?MIval=aa-pubselect2.apg&select_from=PUBLICATION"
                title="Search for zebrafish research publications by author, title or citation">Publications</a>
