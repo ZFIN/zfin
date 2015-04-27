@@ -73,7 +73,12 @@ function updateAuthor(strURL) {
                     the comma separate entries until we get nothing back.  ** <?/MICOMMENT> 
 
     <?MIBLOCK WHILE=$(NOT,$(EQ,$(INDEX,$i,$linkauth_rawAuthorList),))>
-      <?MIVAR NAME="linkauth_author">$(TRIM,$(INDEX,$i,$linkauth_rawAuthorList))<?/MIVAR>
+      <?MIVAR NAME="linkauth_author_last">$(TRIM,$(INDEX,$i,$linkauth_rawAuthorList))<?/MIVAR>
+      <?MIVAR NAME="$i">$(+,$i,1)<?/MIVAR>
+      <?MIVAR NAME="linkauth_author_first">$(TRIM,$(INDEX,$i,$linkauth_rawAuthorList))<?/MIVAR>
+      <?MIVAR NAME="linkauth_author_first">$(SUBSTR,$linkauth_author_first,1,2)<?/MIVAR>
+
+      <?MIVAR NAME="linkauth_author">$linkauth_author_last-$linkauth_author_first<?/MIVAR>
 
       <?MICOMMENT> ** Names with single quotes in them need to informix style escaping ** <?/MICOMMENT>
       <?MIVAR NAME="linkauth_author">$(REPLACE,$linkauth_author,','')<?/MIVAR>
@@ -100,7 +105,7 @@ function updateAuthor(strURL) {
 
       <?MIBLOCK COND="$(NOT,$(POSITION,|$(SEPARATE,$linkauth_authorList,|)|,|$linkauth_author|,1))"> <?/MIVAR> 
         <?MICOMMENT> * the arrays start at 1 - wild! * <?/MICOMMENT>
-        <?MIVAR>$(SETVAR,$linkauth_authorList[$(+,$i,1)],$linkauth_author)<?/MIVAR>
+        <?MIVAR>$(VECAPPEND,$linkauth_authorList,$linkauth_author)<?/MIVAR>
       <?/MIBLOCK> 
 
       <?MICOMMENT> * i++ * <?/MICOMMENT>
@@ -124,8 +129,17 @@ function updateAuthor(strURL) {
                     datablade code ** <?/MICOMMENT>
 
     <?MIBLOCK INDEX=$linkauth_author FOREACH=$linkauth_authorList>
-     
-     <?MISQL SQL="select person.zdb_id, get_person_full_name(zdb_id),
+
+
+     <?MICOMMENT> ** For some reason I'm getting an empty string at the start of the vector every time,
+                     I couldn't seem to get rid of it, so I'm just filtering it out here and for the query
+                     below  --Kevin                  <?/MICOMMENT>
+     <?MIBLOCK COND="$(NE,$linkauth_author,)">
+       <?MIVAR>
+         <div style="text-align:center; font-weight: bold; opacity: 0.7; margin-top: 1em;">Matches for '$linkauth_author'</div>
+       <?/MIVAR>
+     <?/MIBLOCK>
+     <?MISQL COND="$(NE,$linkauth_author,)" SQL="select person.zdb_id, get_person_full_name(zdb_id),
                      case
                        when source_id is not null
                        then 'CHECKED'
@@ -134,7 +148,7 @@ function updateAuthor(strURL) {
                      from person 
                        left outer join int_person_pub
                          on target_id = '$OID' and source_id = person.zdb_id
-                     where UPPER(get_person_full_name(zdb_id)) like UPPER('$linkauth_author%')
+                     where lower(person.name) = lower('$linkauth_author')
                      order by last_name,first_name;">
 
         <?MIVAR NAME="linkauth_pers_zdb_id">$1<?/MIVAR>
@@ -169,6 +183,11 @@ function updateAuthor(strURL) {
         <?/MIVAR>
 
       <?/MISQL>
+      <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
+        <div style="text-align: center; font-style:italic; opacity: .5">
+          No matching results found.
+        </div>
+      <?/MIBLOCK>
     <?/MIBLOCK>
 
     </form>
