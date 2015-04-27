@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Basic interface definition for a term in an ontology.
@@ -52,7 +53,7 @@ public interface Term extends Comparable<Term>, Serializable {
 
 //    List<Term> getParents(String relationshipType);
 
-    SortedSet<TermAlias> getSortedAliases();
+    TreeSet<TermAlias> getSortedAliases();
 
     void setAliases(Set<TermAlias> aliases);
 

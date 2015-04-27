@@ -20,6 +20,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.presentation.Construct;
 import org.zfin.ontology.GenericTerm;
@@ -967,6 +968,15 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         PaginationResult<Marker> relatedMarkerResult = markerRepository.getRelatedMarker(efg, types, new PaginationBean());
         assertNotNull(relatedMarkerResult);
+    }
+
+    @Test
+    public void getOmimPhenotype() {
+        String usherGeneID = "ZDB-GENE-040822-17";
+        Marker usherGene = markerRepository.getMarkerByID(usherGeneID);
+        assertNotNull(usherGene);
+        List<OmimPhenotype> phenotype = markerRepository.getOmimPhenotype(usherGene);
+        assertNotNull(phenotype);
     }
 
     @Test

@@ -432,7 +432,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("do not include in regular tests as it takes more than a minute")
+    @Ignore("do not include in regu lar tests as it takes more than a minute")
     public void getExpressionAnnotationStageViolations() {
         List<ExpressionResult> expressionResultList = ontologyRepository.getExpressionResultsViolateStageRanges();
         assertNotNull(expressionResultList);
@@ -481,6 +481,16 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     public void getRelationshipById() {
         GenericTermRelationship relationship = ontologyRepository.getRelationshipById("ZDB-TERMREL-110123-7220");
         assertNotNull(relationship);
+
+    }
+
+    @Test
+    public void getOmimReferences() {
+        // Usher Syndrome
+        GenericTerm term = ontologyRepository.getTermByOboID("DOID:0050439");
+        assertNotNull(term);
+        Set<TermExternalReference> externalReferences = term.getExternalReferences();
+        assertNotNull(externalReferences);
 
     }
 

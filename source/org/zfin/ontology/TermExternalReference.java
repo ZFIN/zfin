@@ -1,6 +1,9 @@
 package org.zfin.ontology;
 
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.sequence.ForeignDB;
+
+import java.util.Set;
 
 /**
  * Term definition reference.
@@ -38,6 +41,7 @@ public class TermExternalReference implements Comparable{
     private String fullAccession;
     private String xrefPrefix;
     private String xrefAccessionNumber;
+    private Set<OmimPhenotype> omimPhenotypes;
 
     public long getID() {
         return ID;
@@ -70,4 +74,11 @@ public class TermExternalReference implements Comparable{
     }
 
 
+    public Set<OmimPhenotype> getOmimPhenotypes() {
+        return omimPhenotypes;
+    }
+
+    public void setOmimPhenotypes(Set<OmimPhenotype> omimPhenotypes) {
+        this.omimPhenotypes = omimPhenotypes;
+    }
 }

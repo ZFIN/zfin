@@ -470,4 +470,5 @@ public interface MarkerRepository {
 
     PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean);
 
+    List<OmimPhenotype> getOmimPhenotype(Marker marker);
 }

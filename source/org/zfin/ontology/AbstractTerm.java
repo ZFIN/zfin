@@ -2,7 +2,7 @@ package org.zfin.ontology;
 
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
-import org.zfin.sequence.ForeignDB;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.util.NumberAwareStringComparator;
 
 import java.util.*;
@@ -115,8 +115,8 @@ public abstract class AbstractTerm implements Term {
         this.synonyms = synonyms;
     }
 
-    public SortedSet getSortedAliases() {
-        return new TreeSet<TermAlias>(synonyms);
+    public TreeSet getSortedAliases() {
+        return new TreeSet<>(synonyms);
     }
 
     public boolean isAliasesExist() {
@@ -158,7 +158,7 @@ public abstract class AbstractTerm implements Term {
 
     @Override
     public Set<Term> getChildTerms() {
-        Set<Term> terms = new HashSet<Term>();
+        Set<Term> terms = new HashSet<>();
         for (TermRelationship termRelationship : getChildTermRelationships()) {
             terms.add(termRelationship.getTermTwo());
         }
@@ -167,7 +167,7 @@ public abstract class AbstractTerm implements Term {
 
     @Override
     public Set<Term> getParentTerms() {
-        Set<Term> terms = new HashSet<Term>();
+        Set<Term> terms = new HashSet<>();
         for (TermRelationship termRelationship : getParentTermRelationships()) {
             terms.add(termRelationship.getTermOne());
         }
@@ -175,7 +175,7 @@ public abstract class AbstractTerm implements Term {
     }
 
     public List<TermRelationship> getAllDirectlyRelatedTerms() {
-        List<TermRelationship> terms = new ArrayList<TermRelationship>();
+        List<TermRelationship> terms = new ArrayList<>();
         Set<TermRelationship> childTermRelationships = getChildTermRelationships();
         if (childTermRelationships != null)
             terms.addAll(childTermRelationships);
@@ -276,8 +276,9 @@ public abstract class AbstractTerm implements Term {
     public void setExternalReferences(Set<TermExternalReference> externalReferences) {
         this.externalReferences = externalReferences;
     }
+
     public SortedSet getSortedExrefs() {
-        return new TreeSet<TermExternalReference>(externalReferences);
+        return new TreeSet<>(externalReferences);
     }
     public String getReferenceLink() {
         if (checkIfSingleReference()) return null;

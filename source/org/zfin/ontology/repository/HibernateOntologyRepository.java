@@ -12,7 +12,9 @@ import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.InfrastructureService;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 

@@ -289,6 +289,10 @@
         <property name="xrefPrefix" column="tx_prefix"/>
         <property name="xrefAccessionNumber" column="tx_accession"/>
 
+        <set name="omimPhenotypes" lazy="true" table="omimp_termxref_mapping" access="field">
+            <key column="otm_tx_id"/>
+            <many-to-many class="org.zfin.mutant.OmimPhenotype" column="otm_omimp_id"/>
+        </set>
     </class>
 
     <class name="org.zfin.ontology.GenericTerm" mutable="false" table="TERM" batch-size="10">

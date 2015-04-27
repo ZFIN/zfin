@@ -1,6 +1,9 @@
 package org.zfin.mutant;
 
 import org.zfin.marker.Marker;
+import org.zfin.ontology.TermExternalReference;
+
+import java.util.Set;
 
 /**
  * OMIM Phenotype
@@ -9,7 +12,8 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
     private long id;
     private String name;
     private String omimNum;
-    private Marker zfGene;
+    private Marker gene;
+    private Set<TermExternalReference> externalReferences;
 
     public long getId() {
         return id;
@@ -35,14 +39,21 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
         this.omimNum = omimNum;
     }
 
-    public Marker getZfGene() {
-        return zfGene;
+    public Marker getGene() {
+        return gene;
     }
 
-    public void setZfGene(Marker zfGene) {
-        this.zfGene = zfGene;
+    public void setGene(Marker gene) {
+        this.gene = gene;
     }
 
+    public Set<TermExternalReference> getExternalReferences() {
+        return externalReferences;
+    }
+
+    public void setExternalReferences(Set<TermExternalReference> externalReferences) {
+        this.externalReferences = externalReferences;
+    }
 
     @Override
     public int compareTo(OmimPhenotype anotherOmimPhenotype ) {

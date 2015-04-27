@@ -2817,7 +2817,16 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return markerPaginationResult;
     }
 
+    @Override
+    public List<OmimPhenotype> getOmimPhenotype(Marker marker){
+        Session session = HibernateUtil.currentSession();
+        String sql = "FROM OmimPhenotype " +
+                "WHERE gene = :gene ";
 
+        Query query = session.createQuery(sql);
+        query.setParameter("gene", marker);
+        return query.list();
+    }
 
 
     public void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, Marker marker, String pubID) {
