@@ -1899,9 +1899,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "                              where gffs_fig_zdb_id = fig_zdb_id)\n" +
                 "                    );";
 
-        Long count = getCount(sql, publication.getZdbID());
+        Long figureDataCount = getCount(sql, publication.getZdbID());
 
-        if (count == 0) { return true; }
+        sql = "select count(recattrib_source_zdb_id) from record_attribution where recattrib_source_zdb_id = :zdbID";
+        Long directDataCount = getCount(sql, publication.getZdbID());
+
+
+        if (figureDataCount == 0 && directDataCount == 0) { return true; }
 
         return false;
     }
