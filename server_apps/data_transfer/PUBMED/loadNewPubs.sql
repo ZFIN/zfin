@@ -26,7 +26,7 @@ delete from tmp_pubs
  and numAuthors = '0';
 
 create temp table tmp_new_pubs (zdb_id varchar(50),
-       	    	  	       	pmid varchar(30), 
+       	    	  	       	pmid int8, 
 				keywords lvarchar(2200),
 				title lvarchar(400), 
 				pages varchar(30), 
