@@ -160,6 +160,8 @@ public class RenoService {
     public void renameGene(Marker gene, String attributionZdbID) {
         Publication pub = new Publication();
         pub.setZdbID(attributionZdbID);
+        //logger.info("geneToRename in renameGene method: " + gene.getAbbreviation().toString());
+
         RepositoryFactory.getMarkerRepository().renameMarker(gene, pub, MarkerHistory.Reason.RENAMED_TO_CONFORM_WITH_ZEBRAFISH_GUIDELINES);
         RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(gene, "data_alias", "", "", "");
 

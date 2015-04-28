@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerFamilyName;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
@@ -21,6 +22,7 @@ import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.reno.NomenclatureRun;
 import org.zfin.sequence.reno.RunCandidate;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -149,17 +151,52 @@ public class NomenclatureCandidateController extends AbstractCandidateController
         RunCandidate rc = candidateBean.getRunCandidate();
 
         Marker geneToRename = rc.getIdentifiedMarker();
-
+        //kludge to get nomenclature pipeline to work with OTTDARPs which are strangely on Transcripts instead of genes -- blerg.
+        logger.info("geneToRename - entry: " +geneToRename.getAbbreviation().toString());
         // Only rename gene if a name and an abbreviation is provided
         String newAbbreviation = candidateBean.getGeneAbbreviation();
         String newGeneName = candidateBean.getGeneName();
-
+        Marker renamedGene = new Marker();
         // The validator ensures that both values are present or none.
         if (!StringUtils.isEmpty(newAbbreviation) && !StringUtils.isEmpty(newGeneName)) {
-            geneToRename.setAbbreviation(newAbbreviation);
-            geneToRename.setName(newGeneName);
+            if (geneToRename.getType().equals(Marker.Type.TSCRIPT)) {
+                //logger.info("into gene Type: " + gene.getType().toString());
+                List<MarkerRelationship> mrelGroup = new ArrayList<MarkerRelationship>();
+
+                //logger.info("ready for for loop, mrkrType:  " + gene.getType().toString());
+                if (!geneToRename.getSecondMarkerRelationships().isEmpty()) {
+                    for (MarkerRelationship mrel : geneToRename.getSecondMarkerRelationships()) {
+
+                        if (mrel.getType().equals(MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)) {
+                            //logger.debug("get ottdarpGene" + mrel.getFirstMarker().getAbbreviation().toString());
+                            mrelGroup.add(mrel);
+                        }
+                    }
+                    if (mrelGroup.size() > 1) {
+                        //  logger.debug("trying to get a gene from a transcript but can't figure out " +
+                        //      "which one to grab because there is more than 1");
+                        throw new RuntimeException("more than one gene associated with a ottdarp " +
+                                "transcript.");
+                    } else {
+                        if (!mrelGroup.isEmpty()) {
+                            // logger.debug("mrel group is not empty" + mrelGroup.size());
+                            renamedGene = mrelGroup.iterator().next().getFirstMarker();
+                            renamedGene.setAbbreviation(newAbbreviation);
+                            renamedGene.setName(newGeneName);
+                        }
+                    }
+                }
+            }
+            else {
+                renamedGene = geneToRename;
+                renamedGene.setAbbreviation(newAbbreviation);
+                renamedGene.setName(newGeneName);
+            }
+
+           // geneToRename.setAbbreviation(newAbbreviation);
+           // geneToRename.setName(newGeneName);
 //            renameGene(geneToRename, candidateBean.getOrthologyPublicationZdbID());
-            renoService.renameGene(geneToRename, candidateBean.getNomenclaturePublicationZdbID());
+            renoService.renameGene(renamedGene, candidateBean.getNomenclaturePublicationZdbID());
         }
 
         //handle gene families
@@ -171,8 +208,8 @@ public class NomenclatureCandidateController extends AbstractCandidateController
             families.add(mf);
             gene.setFamilyName(families);
         }
-        handleOrthology(candidateBean, geneToRename);
-        renoService.moveNoteToGene(rc, geneToRename);
+        handleOrthology(candidateBean, renamedGene);
+        renoService.moveNoteToGene(rc, renamedGene);
 
         logger.info("handleRunCandidate - exit");
     }

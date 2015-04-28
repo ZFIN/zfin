@@ -815,10 +815,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public MarkerHistory getLastMarkerHistory(Marker marker, MarkerHistory.Event event) {
         Session session = currentSession();
-
         //flush here to ensure that triggers for marker inserts and updates are run.
         session.flush();
-
         Criteria criteria = session.createCriteria(MarkerHistory.class);
         criteria.add(Restrictions.eq("marker.zdbID", marker.getZdbID()));
         // Todo: Check this carefully
@@ -828,6 +826,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // very dangerous as the trigger creates two history records, one for a name change (no alias available)
         // and one for an abbrev change with an associated alias generation
         criteria.setMaxResults(1);
+        logger.debug("got to max results mhist" + marker.getAbbreviation().toString());
         return (MarkerHistory) criteria.uniqueResult();
     }
 
@@ -1560,8 +1559,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
      */
     public void renameMarker(Marker marker, Publication publication, MarkerHistory.Reason reason) {
         //update marker history reason
+        logger.debug("Got to rename marker: " +marker.getAbbreviation().toString() + " "+marker.getZdbID()+" "+marker.getName().toString());
         MarkerRepository mr = RepositoryFactory.getMarkerRepository();
         MarkerHistory mhist = mr.getLastMarkerHistory(marker, MarkerHistory.Event.REASSIGNED);
+        logger.debug("Got to last mhist: " +mhist);
         mhist.setReason(reason);
         mr.runMarkerNameFastSearchUpdate(marker);
 

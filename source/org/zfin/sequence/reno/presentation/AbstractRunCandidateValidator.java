@@ -59,7 +59,7 @@ public abstract class AbstractRunCandidateValidator implements Validator {
                 //reject on any marker that isn't a small segment or genedom, at least until
                 //we know how to handle them
                 if (!m.isInTypeGroup(Marker.TypeGroup.SMALLSEG)
-                        && !m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                        && !m.isInTypeGroup(Marker.TypeGroup.GENEDOM) && !m.isInTypeGroup(Marker.TypeGroup.TRANSCRIPT)) {
                     errors.rejectValue("action", "code", "A query in this candidate is associated with a marker that is not a small segment, gene or pseudogene.");
                 }
 
