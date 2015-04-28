@@ -34,8 +34,7 @@
 		             and construct_zdb_id = constructZdbId);
 
        delete from marker_relationship
-       	      where exists (Select 'x' from construct
-       	      	      	   	   where construct_zdb_id = mrel_mrkr_1_zdb_id);
+       	      where constructZdbID = mrel_mrkr_1_zdb_id;
 
 	foreach 
  	       select get_id('MREL'), conmrkrrel_construct_zdb_id,conmrkrrel_mrkr_zdb_id,conmrkrrel_relationship_type into mrel_id, mrel_1_id, mrel_2_id, mrel_type
