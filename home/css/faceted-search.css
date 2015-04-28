@@ -340,7 +340,7 @@ div.search-box {
 }
 
 
-.modal-body-scrolling { height: 500px; overflow-y: scroll; }
+.modal-body-scrolling { max-height: 500px; overflow-y: scroll; }
 
 body.modal-open {
     overflow: hidden;
