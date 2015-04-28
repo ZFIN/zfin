@@ -3,25 +3,25 @@ with no log;
 
 insert into tmp_ordered_markers (name, construct_id)
   select mrkr_abbrev||"|"||mrkr_name, mrkr_Zdb_id
-     from construct
+     from marker
      where mrkr_type in ('PTCONSTRCT','ETCONSTRCT','TGCONSTRCT','GTCONSTRCT');
 
 insert into tmp_ordered_markers (name, construct_id)
   select a.mrkr_abbrev||"|"||a.mrkr_name, b.mrkr_zdb_id
-    from construct a, construct b, marker_relationship
+    from marker a, marker b, marker_relationship
     where a.mrkr_zdb_id = mrel_mrkr_2_zdb_id
     and b.mrkr_Zdb_id = mrel_mrkr_1_zdb_id
     and mrel_type in ('promoter of','coding sequence of','contains engineered region'); 
 
 insert into tmp_ordered_markers (name, construct_id)
   select dalias_alias, mrkr_zdb_id
-    from construct, data_alias
+    from marker, data_alias
     where mrkr_Zdb_id = dalias_data_zdb_id
     and mrkr_type in ('PTCONSTRCT','ETCONSTRCT','TGCONSTRCT','GTCONSTRCT');
 
 insert into tmp_ordered_markers (name, construct_id)
    select dalias_alias, b.mrkr_zdb_id
-   from data_alias, construct a, construct b, marker_relationship
+   from data_alias, marker a, marker b, marker_relationship
      where a.mrkr_zdb_id = mrel_mrkr_2_zdb_id
     and b.mrkr_Zdb_id = mrel_mrkr_1_zdb_id
     and b.mrkr_type in ('PTCONSTRCT','ETCONSTRCT','TGCONSTRCT','GTCONSTRCT')
@@ -44,14 +44,14 @@ insert into tmp_ordered_markers (name, construct_id)
 
 insert into tmp_ordered_markers (name, construct_id)
   select allnmend_name_end_lower, mrkr_zdb_id
-    from all_name_ends, all_map_names, construct
+    from all_name_ends, all_map_names, marker
     where mrkr_zdb_id = allmapnm_zdb_id
     and allnmend_allmapnm_serial_id = allmapnm_serial_id
     and mrkr_type in ('PTCONSTRCT','ETCONSTRCT','TGCONSTRCT','GTCONSTRCT')
     and allmapnm_precedence not in ('Accession number','Orthologue','Sequence similarity');
 
 insert into construct_search_temp (cons_construct_zdb_id, cons_abbrev_order, cons_name, cons_abbrev)
-  select mrkr_Zdb_id, mrkr_abbrev_order, mrkr_name, mrkr_abbrev from construct;
+  select mrkr_Zdb_id, mrkr_abbrev_order, mrkr_name, mrkr_abbrev from marker;
 
 update construct_search_temp
   set cons_type = 'Gene Trap Construct'
@@ -180,7 +180,7 @@ update construct_gene_feature_result_view_temp
 
 insert into construct_component_search_temp (ccs_cons_id, ccs_gene_zdb_id, ccs_gene_abbrev, ccs_gene_abbrev_order, ccs_relationship_type)
   select distinct cons_pk_id, mrkr_zdb_id, mrkr_abbrev, mrkr_abbrev_order, mrel_type
-    from construct_search_temp, marker_relationship, construct
+    from construct_search_temp, marker_relationship, marker
     where cons_construct_zdb_id  = mrel_mrkr_1_zdb_id
     and mrel_mrkr_2_zdb_id = mrkr_zdb_id;
 
