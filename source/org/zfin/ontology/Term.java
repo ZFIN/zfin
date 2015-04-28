@@ -51,21 +51,15 @@ public interface Term extends Comparable<Term>, Serializable {
 
     Set<TermAlias> getAliases();
 
-//    List<Term> getParents(String relationshipType);
-
     TreeSet<TermAlias> getSortedAliases();
 
     void setAliases(Set<TermAlias> aliases);
-
-//    boolean isAliasesExist();gmake
 
     String getDefinition();
 
     void setDefinition(String definition);
 
     List<TermRelationship> getAllDirectlyRelatedTerms();
-
-//    void setRelatedTerms(List<TermRelationship> relationships);
 
     /**
      * Retrieves all terms that are immediate children of this term.
