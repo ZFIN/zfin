@@ -2445,7 +2445,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene) {
         return HibernateUtil.currentSession().createCriteria(OmimPhenotype.class)
-                .add((Restrictions.eq("zfGene", zebrafishGene)))
+                .add((Restrictions.eq("gene", zebrafishGene)))
                 .list();
     }
 
