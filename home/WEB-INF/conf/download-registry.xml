@@ -2662,6 +2662,31 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="3">Gene Symbol</Column>
             <Column id="4">Pfam Accession Number</Column>
         </Download>
+        <Download orderIndex="1">
+            <Name>
+                Disease Publication Relation
+            </Name>
+            <Category>
+                Disease
+            </Category>
+            <FileName>disease_publication</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select term.term_ont_id, term.term_name, ra.recattrib_source_zdb_id, publication.accession_no
+                    from record_attribution as ra
+                    inner join term on ra.recattrib_data_zdb_id = term.term_zdb_id
+                    inner join publication on ra.recattrib_source_zdb_id = publication.zdb_id
+                    where term.term_ontology = 'disease_ontology'
+                    order by term.term_ont_id;
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Disease Ontology ID</Column>
+            <Column id="2">Disease Name</Column>
+            <Column id="3">Publication ZFIN ID</Column>
+            <Column id="4">Publication PubMed ID</Column>
+        </Download>
     </DownloadDefinitions>
     <DownloadCategories>
         <Category orderIndex="10">
@@ -2714,6 +2739,9 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Category>
         <Category orderIndex="170">
             <name>Image Data</name>
+        </Category>
+        <Category orderIndex="180">
+            <name>Disease</name>
         </Category>
         <Category orderIndex="1000">
             <name>Unofficial Download Files</name>
