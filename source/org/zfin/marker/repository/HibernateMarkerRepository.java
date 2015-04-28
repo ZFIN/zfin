@@ -1051,7 +1051,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
 
         String hql = " select distinct m from Marker m , PublicationAttribution pa "
-                + " where trim(lower(m.abbreviation)) = trim(lower(:name))  "
+                + " where trim(m.abbreviation) = trim(:name)  "
                 + " and pa.dataZdbID = m.zdbID  "
                 + " and pa.sourceZdbID = :publicationZdbId ";
 
