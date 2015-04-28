@@ -37,10 +37,8 @@ import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.mutant.repository.FeaturePresentationBean;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.presentation.ExpressionResultPresentation;
-import org.zfin.ontology.presentation.PhenotypePresentation;
-import org.zfin.ontology.presentation.TermDTOPresentation;
-import org.zfin.ontology.presentation.TermPresentation;
+import org.zfin.ontology.TermExternalReference;
+import org.zfin.ontology.presentation.*;
 import org.zfin.orthology.OrthologySpecies;
 import org.zfin.orthology.presentation.OrthologyPresentation;
 import org.zfin.profile.Organization;
@@ -168,6 +166,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = TermDTOPresentation.getLink((TermDTO) o);
         else if (o instanceof ExpressionResult)
             link = ExpressionResultPresentation.getLink((ExpressionResult) o, suppressPopupLink, curationLink);
+        else if (o instanceof TermExternalReference)
+            link = TermExternalReferencePresentation.getLink((TermExternalReference) o);
         else if (o instanceof ExpressionStatement)
             link = ExpressionStatementPresentation.getLink((ExpressionStatement) o, suppressPopupLink);
         else if (o instanceof PhenotypeStatement)

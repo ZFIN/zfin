@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Term definition reference.
  */
-public class TermExternalReference implements Comparable{
+public class TermExternalReference implements Comparable {
 
     private long ID;
 
@@ -59,7 +59,11 @@ public class TermExternalReference implements Comparable{
         this.foreignDB = foreignDB;
     }
 
-
+    public String getXrefUrl() {
+        if(foreignDB == null)
+            return null;
+        return foreignDB.getDbUrlPrefix() + xrefAccessionNumber;
+    }
 
     public Term getTerm() {
         return term;

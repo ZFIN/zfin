@@ -10,7 +10,7 @@ import java.util.Set;
  * Base class for alias records. You need to extend this class
  * to make use of the real function, e.g. MarkerAlias.
  */
-public class DataAlias implements Comparable, EntityAttribution, Serializable {
+public class DataAlias implements Comparable, EntityAttribution, Serializable, EntityZdbID {
 
     protected String zdbID;
     protected String alias;
@@ -100,10 +100,10 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable {
     }
 
     public void addPublication(PublicationAttribution publicationAttribution) {
-        if(this.publications==null){
-            this.publications = new HashSet<>() ;
+        if (this.publications == null) {
+            this.publications = new HashSet<>();
         }
-        this.publications.add(publicationAttribution) ;
+        this.publications.add(publicationAttribution);
     }
 
     public int getPublicationCount() {
@@ -126,11 +126,31 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable {
 
 
     public boolean hasPublication(PublicationAttribution publicationAttribution) {
-        for(PublicationAttribution aPublicationAttribution: getPublications()){
-            if(publicationAttribution.getPublication().equals(aPublicationAttribution.getPublication())){
-                return true ;
+        for (PublicationAttribution aPublicationAttribution : getPublications()) {
+            if (publicationAttribution.getPublication().equals(aPublicationAttribution.getPublication())) {
+                return true;
             }
         }
-        return false ;
+        return false;
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return alias;
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return alias;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Data Alias";
+    }
+
+    @Override
+    public String getEntityName() {
+        return alias;
     }
 }

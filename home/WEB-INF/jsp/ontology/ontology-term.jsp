@@ -34,10 +34,8 @@
 
             <th>Synonyms:</th>
             <td id="term-synonyms">
-                <c:forEach var="alias" varStatus="loop" items="${formBean.term.sortedAliases}">
-                    <span class="alias-value" title="${alias.aliasGroup.name}">${alias.alias}<c:if test="${!loop.last}"><span
-                            class="alias-separator">,</span></c:if></span>
-                </c:forEach>
+                <zfin2:toggledHyperlinkStrings collection="${formBean.term.sortedAliases}" maxNumber="3"
+                                               id="${formBean.term.zdbID}_alias" isStringCollection="false"/>
             </td>
         </tr>
 
@@ -65,19 +63,8 @@
         <tr>
             <th>References:</th>
             <td id="term-xrefs">
-                <c:forEach var="xrefs" varStatus="loop" items="${formBean.term.sortedExrefs}">
-                   <%-- <span class="xref-value" ><a href="${xrefs.foreignDB.dbUrlPrefix}${xrefs.reference}">${xrefs.foreignDB.dbName}:${xrefs.reference}</a><c:if test="${!loop.last}"><span
-                            class="xref-separator">,</span></c:if></span>--%>
-<c:choose>
-                    <c:when test="${!empty xrefs.foreignDB.dbName}">
-                        <a href="${xrefs.foreignDB.dbUrlPrefix}${xrefs.xrefAccessionNumber}">${xrefs.fullAccession}</a>
-                    </c:when>
-                    <c:otherwise>
-                        ${xrefs.fullAccession}
-                    </c:otherwise>
-</c:choose>
-                    <c:if test="${!loop.last}">,</c:if>
-                </c:forEach>
+                <zfin2:toggledHyperlinkList collection="${formBean.term.sortedXrefs}" maxNumber="3"
+                                            id="${formBean.term.zdbID}" commaDelimited="true"/>
             </td>
         </tr>
         <tr>
@@ -143,7 +130,7 @@
         <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=<zfin2:urlEncode string="${formBean.term.termName}"/>&query_results=exists'>Search
             for publications with '${formBean.term.termName}' in abstract</A>
     </div>--%>
-       <span class="name-label"> Citations:</span>
+    <span class="name-label"> Citations:</span>
     <c:choose>
         <c:when test="${numberOfCitations == 0}">None</c:when>
         <c:otherwise>
