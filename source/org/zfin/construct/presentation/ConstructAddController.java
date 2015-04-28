@@ -3,8 +3,6 @@ package org.zfin.construct.presentation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,19 +11,15 @@ import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
-
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.LookupStrings;
-
 import org.zfin.gwt.root.dto.ConstructDTO;
-
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.repository.MarkerRepository;
-
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -34,8 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
-
-import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Controller
 @RequestMapping("/construct")
@@ -160,6 +152,7 @@ public class ConstructAddController {
 
                 //moving construct record to marker table
                 InformixUtil.runInformixProcedure("regen_construct_marker", constructZdbID + "");
+                InformixUtil.runInformixProcedure("regen_names_marker", constructZdbID +"");
                 Marker latestConstruct = mr.getMarkerByID(newConstruct.getZdbID());
 
 
