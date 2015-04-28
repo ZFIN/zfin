@@ -156,7 +156,7 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
     }
 
     public void addTermToTable(final TermStatus term) {
-        if (false == termsList.contains(term)) {
+        if (!termsList.contains(term)) {
             if (termsList.size() == 0 && table.getRowCount() > 0) {
 //                table.removeRow(0);
                 table.setStyleName("gwt-table-full");
@@ -170,14 +170,13 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
                 public void onClick(ClickEvent event) {
                     // this is new each time . . I think so that we never inadvertently browse to new events
                     lookupPopup = new LookupPopup(lookup.getType(), term.getZdbID());
-//                    lookupPopup = new LookupPopup(lookup.getType(), RepositoryFactory.getInfrastructureRepository().getTermByID());
+                    lookupPopup.setAutoHideOnHistoryEventsEnabled(false);
                 }
             });
 
             table.setWidget(currentRow, 1, link);
             Image removeImage = new Image(imageURL + "action_delete.png");
             table.setWidget(currentRow, 0, new RemoveButton(removeImage, this, term.getTerm()));
-            //Window.alert("Term added: "+term.getZdbID());
             DOM.setElementProperty(hiddenIDList, "value", generateIDList());
             String list = generateNameList();
             DOM.setElementProperty(hiddenNameList, "value", list);
