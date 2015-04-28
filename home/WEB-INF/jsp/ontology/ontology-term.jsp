@@ -1,5 +1,4 @@
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -144,4 +143,11 @@
         <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=<zfin2:urlEncode string="${formBean.term.termName}"/>&query_results=exists'>Search
             for publications with '${formBean.term.termName}' in abstract</A>
     </div>--%>
+       <span class="name-label"> Citations:</span>
+    <c:choose>
+        <c:when test="${numberOfCitations == 0}">None</c:when>
+        <c:otherwise>
+            (<a href="/action/ontology/disease-publication-list/${term.oboID}">${numberOfCitations}</a>)
+        </c:otherwise>
+    </c:choose>
 </div>

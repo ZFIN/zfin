@@ -22,6 +22,7 @@ import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -1650,6 +1651,17 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         } else {
             deleteActiveSourceByZdbID(zdbID);
         }
+    }
+
+    @Override
+    public PaginationResult<Publication> getTermReferences(GenericTerm term) {
+        String hql = "select termAtt.publication from TermAttribution as termAtt where " +
+                "       termAtt.term = :term" +
+                "     order by termAtt.publication.publicationDate";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("term", term);
+
+        return  new PaginationResult<>((List<Publication>) query.list());
     }
 }
 

@@ -14,6 +14,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
@@ -540,6 +541,13 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         List<ReplacementZdbID> replacedGeneIds = RepositoryFactory.getInfrastructureRepository().getReplacedZdbIDsByType(ActiveData.Type.GENE);
         assertNotNull(replacedGeneIds);
         assertTrue(replacedGeneIds.size() > 10);
+    }
+
+    @Test
+    public void getTermReferences() {
+        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID("DOID:4");
+        PaginationResult<Publication> paginationResult = infrastructureRepository.getTermReferences(term);
+        assertNotNull(paginationResult);
     }
 
 }

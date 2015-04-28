@@ -9,6 +9,7 @@ import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -17,6 +18,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
+import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;
@@ -433,6 +435,8 @@ public interface InfrastructureRepository {
      * @param zdbID
      */
     void deleteActiveEntity(String zdbID);
+
+    PaginationResult<Publication> getTermReferences(GenericTerm term);
 }
 
 
