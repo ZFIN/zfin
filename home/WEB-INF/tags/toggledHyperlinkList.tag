@@ -34,8 +34,8 @@
         <c:choose>
             <c:when test="${fn:length(collection) > maxNumber }">
             <span style="display:inline;" id="${id}-short">
-            <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop" end="${maxNumber -1}">
-                <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+            <c:forEach var="entity" items="${collection}" varStatus="loop" end="${maxNumber -1}">
+                <zfin:link entity="${entity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${entity}"/></c:if>
 
 
                 <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
@@ -48,8 +48,8 @@
                 </nobr>
                 </span>
             <span style="display:none;" id="${id}-long">
-            <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop">
-                <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+            <c:forEach var="entity" items="${collection}" varStatus="loop">
+                <zfin:link entity="${entity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${entity}"/></c:if>
 
                 <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
                 <c:if test="${(!loop.last) && (!commaDelimited)}"><br/></c:if>
@@ -59,8 +59,8 @@
                 </span>
             </c:when>
             <c:otherwise>
-                <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop">
-                    <zfin:link entity="${hyperlinkEntity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${hyperlinkEntity}"/></c:if>
+                <c:forEach var="entity" items="${collection}" varStatus="loop">
+                    <zfin:link entity="${entity}"/><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${entity}"/></c:if>
 
                     <c:if test="${(!loop.last) && (commaDelimited)}">, </c:if>
                     <c:if test="${(!loop.last) && (!commaDelimited)}"><br/></c:if>

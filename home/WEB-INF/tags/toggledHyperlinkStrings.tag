@@ -6,12 +6,11 @@ Also, we provide a suffix so that we can change the display easily.
 
 <%@attribute name="collection" type="java.util.Collection" %>
 <%@attribute name="maxNumber" type="java.lang.Integer" %>
-<%@attribute name="isStringCollection" type="java.lang.Boolean" %>
 <%@attribute name="id" type="java.lang.String" %>
 <%@ attribute name="suffix" type="java.lang.String" required="false" %>
 
 <c:if test="${empty suffix}">
-    <c:set var="suffix" value=", "/>
+    <c:set var="delimiter" value=", "/>
 </c:if>
 
 <c:if test="${fn:length(collection) > 0 }">
@@ -33,14 +32,9 @@ Also, we provide a suffix so that we can change the display easily.
             </script>
 
             <span style="display:inline;" id="${id}-short">
-            <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop" end="${maxNumber -1}">
-                <c:choose>
-                    <c:when test="${isStringCollection}">${hyperlinkEntity}${(!loop.last ? suffix : "")}
-                    </c:when>
-                    <c:otherwise>
-                        ${hyperlinkEntity.entityName}${(!loop.last ? suffix : "")}
-                    </c:otherwise>
-                </c:choose>
+            <c:forEach var="entity" items="${collection}" varStatus="loop" end="${maxNumber -1}">
+                <zfin2:showEntityNameOrString entity="${entity}"
+                                              loop="${loop}" delimiter="${delimiter}"/>
             </c:forEach>
                 <nobr>
                     (<a href="javascript:onClick=showEntityList('${id}', true)">all ${fn:length(collection)}</a>)
@@ -49,22 +43,18 @@ Also, we provide a suffix so that we can change the display easily.
                 </nobr>
                 </span>
             <span style="display:none;" id="${id}-long">
-            <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop">
-                <c:choose>
-                    <c:when test="${isStringCollection}">${hyperlinkEntity}${(!loop.last ? suffix : "")}
-                    </c:when>
-                    <c:otherwise>
-                        ${hyperlinkEntity.entityName}${(!loop.last ? suffix : "")}
-                    </c:otherwise>
-                </c:choose>
+            <c:forEach var="entity" items="${collection}" varStatus="loop">
+                <zfin2:showEntityNameOrString entity="${entity}"
+                                              loop="${loop}" delimiter="${delimiter}"/>
             </c:forEach>&nbsp;
                 <img onclick="showEntityList('${id}', false)" class="clickable"
                      src="/images/left_arrow.gif" alt="collapse" title="Show only first ${maxNumber+1} terms">
                 </span>
         </c:when>
         <c:otherwise>
-            <c:forEach var="hyperlinkEntity" items="${collection}" varStatus="loop">
-                ${hyperlinkEntity}${(!loop.last ? suffix : "")}
+            <c:forEach var="entity" items="${collection}" varStatus="loop">
+                <zfin2:showEntityNameOrString entity="${entity}"
+                                              loop="${loop}" delimiter="${delimiter}"/>
             </c:forEach>
         </c:otherwise>
     </c:choose>

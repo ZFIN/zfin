@@ -35,7 +35,7 @@
             <th>Synonyms:</th>
             <td id="term-synonyms">
                 <zfin2:toggledHyperlinkStrings collection="${formBean.term.sortedAliases}" maxNumber="3"
-                                               id="${formBean.term.zdbID}_alias" isStringCollection="false"/>
+                                               id="${formBean.term.zdbID}_alias"/>
             </td>
         </tr>
 
