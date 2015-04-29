@@ -1659,7 +1659,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "       termAtt.term = :term";
 
         if (orderBy == null || orderBy.equalsIgnoreCase("date"))
-            hql += "     order by termAtt.publication.publicationDate";
+            hql += "     order by termAtt.publication.publicationDate desc";
         else if (orderBy.equalsIgnoreCase("author"))
             hql += "     order by termAtt.publication.authors";
         Query query = HibernateUtil.currentSession().createQuery(hql);
