@@ -45,14 +45,14 @@
                 <c:if test="${featureAlias.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${featureAlias.publicationCount == 1}">
-                            (<a href="/${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)
+                            (<a href="/${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
                         </c:when>
                         <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
                         </c:otherwise>
                     </c:choose>
                 </c:if>
-                <c:if test="${!loop.last}">,&nbsp;</c:if>
+
             </c:forEach>
         </td>
     </tr>
