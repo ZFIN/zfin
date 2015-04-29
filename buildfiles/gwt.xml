@@ -126,6 +126,10 @@
             <arg line="-logLevel"/>
             <arg value="INFO"/>
             <arg line="-noserver"/>
+<!--
+            <arg line="-logLevel"/>
+            <arg line="TRACE"/>
+-->
             <!-- Additional arguments like -style PRETTY, -logLevel DEBUG or -nosuperDevMode -->
 <!--
             <arg line="${gwt.args}"/>

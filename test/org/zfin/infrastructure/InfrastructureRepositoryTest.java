@@ -546,7 +546,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getTermReferences() {
         GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID("DOID:4");
-        PaginationResult<Publication> paginationResult = infrastructureRepository.getTermReferences(term);
+        PaginationResult<Publication> paginationResult = infrastructureRepository.getTermReferences(term, "author");
         assertNotNull(paginationResult);
     }
 

@@ -30,6 +30,20 @@
     </b>
 </font>
 
+<c:choose>
+    <c:when test="${orderBy eq 'author'}">
+        <input type=button name=resultOrder
+               onClick="document.location.replace('/action/ontology/disease-publication-list/${term.oboID}?orderBy=date')"
+               value="Order By Date">
+    </c:when>
+    <c:otherwise>
+        <input type=button name=resultOrder
+               onClick="document.location.replace('/action/ontology/disease-publication-list/${term.oboID}?orderBy=author')"
+               value="Order By Author">
+    </c:otherwise>
+</c:choose>
+&nbsp;&nbsp;&nbsp;
+
 
 <c:if test="${citationList.size() > 0}">
     <br/>

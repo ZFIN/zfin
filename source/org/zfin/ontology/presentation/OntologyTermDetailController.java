@@ -165,7 +165,7 @@ public class OntologyTermDetailController {
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getOntology().getCommonName() + ": " + term.getTermName());
         model.addAttribute("jspFunctions", new ZfinJSPFunctions());
-        int number = getInfrastructureRepository().getTermReferences(term).getTotalCount();
+        int number = getInfrastructureRepository().getTermReferences(term, null).getTotalCount();
         model.addAttribute("numberOfCitations", number);
 
         return "ontology/ontology-term.page";
@@ -307,6 +307,7 @@ public class OntologyTermDetailController {
 
     @RequestMapping("/disease-publication-list/{termID}")
     public String diseaseCitationList(@PathVariable String termID,
+                                      @RequestParam(required = false) String orderBy,
                                       Model model) throws Exception {
 
         if (termID == null) {
@@ -314,10 +315,11 @@ public class OntologyTermDetailController {
         }
         GenericTerm term = getOntologyRepository().getTermByOboID(termID);
         if (term == null) {
-            return getErrorPage(model);
+            return getErrorPage(termID, model);
         }
         model.addAttribute("term", term);
-        model.addAttribute("citationList", getInfrastructureRepository().getTermReferences(term).getPopulatedResults());
+        model.addAttribute("orderBy", orderBy);
+        model.addAttribute("citationList", getInfrastructureRepository().getTermReferences(term, orderBy).getPopulatedResults());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/disease-publication-list.page";
     }

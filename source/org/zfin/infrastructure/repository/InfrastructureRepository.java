@@ -436,7 +436,7 @@ public interface InfrastructureRepository {
      */
     void deleteActiveEntity(String zdbID);
 
-    PaginationResult<Publication> getTermReferences(GenericTerm term);
+    PaginationResult<Publication> getTermReferences(GenericTerm term, String orderBy);
 }
 
 
