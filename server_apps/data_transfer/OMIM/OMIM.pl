@@ -202,16 +202,16 @@ $password = "";
 $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password)
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
-$cur = $dbh->prepare('select distinct omimp_name, omimp_gene_zdb_id from omim_phenotype;');
+$cur = $dbh->prepare('select distinct omimp_name, omimp_ortho_zdb_id from omim_phenotype;');
 $cur->execute();
-my ($omimPhenotypeName, $zdbGeneId);
-$cur->bind_columns(\$omimPhenotypeName,\$zdbGeneId);
+my ($omimPhenotypeName, $orthoId);
+$cur->bind_columns(\$omimPhenotypeName,\$orthoId);
 
 $ctOMIMphenotypeNamesAtZFIN = 0;
 %OMIMphenotypeNamesAtZFIN = ();
 while ($cur->fetch()) {
    ### if there is single or double quote in $omimPhenotypeName, the hash won't prevent duplication
-   $OMIMphenotypeNamesAtZFIN{$omimPhenotypeName} = $zdbGeneId;
+   $OMIMphenotypeNamesAtZFIN{$omimPhenotypeName} = $orthoId;
    $ctOMIMphenotypeNamesAtZFIN++;
 }
 
@@ -263,10 +263,11 @@ foreach $line (@lines) {
 
      $ctFoundMIMwithSymbolOnGenemap++;
 
-     $cur = $dbh->prepare('select distinct c_gene_id from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human" and dblink_acc_num = ?;');
+     $cur = $dbh->prepare('select distinct c_gene_id, dblink_acc_num from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human" and dblink_acc_num = ?;');
      $cur->execute($mimNumGene);
      my ($ZFINgeneId);
-     $cur->bind_columns(\$ZFINgeneId);
+     my ($dblinkAcc);
+     $cur->bind_columns(\$ZFINgeneId,\$dblinkAcc);
      while ($cur->fetch()) {
         $ZDBgeneIdOMIMnums{$ZFINgeneId} = $mimNumGene;
 
@@ -379,13 +380,13 @@ close CHECKNOPHENO;
 
 $cur = $dbh->prepare('select distinct c_gene_id, dblink_acc_num from orthologue, db_link where zdb_id = dblink_linked_recid and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-25" and organism = "Human";');
 $cur->execute();
-my ($geneId, $omimNum);
+my ($orthoId, $omimNum);
 $cur->bind_columns(\$geneId,\$omimNum);
 
 print LOG "\nOMIM numbers on ZFIN not found on mim2gene.txt :\n\n";
 while ($cur->fetch()) {
    if (!exists($allMimNums{$omimNum})) {
-      print LOG "$geneId\t$omimNum\n";
+      print LOG "$orthoId\t$omimNum\n";
    }
 }
 

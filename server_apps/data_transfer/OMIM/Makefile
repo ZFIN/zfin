@@ -21,7 +21,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/OMIM
 
 GENERICS = OMIM.pl                               
            
-STATICS = loadOMIM.sql README
+STATICS = loadOMIM.sql README update_omimp_termxref_mapping.sql
 
 # Define targets that require special handling.
 
