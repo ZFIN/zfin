@@ -11,6 +11,13 @@ import java.util.Set;
 public class TermExternalReference implements Comparable {
 
     private long ID;
+    private Term term;
+    private ForeignDB foreignDB;
+    private String fullAccession;
+    private String prefix;
+    private String accessionNumber;
+    private Set<OmimPhenotype> omimPhenotypes;
+
 
     public String getFullAccession() {
         return fullAccession;
@@ -20,28 +27,21 @@ public class TermExternalReference implements Comparable {
         this.fullAccession = fullAccession;
     }
 
-    public String getXrefPrefix() {
-        return xrefPrefix;
+    public String getPrefix() {
+        return prefix;
     }
 
-    public void setXrefPrefix(String xrefPrefix) {
-        this.xrefPrefix = xrefPrefix;
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
-    public String getXrefAccessionNumber() {
-        return xrefAccessionNumber;
+    public String getAccessionNumber() {
+        return accessionNumber;
     }
 
-    public void setXrefAccessionNumber(String xrefAccessionNumber) {
-        this.xrefAccessionNumber = xrefAccessionNumber;
+    public void setAccessionNumber(String accessionNumber) {
+        this.accessionNumber = accessionNumber;
     }
-
-    private Term term;
-    private ForeignDB foreignDB;
-    private String fullAccession;
-    private String xrefPrefix;
-    private String xrefAccessionNumber;
-    private Set<OmimPhenotype> omimPhenotypes;
 
     public long getID() {
         return ID;
@@ -62,7 +62,7 @@ public class TermExternalReference implements Comparable {
     public String getXrefUrl() {
         if(foreignDB == null)
             return null;
-        return foreignDB.getDbUrlPrefix() + xrefAccessionNumber;
+        return foreignDB.getDbUrlPrefix() + accessionNumber;
     }
 
     public Term getTerm() {
