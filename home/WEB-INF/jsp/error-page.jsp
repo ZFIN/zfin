@@ -7,11 +7,11 @@
 <table>
     <tr>
         <td>
-            Error Message:
+            Error Message: ${exception}
         </td>
         <td>
-            <c:if test="${exception != null}">
-                ${exception.message}
+            <c:if test="${not empty exception }">
+                ${exception.getLocalizedMessage()}
             </c:if>
         </td>
     </tr>

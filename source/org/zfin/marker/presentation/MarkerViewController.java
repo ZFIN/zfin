@@ -156,7 +156,8 @@ public class MarkerViewController {
         } catch (Exception e) {
             logger.error("Problem loading marker page: " + zdbID, e);
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+            model.addAttribute(LookupStrings.EXCEPTION, e);
+            return LookupStrings.ERROR_PAGE;
         }
     }
 

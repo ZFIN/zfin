@@ -749,7 +749,7 @@ public class MarkerService {
         logger.debug("marker is:" + marker.getZdbID().toString());
         String zdbID = marker.getZdbID();
         if (Marker.Type.GENE == marker.getType()) {
-            List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotypesByGene(marker);
+            List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(marker);
             Collections.sort(omimPhenotypes);
             marker.setOmimPhenotypes(omimPhenotypes);
         }

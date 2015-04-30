@@ -20,6 +20,7 @@ public class LookupStrings {
 
 
     public static final String RECORD_NOT_FOUND_PAGE = "record-not-found.page";
+    public static final String ERROR_PAGE = "error-page";
 
     // suffix
     public final static String PAGE_SUFFIX = ".page";
@@ -27,6 +28,7 @@ public class LookupStrings {
 
     // form processing
     public static final String SELECTED_TAB = "selectedTab";
+    public static final String EXCEPTION = "exception";
 
     public static String idNotFound(Model model, String fishID) {
         model.addAttribute(LookupStrings.ZDB_ID, fishID);
