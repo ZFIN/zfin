@@ -2822,10 +2822,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<OmimPhenotype> getOmimPhenotype(Marker marker){
         Session session = HibernateUtil.currentSession();
         String sql = "FROM OmimPhenotype " +
-                "WHERE gene = :gene ";
+                "WHERE orthologue.gene = :gene " +
+                "AND orthologue.organism = :organism ";
 
         Query query = session.createQuery(sql);
         query.setParameter("gene", marker);
+        query.setParameter("organism", Species.HUMAN);
         return query.list();
     }
 

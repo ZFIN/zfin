@@ -1,7 +1,7 @@
 package org.zfin.mutant;
 
-import org.zfin.marker.Marker;
 import org.zfin.ontology.TermExternalReference;
+import org.zfin.orthology.Orthologue;
 
 import java.util.Set;
 
@@ -12,7 +12,7 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
     private long id;
     private String name;
     private String omimNum;
-    private Marker gene;
+    private Orthologue orthologue;
     private Set<TermExternalReference> externalReferences;
 
     public long getId() {
@@ -39,12 +39,12 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
         this.omimNum = omimNum;
     }
 
-    public Marker getGene() {
-        return gene;
+    public Orthologue getOrthologue() {
+        return orthologue;
     }
 
-    public void setGene(Marker gene) {
-        this.gene = gene;
+    public void setOrthologue(Orthologue orthologue) {
+        this.orthologue = orthologue;
     }
 
     public Set<TermExternalReference> getExternalReferences() {
