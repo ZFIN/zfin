@@ -19,13 +19,13 @@ import java.util.Set;
 
 /**
  */
-public abstract class AbstractGoViewTable extends ZfinFlexTable implements HandlesError{
+public abstract class AbstractGoViewTable extends ZfinFlexTable implements HandlesError {
 
     // data
     protected String zdbID;
     protected List<GoEvidenceDTO> goEvidences;
 
-    public static final String GENE_FILTER_ALL = "ALL" ;
+    public static final String GENE_FILTER_ALL = "ALL";
     public static final String GO_EVIDENCE_DISPLAY = "go-evidence-display";
 
     // gui
@@ -36,11 +36,15 @@ public abstract class AbstractGoViewTable extends ZfinFlexTable implements Handl
     private final List<HandlesError> handlesErrorListeners = new ArrayList<HandlesError>();
 
 
-    public abstract void setValues() ;
-    public abstract void refreshGUI()  ;
-    public abstract void setHeaderRow() ;
-    protected abstract Widget createGoInlineEditBox(AbstractGoViewTable goViewTable , GoEvidenceDTO goEvidenceDTO);
-    protected abstract Widget createGoInlineCloneBox(AbstractGoViewTable goViewTable , GoEvidenceDTO goEvidenceDTO);
+    public abstract void setValues();
+
+    public abstract void refreshGUI();
+
+    public abstract void setHeaderRow();
+
+    protected abstract Widget createGoInlineEditBox(AbstractGoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO);
+
+    protected abstract Widget createGoInlineCloneBox(AbstractGoViewTable goViewTable, GoEvidenceDTO goEvidenceDTO);
 
 
     public AbstractGoViewTable() {
@@ -82,11 +86,14 @@ public abstract class AbstractGoViewTable extends ZfinFlexTable implements Handl
 
         public GoLink(TermDTO goTerm) {
             String htmlString = "";
-            htmlString += "<a href='";
-            htmlString += "http://www.ebi.ac.uk/QuickGO/GTerm?id=";
+            htmlString += "<a href='/";
             htmlString += goTerm.getOboID();
             htmlString += "'>";
             htmlString += goTerm.getName();
+            htmlString += "</a>";
+            htmlString += "<a href='/action/ontology/term-detail-popup?termID=";
+            htmlString += goTerm.getOboID();
+            htmlString += "' class='popup-link data-popup-link' style='display: inline'>";
             htmlString += "</a>";
             setHTML(htmlString);
         }
@@ -136,7 +143,7 @@ public abstract class AbstractGoViewTable extends ZfinFlexTable implements Handl
         // get row
         insertRow(row);
         formatter.setColSpan(row, 0, getCellCount(0));
-        setWidget(row, 0, createGoInlineCloneBox(this,goEvidenceDTO));
+        setWidget(row, 0, createGoInlineCloneBox(this, goEvidenceDTO));
         newGoRow = row;
     }
 
@@ -158,10 +165,9 @@ public abstract class AbstractGoViewTable extends ZfinFlexTable implements Handl
         // get row
         insertRow(row);
         formatter.setColSpan(row, 0, getCellCount(0));
-        setWidget(row, 0, createGoInlineEditBox(this,goEvidenceDTO));
+        setWidget(row, 0, createGoInlineEditBox(this, goEvidenceDTO));
         newGoRow = row;
     }
-
 
 
     protected void hideNewGoRow() {
@@ -176,7 +182,7 @@ public abstract class AbstractGoViewTable extends ZfinFlexTable implements Handl
     protected class InferredFromComposite extends HTML {
         public InferredFromComposite(Set<String> inferredFromLinks) {
             String html = "";
-            for (Iterator<String> iter = inferredFromLinks.iterator(); iter.hasNext();) {
+            for (Iterator<String> iter = inferredFromLinks.iterator(); iter.hasNext(); ) {
                 html += iter.next();
                 if (iter.hasNext()) {
                     html += "<br>";

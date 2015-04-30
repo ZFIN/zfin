@@ -1,8 +1,11 @@
 package org.zfin.gwt.curation.ui;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.gwt.lookup.ui.LookupPopup;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.GoEvidenceDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
@@ -13,11 +16,13 @@ import org.zfin.gwt.root.ui.MarkerGoEvidenceRPCService;
 
 import java.util.List;
 
+import static com.google.gwt.query.client.GQuery.$;
+
 /**
  */
-public class GoCurationViewTable extends AbstractGoViewTable{
+public class GoCurationViewTable extends AbstractGoViewTable {
 
-    private String geneFilter = GENE_FILTER_ALL ;
+    private String geneFilter = GENE_FILTER_ALL;
 
     public void setValues() {
         MarkerGoEvidenceRPCService.App.getInstance().getMarkerGoTermEvidencesForPub(zdbID,
@@ -31,7 +36,7 @@ public class GoCurationViewTable extends AbstractGoViewTable{
     }
 
     public void doGeneFilter(String selectedText) {
-        if(false==selectedText.equals(geneFilter)){
+        if (false == selectedText.equals(geneFilter)) {
             geneFilter = selectedText;
             refreshGUI();
         }
@@ -44,15 +49,17 @@ public class GoCurationViewTable extends AbstractGoViewTable{
         }
     }
 
+    private LookupPopup lookupPopup = null;
+
     public void refreshGUI() {
         clearTable();
         setHeaderRow();
         int rowNumber = 1;
         String lastZdbID = "";
         if (goEvidences != null) {
-            for (GoEvidenceDTO goEvidenceDTO : goEvidences) {
+            for (final GoEvidenceDTO goEvidenceDTO : goEvidences) {
                 MarkerDTO markerDTO = goEvidenceDTO.getMarkerDTO();
-                if(geneFilter.equals(GENE_FILTER_ALL) || markerDTO.getName().equals(geneFilter)){
+                if (geneFilter.equals(GENE_FILTER_ALL) || markerDTO.getName().equals(geneFilter)) {
                     int columnCount = 0;
                     if (false == lastZdbID.equals(markerDTO.getZdbID())) {
                         lastZdbID = markerDTO.getZdbID();
@@ -72,9 +79,19 @@ public class GoCurationViewTable extends AbstractGoViewTable{
                     ++rowNumber;
                 }
             }
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    processPopupLinks();
+                }
+            });
         }
 
     }
+
+    public static native void processPopupLinks() /*-{
+        $wnd.processPopupLinks('body');
+    }-*/;
 
     protected enum HeaderName {
         GENE(0, "Gene"),
