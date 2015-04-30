@@ -70,7 +70,19 @@
         <tr>
             <th>Ontology:</th>
             <td id="ontology-name">${formBean.term.ontology.commonName}
-                <zfin2:ontologyTermLinks term="${formBean.term}"/></td>
+                <zfin2:ontologyTermLinks term="${formBean.term}"/>
+
+                <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
+                    <span style="margin-left: 20px">
+                        <a href="/action/ontology/term-detail/${formBean.term.oboID}/phenogrid">Phenotype Comparison Chart</a>
+                    </span>
+                </c:if>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td></td>
         </tr>
 
         <c:if test="${formBean.term.obsolete}">
@@ -117,6 +129,8 @@
     </script>
 
 
+
+
     <c:if test="${formBean.term.ontology.expressionData}">
         <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
     </c:if>
@@ -130,6 +144,7 @@
         <A HREF='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pubselect2.apg&anon1=pub_abstract&anon1text=<zfin2:urlEncode string="${formBean.term.termName}"/>&query_results=exists'>Search
             for publications with '${formBean.term.termName}' in abstract</A>
     </div>--%>
+
     <span class="name-label"> Citations:</span>
     <c:choose>
         <c:when test="${numberOfCitations == 0}">None</c:when>
@@ -137,4 +152,5 @@
             (<a href="/action/ontology/disease-publication-list/${term.oboID}">${numberOfCitations}</a>)
         </c:otherwise>
     </c:choose>
+
 </div>

@@ -647,10 +647,10 @@
             <copy todir="@{to}" overwrite="@{overwrite}" >
                 <fileset dir="@{from}">
                     <include name="css/*.css"/>
-                    <include name="css/images/**"/>
                     <include name="css/bootstrap3/**"/>
                     <include name="WEB-INF/**"/>
                     <include name="javascript/**"/>
+                    <exclude name="css/images/**"/>
                     <exclude name="fonts/**"/>
                     <exclude name="images/**"/>
                     <exclude name="**/*.jar"/>
@@ -664,7 +664,9 @@
 
             <copy todir="@{to}" overwrite="@{overwrite}" >
                 <fileset dir="@{from}">
+                    <include name="phenogrid/**"/>
                     <include name="images/**"/>
+                    <include name="css/images/**"/>
                     <include name="fonts/**"/>
                     <include name="WEB-INF/**/*.jar"/>
                     <include name="WEB-INF/**/*.zip"/>
