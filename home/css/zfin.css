@@ -815,3 +815,12 @@ label.curation-form-label { font-weight: bold; }
     transition-property: transform;
     transition-duration: 300ms;
 }
+
+.form-group .twitter-typeahead {
+    display: block !important;
+}
+
+#scrollable-dropdown-menu .tt-dropdown-menu {
+    max-height: 250px;
+    overflow-y: auto;
+}

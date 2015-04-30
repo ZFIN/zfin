@@ -14,16 +14,14 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
-import org.zfin.orthology.OrthoEvidenceDisplay;
 import org.zfin.orthology.Orthology;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
-import java.util.Set;
-import java.util.SortedSet;
 
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * Persistence class that deals with Publication objects.
@@ -142,8 +140,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @param zdbID
      */
     Publication getPublication(String zdbID);
-
-
 
     /**
      * Retrieve a marker (gene) by its symbol name. If it is not unique a Hibernate runtime exception is thrown.
@@ -314,6 +310,8 @@ public interface PublicationRepository extends PaginationParameter {
     List<Publication> getPubsForDisplay(String zdbID);
 
     Journal getJournalByTitle(String journalTitle);
+
+    Journal findJournalByAbbreviation(String abbrevation);
 
     int getNumberAssociatedPublicationsForZdbID(String zdbID) ;
 
@@ -489,11 +487,13 @@ public interface PublicationRepository extends PaginationParameter {
 
     Journal getJournalByID(String zdbID);
 
+    List<Journal> findJournalByAbbreviationAndName(String query);
+
     SortedSet<Publication> getAllPublicationsForGenotype(Genotype genotype);
 
     List<String> getPublicationIDsForGOwithField(String zdbID);
 
-    String getAbstractText(String publicationZdbID);
+    void addPublication(Publication publication);
 
 
     public Long getMarkerCount(Publication publication);

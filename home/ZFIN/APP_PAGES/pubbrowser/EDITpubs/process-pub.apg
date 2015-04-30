@@ -292,7 +292,6 @@ OUTPUT:
 <?MICOMMENT> ** clean up empty strings ** <?/MICOMMENT>
 <?MISQL SQL="update publication set accession_no = null where accession_no = '' and zdb_id = '$OID';"><?/MISQL>
 <?MISQL SQL="update publication set keywords = null where keywords = '' and zdb_id = '$OID';"><?/MISQL>
-<?MISQL SQL="update publication set pub_abstract = null where pub_abstract = '' and zdb_id = '$OID';"><?/MISQL>
 <?MISQL SQL="update publication set pub_doi = null where pub_doi = '' and zdb_id = '$OID';"><?/MISQL>
 <?MISQL SQL="update publication set pub_volume = null where pub_volume = '' and zdb_id = '$OID';"><?/MISQL>
 <?MISQL SQL="update publication set pub_pages = null where pub_pages = '' and zdb_id = '$OID';"><?/MISQL>

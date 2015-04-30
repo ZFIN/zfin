@@ -4688,6 +4688,15 @@ entity1a.term_ont_id || '-' || quality.term_ont_id as phenos_id
 
        </entity>
 
+       <entity name="journal"
+               query="select distinct
+                      jrnl_name as full_name,
+                      jrnl_abbrev as name,
+                      jrnl_zdb_id as id,
+                      'Autocomplete' as category,
+                      'Journal' as type
+                      from journal"/>
+
        <entity name="condition"
                query="select distinct
                              case

@@ -6,12 +6,24 @@
 * */
 
 (function ($) {
-    $.fn.autocompletify = function (url) {
+    $.fn.autocompletify = function (url, options) {
+
+        var defaults = {
+            templates: {
+                suggestion: function (item) {
+                    return "<p>" + item.label + "</p>";
+                }
+            },
+            limit: 5
+        };
+
+        options = $.extend({}, defaults, options);
 
         var hound = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             rateLimitWait: 50,
+            limit: options.limit,
             remote: url
         });
 
@@ -20,11 +32,7 @@
         this.typeahead(null, {
             name: 'search',
             displayKey: 'value',
-            templates: {
-                suggestion: function (item) {
-                    return "<p>" + item.label + "</p>";
-                }
-            },
+            templates: options.templates,
             source: hound.ttAdapter()
         });
 

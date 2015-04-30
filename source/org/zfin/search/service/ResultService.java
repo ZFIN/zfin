@@ -8,7 +8,10 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.presentation.DevelopmentStagePresentation;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.*;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
@@ -32,10 +35,10 @@ import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
+import org.zfin.search.presentation.SearchResult;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.presentation.DBLinkPresentation;
-import org.zfin.search.presentation.SearchResult;
 
 import java.util.*;
 
@@ -629,7 +632,7 @@ public class ResultService {
                 sb.append(publication.getPublicationDate().get(Calendar.YEAR));
 
             result.addAttribute(JOURNAL, sb.toString());
-            String abstractText = RepositoryFactory.getPublicationRepository().getAbstractText(publication.getZdbID());
+            String abstractText = publication.getAbstractText();
             if (StringUtils.isNotEmpty(abstractText)) {
                 result.addAttribute(ABSTRACT, collapsible(abstractText));
             }

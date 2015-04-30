@@ -53,6 +53,7 @@
         <br/>
         <div>
             <b>Add Supplier:</b><br/>
+
             <form:input path="<%= SequenceTargetingReagentAddBean.NEW_STR_SUPPLIER%>" id="supplierName" type="text" size="35" />
             <form:errors path="<%= SequenceTargetingReagentAddBean.NEW_STR_SUPPLIER%>" cssClass="error indented-error"/>
         </div>

@@ -400,7 +400,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return pub;
     }
 
-
     public Marker getMarker(String symbol) {
         Session session = HibernateUtil.currentSession();
         Criteria query = session.createCriteria(Marker.class);
@@ -575,10 +574,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         for (Publication publication : publicationList) {
             if (publication.getDoi() != null) {
-                session.update(publication);
-                session.delete(getDoiAttempt(publication));
+                session.saveOrUpdate(publication);
+                DOIAttempt doiAttempt = getDoiAttempt(publication);
+                if (doiAttempt != null) {
+                    session.delete(getDoiAttempt(publication));
+                }
             }
         }
+
+        session.flush();
         return true;
     }
 
@@ -858,6 +862,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             logger.error("failed to get journal title[" + journalTitle + "] returning null", e);
             return null;
         }
+    }
+
+    @Override
+    public Journal findJournalByAbbreviation(String abbrevation) {
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(Journal.class);
+        criteria.add(Restrictions.eq("abbreviation", abbrevation));
+        return (Journal) criteria.uniqueResult();
     }
 
 
@@ -1748,16 +1759,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return pubIDs;
     }
 
-
-    public String getAbstractText(String publicationZdbID) {
-        String sql = " select pub_abstract from publication where zdb_id = :zdbID";
-        SQLQuery query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("zdbID", publicationZdbID);
-
-        List<String> abstracts = query.list();
-        String abstractText = abstracts.get(0);
-
-        return abstractText;
+    public void addPublication(Publication publication) {
+        HibernateUtil.createTransaction();
+        HibernateUtil.currentSession().save(publication);
+        HibernateUtil.flushAndCommitCurrentSession();
     }
 
     public Long getMarkerCount(Publication publication) {
@@ -1910,6 +1915,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return false;
     }
 
+    public List<Journal> findJournalByAbbreviationAndName(String query) {
+        String likeQuery = "%" + query + "%";
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(Journal.class);
+        criteria.add(Restrictions.or(
+                Restrictions.ilike("name", likeQuery),
+                Restrictions.ilike("abbreviation", likeQuery)
+        ));
+        return criteria.list();
+    }
 
     private Long getMarkerCountByMarkerType(String zdbID, String type) {
         String sql = "select count(recattrib_data_zdb_id)\n" +

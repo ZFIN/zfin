@@ -13,7 +13,10 @@
     <class name="org.zfin.publication.Publication" table="publication">
         <id name="zdbID" type="string">
             <column name="zdb_id" not-null="true"/>
-            <generator class="native"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">PUB</param>
+                <param name="insertActiveSource">true</param>
+            </generator>
         </id>
 
         <property name="title" lazy="false">
@@ -25,20 +28,10 @@
         </property>
 
         <property name="shortAuthorList">
-            <column name="pub_mini_ref" not-null="true"/>
+            <column name="pub_mini_ref"/>
         </property>
 
-
-<!-- Do not use this! When retrieving this table in a query with lots of
-     out joins the abstract has so many characters that you will get an  Informix error:
-     maximum output rowsize (32767) exceeded -->
-<!--
-        <property name="abstractText" lazy="true" >
-            <column name="pub_abstract" not-null="false"/>
-        </property>
--->
-
-
+        <property name="abstractText" type="org.hibernate.type.MaterializedClobType" lazy="true" column="pub_abstract"/>
 
         <property name="publicationDate" column="pub_date"/>
         <property name="closeDate" column="pub_completion_date"/>
@@ -56,8 +49,7 @@
         <property name="errataAndNotes" column="pub_errata_and_notes"/>
         <property name="keywords" column="keywords"/>
 
-        <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" insert="false"
-                     update="false"/>
+        <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" />
 
         <set name="expressionExperiments" lazy="true">
             <key column="xpatex_source_zdb_id"/>
@@ -101,6 +93,10 @@
 
         <property name="publisher">
             <column name="jrnl_publisher" not-null="true"/>
+        </property>
+
+        <property name="isNice">
+            <column name="jrnl_is_nice"/>
         </property>
     </class>
 

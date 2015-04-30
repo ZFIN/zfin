@@ -2,7 +2,6 @@ package org.zfin.publication.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.zfin.expression.Figure;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -10,6 +9,7 @@ import org.zfin.publication.Publication;
 import javax.servlet.ServletContext;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -112,7 +112,44 @@ public class PublicationService {
         return label;
     }
 
+    public static PublicationForm getPublicationFormFromPublication(Publication publication) {
+        PublicationForm publicationForm = new PublicationForm();
+        publicationForm.setZdbID(publication.getZdbID());
+        publicationForm.setTitle(publication.getTitle());
+        publicationForm.setStatus(Publication.Status.getStatus(publication.getStatus()));
+        publicationForm.setPubMedID(publication.getAccessionNumber());
+        publicationForm.setDoi(publication.getDoi());
+        publicationForm.setAuthors(publication.getAuthors());
+        publicationForm.setDate(publication.getPublicationDate().getTime());
+        publicationForm.setJournal(publication.getJournal());
+        publicationForm.setVolume(publication.getVolume());
+        publicationForm.setPages(publication.getPages());
+        publicationForm.setType(publication.getType());
+        publicationForm.setKeywords(publication.getKeywords());
+        publicationForm.setAbstractText(publication.getAbstractText());
+        publicationForm.setNotes(publication.getErrataAndNotes());
+        return publicationForm;
+    }
 
+    public static Publication getPublicationFromPublicationForm(PublicationForm publicationForm) {
+        return null;
+    }
 
-
+    public static void applyFormToPublication(Publication publication, PublicationForm form) {
+        publication.setTitle(form.getTitle());
+        publication.setStatus(form.getStatus().getDisplay());
+        publication.setAccessionNumber(form.getPubMedID());
+        publication.setDoi(form.getDoi());
+        publication.setAuthors(form.getAuthors());
+        GregorianCalendar publicationDate = new GregorianCalendar();
+        publicationDate.setTime(form.getDate());
+        publication.setPublicationDate(publicationDate);
+        publication.setJournal(form.getJournal());
+        publication.setVolume(form.getVolume());
+        publication.setPages(form.getPages());
+        publication.setType(form.getType());
+        publication.setKeywords(form.getKeywords());
+        publication.setAbstractText(form.getAbstractText());
+        publication.setErrataAndNotes(form.getNotes());
+    }
 }

@@ -376,36 +376,47 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         UNKNOWN("Unknown", false),
         UNPUBLISHED("Unpublished", false);
 
-        private final String value;
+        private final String display;
 
         private Type(String type, Boolean allowCuration) {
-            this.value = type;
+            this.display = type;
         }
 
         public String toString() {
-            return this.value;
+            return this.display;
         }
 
         /* Just enough to turn Active_Curation into Active Curation */
-        public String getDisplay() { return this.value.replace("_"," "); }
+        public String getDisplay() {
+            return display.replace("_"," ");
+        }
 
-        public static Type getType(String type) {
-            for (Type t : values()) {
-                if (t.toString().equals(type))
-                    return t;
+    }
+
+    public static enum Status {
+        ACTIVE("active"),
+        INACTIVE("inactive"),
+        EPUB("Epub ahead of print"),
+        PRESS("in press");
+
+        private final String display;
+
+        private Status(String display) {
+            this.display = display;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
+
+        public static Status getStatus(String display) {
+            for (Status status : values()) {
+                if (status.display.equals(display)) {
+                    return status;
+                }
             }
-            throw new RuntimeException("No run type of string " + type + " found.");
+            return null;
         }
-
-        public static boolean isType(String type) {
-            if (type == null)
-                return false;
-            for (Type publicationType : values())
-                if (publicationType.value.equals(type))
-                    return true;
-            return false;
-        }
-
     }
 
 }

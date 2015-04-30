@@ -10,7 +10,7 @@
             <a class="btn btn-mini btn-primary btn-pub-actions" href="/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${result.id}">Curate</a>
             <a class="btn btn-mini btn-default btn-pub-actions" href="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=${result.id}">Track</a>
             <a class="btn btn-mini btn-default btn-pub-actions" href="/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${result.id}${pubLinkExtras}">Link</a>
-            <a class="btn btn-mini btn-default btn-pub-actions" href="/cgi-bin/webdriver?MIval=aa-edit_pub.apg&OID=${result.id}${pubLinkExtras}">Edit</a>
+            <a class="btn btn-mini btn-default btn-pub-actions" href="/action/publication/${result.id}/edit">Edit</a>
         </div>
     </jsp:attribute>
     <jsp:body>

@@ -678,45 +678,40 @@
 
 
     <requestHandler name="/name-autocomplete" class="solr.StandardRequestHandler">
-    <!-- default values for query parameters -->
-     <lst name="defaults">
-         <str name="fl">id, name, category, type</str>
-         <str name="defType">edismax</str>
-         <str name="wt">json</str>
-         <str name="indent">true</str>
-         <str name="q.alt">*:*</str>
-         <str name="qf">
-             name_ac^10
-             full_name_ac^5
-             alias_ac^7
-             orthologue_abbrev_ac^4
-             orthologue_name_ac^3
-             name_t
-             alias_t
-             full_name_t
-         </str>
-         <str name="bf">recip(complexity,1,1,1)^10 sqrt(popularity)^20</str>
-         <str name="fq">-category:Publication -category:Figure</str>
-
-
-         <str name="hl">true</str>
-         <str name="hl.snippets">1</str>
-         <str name="hl.fl">
-             name_ac
-             full_name_ac
-             alias_ac
-             orthologue_abbrev_ac
-             orthologue_name_ac
-             name_t
-             alias_t
-             full_name_t
-         </str>
-         <str name="hl.simple.pre"><![CDATA[<span class="search-result-highlight">]]></str>
-         <str name="hl.simple.post"><![CDATA[</span>]]></str>
-
-
-
-     </lst>
+        <!-- default values for query parameters -->
+        <lst name="defaults">
+            <str name="defType">edismax</str>
+            <str name="wt">json</str>
+            <str name="indent">true</str>
+            <str name="q.alt">*:*</str>
+            <str name="qf">
+                name_ac^10
+                full_name_ac^5
+                alias_ac^7
+                orthologue_abbrev_ac^4
+                orthologue_name_ac^3
+                name_t
+                alias_t
+                full_name_t
+            </str>
+            <str name="bf">recip(complexity,1,1,1)^10 sqrt(popularity)^20</str>
+            <str name="fq">-category:Publication -category:Figure</str>
+            <str name="hl">true</str>
+            <str name="hl.snippets">1</str>
+            <str name="hl.fl">
+                name_ac
+                full_name_ac
+                alias_ac
+                orthologue_abbrev_ac
+                orthologue_name_ac
+                name_t
+                alias_t
+                full_name_t
+            </str>
+            <str name="hl.simple.pre"><![CDATA[<span class="search-result-highlight">]]></str>
+            <str name="hl.simple.post"><![CDATA[</span>]]></str>
+            <str name="fl">id,name,category,type,full_name</str>
+        </lst>
     </requestHandler>
 
 

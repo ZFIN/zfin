@@ -408,7 +408,7 @@ function list_all(user_access) {
 
 <?MIVAR COND="$(EC,$AUTHORIZED,root)">
 
-  <input type=button name=printable value="Add new Pub" onClick="window.location.replace('/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&rtype=publication$UserInput');">
+  <input type=button name=printable value="Add new Pub" onClick="window.location.replace('/action/publication/new');">
 <?/MIVAR>
 		</TD>
 	</TR>
@@ -493,7 +493,7 @@ function list_all(user_access) {
 <?MIVAR NAME=$pubsel2_pstatus>$10<?/MIVAR>
 <?MIVAR NAME=$pubsel2_jtype>$12<?/MIVAR>
 <?MIVAR>
-$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$3$UserInput&START=$START">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ")
+$(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/action/publication/$3/edit">EDIT</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ")
 $(IF,$(AND,$(NXST,$return_rec),$(EC,$ZDB_access,root)),"<A HREF="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-link_authors.apg&OID=$3$UserInput&START=$START"><br>LINK</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
 <?/MIVAR>
 <?MIBLOCK COND="$(NC,$pubsel2_jtype,Curation)">

@@ -51,7 +51,7 @@ public class PublicationViewController {
         }
 
         model.addAttribute("publication", publication);
-        model.addAttribute("abstractText", publicationRepository.getAbstractText(publication.getZdbID()));
+        model.addAttribute("abstractText", publication.getAbstractText());
         model.addAttribute("showFiguresLink", PublicationService.showFiguresLink(publication));
         model.addAttribute("curationStatusDisplay", PublicationService.getCurationStatusDisplay(publication));
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));

@@ -1,0 +1,49 @@
+package org.zfin.publication.presentation;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
+
+import java.util.List;
+
+
+public class PublicationFormValidator implements Validator {
+
+    @Override
+    public boolean supports(Class<?> aClass) {
+        return PublicationForm.class.equals(aClass);
+    }
+
+    @Override
+    public void validate(Object o, Errors errors) {
+        final PublicationForm form = (PublicationForm) o;
+
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "title.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "authors", "authors.empty");
+        ValidationUtils.rejectIfEmpty(errors, "journal", "journal.empty");
+        ValidationUtils.rejectIfEmpty(errors, "date", "date.empty");
+
+        if (form.getPubMedID() != null && !form.getPubMedID().isEmpty()) {
+            if (!form.getPubMedID().matches("^\\d+$")) {
+                errors.rejectValue("pubMedID", "pubmedid.not.number");
+            }
+
+            if (!errors.hasFieldErrors("pubMedID")) {
+                List<Publication> pubsWithSamePubMedId = RepositoryFactory.getPublicationRepository().getPublicationByPmid(form.getPubMedID());
+                CollectionUtils.filter(pubsWithSamePubMedId, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object o) {
+                        return !((Publication) o).getZdbID().equals(form.getZdbID());
+                        }
+                });
+                if (CollectionUtils.isNotEmpty(pubsWithSamePubMedId)) {
+                    errors.rejectValue("pubMedID", "pubmedid.duplicate", "This PubMedID is already used by " + pubsWithSamePubMedId.get(0).getZdbID());
+                }
+            }
+        }
+    }
+}

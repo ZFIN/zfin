@@ -2,7 +2,7 @@
 <%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:set var="editURL">/cgi-bin/webdriver?MIval=aa-edit_pub.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
+<c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
 
 <c:if test="${allowDelete}">
     <c:set var="deleteURL">/action/infrastructure/deleteRecord/${publication.zdbID}</c:set>

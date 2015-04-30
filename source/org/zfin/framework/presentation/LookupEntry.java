@@ -2,9 +2,6 @@ package org.zfin.framework.presentation;
 
 import java.io.Serializable;
 
-/**
- * Created by kschaper on 11/3/14.
- */
 public class LookupEntry implements Serializable {
 
     protected String id;

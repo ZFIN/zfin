@@ -88,7 +88,7 @@ EFFECTS
 	 Please 
 	</font>
 	<?MIVAR>
-	<a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-edit_pub.apg&OID=$OID">enter the DOI</a>. 
+	<a href="/action/publication/$OID/edit">enter the DOI</a>.
 	<?/MIVAR>
 	<br/>
 	<p>

@@ -408,7 +408,8 @@ public class SearchPrototypeController {
     @ResponseBody
     List<FacetLookupEntry> autocomplete(@RequestParam(required = true) String q,
                                         @RequestParam(required = false) String category,
-                                        @RequestParam(required = false) String type) {
+                                        @RequestParam(required = false) String type,
+                                        @RequestParam(required = false) Integer rows) {
         SolrServer server = SolrService.getSolrServer("prototype");
         SolrQuery query = new SolrQuery();
 
@@ -416,12 +417,19 @@ public class SearchPrototypeController {
         query.setQuery(q);
 
         if (StringUtils.isNotEmpty(category)) {
-            if (StringUtils.contains(category, " "))
+            if (StringUtils.contains(category, " ")) {
                 category = "\"" + category + "\"";
+            }
             query.addFilterQuery("category:" + category);
         }
-        if (StringUtils.isNotEmpty(type))
+        if (StringUtils.isNotEmpty(type)) {
             query.addFilterQuery("type:" + type);
+        }
+
+        if (rows != null) {
+            query.setRows(rows);
+        }
+
 
         QueryResponse response = new QueryResponse();
         try {
@@ -430,14 +438,10 @@ public class SearchPrototypeController {
             logger.error(e);
         }
 
-/*
-        SolrDocumentList solrDocumentList = response.getResults();
-*/
-
         List<SearchResult> results = response.getBeans(SearchResult.class);
         injectAutocompleteHighlighting(results, response);
 
-        List<FacetLookupEntry> values = new ArrayList<FacetLookupEntry>();
+        List<FacetLookupEntry> values = new ArrayList<>();
 
         for (SearchResult result : results) {
             FacetLookupEntry entry = new FacetLookupEntry();
@@ -445,10 +449,11 @@ public class SearchPrototypeController {
 
             //The injectAutocompleteHighlighting method will set a the autocomplete label if there
             //is going to be some special highlighting in there, otherwise, use the name.
-            if (StringUtils.isNotEmpty(result.getAutocompleteLabel()))
+            if (StringUtils.isNotEmpty(result.getAutocompleteLabel())) {
                 label.append(result.getAutocompleteLabel());
-            else
+            } else {
                 label.append(result.getName());
+            }
 
             //Only show additional highlighting information if the name didn't create a highlight match
             if (StringUtils.isNotEmpty(result.getMatchingText()) && StringUtils.isEmpty(result.getAutocompleteLabel())) {
@@ -456,52 +461,12 @@ public class SearchPrototypeController {
                 label.append(result.getMatchingText());
                 label.append("]");
             }
-/*
-            if (StringUtils.isEmpty(category) && StringUtils.isEmpty(type)) {
-                label.append(" <span class=\"label\" style=\"float:right\">");
-                label.append(result.getCategory());
-                if (StringUtils.isNotEmpty(result.getType())) {
-                    label.append(" > ");
-                    label.append(result.getType());
-                }
-                label.append("</span>");
-            }
-*/
-
             entry.setLabel(label.toString());
-
-            String value = result.getName();
-
-/*
-            if (StringUtils.contains(value, " "))
-                value = "\"" + value + "\"";
-*/
-
-            entry.setValue(value);
+            entry.setValue(result.getName());
+            entry.setName(result.getFullName());
 
             values.add(entry);
         }
-
-/*
-        query = new SolrQuery();
-        query.addFilterQuery("category:Gene");
-        query.setRows(0);
-        query.setHighlight(false);
-        for (FacetLookupEntry fle : values) {
-            query.addFacetQuery("expression_anatomy:\"" + fle.getValue() + "\"");
-        }
-        response = new QueryResponse();
-        try {
-            response = server.query(query);
-        } catch (Exception e) {
-            logger.error(e);
-        }
-        Map<String, Integer> facetQueries = response.getFacetQuery();
-        for (FacetLookupEntry fle : values) {
-            Integer count = facetQueries.get("expression_anatomy:\"" + fle.getValue() + "\"");
-            fle.setLabel(fle.getLabel() + " (" + count + ") ");
-        }
-*/
 
         return values;
     }

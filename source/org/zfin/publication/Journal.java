@@ -13,6 +13,7 @@ public class Journal implements Serializable, EntityZdbID {
     private String name;
     private String abbreviation;
     private String publisher;
+    private boolean isNice;
 
     public String getZdbID() {
         return zdbID;
@@ -59,6 +60,14 @@ public class Journal implements Serializable, EntityZdbID {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    public boolean getIsNice() {
+        return isNice;
+    }
+
+    public void setIsNice(boolean isNice) {
+        this.isNice = isNice;
     }
 
 }
