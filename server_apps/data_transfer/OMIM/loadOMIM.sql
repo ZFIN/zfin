@@ -44,9 +44,10 @@ load from pre_load_input_omim.txt insert into omimPhenotypesAndGenes;
 insert into omimPhenotypesAndGenesOrtho 
   select gene_Zdb_id, gene_omim_num, phenotype, phenotype_omim_id, zdb_id
     from orthologue, db_link, omimPhenotypesAndGenes
-    where gene_zdb_id = dblink_linked_recid
-    and c_gene_id = gene_Zdb_id
+    where c_gene_id = gene_Zdb_id
     and gene_omim_num = dblink_acc_num;
+
+select count(*) from omimPhenotypesAndGenesOrtho ;
 
 --!echo 'check what will have been deleted from the omim_phenotype table'
 unload to whatHaveBeenDeletedFromOmimPhenotypeTable.txt
@@ -87,7 +88,7 @@ update omim_phenotype set omimp_omim_id = (
 ) where omimp_omim_id is null
     and exists (select "x" from omimPhenotypesAndGenesOrtho
                   where omimp_name = phenotype
-                    and omimp_orhto_zdb_id = ortho_id 
+                    and omimp_ortho_zdb_id = ortho_id 
                     and phenotype_omim_id is not null);       
     
 
@@ -105,7 +106,7 @@ update omim_phenotype set omimp_omim_id = (
    from omimPhenotypesAndGenesOrtho
   where omimp_name = phenotype
     and omimp_ortho_zdb_id = ortho_id
- ) where exists (select "x" from omimPhenotypesAndGenes
+ ) where exists (select "x" from omimPhenotypesAndGenesOrtho
                   where omimp_name = phenotype
                     and omimp_ortho_zdb_id = ortho_id 
                     and omimp_omim_id <> phenotype_omim_id);    
