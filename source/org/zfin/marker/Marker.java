@@ -9,6 +9,7 @@ import org.zfin.mapping.MappedMarker;
 import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.OmimPhenotype;
+import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.orthology.Orthologue;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Person;
@@ -58,6 +59,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private transient List<Marker> markers;
     private Set<OrthologyNote> orthologyNotes;
 
+    private List<DiseaseDisplay> diseaseDisplays;
     private List<OmimPhenotype> omimPhenotypes;
 
     /*public String getZdbID() {
@@ -398,6 +400,14 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             }
         }
         return null;
+    }
+
+    public List<DiseaseDisplay> getDiseaseDisplays() {
+        return diseaseDisplays;
+    }
+
+    public void setDiseaseDisplays(List<DiseaseDisplay> diseaseDisplays) {
+        this.diseaseDisplays = diseaseDisplays;
     }
 
     public List<OmimPhenotype> getOmimPhenotypes() {

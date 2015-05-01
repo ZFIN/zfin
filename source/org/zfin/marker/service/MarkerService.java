@@ -20,6 +20,8 @@ import org.zfin.mutant.GenotypeFigure;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Ontology;
+import org.zfin.ontology.TermExternalReference;
+import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -750,8 +752,8 @@ public class MarkerService {
         String zdbID = marker.getZdbID();
         if (Marker.Type.GENE == marker.getType()) {
             List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(marker);
-            Collections.sort(omimPhenotypes);
-            marker.setOmimPhenotypes(omimPhenotypes);
+            List<DiseaseDisplay> diseaseDisplays = getDiseaseDisplaysForGene(marker);
+            marker.setDiseaseDisplays(diseaseDisplays);
         }
 
         markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));
@@ -847,4 +849,64 @@ public class MarkerService {
     public static List<GenotypeFigure> getPhenotypeDataForSTR(SequenceTargetingReagent str) {
         return getMutantRepository().getGenotypeFiguresBySTR(str);
     }
+
+    public static List<DiseaseDisplay> getDiseaseDisplaysForGene(Marker gene) {
+        if (gene.getType() != Marker.Type.GENE) {
+            return null;
+        }
+
+        List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(gene);
+
+        if (omimPhenotypes == null) {
+            return null;
+        }
+
+        Map<String, DiseaseDisplay> diseaseDisplayMap = new HashMap<>();
+        DiseaseDisplay diseaseDisplay;
+        DiseaseDisplay diseaseDisplayNoDO;
+
+        for (OmimPhenotype omimPhenotype : omimPhenotypes) {
+          //  if(omimPhenotype.getGene().getZdbID().equals(gene.getZdbID())) {
+            String key;
+            Set<TermExternalReference> termExternalReferences = omimPhenotype.getExternalReferences();
+            if (termExternalReferences != null && termExternalReferences.size() > 0) {
+                for (TermExternalReference termExternalReference : termExternalReferences) {
+                    key = termExternalReference.getTerm().getTermName();
+                    if (!diseaseDisplayMap.containsKey(key)) {
+                        diseaseDisplay = new DiseaseDisplay();
+                        diseaseDisplay.setDiseaseTerm(termExternalReference.getTerm());
+                        SortedSet<OmimPhenotype> omimPhenotypesDO = new TreeSet<>();
+                        omimPhenotypesDO.add(omimPhenotype);
+                        diseaseDisplay.setOmimPhenotypes(omimPhenotypesDO);
+                        diseaseDisplayMap.put(key, diseaseDisplay);
+                    } else {
+                        diseaseDisplay = diseaseDisplayMap.get(key);
+                        diseaseDisplay.getOmimPhenotypes().addAll(termExternalReference.getOmimPhenotypes());
+                    }
+                }
+            }  else {
+                key = "blankDO";
+                if (!diseaseDisplayMap.containsKey(key)) {
+                    diseaseDisplayNoDO = new DiseaseDisplay();
+                    SortedSet<OmimPhenotype> omimPhenotypesNoDO = new TreeSet<>();
+                    omimPhenotypesNoDO.add(omimPhenotype);
+                    diseaseDisplayNoDO.setOmimPhenotypes(omimPhenotypesNoDO);
+                    diseaseDisplayMap.put(key, diseaseDisplayNoDO);
+                } else {
+                    diseaseDisplayNoDO = diseaseDisplayMap.get(key);
+                    diseaseDisplayNoDO.getOmimPhenotypes().add(omimPhenotype);
+                }
+            }
+        //    }
+        }
+
+        List<DiseaseDisplay> diseaseDisplays = new ArrayList<>(diseaseDisplayMap.size());
+        if (diseaseDisplayMap.values().size() > 0) {
+            diseaseDisplays.addAll(diseaseDisplayMap.values());
+            Collections.sort(diseaseDisplays);
+        }
+
+        return diseaseDisplays;
+    }
+
 }

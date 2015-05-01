@@ -56,7 +56,14 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
     }
 
     @Override
-    public int compareTo(OmimPhenotype anotherOmimPhenotype ) {
+    public int compareTo(OmimPhenotype anotherOmimPhenotype) {
+
+        if (getOmimNum() == null && anotherOmimPhenotype.getOmimNum() != null) {
+            return 1;
+        } else if (getOmimNum() != null && anotherOmimPhenotype.getOmimNum() == null) {
+            return -1;
+        }
+
         String bracket = "[";
         String brace = "{";
         String questionMark = "?";
@@ -69,7 +76,15 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
         } else if ( !(getName().startsWith(bracket) || getName().startsWith(brace) || getName().startsWith(questionMark) ) && (anotherName.startsWith(bracket) || anotherName.startsWith(brace) || anotherName.startsWith(questionMark) ) ) {
             return -1;
         } else {
-            return getName().compareToIgnoreCase(anotherName);
+            if (getName().equals(anotherName)) {
+                if (getOmimNum() == null && anotherOmimPhenotype.getOmimNum() == null) {
+                    return 1;
+                } else {
+                    return getOmimNum().compareTo(anotherOmimPhenotype.getOmimNum());
+                }
+            } else {
+                return getName().compareToIgnoreCase(anotherName);
+            }
         }
     }
 

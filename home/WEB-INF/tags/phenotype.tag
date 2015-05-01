@@ -64,9 +64,6 @@
         </tr>
     </table>
     </c:if>
-   <%--Human Ortholog Phenotype Data--%>
-   <c:if test="${formBean.marker.omimPhenotypes != null && !empty formBean.marker.omimPhenotypes}">
-     <zfin2:humanOrthologPhenotypeData marker="${formBean.marker}" />
-   </c:if>   
+
 </div>
 

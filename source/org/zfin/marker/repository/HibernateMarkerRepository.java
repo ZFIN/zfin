@@ -2443,14 +2443,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene) {
-        return HibernateUtil.currentSession().createCriteria(OmimPhenotype.class)
-                .add((Restrictions.eq("gene", zebrafishGene)))
-                .list();
-    }
-
-
-    @Override
     public List<SupplierLookupEntry> getSupplierNamesForString(String lookupString) {
         String hql = " select o FROM Organization o " +
                 "where " +

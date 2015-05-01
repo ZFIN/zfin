@@ -409,9 +409,6 @@ public interface MarkerRepository {
 
     List<Marker> getCodingSequence(Marker construct);
 
-    List<OmimPhenotype> getOmimPhenotypesByGene(Marker zebrafishGene);
-
-
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
     List<TargetGeneLookupEntry> getTargetGenesWithNoTranscriptForString(String lookupString);
