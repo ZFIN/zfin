@@ -8,7 +8,7 @@
 
 <%-- set the tag to a default value if nothing is passed in --%>
 <c:if test="${empty title}">
-    <c:set var="title" value="DISEASE ASSOCIATED WITH ${gene.abbreviation} HUMAN ORTHOLOG"/>
+    <c:set var="title" value="DISEASE ASSOCIATED WITH <i>${gene.abbreviation}</i> HUMAN ORTHOLOG<a class='popup-link info-popup-link' href='/action/marker/note/omim-phenotype'></a>"/>
 </c:if>
 
 <zfin2:subsection title="${title}" test="${!empty gene.diseaseDisplays}" showNoData="true">
