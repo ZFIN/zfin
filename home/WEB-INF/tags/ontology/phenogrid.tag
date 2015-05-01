@@ -2,17 +2,17 @@
 
 <%@ attribute name="doid" rtexprvalue="true" required="true" %>
 
-<script src="/phenogrid/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="/phenogrid/js/d3.min.js"></script>
-<script src="/phenogrid/js/jshashtable.js"></script>
-<script src="/phenogrid/js/stickytooltip.js"></script>
-<script src="/phenogrid/js/phenogrid_config.js"></script>
-<script src="/phenogrid/js/phenogrid.js"></script>
-<script src="/phenogrid/js/render.js"></script>
-<link rel="stylesheet" type="text/css" href="/phenogrid/css/jquery-ui.css"/>
-<link rel="stylesheet" type="text/css" href="/phenogrid/css/instructions.css"/>
-<link rel="stylesheet" type="text/css" href="/phenogrid/css/phenogrid.css"/>
-<link rel="stylesheet" type="text/css" href="/phenogrid/css/stickytooltip.css"/>
+<script src="/javascript/phenogrid/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="/javascript/phenogrid/js/d3.min.js"></script>
+<script src="/javascript/phenogrid/js/jshashtable.js"></script>
+<script src="/javascript/phenogrid/js/stickytooltip.js"></script>
+<script src="/javascript/phenogrid/js/phenogrid_config.js"></script>
+<script src="/javascript/phenogrid/js/phenogrid.js"></script>
+<script src="/javascript/phenogrid/js/render.js"></script>
+<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/jquery-ui.css"/>
+<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/instructions.css"/>
+<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/phenogrid.css"/>
+<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/stickytooltip.css"/>
 
 <script>
 
