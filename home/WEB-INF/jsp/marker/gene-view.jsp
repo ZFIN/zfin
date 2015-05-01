@@ -41,6 +41,9 @@
 <%--// PHENOTYPE --%>
 <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
+<%--// DISEASE --%>
+<zfin2:humanDiseaseOnGene gene="${formBean.marker}"/>
+
 <%-- gene ontology--%>
 <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
