@@ -752,8 +752,12 @@ public class MarkerService {
         String zdbID = marker.getZdbID();
         if (Marker.Type.GENE == marker.getType()) {
             List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(marker);
-            List<DiseaseDisplay> diseaseDisplays = getDiseaseDisplaysForGene(marker);
-            marker.setDiseaseDisplays(diseaseDisplays);
+            if (omimPhenotypes == null || omimPhenotypes.size() == 0)  {
+                marker.setDiseaseDisplays(null);
+            }  else {
+                List<DiseaseDisplay> diseaseDisplays = getDiseaseDisplays(omimPhenotypes);
+                marker.setDiseaseDisplays(diseaseDisplays);
+            }
         }
 
         markerBean.setMarkerTypeDisplay(getMarkerTypeString(marker));
@@ -850,14 +854,9 @@ public class MarkerService {
         return getMutantRepository().getGenotypeFiguresBySTR(str);
     }
 
-    public static List<DiseaseDisplay> getDiseaseDisplaysForGene(Marker gene) {
-        if (gene.getType() != Marker.Type.GENE) {
-            return null;
-        }
+    public static List<DiseaseDisplay> getDiseaseDisplays(List<OmimPhenotype> omimPhenotypes) {
 
-        List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(gene);
-
-        if (omimPhenotypes == null) {
+        if (omimPhenotypes == null || omimPhenotypes.size() == 0) {
             return null;
         }
 
@@ -866,7 +865,6 @@ public class MarkerService {
         DiseaseDisplay diseaseDisplayNoDO;
 
         for (OmimPhenotype omimPhenotype : omimPhenotypes) {
-          //  if(omimPhenotype.getGene().getZdbID().equals(gene.getZdbID())) {
             String key;
             Set<TermExternalReference> termExternalReferences = omimPhenotype.getExternalReferences();
             if (termExternalReferences != null && termExternalReferences.size() > 0) {
@@ -881,7 +879,7 @@ public class MarkerService {
                         diseaseDisplayMap.put(key, diseaseDisplay);
                     } else {
                         diseaseDisplay = diseaseDisplayMap.get(key);
-                        diseaseDisplay.getOmimPhenotypes().addAll(termExternalReference.getOmimPhenotypes());
+                        diseaseDisplay.getOmimPhenotypes().add(omimPhenotype);
                     }
                 }
             }  else {
@@ -897,7 +895,6 @@ public class MarkerService {
                     diseaseDisplayNoDO.getOmimPhenotypes().add(omimPhenotype);
                 }
             }
-        //    }
         }
 
         List<DiseaseDisplay> diseaseDisplays = new ArrayList<>(diseaseDisplayMap.size());
