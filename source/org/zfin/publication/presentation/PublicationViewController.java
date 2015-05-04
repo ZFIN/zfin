@@ -108,7 +108,10 @@ public class PublicationViewController {
             model.addAttribute("showAdditionalData", false);
         }
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getShortAuthorList().replace("<i>","").replace("</i>",""));
+        String title = "Publication: " + publication.getShortAuthorList();
+        title.replace("<i>","").replace("</i>","");
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
 
         return "publication/publication-view.page";
     }
