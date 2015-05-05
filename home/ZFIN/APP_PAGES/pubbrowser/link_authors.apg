@@ -139,6 +139,7 @@ function updateAuthor(strURL) {
          <div style="text-align:center; font-weight: bold; opacity: 0.7; margin-top: 1em;">Matches for '$linkauth_author'</div>
        <?/MIVAR>
      <?/MIBLOCK>
+
      <?MISQL COND="$(NE,$linkauth_author,)" SQL="select person.zdb_id, get_person_full_name(zdb_id),
                      case
                        when source_id is not null
@@ -148,7 +149,7 @@ function updateAuthor(strURL) {
                      from person 
                        left outer join int_person_pub
                          on target_id = '$OID' and source_id = person.zdb_id
-                     where lower(person.name) = lower('$linkauth_author')
+                     where lower(person.name) like lower('$linkauth_author%')
                      order by last_name,first_name;">
 
         <?MIVAR NAME="linkauth_pers_zdb_id">$1<?/MIVAR>
@@ -184,9 +185,14 @@ function updateAuthor(strURL) {
 
       <?/MISQL>
       <?MIBLOCK COND="$(=,$MI_ROWCOUNT,0)">
-        <div style="text-align: center; font-style:italic; opacity: .5">
-          No matching results found.
-        </div>
+        <?MIVAR>
+            <div style="text-align: center; font-style:italic; opacity: .5">
+              <?MIVAR NAME="linkauth_author_query">$linkauth_author<?/MIVAR>
+              <?MIVAR NAME="linkauth_author_query">$(REPLACE,$linkauth_author_query,"-"," ")<?/MIVAR>
+              <?MIVAR NAME="linkauth_author_query">$(REPLACE,$linkauth_author_query,"."," ")<?/MIVAR>
+              No matching results found.  <a href="/search?q=$linkauth_author_query&fq=category:Community&fq=type:Person">Search for '$linkauth_author_query'</a>
+            </div>
+        <?/MIVAR>
       <?/MIBLOCK>
     <?/MIBLOCK>
 
