@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.zfin.database.DatabaseService;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class RunSqlQueryTask extends AbstractScriptWrapper {
     private String instance;
     private String sqlFileName;
     private String baseDir;
+    private String propertyPath;
 
     public void execute() {
 
@@ -35,7 +37,15 @@ public class RunSqlQueryTask extends AbstractScriptWrapper {
             throw new RuntimeException(message);
         }
         LOG.info("Running : " + dbQueryFile.getAbsolutePath());
-        initAll();
+        if (propertyPath == null)
+            initAll();
+        else {
+            File file = new File(propertyPath);
+            System.out.println("File: " + file.getAbsolutePath());
+            System.out.println("exists: " + file.exists());
+            ZfinProperties.init(propertyPath);
+            initDatabase();
+        }
         runQueryFile(dbQueryFile);
     }
 
@@ -85,10 +95,20 @@ public class RunSqlQueryTask extends AbstractScriptWrapper {
         String instance = args[0];
         String dbQueryFile = args[1];
         String baseDir = args[2];
+        System.out.println("Instance: " + instance);
+        System.out.println("SQL file: " + dbQueryFile);
+        System.out.println("baseDir: " + baseDir);
         RunSqlQueryTask task = new RunSqlQueryTask();
         task.setBaseDir(baseDir);
         task.setInstance(instance);
         task.setSqlFileName(dbQueryFile);
+        if (args.length > 3) {
+            String homeDir = args[3];
+            String propertyFileName = AbstractValidateDataReportTask.getPropertyFileFromWebroot(homeDir);
+            task.propertyPath = propertyFileName;
+            System.out.println("homeDir: " + propertyFileName);
+
+        }
         initLog4J();
         setLoggerToInfoLevel(LOG);
         task.execute();

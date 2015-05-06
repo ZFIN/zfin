@@ -48,7 +48,7 @@ public class HibernateSysmasterSessionCreator implements FactoryBean {
         if (hbmFiles == null)
             throw new RuntimeException("No Hibernate mapping files found!");
 
-        LOG.info("Hibernate Mapping files being used:");
+        LOG.debug("Hibernate Mapping files being used:");
         for (File file : hbmFiles){
             LOG.info(file.getAbsolutePath());
         }

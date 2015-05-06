@@ -49,9 +49,9 @@ public class HibernateSessionCreator implements FactoryBean {
         if (hbmFiles == null)
             throw new RuntimeException("No Hibernate mapping files found!");
 
-        LOG.info("Hibernate Mapping files being used:");
+        LOG.debug("Hibernate Mapping files being used:");
         for (File file : hbmFiles) {
-            LOG.info(file.getAbsolutePath());
+            LOG.debug(file.getAbsolutePath());
         }
 
         // first add filter.hbm.xml bug in Hibernate!!
@@ -64,7 +64,7 @@ public class HibernateSessionCreator implements FactoryBean {
         // now add the others
         for (File configurationFile : hbmFiles) {
             if (!configurationFile.getName().startsWith("filters.")) {
-                LOG.info("Loading Hibernate mapping file: " + configurationFile.getAbsolutePath());
+                LOG.debug("Loading Hibernate mapping file: " + configurationFile.getAbsolutePath());
                 try {
                     config.addFile(configurationFile);
                 } catch (InvalidMappingException e) {
@@ -93,7 +93,7 @@ public class HibernateSessionCreator implements FactoryBean {
             URL resource = ClassLoader.getSystemResource(FileUtil.createFileFromStrings("org", "zfin").getPath());
 
             String hibernateConfDirString = URLDecoder.decode(resource.getFile());
-            LOG.info("hibernateConfDirString: " + hibernateConfDirString);
+            LOG.debug("hibernateConfDirString: " + hibernateConfDirString);
             hibernateConfigurationFiles = (new File(hibernateConfDirString)).listFiles(new HibernateFilenameFilter());
             if (hibernateConfigurationFiles == null)
                 throw new NullPointerException("No configuration files found in directory" + hibernateConfDir.getAbsolutePath());

@@ -251,10 +251,14 @@ select * from term_stage
 -- );
 
 select termrel_zdb_id,
-	termrel_term_1_zdb_id,
-	termrel_term_2_zdb_id,
+	c.term_ont_id,
+	p.term_ont_id,
 	termrel_type
-    from tmp_zfin_rels ;
+    from tmp_zfin_rels, term as c, term as p
+    where
+     termrel_term_1_zdb_id = c.term_zdb_id AND
+     termrel_term_2_zdb_id = p.term_zdb_id
+    ;
 
 insert into term_relationship (termrel_zdb_id,
     				termrel_term_1_zdb_id,

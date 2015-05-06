@@ -120,7 +120,13 @@
 
     <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
 
-    <target name="load-disease" depends="download-disease-ontology,load-disease-ontology"/>
+    <target name="load-disease" depends="download-disease-ontology,load-disease-ontology,run-omim-mapping-updates">
+    </target>
+
+    <target name="run-omim-mapping-updates" >
+        <echo message="Updating the Omim Phenotype xref mapping table..."/>
+        <run-db-query db-query-file="../OMIM/update_Omimp_termxref_mapping.sql" instanceName="${env.INSTANCE}"/>
+    </target>
 
     <target name="load-anatomy" depends="load-anatomy-ontology"/>
 
@@ -241,6 +247,22 @@
         <property name="oboFileURL" value="${anatomyOboURL}"/>
         <antcall target="download-ontology"/>
     </target>
+
+
+    <macrodef name="run-db-query">
+        <attribute name="db-query-file"/>
+        <attribute name="instanceName"/>
+        <sequential>
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="classpath"
+                  failonerror="true">
+                <arg value="@{instanceName}"/>
+                <arg value="@{db-query-file}"/>
+                <arg value="${basedir}"/>
+                <arg value="${basedir}/../../../home/"/>
+            </java>
+        </sequential>
+    </macrodef>
+
 
 
     <target name="download-ontology" depends="init" description="Run the ontology loader">
