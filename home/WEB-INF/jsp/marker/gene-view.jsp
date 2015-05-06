@@ -45,7 +45,7 @@
 <zfin2:humanDiseaseOnGene gene="${formBean.marker}"/>
 
 <%-- gene ontology--%>
-<zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
+<zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
 
 <%--protein families, domains, and sites--%>
 <zfin2:proteinProductsLight referenceDBs="${formBean.proteinProductDBLinkDisplay}"/>

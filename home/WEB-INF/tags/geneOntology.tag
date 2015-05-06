@@ -5,7 +5,6 @@
 <%@ attribute name="geneOntologyOnMarker" required="true" rtexprvalue="true" type="org.zfin.marker.presentation.GeneOntologyOnMarkerBean" %>
 
 <%@ attribute name="marker" required="true" rtexprvalue="true" type="org.zfin.marker.Marker" %>
-<%@ attribute name="webdriverRoot" required="true" rtexprvalue="true" type="java.lang.String" %>
 
 <%@ attribute name="title" required="false"%>
 
@@ -32,7 +31,7 @@
                         ${geneOntologyOnMarker.biologicalProcessEvidence.flag}
                     <zfin:link entity="${geneOntologyOnMarker.biologicalProcessEvidence.goTerm}"/>
 
-                    (<a href="/${webdriverRoot}?MIval=aa-markergoview.apg&OID=${marker.zdbID}"
+                    (<a href="/action/marker/marker-go-view/${marker.zdbID}"
                             >more</a>)
                 </td>
             </tr>
@@ -46,7 +45,7 @@
                         ${geneOntologyOnMarker.cellularComponentEvidence.flag}
                     <zfin:link entity="${geneOntologyOnMarker.cellularComponentEvidence.goTerm}"/>
 
-                    (<a href="/${webdriverRoot}?MIval=aa-markergoview.apg&OID=${marker.zdbID}"
+                    (<a href="/action/marker/marker-go-view/${marker.zdbID}"
                             >more</a>)
                 </td>
             </tr>
@@ -59,7 +58,7 @@
                 <td>
                         ${geneOntologyOnMarker.molecularFunctionEvidence.flag}
                     <zfin:link entity="${geneOntologyOnMarker.molecularFunctionEvidence.goTerm}"/>
-                    (<a href="/${webdriverRoot}?MIval=aa-markergoview.apg&OID=${marker.zdbID}"
+                    (<a href="/action/marker/marker-go-view/${marker.zdbID}"
                             >more</a>)
                 </td>
             </tr>
