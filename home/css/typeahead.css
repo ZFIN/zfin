@@ -5,7 +5,7 @@ input.tt-input {
 }
 
 .tt-hint {
-    color: #999
+    opacity: .5 !important;
 }
 
 .tt-dropdown-menu {
