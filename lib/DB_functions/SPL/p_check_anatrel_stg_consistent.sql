@@ -45,8 +45,10 @@ create procedure p_check_anatrel_stg_consistent (
 		parentStartHour	   like stage.stg_hours_start default NULL,
 		parentEndHour	   like stage.stg_hours_end default NULL,
 		childStartHour	   like stage.stg_hours_start default NULL,
-		childEndHour	   like stage.stg_hours_end default NULL
-		
+		childEndHour	   like stage.stg_hours_end default NULL,
+		childOboID	   like term.term_ont_id default NULL,
+		parentOboID	   like term.term_ont_id default NULL
+	
 	)
   
       define childStartStgName	like stage.stg_name;
@@ -105,6 +107,15 @@ create procedure p_check_anatrel_stg_consistent (
 	let childEndHour = parentEndHour;
   end if
 
+  select term_ont_id
+  into childOboID
+  from term
+  where term_zdb_id = childAnatZdbId;
+
+  select term_ont_id
+  into parentOboID
+  from term
+  where term_zdb_id = parentAnatZdbId;
 
   -- For is_a and part_of relationship, child term must has a stage range
   -- within the parent term. If violate, raise -746 error. 
@@ -113,7 +124,7 @@ create procedure p_check_anatrel_stg_consistent (
     if (childStartHour < parentStartHour OR childEndHour > parentEndHour) then
 	  raise exception -746, 0, 
 	    "For " || relDageditId || " rel, "||
-	    "child " || childAnatZdbId || " parent " || parentAnatZdbId || "  stage range";
+	    "child " || childOboID || " parent " || parentOboID || "";
     end if 
   end if 
 
