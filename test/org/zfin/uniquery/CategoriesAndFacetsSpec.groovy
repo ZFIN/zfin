@@ -72,7 +72,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         category << [Category.GENE.name, Category.FISH.name, Category.MUTANT.name, Category.CONSTRUCT.name,
                 Category.SEQUENCE_TARGETING_REAGENT.name, Category.MARKER.name, Category.FIGURE.name,
                 Category.EXPRESSIONS.name, Category.PHENOTYPE.name, Category.ANATOMY.name, Category.COMMUNITY.name,
-                Category.PUBLICATION.name, Category.ANTIBODY.name]
+                Category.PUBLICATION.name, Category.ANTIBODY.name, Category.DISEASE.name]
 
     }
 
@@ -121,7 +121,8 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                              + [[Category.ANATOMY.getName()],["ontology", "obsolete"]].combinations() \
                              + [[Category.COMMUNITY.getName()],["type"]].combinations() \
                              + [[Category.PUBLICATION.getName()],["gene", "sequence_alteration", "registered_author", "journal", "keyword", "publication_type"]].combinations() \
-                             + [[Category.ANTIBODY.getName()],["type","antigen_gene","labeled_structure_tf", "assay", "source", "host_organism"]].combinations()
+                             + [[Category.ANTIBODY.getName()],["type","antigen_gene","labeled_structure_tf", "assay", "source", "host_organism"]].combinations() \
+                             + [[Category.DISEASE.getName()],[FieldName.GENE.getName()]].combinations()
     }
 
 

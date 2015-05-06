@@ -108,7 +108,11 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.CONSTRUCT.name        | "Tg2(krt5;EGFP) id:ZDB-TGCONSTRCT-141020-3"      | "12299"
         Category.CONSTRUCT.name        | "Tg(ttna:MA-EGFP) id:ZDB-TGCONSTRCT-121127-1"    | "12299"
         Category.ANATOMY.name          | "(-)-isopiperitenone reductase activity GO:0052581" | "12299"
-
+        Category.DISEASE.name          | "DOID:10609 ICD10CM:E55"                            | "12560"
+        Category.DISEASE.name          | "DOID:10609 UMLS_CUI:C0221468"                      | "12560"
+        Category.DISEASE.name          | "DOID:10609 MSH:D012279"                            | "12560"
+        Category.DISEASE.name          | "DOID:10609 NCI:C26878"                             | "12560"
+        Category.DISEASE.name          | "DOID:10609 SNOMEDCT_2010_1_31:68295002"            | "12560"
     }
 
 

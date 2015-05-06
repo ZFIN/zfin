@@ -87,9 +87,15 @@ where mrkr_type in ('GENE','GENEP','EFG')
                         processor="CachedSqlEntityProcessor"/>
 
                 <entity name="gene_omim"
-                        query="select omimp_name as disease_model, omimp_omim_id as omim_id, omimp_gene_zdb_id as gene_zdb_id from omim_phenotype"
+                        query="select omimp_name as disease_model,
+                                      omimp_omim_id as omim_id,
+                                      c_gene_id as gene_zdb_id
+                              from omim_phenotype
+                                     join orthologue on omimp_ortho_zdb_id = orthologue.zdb_id"
                         where="gene_zdb_id=gene.id"
                         processor="CachedSqlEntityProcessor"/>
+
+
 
 <!-- probably can be deleted, not used as a facet or an xref, probably that means it's not good for text matching either... -->
 <!--                <entity name="gene_authors" query="
@@ -3522,7 +3528,7 @@ where feature_zdb_id = ids_data_zdb_id
                              term_name as proper_name,
                              term_name as full_name,
                              zero_pad(term_name) as name_sort,
-                             case when term_ontology = 'disease_ontology' then TRIM('Autocomplete')
+                             case when term_ontology = 'disease_ontology' then TRIM('Disease')
                                   else TRIM('Anatomy / GO') end as category,
                              case
                                when term_ontology == 'biological_process' then 'Biological Process'
@@ -3552,6 +3558,37 @@ where feature_zdb_id = ids_data_zdb_id
                             tx_full_accession as related_accession,
                             tx_term_zdb_id as term_zdb_id
                             from term_xref;"
+                   where="term_zdb_id=term.internal_id"
+                   processor="CachedSqlEntityProcessor"/>
+
+
+           <entity name="term_disease_gene"
+                   query="select
+                            mrkr_abbrev as gene,
+                            mrkr_name as gene_full_name,
+                            mrkr_zdb_id as xref,
+                            term_zdb_id as term_zdb_id
+                            from term
+                                 join term_xref on tx_term_zdb_id = term_zdb_id
+                                 join omimp_termxref_mapping on otm_tx_id =	tx_pk_id
+                                 join omim_phenotype on otm_omimp_id = omimp_pk_id
+                                 join orthologue on	omimp_ortho_zdb_id = orthologue.zdb_id
+                                 join marker on orthologue.c_gene_id = mrkr_zdb_id
+                            where term_ontology = 'disease_ontology';"
+                   where="term_zdb_id=term.internal_id"
+                   processor="CachedSqlEntityProcessor"/>
+
+           <entity name="term_disease_gene_alias"
+                   query="select
+                            dalias_alias as	gene_previous_name,
+                            term_zdb_id as term_zdb_id
+                            from term
+                                 join term_xref on tx_term_zdb_id = term_zdb_id
+                                 join omimp_termxref_mapping on otm_tx_id = tx_pk_id
+                                 join omim_phenotype on otm_omimp_id = omimp_pk_id
+                                 join orthologue on  omimp_ortho_zdb_id = orthologue.zdb_id
+                                 join data_alias on	dalias_data_zdb_id = orthologue.c_gene_id
+                            where term_ontology = 'disease_ontology';"
                    where="term_zdb_id=term.internal_id"
                    processor="CachedSqlEntityProcessor"/>
 
