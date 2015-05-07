@@ -27,29 +27,12 @@ $web = $1 if ($output =~ /<WebEnv>(\S+)<\/WebEnv>/);
 $key = $1 if ($output =~ /<QueryKey>(\d+)<\/QueryKey>/);
 $count = $1 if ($output =~ /<Count>(\d+)<\/Count>/);
 
-if (-e "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log"){
-    system("/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log") && die "can not remove old parsed files.";
+@filesToRemove = ("parsePubs.log", "newPublicationsAdded.txt", "newJournalsAdded.txt",
+                  "loadSQLError.log", "loadSQLOutput.log", "newPubSummary.txt");
+foreach my $file (@filesToRemove) {
+    unlink "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/$file" or warn "Could not delete $file: $!";
 }
-
-if (-e "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newPublicationsAdded.txt"){
-    system("/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newPublicationsAdded.txt") && die "can not remove old publicationsAdded file.";
-}
-
-if (-e "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournalsAdded.txt"){
-    system("/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournalsAdded.txt") && die "can not remove old journalsAdded file.";
-}
-
-if (-e "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournalsAdded.txt"){
-    system("/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/loadSQLError.log") && die "can not remove old loadSQLError.log file.";
-}
-
-if (-e "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newJournalsAdded.txt"){
-    system("/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/loadSQLOutput.log") && die "can not remove old loadSQLOutput.log file.";
-}
-
-if (-e "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newPubSummary.txt"){
-    system("/bin/rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/newPubSummary.txt") && die "can not remove old newPubSummary.txt file.";
-}
+unlink glob "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/*.clob";
 
 print "webenv: ".$web."\n";
 print "query_key: ".$key."\n";
@@ -129,7 +112,12 @@ sub pubMedArticle {
                     }
                     $joinedParagraphs = join("", @paragraphs);
                     $joinedParagraphs =~ s/\|/\\|/g;
-                    $row{'abstract'} = $joinedParagraphs;
+
+                    my $abstractFileName = sprintf("<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/abstract%08d.clob", $pubCount);
+                    open(ABS, ">", $abstractFileName);
+                    print ABS escape_utf8($joinedParagraphs);
+                    close ABS;
+                    $row{'abstract'} = $abstractFileName;
                 }
             }
 
