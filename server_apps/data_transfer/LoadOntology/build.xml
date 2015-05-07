@@ -184,7 +184,7 @@
     <target name="load-ontology-with-stages" description="Run the ontology loader">
         <antcall target="clear-output-directory"/>
         <property name="dbScriptFiles"
-                  value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,dropTempTables.sql"/>
+                  value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,,loadDBxrefs.sql,dropTempTables.sql"/>
         <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="1024m"
               failonerror="true">
             <classpath refid="classpath"/>
