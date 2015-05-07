@@ -4,6 +4,7 @@ import org.zfin.audit.AuditLogItem;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
+import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 
@@ -36,6 +37,7 @@ public class MarkerBean {
     private List<GeneProductsBean> geneProductsBean;
     private List<MarkerRelationshipPresentation> relatedAntibodies;
     private int numberOfConstructs;
+    private List<DiseaseDisplay> diseaseDisplays;
 
     public String getMarkerTypeDisplay() {
         return markerTypeDisplay;
@@ -225,5 +227,13 @@ public class MarkerBean {
 
     public int getNumberOfConstructs() {
         return numberOfConstructs;
+    }
+
+    public List<DiseaseDisplay> getDiseaseDisplays() {
+        return diseaseDisplays;
+    }
+
+    public void setDiseaseDisplays(List<DiseaseDisplay> diseaseDisplays) {
+        this.diseaseDisplays = diseaseDisplays;
     }
 }

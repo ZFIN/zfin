@@ -59,8 +59,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private transient List<Marker> markers;
     private Set<OrthologyNote> orthologyNotes;
 
-    private List<DiseaseDisplay> diseaseDisplays;
-
     public String getAbbreviation() {
         return abbreviation;
     }
@@ -383,14 +381,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             }
         }
         return null;
-    }
-
-    public List<DiseaseDisplay> getDiseaseDisplays() {
-        return diseaseDisplays;
-    }
-
-    public void setDiseaseDisplays(List<DiseaseDisplay> diseaseDisplays) {
-        this.diseaseDisplays = diseaseDisplays;
     }
 
     public static enum Type {

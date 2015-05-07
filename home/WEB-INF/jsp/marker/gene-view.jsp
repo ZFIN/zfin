@@ -43,9 +43,9 @@
 
 <%--// DISEASE --%>
 <div id="disease">
-   <zfin2:humanDiseaseOnGene gene="${formBean.marker}"/>
+    <zfin2:humanDiseaseOnGene gene="${formBean.marker}" diseases="${formBean.diseaseDisplays}"/>
 </div>
-    
+
 <%-- gene ontology--%>
 <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
 

@@ -753,12 +753,12 @@ public class MarkerService {
         if (Marker.Type.GENE == marker.getType()) {
             List<OmimPhenotype> omimPhenotypes = markerRepository.getOmimPhenotype(marker);
             if (omimPhenotypes == null || omimPhenotypes.size() == 0)  {
-                marker.setDiseaseDisplays(null);
+                markerBean.setDiseaseDisplays(null);
             }  else {
                 SortedSet<DiseaseDisplay> diseaseDisplays = getDiseaseDisplays(omimPhenotypes);
                 List<DiseaseDisplay> diseaseDisplaysList = new ArrayList<>(diseaseDisplays.size());
                 diseaseDisplaysList.addAll(diseaseDisplays);
-                marker.setDiseaseDisplays(diseaseDisplaysList);
+                markerBean.setDiseaseDisplays(diseaseDisplaysList);
             }
         }
 
