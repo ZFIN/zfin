@@ -755,8 +755,10 @@ public class MarkerService {
             if (omimPhenotypes == null || omimPhenotypes.size() == 0)  {
                 marker.setDiseaseDisplays(null);
             }  else {
-                List<DiseaseDisplay> diseaseDisplays = getDiseaseDisplays(omimPhenotypes);
-                marker.setDiseaseDisplays(diseaseDisplays);
+                SortedSet<DiseaseDisplay> diseaseDisplays = getDiseaseDisplays(omimPhenotypes);
+                List<DiseaseDisplay> diseaseDisplaysList = new ArrayList<>(diseaseDisplays.size());
+                diseaseDisplaysList.addAll(diseaseDisplays);
+                marker.setDiseaseDisplays(diseaseDisplaysList);
             }
         }
 
@@ -854,53 +856,31 @@ public class MarkerService {
         return getMutantRepository().getGenotypeFiguresBySTR(str);
     }
 
-    public static List<DiseaseDisplay> getDiseaseDisplays(List<OmimPhenotype> omimPhenotypes) {
+    public static SortedSet<DiseaseDisplay> getDiseaseDisplays(List<OmimPhenotype> omimPhenotypes) {
 
         if (omimPhenotypes == null || omimPhenotypes.size() == 0) {
             return null;
         }
 
-        Map<String, DiseaseDisplay> diseaseDisplayMap = new HashMap<>();
         DiseaseDisplay diseaseDisplay;
-        DiseaseDisplay diseaseDisplayNoDO;
-
+        SortedSet<DiseaseDisplay> diseaseDisplays = new TreeSet<>();
         for (OmimPhenotype omimPhenotype : omimPhenotypes) {
-            String key;
             Set<TermExternalReference> termExternalReferences = omimPhenotype.getExternalReferences();
             if (termExternalReferences != null && termExternalReferences.size() > 0) {
                 for (TermExternalReference termExternalReference : termExternalReferences) {
-                    key = termExternalReference.getTerm().getTermName();
-                    if (!diseaseDisplayMap.containsKey(key)) {
-                        diseaseDisplay = new DiseaseDisplay();
-                        diseaseDisplay.setDiseaseTerm(termExternalReference.getTerm());
-                        SortedSet<OmimPhenotype> omimPhenotypesDO = new TreeSet<>();
-                        omimPhenotypesDO.add(omimPhenotype);
-                        diseaseDisplay.setOmimPhenotypes(omimPhenotypesDO);
-                        diseaseDisplayMap.put(key, diseaseDisplay);
-                    } else {
-                        diseaseDisplay = diseaseDisplayMap.get(key);
-                        diseaseDisplay.getOmimPhenotypes().add(omimPhenotype);
-                    }
+                    diseaseDisplay = new DiseaseDisplay();
+                    diseaseDisplay.setDiseaseTerm(termExternalReference.getTerm());
+                    diseaseDisplay.setOmimTerm(omimPhenotype.getName());
+                    diseaseDisplay.setOmimNumber(omimPhenotype.getOmimNum());
+                    diseaseDisplays.add(diseaseDisplay);
                 }
             }  else {
-                key = "blankDO";
-                if (!diseaseDisplayMap.containsKey(key)) {
-                    diseaseDisplayNoDO = new DiseaseDisplay();
-                    SortedSet<OmimPhenotype> omimPhenotypesNoDO = new TreeSet<>();
-                    omimPhenotypesNoDO.add(omimPhenotype);
-                    diseaseDisplayNoDO.setOmimPhenotypes(omimPhenotypesNoDO);
-                    diseaseDisplayMap.put(key, diseaseDisplayNoDO);
-                } else {
-                    diseaseDisplayNoDO = diseaseDisplayMap.get(key);
-                    diseaseDisplayNoDO.getOmimPhenotypes().add(omimPhenotype);
-                }
+                diseaseDisplay = new DiseaseDisplay();
+                diseaseDisplay.setDiseaseTerm(null);
+                diseaseDisplay.setOmimTerm(omimPhenotype.getName());
+                diseaseDisplay.setOmimNumber(omimPhenotype.getOmimNum());
+                diseaseDisplays.add(diseaseDisplay);
             }
-        }
-
-        List<DiseaseDisplay> diseaseDisplays = new ArrayList<>(diseaseDisplayMap.size());
-        if (diseaseDisplayMap.values().size() > 0) {
-            diseaseDisplays.addAll(diseaseDisplayMap.values());
-            Collections.sort(diseaseDisplays);
         }
 
         return diseaseDisplays;

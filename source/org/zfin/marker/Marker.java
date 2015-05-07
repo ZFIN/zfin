@@ -60,23 +60,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<OrthologyNote> orthologyNotes;
 
     private List<DiseaseDisplay> diseaseDisplays;
-    private List<OmimPhenotype> omimPhenotypes;
-
-    /*public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }*/
 
     public String getAbbreviation() {
         return abbreviation;
@@ -408,14 +391,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     public void setDiseaseDisplays(List<DiseaseDisplay> diseaseDisplays) {
         this.diseaseDisplays = diseaseDisplays;
-    }
-
-    public List<OmimPhenotype> getOmimPhenotypes() {
-        return omimPhenotypes;
-    }
-
-    public void setOmimPhenotypes(List<OmimPhenotype> omimPhenotypes) {
-        this.omimPhenotypes = omimPhenotypes;
     }
 
     public static enum Type {

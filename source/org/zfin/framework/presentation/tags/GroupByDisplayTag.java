@@ -52,7 +52,16 @@ public class GroupByDisplayTag extends TagSupport {
             try {
                 Object previousGroupBeanAttribute = PropertyUtils.getProperty(previousObject, groupByBean);
                 Object currentGroupBeanAttribute = PropertyUtils.getProperty(currentObject, groupByBean);
-                isNewGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
+                //if the row's property to be used for grouping is null, such as in the case of DO term
+                if (currentGroupBeanAttribute == null && previousGroupBeanAttribute != null) {
+                    isNewGroup = true;
+                } else if (currentGroupBeanAttribute == null && previousGroupBeanAttribute == null) {
+                    isNewGroup = false;
+                } else if (currentGroupBeanAttribute != null && previousGroupBeanAttribute == null) {
+                    isNewGroup = true;
+                } else {
+                    isNewGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
+                }
             } catch (IllegalAccessException e) {
                 LOG.error(e);
             } catch (InvocationTargetException e) {

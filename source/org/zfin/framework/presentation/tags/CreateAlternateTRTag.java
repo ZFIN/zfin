@@ -89,8 +89,16 @@ public class CreateAlternateTRTag extends TagSupport {
             try {
                 Object previousGroupBeanAttribute = PropertyUtils.getProperty(previousObject, groupByBean);
                 Object currentGroupBeanAttribute = PropertyUtils.getProperty(currentObject, groupByBean);
-                //if (newGroup)
+                //if the row's property to be used for grouping is null, such as in the case of DO term
+                if (currentGroupBeanAttribute == null && previousGroupBeanAttribute != null) {
+                    newGroup = true;
+                } else if (currentGroupBeanAttribute == null && previousGroupBeanAttribute == null) {
+                    newGroup = false;
+                } else if (currentGroupBeanAttribute != null && previousGroupBeanAttribute == null) {
+                    newGroup = true;
+                } else {
                     newGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
+                }
                 LOG.debug("previousGroupBeanAttribute: " + previousGroupBeanAttribute);
                 LOG.debug("currentGroupBeanAttribute: " + currentGroupBeanAttribute);
             } catch (IllegalAccessException e) {
