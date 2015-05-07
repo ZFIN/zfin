@@ -42,8 +42,10 @@
 <zfin2:phenotype phenotypeOnMarkerBean="${formBean.phenotypeOnMarkerBeans}" marker="${formBean.marker}" webdriverRoot="<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.toString()%>"/>
 
 <%--// DISEASE --%>
-<zfin2:humanDiseaseOnGene gene="${formBean.marker}"/>
-
+<div id="disease">
+   <zfin2:humanDiseaseOnGene gene="${formBean.marker}"/>
+</div>
+    
 <%-- gene ontology--%>
 <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
 
@@ -95,5 +97,6 @@
 <script>
     jQuery(function() {
         jQuery("#mutant-info").find(".alleles").tableCollapse({label: "alleles"});
+        jQuery("#disease").find(".marker-go-table").tableCollapse({label: "records"});
     });
 </script>
