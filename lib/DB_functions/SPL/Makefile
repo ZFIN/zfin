@@ -45,6 +45,8 @@ FISH_STATS   = get_image_stats.sql \
 	       p_check_tginsertion_has_construct_relationship.sql \
 	       get_feature_abbrev_display.sql \
 	       get_feature_abbrev_html.sql \
+	       get_fish_name.sql \
+	       get_fish_handle.sql \
 	       get_genotype_backgrounds.sql \
 	       get_genotype_display.sql \
 	       get_genotype_handle.sql \
