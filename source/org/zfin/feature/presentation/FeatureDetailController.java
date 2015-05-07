@@ -85,19 +85,29 @@ public class FeatureDetailController {
         form.setSortedMarkerRelationships(markerRelationships);
         Collection<FeatureGenomeLocation> locations = FeatureService.getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN);
         if (CollectionUtils.isNotEmpty(locations)) {
+            // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
+            // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
+            // some appropriate amount of padding.
             GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder();
+            FeatureGenomeLocation featureLocation = locations.iterator().next();
             if (markerRelationships.size() == 1) {
                 Marker related = markerRelationships.iterator().next().getMarker();
                 List<MarkerGenomeLocation> markerLocations = linkageRepository.getGenomeLocation(related, GenomeLocation.Source.ZFIN);
-                imageBuilder.landmark(markerLocations.get(0))
-                        .highlight(feature)
-                        .withPadding(0.1);
+                if (CollectionUtils.isNotEmpty(markerLocations)) {
+                    imageBuilder.landmark(markerLocations.get(0))
+                            .highlight(feature)
+                            .withPadding(0.1);
+                } else {
+                    imageBuilder.landmark(featureLocation)
+                            .highlight(feature)
+                            .withPadding(10000);
+                }
             } else {
-                imageBuilder.landmark(locations.iterator().next())
+                imageBuilder.landmark(featureLocation)
                         .highlight(feature)
                         .withPadding(10000);
             }
-            String subSource = locations.iterator().next().getDetailedSource();
+            String subSource = featureLocation.getDetailedSource();
             if (subSource != null) {
                 if (subSource.equals("BurgessLin")) {
                     imageBuilder.tracks(GBrowseTrack.GENES, GBrowseTrack.INSERTION, GBrowseTrack.TRANSCRIPTS);
