@@ -32,7 +32,7 @@ public class SolrService {
 
     public static Logger logger = Logger.getLogger(SolrService.class);
 
-    private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\*\\?\\\"\\,]";
+    private static final String LUCENE_ESCAPE_CHARS = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\[\\{\\}\\~\\*\\?\\\"\\,]";
     private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
     private static final String REPLACEMENT_STRING = "\\\\$0";
 

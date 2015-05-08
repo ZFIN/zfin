@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <config>
 
   <luceneMatchVersion>LUCENE_42</luceneMatchVersion>
@@ -711,6 +710,38 @@
             <str name="hl.simple.pre"><![CDATA[<span class="search-result-highlight">]]></str>
             <str name="hl.simple.post"><![CDATA[</span>]]></str>
             <str name="fl">id,name,category,type,full_name</str>
+        </lst>
+    </requestHandler>
+
+    <requestHandler name="/pub-drug" class="solr.StandardRequestHandler">
+        <lst name="appends">
+            <!-- The 'Autocomplete' category should always be excluded from search -->
+            <str name="fq">category:Publication AND publication_type:Journal</str>
+        </lst>
+        <lst name="defaults">
+        <str name="defType">edismax</str>
+        <str name="wt">json</str>
+        <str name="indent">true</str>
+        <str name="q.alt">*:*</str>
+        <str name="rows">500000</str>
+        <str name="fl">
+            related_accession,full_name,abstract,keyword
+        </str>
+        <str name="qf">
+            full_name_t
+            abstract
+            keyword
+        </str>
+        <str name="pf2">
+            full_name_t
+            abstract
+            keyword
+        </str>
+        <str name="pf3">
+            full_name_t
+            abstract
+            keyword
+        </str>
         </lst>
     </requestHandler>
 
