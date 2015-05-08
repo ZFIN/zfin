@@ -5,6 +5,7 @@ import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
 
@@ -29,7 +30,7 @@ public class OntologyBean extends PaginationBean {
     private List<RelationshipPresentation> termRelationships;
     private List<OntologyMetadata> metadataList;
     private Map<String, String> stageListDisplay;
-
+    private Set<OmimPhenotype> omimPheno;
     private SectionVisibility sectionVisibility = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
 
     public String getAction() {
@@ -155,9 +156,19 @@ public class OntologyBean extends PaginationBean {
     public List<RelationshipPresentation> getTermRelationships() {
         return termRelationships;
     }
+    public List<OmimPhenotypeDisplay> omimPhenos;
+
 
     public void setTermRelationships(List<RelationshipPresentation> termRelationships) {
         this.termRelationships = termRelationships;
+    }
+
+    public List<OmimPhenotypeDisplay> getOmimPhenos() {
+        return omimPhenos;
+    }
+
+    public void setOmimPhenos(List<OmimPhenotypeDisplay> omimPhenos) {
+        this.omimPhenos = omimPhenos;
     }
 
     public Map<String, String> getDisplayStages() {
@@ -202,6 +213,15 @@ public class OntologyBean extends PaginationBean {
             }
             return values;
         }
+    }
+
+
+    public Set<OmimPhenotype> getOmimPheno() {
+        return omimPheno;
+    }
+
+    public void setOmimPheno(Set<OmimPhenotype> omimPheno) {
+        this.omimPheno = omimPheno;
     }
 
     public static enum ActionType {

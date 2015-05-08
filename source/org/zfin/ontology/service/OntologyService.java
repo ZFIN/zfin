@@ -6,9 +6,13 @@ import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.*;
+import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
 
 import java.util.*;
 
@@ -20,6 +24,7 @@ public class OntologyService {
     private final static Logger logger = Logger.getLogger(OntologyService.class);
 
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private static MarkerRepository mR = RepositoryFactory.getMarkerRepository();
 
     /**
      * Get the parent term that has the start stage and return
@@ -108,4 +113,69 @@ public class OntologyService {
         }
         return map;
     }
+
+    public static int getNumberOfDiseaseGenes(GenericTerm term) {
+        for (TermExternalReference xRef : term.getExternalReferences())
+            if (xRef.getOmimPhenotypes() != null) {
+                return xRef.getOmimPhenotypes().size();
+            }
+        return 0;
+
+
+    }
+
+
+
+    public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
+
+
+        if (term == null)
+            return null;
+        Map<String, OmimPhenotypeDisplay> map = new HashMap<String, OmimPhenotypeDisplay>();
+        Set<TermExternalReference> termXRef = term.getExternalReferences();
+        ArrayList<String> hA=new ArrayList<>();
+        for (TermExternalReference xRef : termXRef) {
+                Set<OmimPhenotype> omimResults = xRef.getOmimPhenotypes();
+
+                for (OmimPhenotype omimResult : omimResults) {
+                    // form the key
+
+                    String key = omimResult.getOrthologue().getAbbreviation()+omimResult.getName();
+
+                    OmimPhenotypeDisplay omimDisplay;
+
+                    // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
+                    // otherwise, just get the display object from the map
+                    if (!map.containsKey(key)) {
+                        omimDisplay = new OmimPhenotypeDisplay();
+                        map.put(key, omimDisplay);
+                    } else {
+                        omimDisplay = map.get(key);
+                    }
+                    omimDisplay.setOrthology(omimResult.getOrthologue());
+                    omimDisplay.setName(omimResult.getName());
+                    omimDisplay.setOmimNum(omimResult.getOmimNum());
+                    omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrthologue().getAbbreviation()));
+                    if (omimResult.getOrthologue() != null){
+
+                        hA.add(omimResult.getOrthologue().getAbbreviation());
+                        omimDisplay.setHumanGene(hA);
+                }
+
+
+            }
+        }
+
+        // use SortedSet to hold the values of the map so that the data could be displayed in order
+        List<OmimPhenotypeDisplay> omimDisplays = new ArrayList<OmimPhenotypeDisplay>();
+
+        if (map.values().size() > 0)
+            omimDisplays.addAll(map.values());
+        ////ToDo
+        Collections.sort(omimDisplays, new OmimPhenotypeDisplayComparator());
+
+
+        return omimDisplays;
+    }
 }
+

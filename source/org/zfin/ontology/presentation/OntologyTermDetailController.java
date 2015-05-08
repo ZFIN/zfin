@@ -16,6 +16,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
@@ -166,8 +167,11 @@ public class OntologyTermDetailController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getOntology().getCommonName() + ": " + term.getTermName());
         model.addAttribute("jspFunctions", new ZfinJSPFunctions());
         int number = getInfrastructureRepository().getTermReferences(term, null).getTotalCount();
-        model.addAttribute("numberOfCitations", number);
 
+        model.addAttribute("numberOfCitations", number);
+        int numberOfGenes=OntologyService.getNumberOfDiseaseGenes(term);
+        model.addAttribute("diseaseGenes",numberOfGenes);
+        form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
         return "ontology/ontology-term.page";
 
     }
