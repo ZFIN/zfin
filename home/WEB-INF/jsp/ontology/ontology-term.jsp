@@ -1,10 +1,10 @@
 <%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
-
-
+<script src="/javascript/table-collapse.js"></script>
 <div class="data-page term-detail-page">
 
     <zfin2:dataManager oboID="${formBean.term.oboID}"/>
@@ -33,7 +33,7 @@
         <tr>
 
             <th>Synonyms:</th>
-            <td id="term-synonyms">
+           <td id="term-synonyms">
                 <zfin2:toggledHyperlinkStrings collection="${formBean.term.sortedAliases}" maxNumber="3"
                                                id="${formBean.term.zdbID}_alias"/>
             </td>
@@ -65,7 +65,10 @@
             <td id="term-xrefs">
                 <zfin2:toggledHyperlinkList collection="${formBean.term.sortedXrefs}" maxNumber="3"
                                             id="${formBean.term.zdbID}" commaDelimited="true"/>
+
+
             </td>
+
         </tr>
         <tr>
             <th>Ontology:</th>
@@ -129,7 +132,9 @@
     </script>
 
 
-
+    <div id="genes-involved">
+        <zfin2:genesAssociatedWithDisease formBean="${formBean}"/>
+    </div>
 
     <c:if test="${formBean.term.ontology.expressionData}">
         <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
@@ -138,6 +143,7 @@
     <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_phenotype.jsp" flush="false"/>
 
     <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>
+
 
     <%--<div class="summary">
         <%// Number of Publications with an abstract that contains the anatomical structure %>
@@ -160,3 +166,8 @@
     </c:choose>
 
 </div>
+<script>
+    jQuery(function() {
+        jQuery("#genes-involved").tableCollapse({label: "Genes involved"});
+    });
+</script>
