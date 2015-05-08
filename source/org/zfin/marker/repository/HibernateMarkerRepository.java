@@ -2823,6 +2823,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.list();
     }
 
+    public List<Marker> getZfinOrtholog(String humanAbbrev){
+        Session session = HibernateUtil.currentSession();
+        String sql = "select gene FROM Orthologue orthologue " +
+                "WHERE orthologue.abbreviation = :abbreviation " +
+                "AND orthologue.organism = :organism ";
+
+        Query query = session.createQuery(sql);
+        query.setParameter("abbreviation", humanAbbrev);
+        query.setParameter("organism", Species.HUMAN);
+        return query.list();
+    }
 
     public void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, Marker marker, String pubID) {
   //      HibernateUtil.createTransaction();
