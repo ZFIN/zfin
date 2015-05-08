@@ -10,7 +10,6 @@
 <script src="/javascript/phenogrid/js/phenogrid.js"></script>
 <script src="/javascript/phenogrid/js/render.js"></script>
 <link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/jquery-ui.css"/>
-<link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/instructions.css"/>
 <link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/phenogrid.css"/>
 <link rel="stylesheet" type="text/css" href="/javascript/phenogrid/css/stickytooltip.css"/>
 
