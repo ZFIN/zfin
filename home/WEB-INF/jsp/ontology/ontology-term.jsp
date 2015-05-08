@@ -145,6 +145,12 @@
             for publications with '${formBean.term.termName}' in abstract</A>
     </div>--%>
 
+
+     <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
+         <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
+     </c:if>
+
+
     <span class="name-label"> Citations:</span>
     <c:choose>
         <c:when test="${numberOfCitations == 0}">None</c:when>
