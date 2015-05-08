@@ -1,0 +1,57 @@
+<%@ attribute name="formBean" type="org.zfin.ontology.presentation.OntologyBean" %>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+
+<c:set var="omimTermDisplay" value="${formBean.omimPhenos}"/>
+<zfin2:subsection title="GENES INVOLVED"
+                  test="${fn:length(omimTermDisplay) ne null && fn:length(omimTermDisplay) > 0}">
+<table  class="summary groupstripes">
+
+    <tr>
+
+                <th>Human Gene                </th>
+                <th>
+                    Zebrafish Orthologue
+                </th>
+                <th>
+                    OMIM Term
+                </th>
+               <th >
+                  OMIM Phenotype ID
+               </th>
+
+    </tr>
+
+
+    <c:forEach var="omimGene" items="${omimTermDisplay}" varStatus="loop">
+        <zfin:alternating-tr loopName="loop" groupBeanCollection="${omimTermDisplay}" groupByBean="orthology.abbreviation">
+
+            <td>
+                <zfin:groupByDisplay loopName="loop" groupBeanCollection="${omimTermDisplay}" groupByBean="orthology.abbreviation">
+                    <a href="http://omim.org/entry/${omimGene.orthology.accession}">${omimGene.orthology.abbreviation}</a>
+                    <%--${omimGene.orthology.abbreviation}--%>
+                </zfin:groupByDisplay>
+</td>
+
+            <td>
+                    <zfin:groupByDisplay loopName="loop" groupBeanCollection="${omimTermDisplay}" groupByBean="orthology.abbreviation">
+                    <zfin2:toggledHyperlinkList collection="${omimGene.zfinGene}" maxNumber="3"
+                                                id="zfinGene" commaDelimited="true"/>
+
+                </zfin:groupByDisplay>
+
+
+
+            </td>
+            <td>
+                    ${omimGene.name}
+            </td>
+            <td>
+                <a href="http://omim.org/entry/${omimGene.omimNum}">${omimGene.omimNum}</a>
+
+            </td>
+
+    </zfin:alternating-tr>
+    </c:forEach>
+</table>
+</zfin2:subsection>
