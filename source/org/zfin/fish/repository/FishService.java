@@ -153,8 +153,7 @@ public class FishService {
                 genoxIds.add(id);
             }
             if (type == ActiveData.Type.GENO) {
-                ZfinEntity genotype = new ZfinEntity();
-                genotype.setID(id);
+                Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(id);
                 fish.setGenotype(genotype);
             }
         }

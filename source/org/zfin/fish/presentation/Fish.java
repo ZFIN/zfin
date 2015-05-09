@@ -5,6 +5,11 @@ import org.zfin.fish.FeatureGene;
 import org.zfin.fish.MutationType;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
+import org.zfin.marker.Marker;
+import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +22,11 @@ import java.util.Set;
  */
 public class Fish extends ZfinEntity {
 
-    private ZfinEntity genotype;
+    private Genotype genotype;
     private List<String> genotypeExperimentIDs;
     private String genotypeExperimentIDsString;
     private List<ZfinEntity> features;
-    private List<ZfinEntity> sequenceTargetingReagents;
+    private List<SequenceTargetingReagent> sequenceTargetingReagents;
     private List<ZfinEntity> affectedGenes;
     private List<FeatureGene> featureGenes = new ArrayList<FeatureGene>();
     private int phenotypeFigureCount;
@@ -44,11 +49,11 @@ public class Fish extends ZfinEntity {
         return fishID;
     }
 
-    public ZfinEntity getGenotype() {
+    public Genotype getGenotype() {
         return genotype;
     }
 
-    public void setGenotype(ZfinEntity genotype) {
+    public void setGenotype(Genotype genotype) {
         this.genotype = genotype;
     }
 
@@ -78,22 +83,26 @@ public class Fish extends ZfinEntity {
         this.features = features;
     }
 
-    public List<ZfinEntity> getSequenceTargetingReagents() {
+    public List<SequenceTargetingReagent> getSequenceTargetingReagents() {
             if (CollectionUtils.isEmpty(featureGenes))
             return null;
 
         if (sequenceTargetingReagents != null)
             return sequenceTargetingReagents;
 
-        sequenceTargetingReagents = new ArrayList<ZfinEntity>(featureGenes.size());
+        sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(featureGenes.size());
         for (FeatureGene featureGene : featureGenes) {
-            if (featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO) || featureGene.getMutationTypeDisplay().equals(MutationType.TALEN) || featureGene.getMutationTypeDisplay().equals(MutationType.CRISPR))
-                sequenceTargetingReagents.add(featureGene.getFeature());
+            if (featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO) || featureGene.getMutationTypeDisplay().equals(MutationType.TALEN) || featureGene.getMutationTypeDisplay().equals(MutationType.CRISPR)) {
+                SequenceTargetingReagent str = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(featureGene.getFeature().getID());
+                sequenceTargetingReagents.add(str);
+
+            }
+
         }
         return sequenceTargetingReagents;
     }
 
-    public void setSequenceTargetingReagents(List<ZfinEntity> sequenceTargetingReagents) {
+    public void setSequenceTargetingReagents(List<SequenceTargetingReagent> sequenceTargetingReagents) {
         this.sequenceTargetingReagents = sequenceTargetingReagents;
     }
 
@@ -187,7 +196,7 @@ public class Fish extends ZfinEntity {
 
     public String getGenotypeID() {
         if (genotype != null)
-            return genotype.getID();
+            return genotype.getZdbID();
         else return null;
     }
 

@@ -39,8 +39,8 @@ public class GenotypeDetailController {
         if (zdbID.contains(",")) {
             Fish fish = getFishRepository().getFish(zdbID);
             form.setFishName(fish.getName());
-            ZfinEntity geno = fish.getGenotype();
-            Genotype genotype = mutantRepository.getGenotypeByID(geno.getID());
+            Genotype geno = fish.getGenotype();
+            Genotype genotype = mutantRepository.getGenotypeByID(geno.getZdbID());
             form.setGenotype(genotype);
             retrieveGenotypeAndFeatureData(form, genotype);
             retrieveSequenceTargetingReagentData(form, fish);

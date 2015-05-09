@@ -197,8 +197,8 @@ public class FishDetailController {
         if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
             return null;
         Set<String> strIDs = new HashSet<String>(fish.getSequenceTargetingReagents().size());
-        for (ZfinEntity str : fish.getSequenceTargetingReagents())
-            strIDs.add(str.getID());
+        for (SequenceTargetingReagent str : fish.getSequenceTargetingReagents())
+            strIDs.add(str.getZdbID());
         List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(2);
         for (String moID : strIDs)
             sequenceTargetingReagents.add(getMutantRepository().getSequenceTargetingReagentByID(moID));

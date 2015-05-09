@@ -56,7 +56,7 @@ public class FishMatchingService {
         service = new MatchingService(honoredMatchTypes);
         if (criteria.getGeneOrFeatureNameCriteria().hasValues()) {
             checkGeneFeatureMatches(criteria);
-            String genoID = fish.getGenotype().getID();
+            String genoID = fish.getGenotype().getZdbID();
             if (genoID!=null){
                 List<GenotypeFeature> genotypeFeatures = getMutantRepository().getGenotypeFeaturesByGenotype(genoID);
                 for (GenotypeFeature genoFeature : genotypeFeatures) {

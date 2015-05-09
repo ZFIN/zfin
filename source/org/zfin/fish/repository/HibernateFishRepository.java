@@ -18,7 +18,10 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.PaginationResultFactory;
+import org.zfin.repository.RepositoryFactory;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -362,7 +365,7 @@ public class HibernateFishRepository implements FishRepository {
         } else
             criteria.add(Restrictions.and(
                     Restrictions.eq("genotypeExperimentIds", minimalFish.getGenotypeExperimentIDsString()),
-                    Restrictions.eq("genotypeID", minimalFish.getGenotype().getID())
+                    Restrictions.eq("genotypeID", minimalFish.getGenotype().getZdbID())
             ));
         FishAnnotation annotation = (FishAnnotation) criteria.uniqueResult();
         if (annotation == null)
@@ -374,7 +377,8 @@ public class HibernateFishRepository implements FishRepository {
     private Fish getFishFromFunctionalAnnotation(FishAnnotation annotation, FishSearchCriteria criteria) {
         Fish singleFish = new Fish();
         singleFish.setID(String.valueOf(annotation.getID()));
-        singleFish.setGenotype(getZfinEntity(annotation.getGenotypeID(), annotation.getGenotypeID()));
+        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(annotation.getGenotypeID());
+        singleFish.setGenotype(genotype);
         singleFish.setName(annotation.getName());
         singleFish.setGenotypeExperimentIDs(getIdList(annotation.getGenotypeExperimentIds()));
         singleFish.setGenotypeExperimentIDsString(annotation.getGenotypeExperimentIds());
@@ -507,7 +511,7 @@ public class HibernateFishRepository implements FishRepository {
         Query sqlQuery = session.createSQLQuery(sqlFeatures);
         Fish fish = FishService.getGenoGenoxByFishID(fishID);
         sqlQuery.setParameter("genoxIds", fish.getGenotypeExperimentIDsString());
-        sqlQuery.setParameter("genoID", fish.getGenotype().getID());
+        sqlQuery.setParameter("genoID", fish.getGenotype().getZdbID());
         List<Object[]> objs = sqlQuery.list();
         if (objs == null)
             return null;
@@ -567,7 +571,7 @@ public class HibernateFishRepository implements FishRepository {
      * @param fishAnnotation FishAnnotation
      * @return set of SequenceTargetingReagent entities
      */
-    private List<ZfinEntity> getSequenceTargetingReagents(FishAnnotation fishAnnotation) {
+    private List<SequenceTargetingReagent> getSequenceTargetingReagents(FishAnnotation fishAnnotation) {
         if (fishAnnotation.getSequenceTargetingReagentGroupName() == null)
             return null;
         Session session = HibernateUtil.currentSession();
@@ -588,8 +592,12 @@ public class HibernateFishRepository implements FishRepository {
                 sequenceTargetingReagents.add(sequenceTargetingReagent);
             }
         }
-        List<ZfinEntity> sequenceTargetingReagentList = new ArrayList<ZfinEntity>(sequenceTargetingReagents.size());
-        sequenceTargetingReagentList.addAll(sequenceTargetingReagents);
+        List<SequenceTargetingReagent> sequenceTargetingReagentList = new ArrayList<>(sequenceTargetingReagents.size());
+        for (ZfinEntity entity : sequenceTargetingReagents) {
+            SequenceTargetingReagent str = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(entity.getID());
+            sequenceTargetingReagentList.add(str);
+        }
+
         return sequenceTargetingReagentList;
     }
 
