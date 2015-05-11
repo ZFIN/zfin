@@ -17,6 +17,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
@@ -248,11 +249,10 @@ public class FishMatchingService {
         if (geneNameField == null || StringUtils.isEmpty(geneNameField))
             return;
         geneNameField = geneNameField.toLowerCase().trim();
-        List<ZfinEntity> genes = fish.getSequenceTargetingReagents();
-        if (CollectionUtils.isNotEmpty(genes)) {
+        List<SequenceTargetingReagent> sequenceTargetingReagents = fish.getSequenceTargetingReagents();
+        if (CollectionUtils.isNotEmpty(sequenceTargetingReagents)) {
             // the loop exists for the first match as this is enough!
-            for (ZfinEntity entity : genes) {
-                Marker sequenceTargetingReagent = getMarkerRepository().getMarkerByID(entity.getID());
+            for (SequenceTargetingReagent sequenceTargetingReagent : sequenceTargetingReagents) {
                 // name and abbreviation is the same for sequenceTargetingReagent
                 if (service.addMatchingText(geneNameField, sequenceTargetingReagent.getName(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_NAME).equals(MatchType.EXACT))
                     break;
