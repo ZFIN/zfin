@@ -70,7 +70,7 @@ public class FishSearchController {
         FishSearchCriteria criteria = FishService.getFishSearchCriteria(formBean);
         FishSearchResult searchResult = FishService.getFish(criteria);
         if (searchResult != null) {
-            List<Fish> fishList = searchResult.getResults();
+            List<MartFish> fishList = searchResult.getResults();
             formBean.setTotalRecords(searchResult.getResultsFound());
             formBean.setFishList(fishList);
         }
@@ -81,7 +81,7 @@ public class FishSearchController {
 
     private void attachMetaData(Model model, FishSearchFormBean formBean) {
         formBean.setSummary(fishRepository.getWarehouseSummary(WarehouseSummary.Mart.FISH_MART));
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish Search Results");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish Search Results");
         ZdbFlag status = fishRepository.getFishMartStatus();
         model.addAttribute(status);
     }
@@ -98,7 +98,7 @@ public class FishSearchController {
         formBean.setIncludeSubstructures(true);
         formBean.setSummary(fishRepository.getWarehouseSummary(WarehouseSummary.Mart.FISH_MART));
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish Search");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish Search");
         ZdbFlag status = fishRepository.getFishMartStatus();
         model.addAttribute(status);
         return "fish/fish-search.page";
@@ -120,7 +120,7 @@ public class FishSearchController {
             LOG.error("Errors found during form binding: " + result);
         }
         if (formBean.getFishID().contains("GENO")){
-           Fish fish = FishService.getFish(formBean.getFishID());
+           MartFish fish = FishService.getFish(formBean.getFishID());
             FishSearchCriteria criteria = new FishSearchCriteria(formBean);
             FishMatchingService service = new FishMatchingService(fish);
             Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
@@ -132,7 +132,7 @@ public class FishSearchController {
         }
         else
         {
-            Fish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(formBean.getFishID()).longValue());
+            MartFish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(formBean.getFishID()).longValue());
             FishSearchCriteria criteria = new FishSearchCriteria(formBean);
             FishMatchingService service = new FishMatchingService(fish);
             Set<MatchingText> matchingTextList = service.getMatchingText(criteria);

@@ -9,7 +9,7 @@ import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
 import org.zfin.fish.FunctionalAnnotation;
 import org.zfin.fish.WarehouseSummary;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.fish.presentation.SortBy;
 import org.zfin.framework.HibernateUtil;
@@ -103,7 +103,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
 
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
-        for (Fish fish : result.getResults()) {
+        for (MartFish fish : result.getResults()) {
             assertTrue(fish.getName() + " should have more than 2 affectors", (fish.getFeatures().size() + fish.getSequenceTargetingReagents().size()) > 1);
         }
 
@@ -121,7 +121,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
 
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
-        for (Fish fish : result.getResults()) {
+        for (MartFish fish : result.getResults()) {
             assertTrue(fish.getName() + " should have no morpolinos", (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0));
         }
 
@@ -139,7 +139,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
 
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
-        for (Fish fish : result.getResults()) {
+        for (MartFish fish : result.getResults()) {
             assertTrue(fish.getName() + " should have morpolinos", fish.getSequenceTargetingReagents().size() > 0);
         }
 
@@ -158,7 +158,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
 
         FishSearchResult result = RepositoryFactory.getFishRepository().getFish(criteria);
         for (int i = 0; i < 2; i++) {
-            Fish fish = result.getResults().get(i);
+            MartFish fish = result.getResults().get(i);
             assertNotNull(fish);
             assertTrue("result " + i + ", " + fish.getGeneOrFeatureText() + " should contain 'cz3 '", fish.getGeneOrFeatureText().contains(" cz3 "));
         }
@@ -204,7 +204,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
     public void retrieveFishByGenoAlone() {
         String genoID = "ZDB-GENO-110210-2,ZDB-GENOX-110210-12";
         String fishID = genoID;
-        Fish fish = getFishRepository().getFish(fishID);
+        MartFish fish = getFishRepository().getFish(fishID);
         assertNotNull(fish);
     }
 
@@ -212,7 +212,7 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
     public void retrieveFishByGenoxGeno() {
         String genoxID = "ZDB-GENOX-110211-2,ZDB-GENO-110210-2";
         String fishID = genoxID;
-        Fish fish = getFishRepository().getFish(fishID);
+        MartFish fish = getFishRepository().getFish(fishID);
         assertNotNull(fish);
     }
     //@Test  - gene name with comma test  "adaptor-related protein complex 1, mu 2 subunit"

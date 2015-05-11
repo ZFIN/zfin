@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.zfin.database.BtsContainsService;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.fish.*;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.search.SortType;
@@ -91,12 +91,12 @@ public class HibernateFishRepository implements FishRepository {
 
         logger.debug("functionalAnnotations size: " + functionalAnnotations.size());
 
-        List<Fish> fish = new ArrayList<Fish>(fishObjects.getTotalCount());
+        List<MartFish> fish = new ArrayList<MartFish>(fishObjects.getTotalCount());
         for (FishAnnotation annotation : functionalAnnotations) {
             fish.add(getFishFromFunctionalAnnotation(annotation, criteria));
         }
 
-        logger.debug("Fish size: " + fish.size());
+        logger.debug("MartFish size: " + fish.size());
         logger.debug("FishObjects total count: " + fishObjects.getTotalCount());
 
         results.setResults(fish);
@@ -272,17 +272,17 @@ public class HibernateFishRepository implements FishRepository {
         return sb.toString();
     }
 
-    private void addAllFigures(Fish fish) {
+    private void addAllFigures(MartFish fish) {
         Set<ZfinFigureEntity> figures = getAllFigures(fish.getFishID());
         setImageAttributeOnFish(fish, figures);
     }
 
-    private void addFiguresByTermValues(Fish fish, List<String> values) {
+    private void addFiguresByTermValues(MartFish fish, List<String> values) {
         Set<ZfinFigureEntity> figures = getFiguresByFishAndTerms(fish.getFishID(), values);
         setImageAttributeOnFish(fish, figures);
     }
 
-    private void setImageAttributeOnFish(Fish fish, Set<ZfinFigureEntity> figures) {
+    private void setImageAttributeOnFish(MartFish fish, Set<ZfinFigureEntity> figures) {
         if (figures == null || figures.size() == 0)
             return;
         fish.setPhenotypeFigures(figures);
@@ -331,10 +331,10 @@ public class HibernateFishRepository implements FishRepository {
      * @param fishID ID
      * @return fish
      */
-    public Fish getFish(Long fishID) {
+    public MartFish getFish(Long fishID) {
         Session session = HibernateUtil.currentSession();
         FishAnnotation annotation = (FishAnnotation) session.load(FishAnnotation.class, fishID);
-        Fish fish = getFishFromFunctionalAnnotation(annotation, null);
+        MartFish fish = getFishFromFunctionalAnnotation(annotation, null);
         return fish;
     }
 
@@ -345,10 +345,10 @@ public class HibernateFishRepository implements FishRepository {
      * @param genoGenoxIDs IDs
      * @return fish
      */
-    public Fish getFish(String genoGenoxIDs) {
+    public MartFish getFish(String genoGenoxIDs) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(FishAnnotation.class);
-        Fish minimalFish = FishService.getGenoGenoxByFishID(genoGenoxIDs);
+        MartFish minimalFish = FishService.getGenoGenoxByFishID(genoGenoxIDs);
         if (minimalFish == null)
             return null;
         if (StringUtils.isEmpty(minimalFish.getGenotypeExperimentIDsString())) {
@@ -370,12 +370,12 @@ public class HibernateFishRepository implements FishRepository {
         FishAnnotation annotation = (FishAnnotation) criteria.uniqueResult();
         if (annotation == null)
             return null;
-        Fish fish = getFishFromFunctionalAnnotation(annotation, null);
+        MartFish fish = getFishFromFunctionalAnnotation(annotation, null);
         return fish;
     }
 
-    private Fish getFishFromFunctionalAnnotation(FishAnnotation annotation, FishSearchCriteria criteria) {
-        Fish singleFish = new Fish();
+    private MartFish getFishFromFunctionalAnnotation(FishAnnotation annotation, FishSearchCriteria criteria) {
+        MartFish singleFish = new MartFish();
         singleFish.setID(String.valueOf(annotation.getID()));
         Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(annotation.getGenotypeID());
         singleFish.setGenotype(genotype);
@@ -395,7 +395,7 @@ public class HibernateFishRepository implements FishRepository {
         return singleFish;
     }
 
-    private void addFigures(Fish fish, FishSearchCriteria criteria) {
+    private void addFigures(MartFish fish, FishSearchCriteria criteria) {
         if (criteria == null)
             addAllFigures(fish);
         else {
@@ -419,7 +419,7 @@ public class HibernateFishRepository implements FishRepository {
         return idList;
     }
 
-    private void populateGeneFeatureConstruct(Fish singleFish, FishAnnotation annotation) {
+    private void populateGeneFeatureConstruct(MartFish singleFish, FishAnnotation annotation) {
         String hql = "from FeatureGene " +
                 "where fishAnnotation = :fishAnnotation " +
                 "order by gene.nameOrder, feature.nameOrder";
@@ -509,7 +509,7 @@ public class HibernateFishRepository implements FishRepository {
                 "and (fas_genox_group = :genoxIds AND fas_genotype_group = :genoID) AND ";
         sqlFeatures += btsService.getFullOrClause();
         Query sqlQuery = session.createSQLQuery(sqlFeatures);
-        Fish fish = FishService.getGenoGenoxByFishID(fishID);
+        MartFish fish = FishService.getGenoGenoxByFishID(fishID);
         sqlQuery.setParameter("genoxIds", fish.getGenotypeExperimentIDsString());
         sqlQuery.setParameter("genoID", fish.getGenotype().getZdbID());
         List<Object[]> objs = sqlQuery.list();

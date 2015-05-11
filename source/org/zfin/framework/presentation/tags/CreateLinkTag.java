@@ -12,7 +12,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.presentation.FeaturePrefixPresentation;
 import org.zfin.feature.presentation.FeaturePresentation;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.fish.presentation.FishAnnotationPresentation;
@@ -126,8 +126,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = PublicationPresentation.getLink((Publication) o);
         else if (o instanceof Figure)
             link = FigurePresentation.getLink((Figure) o);
-        else if (o instanceof Fish)
-            link = FishPresentation.getLink((Fish) o);
+        else if (o instanceof MartFish)
+            link = FishPresentation.getLink((MartFish) o);
         else if (o instanceof FishAnnotation)
             link = FishAnnotationPresentation.getLink((FishAnnotation) o);
         else if (o instanceof Image)

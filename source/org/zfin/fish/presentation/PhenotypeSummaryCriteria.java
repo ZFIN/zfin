@@ -159,7 +159,7 @@ public class PhenotypeSummaryCriteria {
         this.construct = construct;
     }
 
-    private Fish fish;
+    private MartFish fish;
     private Construct construct;
     private List<GenotypeExperiment> genotypeExperiments;
     private FishSearchCriteria criteria;
@@ -174,12 +174,12 @@ public class PhenotypeSummaryCriteria {
         this.constructCriteria = constructCriteria;
     }
 
-    public Fish getFish() {
+    public MartFish getFish() {
 
         return fish;
     }
 
-    public void setFish(Fish fish) {
+    public void setFish(MartFish fish) {
         this.fish = fish;
     }
 

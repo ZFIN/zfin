@@ -200,7 +200,7 @@ public class EQReport {
         buffer.append("\t");
         buffer.append("Antibody");
         buffer.append("\t");
-        buffer.append("Fish");
+        buffer.append("MartFish");
         buffer.append("\t");
         buffer.append("Environment");
         buffer.append("\t");

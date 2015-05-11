@@ -348,7 +348,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
         String oldGenotypeID = expressionExperiment.getGenotypeExperiment().getGenotype().getZdbID();
         String newGenotypeID = experimentDTO.getFishID();
-        createAuditRecord(expressionExperiment, comment, oldGenotypeID, newGenotypeID, "Fish");
+        createAuditRecord(expressionExperiment, comment, oldGenotypeID, newGenotypeID, "MartFish");
 
     }
 

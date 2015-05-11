@@ -1,7 +1,6 @@
 package org.zfin.fish.repository;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -11,7 +10,7 @@ import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.FishSearchCriteria;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
@@ -63,8 +62,8 @@ public class FishServiceTest extends AbstractDatabaseTest {
     @Test
     public void matchingOnGeneAbbreviation() {
         String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7";
-        Fish fish = FishService.getFish(fishID);
-        Assert.assertNotNull("Could not find Fish with fishID: " + fishID, fish);
+        MartFish fish = FishService.getFish(fishID);
+        Assert.assertNotNull("Could not find MartFish with fishID: " + fishID, fish);
         FishMatchingService service = new FishMatchingService(fish);
         criteria.getGeneOrFeatureNameCriteria().setValue("Shha");
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
@@ -88,7 +87,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnGeneName() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
+        MartFish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
         FishMatchingService service = new FishMatchingService(fish);
 
         criteria.getGeneOrFeatureNameCriteria().setValue("hedgehog");
@@ -98,7 +97,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnGeneAlias() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
+        MartFish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
         FishMatchingService service = new FishMatchingService(fish);
 
         criteria.getGeneOrFeatureNameCriteria().setValue("you");
@@ -108,7 +107,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnFeatureName() {
-        Fish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
+        MartFish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
         criteria.getGeneOrFeatureNameCriteria().setValue("shha");
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
@@ -117,7 +116,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnMultipleFeatureNameEntries() {
-        Fish fish = FishService.getFish("ZDB-GENO-091027-2,ZDB-GENOX-091027-5");
+        MartFish fish = FishService.getFish("ZDB-GENO-091027-2,ZDB-GENOX-091027-5");
         criteria.getGeneOrFeatureNameCriteria().setValue("shha tbx");
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
@@ -127,7 +126,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnFeatureAbbreviation() {
-        Fish fish = FishService.getFish("ZDB-GENO-110410-1,ZDB-GENOX-110410-1");
+        MartFish fish = FishService.getFish("ZDB-GENO-110410-1,ZDB-GENOX-110410-1");
         criteria.getGeneOrFeatureNameCriteria().setName("tku");
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
@@ -136,7 +135,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnFeatureAlias() {
-        Fish fish = FishService.getFish("ZDB-GENO-101025-2,ZDB-GENOX-101025-22");
+        MartFish fish = FishService.getFish("ZDB-GENO-101025-2,ZDB-GENOX-101025-22");
 
         criteria.getGeneOrFeatureNameCriteria().setValue("k18");
         FishMatchingService service = new FishMatchingService(fish);
@@ -146,7 +145,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnDirectAoTerm() {
-        Fish fish = FishService.getFish("ZDB-GENO-091027-2,ZDB-GENOX-091027-5");
+        MartFish fish = FishService.getFish("ZDB-GENO-091027-2,ZDB-GENOX-091027-5");
         criteria.getPhenotypeAnatomyCriteria().setValue("ZDB-TERM-100331-2186");
 
         FishMatchingService service = new FishMatchingService(fish);
@@ -160,7 +159,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchOnConstructNoPhenotype() {
-        Fish fish = FishService.getFish("ZDB-GENO-060619-1");
+        MartFish fish = FishService.getFish("ZDB-GENO-060619-1");
         criteria.getGeneOrFeatureNameCriteria().setValue("shha");
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTexts = service.getMatchingText(criteria);
@@ -174,7 +173,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         formBean.setGeneOrFeatureName("gfp");
         formBean.setFishID("ZDB-GENO-100122-2,ZDB-GENOX-100122-7");
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
-        Fish fish = FishService.getFish(formBean.getFishID());
+        MartFish fish = FishService.getFish(formBean.getFishID());
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
         assertNotNull(matchingTextList);
@@ -188,7 +187,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         // shha^tbx392/+
         formBean.setFishID("ZDB-GENO-091027-2,ZDB-GENOX-091027-5");
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
-        Fish fish = FishService.getFish(formBean.getFishID());
+        MartFish fish = FishService.getFish(formBean.getFishID());
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
         assertNotNull(matchingTextList);
@@ -203,7 +202,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         // oeptz257;Tg(dharma:GFP)e100
         formBean.setFishID("ZDB-GENO-110131-44");
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
-        Fish fish = FishService.getFish(formBean.getFishID());
+        MartFish fish = FishService.getFish(formBean.getFishID());
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
         assertNotNull(matchingTextList);
@@ -219,7 +218,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         // gli2aty17a/ty17a
         formBean.setFishID("ZDB-GENO-980202-1115,ZDB-GENOX-041102-68,ZDB-GENOX-081006-2");
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
-        Fish fish = FishService.getFish(formBean.getFishID());
+        MartFish fish = FishService.getFish(formBean.getFishID());
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
         assertNotNull(matchingTextList);
@@ -243,7 +242,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void matchingOnFeatureLineNumber() {
-        Fish fish = FishService.getFish("ZDB-GENO-100427-4,ZDB-GENOX-100427-2");
+        MartFish fish = FishService.getFish("ZDB-GENO-100427-4,ZDB-GENOX-100427-2");
         criteria.getGeneOrFeatureNameCriteria().setValue("F0104a");
 
         FishMatchingService service = new FishMatchingService(fish);
@@ -259,7 +258,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     public void getExpressionSummary() {
         // genotype: apchu745/hu745
         String fishID = "ZDB-GENO-090916-1,ZDB-GENOX-090916-4,ZDB-GENOX-120518-12,ZDB-GENOX-120518-13,ZDB-GENOX-120518-16,ZDB-GENOX-120518-17,ZDB-GENOX-120518-7,ZDB-GENOX-120518-8,ZDB-GENOX-120518-9";
-        Fish fish = FishService.getFish(fishID);
+        MartFish fish = FishService.getFish(fishID);
         // should not exist. It used to and then got deleted after 2013.3.15
         assertNull(fish);
 

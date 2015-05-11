@@ -20,7 +20,6 @@ import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -49,11 +48,11 @@ public class FishDetailController {
     @RequestMapping(value = "/fish-detail/{ID}")
     protected String showFishDetail(Model model,
                                     @PathVariable("ID") String fishID, HttpServletResponse response) {
-        LOG.info("Start Fish Detail Controller");
+        LOG.info("Start MartFish Detail Controller");
 
         fishID = ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishID);
 
-        Fish fish = RepositoryFactory.getFishRepository().getFish(fishID);
+        MartFish fish = RepositoryFactory.getFishRepository().getFish(fishID);
         if (fish == null)    {
             String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(fishID);
             if (newZdbID != null) {
@@ -87,16 +86,16 @@ public class FishDetailController {
         addExpressionSummaryToForm(model, fishID);
 
         // the following put the fish Id to page title as debugging for FB case 8817
-        // model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + fishID);
+        // model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish: " + fishID);
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + fishName);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish: " + fishName);
 
         return "fish/fish-detail.page";
     }
 
     @RequestMapping(value = "/fish-detail-popup/{ID}")
     protected String showFishDetailPopup(Model model, @PathVariable("ID") String fishId) {
-        Fish fish = RepositoryFactory.getFishRepository().getFish(
+        MartFish fish = RepositoryFactory.getFishRepository().getFish(
                 ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishId)
         );
         FishBean form = new FishBean();
@@ -133,9 +132,9 @@ public class FishDetailController {
     @RequestMapping(value = "/fish-show-all-phenotypes/{ID}")
     protected String showAllPhenotypes(Model model,
                                        @PathVariable("ID") String fishID) throws Exception {
-        LOG.info("Start Fish Detail Controller");
+        LOG.info("Start MartFish Detail Controller");
 
-        Fish fish = RepositoryFactory.getFishRepository().getFish(fishID);
+        MartFish fish = RepositoryFactory.getFishRepository().getFish(fishID);
         if (fish == null)
             return LookupStrings.idNotFound(model, fishID);
 
@@ -160,8 +159,8 @@ public class FishDetailController {
     @RequestMapping(value = "/fish-show-all-expression/{ID}")
     protected String showAllExpression(Model model,
                                        @PathVariable("ID") String fishID) throws Exception {
-        LOG.info("Start Fish Detail Controller");
-        Fish fish = RepositoryFactory.getFishRepository().getFish(fishID);
+        LOG.info("Start MartFish Detail Controller");
+        MartFish fish = RepositoryFactory.getFishRepository().getFish(fishID);
         if (fish == null)
             return LookupStrings.idNotFound(model, fishID);
 
@@ -187,13 +186,13 @@ public class FishDetailController {
         return "genotype/fish-all-expressions.page";
     }
 
-    private void retrieveSTRData(FishBean form, Fish fish) {
+    private void retrieveSTRData(FishBean form, MartFish fish) {
         if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
             return;
         form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 
-    private List<SequenceTargetingReagent> getSequenceTargetingReagent(Fish fish) {
+    private List<SequenceTargetingReagent> getSequenceTargetingReagent(MartFish fish) {
         if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
             return null;
         Set<String> strIDs = new HashSet<String>(fish.getSequenceTargetingReagents().size());
@@ -216,7 +215,7 @@ public class FishDetailController {
     }
 
 
-    private void retrieveGenotypeExperiment(FishBean form, Fish fish) {
+    private void retrieveGenotypeExperiment(FishBean form, MartFish fish) {
         if (fish.getGenotypeExperimentIDs() == null) {
             return;
         }
@@ -227,7 +226,7 @@ public class FishDetailController {
         form.setGenotypeExperimentsList(genotypeExperiments);
     }
 
-    private void retrieveGenotypes(FishBean form, Fish fish) {
+    private void retrieveGenotypes(FishBean form, MartFish fish) {
         List<Genotype> genotype = new ArrayList<Genotype>();
         if (fish.getGenotype() != null) {
             genotype.add(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));
@@ -241,7 +240,7 @@ public class FishDetailController {
     }
 
 
-    private void retrievePublicationData(FishBean form, Fish fish) {
+    private void retrievePublicationData(FishBean form, MartFish fish) {
         form.setTotalNumberOfPublications(RepositoryFactory.getMutantRepository().getGenoxAttributions(fish.getGenotypeExperimentIDs()).size());
     }
 

@@ -2,24 +2,20 @@ package org.zfin.fish.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.fish.presentation.PhenotypeSummaryCriteria;
 import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
-import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
@@ -34,9 +30,9 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class FishService {
 
-    private Fish fish;
+    private MartFish fish;
 
-    public FishService(Fish fish) {
+    public FishService(MartFish fish) {
         this.fish = fish;
     }
 
@@ -75,7 +71,7 @@ public class FishService {
     }
 
     public static PhenotypeSummaryCriteria getPhenotypeSummaryCriteria(String fishID) {
-        Fish fish = getFishRepository().getFish(fishID);
+        MartFish fish = getFishRepository().getFish(fishID);
         PhenotypeSummaryCriteria criteria = new PhenotypeSummaryCriteria();
         criteria.setFish(fish);
         List<GenotypeExperiment> genotypeExperiments = new ArrayList<GenotypeExperiment>(fish.getGenotypeExperimentIDs().size());
@@ -87,7 +83,7 @@ public class FishService {
     }
 
     public static List<Genotype> getGenotypes(long fishID) {
-        Fish fish = getFishRepository().getFish(fishID);
+        MartFish fish = getFishRepository().getFish(fishID);
         List<GenotypeExperiment> genotypeExperiments = new ArrayList<GenotypeExperiment>(fish.getGenotypeExperimentIDs().size());
         List<Genotype> genotype = new ArrayList<Genotype>();
         for (String genoID : fish.getGenotypeExperimentIDs()) {
@@ -125,7 +121,7 @@ public class FishService {
         return true;
     }
 
-    public static Fish getFish(String fishID) {
+    public static MartFish getFish(String fishID) {
         return getFishRepository().getFish(fishID);
     }
 
@@ -140,10 +136,10 @@ public class FishService {
      * @param fishID fish id
      * @return genox ids and geno id
      */
-    public static Fish getGenoGenoxByFishID(String fishID) {
+    public static MartFish getGenoGenoxByFishID(String fishID) {
         if (StringUtils.isEmpty(fishID))
             return null;
-        Fish fish = new Fish();
+        MartFish fish = new MartFish();
         String[] ids = fishID.split(",");
         List<String> genoxIds = new ArrayList<String>(3);
         // compile the genotype experiment ids

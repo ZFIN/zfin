@@ -1,7 +1,7 @@
 package org.zfin.mutant.presentation;
 
 import org.zfin.fish.FishSearchCriteria;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
@@ -12,16 +12,16 @@ import java.util.List;
 
 public class ConstructExpressionSummaryCriteria {
 
-    private Fish fish;
+    private MartFish fish;
     private List<GenotypeExperiment> genotypeExperiments;
     private FishSearchCriteria criteria;
     private Genotype genotype;
 
-    public Fish getFish() {
+    public MartFish getFish() {
         return fish;
     }
 
-    public void setFish(Fish fish) {
+    public void setFish(MartFish fish) {
         this.fish = fish;
     }
 

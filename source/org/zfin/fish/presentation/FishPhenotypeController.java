@@ -55,7 +55,7 @@ public class FishPhenotypeController {
                                           @ModelAttribute("formBean") FishSearchFormBean formBean,
                                           Model model) throws Exception {
 
-        LOG.info("Start Fish Phenotype Controller");
+        LOG.info("Start MartFish Phenotype Controller");
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
         List<FigureSummaryDisplay> figureSummaryDisplayList = FishService.getPhenotypeSummary(fishID, criteria);
         Collections.sort(figureSummaryDisplayList);
@@ -63,7 +63,7 @@ public class FishPhenotypeController {
         PhenotypeSummaryCriteria summaryCriteria = FishService.getPhenotypeSummaryCriteria(fishID);
         summaryCriteria.setCriteria(criteria);
         model.addAttribute("phenotypeSummaryCriteria", summaryCriteria);
-        Fish fish = FishService.getFish(fishID);
+        MartFish fish = FishService.getFish(fishID);
         // get the all phenotype per genotype experiment data
         GenotypeBean form = new GenotypeBean();
         form.setPhenoStatements(getMutantRepository().getPhenotypeStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
@@ -78,7 +78,7 @@ public class FishPhenotypeController {
                                    @RequestParam(value = "orderBy", required = false) String orderBy,
                                        Model model) throws Exception {
 
-        Fish fish = getFishRepository().getFish(fishID);
+        MartFish fish = getFishRepository().getFish(fishID);
         if (fish == null)
             return LookupStrings.idNotFound(model, fishID);
         FishPublicationBean bean = new FishPublicationBean();
@@ -94,7 +94,7 @@ public class FishPhenotypeController {
     public String getFishPhenotypeFigsPopup(@RequestParam(value = "fishID", required = true) String fishID,
                                             @ModelAttribute("formBean") FishSearchFormBean formBean,
                                             Model model) throws Exception {
-		LOG.info("Fish phenotype figures");
+		LOG.info("MartFish phenotype figures");
 		FishSearchCriteria criteria = new FishSearchCriteria(formBean);
         if (criteria == null)
             criteria = new FishSearchCriteria();

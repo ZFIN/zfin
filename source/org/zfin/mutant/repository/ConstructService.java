@@ -1,34 +1,20 @@
 package org.zfin.mutant.repository;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.zfin.anatomy.presentation.AnatomyLabel;
-import org.zfin.antibody.Antibody;
-import org.zfin.database.BtsContainsService;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
-import org.zfin.expression.service.ExpressionService;
-import org.zfin.fish.FishSearchCriteria;
-import org.zfin.fish.FishSearchResult;
-import org.zfin.fish.presentation.Fish;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.marker.ExpressedGene;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.ExpressedGenotype;
 import org.zfin.mutant.presentation.ConstructSearchFormBean;
-import org.zfin.fish.presentation.PhenotypeSummaryCriteria;
 import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.Construct;
-import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 

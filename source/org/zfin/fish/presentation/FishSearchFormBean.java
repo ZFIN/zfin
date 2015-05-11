@@ -17,7 +17,7 @@ public class FishSearchFormBean extends PaginationBean {
 
     public static final String SHOW_ALL = "showAll";
 
-    private List<Fish> fishList;
+    private List<MartFish> fishList;
     private String geneOrFeatureName;
     // default value: show all records in regards to filter elements
     private String filter1 = SHOW_ALL;
@@ -115,7 +115,7 @@ public class FishSearchFormBean extends PaginationBean {
     }
 
 
-    public List<Fish> getFishList() {
+    public List<MartFish> getFishList() {
         return fishList;
     }
 
@@ -238,7 +238,7 @@ public class FishSearchFormBean extends PaginationBean {
         SEARCH
     }
 
-    public void setFishList(List<Fish> fishList) {
+    public void setFishList(List<MartFish> fishList) {
         this.fishList = fishList;
 
     }

@@ -20,7 +20,7 @@ import java.util.Set;
  * It does only have minimal data that is needed for the search result page,
  * and thus does not represent a full Zfin entity.
  */
-public class Fish extends ZfinEntity {
+public class MartFish extends ZfinEntity {
 
     private Genotype genotype;
     private List<String> genotypeExperimentIDs;

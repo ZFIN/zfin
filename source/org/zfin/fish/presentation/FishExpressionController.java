@@ -52,7 +52,7 @@ public class FishExpressionController {
                                            @ModelAttribute("formBean") FishSearchFormBean formBean,
                                            Model model) throws Exception {
 
-        LOG.info("Start Fish Phenotype Controller");
+        LOG.info("Start MartFish Phenotype Controller");
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
         List<FigureExpressionSummary> figureExpressionSummaryList = FishService.getExpressionSummary(fishID, geneID);
         Collections.sort(figureExpressionSummaryList);
@@ -65,7 +65,7 @@ public class FishExpressionController {
         PhenotypeSummaryCriteria summaryCriteria = FishService.getPhenotypeSummaryCriteria(fishID);
         summaryCriteria.setCriteria(criteria);
         model.addAttribute(summaryCriteria);
-        Fish fish = FishService.getFish(fishID);
+        MartFish fish = FishService.getFish(fishID);
         GenotypeBean form = new GenotypeBean();
         form.setExpressionStatements(getMutantRepository().getExpressionStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
         model.addAttribute(form);

@@ -1,10 +1,9 @@
 package org.zfin.fish.repository;
 
-import org.springframework.stereotype.Repository;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
 import org.zfin.fish.WarehouseSummary;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinFigureEntity;
 
@@ -32,7 +31,7 @@ public interface FishRepository {
      * @param fishID ID
      * @return fish
      */
-    Fish getFish(Long fishID);
+    MartFish getFish(Long fishID);
 
     /**
      * Retrieve fish by genotype experiment ids
@@ -40,7 +39,7 @@ public interface FishRepository {
      * @param genoxIDs IDs
      * @return fish
      */
-    Fish getFish(String genoxIDs);
+    MartFish getFish(String genoxIDs);
 
     /**
      * retrieve all figures for given fish id

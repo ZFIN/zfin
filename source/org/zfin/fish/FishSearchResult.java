@@ -1,6 +1,6 @@
 package org.zfin.fish;
 
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 
 import java.util.List;
 
@@ -9,15 +9,15 @@ import java.util.List;
  * along with necessary stats about the search
  */
 public class FishSearchResult {
-    private List<Fish> results;
+    private List<MartFish> results;
     private int resultsFound;
     private int start;
 
-    public List<Fish> getResults() {
+    public List<MartFish> getResults() {
         return results;
     }
 
-    public void setResults(List<Fish> results) {
+    public void setResults(List<MartFish> results) {
         this.results = results;
     }
 

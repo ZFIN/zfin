@@ -10,13 +10,13 @@ import java.util.Set;
 
 public class FishPublicationBean extends PublicationListBean {
 
-    protected Fish fish;
+    protected MartFish fish;
 
-    public Fish getFish() {
+    public MartFish getFish() {
         return fish;
     }
 
-    public void setFish(Fish fish) {
+    public void setFish(MartFish fish) {
         this.fish = fish;
     }
 

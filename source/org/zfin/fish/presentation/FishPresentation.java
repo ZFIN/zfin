@@ -16,7 +16,7 @@ public class FishPresentation extends EntityPresentation {
      * @param fish Go fish page
      * @return html for marker link
      */
-    public static String getLink(Fish fish) {
+    public static String getLink(MartFish fish) {
         if (fish.getGenotypeID() != null) {
             return getGeneralHyperLink(uri + fish.getFishID(), getName(fish)) +
                     getTomcatPopupLink(popupUri, fish.getFishID(), "More details about this fish");
@@ -28,10 +28,10 @@ public class FishPresentation extends EntityPresentation {
     /**
      * Generate the name of the link
      *
-     * @param fish Fish
+     * @param fish MartFish
      * @return name of the hyperlink.
      */
-    public static String getName(Fish fish) {
+    public static String getName(MartFish fish) {
         String stageName;
         stageName = fish.getName();
 

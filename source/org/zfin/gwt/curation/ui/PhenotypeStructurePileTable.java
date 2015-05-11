@@ -252,7 +252,7 @@ class PhenotypeStructurePileTable extends ZfinFlexTable {
     }
 
     /**
-     * Fish out the row the structure resides on the pile that matches the expressed term.
+     * MartFish out the row the structure resides on the pile that matches the expressed term.
      * If the expressed term is not found it returns -1
      *
      * @param term Expressed Term

@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.repository.MutantRepository;
@@ -20,7 +19,6 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getFishRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 
 @Controller
@@ -37,7 +35,7 @@ public class GenotypeDetailController {
         GenotypeBean form = new GenotypeBean();
 
         if (zdbID.contains(",")) {
-            Fish fish = getFishRepository().getFish(zdbID);
+            MartFish fish = getFishRepository().getFish(zdbID);
             form.setFishName(fish.getName());
             Genotype geno = fish.getGenotype();
             Genotype genotype = mutantRepository.getGenotypeByID(geno.getZdbID());
@@ -156,13 +154,13 @@ public class GenotypeDetailController {
         form.setGenotypeStatistics(genoStat);
     }
 
-    private void retrieveSequenceTargetingReagentData(GenotypeBean form, Fish fish) {
+    private void retrieveSequenceTargetingReagentData(GenotypeBean form, MartFish fish) {
         if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
             return;
         form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 
-    private List<SequenceTargetingReagent> getSequenceTargetingReagent(Fish fish) {
+    private List<SequenceTargetingReagent> getSequenceTargetingReagent(MartFish fish) {
         return fish.getSequenceTargetingReagents();
     }
 

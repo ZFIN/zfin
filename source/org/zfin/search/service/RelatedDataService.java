@@ -40,7 +40,7 @@ public class RelatedDataService {
     @Autowired
     private SolrService solrService;
 
-    private String[] featureRelatedDataCategories = {Category.PUBLICATION.getName(), "Fish", GENOME_BROWSER};
+    private String[] featureRelatedDataCategories = {Category.PUBLICATION.getName(), "MartFish", GENOME_BROWSER};
     private String[] constructRelatedDateCategories = {"Construct Map", Category.MUTANT.getName(), Category.PUBLICATION.getName()};
     private String[] markerCloneRelatedDateCategories = {SEQUENCES, EXPRESSION, GBROWSE, Category.PUBLICATION.getName()};
     private String[] antibodyRelatedDataCategories = {EXPRESSION, Category.PUBLICATION.getName()};

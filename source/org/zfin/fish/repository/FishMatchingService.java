@@ -6,7 +6,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.fish.FishSearchCriteria;
-import org.zfin.fish.presentation.Fish;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.framework.search.SearchCriterion;
@@ -35,9 +35,9 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class FishMatchingService {
 
     private MatchingService service;
-    private Fish fish;
+    private MartFish fish;
 
-    public FishMatchingService(Fish fish) {
+    public FishMatchingService(MartFish fish) {
         this.fish = fish;
     }
 
@@ -68,7 +68,7 @@ public class FishMatchingService {
             else{
                 if (genoID==null){
                     String fishID=fish.getID();
-                    Fish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(fishID).longValue());
+                    MartFish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(fishID).longValue());
                     List<ZfinEntity> ftrEntities=fish.getFeatures();
                     for (ZfinEntity ftrEntity : ftrEntities) {
                         Feature ftr = getFeatureRepository().getFeatureByID(ftrEntity.getID());

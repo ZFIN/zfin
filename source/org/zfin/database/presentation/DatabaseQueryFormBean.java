@@ -1,17 +1,10 @@
 package org.zfin.database.presentation;
 
 
-import org.apache.commons.lang.StringUtils;
-import org.zfin.fish.presentation.Fish;
-import org.zfin.fish.presentation.SortBy;
 import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.gwt.root.dto.FeatureTypeEnum;
-import org.zfin.ontology.Term;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Form bean used for the antibody search page.

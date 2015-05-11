@@ -11,7 +11,7 @@ import java.util.Iterator;
 
 /**
  *
- * This class is used to populate elements under Fish column in figure view's tables
+ * This class is used to populate elements under MartFish column in figure view's tables
  * Previously, when fish was absent, the experiment would still show up, and we wanted to avoid that
  *
  * Notice that in expressionTable.tag, <zfin:link entity="${row.genotypeExperiment}"/> was originally
