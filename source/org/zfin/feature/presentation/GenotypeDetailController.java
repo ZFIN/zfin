@@ -163,15 +163,7 @@ public class GenotypeDetailController {
     }
 
     private List<SequenceTargetingReagent> getSequenceTargetingReagent(Fish fish) {
-        if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
-            return null;
-        Set<String> strIDs = new HashSet<>(fish.getSequenceTargetingReagents().size());
-        for (ZfinEntity str : fish.getSequenceTargetingReagents())
-            strIDs.add(str.getID());
-        List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<>(2);
-        for (String strID : strIDs)
-            sequenceTargetingReagents.add(getMutantRepository().getSequenceTargetingReagentByID(strID));
-        return sequenceTargetingReagents;
+        return fish.getSequenceTargetingReagents();
     }
 
     private void retrieveExpressionData(GenotypeBean form, Genotype genotype) {

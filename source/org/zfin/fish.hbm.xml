@@ -4,7 +4,7 @@
         "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.zfin.fish">
-    
+
     <class name="FishAnnotation" table="fish_annotation_search">
 
         <id name="ID">
