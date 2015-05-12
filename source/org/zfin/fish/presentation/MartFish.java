@@ -26,7 +26,7 @@ public class MartFish extends ZfinEntity {
     private List<String> genotypeExperimentIDs;
     private String genotypeExperimentIDsString;
     private List<ZfinEntity> features;
-    private List<SequenceTargetingReagent> sequenceTargetingReagents;
+    private List<SequenceTargetingReagent> strList;
     private List<ZfinEntity> affectedGenes;
     private List<FeatureGene> featureGenes = new ArrayList<FeatureGene>();
     private int phenotypeFigureCount;
@@ -83,27 +83,27 @@ public class MartFish extends ZfinEntity {
         this.features = features;
     }
 
-    public List<SequenceTargetingReagent> getSequenceTargetingReagents() {
+    public List<SequenceTargetingReagent> getStrList() {
             if (CollectionUtils.isEmpty(featureGenes))
             return null;
 
-        if (sequenceTargetingReagents != null)
-            return sequenceTargetingReagents;
+        if (strList != null)
+            return strList;
 
-        sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(featureGenes.size());
+        strList = new ArrayList<SequenceTargetingReagent>(featureGenes.size());
         for (FeatureGene featureGene : featureGenes) {
             if (featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO) || featureGene.getMutationTypeDisplay().equals(MutationType.TALEN) || featureGene.getMutationTypeDisplay().equals(MutationType.CRISPR)) {
                 SequenceTargetingReagent str = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(featureGene.getFeature().getID());
-                sequenceTargetingReagents.add(str);
+                strList.add(str);
 
             }
 
         }
-        return sequenceTargetingReagents;
+        return strList;
     }
 
-    public void setSequenceTargetingReagents(List<SequenceTargetingReagent> sequenceTargetingReagents) {
-        this.sequenceTargetingReagents = sequenceTargetingReagents;
+    public void setStrList(List<SequenceTargetingReagent> strList) {
+        this.strList = strList;
     }
 
     public List<ZfinEntity> getAffectedGenes() {

@@ -249,7 +249,7 @@ public class FishMatchingService {
         if (geneNameField == null || StringUtils.isEmpty(geneNameField))
             return;
         geneNameField = geneNameField.toLowerCase().trim();
-        List<SequenceTargetingReagent> sequenceTargetingReagents = fish.getSequenceTargetingReagents();
+        List<SequenceTargetingReagent> sequenceTargetingReagents = fish.getStrList();
         if (CollectionUtils.isNotEmpty(sequenceTargetingReagents)) {
             // the loop exists for the first match as this is enough!
             for (SequenceTargetingReagent sequenceTargetingReagent : sequenceTargetingReagents) {

@@ -155,13 +155,13 @@ public class GenotypeDetailController {
     }
 
     private void retrieveSequenceTargetingReagentData(GenotypeBean form, MartFish fish) {
-        if (fish.getSequenceTargetingReagents() == null || fish.getSequenceTargetingReagents().size() == 0)
+        if (fish.getStrList() == null || fish.getStrList().size() == 0)
             return;
         form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 
     private List<SequenceTargetingReagent> getSequenceTargetingReagent(MartFish fish) {
-        return fish.getSequenceTargetingReagents();
+        return fish.getStrList();
     }
 
     private void retrieveExpressionData(GenotypeBean form, Genotype genotype) {
