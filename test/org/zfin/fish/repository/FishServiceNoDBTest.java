@@ -16,6 +16,6 @@ public class FishServiceNoDBTest {
         assertNotNull(fish);
         assertEquals(2, fish.getGenotypeExperimentIDs().size());
         assertEquals("ZDB-GENOX-110211-2,ZDB-GENOX-110211-3", fish.getGenotypeExperimentIDsString());
-        assertEquals("ZDB-GENO-110210-2", fish.getGenotype().getID());
+        assertEquals("ZDB-GENO-110210-2", fish.getGenotype().getZdbID());
     }
 }
