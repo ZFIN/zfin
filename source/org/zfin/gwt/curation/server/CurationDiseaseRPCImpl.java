@@ -111,7 +111,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public List<FishDTO> createFish(String publicationID, FishDTO newFish) {
+    public List<FishDTO> createFish(String publicationID, FishDTO newFish) throws TermNotFoundException{
         HibernateUtil.createTransaction();
         try {
             Publication publication = getPublicationRepository().getPublication(publicationID);

@@ -1466,19 +1466,23 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql = "select fish from ZFish fish " +
                 "     where fish.genotype = :genotype ";
-        if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+        boolean strsAvailable = CollectionUtils.isNotEmpty(fish.getStrList());
+        if (strsAvailable) {
             int index = 0;
             for (SequenceTargetingReagent str : fish.getStrList())
                 hql += " AND :str_" + index + " member of fish.strList ";
-            hql += " AND (select count(str.id) from ZFish zfish" +
-                    " inner join zfish.strList str " +
-                    " where zfish.zdbID = fish.zdbID) = :numberOfStrs";
         }
+        hql += " AND (select count(str.id) from ZFish zfish" +
+                " inner join zfish.strList str " +
+                " where zfish.zdbID = fish.zdbID) = :numberOfStrs";
 
         Query query = session.createQuery(hql);
         query.setParameter("genotype", fish.getGenotype());
-        query.setInteger("numberOfStrs", fish.getStrList().size());
-        if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+        if (strsAvailable)
+            query.setInteger("numberOfStrs", fish.getStrList().size());
+        else
+            query.setInteger("numberOfStrs", 0);
+        if (strsAvailable) {
             int index = 0;
             for (SequenceTargetingReagent str : fish.getStrList())
                 query.setParameter("str_" + index, str.getZdbID());

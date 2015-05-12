@@ -46,7 +46,7 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<RelatedEntityDTO> getStrList(String publicationID);
 
-    List<FishDTO> createFish(String publicationID, FishDTO newFish);
+    List<FishDTO> createFish(String publicationID, FishDTO newFish) throws TermNotFoundException;
 
     List<FishDTO> getFishList(String publicationID);
 

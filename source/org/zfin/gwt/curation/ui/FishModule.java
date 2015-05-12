@@ -9,7 +9,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
@@ -89,11 +88,16 @@ public class FishModule implements HandlesError, EntryPoint {
             @Override
             public void onChange(ChangeEvent changeEvent) {
                 int index = genotypeSelectionBox.getSelectedIndex();
+                if (genotypeSelectionBox.getValue(index).startsWith("---")) {
+                    errorLabel.setText("Not a valid entry");
+                    return;
+                }
+
                 //Window.alert(""+index);
                 List<GenotypeDTO> dtoList = genotypeListCallBack.getDtoList();
                 newGenotype = dtoList.get(index);
                 createFishButton.setEnabled(true);
-                createFishDisplayName();
+                updateConstructionTable();
                 unsetErrorMessage();
             }
         });
@@ -102,10 +106,14 @@ public class FishModule implements HandlesError, EntryPoint {
             public void onClick(ClickEvent clickEvent) {
                 int index = strSelectionBox.getSelectedIndex();
                 List<RelatedEntityDTO> dtoList = strListCallBack.getDtoList();
-                RelatedEntityDTO e = dtoList.get(index);
-                newStrList.add(e);
-                createFishDisplayName();
-                unsetErrorMessage();
+                RelatedEntityDTO str = dtoList.get(index);
+                if (!newStrList.contains(str)) {
+                    newStrList.add(str);
+                    updateConstructionTable();
+                    unsetErrorMessage();
+                } else {
+                    errorLabel.setText("STR already added");
+                }
             }
         });
         createFishButton.addClickHandler(new ClickHandler() {
@@ -132,7 +140,7 @@ public class FishModule implements HandlesError, EntryPoint {
 
             @Override
             public void clearError() {
-                    fireEventSuccess();
+                fireEventSuccess();
             }
 
             @Override
@@ -171,6 +179,9 @@ public class FishModule implements HandlesError, EntryPoint {
 
     private void resetUI() {
         newGenotype = null;
+        newStrList.clear();
+        genotypeSelectionBox.setSelectedIndex(0);
+        strSelectionBox.setSelectedIndex(0);
         removeConstructionRow();
         unsetErrorMessage();
     }
@@ -180,19 +191,28 @@ public class FishModule implements HandlesError, EntryPoint {
         errorLabel.setText("");
     }
 
-    private void createFishDisplayName() {
-        updateConstructionTable();
-    }
-
-    private String getStrName() {
-        String name = "";
+    private Widget getStrPanel() {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setSpacing(5);
         if (newStrList.size() > 0) {
-            for (RelatedEntityDTO str : newStrList) {
-                name += str.getName() + " + ";
+            int index = 0;
+            for (final RelatedEntityDTO str : newStrList) {
+                panel.add(new InlineHTML(str.getName()));
+                Anchor removeLink = new Anchor(" (X)");
+                removeLink.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        newStrList.remove(str);
+                        updateConstructionTable();
+                    }
+                });
+                panel.add(removeLink);
+                if (index < newStrList.size() - 1)
+                    panel.add(new InlineHTML(" + "));
+                index++;
             }
-            name = name.substring(0, name.length() - 3);
         }
-        return name;
+        return panel;
     }
 
     private CurationDiseaseRPCAsync diseaseCurationRPCAsync = CurationDiseaseRPC.App.getInstance();
@@ -222,15 +242,11 @@ public class FishModule implements HandlesError, EntryPoint {
     }
 
     private void updateConstructionTable() {
-        if (newGenotype != null)
-            constructionTable.setText(1, 0, newGenotype.getName());
-        else {
-            constructionTable.setText(1, 0, "");
-            constructionTable.setText(1, 1, "");
-            return;
-        }
+        if (newGenotype == null)
+            newGenotype = genotypeListCallBack.getDtoList().get(0);
+        constructionTable.setText(1, 0, newGenotype.getName());
         if (newStrList != null) {
-            constructionTable.setText(1, 1, getStrName());
+            constructionTable.setWidget(1, 1, getStrPanel());
         }
     }
 
