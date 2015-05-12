@@ -130,6 +130,7 @@ public class ActiveData implements ZdbID {
         EXTNOTE,
         FDBCONT,
         FHIST,
+        FISH(DeleteFishRule.class),
         FIG,
         FMREL,
         FOSMID,

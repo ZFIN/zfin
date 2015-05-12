@@ -1,28 +1,27 @@
 package org.zfin.gwt.curation.server;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
-import org.zfin.gwt.root.dto.GenotypeDTO;
-import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.dto.TermNotFoundException;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.ZFish;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 
-/**
- * Created by cmpich on 3/27/15.
- */
 public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements CurationDiseaseRPC {
 
     @Override
@@ -99,4 +98,48 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     public List<DiseaseModelDTO> addHumanDiseaseModel(DiseaseModelDTO diseaseModelDTO, String publicationID) throws TermNotFoundException {
         return getHumanDiseaseModelList(publicationID);
     }
+
+    @Override
+    public List<RelatedEntityDTO> getStrList(String publicationID) {
+        List<SequenceTargetingReagent> reagentList = getMutantRepository().getStrList(publicationID);
+        if (reagentList == null)
+            return null;
+        List<RelatedEntityDTO> dtoList = new ArrayList<>(reagentList.size());
+        for (SequenceTargetingReagent str : reagentList)
+            dtoList.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
+        return dtoList;
+    }
+
+    @Override
+    public List<FishDTO> createFish(String publicationID, FishDTO newFish) {
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            ZFish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
+            PublicationAttribution attrib = new PublicationAttribution();
+            attrib.setPublication(publication);
+            attrib.setDataZdbID(fish.getZdbID());
+            attrib.setSourceType(RecordAttribution.SourceType.STANDARD);
+            Boolean fishExists = getMutantRepository().existsAttribution(attrib);
+            if (!fishExists)
+                getMutantRepository().createFish(fish, publication);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+        }
+
+        return getFishList(publicationID);
+    }
+
+    @Override
+    public List<FishDTO> getFishList(String publicationID) {
+        List<ZFish> fishList = getMutantRepository().getFishList(publicationID);
+        if (CollectionUtils.isEmpty(fishList))
+            return null;
+        List<FishDTO> fishDtoList = new ArrayList<>(fishList.size());
+        for (ZFish fish : fishList)
+            fishDtoList.add(DTOConversionService.convertToFishDtoFromFish(fish));
+        return fishDtoList;
+    }
+
 }

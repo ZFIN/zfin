@@ -6,7 +6,6 @@ import org.zfin.fish.FishAnnotation;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityNotes;
 import org.zfin.infrastructure.EntityZdbID;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.profile.GenotypeSupplier;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;

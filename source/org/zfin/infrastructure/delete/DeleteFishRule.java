@@ -1,0 +1,42 @@
+package org.zfin.infrastructure.delete;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionResult;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.ZFish;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
+
+import java.util.*;
+
+public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEntityRule {
+
+    public DeleteFishRule(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
+    @Override
+    public List<DeleteValidationReport> validate() {
+        ZFish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
+        entity = fish;
+
+        return validationReportList;
+    }
+
+    @Override
+    public void prepareDelete() {
+        entity = RepositoryFactory.getMutantRepository().getFish(zdbID);
+    }
+
+    @Override
+    public Publication getPublication() {
+        ZFish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
+        SortedSet<Publication> genoPublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForGenotype(fish.getGenotype());
+        // FB case 11678, provide link back to pub.
+        if (CollectionUtils.isNotEmpty(genoPublications) && genoPublications.size() == 1)
+            return genoPublications.first();
+        return null;
+    }
+}

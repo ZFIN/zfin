@@ -68,6 +68,13 @@ public enum CurationModuleType {
             new HumanDiseaseModule(publicationID);
             return null;
         }
+    },
+    FISH_TAB {
+        @Override
+        public ConstructionZone initializeModule(String publicationID) {
+            new FishModule(publicationID);
+            return null;
+        }
     },;
 
     public static CurationModuleType getType(String type) {

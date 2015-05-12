@@ -7,12 +7,12 @@ import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;
 
-public class RetrieveGenotypeListCallBack<T extends RelatedEntityDTO> extends ZfinAsyncCallback<List<T>> {
+public class RetrieveRelatedEntityDTOListCallBack<T extends RelatedEntityDTO> extends ZfinAsyncCallback<List<T>> {
 
     private ListBox entityList;
     private List<T> dtoList;
 
-    public RetrieveGenotypeListCallBack(ListBox listBox, String errorMessage, ErrorHandler errorLabel) {
+    public RetrieveRelatedEntityDTOListCallBack(ListBox listBox, String errorMessage, ErrorHandler errorLabel) {
         super(errorMessage, errorLabel);
         this.entityList = listBox;
     }

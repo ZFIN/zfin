@@ -18,6 +18,7 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
     private String message;
     private ErrorHandler errorHandler;
     private RootPanel loadingPanel;
+    private Widget loadingImage;
 
     private static final String LOGIN_REQUIRED = "login required";
 
@@ -39,7 +40,18 @@ public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
         }
     }
 
+    public ZfinAsyncCallback(String errorMessage, ErrorHandler errorLabel, Widget loadingImage) {
+        this.message = errorMessage;
+        this.errorHandler = errorLabel;
+        this.loadingImage = loadingImage;
+        if (loadingPanel != null) {
+            this.loadingImage.setVisible(true);
+        }
+    }
+
     private Widget getImageWidget() {
+        if(loadingImage != null)
+            return loadingImage;
         int numOfWidgets = loadingPanel.getWidgetCount();
         if (numOfWidgets == 0)
             return null;

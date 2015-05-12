@@ -7,6 +7,7 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -73,6 +74,7 @@ public interface MutantRepository {
      * @return genotype
      */
     Genotype getGenotypeByHandle(String genotypeHandle);
+
     Genotype getGenotypeByName(String genotypeName);
 
 
@@ -386,5 +388,40 @@ public interface MutantRepository {
 
     List<GenotypeFigure> getGenotypeFiguresBySTR(SequenceTargetingReagent str);
 
+    /**
+     * Retrieve list of STRs that are attributed to a pub
+     *
+     * @param publicationID
+     * @return
+     */
+    List<SequenceTargetingReagent> getStrList(String publicationID);
+
+    void createFish(ZFish fish, Publication publication);
+
+    public boolean existsAttribution(PublicationAttribution attribution);
+
+    /**
+     * Retrieve all fish attributed to a given pub
+     *
+     * @param publicationID
+     * @return
+     */
+    List<ZFish> getFishList(String publicationID);
+
+    /**
+     * Retrieve Fish by ID
+     *
+     * @param fishID
+     * @return
+     */
+    ZFish getFish(String fishID);
+
+    /**
+     * Check if a fish is already in the database.
+     *
+     * @param fish
+     * @return
+     */
+    ZFish getFishByGenoStr(ZFish fish);
 }
 

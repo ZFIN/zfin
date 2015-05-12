@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StageRangeIntersection;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
@@ -28,7 +29,7 @@ public interface CurationExperimentRPCAsync {
      * @param publicationID pub ID
      * @param async         callback
      */
-    void getGenotypes(String publicationID, AsyncCallback<List<FishDTO>> async);
+    void getGenotypes(String publicationID, AsyncCallback<List<GenotypeDTO>> async);
 
     /**
      * Retrieve antibodies that are attributed to a given publication

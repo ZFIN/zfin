@@ -42,6 +42,9 @@ import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+
 //import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -352,8 +355,8 @@ public class DTOConversionService {
     public static MarkerDTO convertToMarkerDTO(Marker marker) {
         MarkerDTO markerDTO = new MarkerDTO();
         markerDTO.setName(marker.getName());
-        if (marker.getAbbreviation()!=null){
-        markerDTO.setName(marker.getAbbreviation());
+        if (marker.getAbbreviation() != null) {
+            markerDTO.setName(marker.getAbbreviation());
         }
         markerDTO.setCompareString(marker.getAbbreviationOrder());
         markerDTO.setZdbID(marker.getZdbID());
@@ -361,13 +364,14 @@ public class DTOConversionService {
         markerDTO.setLink(MarkerPresentation.getLink(marker));
         return markerDTO;
     }
+
     public static ConstructDTO convertToConstructDTO(ConstructCuration construct) {
         ConstructDTO constructDTO = new ConstructDTO();
 
-        Construct constructDisp=new Construct();
+        Construct constructDisp = new Construct();
         constructDTO.setName(construct.getName());
 
-            constructDTO.setName(construct.getName());
+        constructDTO.setName(construct.getName());
 
 
         constructDTO.setZdbID(construct.getZdbID());
@@ -383,11 +387,27 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
 
-        List<PublicationDTO> associatedPublications = new ArrayList<PublicationDTO>();
+        List<PublicationDTO> associatedPublications = new ArrayList<>();
         for (int i = 0; i < genotype.getAssociatedPublications().size(); i++) {
             associatedPublications.add(DTOConversionService.convertToPublicationDTO(genotype.getAssociatedPublications().get(i)));
         }
         genotypeDTO.setAssociatedPublications(associatedPublications);
+        return genotypeDTO;
+    }
+
+    public static GenotypeDTO convertToGenotypeDTO(Genotype genotype, boolean includePubInfo) {
+        GenotypeDTO genotypeDTO = new GenotypeDTO();
+        genotypeDTO.setName(genotype.getHandle());
+        genotypeDTO.setZdbID(genotype.getZdbID());
+        genotypeDTO.setHandle(genotype.getHandle());
+
+        if (includePubInfo) {
+            List<PublicationDTO> associatedPublications = new ArrayList<>();
+            for (int i = 0; i < genotype.getAssociatedPublications().size(); i++) {
+                associatedPublications.add(DTOConversionService.convertToPublicationDTO(genotype.getAssociatedPublications().get(i)));
+            }
+            genotypeDTO.setAssociatedPublications(associatedPublications);
+        }
         return genotypeDTO;
     }
 
@@ -1042,6 +1062,7 @@ public class DTOConversionService {
 
         return markerRelationshipDTO;
     }
+
     public static ConstructRelationshipDTO convertToConstructRelationshipDTO(ConstructRelationship constructRelationship) {
         ConstructRelationshipDTO ConstructRelationshipDTO = new ConstructRelationshipDTO();
 
@@ -1052,6 +1073,7 @@ public class DTOConversionService {
 
         return ConstructRelationshipDTO;
     }
+
     public static LabDTO convertToLabDTO(Lab lab) {
         LabDTO labDTO = new LabDTO();
         labDTO.setZdbID(lab.getZdbID());
@@ -1191,5 +1213,57 @@ public class DTOConversionService {
             return null;
         }
         return entity;
+    }
+
+    public static RelatedEntityDTO convertStrToRelatedEntityDTO(SequenceTargetingReagent str) {
+        RelatedEntityDTO entity = new RelatedEntityDTO();
+        entity.setName(str.getName());
+        entity.setZdbID(str.getZdbID());
+        return entity;
+    }
+
+    public static ZFish convertToFishFromFishDTO(FishDTO newFish) {
+        ZFish fish = new ZFish();
+        if (newFish.getZdbID() != null)
+            fish.setZdbID(newFish.getZdbID());
+        fish.setGenotype(convertToGenotypeFromGenotypeDTO(newFish.getGenotypeDTO()));
+        fish.setName(fish.getGenotype().getName());
+        fish.setHandle(fish.getGenotype().getHandle());
+        String strName = "";
+        if (CollectionUtils.isNotEmpty(newFish.getStrList())) {
+            List<SequenceTargetingReagent> strList = new ArrayList<>(newFish.getStrList().size());
+            for (RelatedEntityDTO dto : newFish.getStrList()) {
+                SequenceTargetingReagent str = getMarkerRepository().getSequenceTargetingReagent(dto.getZdbID());
+                strList.add(str);
+                strName += str.getName() + "+";
+            }
+            strName = strName.substring(0, strName.length() - 1);
+            fish.setStrList(strList);
+            fish.setHandle(fish.getGenotype().getHandle() + "+" + strName);
+            fish.setName(fish.getGenotype().getName() + "+" + strName);
+        }
+
+        return fish;
+    }
+
+    public static Genotype convertToGenotypeFromGenotypeDTO(GenotypeDTO genotypeDTO) {
+        if (genotypeDTO.getZdbID() != null)
+            return getMutantRepository().getGenotypeByID(genotypeDTO.getZdbID());
+        Genotype genotype = new Genotype();
+        genotype.setName(genotypeDTO.getName());
+        return genotype;
+    }
+
+    public static FishDTO convertToFishDtoFromFish(ZFish fish) {
+        FishDTO dto = new FishDTO();
+        dto.setZdbID(fish.getZdbID());
+        dto.setName(fish.getName());
+        dto.setHandle(fish.getHandle());
+        dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
+        List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
+        for (SequenceTargetingReagent str : fish.getStrList())
+            strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
+        dto.setStrList(strs);
+        return dto;
     }
 }

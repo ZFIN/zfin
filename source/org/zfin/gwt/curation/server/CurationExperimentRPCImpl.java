@@ -27,9 +27,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.*;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.*;
@@ -43,6 +41,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
@@ -183,25 +182,25 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return assayDtos;
     }
 
-    public List<FishDTO> getGenotypes(String publicationID) {
-        List<FishDTO> genotypes = new ArrayList<FishDTO>();
+    public List<GenotypeDTO> getGenotypes(String publicationID) {
+        List<GenotypeDTO> genotypes = new ArrayList<>();
         Genotype genotype = pubRepository.getGenotypeByHandle("WT");
-        FishDTO fish = new FishDTO();
+        GenotypeDTO fish = new GenotypeDTO();
         fish.setZdbID(genotype.getZdbID());
         fish.setName(genotype.getHandle());
         genotypes.add(fish);
-        fish = new FishDTO();
+        fish = new GenotypeDTO();
         fish.setZdbID(null);
         fish.setName("---------");
         genotypes.add(fish);
         List<Genotype> genos = pubRepository.getNonWTGenotypesByPublication(publicationID);
         for (Genotype geno : genos) {
-            FishDTO fishy = new FishDTO();
+            GenotypeDTO fishy = new GenotypeDTO();
             fishy.setZdbID(geno.getZdbID());
             fishy.setName(geno.getHandle());
             genotypes.add(fishy);
         }
-        fish = new FishDTO();
+        fish = new GenotypeDTO();
         fish.setZdbID(null);
         fish.setName("---------");
         genotypes.add(fish);
@@ -210,7 +209,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             // only add non-WT wildtypes as WT is placed at the top
             if (wiltype.getHandle().equals(Genotype.WT))
                 continue;
-            FishDTO fishy = new FishDTO();
+            GenotypeDTO fishy = new GenotypeDTO();
             fishy.setZdbID(wiltype.getZdbID());
             fishy.setName(wiltype.getNickname());
             genotypes.add(fishy);

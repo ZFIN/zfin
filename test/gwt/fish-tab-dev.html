@@ -35,20 +35,36 @@
     <script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
 
 </head>
-<body>
+<script type="text/javascript" language="javascript"
+        src="org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+<h1> Fish Tab</h1>
 
-<table>
-    <tr>
-        <td><a href="human-disease-tab-dev.html">Human Disease Module</a></td>
-    </tr>
-    <tr>
-        <td><a href="pheno-tab-dev.html">PHENO Module</a></td>
-    </tr>
-    <tr>
-        <td><a href="fish-tab-dev.html">Fish Module</a></td>
-    </tr>
-</table>
+<div id="show-hide-all-sections"></div>
 
-</body>
+<div class="error"> Please use only for developmental purposes as this will make changes to the database!!!
+</div>
+<p/>
 
-</html>
+<div id="title">
+    Publication: Fashena et al., 1999  &nbsp; ZDB-PUB-990507-16
+</div>
+<form method="GET">
+    Publication ID: <label>
+    <input name="publicationID" value=""/>
+</label>
+    &nbsp;<input type="submit" value="Submit"/>
+</form>
+
+<div id="directAttributionName"></div>
+
+<div id="fishTab"></div>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID: "ZDB-PUB-990507-16",
+        moduleType: "FISH_TAB",
+        debug: "false"
+    };
+    var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16";
+</script>
+

@@ -29,7 +29,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private ListBoxWrapper removeListBox = new ListBoxWrapper(false);
     private HTML messageBox = new HTML("");
     private boolean working = false;
-    private HashMap<String, RelatedEntityDTO> relatedEntityDTOs = new HashMap<String, RelatedEntityDTO>(); // entities in the Remove Attr drop-down list
+    private HashMap<String, RelatedEntityDTO> relatedEntityDTOs = new HashMap<>(); // entities in the Remove Attr drop-down list
 
     public static enum RemoveHeader {
         MARKER,

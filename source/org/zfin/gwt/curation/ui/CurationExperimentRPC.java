@@ -5,6 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.StageRangeIntersectionService;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface CurationExperimentRPC extends RemoteService {
      *
      * @param publicationID pub ID
      */
-    List<FishDTO> getGenotypes(String publicationID);
+    List<GenotypeDTO> getGenotypes(String publicationID);
 
     /**
      * Retrieve antibodies that are attributed to a given publication

@@ -91,6 +91,25 @@
 
     </class>
 
+    <class name="org.zfin.mutant.ZFish" table="fish">
+        <id name="zdbID" type="string">
+            <column name="fish_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">FISH</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <property name="name" column="fish_name"/>
+        <property name="handle" column="fish_handle"/>
+        <many-to-one name="genotype" column="fish_genotype_zdb_id" not-null="true"/>
+
+        <bag name="strList" lazy="true" table="fish_str" access="field">
+            <key column="fishstr_fish_zdb_id"/>
+            <many-to-many class="SequenceTargetingReagent" column="fishstr_str_zdb_id"/>
+        </bag>
+    </class>
+
     <class name="org.zfin.mutant.GoEvidenceCode" table="go_evidence_code" mutable="false">
         <id name="code" column="goev_code" type="string"/>
         <property name="name" column="goev_name"/>

@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
@@ -602,16 +603,16 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
-                " select count(*) from marker_go_term_evidence  ev  " +
-                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
-                " where " +
-                " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
-                " and " +
-                " inf.infgrmem_inferred_from=:zdbID " +
-                " ")
-                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
-                .setString("pubZdbID", publicationZdbID)
-                .uniqueResult().toString()
+                        " select count(*) from marker_go_term_evidence  ev  " +
+                        " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                        " where " +
+                        " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
+                        " and " +
+                        " inf.infgrmem_inferred_from=:zdbID " +
+                        " ")
+                        .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
+                        .setString("pubZdbID", publicationZdbID)
+                        .uniqueResult().toString()
         );
     }
 
@@ -1000,14 +1001,13 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<Feature> getAllelesForMarker(String zdbID, String type){
+    public List<Feature> getAllelesForMarker(String zdbID, String type) {
         String hql = "select distinct " +
                 "feat from FeatureMarkerRelationship fmrel, Feature feat " +
-                "where fmrel.marker.zdbID= :zdbID "+
+                "where fmrel.marker.zdbID= :zdbID " +
                 "and fmrel.type=:type " +
                 "and fmrel.feature = feat " +
-                "order by feat.abbreviationOrder"
-                ;
+                "order by feat.abbreviationOrder";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("zdbID", zdbID);
@@ -1416,6 +1416,98 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("zdbID", str.getZdbID());
 
         return (List<GenotypeFigure>) query.list();
+    }
+
+    @Override
+    public List<SequenceTargetingReagent> getStrList(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select str from SequenceTargetingReagent str , PublicationAttribution attrib " +
+                "     where attrib.publication.zdbID = :publicationID AND " +
+                "attrib.dataZdbID = str.zdbID ";
+        Query query = session.createQuery(hql);
+        query.setParameter("publicationID", publicationID);
+
+        return (List<SequenceTargetingReagent>) query.list();
+    }
+
+    @Override
+    public void createFish(ZFish fish, Publication publication) {
+        ZFish existingFish = getFishByGenoStr(fish);
+        if (existingFish != null)
+            fish = existingFish;
+        else
+            HibernateUtil.currentSession().save(fish);
+        PublicationAttribution attribution = new PublicationAttribution();
+        attribution.setPublication(publication);
+        attribution.setDataZdbID(fish.getZdbID());
+        attribution.setSourceType(RecordAttribution.SourceType.STANDARD);
+
+        if (!existsAttribution(attribution))
+            HibernateUtil.currentSession().save(attribution);
+    }
+
+    public boolean existsAttribution(PublicationAttribution attribution) {
+        String hql = "select attribution from PublicationAttribution as attribution where " +
+                "attribution.publication = :publication AND " +
+                "attribution.dataZdbID = :dataZdbID AND " +
+                "attribution.sourceType = :type";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("publication", attribution.getPublication());
+        query.setParameter("dataZdbID", attribution.getDataZdbID());
+        query.setParameter("type", attribution.getSourceType());
+        List<PublicationAttribution> list = query.list();
+        return CollectionUtils.isNotEmpty(list);
+    }
+
+    @Override
+    public ZFish getFishByGenoStr(ZFish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select fish from ZFish fish " +
+                "     where fish.genotype = :genotype ";
+        if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+            int index = 0;
+            for (SequenceTargetingReagent str : fish.getStrList())
+                hql += " AND :str_" + index + " member of fish.strList ";
+            hql += " AND (select count(str.id) from ZFish zfish" +
+                    " inner join zfish.strList str " +
+                    " where zfish.zdbID = fish.zdbID) = :numberOfStrs";
+        }
+
+        Query query = session.createQuery(hql);
+        query.setParameter("genotype", fish.getGenotype());
+        query.setInteger("numberOfStrs", fish.getStrList().size());
+        if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+            int index = 0;
+            for (SequenceTargetingReagent str : fish.getStrList())
+                query.setParameter("str_" + index, str.getZdbID());
+        }
+        List<ZFish> fishList = query.list();
+        session.flush();
+        if (CollectionUtils.isEmpty(fishList))
+            return null;
+        else if (fishList.size() == 1)
+            return fishList.get(0);
+        throw new IllegalStateException("Found more than one Fish " + fish);
+
+    }
+
+    @Override
+    public List<ZFish> getFishList(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select fish from ZFish fish, PublicationAttribution attrib " +
+                "     where attrib.publication.zdbID = :publicationID AND " +
+                "attrib.dataZdbID = fish.zdbID ";
+        Query query = session.createQuery(hql);
+        query.setParameter("publicationID", publicationID);
+        return (List<ZFish>) query.list();
+    }
+
+    @Override
+    public ZFish getFish(String fishID) {
+        return (ZFish) HibernateUtil.currentSession().get(ZFish.class, fishID);
     }
 
 }
