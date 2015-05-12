@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -9,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
@@ -157,6 +159,13 @@ public class FishModule implements HandlesError, EntryPoint {
         initConstructionTable();
         initFishListTable();
         retrieveAllValues();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                updateConstructionTable();
+            }
+        });
+
     }
 
     private void showLoadingImage(boolean showLoadingImage) {
@@ -165,7 +174,7 @@ public class FishModule implements HandlesError, EntryPoint {
 
     private boolean validate(FishDTO newFish) {
         // check if the fish already exists
-        if (fishList.size() > 0)
+        if (fishList != null && fishList.size() > 0)
             return !fishList.contains(newFish);
         return true;
     }
@@ -173,7 +182,8 @@ public class FishModule implements HandlesError, EntryPoint {
     private FishDTO getNewFish() {
         FishDTO dto = new FishDTO();
         dto.setGenotypeDTO(newGenotype);
-        dto.setStrList(newStrList);
+        if (newStrList != null)
+            dto.setStrList(newStrList);
         return dto;
     }
 
@@ -242,8 +252,14 @@ public class FishModule implements HandlesError, EntryPoint {
     }
 
     private void updateConstructionTable() {
-        if (newGenotype == null)
-            newGenotype = genotypeListCallBack.getDtoList().get(0);
+        if (newGenotype == null) {
+            if (genotypeListCallBack != null) {
+                if (genotypeListCallBack.getDtoList() != null)
+                    newGenotype = genotypeListCallBack.getDtoList().get(0);
+                else return;
+            } else
+                return;
+        }
         constructionTable.setText(1, 0, newGenotype.getName());
         if (newStrList != null) {
             constructionTable.setWidget(1, 1, getStrPanel());
