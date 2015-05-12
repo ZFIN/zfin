@@ -39,7 +39,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     private List<HandlesError> handlesErrorListeners = new ArrayList<>();
 
     @UiField
-    FlexTable diseaseTable;
+    ZfinFlexTable diseaseTable;
 
     @UiField
     Label diseaseTableContent;
@@ -194,12 +194,16 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         initReportedDiseaseTable();
         diseaseList.clear();
 
+        int groupIndex = 1;
+        int rowIndex = 1;
         for (TermDTO term : termList) {
             diseaseTable.setText(index, 0, term.getTermName());
             Button deleteButton = new Button("X");
             deleteButton.addClickHandler(new HumanDiseaseDeleteClickListener(term));
             diseaseTable.setWidget(index++, 1, deleteButton);
             diseaseList.addItem(term.getTermName(), term.getZdbID());
+            groupIndex =diseaseTable.setRowStyle(rowIndex++, null, term.getZdbID(), groupIndex);
+
         }
     }
 

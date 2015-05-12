@@ -16,7 +16,7 @@
                 <g:Label text="Diseases Reported: " styleName="bold"/>
                 <g:Label text="None" ui:field="diseaseTableContent" styleName="summary-title"/>
             </g:HorizontalPanel>
-            <g:FlexTable ui:field='diseaseTable' styleName="searchresults" cellSpacing='0' cellPadding='5'/>
+            <zfin:ZfinFlexTable ui:field='diseaseTable' styleName="searchresults groupstripes" cellSpacing='10' cellPadding='10' numberOfColumns="2"/>
         </g:VerticalPanel>
         <g:HTMLPanel>
             <hr/>
