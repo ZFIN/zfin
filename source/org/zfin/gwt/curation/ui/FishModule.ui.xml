@@ -10,7 +10,8 @@
             <g:HorizontalPanel>
                 <g:Label text="FISH CONSTRUCTION:" styleName="bold"/>
             </g:HorizontalPanel>
-            <g:FlexTable ui:field="constructionTable"/>
+            <zfin:ZfinFlexTable ui:field="constructionTable" numberOfColumns="2" styleName="searchresults"
+                                cellSpacing="5" cellPadding="5" />
             <g:HorizontalPanel spacing="10">
                 <g:Button text="Create Fish" ui:field="createFishButton"/>
                 <zfin:SimpleErrorElement ui:field="errorLabel"/>
@@ -20,7 +21,8 @@
                 <g:Label text="FISH LIST" styleName="summaryTitle"/>
                 <g:Label ui:field="noneDefined" text="None defined" styleName="no-data-tag"/>
             </g:HorizontalPanel>
-            <g:FlexTable ui:field="fishListTable"/>
+            <zfin:ZfinFlexTable ui:field="fishListTable" numberOfColumns="3" styleName="searchresults groupstripes"
+                                cellSpacing="5" cellPadding="5" />
         </g:VerticalPanel>
     </g:FlowPanel>
 </ui:UiBinder>

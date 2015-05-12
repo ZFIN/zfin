@@ -2,6 +2,7 @@ package org.zfin.gwt.root.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 
@@ -11,7 +12,7 @@ import com.google.gwt.user.client.ui.*;
  * 2) Hyperlink logic for 'Clear All' check marks
  * 3) Hyperlink logic to toggle between 'Show checked records only' and 'Show All Records'
  */
-public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
+public class ZfinFlexTable extends FlexTable implements ClickHandler {
 
     public static final String CLEAR_ALL = "Clear";
 
@@ -25,13 +26,18 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
 
     private UncheckAllExperimentsHandler uncheckAllExperimentsHandler = null;
 
-    public ZfinFlexTable(int numberOfColumns, int selectionCheckBoxColumn) {
+    public @UiConstructor
+    ZfinFlexTable(int numberOfColumns) {
         super();
         this.numberOfColumns = numberOfColumns;
+        addClickHandler(this);
+    }
+
+    public ZfinFlexTable(int numberOfColumns, int selectionCheckBoxColumn) {
+        this(numberOfColumns);
         this.selectionCheckBoxColumn = selectionCheckBoxColumn;
         if (selectionCheckBoxColumn >= 0)
             uncheckAllExperimentsHandler = new UncheckAllExperimentsHandler();
-        addClickHandler(this);
     }
 
     public ZfinFlexTable(int numberOfColumns, int[] selectionCheckBoxColumns) {
@@ -60,7 +66,7 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
     }
 
     // Returns the group index
-    protected int setRowStyle(int rowIndex, String currentID, String previousID, int groupIndex) {
+    public int setRowStyle(int rowIndex, String currentID, String previousID, int groupIndex) {
         StringBuilder sb = new StringBuilder(50);
         // check even/odd row
         if (rowIndex % 2 == 0)
@@ -284,6 +290,11 @@ public abstract class ZfinFlexTable extends FlexTable implements ClickHandler {
 
     protected void resetShowAllRecords() {
 
+
+    }
+
+    @Override
+    public void onClick(ClickEvent clickEvent) {
 
     }
 

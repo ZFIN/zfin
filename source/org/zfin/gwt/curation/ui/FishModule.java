@@ -7,18 +7,16 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
-import org.zfin.gwt.root.ui.ErrorHandler;
-import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.SimpleErrorElement;
-import org.zfin.gwt.root.ui.ZfinAsyncCallback;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,10 +60,15 @@ public class FishModule implements HandlesError, EntryPoint {
     Label noneDefined;
 
     @UiField
-    FlexTable constructionTable;
+    ZfinFlexTable constructionTable;
 
     @UiField
-    FlexTable fishListTable;
+    ZfinFlexTable fishListTable;
+
+/*
+    @UiField
+    TermInfoComposite termInfoBox;
+*/
 
     public FishModule(String publicationID) {
         this.publicationID = publicationID;
@@ -83,7 +86,6 @@ public class FishModule implements HandlesError, EntryPoint {
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
         errorLabel.setStyleName("error");
-        createFishButton.setEnabled(false);
         genotypeListCallBack = new RetrieveGenotypeListCallBack<>(genotypeSelectionBox, "Genotypes", null);
         strListCallBack = new RetrieveRelatedEntityListCallBack(strSelectionBox, "STRs", null);
         genotypeSelectionBox.addChangeHandler(new ChangeHandler() {
@@ -98,7 +100,6 @@ public class FishModule implements HandlesError, EntryPoint {
                 //Window.alert(""+index);
                 List<GenotypeDTO> dtoList = genotypeListCallBack.getDtoList();
                 newGenotype = dtoList.get(index);
-                createFishButton.setEnabled(true);
                 updateConstructionTable();
                 unsetErrorMessage();
             }
@@ -264,6 +265,7 @@ public class FishModule implements HandlesError, EntryPoint {
         if (newStrList != null) {
             constructionTable.setWidget(1, 1, getStrPanel());
         }
+        constructionTable.setRowStyle(1, null, newGenotype.getZdbID(), 0);
     }
 
     private void removeConstructionRow() {
@@ -301,14 +303,18 @@ public class FishModule implements HandlesError, EntryPoint {
         initFishListTable();
         int index = 1;
 
+        int groupIndex = 0;
+        int rowIndex = 1;
         for (FishDTO fish : fishList) {
             int col = 0;
             fishListTable.setText(index, col++, fish.getHandle());
-            Anchor html = new Anchor(fish.getName(), "/" + fish.getZdbID());
+            Anchor html = new Anchor(SafeHtmlUtils.fromTrustedString(fish.getName()), "/" + fish.getZdbID());
             fishListTable.setWidget(index, col++, html);
             Anchor anchor = new Anchor("X", "/action/infrastructure/deleteRecord/" + fish.getZdbID());
             fishListTable.getCellFormatter().setHorizontalAlignment(index, col, HasHorizontalAlignment.ALIGN_CENTER);
             fishListTable.setWidget(index++, col++, anchor);
+            groupIndex = fishListTable.setRowStyle(rowIndex++, null, fish.getZdbID(), groupIndex);
+
         }
     }
 
