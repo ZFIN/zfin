@@ -411,7 +411,6 @@ public class MutantRepositoryTest {
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(strID));
         fish.setStrList(strList);
         ZFish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
-        assertNotNull(zFish);
     }
 
     @Test
@@ -426,7 +425,6 @@ public class MutantRepositoryTest {
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(str1ID));
         fish.setStrList(strList);
         ZFish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
-        assertNotNull(zFish);
     }
 
 }
