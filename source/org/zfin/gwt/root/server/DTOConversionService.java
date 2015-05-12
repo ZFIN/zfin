@@ -20,7 +20,6 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -1222,8 +1221,8 @@ public class DTOConversionService {
         return entity;
     }
 
-    public static ZFish convertToFishFromFishDTO(FishDTO newFish) {
-        ZFish fish = new ZFish();
+    public static Fish convertToFishFromFishDTO(FishDTO newFish) {
+        Fish fish = new Fish();
         if (newFish.getZdbID() != null)
             fish.setZdbID(newFish.getZdbID());
         fish.setGenotype(convertToGenotypeFromGenotypeDTO(newFish.getGenotypeDTO()));
@@ -1254,7 +1253,7 @@ public class DTOConversionService {
         return genotype;
     }
 
-    public static FishDTO convertToFishDtoFromFish(ZFish fish) {
+    public static FishDTO convertToFishDtoFromFish(Fish fish) {
         FishDTO dto = new FishDTO();
         dto.setZdbID(fish.getZdbID());
         dto.setName(fish.getName());

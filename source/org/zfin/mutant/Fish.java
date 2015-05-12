@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Fish entity
  */
-public class ZFish implements EntityZdbID {
+public class Fish implements EntityZdbID {
 
     private String zdbID;
     private Genotype genotype;

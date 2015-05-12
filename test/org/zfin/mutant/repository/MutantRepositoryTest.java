@@ -390,14 +390,14 @@ public class MutantRepositoryTest {
     @Test
     public void gwtFishList() {
         String publicationID = "ZDB-PUB-130403-23";
-        List<ZFish> reagentList = RepositoryFactory.getMutantRepository().getFishList(publicationID);
+        List<Fish> reagentList = RepositoryFactory.getMutantRepository().getFishList(publicationID);
         assertNotNull(reagentList);
     }
 
     //@Test
     public void gwtFish() {
         String fishID = "ZDB-FISH-150508-17";
-        ZFish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
         assertNotNull(fish);
     }
 
@@ -405,12 +405,12 @@ public class MutantRepositoryTest {
     public void checkExistingFish() {
         String genotypeID = "ZDB-GENO-960809-7";
         String strID = "ZDB-TALEN-150413-1";
-        ZFish fish = new ZFish();
+        Fish fish = new Fish();
         fish.setGenotype(mutantRepository.getGenotypeByID(genotypeID));
         List<SequenceTargetingReagent> strList = new ArrayList<>(2);
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(strID));
         fish.setStrList(strList);
-        ZFish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
+        Fish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
     }
 
     @Test
@@ -418,13 +418,13 @@ public class MutantRepositoryTest {
         String genotypeID = "ZDB-GENO-960809-7";
         String strID = "ZDB-TALEN-150413-1";
         String str1ID = "ZDB-MRPHLNO-090212-1";
-        ZFish fish = new ZFish();
+        Fish fish = new Fish();
         fish.setGenotype(mutantRepository.getGenotypeByID(genotypeID));
         List<SequenceTargetingReagent> strList = new ArrayList<>(2);
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(strID));
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(str1ID));
         fish.setStrList(strList);
-        ZFish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
+        Fish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
     }
 
 }

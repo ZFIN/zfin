@@ -1,11 +1,7 @@
 package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.ZFish;
+import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -19,7 +15,7 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
 
     @Override
     public List<DeleteValidationReport> validate() {
-        ZFish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
         entity = fish;
 
         return validationReportList;
@@ -32,7 +28,7 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
 
     @Override
     public Publication getPublication() {
-        ZFish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
         SortedSet<Publication> genoPublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForGenotype(fish.getGenotype());
         // FB case 11678, provide link back to pub.
         if (CollectionUtils.isNotEmpty(genoPublications) && genoPublications.size() == 1)

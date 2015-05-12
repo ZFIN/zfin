@@ -396,7 +396,7 @@ public interface MutantRepository {
      */
     List<SequenceTargetingReagent> getStrList(String publicationID);
 
-    void createFish(ZFish fish, Publication publication);
+    void createFish(Fish fish, Publication publication);
 
     public boolean existsAttribution(PublicationAttribution attribution);
 
@@ -406,7 +406,7 @@ public interface MutantRepository {
      * @param publicationID
      * @return
      */
-    List<ZFish> getFishList(String publicationID);
+    List<Fish> getFishList(String publicationID);
 
     /**
      * Retrieve Fish by ID
@@ -414,7 +414,7 @@ public interface MutantRepository {
      * @param fishID
      * @return
      */
-    ZFish getFish(String fishID);
+    Fish getFish(String fishID);
 
     /**
      * Check if a fish is already in the database.
@@ -422,6 +422,6 @@ public interface MutantRepository {
      * @param fish
      * @return
      */
-    ZFish getFishByGenoStr(ZFish fish);
+    Fish getFishByGenoStr(Fish fish);
 }
 

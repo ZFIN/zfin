@@ -91,7 +91,7 @@
 
     </class>
 
-    <class name="org.zfin.mutant.ZFish" table="fish">
+    <class name="Fish" table="fish">
         <id name="zdbID" type="string">
             <column name="fish_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">

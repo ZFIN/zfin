@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
@@ -1432,8 +1431,8 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public void createFish(ZFish fish, Publication publication) {
-        ZFish existingFish = getFishByGenoStr(fish);
+    public void createFish(Fish fish, Publication publication) {
+        Fish existingFish = getFishByGenoStr(fish);
         if (existingFish != null)
             fish = existingFish;
         else
@@ -1461,10 +1460,10 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public ZFish getFishByGenoStr(ZFish fish) {
+    public Fish getFishByGenoStr(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select fish from ZFish fish " +
+        String hql = "select fish from Fish fish " +
                 "     where fish.genotype = :genotype ";
         boolean strsAvailable = CollectionUtils.isNotEmpty(fish.getStrList());
         if (strsAvailable) {
@@ -1472,7 +1471,7 @@ public class HibernateMutantRepository implements MutantRepository {
             for (SequenceTargetingReagent str : fish.getStrList())
                 hql += " AND :str_" + index + " member of fish.strList ";
         }
-        hql += " AND (select count(str.id) from ZFish zfish" +
+        hql += " AND (select count(str.id) from Fish zfish" +
                 " inner join zfish.strList str " +
                 " where zfish.zdbID = fish.zdbID) = :numberOfStrs";
 
@@ -1487,7 +1486,7 @@ public class HibernateMutantRepository implements MutantRepository {
             for (SequenceTargetingReagent str : fish.getStrList())
                 query.setParameter("str_" + index, str.getZdbID());
         }
-        List<ZFish> fishList = query.list();
+        List<Fish> fishList = query.list();
         session.flush();
         if (CollectionUtils.isEmpty(fishList))
             return null;
@@ -1498,20 +1497,20 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<ZFish> getFishList(String publicationID) {
+    public List<Fish> getFishList(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select fish from ZFish fish, PublicationAttribution attrib " +
+        String hql = "select fish from Fish fish, PublicationAttribution attrib " +
                 "     where attrib.publication.zdbID = :publicationID AND " +
                 "attrib.dataZdbID = fish.zdbID ";
         Query query = session.createQuery(hql);
         query.setParameter("publicationID", publicationID);
-        return (List<ZFish>) query.list();
+        return (List<Fish>) query.list();
     }
 
     @Override
-    public ZFish getFish(String fishID) {
-        return (ZFish) HibernateUtil.currentSession().get(ZFish.class, fishID);
+    public Fish getFish(String fishID) {
+        return (Fish) HibernateUtil.currentSession().get(Fish.class, fishID);
     }
 
 }

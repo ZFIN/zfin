@@ -12,7 +12,7 @@ import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.mutant.ZFish;
+import org.zfin.mutant.Fish;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
@@ -115,7 +115,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         HibernateUtil.createTransaction();
         try {
             Publication publication = getPublicationRepository().getPublication(publicationID);
-            ZFish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
+            Fish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
             PublicationAttribution attrib = new PublicationAttribution();
             attrib.setPublication(publication);
             attrib.setDataZdbID(fish.getZdbID());
@@ -133,11 +133,11 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
     @Override
     public List<FishDTO> getFishList(String publicationID) {
-        List<ZFish> fishList = getMutantRepository().getFishList(publicationID);
+        List<Fish> fishList = getMutantRepository().getFishList(publicationID);
         if (CollectionUtils.isEmpty(fishList))
             return null;
         List<FishDTO> fishDtoList = new ArrayList<>(fishList.size());
-        for (ZFish fish : fishList)
+        for (Fish fish : fishList)
             fishDtoList.add(DTOConversionService.convertToFishDtoFromFish(fish));
         return fishDtoList;
     }
