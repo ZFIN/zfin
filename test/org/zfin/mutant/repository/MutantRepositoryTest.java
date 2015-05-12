@@ -279,7 +279,7 @@ public class MutantRepositoryTest {
 
     @Test
     public void getAllelesForMarker() {
-        List<Feature> features = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1","is allele of");
+        List<Feature> features = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1", "is allele of");
         assertTrue(features.size() > 4);
         assertTrue(features.size() < 20);
     }
@@ -378,6 +378,55 @@ public class MutantRepositoryTest {
         Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
         List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, genotype, true);
         assertNotNull(statements);
+    }
+
+    @Test
+    public void gwtStrList() {
+        String publicationID = "ZDB-PUB-130403-23";
+        List<SequenceTargetingReagent> reagentList = RepositoryFactory.getMutantRepository().getStrList(publicationID);
+        assertNotNull(reagentList);
+    }
+
+    @Test
+    public void gwtFishList() {
+        String publicationID = "ZDB-PUB-130403-23";
+        List<ZFish> reagentList = RepositoryFactory.getMutantRepository().getFishList(publicationID);
+        assertNotNull(reagentList);
+    }
+
+    //@Test
+    public void gwtFish() {
+        String fishID = "ZDB-FISH-150508-17";
+        ZFish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+        assertNotNull(fish);
+    }
+
+    @Test
+    public void checkExistingFish() {
+        String genotypeID = "ZDB-GENO-960809-7";
+        String strID = "ZDB-TALEN-150413-1";
+        ZFish fish = new ZFish();
+        fish.setGenotype(mutantRepository.getGenotypeByID(genotypeID));
+        List<SequenceTargetingReagent> strList = new ArrayList<>(2);
+        strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(strID));
+        fish.setStrList(strList);
+        ZFish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
+        assertNotNull(zFish);
+    }
+
+    @Test
+    public void checkExistingFishDoubleStr() {
+        String genotypeID = "ZDB-GENO-960809-7";
+        String strID = "ZDB-TALEN-150413-1";
+        String str1ID = "ZDB-MRPHLNO-090212-1";
+        ZFish fish = new ZFish();
+        fish.setGenotype(mutantRepository.getGenotypeByID(genotypeID));
+        List<SequenceTargetingReagent> strList = new ArrayList<>(2);
+        strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(strID));
+        strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(str1ID));
+        fish.setStrList(strList);
+        ZFish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
+        assertNotNull(zFish);
     }
 
 }
