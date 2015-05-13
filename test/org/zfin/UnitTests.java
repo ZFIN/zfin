@@ -13,7 +13,6 @@ import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
-import org.zfin.fish.repository.FishServiceNoDBTest;
 import org.zfin.framework.ExecProcessTest;
 import org.zfin.framework.mail.MailTest;
 import org.zfin.framework.presentation.*;
@@ -94,7 +93,6 @@ import org.zfin.util.*;
         FeatureMarkerRelationshipTest.class,
         FeatureValidationTest.class,
         FileUtilTest.class,
-        FishServiceNoDBTest.class,
         FunctionsTest.class,
         InferenceUnitTest.class,
         IndexerUtilTest.class,

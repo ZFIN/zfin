@@ -177,7 +177,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         FishMatchingService service = new FishMatchingService(fish);
         Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
         assertNotNull(matchingTextList);
-        assertThat("At least one matching condition",matchingTextList.size(), greaterThan(1));
+        assertThat("At least one matching condition", matchingTextList.size(), greaterThan(1));
     }
 
     @Test
@@ -287,6 +287,16 @@ public class FishServiceTest extends AbstractDatabaseTest {
                     assertTrue("No expression statement found: ", display.getExpressedGene().getExpressionStatements().size() > 0);
             }
         }
+    }
+
+    @Test
+    public void getFishIdByGenoxGeno() {
+        String fishID = "ZDB-GENOX-110211-2,ZDB-GENO-110210-2,ZDB-GENOX-110211-3";
+        MartFish fish = FishService.getGenoGenoxByFishID(fishID);
+        assertNotNull(fish);
+        assertEquals(2, fish.getGenotypeExperimentIDs().size());
+        assertEquals("ZDB-GENOX-110211-2,ZDB-GENOX-110211-3", fish.getGenotypeExperimentIDsString());
+        assertEquals("ZDB-GENO-110210-2", fish.getGenotype().getZdbID());
     }
 
 }

@@ -3,13 +3,13 @@
 <jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishBean" scope="request"/>
 
 <authz:authorize ifAnyGranted="root">
-    <zfin2:dataManager zdbID="${formBean.fish.fishID}"
+    <zfin2:dataManager zdbID="${fish.fishID}"
                        rtype="genotype"/>
 </authz:authorize>
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-        <tiles:putAttribute name="subjectName" value="${formBean.fish.name}"/>
+        <tiles:putAttribute name="subjectName" value="${fish.name}"/>
     </tiles:insertTemplate>
 </div>
 
@@ -19,7 +19,7 @@
             <span class="name-label">Genotype + Reagents:</span>
         </th>
         <td class="fish-name-value" style="vertical-align: bottom;">
-            <span class="name-value">${formBean.fish.name}</span>
+            <span class="name-value">${fish.name}</span>
         </td>
     </tr>
 </table>
@@ -68,7 +68,7 @@
         <th width="20%">Reagent</th>
         <th>Targeted Gene</th>
     </tr>
-    <c:if test="${fn:length(formBean.fish.sequenceTargetingReagents) ne null && fn:length(formBean.fish.sequenceTargetingReagents) > 0}">
+    <c:if test="${fn:length(fish.sequenceTargetingReagents) ne null && fn:length(fish.sequenceTargetingReagents) > 0}">
         <c:forEach var="sequenceTargetingReagent" items="${formBean.sequenceTargetingReagents}" varStatus="loop">
             <jsp:useBean id="sequenceTargetingReagent" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
             <tr>
@@ -86,17 +86,17 @@
     <b>GENE EXPRESSION</b>&nbsp;
     <small><a class='popup-link info-popup-link' href='/action/marker/note/expression'></a></small>
     <br/>
-    <b>Gene expression in <zfin:name entity="${formBean.fish}"/></b>
+    <b>Gene expression in <zfin:name entity="${fish}"/></b>
     <c:choose>
         <c:when test="${geneCentricExpressionDataList != null }">
             <zfin2:all-expression expressionSummaryDisplay="${geneCentricExpressionDataList}"
-                                  showNumberOfRecords="5" suppressMoDetails="true" queryKeyValuePair="fishID=${formBean.fish.fishID}"/>
+                                  showNumberOfRecords="5" suppressMoDetails="true" queryKeyValuePair="fishID=${fish.fishID}"/>
             <c:if test="${fn:length(geneCentricExpressionDataList)> 5}">
                 <table width="100%">
                     <tr align="left">
                         <td>
                             Show all <a
-                                href="/action/fish/fish-show-all-expression/${formBean.fish.fishID}">${fn:length(geneCentricExpressionDataList)}
+                                href="/action/fish/fish-show-all-expression/${fish.fishID}">${fn:length(geneCentricExpressionDataList)}
                             expressed genes</a>
                         </td>
                     </tr>
@@ -114,7 +114,7 @@
     <b>PHENOTYPE</b>&nbsp;
     <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
     <br/>
-    <b>Phenotype in <zfin:name entity="${formBean.fish}"/></b>
+    <b>Phenotype in <zfin:name entity="${fish}"/></b>
     <c:choose>
         <c:when test="${formBean.numberOfPhenoDisplays > 0 }">
             <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" showNumberOfRecords="5"
@@ -124,7 +124,7 @@
                     <tr align="left">
                         <td>
                             Show all <a
-                                href="/action/fish/fish-show-all-phenotypes/${formBean.fish.fishID}">${formBean.numberOfPhenoDisplays}&nbsp;phenotypes</a>
+                                href="/action/fish/fish-show-all-phenotypes/${fish.fishID}">${formBean.numberOfPhenoDisplays}&nbsp;phenotypes</a>
                         </td>
                     </tr>
                 </table>
@@ -138,4 +138,4 @@
 </div>
 
 <p>
-    <a href='/action/fish/fish-publication-list?fishID=${formBean.fish.fishID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.totalNumberOfPublications})
+    <a href='/action/fish/fish-publication-list?fishID=${fish.fishID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.totalNumberOfPublications})

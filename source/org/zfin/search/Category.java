@@ -149,7 +149,7 @@ public enum Category {
                 SEQUENCE_ALTERATION
         ),
     */
-    FISH("MartFish", AFFECTED_GENE,
+    FISH("Fish", AFFECTED_GENE,
             EXPRESSIONS_ANATOMY_TF,
             AFFECTED_ANATOMY_TF,
             AFFECTED_BIOLOGICAL_PROCESS_TF,

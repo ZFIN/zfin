@@ -70,9 +70,8 @@ public class FishDetailController {
             //return genotypeDetailController.getGenotypePopup(fish.getGenotypeID(), model);
         }
 
-
+        model.addAttribute("fish", fish);
         FishBean form = new FishBean();
-        form.setFish(fish);
         retrieveGenotypeExperiment(form, fish);
         retrieveGenotypes(form, fish);
         retrievePhenotypeData(form, fish.getGenotypeExperimentIDs());
