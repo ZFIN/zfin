@@ -238,9 +238,11 @@
                             </td>
                             <td>
                                 <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
+                                    <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
                                     <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-sourceview.apg&OID=${source.organization.zdbID}">
                                         ${source.organization.name}
                                     </a>
+                                    </c:if>
                                     <c:if test="${!status.last}">,&nbsp;</c:if>
                                 </c:forEach>
                             </td>
