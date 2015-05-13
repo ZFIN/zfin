@@ -92,6 +92,7 @@ EFFECTS
 <?MIVAR>
   $(VECAPPEND,$pubcur_category,Feature)
   $(VECAPPEND,$pubcur_category,Genotype)
+  $(VECAPPEND,$pubcur_category,Fish)
   $(VECAPPEND,$pubcur_category,Figure)
   $(VECAPPEND,$pubcur_category,Environment)
   $(VECAPPEND,$pubcur_category,FX)
@@ -988,7 +989,9 @@ and feature_zdb_id=fmrel_ftr_zdb_id
 <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Disease))">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-diseasecuration.apg';">$1<?/MISQL>
 <?/MIBLOCK>
-
+<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Fish))">
+  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-fishcuration.apg';">$1<?/MISQL>
+<?/MIBLOCK>
 
 <?MICOMMENT>
   ====================
