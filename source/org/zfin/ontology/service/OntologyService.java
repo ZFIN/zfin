@@ -1,20 +1,23 @@
 package org.zfin.ontology.service;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.FishModel;
 import org.zfin.mutant.OmimPhenotype;
+import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
-import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DBLink;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
  * This service provides a bridge between the OntologyRepository and business logic.
@@ -125,7 +128,6 @@ public class OntologyService {
     }
 
 
-
     public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
 
 
@@ -133,33 +135,33 @@ public class OntologyService {
             return null;
         Map<String, OmimPhenotypeDisplay> map = new HashMap<String, OmimPhenotypeDisplay>();
         Set<TermExternalReference> termXRef = term.getExternalReferences();
-        ArrayList<String> hA=new ArrayList<>();
+        ArrayList<String> hA = new ArrayList<>();
         for (TermExternalReference xRef : termXRef) {
-                Set<OmimPhenotype> omimResults = xRef.getOmimPhenotypes();
+            Set<OmimPhenotype> omimResults = xRef.getOmimPhenotypes();
 
-                for (OmimPhenotype omimResult : omimResults) {
-                    // form the key
+            for (OmimPhenotype omimResult : omimResults) {
+                // form the key
 
-                    String key = omimResult.getOrthologue().getAbbreviation()+omimResult.getName();
+                String key = omimResult.getOrthologue().getAbbreviation() + omimResult.getName();
 
-                    OmimPhenotypeDisplay omimDisplay;
+                OmimPhenotypeDisplay omimDisplay;
 
-                    // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
-                    // otherwise, just get the display object from the map
-                    if (!map.containsKey(key)) {
-                        omimDisplay = new OmimPhenotypeDisplay();
-                        map.put(key, omimDisplay);
-                    } else {
-                        omimDisplay = map.get(key);
-                    }
-                    omimDisplay.setOrthology(omimResult.getOrthologue());
-                    omimDisplay.setName(omimResult.getName());
-                    omimDisplay.setOmimNum(omimResult.getOmimNum());
-                    omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrthologue().getAbbreviation()));
-                    if (omimResult.getOrthologue() != null){
+                // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
+                // otherwise, just get the display object from the map
+                if (!map.containsKey(key)) {
+                    omimDisplay = new OmimPhenotypeDisplay();
+                    map.put(key, omimDisplay);
+                } else {
+                    omimDisplay = map.get(key);
+                }
+                omimDisplay.setOrthology(omimResult.getOrthologue());
+                omimDisplay.setName(omimResult.getName());
+                omimDisplay.setOmimNum(omimResult.getOmimNum());
+                omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrthologue().getAbbreviation()));
+                if (omimResult.getOrthologue() != null) {
 
-                        hA.add(omimResult.getOrthologue().getAbbreviation());
-                        omimDisplay.setHumanGene(hA);
+                    hA.add(omimResult.getOrthologue().getAbbreviation());
+                    omimDisplay.setHumanGene(hA);
                 }
 
 
@@ -176,6 +178,25 @@ public class OntologyService {
 
 
         return omimDisplays;
+    }
+
+    public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease) {
+        List<DiseaseModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        if (CollectionUtils.isEmpty(modelList))
+            return null;
+        Map<FishModel, FishModelDisplay> map = new HashMap<>();
+        for (DiseaseModel model : modelList) {
+            FishModelDisplay display = new FishModelDisplay();
+            display.setFishModel(model.getFishModel());
+            display.addPublication(model.getPublication());
+            FishModelDisplay mapModel = map.get(model.getFishModel());
+            if (mapModel == null)
+                map.put(model.getFishModel(), display);
+            else
+                mapModel.addPublication(model.getPublication());
+        }
+        List<FishModelDisplay> displayList = new ArrayList<>(map.values());
+        return displayList;
     }
 }
 

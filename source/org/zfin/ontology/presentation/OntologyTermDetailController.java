@@ -170,8 +170,9 @@ public class OntologyTermDetailController {
 
         model.addAttribute("numberOfCitations", number);
         int numberOfGenes=OntologyService.getNumberOfDiseaseGenes(term);
-        model.addAttribute("diseaseGenes",numberOfGenes);
+        model.addAttribute("diseaseGenes", numberOfGenes);
         form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
+        model.addAttribute("fishModels", OntologyService.getDiseaseModels(term));
         return "ontology/ontology-term.page";
 
     }

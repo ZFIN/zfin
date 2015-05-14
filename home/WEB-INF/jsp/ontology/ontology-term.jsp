@@ -136,6 +136,10 @@
         <zfin2:genesAssociatedWithDisease formBean="${formBean}"/>
     </div>
 
+    <div id="genes-involved">
+        <zfin2:fishModels fishModels="${fishModels}"/>
+    </div>
+
     <c:if test="${formBean.term.ontology.expressionData}">
         <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
     </c:if>
