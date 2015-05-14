@@ -44,17 +44,20 @@ public class EnvironmentDTO extends RelatedEntityDTO  {
      * @param o environment DTO
      * @return integer: -1, 0, 1
      */
-    public int compareTo(EnvironmentDTO o) {
+    public int compareTo(Object o) {
+        if(!(o instanceof EnvironmentDTO))
+            return 1;
+        EnvironmentDTO dto = (EnvironmentDTO) o;
         if (name.equals(STANDARD))
             return -1;
-        String nameToCompare = o.getName();
+        String nameToCompare = dto.getName();
         if (name.equals(GENERIC_CONTROL) && !nameToCompare.equals(STANDARD))
             return -1;
         if (name.equals(GENERIC_CONTROL) && nameToCompare.equals(STANDARD))
             return 1;
         if (nameToCompare.equals(STANDARD) || nameToCompare.equals(GENERIC_CONTROL))
             return 1;
-        return name.compareTo(o.getName());
+        return name.compareTo(dto.getName());
     }
 
     @Override
