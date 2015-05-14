@@ -124,7 +124,7 @@ select count(*), "All GO Annotations" from marker_go_term_evidence
 
 --Genes with OMIM disease phenotypes
 insert into tmp_output(counter, section)
-select count(distinct omimp_gene_zdb_id), "Genes With OMIM Disease Phenotypes"
+select count(distinct omimp_ortho_zdb_id), "Human Orthology With OMIM Disease Phenotypes"
  from omim_phenotype ;
 
 
