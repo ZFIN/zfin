@@ -204,7 +204,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
         diseaseModelTable.setText(0, index, "Evidence Code");
         diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
-        diseaseModelTable.setText(0, index, "Add / Delete");
+        diseaseModelTable.setText(0, index, "Delete");
         diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
         diseaseModelTable.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_LEFT);
         diseaseModelTable.getRowFormatter().setStyleName(0, "table-header");
@@ -215,6 +215,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         diseaseTable.removeAllRows();
         if (termList == null || termList.size() == 0) {
             diseaseTableContent.setVisible(true);
+            loadingImageDiseases.setVisible(false);
             return;
         }
 
