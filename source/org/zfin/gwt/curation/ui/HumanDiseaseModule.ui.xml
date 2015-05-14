@@ -11,12 +11,15 @@
                 <g:Label text="Disease Models:" styleName="bold"/>
                 <g:Label text="None" ui:field="diseaseModelTableContent" styleName="summary-title"/>
             </g:HorizontalPanel>
-            <g:FlexTable ui:field='diseaseModelTable' styleName="searchresults" cellSpacing='0' cellPadding='5'/>
+            <g:FlexTable ui:field='diseaseModelTable' styleName="searchresults" cellSpacing='5' cellPadding='15'/>
+            <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Image ui:field="loadingImageDiseaseModels" url="/images/ajax-loader.gif"/>
             <g:HorizontalPanel>
                 <g:Label text="Diseases Reported: " styleName="bold"/>
                 <g:Label text="None" ui:field="diseaseTableContent" styleName="summary-title"/>
             </g:HorizontalPanel>
             <zfin:ZfinFlexTable ui:field='diseaseTable' styleName="searchresults groupstripes" cellSpacing='10' cellPadding='10' numberOfColumns="2"/>
+            <g:Image ui:field="loadingImageDiseases" url="/images/ajax-loader.gif"/>
         </g:VerticalPanel>
         <g:HTMLPanel>
             <hr/>

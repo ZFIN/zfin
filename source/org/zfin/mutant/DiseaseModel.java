@@ -1,38 +1,99 @@
 package org.zfin.mutant;
 
-import org.zfin.expression.Experiment;
+import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.publication.Publication;
+
+import java.util.Set;
 
 /**
- * Created by cmpich on 3/31/15.
+ * Disease model entity:
  */
-public class DiseaseModel {
+public class DiseaseModel implements EntityZdbID {
 
-    private GenericTerm term;
-    private Genotype genotype;
-    private Experiment experiment;
+    private long ID;
+    private GenericTerm disease;
+    private Publication publication;
+    private String evidenceCode;
+    private FishModel fishModel;
+    private Set<FishModel> fishModelSet;
 
-    public Experiment getExperiment() {
-        return experiment;
+
+    public Set<FishModel> getFishModelSet() {
+        return fishModelSet;
     }
 
-    public void setExperiment(Experiment experiment) {
-        this.experiment = experiment;
+    public void setFishModelSet(Set<FishModel> fishModelSet) {
+        this.fishModelSet = fishModelSet;
     }
 
-    public Genotype getGenotype() {
-        return genotype;
+    public FishModel getFishModel() {
+        return fishModel;
     }
 
-    public void setGenotype(Genotype genotype) {
-        this.genotype = genotype;
+    public void setFishModel(FishModel fishModel) {
+        this.fishModel = fishModel;
     }
 
-    public GenericTerm getTerm() {
-        return term;
+    public String getEvidenceCode() {
+        return evidenceCode;
     }
 
-    public void setTerm(GenericTerm term) {
-        this.term = term;
+    public void setEvidenceCode(String evidenceCode) {
+        this.evidenceCode = evidenceCode;
+    }
+
+    public long getID() {
+        return ID;
+    }
+
+    public void setID(long ID) {
+        this.ID = ID;
+    }
+
+    public Publication getPublication() {
+        return publication;
+    }
+
+    public void setPublication(Publication publication) {
+        this.publication = publication;
+    }
+
+    public GenericTerm getDisease() {
+        return disease;
+    }
+
+    public void setDisease(GenericTerm term) {
+        this.disease = term;
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return disease.getTermName();
+    }
+
+    @Override
+    public String getAbbreviationOrder() {
+        return disease.getTermName();
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Disease Model";
+    }
+
+    @Override
+    public String getEntityName() {
+        return disease.getTermName();
+    }
+
+    @Override
+    public String getZdbID() {
+        return String.valueOf(ID);
+    }
+
+    @Override
+    public void setZdbID(String zdbID) {
+
     }
 }

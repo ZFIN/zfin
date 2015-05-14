@@ -16,6 +16,7 @@ import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.dto.DiseaseModelDTO;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
@@ -41,8 +42,7 @@ import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 //import org.apache.commons.lang.StringEscapeUtils;
 
@@ -1263,6 +1263,38 @@ public class DTOConversionService {
         for (SequenceTargetingReagent str : fish.getStrList())
             strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
         dto.setStrList(strs);
+        return dto;
+    }
+
+    public static DiseaseModel convertToDiseaseFromDiseaseDTO(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException {
+        DiseaseModel diseaseModel = new DiseaseModel();
+        diseaseModel.setDisease(convertToTerm(diseaseModelDTO.getDisease()));
+        diseaseModel.setPublication(convertToPublication(diseaseModelDTO.getPublication()));
+        diseaseModel.setEvidenceCode(diseaseModelDTO.getEvidenceCode());
+        FishModel model = DTOConversionService.convertToFishModel(diseaseModelDTO);
+        diseaseModel.setFishModel(model);
+        return diseaseModel;
+    }
+
+    private static FishModel convertToFishModel(DiseaseModelDTO diseaseModelDTO) {
+        FishModel model = new FishModel();
+        model.setFish(getMutantRepository().getFish(diseaseModelDTO.getFish().getZdbID()));
+        model.setExperiment(getExpressionRepository().getExperimentByID(diseaseModelDTO.getEnvironment().getZdbID()));
+        return model;
+    }
+
+    private static Publication convertToPublication(PublicationDTO pub) {
+        return getPublicationRepository().getPublication(pub.getZdbID());
+    }
+
+    public static DiseaseModelDTO convertToDiseaseModelDTO(DiseaseModel model) {
+        DiseaseModelDTO dto = new DiseaseModelDTO();
+        dto.setFish(convertToFishDtoFromFish(model.getFishModel().getFish()));
+        dto.setPublication(convertToPublicationDTO(model.getPublication()));
+        dto.setEvidenceCode(model.getEvidenceCode());
+        dto.setEnvironment(convertToEnvironmentDTO(model.getFishModel().getExperiment()));
+        dto.setDisease(convertToTermDTO(model.getDisease()));
+        dto.setEvidenceCode(model.getEvidenceCode());
         return dto;
     }
 }

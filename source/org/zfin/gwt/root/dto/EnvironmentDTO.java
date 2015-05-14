@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * GWT version of Environment corresponding to {@link org.zfin.expression.Experiment}.
  */
-public class EnvironmentDTO implements Comparable<EnvironmentDTO>, IsSerializable {
+public class EnvironmentDTO extends RelatedEntityDTO  {
 
     private String zdbID;
     private String name;

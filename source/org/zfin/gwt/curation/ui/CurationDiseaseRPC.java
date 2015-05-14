@@ -42,7 +42,7 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<DiseaseModelDTO> getHumanDiseaseModelList(String publicationID) throws TermNotFoundException;
 
-    List<DiseaseModelDTO> addHumanDiseaseModel(DiseaseModelDTO diseaseModelDTO, String publicationID) throws TermNotFoundException;
+    List<DiseaseModelDTO> addHumanDiseaseModel(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException;
 
     List<RelatedEntityDTO> getStrList(String publicationID);
 

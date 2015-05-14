@@ -22,7 +22,7 @@ public interface CurationDiseaseRPCAsync {
 
     void getHumanDiseaseModelList(String publicationID, AsyncCallback<List<DiseaseModelDTO>> callback);
 
-    void addHumanDiseaseModel(DiseaseModelDTO diseaseModelDTO, String publicationID, AsyncCallback<List<DiseaseModelDTO>> callback);
+    void addHumanDiseaseModel(DiseaseModelDTO diseaseModelDTO, AsyncCallback<List<DiseaseModelDTO>> callback);
 
     void getStrList(String publicationID, AsyncCallback<List<RelatedEntityDTO>> callback);
 

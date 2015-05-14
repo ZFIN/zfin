@@ -423,5 +423,33 @@ public interface MutantRepository {
      * @return
      */
     Fish getFishByGenoStr(Fish fish);
+
+    /**
+     * create a new disease model
+     * @param diseaseModel
+     */
+    void createDiseaseModel(DiseaseModel diseaseModel);
+
+    /**
+     * Retrieve publications that refer to a given fish
+     * @param zdbID
+     * @return
+     */
+    List<Publication> getPublicationWithFish(String zdbID);
+
+    /**
+     * Retrieve fish model by composite index: (fish, experiment)
+     * @param fishID
+     * @param expID
+     * @return
+     */
+    FishModel getFishModel(String fishID, String expID);
+
+    /**
+     * Retrieve Disease Model by composite index: (disease term, pubID,Evidence code)
+     * @param diseaseModel
+     * @return
+     */
+    DiseaseModel getDiseaseModel(DiseaseModel diseaseModel);
 }
 

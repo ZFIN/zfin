@@ -2,10 +2,7 @@ package org.zfin.mutant.repository;
 
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.PhenotypeExperiment;
-import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.PhenotypeStructure;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.presentation.FigureLink;
@@ -231,4 +228,24 @@ public interface PhenotypeRepository {
 
     List<GenericTerm> getHumanDiseases(String publicationID);
 
+    /**
+     * Retrieve Disease models by publication
+     * @param publicationID
+     * @return
+     */
+    List<DiseaseModel> getHumanDiseaseModels(String publicationID);
+
+    /**
+     * Retrieve disease model list by fish id.
+     * @param zdbID
+     * @return
+     */
+    List<DiseaseModel> getHumanDiseaseModelsByFish(String zdbID);
+
+    /**
+     * Retrieve disease models by disease
+     * @param disease
+     * @return
+     */
+    List<DiseaseModel> getHumanDiseaseModels(GenericTerm disease);
 }

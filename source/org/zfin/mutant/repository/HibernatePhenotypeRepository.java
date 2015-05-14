@@ -755,7 +755,6 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<GenericTerm> getHumanDiseases(String publicationID) {
 
-        //HibernateUtil.currentSession().
         String hql = "select term from TermAttribution as termAtt where " +
                 "       termAtt.publication.zdbID = :publicationID " +
                 "     order by termAtt.term.termName";
@@ -763,7 +762,32 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("publicationID", publicationID);
 
         return (List<GenericTerm>) query.list();
+    }
 
+    @Override
+    public List<DiseaseModel> getHumanDiseaseModels(String publicationID) {
+        String hql = "from DiseaseModel as disease where" +
+                " disease.publication.zdbID = :publicationID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("publicationID", publicationID);
+        return (List<DiseaseModel>) query.list();
+    }
 
+    @Override
+    public List<DiseaseModel> getHumanDiseaseModelsByFish(String fishID) {
+        String hql = "from DiseaseModel as disease where" +
+                " disease.fishModel.fish.zdbID = :fishID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fishID", fishID);
+        return (List<DiseaseModel>) query.list();
+    }
+
+    @Override
+    public List<DiseaseModel> getHumanDiseaseModels(GenericTerm disease) {
+        String hql = "from DiseaseModel where" +
+                " disease = :disease";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("disease", disease);
+        return (List<DiseaseModel>) query.list();
     }
 }

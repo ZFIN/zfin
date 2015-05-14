@@ -2,6 +2,8 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -10,8 +12,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
-import org.zfin.gwt.root.dto.RelatedEntityDTO;
-import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
 
     public static final String IS_A_MODEL_OF = "is a model of";
     public static final String HUMAN_DISEASE_ZONE = "humanDiseaseZone";
+    public static final String SELECT = "Select";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("HumanDiseaseModule.ui.xml")
@@ -43,6 +45,15 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
 
     @UiField
     Label diseaseTableContent;
+
+    @UiField
+    Image loadingImageDiseaseModels;
+
+    @UiField
+    Image loadingImageDiseases;
+
+    @UiField
+    SimpleErrorElement errorLabel;
 
     @UiField
     Label diseaseModelTableContent;
@@ -77,6 +88,8 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         FlowPanel outer = uiBinder.createAndBindUi(this);
         termEntry.getTermTextBox().setTermInfoTable(termInfoBox);
         termEntry.setTermInfoTable(termInfoBox);
+        environmentCallBack = new RetrieveRelatedEntityListCallBack(environmentSelectionBox, "Environment", null);
+
         retrieveAllValues();
         RootPanel.get(HUMAN_DISEASE_ZONE).add(outer);
         resetButton.addClickHandler(new ClickHandler() {
@@ -101,11 +114,24 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
             }
         });
         // hide this section until we have fish IDs
-        diseaseModelTable.setVisible(false);
         attributionModule = new AttributionModule();
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
+        initDiseaseModelTable();
+        setEvidenceCode();
+    }
+
+    private void setEvidenceCode() {
+        evidenceCodeSelectionBox.addItem(SELECT);
+        evidenceCodeSelectionBox.addItem("TAS");
+        evidenceCodeSelectionBox.addItem("IC");
+        evidenceCodeSelectionBox.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent changeEvent) {
+                clearErrorMessages();
+            }
+        });
     }
 
     private void resetUI() {
@@ -116,41 +142,43 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     private CurationDiseaseRPCAsync diseaseCurationRPCAsync = CurationDiseaseRPC.App.getInstance();
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
 
-    private ListBox fishList = new ListBox();
-    private ListBox environmentList = new ListBox();
-    private ListBox diseaseList = new ListBox();
+    private ListBox fishSelectionBox = new ListBox();
+    private List<FishDTO> fishList = new ArrayList<>();
+    private List<EnvironmentDTO> environmentList = new ArrayList<>();
+    private List<TermDTO> diseaseList = new ArrayList<>();
+    private ListBox environmentSelectionBox = new ListBox();
+    private ListBox diseaseSelectionBox = new ListBox();
+    private ListBox evidenceCodeSelectionBox = new ListBox();
+
+    RetrieveRelatedEntityListCallBack environmentCallBack;
 
     private void retrieveAllValues() {
         // human disease list
-        diseaseCurationRPCAsync.getHumanDiseaseList(publicationID, new ZfinAsyncCallback<List<TermDTO>>(null, null) {
-
+        diseaseCurationRPCAsync.getHumanDiseaseList(publicationID, new ZfinAsyncCallback<List<TermDTO>>(null, diseaseErrorLabel) {
             @Override
             public void onSuccess(List<TermDTO> termDTOs) {
+                diseaseList = termDTOs;
                 updateDiseaseTableContent(termDTOs);
             }
         });
 
         // human disease model list
-/*
-        diseaseCurationRPCAsync.getHumanDiseaseModelList(publicationID, new ZfinAsyncCallback<List<DiseaseModelDTO>>(null, null) {
+        diseaseCurationRPCAsync.getHumanDiseaseModelList(publicationID, new ZfinAsyncCallback<List<DiseaseModelDTO>>(null, diseaseErrorLabel) {
 
             @Override
-            public void onSuccess(List<DiseaseModelDTO> termDTOs) {
-                updateDiseaseModelTableContent(termDTOs);
+            public void onSuccess(List<DiseaseModelDTO> modelDTOs) {
+                updateDiseaseModelTableContent(modelDTOs);
             }
         });
 
         // fish (genotype) list
         String message = "Error while reading Genotypes";
-        curationExperimentRPCAsync.getGenotypes(publicationID,
-                new RetrieveGenotypeListCallBack(fishList, message, null));
+        diseaseCurationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack("Fish List", diseaseErrorLabel));
 
         // environment list
         message = "Error while reading the environment";
-        curationExperimentRPCAsync.getEnvironments(publicationID,
-                new RetrieveEnvironmentListCallBack(environmentList, message, null));
+        curationExperimentRPCAsync.getEnvironments(publicationID, new RetrieveEnvironmentListCallBack("Environment", diseaseErrorLabel));
 
-*/
     }
 
 
@@ -167,16 +195,16 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     private void initDiseaseModelTable() {
         // Initialize the diseaseTable.
         int index = 0;
-        diseaseModelTable.setText(0, index, "");
-        diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
-        diseaseModelTable.setText(0, index, "Genotype");
+        diseaseModelTable.setText(0, index, "Fish");
         diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
         diseaseModelTable.setText(0, index, "Environment");
         diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
         diseaseModelTable.setText(0, index++, "");
         diseaseModelTable.setText(0, index, "Human Disease");
         diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
-        diseaseModelTable.setText(0, index, "Delete");
+        diseaseModelTable.setText(0, index, "Evidence Code");
+        diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
+        diseaseModelTable.setText(0, index, "Add / Delete");
         diseaseModelTable.getCellFormatter().setStyleName(0, index++, "bold");
         diseaseModelTable.getCellFormatter().setHorizontalAlignment(0, 2, HasHorizontalAlignment.ALIGN_LEFT);
         diseaseModelTable.getRowFormatter().setStyleName(0, "table-header");
@@ -192,7 +220,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
 
         diseaseTableContent.setVisible(false);
         initReportedDiseaseTable();
-        diseaseList.clear();
+        diseaseSelectionBox.clear();
 
         int groupIndex = 1;
         int rowIndex = 1;
@@ -201,28 +229,30 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
             Button deleteButton = new Button("X");
             deleteButton.addClickHandler(new HumanDiseaseDeleteClickListener(term));
             diseaseTable.setWidget(index++, 1, deleteButton);
-            diseaseList.addItem(term.getTermName(), term.getZdbID());
-            groupIndex =diseaseTable.setRowStyle(rowIndex++, null, term.getZdbID(), groupIndex);
+            diseaseSelectionBox.addItem(term.getTermName(), term.getZdbID());
+            groupIndex = diseaseTable.setRowStyle(rowIndex++, null, term.getZdbID(), groupIndex);
 
         }
     }
 
     public void updateDiseaseModelTableContent(List<DiseaseModelDTO> modelDTOList) {
-        diseaseTable.removeAllRows();
+        diseaseModelTable.removeAllRows();
         if (modelDTOList == null || modelDTOList.size() == 0)
-            diseaseModelTableContent.setVisible(true);
-        else
             diseaseModelTableContent.setVisible(false);
+        else
+            diseaseModelTableContent.setVisible(true);
 
         initDiseaseModelTable();
-        int index = 1;
+        int rowIndex = 1;
         if (modelDTOList != null) {
-            int colIndex = 1;
-            for (DiseaseModelDTO term : modelDTOList) {
-                diseaseModelTable.setText(index, colIndex++, term.getGenotype().getHandle());
-                diseaseModelTable.setText(index, colIndex++, term.getEnvironment().getName());
-                diseaseModelTable.setText(index, colIndex++, IS_A_MODEL_OF);
-                diseaseModelTable.setText(index, colIndex++, term.getTerm().getTermName());
+            for (DiseaseModelDTO diseaseModel : modelDTOList) {
+                int colIndex = 0;
+                diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getFish().getHandle());
+                diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEnvironment().getName());
+                diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
+                diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
+                diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getDisease().getTermName());
+                diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
                 Button deleteButton = new Button("X");
                 deleteButton.addClickHandler(new ClickHandler() {
                     @Override
@@ -230,35 +260,57 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
                         Window.alert("Delete");
                     }
                 });
-                diseaseModelTable.setWidget(index++, colIndex++, deleteButton);
+                diseaseModelTable.setWidget(rowIndex++, colIndex++, deleteButton);
             }
         }
-        addConstructionRow(index);
+        addConstructionRow(rowIndex);
+        loadingImageDiseaseModels.setVisible(false);
     }
 
     private Button addDiseaseModelButton = new Button("Add");
 
-    private void addConstructionRow(int index) {
+    private void addConstructionRow(int rowIndex) {
         int colIndex = 0;
         addDiseaseModelButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                Window.alert("Click new disease");
-                diseaseCurationRPCAsync.addHumanDiseaseModel(null, publicationID, new ZfinAsyncCallback<List<DiseaseModelDTO>>("Could not add a new disease model", null) {
+                DiseaseModelDTO disease = getDiseaseModel();
+                if (disease == null)
+                    return;
+                diseaseCurationRPCAsync.addHumanDiseaseModel(disease, new ZfinAsyncCallback<List<DiseaseModelDTO>>("Could not add a new disease model", null) {
                     @Override
                     public void onSuccess(List<DiseaseModelDTO> modelDTOs) {
-                        Window.alert("Added new model");
                         updateDiseaseModelTableContent(modelDTOs);
                     }
 
                 });
+                loadingImageDiseaseModels.setVisible(true);
             }
         });
-        diseaseModelTable.setWidget(index, colIndex++, addDiseaseModelButton);
-        diseaseModelTable.setWidget(index, colIndex++, fishList);
-        diseaseModelTable.setWidget(index, colIndex++, environmentList);
-        diseaseModelTable.setText(index, colIndex++, "is a model of");
-        diseaseModelTable.setWidget(index, colIndex++, diseaseList);
+        diseaseModelTable.setWidget(rowIndex, colIndex++, fishSelectionBox);
+        diseaseModelTable.setWidget(rowIndex, colIndex++, environmentSelectionBox);
+        diseaseModelTable.setText(rowIndex, colIndex++, IS_A_MODEL_OF);
+        diseaseModelTable.setWidget(rowIndex, colIndex++, diseaseSelectionBox);
+        diseaseModelTable.setWidget(rowIndex, colIndex++, evidenceCodeSelectionBox);
+        diseaseModelTable.setWidget(rowIndex, colIndex++, addDiseaseModelButton);
+    }
+
+    private DiseaseModelDTO getDiseaseModel() {
+        DiseaseModelDTO dto = new DiseaseModelDTO();
+        dto.setFish(fishList.get(fishSelectionBox.getSelectedIndex()));
+        dto.setEnvironment(environmentList.get(environmentSelectionBox.getSelectedIndex()));
+        dto.setDisease(diseaseList.get(diseaseSelectionBox.getSelectedIndex()));
+        String itemText = evidenceCodeSelectionBox.getItemText(evidenceCodeSelectionBox.getSelectedIndex());
+        if (itemText.equals(SELECT)) {
+            errorLabel.setText("Please select a valid Evidence Code");
+            return null;
+        }
+        dto.setEvidenceCode(itemText);
+        PublicationDTO pubDto = new PublicationDTO();
+        pubDto.setZdbID(publicationID);
+        dto.setPublication(pubDto);
+        return dto;
+
     }
 
     @Override
@@ -269,6 +321,10 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     public void clearError() {
         attributionModule.clearError();
         revertGUI();
+    }
+
+    public void clearErrorMessages() {
+        errorLabel.setText("");
     }
 
     private void revertGUI() {
@@ -305,6 +361,41 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
             });
         }
 
+    }
+
+    class RetrieveFishListCallBack extends ZfinAsyncCallback<List<FishDTO>> {
+
+        public RetrieveFishListCallBack(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel, loadingImageDiseases);
+        }
+
+        @Override
+        public void onSuccess(List<FishDTO> list) {
+            fishSelectionBox.clear();
+            fishList = list;
+            for (FishDTO dto : list) {
+                fishSelectionBox.addItem(dto.getName(), dto.getZdbID());
+            }
+            loadingImageDiseases.setVisible(false);
+            resetUI();
+        }
+    }
+
+    class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<EnvironmentDTO>> {
+
+        public RetrieveEnvironmentListCallBack(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel);
+        }
+
+        @Override
+        public void onSuccess(List<EnvironmentDTO> list) {
+            environmentSelectionBox.clear();
+            environmentList = list;
+            for (EnvironmentDTO dto : list) {
+                environmentSelectionBox.addItem(dto.getName(), dto.getZdbID());
+            }
+            resetUI();
+        }
     }
 
 }

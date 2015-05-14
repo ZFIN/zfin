@@ -43,6 +43,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 
 /**
@@ -1494,6 +1495,57 @@ public class HibernateMutantRepository implements MutantRepository {
             return fishList.get(0);
         throw new IllegalStateException("Found more than one Fish " + fish);
 
+    }
+
+    @Override
+    public void createDiseaseModel(DiseaseModel diseaseModel) {
+        FishModel existingModel = getMutantRepository().getFishModel(diseaseModel.getFishModel().getFish().getZdbID(),
+                diseaseModel.getFishModel().getExperiment().getZdbID());
+        if (existingModel == null)
+            HibernateUtil.currentSession().save(diseaseModel.getFishModel());
+        else
+            diseaseModel.setFishModel(existingModel);
+        DiseaseModel existingDiseaseModel = getMutantRepository().getDiseaseModel(diseaseModel);
+        HibernateUtil.currentSession().save(diseaseModel);
+    }
+
+    @Override
+    public List<Publication> getPublicationWithFish(String fishID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select attrib.publication from PublicationAttribution attrib " +
+                "     where attrib.dataZdbID = :fishID ";
+        Query query = session.createQuery(hql);
+        query.setParameter("fishID", fishID);
+        return (List<Publication>) query.list();
+    }
+
+    @Override
+    public FishModel getFishModel(String fishID, String expID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "from FishModel " +
+                "     where fish.zdbID = :fishID and" +
+                "     experiment.zdbID = :expID ";
+        Query query = session.createQuery(hql);
+        query.setParameter("fishID", fishID);
+        query.setParameter("expID", expID);
+        return (FishModel) query.uniqueResult();
+    }
+
+    @Override
+    public DiseaseModel getDiseaseModel(DiseaseModel diseaseModel) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "from DiseaseModel " +
+                "     where disease = :disease and" +
+                "     publication = :publication and " +
+                "     evidenceCode = :evidenceCode ";
+        Query query = session.createQuery(hql);
+        query.setParameter("disease", diseaseModel.getDisease());
+        query.setParameter("publication", diseaseModel.getPublication());
+        query.setString("evidenceCode", diseaseModel.getEvidenceCode());
+        return (DiseaseModel) query.uniqueResult();
     }
 
     @Override
