@@ -492,11 +492,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "      where attr.publication.zdbID = :pubID " +
                 "      and attr.dataZdbID=ftr.zdbID " +
                 "      and ftr.zdbID=fmRel.feature.zdbID " +
-                "      and ftr.type=:tg " +
+	    // "      and ftr.type=:tg " +
                 "      order by fmRel.feature.zdbID";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
-        query.setString("tg", "TRANSGENIC_INSERTION");
+	// query.setString("tg", "TRANSGENIC_INSERTION");
         return (List<FeatureMarkerRelationship>) query.list();
     }
 
