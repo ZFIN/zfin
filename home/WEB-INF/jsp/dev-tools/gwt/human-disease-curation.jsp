@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="/css/Lookup.css"/>
 <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
 <script type="text/javascript" language="javascript"
-        src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+        src="/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 <h1> Human Disease Curation </h1>
 
 <div id="show-hide-all-sections"></div>
@@ -36,8 +36,5 @@
         moduleType: "DISEASE_CURATION",
         debug: "false"
     };
-    var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16";
-</script>
-<script type="text/javascript" src="/javascript/zfin-gwt-autocomplete-helper.js">
 </script>
 

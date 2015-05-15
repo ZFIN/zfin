@@ -1,0 +1,73 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <title>
+        GWT Modules</title>
+
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/css/zfin.css">
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
+    <link rel=stylesheet type="text/css" href="/css/searchresults.css">
+    <link rel=stylesheet type="text/css" href="/css/summary.css">
+    <link rel=stylesheet type="text/css" href="/css/spiffycorners.css">
+    <link rel=stylesheet type="text/css" href="/css/Lookup.css">
+    <link rel=stylesheet type="text/css" href="/css/datapage.css">
+    <link rel=stylesheet type="text/css" href="/css/popup.css">
+    <link rel=stylesheet type="text/css" href="/css/tipsy.css">
+    <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
+    <link rel=stylesheet type="text/css" href="/css/typeahead.css">
+
+
+    <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script src="/javascript/header.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/javascript/jquery.modal.min.js"></script>
+    <script type="text/javascript" src="/javascript/jquery.tipsy.js"></script>
+    <script type="text/javascript" src="/javascript/sorttable.js"></script>
+
+    <script src="/javascript/autocompletify.js"></script>
+
+
+    <script type="text/javascript" src="/javascript/typeahead.bundle.js"></script>
+
+</head>
+<script type="text/javascript" language="javascript"
+        src="/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+<h1> Fish Tab</h1>
+
+<div id="show-hide-all-sections"></div>
+
+<div class="error"> Please use only for developmental purposes as this will make changes to the database!!!
+</div>
+<p/>
+
+<div id="title">
+    <jsp:useBean id="publication" class="org.zfin.publication.Publication" scope="request"/>
+    <b>Publication:</b> <zfin:link entity="${publication}"/> &nbsp; ${publication.zdbID}
+    <br>
+    <b>Title:</b> ${publication.title}<br>
+</div>
+<form method="GET">
+    Publication ID: <label>
+    <input name="publicationID" value=""/>
+</label>
+    &nbsp;<input type="submit" value="Submit"/>
+</form>
+
+<div id="directAttributionName"></div>
+
+<div id="fishTab"></div>
+
+<script type="text/javascript">
+    var curationProperties = {
+        zdbID: "${publication.zdbID}",
+        moduleType: "FISH_TAB",
+        debug: "false"
+    };
+    var g = "ZDB-PUB-060105-3,ZDB-PUB-090616-53,ZDB-PUB-990507-16";
+</script>
+

@@ -44,6 +44,18 @@ public class CurationTestController {
         return "dev-tools/gwt/human-disease-curation.page";
     }
 
+    @RequestMapping("/gwt/fish-tab-curation")
+    protected String fishTabCuration(@RequestParam(required = false) String publicationID,
+                                          Model model) throws Exception {
+
+        if (StringUtils.isEmpty(publicationID)) {
+            publicationID = "ZDB-PUB-990507-16";
+        }
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
+        model.addAttribute(publication);
+        return "dev-tools/gwt/fish-tab-curation.page";
+    }
+
     @RequestMapping("/gwt/phenotype-curation")
     protected String phenotypeCuration(@RequestParam(required = false) String publicationID,
                                        Model model) throws Exception {
