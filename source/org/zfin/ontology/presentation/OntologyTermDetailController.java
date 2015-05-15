@@ -378,4 +378,9 @@ public class OntologyTermDetailController {
         return "ontology/phenogrid.page";
     }
 
+    @RequestMapping("/note/ontology-relationship")
+    public String getOntologyRelationshipNote() {
+        return "ontology/ontology-relationship-note.insert";
+    }
+
 }
