@@ -3,6 +3,14 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<script src="/javascript/table-collapse.js"></script>
+
+<script>
+    jQuery(function() {
+        jQuery('#genotype').tableCollapse({label: "transgenic lines"});
+    });
+</script>
+
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.ConstructBean" scope="request"/>
 
 <c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
@@ -31,30 +39,41 @@
     <div class="summary">
         <c:forEach var="fig" items="${formBean.marker.figures}">
 
-        <c:forEach var="img" items="${fig.images}">
-           <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}" width="300" height="200"></a>
-            <%--<zfin:link entity="${img}"/>--%>
-        </c:forEach>
+            <c:forEach var="img" items="${fig.images}">
+                <a href="/${img.zdbID}"><img src="/imageLoadUp/${img.imageFilename}" width="300" height="200"></a>
+                <%--<zfin:link entity="${img}"/>--%>
+            </c:forEach>
         </c:forEach>
     </div>
 </c:if>
 <zfin2:constructFeatures relationships="${formBean.markerRelationshipPresentationList}"
-        marker="${formBean.marker}"
-        title="CONSTRUCT COMPONENTS" />
+                         marker="${formBean.marker}"
+                         title="CONSTRUCT COMPONENTS" />
 
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
 
-<zfin2:subsection title="TRANSGENIC LINES"
-                        test="${!empty formBean.transgenicLineLinks}" showNoData="true">
-    <table class="summary horizontal-solidblock">
-        <tr>
-            <td>
-                <a href="/action/fish/do-search?geneOrFeatureName=${formBean.marker.name}">View all lines that utilize <i>${formBean.marker.name}</i></a>
-                <%--<zfin2:toggledHyperlinkStrings collection="${formBean.transgenicLineLinks}" maxNumber="5" suffix="<br>"/>--%>
-            </td>
-        </tr>
-    </table>
-</zfin2:subsection>
+<%--Transgenic lines--%>
+<%--link to the facet search result if there are more than 50 lines--%>
+<c:choose>
+   <c:when test="${formBean.transgenicLines != null && fn:length(formBean.transgenicLines) > 50 }">
+       <zfin2:subsection title="TRANSGENIC LINES">
+           <table class="summary horizontal-solidblock">
+             <tr>
+               <td>
+                 <a href="prototype?q=&fq=category:%22Mutation+/+Tg%22&fq=xref:${formBean.marker.zdbID}">View all lines that utilize <i>${formBean.marker.name}</i></a>
+               </td>
+             </tr>
+           </table>
+       </zfin2:subsection>
+   </c:when>
+   <c:otherwise>
+       <div id="genotype">
+          <zfin2:genotype-information genotypes="${formBean.transgenicLines}" title="TRANSGENIC LINES"/>
+       </div>
+    </c:otherwise>
+</c:choose>
+
+
 <%--SEQUENCE INFORMATION--%>
 <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}" title="${fn:toUpperCase('Sequence Information')}" showAllSequences="false"/>
 

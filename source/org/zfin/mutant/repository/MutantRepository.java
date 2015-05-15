@@ -268,7 +268,13 @@ public interface MutantRepository {
 
     List<Marker> getKnockdownReagents(Marker gene);
 
-    List<String> getTransgenicLines(Marker construct);
+    /**
+     * Retrieve transgenocLines(genotypes) by construct
+     *
+     * @param construct
+     * @return list of genotypes
+     */
+    List<Genotype> getTransgenicLinesForConstruct(Marker construct);
 
     /**
      * Retrieve phenotype statements by genotype experiment ids

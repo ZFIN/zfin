@@ -21,6 +21,7 @@ import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeService;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.repository.MutantRepository;
@@ -147,40 +148,17 @@ public class FeatureDetailController {
     private void retrieveGenoData(Feature fr, FeatureBean form) {
         List<Genotype> genotypes = mutantRepository.getGenotypesByFeature(fr);
         form.setGenotypes(genotypes);
-        List<GenotypeInformation> featgenoStats = createGenotypeStats(genotypes);
-        Collections.sort(featgenoStats);
-        form.setFeatgenoStats(featgenoStats);
-        List<GenoExpStatistics> genoexpStats = createGenotypeExpStats(genotypes, fr);
+        List<GenotypeInformation> genotypeInfo = GenotypeService.getGenotypeInfo(genotypes);
+        Collections.sort(genotypeInfo);
+        form.setFeatgenoStats(genotypeInfo);
+        List<GenoExpStatistics> genoexpStats = GenotypeService.getGenotypeExpStats(genotypes, fr);
         form.setGenoexpStats(genoexpStats);
     }
-
 
     private void retrievePubData(Feature fr, FeatureBean form) {
         form.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(fr.getZdbID()));
     }
 
-    private List<GenotypeInformation> createGenotypeStats(List<Genotype> genotypes) {
-        if (genotypes == null)
-            return null;
-        List<GenotypeInformation> stats = new ArrayList<>();
-        for (Genotype genoType : genotypes) {
-            GenotypeInformation stat = new GenotypeInformation(genoType);
-            stats.add(stat);
-        }
-        return stats;
-    }
-
-    private List<GenoExpStatistics> createGenotypeExpStats(List<Genotype> genotypes, Feature fr) {
-        if (genotypes == null || fr == null)
-            return null;
-
-        List<GenoExpStatistics> stats = new ArrayList<>();
-        for (Genotype genoType : genotypes) {
-            GenoExpStatistics stat = new GenoExpStatistics(genoType, fr);
-            stats.add(stat);
-        }
-        return stats;
-    }
 
 }
 

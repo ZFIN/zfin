@@ -603,16 +603,16 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
-                        " select count(*) from marker_go_term_evidence  ev  " +
-                        " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
-                        " where " +
-                        " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
-                        " and " +
-                        " inf.infgrmem_inferred_from=:zdbID " +
-                        " ")
-                        .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
-                        .setString("pubZdbID", publicationZdbID)
-                        .uniqueResult().toString()
+                " select count(*) from marker_go_term_evidence  ev  " +
+                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                " where " +
+                " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
+                " and " +
+                " inf.infgrmem_inferred_from=:zdbID " +
+                " ")
+                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
+                .setString("pubZdbID", publicationZdbID)
+                .uniqueResult().toString()
         );
     }
 
@@ -1030,16 +1030,17 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public List<String> getTransgenicLines(Marker construct) {
-        String sql = " " +
-                "select distinct get_geno_name_with_bg_html_link(genofeat_geno_zdb_id) " +
-                "   from genotype_feature, feature_marker_relationship " +
-                "   where fmrel_mrkr_zdb_id = :markerZdbID " +
-                "   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id " +
-                "   and fmrel_type like 'contains%'";
-        return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("markerZdbID", construct.getZdbID())
-                .list();
+    public List<Genotype> getTransgenicLinesForConstruct(Marker construct) {
+
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct genofeat.genotype from GenotypeFeature genofeat, FeatureMarkerRelationship featMarker " +
+                "where featMarker.marker = :marker " +
+                "and genofeat.feature = featMarker.feature ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("marker", construct);
+        return (List<Genotype>) query.list();
     }
 
     /**

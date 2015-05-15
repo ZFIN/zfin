@@ -6,6 +6,14 @@
 
 <script src="/javascript/gbrowse-image.js"></script>
 
+<script src="/javascript/table-collapse.js"></script>
+
+<script>
+    jQuery(function() {
+        jQuery("#genotype").find(".summary").tableCollapse({label: "genotypes"});
+    });
+</script>
+
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
 <c:set var="editURL">/<%=ZfinProperties.getWebDriver()%>?MIval=aa-markerview.apg&UPDATE=1&orgOID=&OID=${formBean.marker.zdbID}</c:set>
@@ -91,14 +99,7 @@
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
     <div id="genotype" class="summary">
-        <c:choose>
-            <c:when test="${formBean.genotypeData != null && fn:length(formBean.genotypeData) > 0 }">
-                <zfin2:genotype-information genotypes="${formBean.genotypeData}" sequenceTargetReagen="${formBean.marker.name}" />
-            </c:when>
-            <c:otherwise>
-                <span><strong>GENOTYPES CREATED WITH ${formBean.marker.name}</strong></span> <span class="no-data-tag">No data available</span>
-            </c:otherwise>
-        </c:choose>
+       <zfin2:genotype-information genotypes="${formBean.genotypeData}" sequenceTargetReagen="${formBean.marker.name}" />
     </div>
 </c:if>
 

@@ -11,6 +11,10 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeFeature;
+import org.zfin.mutant.GenotypeService;
+import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -91,8 +95,21 @@ public class ConstructViewController {
         markerBean.setMarkerRelationshipPresentationList(cloneRelationships);
 
         // Transgenic lines
-        markerBean.setTransgenicLineLinks(RepositoryFactory.getMutantRepository().getTransgenicLines(construct));
+        //markerBean.setTransgenicLineLinks(RepositoryFactory.getMutantRepository().getTransgenicLines(construct));
 
+     //   List<GenotypeFeature> genotypeFeatures = RepositoryFactory.getMutantRepository().getGenotypeFeaturesForConstruct(construct);
+
+     //   List<Genotype> transgenicLines = new ArrayList<>();
+
+     //   for (GenotypeFeature genoFeat : genotypeFeatures) {
+     //       transgenicLines.add(genoFeat.getGenotype());
+     //   }
+
+       List<Genotype> genotypes = RepositoryFactory.getMutantRepository().getTransgenicLinesForConstruct(construct);
+       List<GenotypeInformation> genotypeInfo = GenotypeService.getGenotypeInfo(genotypes);
+       Collections.sort(genotypeInfo);
+       markerBean.setTransgenicLines(genotypeInfo);
+    //    markerBean.setTransgenicLines(transgenicLines);
 
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());

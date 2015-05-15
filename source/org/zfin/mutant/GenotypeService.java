@@ -1,20 +1,34 @@
 package org.zfin.mutant;
 
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.presentation.ExpressionDisplay;
+import org.zfin.feature.Feature;
+import org.zfin.mutant.presentation.GenoExpStatistics;
+import org.zfin.mutant.presentation.GenotypeInformation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenotypeService {
 
-    /* stubbing out methods for genotype expression summary page*/
-
-    public static List<ExpressionDisplay> getExpressionDisplays(Genotype genotype) {
-        return null;
+    public static List<GenotypeInformation> getGenotypeInfo(List<Genotype> genotypes) {
+        if (genotypes == null)
+            return null;
+        List<GenotypeInformation> genotypeInformations = new ArrayList<>();
+        for (Genotype genoType : genotypes) {
+            GenotypeInformation genotypeInformation = new GenotypeInformation(genoType);
+            genotypeInformations.add(genotypeInformation);
+        }
+        return genotypeInformations;
     }
 
-    public static List<ExpressionDisplay> getExpressionDisplays(List<ExpressionResult> expressionResults) {
-        return null;
-    }
+    public static List<GenoExpStatistics> getGenotypeExpStats(List<Genotype> genotypes, Feature fr) {
+        if (genotypes == null || fr == null)
+            return null;
 
+        List<GenoExpStatistics> stats = new ArrayList<>();
+        for (Genotype genoType : genotypes) {
+            GenoExpStatistics stat = new GenoExpStatistics(genoType, fr);
+            stats.add(stat);
+        }
+        return stats;
+    }
 }

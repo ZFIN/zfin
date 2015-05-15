@@ -1,18 +1,20 @@
 package org.zfin.marker.presentation;
 
+import org.zfin.mutant.presentation.GenotypeInformation;
+
 import java.util.List;
 
 /**
  */
 public class ConstructBean extends MarkerBean{
 
-    private List<String> transgenicLineLinks;
+    private List<GenotypeInformation> transgenicLines;
 
-    public List<String> getTransgenicLineLinks() {
-        return transgenicLineLinks;
+    public List<GenotypeInformation> getTransgenicLines() {
+        return transgenicLines;
     }
 
-    public void setTransgenicLineLinks(List<String> transenicLineLinks) {
-        this.transgenicLineLinks = transenicLineLinks;
+    public void setTransgenicLines(List<GenotypeInformation> transgenicLines) {
+        this.transgenicLines = transgenicLines;
     }
 }

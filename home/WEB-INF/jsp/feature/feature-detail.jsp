@@ -288,15 +288,8 @@
             </c:otherwise>  --%>
 </c:choose>
 
-<div id="genotype" class="summary">
-    <c:choose>
-        <c:when test="${formBean.featgenoStats != null && fn:length(formBean.featgenoStats) > 0 }">
-            <zfin2:genotype-information genotypes="${formBean.featgenoStats}"/>
-        </c:when>
-        <c:otherwise>
-            <span><strong>GENOTYPES</strong></span> <span class="no-data-tag">No data available</span>
-        </c:otherwise>
-    </c:choose>
+<div id="genotype">
+    <zfin2:genotype-information genotypes="${formBean.featgenoStats}"/>
 </div>
 
 <hr width="80%">
