@@ -15,9 +15,7 @@ import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.OmimPhenotype;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
@@ -169,7 +167,7 @@ public class OntologyTermDetailController {
         int number = getInfrastructureRepository().getTermReferences(term, null).getTotalCount();
 
         model.addAttribute("numberOfCitations", number);
-        int numberOfGenes=OntologyService.getNumberOfDiseaseGenes(term);
+        int numberOfGenes = OntologyService.getNumberOfDiseaseGenes(term);
         model.addAttribute("diseaseGenes", numberOfGenes);
         form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
         model.addAttribute("fishModels", OntologyService.getDiseaseModels(term));
@@ -327,6 +325,31 @@ public class OntologyTermDetailController {
         model.addAttribute("citationList", getInfrastructureRepository().getTermReferences(term, orderBy).getPopulatedResults());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/disease-publication-list.page";
+    }
+
+    @RequestMapping("/fish-model-publication-list/{termID}/{fishID}")
+    public String fishModelPublicationList(@PathVariable String termID,
+                                           @PathVariable String fishID,
+                                           @RequestParam(required = false) String orderBy,
+                                           Model model) throws Exception {
+
+        if (fishID == null) {
+            return getErrorPage(model);
+        }
+        Fish fish = getMutantRepository().getFish(fishID);
+        if (fish == null) {
+            return getErrorPage(fishID, model);
+        }
+        GenericTerm disease = getOntologyRepository().getTermByOboID(termID);
+        if (disease == null) {
+            return getErrorPage(termID, model);
+        }
+        model.addAttribute("fish", fish);
+        model.addAttribute("term", disease);
+        model.addAttribute("orderBy", orderBy);
+        model.addAttribute("citationList", PhenotypeService.getPublicationList(disease, fish));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
+        return "ontology/fish-model-publication-list.page";
     }
 
     @RequestMapping("/term-detail/{termID}/phenogrid")

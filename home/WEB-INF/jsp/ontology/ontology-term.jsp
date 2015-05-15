@@ -137,7 +137,7 @@
     </div>
 
     <div id="genes-involved">
-        <zfin2:fishModels fishModels="${fishModels}"/>
+        <zfin2:fishModels term="${formBean.term}" fishModels="${fishModels}"/>
     </div>
 
     <c:if test="${formBean.term.ontology.expressionData}">

@@ -1,16 +1,20 @@
 package org.zfin.mutant;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
+import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -261,6 +265,19 @@ public class PhenotypeService {
         return false;
     }
 
+    public static List<Publication> getPublicationList(GenericTerm disease, Fish fish) {
+        List<FishModelDisplay> model = OntologyService.getDiseaseModels(disease);
+        if (CollectionUtils.isEmpty(model))
+            return null;
+        Set<Publication> publicationSet = new HashSet<>();
+        for (FishModelDisplay display : model) {
+            if (display.getFishModel().getFish().equals(fish))
+                publicationSet.addAll(display.getPublications());
+        }
+        List<Publication> list = new ArrayList<>(publicationSet);
+        return list;
+    }
+
 
     private static class PhenotypeComparator implements Comparator<String> {
         public int compare(String o1, String o2) {
@@ -328,7 +345,7 @@ public class PhenotypeService {
 
     private static void addIfGOTerm(Set<Term> termList, GenericTerm superterm) {
         if (superterm != null)
-            if (superterm.getOntology().equals(Ontology.GO_BP)||(superterm.getOntology().equals(Ontology.GO_MF))||(superterm.getOntology().equals(Ontology.GO_CC)))
+            if (superterm.getOntology().equals(Ontology.GO_BP) || (superterm.getOntology().equals(Ontology.GO_MF)) || (superterm.getOntology().equals(Ontology.GO_CC)))
                 termList.add(superterm);
     }
 
@@ -351,7 +368,7 @@ public class PhenotypeService {
 
                 String key;
                 String keyPheno = pheno.getPhenoStatementString();
-                if(groupBy.equals("condition")) {
+                if (groupBy.equals("condition")) {
                     if (exp.isStandard())
                         key = keyPheno + "standard";
                     else if (exp.isChemical())
@@ -400,7 +417,7 @@ public class PhenotypeService {
 
             return phenoDisplays;
 
-        }  else {
+        } else {
             return null;
         }
     }

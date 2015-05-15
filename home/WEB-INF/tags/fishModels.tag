@@ -1,5 +1,7 @@
-<%@ attribute name="fishModels" type="java.util.Collection" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<%@ attribute name="fishModels" type="java.util.Collection" %>
+<%@ attribute name="term" type="org.zfin.ontology.GenericTerm" %>
 
 
 <zfin2:subsection title="ZEBRAFISH MODELS"
@@ -35,7 +37,7 @@
                             (<a href="/${fishModel.publication.zdbID}">1</a>)
                         </c:when>
                         <c:otherwise>
-                            (<a href="/action/ontology/${fishModel.publication.zdbID}">${fishModel.publications.size()}</a>)
+                            (<a href="/action/ontology/fish-model-publication-list/${term.oboID}/${fishModel.fishModel.fish.zdbID}">${fishModel.publications.size()}</a>)
                         </c:otherwise>
                     </c:choose>
                 </td>
