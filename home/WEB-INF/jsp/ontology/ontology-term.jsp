@@ -161,11 +161,11 @@
      </c:if>
 
 
-    <span class="name-label"> Citations:</span>
+
     <c:choose>
-        <c:when test="${numberOfCitations == 0}">None</c:when>
+        <c:when test="${numberOfCitations == 0}"><span class="name-label"> CITATIONS:</span> None</c:when>
         <c:otherwise>
-            (<a href="/action/ontology/disease-publication-list/${term.oboID}">${numberOfCitations}</a>)
+            <a href="/action/ontology/disease-publication-list/${term.oboID}">CITATIONS</a> (${numberOfCitations})
         </c:otherwise>
     </c:choose>
 
