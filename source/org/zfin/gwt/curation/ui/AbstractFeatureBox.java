@@ -257,28 +257,16 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 featureSequenceBox.setEnabled(false);
                 labOfOriginBox.setEnabled(false);
                 mutageeBox.setEnabled(false);
-                //mutagenBox.setEnabled(false);
+               mutagenBox.setEnabled(false);
                 constructTextBox.setVisible(false);
                 lineNumberBox.setText("");
                 featureNameBox.setVisible(true);
                 featureNameBox.setEnabled(true);
                 break ;
-            case TRANSGENIC_UNSPECIFIED:
-                featureNameBox.setVisible(false);
-                constructTextBox.setVisible(true);
-                dominantCheckBox.setEnabled(false);
-                labDesignationBox.setEnabled(false);
-                lineNumberBox.setEnabled(false);
-                featureAliasBox.setEnabled(false);
-                featureSequenceBox.setEnabled(false);
-                labOfOriginBox.setEnabled(false);
-                mutageeBox.setEnabled(false);
-                //mutagenBox.setEnabled(false);
-                lineNumberBox.setText("");
-                break ;
+
         }
 
-        mutagenBox.clear();
+//        mutagenBox.clear();
 
         FeatureRPCService.App.getInstance().getMutagensForFeatureType(featureTypeSelected,
                 new FeatureEditCallBack<List<String>>("Failed to return mutagen for feature type: " + featureTypeSelected.getName(), this) {
@@ -288,9 +276,11 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                             if (result.size() == 1) {
                                 mutagenBox.addItem(result.get(0));
                             } else {
-                                mutagenBox.addItem("-------");
+                                //mutagenBox.addItem("-------");
                                 for (String mut : result) {
-                                    mutagenBox.addItem(mut);
+                                    if (!mutagenBox.containsValue(mut)){
+                                        mutagenBox.addItem(mut);
+                                }
                                 }
                             }
                             mutagenBox.setEnabled(true);

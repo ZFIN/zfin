@@ -527,28 +527,29 @@ public class HibernateFeatureRepository implements FeatureRepository {
                     "Cannot remove such an alias.");
         // remove the ZDB active data record with cascade.
 
-        /* String hql = "delete from FeatureHistory  mh " +
+        String hql = "delete from FeatureHistory  mh " +
                 " where mh.featureAlias = :zdbID ";
         Query query = currentSession().createQuery(hql);
         query.setString("zdbID", alias.getZdbID());
 
         currentSession().flush();
 
-        int removed = query.executeUpdate();*/
+        int removed = query.executeUpdate();
 
 
+      //  infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
+        currentSession().flush();
+
+        hql = "delete from FeatureAlias ma " +
+                " where ma.dataZdbID = :zdbID ";
+        query = currentSession().createQuery(hql);
+        query.setString("zdbID", feature.getZdbID());
+
+        removed = query.executeUpdate();
         infrastructureRepository.deleteActiveDataByZdbID(alias.getZdbID());
         currentSession().flush();
 
-        /*hql = "delete from FeatureAlias ma " +
-                " where ma.dataZdbID = :zdbID ";
-        query = currentSession().createQuery(hql);
-        query.setString("zdbID", alias.getZdbID());
-
-        removed = query.executeUpdate();
-        currentSession().flush();*/
-
-        currentSession().refresh(feature);
+     //   currentSession().refresh(feature);
 
         // run the fast search table script so the alias is not showing up any more.
         //runFeatureNameFastSearchUpdate(feature);
@@ -1062,7 +1063,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     public List<String> getMutagensForFeatureType(FeatureTypeEnum featureTypeEnum) {
 
-        String sql = "select ftmgm_mutagen from feature_type_mutagen_group_member " +
+        String sql = "select distinct ftmgm_mutagen from feature_type_mutagen_group_member " +
                 " where ftmgm_feature_type = :featureType " +
                 " order by ftmgm_mutagen";
 

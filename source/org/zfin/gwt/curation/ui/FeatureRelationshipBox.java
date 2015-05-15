@@ -304,7 +304,7 @@ public class FeatureRelationshipBox extends AbstractComposite<FeatureDTO>{
                                     // is_allele relationship should only be available for transgenic insertions where the known insertion site box is checked
                                     // unspecified transgenic will never have known insertion sites
                                     if ((featureDTO.getFeatureType() == FeatureTypeEnum.TRANSGENIC_INSERTION
-                                            || featureDTO.getFeatureType() == FeatureTypeEnum.TRANSGENIC_UNSPECIFIED)
+                                            )
                                             && rel.startsWith("is allele of")) {
                                         if (featureDTO.getKnownInsertionSite()) {
                                             featureToAddRelationship.addItem(rel);

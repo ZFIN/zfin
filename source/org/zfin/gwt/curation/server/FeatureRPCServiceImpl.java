@@ -301,9 +301,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (feature == null)
                 throw new ValidationException("no feature found");
             FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, name);
+            featureRepository.deleteFeatureAlias(feature,featureAlias);
            // infrastructureRepository.deleteRecordAttributionsForData(featureDBLink.getZdbID());
-            session.delete(featureAlias);
-            HibernateUtil.flushAndCommitCurrentSession();
+            //session.delete(featureAlias);
+           HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             logger.error(e);
             HibernateUtil.rollbackTransaction();
@@ -425,6 +426,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 } else featureSources.add(featureSource);
                 HibernateUtil.currentSession().save(featureSource);
             }
+            else{
+                throw new ValidationException("Feature cannot be saved without lab of origin");
+            }
 
 
             FeatureAssay featureAssay = new FeatureAssay();
@@ -432,7 +436,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (featureDTO.getMutagen() == null) {
                 featureAssay.setMutagen(Mutagen.NOT_SPECIFIED);
             } else {
-                featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
+                List<String> allowedMutagens=featureRepository.getMutagensForFeatureType(feature.getType());
+                if(allowedMutagens.indexOf(featureDTO.getMutagen())==0){
+                    throw new ValidationException("Invalid mutagen for feature type"+ feature.getType().getDisplay());
+                }
+                else {
+                    featureAssay.setMutagen(Mutagen.getType(featureDTO.getMutagen()));
+                }
             }
             if (featureDTO.getMutagee() == null) {
                 featureAssay.setMutagee(Mutagee.NOT_SPECIFIED);
