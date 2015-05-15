@@ -457,5 +457,18 @@ public interface MutantRepository {
      * @return
      */
     DiseaseModel getDiseaseModel(DiseaseModel diseaseModel);
+
+    /**
+     * Retrieve disease model by ID
+     * @param id
+     * @return
+     */
+    DiseaseModel getDiseaseModelByID(long id);
+
+    /**
+     * Remove a disease model
+     * @param diseaseModel
+     */
+    void deleteDiseaseModel(DiseaseModel diseaseModel);
 }
 

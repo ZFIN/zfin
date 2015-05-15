@@ -1289,6 +1289,7 @@ public class DTOConversionService {
 
     public static DiseaseModelDTO convertToDiseaseModelDTO(DiseaseModel model) {
         DiseaseModelDTO dto = new DiseaseModelDTO();
+        dto.setID(model.getID());
         dto.setFish(convertToFishDtoFromFish(model.getFishModel().getFish()));
         dto.setPublication(convertToPublicationDTO(model.getPublication()));
         dto.setEvidenceCode(model.getEvidenceCode());

@@ -157,7 +157,7 @@ public class FishModule implements HandlesError, EntryPoint {
             }
         });
         initConstructionTableHeader();
-        initConstructionTable();
+        initConstructionRow();
         initFishListTable();
         retrieveAllValues();
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -261,7 +261,10 @@ public class FishModule implements HandlesError, EntryPoint {
             } else
                 return;
         }
-        constructionTable.setText(1, 0, newGenotype.getName());
+        HorizontalPanel genoPanel = new HorizontalPanel();
+        genoPanel.add(new InlineHTML(newGenotype.getName()));
+        genoPanel.setSpacing(5);
+        constructionTable.setWidget(1, 0, genoPanel);
         if (newStrList != null) {
             constructionTable.setWidget(1, 1, getStrPanel());
         }
@@ -273,12 +276,15 @@ public class FishModule implements HandlesError, EntryPoint {
     }
 
 
-    private void initConstructionTable() {
-        constructionTable.setWidget(2, 0, genotypeSelectionBox);
+    private void initConstructionRow() {
+        HorizontalPanel genoPanel = new HorizontalPanel();
+        genoPanel.add(genotypeSelectionBox);
+        constructionTable.setWidget(2, 0, genoPanel);
         HorizontalPanel panelStr = new HorizontalPanel();
         panelStr.add(strSelectionBox);
         panelStr.add(addStrButton);
         constructionTable.setWidget(2, 1, panelStr);
+        constructionTable.getRowFormatter().setStyleName(2, "table-header");
     }
 
     private void initFishListTable() {

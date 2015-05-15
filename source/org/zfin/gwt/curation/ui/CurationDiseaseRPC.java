@@ -50,4 +50,6 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<FishDTO> getFishList(String publicationID);
 
+    List<DiseaseModelDTO> deleteDiseaseModel(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException;
+
 }

@@ -30,5 +30,6 @@ public interface CurationDiseaseRPCAsync {
 
     void getFishList(String publicationID, AsyncCallback<List<FishDTO>> callback);
 
+    void deleteDiseaseModel(DiseaseModelDTO diseaseModelDTO, AsyncCallback<List<DiseaseModelDTO>> callback);
 }
 

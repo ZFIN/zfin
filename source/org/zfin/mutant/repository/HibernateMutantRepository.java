@@ -603,16 +603,16 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
-                " select count(*) from marker_go_term_evidence  ev  " +
-                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
-                " where " +
-                " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
-                " and " +
-                " inf.infgrmem_inferred_from=:zdbID " +
-                " ")
-                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
-                .setString("pubZdbID", publicationZdbID)
-                .uniqueResult().toString()
+                        " select count(*) from marker_go_term_evidence  ev  " +
+                        " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                        " where " +
+                        " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
+                        " and " +
+                        " inf.infgrmem_inferred_from=:zdbID " +
+                        " ")
+                        .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
+                        .setString("pubZdbID", publicationZdbID)
+                        .uniqueResult().toString()
         );
     }
 
@@ -1547,6 +1547,16 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("publication", diseaseModel.getPublication());
         query.setString("evidenceCode", diseaseModel.getEvidenceCode());
         return (DiseaseModel) query.uniqueResult();
+    }
+
+    @Override
+    public DiseaseModel getDiseaseModelByID(long id) {
+        return (DiseaseModel) HibernateUtil.currentSession().get(DiseaseModel.class, id);
+    }
+
+    @Override
+    public void deleteDiseaseModel(DiseaseModel diseaseModel) {
+        HibernateUtil.currentSession().delete(diseaseModel);
     }
 
     @Override

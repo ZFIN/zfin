@@ -5,11 +5,20 @@ import org.zfin.gwt.root.dto.*;
 
 public class DiseaseModelDTO implements IsSerializable {
 
+    private long ID;
     private FishDTO fish;
     private TermDTO disease;
     private EnvironmentDTO environment;
     private PublicationDTO publication;
     private String evidenceCode;
+
+    public long getID() {
+        return ID;
+    }
+
+    public void setID(long ID) {
+        this.ID = ID;
+    }
 
     public FishDTO getFish() {
         return fish;
