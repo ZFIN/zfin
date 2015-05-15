@@ -38,7 +38,7 @@
                 </tr>
                 <c:if test="${hasCoPi}">
                     <tr>
-                        <th>Co-PI:</th>
+                        <th>Co-PI / Senior<br/> Researcher:</th>
                         <td>
                             <zfin2:listMembers members="${members}" only="2" suppressTitle="true" suffix="<br>"/>
                         </td>
