@@ -4,7 +4,6 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.Person;
-import org.zfin.infrastructure.ZdbID;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -38,6 +37,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<Figure> figures;
     //yes, should be authors, but that conflicts with the string field
     private Set<Person> people;
+    private Set<MeshHeading> meshHeadings;
 
     private boolean deletable;
     private boolean indexed;
@@ -221,6 +221,14 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     public String getKeywords() { return keywords; }
 
     public void setKeywords(String keywords) { this.keywords = keywords; }
+
+    public Set<MeshHeading> getMeshHeadings() {
+        return meshHeadings;
+    }
+
+    public void setMeshHeadings(Set<MeshHeading> meshHeadings) {
+        this.meshHeadings = meshHeadings;
+    }
 
     public String getCitation() {
         StringBuilder sb = new StringBuilder();

@@ -10,6 +10,10 @@
         <param name="enumClassname">org.zfin.publication.Publication$Type</param>
     </typedef>
 
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="meshTermType">
+        <param name="enumClassname">org.zfin.publication.MeshTerm$Type</param>
+    </typedef>
+
     <class name="org.zfin.publication.Publication" table="publication">
         <id name="zdbID" type="string">
             <column name="zdb_id" not-null="true"/>
@@ -66,6 +70,11 @@
             <many-to-many class="org.zfin.profile.Person" column="source_id" order-by="full_name asc"/>
         </set>
 
+        <set name="meshHeadings" lazy="true">
+            <key column="mh_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.MeshHeading"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">
@@ -98,6 +107,31 @@
         <property name="isNice">
             <column name="jrnl_is_nice"/>
         </property>
+    </class>
+
+    <class name="org.zfin.publication.MeshTerm" table="mesh_term">
+        <id name="id" type="string">
+            <column name="mesht_mesh_id" not-null="true"/>
+        </id>
+        <property name="name" column="mesht_term_name" not-null="true"/>
+        <property name="type" column="mesht_type" not-null="true" type="meshTermType"/>
+    </class>
+
+    <class name="org.zfin.publication.MeshHeading" table="mesh_heading">
+        <id name="id" type="long" column="mh_pk_id"/>
+
+        <component name="descriptor" class="org.zfin.publication.MeshHeadingTerm">
+            <many-to-one name="term" column="mh_mesht_mesh_descriptor_id"/>
+            <property name="majorTopic" column="mh_descriptor_is_major_topic"/>
+        </component>
+
+        <set name="qualifiers" lazy="true" table="mesh_heading_qualifier">
+            <key column="mhq_mesh_heading_id"/>
+            <composite-element class="org.zfin.publication.MeshHeadingTerm">
+                <many-to-one name="term" column="mhq_mesht_mesh_qualifier_id"/>
+                <property name="majorTopic" column="mhq_is_major_topic"/>
+            </composite-element>
+        </set>
     </class>
 
 </hibernate-mapping>

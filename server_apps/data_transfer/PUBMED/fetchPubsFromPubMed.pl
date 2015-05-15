@@ -28,7 +28,7 @@ $key = $1 if ($output =~ /<QueryKey>(\d+)<\/QueryKey>/);
 $count = $1 if ($output =~ /<Count>(\d+)<\/Count>/);
 
 @filesToRemove = ("parsePubs.log", "newPublicationsAdded.txt", "newJournalsAdded.txt",
-                  "loadSQLError.log", "loadSQLOutput.log", "newPubSummary.txt");
+                  "loadSQLError.log", "loadSQLOutput.log", "newPubSummary.txt", "parseMesh.log");
 foreach my $file (@filesToRemove) {
     unlink "<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/$file" or warn "Could not delete $file: $!";
 }
@@ -38,6 +38,7 @@ print "webenv: ".$web."\n";
 print "query_key: ".$key."\n";
 print "total pub count: ".$count."\n";
 open (LOG, "><!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePub.log : $!\n";
+open (MESH, "><!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log") || die "Cannot open <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log : $!\n";
 
 #assemble the efetch URL
 
@@ -169,6 +170,32 @@ sub pubMedArticle {
                 $row{'iso'} = $journal->first_child_text('ISOAbbreviation');
             }
         }
+
+        if (defined $medlineCitation->first_child('MeshHeadingList')) {
+            my $meshList = $medlineCitation->first_child('MeshHeadingList');
+            if (defined $meshList->children('MeshHeading')) {
+                for my $meshHeading ($meshList->children('MeshHeading')) {
+                    if (defined $meshHeading->first_child('DescriptorName')) {
+                        my $descriptor = $meshHeading->first_child('DescriptorName');
+                        my $descId = $descriptor->att('UI');
+                        my $descIsMajor = $descriptor->att('MajorTopicYN');
+                        $descIsMajor =~ tr/YN/tf/;
+                        print MESH "$row{pmid}|$descId||$descIsMajor\n";
+                        if (defined $meshHeading->children('QualifierName')) {
+                            my @qualifiers = $meshHeading->children('QualifierName');
+                            if (@qualifiers) {
+                                for my $qualifier (@qualifiers) {
+                                    my $qualId = $qualifier->att('UI');
+                                    my $qualIsMajor = $qualifier->att('MajorTopicYN');
+                                    $qualIsMajor =~ tr/YN/tf/;
+                                    print MESH "$row{pmid}|$descId|$qualId|$qualIsMajor\n";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     if (defined $pubMedArticle->first_child('PubmedData')) {
         my $pubmedData = $pubMedArticle->first_child('PubmedData');
@@ -186,6 +213,7 @@ sub escape_utf8 {
 }
 
 close LOG;
+close MESH;
 
 
 exit;

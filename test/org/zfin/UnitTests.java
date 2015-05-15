@@ -51,6 +51,7 @@ import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
 import org.zfin.properties.ZfinPropertiesTest;
+import org.zfin.publication.MeshHeadingSpec;
 import org.zfin.publication.PubMedValidationReportTest;
 import org.zfin.publication.PublicationTest;
 import org.zfin.security.Md5PasswordEncoderTest;
@@ -107,6 +108,7 @@ import org.zfin.util.*;
         MatchingTermServiceTest.class,
         MatchTypeTest.class,
         Md5PasswordEncoderTest.class,
+        MeshHeadingSpec.class,
         MicroarrayParseTest.class,
         MergeMarkerUnitTest.class,
         OntologyServiceTest.class,

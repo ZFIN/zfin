@@ -66,7 +66,7 @@ insert into tmp_new_pubs
     iso,
     status,
     journaltitle
-    from tmp_pubs
+  from tmp_pubs
   where not exists (select 'x' from publication
                     where accession_no = pmid);
 
@@ -213,6 +213,28 @@ insert into publication (
   where year is null
   and not exists (Select 'x' from publication where accession_no = pmid);
 
+create temp table tmp_mesh (
+  pmid varchar(30),
+  descriptor_id varchar(10),
+  qualifier_id varchar(10),
+  is_major boolean
+) with no log;
+
+load from <!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parseMesh.log
+  insert into tmp_mesh;
+
+insert into mesh_heading (mh_pub_zdb_id, mh_mesht_mesh_descriptor_id, mh_descriptor_is_major_topic)
+  select distinct tmp_new_pubs.zdb_id, tmp_mesh.descriptor_id, tmp_mesh.is_major
+  from tmp_new_pubs
+  inner join tmp_mesh on tmp_new_pubs.pmid = tmp_mesh.pmid
+  where tmp_mesh.qualifier_id is null;
+
+insert into mesh_heading_qualifier (mhq_mesh_heading_id, mhq_mesht_mesh_qualifier_id, mhq_is_major_topic)
+  select mesh_heading.mh_pk_id, tmp_mesh.qualifier_id, tmp_mesh.is_major
+  from tmp_mesh
+  inner join mesh_heading on tmp_mesh.descriptor_id = mesh_heading.mh_mesht_mesh_descriptor_id
+  inner join tmp_new_pubs on tmp_mesh.pmid = tmp_new_pubs.pmid and mesh_heading.mh_pub_zdb_id = tmp_new_pubs.zdb_id
+  where tmp_mesh.qualifier_id is not null;
 
 commit work;
 
