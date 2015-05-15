@@ -932,7 +932,7 @@ and feature_zdb_id=fmrel_ftr_zdb_id
 
  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
     <?MIVAR>
-   <a class="small-new-link" href="javascript:;" onClick=open("/action/mutant/mutant-list?zdbID=$OID&callingPage=curation","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")><size=15>TRANSGENIC FEATURE COMPONENTS</a>
+   <a class="small-new-link" href="javascript:;" onClick=open("/action/mutant/mutant-list?zdbID=$OID&callingPage=curation","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")><size=15>FEATURE TABLE</a>
    <?/MIVAR>
  <?/MIBLOCK>
 
