@@ -6,11 +6,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<table bgcolor="#eeeeee" border="0" width="100%">
+<table class="data_manager">
     <tbody>
-        <tr align="center">
+        <tr>
             <td>
-                <font size="-1"><b>ZFIN ID:</b>&nbsp;${formBean.marker.zdbID}</font>
+                <strong>ZFIN ID:</strong>&nbsp;${formBean.marker.zdbID}
             </td>
         </tr>
     </tbody>
@@ -20,24 +20,14 @@
 <table width=100%>
     <tr>
         <td bgcolor=#cccccc>
-            <font size=+2><b>CITATIONS</b></font>
-
-            (${formBean.numOfPublications} total)
-
+            <span class="citation-heading">CITATIONS</span>&nbsp;(${formBean.numOfPublications} total)
         </td>
     </tr>
 </table>
-<p>
-
+<div class="name-label">
+  Clone name: <zfin:link entity="${formBean.marker}"/> 
+</div>
 <form>
-
-    <font size=+1>
-        <b>
-            Clone name: <zfin:link entity="${formBean.marker}"/>  
-            <br/><br/>
-        </b>
-    </font>
-
     <c:if test="${formBean.numOfPublications > 1}">
         <c:choose>
             <c:when test="${formBean.orderBy == 'author'}">

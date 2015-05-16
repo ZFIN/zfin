@@ -5,13 +5,11 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.MarkerRelationshipBean" scope="request"/>
 
-<table bgcolor="#eeeeee" border="0" width="100%">
+<table class="data_manager">
     <tbody>
-        <tr align="center">
+        <tr>
             <td>
-                <font size="-1"><b>ZFIN ID:</b>
-                    ${formBean.markerRelationship.zdbID}
-                </font>&nbsp;&nbsp;&nbsp;&nbsp;
+                <strong>ZFIN ID:</strong>&nbsp;${formBean.markerRelationship.zdbID}
             </td>
         </tr>
     </tbody>
@@ -20,10 +18,7 @@
 <table width=100%>
     <tr>
         <td bgcolor=#cccccc>
-            <font size=+2><b>CITATIONS</b></font>
-
-            (${formBean.numOfPublications} total)
-
+            <span class="citation-heading">CITATIONS</span>&nbsp;(${formBean.numOfPublications} total)
         </td>
     </tr>
 </table>

@@ -35,13 +35,11 @@
         </form>
     </c:when>
     <c:otherwise>
-        <table class="summary rowstripes">
+        <table class="data_manager">
             <tbody>
             <tr>
                 <td>
-                    <font size="-1"><b>ZFIN ID:</b>
-                        ${formBean.antibody.zdbID}
-                    </font>
+                    <strong>ZFIN ID:</strong>&nbsp;${formBean.antibody.zdbID}                      
                 </td>
                 <authz:authorize ifAnyGranted="root">
                     <td>
@@ -57,7 +55,7 @@
                     </td>
                     <td>
                         <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${formBean.antibody.zdbID}&rtype=antibody">
-                            <font size=-1><b>Updated:</b>
+                            <strong>Updated:</strong>
                                 <c:choose>
                                     <c:when test="${zfn:getLastUpdate(zdbID) != null}">
                                         <fmt:formatDate value="${zfn:getLastUpdate(zdbID).dateUpdated}"
@@ -67,7 +65,6 @@
                                         Never modified
                                     </c:otherwise>
                                 </c:choose>
-                            </font>
                         </a>
                     </td>
                 </authz:authorize>
@@ -79,20 +76,14 @@
 <table width=100%>
     <tr>
         <td bgcolor=#cccccc>
-            <font size=+2><b>CITATIONS</b></font>
-
-            (${formBean.numOfPublications} total)
-
+            <span class="citation-heading">CITATIONS</span>&nbsp;(${formBean.numOfPublications} total)
         </td>
     </tr>
 </table>
 
-<font size=+1>
-    <b>
-        Antibody Name:&nbsp;<a href="/action/marker/view/${formBean.antibody.zdbID}">${formBean.antibody.name}</a>
-        <br/>
-    </b>
-</font>
+<div class="name-label">
+    Antibody Name:&nbsp;<a href="/action/marker/view/${formBean.antibody.zdbID}">${formBean.antibody.name}</a>
+</div>
 
 <form:form commandName="formBean" name="Update Antibody Publication List" id="Update Antibody Publication List">
 

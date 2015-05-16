@@ -4,26 +4,19 @@
 <table width=100%>
     <tr>
         <td bgcolor=#cccccc>
-            <font size=+2><b>CITATIONS</b></font>
-
-            (${citationList.size()} total)
-
+            <span class="citation-heading">CITATIONS</span>&nbsp;(${citationList.size()} total)
         </td>
     </tr>
 </table>
 
-<font size=+1>
-    <b>
+<div class="name-label">
         Disease Name:&nbsp;<a href="/${term.oboID}">${term.termName}</a>
         <br/>
     </b>
-</font>
-<font size=+1>
-    <b>
+</div>
+<div class="name-label">
         Fish Name:&nbsp;<a href="/${fish.zdbID}">${fish.name}</a>
-        <br/>
-    </b>
-</font>
+</div>
 
 <p/>
 <c:choose>

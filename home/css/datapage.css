@@ -144,3 +144,8 @@ tr.spaceUnder > td{
     padding-bottom: 1em;
 }
 
+.citation-heading{
+    font-size: x-large; 
+    font-weight: 700; 
+    text-align: left;
+}

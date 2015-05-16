@@ -8,21 +8,15 @@
 <table width=100%>
     <tr>
         <td bgcolor=#cccccc>
-            <font size=+2><b>CITATIONS</b></font>
-
-            (${formBean.numOfPublications} total)
-
+            <span class="citation-heading">CITATIONS</span>&nbsp;(${formBean.numOfPublications} total)
         </td>
     </tr>
 </table>
 
-<font size=+1>
-    <b>
+<div class="name-label">
         Genotype + Sequence Targeting Reagents:&nbsp;
         <a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.name}</a>  
-        <br/>
-    </b>
-</font>
+</div>
 
 <form:form commandName="formBean" name="Update Antibody Publication List" id="Update Antibody Publication List">
 

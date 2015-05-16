@@ -6,13 +6,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<table bgcolor="#eeeeee" border="0" width="100%">
+<table class="data_manager">
     <tbody>
-        <tr align="center">
+        <tr>
             <td>
-                <font size="-1"><b>ZFIN ID:</b>
-                    ${formBean.markerAlias.zdbID}
-                </font>&nbsp;&nbsp;&nbsp;&nbsp;
+                <strong>>ZFIN ID:</strong>&nbsp;${formBean.markerAlias.zdbID}
             </td>
         </tr>
     </tbody>
@@ -21,10 +19,7 @@
 <table width=100%>
     <tr>
         <td bgcolor=#cccccc>
-            <font size=+2><b>CITATIONS</b></font>
-
-            (${formBean.numOfPublications} total)
-
+            <span class="citation-heading">CITATIONS</span>&nbsp;(${formBean.numOfPublications} total)
         </td>
     </tr>
 </table>

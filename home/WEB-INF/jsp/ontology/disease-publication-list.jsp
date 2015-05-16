@@ -1,34 +1,26 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<table class="summary rowstripes">
+<table class="data_manager">
     <tbody>
     <tr>
         <td>
-            <font size="-1"><b>OBO ID:</b>
-                ${term.oboID}
-            </font>
+            <strong>OBO ID:</strong>&nbsp;${term.oboID}
         </td>
     </tr>
     </tbody>
 </table>
 <table width=100%>
     <tr>
-        <td bgcolor=#cccccc>
-            <font size=+2><b>CITATIONS</b></font>
-
-            (${citationList.size()} total)
-
+        <td>
+            <span class="citation-heading">CITATIONS</b></span>&nbsp;(${citationList.size()} total)
         </td>
     </tr>
 </table>
 
-<font size=+1>
-    <b>
+<div class="name-label">
         Term Name:&nbsp;<a href="/action/ontology/term-detail/${term.oboID}">${term.termName}</a>
-        <br/>
-    </b>
-</font>
+</div>
 
 <c:choose>
     <c:when test="${orderBy eq 'author'}">
