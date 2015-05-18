@@ -125,7 +125,7 @@
 
     <target name="run-omim-mapping-updates" >
         <echo message="Updating the Omim Phenotype xref mapping table..."/>
-        <run-db-query db-query-file="../OMIM/update_Omimp_termxref_mapping.sql" instanceName="${env.INSTANCE}"/>
+        <run-db-query db-query-file="../OMIM/update_omimp_termxref_mapping.sql" instanceName="${env.INSTANCE}"/>
     </target>
 
     <target name="load-anatomy" depends="load-anatomy-ontology"/>
