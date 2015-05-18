@@ -60,7 +60,7 @@
            <table class="summary horizontal-solidblock">
              <tr>
                <td>
-                 <a href="prototype?q=&fq=category:%22Mutation+/+Tg%22&fq=xref:${formBean.marker.zdbID}">View all lines that utilize <i>${formBean.marker.name}</i></a>
+                 <a href="prototype?q=&fq=category:%22Mutation+/+Tg%22&fq=xref:${formBean.marker.zdbID}">View all transgenics that utilize <i>${formBean.marker.name}</i></a>
                </td>
              </tr>
            </table>
