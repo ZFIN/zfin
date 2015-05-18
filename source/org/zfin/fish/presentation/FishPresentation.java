@@ -1,6 +1,7 @@
 package org.zfin.fish.presentation;
 
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.mutant.Fish;
 
 /**
  * Create a links and name html div's .
@@ -37,5 +38,8 @@ public class FishPresentation extends EntityPresentation {
 
         return getSpanTag("fish", stageName, stageName);
     }
+
+
+    public static String getName(Fish fish) { return getSpanTag("fish", fish.getName(), fish.getName());  }
 
 }

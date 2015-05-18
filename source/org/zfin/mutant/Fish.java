@@ -77,4 +77,7 @@ public class Fish implements EntityZdbID {
     public String getEntityName() {
         return "Fish";
     }
+
+    public String getFishID() { return zdbID; }
+
 }

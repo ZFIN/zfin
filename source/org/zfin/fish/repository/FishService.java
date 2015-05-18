@@ -16,6 +16,7 @@ import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinFigureEntity;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
@@ -254,5 +255,15 @@ public class FishService {
         String genotypeID = getGenotypeID(fishID);
         List<String> genoxIds = getGenoxIds(fishID);
         return getMutantRepository().hasImagesOnExpressionFigures(genotypeID, genoxIds);
+    }
+
+
+    public static Integer getCitationCount(Fish fish) {
+        return 0;
+        //todo: implement me!
+    }
+
+    public static Integer getCitationCount(MartFish fish) {
+        return RepositoryFactory.getMutantRepository().getGenoxAttributions(fish.getGenotypeExperimentIDs()).size();
     }
 }

@@ -21,10 +21,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.ExpressedGene;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
-import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
 
@@ -50,6 +47,11 @@ public class FishDetailController {
                                     @PathVariable("ID") String fishID, HttpServletResponse response) {
         LOG.info("Start MartFish Detail Controller");
 
+
+        if (fishID.startsWith("ZDB-FISH")) {
+            return showCuratedFish(fishID, model, response);
+        }
+
         fishID = ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishID);
 
         MartFish fish = RepositoryFactory.getFishRepository().getFish(fishID);
@@ -73,23 +75,50 @@ public class FishDetailController {
         model.addAttribute("fish", fish);
         FishBean form = new FishBean();
         retrieveGenotypeExperiment(form, fish);
-        retrieveGenotypes(form, fish);
         retrievePhenotypeData(form, fish.getGenotypeExperimentIDs());
-        retrieveSTRData(form, fish);
-        retrievePublicationData(form, fish);
+        model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        String fishName = fish.getName();
-        fishName = fishName.replaceAll("<sup>", "^");
-        fishName = fishName.replaceAll("</sup>", "");
 
         addExpressionSummaryToForm(model, fishID);
 
         // the following put the fish Id to page title as debugging for FB case 8817
         // model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish: " + fishID);
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish: " + fishName);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
 
         return "fish/fish-detail.page";
+    }
+
+    protected String showCuratedFish(String fishZdbId, Model model, HttpServletResponse response) {
+
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishZdbId);
+
+        if (fish == null) {
+            String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(fishZdbId);
+            if (newZdbID != null) {
+                LOG.debug("found a replaced zdbID for: " + fishZdbId + "->" + newZdbID);
+                return "redirect:/" + newZdbID;
+            }
+            else{
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return LookupStrings.idNotFound(model, fishZdbId);
+            }
+        }
+
+        model.addAttribute("fish", fish);
+        FishBean form = new FishBean();
+
+        model.addAttribute("formBean", form);
+        model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
+
+        return "fish/fish-detail.page";
+    }
+
+    private String getTitle(String fishName) {
+        fishName = fishName.replaceAll("<sup>", "^");
+        fishName = fishName.replaceAll("</sup>", "");
+        return fishName;
     }
 
     @RequestMapping(value = "/fish-detail-popup/{ID}")
@@ -98,10 +127,8 @@ public class FishDetailController {
                 ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishId)
         );
         FishBean form = new FishBean();
-        form.setFish(fish);
+        model.addAttribute("fish",fish);
         retrieveGenotypeExperiment(form, fish);
-        retrieveGenotypes(form, fish);
-        retrieveSTRData(form, fish);
         List<FeatureGene> genomicFeatures = new ArrayList<>();
         // remove any featureGenes that have an STR mutation type and use the resulting list
         // to populate the form's genomicFeatures field
@@ -144,13 +171,10 @@ public class FishDetailController {
         }
 
         FishBean form = new FishBean();
-        form.setFish(fish);
+        model.addAttribute("fish", fish);
         retrievePhenotypeData(form, fish.getGenotypeExperimentIDs());
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        String fishName = fish.getName();
-        fishName = fishName.replaceAll("<sup>", "^");
-        fishName = fishName.replaceAll("</sup>", "");
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, fishName);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(fish.getName()));
 
         return "fish/fish-all-phenotype.page";
     }
@@ -175,32 +199,10 @@ public class FishDetailController {
             form.setGenotype(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));
         addExpressionSummaryToForm(model, fishID);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute("sequenceTargetingReagents", getSequenceTargetingReagent(fish));
         model.addAttribute(fish);
-        String fishName = fish.getName();
-        fishName = fishName.replaceAll("<sup>", "^");
-        fishName = fishName.replaceAll("</sup>", "");
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, fishName);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(fish.getName()));
 
         return "genotype/fish-all-expressions.page";
-    }
-
-    private void retrieveSTRData(FishBean form, MartFish fish) {
-        if (fish.getStrList() == null || fish.getStrList().size() == 0)
-            return;
-        form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
-    }
-
-    private List<SequenceTargetingReagent> getSequenceTargetingReagent(MartFish fish) {
-        if (fish.getStrList() == null || fish.getStrList().size() == 0)
-            return null;
-        Set<String> strIDs = new HashSet<String>(fish.getStrList().size());
-        for (SequenceTargetingReagent str : fish.getStrList())
-            strIDs.add(str.getZdbID());
-        List<SequenceTargetingReagent> sequenceTargetingReagents = new ArrayList<SequenceTargetingReagent>(2);
-        for (String moID : strIDs)
-            sequenceTargetingReagents.add(getMutantRepository().getSequenceTargetingReagentByID(moID));
-        return sequenceTargetingReagents;
     }
 
     public void retrievePhenotypeData(FishBean form, List<String> genoxIds) {
@@ -225,23 +227,7 @@ public class FishDetailController {
         form.setGenotypeExperimentsList(genotypeExperiments);
     }
 
-    private void retrieveGenotypes(FishBean form, MartFish fish) {
-        List<Genotype> genotype = new ArrayList<Genotype>();
-        if (fish.getGenotype() != null) {
-            genotype.add(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));
-        }
-        if (fish.getGenotypeExperimentIDs() != null) {
-            for (String genoxID : fish.getGenotypeExperimentIDs()) {
-                genotype.add(getMutantRepository().getGenotypeExperiment(genoxID).getGenotype());
-            }
-        }
-        form.setGenotypes(genotype);
-    }
 
-
-    private void retrievePublicationData(FishBean form, MartFish fish) {
-        form.setTotalNumberOfPublications(RepositoryFactory.getMutantRepository().getGenoxAttributions(fish.getGenotypeExperimentIDs()).size());
-    }
 
     private class MarkerCentricOrdering implements Comparator<GeneCentricExpressionData> {
 

@@ -5,8 +5,8 @@
 <div class="summary">
     <div class="summaryTitle">
         All ${formBean.numberOfPhenoDisplays} phenotypes for Genotype + Sequence Targeting Reagents:
-        <a href="/action/fish/fish-detail/${formBean.fish.fishID}"><span
-                class="name-value">${formBean.fish.name}</span></a>
+        <a href="/action/fish/fish-detail/${fish.fishID}"><span
+                class="name-value">${fish.name}</span></a>
     </div>
     <zfin2:all-phenotype phenotypeDisplays="${formBean.phenoDisplays}" secondColumn="condition"/>
 </div>

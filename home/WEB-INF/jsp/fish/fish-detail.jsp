@@ -34,11 +34,11 @@
         <th>Parental Zygosity</th>
     </tr>
     <c:choose>
-        <c:when test="${fn:length(formBean.genotype.genotypeFeatures) > 0}">
-            <c:forEach var="genotypeFeature" items="${formBean.genotype.genotypeFeatures}">
+        <c:when test="${fn:length(fish.genotype.genotypeFeatures) > 0}">
+            <c:forEach var="genotypeFeature" items="${fish.genotype.genotypeFeatures}">
                 <jsp:useBean id="genotypeFeature" class="org.zfin.mutant.GenotypeFeature" scope="request"/>
                 <tr>
-                    <td style="vertical-align: bottom;"><zfin:link entity="${formBean.genotype}"/>
+                    <td style="vertical-align: bottom;"><zfin:link entity="${fish.genotype}"/>
 
                     <td style="vertical-align: bottom;">
                         <zfin2:listOfAffectedGenes markerCollection="${genotypeFeature.feature.affectedGenes}"/>
@@ -53,7 +53,7 @@
         </c:when>
         <c:otherwise>
             <tr>
-                <td><zfin:link entity="${formBean.genotype}"/></td>
+                <td><zfin:link entity="${fish.genotype}"/></td>
                 <td>
                 </td>
                 <td>
@@ -138,4 +138,12 @@
 </div>
 
 <p>
-    <a href='/action/fish/fish-publication-list?fishID=${fish.fishID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.totalNumberOfPublications})
+<c:choose>
+    <c:when test="${totalNumberOfPublications > 0}">
+        <a href='/action/fish/fish-publication-list?fishID=${fish.fishID}'><b>CITATIONS</b></a>&nbsp;&nbsp;(${totalNumberOfPublications})
+    </c:when>
+    <c:otherwise>
+        CITATIONS&nbsp;&nbsp;(0)
+    </c:otherwise>
+</c:choose>
+

@@ -15,6 +15,7 @@ import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.Fish;
 
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.presentation.GenotypePresentation;
@@ -67,7 +68,8 @@ public class CreateNameTag extends TagSupport {
             link = TermPresentation.getName((PostComposedEntity) o);
         else if (o instanceof MartFish)
             link = FishPresentation.getName((MartFish) o);
-
+        else if (o instanceof Fish)
+            link = FishPresentation.getName((Fish) o);
         else
             throw new JspException("Tag is not yet implemented for a class of type " + o.getClass());
 

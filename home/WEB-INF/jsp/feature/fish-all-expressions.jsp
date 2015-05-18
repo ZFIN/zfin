@@ -1,7 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<jsp:useBean id="formBean" class="org.zfin.feature.presentation.GenotypeBean" scope="request"/>
-
 <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
         <td width="100%" class="titlebar">
@@ -21,14 +19,14 @@
     <tr>
         <th>Genotype:</th>
         <td>
-            <zfin:link entity="${formBean.genotype}"/>
+            <zfin:link entity="${fish.genotype}"/>
         </td>
     </tr>
-    <c:if test="${!empty sequenceTargetingReagents}">
+    <c:if test="${!empty fish.strList}">
         <tr>
             <th>Knockdown Reagents:</th>
             <td>
-                <c:forEach var="sequenceTargetingReagent" items="${sequenceTargetingReagents}" varStatus="index">
+                <c:forEach var="sequenceTargetingReagent" items="${fish.strList}" varStatus="index">
                     <zfin:link entity="${sequenceTargetingReagent}"/><c:if test="${!index.last}">, </c:if>
 
                 </c:forEach>
@@ -40,11 +38,11 @@
 
 <div class="summary">
     <div class="summaryTitle">
-        All ${fn:length(geneCentricExpressionDataList)} expressed genes for:
+        All ${fn:length(formBean.geneCentricExpressionDataList)} expressed genes for:
         <zfin:link entity="${fish}"/>
     </div>
 
-    <zfin2:all-expression expressionSummaryDisplay="${geneCentricExpressionDataList}"
+    <zfin2:all-expression expressionSummaryDisplay="${formBean.geneCentricExpressionDataList}"
                           queryKeyValuePair="fishID=${fish.fishID}"
                           suppressMoDetails="true"/>
 </div>
