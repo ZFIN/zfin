@@ -12,11 +12,8 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.feature.presentation.FeaturePrefixPresentation;
 import org.zfin.feature.presentation.FeaturePresentation;
-import org.zfin.fish.presentation.MartFish;
-import org.zfin.fish.presentation.FishPresentation;
+import org.zfin.fish.presentation.*;
 import org.zfin.fish.FishAnnotation;
-import org.zfin.fish.presentation.FishAnnotationPresentation;
-import org.zfin.fish.presentation.ZfinEntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.framework.presentation.RunCandidatePresentation;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -28,6 +25,7 @@ import org.zfin.mapping.presentation.PanelPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
+import org.zfin.mutant.DiseaseModel;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
@@ -136,6 +134,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = PanelPresentation.getLink((Panel) o);
         else if (o instanceof OrthologySpecies)
             link = OrthologyPresentation.getLink((OrthologySpecies) o);
+        else if (o instanceof DiseaseModel)
+            link = DiseaseModelPresentation.getLink((DiseaseModel) o);
         else if (o instanceof Genotype)
             link = GenotypePresentation.getLink((Genotype) o, suppressPopupLink);
         else if (o instanceof Feature)
