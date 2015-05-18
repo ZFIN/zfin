@@ -4,6 +4,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.orthology.Orthologue;
 import org.zfin.orthology.Orthology;
+import org.zfin.sequence.DBLink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,14 @@ public class OmimPhenotypeDisplay {
     private String name;
     private String omimNum;
     private ArrayList<String> humanGene;
+
+    public DBLink getHumanAccession() {
+        return humanAccession;
+    }
+
+    public void setHumanAccession(DBLink humanAccession) {
+        this.humanAccession = humanAccession;
+    }
 
     public String getName() {
         return name;
@@ -52,6 +61,7 @@ public class OmimPhenotypeDisplay {
     }
 
     private Orthologue orthology;
+    private DBLink humanAccession;
     private List<Marker> zfinGene;
 
     public List<Marker> getZfinGene() {

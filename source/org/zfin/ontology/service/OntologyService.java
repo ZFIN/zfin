@@ -14,10 +14,12 @@ import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.service.SequenceService;
 
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
  * This service provides a bridge between the OntologyRepository and business logic.
@@ -129,7 +131,7 @@ public class OntologyService {
 
 
     public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
-
+        SequenceService sequenceService=new SequenceService();
 
         if (term == null)
             return null;
@@ -155,6 +157,7 @@ public class OntologyService {
                     omimDisplay = map.get(key);
                 }
                 omimDisplay.setOrthology(omimResult.getOrthologue());
+                omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrthologue().getZdbID(),sequenceService.getOMIMHumanOrthologue()));
                 omimDisplay.setName(omimResult.getName());
                 omimDisplay.setOmimNum(omimResult.getOmimNum());
                 omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrthologue().getAbbreviation()));

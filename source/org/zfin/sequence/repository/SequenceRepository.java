@@ -55,6 +55,7 @@ public interface SequenceRepository {
     DBLink getDBLinkByID(String zdbID);
 
     DBLink getDBLinkByAlternateKey(String accessionString, String dataZdbID, ReferenceDatabase referenceDatabases);
+    DBLink getDBLinkByData(String dataZdbID,ReferenceDatabase referenceDatabase);
     FeatureDBLink getFeatureDBLinkByAlternateKey(String accessionString, String dataZdbID, ReferenceDatabase referenceDatabases);
 
 

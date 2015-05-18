@@ -355,6 +355,15 @@ public class HibernateSequenceRepository implements SequenceRepository {
         criteria.add(Restrictions.eq("accessionNumber", accessionString));
         return (DBLink) criteria.uniqueResult();
     }
+    public DBLink getDBLinkByData(String dataZdbID, ReferenceDatabase referenceDatabase) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(DBLink.class);
+        criteria.add(Restrictions.eq("dataZdbID", dataZdbID));
+        criteria.add(Restrictions.eq("referenceDatabase", referenceDatabase));
+
+
+        return (DBLink) criteria.uniqueResult();
+    }
 
     public FeatureDBLink getFeatureDBLinkByAlternateKey(String accessionString, String dataZdbID,
                                                         ReferenceDatabase referenceDatabases) {
