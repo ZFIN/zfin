@@ -25,8 +25,8 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
             addToValidationReport(fish.getAbbreviation() + " associated with more than one publication: ", publicationList);
         }
         List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModelsByFish(zdbID);
-        if (CollectionUtils.isNotEmpty(diseaseModelList) && diseaseModelList.size() > 1) {
-            addToValidationReport(fish.getAbbreviation() + " associated with : "+diseaseModelList.size()+" disease models", diseaseModelList);
+        if (CollectionUtils.isNotEmpty(diseaseModelList) ) {
+            addToValidationReport(fish.getAbbreviation() + " associated with : "+diseaseModelList.size()+" disease model(s)", diseaseModelList);
         }
         return validationReportList;
     }
