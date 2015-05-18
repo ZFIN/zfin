@@ -12,6 +12,7 @@ EST	/action/marker/view/ZDB-EST
 ETCONSTRCT	/action/marker/view/ZDB-ETCONSTRCT
 EXP	/action/expression/experiment?id=ZDB-EXP
 FIG	/action/figure/view/ZDB-FIG
+FISH	/action/fish/fish-detail/ZDB-FISH
 FOSMID	/action/marker/view/ZDB-FOSMID
 GENE	/action/marker/view/ZDB-GENE
 GENEFAMILY	/action/marker/view/ZDB-GENEFAMILY
