@@ -267,7 +267,6 @@ select count(*), "externalLinks" from db_link, foreign_db_contains,foreign_db
 "RefSeq", --                             31466
 "SGD", --                                    9
 "Sanger_Clone", --                        4247
-"TAO", --                                 4717
 "UniGene", --                            22272
 "UniProtKB", --                          25865
 "UniSTS", --                              1777
