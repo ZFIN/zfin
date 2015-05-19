@@ -1973,3 +1973,12 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  inner join publication on ra.recattrib_source_zdb_id = publication.zdb_id
  where term.term_ontology = 'disease_ontology'
  order by term.term_ont_id;
+
+!echo "unload fish_model_disease.txt"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt'
+ DELIMITER "	"
+ select fe_fish_zdb_id, fe_environment_zdb_id, "is_a_model", term_ont_id, term_name, da_pub_zdb_id, accession_no
+   from fish_environment, disease_annotation, publication, term
+   where fe_pk_id = da_fishenv_id
+   and da_term_zdb_id = term_zdb_id
+   and da_pub_zdb_id = zdb_id;
