@@ -74,13 +74,6 @@
             <th>Ontology:</th>
             <td id="ontology-name">${formBean.term.ontology.commonName}
                 <zfin2:ontologyTermLinks term="${formBean.term}"/>
-
-                <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
-                    <span style="margin-left: 20px">
-                        <a href="/action/ontology/term-detail/${formBean.term.oboID}/phenogrid">Phenotype Comparison Chart</a>
-                    </span>
-                </c:if>
-
             </td>
         </tr>
 
@@ -156,9 +149,11 @@
     </div>--%>
 
 
-     <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
-         <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
-     </c:if>
+     <authz:authorize ifAnyGranted="root">
+         <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
+             <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
+         </c:if>
+     </authz:authorize>
 
 
 
