@@ -3,9 +3,6 @@ package org.zfin.ontology.presentation;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.Term;
 
-import java.util.SortedSet;
-
-
 public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
     private Term diseaseTerm;
     private String omimTerm;
@@ -39,25 +36,18 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
     }
 
     public int compareTo(DiseaseDisplay o) {
-        if (diseaseTerm == null)  {
+        if (diseaseTerm == null && o.getDiseaseTerm() != null)  {
             return 1;
-        }  else if (o.getDiseaseTerm() == null)  {
+        }  else if (o.getDiseaseTerm() == null && diseaseTerm != null)  {
             return -1;
         }  else {
-             if (diseaseTerm.compareTo(o.getDiseaseTerm()) == 0) {
-                 if (omimTerm.compareToIgnoreCase(o.getOmimTerm()) == 0) {
-                     if (omimNumber == null && o.getOmimNumber() != null) {
-                         return 1;
-                     } else if (omimNumber != null && o.getOmimNumber() == null) {
-                         return -1;
-                     }
-                     return omimNumber.compareTo(o.getOmimNumber());
-                 } else {
-                     return omimTerm.compareToIgnoreCase(o.getOmimTerm());
-                 }
-             } else {
-                 return diseaseTerm.compareTo(o.getDiseaseTerm());
-             }
+            OmimPhenotype omimPhenotype = new OmimPhenotype();
+            omimPhenotype.setOmimNum(omimNumber);
+            omimPhenotype.setName(omimTerm);
+            OmimPhenotype anotherOmimPhenotype = new OmimPhenotype();
+            anotherOmimPhenotype.setOmimNum(o.getOmimNumber());
+            anotherOmimPhenotype.setName(o.getOmimTerm());
+            return omimPhenotype.compareTo(anotherOmimPhenotype);
         }
     }
 }

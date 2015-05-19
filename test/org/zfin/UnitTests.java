@@ -35,6 +35,7 @@ import org.zfin.infrastructure.TrieMapTest;
 import org.zfin.infrastructure.ant.ReportConfigurationTest;
 import org.zfin.marker.MergeMarkerUnitTest;
 import org.zfin.marker.presentation.DbLinkDisplayComparatorTest;
+import org.zfin.ontology.presentation.DiseaseDisplayComparatorTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.PhenotypeStatementTest;
@@ -86,6 +87,7 @@ import org.zfin.util.*;
         DatabaseServiceTest.class,
         DbLinkDisplayComparatorTest.class,
         DbScriptFileParserTest.class,
+        DiseaseDisplayComparatorTest.class,
         EntityPresentationTest.class,
         EnvironmentDTOTest.class,
         ExpressionExperimentTest.class,
