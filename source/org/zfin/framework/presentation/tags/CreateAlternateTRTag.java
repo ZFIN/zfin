@@ -92,9 +92,9 @@ public class CreateAlternateTRTag extends TagSupport {
                 //if the row's property to be used for grouping is null, such as in the case of DO term
                 if (currentGroupBeanAttribute == null && previousGroupBeanAttribute != null) {
                     newGroup = true;
-                } else if (currentGroupBeanAttribute == null && previousGroupBeanAttribute == null) {
+                } else if (currentGroupBeanAttribute == null) {
                     newGroup = false;
-                } else if (currentGroupBeanAttribute != null && previousGroupBeanAttribute == null) {
+                } else if (previousGroupBeanAttribute == null) {
                     newGroup = true;
                 } else {
                     newGroup = !previousGroupBeanAttribute.equals(currentGroupBeanAttribute);
