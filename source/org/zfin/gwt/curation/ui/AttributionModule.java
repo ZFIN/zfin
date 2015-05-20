@@ -31,7 +31,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private boolean working = false;
     private HashMap<String, RelatedEntityDTO> relatedEntityDTOs = new HashMap<>(); // entities in the Remove Attr drop-down list
 
-    public static enum RemoveHeader {
+    public enum RemoveHeader {
         MARKER,
         FEATURE,
         GENOTYPE,
@@ -72,6 +72,15 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     @Override
     protected void revertGUI() {
         working();
+        populateAttributeRemoval();
+        markerLookupComposite.clearNote();
+        markerLookupComposite.clearError();
+        featureLookupComposite.clearNote();
+        featureLookupComposite.clearError();
+        clearMessage();
+    }
+
+    public void populateAttributeRemoval() {
         LookupRPCService.App.getInstance().getAttributionsForPub(dto.getPublicationZdbID(),
                 new MarkerEditCallBack<List<RelatedEntityDTO>>("Failed to return attributions for: " + dto, this) {
                     @Override
@@ -91,11 +100,6 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                         notWorking();
                     }
                 });
-        markerLookupComposite.clearNote();
-        markerLookupComposite.clearError();
-        featureLookupComposite.clearNote();
-        featureLookupComposite.clearError();
-        clearMessage();
     }
 
     @Override

@@ -1425,7 +1425,8 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql = "select str from SequenceTargetingReagent str , PublicationAttribution attrib " +
                 "     where attrib.publication.zdbID = :publicationID AND " +
-                "attrib.dataZdbID = str.zdbID ";
+                "attrib.dataZdbID = str.zdbID " +
+                "order by str.abbreviationOrder";
         Query query = session.createQuery(hql);
         query.setParameter("publicationID", publicationID);
 

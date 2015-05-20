@@ -402,7 +402,7 @@ public class DTOConversionService {
 
         if (includePubInfo) {
             List<PublicationDTO> associatedPublications = new ArrayList<>();
-            for (Publication publication:genotype.getAssociatedPublications()) {
+            for (Publication publication : genotype.getAssociatedPublications()) {
                 associatedPublications.add(DTOConversionService.convertToPublicationDTO(publication));
             }
             genotypeDTO.setAssociatedPublications(associatedPublications);
@@ -1293,10 +1293,12 @@ public class DTOConversionService {
     public static DiseaseModelDTO convertToDiseaseModelDTO(DiseaseModel model) {
         DiseaseModelDTO dto = new DiseaseModelDTO();
         dto.setID(model.getID());
-        dto.setFish(convertToFishDtoFromFish(model.getFishModel().getFish()));
+        if (model.getFishModel() != null) {
+            dto.setFish(convertToFishDtoFromFish(model.getFishModel().getFish()));
+            dto.setEnvironment(convertToEnvironmentDTO(model.getFishModel().getExperiment()));
+        }
         dto.setPublication(convertToPublicationDTO(model.getPublication()));
         dto.setEvidenceCode(model.getEvidenceCode());
-        dto.setEnvironment(convertToEnvironmentDTO(model.getFishModel().getExperiment()));
         dto.setDisease(convertToTermDTO(model.getDisease()));
         dto.setEvidenceCode(model.getEvidenceCode());
         return dto;

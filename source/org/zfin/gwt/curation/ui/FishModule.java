@@ -130,10 +130,10 @@ public class FishModule implements HandlesError, EntryPoint {
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
+        // update STR list when attribution
         attributionModule.addHandlesErrorListener(new HandlesError() {
             @Override
             public void setError(String message) {
-
             }
 
             @Override
@@ -144,11 +144,11 @@ public class FishModule implements HandlesError, EntryPoint {
             @Override
             public void fireEventSuccess() {
                 diseaseCurationRPCAsync.getStrList(publicationID, strListCallBack);
+                diseaseCurationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack("Fish List", errorLabel));
             }
 
             @Override
             public void addHandlesErrorListener(HandlesError handlesError) {
-
             }
         });
         initConstructionTableHeader();
@@ -235,7 +235,7 @@ public class FishModule implements HandlesError, EntryPoint {
         diseaseCurationRPCAsync.getStrList(publicationID, strListCallBack);
 
         // get Fish List
-        diseaseCurationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack("Fish List", null));
+        diseaseCurationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack("Fish List", errorLabel));
 
     }
 
@@ -363,6 +363,7 @@ public class FishModule implements HandlesError, EntryPoint {
             loadingImage.setVisible(false);
             if (fishList != null && fishList.size() > 0)
                 noneDefined.setVisible(false);
+            attributionModule.populateAttributeRemoval();
         }
     }
 }

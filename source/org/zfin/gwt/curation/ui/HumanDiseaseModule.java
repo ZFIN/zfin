@@ -228,12 +228,16 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         if (modelDTOList != null) {
             for (DiseaseModelDTO diseaseModel : modelDTOList) {
                 int colIndex = 0;
-                InlineHTML fish = new InlineHTML(diseaseModel.getFish().getHandle());
-                fish.setTitle(diseaseModel.getFish().getZdbID());
-                diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
-                InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
-                environment.setTitle(diseaseModel.getEnvironment().getZdbID());
-                diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
+                if(diseaseModel.getFish() != null) {
+                    InlineHTML fish = new InlineHTML(diseaseModel.getFish().getHandle());
+                    fish.setTitle(diseaseModel.getFish().getZdbID());
+                    diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
+                    InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
+                    environment.setTitle(diseaseModel.getEnvironment().getZdbID());
+                    diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
+                } else {
+                    colIndex +=2;
+                }
                 diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
                 diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
                 InlineHTML disease = new InlineHTML(diseaseModel.getDisease().getTermName());
