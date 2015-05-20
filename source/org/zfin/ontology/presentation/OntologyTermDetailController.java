@@ -347,7 +347,7 @@ public class OntologyTermDetailController {
         model.addAttribute("fish", fish);
         model.addAttribute("term", disease);
         model.addAttribute("orderBy", orderBy);
-        model.addAttribute("citationList", PhenotypeService.getPublicationList(disease, fish));
+        model.addAttribute("citationList", PhenotypeService.getPublicationList(disease, fish, orderBy));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/fish-model-publication-list.page";
     }

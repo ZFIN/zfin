@@ -11,31 +11,46 @@
                              showThisseInSituLink="false"
                              showErrataAndNotes="false"/>
 
-<table class="summary rowstripes" style="margin-top: 1em;">
-    <caption>Disease / Models
+<table class="summary groupstripes" style="margin-top: 1em;">
+    <caption>Disease / Model Data
         (<zfin:choice choicePattern="0#Records| 1#Record| 2#Records"
-                     integerEntity="${fn:length(diseases)}"
-                     includeNumber="true"/>)
+                      integerEntity="${fn:length(diseases)}"
+                      includeNumber="true"/>)
     </caption>
     <tr>
-        <th style="width: 50%">
-            Human Disease
-        </th>
-        <th><span class="tooltip" title="Fish = Genotype + Reagent">Fish Model</span></th>
+        <th> Human Disease</th>
+        <th> Evidence Code</th>
+        <th>Fish Model</th>
+        <th>Environment</th>
     </tr>
     <c:forEach var="disease" items="${diseases}" varStatus="loop">
-        <zfin:alternating-tr loopName="loop" groupByBean="zdbID" groupBeanCollection="${diseases}">
-            <td><zfin:link entity="${disease}"/></td>
+        <zfin:alternating-tr loopName="loop" groupByBean="disease.termName" groupBeanCollection="${diseases}">
             <td>
-                <%-- nothing to see here --%>
+                <zfin:groupByDisplay loopName="loop"
+                                     groupBeanCollection="${diseases}"
+                                     groupByBean="disease.termName">
+
+                    <zfin:link entity="${disease.disease}"/>
+                </zfin:groupByDisplay>
+            </td>
+            <td>${disease.evidenceCode}</td>
+            <td>
+                <c:if test="${not empty disease.fishModel }">
+                    <zfin:link entity="${disease.fishModel.fish}"/>
+                </c:if>
+            </td>
+            <td>
+                <c:if test="${not empty disease.fishModel }">
+                    <zfin:link entity="${disease.fishModel.experiment}"/>
+                </c:if>
             </td>
         </zfin:alternating-tr>
     </c:forEach>
 </table>
 
 <script>
-    $(document).ready(function() {
-        $('.tooltip').tipsy({gravity:'s'});
+    $(document).ready(function () {
+        $('.tooltip').tipsy({gravity: 's'});
     });
 
 </script>

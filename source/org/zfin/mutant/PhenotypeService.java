@@ -8,6 +8,8 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.curation.dto.DiseaseModelDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
@@ -16,12 +18,14 @@ import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationAuthorComparator;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
  * Service class that deals with Phenotype-related logic
@@ -265,6 +269,18 @@ public class PhenotypeService {
         return false;
     }
 
+    public static List<Publication> getPublicationList(GenericTerm disease, Fish fish, String orderBy) {
+        List<Publication> publicationList = getPublicationList(disease, fish);
+        if (publicationList == null)
+            return null;
+
+        if (orderBy != null && orderBy.equalsIgnoreCase("author"))
+            Collections.sort(publicationList, new PublicationAuthorComparator());
+        if (StringUtils.isEmpty(orderBy) || orderBy.equalsIgnoreCase("date"))
+            Collections.sort(publicationList);
+        return publicationList;
+    }
+
     public static List<Publication> getPublicationList(GenericTerm disease, Fish fish) {
         List<FishModelDisplay> model = OntologyService.getDiseaseModels(disease);
         if (CollectionUtils.isEmpty(model))
@@ -278,6 +294,13 @@ public class PhenotypeService {
         return list;
     }
 
+    public static List<DiseaseModelDTO> getDiseaseModelDTOs(String publicationID) {
+        List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModels(publicationID);
+        List<DiseaseModelDTO> dtoList = new ArrayList<>();
+        for (DiseaseModel diseaseModel : diseaseModelList)
+            dtoList.add(DTOConversionService.convertToDiseaseModelDTO(diseaseModel));
+        return dtoList;
+    }
 
     private static class PhenotypeComparator implements Comparator<String> {
         public int compare(String o1, String o2) {

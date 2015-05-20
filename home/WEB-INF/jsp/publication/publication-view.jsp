@@ -51,7 +51,7 @@
             <c:out value="${publication.pages}"/> (<c:out value="${publication.type.display}"/>)
 
             <span style="padding-left: 1em;">
-                <form style="display: inline-block" method=post  action="/cgi-bin/webdriver">
+                <form style="display: inline-block" method=post action="/cgi-bin/webdriver">
                     <input type=hidden name=MIval value=aa-pubprintable.apg>
                     <input type=hidden name=constraint value="where zdb_id='${publication.zdbID}'">
                     <input type=submit name=printable value="Generate reference">
@@ -136,52 +136,63 @@
 </zfin2:subsection>
 
 <zfin2:subsection title="ADDITIONAL INFORMATION" showNoData="true" test="${showAdditionalData}">
-    
+
     <ul>
         <c:if test="${markerCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mrkr">Genes / Markers</a> (${markerCount})</li>
+            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mrkr">Genes /
+                Markers</a> (${markerCount})
+            </li>
         </c:if>
         <c:if test="${morpholinoCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mo">Morpholino</a> (${morpholinoCount})</li>
+            <li>
+                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_mo">Morpholino</a>
+                (${morpholinoCount})
+            </li>
         </c:if>
         <c:if test="${talenCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_talen">TALEN</a> (${talenCount})</li>
+            <li>
+                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_talen">TALEN</a>
+                (${talenCount})
+            </li>
         </c:if>
         <c:if test="${crisprCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_crispr">CRISPR</a> (${crisprCount})</li>
+            <li>
+                <a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_crispr">CRISPR</a>
+                (${crisprCount})
+            </li>
         </c:if>
         <c:if test="${antibodyCount > 0}">
-            <li><a href="/action/antibody/antibodies-per-publication/${publication.zdbID}" id="list-of-antibodies">Antibodies</a> (${antibodyCount})</li>
+            <li><a href="/action/antibody/antibodies-per-publication/${publication.zdbID}" id="list-of-antibodies">Antibodies</a>
+                (${antibodyCount})
+            </li>
         </c:if>
         <c:if test="${efgCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_efg">Engineered Foreign Genes</a> (${efgCount})</li>
+            <li><a href="/cgi-bin/webdriver?MIval=aa-markerselect.apg&pubId=${publication.zdbID}&type=pub_efg">Engineered
+                Foreign Genes</a> (${efgCount})
+            </li>
         </c:if>
         <c:if test="${cloneProbeCount > 0}">
-            <li><a href="/cgi-bin/webdriver?MIval=aa-msegselect.apg&pubId=${publication.zdbID}">Clones and Probes</a> (${cloneProbeCount})</li>
+            <li><a href="/cgi-bin/webdriver?MIval=aa-msegselect.apg&pubId=${publication.zdbID}">Clones and Probes</a>
+                (${cloneProbeCount})
+            </li>
         </c:if>
         <c:if test="${expressionCount > 0 || phenotypeCount > 0}">
             <li><a href="/action/figure/all-figure-view/${publication.zdbID}">${expressionAndPhenotypeLabel}</a></li>
         </c:if>
         <c:if test="${mappingDetailsCount > 0}">
-            <li><a href="/action/mapping/publication/${publication.zdbID}">Mapping Details</a> (${mappingDetailsCount})</li>
+            <li><a href="/action/mapping/publication/${publication.zdbID}">Mapping Details</a> (${mappingDetailsCount})
+            </li>
         </c:if>
         <c:if test="${phenotypeAlleleCount > 0}">
-            <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Mutants / Transgenic Lines</a> (${phenotypeAlleleCount})
-        </c:if>
-        <c:if test="${orthologyCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/orthology-list">Orthology</a> (${orthologyCount})
-        </c:if>
-        <c:choose>
-          <c:when test="${diseaseCount > 1}">
-            <li>
-              <a href="/action/publication/${publication.zdbID}/disease">Disease/Models</a>
-              (${diseaseCount})</li>
-          </c:when>
-    	  <c:when test="${diseaseCount == 1}">
-            <li><zfin:link entity="${disease}">Disease/Model (1)</zfin:link></li>
-      	  </c:when>
-        </c:choose>
-
+        <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Mutants / Transgenic Lines</a>
+            (${phenotypeAlleleCount})
+            </c:if>
+            <c:if test="${orthologyCount > 0}">
+        <li><a href="/action/publication/${publication.zdbID}/orthology-list">Orthology</a> (${orthologyCount})
+            </c:if>
+        <li>
+            <a href="/action/publication/${publication.zdbID}/disease">Disease / Model Data</a>
+        </li>
     </ul>
 
 </zfin2:subsection>
@@ -195,7 +206,7 @@
 
 <script>
     function start_note() {
-        top.zfinhelp=open("/<%=ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect_note.apg","notewindow","scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
+        top.zfinhelp = open("/<%=ZfinProperties.getWebDriver()%>?MIval=aa-xpatselect_note.apg", "notewindow", "scrollbars=no,toolbar=no,directories=no,menubar=no,status=no,resizable=yes,width=400,height=300");
     }
 </script>
 

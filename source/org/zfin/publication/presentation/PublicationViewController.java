@@ -12,6 +12,8 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.PhenotypeService;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -21,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 @Controller
 @RequestMapping("/publication")
@@ -38,7 +40,7 @@ public class PublicationViewController {
         Publication publication = publicationRepository.getPublication(zdbID);
         //try zdb_replaced data if necessary
         if (publication == null) {
-            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
             if (replacedZdbID != null) {
                 publication = publicationRepository.getPublication(replacedZdbID);
             }
@@ -83,13 +85,8 @@ public class PublicationViewController {
         model.addAttribute("orthologyCount", orthologyCount);
         model.addAttribute("mappingDetailsCount", mappingDetailsCount);
 
-        List<GenericTerm> diseaseList = RepositoryFactory.getPhenotypeRepository().getHumanDiseases(publication.getZdbID());
-        int diseaseCount = diseaseList.size();
-        model.addAttribute("diseaseCount", diseaseCount);
-
-        if (diseaseCount == 1) {
-            model.addAttribute("disease", diseaseList.get(0));
-        }
+        List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModels(zdbID);
+        model.addAttribute("diseaseCount", diseaseModelList.size());
 
         model.addAttribute("expressionAndPhenotypeLabel", PublicationService.getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount));
 
@@ -108,7 +105,7 @@ public class PublicationViewController {
             model.addAttribute("showAdditionalData", false);
         }
 
-        //If the mini_ref / shortAuthorList is empty, can't use it in the title...so don't! 
+        //If the mini_ref / shortAuthorList is empty, can't use it in the title...so don't!
         if (StringUtils.isEmpty(publication.getShortAuthorList())) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getZdbID());
         } else {
@@ -149,14 +146,12 @@ public class PublicationViewController {
     @RequestMapping("/{zdbID}/disease")
     public String disease(@PathVariable String zdbID, Model model, HttpServletResponse response) {
 
-        PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-
-        Publication publication = publicationRepository.getPublication(zdbID);
+        Publication publication = getPublicationRepository().getPublication(zdbID);
         //try zdb_replaced data if necessary
         if (publication == null) {
-            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
             if (replacedZdbID != null) {
-                publication = publicationRepository.getPublication(replacedZdbID);
+                publication = getPublicationRepository().getPublication(replacedZdbID);
             }
         }
 
@@ -167,8 +162,8 @@ public class PublicationViewController {
         }
 
         model.addAttribute("publication", publication);
-        model.addAttribute("diseases", RepositoryFactory.getPhenotypeRepository().getHumanDiseases(publication.getZdbID()));
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getShortAuthorList().replace("<i>","").replace("</i> Disease",""));
+        model.addAttribute("diseases", getPhenotypeRepository().getHumanDiseaseModels(publication.getZdbID()));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getShortAuthorList().replace("<i>", "").replace("</i> Disease", ""));
 
         return "publication/publication-disease.page";
     }

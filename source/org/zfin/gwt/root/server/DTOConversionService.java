@@ -1282,7 +1282,10 @@ public class DTOConversionService {
     private static FishModel convertToFishModel(DiseaseModelDTO diseaseModelDTO) {
         FishModel model = new FishModel();
         model.setFish(getMutantRepository().getFish(diseaseModelDTO.getFish().getZdbID()));
-        model.setExperiment(getExpressionRepository().getExperimentByID(diseaseModelDTO.getEnvironment().getZdbID()));
+        Experiment experiment = getExpressionRepository().getExperimentByID(diseaseModelDTO.getEnvironment().getZdbID());
+        model.setExperiment(experiment);
+        model.setStandard(experiment.isOnlyStandard());
+        model.setStandard(experiment.isStandard());
         return model;
     }
 

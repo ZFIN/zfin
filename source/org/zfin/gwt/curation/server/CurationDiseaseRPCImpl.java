@@ -13,6 +13,7 @@ import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.Fish;
 import org.zfin.ontology.GenericTerm;
@@ -37,10 +38,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
     @Override
     public List<DiseaseModelDTO> getHumanDiseaseModelList(String publicationID) throws TermNotFoundException {
-        List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModels(publicationID);
-        List<DiseaseModelDTO> dtoList = new ArrayList<>();
-        for (DiseaseModel diseaseModel : diseaseModelList)
-            dtoList.add(DTOConversionService.convertToDiseaseModelDTO(diseaseModel));
+        List<DiseaseModelDTO> dtoList = PhenotypeService.getDiseaseModelDTOs(publicationID);
         return dtoList;
     }
 

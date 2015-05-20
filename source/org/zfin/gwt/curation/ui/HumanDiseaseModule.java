@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -228,20 +229,20 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         if (modelDTOList != null) {
             for (DiseaseModelDTO diseaseModel : modelDTOList) {
                 int colIndex = 0;
-                if(diseaseModel.getFish() != null) {
-                    InlineHTML fish = new InlineHTML(diseaseModel.getFish().getHandle());
+                if (diseaseModel.getFish() != null) {
+                    Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(diseaseModel.getFish().getHandle()), "/" + diseaseModel.getFish().getZdbID());
                     fish.setTitle(diseaseModel.getFish().getZdbID());
                     diseaseModelTable.setWidget(rowIndex, colIndex++, fish);
                     InlineHTML environment = new InlineHTML(diseaseModel.getEnvironment().getName());
                     environment.setTitle(diseaseModel.getEnvironment().getZdbID());
                     diseaseModelTable.setWidget(rowIndex, colIndex++, environment);
                 } else {
-                    colIndex +=2;
+                    colIndex += 2;
                 }
                 diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
                 diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
-                InlineHTML disease = new InlineHTML(diseaseModel.getDisease().getTermName());
-                disease.setTitle(diseaseModel.getDisease().getZdbID());
+                Anchor disease = new Anchor(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "/" + diseaseModel.getDisease().getOboID());
+                disease.setTitle(diseaseModel.getDisease().getOboID());
                 diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
                 diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
                 Button deleteButton = new Button("X");
