@@ -1964,17 +1964,8 @@ from marker, marker_sequence
  where mrkr_zdb_id = seq_mrkr_zdb_id
  and mrkr_zdb_id like "ZDB-TALEN%";
 
-!echo "unload disease_publication.txt"
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/disease_publication.txt'
- DELIMITER "	"
- select term.term_ont_id, term.term_name, ra.recattrib_source_zdb_id, publication.accession_no
- from record_attribution as ra
- inner join term on ra.recattrib_data_zdb_id = term.term_zdb_id
- inner join publication on ra.recattrib_source_zdb_id = publication.zdb_id
- where term.term_ontology = 'disease_ontology'
- order by term.term_ont_id;
 
-!echo "unload fish_model_disease.txt"
+!echo "unload disease.txt"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt'
  DELIMITER "	"
  select fe_fish_zdb_id, fe_environment_zdb_id, "is_a_model", term_ont_id, term_name, da_pub_zdb_id, accession_no

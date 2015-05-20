@@ -2664,32 +2664,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
         <Download orderIndex="1">
             <Name>
-                Disease Publication Relation
-            </Name>
-            <Category>
-                Disease
-            </Category>
-            <FileName>disease_publication</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                    select term.term_ont_id, term.term_name, ra.recattrib_source_zdb_id, publication.accession_no
-                    from record_attribution as ra
-                    inner join term on ra.recattrib_data_zdb_id = term.term_zdb_id
-                    inner join publication on ra.recattrib_source_zdb_id = publication.zdb_id
-                    where term.term_ontology = 'disease_ontology'
-                    order by term.term_ont_id;
-                ]]>
-            </Query>
-            <Column id="1" unique="true">Disease Ontology ID</Column>
-            <Column id="2">Disease Name</Column>
-            <Column id="3">Publication ZFIN ID</Column>
-            <Column id="4">Publication PubMed ID</Column>
-        </Download>
-        <Download orderIndex="1">
-            <Name>
-                Fish Model Disease
+                Disease/Models
             </Name>
             <Category>
                 Disease
