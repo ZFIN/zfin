@@ -108,10 +108,15 @@ public class PublicationViewController {
             model.addAttribute("showAdditionalData", false);
         }
 
-        String title = "Publication: " + publication.getShortAuthorList();
-        title.replace("<i>","").replace("</i>","");
+        //If the mini_ref / shortAuthorList is empty, can't use it in the title...so don't! 
+        if (StringUtils.isEmpty(publication.getShortAuthorList())) {
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getZdbID());
+        } else {
+            String title = "Publication: " + publication.getShortAuthorList();
+            title.replace("<i>", "").replace("</i>", "");
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
+        }
 
         return "publication/publication-view.page";
     }
