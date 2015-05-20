@@ -7,7 +7,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -65,11 +64,6 @@ public class FishModule implements HandlesError, EntryPoint {
     @UiField
     ZfinFlexTable fishListTable;
 
-/*
-    @UiField
-    TermInfoComposite termInfoBox;
-*/
-
     public FishModule(String publicationID) {
         this.publicationID = publicationID;
         onModuleLoad();
@@ -92,15 +86,16 @@ public class FishModule implements HandlesError, EntryPoint {
             @Override
             public void onChange(ChangeEvent changeEvent) {
                 int index = genotypeSelectionBox.getSelectedIndex();
-                if (genotypeSelectionBox.getValue(index).startsWith("---")) {
-                    errorLabel.setText("Not a valid entry");
-                    return;
-                }
-
                 //Window.alert(""+index);
                 List<GenotypeDTO> dtoList = genotypeListCallBack.getDtoList();
                 newGenotype = dtoList.get(index);
                 updateConstructionTable();
+                unsetErrorMessage();
+            }
+        });
+        strSelectionBox.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent changeEvent) {
                 unsetErrorMessage();
             }
         });
@@ -290,9 +285,9 @@ public class FishModule implements HandlesError, EntryPoint {
     private void initFishListTable() {
         int col = 0;
         fishListTable.getCellFormatter().setStyleName(0, col, "bold");
-        fishListTable.setText(0, col++, "Fish Handle");
+        fishListTable.setText(0, col++, "Fish Name");
         fishListTable.getCellFormatter().setStyleName(0, col, "bold");
-        fishListTable.setText(0, col++, "Display Name");
+        fishListTable.setText(0, col++, "Display Handle");
         fishListTable.getCellFormatter().setStyleName(0, col, "bold");
         fishListTable.setText(0, col++, "Delete");
         fishListTable.getRowFormatter().setStyleName(0, "table-header");
@@ -313,9 +308,11 @@ public class FishModule implements HandlesError, EntryPoint {
         int rowIndex = 1;
         for (FishDTO fish : fishList) {
             int col = 0;
-            fishListTable.setText(index, col++, fish.getHandle());
             Anchor html = new Anchor(SafeHtmlUtils.fromTrustedString(fish.getName()), "/" + fish.getZdbID());
             fishListTable.setWidget(index, col++, html);
+            InlineHTML handle = new InlineHTML(fish.getHandle());
+            handle.setTitle(fish.getZdbID());
+            fishListTable.setWidget(index, col++, handle);
             Anchor anchor = new Anchor("X", "/action/infrastructure/deleteRecord/" + fish.getZdbID());
             fishListTable.getCellFormatter().setHorizontalAlignment(index, col, HasHorizontalAlignment.ALIGN_CENTER);
             fishListTable.setWidget(index++, col++, anchor);
@@ -360,7 +357,6 @@ public class FishModule implements HandlesError, EntryPoint {
 
         @Override
         public void onSuccess(List<FishDTO> list) {
-            //Window.alert("Number of Fish: " + relatedEntityDTOs.size());
             fishList = list;
             resetUI();
             updateFishListTableContent(list);

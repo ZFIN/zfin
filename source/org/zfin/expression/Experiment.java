@@ -1,5 +1,6 @@
 package org.zfin.expression;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
@@ -81,6 +82,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     public boolean isOnlyStandard() {
         return (name.equalsIgnoreCase(Experiment.STANDARD));
     }
+
     public boolean isOnlyControl() {
         return (name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }
@@ -91,7 +93,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         }
 
         boolean allChemical = true;
-        for (ExperimentCondition expCdt: experimentConditions) {
+        for (ExperimentCondition expCdt : experimentConditions) {
             if (!expCdt.isChemicalCondition()) {
                 allChemical = false;
                 break;
@@ -103,14 +105,14 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     public int compareTo(Experiment o) {
         if (this.isStandard() && !o.isStandard()) {
             return -1;
-        }  else if (!this.isStandard() && o.isStandard()) {
+        } else if (!this.isStandard() && o.isStandard()) {
             return 1;
-        }  else {
+        } else {
             if (this.isChemical() && !o.isChemical()) {
                 return -1;
-            }  else if (!this.isChemical() && o.isChemical()) {
+            } else if (!this.isChemical() && o.isChemical()) {
                 return 1;
-            }  else {
+            } else {
                 return 0;
             }
         }
@@ -134,5 +136,16 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @Override
     public String getEntityName() {
         return "Experiment";
+    }
+
+    public boolean isSequenceTargetingReagent() {
+        if (CollectionUtils.isEmpty(experimentConditions))
+            return false;
+        for (ExperimentCondition condition : experimentConditions) {
+            if (condition.getSequenceTargetingReagent() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -402,8 +402,8 @@ public class DTOConversionService {
 
         if (includePubInfo) {
             List<PublicationDTO> associatedPublications = new ArrayList<>();
-            for (int i = 0; i < genotype.getAssociatedPublications().size(); i++) {
-                associatedPublications.add(DTOConversionService.convertToPublicationDTO(genotype.getAssociatedPublications().get(i)));
+            for (Publication publication:genotype.getAssociatedPublications()) {
+                associatedPublications.add(DTOConversionService.convertToPublicationDTO(publication));
             }
             genotypeDTO.setAssociatedPublications(associatedPublications);
         }
@@ -1230,6 +1230,7 @@ public class DTOConversionService {
         fish.setHandle(fish.getGenotype().getHandle());
         String strName = "";
         if (CollectionUtils.isNotEmpty(newFish.getStrList())) {
+            Collections.sort(newFish.getStrList());
             List<SequenceTargetingReagent> strList = new ArrayList<>(newFish.getStrList().size());
             for (RelatedEntityDTO dto : newFish.getStrList()) {
                 SequenceTargetingReagent str = getMarkerRepository().getSequenceTargetingReagent(dto.getZdbID());
@@ -1271,8 +1272,10 @@ public class DTOConversionService {
         diseaseModel.setDisease(convertToTerm(diseaseModelDTO.getDisease()));
         diseaseModel.setPublication(convertToPublication(diseaseModelDTO.getPublication()));
         diseaseModel.setEvidenceCode(diseaseModelDTO.getEvidenceCode());
-        FishModel model = DTOConversionService.convertToFishModel(diseaseModelDTO);
-        diseaseModel.setFishModel(model);
+        if (diseaseModelDTO.getFish() != null && diseaseModelDTO.getFish().getZdbID() != null) {
+            FishModel model = DTOConversionService.convertToFishModel(diseaseModelDTO);
+            diseaseModel.setFishModel(model);
+        }
         return diseaseModel;
     }
 

@@ -21,8 +21,14 @@ public class RetrieveGenotypeListCallBack<T extends RelatedEntityDTO> extends Zf
     public void onSuccess(List<T> dtoList) {
         entityList.clear();
         this.dtoList = dtoList;
+        int index = 0;
         for (T dto : dtoList) {
-            entityList.addItem(dto.getName(), dto.getZdbID());
+            if (dto.getName().startsWith("---")) {
+                entityList.addItem(dto.getName(), dto.getZdbID());
+                entityList.getElement().getElementsByTagName("option").getItem(index).setAttribute("disabled", "disabled");
+            } else
+                entityList.addItem(dto.getName(), dto.getZdbID());
+            index++;
         }
     }
 

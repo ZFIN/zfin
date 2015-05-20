@@ -14,11 +14,7 @@ import java.util.List;
  */
 public interface CurationDiseaseRPCAsync {
 
-    void saveHumanDisease(TermDTO term, String publicationID, AsyncCallback<List<TermDTO>> callback);
-
     void getHumanDiseaseList(String publicationID, AsyncCallback<List<TermDTO>> callback);
-
-    void deleteHumanDisease(TermDTO term, String publicationID, AsyncCallback<List<TermDTO>> callback);
 
     void getHumanDiseaseModelList(String publicationID, AsyncCallback<List<DiseaseModelDTO>> callback);
 

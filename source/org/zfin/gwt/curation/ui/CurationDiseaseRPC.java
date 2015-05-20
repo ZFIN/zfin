@@ -29,16 +29,7 @@ public interface CurationDiseaseRPC extends RemoteService {
         }
     }
 
-    /**
-     * Save a given session variable in Application session.
-     *
-     * @param term Term
-     */
-    List<TermDTO> saveHumanDisease(TermDTO term, String publicationID) throws TermNotFoundException;
-
     List<TermDTO> getHumanDiseaseList(String publicationID);
-
-    List<TermDTO> deleteHumanDisease(TermDTO term, String publicationID) throws TermNotFoundException;
 
     List<DiseaseModelDTO> getHumanDiseaseModelList(String publicationID) throws TermNotFoundException;
 

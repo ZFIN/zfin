@@ -31,6 +31,7 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.DiseaseModel;
 import org.zfin.mutant.Genotype;
 import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
@@ -44,6 +45,8 @@ import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  */
@@ -138,8 +141,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         }
         HibernateUtil.createTransaction();
         infrastructureRepository.deleteRecordAttribution(markerZdbID, pubZdbID);
-        DataAlias dAlias=infrastructureRepository.getDataAliasByID(markerZdbID);
-        if (dAlias!=null) {
+        DataAlias dAlias = infrastructureRepository.getDataAliasByID(markerZdbID);
+        if (dAlias != null) {
             infrastructureRepository.deleteRecordAttribution(dAlias.getZdbID(), pubZdbID);
         }
 
@@ -165,7 +168,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         // always check db-links first
         if (infrastructureRepository.getDBLinkAttributions(zdbID, pubZdbID) > 0) {
-            return createMessage(zdbID,"is associated via a dblink that is") ;
+            return createMessage(zdbID, "is associated via a dblink that is");
         }
 
         // if used in inference of markergoentry
@@ -179,7 +182,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         // if feature
         if (zdbID.startsWith("ZDB-GENO-")) {
-            Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbID);
+            Genotype genotype = getMutantRepository().getGenotypeByID(zdbID);
             return createRemoveAttributionMessageForGenotype(genotype, publication);
         }
 
@@ -190,11 +193,21 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             return createRemoveAttributionMessageForMarker(marker, publication);
         }
 
+        // if a fish
+        List<DiseaseModel> diseaseModelList = getMutantRepository().getDiseaseModel(zdbID, pubZdbID);
+        if (diseaseModelList != null) {
+            for (DiseaseModel model : diseaseModelList) {
+                if (model.getFishModel() != null)
+                    return createMessage(model.getFishModel().getFish().getName(), "has a fishmodel");
+            }
+            return null;
+        }
+
         // if anything else
         // direct association
         if (false == zdbID.startsWith("ZDB-GENO") && infrastructureRepository.
                 getRecordAttribution(zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
-            return createMessage(zdbID,"is directly ") ;
+            return createMessage(zdbID, "is directly ");
         }
 //            if (infrastructureRepository.getDataAliasesAttributions(zdbID, pubZdbID) > 0) {
 //                return createMessage(zdbID,"has data aliases") ;
@@ -205,32 +218,32 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     }
 
     private String createRemoveAttributionMessageForGenotype(Genotype genotype, Publication publication) {
-        if (RepositoryFactory.getMutantRepository().getZFINInferences(genotype.getZdbID(), publication.getZdbID()) > 0) {
-            return createMessage(genotype.getHandle(),"is inferred as GO evidence that is") ;
+        if (getMutantRepository().getZFINInferences(genotype.getZdbID(), publication.getZdbID()) > 0) {
+            return createMessage(genotype.getHandle(), "is inferred as GO evidence that is");
         }
 
         if (infrastructureRepository.getGenotypeExperimentRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
-            return createMessage(genotype.getHandle(),"is used in an experiment that is") ;
+            return createMessage(genotype.getHandle(), "is used in an experiment that is");
         }
 
         if (infrastructureRepository.getGenotypeExpressionExperimentRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
-            return createMessage(genotype.getHandle(),"is used in expression that is") ;
+            return createMessage(genotype.getHandle(), "is used in expression that is");
         }
 
         if (infrastructureRepository.getGenotypePhenotypeRecordAttributions(genotype.getZdbID(), publication.getZdbID()) > 0) {
-            return createMessage(genotype.getHandle(),"is used in phenotype that is") ;
+            return createMessage(genotype.getHandle(), "is used in phenotype that is");
         }
 
         return null;
     }
 
-    private String createMessage(String name,String message){
-        return "Can't remove " + name + ": It " + message +" attributed to this pub." ;
+    private String createMessage(String name, String message) {
+        return "Can't remove " + name + ": It " + message + " attributed to this pub.";
     }
 
     private String createRemoveAttributionMessageForMarker(Marker marker, Publication publication) {
 
-        if (RepositoryFactory.getMutantRepository().getZFINInferences(marker.getZdbID(), publication.getZdbID()) > 0) {
+        if (getMutantRepository().getZFINInferences(marker.getZdbID(), publication.getZdbID()) > 0) {
             return createMessage(marker.getAbbreviation(), "is inferred as GO evidence that is ");
         }
 
@@ -256,7 +269,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         // see fogbugz 5872
         // we can not remove a gene if it has related markers that are attributed to this pub
-        if(marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)){
+        if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             if (infrastructureRepository.getFirstMarkerRelationshipAttributions(marker.getZdbID(), publication.getZdbID()) > 0) {
                 return createMessage(marker.getAbbreviation(), "is related to a marker (in the second position) that is ");
             }
@@ -321,7 +334,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         if (StringUtils.isNotEmpty(relatedEntityDTO.getPublicationZdbID())) {
             publication = (Publication) session.get(Publication.class, relatedEntityDTO.getPublicationZdbID());
         }
-        DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker,aliasName);
+        DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);
         if (dataAlias == null) {
             markerRepository.addMarkerAlias(marker, relatedEntityDTO.getName(), publication);
         } else {
@@ -434,8 +447,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
             transaction.commit();
             return dbLinkDTO;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failure to add internal protein sequence", e);
             transaction.rollback();
             throw new BlastDatabaseAccessException("Failed to add protein sequence.", e);
@@ -473,8 +485,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
             transaction.commit();
             return dbLinkDTO;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failure to add internal protein sequence", e);
             transaction.rollback();
             throw new BlastDatabaseAccessException("Failed to add nucleotide sequence.", e);
@@ -883,7 +894,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     }
 
 
-
     public MarkerDTO addRelatedMarker(MarkerDTO markerDTO) throws TermNotFoundException {
         HibernateUtil.createTransaction();
 
@@ -951,8 +961,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         if (CollectionUtils.isNotEmpty(constructs)) {
             for (ConstructCuration m : constructs) {
 
-                if (m.getZdbID().contains("CONSTRCT"))  {
-                constructDTOs.add(DTOConversionService.convertToConstructDTO(m));
+                if (m.getZdbID().contains("CONSTRCT")) {
+                    constructDTOs.add(DTOConversionService.convertToConstructDTO(m));
 
                 }
             }
@@ -1111,8 +1121,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             throw new TermNotFoundException(markerAbbrev, "Marker");
         }
         String markerZdbID = m.getZdbID();
-        if(infrastructureRepository.getRecordAttribution(markerZdbID,pubZdbID, RecordAttribution.SourceType.STANDARD)!=null){
-            throw new DuplicateEntryException(m.getAbbreviation()+ " is already attributed.") ;
+        if (infrastructureRepository.getRecordAttribution(markerZdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
+            throw new DuplicateEntryException(m.getAbbreviation() + " is already attributed.");
         }
         HibernateUtil.createTransaction();
         infrastructureRepository.insertRecordAttribution(markerZdbID, pubZdbID);
@@ -1121,14 +1131,14 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     }
 
     @Override
-    public void addAttributionForFeatureName(String featureAbbrev, String pubZdbID) throws TermNotFoundException , DuplicateEntryException{
+    public void addAttributionForFeatureName(String featureAbbrev, String pubZdbID) throws TermNotFoundException, DuplicateEntryException {
         Feature f = RepositoryFactory.getFeatureRepository().getFeatureByAbbreviation(featureAbbrev);
         if (f == null) {
             throw new TermNotFoundException(featureAbbrev, "Feature");
         }
         String featureZdbID = f.getZdbID();
-        if(infrastructureRepository.getRecordAttribution(featureZdbID,pubZdbID, RecordAttribution.SourceType.STANDARD)!=null){
-            throw new DuplicateEntryException(f.getAbbreviation()+ " is already attributed as "+f.getName()) ;
+        if (infrastructureRepository.getRecordAttribution(featureZdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
+            throw new DuplicateEntryException(f.getAbbreviation() + " is already attributed as " + f.getName());
         }
         HibernateUtil.createTransaction();
         infrastructureRepository.insertRecordAttribution(featureZdbID, pubZdbID);
@@ -1146,7 +1156,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         MarkerDTO markerDTO = constructRelationshipDTO.getMarkerDTO();
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(markerDTO.getZdbID());
-       constructRelationship.setMarker(marker);
+        constructRelationship.setMarker(marker);
 
         constructRelationship.setType(ConstructRelationship.Type.getType(constructRelationshipDTO.getRelationshipType()));
 

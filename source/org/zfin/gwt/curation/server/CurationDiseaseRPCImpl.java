@@ -26,25 +26,6 @@ import static org.zfin.repository.RepositoryFactory.*;
 
 public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements CurationDiseaseRPC {
 
-    @Override
-    public List<TermDTO> saveHumanDisease(TermDTO term, String publicationID) throws TermNotFoundException {
-        if (term == null)
-            throw new TermNotFoundException("No term provided");
-        if (publicationID == null)
-            throw new TermNotFoundException("No Publication found");
-
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            GenericTerm gTerm = DTOConversionService.convertToTerm(term);
-            getInfrastructureRepository().insertPublicAttribution(gTerm.getZdbID(), publicationID);
-            tx.commit();
-        } catch (HibernateException e) {
-            tx.rollback();
-            throw new TermNotFoundException("Problem saving Human diesease: " + e.getMessage());
-        }
-        return getHumanDiseaseList(publicationID);
-    }
-
     public List<TermDTO> getHumanDiseaseList(String publicationID) {
         List<GenericTerm> diseaseList = getPhenotypeRepository().getHumanDiseases(publicationID);
 
@@ -52,24 +33,6 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         for (GenericTerm term : diseaseList)
             dtoList.add(DTOConversionService.convertToTermDTO(term));
         return dtoList;
-    }
-
-    @Override
-    public List<TermDTO> deleteHumanDisease(TermDTO term, String publicationID) throws TermNotFoundException {
-        if (term == null)
-            throw new TermNotFoundException("No term found");
-        if (publicationID == null)
-            throw new TermNotFoundException("No Publication found");
-
-        Transaction tx = HibernateUtil.currentSession().beginTransaction();
-        try {
-            GenericTerm gTerm = DTOConversionService.convertToTerm(term);
-            getInfrastructureRepository().deleteRecordAttribution(gTerm.getZdbID(), publicationID);
-            tx.commit();
-        } catch (HibernateException e) {
-            tx.rollback();
-        }
-        return getHumanDiseaseList(publicationID);
     }
 
     @Override
@@ -90,7 +53,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
-            throw new TermNotFoundException("Could not insert fish model as it already exists.");
+            throw new TermNotFoundException("Could not Alzheimer's disease insert fish model as it already exists.");
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
@@ -119,12 +82,18 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             attrib.setPublication(publication);
             attrib.setDataZdbID(fish.getZdbID());
             attrib.setSourceType(RecordAttribution.SourceType.STANDARD);
+/*
             Boolean fishExists = getMutantRepository().existsAttribution(attrib);
-            if (!fishExists)
-                getMutantRepository().createFish(fish, publication);
+            Fish existingFish = getMutantRepository().getFishByGenoStr(fish);
+            if (existingFish != null)
+                throw new TermNotFoundException("Fish already exists: " + existingFish.getName() + " [" + existingFish.getZdbID() + "]");
+
+*/
+            getMutantRepository().createFish(fish, publication);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
         }
 
         return getFishList(publicationID);
@@ -151,7 +120,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             DiseaseModel diseaseModel = getMutantRepository().getDiseaseModelByID(diseaseModelDTO.getID());
-            if(diseaseModel == null)
+            if (diseaseModel == null)
                 throw new TermNotFoundException("No disease model found ");
             getMutantRepository().deleteDiseaseModel(diseaseModel);
             tx.commit();

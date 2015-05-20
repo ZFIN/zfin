@@ -95,6 +95,8 @@ public interface CurationExperimentRPC extends RemoteService {
      */
     boolean isReCreatePhenotypePileLinkNeeded(String publicationID);
 
+    List<EnvironmentDTO> getEnvironmentsWithoutSTR(String publicationID);
+
     /**
      * Utility/Convenience class.
      * Use CurationExperimentRPC.App.getInstance() to access static instance of CurationExperimentRPCAsync

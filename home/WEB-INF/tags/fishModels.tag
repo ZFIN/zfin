@@ -29,7 +29,7 @@
                     </zfin:groupByDisplay>
                 </td>
                 <td>
-                    ${fishModel.fishModel.experiment.name}
+                    <zfin:link entity="${fishModel.fishModel.experiment}"/>
                 </td>
                 <td>
                     <c:choose>

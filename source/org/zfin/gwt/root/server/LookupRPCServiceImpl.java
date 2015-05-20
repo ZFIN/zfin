@@ -17,6 +17,7 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.*;
 import org.zfin.profile.Organization;
@@ -28,6 +29,9 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 
 /**
@@ -321,7 +325,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
-            for (Feature feature : RepositoryFactory.getFeatureRepository().getFeaturesByAbbreviation(query)) {
+            for (Feature feature : getFeatureRepository().getFeaturesByAbbreviation(query)) {
                 String featureAbbreviation = feature.getAbbreviation();
                 StringBuilder builder = highlighter.hidePureTermNameHtml(featureAbbreviation);
                 builder.append(highlighter.highlight(featureAbbreviation));
@@ -438,7 +442,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         }
 
 
-        List<Feature> features = RepositoryFactory.getFeatureRepository().getFeaturesForAttribution(publicationZdbID);
+        List<Feature> features = getFeatureRepository().getFeaturesForAttribution(publicationZdbID);
         if (CollectionUtils.isNotEmpty(features)) {
             RelatedEntityDTO spacer = new RelatedEntityDTO();
             spacer.setName(AttributionModule.RemoveHeader.FEATURE.toString());
@@ -448,7 +452,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             relatedEntityDTOs.add(DTOConversionService.convertToFeatureDTO(f));
         }
 
-        List<Genotype> genotypes = RepositoryFactory.getMutantRepository().getGenotypesForAttribution(publicationZdbID);
+        List<Genotype> genotypes = getMutantRepository().getGenotypesForAttribution(publicationZdbID);
         if (CollectionUtils.isNotEmpty(genotypes)) {
             RelatedEntityDTO spacer = new RelatedEntityDTO();
             spacer.setName(AttributionModule.RemoveHeader.GENOTYPE.toString());
@@ -457,6 +461,16 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         for (Genotype g : genotypes) {
             relatedEntityDTOs.add(DTOConversionService.convertToGenotypeDTO(g));
         }
+        List<Fish> fishList = getMutantRepository().getFishList(publicationZdbID);
+        if (CollectionUtils.isNotEmpty(fishList)) {
+            RelatedEntityDTO spacer = new RelatedEntityDTO();
+            spacer.setName(AttributionModule.RemoveHeader.FISH.toString());
+            relatedEntityDTOs.add(spacer);
+            for (Fish fish : fishList) {
+                relatedEntityDTOs.add(DTOConversionService.convertToFishDtoFromFish(fish));
+            }
+        }
+
 
 
         return relatedEntityDTOs;

@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * GWT version of Environment corresponding to {@link org.zfin.expression.Experiment}.
  */
-public class EnvironmentDTO extends RelatedEntityDTO  {
+public class EnvironmentDTO extends RelatedEntityDTO {
 
     private String zdbID;
     private String name;
@@ -25,6 +25,10 @@ public class EnvironmentDTO extends RelatedEntityDTO  {
     }
 
     public void setName(String name) {
+        if (name.startsWith("_") && name.substring(1).equals(STANDARD))
+            name = STANDARD;
+        if (name.startsWith("_") && name.substring(1).equals(GENERIC_CONTROL))
+            name = GENERIC_CONTROL;
         this.name = name;
     }
 
@@ -41,11 +45,12 @@ public class EnvironmentDTO extends RelatedEntityDTO  {
      * 1) Standard
      * 2) Generic-Control
      * 3) alphabetical case insensitive order
+     *
      * @param o environment DTO
      * @return integer: -1, 0, 1
      */
     public int compareTo(Object o) {
-        if(!(o instanceof EnvironmentDTO))
+        if (!(o instanceof EnvironmentDTO))
             return 1;
         EnvironmentDTO dto = (EnvironmentDTO) o;
         if (name.equals(STANDARD))

@@ -432,12 +432,14 @@ public interface MutantRepository {
 
     /**
      * create a new disease model
+     *
      * @param diseaseModel
      */
     void createDiseaseModel(DiseaseModel diseaseModel);
 
     /**
      * Retrieve publications that refer to a given fish
+     *
      * @param zdbID
      * @return
      */
@@ -445,6 +447,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve fish model by composite index: (fish, experiment)
+     *
      * @param fishID
      * @param expID
      * @return
@@ -453,6 +456,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve Disease Model by composite index: (disease term, pubID,Evidence code)
+     *
      * @param diseaseModel
      * @return
      */
@@ -460,6 +464,7 @@ public interface MutantRepository {
 
     /**
      * Retrieve disease model by ID
+     *
      * @param id
      * @return
      */
@@ -467,8 +472,18 @@ public interface MutantRepository {
 
     /**
      * Remove a disease model
+     *
      * @param diseaseModel
      */
     void deleteDiseaseModel(DiseaseModel diseaseModel);
+
+    /**
+     * Retrieve disease / fish model by fish ID and pub.
+     *
+     * @param fishID fish id
+     * @param pubID  pubID
+     * @return
+     */
+    List<DiseaseModel> getDiseaseModel(String fishID, String pubID);
 }
 

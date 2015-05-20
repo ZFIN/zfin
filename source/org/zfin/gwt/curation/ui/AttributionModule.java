@@ -26,7 +26,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private HorizontalPanel container = new HorizontalPanel();
     private LookupComposite markerLookupComposite = new LookupComposite(false);
     private LookupComposite featureLookupComposite = new LookupComposite(false);
-    private ListBoxWrapper removeListBox = new ListBoxWrapper(false);
+    private StringListBox removeListBox = new StringListBox(false);
     private HTML messageBox = new HTML("");
     private boolean working = false;
     private HashMap<String, RelatedEntityDTO> relatedEntityDTOs = new HashMap<>(); // entities in the Remove Attr drop-down list
@@ -34,7 +34,8 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     public static enum RemoveHeader {
         MARKER,
         FEATURE,
-        GENOTYPE,;
+        GENOTYPE,
+        FISH;
 
         private static final String STARS = "**";
 
@@ -163,7 +164,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         removeListBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
-                final String attributionToRemoveID = removeListBox.getSelectedStringValue();
+                final String attributionToRemoveID = removeListBox.getSelectedValue();
                 final String attributionToRemoveLabel = removeListBox.getSelectedText();
 
                 if (RemoveHeader.isHeader(attributionToRemoveID)) {
@@ -198,7 +199,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                                     clearError();
                                     setMessage("Removed attribution: " + attributionToRemoveLabel);
                                     resetInput();
-                                } else if (message != null && false == message.isEmpty()) {
+                                } else if (!message.isEmpty()) {
                                     setError(message);
                                     clearMessage();
                                 }

@@ -1471,7 +1471,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (strsAvailable) {
             int index = 0;
             for (SequenceTargetingReagent str : fish.getStrList())
-                hql += " AND :str_" + index + " member of fish.strList ";
+                hql += " AND :str_" + index++ + " member of fish.strList ";
         }
         hql += " AND (select count(str.id) from Fish zfish" +
                 " inner join zfish.strList str " +
@@ -1486,7 +1486,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (strsAvailable) {
             int index = 0;
             for (SequenceTargetingReagent str : fish.getStrList())
-                query.setParameter("str_" + index, str.getZdbID());
+                query.setParameter("str_" + index++, str.getZdbID());
         }
         List<Fish> fishList = query.list();
         session.flush();
@@ -1500,12 +1500,14 @@ public class HibernateMutantRepository implements MutantRepository {
 
     @Override
     public void createDiseaseModel(DiseaseModel diseaseModel) {
-        FishModel existingModel = getMutantRepository().getFishModel(diseaseModel.getFishModel().getFish().getZdbID(),
-                diseaseModel.getFishModel().getExperiment().getZdbID());
-        if (existingModel == null)
-            HibernateUtil.currentSession().save(diseaseModel.getFishModel());
-        else
-            diseaseModel.setFishModel(existingModel);
+        if (diseaseModel.getFishModel() != null) {
+            FishModel existingModel = getMutantRepository().getFishModel(diseaseModel.getFishModel().getFish().getZdbID(),
+                    diseaseModel.getFishModel().getExperiment().getZdbID());
+            if (existingModel == null)
+                HibernateUtil.currentSession().save(diseaseModel.getFishModel());
+            else
+                diseaseModel.setFishModel(existingModel);
+        }
         DiseaseModel existingDiseaseModel = getMutantRepository().getDiseaseModel(diseaseModel);
         HibernateUtil.currentSession().save(diseaseModel);
     }
@@ -1560,12 +1562,24 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public List<DiseaseModel> getDiseaseModel(String fishID, String pubID) {
+        Query query = HibernateUtil.currentSession().createQuery("" +
+                "from DiseaseModel " +
+                "where publication.zdbID = :pubID " +
+                "AND fishModel.fish.zdbID = :fishID");
+        query.setParameter("fishID", fishID);
+        query.setParameter("pubID", pubID);
+        return (List<DiseaseModel>) query.list();
+    }
+
+    @Override
     public List<Fish> getFishList(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select fish from Fish fish, PublicationAttribution attrib " +
                 "     where attrib.publication.zdbID = :publicationID AND " +
-                "attrib.dataZdbID = fish.zdbID ";
+                "attrib.dataZdbID = fish.zdbID " +
+                "order by fish.name";
         Query query = session.createQuery(hql);
         query.setParameter("publicationID", publicationID);
         return (List<Fish>) query.list();

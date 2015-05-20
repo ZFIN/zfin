@@ -421,6 +421,21 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return CollectionUtils.isNotEmpty(experiments) && CollectionUtils.isEmpty(structures);
     }
 
+    @Override
+    public List<EnvironmentDTO> getEnvironmentsWithoutSTR(String publicationID) {
+        List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
+        List<EnvironmentDTO> assayDtos = new ArrayList<>(experiments.size());
+        for (Experiment experiment : experiments) {
+            if (experiment.isSequenceTargetingReagent())
+                continue;
+            EnvironmentDTO env = new EnvironmentDTO();
+            env.setName(experiment.getName());
+            env.setZdbID(experiment.getZdbID());
+            assayDtos.add(env);
+        }
+        return assayDtos;
+    }
+
     /**
      * Pass in an experiment DTO and an ExpressionExperiment, either an existing one to update
      * or a new instance.

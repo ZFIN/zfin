@@ -160,5 +160,7 @@ public interface CurationExperimentRPCAsync {
     void isReCreatePhenotypePileLinkNeeded(String publicationID, AsyncCallback callback);
 
     void copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions, List<ExpressionFigureStageDTO> copyToExpressions, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
+
+    void getEnvironmentsWithoutSTR(String publicationID, AsyncCallback<List<EnvironmentDTO>> async);
 }
 
