@@ -97,7 +97,7 @@
     <p>
 
     <div class="summary">
-        <span class="summaryTitle">Relationships</span> (<a href="/zf_info/ontology_relationship_info.html">about</a>)
+        <span class="summaryTitle">Relationships<a class='popup-link info-popup-link' href='/action/ontology/note/ontology-relationship'></a></span>
         <table class="summary horizontal-solidblock">
             <c:forEach var="relationshipPresentation" items="${termRelationships}">
                 <tr id="${fn:replace(relationshipPresentation.type," ","-")}">
