@@ -377,8 +377,9 @@ public class HibernateFishRepository implements FishRepository {
     private MartFish getFishFromFunctionalAnnotation(FishAnnotation annotation, FishSearchCriteria criteria) {
         MartFish singleFish = new MartFish();
         singleFish.setID(String.valueOf(annotation.getID()));
-        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(annotation.getGenotypeID());
-        singleFish.setGenotype(genotype);
+        if (!StringUtils.isEmpty(annotation.getGenotypeID())) {
+            singleFish.setGenotype(RepositoryFactory.getMutantRepository().getGenotypeByID(annotation.getGenotypeID()));
+        }
         singleFish.setName(annotation.getName());
         singleFish.setGenotypeExperimentIDs(getIdList(annotation.getGenotypeExperimentIds()));
         singleFish.setGenotypeExperimentIDsString(annotation.getGenotypeExperimentIds());
