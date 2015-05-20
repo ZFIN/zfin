@@ -183,12 +183,23 @@ public class OntologyService {
         return omimDisplays;
     }
 
+    public static List<FishModelDisplay> getDiseaseModelsWithFishModel(GenericTerm disease) {
+        return getDiseaseModels(disease, true);
+    }
+
     public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease) {
+               return getDiseaseModels(disease, false);
+    }
+
+    public static List<FishModelDisplay> getDiseaseModels(GenericTerm disease, boolean fishModelRequired) {
         List<DiseaseModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
         if (CollectionUtils.isEmpty(modelList))
             return null;
         Map<FishModel, FishModelDisplay> map = new HashMap<>();
         for (DiseaseModel model : modelList) {
+            // ignore disease models without fish models
+            if(model.getFishModel() == null && fishModelRequired)
+                continue;
             FishModelDisplay display = new FishModelDisplay();
             display.setFishModel(model.getFishModel());
             display.addPublication(model.getPublication());
