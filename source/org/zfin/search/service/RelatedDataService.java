@@ -45,7 +45,7 @@ public class RelatedDataService {
     private String[] markerCloneRelatedDateCategories = {SEQUENCES, EXPRESSION, GBROWSE, Category.PUBLICATION.getName()};
     private String[] antibodyRelatedDataCategories = {EXPRESSION, Category.PUBLICATION.getName()};
     private String[] anatomyGoRelatedDataCategories = {GENES_WITH_GO, GENES_CAUSING_PHENOTYPE, GENES_EXPRESSED};
-    private String[] geneRelatedDataCategories = {EXPRESSION, PHENOTYPE, Category.MUTANT.getName(), SEQUENCES, GENOME_BROWSER, ORTHOLOGY, Category.PUBLICATION.getName()};
+    private String[] geneRelatedDataCategories = {EXPRESSION, PHENOTYPE, Category.DISEASE.getName(), Category.MUTANT.getName(), SEQUENCES, GENOME_BROWSER, ORTHOLOGY, Category.PUBLICATION.getName()};
     private String[] pubRelatedDataCategories = {Category.GENE.getName(), EXPRESSION,PHENOTYPE, Category.MUTANT.getName(), Category.CONSTRUCT.getName(),Category.SEQUENCE_TARGETING_REAGENT.getName(),Category.ANTIBODY.getName(),ORTHOLOGY};
     public static final String GENES_WITH_GO = "Genes Annotated with this GO Term";
     public static final String GENES_CAUSING_PHENOTYPE = "Genes Causing Phenotype";
@@ -76,19 +76,19 @@ public class RelatedDataService {
 
 
 
-            if (!(id.contains("EFG"))) {
+        if (!(id.contains("EFG"))) {
 
-                if (StringUtils.equals(category, Category.GENE.getName())) {
-                    if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
-                        List<OrthologyPresentationRow> markerList=getOrthologyRepository().getOrthologyForGene(getMarkerRepository().getGeneByID(id));
-                        if (CollectionUtils.isNotEmpty(markerList)) {
-                            links.add(getOrthologyLink(id));
-                        }
+            if (StringUtils.equals(category, Category.GENE.getName())) {
+                if (!ActiveData.isValidActiveData(id, ActiveData.Type.TSCRIPT)) {
+                    List<OrthologyPresentationRow> markerList=getOrthologyRepository().getOrthologyForGene(getMarkerRepository().getGeneByID(id));
+                    if (CollectionUtils.isNotEmpty(markerList)) {
+                        links.add(getOrthologyLink(id));
                     }
-                    String link = "<a href=/action/marker/sequence/view/" + id + ">" + SEQUENCES + "</a>";
-                    links.add(link);
                 }
+                String link = "<a href=/action/marker/sequence/view/" + id + ">" + SEQUENCES + "</a>";
+                links.add(link);
             }
+        }
 
 
 
