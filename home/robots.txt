@@ -35,7 +35,6 @@ Disallow: /action/anatomy/search
 # allow stage searches from drop-down, in theory, need to set explicitly on page
 #Allow: /action/anatomy/search?action=term-by-stage-search&stage.zdbID=ZDB-STAGE-
 # Created via a crawl error
-Disallow: /zf_info/dbase/PAPERS/CurrentDataModel/db.html
 # Don't want bots crawling gbrowse
 Disallow: /cgi-perl/gbrowse
 #bots are misusing these prefixes to run APG pages that otherwise are disallowed.

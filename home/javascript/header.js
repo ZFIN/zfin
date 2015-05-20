@@ -503,7 +503,7 @@ document.write("     <a href=\"/zf_info/zfbook/zfbk.html\" title=\"Browse The Ze
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
 document.write("     <a href=\"/zf_info/contact_us.html\" title=\"ZFIN contact information\">Contact</A>");
 document.write("     <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\" alt=\"-\"> ");
-document.write("     <a href=\"/zf_info/dbase/db.html\" title=\"About ZFIN and citing ZFIN resources in publications\">About</A>");
+document.write("     <a href=\"https://wiki.zfin.org/display/general/ZFIN+db+information\" title=\"About ZFIN and citing ZFIN resources in publications\">About</A>");
 document.write("    </div>");
 document.write("    <div id=\"hdr-motto\" style=\"display:none;\"  class=\"hdr-linkbar\">   ");  
 document.write("      The Zebrafish Model Organism Database");

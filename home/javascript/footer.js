@@ -18,7 +18,7 @@ document.write("     <a href=\"/\">Home</a><img src=\"/images/research-dot.png\"
 document.write("     <a href=\"/ZFIN/misc_html/tips.html\" title=\"Frequently asked questions\">Help and Tips</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/zf_info/glossary.html\" title=\"Terms useful in understanding zebrafish development, anatomy, genetics and bioinformatics\">Glossary</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/zf_info/news/committees.html\" title=\"Committees and working groups\">Committees</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
-document.write("     <a href=\"/zf_info/dbase/db.html#citing\" title=\"Citing ZFIN resources in publications\">Citing ZFIN</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
+document.write("     <a href=\"https://wiki.zfin.org/display/general/ZFIN+db+information\" title=\"Citing ZFIN resources in publications\">Citing ZFIN</a><img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\">  ");
 document.write("     <a href=\"/zf_info/contact_us.html\" title=\"ZFIN contact information\">Contact</a> <img src=\"/images/research-dot.png\" class=\"hdr-linkbar-divider\"> ");
 document.write("     <a href=\"https://wiki.zfin.org/display/general/ZFIN+db+information\" title=\"About ZFIN\">About</a> ");
 document.write("     <a href=\"https://wiki.zfin.org/display/jobs/ZFIN+Jobs\" title=\"Jobs at ZFIN\">ZFIN Jobs</a> ");

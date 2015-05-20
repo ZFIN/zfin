@@ -253,7 +253,6 @@
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
             <a href="/zf_info/contact_us.html" title="ZFIN contact information">Contact</A>
             <img src="/images/research-dot.png" class="hdr-linkbar-divider" alt="-">
-            <a href="/zf_info/dbase/db.html" title="About ZFIN and citing ZFIN resources in publications">About</A>
         </div>
         <div id="hdr-motto" style="display:none;" class="hdr-linkbar">
             The Zebrafish Model Organism Database
