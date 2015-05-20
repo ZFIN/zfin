@@ -200,8 +200,7 @@ public class OntologyService {
             // ignore disease models without fish models
             if(model.getFishModel() == null && fishModelRequired)
                 continue;
-            FishModelDisplay display = new FishModelDisplay();
-            display.setFishModel(model.getFishModel());
+            FishModelDisplay display = new FishModelDisplay(model.getFishModel());
             display.addPublication(model.getPublication());
             FishModelDisplay mapModel = map.get(model.getFishModel());
             if (mapModel == null)
@@ -210,6 +209,7 @@ public class OntologyService {
                 mapModel.addPublication(model.getPublication());
         }
         List<FishModelDisplay> displayList = new ArrayList<>(map.values());
+        Collections.sort(displayList);
         return displayList;
     }
 }

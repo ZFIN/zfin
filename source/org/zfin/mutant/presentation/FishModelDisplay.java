@@ -15,11 +15,15 @@ import java.util.Set;
 /**
  * Disease model which groups by Publications
  */
-public class FishModelDisplay {
+public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
     private Set<Publication> publications;
     private FishModel fishModel;
 
+
+    public FishModelDisplay(FishModel fishModel) {
+        this.fishModel = fishModel;
+    }
 
     public FishModel getFishModel() {
         return fishModel;
@@ -37,15 +41,24 @@ public class FishModelDisplay {
         this.publications = publications;
     }
 
-    public Publication getPublication(){
-        if(CollectionUtils.isEmpty(publications))
+    public Publication getPublication() {
+        if (CollectionUtils.isEmpty(publications))
             return null;
         return publications.iterator().next();
     }
 
     public void addPublication(Publication publication) {
-        if(publications == null                )
+        if (publications == null)
             publications = new HashSet<>();
         publications.add(publication);
+    }
+
+    @Override
+    public int compareTo(FishModelDisplay o) {
+        if (o == null)
+            return 1;
+        if (fishModel.getFish().getName().equals(o.getFishModel().getFish().getName()))
+            return fishModel.getExperiment().getName().compareTo(o.getFishModel().getExperiment().getName());
+        return fishModel.getFish().getName().compareTo(o.getFishModel().getFish().getName());
     }
 }
