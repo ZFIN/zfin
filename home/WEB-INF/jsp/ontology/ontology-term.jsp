@@ -129,7 +129,7 @@
         <zfin2:genesAssociatedWithDisease formBean="${formBean}"/>
     </div>
 
-    <div id="genes-involved">
+    <div id="fish-models">
         <zfin2:fishModels term="${formBean.term}" fishModels="${fishModels}"/>
     </div>
 

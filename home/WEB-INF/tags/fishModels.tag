@@ -4,7 +4,7 @@
 <%@ attribute name="term" type="org.zfin.ontology.GenericTerm" %>
 
 
-<zfin2:subsection title="ZEBRAFISH MODELS"
+<zfin2:subsection title="ZEBRAFISH MODELS" showNoData="true"
                   test="${fn:length(fishModels) ne null && fn:length(fishModels) > 0}">
     <table class="summary groupstripes">
 
