@@ -45,13 +45,18 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     @Override
     public List<DiseaseModelDTO> addHumanDiseaseModel(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException {
         HibernateUtil.createTransaction();
+        DiseaseModel diseaseModel = null;
         try {
-            DiseaseModel diseaseModel = DTOConversionService.convertToDiseaseFromDiseaseDTO(diseaseModelDTO);
+            diseaseModel = DTOConversionService.convertToDiseaseFromDiseaseDTO(diseaseModelDTO);
             getMutantRepository().createDiseaseModel(diseaseModel);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
-            throw new TermNotFoundException("Could not Alzheimer's disease insert fish model as it already exists.");
+            if (diseaseModel != null)
+                throw new TermNotFoundException("Could not insert fish model [" + diseaseModel + "] as it already exists.");
+            else
+                throw new TermNotFoundException("Could not insert fish model");
+
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());

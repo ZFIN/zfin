@@ -156,6 +156,11 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     private void resetUI() {
         termEntry.getTermTextBox().setText("");
         diseaseErrorLabel.clearAllErrors();
+        fishSelectionBox.setSelectedIndex(0);
+        environmentSelectionBox.setSelectedIndex(0);
+        diseaseSelectionBox.setSelectedIndex(0);
+        evidenceCodeSelectionBox.setSelectedIndex(0);
+        clearErrorMessages();
     }
 
 
@@ -241,8 +246,9 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
                 }
                 diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
                 diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
-                Anchor disease = new Anchor(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "/" + diseaseModel.getDisease().getOboID());
+                Hyperlink disease = new Hyperlink(SafeHtmlUtils.fromTrustedString(diseaseModel.getDisease().getTermName()), "diseaseName");
                 disease.setTitle(diseaseModel.getDisease().getOboID());
+                disease.addClickHandler(new PopulateTermEntryClickListener(diseaseModel.getDisease()));
                 diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
                 diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
                 Button deleteButton = new Button("X");
@@ -272,6 +278,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
                     public void onSuccess(List<DiseaseModelDTO> modelDTOs) {
                         diseaseModelList = modelDTOs;
                         updateDiseaseModelTableContent(modelDTOs);
+                        resetUI();
                     }
 
                     @Override
@@ -379,8 +386,23 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
                 public void onSuccess(List<DiseaseModelDTO> modelDTOs) {
                     diseaseModelList = modelDTOs;
                     updateDiseaseModelTableContent(modelDTOs);
+                    resetUI();
                 }
             });
+        }
+    }
+
+    private class PopulateTermEntryClickListener implements ClickHandler {
+
+        private TermDTO termDTO;
+
+        public PopulateTermEntryClickListener(TermDTO termDTO) {
+            this.termDTO = termDTO;
+        }
+
+        public void onClick(ClickEvent event) {
+            termEntry.setTerm(termDTO);
+            termInfoBox.reloadTermInfo(termDTO, "termInfo");
         }
     }
 
@@ -394,8 +416,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         public void onSuccess(List<FishDTO> list) {
             fishSelectionBox.clear();
             fishList = list;
-            fishSelectionBox.addItem("Select" +
-                    "");
+            fishSelectionBox.addItem("None");
             for (FishDTO dto : list) {
                 fishSelectionBox.addItem(dto.getName(), dto.getZdbID());
             }
@@ -413,7 +434,7 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         public void onSuccess(List<EnvironmentDTO> list) {
             environmentSelectionBox.clear();
             environmentList = list;
-            environmentSelectionBox.addItem("Select");
+            environmentSelectionBox.addItem("None");
             for (EnvironmentDTO dto : list) {
                 environmentSelectionBox.addItem(dto.getName(), dto.getZdbID());
             }

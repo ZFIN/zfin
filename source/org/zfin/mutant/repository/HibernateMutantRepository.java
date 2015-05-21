@@ -1545,10 +1545,14 @@ public class HibernateMutantRepository implements MutantRepository {
                 "     where disease = :disease and" +
                 "     publication = :publication and " +
                 "     evidenceCode = :evidenceCode ";
+        if (diseaseModel.getFishModel() != null)
+            hql += "  and fishModel = :fishModel   ";
         Query query = session.createQuery(hql);
         query.setParameter("disease", diseaseModel.getDisease());
         query.setParameter("publication", diseaseModel.getPublication());
         query.setString("evidenceCode", diseaseModel.getEvidenceCode());
+        if (diseaseModel.getFishModel() != null)
+            query.setParameter("fishModel", diseaseModel.getFishModel());
         return (DiseaseModel) query.uniqueResult();
     }
 

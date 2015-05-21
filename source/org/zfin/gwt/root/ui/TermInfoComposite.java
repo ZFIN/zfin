@@ -92,6 +92,11 @@ public class TermInfoComposite extends FlexTable implements ValueChangeHandler<S
         updateTermInfo(termInfoDTO);
     }
 
+    public void reloadTermInfo(TermDTO termInfoDTO, String historyToken) {
+        historyMap.put(historyToken, termInfoDTO);
+        lookupRPC.getTermInfo(termInfoDTO.getOntology(), termInfoDTO.getOboID(), new TermInfoCallBack(this, termInfoDTO.getOboID()));
+    }
+
     private void updateTermInfo(TermDTO termInfoDTO) {
         clear();
         currentTermInfoDTO = termInfoDTO;
