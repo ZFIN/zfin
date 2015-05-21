@@ -117,6 +117,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         String newFtrName = featureDTO.getName();
         HibernateUtil.createTransaction();
         feature.setType(featureDTO.getFeatureType());
+        if (featureDTO.getFeatureType()!=FeatureTypeEnum.UNSPECIFIED){
+            feature.setUnspecifiedFeature(false);
+        }
         if (featureDTO.getPublicNote() != null) {
             feature.setPublicComments(featureDTO.getPublicNote().getNoteData());
         }

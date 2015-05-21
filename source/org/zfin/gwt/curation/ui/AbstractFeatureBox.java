@@ -257,7 +257,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 featureSequenceBox.setEnabled(false);
                 labOfOriginBox.setEnabled(false);
                 mutageeBox.setEnabled(false);
-               mutagenBox.setEnabled(false);
+                mutagenBox.setEnabled(false);
                 constructTextBox.setVisible(false);
                 lineNumberBox.setText("");
                 featureNameBox.setVisible(true);
@@ -272,21 +272,25 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 new FeatureEditCallBack<List<String>>("Failed to return mutagen for feature type: " + featureTypeSelected.getName(), this) {
                     @Override
                     public void onSuccess(List<String> result) {
-                        if (result != null && result.size() > 0) {
-                            if (result.size() == 1) {
-                                mutagenBox.addItem(result.get(0));
-                            } else {
-                                //mutagenBox.addItem("-------");
-                                for (String mut : result) {
-                                    if (!mutagenBox.containsValue(mut)){
-                                        mutagenBox.addItem(mut);
+                        if (featureTypeSelected != FeatureTypeEnum.UNSPECIFIED){
+                            if (result != null && result.size() > 0) {
+                                if (result.size() == 1) {
+                                    mutagenBox.addItem(result.get(0));
+                                } else {
+                                    //mutagenBox.addItem("-------");
+                                    for (String mut : result) {
+                                        if (!mutagenBox.containsValue(mut)) {
+                                            mutagenBox.addItem(mut);
+                                        }
+                                    }
                                 }
-                                }
+                                mutagenBox.setEnabled(true);
                             }
-                            mutagenBox.setEnabled(true);
-                        }
+                            }
+
                     }
                 }
+
         );
 
 
@@ -319,6 +323,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
                 featureDTO.setLineNumber(lineNumberBox.getText());
                 featureDTO.setLabPrefix(labDesignationBox.getSelected());
                 featureDTO.setLabOfOrigin(labOfOriginBox.getSelected());
+
             }
         }
         featureDTO.setMutagen(mutagenBox.getSelected());
