@@ -19,7 +19,6 @@ public enum MutationType {
     TRANSGENIC_INSERTION("Transgenic Insertion"),
     UNKNOWN("Unknown"),
     // Todo: db column needs to be increased to hold the full name
-    UNSPECIFIED_TRANSGENIC_INSERTION("Unspecified Transgenic Insertion"),
     NON_ALLELIC_TRANSGENIC_INSERTION("Transgenic Insertion, non-allelic"),
     UNSPECIFIED("Unspecified"),
     CRISPR("CRISPR"),
