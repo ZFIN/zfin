@@ -39,8 +39,6 @@ create procedure checkfeatureabbrev (vFeatureZdbId varchar(50),
             if (vFeatureAbbrev != vFeatureLabPrefix||vFeatureLineNumber||vFeatureTgSuffix)
             then raise exception -746,0,"FAIL!:tg known insert not like labPrefix||lineNumber||tgSuffix checkFeatureAbbrev.";
 	    end if;
-       elif (vFeatureType = 'TRANSGENIC_UNSPECIFIED' and vFeatureUnspecified='f')
-       	    then raise exception -746,0,"FAIL!:tg_unspecified is not marked unspecified in the db.";
        elif (vFeatureType in ('DEFICIENCY','COMPLEX','TRANSLOCATION','INVERSION'))
        then 
             if (vFeatureAbbrev != vFeatureLabPrefix||vFeatureLineNumber)

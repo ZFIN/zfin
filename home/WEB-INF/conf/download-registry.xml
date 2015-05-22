@@ -1744,7 +1744,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
  select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id, fmrel_mrkr_zdb_id, mrkr_name, b.szm_term_ont_id
                      from feature, feature_marker_Relationship, marker, so_zfin_mapping a, so_zfin_mapping b
                     where fmrel_ftr_zdb_id = feature_zdb_id
-		    and feature_type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+		    and feature_type in ('TRANSGENIC_INSERTION')
                     and fmrel_mrkr_zdb_id = mrkr_zdb_id
 		    and get_obj_type(mrkr_zdb_id) = b.szm_object_type
 		    and feature_type = a.szm_object_type
@@ -1823,7 +1823,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
                       and mrkr_type like 'GENE%' and
                          (
                             (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
-                                              'UNSPECIFIED','TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED', 'INDEL') AND fmrel_type ='is allele of') OR
+                                              'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
                                               (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
                                               (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
                          )

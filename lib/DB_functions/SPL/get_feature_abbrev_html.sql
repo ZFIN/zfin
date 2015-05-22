@@ -36,7 +36,7 @@ create function get_feature_abbrev_html( featZdbId varchar(50) )
     let featAbbrevHtml = null;
   else
   
-    if (featAbbrev like "%unspecified" and featType!= 'TRANSGENIC_UNSPECIFIED') then
+    if (featAbbrev like "%unspecified") then
       let featAbbrev = REPLACE(featAbbrev, featMrkrAbbrev, "unspecified");    
     end if
     

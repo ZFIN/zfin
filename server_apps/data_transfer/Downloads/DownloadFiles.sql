@@ -891,7 +891,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id, fmrel_mrkr_zdb_id, mrkr_name, b.szm_term_ont_id
                      from feature, feature_marker_Relationship, marker, so_zfin_mapping a, so_zfin_mapping b
                     where fmrel_ftr_zdb_id = feature_zdb_id
-		    and feature_type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+		    and feature_type in ('TRANSGENIC_INSERTION')
                     and fmrel_mrkr_zdb_id = mrkr_zdb_id
 		    and get_obj_type(mrkr_zdb_id) = b.szm_object_type
 		    and feature_type = a.szm_object_type;
@@ -1583,7 +1583,7 @@ from feature, feature_type, feature_assay, so_zfin_mapping
 where feature_type =ftrtype_name
  and szm_object_type = feature_type
  and feature_zdb_id = featassay_feature_zdb_id
-and feature_Type not in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+and feature_Type not in ('TRANSGENIC_INSERTION')
 order by lower(feature_abbrev);
 
 insert into tmp_features (feature_id, term_o_id, f_abbrev, f_name, ftypedisp, mutagen, mutagee, construct_id, construct_name)
@@ -1595,7 +1595,7 @@ where feature_type =ftrtype_name
  and feature_zdb_id = fmrel_ftr_zdb_id
  and fmrel_mrkr_zdb_id = mrkr_zdb_id
  and mrkr_type in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
-and feature_Type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+and feature_Type in ('TRANSGENIC_INSERTION')
 and fmrel_type != 'is allele of'
 order by lower(feature_abbrev);
 
@@ -1608,7 +1608,7 @@ where feature_type =ftrtype_name
  and feature_zdb_id = fmrel_ftr_zdb_id
  and fmrel_mrkr_zdb_id = mrkr_zdb_id
  and mrkr_type  in ('TGCONSTRCT','GTCONSTRCT','PTCONSTRCT','ETCONSTRCT')
-and feature_Type in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+and feature_Type in ('TRANSGENIC_INSERTION')
 and fmrel_type = 'is allele of'
 order by lower(feature_abbrev);
 
@@ -1700,7 +1700,7 @@ where fmrel_ftr_zdb_id = feature_zdb_id
   and mrkr_type like 'GENE%' and
   (
     (feature_type in ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
-                      'UNSPECIFIED','TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED', 'INDEL') AND fmrel_type ='is allele of') OR
+                      'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
     (feature_type in ('TRANSLOC', 'INVERSION') AND fmrel_type in ('is allele of', 'markers moved')) OR
     (feature_type in ('DEFICIENCY') AND fmrel_type in ('is allele of','markers missing'))
   )

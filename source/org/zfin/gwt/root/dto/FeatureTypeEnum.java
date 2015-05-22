@@ -15,7 +15,6 @@ public enum FeatureTypeEnum implements IsSerializable{
     DEFICIENCY("Deficiency"),
     COMPLEX_SUBSTITUTION("Complex"),
     SEQUENCE_VARIANT("Unknown"),
-    TRANSGENIC_UNSPECIFIED("unspecified transgenic insertion"),
     UNSPECIFIED("Unspecified")
     ;
 
@@ -58,10 +57,10 @@ public enum FeatureTypeEnum implements IsSerializable{
     }
 
     public boolean isUnspecified(){
-        return this == UNSPECIFIED || this == TRANSGENIC_UNSPECIFIED ;
+        return this == UNSPECIFIED ;
     }
 
     public boolean isTransgenic(){
-        return this == TRANSGENIC_INSERTION || this == TRANSGENIC_UNSPECIFIED;
+        return this == TRANSGENIC_INSERTION ;
     }
 }

@@ -67,8 +67,6 @@ public class FeatureValidationService {
                 return  StringUtils.isNotEmpty(dtoFromGUI.getLabPrefix()) &&
                         StringUtils.isNotEmpty(dtoFromGUI.getLineNumber()) ;
             case UNSPECIFIED:
-            case TRANSGENIC_UNSPECIFIED:
-                return   StringUtils.isNotEmpty(dtoFromGUI.getOptionalName())  ;
             default:
                 Window.alert("Unknown feature type: "+dtoFromGUI.getFeatureType());
                 return false ;
@@ -174,9 +172,7 @@ public class FeatureValidationService {
                 ;
                 break ;
             case UNSPECIFIED:
-            case TRANSGENIC_UNSPECIFIED:
-                returnString = dtoFromGUI.getOptionalName() + UNSPECIFIED_FEATURE_NAME ;
-                break ;
+           
             default:
                 Window.alert("Unknown feature type: "+featureType);
                 returnString = null ;
@@ -219,7 +215,6 @@ public class FeatureValidationService {
                         +  featureDTO.getLabPrefix()
                         + featureDTO.getLineNumber()  ;
             case UNSPECIFIED:
-            case TRANSGENIC_UNSPECIFIED:
             case POINT_MUTATION:
             case DELETION:
             case SEQUENCE_VARIANT:
@@ -262,8 +257,6 @@ public class FeatureValidationService {
                 // enable feature names
                 return name.substring(0,name.indexOf(featureDTO.getLabPrefix()+featureDTO.getLineNumber())).substring(dominantIndex) ;
             case UNSPECIFIED:
-            case TRANSGENIC_UNSPECIFIED:
-                return name.substring(0,name.indexOf(UNSPECIFIED_FEATURE_NAME)) ;
             default:
                 return null ;
         }

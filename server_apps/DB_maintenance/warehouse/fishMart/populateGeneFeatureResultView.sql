@@ -66,7 +66,7 @@ select distinct fa_pk_id,
  and c.fmrel_type = fmreltype_name
  and fmreltype_produces_affected_marker = 't'
  and c.fmrel_type in ('markers missing','markers absent','is allele of','markers moved')
- and feature_Type not in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED')
+ and feature_Type not in ('TRANSGENIC_INSERTION')
  and fas_line_handle = fa_geno_handle;
 
 
@@ -109,7 +109,7 @@ select distinct fa_pk_id,
  and c.fmrel_type = fmreltype_name
  and fmreltype_produces_affected_marker = 't'
  and c.fmrel_type in ('markers missing','markers absent','is allele of','markers moved')
- and feature_Type not in ('TRANSGENIC_INSERTION','TRANSGENIC_UNSPECIFIED') 
+ and feature_Type not in ('TRANSGENIC_INSERTION') 
  and fas_line_handle = fa_geno_handle;
 
 

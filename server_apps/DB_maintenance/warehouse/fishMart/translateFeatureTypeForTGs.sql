@@ -27,15 +27,6 @@ update gene_feature_result_view
   where gfrv_affector_type_display = 'Transgenic Insertion, non-allelic' ;
 
 
-update gene_feature_result_view
-  set gfrv_affector_type_display = 'Transgenic Insertion'
-  where gfrv_affector_type_display = 'Unspecified Transgenic Insertion' ;
-
-update fish_annotation_search_temp
-  set fas_affector_type_group = fas_affector_type_group||", transgenic_insertion"
- where fas_affector_type_Group like '%transgenic_unspecified%';
-  
-
 update fish_annotation_search_temp
   set fas_affector_type_group = replace(fas_affector_type_group,"_","");
   

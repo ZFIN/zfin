@@ -42,7 +42,7 @@ foreach
     let featAbbrevHtml = null;
   else
   
-    if (featName like "%\_unspecified" and featType != 'TRANSGENIC_UNSPECIFIED') then
+    if (featName like "%\_unspecified") then
       let featName = "unspecified";    
     end if
     

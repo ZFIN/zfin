@@ -144,16 +144,15 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	       continue foreach;
        else
      
-            if (featAbbrev like "%unspecified" and featType != 'TRANSGENIC_UNSPECIFIED') then
+            if (featAbbrev like "%unspecified") then
                let featAbbrev = "unspecified";    
             end if
        	    if (featAbbrev like "%unrecovered") then
                let featAbbrev = "unrecovered";    
             end if
         
-	    if (zygAllele == '/allele' and featType = 'TRANSGENIC_UNSPECIFIED') then
-               let zygAllele = '/' || "unspecified";
-	    elif (zygAllele == '/allele' and featType != 'TRANSGENIC_UNSPECIFIED') then
+	
+	    if (zygAllele == '/allele') then
                let zygAllele = '/' || featAbbrev;
 	    else
 	    end if
