@@ -18,10 +18,10 @@
                       includeNumber="true"/>)
     </caption>
     <tr>
-        <th> Human Disease</th>
+        <th>Human Disease</th>
         <th>Fish Model</th>
         <th>Environment</th>
-        <th> Evidence Code</th>
+        <th>Evidence Code</th>
     </tr>
     <c:forEach var="disease" items="${diseases}" varStatus="loop">
         <zfin:alternating-tr loopName="loop" groupByBean="disease.termName" groupBeanCollection="${diseases}">
