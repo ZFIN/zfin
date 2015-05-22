@@ -184,15 +184,17 @@
             </li>
         </c:if>
         <c:if test="${phenotypeAlleleCount > 0}">
-        <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Mutants / Transgenic Lines</a>
-            (${phenotypeAlleleCount})
-            </c:if>
-            <c:if test="${orthologyCount > 0}">
-        <li><a href="/action/publication/${publication.zdbID}/orthology-list">Orthology</a> (${orthologyCount})
-            </c:if>
-        <li>
-            <a href="/action/publication/${publication.zdbID}/disease">Disease / Model Data</a>
-        </li>
+            <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Mutants / Transgenic Lines</a>
+                (${phenotypeAlleleCount})
+            </li>
+        </c:if>
+        <c:if test="${orthologyCount > 0}">
+            <li><a href="/action/publication/${publication.zdbID}/orthology-list">Orthology</a> (${orthologyCount})</li>
+        </c:if>
+        <c:if test="${diseaseCount > 0}">
+            <li><a href="/action/publication/${publication.zdbID}/disease">Disease / Model Data</a>
+            </li>
+        </c:if>
     </ul>
 
 </zfin2:subsection>

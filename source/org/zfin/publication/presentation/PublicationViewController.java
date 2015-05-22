@@ -99,7 +99,7 @@ public class PublicationViewController {
                     antibodyCount, efgCount,
                     cloneProbeCount, expressionCount,
                     phenotypeCount, phenotypeAlleleCount,
-                    orthologyCount
+                    orthologyCount,new Long( diseaseModelList.size())
             ));
         } else {
             model.addAttribute("showAdditionalData", false);
