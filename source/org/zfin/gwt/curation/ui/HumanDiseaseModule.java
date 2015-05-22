@@ -264,11 +264,16 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
 
     private Button addDiseaseModelButton = new Button("Add");
 
+    private boolean processing = false;
+
     private void addConstructionRow(int rowIndex) {
         int colIndex = 0;
         addDiseaseModelButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
+                if(processing)
+                    return;
+                processing = true;
                 DiseaseModelDTO disease = getDiseaseModel();
                 if (disease == null) {
                     return;
@@ -279,12 +284,14 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
                         diseaseModelList = modelDTOs;
                         updateDiseaseModelTableContent(modelDTOs);
                         resetUI();
+                        processing = false;
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
                         super.onFailure(throwable);
                         loadingImageDiseaseModels.setVisible(false);
+                        processing = false;
                     }
                 });
                 loadingImageDiseaseModels.setVisible(true);
