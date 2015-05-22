@@ -411,28 +411,27 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                     featureRepository.addFeatureDataNote(feature, dnote.getNote());
                 }
             }
+            if (featureDTO.getFeatureType() != FeatureTypeEnum.UNSPECIFIED) {
+                if (featureDTO.getLabOfOrigin() != null) {
+                    Organization lab = (Organization) HibernateUtil.currentSession().get(Organization.class, featureDTO.getLabOfOrigin());
+                    if (lab == null) {
+                        throw new RuntimeException("lab not found: " + featureDTO.getLabOfOrigin());
+                    }
+                    FeatureSource featureSource = new FeatureSource();
+                    featureSource.setOrganization(lab);
+                    featureSource.setDataZdbID(feature.getZdbID());
 
-            if (featureDTO.getLabOfOrigin() != null) {
-                Organization lab = (Organization) HibernateUtil.currentSession().get(Organization.class, featureDTO.getLabOfOrigin());
-                if (lab == null) {
-                    throw new RuntimeException("lab not found: " + featureDTO.getLabOfOrigin());
+                    Set<FeatureSource> featureSources = feature.getSources();
+                    if (featureSources == null) {
+                        featureSources = new HashSet<>();
+                        featureSources.add(featureSource);
+                        feature.setSources(featureSources);
+                    } else featureSources.add(featureSource);
+                    HibernateUtil.currentSession().save(featureSource);
+                } else {
+                    throw new ValidationException("Feature cannot be saved without lab of origin");
                 }
-                FeatureSource featureSource = new FeatureSource();
-                featureSource.setOrganization(lab);
-                featureSource.setDataZdbID(feature.getZdbID());
-
-                Set<FeatureSource> featureSources = feature.getSources();
-                if (featureSources == null) {
-                    featureSources = new HashSet<>();
-                    featureSources.add(featureSource);
-                    feature.setSources(featureSources);
-                } else featureSources.add(featureSource);
-                HibernateUtil.currentSession().save(featureSource);
             }
-            else{
-                throw new ValidationException("Feature cannot be saved without lab of origin");
-            }
-
 
             FeatureAssay featureAssay = new FeatureAssay();
             featureAssay.setFeatzdbID(feature.getZdbID());
