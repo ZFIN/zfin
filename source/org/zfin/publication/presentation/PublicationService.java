@@ -120,7 +120,9 @@ public class PublicationService {
         publicationForm.setPubMedID(publication.getAccessionNumber());
         publicationForm.setDoi(publication.getDoi());
         publicationForm.setAuthors(publication.getAuthors());
-        publicationForm.setDate(publication.getPublicationDate().getTime());
+        if (publication.getPublicationDate() != null) {
+            publicationForm.setDate(publication.getPublicationDate().getTime());
+        }
         publicationForm.setJournal(publication.getJournal());
         publicationForm.setVolume(publication.getVolume());
         publicationForm.setPages(publication.getPages());
