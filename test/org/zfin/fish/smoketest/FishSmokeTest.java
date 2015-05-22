@@ -24,18 +24,18 @@ public class FishSmokeTest extends AbstractSmokeTest {
     @Test
     public void testFishSearchPageOk() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/search");
-        assertTrue(page.getTitleText().contains("ZFIN MartFish Search"));
+        assertTrue(page.getTitleText().contains("ZFIN Fish Search"));
     }
 
 
     /**
-     * Display MartFish detail page for
+     * Display Fish detail page for
      * Genotype + Morpholinos:  wild type (unspecified)+MO1-shha
      */
     @Test
     public void testFishDetailPageOk() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
-        assertTrue(page.getTitleText().contains("ZFIN MartFish: WT"));
+        assertTrue(page.getTitleText().contains("ZFIN Fish: WT"));
     }
 
     /**
