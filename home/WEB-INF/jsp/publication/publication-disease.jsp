@@ -19,9 +19,9 @@
     </caption>
     <tr>
         <th> Human Disease</th>
-        <th> Evidence Code</th>
         <th>Fish Model</th>
         <th>Environment</th>
+        <th> Evidence Code</th>
     </tr>
     <c:forEach var="disease" items="${diseases}" varStatus="loop">
         <zfin:alternating-tr loopName="loop" groupByBean="disease.termName" groupBeanCollection="${diseases}">
@@ -33,7 +33,6 @@
                     <zfin:link entity="${disease.disease}"/>
                 </zfin:groupByDisplay>
             </td>
-            <td>${disease.evidenceCode}</td>
             <td>
                 <c:if test="${not empty disease.fishModel }">
                     <zfin:link entity="${disease.fishModel.fish}"/>
@@ -44,6 +43,7 @@
                     <zfin:link entity="${disease.fishModel.experiment}"/>
                 </c:if>
             </td>
+            <td>${disease.evidenceCode}</td>
         </zfin:alternating-tr>
     </c:forEach>
 </table>
