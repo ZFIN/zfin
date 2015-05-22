@@ -68,7 +68,6 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         try {
             HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZDB-ANAT-010921-415");
             assertEquals("ZFIN Anatomy Ontology: brain", page.getTitleText());
-            assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
             List<?> byXPath = page.getByXPath("//a[. = 'PHENOTYPE']");
             assertNotNull("Phenotype section is not displayed", byXPath);
             assertTrue("Phenotype section is not displayed", byXPath.size() > 0);
@@ -83,7 +82,6 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         try {
             HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZDB-TERM-100331-116");
             assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
-            assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
             List<?> byXPath = page.getByXPath("//a[. = 'PHENOTYPE']");
             assertNotNull("Phenotype section is not displayed", byXPath);
             assertTrue("Phenotype section is not displayed", byXPath.size() > 0);
@@ -100,7 +98,6 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
             webClient.waitForBackgroundJavaScriptStartingBefore(1);
             HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/ZFA:0000123");
             assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
-            assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
             assertNotNull(page.getByXPath("//a[. = 'PHENOTYPE']").get(0));
         } catch (Exception e) {
             fail(e.toString());
@@ -114,7 +111,6 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
             HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=liver ");
             assertNotNull(page);
             assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
-            assertNotNull(page.getByXPath("//a[. = 'about']").get(0));
             assertNotNull(page.getByXPath("//a[. = 'PHENOTYPE']").get(0));
         } catch (Exception e) {
             fail(e.toString());
