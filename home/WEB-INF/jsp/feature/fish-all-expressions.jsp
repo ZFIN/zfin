@@ -38,11 +38,11 @@
 
 <div class="summary">
     <div class="summaryTitle">
-        All ${fn:length(formBean.geneCentricExpressionDataList)} expressed genes for:
+        All ${fn:length(geneCentricExpressionDataList)} expressed genes for:
         <zfin:link entity="${fish}"/>
     </div>
 
-    <zfin2:all-expression expressionSummaryDisplay="${formBean.geneCentricExpressionDataList}"
+    <zfin2:all-expression expressionSummaryDisplay="${geneCentricExpressionDataList}"
                           queryKeyValuePair="fishID=${fish.fishID}"
                           suppressMoDetails="true"/>
 </div>

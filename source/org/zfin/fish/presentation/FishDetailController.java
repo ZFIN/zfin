@@ -127,7 +127,7 @@ public class FishDetailController {
                 ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishId)
         );
         FishBean form = new FishBean();
-        model.addAttribute("fish",fish);
+        model.addAttribute("fish", fish);
         retrieveGenotypeExperiment(form, fish);
         List<FeatureGene> genomicFeatures = new ArrayList<>();
         // remove any featureGenes that have an STR mutation type and use the resulting list
@@ -150,7 +150,7 @@ public class FishDetailController {
         if (figureExpressionSummaryList != null) {
             List<GeneCentricExpressionData> geneCentricExpressionData = PresentationConverter.getGeneCentricExpressionData(figureExpressionSummaryList);
             Collections.sort(geneCentricExpressionData, new MarkerCentricOrdering());
-            model.addAttribute(geneCentricExpressionData);
+            model.addAttribute("geneCentricExpressionDataList", geneCentricExpressionData);
             model.addAttribute("expressionFigureCount", figureExpressionSummaryList.size());
         }
     }
