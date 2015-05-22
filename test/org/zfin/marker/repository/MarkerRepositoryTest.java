@@ -432,7 +432,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getMarkersByAbbreviationGroupAndAttribution() {
         // not, that is an lower-case 'L' not the number one.
-        String markerAbbreviation = "Tg(kdrl:grcfp)";
+        String markerAbbreviation = "tg(kdrl:grcfp)";
         String pub = "ZDB-PUB-030527-16";
         List<Marker> markers = null;
         markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution("Tg(", Marker.TypeGroup.CONSTRUCT, pub);
