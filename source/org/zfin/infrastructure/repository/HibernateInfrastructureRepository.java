@@ -1,6 +1,5 @@
 /**
- *  Class HibernateInfrastructureRepository
- *
+ * Class HibernateInfrastructureRepository
  */
 package org.zfin.infrastructure.repository;
 
@@ -1654,18 +1653,23 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
-    public PaginationResult<Publication> getTermReferences(GenericTerm term, String orderBy) {
-        String hql = "select termAtt.publication from TermAttribution as termAtt where " +
-                "       termAtt.term = :term";
+    public List<Publication> getTermReferences(GenericTerm term, String orderBy) {
+        String hql = "select distinct model.publication, model.publication.publicationDate, " +
+                "model.publication.authors  from DiseaseModel as model where " +
+                "model.disease = :term";
 
         if (orderBy == null || orderBy.equalsIgnoreCase("date"))
-            hql += "     order by termAtt.publication.publicationDate desc";
+            hql += "     order by model.publication.publicationDate desc";
         else if (orderBy.equalsIgnoreCase("author"))
-            hql += "     order by termAtt.publication.authors";
+            hql += "     order by model.publication.authors";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("term", term);
 
-        return new PaginationResult<>((List<Publication>) query.list());
+        List<Object[]> objectList = (List<Object[]>) query.list();
+        List<Publication> pubList = new ArrayList<>(objectList.size());
+        for(Object[] o: objectList)
+        pubList.add((Publication) o[0]);
+        return pubList;
     }
 }
 

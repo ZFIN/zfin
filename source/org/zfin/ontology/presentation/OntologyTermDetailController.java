@@ -164,7 +164,7 @@ public class OntologyTermDetailController {
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, term.getOntology().getCommonName() + ": " + term.getTermName());
         model.addAttribute("jspFunctions", new ZfinJSPFunctions());
-        int number = getInfrastructureRepository().getTermReferences(term, null).getTotalCount();
+        int number = getInfrastructureRepository().getTermReferences(term, null).size();
 
         model.addAttribute("numberOfCitations", number);
         int numberOfGenes = OntologyService.getNumberOfDiseaseGenes(term);
@@ -322,7 +322,7 @@ public class OntologyTermDetailController {
         }
         model.addAttribute("term", term);
         model.addAttribute("orderBy", orderBy);
-        model.addAttribute("citationList", getInfrastructureRepository().getTermReferences(term, orderBy).getPopulatedResults());
+        model.addAttribute("citationList", getInfrastructureRepository().getTermReferences(term, orderBy));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/disease-publication-list.page";
     }
