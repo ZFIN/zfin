@@ -21,7 +21,7 @@ public enum Category {
             AFFECTED_BIOLOGICAL_PROCESS_TF,
             AFFECTED_MOLECULAR_FUNCTION_TF,
             AFFECTED_CELLULAR_COMPONENT_TF,
-            DISEASE_MODEL,
+            FieldName.DISEASE,
             PHENOTYPE_STATEMENT,
             BIOLOGICAL_PROCESS_TF,
             MOLECULAR_FUNCTION_TF,

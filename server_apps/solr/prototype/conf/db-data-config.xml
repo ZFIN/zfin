@@ -87,7 +87,7 @@ where mrkr_type in ('GENE','GENEP','EFG')
                         processor="CachedSqlEntityProcessor"/>
 
                 <entity name="gene_omim"
-                        query="select omimp_name as disease_model,
+                        query="select omimp_name as disease,
                                       omimp_omim_id as omim_id,
                                       c_gene_id as gene_zdb_id
                               from omim_phenotype
@@ -95,7 +95,18 @@ where mrkr_type in ('GENE','GENEP','EFG')
                         where="gene_zdb_id=gene.id"
                         processor="CachedSqlEntityProcessor"/>
 
-
+                <entity name="gene_disease"
+                        query="select
+                                term_name as disease,
+                                orthologue.c_gene_id as gene_zdb_id
+                                from term
+                                     join term_xref on tx_term_zdb_id = term_zdb_id
+                                     join omimp_termxref_mapping on otm_tx_id = tx_pk_id
+                                     join omim_phenotype on otm_omimp_id = omimp_pk_id
+                                     join orthologue on omimp_ortho_zdb_id = orthologue.zdb_id
+                                where term_ontology = 'disease_ontology';"
+                        where="gene_zdb_id=gene.id"
+                        processor="CachedSqlEntityProcessor"/>
 
 <!-- probably can be deleted, not used as a facet or an xref, probably that means it's not good for text matching either... -->
 <!--                <entity name="gene_authors" query="
