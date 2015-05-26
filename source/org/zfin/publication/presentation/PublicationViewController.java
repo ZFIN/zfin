@@ -110,7 +110,7 @@ public class PublicationViewController {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication: " + publication.getZdbID());
         } else {
             String title = "Publication: " + publication.getShortAuthorList();
-            title.replace("<i>", "").replace("</i>", "");
+            title = title.replace("<i>", "").replace("</i>", "");
 
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
         }
