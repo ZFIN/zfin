@@ -97,7 +97,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         where:
         [category, field] << [[Category.GENE.getName()] , [FieldName.EXPRESSED_IN_TF.getName(), "affected_anatomy_tf", "affected_biological_process_tf",
                                           "affected_molecular_function_tf", "affected_cellular_component_tf",
-                                          "phenotype_statement", "disease_model", "biological_process_tf",
+                                          "phenotype_statement", "disease", "biological_process_tf",
                                           "molecular_function_tf", "cellular_component_tf","chromosome","type"]].combinations() \
                              + [[Category.FISH.getName()],["affected_gene","affected_anatomy_tf", "affected_biological_process_tf",
                                            "affected_molecular_function_tf", "affected_cellular_component_tf",
