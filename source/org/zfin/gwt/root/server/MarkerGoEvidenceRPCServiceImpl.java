@@ -185,7 +185,10 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
                 genotypeLabelDTO.setName("Genotypes:");
                 relatedEntityDTOs.add(genotypeLabelDTO);
                 for (Genotype genotype : genotypes) {
-                    relatedEntityDTOs.add(DTOConversionService.convertToGenotypeDTO(genotype));
+                    GenotypeDTO genotypeDTO = new GenotypeDTO();
+                    genotypeDTO.setName(genotype.getHandle());
+                    genotypeDTO.setZdbID(genotype.getZdbID());
+                    relatedEntityDTOs.add(genotypeDTO);
                 }
             }
         }

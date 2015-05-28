@@ -426,18 +426,6 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         for (Marker m : markers) {
             MarkerDTO markerDTO = DTOConversionService.convertToMarkerDTO(m);
             markerDTO.setName(m.getAbbreviation() + "[" + m.getType() + "]");
-            if (m.isInTypeGroup(Marker.TypeGroup.KNOCKDOWN_REAGENT)) {
-                List<MarkerDTO> targetedGenes = new ArrayList<>();
-                for (MarkerRelationship mrel : m.getFirstMarkerRelationships()) {
-                    if (mrel.getType() == MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE) {
-                        Marker gene = mrel.getSecondMarker();
-                        targetedGenes.addAll(DTOConversionService.createLinks(DTOConversionService.convertToMarkerDTO(gene), mrel.getPublications()));
-                    }
-
-                }
-                markerDTO.setTargetedGeneAttributes(targetedGenes);
-            }
-            markerDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(m));
             relatedEntityDTOs.add(markerDTO);
         }
 
@@ -449,7 +437,10 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             relatedEntityDTOs.add(spacer);
         }
         for (Feature f : features) {
-            relatedEntityDTOs.add(DTOConversionService.convertToFeatureDTO(f));
+            RelatedEntityDTO featureDTO = new RelatedEntityDTO();
+            featureDTO.setZdbID(f.getZdbID());
+            featureDTO.setName(DTOConversionService.unescapeString(f.getName()));
+            relatedEntityDTOs.add(featureDTO);
         }
 
         List<Genotype> genotypes = getMutantRepository().getGenotypesForAttribution(publicationZdbID);
@@ -459,7 +450,10 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             relatedEntityDTOs.add(spacer);
         }
         for (Genotype g : genotypes) {
-            relatedEntityDTOs.add(DTOConversionService.convertToGenotypeDTO(g));
+            RelatedEntityDTO genotypeDTO = new RelatedEntityDTO();
+            genotypeDTO.setZdbID(g.getZdbID());
+            genotypeDTO.setName(DTOConversionService.unescapeString(g.getHandle()));
+            relatedEntityDTOs.add(genotypeDTO);
         }
         List<Fish> fishList = getMutantRepository().getFishList(publicationZdbID);
         if (CollectionUtils.isNotEmpty(fishList)) {
@@ -467,12 +461,12 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             spacer.setName(AttributionModule.RemoveHeader.FISH.toString());
             relatedEntityDTOs.add(spacer);
             for (Fish fish : fishList) {
-                relatedEntityDTOs.add(DTOConversionService.convertToFishDtoFromFish(fish));
+                RelatedEntityDTO genotypeDTO = new RelatedEntityDTO();
+                genotypeDTO.setZdbID(fish.getZdbID());
+                genotypeDTO.setName(fish.getName());
+                relatedEntityDTOs.add(genotypeDTO);
             }
         }
-
-
-
         return relatedEntityDTOs;
     }
 
