@@ -427,4 +427,11 @@ public class MutantRepositoryTest {
         Fish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
     }
 
+    @Test
+    public void fishListBySequenceTargetingReagent() {
+        SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getSequenceTargetingReagentByID("ZDB-MRPHLNO-060317-4");
+        List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
+        assertNotNull(fishList);
+        assertTrue(fishList.size() > 20);
+    }
 }

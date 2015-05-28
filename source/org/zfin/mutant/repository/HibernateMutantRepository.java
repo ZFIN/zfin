@@ -1595,4 +1595,14 @@ public class HibernateMutantRepository implements MutantRepository {
         return (Fish) HibernateUtil.currentSession().get(Fish.class, fishID);
     }
 
+    @Override
+    public List<Fish> getFishListBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select fish from Fish fish " +
+                     " where :str member of fish.strList " +
+                     " order by fish.name";
+        Query query = session.createQuery(hql);
+        query.setParameter("str", sequenceTargetingReagent);
+        return (List<Fish>) query.list();
+    }
 }

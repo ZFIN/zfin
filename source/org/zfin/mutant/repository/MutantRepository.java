@@ -311,7 +311,7 @@ public interface MutantRepository {
     /**
      * Retrieve sequence targeting reagent by its id
      *
-     * @param sequenceTargetingReagentID equence targeting reagent by its id
+     * @param sequenceTargetingReagentID sequence targeting reagent by its id
      * @return SequenceTargetingReagent object
      */
     SequenceTargetingReagent getSequenceTargetingReagentByID(String sequenceTargetingReagentID);
@@ -485,5 +485,13 @@ public interface MutantRepository {
      * @return
      */
     List<DiseaseModel> getDiseaseModel(String fishID, String pubID);
+
+    /**
+     * Retrieve all fish with a given SequenceTargetingReagent
+     *
+     * @param sequenceTargetingReagent
+     * @return
+     */
+    List<Fish> getFishListBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
 }
 
