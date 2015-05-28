@@ -1,7 +1,5 @@
 package org.zfin.sequence.blast;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.zfin.datatransfer.webservice.EBIFetch;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
@@ -13,155 +11,107 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
-/**
- */
 public class WebServiceSoapClientTest {
-
-    private Logger logger = Logger.getLogger(WebServiceSoapClientTest.class);
 
     @Test
     public void useEfetchForProtein() {
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("P26630");
-        assertTrue(CollectionUtils.isNotEmpty(sequences));
-        assertEquals(1, sequences.size());
-        Sequence sequence = sequences.get(0);
-        Defline defline = sequence.getDefLine();
-        assertTrue(defline.getAccession().equals("P26630"));
-        assertTrue(sequence.getFormattedData().length() > 100);
-        assertTrue(sequence.getFormattedSequence().length() > 100);
-        assertTrue(defline.toString().length() > 20);
+        doAccessionTest("P26630");
     }
 
     @Test
     public void useEfetchForProtein2() {
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("NP_571379");
-        assertTrue(CollectionUtils.isNotEmpty(sequences));
-        assertEquals(1, sequences.size());
-        Sequence sequence = sequences.get(0);
-        Defline defline = sequence.getDefLine();
-        assertTrue(defline.getAccession().equals("NP_571379"));
-        assertTrue(sequence.getFormattedData().length() > 100);
-        assertTrue(sequence.getFormattedSequence().length() > 100);
-        assertTrue(defline.toString().length() > 20);
+        doAccessionTest("NP_571379");
     }
-
-//    @Test
-    // this is curently borken at EBI
-//    public void useEBIForUniprot(){
-//        assertFalse(EBIFetch.validateAccession("NP_571379")) ;
-//        assertTrue(EBIFetch.validateAccession("B3DJJ0")) ;
-//    }
-
 
     @Test
     public void useEBIForUniprot() {
-        assertFalse(EBIFetch.validateAccession("NP_571379"));
-        assertTrue(EBIFetch.validateAccession("B3DJJ0"));
+        assertThat("NP_571379 should not validate", EBIFetch.validateAccession("NP_571379"), is(false));
+        assertThat("B3DJJ0 should validate", EBIFetch.validateAccession("B3DJJ0"), is(true));
     }
 
     @Test
     public void useEfetchForNucleotide() {
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("AY627769");
-        assertTrue(CollectionUtils.isNotEmpty(sequences));
-        assertEquals(1, sequences.size());
-        Sequence sequence = sequences.get(0);
-        Defline defline = sequence.getDefLine();
-        assertTrue(defline.getAccession().equals("AY627769"));
-        assertTrue(sequence.getFormattedData().length() > 100);
-        assertTrue(sequence.getFormattedSequence().length() > 100);
-        assertTrue(defline.toString().length() > 20);
+        doAccessionTest("AY627769");
     }
 
     @Test
     public void useEfetchForNewSequence() {
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("JF828767");
-        assertTrue(CollectionUtils.isNotEmpty(sequences));
-        assertEquals(1, sequences.size());
-        Sequence sequence = sequences.get(0);
-        Defline defline = sequence.getDefLine();
-        assertTrue(defline.getAccession().equals("JF828767"));
-        assertTrue(sequence.getFormattedData().length() > 100);
-        assertTrue(sequence.getFormattedSequence().length() > 100);
-        assertTrue(defline.toString().length() > 20);
+        doAccessionTest("JF828767");
     }
 
     @Test
     public void useEfetchForBadSequence() {
         List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("notasequencethatIknowof");
-        assertTrue(CollectionUtils.isEmpty(sequences));
-        assertEquals(0, sequences.size());
+        assertThat(sequences, is(empty()));
     }
 
     @Test
     public void useEfetchForNucleotide2() {
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("FN428721");
-        assertTrue(CollectionUtils.isNotEmpty(sequences));
-        assertEquals(1, sequences.size());
-        Sequence sequence = sequences.get(0);
-        Defline defline = sequence.getDefLine();
-        assertTrue(defline.getAccession().equals("FN428721"));
-        assertTrue(sequence.getFormattedData().length() > 100);
-        assertTrue(sequence.getFormattedSequence().length() > 100);
-        assertTrue(defline.toString().length() > 20);
+        doAccessionTest("FN428721");
     }
 
     @Test
     public void useEfetchForNucleotideWithMultipleReturn() {
-        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession("X63183");
-        assertTrue(CollectionUtils.isNotEmpty(sequences));
-        assertEquals(1, sequences.size());
-        Sequence sequence = sequences.get(0);
-        Defline defline = sequence.getDefLine();
-        assertTrue(defline.getAccession().equals("X63183"));
-        assertTrue(sequence.getFormattedData().length() > 100);
-        assertTrue(sequence.getFormattedSequence().length() > 100);
-        assertTrue(defline.toString().length() > 20);
+        doAccessionTest("X63183");
     }
 
     @Test
     public void validateAccessions() {
-        String[] accessions = {"NP_571379", "AY627769", "FN428721", "X63183"};
-        for (String accession : accessions) {
-            assertTrue(NCBIEfetch.validateAccession(accession));
+        String[] goodAccessions = {"NP_571379", "AY627769", "FN428721", "X63183"};
+        for (String accession : goodAccessions) {
+            assertThat(accession + " should validate", NCBIEfetch.validateAccession(accession), is(true));
+        }
+
+        String[] badAccessions = {"NOT_GOOD_VERY_VERY_BAD_ACCESSION"};
+        for (String accession : badAccessions) {
+            assertThat(accession + " should not validate", NCBIEfetch.validateAccession(accession), is(false));
         }
     }
 
     @Test
     public void hasMicroarray() {
-        assertTrue(NCBIEfetch.hasMicroarrayData(new HashSet<String>(), "rpf1"));
-        assertFalse(NCBIEfetch.hasMicroarrayData(new HashSet<String>(), "abcdefg"));
+        assertThat("rpf1 should have microarray data", NCBIEfetch.hasMicroarrayData(new HashSet<String>(), "rpf1"), is(true));
+        assertThat("abcdefg should not have microarray data", NCBIEfetch.hasMicroarrayData(new HashSet<String>(), "abcdefg"), is(false));
 
         // for ZDB-EST-010111-34 a rare clone with GEO expression
-        Set<String> strings = new HashSet<String>();
+        Set<String> strings = new HashSet<>();
         strings.add("AI584640");
         strings.add("AI545457");
-        assertTrue(NCBIEfetch.hasMicroarrayData(strings));
-        Set<String> strings2 = new HashSet<String>();
-        strings.add("BBBBBBBB");
-        assertFalse(NCBIEfetch.hasMicroarrayData(strings2));
+        assertThat(NCBIEfetch.hasMicroarrayData(strings), is(true));
+        Set<String> strings2 = new HashSet<>();
+        strings2.add("BBBBBBBB");
+        assertThat(NCBIEfetch.hasMicroarrayData(strings2), is(false));
     }
 
     @Test
     public void getLink() {
-        List<String> accessions = new ArrayList<String>();
+        List<String> accessions = new ArrayList<>();
         accessions.add("AB");
         accessions.add("CD");
         String link = NCBIEfetch.createMicroarrayQuery(accessions, "dogz");
-        assertEquals("txid7955[organism] AND (dogz[gene symbol] OR (AB OR AB.* OR CD OR CD.*))", link);
+        assertThat(link, is("txid7955[organism] AND (dogz[gene symbol] OR (AB OR AB.* OR CD OR CD.*))"));
     }
 
-    // just to see what platforms are there, not worth running otherwise
-//    @Test
-    public void getMicroArrayLink() throws Exception {
-        Set<String> platforms = NCBIEfetch.getPlatformsForZebrafishMicroarrays();
-        assertThat(platforms.size(), greaterThan(0));
-        for (String platform : platforms) {
-            logger.info("platform: " + platform);
-        }
+    @Test
+    public void testNucleodiesNcbi() throws Exception {
+        String accession = "KC818433";
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession(accession, NCBIEfetch.Type.NUCLEOTIDE);
+        assertThat(sequences, not(empty()));
     }
 
+    private void doAccessionTest(String accession) {
+        List<Sequence> sequences = NCBIEfetch.getSequenceForAccession(accession);
+        assertThat("One sequence should be found for accession " + accession, sequences, hasSize(1));
+
+        Sequence sequence = sequences.get(0);
+        Defline defline = sequence.getDefLine();
+        assertThat(defline.getAccession(), is(accession));
+        assertThat("Formatted data for " + accession + " too short", sequence.getFormattedData().length(), greaterThan(100));
+        assertThat("Formatted sequence for " + accession + " too short", sequence.getFormattedSequence().length(), greaterThan(100));
+        assertThat("Defline for " + accession + " too short", defline.toString().length(), greaterThan(20));
+    }
 
 }

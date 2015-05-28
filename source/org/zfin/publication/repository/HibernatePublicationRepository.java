@@ -124,8 +124,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
 
     private String addOrderByParameters(String hql) {
-        if (!isUsePagination())
+        if (!isUsePagination()) {
             return hql;
+        }
         StringBuilder sb = new StringBuilder(hql);
         sb.append(getOrderByClause());
         return sb.toString();
@@ -199,8 +200,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
 
         int totalCount = 0;
-        if (results.last())
+        if (results.last()) {
             totalCount = results.getRowNumber() + 1;
+        }
 
         results.close();
 
@@ -249,8 +251,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param numberOfRecords number
      */
     public PaginationResult<MarkerStatistic> getAllExpressedMarkers(GenericTerm anatomyTerm, int firstRow, int numberOfRecords) {
-        if (firstRow < 0)
+        if (firstRow < 0) {
             throw new RuntimeException("First Row number <" + firstRow + "> is invalid");
+        }
         // Hibernate starts at 0 while the argument expects to start at 1
 
         Session session = HibernateUtil.currentSession();
@@ -373,8 +376,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, GenericTerm anatomyTerm) {
-        if (list == null)
+        if (list == null) {
             return null;
+        }
 
         List<MarkerStatistic> markers = new ArrayList<MarkerStatistic>();
         for (Object[] stats : list) {
@@ -499,8 +503,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         List<Object[]> array = (List<Object[]>) query.list();
         List<FeatureMarkerRelationship> fmrelList = new ArrayList<>(array.size());
-        for (Object[] arrayObject : array)
+        for (Object[] arrayObject : array) {
             fmrelList.add((FeatureMarkerRelationship) arrayObject[0]);
+        }
         return fmrelList;
 
 
@@ -537,8 +542,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         StringBuilder hql = new StringBuilder("select figure from Figure figure, ExpressionExperiment exp, ");
         hql.append("ExpressionResult res ");
         hql.append("where exp.gene = :gene AND ");
-        if (clone != null)
+        if (clone != null) {
             hql.append("      exp.probe = :clone AND ");
+        }
         hql.append("      res member of exp.expressionResults AND ");
         hql.append("      res.expressionFound = :expressionFound  AND ");
         hql.append("      res.entity.superterm = :term AND ");
@@ -546,8 +552,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql.append("order by figure.orderingLabel    ");
         Query query = session.createQuery(hql.toString());
         query.setParameter("gene", gene);
-        if (clone != null)
+        if (clone != null) {
             query.setParameter("clone", clone);
+        }
         query.setParameter("term", aoTerm);
         query.setBoolean("expressionFound", true);
         List<Figure> figures = query.list();
@@ -1194,8 +1201,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql += "       left join fetch experiment.publication ";
         hql += "       join fetch experiment.genotypeExperiment.genotype geno";
         hql += "     where experiment.publication.zdbID = :pubID ";
-        if (geneZdbID != null)
+        if (geneZdbID != null) {
             hql += "           and experiment.gene.zdbID = :geneID ";
+        }
         if (fishID != null) {
             hql += "           and geno.zdbID = :fishID ";
         }
@@ -1205,10 +1213,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "             experiment.assay.displayOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
-        if (geneZdbID != null)
+        if (geneZdbID != null) {
             query.setString("geneID", geneZdbID);
-        if (fishID != null)
+        }
+        if (fishID != null) {
             query.setString("fishID", fishID);
+        }
         query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
         List<ExpressionExperiment> expressionExperiments = (List<ExpressionExperiment>) query.list();
         return new ArrayList<ExpressionExperiment>(expressionExperiments);
@@ -1605,8 +1615,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("pubID", pubID);
         List<Object[]> array = (List<Object[]>) query.list();
         List<Marker> markerList = new ArrayList<>(array.size());
-        for (Object[] arrayObject : array)
+        for (Object[] arrayObject : array) {
             markerList.add((Marker) arrayObject[0]);
+        }
         return markerList;
     }
 
@@ -1630,8 +1641,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             orthology.setEvidenceCode(orthoEvidenceDisplay.getEvidenceCode());
             orthology.setGene(marker);
             String[] speciesArray = orthoEvidenceDisplay.getOrganismList().split(":");
-            for (String species : speciesArray)
+            for (String species : speciesArray) {
                 orthology.addOrthologousSpecies(species);
+            }
             orthologyList.add(orthology);
         }
         return orthologyList;
@@ -1649,8 +1661,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = session.createQuery(hql);
         query.setParameterList("type", new String[]{"Journal", "Review"});
         query.setString("status", "active");
-        if (maxResult != null)
+        if (maxResult != null) {
             query.setMaxResults(maxResult);
+        }
 
         return (List<Publication>) query.list();
     }

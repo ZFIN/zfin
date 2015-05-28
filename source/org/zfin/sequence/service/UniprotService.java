@@ -1,9 +1,10 @@
 package org.zfin.sequence.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
@@ -45,19 +46,18 @@ public class UniprotService {
     public Boolean validateAgainstUniprotWebsite(String accession) {
 
 
-        HttpClient client = new HttpClient()   ;
-        GetMethod method = new GetMethod(getUniprotBaseUrl()+accession);
+        DefaultHttpClient client = new DefaultHttpClient();
         try {
-            int statusCode = client.executeMethod(method);
-            if(statusCode != HttpStatus.SC_OK){
-                logger.error("status is "+statusCode + " trying to retrieve the accession for uniprot ["+accession+"]");
-                return false ;
-            }else{
-                return true ;
+            HttpResponse response = client.execute(new HttpGet(getUniprotBaseUrl() + accession));
+            int statusCode = response.getStatusLine().getStatusCode();
+            boolean isOk = (statusCode == HttpStatus.SC_OK);
+            if (!isOk) {
+                logger.error("status is " + statusCode + " trying to retrieve the accession for uniprot [" + accession + "]");
             }
+            return isOk;
         } catch (IOException e) {
             logger.error(e);
-            return false ;
+            return false;
         }
     }
 

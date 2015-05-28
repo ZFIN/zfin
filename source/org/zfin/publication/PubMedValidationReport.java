@@ -1,16 +1,19 @@
 package org.zfin.publication;
 
-import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.zfin.datatransfer.ServiceConnectionException;
+import org.zfin.datatransfer.webservice.NCBIRequest;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.apache.commons.cli.OptionBuilder.withArgName;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -21,18 +24,19 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
     public static final String PUB_MED = "pubmed";
 
     private static Integer numberOfPublicationsToScan;
-    private static List<Publication> publicationList;
+    private static Map<String, Publication> publicationMap;
     private static final Logger LOG = Logger.getLogger(PubMedValidationReport.class);
+    private static List<String> errorList = new ArrayList<>();
+    private static List<List<String>> pubMedIdNotFoundList = new ArrayList<>();
+    private static List<List<String>> pubInfoMismatchList = new ArrayList<>();
+    private static List<String> processedIds = new ArrayList<>();
 
     static {
         options.addOption(withArgName("jobName").hasArg().withDescription("Job Name").create("jobName"));
         options.addOption(withArgName("baseDir").hasArg().withDescription("Base Directory").create("baseDir"));
         options.addOption(withArgName("propertyFilePath").hasArg().withDescription("Path to zfin.properties").create("propertyFilePath"));
         options.addOption(withArgName("numOfPublication").hasArg().withDescription("Maximum number of Publications to scan").create("numOfPublication"));
-        options.addOption(withArgName("threads").hasArg().withDescription("Maximum number of threads to use").create("threads"));
     }
-
-    private static int numOfThreads = 1;
 
     public PubMedValidationReport(String jobName, String propertyFilePath, String baseDir) {
         super(jobName, propertyFilePath, baseDir);
@@ -46,10 +50,9 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         String propertyFilePath1 = commandLine.getOptionValue("propertyFilePath");
         String baseDir = commandLine.getOptionValue("baseDir");
         PubMedValidationReport task = new PubMedValidationReport(jobName1, propertyFilePath1, baseDir);
-        if (StringUtils.isNotEmpty(commandLine.getOptionValue("numOfPublication")))
+        if (StringUtils.isNotEmpty(commandLine.getOptionValue("numOfPublication"))) {
             numberOfPublicationsToScan = Integer.parseInt(commandLine.getOptionValue("numOfPublication"));
-        if (StringUtils.isNotEmpty(commandLine.getOptionValue("threads")))
-            numOfThreads = Integer.parseInt(commandLine.getOptionValue("threads"));
+        }
         task.initDatabase();
         System.exit(task.execute());
     }
@@ -64,45 +67,37 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         setLoggerFile();
         setReportProperties();
         clearReportDirectory();
-        publicationList = getPublicationRepository().getPublicationWithPubMedId(numberOfPublicationsToScan);
-        LOG.info(numOfThreads + " threads used");
-        LOG.info(publicationList.size() + " publications are scanned");
-        for (int index = 0; index < numOfThreads; index++) {
-            Thread thread = new Thread(new CheckPublications());
-            thread.start();
-        }
-        while (publicationList.size() > 0) {
+        buildPublicationMap();
+        int batchSize = 5000;
+        LOG.info(publicationMap.size() + " publications are scanned");
+        List<String> pubIds = new ArrayList<>(publicationMap.keySet());
+        for (int start = 0; start < pubIds.size(); start += batchSize) {
+            int end = Math.min(start + batchSize, pubIds.size());
+            String idList = StringUtils.join(pubIds.subList(start, end), ",");
+            LOG.info("Fetching pubs " + (start + 1) + " - " + end);
             try {
-                Thread.currentThread().sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                Document results = new NCBIRequest(NCBIRequest.Eutil.FETCH)
+                        .with("db", PUB_MED)
+                        .with("id", idList)
+                        .go();
+                NodeList articles = results.getElementsByTagName("PubmedArticle");
+                for (int i = 0; i < articles.getLength(); i++) {
+                    Element article = (Element) articles.item(i);
+                    checkValidPubMedRecord(article);
+                }
+            } catch (ServiceConnectionException e) {
+                LOG.error(e);
+                return 1;
             }
+        }
+        pubIds.removeAll(processedIds);
+        for (String id : pubIds) {
+            Publication publication = publicationMap.get(id);
+            pubMedIdNotFoundList.add(getElementsList(publication.getShortAuthorList(), publication.getZdbID(), publication.getAccessionNumber()));
         }
         createReports();
         LOG.info("Finished");
         return (pubInfoMismatchList.size() > 0 || pubMedIdNotFoundList.size() > 0) ? 1 : 0;
-    }
-
-    private static class CheckPublications implements Runnable {
-
-        @Override
-        public void run() {
-            Publication publication;
-            while ((publication = getPublication()) != null) {
-                checkValidPubMedRecord(publication);
-            }
-        }
-
-    }
-
-    private synchronized static Publication getPublication() {
-        if (publicationList.size() > 0) {
-            if (publicationList.size() % 1000 == 0) {
-                LOG.info(publicationList.size() + " left");
-            }
-            return publicationList.remove(0);
-        }
-        return null;
     }
 
     public void createReports() {
@@ -114,7 +109,6 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         reportConfiguration = new ReportConfiguration(jobName, dataDirectory, templateName, true);
         createErrorReport(null, pubInfoMismatchList, reportConfiguration);
 
-
         if (pubMedIdNotFoundList.size() > 0) {
             for (String error : errorList) {
                 System.out.println(error);
@@ -122,86 +116,95 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         }
     }
 
-    private static void checkValidPubMedRecord(Publication publication) {
-        try {
-            EUtilsServiceStub service = new EUtilsServiceStub();
-            // call NCBI ESummary utility
-            EUtilsServiceStub.ESummaryRequest req = new EUtilsServiceStub.ESummaryRequest();
-            req.setDb(PUB_MED);
-            req.setId(publication.getAccessionNumber());
-            EUtilsServiceStub.ESummaryResult res = service.run_eSummary(req);
-            // results output
-            EUtilsServiceStub.DocSumType[] docSum = res.getDocSum();
-            if (docSum == null) {
-                pubMedIdNotFoundList.add(getElementsList(publication.getShortAuthorList(), publication.getZdbID(), publication.getAccessionNumber()));
+    private static void buildPublicationMap() {
+        List<Publication> pubs = getPublicationRepository().getPublicationWithPubMedId(numberOfPublicationsToScan);
+        publicationMap = new HashMap<>();
+        for (Publication pub : pubs) {
+            publicationMap.put(pub.getAccessionNumber(), pub);
+        }
+    }
+
+    private static void checkValidPubMedRecord(Element article) {
+        String pmid = article.getElementsByTagName("PMID").item(0).getTextContent();
+        processedIds.add(pmid);
+        Publication publication = publicationMap.get(pmid);
+        PublicationMismatch mismatch = new PublicationMismatch();
+
+        String volumeOne = null;
+        String volumeTwo = null;
+        NodeList volume = article.getElementsByTagName("Volume");
+        if (volume.getLength() > 0) {
+            volumeOne = volume.item(0).getTextContent();
+        }
+        NodeList issue = article.getElementsByTagName("Issue");
+        if (issue.getLength() > 0) {
+            volumeTwo = issue.item(0).getTextContent();
+        }
+
+        NodeList pages = article.getElementsByTagName("Pagination");
+        if (pages.getLength() > 0) {
+            String value = pages.item(0).getTextContent();
+            if (!isSamePageNumbers(publication, value)) {
+                mismatch.setPages(publication.getPages());
+                mismatch.setPagesExternal(value);
+            }
+        }
+
+        NodeList idList = article.getElementsByTagName("ArticleId");
+        for (int i = 0; i < idList.getLength(); i++) {
+            Node articleId = idList.item(i);
+            Node idType = articleId.getAttributes().getNamedItem("IdType");
+            if (idType != null && idType.getTextContent().equals("doi")) {
+                String value = articleId.getTextContent();
+                if (publication.getDoi() == null || !publication.getDoi().equals(value)) {
+                    mismatch.setDoi(publication.getDoi());
+                    mismatch.setDoiExternal(value);
+                }
+            }
+        }
+
+        NodeList title = article.getElementsByTagName("ArticleTitle");
+        if (title.getLength() > 0) {
+            String value = title.item(0).getTextContent();
+            if (value.endsWith(".")) {
+                value = value.substring(0, value.length() - 1);
+            }
+            if (value.startsWith("[") && value.endsWith("]")) {
+                value = value.substring(1, value.length() - 1);
+            }
+            if (publication.getTitle() != null &&
+                    publication.getTitle().startsWith("Chapter ") &&
+                    publication.getTitle().endsWith(value)) {
                 return;
             }
-            if (docSum.length > 1) {
-                errorList.add("More than one PubMed record found for " + publication.getZdbID() + "[" + publication.getAccessionNumber() + "]");
-                return;
+            if (publication.getTitle() == null || !publication.getTitle().equalsIgnoreCase(value)) {
+                mismatch.setTitle(publication.getTitle());
+                mismatch.setTitleExternal(value);
             }
-            PublicationMismatch mismatch = new PublicationMismatch();
-            EUtilsServiceStub.DocSumType aDocSum = docSum[0];
+        }
 
-            String volumeOne = null;
-            String volumeTwo = null;
-            for (int k = 0; k < aDocSum.getItem().length; k++) {
-
-                String elementName = aDocSum.getItem()[k].getName();
-                String value = aDocSum.getItem()[k].getItemContent();
-                if (elementName.equals("Volume")) {
-                    volumeOne = value;
-                }
-                if (elementName.equals("Issue")) {
-                    volumeTwo = value;
-                }
-                if (elementName.equals("Pages")) {
-                    if (!isSamePageNumbers(publication, value)) {
-                        mismatch.setPages(publication.getPages());
-                        mismatch.setPagesExternal(value);
-                    }
-                }
-                if (elementName.equals("DOI") && value != null) {
-                    if (publication.getDoi() == null || !publication.getDoi().equals(value)) {
-                        mismatch.setDoi(publication.getDoi());
-                        mismatch.setDoiExternal(value);
-                    }
-                }
-                if (elementName.equals("Title") && value != null) {
-                    if (value.endsWith("."))
-                        value = value.substring(0, value.length() - 1);
-                    if (value.startsWith("[") && value.endsWith("]"))
-                        value = value.substring(1, value.length() - 1);
-                    if (publication.getTitle() != null && publication.getTitle().startsWith("Chapter ") && publication.getTitle().endsWith(value))
-                        continue;
-                    if (publication.getTitle() == null || !publication.getTitle().equalsIgnoreCase(value)) {
-                        mismatch.setTitle(publication.getTitle());
-                        mismatch.setTitleExternal(value);
-                    }
-                }
-            }
-            String fullVolumeString = volumeOne;
-            if (volumeTwo != null)
-                fullVolumeString += "(" + volumeTwo + ")";
-            if (publication.getVolume() == null || !publication.getVolume().equals(fullVolumeString)) {
-                mismatch.setVolume(publication.getVolume());
-                mismatch.setVolumeExternal(fullVolumeString);
-            }
-            if (mismatch.hasValues()) {
-                pubInfoMismatchList.add(mismatch.createPublicationMismatchElements(publication.getZdbID(), publication.getShortAuthorList(), publication.getAccessionNumber()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String fullVolumeString = volumeOne;
+        if (volumeTwo != null) {
+            fullVolumeString += "(" + volumeTwo + ")";
+        }
+        if (publication.getVolume() == null || !publication.getVolume().equals(fullVolumeString)) {
+            mismatch.setVolume(publication.getVolume());
+            mismatch.setVolumeExternal(fullVolumeString);
+        }
+        if (mismatch.hasValues()) {
+            pubInfoMismatchList.add(mismatch.createPublicationMismatchElements(publication.getZdbID(), publication.getShortAuthorList(), publication.getAccessionNumber()));
         }
     }
 
     public static String getCompletePageNumbers(String value) {
-        if (StringUtils.isEmpty(value))
+        if (StringUtils.isEmpty(value)) {
             return "";
+        }
         StringBuilder builder = new StringBuilder();
         String[] pageValues = value.split("-");
-        if (pageValues.length == 1)
+        if (pageValues.length == 1) {
             return value;
+        }
         if (pageValues.length > 2) {
             String errorMessage = "Could not parse page numbers with more than three components: " + value;
             LOG.error(errorMessage);
@@ -212,11 +215,12 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         builder.append("-");
         // complete end number
         int diff = start.length() - end.length();
-        if (diff < 0)
+        if (diff < 0) {
             return value;
-        if (end.length() == start.length())
+        }
+        if (end.length() == start.length()) {
             builder.append(end);
-        else {
+        } else {
             char[] characters = start.toCharArray();
             for (int index = 0; index < diff; index++) {
                 builder.append(characters[index]);
@@ -229,8 +233,9 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
 
     public static boolean isSamePageNumbers(Publication publication, String value) {
         String pages = publication.getPages();
-        if (StringUtils.equals(pages, value))
+        if (StringUtils.equals(pages, value)) {
             return true;
+        }
         // if not the same check if auto-completion of the second page number will make it equal
         return StringUtils.equals(pages, getCompletePageNumbers(value));
     }
@@ -241,9 +246,6 @@ public class PubMedValidationReport extends AbstractValidateDataReportTask {
         return listOfElements;
     }
 
-    private static List<String> errorList = new ArrayList<>();
-    private static List<List<String>> pubMedIdNotFoundList = new ArrayList<>();
-    private static List<List<String>> pubInfoMismatchList = new ArrayList<>();
 
     static class PublicationMismatch {
         private String doi;

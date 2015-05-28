@@ -21,14 +21,6 @@ public class EBIFetch {
             String data = client.fetchData(InferenceCategory.UNIPROTKB.name()+ ":" +accession,null,null);
             logger.debug("data returned for sequence:\n"+data); 
             return data.contains("AC   "+accession) ;
-//            BufferedReader reader = new BufferedReader(new StringReader(data));
-//            RichSequenceIterator iterator = RichSequence.IOTools.readUniProt(reader ,new SimpleNamespace(""));
-//            if(iterator.hasNext()){
-//                return iterator.nextRichSequence().getAccession().equals(accession) ;
-//            }
-//            else{
-//                return false ;
-//            }
         }
         catch (Exception e) {
             if(e instanceof AxisFault && e.getMessage().contains("DbfNoEntryFoundException")){

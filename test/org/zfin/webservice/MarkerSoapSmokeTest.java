@@ -1,8 +1,8 @@
 package org.zfin.webservice;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Test;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
@@ -41,11 +41,9 @@ public class MarkerSoapSmokeTest extends WebServiceGatewaySupport {
 
     @Test
     public void validateWsdl() throws Exception {
-        GetMethod getMethod = new GetMethod(url + "/" + MarkerEndpoint.WEBSERVICE_WSDL_URL);
-        HttpClient client = new HttpClient();
-        int status = client.executeMethod(getMethod);
-        assertEquals(HttpStatus.SC_OK, status);
-        String body = getMethod.getResponseBodyAsString();
+        HttpGet getMethod = new HttpGet(url + "/" + MarkerEndpoint.WEBSERVICE_WSDL_URL);
+        DefaultHttpClient client = new DefaultHttpClient();
+        String body = client.execute(getMethod, new BasicResponseHandler());
         assertNotNull(body);
         assertTrue(body.length() > 100);
     }

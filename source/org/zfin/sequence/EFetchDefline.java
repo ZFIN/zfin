@@ -1,6 +1,7 @@
 package org.zfin.sequence;
 
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchSequenceServiceStub;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Description:
@@ -17,29 +18,28 @@ import gov.nih.nlm.ncbi.www.soap.eutils.EFetchSequenceServiceStub;
  */
 public class EFetchDefline implements Defline {
 
-    private EFetchSequenceServiceStub.GBSeq_type0 gb_Seq ;
+    private Element seqEl;
 
-    public EFetchDefline(EFetchSequenceServiceStub.GBSeq_type0 gb_Seq){
-        this.gb_Seq = gb_Seq ;
+    public EFetchDefline(Element gbSequenceElement){
+        this.seqEl = gbSequenceElement;
     }
 
     @Override
     public String toString() {
-        StringBuilder sequenceStringBuilder = new StringBuilder() ;
-        sequenceStringBuilder.append(">").append("ncbi").append("|") ;
-        sequenceStringBuilder.append(gb_Seq.getGBSeq_accessionVersion()).append(" ") ;
-        sequenceStringBuilder.append(gb_Seq.getGBSeq_definition()).append("\n");
-        return sequenceStringBuilder.toString();
+        return ">ncbi|" + getElementText("GBSeq_primary-accession") + " " + getElementText("GBSeq_definition") + "\n";
     }
 
     public String getAccession() {
-        return gb_Seq.getGBSeq_primaryAccession() ;
+        return getElementText("GBSeq_primary-accession");
     }
 
     @Override
     public boolean equals(Object o) {
-        if(o == null)
-            return false;
-        return this.toString().equals(o.toString()) ;
+        return o != null && this.toString().equals(o.toString());
+    }
+
+    private String getElementText(String elementName) {
+        NodeList nodes = seqEl.getElementsByTagName(elementName);
+        return nodes.getLength() > 0 ? nodes.item(0).getTextContent() : "";
     }
 }

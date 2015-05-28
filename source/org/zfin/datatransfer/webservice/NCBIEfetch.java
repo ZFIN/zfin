@@ -1,15 +1,18 @@
 package org.zfin.datatransfer.webservice;
 
-import gov.nih.nlm.ncbi.www.soap.eutils.EFetchSequenceServiceStub;
-import gov.nih.nlm.ncbi.www.soap.eutils.EUtilsServiceStub;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.zfin.datatransfer.ServiceConnectionException;
 import org.zfin.datatransfer.microarray.GeoMicorarrayEntriesBean;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.sequence.EFetchDefline;
 import org.zfin.sequence.Sequence;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.util.*;
 
 
@@ -23,8 +26,6 @@ public class NCBIEfetch {
 
     private final static String DOT = ".";
     private final static String UNDERSCORE = "_";
-//    private final static String SEQUENCE_DB = "sequence"; // should end up using this one
-
 
     /**
      * @param accession Accession to get sequences for.
@@ -37,60 +38,48 @@ public class NCBIEfetch {
 
     public static List<Sequence> getSequenceForAccession(String accession, Type type) {
 
-        List<Sequence> fastaStrings = new ArrayList<Sequence>();
-        // fetch a record from Taxonomy database
-        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession, type);
-        if (result == null)
+        List<Sequence> fastaStrings = new ArrayList<>();
+        Document result;
+        try {
+            result = getFetchResults(accession, type);
+        } catch (ServiceConnectionException e) {
             return fastaStrings;
-        EFetchSequenceServiceStub.GBSetSequenceE[] gbSetSequence = result.getGBSet().getGBSetSequence();
-        if (gbSetSequence == null)
-            return fastaStrings;
-        // results output
-        for (EFetchSequenceServiceStub.GBSetSequenceE aGbSetSequence : gbSetSequence) {
-            EFetchSequenceServiceStub.GBSeq_type0 gbSeq = aGbSetSequence.getGBSeq();
-            Sequence sequence = new Sequence();
-            sequence.setData(gbSeq.getGBSeq_sequence());
-            sequence.setDefLine(new EFetchDefline(gbSeq));
-            logger.debug(sequence.getDefLine().toString());
-            fastaStrings.add(sequence);
         }
 
+        NodeList sequences = result.getElementsByTagName("GBSeq");
+        for (int i = 0; i < sequences.getLength(); i++) {
+            Element el = (Element) sequences.item(i);
+            NodeList sequenceNodes = el.getElementsByTagName("GBSeq_sequence");
+            for (int j = 0; j < sequenceNodes.getLength(); j++) {
+                Sequence sequence = new Sequence();
+                sequence.setData(sequenceNodes.item(j).getTextContent());
+                sequence.setDefLine(new EFetchDefline(el));
+                fastaStrings.add(sequence);
+            }
+        }
         return fastaStrings;
     }
 
-    public static Boolean validateAccession(String accession) {
-        EFetchSequenceServiceStub.EFetchResult result = getFetchResults(accession, Type.POLYPEPTIDE);
-        if (result == null) return false;
-        if (result.getGBSet().getGBSetSequence().length > 1) {
-            logger.info(result.getGBSet().getGBSetSequence().length + " sequences returned via EFetch for accession: " + accession);
+    public static boolean validateAccession(String accession) {
+        try {
+            Document result = getFetchResults(accession, Type.POLYPEPTIDE);
+            NodeList sequenceNodes = result.getElementsByTagName("GBSeq_sequence");
+            if (sequenceNodes.getLength() > 1) {
+                logger.warn(sequenceNodes.getLength() + " sequences returned via EFetch for accession: " + accession);
+            }
+            return sequenceNodes.getLength() > 0;
+        } catch (ServiceConnectionException e) {
+            logger.info("Unable to fetch " + accession + " from NCBI", e);
+            return false;
         }
-        return result.getGBSet().getGBSetSequence().length > 0;
     }
 
-
-    private static EFetchSequenceServiceStub.EFetchResult getFetchResults(String accession, Type type) {
-
-        try {
-            EFetchSequenceServiceStub service = new EFetchSequenceServiceStub();
-            // call NCBI EFetch utility
-            EFetchSequenceServiceStub.EFetchRequest req = new EFetchSequenceServiceStub.EFetchRequest();
-//            req.setDb((isNucleotide ? NUCLEOTIDE_DB : POLYPEPTIDE_DB));
-            req.setDb(type.getVal());
-            req.setId(accession.toUpperCase());
-            req.setRetmax("1");
-            return service.run_eFetch(req);
-        } catch (Exception e) {
-            if (e.getMessage().contains("Unexpected subelement Error")
-                    ||
-                    e.getMessage().contains("Unexpected subelement Bioseq-set")
-                    ) {
-                logger.info("Sequence not found at NCBI[" + accession.toUpperCase() + "]");
-                logger.info(e);
-            } else {
-                logger.info("Error trying to find sequence at NCBI[" + accession.toUpperCase() + "]", e);
-            }
-            return null;
-        }
+    private static Document getFetchResults(String accession, Type type) throws ServiceConnectionException {
+        return new NCBIRequest(NCBIRequest.Eutil.FETCH)
+                .with("db", type.getVal())
+                .with("id", accession)
+                .with("retmax", 1)
+                .go();
     }
 
     public static String createMicroarrayQuery(Collection<String> accessions, String symbol) {
@@ -132,23 +121,18 @@ public class NCBIEfetch {
      */
     public static boolean hasMicroarrayData(Collection<String> accessions, String symbol) {
         try {
-            EUtilsServiceStub service = new EUtilsServiceStub();
-            EUtilsServiceStub.ESearchRequest request = new EUtilsServiceStub.ESearchRequest();
-            request.setDb("geoprofiles");
-            request.setTool("geo");
-            request.setTerm(createMicroarrayQuery(accessions, symbol));
-            request.setRetMax("0");
-            EUtilsServiceStub.ESearchResult result = service.run_eSearch(request);
+            Document result = new NCBIRequest(NCBIRequest.Eutil.SEARCH)
+                    .with("db", "geoprofiles")
+                    .with("term", createMicroarrayQuery(accessions, symbol))
+                    .with("retmax", "0")
+                    .go();
 
-            if (result == null || result.getCount() == null)
-                return false;
-            if (Integer.parseInt(result.getCount()) > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
+            String count = XPathFactory.newInstance().newXPath().evaluate("/eSearchResult/Count", result);
+            return Integer.parseInt(count) > 0;
+        } catch (ServiceConnectionException e) {
             logger.error(e);
+            return false;
+        } catch (XPathExpressionException | NumberFormatException e) {
             return false;
         }
     }
@@ -167,7 +151,6 @@ public class NCBIEfetch {
             return null;
         }
         try {
-//            if (NCBIEfetch.hasMicroarrayData(accessions, abbreviation)) {
             StringBuilder sb = new StringBuilder();
             sb.append("<a href=\"http://www.ncbi.nlm.nih.gov/geoprofiles?term=");
             sb.append(createMicroarrayQuery(accessions, abbreviation));
@@ -175,120 +158,60 @@ public class NCBIEfetch {
             sb.append("(<a href=\"/ZDB-PUB-071218-1\">1</a>)")
             ;
             return sb.toString();
-//            }
         } catch (Exception e) {
             logger.error(e);
         }
         return null;
     }
 
-    public static Set<String> getPlatformsForZebrafishMicroarrays() throws Exception {
-
-        EUtilsServiceStub service = new EUtilsServiceStub();
-        EUtilsServiceStub.ESearchRequest request = new EUtilsServiceStub.ESearchRequest();
-        request.setDb("geo");
-        request.setTerm("txid7955[organism]");
-        request.setRetStart("0");
-        request.setRetMax("0");
-        request.setUsehistory("y");
-        EUtilsServiceStub.ESearchResult result = service.run_eSearch(request);
-        String webEnvKey = result.getWebEnv();
-
-        int totalGeoAccessions = Integer.parseInt(result.getCount());
-
-        logger.info("Total geo accessions: " + totalGeoAccessions);
-        int batchSize = 10000; // max
-        int testMaxToProcess = 1000000; // max should be 250K
-
-        Set<String> platforms = new HashSet<String>();
-        EUtilsServiceStub.ESummaryRequest summaryRequest = new EUtilsServiceStub.ESummaryRequest();
-        request.setRetMax(String.valueOf(batchSize));
-
-        long totalTime = 0;
-
-        for (int i = 0; i < totalGeoAccessions; i += batchSize) {
-            long startTime = System.currentTimeMillis();
-            summaryRequest.setRetstart(String.valueOf(i));
-            summaryRequest.setRetmax(String.valueOf(batchSize));
-            summaryRequest.setDb("geo");
-            summaryRequest.setWebEnv(webEnvKey);
-            summaryRequest.setQuery_key("1");
-            EUtilsServiceStub.ESummaryResult summaryResult = service.run_eSummary(summaryRequest);
-            EUtilsServiceStub.DocSumType[] docTypes = summaryResult.getDocSum();
-            for (EUtilsServiceStub.DocSumType docType : docTypes) {
-                // get outer ioccurenct
-                for (EUtilsServiceStub.ItemType itemType : docType.getItem()) {
-                    if (itemType.getName().equals("GPL")) {
-                        platforms.add(itemType.getItemContent());
-                    }
-                }
-            }
-            long endTime = System.currentTimeMillis();
-            totalTime += (endTime - startTime);
-            logger.info("time per : " + ((endTime - startTime) / (1000f * batchSize)) + " i[" + i + "]");
-            if (i >= testMaxToProcess) {
-                double avgTime = (totalTime) / (1000f * testMaxToProcess);
-                logger.info("total time avg: " + avgTime);
-                logger.info("est time: " + avgTime * totalGeoAccessions);
-                return platforms;
-            }
-        }
-
-        return platforms;
-    }
-
     public static GeoMicorarrayEntriesBean getMicroarraySequences() throws Exception {
         GeoMicorarrayEntriesBean bean = new GeoMicorarrayEntriesBean();
+        XPath xPath = XPathFactory.newInstance().newXPath();
 
-        EUtilsServiceStub service = new EUtilsServiceStub();
-        EUtilsServiceStub.ESearchRequest request = new EUtilsServiceStub.ESearchRequest();
-        request.setDb("geoprofiles");
-        request.setTerm("txid7955[organism]");
-        request.setRetStart("0");
-        request.setRetMax("0");
-        request.setUsehistory("y");
-        EUtilsServiceStub.ESearchResult result = service.run_eSearch(request);
-        String webEnvKey = result.getWebEnv();
+        Document result = new NCBIRequest(NCBIRequest.Eutil.SEARCH)
+                .with("db", "geoprofiles")
+                .with("term", "txid7955[organism]")
+                .with("retmax", "0")
+                .with("usehistory", "y")
+                .go();
 
-        int totalGeoAccessions = Integer.parseInt(result.getCount());
+        String webEnvKey = xPath.evaluate("/eSearchResult/WebEnv", result);
+        String queryKey = xPath.evaluate("/eSearchResult/QueryKey", result);
+        int totalGeoAccessions = Integer.parseInt(xPath.evaluate("/eSearchResult/Count", result));
 
-        logger.info("Total geo accessions: " + totalGeoAccessions);
-        int batchSize = 10000; // max
-
-        EUtilsServiceStub.ESummaryRequest summaryRequest = new EUtilsServiceStub.ESummaryRequest();
-        summaryRequest.setWebEnv(webEnvKey);
-        request.setRetMax(String.valueOf(batchSize));
+        logger.warn("Total geo accessions: " + totalGeoAccessions);
+        int batchSize = 10000;
 
         long totalTime = 0;
-        int numAttempts = 5;
 
         for (int i = 1; i < totalGeoAccessions; i += batchSize) {
             long startTime = System.currentTimeMillis();
 
-
-            EUtilsServiceStub.ESummaryResult summaryResult;
-
+            Document summaryResult;
             try {
-                summaryResult = retrieveBatch(service, summaryRequest, i, batchSize, numAttempts);
+                summaryResult = new NCBIRequest(NCBIRequest.Eutil.SUMMARY)
+                        .with("WebEnv", webEnvKey)
+                        .with("query_key", queryKey)
+                        .with("retstart", i)
+                        .with("retmax", batchSize)
+                        .go();
             } catch (ServiceConnectionException e) {
-                logger.error("Failed to retrieve a batch at [" + i + "] after [" + numAttempts + "]");
+                logger.error("Failed to retrieve a batch at [" + i + "]");
                 throw e;
             }
 
-            EUtilsServiceStub.DocSumType[] docTypes = summaryResult.getDocSum();
+            NodeList docSummaries = summaryResult.getElementsByTagName("DocumentSummary");
+            for (int j = 0; j < docSummaries.getLength(); j++)  {
+                Element docSummary = (Element) docSummaries.item(j);
 
-            for (EUtilsServiceStub.DocSumType docType : docTypes) {
-                // get outer ioccurenct
-//                EUtilsServiceStub.ItemType localItemType = docType.getItem()[0];
-                for (EUtilsServiceStub.ItemType itemType : docType.getItem()) {
-                    if (itemType.getName().equals("geneName")) {
-                        bean.addGeneSymbol(itemType.getItemContent());
-                    }
-                    if (itemType.getName().equals("GBACC")) {
-                        if (itemType.getItemContent() != null) {
-                            bean.addAccession(cleanDot(itemType.getItemContent()));
-                        }
-                    }
+                NodeList geneName = docSummary.getElementsByTagName("geneName");
+                for (int k = 0; k < geneName.getLength(); k++) {
+                    bean.addGeneSymbol(geneName.item(k).getTextContent());
+                }
+
+                NodeList gbacc = docSummary.getElementsByTagName("GBACC");
+                for (int k = 0; k < gbacc.getLength(); k++) {
+                    bean.addAccession(gbacc.item(k).getTextContent());
                 }
             }
             long endTime = System.currentTimeMillis();
@@ -314,24 +237,6 @@ public class NCBIEfetch {
         message += " time spent (" + (totalTime / 1000) + " s)";
         message += " avgTime per entry (" + avgTime + " s)";
         logger.info(message);
-    }
-
-    private static EUtilsServiceStub.ESummaryResult retrieveBatch(EUtilsServiceStub service
-            , EUtilsServiceStub.ESummaryRequest summaryRequest
-            , int i, int batchSize, int numAttempts) throws Exception {
-        summaryRequest.setRetstart(String.valueOf(i));
-        summaryRequest.setRetmax(String.valueOf(batchSize));
-        summaryRequest.setDb("geoprofiles");
-        summaryRequest.setQuery_key("1");
-
-        for (int attempt = 0; attempt < numAttempts; ++attempt) {
-            try {
-                return service.run_eSummary(summaryRequest);
-            } catch (Exception e) {
-                logger.warn("problem connecting to service attempt " + (attempt + 1) + "/" + numAttempts, e);
-            }
-        }
-        throw new ServiceConnectionException("Failed to retrieve batch after " + numAttempts + " attempts at batch " + i + "");
     }
 
     /**

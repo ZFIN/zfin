@@ -3,9 +3,13 @@ package org.zfin.datatransfer;
 /**
  * Error that we throw when we can not connect to a service.
  */
-public class ServiceConnectionException extends Exception{
+public class ServiceConnectionException extends Exception {
 
-    public ServiceConnectionException(String message){
+    public ServiceConnectionException(String message) {
         super(message);
+    }
+
+    public ServiceConnectionException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
