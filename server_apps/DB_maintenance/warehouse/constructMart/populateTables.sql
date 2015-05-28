@@ -354,4 +354,4 @@ update figure_term_construct_search_temp
 
 
 update construct 
-  set mrkr_name = get_construct_name(mrkr_zdb_id);
+  set construct_name = get_construct_name(mrkr_zdb_id);
