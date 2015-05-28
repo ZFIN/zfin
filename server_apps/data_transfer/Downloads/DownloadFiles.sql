@@ -1969,7 +1969,8 @@ from marker, marker_sequence
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt'
  DELIMITER "	"
  select fe_fish_zdb_id, fe_environment_zdb_id, "is_a_model", term_ont_id, term_name, da_pub_zdb_id, accession_no
-   from fish_environment, disease_annotation, publication, term
+   from disease_annotation, publication, term,
+   outer fish_environment
    where fe_pk_id = da_fishenv_id
    and da_term_zdb_id = term_zdb_id
    and da_pub_zdb_id = zdb_id;
