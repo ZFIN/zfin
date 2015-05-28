@@ -45,7 +45,8 @@ insert into omimPhenotypesAndGenesOrtho
   select gene_Zdb_id, gene_omim_num, phenotype, phenotype_omim_id, zdb_id
     from orthologue, db_link, omimPhenotypesAndGenes
     where c_gene_id = gene_Zdb_id
-    and gene_omim_num = dblink_acc_num;
+    and gene_omim_num = dblink_acc_num
+    and organism = "Human";
 
 select count(*) from omimPhenotypesAndGenesOrtho ;
 
