@@ -90,7 +90,7 @@
         <class name="org.zfin.construct.ConstructComponent" table="construct_component">
             <id name="ID">
                 <column name="cc_pk_id" not-null="true"/>
-                <generator class="increment"/>
+                <generator class="identity"/>
             </id>
             <property name="constructZdbID" column="cc_construct_zdb_id"/>
             <property name="type" column="cc_component_type" type="constructComponentType"/>
