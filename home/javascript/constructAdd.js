@@ -22,6 +22,7 @@ var finalCname="";
 var finalStoredName="";
 var closeP=")";
 var constructSeparator=":"
+var storedConstructSeparator=":"
 var cassetteSeparator=",";
 
 jQuery(document).ready(function () {
@@ -598,8 +599,15 @@ function makeName(){
         cassette1CodingString +=jQuery(this).val()+componentDelim;
 
     });
+    if (cassette1PromoterString==componentDelim){
+        constructSeparator=""
+            }
+    else{
+        constructSeparator=":"
+    }
+
     cassette1=((cassette1CodingString!=componentDelim)?cassette1PromoterString+constructSeparator+cassette1CodingString:cassette1PromoterString);
-    cassette1Stored=((cassette1CodingString!="")?cassette1PromoterString+constructSeparator+cassette1CodingString:cassette1PromoterString);
+    cassette1Stored=((cassette1CodingString!="")?cassette1PromoterString+storedConstructSeparator+cassette1CodingString:cassette1PromoterString);
 
     jQuery.each(jQuery('.cassette2Promoter'), function (index) {
         cassette2PromoterString +=jQuery(this).val()+componentDelim;
@@ -607,9 +615,14 @@ function makeName(){
     jQuery.each(jQuery('.cassette2Coding'), function (index) {
         cassette2CodingString +=jQuery(this).val()+componentDelim;
     });
-
+    if (cassette2PromoterString==componentDelim){
+        constructSeparator=""
+    }
+    else{
+        constructSeparator=":"
+    }
     cassette2=(((cassette2CodingString!="")&&(cassette2CodingString!=componentDelim))?cassette2PromoterString+constructSeparator+cassette2CodingString:cassette2PromoterString);
-    cassette2Stored=((cassette2CodingString!="")?cassette2PromoterString+constructSeparator+cassette2CodingString:cassette2PromoterString);
+    cassette2Stored=((cassette2CodingString!="")?cassette2PromoterString+storedConstructSeparator+cassette2CodingString:cassette2PromoterString);
 
     jQuery.each(jQuery('.cassette3Promoter'), function (index) {
         cassette3PromoterString +=jQuery(this).val()+componentDelim;
@@ -617,8 +630,14 @@ function makeName(){
     jQuery.each(jQuery('.cassette3Coding'), function (index) {
         cassette3CodingString +=jQuery(this).val()+componentDelim;
     });
+    if (cassette3PromoterString==componentDelim){
+        constructSeparator=""
+    }
+    else{
+        constructSeparator=":"
+    }
     cassette3=(((cassette3CodingString!="")&&(cassette3CodingString!=componentDelim))?cassette3PromoterString+constructSeparator+cassette3CodingString:cassette3PromoterString);
-    cassette3Stored=((cassette3CodingString!="")?cassette3PromoterString+constructSeparator+cassette3CodingString:cassette3PromoterString);
+    cassette3Stored=((cassette3CodingString!="")?cassette3PromoterString+storedConstructSeparator+cassette3CodingString:cassette3PromoterString);
 
     if (cassette2!=""){
         finalCname+=cassette1+cassetteSeparator+cassette2;
