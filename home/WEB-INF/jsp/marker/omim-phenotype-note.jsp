@@ -20,9 +20,9 @@
 
     <p>The number after the name of each disorder indicates the following: 1 the disorder was positioned by mapping of the wildtype gene; 2 the disease phenotype itself was mapped; 3 the molecular basis of the disorder is known; 4 the disorder is a chromosome deletion or duplication syndrome.</p>
 
-    <p>For more information on OMIM, please visit their FAQ at: &nbsp;&nbsp;  <a href="http://omim.org/help/faq">http://omim.org/help/faq</a></p>
+    <p>For more information on OMIM, please visit their FAQ at: <a href="http://omim.org/help/faq">http://omim.org/help/faq</a></p>
 
-    <p>For more information on the Disease Ontology, please visit: &nbsp;&nbsp; <a href="http://omim.org/help/faq">http://disease-ontology.org/</a></p>
+    <p>For more information on the Disease Ontology, please visit: <a href="http://disease-ontology.org">http://disease-ontology.org</a></p>
 
 
 
