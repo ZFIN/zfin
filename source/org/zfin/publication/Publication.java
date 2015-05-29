@@ -382,7 +382,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         OTHER("Other", false),
         REVIEW("Review", false),
         UNKNOWN("Unknown", false),
-        UNPUBLISHED("Unpublished", false);
+        UNPUBLISHED("Unpublished", false),
+        THESIS("Thesis",false);
 
         private final String display;
 
