@@ -23,9 +23,12 @@ import java.util.Map;
 public class NCBIRequest {
 
     private final static String BASE_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
+    private final static int MAX_ATTEMPTS = 3;
+    private final static String UNAVAILABLE = "Resource temporarily unavailable";
 
     private Eutil eutil;
     private Map<String, String> params = new HashMap<>();
+    private int attempts = 0;
 
     public NCBIRequest(Eutil eutil) {
         this.eutil = eutil;
@@ -42,6 +45,10 @@ public class NCBIRequest {
     }
 
     public Document go() throws ServiceConnectionException {
+        attempts += 1;
+        if (attempts > MAX_ATTEMPTS) {
+            throw new ServiceConnectionException("Could not get successful response from NCBI after " + MAX_ATTEMPTS + " attempts");
+        }
         try {
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost(BASE_URL + eutil.getPath());
@@ -54,7 +61,14 @@ public class NCBIRequest {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
-            return docBuilder.parse(response.getEntity().getContent());
+            Document result = docBuilder.parse(response.getEntity().getContent());
+            boolean unavailable = result.getDocumentElement().getTextContent().contains(UNAVAILABLE);
+            if (unavailable) {
+                // make another attempt
+                return go();
+            } else {
+                return result;
+            }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new ServiceConnectionException("Unable to perform EUtils request", e);
         }
