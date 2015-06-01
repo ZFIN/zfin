@@ -93,16 +93,19 @@ dbaccess dbname, """
 
 """
 
-preLines = new File(PRE_FILE).readLines()
-postLines = new File(POST_FILE).readLines()
+if (args) {
+  // means we're (probably) running from Jenkins, so make a report.
+  preLines = new File(PRE_FILE).readLines()
+  postLines = new File(POST_FILE).readLines()
 
-added = postLines - preLines
-removed = preLines - postLines
+  added = postLines - preLines
+  removed = preLines - postLines
 
-new ReportGenerator().with {
+  new ReportGenerator().with {
     setReportTitle("Report for ${args[0]}")
     includeTimestamp()
     addDataTable("${added.size()} terms added", ["ID", "Term", "Type"], added.collect { it.split("\\|") as List })
     addDataTable("${removed.size()} terms removed", ["ID", "Term", "Type"], removed.collect { it.split("\\|") as List })
     writeFiles(new File("."), "loadMeshTermsReport")
+  }
 }
