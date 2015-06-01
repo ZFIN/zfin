@@ -26,6 +26,8 @@ public class NCBIEfetch {
 
     private final static String DOT = ".";
     private final static String UNDERSCORE = "_";
+    private final static String GBSEQ = "GBSeq";
+    private final static String GBSEQ_SEQUENCE = "GBSeq_sequence";
 
     /**
      * @param accession Accession to get sequences for.
@@ -38,34 +40,37 @@ public class NCBIEfetch {
 
     public static List<Sequence> getSequenceForAccession(String accession, Type type) {
 
-        List<Sequence> fastaStrings = new ArrayList<>();
+        List<Sequence> sequences = new ArrayList<>();
         Document result;
         try {
             result = getFetchResults(accession, type);
         } catch (ServiceConnectionException e) {
-            return fastaStrings;
+            return sequences;
         }
 
-        NodeList sequences = result.getElementsByTagName("GBSeq");
-        for (int i = 0; i < sequences.getLength(); i++) {
-            Element el = (Element) sequences.item(i);
-            NodeList sequenceNodes = el.getElementsByTagName("GBSeq_sequence");
+        NodeList gbseqNodes = result.getElementsByTagName(GBSEQ);
+        for (int i = 0; i < gbseqNodes.getLength(); i++) {
+            Element el = (Element) gbseqNodes.item(i);
+            NodeList sequenceNodes = el.getElementsByTagName(GBSEQ_SEQUENCE);
             for (int j = 0; j < sequenceNodes.getLength(); j++) {
                 Sequence sequence = new Sequence();
                 sequence.setData(sequenceNodes.item(j).getTextContent());
                 sequence.setDefLine(new EFetchDefline(el));
-                fastaStrings.add(sequence);
+                sequences.add(sequence);
             }
         }
-        return fastaStrings;
+        return sequences;
     }
 
     public static boolean validateAccession(String accession) {
         try {
             Document result = getFetchResults(accession, Type.POLYPEPTIDE);
-            NodeList sequenceNodes = result.getElementsByTagName("GBSeq_sequence");
+            NodeList sequenceNodes = result.getElementsByTagName(GBSEQ_SEQUENCE);
             if (sequenceNodes.getLength() > 1) {
-                logger.warn(sequenceNodes.getLength() + " sequences returned via EFetch for accession: " + accession);
+                logger.warn("Expected 1 sequence returned via EFetch for accession " + accession + ", but got " + sequenceNodes.getLength() + ":");
+                for (int i = 0; i < sequenceNodes.getLength(); i++) {
+                    logger.warn(sequenceNodes.item(i).getTextContent());
+                }
             }
             return sequenceNodes.getLength() > 0;
         } catch (ServiceConnectionException e) {
