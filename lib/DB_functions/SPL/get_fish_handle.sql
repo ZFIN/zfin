@@ -1,3 +1,4 @@
+
 create function get_fish_handle (vFishZdbId varchar(50))
 returning lvarchar(255);
 
