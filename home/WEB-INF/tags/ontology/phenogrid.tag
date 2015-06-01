@@ -18,7 +18,7 @@
     jQuery(document).ready(function() {
         $.ajax({
             dataType: "json",
-            url: "http://tartini.crbs.ucsd.edu/disease/${doid}.json",
+            url: "https://tartini.crbs.ucsd.edu/disease/${doid}.json",
             success: function(data) {
                 var phenotypes = [];
 
@@ -28,7 +28,7 @@
 
 
                 $("#phen_vis").phenogrid({serverURL :
-                        "http://tartini.crbs.ucsd.edu", phenotypeData: phenotypes,targetSpeciesName: "Danio rerio" });
+                        "https://tartini.crbs.ucsd.edu", phenotypeData: phenotypes,targetSpeciesName: "Danio rerio" });
 
 
             }
