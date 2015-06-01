@@ -1,6 +1,6 @@
 
 create function get_fish_handle (vFishZdbId varchar(50))
-returning lvarchar(255);
+returning varchar(255);
 
 define fishHandle like fish.fish_handle;
 define mrkrAbbrev like marker.mrkr_abbrev;
