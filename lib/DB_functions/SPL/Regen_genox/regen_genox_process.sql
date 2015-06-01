@@ -51,24 +51,25 @@ create procedure regen_genox_process()
 -- and has MO(s) which target ONLY this gene
 insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
   select distinct rggz_zdb_id, genox_zdb_id
-    from marker_relationship, fish_experiment, genotype, regen_genox_input_zdb_id_temp, fish_str, experiment, experiment_Condition, fish
+    from marker_relationship, experiment_condition, experiment, genotype_experiment, genotype, regen_genox_input_zdb_id_temp
    where mrel_mrkr_2_zdb_id = rggz_zdb_id
      and rggz_zdb_id [1,8] = "ZDB-GENE"
      and mrel_type = 'knockdown reagent targets gene'
-     and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
+     and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
      and not exists(select NotThisMO.expcond_mrkr_zdb_id
-                      from marker_relationship NotThisMrkr, fish_str NotThisMO
-                     where NotThisMO.fishstr_str_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
+                      from marker_relationship NotThisMrkr, experiment_condition NotThisMO
+                     where NotThisMO.expcond_exp_zdb_id = genox_exp_zdb_id 
+                       and NotThisMO.expcond_mrkr_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
                        and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id) 
-     and not exists(select NOTstr.fishstr_str_zdb_id 
-                      from fish_str NOTstr
-                     where NOTstr.fishstr_str_zdb_id is null)                       
+     and not exists(select NOTstr.expcond_mrkr_zdb_id 
+                      from experiment_condition NOTstr
+                     where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                       and NOTstr.expcond_mrkr_zdb_id is null)                       
      and expcond_exp_zdb_id = exp_zdb_id
      and exp_name not like '\_%'
      and genox_exp_zdb_id = exp_zdb_id
-     and genox_fish_zdb_id = fish_zdb_id
-     and fish_genotype_zdb_id = geno_zdb_id
+     and genox_geno_zdb_id = geno_zdb_id
      and geno_is_wildtype = 't'
      and exists (select phenox_genox_zdb_id
                    from phenotype_experiment, phenotype_statement 
