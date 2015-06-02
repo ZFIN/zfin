@@ -1087,9 +1087,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         result.add(Restrictions.isNotEmpty("figures"));
         result.add(Restrictions.or(Restrictions.eq("entity.superterm", anatomyTerm), Restrictions.eq("entity.subterm", anatomyTerm)));
         result.add(Restrictions.eq("expressionFound", true));
-        Criteria genox = expresssion.createCriteria("genotypeExperiment");
+        Criteria genox = expresssion.createCriteria("fishExperiment");
         genox.add(Restrictions.eq("standardOrGenericControl", true));
-        Criteria genotype = genox.createCriteria("genotype");
+        Criteria fish = genox.createCriteria("fish");
+        Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -1201,7 +1202,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct fish from Genotype fish, ExpressionExperiment ee," +
                 "                               FishExperiment fishox " +
                 "     where ee.publication.zdbID = :pubID " +
-                "           and ee.genotypeExperiment = fishox " +
+                "           and ee.fishExperiment = fishox " +
                 "           and genox.fish = fish" +
                 "    order by fish.handle ";
         Query query = session.createQuery(hql);
