@@ -1575,15 +1575,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (expressionCriteria.getFishExperiment() != null) {
             aliasMap.put("expressionResults", "xpatres");
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
-            criteria.add(Restrictions.eq("xpatex.genotypeExperiment", expressionCriteria.getFishExperiment()));
+            criteria.add(Restrictions.eq("xpatex.fishExperiment", expressionCriteria.getFishExperiment()));
             logger.debug("genox: " + expressionCriteria.getFishExperiment().getZdbID());
         }
 
         if (expressionCriteria.getGenotype() != null) {
             aliasMap.put("expressionResults", "xpatres");
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
-            criteria.add(Restrictions.eq("genox.genotype", expressionCriteria.getGenotype()));
+            aliasMap.put("xpatex.fishExperiment", "genox");
+            criteria.add(Restrictions.eq("genox.fish.genotype", expressionCriteria.getGenotype()));
             logger.debug("geno: " + expressionCriteria.getGenotype().getZdbID());
         }
 
@@ -1643,16 +1643,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (expressionCriteria.isWildtypeOnly()) {
             aliasMap.put("expressionResults", "xpatres");
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
-            aliasMap.put("genox.genotype", "geno");
-            criteria.add(Restrictions.eq("geno.wildtype", true));
+            aliasMap.put("xpatex.fishExperiment", "genox");
+            aliasMap.put("genox.fish", "fish");
+            aliasMap.put("fish.genotype", "genotype");
+            criteria.add(Restrictions.eq("genotype.wildtype", true));
             logger.debug("wildtype only");
         }
 
         if (expressionCriteria.isStandardEnvironment()) {
             aliasMap.put("expressionResults", "xpatres");
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("xpatex.fishExperiment", "genox");
             criteria.add(Restrictions.eq("genox.standardOrGenericControl", true));
             logger.debug("standard or generic-control only");
         }
@@ -1709,12 +1710,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         if (expressionCriteria.getFishExperiment() != null) {
             aliasMap.put("expressionExperiment", "xpatex");
-            criteria.add(Restrictions.eq("xpatex.genotypeExperiment", expressionCriteria.getFishExperiment()));
+            criteria.add(Restrictions.eq("xpatex.fishExperiment", expressionCriteria.getFishExperiment()));
             logger.debug("genox: " + expressionCriteria.getFishExperiment().getZdbID());
         }
 
         if (expressionCriteria.getGenotype() != null) {
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("xpatex.fishExperiment", "genox");
             criteria.add(Restrictions.eq("genox.genotype", expressionCriteria.getGenotype()));
             logger.debug("geno: " + expressionCriteria.getGenotype().getZdbID());
         }
@@ -1746,15 +1747,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         if (expressionCriteria.isWildtypeOnly() == true) {
             aliasMap.put("expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
-            aliasMap.put("genox.genotype", "geno");
-            criteria.add(Restrictions.eq("geno.wildtype", true));
+            aliasMap.put("xpatex.fishExperiment", "genox");
+            aliasMap.put("genox.fish", "fish");
+            aliasMap.put("fish.genotype", "genotype");
+            aliasMap.put("xpatex.fishExperiment", "genox");
+            criteria.add(Restrictions.eq("genotype.wildtype", true));
             logger.debug("wildtype only");
         }
 
         if (expressionCriteria.isStandardEnvironment()) {
             aliasMap.put("expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("xpatex.fishExperiment", "genox");
             aliasMap.put("genox.experiment", "exp");
             criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
                     Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
@@ -1764,7 +1767,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (expressionCriteria.isChemicalEnvironment()) {
             if (!aliasMap.values().contains("xpatex"))
                 aliasMap.put("xpatres.expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("xpatex.fishExperiment", "genox");
             aliasMap.put("genox.experiment", "exp");
             aliasMap.put("exp.experimentConditions", "cond");
             aliasMap.put("cond.conditionDataType", "cdt");
