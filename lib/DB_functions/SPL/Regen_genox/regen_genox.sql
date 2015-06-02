@@ -417,7 +417,7 @@ create dba function regen_genox() returning integer
       let errorHint = "mfs_genox_zdb_id FK constraint";
       alter table mutant_fast_search add constraint 
         foreign key (mfs_genox_zdb_id)
-        references genotype_experiment on delete cascade 
+        references fish_experiment on delete cascade 
         constraint mutant_fast_search_genox_Zdb_id_foreign_key_odc;
 
       grant select on mutant_fast_search to "public";
