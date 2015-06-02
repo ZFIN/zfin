@@ -38,7 +38,7 @@ create procedure regen_genofig_genotype(phenoxId varchar(100))
   insert into regen_genofig_clean_exp_with_morph_temp
       ( rgfcx_clean_exp_zdb_id, rgfcx_morph_zdb_id )
   select distinct genox_exp_zdb_id, fishstr_str_zdb_id
-    from genotype_experiment, marker, 
+    from fish_experiment, marker, 
          phenotype_experiment, genotype, fish_str, fish
    where phenox_pk_id = phenoxId
      and genox_zdb_id = phenox_genox_zdb_id
@@ -55,7 +55,7 @@ create procedure regen_genofig_genotype(phenoxId varchar(100))
   insert into regen_genofig_not_normal_temp
       (rgfnna_zdb_id,rgfnna_genox_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag)
   select distinct phenox_pk_id,phenox_genox_zdb_id,phenos_entity_1_superterm_zdb_id,phenos_entity_1_subterm_zdb_id,phenos_quality_zdb_id,phenos_tag
-    from phenotype_experiment, phenotype_statement, genotype_experiment
+    from phenotype_experiment, phenotype_statement, fish_experiment
    where phenox_pk_id = phenoxId
      and phenox_genox_zdb_id = genox_zdb_id
      and phenox_pk_id = phenos_phenox_pk_id
@@ -64,7 +64,7 @@ create procedure regen_genofig_genotype(phenoxId varchar(100))
   insert into regen_genofig_not_normal_temp
       (rgfnna_zdb_id,rgfnna_genox_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag)
   select distinct phenox_pk_id,phenox_genox_zdb_id,phenos_entity_2_superterm_zdb_id,phenos_entity_2_subterm_zdb_id,phenos_quality_zdb_id,phenos_tag
-    from phenotype_experiment, phenotype_statement, genotype_experiment
+    from phenotype_experiment, phenotype_statement, fish_experiment
    where phenox_pk_id = phenoxId
      and phenox_genox_zdb_id = genox_zdb_id
      and phenox_pk_id = phenos_phenox_pk_id
