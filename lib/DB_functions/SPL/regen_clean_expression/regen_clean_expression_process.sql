@@ -76,12 +76,12 @@ select distinct xpatex_gene_zdb_id, genox_zdb_id
      and fmrel_type = "contains innocuous sequence feature"
      and not exists (select 'x'
                        from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature
-                      where genox_geno_zdb_id = AnotherFeature.genofeat_geno_zdb_id
+                      where fish_genotype_zdb_id = AnotherFeature.genofeat_geno_zdb_id
                        and AnotherFeature.genofeat_feature_zdb_id = Phenotypic.fmrel_ftr_zdb_id
                         and Phenotypic.fmrel_type != 'contains innocuous sequence feature')      
      and not exists (select 'x'
                       from genotype_feature OtherPhenotypicFeature, feature
-                      where genox_geno_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
+                      where fish_genotype_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
                         and feature_type in ('DEFICIENCY','TRANSLOC','COMPLEX_SUBSTITUTION','INVERSION','POINT_MUTATION','DELETION','SEQUENCE_VARIANT','UNSPECIFIED','INDEL'))
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
