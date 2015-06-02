@@ -15,7 +15,7 @@ public enum ForeignKey {
     EXPCOND_EXP(Table.EXPERIMENT, Table.EXPERIMENT_CONDITION, "expcond_exp_zdb_id"),
     EXPCOND_CDT(Table.CONDITION_DATA_TYPE, Table.EXPERIMENT_CONDITION, "expcond_cdt_zdb_id"),
     XPATEX_GENOX(Table.FISH_EXPERIMENT, Table.EXPRESSION_EXPERIMENT, "xpatex_genox_zdb_id"),
-    PHENOX_GENOX(Table.FISH_EXPERIMENT, Table.PHENOTYPE_EXPERIMENT, "phenox_genox_zdb_id"),
+    PHENOX_FISHOX(Table.FISH_EXPERIMENT, Table.PHENOTYPE_EXPERIMENT, "phenox_genox_zdb_id"),
     PHENOS_PHENOX(Table.PHENOTYPE_EXPERIMENT, Table.PHENOTYPE_STATEMENT, "phenos_phenox_pk_id"),
     LINKAGE_MEMBERHIP(Table.LINKAGE, Table.LINKAGE_MEMBERSHIP, "lnkgm_linkage_zdb_id"),
     PUBLICATION_LINKAGE(Table.PUBLICATION, Table.LINKAGE, "lnkg_source_zdb_id"),

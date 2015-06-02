@@ -18,8 +18,8 @@ public class TableTest {
 
     @Test
     public void getSerialEntityTable() {
-        Table genox = Table.getEntityTable("FISH-22145");
-        assertEquals(genox, Table.WH_FISH);
+        Table genox = Table.getEntityTable("ZDB-FISH-150101-2");
+        assertEquals(genox, Table.FISH);
     }
 
     @Test

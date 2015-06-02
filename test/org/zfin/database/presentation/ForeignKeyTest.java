@@ -23,7 +23,7 @@ public class ForeignKeyTest {
     public void getForeignKeyByColumnName() {
         ForeignKey foreignKey = ForeignKey.getForeignKeyByColumnName("phenox_genox_zdb_id");
         assertNotNull(foreignKey);
-        assertTrue(foreignKey == ForeignKey.PHENOX_GENOX);
+        assertTrue(foreignKey == ForeignKey.PHENOX_FISHOX);
     }
 
     @Test

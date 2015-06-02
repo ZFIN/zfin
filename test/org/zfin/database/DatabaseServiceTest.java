@@ -140,26 +140,26 @@ public class DatabaseServiceTest {
      */
     @Test
     public void testTripleJoinedJdbcStatement() {
-        TableValueLookup lookup = new TableValueLookup(Table.GENOTYPE);
-        String figZdbID = "ZDB-GENO-091027-2";
-        ColumnValue columnValue = new ColumnValue(Table.GENOTYPE.getPkName(), figZdbID);
+        TableValueLookup lookup = new TableValueLookup(Table.FISH);
+        String figZdbID = "ZDB-FISH-091027-2";
+        ColumnValue columnValue = new ColumnValue(Table.FISH.getPkName(), figZdbID);
         lookup.addColumnValue(columnValue);
 
-        List<ForeignKey> foreignKeyList = createForeignKeyList(ForeignKey.FISHOX_FISH, ForeignKey.PHENOX_GENOX, ForeignKey.PHENOS_PHENOX);
+        List<ForeignKey> foreignKeyList = createForeignKeyList(ForeignKey.FISHOX_FISH, ForeignKey.PHENOX_FISHOX, ForeignKey.PHENOS_PHENOX);
         DatabaseJdbcStatement statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, true);
-        assertEquals("SELECT COUNT(*) FROM genotype as genotype_1, genotype_experiment as genotype_experiment_1, phenotype_experiment as phenotype_experiment_1, " +
-                "phenotype_statement as phenotype_statement_1 WHERE genotype_1.geno_zdb_id = 'ZDB-GENO-091027-2' " +
-                "AND genotype_1.geno_zdb_id = genotype_experiment_1.genox_geno_zdb_id " +
-                "AND genotype_experiment_1.genox_zdb_id = phenotype_experiment_1.phenox_genox_zdb_id " +
+        assertEquals("SELECT COUNT(*) FROM fish as fish_1, fish_experiment as fish_experiment_1, phenotype_experiment as phenotype_experiment_1, " +
+                "phenotype_statement as phenotype_statement_1 WHERE fish_1.fish_zdb_id = 'ZDB-FISH-091027-2' " +
+                "AND fish_1.fish_zdb_id = fish_experiment_1.genox_fish_zdb_id " +
+                "AND fish_experiment_1.genox_zdb_id = phenotype_experiment_1.phenox_genox_zdb_id " +
                 "AND phenotype_experiment_1.phenox_pk_id = phenotype_statement_1.phenos_phenox_pk_id", statement.getQuery());
 
         foreignKeyList = createForeignKeyList(ForeignKey.FISHOX_FISH, ForeignKey.XPATEX_GENOX, ForeignKey.XPATRES_XPAT);
-        statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, Table.GENOTYPE);
-        assertEquals("SELECT genotype_1.* FROM genotype as genotype_1, genotype_experiment as genotype_experiment_1, " +
+        statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, Table.FISH);
+        assertEquals("SELECT fish_1.* FROM fish as fish_1, fish_experiment as fish_experiment_1, " +
                 "expression_experiment as expression_experiment_1, expression_result as expression_result_1 " +
-                "WHERE genotype_1.geno_zdb_id = 'ZDB-GENO-091027-2' " +
-                "AND genotype_1.geno_zdb_id = genotype_experiment_1.genox_geno_zdb_id " +
-                "AND genotype_experiment_1.genox_zdb_id = expression_experiment_1.xpatex_genox_zdb_id " +
+                "WHERE fish_1.fish_zdb_id = 'ZDB-FISH-091027-2' " +
+                "AND fish_1.fish_zdb_id = fish_experiment_1.genox_fish_zdb_id " +
+                "AND fish_experiment_1.genox_zdb_id = expression_experiment_1.xpatex_genox_zdb_id " +
                 "AND expression_experiment_1.xpatex_zdb_id = expression_result_1.xpatres_xpatex_zdb_id", statement.getQuery());
 
     }
@@ -169,29 +169,22 @@ public class DatabaseServiceTest {
      */
     @Test
     public void testQuadrupleJoinedJdbcStatement() {
-        TableValueLookup lookup = new TableValueLookup(Table.GENOTYPE);
-        String figZdbID = "ZDB-GENO-030619-2";
-        ColumnValue columnValue = new ColumnValue(Table.GENOTYPE.getPkName(), figZdbID);
+        TableValueLookup lookup = new TableValueLookup(Table.FISH);
+        String figZdbID = "ZDB-FISH-030619-2";
+        ColumnValue columnValue = new ColumnValue(Table.FISH.getPkName(), figZdbID);
         lookup.addColumnValue(columnValue);
 
         List<ForeignKey> foreignKeyList = createForeignKeyList(ForeignKey.FISHOX_FISH, ForeignKey.XPATEX_GENOX, ForeignKey.XPATRES_XPAT, ForeignKey.RECORD_ATTR_XPATRES);
         DatabaseJdbcStatement statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, true);
-        assertEquals("SELECT COUNT(*) FROM fish as genotype_1, fish_experiment as fish_experiment_1, " +
+        assertEquals("SELECT COUNT(*) FROM fish as fish_1, fish_experiment as fish_experiment_1, " +
                 "expression_experiment as expression_experiment_1, expression_result as expression_result_1, " +
                 "record_attribution as record_attribution_1 " +
-                "WHERE genotype_1.fish_zdb_id = 'ZDB-FISH-030619-2' " +
-                "AND genotype_1.fish_zdb_id = fish_experiment_1.genox_fish_zdb_id " +
+                "WHERE fish_1.fish_zdb_id = 'ZDB-FISH-030619-2' " +
+                "AND fish_1.fish_zdb_id = fish_experiment_1.genox_fish_zdb_id " +
                 "AND fish_experiment_1.genox_zdb_id = expression_experiment_1.xpatex_genox_zdb_id " +
                 "AND expression_experiment_1.xpatex_zdb_id = expression_result_1.xpatres_xpatex_zdb_id " +
                 "AND expression_result_1.xpatres_zdb_id = record_attribution_1.recattrib_data_zdb_id", statement.getQuery());
 
-/*
-        foreignKeyList = createForeignKeyList(ForeignKey.WH_FISH_GENOTYPE, ForeignKey.WH_FAS_PFIGG, ForeignKey.WH_FAS_PFIGM);
-        statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, true);
-        assertEquals("SELECT COUNT(*) FROM genotype, fish_annotation_search, phenotype_figure_group, phenotype_figure_group_member " +
-                "WHERE geno_zdb_id = 'ZDB-GENO-030619-2' AND fas_genotype_group = geno_zdb_id AND pfigg_geno_handle = fas_pk_id " +
-                "AND pfiggm_group_id = pfigg_group_pk_id", statement.getQuery());
-*/
     }
 
     @Test

@@ -60,7 +60,7 @@ public enum Table {
     FIGURE("FIG", "figure", "fig_zdb_id", "fig_label"),
     //FISH_SEARCH("FISH_SEARCH", "fish_search", "fish_id", "name"),
     GENOTYPE("GENO", "genotype", "geno_zdb_id", "geno_display_name"),
-    FISH("FISH", "fish", "fish_zdb_id", "geno_name"),
+    FISH("FISH", "fish", "fish_zdb_id", "fish_name"),
     FISH_EXPERIMENT("GENOX", "fish_experiment", "genox_zdb_id", "genox_fish_zdb_id,genox_exp_zdb_id", "genox_is_standard,genox_is_std_or_generic_control"),
     GENOFEAT("GENOFEAT", "genotype_feature", "genofeat_zdb_id"),
     GO_EVIDENCE_CODE("GOEVCODE", "go_evidence_code", "goev_code"),
@@ -164,7 +164,7 @@ public enum Table {
     // warehouse tables
     SEQUENCE_FEATURE_CHROMSOME_LOCATION("CHROMOSOME", "sequence_feature_chromosome_location", "sfcl_data_zdb_id,sfcl_chromosome,sfcl_location_source,sfcl_location_subsource,\n" +
             "    sfcl_start,sfcl_end"),
-    WH_FISH("FISH", "fish_annotation_search", "fas_pk_id", null, "fas_affector_type_group"),
+    WH_FISH("FISH_MART", "fish_annotation_search", "fas_pk_id", null, "fas_affector_type_group"),
     WH_FIGURE_TERM_FISH_SEARCH("FTFS", "figure_term_fish_search", "ftfs_pk_id"),
     WH_GENE_FEATURE_RESULT_VIEW("GENE_FEATURE_RESULT_VIEW", "gene_feature_result_view", "gfrv_pk_id", null, "gfrv_affector_type_display", "gfrv_affector_id,gfrv_construct_zdb_id"),
     WH_STR_GROUP("WHSTRGG", "str_group", "strg_group_pk_id"),
@@ -176,7 +176,7 @@ public enum Table {
     private String pkIdentifier;
     private String tableName;
     private String pkName;
-    private List<String> primaryKeyColumns = new ArrayList<String>(1);
+    private List<String> primaryKeyColumns = new ArrayList<>(1);
     private String entityNameColumn;
     private String dictionaryColumnsString;
     private String zdbDictionaryColumnsString;
@@ -199,7 +199,7 @@ public enum Table {
     }
 
     public static void validateUniquePkIdentifier() {
-        Set<String> pkIdentifiers = new HashSet<String>();
+        Set<String> pkIdentifiers = new HashSet<>();
         for (Table table : values()) {
             String pkIdentifier = table.getPkIdentifier();
             if (!pkIdentifiers.add(pkIdentifier) && !pkIdentifier.equals("MARKER"))
@@ -221,7 +221,7 @@ public enum Table {
 
     Table(String pkIdentifier, String tableName, String pkName, Table tableOne, Table tableTwo) {
         this(pkIdentifier, tableName, pkName);
-        manyToManyTableMap = new HashMap<Table, String>(2);
+        manyToManyTableMap = new HashMap<>(2);
         manyToManyTableMap.put(tableOne, primaryKeyColumns.get(0));
         manyToManyTableMap.put(tableTwo, primaryKeyColumns.get(1));
     }
@@ -299,7 +299,7 @@ public enum Table {
         if (zdbID == null)
             return null;
         String[] tokens = zdbID.split("-");
-        String identifier = null;
+        String identifier;
         if (tokens.length < 2)
             return null;
         // either serial PK or a group of ZDB ids
@@ -340,7 +340,7 @@ public enum Table {
         List<ForeignKey> fkList = ForeignKey.getForeignKeys(this);
         if (fkList == null)
             return null;
-        children = new ArrayList<Table>(fkList.size());
+        children = new ArrayList<>(fkList.size());
         for (ForeignKey fk : fkList)
             children.add(fk.getForeignKeyTable());
         return children;
@@ -358,7 +358,7 @@ public enum Table {
 
     // excluding many-to-many tables
     public static List<Table> getAllTablesWithZdbPk() {
-        List<Table> zdbTables = new ArrayList<Table>(60);
+        List<Table> zdbTables = new ArrayList<>(60);
         for (Table entityTable : values())
             if (entityTable.hasZdbPk() && !entityTable.isManyToManyTable())
                 zdbTables.add(entityTable);
