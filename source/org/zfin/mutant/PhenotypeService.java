@@ -149,15 +149,15 @@ public class PhenotypeService {
      * Retrieve a list of phenotype statements that contain the given term
      * in any position (E1 or E2) in a given genotype experiment
      *
-     * @param genotype Genotype
+     * @param fish Genotype
      * @param term     Term
      * @return list of phenotype statements
      */
-    public static Set<PhenotypeStatement> getPhenotypeStatements(Genotype genotype, GenericTerm term, boolean includSubstructures) {
-        if (genotype == null)
+    public static Set<PhenotypeStatement> getPhenotypeStatements(Fish fish, GenericTerm term, boolean includSubstructures) {
+        if (fish == null)
             return null;
 
-        List<PhenotypeStatement> phenotypeStatementList = getMutantRepository().getPhenotypeStatement(term, genotype, includSubstructures);
+        List<PhenotypeStatement> phenotypeStatementList = getMutantRepository().getPhenotypeStatement(term, fish, includSubstructures);
         // since I do not want to change the equals() method to ignore the PK id
         // I have to create a distinct list myself.
         Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<PhenotypeStatement>(phenotypeStatementList.size());

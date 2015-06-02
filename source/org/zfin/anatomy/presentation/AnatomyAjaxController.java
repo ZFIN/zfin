@@ -21,10 +21,11 @@ import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.presentation.AntibodyStatistics;
-import org.zfin.mutant.presentation.GenotypeStatistics;
+import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
@@ -328,40 +329,40 @@ public class AnatomyAjaxController {
     HttpServletRequest request;
 
     private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures) {
-        PaginationResult<Genotype> genotypeResult;
+        PaginationResult<Fish> genotypeResult;
         if (includeSubstructures)
-            genotypeResult = mutantRepository.getGenotypesByAnatomyTermIncludingSubstructures(ai, false, form);
+            genotypeResult = mutantRepository.getFishByAnatomyTermIncludingSubstructures(ai, false, form);
         else
-            genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(ai, false, form);
+            genotypeResult = mutantRepository.getFishByAnatomyTerm(ai, false, form);
         populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
     }
 
-    private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Genotype> genotypeResult) {
+    private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Fish> genotypeResult) {
         populateFormBeanForMutantList(ai, form, genotypeResult, false);
     }
 
-    private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Genotype> genotypeResult, boolean includeSubstructures) {
-        form.setGenotypeCount(genotypeResult.getTotalCount());
-        form.setTotalRecords(genotypeResult.getTotalCount());
+    private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Fish> fishResult, boolean includeSubstructures) {
+        form.setFishCount(fishResult.getTotalCount());
+        form.setTotalRecords(fishResult.getTotalCount());
         form.setQueryString(request.getQueryString());
         form.setRequestUrl(request.getRequestURL());
 
-        List<Genotype> genotypes = genotypeResult.getPopulatedResults();
-        form.setGenotypes(genotypes);
-        List<GenotypeStatistics> genoStats = createGenotypeStats(genotypes, ai, includeSubstructures);
+        List<Fish> fishList = fishResult.getPopulatedResults();
+        form.setFish(fishList);
+        List<FishStatistics> genoStats = createGenotypeStats(fishList, ai, includeSubstructures);
         form.setGenotypeStatistics(genoStats);
 
         AnatomyStatistics statistics = anatomyRepository.getAnatomyStatisticsForMutants(ai.getZdbID());
         form.setAnatomyStatisticsMutant(statistics);
     }
 
-    private List<GenotypeStatistics> createGenotypeStats(List<Genotype> genotypes, GenericTerm ai, boolean includeSubstructures) {
-        if (genotypes == null || ai == null)
+    private List<FishStatistics> createGenotypeStats(List<Fish> fishList, GenericTerm ai, boolean includeSubstructures) {
+        if (fishList == null || ai == null)
             return null;
 
-        List<GenotypeStatistics> stats = new ArrayList<>();
-        for (Genotype genoType : genotypes) {
-            GenotypeStatistics stat = new GenotypeStatistics(genoType, ai, includeSubstructures);
+        List<FishStatistics> stats = new ArrayList<>();
+        for (Fish fish : fishList) {
+            FishStatistics stat = new FishStatistics(fish, ai, includeSubstructures);
             stats.add(stat);
         }
         return stats;

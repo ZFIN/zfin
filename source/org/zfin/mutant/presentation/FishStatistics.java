@@ -6,7 +6,10 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.*;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.GenotypeFeature;
+import org.zfin.mutant.PhenotypeService;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -19,35 +22,35 @@ import java.util.TreeSet;
 /**
  * Convenient class to show statistics about phenotypes related to a given AO term..
  */
-public class GenotypeStatistics extends EntityStatistics {
+public class FishStatistics extends EntityStatistics {
 
-    private Genotype genotype;
+    private Fish fish;
     private GenericTerm anatomyItem;
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
     private boolean includeSubstructures;
 
-    public GenotypeStatistics(Genotype genotype) {
-        this.genotype = genotype;
+    public FishStatistics(Fish fish) {
+        this.fish = fish;
     }
 
-    public GenotypeStatistics(Genotype genotype, GenericTerm anatomyItem) {
-        this.genotype = genotype;
+    public FishStatistics(Fish fish, GenericTerm anatomyItem) {
+        this.fish = fish;
         this.anatomyItem = anatomyItem;
     }
 
-    public GenotypeStatistics(Genotype genotype, GenericTerm anatomyItem, boolean includeSubstructures) {
-        this.genotype = genotype;
+    public FishStatistics(Fish fish, GenericTerm anatomyItem, boolean includeSubstructures) {
+        this.fish = fish;
         this.anatomyItem = anatomyItem;
         this.includeSubstructures = includeSubstructures;
     }
 
-    public Genotype getGenotype() {
-        return genotype;
+    public Fish getFish() {
+        return fish;
     }
 
     public int getNumberOfFigures() {
         if (figureResults == null) {
-            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoAndAnatomy(genotype, anatomyItem, includeSubstructures);
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByFishAndAnatomy(fish, anatomyItem, includeSubstructures);
         }
         return figureResults.getTotalCount();
     }
@@ -71,7 +74,7 @@ public class GenotypeStatistics extends EntityStatistics {
      */
     public Figure getFigure() {
         if (figureResults == null || figureResults.getTotalCount() != 1) {
-            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoAndAnatomy(genotype, anatomyItem);
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByFishAndAnatomy(fish, anatomyItem);
         }
         if (figureResults == null || figureResults.getTotalCount() != 1) {
             throw new RuntimeException("Can call this method only when there is exactly one figure");
@@ -81,12 +84,12 @@ public class GenotypeStatistics extends EntityStatistics {
 
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         PublicationRepository repository = RepositoryFactory.getPublicationRepository();
-        return repository.getPublicationsWithFigures(genotype, anatomyItem, includeSubstructures);
+        return repository.getPublicationsWithFigures(fish, anatomyItem, includeSubstructures);
     }
 
     public SortedSet<Marker> getAffectedMarkers() {
-        Set<GenotypeFeature> features = genotype.getGenotypeFeatures();
-        SortedSet<Marker> markers = new TreeSet<Marker>();
+        Set<GenotypeFeature> features = fish.getGenotype().getGenotypeFeatures();
+        SortedSet<Marker> markers = new TreeSet<>();
         for (GenotypeFeature feat : features) {
             Feature feature = feat.getFeature();
             Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
@@ -107,8 +110,8 @@ public class GenotypeStatistics extends EntityStatistics {
 
 
     public Set<PhenotypeStatement> getPhenotypeStatements() {
-        Set<PhenotypeStatement> phenotypeStatements = new TreeSet<PhenotypeStatement>();
-        phenotypeStatements.addAll(PhenotypeService.getPhenotypeStatements(genotype, anatomyItem, includeSubstructures));
+        Set<PhenotypeStatement> phenotypeStatements = new TreeSet<>();
+        phenotypeStatements.addAll(PhenotypeService.getPhenotypeStatements(fish, anatomyItem, includeSubstructures));
         return phenotypeStatements;
     }
 

@@ -8,9 +8,9 @@ import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.mutant.Genotype;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.AntibodyStatistics;
-import org.zfin.mutant.presentation.GenotypeStatistics;
+import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -53,15 +53,15 @@ public class AnatomySearchBean extends PaginationBean {
     private int markerCount;
     private SectionVisibility visibility = new SectionVisibility<AnatomySearchBean.Section>(AnatomySearchBean.Section.class);
 
-    private List<Genotype> genotypes;
-    private int genotypeCount;
+    private List<Fish> fish;
+    private int fishCount;
     private int antibodyCount;
     private int expressedGeneCount;
     private int wildtypeSTRcount;
     private int mutantSTRcount;
     private int totalNumberOfFiguresPerAnatomyItem;
     private int totalNumberOfImagesPerAnatomyItem;
-    private List<GenotypeStatistics> genoStats;
+    private List<FishStatistics> genoStats;
     private List<SequenceTargetingReagentStatistics> allSequenceTargetingReagents;
     private List<AntibodyStatistics> antibodyStatistics;
     private List<SequenceTargetingReagentStatistics> nonWildtypeSTRs;
@@ -216,12 +216,12 @@ public class AnatomySearchBean extends PaginationBean {
         return markerCount;
     }
 
-    public void setGenotypes(List<Genotype> genotypes) {
-        this.genotypes = genotypes;
+    public List<Fish> getFish() {
+        return fish;
     }
 
-    public List<Genotype> getGenotypes() {
-        return genotypes;
+    public void setFish(List<Fish> fish) {
+        this.fish = fish;
     }
 
     public void setTotalNumberOfFiguresPerAnatomyItem(int totalNumberOfFiguresPerAnatomyItem) {
@@ -242,12 +242,12 @@ public class AnatomySearchBean extends PaginationBean {
         this.totalNumberOfImagesPerAnatomyItem = totalNumberOfImagesPerAnatomyItem;
     }
 
-    public void setGenotypeStatistics(List<GenotypeStatistics> genoStats) {
+    public void setGenotypeStatistics(List<FishStatistics> genoStats) {
         this.genoStats = genoStats;
     }
 
 
-    public List<GenotypeStatistics> getGenotypeStatistics() {
+    public List<FishStatistics> getGenotypeStatistics() {
         return genoStats;
     }
 
@@ -405,12 +405,12 @@ public class AnatomySearchBean extends PaginationBean {
         return aoTerm.getZdbID();
     }
 
-    public int getGenotypeCount() {
-        return genotypeCount;
+    public int getFishCount() {
+        return fishCount;
     }
 
-    public void setGenotypeCount(int genotypeCount) {
-        this.genotypeCount = genotypeCount;
+    public void setFishCount(int fishCount) {
+        this.fishCount = fishCount;
     }
 
     public int getWildtypeSTRcount() {
@@ -509,7 +509,7 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public boolean isAllGenotypesAreDisplayed() {
-        return genotypeCount <= MAX_NUMBER_GENOTYPES;
+        return fishCount <= MAX_NUMBER_GENOTYPES;
     }
 
     public boolean isAllAntibodiesAreDisplayed() {

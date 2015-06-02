@@ -14,6 +14,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
@@ -126,12 +127,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAllExpressedMutants() {
         // lateral floor plate
-        String aoZdbID = "ZDB-TERM-100331-1214";
+        String aoZdbID = "ZDB-TERM-100331-116";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(4);
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, bean);
+        PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTerm(item, false, bean);
 //        assertEquals("8 genes", 4, list.size());
         assertNotNull(genotypeResult.getPopulatedResults());
         assertEquals(genotypeResult.getPopulatedResults().size(), 4);
@@ -146,7 +147,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         item.setZdbID(goZdbID);
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(4);
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, bean);
+        PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTerm(item, false, bean);
         assertNotNull(genotypeResult.getPopulatedResults());
         assertTrue(genotypeResult.getTotalCount() > 1);
     }
@@ -159,7 +160,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         item.setZdbID(aoZdbID);
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(4);
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTermIncludingSubstructures(item, false, bean);
+        PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTermIncludingSubstructures(item, false, bean);
         assertNotNull(genotypeResult.getPopulatedResults());
         assertTrue(genotypeResult.getTotalCount() > 2);
     }
@@ -172,7 +173,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         item.setZdbID(goZdbID);
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(4);
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTermIncludingSubstructures(item, false, bean);
+        PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTermIncludingSubstructures(item, false, bean);
         assertNotNull(genotypeResult.getPopulatedResults());
         assertTrue(genotypeResult.getTotalCount() > 0);
     }
@@ -256,7 +257,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         PaginationBean bean = new PaginationBean();
         bean.setMaxDisplayRecords(5);
 
-        PaginationResult<Genotype> genotypeResult = mutantRepository.getGenotypesByAnatomyTerm(item, false, bean);
+        PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTerm(item, false, bean);
 
         assertNotNull(genotypeResult);
         assertNotNull(genotypeResult.getPopulatedResults());
@@ -268,14 +269,14 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getFiguresForGenotype() {
         //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-020426-5";
-        Genotype geno = new Genotype();
+        String genoZdbID = "ZDB-FISH-020426-5";
+        Fish geno = new Fish();
         geno.setZdbID(genoZdbID);
         // brain
         String aoZdbID = "ZDB-ANAT-010921-415";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item);
+        PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(geno, item);
         assertNotNull(figs.getPopulatedResults());
 
 /*      This case has two figures where one of them comes from a genotype with MOs and thus should not be retrieved.
@@ -285,7 +286,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // midbrain hindbrain boundary
         aoZdbID = "ZDB-TERM-100331-40";
         item.setZdbID(aoZdbID);
-        figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item.createGenericTerm());
+        figs = publicationRepository.getFiguresByFishAndAnatomy(geno, item.createGenericTerm());
         assertTrue(figs.getPopulatedResults() != null);
 */
     }
@@ -294,37 +295,22 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getFiguresForGenotypeAndAoPlusSubstructures() {
         //  genotype Df(Chr03:sox8,sox9b)b971/b971
         String genoZdbID = "ZDB-GENO-050322-1";
-        Genotype geno = new Genotype();
+        Fish geno = new Fish();
         geno.setZdbID(genoZdbID);
         // actinotrichium
         String aoZdbID = "ZDB-TERM-100614-30";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoAndAnatomy(geno, item, true);
+        PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(geno, item, true);
         assertNotNull(figs.getPopulatedResults());
         assertTrue(figs.getPopulatedResults().size() > 0);
-    }
-
-    @Test
-    public void getPublicationsForGenoAndAo() {
-        // Df(LG23:acvr1b,sp5l,wnt1,wnt10b)w5/w5
-        String genoZdbID = "ZDB-GENO-091207-3";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // midbrain hindbrain boundary
-        GenericTerm item = new GenericTerm();
-        String aoZdbID = "ZDB-TERM-100331-40";
-        item.setZdbID(aoZdbID);
-        PaginationResult<Publication> publications = publicationRepository.getPublicationsWithFigures(geno, item);
-        assertNotNull(publications.getPopulatedResults());
-        assertTrue(publications.getPopulatedResults().size() > 0);
     }
 
     @Test
     public void getPublicationsForGenoAndAoIncludingSubstructures() {
         //  genotype Df(Chr03:sox8,sox9b)b971/b971
         String genoZdbID = "ZDB-GENO-050322-1";
-        Genotype geno = new Genotype();
+        Fish geno = new Fish();
         geno.setZdbID(genoZdbID);
         // actinotrichium
         String aoZdbID = "ZDB-TERM-100614-30";

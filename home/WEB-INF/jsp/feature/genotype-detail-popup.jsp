@@ -89,7 +89,7 @@
         <tr>
             <th>
                 <c:choose>
-                    <c:when test="${fn:length(formBean.genotypeStatistics.affectedMarkers) ne null && fn:length(formBean.genotypeStatistics.affectedMarkers) > 1}">
+                    <c:when test="${fn:length(formBean.fishStatistics.affectedMarkers) ne null && fn:length(formBean.fishStatistics.affectedMarkers) > 1}">
                         Affected&nbsp;Genes:
                     </c:when>
                     <c:otherwise>
@@ -98,7 +98,7 @@
                 </c:choose>
             </th>
             <td>
-                <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}" varStatus="loop">
+                <c:forEach var="affectedGene" items="${formBean.fishStatistics.affectedMarkers}" varStatus="loop">
                     <zfin:link entity="${affectedGene}"/><c:if test="${!loop.last}">,&nbsp;</c:if>
                 </c:forEach>
             </td>

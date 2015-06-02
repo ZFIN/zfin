@@ -82,7 +82,7 @@
         <tr>
             <th>
                 <c:choose>
-                    <c:when test="${fn:length(formBean.genotypeStatistics.affectedMarkers) ne null && fn:length(formBean.genotypeStatistics.affectedMarkers) > 1}">
+                    <c:when test="${fn:length(formBean.fishStatistics.affectedMarkers) ne null && fn:length(formBean.fishStatistics.affectedMarkers) > 1}">
                         Affected&nbsp;Genes:
                     </c:when>
                     <c:otherwise>
@@ -91,7 +91,7 @@
                 </c:choose>
             </th>
             <td>
-                <c:forEach var="affectedGene" items="${formBean.genotypeStatistics.affectedMarkers}" varStatus="loop">
+                <c:forEach var="affectedGene" items="${formBean.fishStatistics.affectedMarkers}" varStatus="loop">
                     <zfin:link entity="${affectedGene}"/><c:if test="${!loop.last}">,&nbsp;</c:if>
                 </c:forEach>
             </td>
@@ -125,7 +125,7 @@
                                 <c:choose>
                                     <c:when test="${supplier.moensLab}">&nbsp;
                                         <c:forEach var="affectedGene"
-                                                   items="${formBean.genotypeStatistics.affectedMarkers}"
+                                                   items="${formBean.fishStatistics.affectedMarkers}"
                                                    varStatus="loop">
                                             (<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${affectedGene.abbreviation}"><font size="-1">request this mutant</font></a>)
                                             <c:if test="${!loop.last}">,&nbsp;
@@ -135,7 +135,7 @@
                                     <c:otherwise>
                                         <c:if test="${supplier.solnicaLab}">&nbsp;
                                             <c:forEach var="affectedGene"
-                                                       items="${formBean.genotypeStatistics.affectedMarkers}"
+                                                       items="${formBean.fishStatistics.affectedMarkers}"
                                                        varStatus="loop">
                                                 (<a href="http://devbio.wustl.edu/solnicakrezellab/${affectedGene.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
                                                 <c:if test="${!loop.last}">,&nbsp;</c:if>

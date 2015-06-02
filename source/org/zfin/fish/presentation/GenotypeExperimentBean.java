@@ -9,7 +9,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.GenotypeStatistics;
+import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
@@ -20,7 +20,7 @@ import java.util.*;
 public class GenotypeExperimentBean {
     private FishExperiment fishExperiment;
     private Genotype genotype;
-    private GenotypeStatistics genotypeStatistics;
+    private FishStatistics fishStatistics;
     private List<GenotypeFeature> genotypeFeatures;
     private List<GenotypeFigure> genotypeFigures;
     private List<PhenotypeStatement> phenoStatements;
@@ -53,17 +53,17 @@ public class GenotypeExperimentBean {
     }
 
 
-    public GenotypeStatistics getGenotypeStatistics() {
-        if (genotypeStatistics == null) {
-            if (genotype == null)
+    public FishStatistics getFishStatistics() {
+        if (fishStatistics == null) {
+            if (fishExperiment == null && fishExperiment.getFish() == null)
                 return null;
-            return new GenotypeStatistics(genotype);
+            return new FishStatistics(fishExperiment.getFish());
         }
-        return genotypeStatistics;
+        return fishStatistics;
     }
 
-    public void setGenotypeStatistics(GenotypeStatistics genotypeStatistics) {
-        this.genotypeStatistics = genotypeStatistics;
+    public void setFishStatistics(FishStatistics fishStatistics) {
+        this.fishStatistics = fishStatistics;
     }
 
     public List<GenotypeFeature> getGenotypeFeatures() {

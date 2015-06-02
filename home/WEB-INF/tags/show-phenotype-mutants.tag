@@ -12,7 +12,7 @@
             <tbody>
             <tr>
                 <th width="15%">
-                    Genotype (Background)
+                    Fish
                 </th>
                 <th width="15%">
                     Affected Genes
@@ -27,10 +27,7 @@
             <c:forEach var="genoStat" items="${formBean.genotypeStatistics}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
                     <td>
-                        <zfin:link entity="${genoStat.genotype}"/>
-                        <c:if test="${fn:length(genoStat.genotype.associatedGenotypes)>0}">
-                        </c:if>
-
+                        <zfin:link entity="${genoStat.fish}"/>
                     </td>
                     <td>
                         <zfin:link entity="${genoStat.affectedMarkers}"/>
@@ -43,7 +40,7 @@
                     <td>
                         <c:if test="${genoStat.numberOfFigures > 0}">
                             <c:if test="${genoStat.numberOfFigures > 1}">
-                                <a href="/action/ontology/${formBean.aoTerm.oboID}/phenotype-summary/${genoStat.genotype.zdbID}">
+                                <a href="/action/ontology/${formBean.aoTerm.oboID}/phenotype-summary/${genoStat.fish.genotype.zdbID}">
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
                             </c:if>

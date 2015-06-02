@@ -371,10 +371,10 @@ public class MutantRepositoryTest {
         ////String oboID = "ZFA:0005435";
         // fin fold actinotrichium
         String oboID = "ZFA:0000089";
-        String genotypeID = "ZDB-GENO-090827-1";
+        String fishID = "ZDB-FISH-090827-1";
         GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
-        Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
-        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, genotype, true);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+        List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, fish, true);
         assertNotNull(statements);
     }
 

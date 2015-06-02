@@ -15,16 +15,13 @@
                 <th width="15%">
                     Target Genes
                 </th>
-                <th width="15%">
-                    Reagents
-                </th>
-                <th width="20%">
-                    Genotype
+                <th width="30%">
+                    Fish
                 </th>
                 <th width="30%">
                     Phenotype
                 </th>
-                <th width="20%">
+                <th width="25%">
                     Figures
                 </th>
             </tr>
@@ -34,10 +31,7 @@
                         <zfin:link entity="${sequenceTargetingReagentStat.sequenceTargetingReagents}"/>
                     </td>
                     <td>
-                        <zfin:link entity="${sequenceTargetingReagentStat.genoExperiment.experiment.sequenecTargetingReagentConditions}"/>
-                    </td>
-                    <td>
-                        <zfin:link entity="${sequenceTargetingReagentStat.genoExperiment.genotype}"/>
+                        <zfin:link entity="${sequenceTargetingReagentStat.fishExperiment.fish}"/>
                     </td>
                     <td>
                         <c:forEach var="statement" items="${sequenceTargetingReagentStat.phenotypeStatements}" varStatus="loop">
@@ -47,7 +41,7 @@
                     <td>
                         <c:if test="${sequenceTargetingReagentStat.numberOfFigures > 0}">
                             <c:if test="${sequenceTargetingReagentStat.numberOfFigures > 1}">
-                                <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() %>?MIval=aa-pheno_summary.apg&OID=${sequenceTargetingReagentStat.genoExperiment.genotype.zdbID}&anatID=${formBean.aoTerm.zdbID}&envID=${sequenceTargetingReagentStat.genoExperiment.experiment.zdbID}">
+                                <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() %>?MIval=aa-pheno_summary.apg&OID=${sequenceTargetingReagentStat.fishExperiment.fish.genotype.zdbID}&anatID=${formBean.aoTerm.zdbID}&envID=${sequenceTargetingReagentStat.fishExperiment.experiment.zdbID}">
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${sequenceTargetingReagentStat.numberOfFigures}"
                                                  includeNumber="true"/>

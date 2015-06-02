@@ -5,7 +5,7 @@
 <table border="0" width="100%">
     <tbody>
     <tr align="left">
-        <td><b>${formBean.genotypeCount} Genotypes
+        <td><b>${formBean.fishCount} Genotypes
             affecting</b>
             <zfin:link entity="${formBean.aoTerm}"/>
             <c:if test="${includingSubstructures}">

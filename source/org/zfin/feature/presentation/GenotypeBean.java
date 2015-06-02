@@ -6,7 +6,7 @@ import org.zfin.fish.presentation.AbstractFishViewBean;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.GenotypeStatistics;
+import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
@@ -15,7 +15,8 @@ import java.util.*;
 
 public class GenotypeBean  extends AbstractFishViewBean{
     private Genotype genotype;
-    private GenotypeStatistics genotypeStatistics;
+    private Fish fish;
+    private FishStatistics fishStatistics;
     private List<GenotypeFeature> genotypeFeatures;
     private List<GenotypeFigure> genotypeFigures;
     private List<PhenotypeStatement> phenoStatements;
@@ -61,18 +62,25 @@ public class GenotypeBean  extends AbstractFishViewBean{
         this.genotype = genotype;
     }
 
-
-    public GenotypeStatistics getGenotypeStatistics() {
-        if (genotypeStatistics == null) {
-            if (genotype == null)
-                return null;
-            return new GenotypeStatistics(genotype);
-        }
-        return genotypeStatistics;
+    public Fish getFish() {
+        return fish;
     }
 
-    public void setGenotypeStatistics(GenotypeStatistics genotypeStatistics) {
-        this.genotypeStatistics = genotypeStatistics;
+    public void setFish(Fish fish) {
+        this.fish = fish;
+    }
+
+    public FishStatistics getFishStatistics() {
+        if (fishStatistics == null) {
+            if (fish == null)
+                return null;
+            return new FishStatistics(fish);
+        }
+        return fishStatistics;
+    }
+
+    public void setFishStatistics(FishStatistics fishStatistics) {
+        this.fishStatistics = fishStatistics;
     }
 
     public List<GenotypeFeature> getGenotypeFeatures() {

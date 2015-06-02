@@ -10,6 +10,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
@@ -249,21 +250,21 @@ public interface PublicationRepository extends PaginationParameter {
      * Retrieve list of figures for a given genotype and anatomy term
      * for mutant genotypes excluding SequenceTargetingReagent.
      *
-     * @param geno genotype
+     * @param fish genotype
      * @param term anatomy term
      * @return list of figures.
      */
-    PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term);
+    PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term);
 
     /**
      * Retrieve list of figures for a given genotype and anatomy term
      * for mutant genotypes excluding SequenceTargetingReagent.
      *
-     * @param geno genotype
+     * @param fish genotype
      * @param term anatomy term
      * @return list of figures.
      */
-    PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term, boolean includeSubstructures);
+    PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term, boolean includeSubstructures);
 
     PaginationResult<Figure> getFiguresByGeno(Genotype geno);
 
@@ -275,21 +276,12 @@ public interface PublicationRepository extends PaginationParameter {
 
 
     /**
-     * Retrieve publications that have phenotype data for a given term and genotype
-     * @param genotype Genotype
-     * @param aoTerm   ao term
-     * @return Number of publications with figures per genotype and anatomy
-     */
-    PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm);
-
-    /**
      * Retrieve publications that have phenotype data for a given term and genotype including
      * substructures
-     * @param genotype Genotype
-     * @param aoTerm   ao term
-     * @return Number of publications with figures per genotype and anatomy
+     * @param fish Fish
+     *@param aoTerm   ao term  @return Number of publications with figures per genotype and anatomy
      */
-    PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm, boolean includeSubstructures);
+    PaginationResult<Publication> getPublicationsWithFigures(Fish fish, GenericTerm aoTerm, boolean includeSubstructures);
 
     /**
      * @param genotype Genotype

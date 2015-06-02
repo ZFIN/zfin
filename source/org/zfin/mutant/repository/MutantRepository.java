@@ -38,7 +38,7 @@ public interface MutantRepository {
      * @param bean     Pagination bean info
      * @return list of genotypes
      */
-    PaginationResult<Genotype> getGenotypesByAnatomyTerm(GenericTerm item, boolean wildtype, PaginationBean bean);
+    PaginationResult<Fish> getFishByAnatomyTerm(GenericTerm item, boolean wildtype, PaginationBean bean);
 
     List<Genotype> getGenotypesByFeature(Feature feature);
 
@@ -354,24 +354,24 @@ public interface MutantRepository {
      * Retrieve phenotype statements for given structure and genotype.
      *
      * @param term
-     * @param genotype
+     * @param fish
      * @param includeSubstructures
      * @return
      */
-    List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Genotype genotype, boolean includeSubstructures);
+    List<PhenotypeStatement> getPhenotypeStatement(GenericTerm term, Fish fish, boolean includeSubstructures);
 
     List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
 
     /**
      * Retrieve phenotype statements for given structure and genotype.
      *
-     * @param genotype
+     * @param fish
      * @param includeSubstructures
      * @return
      */
-    List<PhenotypeStatement> getPhenotypeStatement(Genotype genotype, boolean includeSubstructures);
+    List<PhenotypeStatement> getPhenotypeStatement(Fish fish, boolean includeSubstructures);
 
-    PaginationResult<Genotype> getGenotypesByAnatomyTermIncludingSubstructures(GenericTerm item, boolean wildtype, PaginationBean bean);
+    PaginationResult<Fish> getFishByAnatomyTermIncludingSubstructures(GenericTerm item, boolean wildtype, PaginationBean bean);
 
     List<Genotype> getGenotypes(List<String> genotypeExperimentIDs);
 

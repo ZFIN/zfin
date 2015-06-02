@@ -20,14 +20,14 @@ import java.util.*;
  */
 public class SequenceTargetingReagentStatistics extends EntityStatistics {
 
-    private FishExperiment genoExperiment;
+    private FishExperiment fishExperiment;
     private GenericTerm anatomyItem;
     private Set<Figure> figures;
     private String targetGeneOrder;
 
     public SequenceTargetingReagentStatistics(FishExperiment genoExperiment, GenericTerm anatomyItem) {
         this.anatomyItem = anatomyItem;
-        this.genoExperiment = genoExperiment;
+        this.fishExperiment = genoExperiment;
         targetGeneOrder = "";
         Set<Marker> targetGenes = getSequenceTargetingReagents();
         int numberOfTargetGenes = targetGenes.size();
@@ -40,12 +40,12 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
         }
     }
 
-    public FishExperiment getGenoExperiment() {
-        return genoExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
     public Set<Marker> getSequenceTargetingReagents() {
-        Set<ExperimentCondition> experimentConditions = genoExperiment.getExperiment().getExperimentConditions();
+        Set<ExperimentCondition> experimentConditions = fishExperiment.getExperiment().getExperimentConditions();
         Set<Marker> sequenceTargetingReagents = new TreeSet<Marker>(new Comparator<Marker>() {
             public int compare(Marker one, Marker two) {
                 return (one.getAbbreviation().compareTo(two.getAbbreviation()));
@@ -64,14 +64,14 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
     }
 
     public Set<PhenotypeStatement> getPhenotypeStatements() {
-        return PhenotypeService.getPhenotypeStatements(genoExperiment, anatomyItem);
+        return PhenotypeService.getPhenotypeStatements(fishExperiment, anatomyItem);
     }
 
     @Override
     public int getNumberOfFigures() {
         if (figures == null) {
             figures = new HashSet<Figure>(5);
-            for (PhenotypeExperiment phenotype : genoExperiment.getPhenotypeExperiments()) {
+            for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
                 for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
                     if (phenoStatement.hasAffectedTerm(anatomyItem))
                         figures.add(phenotype.getFigure());
@@ -119,7 +119,7 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
     @Override
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         Set<Publication>pubs = new HashSet<Publication>(5);
-        for (PhenotypeExperiment phenotype : genoExperiment.getPhenotypeExperiments()) {
+        for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
             for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
                 if (phenoStatement.hasAffectedTerm(anatomyItem))
                     pubs.add(phenotype.getFigure().getPublication());

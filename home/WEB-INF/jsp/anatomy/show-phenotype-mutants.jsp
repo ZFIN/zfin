@@ -10,6 +10,6 @@
                                        structureSearchLink="/action/ontology/show-all-phenotype-mutants/${formBean.aoTerm.zdbID}"
                                        choicePattern="0# genotypes| 1# genotype| 2# genotypes"
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"
-                                       totalRecordCount="${formBean.genotypeCount}"
+                                       totalRecordCount="${formBean.fishCount}"
                                        useWebdriverURL="false"
                                        substructureSearchLink="/action/ontology/show-all-phenotype-mutants-substructures/${formBean.aoTerm.zdbID}"/>

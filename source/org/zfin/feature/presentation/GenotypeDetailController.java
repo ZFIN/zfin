@@ -12,7 +12,7 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.GenotypeStatistics;
+import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -150,8 +150,11 @@ public class GenotypeDetailController {
         List<GenotypeFeature> genotypeFeatures = mutantRepository.getGenotypeFeaturesByGenotype(genotype);
         form.setGenotypeFeatures(genotypeFeatures);
 
-        GenotypeStatistics genoStat = new GenotypeStatistics(genotype);
-        form.setGenotypeStatistics(genoStat);
+        /// TODO still needs to be handled: either go to fish controller or use fish here...
+/*
+        FishStatistics genoStat = new FishStatistics(genotype);
+        form.setFishStatistics(genoStat);
+*/
     }
 
     private void retrieveSequenceTargetingReagentData(GenotypeBean form, MartFish fish) {

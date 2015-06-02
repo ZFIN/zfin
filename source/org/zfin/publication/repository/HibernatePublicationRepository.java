@@ -23,6 +23,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
@@ -496,11 +497,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct fmRel, fmRel.feature.name from FeatureMarkerRelationship fmRel, PublicationAttribution attr " +
                 "      where attr.publication.zdbID = :pubID " +
                 "      and attr.dataZdbID=fmRel.feature.zdbID " +
-	    // "      and ftr.type=:tg " +
+                // "      and ftr.type=:tg " +
                 "      order by fmRel.feature.name";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
-	// query.setString("tg", "TRANSGENIC_INSERTION");
+        // query.setString("tg", "TRANSGENIC_INSERTION");
 
         List<Object[]> array = (List<Object[]>) query.list();
         List<FeatureMarkerRelationship> fmrelList = new ArrayList<>(array.size());
@@ -638,29 +639,26 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * Retrieve list of figures for a given genotype and anatomy term
      * for mutant genotypes excluding sequenceTargetingReagent.
      *
-     * @param geno genotype
+     * @param fish genotype
      * @param term anatomy term
      * @return list of figures.
      */
     @SuppressWarnings("unchecked")
-    public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term, boolean includeSubstructures) {
+    public PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure from Figure figure, PhenotypeStatement phenos, " +
-                "FishExperiment fishox, Genotype geno, TransitiveClosure transitiveClosure " +
-                "where geno.zdbID = :genoID AND " +
-                "      genox.fish.genotype = geno AND " +
-                "      phenos.phenotypeExperiment.fishExperiment = genox  AND " +
+                "FishExperiment fishox, TransitiveClosure transitiveClosure " +
+                "where fishox.fish = :fish AND " +
+                "      phenos.phenotypeExperiment.fishExperiment = fishox  AND " +
                 "      phenos.phenotypeExperiment.figure = figure AND " +
                 "      transitiveClosure.root = :aoTerm AND " +
                 "      ( phenos.entity.superterm = transitiveClosure.child OR phenos.entity.subterm = transitiveClosure.child OR " +
                 "        phenos.relatedEntity.superterm = transitiveClosure.child OR phenos.relatedEntity.subterm = transitiveClosure.child) " +
-                "      and not exists (from ExperimentCondition as cond where " +
-                "                           cond.experiment = genox.experiment" +
-                "                           AND cond.sequenceTargetingReagent is not null)" +
+                "      and 0 = all elements(fishox.fish.strList) " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
-        query.setString("genoID", geno.getZdbID());
+        query.setParameter("fish", fish);
         query.setParameter("aoTerm", term);
         PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
         return paginationResult;
@@ -670,13 +668,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * Retrieve list of figures for a given genotype and anatomy term
      * for mutant genotypes excluding sequenceTargetingReagent.
      *
-     * @param geno genotype
+     * @param fish genotype
      * @param term anatomy term
      * @return list of figures.
      */
     @Override
-    public PaginationResult<Figure> getFiguresByGenoAndAnatomy(Genotype geno, GenericTerm term) {
-        return getFiguresByGenoAndAnatomy(geno, term, false);
+    public PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term) {
+        return getFiguresByFishAndAnatomy(fish, term, false);
     }
 
     public PaginationResult<Figure> getFiguresByGeno(Genotype geno) {
@@ -716,10 +714,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * Retrieve publications that have phenotype data for a given term and genotype
      *
      * @param genotype Genotype
-     * @param aoTerm   ao term
-     * @return Number of publications with figures per genotype and anatomy
+     * @param fish
+     * @param aoTerm   ao term  @return Number of publications with figures per genotype and anatomy
      */
-    public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm, boolean includeSubstructures) {
+    public PaginationResult<Publication> getPublicationsWithFigures(Fish fish, GenericTerm aoTerm, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
         String hql = "select publication from Publication as publication, PhenotypeStatement as phenotype, " +
                 "     TransitiveClosure transitiveClosure " +
@@ -728,15 +726,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 " transitiveClosure.root = :aoTerm and " +
                 "(phenotype.entity.superterm = transitiveClosure.child OR phenotype.entity.subterm = transitiveClosure.child OR " +
                 " phenotype.relatedEntity.superterm = transitiveClosure.child OR phenotype.relatedEntity.subterm = transitiveClosure.child) " +
-                " AND phenotype.phenotypeExperiment.genotypeExperiment.genotype = :genotype" +
-                " AND phenotype.phenotypeExperiment.genotypeExperiment.genotype.wildtype = :wildtype" +
-                " AND not exists (from ExperimentCondition as cond " +
-                "                 where cond.experiment = phenotype.phenotypeExperiment.genotypeExperiment.experiment" +
-                "                       and cond.sequenceTargetingReagent is not null)";
+                " AND phenotype.phenotypeExperiment.fishExperiment.fish = :fish" +
+                " AND phenotype.phenotypeExperiment.fishExperiment.fish.genotype.wildtype = :wildtype" +
+                " AND 0 = all elements(phenotype.phenotypeExperiment.fishExperiment.fish.strList) ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", aoTerm);
-        query.setParameter("genotype", genotype);
+        query.setParameter("fish", fish);
         query.setBoolean("wildtype", false);
 
 /*
@@ -745,19 +741,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 */
         query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return new PaginationResult<Publication>((List<Publication>) query.list());
-    }
-
-    /**
-     * Retrieve publications that have phenotype data for a given term and genotype including
-     * substructures
-     *
-     * @param genotype Genotype
-     * @param aoTerm   ao term
-     * @return Number of publications with figures per genotype and anatomy
-     */
-    @Override
-    public PaginationResult<Publication> getPublicationsWithFigures(Genotype genotype, GenericTerm aoTerm) {
-        return getPublicationsWithFigures(genotype, aoTerm, false);
     }
 
     public PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype) {
@@ -1873,7 +1856,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public Long getMappingDetailsCount(Publication publication) {
-        String sql="select (\n" +
+        String sql = "select (\n" +
                 "select count(distinct lms_member_1_zdb_id)\n" +
                 "    \t  from linkage, linkage_membership_search\n" +
                 "    \t where lnkg_source_zdb_id = :zdbID\n" +
@@ -1916,7 +1899,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Long directDataCount = getCount(sql, publication.getZdbID());
 
 
-        if (figureDataCount == 0 && directDataCount == 0) { return true; }
+        if (figureDataCount == 0 && directDataCount == 0) {
+            return true;
+        }
 
         return false;
     }
