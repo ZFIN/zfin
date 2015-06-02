@@ -242,8 +242,9 @@ create dba function regen_pheno_term()
 	      	   phenotype_experiment, 
 		   figure, 
 		   genotype,
-		   genotype_experiment
-	      where geno_zdb_id = genox_geno_zdb_id
+		   fish_experiment, fish
+	      where geno_zdb_id = fish_genotype_zdb_id
+	      and genox_fish_Zdb_id = fish_Zdb_id
 	      and genox_zdb_id = phenox_genox_zdb_id
 	      and fig_zdb_id = phenox_fig_Zdb_id
 	      and phenox_pk_id = phenos_phenox_pk_id
@@ -277,8 +278,9 @@ create dba function regen_pheno_term()
 	      	   phenotype_experiment, 
 		   figure, 
 		   genotype,
-		   genotype_experiment
-	      where geno_zdb_id = genox_geno_zdb_id
+		   fish_experiment,fish
+	      where geno_zdb_id = fish_genotype_zdb_id
+	      and genox_fish_zdb_id = fish_zdb_id
 	      and genox_zdb_id = phenox_genox_zdb_id
 	      and fig_zdb_id = phenox_fig_Zdb_id
 	      and phenox_pk_id = phenos_phenox_pk_id
@@ -312,8 +314,9 @@ create dba function regen_pheno_term()
 	      	   phenotype_experiment, 
 		   figure, 
 		   genotype,
-		   genotype_experiment
-	      where geno_zdb_id = genox_geno_zdb_id
+		   fish_experiment, fish
+	      where fish_zdb_id = genox_fish_zdb_id
+	      and fish_genotype_zdb_id = geno_zdb_id
 	      and genox_zdb_id = phenox_genox_zdb_id
 	      and fig_zdb_id = phenox_fig_Zdb_id
 	      and phenox_pk_id = phenos_phenox_pk_id
@@ -347,8 +350,9 @@ create dba function regen_pheno_term()
 	      	   phenotype_experiment, 
 		   figure, 
 		   genotype,
-		   genotype_experiment
-	      where geno_zdb_id = genox_geno_zdb_id
+		   fish_experiment, fish
+	      where fish_zdb_id = genox_fish_zdb_id
+	      and fish_genotype_zdb_id = geno_zdb_id
 	      and genox_zdb_id = phenox_genox_zdb_id
 	      and fig_zdb_id = phenox_fig_Zdb_id
 	      and phenox_pk_id = phenos_phenox_pk_id
