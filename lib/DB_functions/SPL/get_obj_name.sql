@@ -293,7 +293,7 @@ get_obj_name(zdbId varchar(50))
   elif (objType = "GENOX") then
     select genox_zdb_id		-- don't have names, use ZDB ID
       into objName
-      from genotype_experiment
+      from fish_experiment
       where genox_zdb_id = zdbId;
 
   elif (objType = "TERMDEF") then
