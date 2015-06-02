@@ -75,6 +75,11 @@
             <one-to-many class="org.zfin.publication.MeshHeading"/>
         </set>
 
+        <set name="notes" lazy="true" table="publication_note" order-by="pnote_date desc">
+            <key column="pnote_pub_zdb_id"/>
+            <one-to-many class="org.zfin.curation.PublicationNote"/>
+        </set>
+
     </class>
 
     <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">

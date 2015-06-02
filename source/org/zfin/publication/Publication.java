@@ -1,5 +1,6 @@
 package org.zfin.publication;
 
+import org.zfin.curation.PublicationNote;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.EntityZdbID;
@@ -38,6 +39,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     //yes, should be authors, but that conflicts with the string field
     private Set<Person> people;
     private Set<MeshHeading> meshHeadings;
+    private Set<PublicationNote> notes;
 
     private boolean deletable;
     private boolean indexed;
@@ -229,6 +231,15 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     public void setMeshHeadings(Set<MeshHeading> meshHeadings) {
         this.meshHeadings = meshHeadings;
     }
+
+    public Set<PublicationNote> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(Set<PublicationNote> notes) {
+        this.notes = notes;
+    }
+
 
     public String getCitation() {
         StringBuilder sb = new StringBuilder();

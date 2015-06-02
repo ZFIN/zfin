@@ -57,6 +57,7 @@
         <mapping resource="org/zfin/publication.hbm.xml"/>
         <mapping resource="org/zfin/sequence.hbm.xml"/>
         <mapping resource="org/zfin/reno.hbm.xml"/>
+        <mapping resource="org/zfin/curation.hbm.xml"/>
 
 
     </session-factory>
