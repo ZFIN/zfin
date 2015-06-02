@@ -60,6 +60,8 @@ FISH_STATS   = get_image_stats.sql \
 	       checkFeatureAbbrev.sql \
 	       checkDblinkOneToOneAccessionMapping.sql \
 	       updateConstructAbbrev.sql \
+	       updatestandardorgenericcontrol.sql \
+	       updatestandard.sql \
 	       checkDupFeaturePrefixLineDesignation.sql \
 	       populate_feature_tracking.sql \
 	       p_update_BurgessLinn_genotype_names.sql\
