@@ -163,14 +163,15 @@ create function regen_anatomy_counts()
       insert into genes_with_xpats
 	  select distinct xpatex_gene_zdb_id,term_zdb_id,'p'
 	    from expression_experiment, outer marker probe, marker gene, expression_result,
-	    	 genotype_experiment, genotype, term   	 
+	    	 fish_experiment, genotype, term,fish   	 
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
               and (xpatres_superterm_zdb_id = term_zdb_id OR xpatres_subterm_zdb_id = term_zdb_id)
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and xpatex_genox_zdb_id = genox_zdb_id
-              and genox_geno_zdb_id = geno_zdb_id
+              and genox_fish_zdb_id = fish_zdb_id
+	      and fish_genotype_zdb_id = geno_zdb_id
               and geno_is_wildtype = 't'
 	      and genox_is_std_or_generic_control = 't'
               and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
@@ -202,7 +203,7 @@ create function regen_anatomy_counts()
 	  select distinct xpatex_gene_zdb_id,term_zdb_id,'c'
 	    from all_term_contains,
 		 expression_experiment, outer marker probe, marker gene, expression_result,
-		 genotype_experiment, genotype, term		
+		 fish_experiment, genotype, term, fish		
 	    where xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id
               and xpatex_gene_zdb_id = gene.mrkr_zdb_id
               and (alltermcon_contained_zdb_id = xpatres_superterm_zdb_id OR 
@@ -211,7 +212,8 @@ create function regen_anatomy_counts()
 	      and xpatres_xpatex_zdb_id = xpatex_zdb_id
 	      and xpatres_expression_found = 't'
               and xpatex_genox_zdb_id = genox_zdb_id
-              and genox_geno_zdb_id = geno_zdb_id
+              and genox_fish_zdb_id = fish_zdb_id
+	      and fish_genotype_zdb_id = geno_zdb_id
               and geno_is_wildtype = 't'
 	      and genox_is_std_or_generic_control = 't'
               and gene.mrkr_abbrev[1,10] <> "WITHDRAWN:"
