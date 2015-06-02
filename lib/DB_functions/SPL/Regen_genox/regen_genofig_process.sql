@@ -32,7 +32,7 @@ create procedure regen_genofig_process()
 -- Any genotype which has a morpholino environment
 insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_morph_zdb_id,rgf_phenox_pk_id)
   select distinct rgfg_zdb_id,phenox_fig_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag,rgfcx_morph_zdb_id,phenox_pk_id
-    from genotype_experiment, fish, 
+    from fish_experiment, fish, 
          regen_genofig_clean_exp_with_morph_temp, 
          regen_genofig_not_normal_temp,
          phenotype_statement,
@@ -49,7 +49,7 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb
 
 insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_phenox_pk_id)
   select distinct rgfg_zdb_id,phenox_fig_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag,phenox_pk_id
-    from genotype_experiment, 
+    from fish_experiment, 
          experiment, 
          regen_genofig_not_normal_temp,
          phenotype_statement,
@@ -58,6 +58,7 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb
    where fish_zdb_id = genox_fish_zdb_id
      and fish_genotype_zdb_id = rgfg_zdb_id
      and genox_exp_zdb_id = exp_zdb_id
+     and phenox_genox_zdb_id = genox_zdb_id
      and phenox_pk_id = phenos_phenox_pk_id
      and exp_name like '\_%'
      and genox_zdb_id = rgfnna_genox_zdb_id

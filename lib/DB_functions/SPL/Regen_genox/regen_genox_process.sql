@@ -118,25 +118,25 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
 -- cannot involve any phenotypic Tg, and have MO(s) which target ONLY this gene                    
 insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
   select distinct rggz_zdb_id, genox_zdb_id
-    from feature_marker_relationship, genotype_feature, genotype_experiment, experiment_condition, marker_relationship, regen_genox_input_zdb_id_temp, fish
+    from feature_marker_relationship, genotype_feature, fish_experiment, experiment_condition, marker_relationship, regen_genox_input_zdb_id_temp, fish
    where fmrel_mrkr_zdb_id = rggz_zdb_id  
      and rggz_zdb_id [1,8] = "ZDB-GENE"
      and fmrel_type = "is allele of"
      and not exists (select OtherMrkr.fmrel_ftr_zdb_id
-                       from feature_marker_relationship OtherMrkr, genotype_feature OtherFeature, fish2
+                       from feature_marker_relationship OtherMrkr, genotype_feature OtherFeature, fish as fish2
                       where genox_fish_zdb_id = fish2.fish_zdb_id
 		      	and fish_genotype_zdb_id = OtherFeature.genofeat_geno_zdb_id
                         and OtherFeature.genofeat_feature_zdb_id = OtherMrkr.fmrel_ftr_zdb_id
                         and OtherMrkr.fmrel_type = 'is allele of'
                         and OtherMrkr.fmrel_mrkr_zdb_id != rggz_zdb_id)   
      and not exists (select 'x'
-                       from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish3
+                       from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish as fish3
                       where genox_fish_zdb_id = fish3.fish_zdb_id
 		      	and fish_genotype_zdb_id = AnotherFeature.genofeat_geno_zdb_id
                         and AnotherFeature.genofeat_feature_zdb_id = Phenotypic.fmrel_ftr_zdb_id
                         and Phenotypic.fmrel_type = 'contains phenotypic sequence feature')                         
      and not exists (select 'x'
-                       from genotype_feature OtherPhenotypicFeature, feature, fish4
+                       from genotype_feature OtherPhenotypicFeature, feature, fish as fish4
                       where genox_fish_zdb_id = fish4.fish_zdb_id
 		      	and fish4.fish_genotype_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
@@ -168,13 +168,13 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
      and rggz_zdb_id [1,8] = "ZDB-GENE"
      and fmrel_type = "contains innocuous sequence feature"
      and not exists (select 'x'
-                       from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish2
+                       from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish as fish2
 		       where genox_fish_Zdb_id = fish2.fish_zdb_id
 		       and fish2.fish_genotype_Zdb_id = AnotherFeature.genofeat_geno_zdb_id
                         and AnotherFeature.genofeat_feature_zdb_id = Phenotypic.fmrel_ftr_zdb_id
                         and Phenotypic.fmrel_type != 'contains innocuous sequence feature')      
      and not exists (select 'x'
-                       from genotype_feature OtherPhenotypicFeature, feature, fish3
+                       from genotype_feature OtherPhenotypicFeature, feature, fish as fish3
 		       where genox_fish_Zdb_id = fish3.fish_zdb_id
 		       and fish3.fish_genotype_Zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
@@ -200,7 +200,6 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
    where mrel_mrkr_2_zdb_id = rggz_zdb_id  
      and rggz_zdb_id [1,8] = "ZDB-GENE"
      and mrel_type = 'knockdown reagent targets gene'
-     and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
      and not exists(select NotThisMO.fishstr_str_zdb_id
                       from marker_relationship NotThisMrkr, fish_str NotThisMO
                      where NotThisMO.fishstr_str_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
@@ -214,20 +213,20 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
      and fmrel_type = "contains innocuous sequence feature"
      and not exists (select 'x'
-                       from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish2
+                       from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish as fish2
                       where fish2.fish_zdb_id = genox_fish_zdb_id
 		      	and   fish2.fish_genotype_zdb_id = AnotherFeature.genofeat_geno_zdb_id
                         and AnotherFeature.genofeat_feature_zdb_id = Phenotypic.fmrel_ftr_zdb_id
                         and Phenotypic.fmrel_type = 'contains phenotypic sequence feature')   
      and not exists (select 'x'
-                       from feature_marker_relationship AlleleToOtherGene, genotype_feature OtherFeature, fish3
+                       from feature_marker_relationship AlleleToOtherGene, genotype_feature OtherFeature, fish as fish3
                       where fish3.fish_genotype_zdb_id = OtherFeature.genofeat_geno_zdb_id
 		        and fish3.fish_zdb_id = genox_fish_zdb_id
                         and OtherFeature.genofeat_feature_zdb_id = AlleleToOtherGene.fmrel_ftr_zdb_id
                         and AlleleToOtherGene.fmrel_type = 'is allele of'
                         and AlleleToOtherGene.fmrel_mrkr_zdb_id != rggz_zdb_id)                          
      and not exists (select 'x'
-                       from genotype_feature OtherPhenotypicFeature, feature, fish4
+                       from genotype_feature OtherPhenotypicFeature, feature, fish as fish4
 		       where genox_fish_Zdb_id = fish4.fish_zdb_id
 		       and fish4.fish_genotype_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
@@ -245,7 +244,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
       -- The genotypes include any of the WT lines, and no other MO, TALEN or CRISPR involved
       insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
         select distinct rggz_zdb_id, genox_zdb_id
-          from genotype_experiment, experiment_condition, regen_genox_input_zdb_id_temp, fish_str, fish
+          from fish_experiment, experiment_condition, regen_genox_input_zdb_id_temp, fish_str, fish
          where genox_fish_zdb_id = fish_zdb_id
 	   and fish_zdb_id = fishstr_fish_zdb_id
 	   and fishstr_str_zdb_id = rggz_zdb_id
@@ -260,7 +259,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                            where NOTstr.fishstr_str_zdb_id != rggz_zdb_id
 			   and fishstr_fish_zdb_id = fish_zdb_id)
            and not exists(select 'x' 
-                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr, fish2
+                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr, fish as fish2
                            where fish2.fish_genotype_zdb_id = NOTfeat.genofeat_geno_zdb_id
 			     and genox_fish_Zdb_id = fish2.fish_zdb_id
                              and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
@@ -276,7 +275,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
       -- The genotypes include none phenotypic Tg feature only, which are NOT alleles of any gene, and no other MO, TALEN or CRISPR involved
       insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
         select distinct rggz_zdb_id, genox_zdb_id
-          from genotype_feature, feature_marker_relationship, genotype_experiment, experiment_condition, regen_genox_input_zdb_id_temp, fish
+          from genotype_feature, feature_marker_relationship, fish_experiment, experiment_condition, regen_genox_input_zdb_id_temp, fish
          where expcond_mrkr_zdb_id = rggz_zdb_id
 	   and rggz_zdb_id [1,8] != "ZDB-GENE"
            and expcond_exp_zdb_id = genox_exp_zdb_id
@@ -285,13 +284,13 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
            and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
            and fmrel_type = "contains innocuous sequence feature"
            and not exists (select 'x'
-                             from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish2
+                             from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature,fish as fish2
                             where genox_fish_zdb_id = fish2.fish_zdb_id
 			    and fish2.fish_genotype_zdb_id = AnotherFeature.genofeat_geno_zdb_id
                               and AnotherFeature.genofeat_feature_zdb_id = Phenotypic.fmrel_ftr_zdb_id
                               and Phenotypic.fmrel_type = 'contains phenotypic sequence feature')  
            and not exists (select 'x'
-                             from genotype_feature OtherPhenotypicFeature, feature, fish3
+                             from genotype_feature OtherPhenotypicFeature, feature, fish as fish3
                             where fish3.fish_genotype_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
 			    and fish3.fish_zdb_id = genox_fish_zdb_id
                               and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
@@ -301,8 +300,9 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                            where NOTstr.fishstr_str_zdb_id != rggz_zdb_id
 			   and fish_zdb_id = NOTstr.fishstr_fish_zdb_id)
            and not exists(select 'x' 
-                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr
-                           where genox_geno_zdb_id = NOTfeat.genofeat_geno_zdb_id
+                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr, fish as fish3
+                           where genox_fish_zdb_id = fish3.fish_zdb_id 
+			     and fish_genotype_zdb_id = NOTfeat.genofeat_geno_zdb_id
                              and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
                              and NOTmrkr.fmrel_mrkr_zdb_id = NOTstr.mrel_mrkr_1_zdb_id 
                              and NOTstr.mrel_mrkr_2_zdb_id != rggz_zdb_id
