@@ -327,7 +327,7 @@ let errorHint = "clean_expression_fast_search_new_proc";
       let errorHint = "cefs_genox_zdb_id FK constraint";
       alter table clean_expression_fast_search add constraint 
         foreign key (cefs_genox_zdb_id)
-        references genotype_experiment on delete cascade 
+        references fish_experiment on delete cascade 
         constraint clean_expression_fast_search_genox_Zdb_id_foreign_key_odc;
 
       grant select on clean_expression_fast_search to "public";

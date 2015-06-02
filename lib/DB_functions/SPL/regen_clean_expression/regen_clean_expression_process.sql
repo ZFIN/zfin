@@ -50,12 +50,13 @@ create procedure regen_clean_expression_process()
 -- expression genes in WT genos in std/generic control environments
 insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
   select distinct rggz_zdb_id, genox_zdb_id
-    from expression_experiment, genotype_experiment, expression_Result, expression_pattern_figure, genotype, regen_genox_input_zdb_id_temp
+    from expression_experiment, fish_experiment, expression_Result, expression_pattern_figure, genotype, regen_genox_input_zdb_id_temp, fish
     where genox_zdb_id = xpatex_genox_zdb_id
      and xpatex_zdb_id = xpatres_xpatex_zdb_id
      and xpatres_zdb_id = xpatfig_xpatres_zdb_id
     and genox_is_std_or_generic_control = 't'
-    and genox_geno_zdb_id = geno_Zdb_id
+    and genox_fish_zdb_id = fish_Zdb_id
+    and fish_genotype_zdb_id = geno_zdb_id
     and geno_is_wildtype = 't'
    and rggz_zdb_id [1,8] = "ZDB-GENE"
  and rggz_zdb_id = xpatex_gene_zdb_id;
@@ -65,7 +66,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
 
 insert into regen_genox_temp(rggt_mrkr_zdb_id, rggt_genox_zdb_id)
 select distinct xpatex_gene_zdb_id, genox_zdb_id
-    from feature_marker_relationship, genotype_feature, genotype_experiment, expression_experiment, expression_result, expression_pattern_figure, regen_genox_input_zdb_id_temp
+    from feature_marker_relationship, genotype_feature, fish_experiment, expression_experiment, expression_result, expression_pattern_figure, regen_genox_input_zdb_id_temp, fish
    where xpatex_gene_zdb_id[1,8] = "ZDB-GENE"
     and rggz_zdb_id = xpatex_gene_zdb_id
      and genox_zdb_id = xpatex_genox_Zdb_id
@@ -84,7 +85,8 @@ select distinct xpatex_gene_zdb_id, genox_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
                         and feature_type in ('DEFICIENCY','TRANSLOC','COMPLEX_SUBSTITUTION','INVERSION','POINT_MUTATION','DELETION','SEQUENCE_VARIANT','UNSPECIFIED','INDEL'))
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-     and genox_geno_zdb_id = genofeat_geno_zdb_id;
+     and genox_fish_zdb_id = fish_zdb_id
+     and fish_genotype_zdb_id = genofeat_geno_zdb_id;
 
 
                           
