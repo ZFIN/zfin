@@ -7,9 +7,10 @@ define vGeneIsEFG boolean ;
 if (vXpatGeneZdbId like 'ZDB-EFG%')
 then
 	let vGenoIsWildtype = (Select geno_is_wildtype 
-	    		      	      from genotype, genotype_experiment
+	    		      	      from genotype, fish_experiment, fish
 				      where vXpatGenoxZdbId = genox_zdb_id
-				      and genox_geno_zdb_id = geno_zdb_id);
+				      and genox_fish_zdb_id = fish_zdb_id
+				      and fish_genotype_zdb_id = geno_zdb_id);
 	if (vGenoIsWildtype = 't')
 	then 
 	    raise exception -746,0,'FAIL!!: EFGs can not be used in WT expression' ;
