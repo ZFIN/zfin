@@ -295,8 +295,8 @@ Create dba function regen_feature_term_fast_search()
 		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, 
 		       xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id,
 		       'Antibody' 
-		from antibody, genotype_experiment, expression_experiment, expression_result, 
-			  figure, expression_pattern_figure, genotype, all_term_contains
+		from antibody, fish_experiment, expression_experiment, expression_result, 
+			  figure, expression_pattern_figure, genotype, all_term_contains, fish
 		where  xpatres_expression_found = 't'
 		and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
@@ -304,7 +304,8 @@ Create dba function regen_feature_term_fast_search()
 		and fig_zdb_id = xpatfig_fig_zdb_id
 		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
 		and genox_is_std_or_generic_control = 't'
-		and geno_zdb_id = genox_geno_zdb_id
+		and fish_zdb_id = genox_fish_zdb_id
+		and fish_genotype_zdb_id = geno_zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055' ;
@@ -322,8 +323,8 @@ Create dba function regen_feature_term_fast_search()
 		       fstat_xpatres_zdb_id,
 		       fstat_type)
 		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, 'Antibody' 
-		from antibody, genotype_experiment, expression_experiment, expression_result, 
-			  figure, expression_pattern_figure, genotype, all_term_contains
+		from antibody, fish_experiment, expression_experiment, expression_result, 
+			  figure, expression_pattern_figure, genotype, all_term_contains, fish
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
 		and  xpatex_atb_zdb_id = atb_zdb_id
@@ -331,7 +332,8 @@ Create dba function regen_feature_term_fast_search()
 		and fig_zdb_id = xpatfig_fig_zdb_id
 		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
 		and genox_is_std_or_generic_control = 't'
-		and geno_zdb_id = genox_geno_zdb_id
+		and fish_zdb_id = genox_fish_zdb_id
+		and fish_genotype_zdb_id = geno_zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
                 and xpatres_subterm_zdb_id is not null ;
@@ -350,7 +352,7 @@ Create dba function regen_feature_term_fast_search()
 		       fstat_type) 
 		select xpatex_probe_feature_zdb_id, alltermcon_container_zdb_id, xpatres_superterm_zdb_id, xpatex_gene_zdb_id, 
 		       xpatfig_fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
-		  from clone, genotype_experiment, expression_experiment, expression_result, image, 
+		  from clone, fish, fish_experiment, expression_experiment, expression_result, image, 
 			  expression_pattern_figure, genotype, all_term_contains
 		   where  xpatres_expression_found = 't'
 	           and genox_zdb_id = xpatex_genox_zdb_id
@@ -358,7 +360,8 @@ Create dba function regen_feature_term_fast_search()
 		   and genox_is_std_or_generic_control = 't'
 		   and img_fig_zdb_id = xpatfig_fig_zdb_id
 		   and xpatfig_xpatres_zdb_id = xpatres_zdb_id
-		   and geno_zdb_id = genox_geno_zdb_id
+		   and fish_zdb_id = genox_fish_zdb_id
+		   and fish_genotype_zdb_id = geno_zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
 		and xpatres_superterm_zdb_id !='ZDB-TERM-100331-1055'
@@ -378,7 +381,7 @@ Create dba function regen_feature_term_fast_search()
 		       fstat_type)	
 		select clone_mrkr_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, 
 		       xpatfig_fig_zdb_id, xpatex_source_zdb_id, xpatres_zdb_id, img_zdb_id, 'High-Quality-Probe'
-		from clone, genotype_experiment, expression_experiment, expression_result, image,
+		from clone, fish,fish_experiment, expression_experiment, expression_result, image,
 			   expression_pattern_figure, genotype, all_term_contains
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
@@ -386,7 +389,8 @@ Create dba function regen_feature_term_fast_search()
 		and img_fig_zdb_id = xpatfig_fig_zdb_id
 		and xpatfig_xpatres_zdb_id = xpatres_zdb_id
 		   and genox_is_std_or_generic_control = 't'
-		and geno_zdb_id = genox_geno_zdb_id
+		and fish_zdb_id = genox_fish_zdb_id
+		and fish_genotype_zdb_id = geno_Zdb_id
 		and geno_is_wildtype = 't'
 		and alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
 		and xpatres_subterm_zdb_id !='ZDB-TERM-100331-1055'
