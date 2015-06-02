@@ -17,13 +17,16 @@
     -->
     <maxPendingDeletes>100000</maxPendingDeletes>
 
+      <updateLog>
+          <str name="dir">${solr.ulog.dir:}</str>
+      </updateLog>
 
 
 
   </updateHandler>
 
 
-  <query>
+    <query>
     <!-- Maximum number of clauses in a boolean query... can affect
         range or prefix queries that expand to big boolean
         queries.  An exception is thrown if exceeded.  -->
