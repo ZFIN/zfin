@@ -65,7 +65,7 @@ begin
 	
 		select atb_zdb_id, alltermcon_container_zdb_id, xpatres_subterm_zdb_id, xpatex_gene_zdb_id, fig_zdb_id, xpatex_source_zdb_id
 			into atbZdbId, supertermZdbId, subtermZdbId, geneZdbId, figureZdbId, pubZdbId
-		from antibody, genotype_experiment, expression_experiment, expression_result, 
+		from antibody, fish_experiment, expression_experiment, expression_result, 
 			  figure, expression_pattern_figure, genotype, all_term_contains, fish
 		where  xpatres_expression_found = 't'
 			and genox_zdb_id = xpatex_genox_zdb_id
