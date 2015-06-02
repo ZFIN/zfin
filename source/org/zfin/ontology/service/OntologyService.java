@@ -8,7 +8,7 @@ import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.DiseaseModel;
-import org.zfin.mutant.FishModel;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
@@ -195,16 +195,16 @@ public class OntologyService {
         List<DiseaseModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
         if (CollectionUtils.isEmpty(modelList))
             return null;
-        Map<FishModel, FishModelDisplay> map = new HashMap<>();
+        Map<FishExperiment, FishModelDisplay> map = new HashMap<>();
         for (DiseaseModel model : modelList) {
             // ignore disease models without fish models
-            if(model.getFishModel() == null && fishModelRequired)
+            if(model.getFishExperiment() == null && fishModelRequired)
                 continue;
-            FishModelDisplay display = new FishModelDisplay(model.getFishModel());
+            FishModelDisplay display = new FishModelDisplay(model.getFishExperiment());
             display.addPublication(model.getPublication());
-            FishModelDisplay mapModel = map.get(model.getFishModel());
+            FishModelDisplay mapModel = map.get(model.getFishExperiment());
             if (mapModel == null)
-                map.put(model.getFishModel(), display);
+                map.put(model.getFishExperiment(), display);
             else
                 mapModel.addPublication(model.getPublication());
         }

@@ -29,9 +29,7 @@ import java.util.*;
 
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 @SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
 public class MutantRepositoryTest {
@@ -86,7 +84,7 @@ public class MutantRepositoryTest {
         String name = "otic placode";
         OntologyRepository ar = RepositoryFactory.getOntologyRepository();
         GenericTerm ai = ar.getTermByName(name, Ontology.ANATOMY);
-        PaginationResult<GenotypeExperiment> morphs =
+        PaginationResult<FishExperiment> morphs =
                 getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(ai, true, null);
         assertNotNull("morphs exist", morphs.getPopulatedResults());
 
@@ -242,7 +240,7 @@ public class MutantRepositoryTest {
         // bile canaliculus
         String oboID = "ZFA:0005163 ";
         GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(oboID);
-        List<GenotypeExperiment> genox = mutantRepository.getGenotypeExperimentSequenceTargetingReagents(term, null);
+        List<FishExperiment> genox = mutantRepository.getGenotypeExperimentSequenceTargetingReagents(term, null);
         assertNotNull(genox);
         assertTrue(genox.size() >= 0);
     }
@@ -425,6 +423,35 @@ public class MutantRepositoryTest {
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(str1ID));
         fish.setStrList(strList);
         Fish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
+    }
+
+    @Test
+    public void getAllPubsForFish() {
+        String fishID = "ZDB-FISH-150512-28";
+        List<Publication> publicationList = RepositoryFactory.getMutantRepository().getPublicationWithFish(fishID);
+        //assertNotNull(publicationList);
+    }
+
+    @Test
+    public void getFishModel() {
+        String fishID = "ZDB-FISH-150512-28";
+        String expID = "ZDB-FISH-150512-28";
+        FishExperiment fishModel = RepositoryFactory.getMutantRepository().getFishModel(fishID, expID);
+        ///assertNotNull(fishModel);
+    }
+
+    @Test
+    public void getExistingDiseaseModel() {
+        String diseaseID = "ZDB-TERM-150506-542";
+        GenericTerm disease = getOntologyRepository().getTermByZdbID(diseaseID);
+        String pubID = "ZDB-PUB-990507-16";
+        Publication pub = getPublicationRepository().getPublication(pubID);
+        DiseaseModel model = new DiseaseModel();
+        model.setDisease(disease);
+        model.setPublication(pub);
+        model.setEvidenceCode("IC");
+        DiseaseModel fishModel = RepositoryFactory.getMutantRepository().getDiseaseModel(model);
+        ///assertNotNull(fishModel);
     }
 
     @Test

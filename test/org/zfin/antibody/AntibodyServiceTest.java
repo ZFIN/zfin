@@ -8,8 +8,9 @@ import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.marker.MarkerAlias;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
@@ -61,7 +62,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         resultFour.setSuperTerm(termThree);
         resultFour.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        HashSet<ExpressionResult> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
         results.add(resultThree);
@@ -109,7 +110,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         resultFour.setSuperTerm(termThree);
         resultFour.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        HashSet<ExpressionResult> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
         results.add(resultThree);
@@ -148,7 +149,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         resultOne.setSuperTerm(createMinimalGenericTerm(termTwo, Ontology.ANATOMY));
         resultTwo.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        HashSet<ExpressionResult> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
 
@@ -168,15 +169,17 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
     }
 
     private Set<ExpressionExperiment> createWildtypeAndStandardGenotypeExperiment(ExpressionExperiment experiment) {
-        GenotypeExperiment genox = new GenotypeExperiment();
-        experiment.setGenotypeExperiment(genox);
+        FishExperiment genox = new FishExperiment();
+        experiment.setFishExperiment(genox);
+        Fish fish = new Fish();
         Genotype geno = new Genotype();
         geno.setWildtype(true);
-        genox.setGenotype(geno);
+        fish.setGenotype(geno);
+        genox.setFish(fish);
         Experiment exp = new Experiment();
         exp.setName(Experiment.STANDARD);
         genox.setExperiment(exp);
-        Set<ExpressionExperiment> experiments = new HashSet<ExpressionExperiment>();
+        Set<ExpressionExperiment> experiments = new HashSet<>();
         experiments.add(experiment);
         return experiments;
     }
@@ -189,7 +192,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         resultOne.setSubTerm(termOne);
         resultOne.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        HashSet<ExpressionResult> results = new HashSet<>();
         results.add(resultOne);
 
         ExpressionExperiment experiment = new ExpressionExperiment();
@@ -212,7 +215,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         ExpressionResult resultOne = new ExpressionResult();
         resultOne.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        HashSet<ExpressionResult> results = new HashSet<>();
         results.add(resultOne);
 
         ExpressionExperiment experiment = new ExpressionExperiment();
@@ -243,7 +246,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         resultTwo.setSubTerm(termTwo);
         resultTwo.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        HashSet<ExpressionResult> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
 
@@ -293,7 +296,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         ExpressionResult resultThree = new ExpressionResult();
         resultThree.setSubTerm(termOne);
         resultThree.setExpressionFound(true);
-        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        HashSet<ExpressionResult> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
         results.add(resultThree);
@@ -327,7 +330,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         resultThree.setSubTerm(termOne);
         resultThree.setExpressionFound(true);
 
-        HashSet<ExpressionResult> results = new HashSet<ExpressionResult>();
+        HashSet<ExpressionResult> results = new HashSet<>();
         results.add(resultOne);
         results.add(resultTwo);
         results.add(resultThree);
@@ -336,7 +339,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         experiment.setExpressionResults(results);
         createWildtypeAndStandardGenotypeExperiment(experiment);
 
-        Set<ExpressionExperiment> experiments = new HashSet<ExpressionExperiment>();
+        Set<ExpressionExperiment> experiments = new HashSet<>();
         experiments.add(experiment);
 
         Antibody ab = new Antibody();
@@ -366,7 +369,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         antibody.setName("anti-Tbx16");
         MarkerAlias alias = new MarkerAlias();
         alias.setAlias("anti-VegT");
-        HashSet<MarkerAlias> aliases = new HashSet<MarkerAlias>();
+        HashSet<MarkerAlias> aliases = new HashSet<>();
         aliases.add(alias);
         antibody.setAliases(aliases);
 
@@ -393,7 +396,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         antibody.setName("anti-Tbx16");
         MarkerAlias alias = new MarkerAlias();
         alias.setAlias("anti-VegT");
-        HashSet<MarkerAlias> aliases = new HashSet<MarkerAlias>();
+        HashSet<MarkerAlias> aliases = new HashSet<>();
         aliases.add(alias);
         antibody.setAliases(aliases);
 
@@ -421,7 +424,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         antibodyService.createFigureSummary(criteria);
 
         List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
-        List<Figure> figures = new ArrayList<Figure>();
+        List<Figure> figures = new ArrayList<>();
 
 
         for (FigureSummaryDisplay figureSummary : figureSummaryList) {
@@ -470,8 +473,8 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         antibodyService.createFigureSummary(criteria);
 
         List<FigureSummaryDisplay> figureSummaryList = antibodyService.getFigureSummary();
-        List<Figure> figures = new ArrayList<Figure>();
-        Set<ExpressionStatement> statements = new HashSet<ExpressionStatement>();
+        List<Figure> figures = new ArrayList<>();
+        Set<ExpressionStatement> statements = new HashSet<>();
 
 
         for (FigureSummaryDisplay figureSummary : figureSummaryList) {

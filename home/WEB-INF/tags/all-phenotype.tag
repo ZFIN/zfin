@@ -42,7 +42,7 @@
                         <zfin:link entity="${phenotypeDisplay.experiment}" suppressMoDetails="${displayMoDetails}"/>
                     </c:when>
                     <c:otherwise>
-                        <zfin:link entity="${phenotypeDisplay.phenoStatement.phenotypeExperiment.genotypeExperiment.genotype}"/>
+                        <zfin:link entity="${phenotypeDisplay.phenoStatement.phenotypeExperiment.fishExperiment.fish}"/>
                     </c:otherwise>
                 </c:choose>
             </td>

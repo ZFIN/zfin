@@ -98,7 +98,7 @@ public class DTOConversionService {
     }
 
     public static Set<RelatedEntityDTO> convertPublicationAttributionsToDTOs(String dataZdbID, String name, Set<PublicationAttribution> publications) {
-        Set<RelatedEntityDTO> relatedEntityDTOs = new HashSet<RelatedEntityDTO>();
+        Set<RelatedEntityDTO> relatedEntityDTOs = new HashSet<>();
         if (publications == null || publications.size() == 0) {
             RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
             relatedEntityDTO.setDataZdbID(dataZdbID);
@@ -117,7 +117,7 @@ public class DTOConversionService {
     }
 
     public static Set<SequenceDTO> convertToSequenceDTOs(Sequence sequence, String markerName) {
-        Set<SequenceDTO> sequenceDTOs = new HashSet<SequenceDTO>();
+        Set<SequenceDTO> sequenceDTOs = new HashSet<>();
         Set<PublicationAttribution> publications = sequence.getDbLink().getPublications();
         if (publications == null || publications.size() == 0) {
             sequenceDTOs.add(convertToSequenceDTO(sequence, markerName, null, null));
@@ -162,12 +162,12 @@ public class DTOConversionService {
     }
 
     public static <U extends HasLink> Set<U> createLinks(U linkableData, Set<PublicationAttribution> publications) {
-        Set<U> attributeDTOs = new HashSet<U>();
+        Set<U> attributeDTOs = new HashSet<>();
         if (publications == null || publications.size() == 0) {
             attributeDTOs.add(linkableData);
         } else {
             for (PublicationAttribution publicationAttribution : publications) {
-                U newLink = linkableData.<U>deepCopy();
+                U newLink = linkableData.deepCopy();
                 newLink.setPublicationZdbID(publicationAttribution.getPublication().getZdbID());
                 attributeDTOs.add(newLink);
             }
@@ -202,7 +202,7 @@ public class DTOConversionService {
     }
 
     public static List<DBLinkDTO> convertToDBLinkDTOs(List<DBLink> dbLinks, String markerZdbID, String markerName) {
-        List<DBLinkDTO> dbLinkDTOs = new ArrayList<DBLinkDTO>();
+        List<DBLinkDTO> dbLinkDTOs = new ArrayList<>();
 
         for (DBLink dbLink : dbLinks) {
             dbLinkDTOs.addAll(convertToDBLinkDTOs(dbLink, markerZdbID, markerName));
@@ -268,7 +268,7 @@ public class DTOConversionService {
      * @return A list of DBLinkDTOs, one for each reference.
      */
     public static List<DBLinkDTO> convertToDBLinkDTOs(DBLink dbLink, String markerZdbID, String markerName) {
-        List<DBLinkDTO> dbLinkDTOs = new ArrayList<DBLinkDTO>();
+        List<DBLinkDTO> dbLinkDTOs = new ArrayList<>();
 
         Set<PublicationAttribution> publicationAttributions = dbLink.getPublications();
         if (publicationAttributions == null || publicationAttributions.size() == 0) {
@@ -282,7 +282,7 @@ public class DTOConversionService {
     }
 
     public static List<ReferenceDatabaseDTO> convertToReferenceDatabaseDTOs(List<ReferenceDatabase> referenceDatabases) {
-        List<ReferenceDatabaseDTO> referenceDatabaseDTOList = new ArrayList<ReferenceDatabaseDTO>();
+        List<ReferenceDatabaseDTO> referenceDatabaseDTOList = new ArrayList<>();
 
         for (ReferenceDatabase referenceDatabase : referenceDatabases) {
             referenceDatabaseDTOList.add(convertToReferenceDatabaseDTO(referenceDatabase));
@@ -440,8 +440,8 @@ public class DTOConversionService {
         returnDTO.setName(markerGoTermEvidence.getGoTerm().getTermName());
 
         // create inferences
-        Set<String> inferredFromSet = new HashSet<String>();
-        Set<String> inferredFromLinks = new HashSet<String>();
+        Set<String> inferredFromSet = new HashSet<>();
+        Set<String> inferredFromLinks = new HashSet<>();
         if (markerGoTermEvidence.getInferredFrom() != null) {
             for (InferenceGroupMember inferenceGroupMember : markerGoTermEvidence.getInferredFrom()) {
                 inferredFromSet.add(inferenceGroupMember.getInferredFrom());
@@ -526,7 +526,7 @@ public class DTOConversionService {
 
         Set<DataNote> curatorNotes = feature.getDataNotes();
         if (CollectionUtils.isNotEmpty(curatorNotes)) {
-            List<NoteDTO> curatorNoteDTOs = new ArrayList<NoteDTO>();
+            List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
             for (DataNote dataNote : curatorNotes) {
                 NoteDTO noteDTO = new CuratorNoteDTO(dataNote.getZdbID(), dataNote.getDataZdbID(), DTOConversionService.unescapeString(dataNote.getNote()));
                 curatorNoteDTOs.add(noteDTO);
@@ -578,11 +578,11 @@ public class DTOConversionService {
             return null;
 
         MutantFigureStage mfs = new MutantFigureStage();
-        GenotypeExperiment genotypeExperiment =
-                RepositoryFactory.getExpressionRepository().getGenotypeExperimentByExperimentIDAndGenotype(mutantFigureStage.getEnvironment().getZdbID(),
-                        mutantFigureStage.getGenotype().getZdbID());
-        if (genotypeExperiment != null)
-            mfs.setGenotypeExperiment(genotypeExperiment);
+        FishExperiment fishExperiment =
+                getExpressionRepository().getFishExperimentByExperimentIDAndGenotype(mutantFigureStage.getEnvironment().getZdbID(),
+                        mutantFigureStage.getFish().getZdbID());
+        if (fishExperiment != null)
+            mfs.setGenotypeExperiment(fishExperiment);
 
         Figure figure = RepositoryFactory.getPublicationRepository().getFigureByID(mutantFigureStage.getFigure().getZdbID());
         mfs.setFigure(figure);
@@ -608,12 +608,12 @@ public class DTOConversionService {
         } else
             dto.setFigure(convertToFigureDTO(mutantFigureStage.getFigure()));
         dto.setPublicationID(figure.getPublication().getZdbID());
-        dto.setEnvironment(convertToEnvironmentDTO(mutantFigureStage.getGenotypeExperiment().getExperiment()));
+        dto.setEnvironment(convertToEnvironmentDTO(mutantFigureStage.getFishExperiment().getExperiment()));
         dto.setStart(convertToStageDTO(mutantFigureStage.getStartStage()));
         dto.setEnd(convertToStageDTO(mutantFigureStage.getEndStage()));
-        dto.setGenotype(convertToGenotypeDTO(mutantFigureStage.getGenotypeExperiment().getGenotype()));
+        dto.setFish(convertToFishDtoFromFish(mutantFigureStage.getFishExperiment().getFish()));
         Set<PhenotypeStatement> phenoStatements = mutantFigureStage.getPhenotypeStatements();
-        List<PhenotypeStatementDTO> phenotypeTerms = new ArrayList<PhenotypeStatementDTO>(5);
+        List<PhenotypeStatementDTO> phenotypeTerms = new ArrayList<>(5);
         if (phenoStatements != null) {
             for (PhenotypeStatement phenotype : phenoStatements) {
                 PhenotypeStatementDTO phenotypeDto = convertToPhenotypeTermDTO(phenotype);
@@ -683,7 +683,7 @@ public class DTOConversionService {
 //    }
 
     private static Set<String> convertToAliasDTO(Set<TermAlias> aliases) {
-        Set<String> aliasDTOs = new HashSet<String>();
+        Set<String> aliasDTOs = new HashSet<>();
         for (TermAlias termAlias : aliases) {
             aliasDTOs.add(termAlias.getAlias());
         }
@@ -696,7 +696,7 @@ public class DTOConversionService {
         }
         TermDTO dto = convertToTermDTO(term);
 
-        Set<TermDTO> childTerms = new HashSet<TermDTO>();
+        Set<TermDTO> childTerms = new HashSet<>();
         for (TermRelationship termRelationship : term.getChildTermRelationships()) {
             TermDTO childTerm = convertToTermDTO(termRelationship.getTermTwo());
             childTerm.setRelationshipType(termRelationship.getType());
@@ -704,7 +704,7 @@ public class DTOConversionService {
         }
         dto.setChildrenTerms(childTerms);
 
-        Set<TermDTO> parentTerms = new HashSet<TermDTO>();
+        Set<TermDTO> parentTerms = new HashSet<>();
         for (TermRelationship termRelationship : term.getParentTermRelationships()) {
             TermDTO parentTerm = convertToTermDTO(termRelationship.getTermOne());
             parentTerm.setRelationshipType(termRelationship.getType());
@@ -824,7 +824,7 @@ public class DTOConversionService {
     private static Set<String> convertToSubsetDTO(Set<Subset> subsets) {
         if (subsets == null)
             return null;
-        Set<String> subsetDtos = new HashSet<String>(subsets.size());
+        Set<String> subsetDtos = new HashSet<>(subsets.size());
         for (Subset subset : subsets) {
             subsetDtos.add(subset.getInternalName());
         }
@@ -908,12 +908,12 @@ public class DTOConversionService {
         if (experiment.getAntibody() != null) {
             experimentDTO.setAntibodyMarker(convertToMarkerDTO(experiment.getAntibody()));
         }
-        experimentDTO.setFishName(experiment.getGenotypeExperiment().getGenotype().getHandle());
-        experimentDTO.setFishID(experiment.getGenotypeExperiment().getGenotype().getZdbID());
-        experimentDTO.setEnvironment(convertToEnvironmentDTO(experiment.getGenotypeExperiment().getExperiment()));
+        experimentDTO.setFishName(experiment.getFishExperiment().getFish().getHandle());
+        experimentDTO.setFishID(experiment.getFishExperiment().getFish().getZdbID());
+        experimentDTO.setEnvironment(convertToEnvironmentDTO(experiment.getFishExperiment().getExperiment()));
         experimentDTO.setAssay(experiment.getAssay().getName());
         experimentDTO.setAssayAbbreviation(experiment.getAssay().getAbbreviation());
-        experimentDTO.setGenotypeExperimentID(experiment.getGenotypeExperiment().getZdbID());
+        experimentDTO.setGenotypeExperimentID(experiment.getFishExperiment().getZdbID());
         experimentDTO.setPublicationID(experiment.getPublication().getZdbID());
         // check if there are expressions associated
         Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
@@ -934,14 +934,14 @@ public class DTOConversionService {
 
         PhenotypeExperiment phenoExperiment = new PhenotypeExperiment();
         phenoExperiment.setId(dto.getId());
-        Genotype genotype = new Genotype();
-        genotype.setZdbID(dto.getGenotype().getZdbID());
+        Fish genotype = new Fish();
+        genotype.setZdbID(dto.getFish().getZdbID());
         Experiment environment = new Experiment();
         environment.setZdbID(dto.getEnvironment().getZdbID());
-        GenotypeExperiment genotypeExperiment = new GenotypeExperiment();
-        genotypeExperiment.setGenotype(genotype);
-        genotypeExperiment.setExperiment(environment);
-        phenoExperiment.setGenotypeExperiment(genotypeExperiment);
+        FishExperiment fishExperiment = new FishExperiment();
+        fishExperiment.setFish(genotype);
+        fishExperiment.setExperiment(environment);
+        phenoExperiment.setFishExperiment(fishExperiment);
         phenoExperiment.setStartStage(convertToDevelopmentStage(dto.getStart()));
         phenoExperiment.setEndStage(convertToDevelopmentStage(dto.getEnd()));
         phenoExperiment.setFigure(convertToFigure(dto.getFigure()));
@@ -1081,7 +1081,7 @@ public class DTOConversionService {
     }
 
     public static List<LabDTO> convertToLabDTO(List<Lab> labsOfOrigin) {
-        List<LabDTO> labDTO = new ArrayList<LabDTO>();
+        List<LabDTO> labDTO = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(labsOfOrigin)) {
             for (Lab lab : labsOfOrigin) {
                 labDTO.add(DTOConversionService.convertToLabDTO(lab));
@@ -1098,7 +1098,7 @@ public class DTOConversionService {
     }
 
     public static List<OrganizationDTO> convertToOrganizationDTO(List<Organization> labsOfOrigin) {
-        List<OrganizationDTO> organizationDTO = new ArrayList<OrganizationDTO>();
+        List<OrganizationDTO> organizationDTO = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(labsOfOrigin)) {
             for (Organization lab : labsOfOrigin) {
                 organizationDTO.add(DTOConversionService.convertToOrganizationDTO(lab));
@@ -1115,7 +1115,7 @@ public class DTOConversionService {
     }
 
     public static List<FeaturePrefixDTO> convertToFeaturePrefixDTO(List<FeaturePrefix> labPrefixes) {
-        List<FeaturePrefixDTO> featurePrefixDTOs = new ArrayList<FeaturePrefixDTO>();
+        List<FeaturePrefixDTO> featurePrefixDTOs = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(labPrefixes)) {
             for (FeaturePrefix featurePrefix : labPrefixes) {
                 featurePrefixDTOs.add(convertToFeaturePrefixDTO(featurePrefix));
@@ -1186,7 +1186,7 @@ public class DTOConversionService {
         if (expressionFigureStageDTO == null)
             return null;
 
-        List<PileStructureAnnotationDTO> list = new ArrayList<PileStructureAnnotationDTO>();
+        List<PileStructureAnnotationDTO> list = new ArrayList<>();
         for (ExpressedTermDTO termDto : expressionFigureStageDTO.getExpressedTerms()) {
             PileStructureAnnotationDTO annotation = new PileStructureAnnotationDTO();
             annotation.setAction(action);
@@ -1273,14 +1273,14 @@ public class DTOConversionService {
         diseaseModel.setPublication(convertToPublication(diseaseModelDTO.getPublication()));
         diseaseModel.setEvidenceCode(diseaseModelDTO.getEvidenceCode());
         if (diseaseModelDTO.getFish() != null && diseaseModelDTO.getFish().getZdbID() != null) {
-            FishModel model = DTOConversionService.convertToFishModel(diseaseModelDTO);
-            diseaseModel.setFishModel(model);
+            FishExperiment model = DTOConversionService.convertToFishModel(diseaseModelDTO);
+            diseaseModel.setFishExperiment(model);
         }
         return diseaseModel;
     }
 
-    private static FishModel convertToFishModel(DiseaseModelDTO diseaseModelDTO) {
-        FishModel model = new FishModel();
+    private static FishExperiment convertToFishModel(DiseaseModelDTO diseaseModelDTO) {
+        FishExperiment model = new FishExperiment();
         model.setFish(getMutantRepository().getFish(diseaseModelDTO.getFish().getZdbID()));
         Experiment experiment = getExpressionRepository().getExperimentByID(diseaseModelDTO.getEnvironment().getZdbID());
         model.setExperiment(experiment);
@@ -1296,9 +1296,9 @@ public class DTOConversionService {
     public static DiseaseModelDTO convertToDiseaseModelDTO(DiseaseModel model) {
         DiseaseModelDTO dto = new DiseaseModelDTO();
         dto.setID(model.getID());
-        if (model.getFishModel() != null) {
-            dto.setFish(convertToFishDtoFromFish(model.getFishModel().getFish()));
-            dto.setEnvironment(convertToEnvironmentDTO(model.getFishModel().getExperiment()));
+        if (model.getFishExperiment() != null) {
+            dto.setFish(convertToFishDtoFromFish(model.getFishExperiment().getFish()));
+            dto.setEnvironment(convertToEnvironmentDTO(model.getFishExperiment().getExperiment()));
         }
         dto.setPublication(convertToPublicationDTO(model.getPublication()));
         dto.setEvidenceCode(model.getEvidenceCode());

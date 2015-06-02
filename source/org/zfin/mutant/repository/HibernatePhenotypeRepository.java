@@ -196,21 +196,21 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         if (featureID != null) {
             hql += ", GenotypeFeature genoFeature ";
         }
-        hql += "       left join phenox.genotypeExperiment genox ";
+        hql += "       left join phenox.fishExperiment fishox ";
         if (fishID != null) {
-            hql += "       join phenox.genotypeExperiment.genotype geno";
+            hql += "       join phenox.genotypeExperiment.fish fish";
         }
         hql += "     where phenox.figure.publication.zdbID = :pubID ";
         if (fishID != null)
-            hql += "           and geno.zdbID = :fishID ";
+            hql += "           and fish.zdbID = :fishID ";
         if (figureID != null)
             hql += "           and phenox.figure.zdbID = :figureID ";
         if (featureID != null) {
-            hql += "           and genox.genotype = genoFeature.genotype ";
+            hql += "           and fishox.fish.genotype = genoFeature.genotype ";
             hql += "           and genoFeature.feature.zdbID = :featureID ";
         }
         hql += "    order by phenox.figure.orderingLabel, " +
-                "             genox.genotype.nickname, " +
+                "             fishox.fish.name, " +
                 "             phenox.startStage.abbreviation ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
@@ -236,16 +236,16 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select phenoExperiment from PhenotypeExperiment phenoExperiment";
-        hql += "       join phenoExperiment.genotypeExperiment.genotype geno";
-        hql += "       join phenoExperiment.genotypeExperiment.experiment environment";
+        hql += "       join phenoExperiment.fishExperiment.fish fish";
+        hql += "       join phenoExperiment.fishExperiment.experiment environment";
         hql += "     where phenoExperiment.figure.zdbID = :figureID ";
-        hql += "           and geno.zdbID = :fishID ";
+        hql += "           and fish.zdbID = :fishID ";
         hql += "           and environment.zdbID = :environmentID ";
         hql += "           and phenoExperiment.startStage.zdbID= :startID ";
         hql += "           and phenoExperiment.endStage.zdbID= :endID ";
         Query query = session.createQuery(hql);
-        query.setString("fishID", phenotypeExperimentFilter.getGenotypeExperiment().getGenotype().getZdbID());
-        query.setString("environmentID", phenotypeExperimentFilter.getGenotypeExperiment().getExperiment().getZdbID());
+        query.setString("fishID", phenotypeExperimentFilter.getFishExperiment().getFish().getZdbID());
+        query.setString("environmentID", phenotypeExperimentFilter.getFishExperiment().getExperiment().getZdbID());
         query.setString("figureID", phenotypeExperimentFilter.getFigure().getZdbID());
         query.setString("startID", phenotypeExperimentFilter.getStartStage().getZdbID());
         query.setString("endID", phenotypeExperimentFilter.getEndStage().getZdbID());
@@ -257,8 +257,8 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             throw new RuntimeException("Found more than one phenotype experiment for given filter: " + phenotypeExperimentFilter);
 
         PhenotypeExperiment phenoExperiment = phenoExperiments.get(0);
-        GenotypeExperiment genotypeExperiment = phenoExperiment.getGenotypeExperiment();
-        phenoExperiment.setGenotypeExperiment(genotypeExperiment);
+        FishExperiment fishExperiment = phenoExperiment.getFishExperiment();
+        phenoExperiment.setFishExperiment(fishExperiment);
         phenoExperiment.setStartStage(phenoExperiment.getStartStage());
         phenoExperiment.setEndStage(phenoExperiment.getEndStage());
         phenoExperiment.setFigure(phenoExperiment.getFigure());
@@ -281,7 +281,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      */
     public void runRegenGenotypeFigureScript(PhenotypeExperiment phenotypeExperiment) {
         InformixUtil.runInformixProcedure("regen_genofig_genotype", phenotypeExperiment.getId() + "");
-        Set<ExperimentCondition> conditions = phenotypeExperiment.getGenotypeExperiment().getExperiment().getSequenecTargetingReagentConditions();
+        Set<ExperimentCondition> conditions = phenotypeExperiment.getFishExperiment().getExperiment().getSequenecTargetingReagentConditions();
         if (conditions != null) {
             for (ExperimentCondition condition : conditions) {
                 SequenceTargetingReagent sequenceTargetingReagent = condition.getSequenceTargetingReagent();
@@ -777,7 +777,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<DiseaseModel> getHumanDiseaseModelsByFish(String fishID) {
         String hql = "from DiseaseModel as disease where" +
-                " disease.fishModel.fish.zdbID = :fishID";
+                " disease.fishExperiment.fish.zdbID = :fishID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("fishID", fishID);
         return (List<DiseaseModel>) query.list();

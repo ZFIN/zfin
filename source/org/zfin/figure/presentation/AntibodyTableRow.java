@@ -1,18 +1,14 @@
 package org.zfin.figure.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.fish.FishAnnotation;
-import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.Term;
 
 /*
 Should represent these columns:
@@ -22,7 +18,7 @@ public class AntibodyTableRow {
 
     private Antibody antibody;
     private ExpressionAssay assay;
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Genotype genotype;
     private Experiment experiment;
     private DevelopmentStage start;
@@ -47,13 +43,13 @@ public class AntibodyTableRow {
         ExpressionExperiment expressionExperiment = expressionResult.getExpressionExperiment();
         setAntibody(expressionExperiment.getAntibody());
         setAssay(expressionResult.getExpressionExperiment().getAssay());
-        setGenotypeExperiment(expressionExperiment.getGenotypeExperiment());
-        setGenotype(genotypeExperiment.getGenotype());
-        setExperiment(genotypeExperiment.getExperiment());
+        setFishExperiment(expressionExperiment.getFishExperiment());
+        setGenotype(fishExperiment.getFish().getGenotype());
+        setExperiment(fishExperiment.getExperiment());
         setStart(expressionResult.getStartStage());
         setEnd(expressionResult.getEndStage());
         setEntity(expressionResult.getEntity());
-        setAntibodyGenoxZdbIDs(antibody.getZdbID()+genotypeExperiment.getZdbID());
+        setAntibodyGenoxZdbIDs(antibody.getZdbID()+ fishExperiment.getZdbID());
         setExpressionFound(expressionResult.isExpressionFound());
         if (!expressionResult.isExpressionFound())
             setQualifier("Not Detected");
@@ -63,7 +59,7 @@ public class AntibodyTableRow {
             //todo: needs to be zero-padded
             setFishNameOrder(fish.getName());
         } else {*/
-            setFishNameOrder(genotypeExperiment.getGenotype().getNameOrder());
+            setFishNameOrder(fishExperiment.getFish().getGenotype().getNameOrder());
 //        }
 
     }
@@ -108,12 +104,12 @@ public class AntibodyTableRow {
         this.experiment = experiment;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public DevelopmentStage getStart() {

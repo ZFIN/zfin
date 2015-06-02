@@ -32,9 +32,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Test class for PhenotypeRepository.
@@ -142,12 +140,13 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
 
     @Test
     public void getPhenotypeExperiment() {
-        String genotypeID = "ZDB-GENO-070119-8";
-        Genotype genotype = getMutantRepository().getGenotypeByID(genotypeID);
-        GenotypeExperiment genoExperiment = new GenotypeExperiment();
-        genoExperiment.setGenotype(genotype);
+        // TODO Find a good fish Id replacement
+        String fishID = "ZDB-GENO-070119-8";
+        Fish fish = getMutantRepository().getFish(fishID);
+        FishExperiment genoExperiment = new FishExperiment();
+        genoExperiment.setFish(fish);
         PhenotypeExperiment phenotypeExperimentFilter = new PhenotypeExperiment();
-        phenotypeExperimentFilter.setGenotypeExperiment(genoExperiment);
+        phenotypeExperimentFilter.setFishExperiment(genoExperiment);
         DevelopmentStage start = new DevelopmentStage();
         start.setZdbID("ZDB-STAGE-010723-39");
         phenotypeExperimentFilter.setEndStage(start);
@@ -274,16 +273,17 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     @Test
     public void regenGenofigGenotype() {
         PhenotypeStatement phenotype = new PhenotypeStatement();
-        GenotypeExperiment genox = new GenotypeExperiment();
+        FishExperiment genox = new FishExperiment();
         genox.setZdbID("ZDB-GENOX-041102-1948");
-        Genotype geno = new Genotype();
-        geno.setZdbID("ZDB-GENO-980202-405");
-        genox.setGenotype(geno);
+        Fish fish = new Fish();
+        // TODO replace with fish ID
+        fish.setZdbID("ZDB-GENO-980202-405");
+        genox.setFish(fish);
         Experiment experiment = new Experiment();
         experiment.setZdbID("ZDB-EXP-041102-1");
         genox.setExperiment(experiment);
         PhenotypeExperiment phenox = new PhenotypeExperiment();
-        phenox.setGenotypeExperiment(genox);
+        phenox.setFishExperiment(genox);
 
         phenotype.setPhenotypeExperiment(phenox);
 
@@ -314,7 +314,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
             phenoExperiment.setFigure(figure);
             phenoExperiment.setStartStage(start);
             phenoExperiment.setEndStage(end);
-            phenoExperiment.setGenotypeExperiment(expressionExperiment.getGenotypeExperiment());
+            phenoExperiment.setFishExperiment(expressionExperiment.getFishExperiment());
             getPhenotypeRepository().createPhenotypeExperiment(phenoExperiment);
             assertTrue(phenoExperiment.getId() > 0);
             // no default statement is created. 
@@ -332,7 +332,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         String publicationID = "ZDB-PUB-101011-54";
         List<PhenotypeExperiment> phenotypeExperiments =
                 getPhenotypeRepository().getPhenotypeExperimentsWithoutAnnotation(publicationID);
-        assertTrue(phenotypeExperiments.size()>=0);
+        assertTrue(phenotypeExperiments.size() >= 0);
     }
 
     @Test
@@ -440,5 +440,26 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     public void getHumanDisease() {
         List<GenericTerm> genericTermList = getPhenotypeRepository().getHumanDiseases("ZDB-PUB-990507-16");
         assertNotNull(genericTermList);
+    }
+
+    @Test
+    public void getHumanDiseaseModels() {
+        List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModels("ZDB-PUB-990507-16");
+       // assertNotNull(diseaseModels);
+    }
+
+    @Test
+    public void getHumanDiseaseModelsByFish() {
+        String fishID = "ZDB-FISH-150512-28";
+        List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishID);
+        //assertNotNull(diseaseModels);
+    }
+
+    @Test
+    public void getHumanDiseaseModelsByDisease() {
+        //ABCD syndrome
+        GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:0050600");
+        List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        //assertNotNull(diseaseModels);
     }
 }

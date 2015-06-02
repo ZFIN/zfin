@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class GeneGenotypeExperiment implements Serializable {
 
     private Marker gene;
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
 
     public Marker getGene() {
         return gene;
@@ -20,12 +20,12 @@ public class GeneGenotypeExperiment implements Serializable {
         this.gene = gene;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class GeneGenotypeExperiment implements Serializable {
         GeneGenotypeExperiment that = (GeneGenotypeExperiment) o;
 
         if (gene != null ? !gene.equals(that.gene) : that.gene != null) return false;
-        if (genotypeExperiment != null ? !genotypeExperiment.equals(that.genotypeExperiment) : that.genotypeExperiment != null)
+        if (fishExperiment != null ? !fishExperiment.equals(that.fishExperiment) : that.fishExperiment != null)
             return false;
 
         return true;
@@ -45,7 +45,7 @@ public class GeneGenotypeExperiment implements Serializable {
     @Override
     public int hashCode() {
         int result = gene != null ? gene.hashCode() : 0;
-        result = 31 * result + (genotypeExperiment != null ? genotypeExperiment.hashCode() : 0);
+        result = 31 * result + (fishExperiment != null ? fishExperiment.hashCode() : 0);
         return result;
     }
 }

@@ -1,12 +1,7 @@
 package org.zfin.mutant.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.expression.Experiment;
-import org.zfin.infrastructure.EntityZdbID;
-import org.zfin.mutant.DiseaseModel;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.FishModel;
-import org.zfin.ontology.GenericTerm;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.publication.Publication;
 
 import java.util.HashSet;
@@ -18,18 +13,18 @@ import java.util.Set;
 public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
     private Set<Publication> publications;
-    private FishModel fishModel;
+    private FishExperiment fishModel;
 
 
-    public FishModelDisplay(FishModel fishModel) {
+    public FishModelDisplay(FishExperiment fishModel) {
         this.fishModel = fishModel;
     }
 
-    public FishModel getFishModel() {
+    public FishExperiment getFishModel() {
         return fishModel;
     }
 
-    public void setFishModel(FishModel fishModel) {
+    public void setFishModel(FishExperiment fishModel) {
         this.fishModel = fishModel;
     }
 

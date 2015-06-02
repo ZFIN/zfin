@@ -15,24 +15,24 @@ public class DiseaseModel implements EntityZdbID {
     private GenericTerm disease;
     private Publication publication;
     private String evidenceCode;
-    private FishModel fishModel;
-    private Set<FishModel> fishModelSet;
+    private FishExperiment fishExperiment;
+    private Set<FishExperiment> fishModelSet;
 
 
-    public Set<FishModel> getFishModelSet() {
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
+    }
+
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
+    }
+
+    public Set<FishExperiment> getFishModelSet() {
         return fishModelSet;
     }
 
-    public void setFishModelSet(Set<FishModel> fishModelSet) {
+    public void setFishModelSet(Set<FishExperiment> fishModelSet) {
         this.fishModelSet = fishModelSet;
-    }
-
-    public FishModel getFishModel() {
-        return fishModel;
-    }
-
-    public void setFishModel(FishModel fishModel) {
-        this.fishModel = fishModel;
     }
 
     public String getEvidenceCode() {

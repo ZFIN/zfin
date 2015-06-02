@@ -14,6 +14,9 @@ public class Fish implements EntityZdbID {
     private Genotype genotype;
     private String name;
     private String handle;
+
+    private Set<FishExperiment> fishExperiments;
+
     private List<SequenceTargetingReagent> strList;
 
     public Genotype getGenotype() {
@@ -80,4 +83,11 @@ public class Fish implements EntityZdbID {
 
     public String getFishID() { return zdbID; }
 
+    public Set<FishExperiment> getFishExperiments() {
+        return fishExperiments;
+    }
+
+    public void setFishExperiments(Set<FishExperiment> fishExperiments) {
+        this.fishExperiments = fishExperiments;
+    }
 }

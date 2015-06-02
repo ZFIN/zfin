@@ -30,7 +30,7 @@ public class DatabaseServiceDbTest extends AbstractDatabaseTest {
     @Test
     public void getExpressionExperimentInfoFromGenoXID() {
         String parentPkValue = "ZDB-GENOX-041102-2604";
-        String entityName = DatabaseService.getEntityName(parentPkValue, Table.GENOTYPE_EXPERIMENT);
+        String entityName = DatabaseService.getEntityName(parentPkValue, Table.FISH_EXPERIMENT);
         assertNotNull(entityName);
         assertEquals("wild type (unspecified) || _Standard", entityName);
     }

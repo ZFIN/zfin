@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class MutantFigureStage {
 
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Figure figure;
     private DevelopmentStage start;
     private DevelopmentStage end;
@@ -48,12 +48,12 @@ public class MutantFigureStage {
         this.end = end;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getGenotypeExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setGenotypeExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public Publication getPublication() {
@@ -80,7 +80,7 @@ public class MutantFigureStage {
         MutantFigureStage that = (MutantFigureStage) o;
 
         if (end != null ? !end.equals(that.end) : that.end != null) return false;
-        if (genotypeExperiment != null ? !genotypeExperiment.getZdbID().equals(that.genotypeExperiment.getZdbID()) : that.genotypeExperiment != null)
+        if (fishExperiment != null ? !fishExperiment.getZdbID().equals(that.fishExperiment.getZdbID()) : that.fishExperiment != null)
             return false;
         if (figure != null ? !figure.getZdbID().equals(that.figure.getZdbID()) : that.figure != null) return false;
         return !(start != null ? !start.equals(that.start) : that.start != null);
@@ -89,7 +89,7 @@ public class MutantFigureStage {
 
     @Override
     public int hashCode() {
-        int result = genotypeExperiment != null ? genotypeExperiment.hashCode() : 0;
+        int result = fishExperiment != null ? fishExperiment.hashCode() : 0;
         result = 31 * result + (figure != null ? figure.getZdbID().hashCode() : 0);
         result = 31 * result + (start != null ? start.getZdbID().hashCode() : 0);
         result = 31 * result + (end != null ? end.getZdbID().hashCode() : 0);
@@ -106,7 +106,7 @@ public class MutantFigureStage {
      * @return set of mutants
      */
     public Set<PhenotypeExperiment> getMatchingMutantPhenotypes() {
-        Set<PhenotypeExperiment> phenos = genotypeExperiment.getPhenotypeExperiments();
+        Set<PhenotypeExperiment> phenos = fishExperiment.getPhenotypeExperiments();
         if (phenos == null)
             return null;
         Set<PhenotypeExperiment> mutantPhenotypes = new HashSet<PhenotypeExperiment>(5);

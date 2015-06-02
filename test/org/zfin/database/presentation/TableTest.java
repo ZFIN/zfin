@@ -13,7 +13,7 @@ public class TableTest {
     @Test
     public void getZdbEntityTable() {
         Table genox = Table.getEntityTable("ZDB-GENOX-091001-1");
-        assertEquals(genox, Table.GENOTYPE_EXPERIMENT);
+        assertEquals(genox, Table.FISH_EXPERIMENT);
     }
 
     @Test
@@ -24,13 +24,13 @@ public class TableTest {
 
     @Test
     public void getEntityTableByTableName() {
-        Table genox = Table.getEntityTableByTableName("genotype_experiment");
-        assertEquals(genox, Table.GENOTYPE_EXPERIMENT);
+        Table genox = Table.getEntityTableByTableName("fish_experiment");
+        assertEquals(genox, Table.FISH_EXPERIMENT);
     }
 
     @Test
     public void getChildTables() {
-        Table genox = Table.GENOTYPE_EXPERIMENT;
+        Table genox = Table.FISH_EXPERIMENT;
         List<Table> childTables = genox.getChildTables();
         assertNotNull(childTables);
         assertTrue(childTables.size() >= 4);

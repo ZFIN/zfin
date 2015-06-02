@@ -6,7 +6,7 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 public class SequenceTargetingReagentStatisticsTest {
 
-    private GenotypeExperiment genoxOne;
+    private FishExperiment genoxOne;
     private GenericTerm item;
 
     @Test
@@ -29,7 +29,7 @@ public class SequenceTargetingReagentStatisticsTest {
 
     @Before
     public void createFirstExperiment() {
-        genoxOne = new GenotypeExperiment();
+        genoxOne = new FishExperiment();
         Experiment experimentOne = new Experiment();
         experimentOne.setName("One");
         genoxOne.setExperiment(experimentOne);

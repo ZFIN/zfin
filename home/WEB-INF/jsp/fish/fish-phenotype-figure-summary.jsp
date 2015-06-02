@@ -21,14 +21,14 @@
     <tr>
         <th>Genotype:</th>
         <td>
-            <zfin:link entity="${phenotypeSummaryCriteria.genotypeExperiments[0].genotype}"/>
+            <zfin:link entity="${phenotypeSummaryCriteria.fishExperiments[0].genotype}"/>
         </td>
     </tr>
-    <c:if test="${!empty phenotypeSummaryCriteria.genotypeExperiments}">
+    <c:if test="${!empty phenotypeSummaryCriteria.fishExperiments}">
         <tr>
             <th>Conditions:</th>
             <td>
-                <zfin:link entity="${phenotypeSummaryCriteria.genotypeExperiments[0].experiment}"/>
+                <zfin:link entity="${phenotypeSummaryCriteria.fishExperiments[0].experiment}"/>
             </td>
         </tr>
     </c:if>

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
@@ -79,10 +79,10 @@ public class AllSequenceTargetingReagentExperimentController {
 
     protected void retrieveSequenceTargetingReagentData(GenericTerm term, AnatomySearchBean form, boolean wildtype) {
 
-        PaginationResult<GenotypeExperiment> wildtypeSTRgenotypeExperiments =
+        PaginationResult<FishExperiment> wildtypeSTRgenotypeExperiments =
                 getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(term, wildtype, form);
         int count = wildtypeSTRgenotypeExperiments.getTotalCount();
-        List<GenotypeExperiment> experiments = wildtypeSTRgenotypeExperiments.getPopulatedResults();
+        List<FishExperiment> experiments = wildtypeSTRgenotypeExperiments.getPopulatedResults();
 
         List<SequenceTargetingReagentStatistics> sequenceTargetingReagentsStats = createSequenceTargetingReagentStats(experiments, term);
         Collections.sort(sequenceTargetingReagentsStats, new Comparator<SequenceTargetingReagentStatistics>() {
@@ -96,12 +96,12 @@ public class AllSequenceTargetingReagentExperimentController {
         form.setAllSequenceTargetingReagents(sequenceTargetingReagentsStats);
     }
 
-    protected List<SequenceTargetingReagentStatistics> createSequenceTargetingReagentStats(List<GenotypeExperiment> strExperiments, GenericTerm term) {
+    protected List<SequenceTargetingReagentStatistics> createSequenceTargetingReagentStats(List<FishExperiment> strExperiments, GenericTerm term) {
         if (strExperiments == null || term == null)
             return null;
 
         List<SequenceTargetingReagentStatistics> stats = new ArrayList<>();
-        for (GenotypeExperiment genoExp : strExperiments) {
+        for (FishExperiment genoExp : strExperiments) {
             SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, term);
             stats.add(stat);
         }

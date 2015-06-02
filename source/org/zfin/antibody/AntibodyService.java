@@ -6,7 +6,6 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.*;
-import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
@@ -60,9 +59,9 @@ public class AntibodyService {
             return null;
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
 
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
@@ -99,9 +98,9 @@ public class AntibodyService {
             return 0;
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
 
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
@@ -135,9 +134,9 @@ public class AntibodyService {
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
 
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
@@ -172,9 +171,9 @@ public class AntibodyService {
             return null;
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
             if (results != null) {
@@ -201,9 +200,9 @@ public class AntibodyService {
             return null;
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
             if (results != null) {
@@ -313,10 +312,10 @@ public class AntibodyService {
         if (experiments == null)
             return terms;
         for (ExpressionExperiment experiment : experiments) {
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
 
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
 
             if (geno.isWildtype() && exp.isStandard()) {
                 Set<ExpressionResult> results = experiment.getExpressionResults();
@@ -426,8 +425,8 @@ public class AntibodyService {
         Set<ExpressionStatement> statementSet = new HashSet<ExpressionStatement>();
 
         for (ExpressionExperiment exp : experiments) {
-            Genotype geno = exp.getGenotypeExperiment().getGenotype();
-            if (geno.isWildtype() && exp.getGenotypeExperiment().isStandardOrGenericControl()) {
+            Genotype geno = exp.getFishExperiment().getFish().getGenotype();
+            if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl()) {
                 if (exp.getExpressionResults() != null)
                     for (ExpressionResult result : exp.getExpressionResults()) {
                         if (result.isExpressionFound()) {
@@ -448,10 +447,10 @@ public class AntibodyService {
         for (ExpressionExperiment exp : experiments) {
 
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = exp.getGenotypeExperiment().getGenotype();
+            Genotype geno = exp.getFishExperiment().getFish().getGenotype();
 
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment experiment = exp.getGenotypeExperiment().getExperiment();
+            Experiment experiment = exp.getFishExperiment().getExperiment();
 
             if (geno.isWildtype() && experiment.isStandard()) {
 
@@ -539,9 +538,9 @@ public class AntibodyService {
         // loop thru the set of ExpressionExperiment objects to get the related data
         for (ExpressionExperiment exp : experiments) {
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = exp.getGenotypeExperiment().getGenotype();
+            Genotype geno = exp.getFishExperiment().getFish().getGenotype();
 
-            if (geno.isWildtype() && exp.getGenotypeExperiment().isStandardOrGenericControl()) {
+            if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl()) {
                 ExpressionAssay assay = exp.getAssay();
                 Marker gene = exp.getGene();
 

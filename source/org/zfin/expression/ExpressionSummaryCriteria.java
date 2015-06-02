@@ -4,7 +4,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
@@ -13,7 +13,7 @@ import org.zfin.ontology.Term;
 public class ExpressionSummaryCriteria {
 
     private Marker gene;
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Genotype genotype;
     private Antibody antibody;
     private SequenceTargetingReagent sequenceTargetingReagent;
@@ -34,7 +34,7 @@ public class ExpressionSummaryCriteria {
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
 
         criteria.setGene(gene);
-        criteria.setGenotypeExperiment(genotypeExperiment);
+        criteria.setFishExperiment(fishExperiment);
         criteria.setGenotype(genotype);
         criteria.setAntibody(antibody);
         criteria.setEntity(entity);
@@ -58,12 +58,12 @@ public class ExpressionSummaryCriteria {
         this.gene = gene;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public Genotype getGenotype() {

@@ -183,8 +183,8 @@ public class FigureViewService {
         List<Genotype> genotypes = new ArrayList<>();
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (!genotypes.contains(expressionResult.getExpressionExperiment().getGenotypeExperiment().getGenotype())) {
-                genotypes.add(expressionResult.getExpressionExperiment().getGenotypeExperiment().getGenotype());
+            if (!genotypes.contains(expressionResult.getExpressionExperiment().getFishExperiment().getFish().getGenotype())) {
+                genotypes.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish().getGenotype());
             }
         }
 
@@ -212,8 +212,8 @@ public class FigureViewService {
         List<Object> fishesAndGenotypes = new ArrayList<>();
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (!fishesAndGenotypes.contains(expressionResult.getExpressionExperiment().getGenotypeExperiment().getGenotype())) {
-                fishesAndGenotypes.add(expressionResult.getExpressionExperiment().getGenotypeExperiment().getGenotype());
+            if (!fishesAndGenotypes.contains(expressionResult.getExpressionExperiment().getFishExperiment().getFish().getGenotype())) {
+                fishesAndGenotypes.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish().getGenotype());
             }
         }
 
@@ -242,7 +242,7 @@ public class FigureViewService {
         List<SequenceTargetingReagent> strs = new ArrayList<>();
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            for (ExperimentCondition experimentCondition: expressionResult.getExpressionExperiment().getGenotypeExperiment().getExperiment().getExperimentConditions()){
+            for (ExperimentCondition experimentCondition: expressionResult.getExpressionExperiment().getFishExperiment().getExperiment().getExperimentConditions()){
                 if (experimentCondition.getSequenceTargetingReagent()!= null &&
                         !strs.contains(experimentCondition.getSequenceTargetingReagent())) {
                     strs.add(experimentCondition.getSequenceTargetingReagent());
@@ -274,8 +274,8 @@ public class FigureViewService {
         List<Experiment> conditions = new ArrayList<>();
 
         for (ExpressionResult expressonResult: figure.getExpressionResults()) {
-            if (canAddExperimentToConditionsList(expressonResult.getExpressionExperiment().getGenotypeExperiment(), conditions)) {
-                conditions.add(expressonResult.getExpressionExperiment().getGenotypeExperiment().getExperiment());
+            if (canAddExperimentToConditionsList(expressonResult.getExpressionExperiment().getFishExperiment(), conditions)) {
+                conditions.add(expressonResult.getExpressionExperiment().getFishExperiment().getExperiment());
             }
         }
 
@@ -400,8 +400,8 @@ public class FigureViewService {
         List<Genotype> genotypes = new ArrayList<>();
 
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            if (!genotypes.contains(phenotypeExperiment.getGenotypeExperiment().getGenotype())) {
-                genotypes.add(phenotypeExperiment.getGenotypeExperiment().getGenotype());
+            if (!genotypes.contains(phenotypeExperiment.getFishExperiment().getFish().getGenotype())) {
+                genotypes.add(phenotypeExperiment.getFishExperiment().getFish().getGenotype());
             }
         }
 
@@ -428,8 +428,8 @@ public class FigureViewService {
         List<Object> fishesAndGenotypes = new ArrayList<>();
 
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            if (!fishesAndGenotypes.contains(phenotypeExperiment.getGenotypeExperiment().getGenotype())) {
-                fishesAndGenotypes.add(phenotypeExperiment.getGenotypeExperiment().getGenotype());
+            if (!fishesAndGenotypes.contains(phenotypeExperiment.getFishExperiment().getFish().getGenotype())) {
+                fishesAndGenotypes.add(phenotypeExperiment.getFishExperiment().getFish().getGenotype());
             }
         }
 
@@ -457,7 +457,7 @@ public class FigureViewService {
         List<SequenceTargetingReagent> strs = new ArrayList<>();
 
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            for (ExperimentCondition experimentCondition: phenotypeExperiment.getGenotypeExperiment().getExperiment().getExperimentConditions()){
+            for (ExperimentCondition experimentCondition: phenotypeExperiment.getFishExperiment().getExperiment().getExperimentConditions()){
                 if (experimentCondition.getSequenceTargetingReagent()!= null &&
                     !strs.contains(experimentCondition.getSequenceTargetingReagent())) {
                     strs.add(experimentCondition.getSequenceTargetingReagent());
@@ -488,8 +488,8 @@ public class FigureViewService {
         List<Experiment> conditions = new ArrayList<>();
 
         for (PhenotypeExperiment phenotypeExperiment: figure.getPhenotypeExperiments()) {
-            if (canAddExperimentToConditionsList(phenotypeExperiment.getGenotypeExperiment(),conditions)){
-                conditions.add(phenotypeExperiment.getGenotypeExperiment().getExperiment());
+            if (canAddExperimentToConditionsList(phenotypeExperiment.getFishExperiment(),conditions)){
+                conditions.add(phenotypeExperiment.getFishExperiment().getExperiment());
             }
         }
 
@@ -497,15 +497,15 @@ public class FigureViewService {
         return conditions;
     }
 
-    private boolean canAddExperimentToConditionsList(GenotypeExperiment genotypeExperiment, List<Experiment> conditions) {
-        if (genotypeExperiment == null
-           || genotypeExperiment.getExperiment() == null
-           || genotypeExperiment.getExperiment().isStandard() // the experiment is standard or generic control
-           || conditions.contains(genotypeExperiment.getExperiment())) {
+    private boolean canAddExperimentToConditionsList(FishExperiment fishExperiment, List<Experiment> conditions) {
+        if (fishExperiment == null
+           || fishExperiment.getExperiment() == null
+           || fishExperiment.getExperiment().isStandard() // the experiment is standard or generic control
+           || conditions.contains(fishExperiment.getExperiment())) {
             return false;
         }
 
-        for (ExperimentCondition experimentCondition: genotypeExperiment.getExperiment().getExperimentConditions()) {
+        for (ExperimentCondition experimentCondition: fishExperiment.getExperiment().getExperimentConditions()) {
             // if none is null, then the figure page has only experiments with reagents, so nothing should be in the list
             if (experimentCondition.getSequenceTargetingReagent() == null) return true;
         }

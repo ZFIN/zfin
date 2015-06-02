@@ -206,8 +206,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria criteria = session.createCriteria(Antibody.class);
         criteria.setProjection(Projections.countDistinct("zdbID"));
         Criteria labeling = criteria.createCriteria("antibodyLabelings");
-        Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
-        Criteria genotype = genotypeExperiment.createCriteria("genotype");
+        Criteria fishExperiment = labeling.createCriteria("fishExperiment");
+        Criteria fish = fishExperiment.createCriteria("fish");
+        Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
         Criteria results = labeling.createCriteria("expressionResults");
         // check AO1 and AO2 
@@ -215,7 +216,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 Restrictions.eq("entity.superterm", aoTerm),
                 Restrictions.eq("entity.subterm", aoTerm)));
         results.add(eq("expressionFound", true));
-        Criteria experiment = genotypeExperiment.createCriteria("experiment");
+        Criteria experiment = fishExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 
         return ((Long) results.list().get(0)).intValue();
@@ -226,13 +227,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Session session = HibernateUtil.currentSession();
         StringBuffer hql = new StringBuffer();
         hql.append("select distinct antibody from Antibody antibody, ExpressionExperiment expExp,  ");
-        hql.append("                ExpressionResult res, GenotypeExperiment genox, Genotype geno, ");
+        hql.append("                ExpressionResult res, FishExperiment fishox, Genotype geno, ");
         hql.append("                Experiment exp ");
         hql.append("where ");
         hql.append("       expExp.antibody = antibody ");
         hql.append("       and res.expressionExperiment = expExp ");
-        hql.append("       and genox = expExp.genotypeExperiment ");
-        hql.append("       and geno = genox.genotype ");
+        hql.append("       and fishox = expExp.fishExperiment ");
+        hql.append("       and geno = fishox.fish.genotype ");
         hql.append("       and geno.wildtype = :wildType ");
         if (includeSubstructures) {
             hql.append("   and ( res.entity.superterm = :aoTerm  OR res.entity.subterm = :aoTerm" +
@@ -244,7 +245,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         } else
             hql.append("       and (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) ");
         hql.append("       and res.expressionFound = :expressionFound ");
-        hql.append("       and exp = genox.experiment ");
+        hql.append("       and exp = fishox.experiment ");
         hql.append("       and exp.name in (:standard , :generic ) ");
         hql.append("order by antibody.abbreviationOrder");
         Query query = session.createQuery(hql.toString());
@@ -272,10 +273,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
-        Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
-        Criteria genotype = genotypeExperiment.createCriteria("genotype");
+        Criteria fishExperiment = labeling.createCriteria("genotypeExperiment");
+        Criteria fish = fishExperiment.createCriteria("fish");
+        Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
-        Criteria experiment = genotypeExperiment.createCriteria("experiment");
+        Criteria experiment = fishExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD}));
         return ((Long) criteria.list().get(0)).intValue();
     }
@@ -293,10 +295,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
-        Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
-        Criteria genotype = genotypeExperiment.createCriteria("genotype");
+        Criteria fishExperiment = labeling.createCriteria("genotypeExperiment");
+        Criteria fish = fishExperiment.createCriteria("fish");
+        Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
-        Criteria experiment = genotypeExperiment.createCriteria("experiment");
+        Criteria experiment = fishExperiment.createCriteria("experiment");
         experiment.add(Restrictions.eq("name", Experiment.STANDARD));
 
         return (List<Figure>) labeling.list();
@@ -315,10 +318,11 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 Restrictions.eq("entity.subterm", aoTerm)));
         results.add(isNotEmpty("figures"));
         results.add(eq("expressionFound", true));
-        Criteria genotypeExperiment = labeling.createCriteria("genotypeExperiment");
-        Criteria genotype = genotypeExperiment.createCriteria("genotype");
+        Criteria fishExperiment = labeling.createCriteria("genotypeExperiment");
+        Criteria fish = fishExperiment.createCriteria("fish");
+        Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
-        Criteria experiment = genotypeExperiment.createCriteria("experiment");
+        Criteria experiment = fishExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return new PaginationResult<Publication>((List<Publication>) pubs.list());

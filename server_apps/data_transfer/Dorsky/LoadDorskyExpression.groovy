@@ -8,7 +8,7 @@ import org.zfin.figure.service.VideoService
 import org.zfin.framework.HibernateUtil
 import org.zfin.marker.Marker
 import org.zfin.mutant.Genotype
-import org.zfin.mutant.GenotypeExperiment
+import org.zfin.mutant.FishExperiment
 import org.zfin.ontology.Ontology
 import org.zfin.ontology.Term
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper
@@ -68,7 +68,7 @@ dorskyVideos.each { csv ->
     Publication publication = RepositoryFactory.publicationRepository.getPublication("ZDB-PUB-141007-8")
     Genotype genotype = RepositoryFactory.mutantRepository.getGenotypeByID(csv.genoname)
     Experiment experiment = RepositoryFactory.expressionRepository.getExperimentByID("ZDB-EXP-041102-1")
-    GenotypeExperiment genotypeExperiment = RepositoryFactory.mutantRepository.getGenotypeExperiment(genotype.getZdbID(),experiment.getZdbID() )
+    FishExperiment genotypeExperiment = RepositoryFactory.mutantRepository.getGenotypeExperiment(genotype.getZdbID(),experiment.getZdbID() )
     String feature=csv.ftr1
 
     //create a genox if we need one
@@ -172,7 +172,7 @@ else
 
 
 
-ExpressionExperiment getOrCreateExpressionExperiment(GenotypeExperiment genotypeExperiment,
+ExpressionExperiment getOrCreateExpressionExperiment(FishExperiment genotypeExperiment,
                                                      Marker gene,
                                                      Publication publication,
                                                      ExpressionAssay assay) {
@@ -234,8 +234,8 @@ ExpressionResult createExpressionResult(ExpressionExperiment expressionExperimen
     return expressionResult
 }
 
-GenotypeExperiment createGenotypeExperiment(Genotype genotype, Experiment experiment) {
-    GenotypeExperiment genotypeExperiment = new GenotypeExperiment()
+FishExperiment createGenotypeExperiment(Genotype genotype, Experiment experiment) {
+    FishExperiment genotypeExperiment = new FishExperiment()
     genotypeExperiment.experiment = experiment
     genotypeExperiment.genotype = genotype
     genotypeExperiment.standard = true
@@ -246,13 +246,13 @@ GenotypeExperiment createGenotypeExperiment(Genotype genotype, Experiment experi
     return genotypeExperiment
 }
 
-ExpressionExperiment createExpressionExperiment(GenotypeExperiment genotypeExperiment,
+ExpressionExperiment createExpressionExperiment(FishExperiment genotypeExperiment,
                                                 Marker gene,
                                                 Publication publication,
                                                 ExpressionAssay assay) {
     ExpressionExperiment expressionExperiment = new ExpressionExperiment()
     expressionExperiment.setGene(gene)
-    expressionExperiment.setGenotypeExperiment(genotypeExperiment)
+    expressionExperiment.setFishExperiment(genotypeExperiment)
     expressionExperiment.setPublication(publication)
     expressionExperiment.setAssay(assay)
 

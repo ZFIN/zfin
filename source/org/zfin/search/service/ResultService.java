@@ -472,8 +472,8 @@ public class ResultService {
             if (xpatex.getProbe() != null)
                 result.addAttribute(PROBE, MarkerPresentation.getName(xpatex.getProbe()));
 
-            result.addAttribute(GENOTYPE, xpatex.getGenotypeExperiment().getGenotype().getName());
-            String conditions = ExperimentPresentation.getLink(xpatex.getGenotypeExperiment().getExperiment(), true, false);
+            result.addAttribute(GENOTYPE, xpatex.getFishExperiment().getFish().getGenotype().getName());
+            String conditions = ExperimentPresentation.getLink(xpatex.getFishExperiment().getExperiment(), true, false);
            // String conditions = ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(), true, false);
             result.addAttribute(CONDITIONS, conditions);
 
@@ -517,9 +517,9 @@ public class ResultService {
             }
             sb.append(" expression in ");
 
-            sb.append(GenotypePresentation.getName(xpatex.getGenotypeExperiment().getGenotype()));
+            sb.append(GenotypePresentation.getName(xpatex.getFishExperiment().getFish().getGenotype()));
             sb.append(" + ");
-            sb.append(ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(),true));
+            sb.append(ExperimentPresentation.getNameForFaceted(xpatex.getFishExperiment().getExperiment(),true));
 
             sb.append(" from ");
 
@@ -555,10 +555,10 @@ public class ResultService {
 
         PhenotypeExperiment phenotypeExperiment = RepositoryFactory.getMutantRepository().getPhenotypeExperiment(id);
         if (phenotypeExperiment != null) {
-            result.addAttribute(GENOTYPE, phenotypeExperiment.getGenotypeExperiment().getGenotype().getName());
+            result.addAttribute(GENOTYPE, phenotypeExperiment.getFishExperiment().getFish().getGenotype().getName());
 
 
-            result.addAttribute(CONDITIONS, ExperimentPresentation.getLink(phenotypeExperiment.getGenotypeExperiment().getExperiment(), true, false));
+            result.addAttribute(CONDITIONS, ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true, false));
 
             if (phenotypeExperiment.getStartStage().equals(phenotypeExperiment.getEndStage()))
                 result.addAttribute(STAGE, phenotypeExperiment.getStartStage().getName());
@@ -582,7 +582,7 @@ public class ResultService {
 
 
             //todo: add more?
-            if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getGenotypeExperiment().getExperiment(), true, false), "standard or control")) {
+            if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true, false), "standard or control")) {
 
                     StringBuilder sb = new StringBuilder();
 
@@ -593,9 +593,9 @@ public class ResultService {
 
                     // sb.append(" expression in ");
 
-                    sb.append(GenotypePresentation.getName(phenotypeExperiment.getGenotypeExperiment().getGenotype()));
+                    sb.append(GenotypePresentation.getName(phenotypeExperiment.getFishExperiment().getFish().getGenotype()));
                     sb.append(" + ");
-                    sb.append(ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getGenotypeExperiment().getExperiment(),true));
+                    sb.append(ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment(),true));
 
                     sb.append(" from ");
 

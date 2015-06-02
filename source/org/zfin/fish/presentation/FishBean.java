@@ -4,7 +4,7 @@ import org.zfin.audit.AuditLogItem;
 import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.fish.FeatureGene;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.RepositoryFactory;
 
@@ -16,7 +16,7 @@ import java.util.List;
 public class FishBean extends AbstractFishViewBean {
 
     private MartFish fish;
-    private List<GenotypeExperiment> genotypeExperimentsList;
+    private List<FishExperiment> fishExperimentsList;
     private List<Genotype> genotypes;
     private int totalNumberOfPublications;
     private int totalNumberOfPhenotypes;
@@ -40,12 +40,12 @@ public class FishBean extends AbstractFishViewBean {
      * @return Genotype
      */
 
-    public List<GenotypeExperiment> getGenotypeExperimentsList() {
-        return genotypeExperimentsList;
+    public List<FishExperiment> getGenotypeExperimentsList() {
+        return fishExperimentsList;
     }
 
-    public void setGenotypeExperimentsList(List<GenotypeExperiment> genotypeExperimentsList) {
-        this.genotypeExperimentsList = genotypeExperimentsList;
+    public void setGenotypeExperimentsList(List<FishExperiment> fishExperimentsList) {
+        this.fishExperimentsList = fishExperimentsList;
     }
 
 

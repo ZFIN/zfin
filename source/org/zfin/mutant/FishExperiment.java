@@ -8,12 +8,12 @@ import java.util.Set;
 /**
  * Domain object.
  */
-public class GenotypeExperiment {
+public class FishExperiment {
     private String zdbID;
     private boolean standard;
     private boolean standardOrGenericControl;
     private Experiment experiment;
-    private Genotype genotype;
+    private Fish fish;
     private Set<PhenotypeExperiment> phenotypeExperiments;
     private Set<ExpressionExperiment> expressionExperiments;
 
@@ -49,12 +49,12 @@ public class GenotypeExperiment {
         this.experiment = experiment;
     }
 
-    public Genotype getGenotype() {
-        return genotype;
+    public Fish getFish() {
+        return fish;
     }
 
-    public void setGenotype(Genotype genotype) {
-        this.genotype = genotype;
+    public void setFish(Fish fish) {
+        this.fish = fish;
     }
 
     public Set<ExpressionExperiment> getExpressionExperiments() {

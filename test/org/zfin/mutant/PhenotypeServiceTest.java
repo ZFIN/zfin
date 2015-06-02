@@ -52,7 +52,7 @@ public class PhenotypeServiceTest {
 
     @Test
     public void noPhenotypesOrAnatomy() {
-        GenotypeExperiment genox = new GenotypeExperiment();
+        FishExperiment genox = new FishExperiment();
         Map<String, Set<String>> map = PhenotypeService.getPhenotypesGroupedByOntology(genox, anatomyTerm);
         assertTrue(map == null);
 
@@ -70,7 +70,7 @@ public class PhenotypeServiceTest {
      */
     @Test
     public void singleAOPhenotype() {
-        GenotypeExperiment genox = new GenotypeExperiment();
+        FishExperiment genox = new FishExperiment();
         PhenotypeExperiment phenoExp = new PhenotypeExperiment();
         String brightOrange = "bright orange";
         PhenotypeStatement pheno = createPhenotypeStatement(anatomyTerm, null, null, null, brightOrange);
@@ -97,7 +97,7 @@ public class PhenotypeServiceTest {
      */
     @Test
     public void threeAOPhenotype() {
-        GenotypeExperiment genox = new GenotypeExperiment();
+        FishExperiment genox = new FishExperiment();
         String brightOrange = "bright orange";
         String pink = "pink";
         String angry = "angry";
@@ -175,7 +175,7 @@ public class PhenotypeServiceTest {
         phenotypes.add(statementEight);
         phenotypes.add(statementNine);
 
-        GenotypeExperiment genox = new GenotypeExperiment();
+        FishExperiment genox = new FishExperiment();
         PhenotypeExperiment phenoExp = new PhenotypeExperiment();
         Set<PhenotypeExperiment> phenoExperiments = new HashSet<PhenotypeExperiment>(1);
         phenoExp.setPhenotypeStatements(phenotypes);

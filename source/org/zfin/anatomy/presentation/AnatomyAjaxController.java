@@ -22,7 +22,7 @@ import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.GenotypeStatistics;
 import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
@@ -378,10 +378,10 @@ public class AnatomyAjaxController {
      */
     protected void retrieveSequenceTargetingReagentData(GenericTerm ai, AnatomySearchBean form, boolean wildtype) {
 
-        PaginationResult<GenotypeExperiment> wildtypeSTRresults =
+        PaginationResult<FishExperiment> wildtypeSTRresults =
                 mutantRepository.getGenotypeExperimentSequenceTargetingReagents(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         int count = wildtypeSTRresults.getTotalCount();
-        List<GenotypeExperiment> experiments = wildtypeSTRresults.getPopulatedResults();
+        List<FishExperiment> experiments = wildtypeSTRresults.getPopulatedResults();
 
         List<SequenceTargetingReagentStatistics> strStats = createSequenceTargetingReagenStats(experiments, ai);
         if (wildtype) {
@@ -393,12 +393,12 @@ public class AnatomyAjaxController {
         }
     }
 
-    protected static List<SequenceTargetingReagentStatistics> createSequenceTargetingReagenStats(List<GenotypeExperiment> strExperiments, GenericTerm ai) {
+    protected static List<SequenceTargetingReagentStatistics> createSequenceTargetingReagenStats(List<FishExperiment> strExperiments, GenericTerm ai) {
         if (strExperiments == null || ai == null)
             return null;
 
         List<SequenceTargetingReagentStatistics> stats = new ArrayList<>();
-        for (GenotypeExperiment genoExp : strExperiments) {
+        for (FishExperiment genoExp : strExperiments) {
             SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, ai);
             stats.add(stat);
         }

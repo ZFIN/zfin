@@ -96,7 +96,7 @@ public interface MutantRepository {
      * @param numberOfRecords defines the first n records to retrieve
      * @return list of genotype experiment object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, int numberOfRecords);
+    PaginationResult<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, int numberOfRecords);
 
     /**
      * Retrieve all genotype experiment objects that are associated to a str.
@@ -107,7 +107,7 @@ public interface MutantRepository {
      * @param isWildtype wildtype of genotype
      * @return list of genotype experiment object
      */
-    List<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype);
+    List<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype);
 
     /**
      * Retrieve genotype experiment objects that are associated to a str within the range specified
@@ -120,7 +120,7 @@ public interface MutantRepository {
      * @param bean       PaginationBean
      * @return list of genotype experiment object
      */
-    PaginationResult<GenotypeExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, PaginationBean bean);
+    PaginationResult<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, PaginationBean bean);
 
     /**
      * @param name name of quality term
@@ -155,7 +155,7 @@ public interface MutantRepository {
      * @param genotypeExperimentID pk
      * @return genotype experiment
      */
-    GenotypeExperiment getGenotypeExperiment(String genotypeExperimentID);
+    FishExperiment getGenotypeExperiment(String genotypeExperimentID);
 
     /**
      * Retrieve a genotype experiment by the natural key, geno & exp zdb_ids
@@ -164,7 +164,7 @@ public interface MutantRepository {
      * @param experimentZdbID ak
      * @return genox
      */
-    GenotypeExperiment getGenotypeExperiment(String genotypeZdbID, String experimentZdbID);
+    FishExperiment getGenotypeExperiment(String genotypeZdbID, String experimentZdbID);
 
     /**
      * Remove a PhenotypeExperiment record:
@@ -452,7 +452,7 @@ public interface MutantRepository {
      * @param expID
      * @return
      */
-    FishModel getFishModel(String fishID, String expID);
+    FishExperiment getFishModel(String fishID, String expID);
 
     /**
      * Retrieve Disease Model by composite index: (disease term, pubID,Evidence code)

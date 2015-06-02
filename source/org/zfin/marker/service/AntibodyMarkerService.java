@@ -41,9 +41,9 @@ public class AntibodyMarkerService {
             return null;
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
 
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
@@ -80,9 +80,9 @@ public class AntibodyMarkerService {
             return 0;
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
 
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
@@ -116,9 +116,9 @@ public class AntibodyMarkerService {
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
 
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
@@ -153,9 +153,9 @@ public class AntibodyMarkerService {
             return null;
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
             if (results != null) {
@@ -182,9 +182,9 @@ public class AntibodyMarkerService {
             return null;
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
             if (!(geno.isWildtype() && exp.isStandard()))
                 continue;
             if (results != null) {
@@ -206,10 +206,10 @@ public class AntibodyMarkerService {
         if (experiments == null)
             return terms;
         for (ExpressionExperiment experiment : experiments) {
-            Genotype geno = experiment.getGenotypeExperiment().getGenotype();
+            Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
 
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getGenotypeExperiment().getExperiment();
+            Experiment exp = experiment.getFishExperiment().getExperiment();
 
             if (geno.isWildtype() && exp.isStandard()) {
                 Set<ExpressionResult> results = experiment.getExpressionResults();
@@ -273,10 +273,10 @@ public class AntibodyMarkerService {
         for (ExpressionExperiment exp : experiments) {
 
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = exp.getGenotypeExperiment().getGenotype();
+            Genotype geno = exp.getFishExperiment().getFish().getGenotype();
 
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment experiment = exp.getGenotypeExperiment().getExperiment();
+            Experiment experiment = exp.getFishExperiment().getExperiment();
 
             if (geno.isWildtype() && experiment.isStandard()) {
 
@@ -364,9 +364,9 @@ public class AntibodyMarkerService {
         // loop thru the set of ExpressionExperiment objects to get the related data
         for (ExpressionExperiment exp : experiments) {
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
-            Genotype geno = exp.getGenotypeExperiment().getGenotype();
+            Genotype geno = exp.getFishExperiment().getFish().getGenotype();
 
-            if (geno.isWildtype() && exp.getGenotypeExperiment().isStandardOrGenericControl()) {
+            if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl()) {
                 ExpressionAssay assay = exp.getAssay();
                 Marker gene = exp.getGene();
 
@@ -412,7 +412,7 @@ public class AntibodyMarkerService {
                         }
 
                         if (labeling.getAssays() == null) {
-                            SortedSet<ExpressionAssay> assays = new TreeSet<ExpressionAssay>();
+                            SortedSet<ExpressionAssay> assays = new TreeSet<>();
                             labeling.setAssays(assays);
                         }
 
@@ -420,7 +420,7 @@ public class AntibodyMarkerService {
                             labeling.getAssays().add(assay);
 
                         if (labeling.getGenes() == null) {
-                            SortedSet<Marker> genes = new TreeSet<Marker>();
+                            SortedSet<Marker> genes = new TreeSet<>();
                             labeling.setGenes(genes);
                         }
 
@@ -451,7 +451,7 @@ public class AntibodyMarkerService {
         }
 
         // use SortedSet to hold the values of the map so that the data could be displayed in order
-        List<AnatomyLabel> labelingDisplays = new ArrayList<AnatomyLabel>();
+        List<AnatomyLabel> labelingDisplays = new ArrayList<>();
 
         if (map.values().size() > 0)
             labelingDisplays.addAll(map.values());

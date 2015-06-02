@@ -57,12 +57,4 @@ public class GenoExpStatistics extends EntityStatistics {
         return repository.getPublicationsWithFiguresbyGenoExp(genotype);
     }
 
-
-    /*public Map<String, Set> getPhenotypeDescriptions() {
-   Map<String, Set> phenotypes = new HashMap<String, Set>();
-   Set<GenotypeExperiment> genotypeExperiments = genotype.getGenotypeExperiments();
-   for (GenotypeExperiment genoExperiment : genotypeExperiments) {
-       phenotypes.putAll(PhenotypeService.getPhenotypesGroupedByOntology(genoExperiment, anatomyItem));
-   }
-   return phenotypes;*/
 }

@@ -4,12 +4,11 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,7 +19,7 @@ public class ExpressionExperiment {
     private String zdbID;
     private Publication publication;
     private Set<ExpressionResult> expressionResults;
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Marker gene;
     private Clone probe;
     private ExpressionAssay assay;
@@ -40,7 +39,7 @@ public class ExpressionExperiment {
     public int getAlternateKey() {
         int hash = 1;
         hash = hash * 31 + publication.hashCode();  // uses zdbID
-        hash = hash * 31 + genotypeExperiment.getZdbID().hashCode();
+        hash = hash * 31 + fishExperiment.getZdbID().hashCode();
         hash = hash * 31 + assay.getName().hashCode();
         hash = hash * 31 + (probe == null ? 0 : probe.hashCode()); // uses zdbID
         hash = hash * 31 + (gene == null ? 0 : gene.hashCode());// uses zdbID
@@ -84,12 +83,12 @@ public class ExpressionExperiment {
         this.probe = probe;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public Antibody getAntibody() {

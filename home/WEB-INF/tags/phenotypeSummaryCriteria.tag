@@ -12,14 +12,14 @@
         <td><zfin:link entity="${criteria.gene}"/> </td>
       </tr>
     </c:if>
-    <c:if test="${!empty criteria.genotypeExperiment}">
+    <c:if test="${!empty criteria.fishExperiment}">
       <tr>
         <th>Genotype:</th>
-        <td><zfin:link entity="${criteria.genotypeExperiment.genotype}"/> </td>
+        <td><zfin:link entity="${criteria.fishExperiment.genotype}"/> </td>
       </tr>
       <tr>
           <th>Conditions:</th>
-          <td><zfin:link entity="${criteria.genotypeExperiment.experiment}"/></td>
+          <td><zfin:link entity="${criteria.fishExperiment.experiment}"/></td>
       </tr>
     </c:if>
     <%--sometimes rather than a genox, it's just a genotype--%>

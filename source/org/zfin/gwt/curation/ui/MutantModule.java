@@ -107,12 +107,12 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     private boolean showSelectedMutantsOnly;
 
     // all annotations that are selected
-    private List<PhenotypeExperimentDTO> selectedExpressions = new ArrayList<PhenotypeExperimentDTO>(10);
+    private List<PhenotypeExperimentDTO> selectedExpressions = new ArrayList<>(10);
     // all mutants displayed on the page (all or a subset defined by the filter elements)
-    private List<PhenotypeExperimentDTO> displayedExpressions = new ArrayList<PhenotypeExperimentDTO>(20);
+    private List<PhenotypeExperimentDTO> displayedExpressions = new ArrayList<>(20);
     // This maps the display table and contains the full objects that each
     // row is made up from
-    private Map<Integer, PhenotypeExperimentDTO> displayTableMap = new HashMap<Integer, PhenotypeExperimentDTO>(20);
+    private Map<Integer, PhenotypeExperimentDTO> displayTableMap = new HashMap<>(20);
 
     // attributes for duplicate row
     private String duplicateRowOriginalStyle;
@@ -132,11 +132,11 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     public static final String HIDE = "hide";
     public static final String SHOW = "show";
 
-    private Set<PhenotypeStatementDTO> expressedTerms = new HashSet<PhenotypeStatementDTO>(20);
+    private Set<PhenotypeStatementDTO> expressedTerms = new HashSet<>(20);
     // used for highlighting structures
     private ExpressedTermDTO expressedStructure;
     private boolean markStructures;
-    private List<FigureDTO> allFigureDtos = new ArrayList<FigureDTO>(10);
+    private List<FigureDTO> allFigureDtos = new ArrayList<>(10);
 
     // injected variables
     private StructurePile structurePile;
@@ -408,7 +408,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             if (checkAll)
                 selectedExpressions = displayedExpressions;
             else
-                selectedExpressions = new ArrayList<PhenotypeExperimentDTO>(15);
+                selectedExpressions = new ArrayList<>(15);
             //Window.alert("Selected Expressions: " + selectedExpressions.size());
             sendFigureAnnotationsToStructureSection();
         }
@@ -446,7 +446,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 selectedExpressions.remove(checkedExpression);
             }
             WidgetUtil.selectListBox(environmentList, checkedExpression.getEnvironment().getZdbID());
-            WidgetUtil.selectListBox(fishList, checkedExpression.getGenotype().getZdbID());
+            WidgetUtil.selectListBox(fishList, checkedExpression.getFish().getZdbID());
             //Window.alert("Selected Expressions: "+selectedExpressions.size());
             sendFigureAnnotationsToStructureSection();
             displayTable.showHideClearAllLink();
@@ -462,9 +462,9 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         FigureDTO figDto = new FigureDTO();
         figDto.setZdbID(figID);
         newMutantFigureStage.setFigure(figDto);
-        GenotypeDTO fishDto = new GenotypeDTO();
+        FishDTO fishDto = new FishDTO();
         fishDto.setZdbID(fishID);
-        newMutantFigureStage.setGenotype(fishDto);
+        newMutantFigureStage.setFish(fishDto);
         return newMutantFigureStage;
     }
 
@@ -665,7 +665,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             String fishID = fishList.getValue(fishList.getSelectedIndex());
             String environmentID = environmentList.getValue(environmentList.getSelectedIndex());
 
-            List<PhenotypeExperimentDTO> phenotypeFigureStageDTOList = new ArrayList<PhenotypeExperimentDTO>(4);
+            List<PhenotypeExperimentDTO> phenotypeFigureStageDTOList = new ArrayList<>(4);
             if (stageSelector.isDualStageMode()) {
                 PhenotypeExperimentDTO dto = createBasicPhenoFigDto(figID, fishID, environmentID);
                 phenotypeFigureStageDTOList.add(dto);
@@ -742,7 +742,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             errorElement.setError("No environment is selected!");
             return false;
         }
-        if (mutant.getGenotype() == null || StringUtils.isEmpty(mutant.getGenotype().getZdbID())) {
+        if (mutant.getFish() == null || StringUtils.isEmpty(mutant.getFish().getZdbID())) {
             errorElement.setError("No genotypes is selected!");
             return false;
         }
@@ -795,7 +795,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
 
             List<PhenotypeExperimentDTO> expressionFigureStageDTOs;
             if (showSelectedMutantsOnly) {
-                expressionFigureStageDTOs = new ArrayList<PhenotypeExperimentDTO>(20);
+                expressionFigureStageDTOs = new ArrayList<>(20);
                 expressionFigureStageDTOs.addAll(selectedExpressions);
             } else {
                 expressionFigureStageDTOs = displayedExpressions;
@@ -818,8 +818,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 Label figure = new Label(expression.getFigure().getLabel());
                 figure.setTitle(expression.getFigure().getZdbID());
                 setWidget(rowIndex, HeaderName.FIGURE.getIndex(), figure);
-                Label genotype = new Label(expression.getGenotype().getHandle());
-                genotype.setTitle(expression.getGenotype().getZdbID());
+                Label genotype = new Label(expression.getFish().getHandle());
+                genotype.setTitle(expression.getFish().getZdbID());
                 setWidget(rowIndex, HeaderName.FISH.getIndex(), genotype);
                 Widget environment = new Label(expression.getEnvironment().getName());
                 environment.setTitle(expression.getEnvironment().getZdbID());
@@ -1046,7 +1046,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         @Override
         public void onSuccess(List<FigureDTO> list) {
             super.onSuccess(list);
-            allFigureDtos = new ArrayList<FigureDTO>(list);
+            allFigureDtos = new ArrayList<>(list);
             updateFigureListBox();
             //Window.alert("SIZE: " + experiments.size());
         }
@@ -1137,7 +1137,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
      * @param deletedExperiment experiment that was deleted
      */
     public void removeFigureAnnotations(ExperimentDTO deletedExperiment) {
-        Collection<ExpressionFigureStageDTO> toBeDeleted = new ArrayList<ExpressionFigureStageDTO>();
+        Collection<ExpressionFigureStageDTO> toBeDeleted = new ArrayList<>();
         for (PhenotypeExperimentDTO efs : displayedExpressions) {
 /*
             ExperimentDTO expDto = efs.getExperiment();

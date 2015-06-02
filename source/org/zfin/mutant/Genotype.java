@@ -4,7 +4,6 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.expression.Figure;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.infrastructure.DataNote;
-import org.zfin.infrastructure.EntityNotes;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.GenotypeSupplier;
 import org.zfin.publication.Publication;
@@ -32,7 +31,6 @@ public class Genotype implements Comparable, EntityZdbID {
     private String nickname;
     private boolean wildtype;
     private boolean extinct;
-    private Set<GenotypeExperiment> genotypeExperiments;
     // This attribute is used only for storage purposes.
     // as the background is stored as a many-to-many relationship.
     private Set<Genotype> associatedGenotypes;
@@ -84,14 +82,6 @@ public class Genotype implements Comparable, EntityZdbID {
 
     public void setWildtype(boolean wildtype) {
         this.wildtype = wildtype;
-    }
-
-    public Set<GenotypeExperiment> getGenotypeExperiments() {
-        return genotypeExperiments;
-    }
-
-    public void setGenotypeExperiments(Set<GenotypeExperiment> genotypeExperiments) {
-        this.genotypeExperiments = genotypeExperiments;
     }
 
     public String getNickname() {

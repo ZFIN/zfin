@@ -15,7 +15,7 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
@@ -280,8 +280,8 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
 
 
     @SuppressWarnings("unchecked")
-    private List<GenotypeExperiment> createGenotypeExperiments() {
-        return HibernateUtil.currentSession().createCriteria(GenotypeExperiment.class)
+    private List<FishExperiment> createGenotypeExperiments() {
+        return HibernateUtil.currentSession().createCriteria(FishExperiment.class)
                 .setMaxResults(2).list();
     }
 
@@ -406,9 +406,9 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
             Publication pub1 = publications.get(0);
             Publication pub2 = publications.get(1);
 
-            List<GenotypeExperiment> genotypeExperiments = createGenotypeExperiments();
-            GenotypeExperiment genox1 = genotypeExperiments.get(0);
-            GenotypeExperiment genox2 = genotypeExperiments.get(1);
+            List<FishExperiment> fishExperiments = createGenotypeExperiments();
+            FishExperiment genox1 = fishExperiments.get(0);
+            FishExperiment genox2 = fishExperiments.get(1);
 
             List<ExpressionAssay> expressionAssays = createExpressionAssays();
             ExpressionAssay assay1 = expressionAssays.get(0);
@@ -435,7 +435,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
 //            eea1.setZdbID("eea1");
             eea1.setAntibody(antibodyA);
             eea1.setPublication(pub1);
-            eea1.setGenotypeExperiment(genox1);
+            eea1.setFishExperiment(genox1);
             eea1.setAssay(assay1);
             HibernateUtil.currentSession().save(eea1);
 
@@ -444,7 +444,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
 //            eea2.setZdbID(eeSameZdbID);
             eea2.setAntibody(antibodyA);
             eea2.setPublication(pub2);
-            eea2.setGenotypeExperiment(genox2);
+            eea2.setFishExperiment(genox2);
             eea2.setAssay(assay2);
             HibernateUtil.currentSession().save(eea2);
             String eeSameZdbID = eea2.getZdbID();
@@ -500,7 +500,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
 //            eeb1.setZdbID("eeb1");
             eeb1.setAntibody(antibodyB);
             eeb1.setPublication(pub1);
-            eeb1.setGenotypeExperiment(genox2); // THIS IS DIFFERENT
+            eeb1.setFishExperiment(genox2); // THIS IS DIFFERENT
             eeb1.setAssay(assay1);
             HibernateUtil.currentSession().save(eeb1);
 
@@ -509,7 +509,7 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
 ////            eeb2.setZdbID(eeSameZdbID);
             eeb2.setAntibody(antibodyB);
             eeb2.setPublication(pub2);
-            eeb2.setGenotypeExperiment(genox2);
+            eeb2.setFishExperiment(genox2);
             eeb2.setAssay(assay2);
             HibernateUtil.currentSession().save(eeb2);
 

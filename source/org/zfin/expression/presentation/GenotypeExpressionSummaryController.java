@@ -13,7 +13,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.RepositoryFactory;
 
@@ -37,7 +37,7 @@ public class GenotypeExpressionSummaryController   {
                                                         Model model) {
 
 
-        GenotypeExperiment genox = RepositoryFactory.getMutantRepository().getGenotypeExperiment(genoZdbID, expZdbID);
+        FishExperiment genox = RepositoryFactory.getMutantRepository().getGenotypeExperiment(genoZdbID, expZdbID);
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
 
         //I would prefer the record not found show both ids...maybe it would be best if we just used genox?
@@ -56,7 +56,7 @@ public class GenotypeExpressionSummaryController   {
         List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genox.getGenotype().getName() + " Expression Figure Summary");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genox.getFish().getName() + " Expression Figure Summary");
         return "expression/genotype-figure-summary.page";
 
     }

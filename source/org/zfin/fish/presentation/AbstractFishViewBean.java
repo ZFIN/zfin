@@ -102,7 +102,7 @@ public class AbstractFishViewBean {
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
-                Experiment exp = xpResult.getExpressionExperiment().getGenotypeExperiment().getExperiment();
+                Experiment exp = xpResult.getExpressionExperiment().getFishExperiment().getExperiment();
 
                 String key = keyGeno + expressedGene.getZdbID();
 

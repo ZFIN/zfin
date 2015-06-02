@@ -18,7 +18,7 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.*;
 
 public class GenotypeExperimentBean {
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Genotype genotype;
     private GenotypeStatistics genotypeStatistics;
     private List<GenotypeFeature> genotypeFeatures;
@@ -33,12 +33,12 @@ public class GenotypeExperimentBean {
     public GenotypeExperimentBean() {
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public Genotype getGenotype() {
@@ -135,7 +135,7 @@ public class GenotypeExperimentBean {
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
-                Experiment exp = xpResult.getExpressionExperiment().getGenotypeExperiment().getExperiment();
+                Experiment exp = xpResult.getExpressionExperiment().getFishExperiment().getExperiment();
 
                 String key = keyGeno + expressedGene.getZdbID();
 
@@ -243,7 +243,7 @@ public class GenotypeExperimentBean {
                 Figure fig = pheno.getPhenotypeExperiment().getFigure();
                 Publication pub = fig.getPublication();
 
-                Experiment exp = pheno.getPhenotypeExperiment().getGenotypeExperiment().getExperiment();
+                Experiment exp = pheno.getPhenotypeExperiment().getFishExperiment().getExperiment();
 
                 String keyPheno = pheno.getPhenoStatementString();
                 String key;

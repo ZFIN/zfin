@@ -263,7 +263,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
                 "count(distinct fig.fig_zdb_id) as numOfFig  " +
                 "FROM  Expression_Experiment exp, outer marker probe, Term item_, Marker gene, Figure fig," +
-                "      Genotype geno, Genotype_Experiment genox, expression_pattern_figure results, expression_result result " +
+                "      Genotype geno, fish_Experiment genox, expression_pattern_figure results, expression_result result, fish fish " +
                 "WHERE  exp.xpatex_probe_feature_zdb_id = probe.mrkr_zdb_id AND" +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND         " +
                 "       item_.term_zdb_id = :termID AND " +
@@ -273,7 +273,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "       fig.fig_zdb_id=results.xpatfig_fig_zdb_id AND " +
                 "       results.xpatfig_xpatres_zdb_id=result.xpatres_zdb_id AND " +
                 "       genox.genox_zdb_id=exp.xpatex_genox_zdb_id AND " +
-                "       genox.genox_geno_zdb_id=geno.geno_zdb_id AND " +
+                "       genox.genox_fish_zdb_id=fish.fish_zdb_id AND " +
+                "       fish.fish_genotype_zdb_id=geno.geno_zdb_id AND " +
                 "       geno.geno_is_wildtype = :isWildtype AND " +
                 "       exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id AND " +
                 "       genox.genox_is_std_or_generic_control = :condition AND " +
@@ -336,7 +337,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "     join expression_pattern_figure on xpatfig_fig_zdb_id = fig_zdb_id " +
                 "     join expression_result on xpatres_zdb_id = xpatfig_xpatres_zdb_id " +
                 "     join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
-                "     join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id " +
+                "     join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id " +
                 "     join marker on mrkr_zdb_id = xpatex_gene_zdb_id " +
                 "where (xpatres_superterm_zdb_id = :termZdbId or xpatres_subterm_zdb_id = :termZdbId) " +
                 "   and xpatres_expression_found = :expressionFound " +
@@ -622,9 +623,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     private void getBaseQueryForSequenceTargetingReagentFigureData(StringBuilder hql) {
         hql.append("from Figure figure, PhenotypeStatement phenotype, ");
-        hql.append("GenotypeExperiment geno, Marker marker, Experiment exp, ExperimentCondition con ");
+        hql.append("FishExperiment fishox, Marker marker, Experiment exp, ExperimentCondition con ");
         hql.append("where marker.zdbID = :markerID AND ");
-        hql.append("      geno.experiment = exp AND ");
+        hql.append("      fishox.experiment = exp AND ");
         hql.append("      con.experiment = exp AND  ");
         hql.append("      marker = con.sequenceTargetingReagent AND  ");
         hql.append("      phenotype.phenotypeExperiment.genotypeExperiment = geno AND  ");
@@ -646,10 +647,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure from Figure figure, PhenotypeStatement phenos, " +
-                "GenotypeExperiment genox, Genotype geno, TransitiveClosure transitiveClosure " +
+                "FishExperiment fishox, Genotype geno, TransitiveClosure transitiveClosure " +
                 "where geno.zdbID = :genoID AND " +
-                "      genox.genotype = geno AND " +
-                "      phenos.phenotypeExperiment.genotypeExperiment = genox  AND " +
+                "      genox.fish.genotype = geno AND " +
+                "      phenos.phenotypeExperiment.fishExperiment = genox  AND " +
                 "      phenos.phenotypeExperiment.figure = figure AND " +
                 "      transitiveClosure.root = :aoTerm AND " +
                 "      ( phenos.entity.superterm = transitiveClosure.child OR phenos.entity.subterm = transitiveClosure.child OR " +
@@ -680,18 +681,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public PaginationResult<Figure> getFiguresByGeno(Genotype geno) {
         Session session = HibernateUtil.currentSession();
-
-        /*String hql = "select distinct figure from Figure figure, Phenotype pheno,  ExperimentCondition con, " +
-  "GenotypeExperiment exp, Genotype geno, Experiment experiment " +
-  "where geno.zdbID = :genoID AND " +
-  "      exp.genotype = geno AND " +
-  "      pheno.genotypeExperiment = exp  AND " +
-  "      figure member of pheno.figures AND " +
-   "      exp.experiment =experiment AND " +
-  "      con.experiment=experiment AND " +
-
-  "      pheno.tag <> 'normal' "+
-  "order by figure.orderingLabel    ";*/
         String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +
                 "where genofig.genotype.zdbID = :genoID AND " +
                 "      genofig.figure.zdbID=figure.id " +
@@ -708,15 +697,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure from Figure figure, ExpressionResult res, ExpressionExperiment exp," +
-                "GenotypeExperiment genox, Genotype geno, ExpressionResultFigure xpatfig " +
+                "FishExperiment fishox, Genotype geno, ExpressionResultFigure xpatfig " +
                 "where geno.zdbID = :genoID AND " +
-                "      genox.genotype = geno AND " +
+                "      fishox.fish.genotype = geno AND " +
                 "   res.expressionExperiment = exp AND " +
                 "   xpatfig.expressionResult = res AND " +
                 "   xpatfig.figure = figure AND " +
                 "   exp.antibody is null AND " +
                 "   exp.genotypeExperiment = genox AND " +
-                "   genox.genotype = geno  " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
@@ -841,7 +829,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp, " +
-                "     Genotype geno, GenotypeExperiment genox, ExpressionResultFigure xpatfig " +
+                "     FishExperiment fishox, ExpressionResultFigure xpatfig " +
                 "where " +
                 "   marker = :marker AND " +
                 "   exp.gene = marker AND " +
@@ -850,11 +838,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   xpatfig.expressionResult = res AND " +
                 "   xpatfig.figure = fig AND " +
                 "   res.expressionFound = :expressionFound AND " +
-                "   exp.genotypeExperiment = genox AND " +
-                "   genox.genotype = geno AND " +
+                "   exp.genotypeExperiment = fishox AND " +
                 "   genox.standardOrGenericControl = :condition AND " +
                 "   genox.genotype = geno AND " +
-                "   geno.wildtype = :isWildtype ";
+                "   fishox.fish.geno.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
@@ -1229,10 +1216,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct fish from Genotype fish, ExpressionExperiment ee," +
-                "                               GenotypeExperiment genox " +
+                "                               FishExperiment fishox " +
                 "     where ee.publication.zdbID = :pubID " +
-                "           and ee.genotypeExperiment = genox " +
-                "           and genox.genotype = fish" +
+                "           and ee.genotypeExperiment = fishox " +
+                "           and genox.fish = fish" +
                 "    order by fish.handle ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);

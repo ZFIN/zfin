@@ -8,7 +8,7 @@ import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
@@ -84,20 +84,20 @@ public interface ExpressionRepository {
     MarkerDBLink getMarkDBLink(String genbankID);
 
     /**
-     * Retrieve GenotypeExperiment by Experiment ID
+     * Retrieve FishExperiment by Experiment ID
      *
      * @param experimentID id
      * @param genotypeID   genotype id
-     * @return GenotypeExperiment
+     * @return FishExperiment
      */
-    GenotypeExperiment getGenotypeExperimentByExperimentIDAndGenotype(String experimentID, String genotypeID);
+    FishExperiment getFishExperimentByExperimentIDAndGenotype(String experimentID, String genotypeID);
 
     /**
      * Create a new genotype experiment for given experiment and genotype.
      *
      * @param experiment genotype Experiment
      */
-    void createGenoteypExperiment(GenotypeExperiment experiment);
+    void createGenoteypExperiment(FishExperiment experiment);
 
     /**
      * Retrieve experiment by id.
@@ -123,7 +123,7 @@ public interface ExpressionRepository {
      * @param genotypeID   id
      * @return genotype Experiment
      */
-    GenotypeExperiment createGenoteypExperiment(String experimentID, String genotypeID);
+    FishExperiment createGenoteypExperiment(String experimentID, String genotypeID);
 
     /**
      * Create a new expression Experiment.
@@ -266,9 +266,9 @@ public interface ExpressionRepository {
     /**
      * Retrieve a genotype experiment for a given genotype ID.
      * @param zdbID genotype id
-     * @return GenotypeExperiment
+     * @return FishExperiment
      */
-    GenotypeExperiment getGenotypeExperimentByGenotypeID(String zdbID);
+    FishExperiment getGenotypeExperimentByGenotypeID(String zdbID);
 
     /**
      * Create all expression structures being used in a given publication.

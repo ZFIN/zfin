@@ -15,9 +15,7 @@ import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
@@ -197,8 +195,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         List<DiseaseModel> diseaseModelList = getMutantRepository().getDiseaseModel(zdbID, pubZdbID);
         if (diseaseModelList != null) {
             for (DiseaseModel model : diseaseModelList) {
-                if (model.getFishModel() != null)
-                    return createMessage(model.getFishModel().getFish().getName(), "has a fishmodel");
+                if (model.getFishExperiment() != null)
+                    return createMessage(model.getFishExperiment().getFish().getName(), "has a fishmodel");
             }
             return null;
         }

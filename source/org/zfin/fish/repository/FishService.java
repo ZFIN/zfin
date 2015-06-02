@@ -9,16 +9,16 @@ import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
-import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.FishSearchFormBean;
+import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.PhenotypeSummaryCriteria;
 import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
 
@@ -51,8 +51,8 @@ public class FishService {
         if (zfinFigureEntities == null)
             return null;
 
-        List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<FigureSummaryDisplay>(zfinFigureEntities.size());
-        Set<Figure> figures = new HashSet<Figure>(zfinFigureEntities.size());
+        List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<>(zfinFigureEntities.size());
+        Set<Figure> figures = new HashSet<>(zfinFigureEntities.size());
         for (ZfinFigureEntity figureEntity : zfinFigureEntities) {
             FigureSummaryDisplay figureSummaryDisplay = new FigureSummaryDisplay();
             Figure figure = getPublicationRepository().getFigure(figureEntity.getID());
@@ -75,20 +75,19 @@ public class FishService {
         MartFish fish = getFishRepository().getFish(fishID);
         PhenotypeSummaryCriteria criteria = new PhenotypeSummaryCriteria();
         criteria.setFish(fish);
-        List<GenotypeExperiment> genotypeExperiments = new ArrayList<GenotypeExperiment>(fish.getGenotypeExperimentIDs().size());
+        List<FishExperiment> fishExperiments = new ArrayList<>(fish.getGenotypeExperimentIDs().size());
         for (String genoID : fish.getGenotypeExperimentIDs()) {
-            genotypeExperiments.add(getMutantRepository().getGenotypeExperiment(genoID));
+            fishExperiments.add(getMutantRepository().getGenotypeExperiment(genoID));
         }
-        criteria.setGenotypeExperiments(genotypeExperiments);
+        criteria.setFishExperiments(fishExperiments);
         return criteria;
     }
 
     public static List<Genotype> getGenotypes(long fishID) {
         MartFish fish = getFishRepository().getFish(fishID);
-        List<GenotypeExperiment> genotypeExperiments = new ArrayList<GenotypeExperiment>(fish.getGenotypeExperimentIDs().size());
-        List<Genotype> genotype = new ArrayList<Genotype>();
+        List<Genotype> genotype = new ArrayList<>();
         for (String genoID : fish.getGenotypeExperimentIDs()) {
-            genotype.add(getMutantRepository().getGenotypeExperiment(genoID).getGenotype());
+            genotype.add(getMutantRepository().getGenotypeExperiment(genoID).getFish().getGenotype());
         }
         return genotype;
     }
@@ -103,7 +102,7 @@ public class FishService {
         if (phenotypeStatementList == null)
             return null;
 
-        List<PhenotypeStatement> phenotypeStatements = new ArrayList<PhenotypeStatement>(phenotypeStatementList.size());
+        List<PhenotypeStatement> phenotypeStatements = new ArrayList<>(phenotypeStatementList.size());
         for (PhenotypeStatement phenotypeStatement : phenotypeStatementList) {
             if (isDistinctPhenotype(phenotypeStatement, phenotypeStatements))
                 phenotypeStatements.add(phenotypeStatement);
@@ -142,7 +141,7 @@ public class FishService {
             return null;
         MartFish fish = new MartFish();
         String[] ids = fishID.split(",");
-        List<String> genoxIds = new ArrayList<String>(3);
+        List<String> genoxIds = new ArrayList<>(3);
         // compile the genotype experiment ids
         for (String id : ids) {
             ActiveData.Type type = ActiveData.validateID(id);
@@ -248,7 +247,7 @@ public class FishService {
     /**
      * Check if a given fish has expression data with at least one figure that has an image.
      *
-     * @param fishID
+     * @param fishID fish ID
      * @return
      */
     public static boolean hasImagesOnExpressionFigures(String fishID) {

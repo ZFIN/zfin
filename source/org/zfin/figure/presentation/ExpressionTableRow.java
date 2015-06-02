@@ -1,15 +1,12 @@
 package org.zfin.figure.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
-import org.zfin.fish.FishAnnotation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.Term;
 
 /**
  * Stores a collection of entities used to display one row of the figureview expression table
@@ -17,7 +14,7 @@ import org.zfin.ontology.Term;
 public class ExpressionTableRow{
     private Marker gene;
     private Antibody antibody;
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Genotype genotype;
     private Experiment experiment;
     private String qualifier;
@@ -41,9 +38,9 @@ public class ExpressionTableRow{
         ExpressionExperiment expressionExperiment = expressionResult.getExpressionExperiment();
         setGene(expressionExperiment.getGene());
         setAntibody(expressionExperiment.getAntibody());
-        setGenotypeExperiment(expressionExperiment.getGenotypeExperiment());
-        setGenotype(expressionExperiment.getGenotypeExperiment().getGenotype());
-        setExperiment(expressionExperiment.getGenotypeExperiment().getExperiment());
+        setFishExperiment(expressionExperiment.getFishExperiment());
+        setGenotype(expressionExperiment.getFishExperiment().getFish().getGenotype());
+        setExperiment(expressionExperiment.getFishExperiment().getExperiment());
         setStart(expressionResult.getStartStage());
         setEnd(expressionResult.getEndStage());
         setExpressionFound(expressionResult.isExpressionFound());
@@ -52,14 +49,14 @@ public class ExpressionTableRow{
         setEntity(expressionResult.getEntity());
         setAssay(expressionResult.getExpressionExperiment().getAssay());
 
-        setGeneGenoxZdbIDs(gene.getZdbID() + genotypeExperiment.getZdbID());
+        setGeneGenoxZdbIDs(gene.getZdbID() + fishExperiment.getZdbID());
 
 /*        if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
             FishAnnotation fish = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator().next().getFishAnnotation();
             //todo: needs to be zero-padded
             setFishNameOrder(fish.getName());
         } else {*/
-            setFishNameOrder(genotypeExperiment.getGenotype().getNameOrder());
+            setFishNameOrder(fishExperiment.getFish().getGenotype().getNameOrder());
   /*      }*/
 
     }
@@ -89,12 +86,12 @@ public class ExpressionTableRow{
         this.antibody = antibody;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public Genotype getGenotype() {

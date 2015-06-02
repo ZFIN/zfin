@@ -19,7 +19,7 @@ public class PhenotypeServiceDBTest extends AbstractDatabaseTest {
     @Test
     public void retrievePhenotypeStatementsByGenoxAndTerm() {
         String genoxID = "ZDB-GENOX-050323-1";
-        GenotypeExperiment genox = RepositoryFactory.getMutantRepository().getGenotypeExperiment(genoxID);
+        FishExperiment genox = RepositoryFactory.getMutantRepository().getGenotypeExperiment(genoxID);
         // actinotrichium
         String aoZdbID = "ZDB-TERM-100614-30";
         GenericTerm term = new GenericTerm();
@@ -33,7 +33,7 @@ public class PhenotypeServiceDBTest extends AbstractDatabaseTest {
     @Test
     public void phenotypeStatmentHasSubstructure() {
         String genoxID = "ZDB-GENOX-050323-1";
-        GenotypeExperiment genox = RepositoryFactory.getMutantRepository().getGenotypeExperiment(genoxID);
+        FishExperiment genox = RepositoryFactory.getMutantRepository().getGenotypeExperiment(genoxID);
         // actinotrichium
         String aoZdbID = "ZDB-TERM-100614-30";
         GenericTerm term = new GenericTerm();

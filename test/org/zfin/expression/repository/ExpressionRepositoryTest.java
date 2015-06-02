@@ -24,10 +24,9 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.repository.PublicationRepository;
@@ -79,7 +78,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getGenotypeExperimentByExperiment() {
         String experimentID = "ZDB-EXP-070511-5";
         String genotypeID = "ZDB-GENO-960809-7";
-        GenotypeExperiment experiment = expRep.getGenotypeExperimentByExperimentIDAndGenotype(experimentID, genotypeID);
+        FishExperiment experiment = expRep.getFishExperimentByExperimentIDAndGenotype(experimentID, genotypeID);
         assertTrue(experiment != null);
 
     }
@@ -107,7 +106,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String genotypeID = "ZDB-GENO-960809-7";
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            GenotypeExperiment genox = expRep.createGenoteypExperiment(experimentID, genotypeID);
+            FishExperiment genox = expRep.createGenoteypExperiment(experimentID, genotypeID);
             assertTrue(genox.getZdbID() != null);
         } finally {
             tx.rollback();
@@ -337,7 +336,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getGenoxFromGenotype() {
 
         String genotypeID = "ZDB-GENO-030530-1";
-        GenotypeExperiment genox = expRep.getGenotypeExperimentByGenotypeID(genotypeID);
+        FishExperiment genox = expRep.getGenotypeExperimentByGenotypeID(genotypeID);
         assertNotNull(genox);
     }
 
@@ -362,7 +361,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-GENE-980526-333";
         String sql = "SELECT distinct term_zdb_id, term_name " +
                 "FROM " +
-                "expression_result , expression_experiment, term , genotype_experiment, experiment , genotype " +
+                "expression_result , expression_experiment, term , fish_experiment, experiment , fish, geno " +
                 "WHERE " +
                 "xpatex_gene_zdb_id = :zdbID " +
                 "AND  xpatres_xpatex_zdb_id = xpatex_zdb_id " +
@@ -370,7 +369,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
                 "AND xpatres_superterm_zdb_id = term_zdb_id " +
                 "AND xpatex_genox_zdb_id = genox_zdb_id " +
                 "AND exp_zdb_id = genox_exp_zdb_id and exp_name = :experiment  " +
-                "AND geno_zdb_id  = genox_geno_zdb_id " +
+                "AND fish_zdb_id  = genox_fish_zdb_id " +
+                "AND fish_genotype_zdb_id  = geno_zdb_id " +
                 "AND geno_is_wildtype = :wildType " +
                 "ORDER BY term_name asc";
         List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createSQLQuery(sql)

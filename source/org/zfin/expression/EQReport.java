@@ -156,9 +156,9 @@ public class EQReport {
         reportLines.add(buffer);
         for (PhenotypeStatement phenotype : phenotypes) {
             buffer = new StringBuffer();
-            buffer.append(phenotype.getPhenotypeExperiment().getGenotypeExperiment().getGenotype().getName());
+            buffer.append(phenotype.getPhenotypeExperiment().getFishExperiment().getFish().getGenotype().getName());
             buffer.append("\t");
-            Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getGenotypeExperiment().getExperiment().getSequenecTargetingReagentConditions();
+            Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getFishExperiment().getExperiment().getSequenecTargetingReagentConditions();
             if (conditions != null && conditions.size() > 0) {
                 for (ExperimentCondition condition : conditions) {
                     buffer.append(condition.getSequenceTargetingReagent().getName());
@@ -227,9 +227,9 @@ public class EQReport {
                 buffer.append(phenotype.getExpressionExperiment().getAntibody().getName());
             }
             buffer.append("\t");
-            buffer.append(phenotype.getExpressionExperiment().getGenotypeExperiment().getGenotype().getName());
+            buffer.append(phenotype.getExpressionExperiment().getFishExperiment().getFish().getGenotype().getName());
             buffer.append("\t");
-            buffer.append(phenotype.getExpressionExperiment().getGenotypeExperiment().getExperiment().getName());
+            buffer.append(phenotype.getExpressionExperiment().getFishExperiment().getExperiment().getName());
             buffer.append("\t");
             buffer.append(phenotype.getExpressionExperiment().getAssay().getAbbreviation());
             buffer.append("\t");

@@ -13,7 +13,7 @@ public class ForeignKeyTest {
 
     @Test
     public void getForeignKeys() {
-        Table genox = Table.GENOTYPE_EXPERIMENT;
+        Table genox = Table.FISH_EXPERIMENT;
         List<ForeignKey> foreignKeyList = ForeignKey.getForeignKeys(genox);
         assertNotNull(foreignKeyList);
         assertTrue(foreignKeyList.size() >= 4);
@@ -28,7 +28,7 @@ public class ForeignKeyTest {
 
     @Test
     public void getForeignKeysByLevel() {
-        Table genox = Table.GENOTYPE_EXPERIMENT;
+        Table genox = Table.FISH_EXPERIMENT;
         List<ForeignKey> foreignKeyList = ForeignKey.getForeignKeys(genox, 1);
         assertNotNull(foreignKeyList);
         assertTrue(foreignKeyList.size() >= 4);
@@ -88,7 +88,7 @@ public class ForeignKeyTest {
 
     //@Test
     public void getJoinedForeignKeys() {
-        Table genox = Table.GENOTYPE_EXPERIMENT;
+        Table genox = Table.FISH_EXPERIMENT;
         List<ForeignKey> foreignKeyList = ForeignKey.getJoinedForeignKeys("phenos_phenox_pk_id", genox.getTableName());
         assertNotNull(foreignKeyList);
         assertTrue(foreignKeyList.size() >= 4);

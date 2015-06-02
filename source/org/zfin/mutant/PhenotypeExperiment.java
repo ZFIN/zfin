@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class PhenotypeExperiment {
     private long id;
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private DevelopmentStage startStage;
     private DevelopmentStage endStage;
     private Figure figure;
@@ -30,12 +30,12 @@ public class PhenotypeExperiment {
         this.id = id;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public DevelopmentStage getStartStage() {

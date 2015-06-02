@@ -6,7 +6,7 @@ import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
@@ -20,12 +20,12 @@ import java.util.*;
  */
 public class SequenceTargetingReagentStatistics extends EntityStatistics {
 
-    private GenotypeExperiment genoExperiment;
+    private FishExperiment genoExperiment;
     private GenericTerm anatomyItem;
     private Set<Figure> figures;
     private String targetGeneOrder;
 
-    public SequenceTargetingReagentStatistics(GenotypeExperiment genoExperiment, GenericTerm anatomyItem) {
+    public SequenceTargetingReagentStatistics(FishExperiment genoExperiment, GenericTerm anatomyItem) {
         this.anatomyItem = anatomyItem;
         this.genoExperiment = genoExperiment;
         targetGeneOrder = "";
@@ -40,7 +40,7 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
         }
     }
 
-    public GenotypeExperiment getGenoExperiment() {
+    public FishExperiment getGenoExperiment() {
         return genoExperiment;
     }
 

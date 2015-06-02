@@ -6,7 +6,7 @@ import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
@@ -104,8 +104,8 @@ public class MergeMarkerUnitTest {
         a1.setZdbID("antibodyZdbID");
         Publication publication = new Publication();
         publication.setZdbID("pubZdbID");
-        GenotypeExperiment genotypeExperiment = new GenotypeExperiment();
-        genotypeExperiment.setZdbID("genotypeExperimentZdbID");
+        FishExperiment fishExperiment = new FishExperiment();
+        fishExperiment.setZdbID("genotypeExperimentZdbID");
         ExpressionAssay expressionAssay = new ExpressionAssay() ;
         expressionAssay.setName("dogz");
         Clone probe = new Clone() ;
@@ -122,7 +122,7 @@ public class MergeMarkerUnitTest {
 
         ExpressionExperiment e1 = new ExpressionExperiment();
         e1.setPublication(publication);
-        e1.setGenotypeExperiment(genotypeExperiment);
+        e1.setFishExperiment(fishExperiment);
         e1.setAssay(expressionAssay);
         e1.setProbe(probe);
         e1.setGene(gene);
@@ -131,7 +131,7 @@ public class MergeMarkerUnitTest {
 
         ExpressionExperiment e2 = new ExpressionExperiment();
         e2.setPublication(publication);
-        e2.setGenotypeExperiment(genotypeExperiment);
+        e2.setFishExperiment(fishExperiment);
         e2.setAssay(expressionAssay);
         e2.setProbe(probe);
         e2.setGene(gene);

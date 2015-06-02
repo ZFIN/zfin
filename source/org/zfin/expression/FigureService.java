@@ -5,7 +5,7 @@ import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
@@ -27,9 +27,9 @@ public class FigureService {
     /**
      * this is the method (parameter set?) as it will be used for genotype expression display of nonstandard envs
      */
-    public static ExpressionSummaryCriteria createExpressionCriteria(GenotypeExperiment genox, Marker gene, boolean withImgsOnly) {
+    public static ExpressionSummaryCriteria createExpressionCriteria(FishExperiment genox, Marker gene, boolean withImgsOnly) {
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
-        criteria.setGenotypeExperiment(genox);
+        criteria.setFishExperiment(genox);
         criteria.setGene(gene);
         criteria.setWithImagesOnly(withImgsOnly);
         criteria.setStandardEnvironment(false);
@@ -99,7 +99,7 @@ public class FigureService {
     }
 
 
-    public static List<FigureSummaryDisplay> createExpressionFigureSummary(GenotypeExperiment genox, Marker gene, boolean withImgsOnly) {
+    public static List<FigureSummaryDisplay> createExpressionFigureSummary(FishExperiment genox, Marker gene, boolean withImgsOnly) {
         ExpressionSummaryCriteria criteria = createExpressionCriteria(genox, gene, withImgsOnly);
         return createExpressionFigureSummary(criteria);
     }

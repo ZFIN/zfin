@@ -3,7 +3,7 @@ package org.zfin.expression;
 import org.zfin.antibody.Antibody;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.Set;
@@ -18,7 +18,7 @@ public class ExpressionDetailsGenerated {
     private Figure figure;
     private Set<ExpressionResultGenerated> expressionResults;
     private ExpressionExperiment expressionExperiment;
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Marker gene;
     private Clone probe;
     private ExpressionAssay assay;
@@ -54,12 +54,12 @@ public class ExpressionDetailsGenerated {
 
     public void setExpressionExperiment(ExpressionExperiment expressionExperiment) { this.expressionExperiment = expressionExperiment; }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public Marker getGene() {

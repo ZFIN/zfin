@@ -19,7 +19,7 @@ public class PhenotypeDisplay implements Comparable<PhenotypeDisplay> {
     }
 
     public Experiment getExperiment() {
-        return phenoStatement.getPhenotypeExperiment().getGenotypeExperiment().getExperiment();
+        return phenoStatement.getPhenotypeExperiment().getFishExperiment().getExperiment();
     }
 
     public int compareTo(PhenotypeDisplay o) {

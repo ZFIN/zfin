@@ -204,7 +204,7 @@ public class SequenceTargetingReagentBean extends MarkerBean{
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
-                Experiment exp = xpResult.getExpressionExperiment().getGenotypeExperiment().getExperiment();
+                Experiment exp = xpResult.getExpressionExperiment().getFishExperiment().getExperiment();
 
                 String key = keySTR + expressedGene.getZdbID();
 

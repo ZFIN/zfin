@@ -166,8 +166,8 @@ public class FishDetailController {
 
         if (fish.getGenotypeExperimentIDs() != null && fish.getGenotypeExperimentIDs().size() == 1 && fish.getStrList().size() == 0) {
             String genotypeExperimentIDsString = fish.getGenotypeExperimentIDs().get(0);
-            GenotypeExperiment genotypeExperiment = getMutantRepository().getGenotypeExperiment(genotypeExperimentIDsString);
-            return genotypeDetailController.getAllPhenotypesForGenotype(genotypeExperiment.getGenotype().getZdbID(), model);
+            FishExperiment fishExperiment = getMutantRepository().getGenotypeExperiment(genotypeExperimentIDsString);
+            return genotypeDetailController.getAllPhenotypesForGenotype(fishExperiment.getFish().getGenotype().getZdbID(), model);
         }
 
         FishBean form = new FishBean();
@@ -189,8 +189,8 @@ public class FishDetailController {
 
         if (fish.getGenotypeExperimentIDs() != null && fish.getGenotypeExperimentIDs().size() == 1 && fish.getStrList().size() == 0) {
             String genotypeExperimentIDsString = fish.getGenotypeExperimentIDs().get(0);
-            GenotypeExperiment genotypeExperiment = getMutantRepository().getGenotypeExperiment(genotypeExperimentIDsString);
-            return genotypeDetailController.getAllExpressionsPerGenotype(genotypeExperiment.getGenotype().getZdbID(), model);
+            FishExperiment fishExperiment = getMutantRepository().getGenotypeExperiment(genotypeExperimentIDsString);
+            return genotypeDetailController.getAllExpressionsPerGenotype(fishExperiment.getFish().getGenotype().getZdbID(), model);
         }
 
         GenotypeBean form = new GenotypeBean();
@@ -220,11 +220,11 @@ public class FishDetailController {
         if (fish.getGenotypeExperimentIDs() == null) {
             return;
         }
-        List<GenotypeExperiment> genotypeExperiments = new ArrayList<GenotypeExperiment>(fish.getGenotypeExperimentIDs().size());
+        List<FishExperiment> fishExperiments = new ArrayList<>(fish.getGenotypeExperimentIDs().size());
         for (String genoID : fish.getGenotypeExperimentIDs()) {
-            genotypeExperiments.add(getMutantRepository().getGenotypeExperiment(genoID));
+            fishExperiments.add(getMutantRepository().getGenotypeExperiment(genoID));
         }
-        form.setGenotypeExperimentsList(genotypeExperiments);
+        form.setGenotypeExperimentsList(fishExperiments);
     }
 
 

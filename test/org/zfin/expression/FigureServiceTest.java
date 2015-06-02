@@ -9,7 +9,7 @@ import org.zfin.figure.service.FigureViewService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -56,7 +56,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
     @Test
     public void genotypeExpressionFigureSummaryDisplayTest() {
         Figure figure = publicationRepository.getFigure("ZDB-FIG-041108-3");
-        GenotypeExperiment genox = mutantRepository.getGenotypeExperiment("ZDB-GENOX-050228-2");
+        FishExperiment genox = mutantRepository.getGenotypeExperiment("ZDB-GENOX-050228-2");
         Marker pax2a = markerRepository.getMarkerByID("ZDB-GENE-990415-8");
 
         PostComposedEntity oticPlacodeEntity = new PostComposedEntity();
@@ -114,7 +114,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
     @Test
     public void specificGenoxGenotypeExpressionFigureSummaryTest() {
 
-        GenotypeExperiment genox = mutantRepository.getGenotypeExperiment("ZDB-GENOX-050228-2");
+        FishExperiment genox = mutantRepository.getGenotypeExperiment("ZDB-GENOX-050228-2");
         Marker gene = markerRepository.getMarkerByID("ZDB-GENE-990415-8");
 
         Figure figure = publicationRepository.getFigure("ZDB-FIG-041108-3");

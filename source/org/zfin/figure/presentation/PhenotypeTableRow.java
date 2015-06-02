@@ -1,24 +1,15 @@
 package org.zfin.figure.presentation;
 
 
-import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.fish.FishAnnotation;
 import org.zfin.mutant.*;
-import org.zfin.mutant.repository.PhenotypeRepository;
-
-import java.util.Date;
-import java.util.Set;
-
 
 
 /* Should be: Genotype, Experiment, Start Stage, End Stage, PhenotypeStatement  */
 public class PhenotypeTableRow{
 
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Genotype genotype;
     private Experiment experiment;
     private DevelopmentStage start;
@@ -31,9 +22,9 @@ public class PhenotypeTableRow{
     }
 
     public PhenotypeTableRow(PhenotypeStatement phenotypeStatement) {
-        setGenotypeExperiment(phenotypeStatement.getPhenotypeExperiment().getGenotypeExperiment());
-        setGenotype(phenotypeStatement.getPhenotypeExperiment().getGenotypeExperiment().getGenotype());
-        setExperiment(phenotypeStatement.getPhenotypeExperiment().getGenotypeExperiment().getExperiment());
+        setFishExperiment(phenotypeStatement.getPhenotypeExperiment().getFishExperiment());
+        setGenotype(phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getFish().getGenotype());
+        setExperiment(phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getExperiment());
         setStart(phenotypeStatement.getPhenotypeExperiment().getStartStage());
         setEnd(phenotypeStatement.getPhenotypeExperiment().getEndStage());
         setPhenotypeStatement(phenotypeStatement);
@@ -43,17 +34,17 @@ public class PhenotypeTableRow{
             //todo: needs to be zero-padded
             setFishNameOrder(fish.getName());
         } else {*/
-            setFishNameOrder(genotypeExperiment.getGenotype().getNameOrder());
+            setFishNameOrder(fishExperiment.getFish().getGenotype().getNameOrder());
 /*        }*/
 
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public Genotype getGenotype() {

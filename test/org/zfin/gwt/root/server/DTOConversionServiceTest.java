@@ -42,12 +42,12 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         start.setZdbID(startID);
         StageDTO end = new StageDTO();
         end.setZdbID(endID);
-        GenotypeDTO geno = new GenotypeDTO();
-        geno.setZdbID(genotypeID);
+        FishDTO fishDTO = new FishDTO();
+        fishDTO.setZdbID(genotypeID);
         FigureDTO fig = new FigureDTO();
         fig.setZdbID(figureID);
         PhenotypeExperimentDTO pfs = new PhenotypeExperimentDTO();
-        pfs.setGenotype(geno);
+        pfs.setFish(fishDTO);
         pfs.setStart(start);
         pfs.setEnd(end);
         pfs.setFigure(fig);

@@ -8,15 +8,15 @@ import org.zfin.gwt.root.util.NumberAwareStringComparatorDTO;
  */
 public class PhenotypeExperimentDTO extends AbstractFigureStageDTO<PhenotypeStatementDTO> implements Comparable<PhenotypeExperimentDTO>{
 
-    private GenotypeDTO genotype;
+    private FishDTO fish;
     private EnvironmentDTO environment;
 
-    public GenotypeDTO getGenotype() {
-        return genotype;
+    public FishDTO getFish() {
+        return fish;
     }
 
-    public void setGenotype(GenotypeDTO genotype) {
-        this.genotype = genotype;
+    public void setFish(FishDTO fish) {
+        this.fish = fish;
     }
 
     public EnvironmentDTO getEnvironment() {
@@ -42,8 +42,8 @@ public class PhenotypeExperimentDTO extends AbstractFigureStageDTO<PhenotypeStat
                 return comparator.compare(figure.getLabel(),efs.getFigure().getLabel());
             }
         }
-        if (!genotype.equals(efs.getGenotype()))
-            return genotype.compareTo(efs.getGenotype());
+        if (!fish.equals(efs.getFish()))
+            return fish.compareTo(efs.getFish());
         if (!environment.equals(efs.getEnvironment()))
             return environment.compareTo(efs.getEnvironment());
         if (!start.getName().equals(efs.getStart().getName()))

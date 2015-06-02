@@ -2,12 +2,10 @@ package org.zfin.mutant;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.fish.repository.FishService;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.presentation.FishModelDisplay;
@@ -39,21 +37,21 @@ public class PhenotypeService {
      * Return a map of phenotype descriptions, comma-delimited, and grouped by ontology for a given
      * anatomy structure.
      *
-     * @param genotypeExperiment Genotype Experiment
+     * @param fishExperiment Genotype Experiment
      * @param anatomyItem        Anatomy Term
      * @return HashMap
      */
-    public static Map<String, Set<String>> getPhenotypesGroupedByOntology(GenotypeExperiment genotypeExperiment, GenericTerm anatomyItem) {
-        if (genotypeExperiment == null)
+    public static Map<String, Set<String>> getPhenotypesGroupedByOntology(FishExperiment fishExperiment, GenericTerm anatomyItem) {
+        if (fishExperiment == null)
             return null;
         if (anatomyItem == null)
             return null;
-        if (genotypeExperiment.getPhenotypeExperiments() == null)
+        if (fishExperiment.getPhenotypeExperiments() == null)
             return null;
 
         Map<String, Set<String>> map = new TreeMap<String, Set<String>>(new PhenotypeComparator());
 
-        for (PhenotypeExperiment phenotype : genotypeExperiment.getPhenotypeExperiments()) {
+        for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
             for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
                 GenericTerm subTerm = phenoStatement.getEntity().getSubterm();
                 if (StringUtils.equals(phenoStatement.getEntity().getSuperterm().getZdbID(), anatomyItem.getZdbID()) ||
@@ -105,7 +103,7 @@ public class PhenotypeService {
      * @param genoExperiment Genotype Experiment
      * @return list of phenotype statements
      */
-    public static Set<PhenotypeStatement> getPhenotypeStatements(GenotypeExperiment genoExperiment) {
+    public static Set<PhenotypeStatement> getPhenotypeStatements(FishExperiment genoExperiment) {
         return getPhenotypeStatements(genoExperiment, null);
     }
 
@@ -117,7 +115,7 @@ public class PhenotypeService {
      * @param term           Term
      * @return list of phenotype statements
      */
-    public static Set<PhenotypeStatement> getPhenotypeStatements(GenotypeExperiment genoExperiment, GenericTerm term) {
+    public static Set<PhenotypeStatement> getPhenotypeStatements(FishExperiment genoExperiment, GenericTerm term) {
         if (genoExperiment == null)
             return null;
 
@@ -387,7 +385,7 @@ public class PhenotypeService {
                 Figure fig = pheno.getPhenotypeExperiment().getFigure();
                 Publication pub = fig.getPublication();
 
-                Experiment exp = pheno.getPhenotypeExperiment().getGenotypeExperiment().getExperiment();
+                Experiment exp = pheno.getPhenotypeExperiment().getFishExperiment().getExperiment();
 
                 String key;
                 String keyPheno = pheno.getPhenoStatementString();
@@ -399,7 +397,7 @@ public class PhenotypeService {
                     else
                         key = keyPheno + exp.getZdbID();
                 } else {
-                    key = keyPheno + pheno.getPhenotypeExperiment().getGenotypeExperiment().getGenotype().getZdbID();
+                    key = keyPheno + pheno.getPhenotypeExperiment().getFishExperiment().getFish().getZdbID();
                 }
 
                 PhenotypeDisplay phenoDisplay;

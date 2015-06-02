@@ -4,7 +4,7 @@ import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.presentation.MartFish;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 public class ConstructExpressionSummaryCriteria {
 
     private MartFish fish;
-    private List<GenotypeExperiment> genotypeExperiments;
+    private List<FishExperiment> fishExperiments;
     private FishSearchCriteria criteria;
     private Genotype genotype;
 
@@ -25,12 +25,12 @@ public class ConstructExpressionSummaryCriteria {
         this.fish = fish;
     }
 
-    public List<GenotypeExperiment> getGenotypeExperiments() {
-        return genotypeExperiments;
+    public List<FishExperiment> getGenotypeExperiments() {
+        return fishExperiments;
     }
 
-    public void setGenotypeExperiments(List<GenotypeExperiment> genotypeExperiments) {
-        this.genotypeExperiments = genotypeExperiments;
+    public void setGenotypeExperiments(List<FishExperiment> fishExperiments) {
+        this.fishExperiments = fishExperiments;
     }
 
     public FishSearchCriteria getCriteria() {

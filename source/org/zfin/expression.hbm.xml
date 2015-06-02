@@ -145,7 +145,7 @@
         </id>
         <many-to-one name="assay" column="xedg_assay_name" class="org.zfin.expression.ExpressionAssay"/>
         <many-to-one name="expressionExperiment" column="xedg_zdb_id" class="org.zfin.expression.ExpressionExperiment"/>
-        <many-to-one name="genotypeExperiment" column="xedg_genox_zdb_id" class="org.zfin.mutant.GenotypeExperiment"/>
+        <many-to-one name="fishExperiment" column="xedg_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
 
         <many-to-one name="gene" class="org.zfin.marker.Marker" column="xedg_gene_zdb_id"/>
         <many-to-one name="figure" class="org.zfin.expression.Figure" column="xedg_fig_zdb_id"/>
@@ -194,7 +194,7 @@
 
         <many-to-one name="publication" class="org.zfin.publication.Publication" column="xpatex_source_zdb_id"/>
         <many-to-one name="assay" column="xpatex_assay_name" class="org.zfin.expression.ExpressionAssay"/>
-        <many-to-one name="genotypeExperiment" column="xpatex_genox_zdb_id" class="org.zfin.mutant.GenotypeExperiment"/>
+        <many-to-one name="fishExperiment" column="xpatex_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
 
         <many-to-one name="gene" class="org.zfin.marker.Marker" column="xpatex_gene_zdb_id"/>
         <many-to-one name="probe" class="org.zfin.marker.Clone" column="xpatex_probe_feature_zdb_id"/>
@@ -330,8 +330,8 @@
              org.zfin.expression.ExpressionExperiment xpatex
         where xpatex.gene.zdbID = :geneZdbID
           and xpatres member of xpatex.expressionResults
-          and xpatex.genotypeExperiment.standardOrGenericControl = 't'
-          and xpatex.genotypeExperiment.genotype.wildtype = true
+          and xpatex.fishExperiment.standardOrGenericControl = 't'
+          and xpatex.fishExperiment.fish.genotype.wildtype = true
           and xpatres.entity.superterm.termName <> :unspecified
           and xpatres.startStage.name <> :unknown
           and stage.hoursStart >= xpatres.startStage.hoursStart

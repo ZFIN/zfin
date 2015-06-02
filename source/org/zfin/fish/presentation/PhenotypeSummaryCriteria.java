@@ -8,7 +8,7 @@ import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.ConstructSearchCriteria;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.presentation.Construct;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
@@ -20,7 +20,7 @@ import java.util.List;
 public class PhenotypeSummaryCriteria {
 
     private Marker gene;
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
 
     private Antibody antibody;
     private PostComposedEntity entity;
@@ -39,7 +39,7 @@ public class PhenotypeSummaryCriteria {
         PhenotypeSummaryCriteria criteria = new PhenotypeSummaryCriteria();
 
         criteria.setGene(gene);
-        criteria.setGenotypeExperiment(genotypeExperiment);
+        criteria.setFishExperiment(fishExperiment);
         criteria.setGenotype(genotype);
 
         criteria.setEntity(entity);
@@ -63,12 +63,12 @@ public class PhenotypeSummaryCriteria {
         this.gene = gene;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
 
@@ -161,7 +161,7 @@ public class PhenotypeSummaryCriteria {
 
     private MartFish fish;
     private Construct construct;
-    private List<GenotypeExperiment> genotypeExperiments;
+    private List<FishExperiment> fishExperiments;
     private FishSearchCriteria criteria;
     private ConstructSearchCriteria constructCriteria;
     private Genotype genotype;
@@ -183,12 +183,12 @@ public class PhenotypeSummaryCriteria {
         this.fish = fish;
     }
 
-    public List<GenotypeExperiment> getGenotypeExperiments() {
-        return genotypeExperiments;
+    public List<FishExperiment> getFishExperiments() {
+        return fishExperiments;
     }
 
-    public void setGenotypeExperiments(List<GenotypeExperiment> genotypeExperiments) {
-        this.genotypeExperiments = genotypeExperiments;
+    public void setFishExperiments(List<FishExperiment> fishExperiments) {
+        this.fishExperiments = fishExperiments;
     }
 
     public FishSearchCriteria getCriteria() {

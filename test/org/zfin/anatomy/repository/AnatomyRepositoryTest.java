@@ -6,7 +6,7 @@ import org.zfin.anatomy.*;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.*;
 
 import java.util.List;
@@ -59,8 +59,8 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void compareWildTypeSelectionToFullForMorphs() {
         GenericTerm item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
-        PaginationResult<GenotypeExperiment> genotypeWildtype = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true, null);
-        PaginationResult<GenotypeExperiment> genotypeNonWildtype = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, false, null);
+        PaginationResult<FishExperiment> genotypeWildtype = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true, null);
+        PaginationResult<FishExperiment> genotypeNonWildtype = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, false, null);
 
         assertNotNull(genotypeWildtype.getPopulatedResults());
         assertNotNull(genotypeNonWildtype.getPopulatedResults());
@@ -73,11 +73,11 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
     public void getWildtypeMorpholinos() {
         // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
         GenericTerm item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
-        PaginationResult<GenotypeExperiment> genos = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true, null);
+        PaginationResult<FishExperiment> genos = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true, null);
         assertNotNull(genos.getPopulatedResults());
         assertTrue(genos.getPopulatedResults().size() > 1);
 
-        List<GenotypeExperiment> genotypeList = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true);
+        List<FishExperiment> genotypeList = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true);
         assertNotNull(genotypeList);
         assertTrue(genotypeList.size() > 1);
 

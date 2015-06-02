@@ -101,7 +101,7 @@ public class Antibody extends Marker {
      */
     private boolean canMergeAntibodyLabel(ExpressionExperiment eea,ExpressionExperiment eeb){
         if(!eea.getPublication().equals(eeb.getPublication())) return true ;
-        if(!eea.getGenotypeExperiment().equals(eeb.getGenotypeExperiment())) return true ;
+        if(!eea.getFishExperiment().equals(eeb.getFishExperiment())) return true ;
         if(!eea.getAssay().equals(eeb.getAssay())) return true ;
 
         if( eea.getProbe()==null && eeb.getProbe()!=null ) return true ;

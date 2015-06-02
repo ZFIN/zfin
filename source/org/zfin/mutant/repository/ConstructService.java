@@ -288,8 +288,8 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
         results.addAll(criteria.list());
         Experiment experiment = null;
         for (ExpressionResult result : results) {
-            if (!result.getExpressionExperiment().getGenotypeExperiment().getExperiment().isChemical())
-            experiment = result.getExpressionExperiment().getGenotypeExperiment().getExperiment();
+            if (!result.getExpressionExperiment().getFishExperiment().getExperiment().isChemical())
+            experiment = result.getExpressionExperiment().getFishExperiment().getExperiment();
         }
 
         return experiment;

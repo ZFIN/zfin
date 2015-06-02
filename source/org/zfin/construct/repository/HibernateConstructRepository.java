@@ -119,9 +119,10 @@ public class HibernateConstructRepository implements ConstructRepository {
 
 
             String sqlResults = "select distinct geno_zdb_id " +
-                    "from figure_term_construct_search ftcs, construct_search cs, genotype,genotype_experiment " +
+                    "from figure_term_construct_search ftcs, construct_search cs, genotype,fish_experiment,fish " +
                     "where ftcs.ftcs_cs_id =cs.cons_pk_id and " +
-                    "genox_geno_zdb_id=geno_zdb_id and " +
+                    "genox_fish_zdb_id=fish_zdb_id and " +
+                    "fish_genotype_zdb_id=geno_zdb_id and " +
                     "geno_is_wildtype='f' and " +
                     "genox_zdb_id=ftcs_genox_zdb_id and " +
                     "cons_construct_zdb_id=:constructId and "  +

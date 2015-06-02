@@ -299,7 +299,7 @@ public class OntologyTermDetailController {
         }
 
         // check for STRs
-        List<GenotypeExperiment> strPhenotypes =
+        List<FishExperiment> strPhenotypes =
                 getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(term, null);
         if (strPhenotypes != null && strPhenotypes.size() > 0) {
             return true;

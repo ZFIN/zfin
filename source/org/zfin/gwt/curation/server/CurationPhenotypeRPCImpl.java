@@ -11,13 +11,11 @@ import org.zfin.gwt.curation.ui.CurationPhenotypeRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
-import org.zfin.mutant.GenotypeExperiment;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStructure;
-import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.LoggingUtil;
 
 import java.util.*;
@@ -31,22 +29,20 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
 
     private static final Logger logger = Logger.getLogger(CurationPhenotypeRPCImpl.class);
 
-    private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-
     public List<PhenotypeExperimentDTO> getExpressionsByFilter(ExperimentDTO experimentFilter, String figureID) {
 
         List<PhenotypeExperiment> phenotypes = getPhenotypeRepository().getMutantExpressionsByFigureFish(experimentFilter.getPublicationID(),
                 figureID, experimentFilter.getFishID(), experimentFilter.getFeatureID());
         if (phenotypes == null)
             return null;
-        List<PhenotypeExperimentDTO> dtos = new ArrayList<PhenotypeExperimentDTO>(30);
+        List<PhenotypeExperimentDTO> dtos = new ArrayList<>(30);
         for (PhenotypeExperiment phenotypeExperiment : phenotypes) {
             PhenotypeExperimentDTO dto = new PhenotypeExperimentDTO();
             dto.setId(phenotypeExperiment.getId());
             dto.setFigure(DTOConversionService.convertToFigureDTO(phenotypeExperiment.getFigure()));
             dto.setStart(DTOConversionService.convertToStageDTO(phenotypeExperiment.getStartStage()));
             dto.setEnd((DTOConversionService.convertToStageDTO(phenotypeExperiment.getEndStage())));
-            List<PhenotypeStatementDTO> termStrings = new ArrayList<PhenotypeStatementDTO>(5);
+            List<PhenotypeStatementDTO> termStrings = new ArrayList<>(5);
             for (PhenotypeStatement phenotype : phenotypeExperiment.getPhenotypeStatements()) {
                 PhenotypeStatementDTO termDto = new PhenotypeStatementDTO();
                 termDto.setEntity(DTOConversionService.convertToEntityDTO(phenotype.getEntity()));
@@ -60,9 +56,9 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             //dto.setExpressedIn(formatter.getFormattedString());
             Collections.sort(termStrings);
             dto.setExpressedTerms(termStrings);
-            GenotypeDTO genotype = DTOConversionService.convertToGenotypeDTO(phenotypeExperiment.getGenotypeExperiment().getGenotype());
-            dto.setGenotype(genotype);
-            dto.setEnvironment(DTOConversionService.convertToEnvironmentDTO(phenotypeExperiment.getGenotypeExperiment().getExperiment()));
+            FishDTO fishDTO = DTOConversionService.convertToFishDtoFromFish(phenotypeExperiment.getFishExperiment().getFish());
+            dto.setFish(fishDTO);
+            dto.setEnvironment(DTOConversionService.convertToEnvironmentDTO(phenotypeExperiment.getFishExperiment().getExperiment()));
             dto.setPublicationID(experimentFilter.getPublicationID());
             dtos.add(dto);
         }
@@ -76,7 +72,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
 
         Session session = HibernateUtil.currentSession();
         Transaction tx = null;
-        List<PhenotypeExperimentDTO> returnRecords = new ArrayList<PhenotypeExperimentDTO>(newFigureAnnotations.size());
+        List<PhenotypeExperimentDTO> returnRecords = new ArrayList<>(newFigureAnnotations.size());
         try {
             tx = session.beginTransaction();
             for (PhenotypeExperimentDTO pfs : newFigureAnnotations) {
@@ -86,6 +82,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             tx.commit();
         } catch (HibernateException e) {
             logger.error("failed to create mutant figure stages",e);
+            if(tx != null)
             tx.rollback();
         }
         return returnRecords;
@@ -102,14 +99,14 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         PhenotypeExperiment phenoExperiment = DTOConversionService.convertToPhenotypeExperimentFilter(mutantFigureStage);
         // check if there is a genotypes experiment already.
         // if not create a new one.
-        GenotypeExperiment genotypeExperiment = getExpressionRepository().getGenotypeExperimentByExperimentIDAndGenotype(
-                mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getGenotype().getZdbID());
+        FishExperiment fishExperiment = getExpressionRepository().getFishExperimentByExperimentIDAndGenotype(
+                mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getFish().getZdbID());
         // create a new genotype experiment if needed
-        if (genotypeExperiment == null) {
-            genotypeExperiment =
-                    getExpressionRepository().createGenoteypExperiment(mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getGenotype().getZdbID());
+        if (fishExperiment == null) {
+            fishExperiment =
+                    getExpressionRepository().createGenoteypExperiment(mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getFish().getZdbID());
         }
-        phenoExperiment.setGenotypeExperiment(genotypeExperiment);
+        phenoExperiment.setFishExperiment(fishExperiment);
         getPhenotypeRepository().createPhenotypeExperiment(phenoExperiment);
         return phenoExperiment;
     }
@@ -145,8 +142,8 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             return null;
 
         // Collect all phenotype experiments being used
-        Set<PhenotypeExperiment> phenotypeExperiments = new HashSet<PhenotypeExperiment>();
-        List<PhenotypeExperimentDTO> updatedAnnotations = new ArrayList<PhenotypeExperimentDTO>(5);
+        Set<PhenotypeExperiment> phenotypeExperiments = new HashSet<>();
+        List<PhenotypeExperimentDTO> updatedAnnotations = new ArrayList<>(5);
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
             // for each figure annotation check which structures need to be added or removed

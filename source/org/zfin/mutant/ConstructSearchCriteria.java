@@ -5,14 +5,12 @@ import org.zfin.antibody.Antibody;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.presentation.ConstructSearchFormBean;
-import org.zfin.fish.presentation.SortBy;
 import org.zfin.framework.search.AbstractSearchCriteria;
 import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.framework.search.SortType;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +80,7 @@ public class ConstructSearchCriteria extends AbstractSearchCriteria {
 
 
 
-    private GenotypeExperiment genotypeExperiment;
+    private FishExperiment fishExperiment;
     private Genotype genotype;
     private List<Genotype> genos;
     private Antibody antibody;
@@ -113,7 +111,7 @@ public class ConstructSearchCriteria extends AbstractSearchCriteria {
 
        // criteria.setGene(gene);
       //  criteria.setGene(RepositoryFactory.getMarkerRepository().getMarkerByAbbreviationIgnoreCase(expressedGeneCriteria.getValue()));
-        criteria.setGenotypeExperiment(genotypeExperiment);
+        criteria.setGenotypeExperiment(fishExperiment);
         criteria.setGenotype(genotype);
         criteria.setAntibody(antibody);
         criteria.setEntity(entity);
@@ -136,12 +134,12 @@ public class ConstructSearchCriteria extends AbstractSearchCriteria {
         this.gene = gene;
     }
 
-    public GenotypeExperiment getGenotypeExperiment() {
-        return genotypeExperiment;
+    public FishExperiment getGenotypeExperiment() {
+        return fishExperiment;
     }
 
-    public void setGenotypeExperiment(GenotypeExperiment genotypeExperiment) {
-        this.genotypeExperiment = genotypeExperiment;
+    public void setGenotypeExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 
     public Genotype getGenotype() {

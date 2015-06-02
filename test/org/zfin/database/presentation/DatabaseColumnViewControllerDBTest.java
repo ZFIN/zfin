@@ -20,7 +20,7 @@ public class DatabaseColumnViewControllerDBTest extends AbstractDatabaseTest {
     public void createFKResultList() {
         DatabaseColumnViewController controller = new DatabaseColumnViewController();
 /*
-        List<ForeignKeyResult> resultList = controller.createFKResultList(Table.GENOTYPE_EXPERIMENT, "ZDB-GENOX-090731-5");
+        List<ForeignKeyResult> resultList = controller.createFKResultList(Table.FISH_EXPERIMENT, "ZDB-GENOX-090731-5");
         assertNotNull(resultList);
 
         List<ForeignKeyResultFlattened> flattenedList = controller.getFlattenedView(resultList);

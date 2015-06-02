@@ -4,11 +4,15 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
 import org.zfin.gwt.root.dto.OntologyDTO;
+import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.ontology.AbstractOntologyTest;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
+
+import java.util.List;
 
 import static org.hibernate.validator.util.Contracts.assertNotNull;
 import static org.springframework.ws.test.support.AssertionErrors.assertTrue;
@@ -17,7 +21,7 @@ import static org.springframework.ws.test.support.AssertionErrors.assertTrue;
 /**
  *
  */
-public class LookupRPCServiceImplTest {
+public class LookupRPCServiceImplTest extends AbstractDatabaseTest {
 
     private String oldIoTempDir;
 
@@ -55,6 +59,13 @@ public class LookupRPCServiceImplTest {
         SuggestOracle.Response response = service.getTermCompletionWithData(request, OntologyDTO.AOGO, false);
         assertNotNull(response);
         assertTrue("Check that there are more than 3 auto-completed values for liver*", response.getSuggestions().size() > 3);
+    }
+
+    @Test
+    public void getAttributionsPerPub() {
+        LookupRPCService service = new LookupRPCServiceImpl();
+        List<RelatedEntityDTO> response = service.getAttributionsForPub("ZDB-PUB-140101-37");
+        assertNotNull(response);
     }
 }
 
