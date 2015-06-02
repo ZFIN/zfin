@@ -51,20 +51,21 @@ create procedure regen_genox_process()
 -- and has MO(s) which target ONLY this gene
 insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
   select distinct rggz_zdb_id, genox_zdb_id
-    from marker_relationship, fish_str, experiment, fish_experiment, genotype, regen_genox_input_zdb_id_temp
+    from marker_relationship, fish_str, experiment, fish_experiment, genotype, regen_genox_input_zdb_id_temp, fish
    where mrel_mrkr_2_zdb_id = rggz_zdb_id
      and rggz_zdb_id [1,8] = "ZDB-GENE"
      and mrel_type = 'knockdown reagent targets gene'
      and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
-     and genox_fish_zdb_id = fishstr_fish_zdb_id
-     and not exists(select NotThisMO.expcond_mrkr_zdb_id
+     and not exists(select NotThisMO.fishstr_str_zdb_id
                       from marker_relationship NotThisMrkr, fish_str NotThisMO
                      where NotThisMO.fishstr_str_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
                        and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id) 
      and exp_name not like '\_%'
      and genox_exp_zdb_id = exp_zdb_id
-     and genox_geno_zdb_id = geno_zdb_id
+     and genox_fish_zdb_id = fish_zdb_id
+     and fish_zdb_id = fishstr_fish_zdb_id
+     and fish_genotype_zdb_id = geno_zdb_id
      and geno_is_wildtype = 't'
      and exists (select phenox_genox_zdb_id
                    from phenotype_experiment, phenotype_statement 
@@ -81,21 +82,22 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
      and rggz_zdb_id [1,8] = "ZDB-GENE"
      and fmrel_type = "is allele of"
      and not exists (select OtherMrkr.fmrel_ftr_zdb_id
-                       from feature_marker_relationship OtherMrkr, genotype_feature OtherFeature
-                      where genox_geno_zdb_id = OtherFeature.genofeat_geno_zdb_id
+                       from feature_marker_relationship OtherMrkr, genotype_feature OtherFeature, fish as fish2
+                      where genox_fish_zdb_id = fish2.fish_Zdb_id
+		      and fish2.fish_genotype_zdb_id = OtherFeature.genofeat_geno_zdb_id
                         and OtherFeature.genofeat_feature_zdb_id = OtherMrkr.fmrel_ftr_zdb_id
                         and OtherMrkr.fmrel_type = 'is allele of'
                         and OtherMrkr.fmrel_mrkr_zdb_id != rggz_zdb_id)  
      and not exists (select 'x'
-                       from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish3
+                       from feature_marker_relationship Phenotypic, genotype_feature AnotherFeature, fish as fish3
                       where genox_fish_zdb_id = fish3.fish_zdb_id
-		        and fish_gentoype_zdb_id = AnotherFeature.genofeat_geno_zdb_id
+		        and fish_genotype_zdb_id = AnotherFeature.genofeat_geno_zdb_id
                         and AnotherFeature.genofeat_feature_zdb_id = Phenotypic.fmrel_ftr_zdb_id
                         and Phenotypic.fmrel_type = 'contains phenotypic sequence feature') 
      and not exists (select 'x'
-                       from genotype_feature OtherPhenotypicFeature, feature, fish fish2
-                      where genox_fish_zdb_id = fish2.fish_zdb_id
-		        and fish_gentoype_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
+                       from genotype_feature OtherPhenotypicFeature, feature, fish as fish4
+                      where genox_fish_zdb_id = fish4.fish_zdb_id
+		        and fish4.fish_genotype_zdb_id = OtherPhenotypicFeature.genofeat_geno_zdb_id
                         and OtherPhenotypicFeature.genofeat_feature_zdb_id = feature_zdb_id
                         and feature_type in ('DEFICIENCY','TRANSLOC','COMPLEX_SUBSTITUTION','INVERSION')) 
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
