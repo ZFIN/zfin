@@ -57,6 +57,8 @@ TRIGGERS = \
 	genofeat_update_trigger.sql \
 	geno_display_name_update_trigger.sql \
 	geno_handle_update_trigger.sql \
+	genox_exp_update_trigger.sql \
+	genox_exp_insert_trigger.sql \
 	image_stage_insert_trigger.sql \
 	image_stage_update_trigger.sql \
 	int_person_pub_insert_trigger.sql \
