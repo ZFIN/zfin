@@ -1,4 +1,4 @@
-----------------------------------------------------------------
+b----------------------------------------------------------------
 -- This function populates feature_stats table
 -- Need to store the xpates_zdb_id in the table as well in order to be able
 -- to remove specific records. It could be that two xpatres_zdb_id records refer to
