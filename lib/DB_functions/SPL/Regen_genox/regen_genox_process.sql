@@ -204,10 +204,11 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                       from marker_relationship NotThisMrkr, fish_str NotThisMO
                      where NotThisMO.fishstr_str_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
-                       and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id)                 
+                       and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id
+		       and NotThisMo.fishstr_fish_zdb_id = fish_zdb_id)                 
      and expcond_exp_zdb_id = genox_exp_zdb_id 
      and fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
-     and fish_zdb_id =fishstr_fish_zdb_id
+     and fish_zdb_id = fishstr_fish_zdb_id
      and fish_genotype_zdb_id = genofeat_geno_zdb_id
      and genox_fish_zdb_id = fish_zdb_id
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
