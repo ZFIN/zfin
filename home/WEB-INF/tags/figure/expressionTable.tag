@@ -31,7 +31,7 @@
                     <td>
                         <zfin:groupByDisplay loopName="loop" groupBeanCollection="${expressionTableRows}"
                                              groupByBean="geneGenoxZdbIDs">
-                            <zfin:link entity="${row.genotypeExperiment}"/>
+                            <zfin:link entity="${row.fishExperiment}"/>
                         </zfin:groupByDisplay>
                     </td>
                     <td>

@@ -28,7 +28,7 @@
                 <td>
                     <zfin:groupByDisplay loopName="loop" groupBeanCollection="${antibodyTableRows}"
                                          groupByBean="antibodyGenoxZdbIDs">
-                        <zfin:link entity="${row.genotypeExperiment}"/>
+                        <zfin:link entity="${row.fishExperiment}"/>
                     </zfin:groupByDisplay>
                 </td>
                 <td>

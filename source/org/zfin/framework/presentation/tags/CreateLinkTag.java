@@ -29,7 +29,7 @@ import org.zfin.mutant.DiseaseModel;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.presentation.GenotypeExperimentPresentation;
+import org.zfin.mutant.presentation.FishExperimentPresentation;
 import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.mutant.repository.FeaturePresentationBean;
@@ -147,7 +147,7 @@ public class CreateLinkTag extends BodyTagSupport {
         else if (o instanceof Experiment)
             link = ExperimentPresentation.getLink((Experiment) o, suppressPopupLink, suppressMoDetails);
         else if (o instanceof FishExperiment)
-            link = GenotypeExperimentPresentation.getLink((FishExperiment) o, suppressPopupLink, suppressMoDetails);
+            link = FishExperimentPresentation.getLink((FishExperiment) o, suppressPopupLink, suppressMoDetails);
         else if (o instanceof ExperimentCondition)
             link = ExperimentConditionPresentation.getLink((ExperimentCondition) o, suppressPopupLink);
         else if (o instanceof DevelopmentStage)

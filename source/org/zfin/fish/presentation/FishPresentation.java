@@ -26,6 +26,12 @@ public class FishPresentation extends EntityPresentation {
         }
     }
 
+
+    //todo: this is probably going to need a popup link...
+    public static String getLink(Fish fish, Boolean suppressPopupLink) {
+        return getViewLink(fish.getZdbID(), fish.getName(), fish.getName(),null);
+    }
+
     /**
      * Generate the name of the link
      *

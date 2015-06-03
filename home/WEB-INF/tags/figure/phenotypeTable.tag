@@ -15,12 +15,12 @@
             <c:forEach var="row" items="${phenotypeTableRows}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop"
                                      groupBeanCollection="${phenotypeTableRows}"
-                                     groupByBean="genotypeExperiment" newGroup="true">
+                                     groupByBean="fishExperiment" newGroup="true">
 
                     <td>
                         <zfin:groupByDisplay loopName="loop" groupBeanCollection="${phenotypeTableRows}"
-                                             groupByBean="genotypeExperiment">
-                            <zfin:link entity="${row.genotypeExperiment}"/>
+                                             groupByBean="fishExperiment">
+                            <zfin:link entity="${row.fishExperiment}"/>
                         </zfin:groupByDisplay>
                     </td>
                     <td>

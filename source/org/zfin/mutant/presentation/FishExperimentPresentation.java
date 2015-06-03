@@ -2,6 +2,7 @@ package org.zfin.mutant.presentation;
 
 import org.apache.log4j.Logger;
 import org.zfin.expression.presentation.ExperimentPresentation;
+import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.mutant.FishExperiment;
 
@@ -15,15 +16,14 @@ import org.zfin.mutant.FishExperiment;
  * <zfin:link entity="${row.experiment}"/>
  *
  */
-public class GenotypeExperimentPresentation extends EntityPresentation {
+public class FishExperimentPresentation extends EntityPresentation {
 
-    private static Logger logger = Logger.getLogger(GenotypeExperimentPresentation.class);
+    private static Logger logger = Logger.getLogger(FishExperimentPresentation.class);
 
     // the last 2 parameters are used only to be passed into ExperimentPresentation.getLink()
     public static String getLink(FishExperiment fishExperiment, boolean suppressPopupLink, boolean suppressMoDetails) {
 //            logger.error("is empty");
-        // TODO: needs to be a fish insteads of genotype
-            return GenotypePresentation.getLink(fishExperiment.getFish().getGenotype(), suppressPopupLink) + "   "
+            return FishPresentation.getLink(fishExperiment.getFish(), suppressPopupLink) + "   "
                     + ExperimentPresentation.getLinkWithChemicalDetails(fishExperiment.getExperiment());
 
 
