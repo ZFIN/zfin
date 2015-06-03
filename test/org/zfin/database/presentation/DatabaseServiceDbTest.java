@@ -32,7 +32,7 @@ public class DatabaseServiceDbTest extends AbstractDatabaseTest {
         String parentPkValue = "ZDB-GENOX-041102-2604";
         String entityName = DatabaseService.getEntityName(parentPkValue, Table.FISH_EXPERIMENT);
         assertNotNull(entityName);
-        assertEquals("wild type (unspecified) || _Standard", entityName);
+        assertEquals("WT || _Standard", entityName);
     }
 
     @Test

@@ -273,7 +273,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
-        Criteria fishExperiment = labeling.createCriteria("genotypeExperiment");
+        Criteria fishExperiment = labeling.createCriteria("fishExperiment");
         Criteria fish = fishExperiment.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
@@ -295,7 +295,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         results.add(eq("expressionFound", true));
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
-        Criteria fishExperiment = labeling.createCriteria("genotypeExperiment");
+        Criteria fishExperiment = labeling.createCriteria("fishExperiment");
         Criteria fish = fishExperiment.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
@@ -318,14 +318,14 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 Restrictions.eq("entity.subterm", aoTerm)));
         results.add(isNotEmpty("figures"));
         results.add(eq("expressionFound", true));
-        Criteria fishExperiment = labeling.createCriteria("genotypeExperiment");
+        Criteria fishExperiment = labeling.createCriteria("fishExperiment");
         Criteria fish = fishExperiment.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
         Criteria experiment = fishExperiment.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<Publication>((List<Publication>) pubs.list());
+        return new PaginationResult<>((List<Publication>) pubs.list());
     }
 
     @SuppressWarnings("unchecked")
@@ -648,9 +648,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria criteria = session.createCriteria(Figure.class);
         criteria.createAlias("expressionResults", "xpatres");
         criteria.createAlias("xpatres.expressionExperiment", "xpatex");
-        criteria.createAlias("xpatex.genotypeExperiment", "genox");
-        criteria.createAlias("genox.genotype", "geno");
-        criteria.createAlias("genox.experiment", "exp");
+        criteria.createAlias("xpatex.fishExperiment", "fishox");
+        criteria.createAlias("fishox.fish", "fish");
+        criteria.createAlias("fish.genotype", "geno");
+        criteria.createAlias("fishox.experiment", "exp");
         criteria.createAlias("publication", "pub");
 
 
@@ -695,9 +696,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria criteria = session.createCriteria(Figure.class);
         criteria.createAlias("expressionResults", "xpatres");
         criteria.createAlias("xpatres.expressionExperiment", "xpatex");
-        criteria.createAlias("xpatex.genotypeExperiment", "genox");
-        criteria.createAlias("genox.genotype", "geno");
-        criteria.createAlias("genox.experiment", "exp");
+        criteria.createAlias("xpatex.fishExperiment", "fishox");
+        criteria.createAlias("fishox.fish", "fish");
+        criteria.createAlias("fish.genotype", "geno");
+        criteria.createAlias("fishox.experiment", "exp");
         criteria.createAlias("publication", "pub");
 
 
@@ -728,9 +730,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 " where :figure member of xpatres.figures " +
                 "   and xpatres.expressionFound = :expressionFound " +
                 "   and xpatres.expressionExperiment.antibody = :antibody " +
-                "   and xpatres.expressionExperiment.genotypeExperiment.genotype.wildtype = :isWildtype " +
-                "   and ( xpatres.expressionExperiment.genotypeExperiment.experiment.name = :standard  " +
-                "         or xpatres.expressionExperiment.genotypeExperiment.experiment.name = :gc ) ";
+                "   and xpatres.expressionExperiment.fishExperiment.fish.genotype.wildtype = :isWildtype " +
+                "   and ( xpatres.expressionExperiment.fishExperiment.experiment.name = :standard  " +
+                "         or xpatres.expressionExperiment.fishExperiment.experiment.name = :gc ) ";
         if (start != null)
             hql += "  and  xpatres.startStage = :startStage ";
         if (end != null)

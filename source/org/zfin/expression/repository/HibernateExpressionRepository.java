@@ -492,7 +492,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(FishExperiment.class);
         criteria.add(Restrictions.eq("experiment.zdbID", experimentID));
-        criteria.add(Restrictions.eq("genotype.zdbID", genotypeID));
+        criteria.add(Restrictions.eq("fish.zdbID", genotypeID));
         return (FishExperiment) criteria.uniqueResult();
     }
 
@@ -501,7 +501,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      *
      * @param experiment genotype experiment
      */
-    public void createGenoteypExperiment(FishExperiment experiment) {
+    public void createFishExperiment(FishExperiment experiment) {
         Session session = HibernateUtil.currentSession();
         session.save(experiment);
     }
@@ -535,14 +535,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param experimentID id
      * @param fishID   id
      */
-    public FishExperiment createGenoteypExperiment(String experimentID, String fishID) {
+    public FishExperiment createFishExperiment(String experimentID, String fishID) {
         Experiment experiment = getExperimentByID(experimentID);
         Fish fish = getMutantRepository().getFish(fishID);
-        FishExperiment genox = new FishExperiment();
-        genox.setExperiment(experiment);
-        genox.setFish(fish);
-        createGenoteypExperiment(genox);
-        return genox;
+        FishExperiment fishox = new FishExperiment();
+        fishox.setExperiment(experiment);
+        fishox.setFish(fish);
+        createFishExperiment(fishox);
+        return fishox;
     }
 
     /**
@@ -603,7 +603,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "       left join experiment.gene as gene " +
                 "     where experiment.publication.zdbID = :pubID " +
                 "    order by gene.abbreviationOrder, " +
-                "             experiment.fishExperiment.genotype.nickname, " +
+                "             experiment.fishExperiment.fish.name, " +
                 "             experiment.assay.displayOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
@@ -631,7 +631,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String hql = "select result, fig   from ExpressionResult result"
                 + "       left join result.figures fig "
                 + "       left join result.expressionExperiment.gene as gene "
-                + "       join result.expressionExperiment.genotypeExperiment.genotype as geno "
+                + "       join result.expressionExperiment.fishExperiment.fish as fish "
                 + "       where result.expressionExperiment.publication.zdbID = :pubID "
                 + "       AND fig member of result.figures ";
         if (geneZdbID != null) {
@@ -641,11 +641,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             hql += " and fig.zdbID = :figureZdbID ";
         }
         if (fishZdbID != null) {
-            hql += " and geno.zdbID = :fishZdbID ";
+            hql += " and fish.zdbID = :fishZdbID ";
         }
 
         hql += "       order by fig.orderingLabel, gene.abbreviationOrder "
-                + "             , geno.nickname "
+                + "             , fish.name "
                 + "             , result.expressionExperiment.assay.displayOrder "
                 + "             , result.startStage.abbreviation "
                 + " ";
@@ -704,16 +704,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         String hql = "select experiment from ExpressionExperiment experiment "
                 + "       left join experiment.gene as gene "
-                + "       left join experiment.genotypeExperiment as genox"
+                + "       left join experiment.fishExperiment as fishox"
                 + "     where experiment.publication.zdbID = :pubID ";
         if (geneZdbID != null)
             hql += "           and gene.zdbID = :geneID ";
         if (fishID != null) {
-            hql += "           and genox.genotype.zdbID = :fishID ";
+            hql += "           and fishox.fish.zdbID = :fishID ";
         }
         hql += "    order by gene.abbreviationOrder, " +
-                "             genox.genotype.nameOrder, " +
-                "             genox.experiment.name, " +
+                "             fishox.fish.name, " +
+                "             fishox.experiment.name, " +
                 "             experiment.assay.displayOrder ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubID", publicationID);
@@ -1540,8 +1540,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "FROM " +
                 "ExpressionResult er, GenericTerm ai " +
                 " join er.expressionExperiment ee " +
-                " join ee.genotypeExperiment ge " +
-                " join ge.genotype g " +
+                " join ee.fishExperiment ge " +
+                " join ge.fish fish " +
+                " join fish.genotype g " +
                 " WHERE " +
                 "ee.gene.zdbID = :zdbID " +
                 "AND er.entity.superterm.oboID = ai.oboID " +

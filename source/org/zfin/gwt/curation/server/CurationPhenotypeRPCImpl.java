@@ -104,7 +104,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         // create a new genotype experiment if needed
         if (fishExperiment == null) {
             fishExperiment =
-                    getExpressionRepository().createGenoteypExperiment(mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getFish().getZdbID());
+                    getExpressionRepository().createFishExperiment(mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getFish().getZdbID());
         }
         phenoExperiment.setFishExperiment(fishExperiment);
         getPhenotypeRepository().createPhenotypeExperiment(phenoExperiment);

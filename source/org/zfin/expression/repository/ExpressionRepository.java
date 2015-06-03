@@ -97,7 +97,7 @@ public interface ExpressionRepository {
      *
      * @param experiment genotype Experiment
      */
-    void createGenoteypExperiment(FishExperiment experiment);
+    void createFishExperiment(FishExperiment experiment);
 
     /**
      * Retrieve experiment by id.
@@ -123,7 +123,7 @@ public interface ExpressionRepository {
      * @param genotypeID   id
      * @return genotype Experiment
      */
-    FishExperiment createGenoteypExperiment(String experimentID, String genotypeID);
+    FishExperiment createFishExperiment(String experimentID, String genotypeID);
 
     /**
      * Create a new expression Experiment.

@@ -468,7 +468,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         LOG.info("Finding Genotype Experiment for :" + experimentDTO.getEnvironment().getZdbID() + ", " + experimentDTO.getFishID());
         // if no genotype experiment found create a new one.
         if (genox == null) {
-            genox = expRepository.createGenoteypExperiment(experimentDTO.getEnvironment().getZdbID(), experimentDTO.getFishID());
+            genox = expRepository.createFishExperiment(experimentDTO.getEnvironment().getZdbID(), experimentDTO.getFishID());
             LOG.info("Created Genotype Experiment :" + genox.getZdbID());
         }
         expressionExperiment.setFishExperiment(genox);
