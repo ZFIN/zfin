@@ -165,8 +165,8 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions.txt'
  DELIMITER "	"
 select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
- from marker, expression_experiment, expression_result, term as super,
-      outer term as sub, genotype_experiment, genotype
+ from marker, expression_experiment, expression_result, fish, term as super,
+      outer term as sub, fish_experiment, genotype
  where xpatres_xpatex_zdb_id = xpatex_zdb_id
    AND xpatex_atb_zdb_id = mrkr_zdb_id
    AND mrkr_type = 'ATB'
@@ -175,7 +175,8 @@ select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id
    AND xpatex_genox_zdb_id = genox_zdb_id
    AND genox_is_std_or_generic_control = 't'
    AND xpatres_expression_found = 't'
-   AND geno_zdb_id = genox_geno_zdb_id
+   AND fish_zdb_id = genox_fish_zdb_id
+   AND geno_zdb_id = fish_genotype_zdb_id
    AND geno_is_wildtype = 't'
  order by mrkr_zdb_id
 ;
@@ -354,13 +355,15 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
         xpatex_assay_name, xpatex_zdb_id xpat_zdb,
         xpatex_source_zdb_id,
-        genox_geno_zdb_id, genox_exp_zdb_id,
+        fish.genotype_zdb_id, genox_exp_zdb_id,
         clone_rating
  from expression_experiment
- join genotype_experiment
+ join fish_experiment
    on genox_zdb_id = xpatex_genox_zdb_id
  join marker gene
    on gene.mrkr_zdb_id = xpatex_gene_zdb_id
+ join fish fish
+   on fish.fish_zdb_id = genox_fish_zdb_id
  left join marker probe
    on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
  left join clone
@@ -378,10 +381,12 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  DELIMITER "	"
  select antibody.atb_zdb_id, atb.mrkr_abbrev,gene.mrkr_zdb_id as gene_zdb,
 	gene.mrkr_abbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
-	xpatex_source_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id
+	xpatex_source_zdb_id, fish_genotype_zdb_id, genox_exp_zdb_id
  from expression_experiment
- join genotype_experiment
+ join fish_experiment
    on genox_zdb_id = xpatex_genox_zdb_id
+ join fish fish
+   on fish.fish_zdb_id = genox_fish_zdb_id
  join antibody antibody
    on antibody.atb_zdb_id = xpatex_atb_zdb_id
  left join marker gene
@@ -391,10 +396,12 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 UNION
  select antibody.atb_zdb_id, atb.mrkr_abbrev, gene.mrkr_zdb_id as gene_zdb,
 	gene.mrkr_abbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
-	xpatex_source_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id
+	xpatex_source_zdb_id, fish_genotype_zdb_id, genox_exp_zdb_id
  from expression_experiment
- join genotype_experiment
+ join fish_experiment
    on genox_zdb_id = xpatex_genox_zdb_id
+ join fish fish
+   on fish.fish_zdb_id = genox_fish_zdb_id
  join antibody antibody
    on antibody.atb_zdb_id = xpatex_atb_zdb_id
  join marker gene
@@ -418,7 +425,7 @@ select exp_zdb_id, cdt_group,
    and expcond_cdt_zdb_id = cdt_zdb_id
    and expcond_expunit_zdb_id = expunit_zdb_id
    and exists (
-	select 't' from genotype_experiment, expression_experiment
+	select 't' from fish_experiment, expression_experiment
 	 where exp_zdb_id = genox_exp_zdb_id
 	   and genox_zdb_id = xpatex_genox_zdb_id
 )
@@ -459,10 +466,11 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
               tps.bsuperterm_name,
               fig_source_zdb_id,
               gx.genox_exp_zdb_id
-  from phenotype_experiment, phenotype_statement ps, figure, genotype g, genotype_experiment gx, tmp_phenotype_statement tps
+  from phenotype_experiment, phenotype_statement ps, figure, genotype g, fish f, fish_experiment gx, tmp_phenotype_statement tps
  where ps.phenos_phenox_pk_id = phenox_pk_id
    and phenox_genox_zdb_id = gx.genox_zdb_id
-   and gx.genox_geno_zdb_id = g.geno_zdb_id
+   and f.fish_genotype_zdb_id = g.geno_zdb_id
+   and f.fish_zdb_id = gx.genox_fish_zdb_id
    and phenox_fig_zdb_id = fig_zdb_id
    and ps.phenos_pk_Id = tps.phenos_pk_id
  order by geno_zdb_id, fig_source_zdb_id;
@@ -482,10 +490,11 @@ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig.txt'
  DELIMITER "	"
- select distinct genox_geno_zdb_id, phenox_fig_zdb_id
- from genotype_experiment, phenotype_experiment
+ select distinct fish_genotype_zdb_id, phenox_fig_zdb_id
+ from fish_experiment, phenotype_experiment, fish
  where genox_zdb_id = phenox_genox_zdb_id
- order by genox_geno_zdb_id;
+ and genox_fish_zdb_id = fish_zdb_id
+ order by fish_genotype_zdb_id;
 
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'"
@@ -502,7 +511,7 @@ select exp_zdb_id, cdt_group,
    and expcond_expunit_zdb_id = expunit_zdb_id
    and exists (
 	select 't'
-	 from genotype_experiment, phenotype_experiment
+	 from fish_experiment, phenotype_experiment
 	 where exp_zdb_id = genox_exp_zdb_id
 	   and genox_zdb_id = phenox_genox_zdb_id
 )
@@ -1251,8 +1260,9 @@ select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.ter
         case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id
  from marker
  join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
- join genotype_experiment on genox_zdb_id = xpatex_genox_zdb_id
- join genotype on geno_zdb_id = genox_geno_zdb_id
+ join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
+ join fish on fish_zdb_id = genox_fish_zdb_id
+ join genotype on geno_zdb_id = fish_genotype_zdb_id
  join experiment on exp_zdb_id = genox_exp_zdb_id
  join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
  join stage startStage on xpatres_start_stg_zdb_id = startStage.stg_zdb_id
@@ -1417,7 +1427,7 @@ union
 
 select geneid, szm_term_ont_id, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
 --select count(*)
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment,  phenotype_experiment, phenotype_statement, figure, so_zfin_mapping, marker
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, feature_marker_relationship, genotype_feature, fish_experiment,  phenotype_experiment, phenotype_statement, figure, so_zfin_mapping, marker, fish
 where geneid=dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
@@ -1426,8 +1436,9 @@ and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
 and geneid = fmrel_mrkr_zdb_id
 and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-and genofeat_geno_zdb_id = genox_geno_zdb_id
+and genofeat_geno_zdb_id = fish_genotype_zdb_id
 and genox_zdb_id = phenox_genox_zdb_id
+and fish_zdb_id = genox_fish_zdb_id
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
 and fig_source_zdb_id = zdb_id
@@ -1499,15 +1510,16 @@ union
 
 select geneid, szm_term_ont_id, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
 --select count(*)
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication, tmp_gene_pubcount, feature_marker_relationship, genotype_feature, genotype_experiment, phenotype_experiment, phenotype_statement, figure, marker, so_zfin_mapping
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication, tmp_gene_pubcount, feature_marker_relationship, genotype_feature, fish, fish_experiment, phenotype_experiment, phenotype_statement, figure, marker, so_zfin_mapping
 where geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
 and fdb.fdb_db_name = 'UniProtKB'
 and geneid = fmrel_mrkr_zdb_id
 and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-and genofeat_geno_zdb_id = genox_geno_zdb_id
+and genofeat_geno_zdb_id = fish_genotype_zdb_id
 and genox_zdb_id = phenox_genox_zdb_id
+and fish_zdb_id = genox_fish_zdb_id
 and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
 and phenos_phenox_pk_id = phenox_pk_id
@@ -1714,9 +1726,9 @@ create temp table tmp_pheno_gene (id varchar(50), genox_zdb_id varchar(50), gene
 ! echo "add direct phenotype annotations with genes"
 ! echo "Entity 2 subterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id, mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id, mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from all_term_contains,
-       genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
+       fish_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = mrkr_zdb_id
   and mrkr_zdb_id like 'ZDB-GENE%'
@@ -1728,14 +1740,15 @@ select distinct phenos_pk_id, genox_Zdb_id, mrkr_abbrev, mrkr_zdb_id, b.term_ont
   and phenos_phenox_pk_id = phenox_pk_id
   and phenos_tag != 'normal'
   and b.term_zdb_id = alltermcon_contained_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
  ;
 
 
 ! echo "Entity 2 superterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from all_term_contains,
-       genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
+       fish_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = mrkr_zdb_id
 and mrkr_zdb_id like 'ZDB-GENE%'
@@ -1747,13 +1760,14 @@ and mrkr_zdb_id like 'ZDB-GENE%'
   and phenos_phenox_pk_id = phenox_pk_id
   and phenos_tag != 'normal'
   and b.term_zdb_id = alltermcon_contained_zdb_id
- ;
+  and fish_zdb_id = genox_fish_zdb_id
+;
 
 ! echo "Entity 1 subterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from all_term_contains,
-       genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
+       fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = mrkr_zdb_id
 and mrkr_zdb_id like 'ZDB-GENE%'
@@ -1765,14 +1779,15 @@ and mrkr_zdb_id like 'ZDB-GENE%'
   and phenos_phenox_pk_id = phenox_pk_id
   and phenos_tag != 'normal'
   and b.term_zdb_id = alltermcon_contained_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
  ;
 
 
 ! echo "Entity 1 superterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from all_term_contains,
-       genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
+       fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = mrkr_zdb_id
   and expcond_exp_zdb_id =exp_zdb_id
@@ -1784,6 +1799,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
   and phenos_phenox_pk_id = phenox_pk_id
   and phenos_tag != 'normal'
   and b.term_zdb_id = alltermcon_contained_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
  ;
 
 
@@ -1791,11 +1807,11 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 ! echo "Entity 1 superterms"
 ---ALLELES
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
-       genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
+       fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-  and genox_geno_Zdb_id = genofeat_geno_zdb_id
+  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
   and mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = fmrel_mrkr_Zdb_id
   and fmrel_type = 'is allele of'
@@ -1809,15 +1825,16 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
   and mrkr_zdb_id = mfs_mrkr_zdb_id
   and mrkr_zdb_id = fmrel_mrkr_zdb_id
   and b.term_zdb_id = alltermcon_contained_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
  ;
 
 ! echo "Entity 1 subterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
-       genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
+       fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-  and genox_geno_Zdb_id = genofeat_geno_zdb_id
+  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
   and mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = fmrel_mrkr_Zdb_id
   and expcond_exp_zdb_id =exp_zdb_id
@@ -1829,16 +1846,17 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
   and phenos_phenox_pk_id = phenox_pk_id
   and mrkr_zdb_id = mfs_mrkr_zdb_id
   and mrkr_zdb_id = fmrel_mrkr_zdb_id
- and b.term_zdb_id = alltermcon_contained_zdb_id
+  and b.term_zdb_id = alltermcon_contained_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
 ;
 
 ! echo "Entity 2 superterm"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
-       genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b,experiment, experiment_condition
+       fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b,experiment, experiment_condition, fish
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-  and genox_geno_Zdb_id = genofeat_geno_zdb_id
+  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
   and expcond_exp_zdb_id =exp_zdb_id
   and exp_zdb_id = genox_exp_zdb_id
   and mfs_genox_zdb_id = genox_zdb_id
@@ -1850,16 +1868,17 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
   and phenos_phenox_pk_id = phenox_pk_id
   and mrkr_zdb_id = mfs_mrkr_zdb_id
   and mrkr_zdb_id = fmrel_mrkr_zdb_id
- and b.term_zdb_id = alltermcon_contained_zdb_id
+  and b.term_zdb_id = alltermcon_contained_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
 ;
 
 ! echo "Entity 2 superterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', genox_geno_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
-       genotype_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b,experiment, experiment_condition
+       fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b,experiment, experiment_condition, fish
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-  and genox_geno_Zdb_id = genofeat_geno_zdb_id
+  and fish_genotype_Zdb_id = genofeat_geno_zdb_id
   and mfs_genox_zdb_id = genox_zdb_id
   and mfs_mrkr_Zdb_id = fmrel_mrkr_Zdb_id
   and fmrel_type = 'is allele of'
@@ -1872,6 +1891,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
   and mrkr_zdb_id = mfs_mrkr_zdb_id
   and mrkr_zdb_id = fmrel_mrkr_zdb_id
   and b.term_zdb_id = alltermcon_contained_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
 ;
 
 ! echo "Create tmp_dumpPheno temp table"
