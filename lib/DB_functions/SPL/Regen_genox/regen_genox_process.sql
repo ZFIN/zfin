@@ -62,6 +62,10 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
                        and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id
 		       and fish_zdb_id = NotThisMo.fishstr_fish_zdb_id) 
+      and not exists(select NOTstr.expcond_mrkr_zdb_id 
+                      from experiment_condition NOTstr
+                     where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                       and NOTstr.expcond_mrkr_zdb_id is null)        
      and genox_exp_zdb_id = exp_zdb_id
      and genox_fish_zdb_id = fish_zdb_id
      and fish_zdb_id = fishstr_fish_zdb_id
@@ -153,7 +157,11 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                      where NotThisMO.fishstr_str_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
                        and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id
-		       and fishstr_fish_zdb_id = fish_zdb_id)                         
+		       and fishstr_fish_zdb_id = fish_zdb_id)     
+     and not exists(select NOTstr.expcond_mrkr_zdb_id 
+                      from experiment_condition NOTstr
+                     where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                       and NOTstr.expcond_mrkr_zdb_id is null)                                    
      and exists (select phenox_genox_zdb_id
                    from phenotype_experiment, phenotype_statement 
                   where phenox_genox_zdb_id = genox_zdb_id  
@@ -259,6 +267,10 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                            where NOTstr.fishstr_str_zdb_id != rggz_zdb_id
 			   and fishstr_fish_zdb_id = fish_zdb_id)
            and not exists(select 'x' 
+                            from experiment_condition NOTstr
+                           where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                             and NOTstr.expcond_mrkr_zdb_id is null)
+           and not exists(select 'x' 
                             from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr
                            where fish_genotype_zdb_id = NOTfeat.genofeat_geno_zdb_id
                              and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
@@ -297,6 +309,10 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                             from fish_str NOTstr
                            where NOTstr.fishstr_str_zdb_id != rggz_zdb_id
 			   and fish_zdb_id = NOTstr.fishstr_fish_zdb_id)
+        and not exists(select 'x'
+                            from experiment_condition NOTstr
+                           where NOTstr.expcond_exp_zdb_id = genox_exp_zdb_id 
+                             and NOTstr.expcond_mrkr_zdb_id is null)
            and not exists(select 'x' 
                             from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr, fish as fish3
                            where genox_fish_zdb_id = fish3.fish_zdb_id 
