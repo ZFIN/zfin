@@ -21,7 +21,7 @@
       <command>cd $SOURCEROOT</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>build-solr-index-jenkins restart-solr</targets>
+      <targets>build-solr-index-jenkins add-abstracts-to-pubs restart-solr</targets>
       <buildFile>$SOURCEROOT/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>

@@ -4,6 +4,7 @@
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.SolrResponse
 import org.apache.solr.client.solrj.SolrServer
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer
 import org.apache.solr.client.solrj.impl.HttpSolrServer
 import org.apache.solr.common.SolrDocument
 import org.apache.solr.common.SolrInputDocument
@@ -11,6 +12,7 @@ import org.apache.solr.common.SolrInputDocument
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
+import java.sql.Statement
 
 def dbname = System.getenv('DBNAME')
 def sqlhost = System.getenv('SQLHOSTS_HOST')
@@ -35,8 +37,8 @@ connectionProps.put("driver", args.driver)
 conn = DriverManager.getConnection(args.url, connectionProps)
 
 def solrPort = System.env.get("SOLR_PORT")
-SolrServer server = new HttpSolrServer("http://localhost:$solrPort/solr/prototype")
-
+//SolrServer server = new HttpSolrServer("http://localhost:$solrPort/solr/prototype")
+SolrServer server = new ConcurrentUpdateSolrServer("http://localhost:$solrPort/solr/prototype", 100, 20)
 
 
 Map<String, String> abstractMap = new HashMap<>()
@@ -47,8 +49,12 @@ pubQuery = """
     from publication
 """
 
-List<SolrDocument> docs = []
-ResultSet rs = conn.createStatement().executeQuery(pubQuery);
+Statement statement = conn.createStatement(
+        java.sql.ResultSet.TYPE_FORWARD_ONLY,
+        java.sql.ResultSet.CONCUR_READ_ONLY)
+statement.setFetchSize(1);
+ResultSet rs = statement.executeQuery(pubQuery);
+println "building documents"
 while (rs.next()) {
         String id = rs.getString("id")
         String abstractText = rs.getString("pub_abstract")
@@ -58,10 +64,10 @@ while (rs.next()) {
         partialUpdate.put("set", abstractText);
         doc.addField("id", id);
         doc.addField("abstract", partialUpdate);
-        docs.add(doc)
+        server.add(doc)
+
+        print "."
 
 }
-
-server.add(docs)
 
 server.commit()
