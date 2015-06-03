@@ -1371,7 +1371,7 @@ public class FxExpressionModule extends Composite implements ExpressionSection<E
         SELECT(0, "", Alignment.CENTER),
         FIGURE(1, "Figure", Alignment.LEFT),
         GENE(2, "Gene", Alignment.LEFT),
-        FISH(3, "MartFish", Alignment.LEFT),
+        FISH(3, "Fish", Alignment.LEFT),
         ENVIRONMENT(4, "Env ", Alignment.LEFT),
         ASSAY(5, "Assay", Alignment.LEFT),
         ANTIBODY(6, "Ab", Alignment.LEFT),

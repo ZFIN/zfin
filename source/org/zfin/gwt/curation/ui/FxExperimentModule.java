@@ -1290,7 +1290,7 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
     private enum HeaderName {
         SELECT(0, "Select"),
         GENE(1, "Gene"),
-        FISH(2, "MartFish"),
+        FISH(2, "Fish"),
         ENVIRONMENT(3, "Environment"),
         ASSAY(4, "Assay"),
         ANTIBODY(5, "Antibody"),
