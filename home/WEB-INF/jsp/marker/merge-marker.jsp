@@ -50,6 +50,8 @@ jQuery(document).ready(function () {
     orthologyIgnored = true;
     mapInfoIgnored = true;
     differentTargets = false;
+    differentSequence = false;
+    differentFish = false;
 
     <c:if test="${formBean.markerToDelete.markerType.name eq 'GENE' || formBean.markerToDelete.markerType.name eq 'GENEP'}">
             autocompleteSource = '/action/marker/find-gene-to-merge-into';
@@ -154,6 +156,7 @@ jQuery(document).ready(function () {
     jQuery('#ignoreTranscript').hide();
     jQuery('#ignoreOrth').hide();
     jQuery('#ignoreMapping').hide();
+    jQuery('#ignoreDifferentFishForSTR').hide();
 
 });
 
@@ -882,7 +885,7 @@ var validateSequencesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, 
     if (isTALEN)
         var secondSequenceSTR2 = sequenceDataSTR2.secondSequence;
 
-    var differentSequence = true;
+    differentSequence = true;
     if(isTALEN) {
         if (sequenceSTR1 === sequenceSTR2 && secondSequenceSTR1 === secondSequenceSTR2 || sequenceSTR1 === '' && secondSequenceSTR1 === '' || sequenceSTR2 === '' && secondSequenceSTR2 === '') {
             differentSequence = false;
@@ -912,9 +915,75 @@ var validateSequencesForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, 
         }
     }
 
-    if (!differentTargets && !differentSequence)
-        enableMerge();
+    validateFishListForMergingSRTs(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto);
 };
+
+var validateFishListForMergingSRTs = function(strIDdelete, strZdbIdMergedInto, strAbbrevMergedInto) {
+    var fishListSTR1 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strIDdelete,
+        dataType: "json",
+        async: false
+    }).responseText);
+
+    var fishNamesOfSTR1 = new Array();
+    var fishIDsOfSTR1 = new Array();
+    for (fish in fishListSTR1) {
+        fishNamesOfSTR1.push(fishListSTR1[fish].name);
+        fishIDsOfSTR1.push(fishListSTR1[fish].zdbID);
+    }
+
+    var fishListSTR2 = jQuery.parseJSON(jQuery.ajax({url: "/action/marker/get-fish-for-sequenceTargetingReagentZdbId?sequenceTargetingReagentZdbId=" + strZdbIdMergedInto,
+        dataType: "json",
+        async: false
+    }).responseText);
+
+    var fishNamesOfSTR2 = new Array();
+    var fishIDsOfSTR2 = new Array();
+    for (fish in fishListSTR2) {
+        fishNamesOfSTR2.push(fishListSTR2[fish].name);
+        fishIDsOfSTR2.push(fishListSTR2[fish].zdbID);
+    }
+
+    if(fishIDsOfSTR1.length !== 0 && fishIDsOfSTR2.length !== 0) {
+        if (fishIDsOfSTR1.length !== fishIDsOfSTR2.length) {
+            differentFish = true;
+        } else {
+            for (var i = 0; i < fishIDsOfSTR1.length; i++) {
+                if (fishIDsOfSTR1[i] !== fishIDsOfSTR2[i])
+                    differentFish = true;
+            }
+        }
+    }
+
+    if (differentFish) {
+        jQuery('#validationSTRText').append('<h4>Merging these two sequence targeting reagents is not allowed because they have been with different fish.</h4>');
+        if (fishNamesOfSTR1.length > 0) {
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is with the following fish:</h4>');
+            for (var i = 0; i < fishNamesOfSTR1.length; i++) {
+                jQuery('#validationSTRText').append('<div>'
+                        + '<a target="_blank" href="/' + fishIDsOfSTR1[i] +'">'
+                        + fishNamesOfSTR1[i] + '</a>'
+                        + '</div>');
+            }
+        } else {
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/${formBean.zdbIDToDelete}">${formBean.markerToDeleteViewString}</a> is with no fish.</h4>');
+        }
+
+        if (fishNamesOfSTR2.length > 0) {
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is with the following fish:</h4>');
+            for (var i = 0; i < fishNamesOfSTR2.length; i++) {
+                jQuery('#validationSTRText').append('<div>'
+                        + '<a target="_blank" href="/' + fishIDsOfSTR2[i] +'">'
+                        + fishNamesOfSTR2[i] + '</a>'
+                        + '</div>');
+            }
+        } else {
+            jQuery('#validationSTRText').append('<h4><a target="_blank" href="/action/marker/view/' + strZdbIdMergedInto + '">' + strAbbrevMergedInto + '</a> is with no fish.</h4>');
+        }
+    }
+
+    if (!differentTargets && !differentSequence && differentFish)
+        jQuery('#ignoreDifferentFishForSTR').show();
+}
 
 function ignoreUnspecifiedAlleles(formObj) {
     unspecifiedAllelesIgnored = true;
@@ -998,8 +1067,15 @@ function ignoreMappingInfo(formObj) {
     enableMerge();
 }
 
+function ignoreFishListForSTRs(formObj) {
+    differentFish = false;
+    jQuery('#ignoreDifferentFishForSTR').hide();
+
+    enableMerge();
+}
+
 function enableMerge() {
-    if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && ensemblZv9IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored) {
+    if (unspecifiedAllelesIgnored && sequenceTargetingReagentsIgnored && antibodiesIgnored && ncbiGeneIdsIgnored && uniGeneIdsIgnored && vegaIdsIgnored && ensemblZv9IdsIgnored && transcriptsIgnored && orthologyIgnored && mapInfoIgnored && !differentFish) {
         jQuery('#submitMerge').removeAttr('disabled');
     }
 }
@@ -1065,6 +1141,9 @@ function enableMerge() {
         <input type="button" value="Ignore Mapping Info" onclick="ignoreMappingInfo(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the mapping info with ${formBean.markerToDeleteViewString} will be associated with the gene retained regardless of whether it conflicts or not.">
     </form>
     <div id="validationSTRText"></div>
+    <form id="ignoreDifferentFishForSTR">
+        <input type="button" value="Ignore Different Fish" onclick="ignoreFishListForSTRs(this);" title="By clicking this button, you acknowledge the fact that after the merge is done, the above fish list with ${formBean.markerToDeleteViewString} will be associated with the sequence targeting reagent retained.">
+    </form>
 </c:if>
 
 

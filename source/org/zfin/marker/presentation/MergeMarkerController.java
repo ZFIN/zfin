@@ -11,13 +11,17 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.presentation.SimpleFeaturePresentation;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.FishDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MergeService;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -347,5 +351,22 @@ public class MergeMarkerController {
         }
         Collections.sort(antibodyLookupEntries);
         return antibodyLookupEntries;
+    }
+
+    @RequestMapping(value = "/get-fish-for-sequenceTargetingReagentZdbId", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<FishDTO> getFishList(@RequestParam("sequenceTargetingReagentZdbId") String sequenceTargetingReagentZdbId) {
+        MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+        SequenceTargetingReagent str = mutantRepository.getSequenceTargetingReagentByID(sequenceTargetingReagentZdbId);
+        if (str == null) {
+            return null;
+        }
+        List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(str);
+        List<FishDTO> fishDTOs = new ArrayList<>(fishList.size());
+        for (Fish fish : fishList) {
+            fishDTOs.add(DTOConversionService.convertToFishDtoFromFish(fish));
+        }
+        return fishDTOs;
     }
 }
