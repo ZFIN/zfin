@@ -46,8 +46,6 @@ public interface ConstructRepository {
 
     Set<ZfinFigureEntity> getFiguresByConstructAndTerms(String constructID, List<String> termIDs);
 
-    List<Genotype> getFigureGenotype(Figure figure, String constructID);
-
     Set<ZfinFigureEntity> getAllFigures(String constructID);
 
     WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart);
@@ -68,4 +66,6 @@ public interface ConstructRepository {
     public ConstructCuration getConstructByID(String zdbID);
     public ConstructCuration getConstructByName(String conName);
     void createConstruct(ConstructCuration construct, Publication publication);
+
+    List<Fish> getFishByFigureConstruct(Figure figure, String constructID);
 }

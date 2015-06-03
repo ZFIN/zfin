@@ -5,6 +5,7 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
@@ -13,27 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
+
     private Publication publication;
     private Figure figure;
-
-
-
     private int imgCount;
-
     public List<Experiment> getExp() {
         return exp;
     }
-
     public void setExp(List<Experiment> exp) {
         this.exp = exp;
     }
-
     private String thumbnail;
     private List<Experiment> exp;
+
     // for phenotype summary page
-
-
-
     private List<PhenotypeStatement> phenotypeStatementList;
     public List<String> geno;
 
@@ -47,19 +41,11 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     // for expression summary page
 
 
-    public List<Genotype> getGenotype() {
-        return genotype;
-    }
-
-    public void setGenotype(List<Genotype> genotype) {
-        this.genotype = genotype;
-    }
-
     private List<ExpressionStatement> expressionStatementList;
     private DevelopmentStage earliestStartStage;
     private DevelopmentStage latestEndStage;
     private List<Marker> expressedGenes;
-    private List<Genotype> genotype;
+    private List<Fish> fishList;
 
     private boolean publicationDisplayed;
 
@@ -93,6 +79,14 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
 
     public void setPublicationDisplayed(boolean publicationDisplayed) {
         this.publicationDisplayed = publicationDisplayed;
+    }
+
+    public List<Fish> getFishList() {
+        return fishList;
+    }
+
+    public void setFishList(List<Fish> fish) {
+        this.fishList = fish;
     }
 
     public List<ExpressionStatement> getExpressionStatementList() {

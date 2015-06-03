@@ -79,7 +79,7 @@ public class HibernateConstructRepository implements ConstructRepository {
             Object[] annotationObj = (Object[]) obj;
             BigInteger bigInteger = (BigInteger) annotationObj[0];
             annotation.setID(bigInteger.longValue());
-            annotation.setConstructID((String)annotationObj[1]);
+            annotation.setConstructID((String) annotationObj[1]);
             annotation.setConstructName((String) annotationObj[2]);
 
 
@@ -90,7 +90,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         logger.debug("constructSearch size: " + constructSearch.size());
 
         List<Construct> construct = new ArrayList<Construct>(constructObjects.getTotalCount());
-       for (ConstructSearch annotation : constructSearch) {
+        for (ConstructSearch annotation : constructSearch) {
             construct.add(getConstructFromConstructSearch(annotation, criteria));
         }
 
@@ -103,6 +103,7 @@ public class HibernateConstructRepository implements ConstructRepository {
 
         return results;
     }
+
     private Construct getConstructFromConstructSearch(ConstructSearch annotation, ConstructSearchCriteria criteria) {
         Construct singleConstruct = new Construct();
         singleConstruct.setName(annotation.getConstructName());
@@ -111,40 +112,6 @@ public class HibernateConstructRepository implements ConstructRepository {
         addFigures(singleConstruct, criteria);
         return singleConstruct;
     }
-
-
-
-    public List<Genotype> getFigureGenotype(Figure figure,String constructID){
-
-
-
-            String sqlResults = "select distinct geno_zdb_id " +
-                    "from figure_term_construct_search ftcs, construct_search cs, genotype,fish_experiment,fish " +
-                    "where ftcs.ftcs_cs_id =cs.cons_pk_id and " +
-                    "genox_fish_zdb_id=fish_zdb_id and " +
-                    "fish_genotype_zdb_id=geno_zdb_id and " +
-                    "geno_is_wildtype='f' and " +
-                    "genox_zdb_id=ftcs_genox_zdb_id and " +
-                    "cons_construct_zdb_id=:constructId and "  +
-                    "ftcs_fig_zdb_id=:figId  " ;
-            //sqlResults += btsService.getFullOrClause();
-            Session session = HibernateUtil.currentSession();
-            Query sqlQuery = session.createSQLQuery(sqlResults);
-            sqlQuery.setParameter("constructId", constructID);
-            sqlQuery.setParameter("figId", figure.getZdbID());
-
-            List<String> genotypes= sqlQuery.list();
-            List<Genotype> genotype=new ArrayList<Genotype>(genotypes.size());
-            for (String genos : genotypes){
-                Genotype geno = getMutantRepository().getGenotypeByID(genos);
-                genotype.add(geno);
-            }
-            return  genotype;
-
-        }
-
-
-
 
 
     private void addFigures(Construct construct, ConstructSearchCriteria criteria) {
@@ -253,8 +220,6 @@ public class HibernateConstructRepository implements ConstructRepository {
     }
 
 
-
-
     private Query generateConstructSearchQuery(ConstructSearchCriteria criteria) {
         Session session = HibernateUtil.currentSession();
 
@@ -263,15 +228,12 @@ public class HibernateConstructRepository implements ConstructRepository {
         List<String> fromClauseList = new ArrayList<String>();
 
 
-
-
         String baseSelectColumns = " cons_pk_id, cons_construct_zdb_id, cons_name, cons_abbrev, cons_abbrev_order ";
-
 
 
         fromClauseList.add(" construct_search ");
         if (criteria.getPhenotypeAnatomyCriteria().hasValues()) {
-            fromClauseList.add( "figure_term_construct_search ");
+            fromClauseList.add("figure_term_construct_search ");
         }
 
         StringBuilder fromClause = new StringBuilder();
@@ -290,11 +252,11 @@ public class HibernateConstructRepository implements ConstructRepository {
         if (criteria.getGenePromoterCriteria().hasValues()) {
 
             BtsContainsService btsService1 = new BtsContainsService("ccs_promoter_all_names");
-           btsService1.addBtsExpandedValueList("ccs_promoter_all_names", criteria.getGenePromoterCriteria().getValues());
-            String btsContainsClause1=btsService1.getFullClauseConstructs();
+            btsService1.addBtsExpandedValueList("ccs_promoter_all_names", criteria.getGenePromoterCriteria().getValues());
+            String btsContainsClause1 = btsService1.getFullClauseConstructs();
             whereClauseList.add(" exists" + "(" + "select 'c' from construct_component_search where " +
                     "ccs_cons_id = cons_pk_id and ccs_relationship_type = 'promoter of'  ");
-            whereClauseList.add(btsContainsClause1 +")");
+            whereClauseList.add(btsContainsClause1 + ")");
         }
 
         if (criteria.getEngineeredRegionCriteria().hasValues()) {
@@ -302,8 +264,8 @@ public class HibernateConstructRepository implements ConstructRepository {
             btsService2.addBtsExpandedValueList("ccs_engineered_region_all_names", criteria.getEngineeredRegionCriteria().getValues());
             whereClauseList.add(" exists" + "(" + "select 'c' from construct_component_search where " +
                     "ccs_cons_id = cons_pk_id and ccs_relationship_type = 'contains engineered region'  ");
-            String btsContainsClause1=btsService2.getFullClauseConstructs();
-            whereClauseList.add(btsContainsClause1 +")");
+            String btsContainsClause1 = btsService2.getFullClauseConstructs();
+            whereClauseList.add(btsContainsClause1 + ")");
 
         }
         if (criteria.getExpressedGeneCriteria().hasValues()) {
@@ -311,35 +273,35 @@ public class HibernateConstructRepository implements ConstructRepository {
             btsService3.addBtsExpandedValueList("ccs_coding_all_names", criteria.getExpressedGeneCriteria().getValues());
             whereClauseList.add(" exists" + "(" + "select 'c' from construct_component_search where " +
                     "ccs_cons_id = cons_pk_id and ccs_relationship_type = 'coding sequence of'  ");
-            String btsContainsClause1=btsService3.getFullClauseConstructs();
-            whereClauseList.add(btsContainsClause1 +")");
+            String btsContainsClause1 = btsService3.getFullClauseConstructs();
+            whereClauseList.add(btsContainsClause1 + ")");
 
         }
         if (criteria.getPhenotypeAnatomyCriteria().hasValues()) {
             BtsContainsService btsService5 = new BtsContainsService("ftcs_term_group");
             btsService5.addBtsValueList("ftcs_term_group", criteria.getPhenotypeAnatomyCriteria().getValues());
             whereClauseList.add(" ftcs_cs_id = cons_pk_id   ");
-            String btsContainsClause1=btsService5.getFullClauseConstructs();
+            String btsContainsClause1 = btsService5.getFullClauseConstructs();
             whereClauseList.add(btsContainsClause1);
 
         }
 
 
-            if (criteria.getPtypeCriteria().isTrue()) {
-                typeClauseList.add("'Promoter Trap Construct'");
-            }
-             if (criteria.getGtypeCriteria().isTrue()) {
-                 typeClauseList.add("'Gene Trap Construct'" );
-                               }
+        if (criteria.getPtypeCriteria().isTrue()) {
+            typeClauseList.add("'Promoter Trap Construct'");
+        }
+        if (criteria.getGtypeCriteria().isTrue()) {
+            typeClauseList.add("'Gene Trap Construct'");
+        }
 
-                if (criteria.getEtypeCriteria().isTrue()){
+        if (criteria.getEtypeCriteria().isTrue()) {
 
-                    typeClauseList.add( "'Enhancer Trap Construct'");
-                }
+            typeClauseList.add("'Enhancer Trap Construct'");
+        }
 
-                if (criteria.getTgtypeCriteria().isTrue()){
-                    typeClauseList.add("'Transgenic Construct'" );
-                }
+        if (criteria.getTgtypeCriteria().isTrue()) {
+            typeClauseList.add("'Transgenic Construct'");
+        }
 
 
         if (criteria.getAffectedGeneCriteria().hasValues()) {
@@ -347,27 +309,25 @@ public class HibernateConstructRepository implements ConstructRepository {
             btsService4.addBtsExpandedValueList("cgfrv_allele_gene_all_names", criteria.getAffectedGeneCriteria().getValues());
             whereClauseList.add(" exists" + "(" + "select 'c' from construct_gene_feature_result_view where " +
                     "cgfrv_cs_id = cons_pk_id  ");
-            String btsContainsClause1=btsService4.getFullClauseConstructs();
+            String btsContainsClause1 = btsService4.getFullClauseConstructs();
             if (criteria.getAvailabilityCriteria().isTrue()) {
                 whereClauseList.add(btsContainsClause1);
-            }
-            else{
-            whereClauseList.add(btsContainsClause1 +")");
+            } else {
+                whereClauseList.add(btsContainsClause1 + ")");
             }
 
         }
         if (criteria.getAvailabilityCriteria().isTrue()) {
             if (criteria.getAffectedGeneCriteria().hasValues())
-                whereClauseList.add(" cgfrv_available is not null" +")" );
-            else
-            {
+                whereClauseList.add(" cgfrv_available is not null" + ")");
+            else {
                 whereClauseList.add(" exists" + "(" + "select 'c' from construct_gene_feature_result_view where " +
-                    "cgfrv_cs_id = cons_pk_id and cgfrv_available is not null" +")");
-        }
+                        "cgfrv_cs_id = cons_pk_id and cgfrv_available is not null" + ")");
+            }
 
         }
 
-       StringBuilder whereClause = new StringBuilder();
+        StringBuilder whereClause = new StringBuilder();
         StringBuilder typeClause = new StringBuilder();
         for (String clause : whereClauseList) {
             if (!(whereClause.length() == 0))
@@ -379,28 +339,27 @@ public class HibernateConstructRepository implements ConstructRepository {
                 typeClause.append(" ,  ");
             typeClause.append(orClause);
         }
-       if (!(typeClause.length() == 0)){
-           if (!(whereClause.length() == 0)) {
-              whereClause.append(" and ");
-               whereClause.append(" cons_type in ( " );
-              whereClause.append(typeClause.toString());
-               whereClause.append(")");
-           }
-           else{
-               whereClause.append(" cons_type in ( " );
-               whereClause.append(typeClause.toString());
-               whereClause.append(")");
-           }
-           }
+        if (!(typeClause.length() == 0)) {
+            if (!(whereClause.length() == 0)) {
+                whereClause.append(" and ");
+                whereClause.append(" cons_type in ( ");
+                whereClause.append(typeClause.toString());
+                whereClause.append(")");
+            } else {
+                whereClause.append(" cons_type in ( ");
+                whereClause.append(typeClause.toString());
+                whereClause.append(")");
+            }
+        }
 
 
-          String orderBy="cons_abbrev_order";
+        String orderBy = "cons_abbrev_order";
 
 
         String sql = " select  distinct " + baseSelectColumns +
                 "  from " + fromClause.toString();
         if (StringUtils.isNotEmpty(whereClause.toString()))
-            sql += "  where " +  whereClause.toString();
+            sql += "  where " + whereClause.toString();
         sql += "  order by " + orderBy;
         logger.debug(criteria.toString());
         logger.debug(sql);
@@ -412,7 +371,7 @@ public class HibernateConstructRepository implements ConstructRepository {
 
     //todo: improve this, I'm sure.
 
-    public List<ExpressionResult> getExpressionForConstructs(String constructID,  List<String> termIDs) {
+    public List<ExpressionResult> getExpressionForConstructs(String constructID, List<String> termIDs) {
 
         Session session = HibernateUtil.currentSession();
         BtsContainsService btsService = new BtsContainsService("ftcs_term_group");
@@ -429,17 +388,16 @@ public class HibernateConstructRepository implements ConstructRepository {
         Query sqlQuery = session.createSQLQuery(sqlFeatures);
         sqlQuery.setParameter("constructID", constructID);
 
-            List<String> expRsltlist=sqlQuery.list();
-            List<ExpressionResult> expressionResult = new ArrayList<ExpressionResult>();
-            for(String zdbId: expRsltlist){
-                ExpressionResult expRslt = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class,zdbId) ;
-                expressionResult.add(expRslt) ;
-            }
-            return expressionResult ;
-
-
+        List<String> expRsltlist = sqlQuery.list();
+        List<ExpressionResult> expressionResult = new ArrayList<ExpressionResult>();
+        for (String zdbId : expRsltlist) {
+            ExpressionResult expRslt = (ExpressionResult) HibernateUtil.currentSession().get(ExpressionResult.class, zdbId);
+            expressionResult.add(expRslt);
         }
+        return expressionResult;
 
+
+    }
 
 
     private ZfinEntity getZfinEntity(String zdbID, String name) {
@@ -456,13 +414,12 @@ public class HibernateConstructRepository implements ConstructRepository {
                 " constructSearch.constructID = :constructID ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("constructID", constructID);
-        ConstructSearch annotation=(ConstructSearch)query.uniqueResult();
+        ConstructSearch annotation = (ConstructSearch) query.uniqueResult();
         if (annotation == null)
             return null;
         Construct construct = getConstructFromConstructSearch(annotation, null);
         return construct;
     }
-
 
 
     public WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart) {
@@ -544,9 +501,9 @@ public class HibernateConstructRepository implements ConstructRepository {
         //      HibernateUtil.createTransaction();
 
         if (!promMarker.isEmpty()) {
-            for (Marker promMarkers:promMarker){
-                ConstructRelationship cmRel=getConstructRelationship(construct, promMarkers, ConstructRelationship.Type.PROMOTER_OF);
-                if (cmRel==null) {
+            for (Marker promMarkers : promMarker) {
+                ConstructRelationship cmRel = getConstructRelationship(construct, promMarkers, ConstructRelationship.Type.PROMOTER_OF);
+                if (cmRel == null) {
                     ConstructRelationship promMRel = new ConstructRelationship();
                     promMRel.setConstruct(construct);
                     promMRel.setMarker(promMarkers);
@@ -559,11 +516,12 @@ public class HibernateConstructRepository implements ConstructRepository {
             }
         }
         if (!codingMarker.isEmpty()) {
-            for (Marker codingMarkers:codingMarker){
-                ConstructRelationship cmRel=getConstructRelationship(construct, codingMarkers, ConstructRelationship.Type.CODING_SEQUENCE_OF);
-                if (cmRel==null) {
+            for (Marker codingMarkers : codingMarker) {
+                ConstructRelationship cmRel = getConstructRelationship(construct, codingMarkers, ConstructRelationship.Type.CODING_SEQUENCE_OF);
+                if (cmRel == null) {
                     ConstructRelationship codingRel = new ConstructRelationship();
-                    codingRel.setConstruct(construct);;
+                    codingRel.setConstruct(construct);
+                    ;
                     codingRel.setMarker(codingMarkers);
                     codingRel.setType(ConstructRelationship.Type.CODING_SEQUENCE_OF);
                     currentSession().save(codingRel);
@@ -579,6 +537,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         //       flushAndCommitCurrentSession();
 
     }
+
     public void addConstructPub(ConstructCuration construct, Publication publication) {
         if (publication == null)
             throw new RuntimeException("Cannot attribute this marker with a blank pub.");
@@ -605,10 +564,12 @@ public class HibernateConstructRepository implements ConstructRepository {
         Session session = currentSession();
         return (ConstructCuration) session.get(ConstructCuration.class, zdbID);
     }
+
     public ConstructCuration getConstructByName(String conName) {
         Session session = currentSession();
         return (ConstructCuration) session.get(ConstructCuration.class, conName);
     }
+
     public void createConstruct(ConstructCuration construct, Publication pub) {
         if (construct.getName() == null)
             throw new RuntimeException("Cannot create a new construct without a name.");
@@ -619,7 +580,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         if (pub == null)
             throw new RuntimeException("Cannot create a new construct without a publication.");
 
-       construct.setOwner(ProfileService.getCurrentSecurityUser());
+        construct.setOwner(ProfileService.getCurrentSecurityUser());
         if (!construct.getOwner().getAccountInfo().getRoot())
             throw new RuntimeException("Non-root user cannot create a construct");
         currentSession().save(construct);
@@ -632,6 +593,31 @@ public class HibernateConstructRepository implements ConstructRepository {
 
         // run procedure for fast search table
 
+    }
+
+    @Override
+    public List<Fish> getFishByFigureConstruct(Figure figure, String constructID) {
+        String sqlResults = "select distinct fish_zdb_id " +
+                "from figure_term_construct_search ftcs, construct_search cs, fish_experiment,fish, genotype " +
+                "where ftcs.ftcs_cs_id =cs.cons_pk_id and " +
+                "genox_fish_zdb_id=fish_zdb_id and " +
+                "fish_genotype_zdb_id=geno_zdb_id and " +
+                "geno_is_wildtype='f' and " +
+                "genox_zdb_id=ftcs_genox_zdb_id and " +
+                "cons_construct_zdb_id=:constructId and " +
+                "ftcs_fig_zdb_id=:figId  ";
+        Session session = HibernateUtil.currentSession();
+        Query sqlQuery = session.createSQLQuery(sqlResults);
+        sqlQuery.setParameter("constructId", constructID);
+        sqlQuery.setParameter("figId", figure.getZdbID());
+
+        List<String> fishIDList = sqlQuery.list();
+        List<Fish> fishList = new ArrayList<>(fishIDList.size());
+        for (String fishID : fishIDList) {
+            Fish geno = getMutantRepository().getFish(fishID);
+            fishList.add(geno);
+        }
+        return fishList;
     }
 
     public void addConstructRelationshipAttribution(ConstructRelationship cmrel, Publication attribution, ConstructCuration construct) {

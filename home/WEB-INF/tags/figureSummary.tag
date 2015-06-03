@@ -18,7 +18,7 @@
             <th align="left" width="300"> &nbsp; </th>
             <c:if test="${showGenotype}">
                 <%--<th align="left" width="15%">Conditions</th>--%>
-                <th align="left" width="15%">Genotype</th>
+                <th align="left" width="15%">Fish</th>
             </c:if>
             <%--<th align="left" width="5%"> &nbsp; </th>--%>
             <c:if test="${showMarker}">
@@ -75,11 +75,11 @@
                 </c:if>
 --%>
                     <td>
-                <c:if test="${!empty figureExpressionSummaryDisplay.genotype}">
-                    <c:forEach var="genotype" items="${figureExpressionSummaryDisplay.genotype}" varStatus="status">
-                        <zfin:link entity="${figureExpressionSummaryDisplay.genotype[status.index]}"/>
+                <c:if test="${!empty figureExpressionSummaryDisplay.fishList}">
+                    <c:forEach var="fish" items="${figureExpressionSummaryDisplay.fishList}" varStatus="status">
+                        <zfin:link entity="${figureExpressionSummaryDisplay.fishList[status.index]}"/>
 
-                    <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${figureExpressionSummaryDisplay.genotype[status.index].zdbID}"></a>
+                    <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${figureExpressionSummaryDisplay.fishList[status.index].zdbID}"></a>
                             <%--${figureExpressionSummaryDisplay.geno}--%>
 
                         <c:if test="${!status.last}">,&nbsp&nbsp;</c:if>

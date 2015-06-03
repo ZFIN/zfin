@@ -48,7 +48,6 @@ public class ConstructService {
     }
 
 
-
     private List<FigureSummaryDisplay> figureSummary;
 
     public ConstructService(Marker construct) {
@@ -70,16 +69,6 @@ public class ConstructService {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     public static Construct getConstruct(String constructID) {
         return getConstructRepository().getConstruct(constructID);
     }
@@ -99,18 +88,20 @@ public class ConstructService {
     public static List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
         return RepositoryFactory.getPhenotypeRepository().getPhenotypeStatements(figure, fishID);
     }
-public static  List<Genotype>  getFigureGenotype(Figure figure, String constructID){
-        return RepositoryFactory.getConstructRepository().getFigureGenotype(figure,constructID);
-}
+
+    public static List<Fish> getFishByFigureConstruct(Figure figure, String constructID) {
+        return getConstructRepository().getFishByFigureConstruct(figure, constructID);
+    }
 
 
     /**
      * Retrieve the longest genotype experiment group id for all fish
+     *
      * @return String
      */
 
 
-    public void createFigureSummary(ConstructSearchCriteria criteria,String constructID) {
+    public void createFigureSummary(ConstructSearchCriteria criteria, String constructID) {
         Set<Publication> publications = new HashSet<Publication>();
 
         List<FigureSummaryDisplay> summaryRows = getExpressionSummary(constructID, criteria);
@@ -127,9 +118,11 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
         int numberOfFigures = figureSummary.size();
         return numberOfFigures + " " + AnatomyLabel.figureChoice.format(numberOfFigures);
     }
+
     public String getNumberOfPublicationsDisplay() {
         return numberOfPublications + " " + AnatomyLabel.publicationChoice.format(numberOfPublications);
     }
+
     public static List<FigureSummaryDisplay> getExpressionSummary(String constructID, ConstructSearchCriteria criteria) {
         if (criteria == null) {
             criteria = new ConstructSearchCriteria();
@@ -139,15 +132,12 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
 
         Set<ZfinFigureEntity> zfinFigureEntities = RepositoryFactory.getConstructRepository().getFiguresByConstructAndTerms(constructID, criteria.getPhenotypeAnatomyCriteria().getValues());
         List<Figure> figures = new ArrayList<Figure>(zfinFigureEntities.size());
-        for (ZfinFigureEntity figureEntity : zfinFigureEntities){
+        for (ZfinFigureEntity figureEntity : zfinFigureEntities) {
             Figure figure = getPublicationRepository().getFigure(figureEntity.getID());
             figures.add(figure);
         }
 
         for (Figure figure : figures) {
-
-            Set<Image> imgs = figure.getImages();
-
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();
 
@@ -157,9 +147,9 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
                 FigureSummaryDisplay figureData = new FigureSummaryDisplay();
                 figureData.setPublication(pub);
                 figureData.setFigure(figure);
-                List<Genotype>genos=getFigureGenotype(figure, constructID);
-                figureData.setGenotype(genos);
-                figureData.setExpressionStatementList(getFigureExpressionStatementList(figure, criteria,genos));
+                List<Fish> fishList = getFishByFigureConstruct(figure, constructID);
+                figureData.setFishList(fishList);
+                figureData.setExpressionStatementList(getFigureExpressionStatementList(figure, criteria, fishList));
 
                 for (Image img : figure.getImages()) {
                     if (figureData.getThumbnail() == null)
@@ -170,39 +160,30 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
             }
         }
 
-
         List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
         if (map.values().size() > 0) {
             summaryRows.addAll(map.values());
         }
         Collections.sort(summaryRows);
         return summaryRows;
+    }
 
-
-}
-
-    public static List<ExpressionStatement> getFigureExpressionStatementList(Figure figure, ConstructSearchCriteria expressionCriteria, List<Genotype> genotype) {
+    public static List<ExpressionStatement> getFigureExpressionStatementList(Figure figure, ConstructSearchCriteria expressionCriteria, List<Fish> fishList) {
         //work with a clone of the original criteria, so that it doesn't get screwed up.
         ConstructSearchCriteria clone = expressionCriteria.clone();
-
         //set the figure we're limiting to
         clone.setFigure(figure);
-
-        clone.setGenos(genotype);
-
+        clone.setFishList(fishList);
 
         //unset the entities, since we want all terms that match all of the other criteria
         clone.setEntity(null);
         clone.setSingleTermEitherPosition(null);
-
         Set<ExpressionStatement> expressionResultSet = getExpressionStatements(clone);
         List<ExpressionStatement> expressionStatementList = new ArrayList<ExpressionStatement>();
-
         expressionStatementList.addAll(expressionResultSet);
         return expressionStatementList;
 
     }
-
 
 
     public static Set<ExpressionStatement> getExpressionStatements(ConstructSearchCriteria expressionCriteria) {
@@ -226,17 +207,16 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
 
         }
         if (expressionCriteria.getGenos() != null) {
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
-            criteria.add(Restrictions.in("genox.genotype", expressionCriteria.getGenos()));
+            aliasMap.put("xpatex.fishExperiment", "fishox");
+            criteria.add(Restrictions.in("fishox.fish", expressionCriteria.getFishList()));
 
         }
 
         aliasMap.put("expressionExperiment", "xpatex");
-        aliasMap.put("xpatex.genotypeExperiment", "genox");
-        aliasMap.put("genox.experiment", "exp");
+        aliasMap.put("xpatex.fishExperiment", "fishox");
+        aliasMap.put("fishox.experiment", "exp");
         criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
                 Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
-
 
 
         for (Map.Entry<String, String> entry : aliasMap.entrySet()) {
@@ -255,7 +235,7 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
         return expressionStatements;
     }
 
-    public static Experiment  getExperiment(Figure figure,ConstructSearchCriteria expressionCriteria) {
+    public static Experiment getExperiment(Figure figure, ConstructSearchCriteria expressionCriteria) {
         ConstructSearchCriteria clone = expressionCriteria.clone();
 
         //set the figure we're limiting to
@@ -289,7 +269,7 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
         Experiment experiment = null;
         for (ExpressionResult result : results) {
             if (!result.getExpressionExperiment().getFishExperiment().getExperiment().isChemical())
-            experiment = result.getExpressionExperiment().getFishExperiment().getExperiment();
+                experiment = result.getExpressionExperiment().getFishExperiment().getExperiment();
         }
 
         return experiment;
@@ -307,7 +287,6 @@ public static  List<Genotype>  getFigureGenotype(Figure figure, String construct
     public static List<String> getGenoxIds(String constructID) {
         return getConstruct(constructID).getGenotypeExperimentIDs();
     }
-
 
 
 }

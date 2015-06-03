@@ -83,6 +83,7 @@ public class ConstructSearchCriteria extends AbstractSearchCriteria {
     private FishExperiment fishExperiment;
     private Genotype genotype;
     private List<Genotype> genos;
+    private List<Fish> fishList;
     private Antibody antibody;
     private PostComposedEntity entity;
     private Term singleTermEitherPosition;
@@ -168,6 +169,14 @@ public class ConstructSearchCriteria extends AbstractSearchCriteria {
 
     public PostComposedEntity getEntity() {
         return entity;
+    }
+
+    public List<Fish> getFishList() {
+        return fishList;
+    }
+
+    public void setFishList(List<Fish> fishList) {
+        this.fishList = fishList;
     }
 
     public void setEntity(PostComposedEntity entity) {
