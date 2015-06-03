@@ -41,7 +41,8 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb
          regen_genofig_not_normal_temp,
          phenotype_statement,
          phenotype_experiment
-   where genox_geno_zdb_id = geno_zdb_id
+   where genox_fish_zdb_id = fish_zdb_id
+     and fish_genotype_zdb_id = geno_zdb_id
      and phenox_pk_id = phenoxId
      and phenox_genox_zdb_id = genox_zdb_id
      and phenox_pk_id = phenos_phenox_pk_id
@@ -58,7 +59,8 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb
          regen_genofig_not_normal_temp,
          phenotype_statement,
          phenotype_experiment
-   where genox_geno_zdb_id = geno_zdb_id
+   where genox_fish_zdb_id = fish_zdb_id
+     and fish_genotype_zdb_id = geno_zdb_id
      and phenox_pk_id = phenoxId
      and phenox_genox_zdb_id = genox_zdb_id
      and genox_exp_zdb_id = exp_zdb_id

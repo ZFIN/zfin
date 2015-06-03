@@ -56,12 +56,12 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
      and rggz_zdb_id [1,8] = "ZDB-GENE"
      and mrel_type = 'knockdown reagent targets gene'
      and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
-     and not exists(select NotThisMO.fishstr_str_zdb_id
+     and not exists(select 'x'
                       from marker_relationship NotThisMrkr, fish_str NotThisMO
                      where NotThisMO.fishstr_str_zdb_id = NotThisMrkr.mrel_mrkr_1_zdb_id 
                        and NotThisMrkr.mrel_type = 'knockdown reagent targets gene'
-                       and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id) 
-     and exp_name not like '\_%'
+                       and NotThisMrkr.mrel_mrkr_2_zdb_id != rggz_zdb_id
+		       and fish_zdb_id = NotThisMo.fishstr_fish_zdb_id) 
      and genox_exp_zdb_id = exp_zdb_id
      and genox_fish_zdb_id = fish_zdb_id
      and fish_zdb_id = fishstr_fish_zdb_id
@@ -244,12 +244,11 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
       -- The genotypes include any of the WT lines, and no other MO, TALEN or CRISPR involved
       insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
         select distinct rggz_zdb_id, genox_zdb_id
-          from fish_experiment, experiment_condition, regen_genox_input_zdb_id_temp, fish_str, fish
+          from fish_experiment, regen_genox_input_zdb_id_temp, fish_str, fish
          where genox_fish_zdb_id = fish_zdb_id
 	   and fish_zdb_id = fishstr_fish_zdb_id
 	   and fishstr_str_zdb_id = rggz_zdb_id
 	   and rggz_zdb_id [1,8] != "ZDB-GENE"
-           and expcond_exp_zdb_id = genox_exp_zdb_id
            and exists (select 'x'
                          from genotype WT
                         where fish_genotype_zdb_id = WT.geno_zdb_id
@@ -259,13 +258,11 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
                            where NOTstr.fishstr_str_zdb_id != rggz_zdb_id
 			   and fishstr_fish_zdb_id = fish_zdb_id)
            and not exists(select 'x' 
-                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr, fish as fish2
-                           where fish2.fish_genotype_zdb_id = NOTfeat.genofeat_geno_zdb_id
-			     and genox_fish_Zdb_id = fish2.fish_zdb_id
+                            from feature_marker_relationship NOTmrkr,genotype_feature NOTfeat,marker_relationship NOTstr
+                           where fish_genotype_zdb_id = NOTfeat.genofeat_geno_zdb_id
                              and NOTfeat.genofeat_feature_zdb_id = NOTmrkr.fmrel_ftr_zdb_id
-                             and NOTmrkr.fmrel_mrkr_zdb_id = NOTstr.mrel_mrkr_1_zdb_id 
-                             and NOTstr.mrel_mrkr_2_zdb_id != rggz_zdb_id
-                             and NOTmrkr.fmrel_type = "is allele of") 
+                             and NOTmrkr.fmrel_mrkr_zdb_id = NOTstr.mrel_mrkr_1_zdb_id
+                             and NOTmrkr.fmrel_type != "is allele of") 
            and exists (select phenox_genox_zdb_id
                          from phenotype_experiment, phenotype_statement 
                         where phenox_genox_zdb_id = genox_zdb_id  
