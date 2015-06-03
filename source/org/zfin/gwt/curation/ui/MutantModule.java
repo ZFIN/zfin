@@ -53,8 +53,8 @@ import java.util.*;
  * as a related marker are listed.
  * II)GenBank-Selection-Box: Selecting a gene updates the GenBank-Selection-Box: GenBank accession numbers that
  * belong the given gene or clones that are related to the gene (EST or cDNA) are listed.
- * C) MartFish-Selection-Box: It list first WT then the list of non-wildtype genotypes attributes to this publication
- * and then all other wild-type genotypes. No cross-interaction upon selection.
+ * C) MartFish-Selection-Box: It list first WT then the list of non-wildtype fish attributes to this publication
+ * and then all other wild-type fish. No cross-interaction upon selection.
  * D) Environment-Selection-Box: This lists first: Standard, Generic-control and the all environments defined in
  * the environment tab. No cross-interaction upon selection.
  * E) Assay-Selection-Box: This lists all assays defined in the expression_pattern_assay according to the
@@ -217,9 +217,8 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
         // stage list
         curationRPCAsync.getStages(new RetrieveStageListCallback());
         // retrieve fish list
-        // fish (genotype) list
-        String message = "Error while reading Genotypes";
-        curationRPCAsync.getGenotypes(publicationID, new RetrieveGenotypeListCallBack(fishList, message, errorElement));
+        String message = "Error while reading fish";
+        curationRPCAsync.getFishList(publicationID, new RetrieveDTOListCallBack<FishDTO>(fishList, message, errorElement));
 
         // environment list
         message = "Error while reading the environment";
@@ -232,9 +231,9 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     }
 
     public void updateFish() {
-        String message = "Error while reading Genotypes";
+        String message = "Error while reading Fish";
         fishList.clear();
-        curationRPCAsync.getGenotypes(publicationID, new RetrieveGenotypeListCallBack(fishList, message, errorElement));
+        curationRPCAsync.getFishList(publicationID, new RetrieveDTOListCallBack<FishDTO>(fishList, message, errorElement));
     }
 
 
@@ -743,7 +742,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
             return false;
         }
         if (mutant.getFish() == null || StringUtils.isEmpty(mutant.getFish().getZdbID())) {
-            errorElement.setError("No genotypes is selected!");
+            errorElement.setError("No fish is selected!");
             return false;
         }
         // check that end stage comes after start stage
@@ -818,9 +817,9 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
                 Label figure = new Label(expression.getFigure().getLabel());
                 figure.setTitle(expression.getFigure().getZdbID());
                 setWidget(rowIndex, HeaderName.FIGURE.getIndex(), figure);
-                Label genotype = new Label(expression.getFish().getHandle());
-                genotype.setTitle(expression.getFish().getZdbID());
-                setWidget(rowIndex, HeaderName.FISH.getIndex(), genotype);
+                Label fish = new Label(expression.getFish().getHandle());
+                fish.setTitle(expression.getFish().getZdbID());
+                setWidget(rowIndex, HeaderName.FISH.getIndex(), fish);
                 Widget environment = new Label(expression.getEnvironment().getName());
                 environment.setTitle(expression.getEnvironment().getZdbID());
                 setWidget(rowIndex, HeaderName.ENVIRONMENT.getIndex(), environment);
@@ -1154,7 +1153,7 @@ public class MutantModule extends Composite implements ExpressionSection<Phenoty
     private enum HeaderName {
         SELECT(0, ""),
         FIGURE(1, "Figure"),
-        FISH(2, "Genotype"),
+        FISH(2, "Fish"),
         ENVIRONMENT(3, "Environment"),
         STAGE_RANGE(4, "Stage Range"),
         EXPRESSED_IN(5, "Phenotype"),

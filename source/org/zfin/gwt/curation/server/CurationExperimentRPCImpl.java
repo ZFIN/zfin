@@ -59,6 +59,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     private static MutantRepository mutantRep = RepositoryFactory.getMutantRepository();
     private static PhenotypeRepository phenotypeRep = RepositoryFactory.getPhenotypeRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private CurationFilterRPCImpl curationFilterRPC = new CurationFilterRPCImpl();
 
     public List<MarkerDTO> getGenes(String pubID) throws PublicationNotFoundException {
 
@@ -179,6 +180,11 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         }
 
         return assayDtos;
+    }
+
+    @Override
+    public List<FishDTO> getFishList(String publicationID) {
+        return curationFilterRPC.createFishList(publicationID);
     }
 
     public List<GenotypeDTO> getGenotypes(String publicationID) {

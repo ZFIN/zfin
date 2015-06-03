@@ -1907,6 +1907,28 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return false;
     }
 
+    @Override
+    public Fish getFishByHandle(String handle) {
+        Session session = HibernateUtil.currentSession();
+        Criteria crit = session.createCriteria(Fish.class);
+        crit.add(Restrictions.eq("handle", handle));
+        return (Fish) crit.uniqueResult();
+    }
+
+    @Override
+    public List<Fish> getNonWTFishByPublication(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct fish from Fish fish, PublicationAttribution record" +
+                "     where record.publication.zdbID = :pubID " +
+                "           and record.dataZdbID = fish.zdbID" +
+                "    order by fish.name";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+
+        return (List<Fish>) query.list();
+    }
+
     public List<Journal> findJournalByAbbreviationAndName(String query) {
         String likeQuery = "%" + query + "%";
         Criteria criteria = HibernateUtil.currentSession().createCriteria(Journal.class);

@@ -1600,4 +1600,15 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("str", sequenceTargetingReagent);
         return (List<Fish>) query.list();
     }
+
+    @Override
+    public List<Fish> getAllWildtypeFish() {
+        Session session = HibernateUtil.currentSession();
+        Criteria fishCriteria = session.createCriteria(Fish.class);
+        Criteria criteria = fishCriteria.createCriteria("genotype");
+        criteria.add(Restrictions.eq("wildtype", true));
+        fishCriteria.add(Restrictions.isEmpty("strList"));
+        fishCriteria.addOrder(Order.asc("name"));
+        return fishCriteria.list();
+    }
 }

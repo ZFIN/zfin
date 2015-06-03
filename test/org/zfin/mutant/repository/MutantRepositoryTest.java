@@ -353,6 +353,13 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void getWildtypeFish() {
+        List<Fish> wildtypes = mutantRepository.getAllWildtypeFish();
+        assertNotNull(wildtypes);
+        assertTrue(wildtypes.size() < 50);
+    }
+
+    @Test
     public void getPhenotypeFigures() {
         // actinotrichium
         ////String oboID = "ZFA:0005435";

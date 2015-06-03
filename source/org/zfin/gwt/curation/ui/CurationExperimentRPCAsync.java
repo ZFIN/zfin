@@ -29,7 +29,7 @@ public interface CurationExperimentRPCAsync {
      * @param publicationID pub ID
      * @param async         callback
      */
-    void getGenotypes(String publicationID, AsyncCallback<List<GenotypeDTO>> async);
+    void getFishList(String publicationID, AsyncCallback<List<FishDTO>> async);
 
     /**
      * Retrieve antibodies that are attributed to a given publication
@@ -162,5 +162,15 @@ public interface CurationExperimentRPCAsync {
     void copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions, List<ExpressionFigureStageDTO> copyToExpressions, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
 
     void getEnvironmentsWithoutSTR(String publicationID, AsyncCallback<List<EnvironmentDTO>> async);
+
+    /**
+     * Retrieve all genotypes for a given publication:
+     * 1) WT
+     * 2)
+     * 3)
+     *
+     * @param publicationID pub ID
+     */
+    void getGenotypes(String publicationID, AsyncCallback<List<GenotypeDTO>> async);
 }
 

@@ -32,6 +32,16 @@ public interface CurationExperimentRPC extends RemoteService {
     List<GenotypeDTO> getGenotypes(String publicationID);
 
     /**
+     * Retrieve all genotypes for a given publication:
+     * 1) WT
+     * 2)
+     * 3)
+     *
+     * @param publicationID pub ID
+     */
+    List<FishDTO> getFishList(String publicationID);
+
+    /**
      * Retrieve antibodies that are attributed to a given publication
      */
     List<MarkerDTO> getAntibodies(String publicationID);

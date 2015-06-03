@@ -198,7 +198,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         }
         hql += "       left join phenox.fishExperiment fishox ";
         if (fishID != null) {
-            hql += "       join phenox.genotypeExperiment.fish fish";
+            hql += "       join phenox.fishExperiment.fish fish";
         }
         hql += "     where phenox.figure.publication.zdbID = :pubID ";
         if (fishID != null)

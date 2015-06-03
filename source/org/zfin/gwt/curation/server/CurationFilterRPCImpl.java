@@ -16,6 +16,7 @@ import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.profile.CuratorSession;
@@ -145,28 +146,27 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         return figureDTOs;
     }
 
-    private List<FishDTO> createFishList(String publicationID) {
-        List<Genotype> genotypes = pubRepository.getGenotypesInPublication(publicationID);
-        List<FishDTO> fishDTOs = new ArrayList<FishDTO>();
-
-        Genotype geno = pubRepository.getGenotypeByHandle(Genotype.WT);
-        fishDTOs.add(DTOConversionService.convertToFishDTOFromGenotype(geno));
-        FishDTO separator = new FishDTO();
-        separator.setName("--------------");
-        fishDTOs.add(separator);
-
-        for (Genotype genotype : genotypes) {
-            fishDTOs.add(DTOConversionService.convertToFishDTOFromGenotype(genotype));
+    public List<FishDTO> createFishList(String publicationID) {
+        List<FishDTO> fishDTOList = new ArrayList<>();
+        Fish wtFish = pubRepository.getFishByHandle("WT");
+        FishDTO fish = new FishDTO();
+        fish.setZdbID(wtFish.getZdbID());
+        fish.setName(wtFish.getHandle());
+        fishDTOList.add(fish);
+        fish = new FishDTO();
+        fish.setZdbID(null);
+        fish.setName("---------");
+        fishDTOList.add(fish);
+        List<Fish> fishList = pubRepository.getNonWTFishByPublication(publicationID);
+        for (Fish nonWTFish : fishList) {
+            if(nonWTFish.getHandle().equals("WT"))
+                continue;
+            FishDTO fishy = new FishDTO();
+            fishy.setZdbID(nonWTFish.getZdbID());
+            fishy.setName(nonWTFish.getHandle());
+            fishDTOList.add(fishy);
         }
-
-        fishDTOs.add(separator);
-        List<Genotype> wildtypes = mutantRep.getAllWildtypeGenotypes();
-        for (Genotype genotype : wildtypes) {
-            // only add non-WT wildtypes as WT is placed at the top
-            if (!genotype.getHandle().equals(Genotype.WT))
-                fishDTOs.add(DTOConversionService.convertToFishDTOFromGenotype(genotype));
-        }
-        return fishDTOs;
+        return fishDTOList;
     }
 
     /**

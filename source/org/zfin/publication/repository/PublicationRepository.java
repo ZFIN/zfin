@@ -501,4 +501,8 @@ public interface PublicationRepository extends PaginationParameter {
     public Long getOrthologyCount(Publication publication);
     public Long getMappingDetailsCount(Publication publication);
     public Boolean canDeletePublication(Publication publication);
+
+    Fish getFishByHandle(String handle);
+
+    List<Fish> getNonWTFishByPublication(String publicationID);
 }

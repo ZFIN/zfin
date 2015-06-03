@@ -80,7 +80,7 @@ public class FishModule implements HandlesError, EntryPoint {
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
         errorLabel.setStyleName("error");
-        genotypeListCallBack = new RetrieveGenotypeListCallBack<>(genotypeSelectionBox, "Genotypes", null);
+        genotypeListCallBack = new RetrieveDTOListCallBack<>(genotypeSelectionBox, "Genotypes", null);
         strListCallBack = new RetrieveRelatedEntityListCallBack(strSelectionBox, "STRs", null);
         genotypeSelectionBox.addChangeHandler(new ChangeHandler() {
             @Override
@@ -223,7 +223,7 @@ public class FishModule implements HandlesError, EntryPoint {
 
     private CurationDiseaseRPCAsync diseaseCurationRPCAsync = CurationDiseaseRPC.App.getInstance();
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
-    private RetrieveGenotypeListCallBack<GenotypeDTO> genotypeListCallBack;
+    private RetrieveDTOListCallBack<GenotypeDTO> genotypeListCallBack;
     private RetrieveRelatedEntityListCallBack strListCallBack;
 
     private void retrieveAllValues() {

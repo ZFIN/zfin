@@ -10,6 +10,8 @@ import java.util.Set;
  */
 public class Fish implements EntityZdbID {
 
+    public static final String WT = "WT";
+
     private String zdbID;
     private Genotype genotype;
     private String name;

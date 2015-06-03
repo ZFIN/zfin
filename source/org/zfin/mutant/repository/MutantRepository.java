@@ -493,5 +493,7 @@ public interface MutantRepository {
      * @return
      */
     List<Fish> getFishListBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
+
+    List<Fish> getAllWildtypeFish();
 }
 
