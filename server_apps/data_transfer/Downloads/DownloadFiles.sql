@@ -1832,7 +1832,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 insert into tmp_pheno_gene
 select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
-       fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition
+       fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
   and fish_genotype_Zdb_id = genofeat_geno_zdb_id
   and mfs_genox_zdb_id = genox_zdb_id
