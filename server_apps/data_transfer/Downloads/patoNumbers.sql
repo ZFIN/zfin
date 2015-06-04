@@ -148,7 +148,7 @@ select zdb_id, gene_id, mrkr_abbrev, ortho_abbrev, organism,
 	 d.term_ont_id as d_ont_id,d.term_name as e2subname, d.term_ontology as e2subTermOntology,
 	 e.term_ont_id as e_ont_id, e.term_name as qualityName, phenos_tag,
 	 '' as a_relationship_id,'' as a_relationship_name,'' as b_relationship_id,'' as b_relationship_name, phenos_pk_id as phenos_id
-    from tmp_o_with_p, feature_marker_relationship, genotype_feature, genotype_experiment, 
+    from tmp_o_with_p, feature_marker_relationship, genotype_feature, fish_experiment, fish,
     	 phenotype_experiment, phenotype_statement, marker,
 	 term a, 
 	 outer term b, 
@@ -159,7 +159,8 @@ select zdb_id, gene_id, mrkr_abbrev, ortho_abbrev, organism,
     where fmrel_mrkr_zdb_id = gene_id
     and fmrel_mrkr_Zdb_id = mrkr_zdb_id
     and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-    and genofeat_geno_zdb_id = genox_geno_zdb_id
+    and genofeat_geno_zdb_id = fish_genotype_zdb_id
+    and fish_zdb_id = genox_fish_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and a.term_zdb_id = phenos_entity_1_superterm_zdb_id
@@ -205,7 +206,7 @@ union
 	 d.term_ont_id as d_ont_id,d.term_name as e2subname, d.term_ontology as e2subTermOntology,
 	 e.term_ont_id as e_ont_id, e.term_name as qualityName, phenos_tag,
 	 '' as a_relationship_id,'' as a_relationship_name,'' as b_relationship_id,'' as b_relationship_name, phenos_pk_id as phenos_id
-    from tmp_o_with_p, marker_relationship, experiment_condition, genotype_experiment, 
+    from tmp_o_with_p, marker_relationship, experiment_condition, fish_experiment,
     	 phenotype_Experiment, phenotype_statement, marker,
 	 term a, 
 	 outer term b, 
