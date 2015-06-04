@@ -38,15 +38,15 @@ update morpholino_group (morphg_group_name)
 
 
 update morpholino_group
-  set morphg_group_name = replace(morphg_group_name,",M","+M")
+  set morphg_group_name = replace(morphg_group_name,",M"," + M")
   where morphg_Group_name like '%,%';
 
 update morpholino_group
-  set morphg_group_name = replace(morphg_group_name,",T","+T")
+  set morphg_group_name = replace(morphg_group_name,",T"," + T")
   where morphg_Group_name like '%,%';
 
 update morpholino_group
-  set morphg_group_name = replace(morphg_group_name,",C","+C")
+  set morphg_group_name = replace(morphg_group_name,",C"," + C")
   where morphg_Group_name like '%,%';
 
 insert into morpholino_group_member(morphgm_group_id, morphgm_member_name, morphgm_member_id)

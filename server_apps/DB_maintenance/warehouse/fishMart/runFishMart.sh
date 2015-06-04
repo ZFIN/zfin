@@ -96,6 +96,9 @@ set fishMartScripts=(begin.sql \
 	     begin.sql \
 	     createTempBtsIndexes.sql \
 	     commit.sql \
+	     begin.sql \
+	     addFishId.sql \
+	     commit.sql \
 	     )
 
 
@@ -182,6 +185,9 @@ set fullFishMartScripts=(begin.sql \
 	     commit.sql \
 	     begin.sql \
 	     createTempBtsIndexes.sql \
+	     commit.sql \
+	     begin.sql \
+	     addFishId.sql \
 	     commit.sql \
 	     begin.sql \
 	     dropBtsIndexes.sql \
