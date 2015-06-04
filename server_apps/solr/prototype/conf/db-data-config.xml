@@ -4,15 +4,6 @@
 	        user="zfinner" password="Rtwm4ts"  transactionIsolation="TRANSACTION_READ_UNCOMMITTED"/>
 
 
-    <script><![CDATA[
-                function unclob(row)        {
-                    row.get('abstract').
-                    return row;
-                }
-        ]]></script>
-
-
-
     <document>
 
             <entity name="gene"
@@ -3998,17 +3989,19 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    processor="CachedSqlEntityProcessor"
                    where="pub_zdb_id=publication.id"/>
 
+<!--
            This is commented out because it causes locks
 
-           <entity name="pub_abstract_from_clob" <!--transformer="ClobTransformer"-->
+           <entity name="pub_abstract_from_clob" &lt;!&ndash;transformer="ClobTransformer"&ndash;&gt;
                    query="select zdb_id as pub_zdb_id, pub_abstract as abstract
                           from publication"
                    processor="CachedSqlEntityProcessor"
                    where="pub_zdb_id=publication.id">
 
-               <!-- de-clob-ify abstracts -->
-               <field column="pub_abstract" name="abstract" <!--clob="true"--> />
+               &lt;!&ndash; de-clob-ify abstracts &ndash;&gt;
+               <field column="pub_abstract" name="abstract" &lt;!&ndash;clob="true"&ndash;&gt; />
            </entity>
+-->
 
        </entity>
 
