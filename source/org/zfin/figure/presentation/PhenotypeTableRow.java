@@ -10,7 +10,7 @@ import org.zfin.mutant.*;
 public class PhenotypeTableRow{
 
     private FishExperiment fishExperiment;
-    private Genotype genotype;
+    private Fish fish;
     private Experiment experiment;
     private DevelopmentStage start;
     private DevelopmentStage end;
@@ -23,19 +23,15 @@ public class PhenotypeTableRow{
 
     public PhenotypeTableRow(PhenotypeStatement phenotypeStatement) {
         setFishExperiment(phenotypeStatement.getPhenotypeExperiment().getFishExperiment());
-        setGenotype(phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getFish().getGenotype());
+        setFish(phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getFish());
         setExperiment(phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getExperiment());
         setStart(phenotypeStatement.getPhenotypeExperiment().getStartStage());
         setEnd(phenotypeStatement.getPhenotypeExperiment().getEndStage());
         setPhenotypeStatement(phenotypeStatement);
 
-/*        if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
-            FishAnnotation fish = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator().next().getFishAnnotation();
-            //todo: needs to be zero-padded
-            setFishNameOrder(fish.getName());
-        } else {*/
-            setFishNameOrder(fishExperiment.getFish().getGenotype().getNameOrder());
-/*        }*/
+        //todo: might want this to be getNameOrder later...
+        setFishNameOrder(fishExperiment.getFish().getAbbreviationOrder());
+
 
     }
 
@@ -47,12 +43,12 @@ public class PhenotypeTableRow{
         this.fishExperiment = fishExperiment;
     }
 
-    public Genotype getGenotype() {
-        return genotype;
+    public Fish getFish() {
+        return fish;
     }
 
-    public void setGenotype(Genotype genotype) {
-        this.genotype = genotype;
+    public void setFish(Fish fish) {
+        this.fish = fish;
     }
 
     public Experiment getExperiment() {

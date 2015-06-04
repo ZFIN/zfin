@@ -9,6 +9,7 @@
         <table class="summary groupstripes">
             <tr>
                 <th><span class="fish-label" title="Fish = Genotype + Reagents">Fish</span></th>
+                <th>Environment</th>
                 <th>Stage</th>
                 <th>Phenotype</th>
             </tr>
@@ -20,7 +21,13 @@
                     <td>
                         <zfin:groupByDisplay loopName="loop" groupBeanCollection="${phenotypeTableRows}"
                                              groupByBean="fishExperiment">
-                            <zfin:link entity="${row.fishExperiment}"/>
+                            <zfin:link entity="${row.fish}"/>
+                        </zfin:groupByDisplay>
+                    </td>
+                    <td>
+                        <zfin:groupByDisplay loopName="loop" groupBeanCollection="${phenotypeTableRows}"
+                                             groupByBean="fishExperiment">
+                            <zfin:link entity="${row.experiment}"/>
                         </zfin:groupByDisplay>
                     </td>
                     <td>
@@ -29,7 +36,7 @@
                             - <zfin:link entity="${row.end}"/>
                         </c:if>
                     </td>
-                    <td> <zfin:link entity="${row.phenotypeStatement}"/> </td>
+                    <td> <zfin:link entity="${row.phenotypeStatement}" suppressMoDetails="true"/> </td>
                 </zfin:alternating-tr>
             </c:forEach>
         </table>

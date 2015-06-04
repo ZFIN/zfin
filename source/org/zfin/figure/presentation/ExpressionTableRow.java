@@ -4,6 +4,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.PostComposedEntity;
@@ -15,7 +16,7 @@ public class ExpressionTableRow{
     private Marker gene;
     private Antibody antibody;
     private FishExperiment fishExperiment;
-    private Genotype genotype;
+    private Fish fish;
     private Experiment experiment;
     private String qualifier;
     private Boolean isExpressionFound;
@@ -39,25 +40,22 @@ public class ExpressionTableRow{
         setGene(expressionExperiment.getGene());
         setAntibody(expressionExperiment.getAntibody());
         setFishExperiment(expressionExperiment.getFishExperiment());
-        setGenotype(expressionExperiment.getFishExperiment().getFish().getGenotype());
+        setFish(expressionExperiment.getFishExperiment().getFish());
         setExperiment(expressionExperiment.getFishExperiment().getExperiment());
         setStart(expressionResult.getStartStage());
         setEnd(expressionResult.getEndStage());
         setExpressionFound(expressionResult.isExpressionFound());
-        if (!expressionResult.isExpressionFound())
+        if (!expressionResult.isExpressionFound()) {
             setQualifier("Not Detected");
+        }
         setEntity(expressionResult.getEntity());
         setAssay(expressionResult.getExpressionExperiment().getAssay());
 
         setGeneGenoxZdbIDs(gene.getZdbID() + fishExperiment.getZdbID());
 
-/*        if (CollectionUtils.isNotEmpty(genotypeExperiment.getGenotypeExperimentFishAnnotations())) {
-            FishAnnotation fish = genotypeExperiment.getGenotypeExperimentFishAnnotations().iterator().next().getFishAnnotation();
-            //todo: needs to be zero-padded
-            setFishNameOrder(fish.getName());
-        } else {*/
-            setFishNameOrder(fishExperiment.getFish().getGenotype().getNameOrder());
-  /*      }*/
+        //todo: might want this to be getNameOrder later...
+        setFishNameOrder(fishExperiment.getFish().getAbbreviationOrder());
+
 
     }
 
@@ -94,12 +92,12 @@ public class ExpressionTableRow{
         this.fishExperiment = fishExperiment;
     }
 
-    public Genotype getGenotype() {
-        return genotype;
+    public Fish getFish() {
+        return fish;
     }
 
-    public void setGenotype(Genotype genotype) {
-        this.genotype = genotype;
+    public void setFish(Fish fish) {
+        this.fish = fish;
     }
 
     public Experiment getExperiment() {

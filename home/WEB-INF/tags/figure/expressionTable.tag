@@ -12,6 +12,7 @@
                 <th class="gene">Gene</th>
                 <th class="antibody">Antibody</th>
                 <th class="fish"><span class="fish-label" title="Fish = Genotype + Reagents">Fish</span></th>
+                <th>Environment</th>
                 <th class="stage">Stage</th>
                 <c:if test="${showQualifierColumn}">
                     <th class="qualifier">Qualifier</th>
@@ -31,7 +32,13 @@
                     <td>
                         <zfin:groupByDisplay loopName="loop" groupBeanCollection="${expressionTableRows}"
                                              groupByBean="geneGenoxZdbIDs">
-                            <zfin:link entity="${row.fishExperiment}"/>
+                            <zfin:link entity="${row.fish}"/>
+                        </zfin:groupByDisplay>
+                    </td>
+                    <td>
+                        <zfin:groupByDisplay loopName="loop" groupBeanCollection="${expressionTableRows}"
+                                             groupByBean="geneGenoxZdbIDs">
+                            <zfin:link entity="${row.experiment}" suppressMoDetails="true"/>
                         </zfin:groupByDisplay>
                     </td>
                     <td>
