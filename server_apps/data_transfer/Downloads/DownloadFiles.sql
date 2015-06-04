@@ -355,7 +355,7 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
         xpatex_assay_name, xpatex_zdb_id xpat_zdb,
         xpatex_source_zdb_id,
-        fish.genotype_zdb_id, genox_exp_zdb_id,
+        fish.fish_genotype_zdb_id, genox_exp_zdb_id,
         clone_rating
  from expression_experiment
  join fish_experiment
