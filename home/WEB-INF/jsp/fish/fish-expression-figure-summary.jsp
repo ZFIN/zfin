@@ -19,9 +19,9 @@
 
 <table class="primary-entity-attributes">
     <tr>
-        <th>Genotype:</th>
+        <th>Fish:</th>
         <td>
-            <zfin:link entity="${phenotypeSummaryCriteria.fishExperiments[0].genotype}"/>
+            <zfin:link entity="${phenotypeSummaryCriteria.fishExperiments[0].fish}"/>
         </td>
     </tr>
     <c:if test="${!empty phenotypeSummaryCriteria.fishExperiments}">

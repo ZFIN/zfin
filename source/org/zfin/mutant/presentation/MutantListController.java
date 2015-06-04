@@ -31,7 +31,9 @@ public class MutantListController {
     private PhenotypeRepository phenoRepository = RepositoryFactory.getPhenotypeRepository();
 
     @RequestMapping(value = {"/mutant-list"})
-    protected String getMutantList(@RequestParam String zdbID, @RequestParam(value = "callingPage", required = false) String callingPage, Model model) {
+    protected String getMutantList(@RequestParam String zdbID,
+                                   @RequestParam(value = "callingPage", required = false) String callingPage,
+                                   Model model) {
 
         LOG.debug("Start MutantListController");
 
@@ -44,7 +46,6 @@ public class MutantListController {
                     LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
                     pub = pubRepository.getPublication(replacedZdbID);
                 }
-
             }
 
             if (pub == null) {
@@ -59,7 +60,6 @@ public class MutantListController {
             }
 
             retrieveMutantListByPub(form, zdbID);
-
 
             model.addAttribute(LookupStrings.FORM_BEAN, form);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mutant and Transgenic Line List");

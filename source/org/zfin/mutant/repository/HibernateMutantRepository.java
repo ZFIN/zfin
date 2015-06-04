@@ -1165,20 +1165,20 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> genoxIds, String geneID) {
-        if (CollectionUtils.isEmpty(genoxIds) || StringUtils.isEmpty(genotypeID))
+    public List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> fishoxIds, String geneID) {
+        if (CollectionUtils.isEmpty(fishoxIds) || StringUtils.isEmpty(genotypeID))
             return null;
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
-                " expressionResult.expressionExperiment.genotypeExperiment.genotype.zdbID = :genotypeID AND " +
-                " expressionResult.expressionExperiment.genotypeExperiment.zdbID in (:genoxIds) AND ";
+                " expressionResult.expressionExperiment.fishExperiment.fish.genotype.zdbID = :genotypeID AND " +
+                " expressionResult.expressionExperiment.fishExperiment.zdbID in (:fishoxIds) AND ";
         if (geneID == null)
             hql += " expressionResult.expressionExperiment.gene is not null";
         else
             hql += " expressionResult.expressionExperiment.gene = :geneID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotypeID", genotypeID);
-        query.setParameterList("genoxIds", genoxIds);
+        query.setParameterList("fishoxIds", fishoxIds);
         if (geneID != null)
             query.setString("geneID", geneID);
         return query.list();
