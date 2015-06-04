@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.GeneCentricExpressionData;
 import org.zfin.feature.presentation.GenotypeBean;
@@ -75,11 +74,16 @@ public class FishDetailController {
         model.addAttribute("fish", fish);
         FishBean form = new FishBean();
         retrieveGenotypeExperiment(form, fish);
-        retrievePhenotypeData(form, fish.getGenotypeExperimentIDs());
+
+
+        List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs());
+        model.addAttribute("phenotypeStatements", phenotypeStatements);
+        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
+
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute(LookupStrings.FORM_BEAN, form);
 
-        addExpressionSummaryToForm(model, fishID);
+        addExpressionSummaryToModel(model, fishID);
 
         // the following put the fish Id to page title as debugging for FB case 8817
         // model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish: " + fishID);
@@ -106,9 +110,11 @@ public class FishDetailController {
         }
 
         model.addAttribute("fish", fish);
-        FishBean form = new FishBean();
 
-        model.addAttribute("formBean", form);
+        List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
+        model.addAttribute("phenotypeStatements", phenotypeStatements);
+        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
+
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
 
@@ -145,7 +151,7 @@ public class FishDetailController {
         return "fish/fish-detail-popup.popup";
     }
 
-    private void addExpressionSummaryToForm(Model model, String fishID) {
+    private void addExpressionSummaryToModel(Model model, String fishID) {
         List<FigureExpressionSummary> figureExpressionSummaryList = FishService.getExpressionSummary(fishID);
         if (figureExpressionSummaryList != null) {
             List<GeneCentricExpressionData> geneCentricExpressionData = PresentationConverter.getGeneCentricExpressionData(figureExpressionSummaryList);
@@ -172,7 +178,8 @@ public class FishDetailController {
 
         FishBean form = new FishBean();
         model.addAttribute("fish", fish);
-        retrievePhenotypeData(form, fish.getGenotypeExperimentIDs());
+        model.addAttribute("phenotypeStatements", getMutantRepository().getPhenotypeStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
+        model.addAttribute("expressionStatements", getMutantRepository().getExpressionStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(fish.getName()));
 
@@ -194,10 +201,10 @@ public class FishDetailController {
         }
 
         GenotypeBean form = new GenotypeBean();
-        retrieveExpressionData(form, fish.getGenotypeExperimentIDs());
+        model.addAttribute("expressionStatements", getMutantRepository().getExpressionStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
         if (StringUtils.isNotEmpty(fish.getGenotypeID()))
             form.setGenotype(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));
-        addExpressionSummaryToForm(model, fishID);
+        addExpressionSummaryToModel(model, fishID);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(fish);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(fish.getName()));
@@ -205,15 +212,6 @@ public class FishDetailController {
         return "genotype/fish-all-expressions.page";
     }
 
-    public void retrievePhenotypeData(FishBean form, List<String> genoxIds) {
-        List<PhenotypeStatement> phenoStatements = getMutantRepository().getPhenotypeStatementsByGenotypeExperiments(genoxIds);
-        form.setPhenoStatements(phenoStatements);
-    }
-
-    public void retrieveExpressionData(GenotypeBean form, List<String> genoxIds) {
-        List<ExpressionStatement> phenoStatements = getMutantRepository().getExpressionStatementsByGenotypeExperiments(genoxIds);
-        form.setExpressionStatements(phenoStatements);
-    }
 
 
     private void retrieveGenotypeExperiment(FishBean form, MartFish fish) {

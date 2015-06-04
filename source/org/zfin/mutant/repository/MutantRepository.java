@@ -284,6 +284,8 @@ public interface MutantRepository {
      */
     List<PhenotypeStatement> getPhenotypeStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs);
 
+    List<PhenotypeStatement> getPhenotypeStatementsByFish(Fish fish);
+
     /**
      * Retrieve phenotype statements by genotype experiment ids
      *

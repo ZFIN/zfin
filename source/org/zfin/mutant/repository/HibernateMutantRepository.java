@@ -1053,6 +1053,16 @@ public class HibernateMutantRepository implements MutantRepository {
         return query.list();
     }
 
+    public List<PhenotypeStatement> getPhenotypeStatementsByFish(Fish fish) {
+        String hql = " from PhenotypeStatement where " +
+                "phenotypeExperiment.fishExperiment.fish.zdbID = :fishZdbId";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fishZdbId", fish.getZdbID());
+        return query.list();
+    }
+
+
     /**
      * Retrieve phenotype statements by genotype experiment ids
      *

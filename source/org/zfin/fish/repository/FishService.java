@@ -16,10 +16,7 @@ import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinFigureEntity;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -40,6 +37,7 @@ public class FishService {
     public static FishSearchResult getFish(FishSearchCriteria criteria) {
         return RepositoryFactory.getFishRepository().getFish(criteria);
     }
+
 
 
     public static List<FigureSummaryDisplay> getPhenotypeSummary(String fishID, FishSearchCriteria criteria) {
