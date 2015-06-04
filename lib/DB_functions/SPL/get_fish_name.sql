@@ -33,7 +33,7 @@ then
 	 	       where mrkr_Zdb_id = fishstr_str_zdb_id
 		       and fishstr_fish_zdb_id = vFishZdbId
 		       order by mrkr_abbrev
-    let fishName = fishName || "+" ||mrkrAbbrev;
+    let fishName = fishName || " + " ||mrkrAbbrev;
 
 end foreach
 end if;
