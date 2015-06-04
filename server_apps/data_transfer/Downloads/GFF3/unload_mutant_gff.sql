@@ -9,10 +9,10 @@ select  vg.gff_seqname,
            "." gff_score,
            vg.gff_strand,
            "." gff_frame,
-       'geno_id=' || geno_zdb_id ||';Name='
+       'geno_id=' || fish_genotype_zdb_id ||';Name='
        || geno_display_name ||';Alias='||  geno_zdb_id attribute
 
-from mutant_fast_search,genotype_experiment,genotype,
+from mutant_fast_search,fish_experiment,genotype,fish,
  gff3 vt, gff3 vg, db_link,marker_relationship
 
  where mfs_genox_zdb_id  = genox_zdb_id
@@ -23,7 +23,7 @@ from mutant_fast_search,genotype_experiment,genotype,
    and vg.gff_source = 'vega' and vg.gff_feature = 'gene'
    and dblink_acc_num = vt.gff_ID
    and vt.gff_Parent = vg.gff_ID
-
+   and fish_zdb_id = genox_fish_zdb_id
  group by vg.gff_seqname,gstart,vg.gff_strand,attribute;
 
 -- to be valid the gff3 requires a header
