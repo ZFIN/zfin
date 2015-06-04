@@ -1,6 +1,7 @@
 package org.zfin.expression.presentation;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.EntityPresentation;
@@ -70,9 +71,12 @@ public class ExperimentPresentation extends EntityPresentation {
             return "";
 
         StringBuilder sb = new StringBuilder(50);
+        String experimentName = getNameWithChemicalDetails(experiment);
 
-        sb.append(getTomcatLink(experimentUri,experiment.getZdbID(),getNameWithChemicalDetails(experiment)));
-        sb.append(getTomcatPopupLink(experimentPopupUri,experiment.getZdbID(),"Further explanation of experimental conditions"));
+        if (StringUtils.isNotEmpty(experimentName)) {
+            sb.append(getTomcatLink(experimentUri,experiment.getZdbID(),experimentName));
+            sb.append(getTomcatPopupLink(experimentPopupUri,experiment.getZdbID(),"Further explanation of experimental conditions"));
+        }
 
         return sb.toString();
     }
@@ -95,10 +99,14 @@ public class ExperimentPresentation extends EntityPresentation {
         StringBuilder sb = new StringBuilder(50);
         int i = 0;
         for (ExperimentCondition experimentCondition : conditions) {
-            if (i > 0)
-                sb.append(", ");
-            sb.append(ExperimentConditionPresentation.getName(experimentCondition));
-            i++;
+            if (!experimentCondition.isSequenceTargetingReagentCondition()) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(ExperimentConditionPresentation.getName(experimentCondition));
+                i++;
+            }
+
         }
         return sb.toString();
     }
