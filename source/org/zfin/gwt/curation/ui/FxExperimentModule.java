@@ -191,8 +191,8 @@ public class FxExperimentModule extends Composite implements ExperimentSection, 
         curationExperimentRPCAsync.getGenes(publicationID, new GeneSelectionListAsyncCallback(null));
 
         // fish (genotype) list
-        String message = "Error while reading Genotypes";
-        curationExperimentRPCAsync.getGenotypes(publicationID,
+        String message = "Error while reading Fish";
+        curationExperimentRPCAsync.getFishList(publicationID,
                 new RetrieveDTOListCallBack(fishList, message, errorElement));
 
         // environment list
