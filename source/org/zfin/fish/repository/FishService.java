@@ -265,8 +265,8 @@ public class FishService {
     }
 
     public static Set<Publication> getFishPublications(Fish fish) {
-        List<Publication> pubs = RepositoryFactory.getMutantRepository().getFishAttributionList(fish.getFishExperiments());
-        Set<Publication> publicationSet = new HashSet<Publication>(pubs.size());
+        List<Publication> pubs = RepositoryFactory.getMutantRepository().getFishAttributionList(fish);
+        Set<Publication> publicationSet = new HashSet<>(pubs.size());
         publicationSet.addAll(pubs);
         return publicationSet;
     }

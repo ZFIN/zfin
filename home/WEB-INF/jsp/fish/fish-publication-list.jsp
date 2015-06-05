@@ -14,7 +14,7 @@
 </table>
 
 <div class="name-label">
-        Genotype + Sequence Targeting Reagents:&nbsp;
+        Fish:&nbsp;
         <a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.name}</a>  
 </div>
 

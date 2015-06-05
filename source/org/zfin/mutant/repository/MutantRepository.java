@@ -305,10 +305,10 @@ public interface MutantRepository {
     /**
      * Retrieve citation list of pubs for fish annotations.
      *
-     * @param fishExperiments
+     * @param fish
      * @return
      */
-    List<Publication> getFishAttributionList(Set<FishExperiment> fishExperiments);
+    List<Publication> getFishAttributionList(Fish fish);
 
     /**
      * Retrieve sequence targeting reagent by its id
