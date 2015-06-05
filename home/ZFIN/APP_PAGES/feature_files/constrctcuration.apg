@@ -314,19 +314,6 @@ FILTER  section
 
 
 
-<?MICOMMENT>
-<a name=featrelation>
-<br><b><font size=3>Add Relationships:</font> </b>
-<?MIBLOCK COND=$(OR,$(NXST,$featcur_featrel),$(EC,$featcur_featrel,hide))>
-     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'#featrelationship');">$unhide<a><?/MIVAR>
-     <br>
-<?MIELSE>
-     <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featrel','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random());">$hide</a><?/MIVAR>
-     <br>
-     <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-constrctrelationships.apg';">$1<?/MISQL>
-<?/MIBLOCK>
-<?/MICOMMENT>
-<?/MICOMMENT>
 
 <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
