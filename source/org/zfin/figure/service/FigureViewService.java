@@ -179,61 +179,33 @@ public class FigureViewService {
     /**
      * Sorted/unique list of genotypes from the gene expression in this figure
      */
-    public List<Genotype> getExpressionGenotypes(Figure figure) {
-        List<Genotype> genotypes = new ArrayList<>();
+    public List<Fish> getExpressionFish(Figure figure) {
+        List<Fish> fishList = new ArrayList<>();
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (!genotypes.contains(expressionResult.getExpressionExperiment().getFishExperiment().getFish().getGenotype())) {
-                genotypes.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish().getGenotype());
+            if (!fishList.contains(expressionResult.getExpressionExperiment().getFishExperiment().getFish())
+                    && !expressionResult.getExpressionExperiment().getFishExperiment().getFish().isWildtypeWithoutReagents()) {
+                fishList.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish());
             }
         }
 
-        Collections.sort(genotypes);
-        return genotypes;
+        Collections.sort(fishList);
+        return fishList;
     }
 
     /**
      * Get the list of expression genotypes for each figure in a list
      * */
-    public Map<Figure, List<Genotype>> getExpressionGenotypes(List<Figure> figures) {
-        Map<Figure, List<Genotype>> map = new HashMap<>();
+    public Map<Figure, List<Fish>> getExpressionFish(List<Figure> figures) {
+        Map<Figure, List<Fish>> map = new HashMap<>();
 
         for (Figure figure : figures)
-            map.put(figure, getExpressionGenotypes(figure));
+            map.put(figure, getExpressionFish(figure));
 
         return map;
     }
 
 
-    /**
-     * This method is created because getExpressionFishes() alone won't display wild-type fish
-     */
-    public List<Object> getExpressionFishesAndGenotypes (Figure figure) {
-        List<Object> fishesAndGenotypes = new ArrayList<>();
-
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (!fishesAndGenotypes.contains(expressionResult.getExpressionExperiment().getFishExperiment().getFish().getGenotype())) {
-                fishesAndGenotypes.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish().getGenotype());
-            }
-        }
-
-
-        Collections.sort(fishesAndGenotypes, ComparatorCreator.orderBy("name"));
-
-        return fishesAndGenotypes;
-    }
-
-    /**
-     * Get the list of fishes and genotypes for each figure in a list
-     * */
-    public Map<Figure, List<Object>> getExpressionFishesAndGenotypes (List<Figure> figures) {
-        Map<Figure, List<Object>> map = new HashMap<>();
-
-        for (Figure figure : figures)
-            map.put(figure, getExpressionFishesAndGenotypes(figure));
-
-        return map;
-    }
 
     /**
      * Get the list of sequence targeting reagent (knockdown reagents) shown in a figure
@@ -396,60 +368,31 @@ public class FigureViewService {
     /**
      * Sorted/unique list of genotypes from the phenotype shown in this Figure
      */
-    public List<Genotype> getPhenotypeGenotypes(Figure figure) {
-        List<Genotype> genotypes = new ArrayList<>();
+    public List<Fish> getPhenotypeFish(Figure figure) {
+        List<Fish> fishList = new ArrayList<>();
 
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            if (!genotypes.contains(phenotypeExperiment.getFishExperiment().getFish().getGenotype())) {
-                genotypes.add(phenotypeExperiment.getFishExperiment().getFish().getGenotype());
+            if (!fishList.contains(phenotypeExperiment.getFishExperiment().getFish())
+                    && !phenotypeExperiment.getFishExperiment().getFish().isWildtypeWithoutReagents()) {
+                fishList.add(phenotypeExperiment.getFishExperiment().getFish());
             }
         }
 
-        Collections.sort(genotypes);
-        return genotypes;
+        Collections.sort(fishList);
+        return fishList;
     }
 
     /**
      * Get the list of genotypes for each figure in a list
      * */
-    public Map<Figure, List<Genotype>> getPhenotypeGenotypes(List<Figure> figures) {
-        Map<Figure, List<Genotype>> map = new HashMap<>();
+    public Map<Figure, List<Fish>> getPhenotypeFish(List<Figure> figures) {
+        Map<Figure, List<Fish>> map = new HashMap<>();
 
         for (Figure figure : figures)
-            map.put(figure, getPhenotypeGenotypes(figure));
+            map.put(figure, getPhenotypeFish(figure));
 
         return map;
     }
-
-    /**
-     * This method is created because getExpressionFishes() alone won't display wild-type fish
-     */
-    public List<Object> getPhenotypeFishesAndGenotypes (Figure figure) {
-        List<Object> fishesAndGenotypes = new ArrayList<>();
-
-        for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            if (!fishesAndGenotypes.contains(phenotypeExperiment.getFishExperiment().getFish().getGenotype())) {
-                fishesAndGenotypes.add(phenotypeExperiment.getFishExperiment().getFish().getGenotype());
-            }
-        }
-
-        Collections.sort(fishesAndGenotypes, ComparatorCreator.orderBy("name"));
-
-        return fishesAndGenotypes;
-    }
-
-    /**
-     * Get the list of fishes and genotypes for each figure in a list
-     * */
-    public Map<Figure, List<Object>> getPhenotypeFishesAndGenotypes (List<Figure> figures) {
-        Map<Figure, List<Object>> map = new HashMap<>();
-
-        for (Figure figure : figures)
-            map.put(figure, getPhenotypeFishesAndGenotypes(figure));
-
-        return map;
-    }
-
     /**
      * Get the list of sequence targeting reagent (knockdown reagents) shown in a figure
      */

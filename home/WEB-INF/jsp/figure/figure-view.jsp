@@ -44,14 +44,14 @@
 
 <zfin-figure:expressionSummary genes="${expressionGenes}"
                                antibodies="${expressionAntibodies}"
-                               fishesAndGenotypes="${expressionFishesAndGenotypes}"
+                               fish="${expressionFish}"
                                strs="${expressionSTRs}"
                                experiments="${expressionConditions}"
                                entities="${expressionEntities}"
                                start="${expressionStartStage}" end="${expressionEndStage}"
                                probe="${probe}" probeSuppliers="${probeSuppliers}"/>
 
-<zfin-figure:phenotypeSummary fishesAndGenotypes="${phenotypeFishesAndGenotypes}"
+<zfin-figure:phenotypeSummary fish="${phenotypeFish}"
                               strs="${phenotypeSTRs}"
                               entities="${phenotypeEntities}"
                               experiments="${phenotypeConditions}"

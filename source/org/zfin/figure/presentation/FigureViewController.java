@@ -57,7 +57,7 @@ public class FigureViewController {
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(figure.getPublication()));
         model.addAttribute("expressionGenes",figureViewService.getExpressionGenes(figure));
         model.addAttribute("expressionAntibodies",figureViewService.getAntibodies(figure));
-        model.addAttribute("expressionFishesAndGenotypes",figureViewService.getExpressionFishesAndGenotypes(figure));
+        model.addAttribute("expressionFish",figureViewService.getExpressionFish(figure));
         model.addAttribute("expressionSTRs",figureViewService.getExpressionSTR(figure));
         model.addAttribute("expressionConditions", figureViewService.getExpressionCondition(figure)); // conditions are actually List<Experiment>
         model.addAttribute("expressionEntities",figureViewService.getExpressionEntities(figure));
@@ -65,7 +65,7 @@ public class FigureViewController {
         model.addAttribute("expressionEndStage",figureViewService.getExpressionEndStage(figure));
 
         //fishes, STRs, conditions, terms, stages
-        model.addAttribute("phenotypeFishesAndGenotypes",figureViewService.getPhenotypeFishesAndGenotypes(figure));
+        model.addAttribute("phenotypeFish",figureViewService.getPhenotypeFish(figure));
         model.addAttribute("phenotypeSTRs",figureViewService.getPhenotypeSTR(figure));
         model.addAttribute("phenotypeConditions",figureViewService.getPhenotypeCondition(figure));
         model.addAttribute("phenotypeEntities",figureViewService.getPhenotypeEntities(figure));
@@ -143,14 +143,14 @@ public class FigureViewController {
 
         model.addAttribute("expressionGeneMap", figureViewService.getExpressionGenes(figures));
         model.addAttribute("expressionAntibodyMap", figureViewService.getAntibodies(figures));
-        model.addAttribute("expressionFishesAndGenotypeMap",figureViewService.getExpressionFishesAndGenotypes(figures));
+        model.addAttribute("expressionFishMap",figureViewService.getExpressionFish(figures));
         model.addAttribute("expressionSTRMap",figureViewService.getExpressionSTRs(figures));
         model.addAttribute("expressionConditionMap", figureViewService.getExpressionConditions(figures));
         model.addAttribute("expressionEntityMap", figureViewService.getExpressionEntities(figures));
         model.addAttribute("expressionStartStageMap", figureViewService.getExpressionStartStages(figures));
         model.addAttribute("expressionEndStageMap", figureViewService.getExpressionEndStages(figures));
 
-        model.addAttribute("phenotypeFishesAndGenotypeMap",figureViewService.getPhenotypeFishesAndGenotypes(figures));
+        model.addAttribute("phenotypeFishMap",figureViewService.getPhenotypeFish(figures));
         model.addAttribute("phenotypeConditionMap", figureViewService.getPhenotypeConditions(figures));
         model.addAttribute("phenotypeSTRMap", figureViewService.getPhenotypeSTRs(figures));
         model.addAttribute("phenotypeEntitiesMap", figureViewService.getPhenotypeEntities(figures));

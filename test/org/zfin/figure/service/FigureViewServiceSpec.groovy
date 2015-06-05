@@ -8,7 +8,7 @@ import org.zfin.figure.presentation.AntibodyTableRow
 import org.zfin.figure.presentation.ExpressionTableRow
 import org.zfin.figure.presentation.PhenotypeTableRow
 import org.zfin.marker.Marker
-import org.zfin.mutant.Genotype
+import org.zfin.mutant.Fish
 import org.zfin.repository.RepositoryFactory
 import spock.lang.Ignore
 import spock.lang.Shared
@@ -120,13 +120,13 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
 
 
     @Unroll
-    def "#figZdbID should have #count expression genotypes"() {
+    def "#figZdbID should have #count expression fish"() {
         when: "we get the figure"
         Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
-        List<Genotype> genotypes = figureViewService.getExpressionGenotypes(figure)
+        List<Fish> fishList = figureViewService.getExpressionFish(figure)
 
         then:
-        count == genotypes.size()
+        count == fishList.size()
 
         where:
         count | figZdbID
@@ -134,7 +134,7 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
         1     | figures.singleXpatRes
         1     | figures.tenXpatRes
         0     | figures.hasOnlyPhenotype
-        3     | figures.hasAllThree
+        5     | figures.hasAllThree
 
     }
 
@@ -201,20 +201,20 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
     }
 
     @Unroll
-    def "#figZdbID list of phenotype genotypes should have #count genotypes"() {
+    def "#figZdbID list of phenotype fish should have #count fish"() {
         when: "we get the figure"
         Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
-        List<Genotype> genotypes = figureViewService.getPhenotypeGenotypes(figure)
+        List<Fish> fishList = figureViewService.getPhenotypeFish(figure)
 
         then:
-        count == genotypes.size()
+        count == fishList.size()
 
         where:
         count | figZdbID
         0     | figures.hasNoData
         0     | figures.singleXpatRes
         11    | figures.hasOnlyPhenotype
-        2     | figures.hasAllThree
+        3     | figures.hasAllThree
 
 
     }

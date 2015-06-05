@@ -2,7 +2,7 @@
 
 <%@attribute name="genes" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="antibodies" type="java.util.List" rtexprvalue="true" required="true" %>
-<%@attribute name="fishesAndGenotypes" type="java.util.List" rtexprvalue="true" required="true" %>
+<%@attribute name="fish" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="strs" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="experiments" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="entities" type="java.util.List" rtexprvalue="true" required="true" %>
@@ -36,12 +36,12 @@
                     <td> <zfin2:toggledPostcomposedList entities="${antibodies}" maxNumber="5"/>  </td>
                 </tr>
             </c:if>
-            <c:if test="${!empty fishesAndGenotypes}">
+            <c:if test="${!empty fish}">
                 <tr>
                     <th>
-                        <zfin:choice choicePattern="0#Genotypes:| 1#Genotype:| 2#Genotypes:" integerEntity="${fn:length(fishAndGenotypes)}"/>
+                        <zfin:choice choicePattern="0#Fish:| 1#Fish:| 2#Fish:" integerEntity="${fn:length(fish)}"/>
                     </th>
-                    <td> <zfin2:toggledPostcomposedList entities="${fishesAndGenotypes}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledPostcomposedList entities="${fish}" maxNumber="5"/>  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty experiments}">

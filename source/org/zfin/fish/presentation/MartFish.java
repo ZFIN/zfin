@@ -7,6 +7,7 @@ import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.RepositoryFactory;
@@ -36,6 +37,7 @@ public class MartFish extends ZfinEntity {
     //todo: probably remove this once we have real matching text
     private String geneOrFeatureText;
     private String scoringText;
+
 
     private List<String> mutationTypes;
     private Set<ZfinFigureEntity> phenotypeFigures;

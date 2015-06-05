@@ -35,9 +35,9 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
         when: "we get a figure with phenotype data"
         Figure figure = RepositoryFactory.figureRepository.getFigure("ZDB-FIG-080325-45")
 
-        then: "it should have phenotype experiments, and those experiments should have genotypes, stages and at least one phenotype statement"
+        then: "it should have phenotype experiments, and those experiments should have fish, stages and at least one phenotype statement"
         figure.getPhenotypeExperiments().size() > 0
-        figure.getPhenotypeExperiments().first().genotypeExperiment
+        figure.getPhenotypeExperiments().first().fishExperiment
         figure.getPhenotypeExperiments().first().startStage
         figure.getPhenotypeExperiments().first().endStage
         figure.getPhenotypeExperiments().first().phenotypeStatements.size() > 0

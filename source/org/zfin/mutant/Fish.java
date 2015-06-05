@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Fish entity
  */
-public class Fish implements EntityZdbID {
+public class Fish implements EntityZdbID, Comparable {
 
     public static final String WT = "WT";
 
@@ -92,4 +92,17 @@ public class Fish implements EntityZdbID {
     public void setFishExperiments(Set<FishExperiment> fishExperiments) {
         this.fishExperiments = fishExperiments;
     }
+
+
+    public int compareTo(Object o) {
+        Fish otherFish = (Fish)o;
+
+        return getAbbreviationOrder().compareTo(otherFish.getAbbreviationOrder());
+    }
+
+    public boolean isWildtypeWithoutReagents() {
+        return genotype.isWildtype() && strList.size() == 0;
+    }
+
+    public String toString() { return name; }
 }

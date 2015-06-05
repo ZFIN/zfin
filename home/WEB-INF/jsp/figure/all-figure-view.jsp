@@ -45,7 +45,7 @@
 
         <zfin-figure:expressionSummary genes="${expressionGeneMap[figure]}"
                                        antibodies="${expressionAntibodyMap[figure]}"
-                                       fishesAndGenotypes="${expressionFishesAndGenotypeMap[figure]}"
+                                       fish="${expressionFishMap[figure]}"
                                        strs="${expressionSTRMap[figure]}"
                                        experiments="${expressionConditionMap[figure]}"
                                        entities="${expressionEntityMap[figure]}"
@@ -57,13 +57,13 @@
             </div>
         </c:if>
 
-        <zfin-figure:phenotypeSummary fishesAndGenotypes="${phenotypeFishesAndGenotypeMap[figure]}"
+        <zfin-figure:phenotypeSummary fish="${phenotypeFishMap[figure]}"
                                       strs="${phenotypeSTRMap[figure]}"
                                       entities="${phenotypeEntitiesMap[figure]}"
                                       experiments="${phenotypeConditionMap[figure]}"
                                       start="${phenotypeStartStageMap[figure]}" end="${phenotypeEndStageMap[figure]}" />
 
-        <c:if test="${!empty phenotypeFishesAndGenotypeMap[figure]}">
+        <c:if test="${!empty phenotypeFishMap[figure]}">
             <div style="margin-top: 1em;">
                 <a href="/${figure.zdbID}#phenoDetail">Phenotype details</a>
             </div>

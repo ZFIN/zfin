@@ -1,24 +1,24 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
-<%@attribute name="fishesAndGenotypes" type="java.util.List" rtexprvalue="true" required="true" %>
+<%@attribute name="fish" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="strs" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="entities" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="experiments" type="java.util.List" rtexprvalue="true" required="true" %>
 <%@attribute name="start" type="org.zfin.anatomy.DevelopmentStage" rtexprvalue="true" required="true"%>
 <%@attribute name="end" type="org.zfin.anatomy.DevelopmentStage" rtexprvalue="true" required="true"%>
 
-<c:if test="${!empty fishesAndGenotypes}">  <%-- don't display the summary at all if there's no data--%>
-    <zfin2:subsection title="PHENOTYPE:" test="${!empty fishesAndGenotypes}">
+<c:if test="${!empty fish}">  <%-- don't display the summary at all if there's no data--%>
+    <zfin2:subsection title="PHENOTYPE:" test="${!empty fish}">
 
         <table class="primary-entity-attributes">
 
-            <c:if test="${!empty fishesAndGenotypes}">
+            <c:if test="${!empty fish}">
                 <tr>
                     <th>
-			<zfin:choice choicePattern="0#Genotypes:| 1#Genotype:| 2#Genotypes:" integerEntity="${fn:length(fishAndGenotypes)}"/>
+			<zfin:choice choicePattern="0#Fish:| 1#Fish:| 2#Fish:" integerEntity="${fn:length(fish)}"/>
                     </th>
-                    <td> <zfin2:toggledPostcomposedList entities="${fishesAndGenotypes}" maxNumber="5"/>  </td>
+                    <td> <zfin2:toggledPostcomposedList entities="${fish}" maxNumber="5"/>  </td>
                 </tr>
             </c:if>
             <c:if test="${!empty experiments}">

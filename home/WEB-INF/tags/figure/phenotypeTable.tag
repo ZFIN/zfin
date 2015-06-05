@@ -9,7 +9,7 @@
         <table class="summary groupstripes">
             <tr>
                 <th><span class="fish-label" title="Fish = Genotype + Reagents">Fish</span></th>
-                <th>Environment</th>
+                <th>Conditions</th>
                 <th>Stage</th>
                 <th>Phenotype</th>
             </tr>
