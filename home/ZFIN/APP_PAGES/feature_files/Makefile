@@ -18,9 +18,8 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/feature_files
 
-GENERICS = constrctcuration.apg constrctrelationships.apg \
-featcurupdate.apg featrelationships.apg featureedit.apg new_constrct.apg \
-new_feature.apg
+GENERICS = constrctcuration.apg 
+
 
 STATICS = record_web_update.apg featcuration.apg
 
