@@ -26,6 +26,7 @@ import static org.zfin.repository.RepositoryFactory.getFishRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.mutant.Fish;
 
 /**
  * This class serves the phenotype summary page.
@@ -78,7 +79,7 @@ public class FishPhenotypeController {
                                    @RequestParam(value = "orderBy", required = false) String orderBy,
                                        Model model) throws Exception {
 
-        MartFish fish = getFishRepository().getFish(fishID);
+        Fish fish = getMutantRepository().getFish(fishID);
         if (fish == null)
             return LookupStrings.idNotFound(model, fishID);
         FishPublicationBean bean = new FishPublicationBean();

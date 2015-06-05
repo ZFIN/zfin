@@ -17,6 +17,7 @@ import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.*;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -256,11 +257,17 @@ public class FishService {
 
 
     public static Integer getCitationCount(Fish fish) {
-        return 0;
-        //todo: implement me!
+        return getFishPublications(fish).size();
     }
 
     public static Integer getCitationCount(MartFish fish) {
         return RepositoryFactory.getMutantRepository().getGenoxAttributions(fish.getGenotypeExperimentIDs()).size();
+    }
+
+    public static Set<Publication> getFishPublications(Fish fish) {
+        List<Publication> pubs = RepositoryFactory.getMutantRepository().getFishAttributionList(fish.getFishExperiments());
+        Set<Publication> publicationSet = new HashSet<Publication>(pubs.size());
+        publicationSet.addAll(pubs);
+        return publicationSet;
     }
 }

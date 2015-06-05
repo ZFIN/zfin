@@ -1112,32 +1112,32 @@ public class HibernateMutantRepository implements MutantRepository {
     /**
      * Retrieve citation list of pubs for fish annotations.
      *
-     * @param genotypeExperimentIDs
+     * @param fishExperiments
      * @return
      */
-    public List<Publication> getFishAttributionList(List<String> genotypeExperimentIDs) {
+    public List<Publication> getFishAttributionList(Set<FishExperiment> fishExperiments) {
         String hql = "select distinct experiment.publication from ExpressionExperiment experiment where " +
-                " experiment.fishExperiment.zdbID in (:genoxIds)";
+                " experiment.fishExperiment in (:fishExperiments)";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        query.setParameterList("fishExperiments", fishExperiments);
         List<Publication> publications = (List<Publication>) query.list();
         List<Publication> distinctPublications = new ArrayList<Publication>(publications.size());
         distinctPublications.addAll(publications);
 
         // phenotype experiments
         hql = "select distinct experiment.figure.publication from PhenotypeExperiment experiment where " +
-                " experiment.fishExperiment.zdbID in (:genoxIds)";
+                " experiment.fishExperiment in (:fishExperiments)";
         query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        query.setParameterList("fishExperiments", fishExperiments);
         publications = (List<Publication>) query.list();
         distinctPublications.addAll(publications);
 
         // experiments
         hql = "select distinct experiment.experiment.publication from FishExperiment experiment where " +
-                " experiment.zdbID in (:genoxIds)";
+                " experiment in (:fishExperiments)";
         query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameterList("genoxIds", genotypeExperimentIDs);
+        query.setParameterList("fishExperiments", fishExperiments);
         publications = (List<Publication>) query.list();
         distinctPublications.addAll(publications);
 
