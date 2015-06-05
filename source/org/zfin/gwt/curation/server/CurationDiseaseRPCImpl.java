@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
@@ -12,10 +13,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.mutant.DiseaseModel;
-import org.zfin.mutant.PhenotypeService;
-import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.mutant.Fish;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
@@ -26,6 +24,63 @@ import static org.zfin.repository.RepositoryFactory.*;
 
 
 public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements CurationDiseaseRPC {
+
+    @Override
+    public List<GenotypeDTO> getGenotypeList(String publicationID) {
+        List<Genotype> genotypeList = getMutantRepository().getGenotypesForAttribution(publicationID);
+        if (CollectionUtils.isEmpty(genotypeList))
+            return null;
+        List<GenotypeDTO> genotypeDTOList = new ArrayList<>(genotypeList.size());
+        for (Genotype genotype : genotypeList)
+            genotypeDTOList.add(DTOConversionService.convertToGenotypeDTO(genotype));
+        return genotypeDTOList;
+    }
+
+    @Override
+    public List<FeatureDTO> getFeatureList(String publicationID) {
+        List<Feature> featureList = getFeatureRepository().getFeaturesByPublication(publicationID);
+        if (CollectionUtils.isEmpty(featureList))
+            return null;
+        List<FeatureDTO> featureDTOList = new ArrayList<>(featureList.size());
+        for (Feature feature : featureList)
+            featureDTOList.add(DTOConversionService.convertToFeatureDTO(feature));
+        return featureDTOList;
+    }
+
+    @Override
+    public List<GenotypeDTO> searchGenotypes(String publicationID, String featureID, String genotypeID) {
+        Feature feature = getFeatureRepository().getFeatureByID(featureID);
+        Genotype background = getMutantRepository().getGenotypeByID(genotypeID);
+        Publication publication = getPublicationRepository().getPublication(publicationID);
+        List<Genotype> genotypeList = getMutantRepository().getGenotypesByFeatureAndBackground(feature, background, publication);
+        List<GenotypeDTO> genotypeDTOList = new ArrayList<>(genotypeList.size());
+        for (Genotype genotype : genotypeList)
+            genotypeDTOList.add(DTOConversionService.convertToGenotypeDTO(genotype));
+        return genotypeDTOList;
+    }
+
+    @Override
+    public List<GenotypeDTO> addGenotypeToPublication(String publicationID, String genotypeID) throws TermNotFoundException {
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            Genotype genotype = getMutantRepository().getGenotypeByID(genotypeID);
+            if (genotype == null)
+                throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
+            getInfrastructureRepository().insertPublicAttribution(genotypeID, publicationID, RecordAttribution.SourceType.STANDARD);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return getGenotypeList(publicationID);
+
+
+    }
 
     public List<TermDTO> getHumanDiseaseList(String publicationID) {
         List<GenericTerm> diseaseList = getPhenotypeRepository().getHumanDiseases(publicationID);

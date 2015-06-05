@@ -7,8 +7,28 @@
 
     <g:FlowPanel>
         <g:VerticalPanel spacing="10" title="Disease">
+            <g:HorizontalPanel spacing="0">
+                <g:Label text="GENOTYPE LIST" styleName="summaryTitle"/>
+            </g:HorizontalPanel>
+            <zfin:ZfinFlexTable ui:field="genotypeListTable" numberOfColumns="3" styleName="searchresults groupstripes"
+                                cellSpacing="5" cellPadding="5" />
+            <g:VerticalPanel>
+                <g:HorizontalPanel>
+                <g:Label text="ASSOCIATE EXISTING GENOTYPE:" styleName="bold" horizontalAlignment="left"/>
+                    <g:InlineHTML text="&nbsp;"/>
+                    <g:Anchor text="Show" ui:field="showHideExistingGeno"/>
+                </g:HorizontalPanel>
+                <zfin:ZfinFlexTable ui:field="genotypeSearchResultTable" numberOfColumns="3" styleName="searchresults groupstripes"
+                                    cellSpacing="5" cellPadding="5" />
+                <zfin:SimpleErrorElement ui:field="errorLabelSearch"/>
+            </g:VerticalPanel>
+            <g:HorizontalPanel>
+                <g:Label text="GENOTYPE CONSTRUCTION:" styleName="bold"/>
+            </g:HorizontalPanel>
             <g:HorizontalPanel>
                 <g:Label text="FISH CONSTRUCTION:" styleName="bold"/>
+                <g:InlineHTML text="&nbsp;"/>
+                <g:Anchor text="Show" ui:field="showHideFishConstruction"/>
             </g:HorizontalPanel>
             <zfin:ZfinFlexTable ui:field="constructionTable" numberOfColumns="2" styleName="searchresults"
                                 cellSpacing="5" cellPadding="5" />

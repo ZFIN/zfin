@@ -4,10 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
-import org.zfin.gwt.root.dto.FishDTO;
-import org.zfin.gwt.root.dto.RelatedEntityDTO;
-import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.dto.TermNotFoundException;
+import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
 
@@ -15,6 +12,14 @@ import java.util.List;
  * GWT class to facilitate curation of FX
  */
 public interface CurationDiseaseRPC extends RemoteService {
+
+    List<GenotypeDTO> getGenotypeList(String publicationID);
+
+    List<FeatureDTO> getFeatureList(String publicationID);
+
+    List<GenotypeDTO> searchGenotypes(String publicationID, String featureID, String genotypeID);
+
+    List<GenotypeDTO> addGenotypeToPublication(String publicationID, String zdbID) throws TermNotFoundException;
 
     public static class App {
         private static final CurationDiseaseRPCAsync INSTANCE;

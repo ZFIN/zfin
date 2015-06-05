@@ -2,9 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
-import org.zfin.gwt.root.dto.FishDTO;
-import org.zfin.gwt.root.dto.RelatedEntityDTO;
-import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;
@@ -27,5 +25,14 @@ public interface CurationDiseaseRPCAsync {
     void getFishList(String publicationID, AsyncCallback<List<FishDTO>> callback);
 
     void deleteDiseaseModel(DiseaseModelDTO diseaseModelDTO, AsyncCallback<List<DiseaseModelDTO>> callback);
+
+    void getGenotypeList(String publicationID, AsyncCallback<List<GenotypeDTO>> callback);
+
+    void getFeatureList(String publicationID, AsyncCallback<List<RelatedEntityDTO>> callback);
+
+    void searchGenotypes(String publicationID, String featureID, String genotypeID, AsyncCallback<List<GenotypeDTO>> callback);
+
+    void addGenotypeToPublication(String publicationID, String zdbID, AsyncCallback<List<GenotypeDTO>> callback);
 }
+
 

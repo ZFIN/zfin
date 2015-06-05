@@ -107,6 +107,8 @@ public interface CurationExperimentRPC extends RemoteService {
 
     List<EnvironmentDTO> getEnvironmentsWithoutSTR(String publicationID);
 
+    List<RelatedEntityDTO> getBackgroundGenotypes(String publicationID);
+
     /**
      * Utility/Convenience class.
      * Use CurationExperimentRPC.App.getInstance() to access static instance of CurationExperimentRPCAsync

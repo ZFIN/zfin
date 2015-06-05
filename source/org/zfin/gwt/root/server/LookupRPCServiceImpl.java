@@ -453,6 +453,13 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
             RelatedEntityDTO genotypeDTO = new RelatedEntityDTO();
             genotypeDTO.setZdbID(g.getZdbID());
             genotypeDTO.setName(DTOConversionService.unescapeString(g.getHandle()));
+            if(g.getAssociatedPublications() != null) {
+                List<PublicationDTO>  publicationDTOs = new ArrayList<>(g.getAssociatedPublications().size());
+                for(Publication pub : g.getAssociatedPublications()){
+                    publicationDTOs.add(DTOConversionService.convertToPublicationDTO(pub));
+                }
+                genotypeDTO.setAssociatedPublications(publicationDTOs);
+            }
             relatedEntityDTOs.add(genotypeDTO);
         }
         List<Fish> fishList = getMutantRepository().getFishList(publicationZdbID);

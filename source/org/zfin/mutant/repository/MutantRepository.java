@@ -497,5 +497,7 @@ public interface MutantRepository {
     List<Fish> getFishListBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent);
 
     List<Fish> getAllWildtypeFish();
+
+    List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication);
 }
 

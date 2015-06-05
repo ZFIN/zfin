@@ -965,15 +965,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
 
-    public int getGenotypeExperimentRecordAttributions(String zdbID, String pubZdbID) {
+    public int getGenotypeExperimentRecordAttributions(String genotypeID, String pubZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
                         "  select count(*)  " +
-                        " from record_attribution ra, genotype_experiment ge " +
+                        " from record_attribution ra, fish_experiment ge, fish fish  " +
                         " where ra.recattrib_data_zdb_id = ge.genox_exp_zdb_id " +
-                        " and ge.genox_geno_zdb_id = :zdbID " +
+                        " and ge.genox_fish_zdb_id = fish_zdb_id " +
+                        " and fish.fish_genotype_zdb_id = :genotypeID " +
                         " and  ra.recattrib_source_zdb_id = :pubZdbID " +
                         "")
-                        .setString("zdbID", zdbID)
+                        .setString("genotypeID", genotypeID)
                         .setString("pubZdbID", pubZdbID)
                         .uniqueResult().toString()
         );

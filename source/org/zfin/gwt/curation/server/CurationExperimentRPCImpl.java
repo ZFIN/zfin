@@ -441,6 +441,22 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         return assayDtos;
     }
 
+    @Override
+    public List<RelatedEntityDTO> getBackgroundGenotypes(String publicationID) {
+        List<Genotype> wildtypes = mutantRep.getAllWildtypeGenotypes();
+        List<RelatedEntityDTO> backgroundList = new ArrayList<>(wildtypes.size());
+        for (Genotype wiltype : wildtypes) {
+            // only add non-WT wildtypes as WT is placed at the top
+            if (wiltype.getHandle().equals(Genotype.WT))
+                continue;
+            GenotypeDTO fishy = new GenotypeDTO();
+            fishy.setZdbID(wiltype.getZdbID());
+            fishy.setName(wiltype.getNickname());
+            backgroundList.add(fishy);
+        }
+        return backgroundList;
+    }
+
     /**
      * Pass in an experiment DTO and an ExpressionExperiment, either an existing one to update
      * or a new instance.

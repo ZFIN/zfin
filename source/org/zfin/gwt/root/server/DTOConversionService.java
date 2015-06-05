@@ -382,7 +382,7 @@ public class DTOConversionService {
 
     public static GenotypeDTO convertToGenotypeDTO(Genotype genotype) {
         GenotypeDTO genotypeDTO = new GenotypeDTO();
-        genotypeDTO.setName(genotype.getHandle());
+        genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
 
@@ -391,6 +391,15 @@ public class DTOConversionService {
             associatedPublications.add(DTOConversionService.convertToPublicationDTO(genotype.getAssociatedPublications().get(i)));
         }
         genotypeDTO.setAssociatedPublications(associatedPublications);
+
+        // add features
+        if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
+            List<FeatureDTO> featureDTOList = new ArrayList<>(4);
+            for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
+                featureDTOList.add(convertToFeatureDTO(genotypeFeature.getFeature()));
+            }
+            genotypeDTO.setFeatureList(featureDTOList);
+        }
         return genotypeDTO;
     }
 

@@ -152,9 +152,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "AND genofeat.genotype =geno " +
                         "AND genofeat.feature =feat " +
                         "AND type.name=feat.type " +
-//                        "AND type.name=feat.type.name " + // HQL interpets this wrong, but the above right
                         "ORDER by type.significance, geno.nameOrder ";
-
 
         Query query = session.createQuery(hql);
         query.setString("zdbID", feature.getZdbID());
@@ -821,7 +819,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct phenoStatement from PhenotypeStatement phenoStatement " +
-                "WHERE phenoStatement.phenotypeExperiment.fishExperiment.genotype = :genotype";
+                "WHERE phenoStatement.phenotypeExperiment.fishExperiment.fish.genotype = :genotype";
 
         Query query = session.createQuery(hql);
         query.setParameter("genotype", genotype);
@@ -1644,5 +1642,33 @@ public class HibernateMutantRepository implements MutantRepository {
         fishCriteria.add(Restrictions.isEmpty("strList"));
         fishCriteria.addOrder(Order.asc("name"));
         return fishCriteria.list();
+    }
+
+    @Override
+    public List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication) {
+        Session session = HibernateUtil.currentSession();
+        String hql =
+                "select gf.genotype as g from GenotypeFeature gf ";
+        hql += "WHERE  gf.feature = :feature ";
+/*
+        if (background != null)
+            hql += "AND :background member of g.associatedGenotypes ";
+*/
+        if (publication != null)
+            hql += "AND gf.genotype.zdbID not in (select dataZdbID from RecordAttribution " +
+                    "where publication = :publication and sourceType = :standard) ";
+        hql += "ORDER BY gf.genotype.nameOrder ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("feature", feature);
+/*
+        if (background != null)
+            query.setParameter("background", background);
+*/
+        if (publication != null) {
+            query.setParameter("publication", publication);
+            query.setParameter("standard", RecordAttribution.SourceType.STANDARD);
+        }
+        return(List<Genotype>) query.list();
     }
 }

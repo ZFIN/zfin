@@ -1,10 +1,13 @@
 package org.zfin.gwt.root.dto;
 
+import java.util.List;
+
 /**
  */
 public class GenotypeDTO extends RelatedEntityDTO {
 
     private String handle;
+    private List<FeatureDTO> featureList;
 
     public GenotypeDTO() {
     }
@@ -47,6 +50,14 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     public void setHandle(String handle) {
         this.handle = handle;
+    }
+
+    public List<FeatureDTO> getFeatureList() {
+        return featureList;
+    }
+
+    public void setFeatureList(List<FeatureDTO> featureList) {
+        this.featureList = featureList;
     }
 
 }

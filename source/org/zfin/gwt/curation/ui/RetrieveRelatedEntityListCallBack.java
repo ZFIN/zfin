@@ -15,6 +15,7 @@ public class RetrieveRelatedEntityListCallBack extends ZfinAsyncCallback<List<Re
 
     private ListBox relatedEntityListBox;
     private List<RelatedEntityDTO> dtoList;
+    private boolean leaveFirstEntryBlank;
 
     public RetrieveRelatedEntityListCallBack(ListBox listBox, String errorMessage, ErrorHandler errorLabel) {
         super(errorMessage, errorLabel);
@@ -24,7 +25,12 @@ public class RetrieveRelatedEntityListCallBack extends ZfinAsyncCallback<List<Re
     @Override
     public void onSuccess(List<RelatedEntityDTO> dtoList) {
         relatedEntityListBox.clear();
+        if (leaveFirstEntryBlank) {
+            relatedEntityListBox.addItem("");
+            dtoList.add(0, new RelatedEntityDTO());
+        }
         this.dtoList = dtoList;
+
         for (RelatedEntityDTO entityDTO : dtoList) {
             relatedEntityListBox.addItem(entityDTO.getName(), entityDTO.getZdbID());
         }
@@ -32,5 +38,9 @@ public class RetrieveRelatedEntityListCallBack extends ZfinAsyncCallback<List<Re
 
     public List<RelatedEntityDTO> getDtoList() {
         return dtoList;
+    }
+
+    public void setLeaveFirstEntryBlank(boolean leaveFirstEntryBlank) {
+        this.leaveFirstEntryBlank = leaveFirstEntryBlank;
     }
 }
