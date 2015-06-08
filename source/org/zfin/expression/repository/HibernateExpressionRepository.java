@@ -1304,6 +1304,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         return (List<ExpressionResult>) query.list();
     }
+    public List<ExpressionResult> getExpressionResultsByFish(Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
+                "      where fishox.fish = :fish " +
+                "        and fishox = xpExp.fishExperiment " +
+                "        and xpRslt.expressionExperiment = xpExp " +
+                "        and xpExp.gene != null";
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
+
+        return (List<ExpressionResult>) query.list();
+    }
 
     public List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID) {
         String hql = "select " +

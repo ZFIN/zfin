@@ -7,6 +7,7 @@ import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -300,6 +301,8 @@ public interface ExpressionRepository {
      * @return list of expression results
      */
     List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
+
+    List<ExpressionResult> getExpressionResultsByFish (Fish fish);
 
     /**
      * Retrieve all expression results for a given Sequenec Targeting Reagent
