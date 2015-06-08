@@ -31,33 +31,33 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
         if (CollectionUtils.isNotEmpty(diseaseModelList) ) {
             addToValidationReport(fish.getAbbreviation() + " associated with : "+diseaseModelList.size()+" disease model(s)", diseaseModelList);
         }
-        List<PhenotypeStatement> phenotypeStatements = getPhenotypeRepository().getPhenotypeStatementsByFish(zdbID);
+//        List<PhenotypeStatement> phenotypeStatements = getPhenotypeRepository().getPhenotypeStatementsByFish(zdbID);
         // Can't delete a genotype if it has phenotypes associated
-        if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
-            SortedSet<PhenotypeStatement> sortedPhenotypesForFish = new TreeSet<>();
-            for (PhenotypeStatement pheno : phenotypeStatements) {
-                sortedPhenotypesForFish.add(pheno);
-            }
-            addToValidationReport(fish.getAbbreviation() + " has the following phenotype annotation", sortedPhenotypesForFish);
-        }
-        List<ExpressionResult> fishExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByFish(zdbID);
+ //       if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
+  //          SortedSet<PhenotypeStatement> sortedPhenotypesForFish = new TreeSet<>();
+   //         for (PhenotypeStatement pheno : phenotypeStatements) {
+    //            sortedPhenotypesForFish.add(pheno);
+     //       }
+      //      addToValidationReport(fish.getAbbreviation() + " has the following phenotype annotation", sortedPhenotypesForFish);
+      //  }
+       // List<ExpressionResult> fishExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByFish(zdbID);
         // Can't delete a genotype if it has expression data associated
-        if (CollectionUtils.isNotEmpty(fishExpressionResults)) {
-            Set<ExpressionExperiment> expressionExperiments = new HashSet<>();
-            for (ExpressionResult fishExpressionResult : fishExpressionResults) {
-                expressionExperiments.add(fishExpressionResult.getExpressionExperiment());
-            }
-            int numExpression = expressionExperiments.size();
-            Set<Publication> pubs = new HashSet<>();
-            for (ExpressionExperiment expressionExperiment : expressionExperiments) {
-                pubs.add(expressionExperiment.getPublication());
-            }
-            addToValidationReport(fish.getAbbreviation() + " is used in " + numExpression +
-                    " expression records in the following " + pubs.size() + " publication(s): <br/>", pubs);
-        }
+       // if (CollectionUtils.isNotEmpty(fishExpressionResults)) {
+        //    Set<ExpressionExperiment> expressionExperiments = new HashSet<>();
+         //   for (ExpressionResult fishExpressionResult : fishExpressionResults) {
+          //      expressionExperiments.add(fishExpressionResult.getExpressionExperiment());
+          //  }
+           // int numExpression = expressionExperiments.size();
+           // Set<Publication> pubs = new HashSet<>();
+           // for (ExpressionExperiment expressionExperiment : expressionExperiments) {
+            //    pubs.add(expressionExperiment.getPublication());
+          //  }
+           // addToValidationReport(fish.getAbbreviation() + " is used in " + numExpression +
+            //        " expression records in the following " + pubs.size() + " publication(s): <br/>", pubs);
+       // }
         return validationReportList;
-    }
-
+   // }
+}
     @Override
     public void prepareDelete() {
         entity = RepositoryFactory.getMutantRepository().getFish(zdbID);
