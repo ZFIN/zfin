@@ -267,7 +267,7 @@
     <div id="fish" class="summary">
 
         <zfin2:subsection title="FISH INVOLVED" showNoData="true"
-                          test="${fn:length(fishGenotypeStatisticsList) ne null && fn:length(fishGenotypeStatisticsList) > 0}">
+                          test="${fn:length(fishList) ne null && fn:length(fishList) > 0}">
         <b>Fish utilizing
                 <zfin:name entity="${formBean.genotype}"/>
             <table class="summary">
@@ -277,13 +277,22 @@
                     <th>Phenotype</th>
                     <th>Gene Expression</th>
                 </tr>
-                <c:forEach var="fishGenotypeStatistics" items="${fishGenotypeStatisticsList}">
+                <c:forEach var="fishGenotypeStatistics" items="${fishList}">
                     <tr>
                         <td><zfin:link entity="${fishGenotypeStatistics.fish}"/></td>
-                        <td></td>
+                        <td>
+                            <c:forEach var="marker" items="${fishGenotypeStatistics.getAffectedMarker()}"
+                                       varStatus="loop">
+                                <zfin:link entity="${marker}"/><c:if test="${!loop.last}">, </c:if>
+                            </c:forEach>
+                        </td>
                         <td>
                             <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics}"/>
+                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"/>
+                        </td>
+                        <td>
+                            <zfin2:showFigureData entity="${genotype}"
+                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"/>
                         </td>
                     </tr>
                 </c:forEach>

@@ -14,7 +14,9 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.FishGenotypeStatistics;
+import org.zfin.mutant.presentation.FishGenotypeExpressionStatistics;
+import org.zfin.mutant.presentation.FishGenotypePhenotypeStatistics;
+import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -120,14 +122,14 @@ public class GenotypeDetailController {
             retrieveGenotypeAndFeatureData(form, genotype);
             retrievePublicationData(form, genotype);
             List<FishExperiment> fishExperimentList = mutantRepository.getFishExperiment(genotype);
-            List<FishGenotypeStatistics> fishGenotypeStatisticsList = createSequenceTargetingReagentStats(fishExperimentList);
-            Collections.sort(fishGenotypeStatisticsList, new Comparator<FishGenotypeStatistics>() {
-                public int compare(FishGenotypeStatistics one, FishGenotypeStatistics two) {
+            List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList = createResult(fishExperimentList);
+            Collections.sort(fishGenotypePhenotypeStatisticsList, new Comparator<GenotypeFishResult>() {
+                public int compare(GenotypeFishResult one, GenotypeFishResult two) {
                     return (one.getFish().compareTo(two.getFish()));
                 }
             });
 
-            model.addAttribute("fishGenotypeStatisticsList", fishGenotypeStatisticsList);
+            model.addAttribute("fishList", fishGenotypePhenotypeStatisticsList);
         }
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
@@ -138,17 +140,29 @@ public class GenotypeDetailController {
         return "genotype/genotype-detail.page";
     }
 
-    private List<FishGenotypeStatistics> createSequenceTargetingReagentStats(List<FishExperiment> fishExperimentList) {
-        Map<Fish, FishGenotypeStatistics> statisticsMap = new HashMap<>();
+    private List<GenotypeFishResult> createResult(List<FishExperiment> fishExperimentList) {
+        Map<Fish, GenotypeFishResult> statisticsMap = new HashMap<>();
         for (FishExperiment genoExp : fishExperimentList) {
             Fish fish = genoExp.getFish();
-            FishGenotypeStatistics stat = statisticsMap.get(fish);
+            GenotypeFishResult stat = statisticsMap.get(fish);
             if (stat == null) {
-                stat = new FishGenotypeStatistics(fish );
+                stat = new GenotypeFishResult(fish);
+                FishGenotypePhenotypeStatistics pheno = stat.getFishGenotypePhenotypeStatistics();
+                if (pheno == null) {
+                    pheno = new FishGenotypePhenotypeStatistics(fish);
+                    stat.setFishGenotypePhenotypeStatistics(pheno);
+                }
+                FishGenotypeExpressionStatistics expression = stat.getFishGenotypeExpressionStatistics();
+                if (expression == null) {
+                    expression = new FishGenotypeExpressionStatistics(fish);
+                    stat.setFishGenotypeExpressionStatistics(expression);
+                }
+                pheno.addFishExperiment(genoExp);
+                expression.addFishExperiment(genoExp);
                 statisticsMap.put(fish, stat);
             }
-            stat.addFishExperiment(genoExp);
         }
+
         return new ArrayList<>(statisticsMap.values());
     }
 
