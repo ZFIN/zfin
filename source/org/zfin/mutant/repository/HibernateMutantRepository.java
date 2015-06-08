@@ -1119,8 +1119,8 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // direct attribution
         String hql = "select p.publication " +
-                     " from PublicationAttribution p " +
-                     " where p.dataZdbID = :fishZdbID ";
+                " from PublicationAttribution p " +
+                " where p.dataZdbID = :fishZdbID ";
 
         Query query = session.createQuery(hql);
         query.setString("fishZdbID", fish.getZdbID());
@@ -1129,9 +1129,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // alias
         hql = "select p.publication " +
-                      " from PublicationAttribution p , DataAlias  da " +
-                     " where p.dataZdbID = da.zdbID " +
-                       " and da.dataZdbID = :fishZdbID ";
+                " from PublicationAttribution p , DataAlias  da " +
+                " where p.dataZdbID = da.zdbID " +
+                " and da.dataZdbID = :fishZdbID ";
 
         query = session.createQuery(hql);
         query.setString("fishZdbID", fish.getZdbID());
@@ -1669,6 +1669,17 @@ public class HibernateMutantRepository implements MutantRepository {
             query.setParameter("publication", publication);
             query.setParameter("standard", RecordAttribution.SourceType.STANDARD);
         }
-        return(List<Genotype>) query.list();
+        return (List<Genotype>) query.list();
+    }
+
+    @Override
+    public List<FishExperiment> getFishExperiment(Genotype genotype) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "FROM  FishExperiment fishExperiment " +
+                "WHERE fishExperiment.fish.genotype = :genotype ";
+        Query query = session.createQuery(hql);
+        query.setParameter("genotype", genotype);
+
+        return (List<FishExperiment>) query.list();
     }
 }

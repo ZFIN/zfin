@@ -1,4 +1,4 @@
-package org.zfin.mutant.presentation;
+        package org.zfin.mutant.presentation;
 
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
@@ -46,7 +46,7 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
 
     public Set<Marker> getSequenceTargetingReagents() {
         Set<ExperimentCondition> experimentConditions = fishExperiment.getExperiment().getExperimentConditions();
-        Set<Marker> sequenceTargetingReagents = new TreeSet<Marker>(new Comparator<Marker>() {
+        Set<Marker> sequenceTargetingReagents = new TreeSet<>(new Comparator<Marker>() {
             public int compare(Marker one, Marker two) {
                 return (one.getAbbreviation().compareTo(two.getAbbreviation()));
             }
@@ -70,7 +70,7 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
     @Override
     public int getNumberOfFigures() {
         if (figures == null) {
-            figures = new HashSet<Figure>(5);
+            figures = new HashSet<>(5);
             for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
                 for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
                     if (phenoStatement.hasAffectedTerm(anatomyItem))
@@ -118,15 +118,15 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
 
     @Override
     protected PaginationResult<Publication> getPublicationPaginationResult() {
-        Set<Publication>pubs = new HashSet<Publication>(5);
+        Set<Publication>pubs = new HashSet<>(5);
         for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
             for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
                 if (phenoStatement.hasAffectedTerm(anatomyItem))
                     pubs.add(phenotype.getFigure().getPublication());
             }
         }
-        List<Publication> pubList = new ArrayList<Publication>(pubs);
-        return new PaginationResult<Publication>(pubList);
+        List<Publication> pubList = new ArrayList<>(pubs);
+        return new PaginationResult<>(pubList);
     }
 
     public String getTargetGeneOrder() {

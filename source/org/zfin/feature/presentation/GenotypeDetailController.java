@@ -1,18 +1,20 @@
 package org.zfin.feature.presentation;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.anatomy.presentation.AllSequenceTargetingReagentExperimentController;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.FishStatistics;
+import org.zfin.mutant.presentation.FishGenotypeStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -24,9 +26,13 @@ import static org.zfin.repository.RepositoryFactory.getFishRepository;
 @Controller
 @RequestMapping(value = "/genotype")
 public class GenotypeDetailController {
+
     private static final Logger LOG = Logger.getLogger(GenotypeDetailController.class);
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+
+    @Autowired
+    AllSequenceTargetingReagentExperimentController strController;
 
     @RequestMapping(value = {"/genotype-detail-popup"})
     public String getGenotypePopup(@RequestParam String zdbID, Model model) {
@@ -112,9 +118,16 @@ public class GenotypeDetailController {
         form.setGenotype(genotype);
         if (!genotype.isWildtype()) {
             retrieveGenotypeAndFeatureData(form, genotype);
-            retrieveExpressionData(form, genotype);
-            retrievePhenotypeData(form, genotype);
             retrievePublicationData(form, genotype);
+            List<FishExperiment> fishExperimentList = mutantRepository.getFishExperiment(genotype);
+            List<FishGenotypeStatistics> fishGenotypeStatisticsList = createSequenceTargetingReagentStats(fishExperimentList);
+            Collections.sort(fishGenotypeStatisticsList, new Comparator<FishGenotypeStatistics>() {
+                public int compare(FishGenotypeStatistics one, FishGenotypeStatistics two) {
+                    return (one.getFish().compareTo(two.getFish()));
+                }
+            });
+
+            model.addAttribute("fishGenotypeStatisticsList", fishGenotypeStatisticsList);
         }
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
@@ -122,8 +135,21 @@ public class GenotypeDetailController {
         genotypeName = genotypeName.replaceAll("<sup>", "^");
         genotypeName = genotypeName.replaceAll("</sup>", "");
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
-
         return "genotype/genotype-detail.page";
+    }
+
+    private List<FishGenotypeStatistics> createSequenceTargetingReagentStats(List<FishExperiment> fishExperimentList) {
+        Map<Fish, FishGenotypeStatistics> statisticsMap = new HashMap<>();
+        for (FishExperiment genoExp : fishExperimentList) {
+            Fish fish = genoExp.getFish();
+            FishGenotypeStatistics stat = statisticsMap.get(fish);
+            if (stat == null) {
+                stat = new FishGenotypeStatistics(fish );
+                statisticsMap.put(fish, stat);
+            }
+            stat.addFishExperiment(genoExp);
+        }
+        return new ArrayList<>(statisticsMap.values());
     }
 
 

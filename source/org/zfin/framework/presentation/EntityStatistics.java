@@ -89,15 +89,15 @@ public abstract class EntityStatistics {
     }
 
     public int getNumberOfImages() {
-        if (figs == null || figs.isEmpty())   {
+        if (figs == null || figs.isEmpty()) {
             return 0;
         }
-        if (images != null && !images.isEmpty())   {
+        if (images != null && !images.isEmpty()) {
             return images.size();
         }
-        Set<Image> imgs = new HashSet<Image>() ;
+        Set<Image> imgs = new HashSet<Image>();
         for (Figure fig : figs) {
-            imgs.addAll(fig.getImages()) ;
+            imgs.addAll(fig.getImages());
         }
         return imgs.size();
     }
@@ -125,5 +125,8 @@ public abstract class EntityStatistics {
         return genes;
     }
 
+    public boolean isImgInFigure() {
+        return false;
+    }
 
 }

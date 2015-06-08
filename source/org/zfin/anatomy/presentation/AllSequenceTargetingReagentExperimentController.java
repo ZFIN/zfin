@@ -96,7 +96,7 @@ public class AllSequenceTargetingReagentExperimentController {
         form.setAllSequenceTargetingReagents(sequenceTargetingReagentsStats);
     }
 
-    protected List<SequenceTargetingReagentStatistics> createSequenceTargetingReagentStats(List<FishExperiment> strExperiments, GenericTerm term) {
+    public List<SequenceTargetingReagentStatistics> createSequenceTargetingReagentStats(List<FishExperiment> strExperiments, GenericTerm term) {
         if (strExperiments == null || term == null)
             return null;
 

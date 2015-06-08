@@ -499,5 +499,7 @@ public interface MutantRepository {
     List<Fish> getAllWildtypeFish();
 
     List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication);
+
+    List<FishExperiment> getFishExperiment(Genotype genotype);
 }
 
