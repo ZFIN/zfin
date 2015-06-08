@@ -5,6 +5,10 @@
 
 <hibernate-mapping package="org.zfin.curation">
 
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="curationTopicType">
+        <param name="enumClassname">org.zfin.curation.Curation$Topic</param>
+    </typedef>
+
     <class name="org.zfin.curation.PublicationNote" table="publication_note">
         <id name="zdbID" type="string">
             <column name="pnote_zdb_id" not-null="true"/>
@@ -27,6 +31,14 @@
                 <param name="insertActiveData">true</param>
             </generator>
         </id>
+
+        <many-to-one name="publication" column="cur_pub_zdb_id" class="org.zfin.publication.Publication"/>
+        <many-to-one name="curator" column="cur_curator_zdb_id" class="org.zfin.profile.Person"/>
+        <property name="topic" column="cur_topic" type="curationTopicType"/>
+        <property name="dataFound" column="cur_data_found"/>
+        <property name="entryDate" column="cur_entry_date"/>
+        <property name="closedDate" column="cur_closed_date"/>
+        <property name="openedDate" column="cur_opened_date"/>
     </class>
 
 </hibernate-mapping>

@@ -41,59 +41,137 @@
     </div>
   </div>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Topics</h3>
-    </div>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Topic</th>
-          <th>Open</th>
-          <th>Close</th>
-          <th>Curator</th>
-        </tr>
-      </thead>
-      <tbody>
-
-      </tbody>
-    </table>
-  </div>
-
-  <div class="panel panel-default"
-       ng-controller="PubTrackingNotesController as notesCtrl"
-       data-logged-in-user="${loggedInUser}" data-pub-zdb-id="${publication.zdbID}">
-    <div class="panel-heading">
-      <h3 class="panel-title">Notes</h3>
-    </div>
-    <div class="panel-body">
-      <form role="form">
-        <div class="form-group">
-          <label for="new-note-text">New Note</label>
-          <textarea ng-model="notesCtrl.newNote" class="form-control" rows="3" id="new-note-text"></textarea>
-        </div>
-        <button ng-click="notesCtrl.addNote()" type="submit" class="btn btn-primary">Post</button>
-      </form>
-      <hr>
-      <div class="media" ng-repeat="note in notesCtrl.notes">
-        <div class="media-left">
-          <div style="width: 64px; height: 64px; text-align: center;">
-            <img style="max-width: 100%; max-height: 100%" ng-src="{{note.curator.imageURL}}">
+  <div ng-controller="PubTrackingTopicsController as topicsCtrl">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Status</h3>
+      </div>
+      <div class="panel-body" ng-cloak ng-show="topicsCtrl.status">
+        <div class="row bottom-buffer">
+          <div class="col-xs-4" >
+            <div ng-if="topicsCtrl.status.indexed">
+              <strong>Indexed on {{topicsCtrl.status.indexedDate | date:'yyyy-MM-dd'}}</strong>
+              <button class="btn btn-default btn-block" ng-click="topicsCtrl.unindexPub()">Un-index</button>
+            </div>
+            <div ng-if="!topicsCtrl.status.indexed">
+              <strong>Not indexed yet</strong>
+              <button class="btn btn-primary btn-block" ng-click="topicsCtrl.indexPub()">Index</button>
+            </div>
           </div>
         </div>
-        <div class="media-body">
-          <h4 class="media-heading">
-            {{note.curator.name}}
-            <small>{{note.date}}</small>
-          </h4>
-          <ul class="list-inline" ng-show="note.curator.zdbID === notesCtrl.user">
-            <li><small><a href ng-click="note.editing = true;">Edit</a></small></li>
-            <li><small><a href ng-click="notesCtrl.deleteNote(note)">Delete</a></small></li>
+        <div class="row bottom-buffer">
+          <div class="col-xs-4">
+            <div ng-if="!topicsCtrl.status.closedDate && !topicsCtrl.hasTopics()">
+              <strong>Not closed yet</strong>
+              <button class="btn btn-primary btn-block" ng-click="topicsCtrl.closePub()">Close with no data found</button>
+            </div>
+            <div ng-if="!topicsCtrl.status.closedDate && topicsCtrl.hasTopics()">
+              <strong>Not closed yet</strong>
+              <button class="btn btn-primary btn-block" ng-click="topicsCtrl.closePub()">Close</button>
+            </div>
+            <div ng-if="topicsCtrl.status.closedDate">
+              <strong>Closed on {{topicsCtrl.status.closedDate | date:"yyyy-MM-dd"}}</strong>
+              <button class="btn btn-default btn-block">Re-open</button>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-warning" role="alert" ng-show="topicsCtrl.warnings.length > 0">
+          <h4>Heads up!</h4>
+          <p class="bottom-buffer-sm">You might not want to close this publication yet. Are you sure you want to close it?</p>
+          <ul class="bottom-buffer">
+            <li ng-repeat="warning in topicsCtrl.warnings">
+              {{warning}}
+            </li>
           </ul>
-          <p ng-hide="note.editing">{{note.text}}</p>
-          <div ng-show="note.editing">
-            <textarea ng-model="note.text"></textarea>
-            <button ng-click="notesCtrl.editNote(note)" type="submit" class="btn btn-default">Save</button>
+          <p>
+            <button class="btn btn-warning" ng-click="topicsCtrl.closeWithoutWarning()">Yes, close it</button>
+            <button class="btn btn-default" ng-click="topicsCtrl.hideWarnings()">Cancel</button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Topics</h3>
+      </div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Status</th>
+            <th>Curator</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="topic in topicsCtrl.topics" ng-cloak>
+            <td>
+              <input type="checkbox" ng-checked="topic.dataFound" ng-click="topicsCtrl.toggleDataFound(topic, $index)"/> {{topic.topic}}
+            </td>
+            <td>
+              {{topicsCtrl.getStatus(topic)}}
+            </td>
+            <td>{{(!topicsCtrl.isNew(topic)) ? topic.curator.name : ""}}</td>
+            <td>
+              <button class="btn btn-default" ng-show="topicsCtrl.isNew(topic)" ng-click="topicsCtrl.open(topic, $index)">Open</button>
+              <!-- Split button -->
+              <div class="btn-group" ng-show="topicsCtrl.isOpen(topic)">
+                <button type="button" class="btn btn-default" ng-click="topicsCtrl.close(topic, $index)">Close</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  <span class="caret"></span>
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href ng-click="topicsCtrl.unopen(topic, $index)">Back to New</a></li>
+                </ul>
+              </div>
+              <%--<button class="btn btn-danger" ng-show="{{topic.openedDate && !topic.closedDate}}" ng-click="topicsCtrl.close(topic, $index)">Close</button>--%>
+              <%--<button class="btn btn-default" ng-show="{{topic.openedDate && !topic.closedDate}}">Un-open</button>--%>
+              <button class="btn btn-default" ng-show="topicsCtrl.isClosed(topic)" ng-click="topicsCtrl.open(topic, $index)">Re-open</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Notes</h3>
+      </div>
+      <div class="panel-body">
+        <form role="form">
+          <div class="form-group">
+            <label for="new-note-text">New Note</label>
+            <textarea ng-model="topicsCtrl.newNote" class="form-control" rows="3" id="new-note-text"></textarea>
+          </div>
+          <button ng-click="topicsCtrl.addNote()" type="submit" class="btn btn-primary">Post</button>
+        </form>
+        <hr>
+        <div class="media" ng-repeat="note in topicsCtrl.notes" ng-cloak>
+          <div class="media-left">
+            <div style="width: 64px; height: 64px; text-align: center;">
+              <img style="max-width: 100%; max-height: 100%" ng-src="{{note.curator.imageURL}}">
+            </div>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">
+              {{note.curator.name}}
+              <small>{{note.date | date:'yyyy-MM-dd'}}</small>
+            </h4>
+            <ul class="list-inline" ng-show="note.editable">
+              <li><small><a href ng-click="topicsCtrl.beginEditing(note)">Edit</a></small></li>
+              <li><small><a href ng-click="topicsCtrl.deleteNote(note)">Delete</a></small></li>
+            </ul>
+            <p ng-hide="note.editing">{{note.text}}</p>
+            <div ng-show="note.editing">
+              <div class="form-group">
+                <textarea class="form-control" ng-model="note.text"></textarea>
+              </div>
+              <button ng-click="topicsCtrl.editNote(note)" type="submit" class="btn btn-primary">Done Editing</button>
+              <button ng-click="topicsCtrl.cancelEditing(note)" type="submit" class="btn btn-default">Cancel</button>
+            </div>
           </div>
         </div>
       </div>

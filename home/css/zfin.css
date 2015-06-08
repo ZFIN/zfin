@@ -823,3 +823,11 @@ label.curation-form-label { font-weight: bold; }
     max-height: 250px;
     overflow-y: auto;
 }
+
+.bottom-buffer {
+    margin-bottom: 20px !important;
+}
+
+.bottom-buffer-sm {
+    margin-bottom: 10px !important;
+}

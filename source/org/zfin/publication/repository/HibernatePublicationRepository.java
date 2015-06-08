@@ -7,9 +7,11 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.springframework.stereotype.Repository;
 import org.zfin.antibody.Antibody;
+import org.zfin.curation.Curation;
 import org.zfin.database.SearchUtil;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionExperiment;
@@ -30,6 +32,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.OrthoEvidenceDisplay;
 import org.zfin.orthology.Orthology;
+import org.zfin.profile.Person;
 import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
@@ -1937,6 +1940,100 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 Restrictions.ilike("abbreviation", likeQuery)
         ));
         return criteria.list();
+    }
+
+    public List<String> getFeatureNamesWithNoGenotypesForPub(String pubZdbID) {
+        String sql = "select distinct f.feature_name, f.feature_zdb_id, ra1.recattrib_source_zdb_id" +
+                " from feature f" +
+                " join record_attribution ra1 on ra1.recattrib_data_zdb_id=f.feature_zdb_id" +
+                " where ra1.recattrib_source_zdb_id = :pubID" +
+                " and ra1.recattrib_source_type = 'standard'" +
+                " and not exists (" +
+                "     select 'x'" +
+                "     from genotype_feature gf, record_attribution ra2" +
+                "     where gf.genofeat_feature_zdb_id = f.feature_zdb_id" +
+                "     and ra2.recattrib_source_type = 'standard'" +
+                "     and gf.genofeat_geno_zdb_id = ra2.recattrib_data_zdb_id" +
+                "     and ra2.recattrib_source_zdb_id = :pubID" +
+                " );";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("pubID", pubZdbID);
+        query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                return tuple[0];
+            }
+        });
+        return query.list();
+    }
+
+    public List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID) {
+        String sql = "select distinct feature_name" +
+                " from record_attribution, feature" +
+                " where recattrib_source_zdb_id = :pubID" +
+                " and recattrib_data_zdb_id = feature_zdb_id" +
+                " and exists (" +
+                "   select 'x' from feature_assay" +
+                "   where featassay_feature_zdb_id = recattrib_data_zdb_id" +
+                "   and (featassay_mutagen = 'CRISPR' or featassay_mutagen = 'TALEN')" +
+                " )" +
+                " and (" +
+                "   not exists (" +
+                "     select 'x' from feature_marker_relationship" +
+                "     where fmrel_ftr_zdb_id = recattrib_data_zdb_id" +
+                "     and fmrel_type = 'is allele of') " +
+                "   or not exists (" +
+                "     select 'x' from feature_marker_relationship" +
+                "     where fmrel_ftr_zdb_id = recattrib_data_zdb_id" +
+                "     and fmrel_type = 'created by')" +
+                " );";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("pubID", pubZdbID);
+        return query.list();
+    }
+
+    public List<Curation> getOpenCurationTopics(String pubZdbID) {
+        String hql = "from Curation c" +
+                " where c.publication.zdbID = :pubID" +
+                " and c.openedDate is not null " +
+                " and c.closedDate is null " +
+                " and c.topic != :linkedAuthors";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("pubID", pubZdbID);
+        query.setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS);
+        return query.list();
+    }
+
+    public void closeOpenCurationTopics(Publication pub, Person curator) {
+
+        // for topics that are already open, just close them without updating the curator
+        String hql = "update Curation c" +
+                " set c.closedDate = :now" +
+                " where c.publication = :pub" +
+                " and c.openedDate is not null" +
+                " and c.closedDate is null" +
+                " and c.topic != :linkedAuthors";
+        HibernateUtil.currentSession()
+                .createQuery(hql)
+                .setParameter("now", new Date())
+                .setParameter("pub", pub)
+                .setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS)
+                .executeUpdate();
+
+        // topics that aren't opened, should get and openedDate, closedDate, and curator
+        hql = "update Curation c" +
+                " set c.openedDate = :now, c.closedDate = :now, c.curator = :curator" +
+                " where c.publication = :pub" +
+                " and c.openedDate is null" +
+                " and c.closedDate is null" +
+                " and c.topic != :linkedAuthors";
+        HibernateUtil.currentSession()
+                .createQuery(hql)
+                .setParameter("now", new Date())
+                .setParameter("curator", curator)
+                .setParameter("pub", pub)
+                .setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS)
+                .executeUpdate();
     }
 
     private Long getMarkerCountByMarkerType(String zdbID, String type) {

@@ -1,6 +1,7 @@
 package org.zfin.publication.repository;
 
 import org.zfin.antibody.Antibody;
+import org.zfin.curation.Curation;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
@@ -16,6 +17,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Orthology;
+import org.zfin.profile.Person;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationParameter;
@@ -486,6 +488,14 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getPublicationIDsForGOwithField(String zdbID);
 
     void addPublication(Publication publication);
+
+    List<String> getFeatureNamesWithNoGenotypesForPub(String pubZdbID);
+
+    List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID);
+
+    List<Curation> getOpenCurationTopics(String pubZdbID);
+
+    void closeOpenCurationTopics(Publication pub, Person curator);
 
 
     public Long getMarkerCount(Publication publication);

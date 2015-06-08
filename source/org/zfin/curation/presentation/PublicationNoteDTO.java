@@ -1,11 +1,14 @@
 package org.zfin.curation.presentation;
 
+import java.util.Date;
+
 public class PublicationNoteDTO {
 
     private String zdbID;
     private String text;
-    private String date;
+    private Date date;
     private CuratorDTO curator;
+    private boolean editable;
 
     public String getZdbID() {
         return zdbID;
@@ -23,11 +26,11 @@ public class PublicationNoteDTO {
         this.text = text;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -37,5 +40,13 @@ public class PublicationNoteDTO {
 
     public void setCurator(CuratorDTO curator) {
         this.curator = curator;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

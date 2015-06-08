@@ -3,14 +3,14 @@ package org.zfin.curation;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import java.util.Calendar;
+import java.util.Date;
 
 public class PublicationNote {
 
     private String zdbID;
     private Publication publication;
     private Person curator;
-    private Calendar date;
+    private Date date;
     private String text;
 
     public Person getCurator() {
@@ -21,11 +21,11 @@ public class PublicationNote {
         this.curator = curator;
     }
 
-    public Calendar getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

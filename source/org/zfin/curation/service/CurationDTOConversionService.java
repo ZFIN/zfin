@@ -1,24 +1,27 @@
 package org.zfin.curation.service;
 
+import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
+import org.zfin.curation.presentation.CurationDTO;
 import org.zfin.curation.presentation.CuratorDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
 import org.zfin.profile.Person;
-
-import java.text.SimpleDateFormat;
+import org.zfin.profile.service.ProfileService;
 
 public class CurationDTOConversionService {
 
     private static final String DEFAULT_IMAGE = "/images/LOCAL/smallogo.gif";
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     public static PublicationNoteDTO publicationNoteToDTO(PublicationNote note) {
         PublicationNoteDTO dto = new PublicationNoteDTO();
         dto.setZdbID(note.getZdbID());
-        SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
-        dto.setDate(df.format(note.getDate().getTime()));
+        dto.setDate(note.getDate());
         dto.setText(note.getText());
         dto.setCurator(personToCuratorDTO(note.getCurator()));
+
+        Person currentUser = ProfileService.getCurrentSecurityUser();
+        dto.setEditable(currentUser != null && currentUser.equals(note.getCurator()));
+
         return dto;
     }
 
@@ -31,6 +34,18 @@ public class CurationDTOConversionService {
         } else {
             dto.setImageURL("/action/profile/image/view/" + curator.getZdbID() + ".jpg");
         }
+        return dto;
+    }
+
+    public static CurationDTO curationToDTO(Curation curation) {
+        CurationDTO dto = new CurationDTO();
+        dto.setZdbID(curation.getZdbID());
+        dto.setTopic(curation.getTopic().toString());
+        dto.setCurator(personToCuratorDTO(curation.getCurator()));
+        dto.setDataFound(curation.isDataFound());
+        dto.setEntryDate(curation.getEntryDate());
+        dto.setOpenedDate(curation.getOpenedDate());
+        dto.setClosedDate(curation.getClosedDate());
         return dto;
     }
 

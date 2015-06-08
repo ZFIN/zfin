@@ -4,23 +4,29 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
+import org.zfin.curation.presentation.CurationDTO;
+import org.zfin.curation.presentation.CurationStatusDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
-import java.util.Collection;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 @Controller
 @RequestMapping("/publication")
@@ -59,7 +65,7 @@ public class PublicationTrackingController {
 
         PublicationNote note = new PublicationNote();
         note.setText(noteDTO.getText());
-        note.setDate(new GregorianCalendar());
+        note.setDate(new Date());
         note.setCurator(ProfileService.getCurrentSecurityUser());
         note.setPublication(publication);
 
@@ -98,9 +104,131 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "{zdbID}/claims", method = RequestMethod.GET)
-    public String getPublicationClaims(@PathVariable String zdbID) {
-        return "";
+    @RequestMapping(value = "{zdbID}/topics", method = RequestMethod.GET)
+    public Collection<CurationDTO> getCurationTopics(@PathVariable String zdbID) {
+
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery(
+                "from Curation c " +
+                        "where c.publication = :pub " +
+                        "and c.topic != :linkedAuthors");
+        query.setParameter("pub", publicationRepository.getPublication(zdbID));
+        query.setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS);
+
+        Set<CurationDTO> curation = new TreeSet<>(new Comparator<CurationDTO>() {
+            @Override
+            public int compare(CurationDTO o1, CurationDTO o2) {
+                return o1.getTopic().compareTo(o2.getTopic());
+            }
+        });
+        List<Curation.Topic> topics = new ArrayList<>();
+        for (Object o : query.list()) {
+            Curation c = (Curation) o;
+            curation.add(CurationDTOConversionService.curationToDTO(c));
+            topics.add(c.getTopic());
+        }
+        for (Curation.Topic t : Curation.Topic.values()) {
+            if (!topics.contains(t) && t != Curation.Topic.LINKED_AUTHORS) {
+                CurationDTO dto = new CurationDTO();
+                dto.setTopic(t.toString());
+                curation.add(dto);
+            }
+        }
+        return curation;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.GET)
+    public CurationStatusDTO getCurationStatus(@PathVariable String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+
+        CurationStatusDTO dto = new CurationStatusDTO();
+        dto.setClosedDate(publication.getCloseDate());
+        dto.setIndexed(publication.isIndexed());
+        dto.setIndexedDate(publication.getIndexedDate());
+        dto.setPubZdbID(publication.getZdbID());
+        dto.setCurationAllowed(PublicationService.allowCuration(publication));
+
+        return dto;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.POST)
+    public CurationStatusDTO updateCurationStatus(@PathVariable String zdbID, @RequestBody CurationStatusDTO dto) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+        Publication publication = publicationRepository.getPublication(zdbID);
+        publication.setIndexed(dto.isIndexed());
+        publication.setIndexedDate((GregorianCalendar) dto.getIndexedDate());
+        if (publication.getCloseDate() == null && dto.getClosedDate() != null) {
+            // looks like this paper's getting closed!
+            publicationRepository.closeOpenCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+            publication.setCloseDate((GregorianCalendar) dto.getClosedDate());
+        }
+        session.update(publication);
+        tx.commit();
+
+        return dto;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/validate", method = RequestMethod.POST)
+    public JSONMessageList validatePublication(@PathVariable String zdbID) {
+        Collection<String> warnings = new ArrayList<>();
+        List<Curation> openTopics = publicationRepository.getOpenCurationTopics(zdbID);
+        if (CollectionUtils.isNotEmpty(openTopics)) {
+            warnings.add("There are open topics which will be closed");
+        }
+        List<String> featureNames = publicationRepository.getFeatureNamesWithNoGenotypesForPub(zdbID);
+        if (CollectionUtils.isNotEmpty(featureNames)) {
+            warnings.add("The following features have no genotypes: " + StringUtils.join(featureNames, ", "));
+        }
+        featureNames = publicationRepository.getTalenOrCrisprFeaturesWithNoRelationship(zdbID);
+        if (CollectionUtils.isNotEmpty(featureNames)) {
+            warnings.add("The following features were created by a CRISPR or TALEN with no feature marker relationship: " + StringUtils.join(featureNames, ", "));
+        }
+
+        JSONMessageList messages = new JSONMessageList();
+        messages.setWarnings(warnings);
+        return messages;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/topics", method = RequestMethod.POST)
+    public CurationDTO addCurationTopic(@PathVariable String zdbID, @RequestBody CurationDTO topicDTO) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+
+        Curation curation = new Curation();
+        curation.setTopic(Curation.Topic.fromString(topicDTO.getTopic()));
+        curation.setPublication(publicationRepository.getPublication(zdbID));
+        curation.setCurator(ProfileService.getCurrentSecurityUser());
+        curation.setEntryDate(new Date());
+        curation.setDataFound(topicDTO.isDataFound());
+        curation.setOpenedDate(topicDTO.getOpenedDate());
+        curation.setClosedDate(topicDTO.getClosedDate());
+        session.save(curation);
+        tx.commit();
+
+        return CurationDTOConversionService.curationToDTO(curation);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/topics/{zdbID}", method = RequestMethod.POST)
+    public CurationDTO editCurationTopic(@PathVariable String zdbID, @RequestBody CurationDTO topicDTO) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+
+        Curation curation = (Curation) session.get(Curation.class, zdbID);
+        curation.setDataFound(topicDTO.isDataFound());
+        curation.setCurator(ProfileService.getCurrentSecurityUser());
+        curation.setOpenedDate(topicDTO.getOpenedDate());
+        curation.setClosedDate(topicDTO.getClosedDate());
+        session.update(curation);
+        tx.commit();
+
+        return CurationDTOConversionService.curationToDTO(curation);
     }
 
     private Collection<PublicationNoteDTO> getPubNotes(Publication publication) {

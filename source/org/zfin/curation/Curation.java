@@ -3,7 +3,7 @@ package org.zfin.curation;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import java.util.Calendar;
+import java.util.Date;
 
 public class Curation {
 
@@ -12,14 +12,15 @@ public class Curation {
     private Person curator;
     private Topic topic;
     private boolean dataFound;
-    private Calendar entryDate;
-    private Calendar closedDate;
+    private Date entryDate;
+    private Date closedDate;
+    private Date openedDate;
 
-    public Calendar getClosedDate() {
+    public Date getClosedDate() {
         return closedDate;
     }
 
-    public void setClosedDate(Calendar closedDate) {
+    public void setClosedDate(Date closedDate) {
         this.closedDate = closedDate;
     }
 
@@ -39,11 +40,11 @@ public class Curation {
         this.dataFound = dataFound;
     }
 
-    public Calendar getEntryDate() {
+    public Date getEntryDate() {
         return entryDate;
     }
 
-    public void setEntryDate(Calendar entryDate) {
+    public void setEntryDate(Date entryDate) {
         this.entryDate = entryDate;
     }
 
@@ -69,6 +70,14 @@ public class Curation {
 
     public void setZdbID(String zdbID) {
         this.zdbID = zdbID;
+    }
+
+    public Date getOpenedDate() {
+        return openedDate;
+    }
+
+    public void setOpenedDate(Date openedDate) {
+        this.openedDate = openedDate;
     }
 
     public enum Topic {
@@ -99,6 +108,15 @@ public class Curation {
         @Override
         public String toString() {
             return display;
+        }
+
+        public static Topic fromString(String name) {
+            for (Topic topic : values()) {
+                if (topic.toString().equals(name)) {
+                    return topic;
+                }
+            }
+            return null;
         }
     }
 
