@@ -337,10 +337,13 @@ public class MutantRepositoryTest {
 
     @Test
     public void getFishCitations() {
-        List<String> genoxIds = new ArrayList<String>(1);
-        genoxIds.add("ZDB-GENO-070406-1");
-        genoxIds.add("ZDB-GENOX-100402-4");
-        List<Publication> attributions = mutantRepository.getFishAttributionList(genoxIds);
+        Fish fish = new Fish();
+        fish.setZdbID("ZDB-FISH-150603-15314");
+        Genotype genotype = new Genotype();
+        genotype.setZdbID("ZDB-GENO-070406-1");
+        fish.setGenotype(genotype);
+
+        List<Publication> attributions = mutantRepository.getFishAttributionList(fish);
         assertNotNull(attributions);
         assertTrue(attributions.size() > 1);
     }
