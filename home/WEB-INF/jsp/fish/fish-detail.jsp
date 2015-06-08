@@ -16,70 +16,40 @@
 <table class="primary-entity-attributes">
     <tr>
         <th class="fish-name-label" style="vertical-align: bottom;">
-            <span class="name-label">Genotype + Reagents:</span>
+            <span class="name-label">Fish name:</span>
         </th>
         <td class="fish-name-value" style="vertical-align: bottom;">
             <span class="name-value">${fish.name}</span>
         </td>
     </tr>
+    <tr>
+        <th>Genotype Component:</th>
+        <td>
+            <c:choose>
+                <c:when test="${!empty fish.genotype}">
+                    <zfin:link entity="${fish.genotype}"/>
+                </c:when>
+                <c:otherwise><span class="no-data-tag">none</span></c:otherwise>
+            </c:choose>
+
+        </td>
+    </tr>
+    <tr>
+        <th>Reagent Component:</th>
+        <td>
+            <c:choose>
+                <c:when test="${!empty fish.strList}">
+                    <zfin:link entity="${fish.strList}"/>
+                </c:when>
+                <c:otherwise><span class="no-data-tag">none</span></c:otherwise>
+            </c:choose>
+
+        </td>
+    </tr>
 </table>
 </p>
 
-<b>FISH COMPOSITION</b>
-<table class="summary rowstripes">
-    <tr>
-        <th width="20%">Genotype</th>
-        <th>Affected Gene</th>
-        <th>Construct</th>
-        <th>Parental Zygosity</th>
-    </tr>
-    <c:choose>
-        <c:when test="${fn:length(fish.genotype.genotypeFeatures) > 0}">
-            <c:forEach var="genotypeFeature" items="${fish.genotype.genotypeFeatures}">
-                <jsp:useBean id="genotypeFeature" class="org.zfin.mutant.GenotypeFeature" scope="request"/>
-                <tr>
-                    <td style="vertical-align: bottom;"><zfin:link entity="${fish.genotype}"/>
 
-                    <td style="vertical-align: bottom;">
-                        <zfin2:listOfAffectedGenes markerCollection="${genotypeFeature.feature.affectedGenes}"/>
-                    </td>
-                    <td style="vertical-align: bottom;"><zfin2:listOfTgConstructs markerCollection="${genotypeFeature.feature.tgConstructs}"/></td>
-
-                    <td style="vertical-align: bottom;">
-                            ${genotypeFeature.parentalZygosityDisplay}
-                    </td>
-                </tr>
-            </c:forEach>
-        </c:when>
-        <c:otherwise>
-            <tr>
-                <td><zfin:link entity="${fish.genotype}"/></td>
-                <td>
-                </td>
-                <td>
-                </td>
-            </tr>
-        </c:otherwise>
-    </c:choose>
-</table>
-</p>
-<table class="summary rowstripes">
-    <tr>
-        <th width="20%">Reagent</th>
-        <th>Targeted Gene</th>
-    </tr>
-    <c:if test="${fn:length(fish.strList) ne null && fn:length(fish.strList) > 0}">
-        <c:forEach var="sequenceTargetingReagent" items="${fish.strList}" varStatus="loop">
-            <jsp:useBean id="sequenceTargetingReagent" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
-            <tr>
-                <td><zfin:link entity="${sequenceTargetingReagent}"/></td>
-                <td>
-                    <zfin2:listOfAffectedGenes markerCollection="${sequenceTargetingReagent.targetGenes}"/>
-                </td>
-            </tr>
-        </c:forEach>
-    </c:if>
-</table>
 </p>
 
 <div class="summary">
