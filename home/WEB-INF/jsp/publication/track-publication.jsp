@@ -41,51 +41,51 @@
     </div>
   </div>
 
-  <div ng-controller="PubTrackingTopicsController as topicsCtrl">
+  <div id="pub-tracking-main" ng-controller="PubTrackingController as trackCtrl">
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title">Status</h3>
       </div>
-      <div class="panel-body" ng-cloak ng-show="topicsCtrl.status">
+      <div class="panel-body" ng-cloak ng-show="trackCtrl.status">
         <div class="row bottom-buffer">
           <div class="col-xs-4" >
-            <div ng-if="topicsCtrl.status.indexed">
-              <strong>Indexed on {{topicsCtrl.status.indexedDate | date:'yyyy-MM-dd'}}</strong>
-              <button class="btn btn-default btn-block" ng-click="topicsCtrl.unindexPub()">Un-index</button>
+            <div ng-if="trackCtrl.status.indexed">
+              <strong>Indexed on {{trackCtrl.status.indexedDate | date:'yyyy-MM-dd'}}</strong>
+              <button class="btn btn-default btn-block" ng-click="trackCtrl.unindexPub()">Un-index</button>
             </div>
-            <div ng-if="!topicsCtrl.status.indexed">
+            <div ng-if="!trackCtrl.status.indexed">
               <strong>Not indexed yet</strong>
-              <button class="btn btn-primary btn-block" ng-click="topicsCtrl.indexPub()">Index</button>
+              <button class="btn btn-primary btn-block" ng-click="trackCtrl.indexPub()">Index</button>
             </div>
           </div>
         </div>
         <div class="row bottom-buffer">
           <div class="col-xs-4">
-            <div ng-if="!topicsCtrl.status.closedDate && !topicsCtrl.hasTopics()">
+            <div ng-if="!trackCtrl.status.closedDate && !trackCtrl.hasTopics()">
               <strong>Not closed yet</strong>
-              <button class="btn btn-primary btn-block" ng-click="topicsCtrl.closePub()">Close with no data found</button>
+              <button class="btn btn-primary btn-block" ng-click="trackCtrl.validateForClose()">Close with no data found</button>
             </div>
-            <div ng-if="!topicsCtrl.status.closedDate && topicsCtrl.hasTopics()">
+            <div ng-if="!trackCtrl.status.closedDate && trackCtrl.hasTopics()">
               <strong>Not closed yet</strong>
-              <button class="btn btn-primary btn-block" ng-click="topicsCtrl.closePub()">Close</button>
+              <button class="btn btn-primary btn-block" ng-click="trackCtrl.validateForClose()">Close</button>
             </div>
-            <div ng-if="topicsCtrl.status.closedDate">
-              <strong>Closed on {{topicsCtrl.status.closedDate | date:"yyyy-MM-dd"}}</strong>
-              <button class="btn btn-default btn-block">Re-open</button>
+            <div ng-if="trackCtrl.status.closedDate">
+              <strong>Closed on {{trackCtrl.status.closedDate | date:"yyyy-MM-dd"}}</strong>
+              <button class="btn btn-default btn-block" ng-click="trackCtrl.reopenPub()">Reopen</button>
             </div>
           </div>
         </div>
-        <div class="alert alert-warning" role="alert" ng-show="topicsCtrl.warnings.length > 0">
+        <div class="alert alert-warning" role="alert" ng-show="trackCtrl.warnings.length > 0">
           <h4>Heads up!</h4>
           <p class="bottom-buffer-sm">You might not want to close this publication yet. Are you sure you want to close it?</p>
           <ul class="bottom-buffer">
-            <li ng-repeat="warning in topicsCtrl.warnings">
+            <li ng-repeat="warning in trackCtrl.warnings">
               {{warning}}
             </li>
           </ul>
           <p>
-            <button class="btn btn-warning" ng-click="topicsCtrl.closeWithoutWarning()">Yes, close it</button>
-            <button class="btn btn-default" ng-click="topicsCtrl.hideWarnings()">Cancel</button>
+            <button class="btn btn-warning" ng-click="trackCtrl.closePub()">Yes, close it</button>
+            <button class="btn btn-default" ng-click="trackCtrl.hideWarnings()">Cancel</button>
           </p>
         </div>
       </div>
@@ -105,31 +105,29 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="topic in topicsCtrl.topics" ng-cloak>
+          <tr ng-repeat="topic in trackCtrl.topics" ng-cloak>
             <td>
-              <input type="checkbox" ng-checked="topic.dataFound" ng-click="topicsCtrl.toggleDataFound(topic, $index)"/> {{topic.topic}}
+              <input type="checkbox" ng-checked="topic.dataFound" ng-click="trackCtrl.toggleTopicDataFound(topic, $index)"/> {{topic.topic}}
             </td>
             <td>
-              {{topicsCtrl.getStatus(topic)}}
+              {{trackCtrl.getTopicStatus(topic)}}
             </td>
-            <td>{{(!topicsCtrl.isNew(topic)) ? topic.curator.name : ""}}</td>
+            <td>{{(!trackCtrl.isNewTopic(topic)) ? topic.curator.name : ""}}</td>
             <td>
-              <button class="btn btn-default" ng-show="topicsCtrl.isNew(topic)" ng-click="topicsCtrl.open(topic, $index)">Open</button>
+              <button class="btn btn-default" ng-show="trackCtrl.isNewTopic(topic)" ng-click="trackCtrl.openTopic(topic, $index)">Open</button>
               <!-- Split button -->
-              <div class="btn-group" ng-show="topicsCtrl.isOpen(topic)">
-                <button type="button" class="btn btn-default" ng-click="topicsCtrl.close(topic, $index)">Close</button>
+              <div class="btn-group" ng-show="trackCtrl.isOpenTopic(topic)">
+                <button type="button" class="btn btn-default" ng-click="trackCtrl.closeTopic(topic, $index)">Close</button>
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                   <span class="caret"></span>
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
 
                 <ul class="dropdown-menu" role="menu">
-                  <li><a href ng-click="topicsCtrl.unopen(topic, $index)">Back to New</a></li>
+                  <li><a href ng-click="trackCtrl.unopenTopic(topic, $index)">Back to New</a></li>
                 </ul>
               </div>
-              <%--<button class="btn btn-danger" ng-show="{{topic.openedDate && !topic.closedDate}}" ng-click="topicsCtrl.close(topic, $index)">Close</button>--%>
-              <%--<button class="btn btn-default" ng-show="{{topic.openedDate && !topic.closedDate}}">Un-open</button>--%>
-              <button class="btn btn-default" ng-show="topicsCtrl.isClosed(topic)" ng-click="topicsCtrl.open(topic, $index)">Re-open</button>
+              <button class="btn btn-default" ng-show="trackCtrl.isClosedTopic(topic)" ng-click="trackCtrl.openTopic(topic, $index)">Re-open</button>
             </td>
           </tr>
         </tbody>
@@ -144,12 +142,12 @@
         <form role="form">
           <div class="form-group">
             <label for="new-note-text">New Note</label>
-            <textarea ng-model="topicsCtrl.newNote" class="form-control" rows="3" id="new-note-text"></textarea>
+            <textarea ng-model="trackCtrl.newNote" class="form-control" rows="3" id="new-note-text"></textarea>
           </div>
-          <button ng-click="topicsCtrl.addNote()" type="submit" class="btn btn-primary">Post</button>
+          <button ng-click="trackCtrl.addNote()" type="submit" class="btn btn-primary">Post</button>
         </form>
         <hr>
-        <div class="media" ng-repeat="note in topicsCtrl.notes" ng-cloak>
+        <div class="media" ng-repeat="note in trackCtrl.notes" ng-cloak>
           <div class="media-left">
             <div style="width: 64px; height: 64px; text-align: center;">
               <img style="max-width: 100%; max-height: 100%" ng-src="{{note.curator.imageURL}}">
@@ -161,16 +159,16 @@
               <small>{{note.date | date:'yyyy-MM-dd'}}</small>
             </h4>
             <ul class="list-inline" ng-show="note.editable">
-              <li><small><a href ng-click="topicsCtrl.beginEditing(note)">Edit</a></small></li>
-              <li><small><a href ng-click="topicsCtrl.deleteNote(note)">Delete</a></small></li>
+              <li><small><a href ng-click="trackCtrl.beginEditingNote(note)">Edit</a></small></li>
+              <li><small><a href ng-click="trackCtrl.deleteNote(note)">Delete</a></small></li>
             </ul>
-            <p ng-hide="note.editing">{{note.text}}</p>
+            <p ng-hide="note.editing" class="keep-breaks">{{note.text}}</p>
             <div ng-show="note.editing">
               <div class="form-group">
                 <textarea class="form-control" ng-model="note.text"></textarea>
               </div>
-              <button ng-click="topicsCtrl.editNote(note)" type="submit" class="btn btn-primary">Done Editing</button>
-              <button ng-click="topicsCtrl.cancelEditing(note)" type="submit" class="btn btn-default">Cancel</button>
+              <button ng-click="trackCtrl.editNote(note)" type="submit" class="btn btn-primary">Done Editing</button>
+              <button ng-click="trackCtrl.cancelEditingNote(note)" type="submit" class="btn btn-default">Cancel</button>
             </div>
           </div>
         </div>
@@ -195,7 +193,7 @@
           <label for="additional-emails">Additional recipients</label>
           <input class="form-control" id="additional-emails" type="text" placeholder="alice@example.com, bob@example.net"/>
         </div>
-        <p class="text-danger error hidden">No contacts selected</p>
+        <p class="text-danger error">No contacts selected</p>
         <button class="btn btn-primary" type="submit">Edit Notification</button>
       </form>
     </div>
@@ -204,6 +202,7 @@
 
 <script>
   $(function() {
+    $(".error", this).hide();
     $("#edit-notification").submit(function (evt) {
       evt.preventDefault();
       var contactList = $(":checked", this).map(function () { return $(this).val(); }).get().join("|");

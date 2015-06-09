@@ -8,8 +8,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +20,8 @@ import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.presentation.JSONMessageList;
+import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -36,6 +36,9 @@ public class PublicationTrackingController {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    private PhenotypeRepository phenotypeRepository;
 
     @RequestMapping(value = "/{zdbID}/track")
     public String showPubTracker(Model model, @PathVariable String zdbID) {
@@ -161,10 +164,10 @@ public class PublicationTrackingController {
         publication.setIndexed(dto.isIndexed());
         publication.setIndexedDate((GregorianCalendar) dto.getIndexedDate());
         if (publication.getCloseDate() == null && dto.getClosedDate() != null) {
-            // looks like this paper's getting closed!
-            publicationRepository.closeOpenCurationTopics(publication, ProfileService.getCurrentSecurityUser());
-            publication.setCloseDate((GregorianCalendar) dto.getClosedDate());
+            // looks like this paper's getting closed. close all the topics, too.
+            publicationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
         }
+        publication.setCloseDate((GregorianCalendar) dto.getClosedDate());
         session.update(publication);
         tx.commit();
 
@@ -175,17 +178,29 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/{zdbID}/validate", method = RequestMethod.POST)
     public JSONMessageList validatePublication(@PathVariable String zdbID) {
         Collection<String> warnings = new ArrayList<>();
+
         List<Curation> openTopics = publicationRepository.getOpenCurationTopics(zdbID);
         if (CollectionUtils.isNotEmpty(openTopics)) {
             warnings.add("There are open topics which will be closed");
         }
+
         List<String> featureNames = publicationRepository.getFeatureNamesWithNoGenotypesForPub(zdbID);
         if (CollectionUtils.isNotEmpty(featureNames)) {
             warnings.add("The following features have no genotypes: " + StringUtils.join(featureNames, ", "));
         }
+
         featureNames = publicationRepository.getTalenOrCrisprFeaturesWithNoRelationship(zdbID);
         if (CollectionUtils.isNotEmpty(featureNames)) {
             warnings.add("The following features were created by a CRISPR or TALEN with no feature marker relationship: " + StringUtils.join(featureNames, ", "));
+        }
+
+        List<PhenotypeExperiment> phenotypeExperiments = phenotypeRepository.getPhenotypeExperimentsWithoutAnnotation(zdbID);
+        Set<String> figures = new TreeSet<>();
+        for (PhenotypeExperiment phenotypeExperiment : phenotypeExperiments) {
+            figures.add(phenotypeExperiment.getFigure().getLabel());
+        }
+        if (CollectionUtils.isNotEmpty(phenotypeExperiments)) {
+            warnings.add("The following figures still have mutants without phenotypes defined: " + StringUtils.join(figures, ", "));
         }
 
         JSONMessageList messages = new JSONMessageList();

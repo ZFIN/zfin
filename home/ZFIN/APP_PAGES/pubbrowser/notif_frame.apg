@@ -30,9 +30,7 @@ OUTPUT:
 <HEAD>
 <SCRIPT>
    function addNotifNote(note){
-      <?MIVAR>
-	opener.location.replace("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID&pnote="+note)
-      <?/MIVAR>  
+      window.opener.angular.element("#pub-tracking-main").controller()._addNote(note);
    }
 
 </SCRIPT>

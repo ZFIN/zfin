@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.BasicTransformerAdapter;
+import org.springframework.stereotype.Repository;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
@@ -27,6 +28,7 @@ import java.util.*;
 /**
  * Class defines methods to retrieve phenotypic data for annotation purposes
  */
+@Repository
 public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     private static Logger LOG = Logger.getLogger(HibernatePhenotypeRepository.class);

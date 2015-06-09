@@ -831,3 +831,7 @@ label.curation-form-label { font-weight: bold; }
 .bottom-buffer-sm {
     margin-bottom: 10px !important;
 }
+
+.keep-breaks {
+    white-space: pre-wrap;
+}
