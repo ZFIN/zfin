@@ -25,10 +25,7 @@ import org.zfin.mapping.presentation.PanelPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.RelatedMarker;
-import org.zfin.mutant.DiseaseModel;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.FishExperimentPresentation;
 import org.zfin.mutant.presentation.GenotypePresentation;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
@@ -104,6 +101,8 @@ public class CreateLinkTag extends BodyTagSupport {
         }
         if (o instanceof ProvidesLink) // provides a generic link interface
             link = ((ProvidesLink) o).getLink();
+        else if (o instanceof SequenceTargetingReagent)
+            link = MarkerPresentation.getLink((SequenceTargetingReagent) o, suppressPopupLink);
         else if (o instanceof Marker)  //handling of marker subtypes is taken care of in the getLink method
             link = MarkerPresentation.getLink((Marker) o);
         else if (o instanceof RelatedMarker)

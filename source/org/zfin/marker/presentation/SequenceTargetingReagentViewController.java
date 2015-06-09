@@ -26,6 +26,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.Database;
 
 import java.util.ArrayList;
@@ -158,6 +159,14 @@ public class SequenceTargetingReagentViewController {
         
         return "marker/sequence-targeting-reagent-target-view.page";
     }
+
+
+    @RequestMapping(value="/popup/{zdbID}")
+    public String getPopup(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        getView(model, zdbID);
+        return "marker/sequence-targeting-reagent-popup.popup";
+    }
+
 
     @RequestMapping(value = "/call-regen-genox", method = RequestMethod.GET)
     public

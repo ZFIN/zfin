@@ -21,6 +21,10 @@
     <definition name="marker/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
     </definition>
+    <definition name="marker/*.popup" extends="popup_layout">
+        <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
+    </definition>
+
     <definition name="construct/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/construct/{1}.jsp"/>
     </definition>

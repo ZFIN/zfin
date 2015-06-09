@@ -195,6 +195,18 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
+    public static String getPopupLink(String url) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<a href=\"");
+        sb.append(url);
+        sb.append("\"");
+        sb.append(" class=\"popup-link data-popup-link\"");
+        sb.append(" title=\"");
+        sb.append("\">");
+        sb.append("</a>");
+        return sb.toString();
+    }
+
     public static String getWebdriverLink(String uri, String zdbID, String abbreviation) {
         StringBuilder sb = getWebdriverHyperLinkStart();
         sb.append(uri);

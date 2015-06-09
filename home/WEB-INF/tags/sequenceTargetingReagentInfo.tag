@@ -10,6 +10,12 @@
               rtexprvalue="true" required="true" %>
 <%@ attribute name="typeName" type="java.lang.String" required="false" rtexprvalue="true" %>
 <%@ attribute name="previousNames" type="java.util.List" rtexprvalue="true" required="true" %>
+<%@ attribute name="suppressAnalysisTools" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
+
+<c:if test="${empty suppressAnalysisTools}">
+    <c:set var="suppressAnalysisTools" value="${false}"/>
+</c:if>
+
 
 <c:if test="${empty typeName}">
     <c:set var="typeName">${marker.markerType.name}</c:set>
@@ -67,17 +73,20 @@
                             (${markerBean.sequenceAttribution})
                         </c:if>
                     </div>
-                    &nbsp;&nbsp;&nbsp;
-                    <c:if test="${typeName eq 'TALEN'}">
-                        <c:set var="firstSeqLen">${fn:length(marker.sequence.sequence)}</c:set>
-                        <c:set var="secondSeqLen">${fn:length(marker.sequence.secondSequence)}</c:set>
+                    <c:if test="${!suppressAnalysisTools}">
+                        &nbsp;&nbsp;&nbsp;
+                        <c:if test="${typeName eq 'TALEN'}">
+                            <c:set var="firstSeqLen">${fn:length(marker.sequence.sequence)}</c:set>
+                            <c:set var="secondSeqLen">${fn:length(marker.sequence.secondSequence)}</c:set>
+                        </c:if>
+                        <zfin2:markerSequenceBlastDropDown
+                                sequence="${marker.sequence.sequence}"
+                                databases="${markerBean.databases}"
+                                instructions="Select Sequence Analysis Tool"
+                                />
+                        <br>
                     </c:if>
-                    <zfin2:markerSequenceBlastDropDown
-                            sequence="${marker.sequence.sequence}"
-                            databases="${markerBean.databases}"
-                            instructions="Select Sequence Analysis Tool"
-                            />
-                    <br>
+
                 </c:when>
                 <c:otherwise>
                     <zfin2:noDataAvailable/>
@@ -100,13 +109,15 @@
                                 (${markerBean.sequenceAttribution})
                             </c:if>
                         </div>
-                        &nbsp;&nbsp;&nbsp;
-                        <zfin2:markerSequenceBlastDropDown
-                                sequence="${marker.sequence.secondSequence}"
-                                databases="${markerBean.databases}"
-                                instructions="Select Sequence Analysis Tool"
-                                />
-                        <br>
+                        <c:if test="${!suppressAnalysisTools}">
+                            &nbsp;&nbsp;&nbsp;
+                            <zfin2:markerSequenceBlastDropDown
+                                    sequence="${marker.sequence.secondSequence}"
+                                    databases="${markerBean.databases}"
+                                    instructions="Select Sequence Analysis Tool"
+                                    />
+                            <br>
+                        </c:if>
                     </c:when>
                     <c:otherwise>
                         <zfin2:noDataAvailable/>
@@ -120,8 +131,8 @@
         <td>
             <c:if test="${!empty marker.sequence}">
                 <small>
-                    (Although ZFIN verifies reagent sequence data, we recommend that you conduct independent sequence
-                    analysis before ordering any reagent.)
+                    (Although ZFIN verifies reagent sequence data, we recommend that you
+                    conduct independent sequence analysis before ordering any reagent.)
                 </small>
             </c:if>
         </td>
