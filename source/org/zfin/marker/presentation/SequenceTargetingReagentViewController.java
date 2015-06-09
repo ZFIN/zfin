@@ -163,7 +163,25 @@ public class SequenceTargetingReagentViewController {
 
     @RequestMapping(value="/popup/{zdbID}")
     public String getPopup(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        getView(model, zdbID);
+        //getView(model, zdbID);
+
+        SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
+
+        logger.info("zdbID: " + zdbID);
+        SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(zdbID);
+        logger.info("sequenceTargetingReagent: " + sequenceTargetingReagent);
+
+        sequenceTargetingReagentBean.setMarker(sequenceTargetingReagent);
+        model.addAttribute("sequenceTargetingReagent", sequenceTargetingReagent);
+
+        MarkerService.createDefaultViewForMarker(sequenceTargetingReagentBean);
+
+        // set targetGenes
+        addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
+
+
+        model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
+
         return "marker/sequence-targeting-reagent-popup.popup";
     }
 
