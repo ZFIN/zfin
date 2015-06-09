@@ -1053,7 +1053,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
                 <?MICOMMENT> *** deciding on displaying MO icon or not <?/MICOMMENT>
                 <?MISQL COND="$(<,$mrkrsel_MO_flag,1)"
                         SQL="select count(expcond_mrkr_zdb_id)
-       	                       from mutant_fast_search,genotype_experiment,experiment_condition,phenotype_experiment
+       	                       from mutant_fast_search,fish_experiment,experiment_condition,phenotype_experiment
        	                      where mfs_mrkr_zdb_id = '$OID'
        	                        and phenox_genox_zdb_id = mfs_genox_zdb_id
        	                        and phenox_fig_zdb_id = '$mrkrsel_pheno_fig_zdb_id'
