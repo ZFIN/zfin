@@ -8,6 +8,8 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     private String handle;
     private List<FeatureDTO> featureList;
+    private String publicNote;
+    private String privateNote;
 
     public GenotypeDTO() {
     }
@@ -60,4 +62,19 @@ public class GenotypeDTO extends RelatedEntityDTO {
         this.featureList = featureList;
     }
 
+    public String getPrivateNote() {
+        return privateNote;
+    }
+
+    public void setPrivateNote(String privateNote) {
+        this.privateNote = privateNote;
+    }
+
+    public String getPublicNote() {
+        return publicNote;
+    }
+
+    public void setPublicNote(String publicNote) {
+        this.publicNote = publicNote;
+    }
 }

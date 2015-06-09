@@ -79,7 +79,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
                         "AND phenoeq.tag != :tag " +
                         "AND fishox.experiment.name in (:condition) " +
-                        "AND 0 = all elements(fishox.fish.strList)  ";
+                        "AND size(fishox.fish.strList) = 0  ";
 
         if (!wildtype) {
             hql += "AND fishox.fish.genotype.wildtype = 'f' ";
