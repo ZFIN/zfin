@@ -6,8 +6,6 @@ import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.PhenotypeExperiment;
-import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
@@ -41,8 +39,8 @@ public class FishGenotypeExpressionStatistics extends EntityStatistics {
         if (figures == null) {
             figures = new HashSet<>(5);
             for (FishExperiment fishExperiment : fishExperimentList)
-                for (ExpressionExperiment phenotype : fishExperiment.getExpressionExperiments()) {
-                        figures.addAll(phenotype.getAllFigures());
+                for (ExpressionExperiment expressionExperiment : fishExperiment.getExpressionExperiments()) {
+                    figures.addAll(expressionExperiment.getAllFigures());
                 }
         }
         return figures.size();
@@ -87,9 +85,9 @@ public class FishGenotypeExpressionStatistics extends EntityStatistics {
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         Set<Publication> pubs = new HashSet<>(5);
         for (FishExperiment fishExperiment : fishExperimentList)
-            for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
-                for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
-                    pubs.add(phenotype.getFigure().getPublication());
+            for (ExpressionExperiment phenotype : fishExperiment.getExpressionExperiments()) {
+                for (Figure figure : phenotype.getAllFigures()) {
+                    pubs.add(figure.getPublication());
                 }
             }
         List<Publication> pubList = new ArrayList<>(pubs);
