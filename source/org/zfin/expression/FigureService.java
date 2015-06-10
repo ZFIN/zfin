@@ -4,10 +4,7 @@ import org.apache.log4j.Logger;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -51,6 +48,17 @@ public class FigureService {
         boolean isStandardEnvironment = true;
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
         criteria.setGenotype(geno);
+        criteria.setGene(gene);
+        criteria.setWithImagesOnly(withImgsOnly);
+        criteria.setStandardEnvironment(isStandardEnvironment);
+        criteria.setWildtypeOnly(false);
+        return criteria;
+    }
+
+    public static ExpressionSummaryCriteria createExpressionCriteriaStandardEnvironment(Fish fish, Marker gene, boolean withImgsOnly) {
+        boolean isStandardEnvironment = true;
+        ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
+        criteria.setFish(fish);
         criteria.setGene(gene);
         criteria.setWithImagesOnly(withImgsOnly);
         criteria.setStandardEnvironment(isStandardEnvironment);

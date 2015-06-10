@@ -79,11 +79,11 @@ public class FishDetailController {
         List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs());
         model.addAttribute("phenotypeStatements", phenotypeStatements);
         model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
-
+        addExpressionSummaryToModel(model, fishID);
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute(LookupStrings.FORM_BEAN, form);
 
-        addExpressionSummaryToModel(model, fishID);
+
 
         // the following put the fish Id to page title as debugging for FB case 8817
         // model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish: " + fishID);
@@ -114,7 +114,7 @@ public class FishDetailController {
         List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
         model.addAttribute("phenotypeStatements", phenotypeStatements);
         model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
-
+        addExpressionSummaryToModel(model, fishZdbId);
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
 

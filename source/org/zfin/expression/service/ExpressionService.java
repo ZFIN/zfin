@@ -532,7 +532,7 @@ public class ExpressionService {
             for (Figure figure : result.getFigures()) {
                 Set<ExpressionResult> expressionResults = figureListMap.get(figure);
                 if (expressionResults == null) {
-                    expressionResults = new HashSet<ExpressionResult>();
+                    expressionResults = new HashSet<>();
                     figureListMap.put(figure, expressionResults);
                 }
                 expressionResults.add(result);

@@ -17,6 +17,7 @@ import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.*;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -202,8 +203,14 @@ public class FishService {
         return RepositoryFactory.getPhenotypeRepository().getPhenotypeStatements(figure, fishID);
     }
 
-    public static List<String> getGenoxIds(String fishID) {
-        return getFish(fishID).getGenotypeExperimentIDs();
+    public static List<String> getFishOxIds(String fishID) {
+       // return getFish(fishID).getGenotypeExperimentIDs();
+        Set<FishExperiment> fishOx = getMutantRepository().getFish(fishID).getFishExperiments();
+        List<String>fishoxID=new ArrayList<>(fishOx.size());
+        for (FishExperiment genoID : getMutantRepository().getFish(fishID).getFishExperiments()) {
+            fishoxID.add(genoID.getZdbID());
+        }
+        return fishoxID;
     }
 
     /**
@@ -235,8 +242,13 @@ public class FishService {
     public static List<FigureExpressionSummary> getExpressionSummary(String fishID, String geneID) {
 
         String genotypeID = getGenotypeID(fishID);
-        List<String> genoxIds = getGenoxIds(fishID);
-        List<ExpressionResult> results = getMutantRepository().getExpressionSummary(genotypeID, genoxIds, geneID);
+        //List<String> genoxIds = getGenoxIds(fishID);
+        Fish fish=getMutantRepository().getFish(fishID);
+        Set<FishExperiment> fishOx = fish.getFishExperiments();
+
+
+
+        List<ExpressionResult> results = getMutantRepository().getExpressionSummary(genotypeID, fishOx, geneID);
         if (CollectionUtils.isEmpty(results))
             return null;
 
@@ -251,8 +263,10 @@ public class FishService {
      */
     public static boolean hasImagesOnExpressionFigures(String fishID) {
         String genotypeID = getGenotypeID(fishID);
-        List<String> genoxIds = getGenoxIds(fishID);
-        return getMutantRepository().hasImagesOnExpressionFigures(genotypeID, genoxIds);
+        Set<FishExperiment> fishOx = getMutantRepository().getFish(fishID).getFishExperiments();
+
+
+        return getMutantRepository().hasImagesOnExpressionFigures(genotypeID, fishOx);
     }
 
 

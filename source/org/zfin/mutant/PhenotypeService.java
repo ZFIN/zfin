@@ -469,6 +469,33 @@ public class PhenotypeService {
         return figureSummaryDisplays;
 
     }
+
+    /**
+     * Create a list of FigureSummaryDisplay objects for a given fish
+     */
+    public static List<FigureSummaryDisplay> getPhenotypeFigureSummaryForFish(Fish fish) {
+        List<Figure> phenotypeFigures = RepositoryFactory.getPhenotypeRepository().getPhenotypeFiguresForFish(fish);
+        List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<>(phenotypeFigures.size());
+        Set<Figure> figures = new HashSet<Figure>(phenotypeFigures.size());
+
+        for (Figure figure : phenotypeFigures) {
+            FigureSummaryDisplay figureSummaryDisplay = new FigureSummaryDisplay();
+            if (figures.add(figure)) {
+                figureSummaryDisplay.setFigure(figure);
+                figureSummaryDisplay.setPublication(figure.getPublication());
+                List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getPhenotypeStatementsForFigureAndFish(figure, fish);
+                figureSummaryDisplay.setPhenotypeStatementList(FishService.getDistinctPhenotypeStatements(phenotypeStatements));
+                figureSummaryDisplays.add(figureSummaryDisplay);
+                if (!figure.isImgless()) {
+                    figureSummaryDisplay.setImgCount(figure.getImages().size());
+                    figureSummaryDisplay.setThumbnail(figure.getImages().iterator().next().getThumbnail());
+                }
+            }
+        }
+
+        return figureSummaryDisplays;
+
+    }
 }
 
 

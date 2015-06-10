@@ -23,6 +23,7 @@ import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
@@ -40,6 +41,7 @@ import java.util.Set;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 /**
@@ -413,6 +415,17 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         int count = expRep.getExpressionFigureCountForGenotype(genotype);
         Assert.assertTrue(count < 50);
         Assert.assertTrue(count > 1);
+    }
+
+    //@Test Wait until stable fish id
+    public void getExpressionFigureCountForGivenFish() {
+        Fish fish = getMutantRepository().getFish("ZDB-FISH-150602-4531");
+        int count = expRep.getExpressionFigureCountForFish(fish);
+        Assert.assertTrue(count < 200);
+        Assert.assertTrue(count > 1);
+
+        List<ExpressionResult> expressionResults = expRep.getExpressionResultsByFish(fish);
+        assertNotNull(expressionResults);
     }
 
     @Test

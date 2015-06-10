@@ -385,6 +385,8 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
+        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes()))
+            genotypeDTO.setPublicNote(genotype.getExternalNotes().iterator().next().getNote());
 
         List<PublicationDTO> associatedPublications = new ArrayList<>();
         for (int i = 0; i < genotype.getAssociatedPublications().size(); i++) {
