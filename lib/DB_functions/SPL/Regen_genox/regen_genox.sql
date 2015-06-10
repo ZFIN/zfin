@@ -237,7 +237,8 @@ create dba function regen_genox() returning integer
         gffs_phenox_pk_id int8 not null,
 	gffs_date_created DATETIME YEAR TO SECOND 
 			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
-        gffs_serial_id serial8 not null
+        gffs_serial_id serial8 not null,
+	gffs_fish_zdb_id varchar(50) not null
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
     extent size 512 next size 512 ;
@@ -333,7 +334,13 @@ create dba function regen_genox() returning integer
     create index genotype_figure_fast_search_geno_foreign_key_index_transient
       on genotype_figure_fast_search_new (gffs_geno_zdb_id)
       fillfactor 100
-      in idxdbs1;
+      in idxdbs3;
+
+   let errorHint = "genotype_figure_fast_search_new create fish index";
+    create index genotype_figure_fast_search_fish_foreign_key_index_transient
+      on genotype_figure_fast_search_new (gffs_fish_zdb_id)
+      fillfactor 100
+      in idxdbs2;
 
     let errorHint = "genotype_figure_fast_search_new create fig index";
     create index genotype_figure_fast_search_fig_foreign_key_index_transient
@@ -345,7 +352,7 @@ create dba function regen_genox() returning integer
     create index genotype_figure_fast_search_morph_foreign_key_index_transient
       on genotype_figure_fast_search_new (gffs_morph_zdb_id)
       fillfactor 100
-      in idxdbs1;
+      in idxdbs3;
         
     update statistics high for table genotype_figure_fast_search_new;
 

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AntConfiguration">
-    <defaultAnt bundledAnt="true" />
-  </component>
   <component name="ArtifactManager">
     <artifact type="exploded-war" name="zfin:Web exploded">
       <root id="root">
@@ -278,7 +275,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/../../home/WEB-INF/classes" />
   </component>
   <component name="ResourceManagerContainer">
@@ -293,7 +290,7 @@
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/../.." vcs="Git" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
@@ -302,7 +299,6 @@
         <root url="file://$PROJECT_DIR$/../../lib/Java/gwt" />
         <root url="file://$PROJECT_DIR$/../../lib/Java/netscape" />
         <root url="file://$PROJECT_DIR$/../../lib/Java/jwebunit" />
-        <root url="file://$PROJECT_DIR$/../../lib/Java/ifc111" />
         <root url="file://$PROJECT_DIR$/../../lib/Java/tomcat" />
         <root url="file://$PROJECT_DIR$/../../lib/Java" />
       </CLASSES>
@@ -310,7 +306,6 @@
       <SOURCES />
       <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/gwt" recursive="false" />
-      <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/ifc111" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/jwebunit" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/netscape" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/../../lib/Java/tomcat" recursive="false" />
@@ -328,9 +323,9 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.core-sources-3.0.5.RELEASE.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.web.servlet-sources-3.0.5.RELEASE.jar!/" />
-        <root url="jar://$PROJECT_DIR$/../../../../spring/spring-framework-3.0.5.RELEASE/src/org.springframework.web-sources-3.0.5.RELEASE.jar!/" />
+        <root url="jar://$USER_HOME$/spring/spring-framework-3.0.5.RELEASE/src/org.springframework.core-sources-3.0.5.RELEASE.jar!/" />
+        <root url="jar://$USER_HOME$/spring/spring-framework-3.0.5.RELEASE/src/org.springframework.web.servlet-sources-3.0.5.RELEASE.jar!/" />
+        <root url="jar://$USER_HOME$/spring/spring-framework-3.0.5.RELEASE/src/org.springframework.web-sources-3.0.5.RELEASE.jar!/" />
         <root url="file://E:/projects/tiles-2.2.2/src/tiles-core/src/main/java" />
         <root url="file://E:/projects/tiles-2.2.2/src/tiles-api/src/main/java" />
         <root url="file://E:/projects/tiles-2.2.2/src/tiles-servlet/src/main/java" />

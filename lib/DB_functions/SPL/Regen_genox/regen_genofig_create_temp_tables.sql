@@ -98,7 +98,8 @@ create procedure regen_genofig_create_temp_tables()
 	rgf_quality_zdb_id	varchar(50) not null,
 	rgf_tag 	        varchar(25) not null,
 	rgf_morph_zdb_id	varchar(50),
-	rgf_phenox_pk_id	int8
+	rgf_phenox_pk_id	int8,
+	rgf_fish_zdb_id		varchar(50) not null
       ) with no log;
 
   end

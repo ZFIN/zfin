@@ -152,8 +152,8 @@ DEBUGGING:
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(AND,$(XST,$envID),$(NE,$envID,))">
-    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_from,$(CONCAT,$phenosum_getPheno_sql_from,$phenosum_getPheno_sql_comma phenotype_experiment $phenosum_getPheno_sql_comma phenotype_statement $phenosum_getPheno_sql_comma genotype_experiment))<?/MIVAR>            
-    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_fig_zdb_id = phenox_fig_zdb_id and phenos_phenox_pk_id = phenox_pk_id and $phenosum_getPheno_sql_leftPar phenos_entity_1_superterm_zdb_id = '$anatID' or phenos_entity_1_subterm_zdb_id = '$anatID' or phenos_entity_2_superterm_zdb_id = '$anatID' or phenos_entity_2_subterm_zdb_id = '$anatID' $phenosum_getPheno_sql_rightPar and phenox_genox_zdb_id = genox_zdb_id and genox_exp_zdb_id = '$envID' and not exists $phenosum_getPheno_sql_leftPar select 'x' from experiment_condition where expcond_exp_zdb_id = genox_exp_zdb_id and expcond_mrkr_zdb_id = '' $phenosum_getPheno_sql_rightPar $phenosum_getPheno_sql_space))<?/MIVAR>  
+    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_from,$(CONCAT,$phenosum_getPheno_sql_from,$phenosum_getPheno_sql_comma phenotype_experiment $phenosum_getPheno_sql_comma phenotype_statement $phenosum_getPheno_sql_comma fish_experiment))<?/MIVAR>            
+    <?MIVAR>$(SETVAR,$phenosum_getPheno_sql_where,$(CONCAT,$phenosum_getPheno_sql_where,$phenosum_getPheno_sql_space and gffs_fig_zdb_id = phenox_fig_zdb_id and phenos_phenox_pk_id = phenox_pk_id and $phenosum_getPheno_sql_leftPar phenos_entity_1_superterm_zdb_id = '$anatID' or phenos_entity_1_subterm_zdb_id = '$anatID' or phenos_entity_2_superterm_zdb_id = '$anatID' or phenos_entity_2_subterm_zdb_id = '$anatID' $phenosum_getPheno_sql_rightPar and phenox_genox_zdb_id = genox_zdb_id and genox_exp_zdb_id = '$envID' and not exists $phenosum_getPheno_sql_leftPar select 'x' from experiment_condition where expcond_exp_zdb_id = genox_exp_zdb_id and not exists (select 'x' from fish_str where fishstr_fish_zdb_id =genox_fish_zdb_id) $phenosum_getPheno_sql_rightPar $phenosum_getPheno_sql_space))<?/MIVAR>  
   <?/MIBLOCK>
 
   <?MIBLOCK COND="$(AND,$(XST,$entID),$(NE,$entID,)$(XST,$qualityID),$(NE,$qualityID,),$(XST,$tag),$(NE,$tag,))">
@@ -188,13 +188,14 @@ DEBUGGING:
 <?MIELSE> <?MICOMMENT> ** if the phenotype summary is called from gene / MO page ** <?/MICOMMENT>
   <?MIVAR NAME="$phenosum_getPheno_sql">
     insert into $phenosum_phenodata
-         select distinct zdb_id, pub_mini_ref, fig_zdb_id, fig_label, fig_full_label, genox_geno_zdb_id 
-           from phenotype_experiment, genotype_experiment, figure, publication , mutant_fast_search 
+         select distinct zdb_id, pub_mini_ref, fig_zdb_id, fig_label, fig_full_label, fish_genotype_zdb_id 
+           from phenotype_experiment, fish, fish_experiment, figure, publication , mutant_fast_search 
           where mfs_mrkr_zdb_id = '$OID' 
             and mfs_genox_zdb_id = phenox_genox_zdb_id 
             and genox_zdb_id = phenox_genox_zdb_id
             and phenox_fig_zdb_id = fig_zdb_id 
             and fig_source_zdb_id = zdb_id 
+	    and fish_zdb_id = genox_fish_Zdb_id
             and exists (select 'x' from phenotype_statement NOTnormal 
                          where NOTnormal.phenos_phenox_pk_id = phenox_pk_id 
                            and NOTnormal.phenos_tag != "normal") 
@@ -487,14 +488,14 @@ DEBUGGING:
 
       <?MIBLOCK COND="$(EC,$(SUBSTR,$OID,1,8),ZDB-GENE)">
         <?MIVAR NAME=phenosum_sql_MO>select distinct mrkr_abbrev, mrkr_abbrev_order, mrkr_zdb_id
-       	              from mutant_fast_search, genotype_experiment, experiment_condition, marker, phenotype_experiment
+       	              from mutant_fast_search, fish_experiment, fish_str, marker, phenotype_experiment
        	             where mfs_mrkr_zdb_id = '$OID'
        	               and phenox_genox_zdb_id = mfs_genox_zdb_id 
        	               and phenox_fig_zdb_id = '$phenosum_fig_zdb' 
        	               and mfs_genox_zdb_id = genox_zdb_id
-       	               and genox_geno_zdb_id = '$phenosum_geno_zdb'
-       	               and expcond_exp_zdb_id = genox_exp_zdb_id
-       	               and expcond_mrkr_zdb_id = mrkr_zdb_id
+		       and fish_zdb_id = genox_fish_zdb_id
+       	               and fish_genotype_zdb_id = '$phenosum_geno_zdb'
+       	               and fishstr_str_zdb_id = mrkr_zdb_id
                   order by mrkr_abbrev_order
         <?/MIVAR>     	  
       <?MIELSE>
@@ -582,11 +583,12 @@ DEBUGGING:
         <?MIVAR NAME=phenosum_sql_entities>
           select distinct super.term_zdb_id, lower(super.term_name),
 	  	 sub.term_zdb_id, lower(sub.term_name), get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id)
-            from phenotype_statement, phenotype_experiment, genotype_experiment, mutant_fast_search, term as super,
+            from phenotype_statement, phenotype_experiment, fish, fish_experiment, mutant_fast_search, term as super,
 	    	 OUTER term as sub
            where mfs_mrkr_zdb_id = '$OID'
              and mfs_genox_zdb_id = genox_zdb_id
-             and genox_geno_zdb_id = '$phenosum_geno_zdb'
+	     and fish_zdb_id = genox_fish_zdb_id
+             and fish_genotype_zdb_id = '$phenosum_geno_zdb'
              and phenox_genox_zdb_id = mfs_genox_zdb_id
              and phenox_pk_id = phenos_phenox_pk_id
              and phenox_fig_zdb_id = '$phenosum_fig_zdb'
@@ -596,11 +598,12 @@ DEBUGGING:
  	  union
           select distinct super.term_zdb_id, lower(super.term_name),
 	  	 sub.term_zdb_id, lower(sub.term_name), get_postcomposed_term_html(super.term_zdb_id, sub.term_zdb_id)
-            from phenotype_statement, phenotype_experiment, genotype_experiment, mutant_fast_search, term as super,
+            from phenotype_statement, phenotype_experiment, fish,fish_experiment, mutant_fast_search, term as super,
 	    	 OUTER term as sub
            where mfs_mrkr_zdb_id = '$OID'
              and mfs_genox_zdb_id = genox_zdb_id
-             and genox_geno_zdb_id = '$phenosum_geno_zdb'
+	     and genox_fish_zdb_id = fish_Zdb_id
+             and fish_genotype_zdb_id = '$phenosum_geno_zdb'
              and phenox_genox_zdb_id = mfs_genox_zdb_id
              and phenox_pk_id = phenos_phenox_pk_id
              and phenox_fig_zdb_id = '$phenosum_fig_zdb'
