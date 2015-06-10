@@ -24,6 +24,8 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+
 /**
  * Class defines methods to retrieve phenotypic data for annotation purposes
  */
@@ -702,6 +704,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @return list of phenotype statements
      */
     public List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
+        Fish fish=getMutantRepository().getFish(fishID);
+        Set<FishExperiment> fishOx = getMutantRepository().getFish(fishID).getFishExperiments();
+        List<String>fishoxID=new ArrayList<>(fishOx.size());
+        for (FishExperiment genoID : getMutantRepository().getFish(fishID).getFishExperiments()) {
+            fishoxID.add(genoID.getZdbID());
+        }
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct pheno from PhenotypeStatement pheno  " +
@@ -710,7 +718,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
         Query query = session.createQuery(hql);
         query.setParameter("figure", figure);
-        query.setParameterList("genoxIDs", FishService.getGenoxIds(fishID));
+        query.setParameterList("genoxIDs", fishoxID);
         return (List<PhenotypeStatement>) query.list();
     }
 

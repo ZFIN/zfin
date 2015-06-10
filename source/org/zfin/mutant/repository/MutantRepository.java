@@ -330,7 +330,7 @@ public interface MutantRepository {
      *
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> genoxIds, String geneID);
+    List<ExpressionResult> getExpressionSummary(String genotypeID, Set<FishExperiment> fishOx, String geneID);
 
     List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds);
 
@@ -340,7 +340,7 @@ public interface MutantRepository {
      *
      * @return
      */
-    boolean hasImagesOnExpressionFigures(String genotypeID, List<String> genoxIds);
+    boolean hasImagesOnExpressionFigures(String genotypeID, Set<FishExperiment> fishOx);
 
     /**
      * Retrieve figures for phenotypes for a given genotype and structure.
