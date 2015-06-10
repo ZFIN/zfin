@@ -25,9 +25,9 @@
     </div>
     <div class="panel-body">
       <c:if test="${hasFile}">
-        <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}"><i class="fa fa-file-pdf-o"></i> PDF</a>
+        <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a>
       </c:if>
-      <form action="/cgi-bin/upload.cgi" method="post" class="form-inline">
+      <form action="/cgi-bin/upload.cgi" method="post" class="form-inline" enctype="multipart/form-data">
         <div class="form-group">
           <label for="pdfUploadFileInput">
             ${hasFile ? "Replace File" : "Upload File"}
