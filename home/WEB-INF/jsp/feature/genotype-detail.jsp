@@ -288,11 +288,13 @@
                         </td>
                         <td>
                             <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"/>
+                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
+                                    link=""/>
                         </td>
                         <td>
                             <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"/>
+                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
+                                    link="/action/expression/fish-expression-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                     </tr>
                 </c:forEach>

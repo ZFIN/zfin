@@ -41,6 +41,8 @@ public interface ExpressionRepository {
 
     int getExpressionFigureCountForGenotype(Genotype genotype);
 
+    int getExpressionFigureCountForFish(Fish fish);
+
     FigureLink getExpressionSingleFigure(Marker marker);
 
     int getExpressionFigureCountForClone(Clone clone);
@@ -295,13 +297,11 @@ public interface ExpressionRepository {
     List<ExpressionResult> getExpressionsWithEntity(List<GenericTerm> terms);
 
     /**
-     * Retrieve all expression results for a given genotype
+     * Retrieve all expression results for a given fish
      *
-     * @param genotype genotype
+     * @param fish Fish
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
-
     List<ExpressionResult> getExpressionResultsByFish (Fish fish);
 
     /**

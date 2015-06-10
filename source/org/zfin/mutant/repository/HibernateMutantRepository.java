@@ -79,7 +79,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
                         "AND phenoeq.tag != :tag " +
                         "AND fishox.experiment.name in (:condition) " +
-                        "AND 0 = all elements(fishox.fish.strList)  ";
+                        "AND size(fishox.fish.strList) = 0  ";
 
         if (!wildtype) {
             hql += "AND fishox.fish.genotype.wildtype = 'f' ";
@@ -1573,13 +1573,13 @@ public class HibernateMutantRepository implements MutantRepository {
                 "     publication = :publication and " +
                 "     evidenceCode = :evidenceCode ";
         if (diseaseModel.getFishExperiment() != null)
-            hql += "  and fishModel = :fishModel   ";
+            hql += "  and fishExperiment = :fishExperiment   ";
         Query query = session.createQuery(hql);
         query.setParameter("disease", diseaseModel.getDisease());
         query.setParameter("publication", diseaseModel.getPublication());
         query.setString("evidenceCode", diseaseModel.getEvidenceCode());
         if (diseaseModel.getFishExperiment() != null)
-            query.setParameter("fishModel", diseaseModel.getFishExperiment());
+            query.setParameter("fishExperiment", diseaseModel.getFishExperiment());
         return (DiseaseModel) query.uniqueResult();
     }
 

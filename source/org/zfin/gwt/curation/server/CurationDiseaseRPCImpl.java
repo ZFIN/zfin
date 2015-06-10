@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.zfin.ExternalNote;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
@@ -18,7 +19,9 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -78,8 +81,41 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             throw new TermNotFoundException(e.getMessage());
         }
         return getGenotypeList(publicationID);
+    }
 
+    @Override
+    public GenotypeDTO savePublicNote(String publicationID, GenotypeDTO genotypeDTO) throws TermNotFoundException {
 
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            String genotypeID = genotypeDTO.getZdbID();
+            Genotype genotype = getMutantRepository().getGenotypeByID(genotypeID);
+            if (genotype == null)
+                throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
+            Set<GenotypeExternalNote> notes = genotype.getExternalNotes();
+            GenotypeExternalNote note = new GenotypeExternalNote();
+            if (CollectionUtils.isEmpty(notes)) {
+                notes = new HashSet<>(1);
+                note.setGenotype(genotype);
+                notes.add(note);
+            } else {
+                // assumes that there is only one note for genotypes.
+                note = notes.iterator().next();
+            }
+            note.setNote(genotypeDTO.getPublicNote());
+            HibernateUtil.currentSession().saveOrUpdate(note);
+            genotype.setExternalNotes(notes);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return genotypeDTO;
     }
 
     public List<TermDTO> getHumanDiseaseList(String publicationID) {

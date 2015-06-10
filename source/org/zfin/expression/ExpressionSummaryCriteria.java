@@ -3,6 +3,7 @@ package org.zfin.expression;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -15,6 +16,7 @@ public class ExpressionSummaryCriteria {
     private Marker gene;
     private FishExperiment fishExperiment;
     private Genotype genotype;
+    private Fish fish;
     private Antibody antibody;
     private SequenceTargetingReagent sequenceTargetingReagent;
     private PostComposedEntity entity;
@@ -36,6 +38,7 @@ public class ExpressionSummaryCriteria {
         criteria.setGene(gene);
         criteria.setFishExperiment(fishExperiment);
         criteria.setGenotype(genotype);
+        criteria.setFish(fish);
         criteria.setAntibody(antibody);
         criteria.setEntity(entity);
         criteria.setSingleTermEitherPosition(singleTermEitherPosition);
@@ -168,5 +171,13 @@ public class ExpressionSummaryCriteria {
 
     public void setShowCondition(boolean showCondition) {
         this.showCondition = showCondition;
+    }
+
+    public Fish getFish() {
+        return fish;
+    }
+
+    public void setFish(Fish fish) {
+        this.fish = fish;
     }
 }

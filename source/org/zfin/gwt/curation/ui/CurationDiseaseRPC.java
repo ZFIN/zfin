@@ -5,6 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface CurationDiseaseRPC extends RemoteService {
     List<GenotypeDTO> searchGenotypes(String publicationID, String featureID, String genotypeID);
 
     List<GenotypeDTO> addGenotypeToPublication(String publicationID, String zdbID) throws TermNotFoundException;
+
+    GenotypeDTO savePublicNote(String publicationID, GenotypeDTO genotypeDTO) throws TermNotFoundException;
 
     public static class App {
         private static final CurationDiseaseRPCAsync INSTANCE;

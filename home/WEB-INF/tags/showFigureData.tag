@@ -2,10 +2,11 @@
 
 <%@ attribute name="fishGenotypeStatistics" type="org.zfin.framework.presentation.EntityStatistics" required="true" %>
 <%@ attribute name="entity" type="org.zfin.infrastructure.EntityZdbID" required="true" %>
+<%@ attribute name="link" type="java.lang.String" required="true" %>
 
 <c:if test="${fishGenotypeStatistics.numberOfFigures > 0}">
     <c:if test="${fishGenotypeStatistics.numberOfFigures > 1}">
-        <a href='/?MIval=aa-pheno_summary.apg&OID=${entity.zdbID}'>
+        <a href='${link}'>
             <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                          integerEntity="${fishGenotypeStatistics.numberOfFigures}"
                          includeNumber="true"/>
