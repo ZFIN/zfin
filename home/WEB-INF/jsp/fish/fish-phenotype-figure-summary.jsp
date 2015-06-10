@@ -19,9 +19,9 @@
 
 <table class="primary-entity-attributes">
     <tr>
-        <th>Genotype:</th>
+        <th>Fish:</th>
         <td>
-            <zfin:link entity="${phenotypeSummaryCriteria.fishExperiments[0].genotype}"/>
+            <zfin:link entity="${fish}"/>
         </td>
     </tr>
     <c:if test="${!empty phenotypeSummaryCriteria.fishExperiments}">
@@ -49,16 +49,5 @@
 
 <div class="summary">
     <span class="summaryTitle">Phenotypes</span>
-    (<zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
-                  collectionEntity="${figureSummaryDisplay}"/>)
-    <%--
-        <span style="float: right">
-            <c:if test="${fn:length(phenotypeSummaryCriteria.searchCriteriaPhenotype) > 0}">
-                [ <a
-                    href="javascript:document.location.replace('?fishID=${phenotypeSummaryCriteria.fish.fishID}')">
-                Remove matching terms</a> ]
-            </c:if>
-        </span>
-    --%>
-    <zfin2:figurePhenotypeSummary figureSummaryDisplayList="${figureSummaryDisplay}" />
+    <zfin2:figurePhenotypeSummary figureSummaryDisplayList="${figureSummaryDisplay}"/>
 </div>
