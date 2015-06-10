@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.curation.Correspondence;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
+import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.CurationDTO;
 import org.zfin.curation.presentation.CurationStatusDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
@@ -244,6 +246,52 @@ public class PublicationTrackingController {
         tx.commit();
 
         return CurationDTOConversionService.curationToDTO(curation);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.GET)
+    public Collection<CorrespondenceDTO> getCorrespondences(@PathVariable String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        return CollectionUtils.collect(publication.getCorrespondences(), new Transformer() {
+            @Override
+            public Object transform(Object o) {
+                return CurationDTOConversionService.correspondenceToDTO((Correspondence) o);
+            }
+        });
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.POST)
+    public CorrespondenceDTO newCorrespondence(@PathVariable String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+
+        Correspondence correspondence = new Correspondence();
+        correspondence.setPublication(publicationRepository.getPublication(zdbID));
+        correspondence.setCurator(ProfileService.getCurrentSecurityUser());
+        correspondence.setContactedDate(new Date());
+        session.save(correspondence);
+        tx.commit();
+
+        return CurationDTOConversionService.correspondenceToDTO(correspondence);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.POST)
+    public CorrespondenceDTO editCorrespondence(@PathVariable long id, @RequestBody CorrespondenceDTO correspondenceDTO) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+
+        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
+        if (correspondenceDTO.isReplyReceived()) {
+            correspondence.setRespondedDate(correspondenceDTO.getClosedDate());
+        } else {
+            correspondence.setGiveUpDate(correspondenceDTO.getClosedDate());
+        }
+        session.update(correspondence);
+        tx.commit();
+
+        return CurationDTOConversionService.correspondenceToDTO(correspondence);
     }
 
     private Collection<PublicationNoteDTO> getPubNotes(Publication publication) {

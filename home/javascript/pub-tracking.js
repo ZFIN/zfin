@@ -80,6 +80,7 @@ angular.module('pubTrackingApp', [])
         pubTrack.notes = [];
         pubTrack.newNote = '';
         pubTrack.warnings = [];
+        pubTrack.correspondences = [];
 
         var getTopics = function() {
             $http.get('/action/publication/' + pubId + '/topics')
@@ -99,6 +100,13 @@ angular.module('pubTrackingApp', [])
             $http.get('/action/publication/' + pubId + '/notes')
                 .success(function (data) {
                     pubTrack.notes = data;
+                });
+        };
+
+        var getCorrespondences = function () {
+            $http.get('/action/publication/' + pubId + '/correspondences')
+                .success(function (data) {
+                    pubTrack.correspondences = data;
                 });
         };
 
@@ -266,8 +274,29 @@ angular.module('pubTrackingApp', [])
             return pubTrack.topics.some(function (t) { return t.dataFound; });
         };
 
+        pubTrack.allCorrespondencesClosed = function () {
+            return pubTrack.correspondences.length == 0 || pubTrack.correspondences[0].closedDate;
+        };
+
+        pubTrack.newCorrespondence = function () {
+            $http.post('/action/publication/' + pubId + '/correspondences', {})
+                .success(function (data) {
+                    pubTrack.correspondences.unshift(data);
+                });
+        };
+
+        pubTrack.closeCorrespondence = function (replied, corr, idx) {
+            corr.closedDate = Date.now();
+            corr.replyReceived = replied;
+            $http.post('/action/publication/correspondences/' + corr.id, corr)
+                .success(function (data) {
+                    pubTrack.correspondences[idx] = data;
+                });
+        };
+
         getTopics();
         getStatus();
         getNotes();
+        getCorrespondences();
 
     }]);

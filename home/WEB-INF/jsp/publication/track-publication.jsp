@@ -122,12 +122,58 @@
                   <span class="caret"></span>
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
-
                 <ul class="dropdown-menu" role="menu">
                   <li><a href ng-click="trackCtrl.unopenTopic(topic, $index)">Back to New</a></li>
                 </ul>
               </div>
               <button class="btn btn-default" ng-show="trackCtrl.isClosedTopic(topic)" ng-click="trackCtrl.openTopic(topic, $index)">Re-open</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Correspondence</h3>
+      </div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th class="col-xs-6">Contacted</th>
+            <th class="col-xs-6">Correspondence completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-if="trackCtrl.allCorrespondencesClosed()">
+            <td>
+              <button class="btn btn-primary" ng-click="trackCtrl.newCorrespondence()">Contacted author</button>
+            </td>
+            <td></td>
+          </tr>
+          <tr ng-repeat="corr in trackCtrl.correspondences" ng-cloak>
+            <td>{{ corr.openedDate | date:'yyyy-MM-dd' }}</td>
+            <td ng-if="corr.closedDate">
+              <i class="fa fa-fw" ng-class="{'fa-check': corr.replyReceived, 'fa-times': !corr.replyReceived}"></i>
+              {{ corr.closedDate | date:'yyyy-MM-dd' }}
+            </td>
+            <td ng-if="!corr.closedDate">
+              <div class="btn-group">
+                <button class="btn btn-primary" ng-click="trackCtrl.closeCorrespondence(true, corr, $index)">
+                  <i class="fa fa-check"></i> Received reply
+                </button>
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                  <span class="caret"></span>
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li>
+                    <a href ng-click="trackCtrl.closeCorrespondence(false, corr, $index)">
+                      <i class="fa fa-times"></i> Reply not expected
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -147,6 +193,7 @@
           <button ng-click="trackCtrl.addNote()" type="submit" class="btn btn-primary">Post</button>
         </form>
         <hr>
+        <p ng-if="!trackCtrl.notes.length" class="text-muted text-center">No notes yet</p>
         <div class="media" ng-repeat="note in trackCtrl.notes" ng-cloak>
           <div class="media-left">
             <div style="width: 64px; height: 64px; text-align: center;">

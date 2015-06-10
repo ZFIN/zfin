@@ -1,5 +1,6 @@
 package org.zfin.publication;
 
+import org.zfin.curation.Correspondence;
 import org.zfin.curation.PublicationNote;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
@@ -40,6 +41,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<Person> people;
     private Set<MeshHeading> meshHeadings;
     private Set<PublicationNote> notes;
+    private Set<Correspondence> correspondences;
 
     private boolean deletable;
     private boolean indexed;
@@ -240,6 +242,13 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.notes = notes;
     }
 
+    public Set<Correspondence> getCorrespondences() {
+        return correspondences;
+    }
+
+    public void setCorrespondences(Set<Correspondence> correspondences) {
+        this.correspondences = correspondences;
+    }
 
     public String getCitation() {
         StringBuilder sb = new StringBuilder();
