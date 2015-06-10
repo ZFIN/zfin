@@ -11,6 +11,7 @@ public class GenotypeFigure implements Serializable {
 
     private int id;
     private Genotype genotype;
+    private Fish fish;
     private Figure figure;
     private GenericTerm superTerm;
     private GenericTerm subTerm;
@@ -89,5 +90,13 @@ public class GenotypeFigure implements Serializable {
 
     public void setPhenotypeExperiment(PhenotypeExperiment phenotypeExperiment) {
         this.phenotypeExperiment = phenotypeExperiment;
+    }
+
+    public Fish getFish() {
+        return fish;
+    }
+
+    public void setFish(Fish fish) {
+        this.fish = fish;
     }
 }
