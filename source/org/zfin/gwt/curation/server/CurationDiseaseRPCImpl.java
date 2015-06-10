@@ -35,7 +35,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             return null;
         List<GenotypeDTO> genotypeDTOList = new ArrayList<>(genotypeList.size());
         for (Genotype genotype : genotypeList)
-            genotypeDTOList.add(DTOConversionService.convertToGenotypeDTO(genotype));
+            genotypeDTOList.add(DTOConversionService.convertToGenotypeDTOShallow(genotype));
         return genotypeDTOList;
     }
 
