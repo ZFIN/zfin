@@ -52,6 +52,8 @@ TRIGGERS = \
 	feature_insert_trigger.sql \
 	feature_abbrev_update_trigger.sql \
 	feature_name_update_trigger.sql \
+	fish_insert_trigger.sql \
+	fish_name_update_trigger.sql \
 	genotype_insert_trigger.sql \
 	genofeat_insert_trigger.sql \
 	genofeat_update_trigger.sql \
