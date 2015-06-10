@@ -748,7 +748,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct genofig.figure from GenotypeFigure genofig " +
-                "where genofig.genotype = :genotype";
+                "where genofig.fish = :fish";
 
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
@@ -783,7 +783,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, GenotypeFigure genoFig  " +
                 "      where pheno.phenotypeExperiment = phenoExp " +
                 "        and genoFig.phenotypeExperiment = phenoExp " +
-                "        and genoFig.genotype = :genotype " +
+                "        and genoFig.fish = :fish" +
                 "        and genoFig.figure = :figure";
 
         Query query = session.createQuery(hql);

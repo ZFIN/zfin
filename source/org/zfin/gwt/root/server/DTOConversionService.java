@@ -405,6 +405,25 @@ public class DTOConversionService {
         return genotypeDTO;
     }
 
+    public static GenotypeDTO convertToGenotypeDTOShallow(Genotype genotype) {
+        GenotypeDTO genotypeDTO = new GenotypeDTO();
+        genotypeDTO.setName(genotype.getName());
+        genotypeDTO.setZdbID(genotype.getZdbID());
+        genotypeDTO.setHandle(genotype.getHandle());
+        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes()))
+            genotypeDTO.setPublicNote(genotype.getExternalNotes().iterator().next().getNote());
+
+        // add features
+        if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
+            List<FeatureDTO> featureDTOList = new ArrayList<>(4);
+            for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
+                featureDTOList.add(convertToFeatureDTO(genotypeFeature.getFeature()));
+            }
+            genotypeDTO.setFeatureList(featureDTOList);
+        }
+        return genotypeDTO;
+    }
+
     public static GenotypeDTO convertToGenotypeDTO(Genotype genotype, boolean includePubInfo) {
         GenotypeDTO genotypeDTO = new GenotypeDTO();
         genotypeDTO.setName(genotype.getHandle());

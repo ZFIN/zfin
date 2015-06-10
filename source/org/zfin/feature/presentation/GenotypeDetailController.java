@@ -262,7 +262,7 @@ public class GenotypeDetailController {
     }
 
     @RequestMapping(value = {"fish-phenotype-figure-summary"})
-    public String getPhenotypeSummaryForFish(@RequestParam(value = "genoZdbID", required = true) String fishID,
+    public String getPhenotypeSummaryForFish(@RequestParam(value = "fishID", required = true) String fishID,
                                              Model model) throws Exception {
         LOG.debug("Start Genotype Controller");
         Fish fish = mutantRepository.getFish(fishID);
@@ -274,13 +274,13 @@ public class GenotypeDetailController {
         form.setFish(fish);
 
         List<FigureSummaryDisplay> figureSummaryDisplayList = PhenotypeService.getPhenotypeFigureSummaryForFish(fish);
-
         Collections.sort(figureSummaryDisplayList);
         model.addAttribute("figureSummaryDisplay", figureSummaryDisplayList);
+        model.addAttribute("fish", fish);
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + fish.getName());
 
-        return "genotype/fish-phenotype-figure-summary.page";
+        return "fish/fish-phenotype-figure-summary.page";
     }
 }

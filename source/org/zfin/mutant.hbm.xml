@@ -607,6 +607,9 @@
         <many-to-one name="genotype" class="org.zfin.mutant.Genotype">
             <column name="gffs_geno_zdb_id" not-null="true"/>
         </many-to-one>
+        <many-to-one name="fish" class="Fish">
+            <column name="gffs_fish_zdb_id" not-null="true"/>
+        </many-to-one>
         <many-to-one name="figure" class="org.zfin.expression.Figure">
             <column name="gffs_fig_zdb_id" not-null="true"/>
         </many-to-one>
