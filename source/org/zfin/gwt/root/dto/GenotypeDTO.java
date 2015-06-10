@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,8 +9,8 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     private String handle;
     private List<FeatureDTO> featureList;
-    private String publicNote;
-    private String privateNote;
+    private List<ExternalNoteDTO> publicNotes;
+    private List<CuratorNoteDTO> privateNotes;
 
     public GenotypeDTO() {
     }
@@ -62,19 +63,29 @@ public class GenotypeDTO extends RelatedEntityDTO {
         this.featureList = featureList;
     }
 
-    public String getPrivateNote() {
-        return privateNote;
+    public List<CuratorNoteDTO> getPrivateNotes() {
+        return privateNotes;
     }
 
-    public void setPrivateNote(String privateNote) {
-        this.privateNote = privateNote;
+    public void setPrivateNotes(List<CuratorNoteDTO> privateNotes) {
+        this.privateNotes = privateNotes;
     }
 
-    public String getPublicNote() {
-        return publicNote;
+    public List<ExternalNoteDTO> getPublicNotes() {
+        return publicNotes;
     }
 
-    public void setPublicNote(String publicNote) {
-        this.publicNote = publicNote;
+    public List<ExternalNoteDTO> getPublicNotes(String publicationID) {
+        if (publicNotes == null)
+            return null;
+        List<ExternalNoteDTO> truncatedList = new ArrayList<>();
+        for (ExternalNoteDTO note : publicNotes)
+            if (note.publicationZdbID.equals(publicationID))
+                truncatedList.add(note);
+        return truncatedList;
+    }
+
+    public void setPublicNotes(List<ExternalNoteDTO> publicNotes) {
+        this.publicNotes = publicNotes;
     }
 }

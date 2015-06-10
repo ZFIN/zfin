@@ -385,8 +385,9 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
-        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes()))
-            genotypeDTO.setPublicNote(genotype.getExternalNotes().iterator().next().getNote());
+        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
+            createNotesOnGenotype(genotype, genotypeDTO);
+        }
 
         List<PublicationDTO> associatedPublications = new ArrayList<>();
         for (int i = 0; i < genotype.getAssociatedPublications().size(); i++) {
@@ -410,9 +411,9 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
-        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes()))
-            genotypeDTO.setPublicNote(genotype.getExternalNotes().iterator().next().getNote());
-
+        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
+            createNotesOnGenotype(genotype, genotypeDTO);
+        }
         // add features
         if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
             List<FeatureDTO> featureDTOList = new ArrayList<>(4);
@@ -422,6 +423,18 @@ public class DTOConversionService {
             genotypeDTO.setFeatureList(featureDTOList);
         }
         return genotypeDTO;
+    }
+
+    private static void createNotesOnGenotype(Genotype genotype, GenotypeDTO genotypeDTO) {
+        List<ExternalNoteDTO> externalNoteDTOList = new ArrayList<>(genotype.getExternalNotes().size());
+        for (GenotypeExternalNote note : genotype.getExternalNotes()) {
+            ExternalNoteDTO noteDTO = new ExternalNoteDTO();
+            noteDTO.setZdbID(note.getZdbID());
+            noteDTO.setNoteData(note.getNote());
+            noteDTO.setPublicationZdbID(note.getSinglePubAttribution().getSourceZdbID());
+            externalNoteDTOList.add(noteDTO);
+        }
+        genotypeDTO.setPublicNotes(externalNoteDTOList);
     }
 
     public static GenotypeDTO convertToGenotypeDTO(Genotype genotype, boolean includePubInfo) {
