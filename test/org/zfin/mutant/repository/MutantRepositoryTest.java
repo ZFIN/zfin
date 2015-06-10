@@ -343,12 +343,9 @@ public class MutantRepositoryTest {
         Genotype genotype = new Genotype();
         genotype.setZdbID("ZDB-GENO-070406-1");
         fish.setGenotype(genotype);
-
-//TODO change assertions once we have stable fish id, this will atleast make sure that the repository method is ok.
-
         List<Publication> attributions = mutantRepository.getFishAttributionList(fish);
      //   assertNotNull(attributions);
-        assertTrue(attributions.size() = 0);
+        assertTrue(attributions.size() < 1);
     }
 
     @Test
