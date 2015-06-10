@@ -1,4 +1,4 @@
-create function update_fish_sort_order (genoZdbId varchar(50))
+create function update_fish_sort_order (fishZdbId varchar(50))
   returning varchar(20);
   
   define featureId    like feature.feature_zdb_id; 
