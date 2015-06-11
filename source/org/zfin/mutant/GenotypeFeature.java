@@ -1,6 +1,12 @@
 package org.zfin.mutant;
 
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.marker.Marker;
+
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * A genotype feature.
@@ -64,17 +70,42 @@ public class GenotypeFeature {
 
     public String getParentalZygosityDisplay() {
         StringBuilder displayString = new StringBuilder("");
+        boolean unknown = true;
         if (momZygosity.getZygositySymbol().length() > 0) {
             displayString.append("&#9792;");
             displayString.append(momZygosity.getZygositySymbol());
+            unknown = false;
         }
 
         if (dadZygosity.getZygositySymbol().length() > 0) {
             displayString.append("&nbsp;");
             displayString.append("&#9794;");
             displayString.append(dadZygosity.getZygositySymbol());
+            unknown = false;
         }
-        return displayString.toString();
+
+        if (unknown)
+            return "Unknown";
+        else
+            return displayString.toString();
     }
 
+    public SortedSet<Marker> getAffectedGenes() {
+        SortedSet<Marker> affectedGenes = new TreeSet<>();
+        Marker affectedGene;
+        Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
+        SortedSet<FeatureMarkerRelationship> affectedGeneFeatureMarkerRelationships = new TreeSet<>();
+        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelationships) {
+            if (featureMarkerRelationship != null) {
+                if (featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                    affectedGeneFeatureMarkerRelationships.add(featureMarkerRelationship);
+                    affectedGene = featureMarkerRelationship.getMarker();
+                    if (affectedGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                        affectedGenes.add(affectedGene);
+                    }
+                }
+            }
+        }
+        return affectedGenes;
+    }
 }
