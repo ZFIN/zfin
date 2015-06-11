@@ -13,7 +13,7 @@ INPUT VARS:
 		  lastname, firstname=email@address|lastname, firstname=email@address|
   additional_eaddr :: additional contacts' email addresses separated by comma.
                    At least one of the contacts_id and additional_eaddr should be non empty.
-                   The calling page pubcuration.apg checks and makes sure of it.
+                   The calling page checks and makes sure of it.
   OID       :: the publication zdb id 
   sender_id :: current login user's zdb id
   

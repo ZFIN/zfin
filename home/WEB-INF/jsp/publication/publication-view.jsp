@@ -8,7 +8,7 @@
     <c:set var="deleteURL">/action/infrastructure/deleteRecord/${publication.zdbID}</c:set>
 </c:if>
 
-<c:set var="trackURL">/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=${publication.zdbID}</c:set>
+<c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
 
 <c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
 
@@ -106,7 +106,7 @@
                     </c:when>
                     <c:when test="${empty publication.fileName && allowCuration}">
                         Upload a PDF from the
-                        <a href="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=${publication.zdbID}">Tracking</a>
+                        <a href="/action/publication/${publication.zdbID}/track">Tracking</a>
                         page.
                     </c:when>
                 </c:choose>
