@@ -137,10 +137,11 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         dto.setPublicationID(pubID);
 
         ExpressionExperiment expressionExperiment = new ExpressionExperiment();
-        CurationExperimentRPCImpl.populateExpressionExperiment(dto, expressionExperiment);
+
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
+            CurationExperimentRPCImpl.populateExpressionExperiment(dto, expressionExperiment);
             expRep.createExpressionExperiment(expressionExperiment);
             assertTrue(expressionExperiment.getZdbID() != null);
         } finally {

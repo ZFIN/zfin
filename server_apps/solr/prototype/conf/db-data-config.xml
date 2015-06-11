@@ -949,24 +949,20 @@ where recattrib_data_zdb_id = mrkr_zdb_id
 
        <entity name="fish"
                datasource="db" query="
-                select
-fas_pk_id as internal_id,
-fas_genotype_group || nvl(',' || fas_genox_group,'') as id,
-'/action/fish/fish-detail/' || fas_genotype_group || nvl(',' || fas_genox_group,'') as url,
-fas_geno_long_name as name,
-fas_geno_long_name as proper_name,
-fas_geno_long_name as full_name,
-fas_gene_order as name_sort,
+select
+fish_zdb_id as id,
+'/' || fish_zdb_id,
+fish_name as name,
+fish_name as full_name,
+fish_name as proper_name,
+fish_name_order as name_sort,
 'Fish' as category,
-fas_fish_significance as complexity,
-fas_gene_group,
-count(gfrv_gene_abbrev) as affected_gene_count
-from fish_annotation_search, gene_feature_result_view
-where fas_pk_id = gfrv_fas_id
-  and fas_geno_name != ''
-group by 1,2,3,4,5,6,7,8,9,10
+'100' as complexity
+from fish
+where fish_zdb_id is not null;
                  ">
 
+<!--  I'm not sure that this was ever used...
            <entity name="fish_attribution"
                    datasource="db" query="select count(exp_source_zdb_id) as attribution_count, ftfs_fas_id as internal_id
                             from figure_term_fish_search, genotype_experiment, experiment
@@ -975,6 +971,7 @@ group by 1,2,3,4,5,6,7,8,9,10
                             group by 2;"
                    where="gfrv_fas_id=fish.internal_id"
                    processor="CachedSqlEntityProcessor"/>
+-->
 
 
            <!--<entity name="fish_publication_xref"
@@ -990,7 +987,7 @@ group by 1,2,3,4,5,6,7,8,9,10
                    datasource="db" query="
 select gfrv_gene_abbrev as affected_gene,
        gfrv_construct_name as construct,
-       gfrv_fas_id,
+       gfrv_fish_zdb_id as fish_zdb_id,
        '{' || '&quot;gene&quot; : &quot;' || nvl(gfrv_gene_abbrev,'') || '&quot;' ||
            ',' || '&quot;affector&quot; : &quot;' || nvl(gfrv_affector_abbrev,'') || '&quot;' ||
            ',' || '&quot;affectorType&quot; : &quot;' || nvl(gfrv_affector_type_display,'') || '&quot;' ||
@@ -999,7 +996,7 @@ select gfrv_gene_abbrev as affected_gene,
            from gene_feature_result_view
            where gfrv_gene_zdb_id[1,8] = 'ZDB-GENE'
            order by gfrv_fas_id asc, gfrv_gene_abbrev_order asc, gfrv_affector_abbrev_order asc, gfrv_construct_abbrev_order asc;"
-                   where="gfrv_fas_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_feature"
@@ -1010,41 +1007,43 @@ select gfrv_gene_abbrev as affected_gene,
                                ',' || '&quot;construct&quot; : &quot;' || nvl(gfrv_construct_name,'') || '&quot;' ||
                                '}' as result_table,
                                  feature_zdb_id as xref,
-                                 gfrv_fas_id as fas_pk_id
+                                 gfrv_fish_zdb_id
                           from gene_feature_result_view
                                join feature on feature_zdb_id = gfrv_affector_id;"
-                   where="fas_pk_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
+
            <entity name="fish_gene_names"
-                   datasource="db" query="select mrkr_name as affected_gene_full_name, gfrv_fas_id
+                   datasource="db" query="select mrkr_name as affected_gene_full_name, gfrv_fish_zdb_id
                    from gene_feature_result_view, marker
                    where gfrv_gene_zdb_id = mrkr_zdb_id
                      and gfrv_gene_zdb_id[1,8] = 'ZDB-GENE';"
-                   where="gfrv_fas_id=fish.internal_id"
+                   where="gfrv_fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
+
            <entity name="fish_gene_previous_names"
-                   datasource="db" query=" select dalias_alias as affected_gene_previous_name, gfrv_fas_id
+                   datasource="db" query=" select dalias_alias as affected_gene_previous_name, gfrv_fish_zdb_id
                    from gene_feature_result_view, data_alias
                    where gfrv_gene_zdb_id = dalias_data_zdb_id
                      and gfrv_gene_zdb_id[1,8] = 'ZDB-GENE';"
-                   where="gfrv_fas_id=fish.internal_id"
+                   where="gfrv_fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_str"
                    datasource="db" query="select mrkr_name as sequence_targeting_reagent,
                                  mrkr_zdb_id as xref,
-                                 gfrv_fas_id as fas_pk_id
+                                 gfrv_fish_zdb_id as fish_zdb_id
                           from gene_feature_result_view
                                join marker on gfrv_affector_id = mrkr_zdb_id;"
-                   where="fas_pk_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_str_via_created_feature"
                    datasource="db" query="select mrkr_abbrev as sequence_targeting_reagent,
                                  mrkr_zdb_id as xref,
-                                 gfrv_fas_id as fas_pk_id
+                                 gfrv_fish_zdb_id as fas_pk_id
                           from gene_feature_result_view
                                join feature_marker_relationship on fmrel_ftr_zdb_id = gfrv_affector_id
                                join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id and fmrel_type = 'created by';"
@@ -1054,7 +1053,7 @@ select gfrv_gene_abbrev as affected_gene,
            <entity name="fish_expressed_gene_names"
                    datasource="db" query="select distinct mrkr_abbrev as expressed_gene,
                                    mrkr_name as expressed_gene_full_name,
-                                   ftfs_fas_id as internal_id
+                                   ftfs_fish_zdb_id as fish_zdb_id
                             from figure_term_fish_search,
                                  expression_experiment,
                                  expression_result,
@@ -1063,40 +1062,39 @@ select gfrv_gene_abbrev as affected_gene,
                               and xpatex_gene_zdb_id = mrkr_zdb_id
                               and xpatex_zdb_id = xpatres_xpatex_zdb_id
                               and xpatres_expression_found='t';"
-                   where="gfrv_fas_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_expressed_gene_alias"
                    datasource="db" query="select distinct dalias_alias as expressed_gene_previous_name,
-                                   ftfs_fas_id as internal_id
-                            from figure_term_fish_search,
+                                   genox_fish_zdb_id as fish_zdb_id
+                            from fish_experiment,
                                  expression_experiment,
                                  expression_result,
                                  data_alias
-                            where ftfs_genox_zdb_id = xpatex_genox_zdb_id
+                            where genox_zdb_id = xpatex_genox_zdb_id
                               and xpatex_gene_zdb_id = dalias_data_zdb_id
                               and xpatex_zdb_id = xpatres_xpatex_zdb_id
                               and xpatres_expression_found='t';"
-                   where="gfrv_fas_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_background"
-                   datasource="db" query="select geno_display_name as background, fas_pk_id
-from fish_annotation_search, genotype_background, genotype
-where fas_genotype_group = genoback_geno_zdb_id
-  and geno_zdb_id = genoback_background_zdb_id;"
-                   where="fas_pk_id=fish.internal_id"
+                   datasource="db" query="select geno_display_name as background, fish_zdb_id
+                                    from fish, genotype_background, genotype
+                                    where fish_genotype_zdb_id = genoback_geno_zdb_id
+                                      and geno_zdb_id = genoback_background_zdb_id;"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
-
            <entity name="fish_construct_coding_sequence"
-                   datasource="db" query="select gfrv_fas_id, mrkr_abbrev as coding_sequence, dalias_alias as coding_sequence_full_name
+                   datasource="db" query="select gfrv_fish_zdb_id as fish_zdb_id, mrkr_abbrev as coding_sequence, dalias_alias as coding_sequence_full_name
                                              from marker_relationship, marker, gene_feature_result_view, data_alias
                                              where mrel_type = 'coding sequence of'
                                                and mrel_mrkr_2_zdb_id = dalias_data_zdb_id
                                                and mrel_mrkr_2_zdb_id = mrkr_zdb_id
                                                and mrel_mrkr_1_zdb_id = gfrv_construct_zdb_id;  "
-                   where="gfrv_fas_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_phenotype_statement"
@@ -1107,93 +1105,93 @@ super_1.term_name
 || nvl(' ' || super_2.term_name,'')
 || nvl(' ' || sub_2.term_name,'')
 as phenotype_statement,
-       ftfs_fas_id as internal_id
+       genox_fish_zdb_id as fish_zdb_id
 from phenotype_statement
      join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
-     join figure_term_fish_search on phenox_genox_zdb_id = ftfs_genox_zdb_id
+     join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
      join term as super_1 on phenos_entity_1_superterm_zdb_id = super_1.term_zdb_id
      left outer join term as sub_1 on phenos_entity_1_subterm_zdb_id = sub_1.term_zdb_id
      join term as quality on phenos_quality_zdb_id = quality.term_zdb_id
      left outer join term as super_2 on phenos_entity_2_superterm_zdb_id = super_2.term_zdb_id
      left outer join term as sub_2 on phenos_entity_2_subterm_zdb_id = sub_2.term_zdb_id
 where phenos_tag = 'abnormal'  "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
 
 
            <entity name="fish_affected_anatomy_direct"
-                   datasource="db" query="select term_ont_id as xref, term_name as affected_anatomy_direct, ftfs_fas_id as internal_id
-                     from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                   datasource="db" query="select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
+                     from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                     where term_zdb_id = phenos_entity_1_superterm_zdb_id
                       and phenos_phenox_pk_id = phenox_pk_id
-                      and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                      and phenox_genox_zdb_id = genox_zdb_id
                       and ps.phenos_tag = 'abnormal'
                       and term_ontology='zebrafish_anatomy'
                    union
-                   select term_ont_id as xref, term_name as affected_anatomy_direct, ftfs_fas_id as internal_id
-                     from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                   select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
+                     from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                     where term_zdb_id = phenos_entity_1_subterm_zdb_id
                       and phenos_phenox_pk_id = phenox_pk_id
-                      and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                      and phenox_genox_zdb_id = genox_zdb_id
                       and ps.phenos_tag = 'abnormal'
                       and term_ontology='zebrafish_anatomy'
                    union
-                   select term_ont_id as xref, term_name as affected_anatomy_direct, ftfs_fas_id as internal_id
-                     from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                   select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
+                     from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                     where term_zdb_id = phenos_entity_2_superterm_zdb_id
                       and phenos_phenox_pk_id = phenox_pk_id
-                      and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                      and phenox_genox_zdb_id = genox_zdb_id
                       and ps.phenos_tag = 'abnormal'
                       and term_ontology='zebrafish_anatomy'
                    union
-                   select term_ont_id as xref, term_name as affected_anatomy_direct, ftfs_fas_id as internal_id
-                     from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                   select term_ont_id as xref, term_name as affected_anatomy_direct, genox_fish_zdb_id as fish_zdb_id
+                     from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                     where term_zdb_id = phenos_entity_2_subterm_zdb_id
                       and phenos_phenox_pk_id = phenox_pk_id
-                      and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                      and phenox_genox_zdb_id = genox_zdb_id
                       and ps.phenos_tag = 'abnormal'
                       and term_ontology='zebrafish_anatomy'; "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_affected_anatomy_parent"
-                   datasource="db" query="select term_ont_id as xref, term_name as affected_anatomy_parent, ftfs_fas_id as internal_id
-                                        from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                   datasource="db" query="select term_ont_id as xref, term_name as affected_anatomy_parent, genox_fish_zdb_id as fish_zdb_id
+                                        from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                        where term_zdb_id = alltermcon_container_zdb_id
                                          and alltermcon_contained_zdb_id = phenos_entity_1_superterm_zdb_id
                                          and phenos_phenox_pk_id = phenox_pk_id
-                                         and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                         and phenox_genox_zdb_id = genox_zdb_id
                                          and ps.phenos_tag = 'abnormal'
                                          and term_ontology='zebrafish_anatomy'
                                       union
-                                      select term_ont_id as xref, term_name as affected_anatomy_parent, ftfs_fas_id as internal_id
-                                        from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                      select term_ont_id as xref, term_name as affected_anatomy_parent, genox_fish_zdb_id as fish_zdb_id
+                                        from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                        where term_zdb_id = alltermcon_container_zdb_id
                                          and alltermcon_contained_zdb_id = phenos_entity_1_subterm_zdb_id
                                          and phenos_phenox_pk_id = phenox_pk_id
-                                         and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                         and phenox_genox_zdb_id = genox_zdb_id
                                          and ps.phenos_tag = 'abnormal'
                                          and term_ontology='zebrafish_anatomy'
                                       union
-                                      select term_ont_id as xref, term_name as affected_anatomy_parent, ftfs_fas_id as internal_id
-                                        from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                      select term_ont_id as xref, term_name as affected_anatomy_parent, genox_fish_zdb_id as fish_zdb_id
+                                        from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                        where term_zdb_id = alltermcon_container_zdb_id
                                          and alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
                                          and phenos_phenox_pk_id = phenox_pk_id
-                                         and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                         and phenox_genox_zdb_id = genox_zdb_id
                                          and ps.phenos_tag = 'abnormal'
                                          and term_ontology='zebrafish_anatomy'
                                       union
-                                      select term_ont_id as xref, term_name as affected_anatomy_parent, ftfs_fas_id as internal_id
-                                        from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                      select term_ont_id as xref, term_name as affected_anatomy_parent, genox_fish_zdb_id as fish_zdb_id
+                                        from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                        where term_zdb_id = alltermcon_container_zdb_id
                                          and alltermcon_contained_zdb_id = phenos_entity_2_subterm_zdb_id
                                          and phenos_phenox_pk_id = phenox_pk_id
-                                         and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                         and phenox_genox_zdb_id = genox_zdb_id
                                          and ps.phenos_tag = 'abnormal'
                                          and term_ontology='zebrafish_anatomy';"
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
 
@@ -1201,249 +1199,249 @@ where phenos_tag = 'abnormal'  "
            <entity name="fish_phenotype_quality_direct"
                    datasource="db" query="select distinct
                    term_ont_id as xref, term_name as phenotype_quality_direct,
-                   ftfs_fas_id as internal_id
-                   from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                   genox_fish_zdb_id as fish_zdb_id
+                   from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                    where term_zdb_id = phenos_quality_zdb_id
                     and phenos_phenox_pk_id = phenox_pk_id
-                    and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                    and phenox_genox_zdb_id = genox_zdb_id
                     and ps.phenos_tag = 'abnormal'; "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_phenotype_quality_parent"
                    datasource="db" query=" select distinct
                    term_ont_id as xref, term_name as phenotype_quality_parent,
-                   ftfs_fas_id as internal_id
-                   from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                   genox_fish_zdb_id as fish_zdb_id
+                   from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                    where term_zdb_id = alltermcon_container_zdb_id
                     and alltermcon_contained_zdb_id = phenos_quality_zdb_id
                     and phenos_phenox_pk_id = phenox_pk_id
-                    and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                    and phenox_genox_zdb_id = genox_zdb_id
                     and ps.phenos_tag = 'abnormal'
                     and alltermcon_container_zdb_id != alltermcon_contained_zdb_id;"
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
 
            <entity name="fish_affected_cellular_component_direct"
-                   datasource="db" query="            select term_ont_id as xref, term_name as affected_cellular_component_direct, ftfs_fas_id as internal_id
-                                        from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                   datasource="db" query="            select term_ont_id as xref, term_name as affected_cellular_component_direct, genox_fish_zdb_id as fish_zdb_id
+                                        from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                        where term_zdb_id = phenos_entity_1_superterm_zdb_id
                                          and phenos_phenox_pk_id = phenox_pk_id
-                                         and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                         and phenox_genox_zdb_id = genox_zdb_id
                                          and ps.phenos_tag = 'abnormal'
                                          and term_ontology='cellular_component'
                                       union
-                                      select term_ont_id as xref, term_name as affected_cellular_component_direct, ftfs_fas_id as internal_id
-                                        from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                      select term_ont_id as xref, term_name as affected_cellular_component_direct, genox_fish_zdb_id as fish_zdb_id
+                                        from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                        where term_zdb_id = phenos_entity_1_subterm_zdb_id
                                          and phenos_phenox_pk_id = phenox_pk_id
-                                         and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                         and phenox_genox_zdb_id = genox_zdb_id
                                          and ps.phenos_tag = 'abnormal'
                                          and term_ontology='cellular_component'
                                       union
-                                      select term_ont_id as xref, term_name as affected_cellular_component_direct, ftfs_fas_id as internal_id
-                                        from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                      select term_ont_id as xref, term_name as affected_cellular_component_direct, genox_fish_zdb_id as fish_zdb_id
+                                        from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                        where term_zdb_id = phenos_entity_2_superterm_zdb_id
                                          and phenos_phenox_pk_id = phenox_pk_id
-                                         and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                         and phenox_genox_zdb_id = genox_zdb_id
                                          and ps.phenos_tag = 'abnormal'
                                          and term_ontology='cellular_component'
                                       union
-                                      select term_ont_id as xref, term_name as affected_cellular_component_direct, ftfs_fas_id as internal_id
-                                        from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                      select term_ont_id as xref, term_name as affected_cellular_component_direct, genox_fish_zdb_id as fish_zdb_id
+                                        from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                        where term_zdb_id = phenos_entity_2_subterm_zdb_id
                                          and phenos_phenox_pk_id = phenox_pk_id
-                                         and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                         and phenox_genox_zdb_id = genox_zdb_id
                                          and ps.phenos_tag = 'abnormal'
                                          and term_ontology='cellular_component';
                     "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
            <entity name="fish_phenotype__cellular_component_parent"
-                   datasource="db" query="select term_ont_id as xref, term_name as affected_cellular_component_parent, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                   datasource="db" query="select term_ont_id as xref, term_name as affected_cellular_component_parent, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                           where term_zdb_id = alltermcon_container_zdb_id
                                                             and alltermcon_contained_zdb_id = phenos_entity_1_superterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='cellular_component'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_cellular_component_parent, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                         select term_ont_id as xref, term_name as affected_cellular_component_parent, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                           where term_zdb_id = alltermcon_container_zdb_id
                                                             and alltermcon_contained_zdb_id = phenos_entity_1_subterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='cellular_component'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_cellular_component_parent, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                         select term_ont_id as xref, term_name as affected_cellular_component_parent, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                           where term_zdb_id = alltermcon_container_zdb_id
                                                             and alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='cellular_component'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_cellular_component_parent, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                         select term_ont_id as xref, term_name as affected_cellular_component_parent, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                           where term_zdb_id = alltermcon_container_zdb_id
                                                             and alltermcon_contained_zdb_id = phenos_entity_2_subterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='cellular_component'; "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_affected_biological_process_direct"
-                   datasource="db" query="select term_ont_id as xref, term_name as affected_biological_process_direct, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                   datasource="db" query="select term_ont_id as xref, term_name as affected_biological_process_direct, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                                           where term_zdb_id = phenos_entity_1_superterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='biological_process'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_biological_process_direct, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                                         select term_ont_id as xref, term_name as affected_biological_process_direct, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                                           where term_zdb_id = phenos_entity_1_subterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='biological_process'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_biological_process_direct, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                                         select term_ont_id as xref, term_name as affected_biological_process_direct, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                                           where term_zdb_id = phenos_entity_2_superterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='biological_process'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_biological_process_direct, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                                         select term_ont_id as xref, term_name as affected_biological_process_direct, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                                           where term_zdb_id = phenos_entity_2_subterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='biological_process'; "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
            <entity name="fish_affected_biological_process_parent"
-                   datasource="db" query="select term_ont_id as xref, term_name as affected_biological_process_parent, ftfs_fas_id as internal_id
-                                                                              from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                   datasource="db" query="select term_ont_id as xref, term_name as affected_biological_process_parent, genox_fish_zdb_id as fish_zdb_id
+                                                                              from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                                              where term_zdb_id = alltermcon_container_zdb_id
                                                                                and alltermcon_contained_zdb_id = phenos_entity_1_superterm_zdb_id
                                                                                and phenos_phenox_pk_id = phenox_pk_id
-                                                                               and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                                               and phenox_genox_zdb_id = genox_zdb_id
                                                                                and ps.phenos_tag = 'abnormal'
                                                                                and term_ontology='biological_process'
                                                                             union
-                                                                            select term_ont_id as xref, term_name as affected_biological_process_parent, ftfs_fas_id as internal_id
-                                                                              from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                                            select term_ont_id as xref, term_name as affected_biological_process_parent, genox_fish_zdb_id as fish_zdb_id
+                                                                              from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                                              where term_zdb_id = alltermcon_container_zdb_id
                                                                                and alltermcon_contained_zdb_id = phenos_entity_1_subterm_zdb_id
                                                                                and phenos_phenox_pk_id = phenox_pk_id
-                                                                               and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                                               and phenox_genox_zdb_id = genox_zdb_id
                                                                                and ps.phenos_tag = 'abnormal'
                                                                                and term_ontology='biological_process'
                                                                             union
-                                                                            select term_ont_id as xref, term_name as affected_biological_process_parent, ftfs_fas_id as internal_id
-                                                                              from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                                            select term_ont_id as xref, term_name as affected_biological_process_parent, genox_fish_zdb_id as fish_zdb_id
+                                                                              from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                                              where term_zdb_id = alltermcon_container_zdb_id
                                                                                and alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
                                                                                and phenos_phenox_pk_id = phenox_pk_id
-                                                                               and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                                               and phenox_genox_zdb_id = genox_zdb_id
                                                                                and ps.phenos_tag = 'abnormal'
                                                                                and term_ontology='biological_process'
                                                                             union
-                                                                            select term_ont_id as xref, term_name as affected_biological_process_parent, ftfs_fas_id as internal_id
-                                                                              from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                                            select term_ont_id as xref, term_name as affected_biological_process_parent, genox_fish_zdb_id as fish_zdb_id
+                                                                              from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                                              where term_zdb_id = alltermcon_container_zdb_id
                                                                                and alltermcon_contained_zdb_id = phenos_entity_2_subterm_zdb_id
                                                                                and phenos_phenox_pk_id = phenox_pk_id
-                                                                               and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                                               and phenox_genox_zdb_id = genox_zdb_id
                                                                                and ps.phenos_tag = 'abnormal'
                                                                                and term_ontology='biological_process'; "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
 
            <entity name="fish_affected_molecular_function_direct"
-                   datasource="db" query="select term_ont_id as xref, term_name as affected_molecular_function_direct, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                   datasource="db" query="select term_ont_id as xref, term_name as affected_molecular_function_direct, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                                           where term_zdb_id = phenos_entity_1_superterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='molecular_function'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_molecular_function_direct, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                                         select term_ont_id as xref, term_name as affected_molecular_function_direct, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                                           where term_zdb_id = phenos_entity_1_subterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='molecular_function'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_molecular_function_direct, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                                         select term_ont_id as xref, term_name as affected_molecular_function_direct, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                                           where term_zdb_id = phenos_entity_2_superterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='molecular_function'
                                                          union
-                                                         select term_ont_id as xref, term_name as affected_molecular_function_direct, ftfs_fas_id as internal_id
-                                                           from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term
+                                                         select term_ont_id as xref, term_name as affected_molecular_function_direct, genox_fish_zdb_id as fish_zdb_id
+                                                           from phenotype_statement ps, phenotype_experiment, fish_experiment, term
                                                           where term_zdb_id = phenos_entity_2_subterm_zdb_id
                                                             and phenos_phenox_pk_id = phenox_pk_id
-                                                            and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                            and phenox_genox_zdb_id = genox_zdb_id
                                                             and ps.phenos_tag = 'abnormal'
                                                             and term_ontology='molecular_function'; "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
            <entity name="fish_affected_molecular_function_direct"
-                   datasource="db" query="select term_ont_id as xref, term_name as affected_molecular_function_parent, ftfs_fas_id as internal_id
-                                                                              from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                   datasource="db" query="select term_ont_id as xref, term_name as affected_molecular_function_parent, genox_fish_zdb_id as fish_zdb_id
+                                                                              from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                                              where term_zdb_id = alltermcon_container_zdb_id
                                                                                and alltermcon_contained_zdb_id = phenos_entity_1_superterm_zdb_id
                                                                                and phenos_phenox_pk_id = phenox_pk_id
-                                                                               and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                                               and phenox_genox_zdb_id = genox_zdb_id
                                                                                and ps.phenos_tag = 'abnormal'
                                                                                and term_ontology='molecular_function'
                                                                             union
-                                                                            select term_ont_id as xref, term_name as affected_molecular_function_parent, ftfs_fas_id as internal_id
-                                                                              from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                                            select term_ont_id as xref, term_name as affected_molecular_function_parent, genox_fish_zdb_id as fish_zdb_id
+                                                                              from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                                              where term_zdb_id = alltermcon_container_zdb_id
                                                                                and alltermcon_contained_zdb_id = phenos_entity_1_subterm_zdb_id
                                                                                and phenos_phenox_pk_id = phenox_pk_id
-                                                                               and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                                               and phenox_genox_zdb_id = genox_zdb_id
                                                                                and ps.phenos_tag = 'abnormal'
                                                                                and term_ontology='molecular_function'
                                                                             union
-                                                                            select term_ont_id as xref, term_name as affected_molecular_function_parent, ftfs_fas_id as internal_id
-                                                                              from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                                            select term_ont_id as xref, term_name as affected_molecular_function_parent, genox_fish_zdb_id as fish_zdb_id
+                                                                              from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                                              where term_zdb_id = alltermcon_container_zdb_id
                                                                                and alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
                                                                                and phenos_phenox_pk_id = phenox_pk_id
-                                                                               and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                                               and phenox_genox_zdb_id = genox_zdb_id
                                                                                and ps.phenos_tag = 'abnormal'
                                                                                and term_ontology='molecular_function'
                                                                             union
-                                                                            select term_ont_id as xref, term_name as affected_molecular_function_parent, ftfs_fas_id as internal_id
-                                                                              from phenotype_statement ps, phenotype_experiment, figure_term_fish_search, term, all_term_contains
+                                                                            select term_ont_id as xref, term_name as affected_molecular_function_parent, genox_fish_zdb_id as fish_zdb_id
+                                                                              from phenotype_statement ps, phenotype_experiment, fish_experiment, term, all_term_contains
                                                                              where term_zdb_id = alltermcon_container_zdb_id
                                                                                and alltermcon_contained_zdb_id = phenos_entity_2_subterm_zdb_id
                                                                                and phenos_phenox_pk_id = phenox_pk_id
-                                                                               and phenox_genox_zdb_id = ftfs_genox_zdb_id
+                                                                               and phenox_genox_zdb_id = genox_zdb_id
                                                                                and ps.phenos_tag = 'abnormal'
                                                                                and term_ontology='molecular_function'; "
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
 
@@ -1453,64 +1451,65 @@ where phenos_tag = 'abnormal'  "
                    datasource="db" query="
 select
                                              term_ont_id as xref, term_name as expression_anatomy_direct,
-                                             ftfs_fas_id as internal_id
-                                      from figure_term_fish_search,
+                                             genox_fish_zdb_id as fish_zdb_id
+                                      from fish_experiment,
                                            expression_experiment,
                                            expression_result,
                                            term
                                       where xpatres_superterm_zdb_id = term_zdb_id
-                                        and ftfs_genox_zdb_id = xpatex_genox_zdb_id
+                                        and genox_zdb_id = xpatex_genox_zdb_id
                                         and xpatres_xpatex_zdb_id = xpatex_zdb_id
                                            and term_ontology='zebrafish_anatomy'
                                            and xpatres_expression_found='t'
 union
 select
                                              term_ont_id as xref, term_name as expression_anatomy_direct,
-                                             ftfs_fas_id as internal_id
-                                      from figure_term_fish_search,
+                                             genox_fish_zdb_id as fish_zdb_id
+                                      from fish_experiment,
                                            expression_experiment,
                                            expression_result,
                                            term
                                       where xpatres_subterm_zdb_id = term_zdb_id
-                                        and ftfs_genox_zdb_id = xpatex_genox_zdb_id
+                                        and genox_zdb_id = xpatex_genox_zdb_id
                                         and xpatres_xpatex_zdb_id = xpatex_zdb_id
                                         and term_ontology='zebrafish_anatomy'
                                         and xpatres_expression_found='t';"
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_expression_anatomy_parent"
                    datasource="db" query="select
                                                                 term_ont_id as xref, term_name as expression_anatomy_parent,
-                                                                ftfs_fas_id as internal_id
-                                                         from figure_term_fish_search,
+                                                                genox_fish_zdb_id as fish_zdb_id
+                                                         from fish_experiment,
                                                               expression_experiment,
                                                               expression_result,
                                                               term,
                                                               all_term_contains
                                                          where xpatres_superterm_zdb_id = alltermcon_contained_zdb_id
                                                            and alltermcon_container_zdb_id = term_zdb_id
-                                                           and ftfs_genox_zdb_id = xpatex_genox_zdb_id
+                                                           and genox_zdb_id = xpatex_genox_zdb_id
                                                            and xpatres_xpatex_zdb_id = xpatex_zdb_id
                                                               and term_ontology='zebrafish_anatomy'
                                                               and xpatres_expression_found='t'
                    union
                    select
                                                                 term_ont_id as xref, term_name as expression_anatomy_parent,
-                                                                ftfs_fas_id as internal_id
-                                                         from figure_term_fish_search,
+                                                                genox_fish_zdb_id as fish_zdb_id
+                                                         from fish_experiment,
                                                               expression_experiment,
                                                               expression_result,
                                                               term,
                                                               all_term_contains
                                                          where xpatres_subterm_zdb_id = alltermcon_contained_zdb_id
                                                            and alltermcon_container_zdb_id = term_zdb_id
-                                                           and ftfs_genox_zdb_id = xpatex_genox_zdb_id
+                                                           and genox_zdb_id = xpatex_genox_zdb_id
                                                            and xpatres_xpatex_zdb_id = xpatex_zdb_id
                                                            and term_ontology='zebrafish_anatomy'
                                                            and xpatres_expression_found='t';"
-                   where="internal_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
+
 
 
 
