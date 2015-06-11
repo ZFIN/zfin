@@ -57,7 +57,7 @@
                 </span>
             </c:when>
             <c:otherwise>
-                <div class="summaryTitle">${title} <zfin:name entity="${titleEntityAppended}"/>
+                <div class="summaryTitle">${title} <c:if test="${not empty titleEntityAppended}"><zfin:name entity="${titleEntityAppended}"/></c:if>
                     <c:if test="${!test and showNoData}">
                         <span class="no-data-tag">${noDataText}</span>
                     </c:if>
