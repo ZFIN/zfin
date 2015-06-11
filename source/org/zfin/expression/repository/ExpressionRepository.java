@@ -241,6 +241,8 @@ public interface ExpressionRepository {
      */
     void deleteExpressionStructure(ExpressionStructure structure);
 
+    void deleteExpressionStructuresForPub(Publication publication);
+
     /**
      * Delete an expression result record for a given figure.
      * If the result has more than one figure it only removes the figure-result association.

@@ -19,10 +19,12 @@ import org.zfin.curation.presentation.CurationDTO;
 import org.zfin.curation.presentation.CurationStatusDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
 import org.zfin.curation.service.CurationDTOConversionService;
+import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
@@ -41,6 +43,12 @@ public class PublicationTrackingController {
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;
+
+    @Autowired
+    private ExpressionRepository expressionRepository;
+
+    @Autowired
+    private MutantRepository mutantRepository;
 
     @RequestMapping(value = "/{zdbID}/track")
     public String showPubTracker(Model model, @PathVariable String zdbID) {
@@ -166,8 +174,10 @@ public class PublicationTrackingController {
         publication.setIndexed(dto.isIndexed());
         publication.setIndexedDate((GregorianCalendar) dto.getIndexedDate());
         if (publication.getCloseDate() == null && dto.getClosedDate() != null) {
-            // looks like this paper's getting closed. close all the topics, too.
+            // looks like this paper's getting closed. close all the topics and do some cleanup, too.
             publicationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+            expressionRepository.deleteExpressionStructuresForPub(publication);
+            mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
         }
         publication.setCloseDate((GregorianCalendar) dto.getClosedDate());
         session.update(publication);

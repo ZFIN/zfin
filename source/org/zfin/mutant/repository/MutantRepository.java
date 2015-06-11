@@ -501,5 +501,7 @@ public interface MutantRepository {
     List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication);
 
     List<FishExperiment> getFishExperiment(Genotype genotype);
+
+    void updateGenotypeNicknameWithHandleForPublication(Publication publication);
 }
 
