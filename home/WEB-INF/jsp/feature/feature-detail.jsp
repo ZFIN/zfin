@@ -320,7 +320,7 @@
                     <zfin:link entity="${genotypeDisplay.affectedGenes}"/>
                 </td>
                 <td>
-                    ${genotypeDisplay.parentalZygosityDisplay}
+                    <c:if test="${genotypeDisplay.zygosity ne 'Complex'}">${genotypeDisplay.parentalZygosityDisplay}</c:if>
                 </td>
             </zfin:alternating-tr>
         </c:forEach>
