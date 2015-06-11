@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.zfin.ExternalNote;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
@@ -18,7 +19,9 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -32,7 +35,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             return null;
         List<GenotypeDTO> genotypeDTOList = new ArrayList<>(genotypeList.size());
         for (Genotype genotype : genotypeList)
-            genotypeDTOList.add(DTOConversionService.convertToGenotypeDTO(genotype));
+            genotypeDTOList.add(DTOConversionService.convertToGenotypeDTOShallow(genotype));
         return genotypeDTOList;
     }
 
@@ -78,8 +81,70 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             throw new TermNotFoundException(e.getMessage());
         }
         return getGenotypeList(publicationID);
+    }
 
+    @Override
+    public ExternalNoteDTO savePublicNote(String publicationID, ExternalNoteDTO externalNoteDTO) throws TermNotFoundException {
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            String noteID = externalNoteDTO.getZdbID();
+            ExternalNote note = getInfrastructureRepository().getExternalNoteByID(noteID);
+            if (note == null)
+                throw new TermNotFoundException("No note with ID: " + noteID + " found");
+            note.setNote(externalNoteDTO.getNoteData());
+            HibernateUtil.currentSession().saveOrUpdate(note);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return externalNoteDTO;
+    }
 
+    @Override
+    public List<GenotypeDTO> createPublicNote(String publicationID, GenotypeDTO genotypeDTO, String text) throws TermNotFoundException {
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            String genotypeID = genotypeDTO.getZdbID();
+            Genotype genotype = getMutantRepository().getGenotypeByID(genotypeID);
+            if (genotype == null)
+                throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
+            GenotypeExternalNote note = new GenotypeExternalNote();
+            note.setType("genotype");
+            note.setGenotype(genotype);
+            note.setNote(text);
+            getInfrastructureRepository().saveExternalNote(note, publication);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return getGenotypeList(publicationID);
+    }
+
+    @Override
+    public List<GenotypeDTO> deletePublicNote(String publicationID, ExternalNoteDTO extNote) throws TermNotFoundException {
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            String noteID = extNote.getZdbID();
+            getInfrastructureRepository().deleteActiveDataByZdbID(noteID);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return getGenotypeList(publicationID);
     }
 
     public List<TermDTO> getHumanDiseaseList(String publicationID) {

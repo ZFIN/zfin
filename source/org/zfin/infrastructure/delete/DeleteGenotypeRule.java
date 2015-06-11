@@ -21,7 +21,8 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
         Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbID);
         entity = genotype;
 
-        List<ExpressionResult> genoExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByGenotype(genotype);
+        // loo through all Fish using genotype
+        List<ExpressionResult> genoExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByFish(null);
         // Can't delete a genotype if it has expression data associated
         if (CollectionUtils.isNotEmpty(genoExpressionResults)) {
             Set<ExpressionExperiment> expressionExperiments = new HashSet<>();

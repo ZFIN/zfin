@@ -1637,15 +1637,6 @@ union
 
 <?/MIBLOCK><?MICOMMENT>end of type_of_genedom<?/MICOMMENT>
 
-    <?MICOMMENT> *** DISPLAY PHENOTYPE TABLE ** <?/MICOMMENT>
-<?MIBLOCK COND="$(OR,$(EQ,$marker_type,GENE),$(EQ,$marker_type,MRPHLNO))">
-    <div class="summary">
-    <span class="summaryTitle">PHENOTYPE</span> (<a href="javascript:start_note('phenotype_note')">current status</a>)
-      <?MICOMMENT> *** call phenotype_miniview.apg to display the phenotype data *** <?/MICOMMENT>
-      <?MISQL SQL="select WebExplode(object,'phmview_input_table=$mrkrview_temp_pato') from webPages where ID='aa-phenotype_miniview.apg';">$1<?/MISQL>
-    </div>
-<?/MIBLOCK>
-
 <?MISQL COND=$(XST,$debug_timing) SQL="
         execute function get_time()">
         <br>$1 End Geno/Mutant section

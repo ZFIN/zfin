@@ -79,7 +79,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
                         "AND phenoeq.tag != :tag " +
                         "AND fishox.experiment.name in (:condition) " +
-                        "AND 0 = all elements(fishox.fish.strList)  ";
+                        "AND size(fishox.fish.strList) = 0  ";
 
         if (!wildtype) {
             hql += "AND fishox.fish.genotype.wildtype = 'f' ";
@@ -1197,20 +1197,20 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> fishoxIds, String geneID) {
-        if (CollectionUtils.isEmpty(fishoxIds) || StringUtils.isEmpty(genotypeID))
+    public List<ExpressionResult> getExpressionSummary(String genotypeID, Set<FishExperiment> fishOx, String geneID) {
+        if (CollectionUtils.isEmpty(fishOx) || StringUtils.isEmpty(genotypeID))
             return null;
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
                 " expressionResult.expressionExperiment.fishExperiment.fish.genotype.zdbID = :genotypeID AND " +
-                " expressionResult.expressionExperiment.fishExperiment.zdbID in (:fishoxIds) AND ";
+                " expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND ";
         if (geneID == null)
             hql += " expressionResult.expressionExperiment.gene is not null";
         else
             hql += " expressionResult.expressionExperiment.gene = :geneID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotypeID", genotypeID);
-        query.setParameterList("fishoxIds", fishoxIds);
+        query.setParameterList("fishOx", fishOx);
         if (geneID != null)
             query.setString("geneID", geneID);
         return query.list();
@@ -1237,19 +1237,19 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public boolean hasImagesOnExpressionFigures(String genotypeID, List<String> genoxIds) {
-        if (CollectionUtils.isEmpty(genoxIds) || StringUtils.isEmpty(genotypeID))
+    public boolean hasImagesOnExpressionFigures(String genotypeID,Set<FishExperiment> fishOx) {
+        if (CollectionUtils.isEmpty(fishOx) || StringUtils.isEmpty(genotypeID))
             return false;
 
         String hql = " select count(figure) from Figure figure, ExpressionResult expressionResult where " +
                 " expressionResult.expressionExperiment.fishExperiment.fish.genotype.zdbID = :genotypeID AND " +
-                " expressionResult.expressionExperiment.fishExperiment.zdbID in (:genoxIds) AND " +
+                " expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND " +
                 " expressionResult.expressionExperiment.gene is not null AND " +
                 " figure member of expressionResult.figures AND " +
                 " figure.images is not empty ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotypeID", genotypeID);
-        query.setParameterList("genoxIds", genoxIds);
+        query.setParameterList("fishOx", fishOx);
         long numOfImages = (Long) query.uniqueResult();
         return numOfImages > 0;
     }
@@ -1573,13 +1573,13 @@ public class HibernateMutantRepository implements MutantRepository {
                 "     publication = :publication and " +
                 "     evidenceCode = :evidenceCode ";
         if (diseaseModel.getFishExperiment() != null)
-            hql += "  and fishModel = :fishModel   ";
+            hql += "  and fishExperiment = :fishExperiment   ";
         Query query = session.createQuery(hql);
         query.setParameter("disease", diseaseModel.getDisease());
         query.setParameter("publication", diseaseModel.getPublication());
         query.setString("evidenceCode", diseaseModel.getEvidenceCode());
         if (diseaseModel.getFishExperiment() != null)
-            query.setParameter("fishModel", diseaseModel.getFishExperiment());
+            query.setParameter("fishExperiment", diseaseModel.getFishExperiment());
         return (DiseaseModel) query.uniqueResult();
     }
 

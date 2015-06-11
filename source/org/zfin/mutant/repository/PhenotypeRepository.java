@@ -219,12 +219,21 @@ public interface PhenotypeRepository {
     List<Figure> getPhenotypeFiguresForGenotype(Genotype genotype);
 
     /**
+     * Retrieve phenotype figures for a given fish.
+     * @param fish fish
+     * @return list of figures
+     */
+    List<Figure> getPhenotypeFiguresForFish(Fish fish);
+
+    /**
      * Retrieve phenotype statement for a given figure and genotype.
      * @param figure figure
      * @param genotype genotype
      * @return list of phenotype statements
      */
     List<PhenotypeStatement> getPhenotypeStatementsForFigureAndGenotype(Figure figure, Genotype genotype);
+
+    List<PhenotypeStatement> getPhenotypeStatementsForFigureAndFish(Figure figure, Fish fish);
 
     List<GenericTerm> getHumanDiseases(String publicationID);
 

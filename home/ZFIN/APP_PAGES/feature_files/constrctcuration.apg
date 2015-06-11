@@ -184,9 +184,6 @@ FILTERs section
     <?/MIVAR>
 
 
-    <?MICOMMENT>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_constrct.apg';">$1<?/MISQL>
-  <?/MICOMMENT>
 <?/MIBLOCK>
 <?/MICOMMENT>
 
@@ -239,9 +236,6 @@ FILTERs section
     <?/MIBLOCK>
 <?/MICOMMENT>
 
-    <?MICOMMENT>
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-new_constrct.apg';">$1<?/MISQL>
-  <?/MICOMMENT>
 
 
  <?MICOMMENT>

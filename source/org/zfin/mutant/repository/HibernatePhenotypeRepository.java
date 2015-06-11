@@ -24,6 +24,8 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+
 /**
  * Class defines methods to retrieve phenotypic data for annotation purposes
  */
@@ -702,6 +704,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @return list of phenotype statements
      */
     public List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
+        Fish fish=getMutantRepository().getFish(fishID);
+        Set<FishExperiment> fishOx = getMutantRepository().getFish(fishID).getFishExperiments();
+        List<String>fishoxID=new ArrayList<>(fishOx.size());
+        for (FishExperiment genoID : getMutantRepository().getFish(fishID).getFishExperiments()) {
+            fishoxID.add(genoID.getZdbID());
+        }
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct pheno from PhenotypeStatement pheno  " +
@@ -710,7 +718,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
         Query query = session.createQuery(hql);
         query.setParameter("figure", figure);
-        query.setParameterList("genoxIDs", FishService.getGenoxIds(fishID));
+        query.setParameterList("genoxIDs", fishoxID);
         return (List<PhenotypeStatement>) query.list();
     }
 
@@ -727,6 +735,23 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
         Query query = session.createQuery(hql);
         query.setParameter("genotype", genotype);
+
+        return (List<Figure>) query.list();
+    }
+
+    /**
+     * Retrieve phenotype figures for a given genotype.
+     * @param fish fish
+     * @return list of figures
+     */
+    public List<Figure> getPhenotypeFiguresForFish(Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct genofig.figure from GenotypeFigure genofig " +
+                "where genofig.fish = :fish";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
 
         return (List<Figure>) query.list();
     }
@@ -749,6 +774,21 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         Query query = session.createQuery(hql);
         query.setParameter("figure", figure);
         query.setParameter("genotype", genotype);
+        return (List<PhenotypeStatement>) query.list();
+    }
+
+    public List<PhenotypeStatement> getPhenotypeStatementsForFigureAndFish(Figure figure, Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, GenotypeFigure genoFig  " +
+                "      where pheno.phenotypeExperiment = phenoExp " +
+                "        and genoFig.phenotypeExperiment = phenoExp " +
+                "        and genoFig.fish = :fish" +
+                "        and genoFig.figure = :figure";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("figure", figure);
+        query.setParameter("fish", fish);
         return (List<PhenotypeStatement>) query.list();
     }
 

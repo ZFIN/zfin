@@ -11,15 +11,15 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import org.zfin.gwt.root.dto.FeatureDTO;
-import org.zfin.gwt.root.dto.FishDTO;
-import org.zfin.gwt.root.dto.GenotypeDTO;
-import org.zfin.gwt.root.dto.RelatedEntityDTO;
+import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Entry point for FX curation module.
@@ -118,6 +118,8 @@ public class FishModule implements HandlesError, EntryPoint {
         genotypeSearchResultTable.setVisible(showExistingGenoBool);
         constructionTable.setVisible(showFishConstruction);
         createFishButton.setVisible(showFishConstruction);
+
+        // Add the widgets to the root panel.
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
@@ -125,6 +127,56 @@ public class FishModule implements HandlesError, EntryPoint {
             }
         });
 
+    }
+
+    private class PublicNotePopup extends PopupPanel {
+
+        public PublicNotePopup(final GenotypeDTO genotypeDTO) {
+            // set auto hide to true
+            super(true);
+            VerticalPanel vPanel = new VerticalPanel();
+            final TextArea textArea = new TextArea();
+            textArea.setHeight("100px");
+            textArea.setWidth("250px");
+            vPanel.add(textArea);
+            Button save = new Button("Save");
+            vPanel.add(save);
+            setWidget(vPanel);
+            save.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent clickEvent) {
+                    diseaseCurationRPCAsync.createPublicNote(publicationID, genotypeDTO, textArea.getText(), new RetrieveGenotypeListCallBack("Genotype List", errorLabel));
+                    hide();
+                }
+            });
+        }
+
+        public PublicNotePopup(final ExternalNoteDTO externalNoteDTO) {
+            // set auto hide to true
+            super(true);
+            VerticalPanel vPanel = new VerticalPanel();
+            final TextArea textArea = new TextArea();
+            textArea.setHeight("100px");
+            textArea.setWidth("250px");
+            textArea.setText(externalNoteDTO.getNoteData());
+            vPanel.add(textArea);
+            Button save = new Button("Save");
+            vPanel.add(save);
+            setWidget(vPanel);
+            save.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent clickEvent) {
+                    externalNoteDTO.setNoteData(getNoteStub(textArea.getText()));
+                    diseaseCurationRPCAsync.savePublicNote(publicationID, externalNoteDTO, new ZfinAsyncCallback<ExternalNoteDTO>("public note ", errorLabelSearch) {
+                        @Override
+                        public void onSuccess(ExternalNoteDTO noteDTO) {
+                            publicNoteAnchor.get(noteDTO.getZdbID()).setText(noteDTO.getNoteData());
+                        }
+                    });
+                    hide();
+                }
+            });
+        }
     }
 
     private void addHandlers() {
@@ -335,7 +387,7 @@ public class FishModule implements HandlesError, EntryPoint {
         // get Fish List
         diseaseCurationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack("Fish List", errorLabel));
 
-        // get Fish List
+        // get genotype List
         diseaseCurationRPCAsync.getGenotypeList(publicationID, new RetrieveGenotypeListCallBack("Genotype List", errorLabel));
 
         // get Feature List
@@ -487,7 +539,7 @@ public class FishModule implements HandlesError, EntryPoint {
 
         int groupIndex = 0;
         int rowIndex = 1;
-        for (GenotypeDTO genotype : genotypeDTOList) {
+        for (final GenotypeDTO genotype : genotypeDTOList) {
             int col = 0;
             Anchor html = new Anchor(SafeHtmlUtils.fromTrustedString(genotype.getName()), "/" + genotype.getZdbID());
             genotypeListTable.setWidget(index, col++, html);
@@ -499,7 +551,31 @@ public class FishModule implements HandlesError, EntryPoint {
                 for (FeatureDTO featureDTO : genotype.getFeatureList())
                     featurePanel.add(new InlineHTML(featureDTO.getAbbreviation()));
             genotypeListTable.setWidget(index, col++, featurePanel);
-            genotypeListTable.setWidget(index, col++, new InlineHTML());
+
+            VerticalPanel publicNotePanel = new VerticalPanel();
+            if (genotype.getPublicNotes(publicationID) != null) {
+                for (final ExternalNoteDTO note : genotype.getPublicNotes(publicationID)) {
+                    Anchor publicNote = new Anchor(getNoteStub(note.getNoteData()));
+                    HorizontalPanel panel = new HorizontalPanel();
+                    panel.add(publicNote);
+                    Anchor remove = new Anchor("[X]");
+                    remove.addClickHandler(new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent clickEvent) {
+                            diseaseCurationRPCAsync.deletePublicNote(publicationID, note, new RetrieveGenotypeListCallBack("delete note", errorLabelSearch));
+                        }
+                    });
+                    panel.add(remove);
+                    publicNoteAnchor.put(note.getZdbID(), publicNote);
+                    publicNotePanel.add(panel);
+                    addClickHandler(note, publicNote);
+                }
+            }
+            Anchor publicNote = new Anchor("Add");
+            addClickHandler(genotype, publicNote);
+            publicNoteAnchor.put(genotype.getDataZdbID(), publicNote);
+            publicNotePanel.add(publicNote);
+            genotypeListTable.setWidget(index, col++, publicNotePanel);
             genotypeListTable.setWidget(index, col++, new InlineHTML());
             Anchor anchor = new Anchor("X", "/action/infrastructure/deleteRecord/" + genotype.getZdbID());
             genotypeListTable.getCellFormatter().setHorizontalAlignment(index, col, HasHorizontalAlignment.ALIGN_CENTER);
@@ -508,6 +584,37 @@ public class FishModule implements HandlesError, EntryPoint {
 
         }
     }
+
+    private String getNoteStub(String note) {
+        if (note.length() < 15)
+            return note;
+        else
+            return note.substring(0, 15) + "...";
+    }
+
+    private void addClickHandler(final GenotypeDTO noteDTO, Anchor publicNote) {
+        publicNote.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                PublicNotePopup publicNotePopup = new PublicNotePopup(noteDTO);
+                publicNotePopup.show();
+                publicNotePopup.center();
+            }
+        });
+    }
+
+    private void addClickHandler(final ExternalNoteDTO noteDTO, Anchor publicNote) {
+        publicNote.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                PublicNotePopup publicNotePopup = new PublicNotePopup(noteDTO);
+                publicNotePopup.show();
+                publicNotePopup.center();
+            }
+        });
+    }
+
+    private Map<String, Anchor> publicNoteAnchor = new HashMap<>();
 
     public void updateExistingGenotypeListTableContent(List<GenotypeDTO> genotypeDTOList) {
         genotypeSearchResultTable.removeAllRows();
@@ -584,7 +691,6 @@ public class FishModule implements HandlesError, EntryPoint {
             loadingImage.setVisible(false);
             if (fishList != null && fishList.size() > 0)
                 noneDefined.setVisible(false);
-            attributionModule.populateAttributeRemoval();
         }
     }
 
@@ -609,7 +715,6 @@ public class FishModule implements HandlesError, EntryPoint {
             loadingImage.setVisible(false);
             if (fishList != null && fishList.size() > 0)
                 noneDefined.setVisible(false);
-            attributionModule.populateAttributeRemoval();
             if (updateExistingGenotypeList)
                 diseaseCurationRPCAsync.searchGenotypes(publicationID, getSelectedFeatureID(), getSelectedGenotypeID(), new RetrieveExistingGenotypeListCallBack("error", errorLabelSearch));
         }

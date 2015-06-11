@@ -81,17 +81,11 @@
         </tr>
         <tr>
             <th>
-                <c:choose>
-                    <c:when test="${fn:length(formBean.fishStatistics.affectedMarkers) ne null && fn:length(formBean.fishStatistics.affectedMarkers) > 1}">
-                        Affected&nbsp;Genes:
-                    </c:when>
-                    <c:otherwise>
-                        Affected&nbsp;Gene:
-                    </c:otherwise>
-                </c:choose>
+                <zfin2:pluralization list="${affectedMarkerList}" singular="Affected Gene:"
+                                     nonSingular="Affected Genes:"/>
             </th>
             <td>
-                <c:forEach var="affectedGene" items="${formBean.fishStatistics.affectedMarkers}" varStatus="loop">
+                <c:forEach var="affectedGene" items="${affectedMarkerList}" varStatus="loop">
                     <zfin:link entity="${affectedGene}"/><c:if test="${!loop.last}">,&nbsp;</c:if>
                 </c:forEach>
             </td>
@@ -222,8 +216,6 @@
                         <th width="20%">
                             Parental Zygosity
                         </th>
-
-
                     </tr>
                     <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
                         <zfin:alternating-tr loopName="loop">
@@ -265,20 +257,18 @@
         </c:choose>
     </div>
     <div id="fish" class="summary">
-
-        <zfin2:subsection title="FISH INVOLVED" showNoData="true"
-                          test="${fn:length(fishList) ne null && fn:length(fishList) > 0}">
-        <b>Fish utilizing
-                <zfin:name entity="${formBean.genotype}"/>
-            <table class="summary">
+        <zfin2:subsection title="FISH UTILIZING" showNoData="true"
+                          test="${fn:length(fishList) ne null && fn:length(fishList) > 0}"
+                          titleEntityAppended="${formBean.genotype}">
+            <table class="summary rowstripes">
                 <tr>
                     <th>Fish</th>
                     <th>Affected Genes</th>
                     <th>Phenotype</th>
                     <th>Gene Expression</th>
                 </tr>
-                <c:forEach var="fishGenotypeStatistics" items="${fishList}">
-                    <tr>
+                <c:forEach var="fishGenotypeStatistics" items="${fishList}" varStatus="index">
+                    <zfin:alternating-tr loopName="index">
                         <td><zfin:link entity="${fishGenotypeStatistics.fish}"/></td>
                         <td>
                             <c:forEach var="marker" items="${fishGenotypeStatistics.getAffectedMarker()}"
@@ -288,16 +278,18 @@
                         </td>
                         <td>
                             <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"/>
+                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
+                                                  link="/action/genotype/fish-phenotype-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                         <td>
                             <zfin2:showFigureData entity="${genotype}"
-                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"/>
+                                                  fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypeExpressionStatistics}"
+                                                  link="/action/expression/fish-expression-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
-                    </tr>
+                    </zfin:alternating-tr>
                 </c:forEach>
             </table>
-            </zfin2:subsection>
+        </zfin2:subsection>
     </div>
 
     <p/>

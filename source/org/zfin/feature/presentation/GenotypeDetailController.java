@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.presentation.AllSequenceTargetingReagentExperimentController;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.fish.presentation.MartFish;
@@ -130,6 +129,7 @@ public class GenotypeDetailController {
             });
 
             model.addAttribute("fishList", fishGenotypePhenotypeStatisticsList);
+            model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
         }
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
@@ -179,7 +179,7 @@ public class GenotypeDetailController {
         GenotypeBean form = new GenotypeBean();
         form.setGenotype(genotype);
 
-        retrieveExpressionData(form, genotype);
+        //retrieveExpressionData(form, genotype);
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotype.getName());
@@ -207,16 +207,9 @@ public class GenotypeDetailController {
         return fish.getStrList();
     }
 
-    private void retrieveExpressionData(GenotypeBean form, Genotype genotype) {
-        List<ExpressionResult> expressionResults = expressionRepository.getExpressionResultsByGenotype(genotype);
-        form.setExpressionResults(expressionResults);
-    }
-
     public void retrievePhenotypeData(GenotypeBean form, Genotype genotype) {
         List<PhenotypeStatement> phenoStatements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
-
         form.setPhenoStatements(phenoStatements);
-
     }
 
     private void retrievePublicationData(GenotypeBean form, Genotype genotype) {
@@ -267,5 +260,28 @@ public class GenotypeDetailController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + genotype.getName());
 
         return "genotype/genotype-phenotype-figure-summary.page";
+    }
+
+    @RequestMapping(value = {"fish-phenotype-figure-summary"})
+    public String getPhenotypeSummaryForFish(@RequestParam(value = "fishID", required = true) String fishID,
+                                             Model model) throws Exception {
+        LOG.debug("Start Genotype Controller");
+        Fish fish = mutantRepository.getFish(fishID);
+        if (fish == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, fishID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+        GenotypeBean form = new GenotypeBean();
+        form.setFish(fish);
+
+        List<FigureSummaryDisplay> figureSummaryDisplayList = PhenotypeService.getPhenotypeFigureSummaryForFish(fish);
+        Collections.sort(figureSummaryDisplayList);
+        model.addAttribute("figureSummaryDisplay", figureSummaryDisplayList);
+        model.addAttribute("fish", fish);
+
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + fish.getName());
+
+        return "fish/fish-phenotype-figure-summary.page";
     }
 }
