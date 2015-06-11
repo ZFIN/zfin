@@ -431,7 +431,8 @@ public class DTOConversionService {
             ExternalNoteDTO noteDTO = new ExternalNoteDTO();
             noteDTO.setZdbID(note.getZdbID());
             noteDTO.setNoteData(note.getNote());
-            noteDTO.setPublicationZdbID(note.getSinglePubAttribution().getSourceZdbID());
+            if (note.getSinglePubAttribution() != null)
+                noteDTO.setPublicationZdbID(note.getSinglePubAttribution().getSourceZdbID());
             externalNoteDTOList.add(noteDTO);
         }
         genotypeDTO.setPublicNotes(externalNoteDTOList);
@@ -1303,10 +1304,12 @@ public class DTOConversionService {
         dto.setName(fish.getName());
         dto.setHandle(fish.getHandle());
         dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
-        List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
-        for (SequenceTargetingReagent str : fish.getStrList())
-            strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
-        dto.setStrList(strs);
+        if(CollectionUtils.isNotEmpty(fish.getStrList())) {
+            List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
+            for (SequenceTargetingReagent str : fish.getStrList())
+                strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
+            dto.setStrList(strs);
+        }
         return dto;
     }
 

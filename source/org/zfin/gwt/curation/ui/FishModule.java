@@ -63,7 +63,13 @@ public class FishModule implements HandlesError, EntryPoint {
     Image loadingImage;
 
     @UiField
+    Image loadingImageGenoSearch;
+
+    @UiField
     Label noneDefined;
+
+    @UiField
+    Label noneDefinedGenoLabel;
 
     @UiField
     ZfinFlexTable constructionTable;
@@ -113,6 +119,7 @@ public class FishModule implements HandlesError, EntryPoint {
         initConstructionTableHeader();
         initConstructionRow();
         initFishListTable();
+        loadingImageGenoSearch.setVisible(false);
         initConstructionGenotypeSearchResultRow(0);
         retrieveAllValues();
         genotypeSearchResultTable.setVisible(showExistingGenoBool);
@@ -275,6 +282,7 @@ public class FishModule implements HandlesError, EntryPoint {
         String featureID = getSelectedFeatureID();
         String genotypeID = getSelectedGenotypeID();
         diseaseCurationRPCAsync.searchGenotypes(publicationID, featureID, genotypeID, new RetrieveExistingGenotypeListCallBack("error", errorLabelSearch));
+        loadingImageGenoSearch.setVisible(true);
     }
 
     private void toggleVisibilityFishConstruction() {
@@ -711,6 +719,8 @@ public class FishModule implements HandlesError, EntryPoint {
         public void onSuccess(List<GenotypeDTO> list) {
             genotypeList = list;
             resetUI();
+            if (list != null && list.size() > 0)
+                noneDefinedGenoLabel.setVisible(false);
             updateFishGenotypeListTableContent(list);
             loadingImage.setVisible(false);
             if (fishList != null && fishList.size() > 0)
@@ -734,7 +744,7 @@ public class FishModule implements HandlesError, EntryPoint {
             existingGenotypeList = list;
             resetUI();
             updateExistingGenotypeListTableContent(list);
-            loadingImage.setVisible(false);
+            loadingImageGenoSearch.setVisible(false);
         }
     }
 }

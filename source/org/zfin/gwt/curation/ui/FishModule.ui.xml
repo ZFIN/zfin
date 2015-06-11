@@ -9,6 +9,7 @@
         <g:VerticalPanel spacing="10" title="Disease">
             <g:HorizontalPanel spacing="0">
                 <g:Label text="GENOTYPE LIST" styleName="summaryTitle"/>
+                <g:Label ui:field="noneDefinedGenoLabel" text="&nbsp;None defined" styleName="no-data-tag"/>
             </g:HorizontalPanel>
             <zfin:ZfinFlexTable ui:field="genotypeListTable" numberOfColumns="3" styleName="searchresults groupstripes"
                                 cellSpacing="5" cellPadding="5" />
@@ -20,6 +21,7 @@
                 </g:HorizontalPanel>
                 <zfin:ZfinFlexTable ui:field="genotypeSearchResultTable" numberOfColumns="3" styleName="searchresults groupstripes"
                                     cellSpacing="5" cellPadding="5" />
+                <g:Image ui:field="loadingImageGenoSearch" url="/images/ajax-loader.gif"/>
                 <zfin:SimpleErrorElement ui:field="errorLabelSearch"/>
             </g:VerticalPanel>
             <g:HorizontalPanel>
@@ -39,7 +41,7 @@
             <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif"/>
             <g:HorizontalPanel spacing="0">
                 <g:Label text="FISH LIST" styleName="summaryTitle"/>
-                <g:Label ui:field="noneDefined" text="None defined" styleName="no-data-tag"/>
+                <g:Label ui:field="noneDefined" text="&nbsp;None defined" styleName="no-data-tag"/>
             </g:HorizontalPanel>
             <zfin:ZfinFlexTable ui:field="fishListTable" numberOfColumns="3" styleName="searchresults groupstripes"
                                 cellSpacing="5" cellPadding="5" />
