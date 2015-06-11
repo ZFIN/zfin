@@ -1,15 +1,18 @@
 package org.zfin.mutant.presentation;
 
-import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.mutant.*;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class is a statistics class about Fish for given genotype
@@ -39,9 +42,7 @@ public class FishGenotypePhenotypeStatistics extends EntityStatistics {
             figures = new HashSet<>(5);
             for (FishExperiment fishExperiment : fishExperimentList)
                 for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
-                    for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
-                        figures.add(phenotype.getFigure());
-                    }
+                    figures.add(phenotype.getFigure());
                 }
         }
         return figures.size();

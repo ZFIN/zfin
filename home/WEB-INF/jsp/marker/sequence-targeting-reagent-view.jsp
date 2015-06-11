@@ -69,7 +69,7 @@
     <b>GENE EXPRESSION</b>
     <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
     <br/>
-    <b>Gene expression in ${formBean.marker.name}</b>
+    <b>Gene expression in Wild Types + ${formBean.marker.name}</b>
     <c:choose>
         <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
             <zfin2:expressionData sequenceTargetingReagentID="${sequenceTargetingReagent.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showCondition="false" />

@@ -1,11 +1,12 @@
 package org.zfin.mutant;
 
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.mutant.presentation.GenotypeInformation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GenotypeService {
 
@@ -31,4 +32,24 @@ public class GenotypeService {
         }
         return stats;
     }
+
+    public static SortedSet<Marker> getAffectedMarker(Genotype genotype) {
+        Set<GenotypeFeature> features = genotype.getGenotypeFeatures();
+        SortedSet<Marker> markers = new TreeSet<Marker>();
+        for (GenotypeFeature feat : features) {
+            Feature feature = feat.getFeature();
+            Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
+            for (FeatureMarkerRelationship rel : rels) {
+                if (rel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                    Marker marker = rel.getMarker();
+                    // Only add true genes
+                    if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                        markers.add(marker);
+                    }
+                }
+            }
+        }
+        return markers;
+    }
+
 }

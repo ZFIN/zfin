@@ -129,6 +129,7 @@ public class GenotypeDetailController {
             });
 
             model.addAttribute("fishList", fishGenotypePhenotypeStatisticsList);
+            model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
         }
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
