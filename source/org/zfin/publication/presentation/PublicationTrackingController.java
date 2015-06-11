@@ -117,7 +117,7 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "{zdbID}/topics", method = RequestMethod.GET)
+    @RequestMapping(value = "/{zdbID}/topics", method = RequestMethod.GET)
     public Collection<CurationDTO> getCurationTopics(@PathVariable String zdbID) {
 
         Session session = HibernateUtil.currentSession();
