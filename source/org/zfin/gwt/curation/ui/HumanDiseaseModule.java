@@ -136,7 +136,6 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     }
 
     private void setEvidenceCode() {
-        evidenceCodeSelectionBox.addItem(SELECT);
         evidenceCodeSelectionBox.addItem("TAS");
         evidenceCodeSelectionBox.addItem("IC");
         evidenceCodeSelectionBox.addChangeHandler(new ChangeHandler() {
@@ -326,10 +325,6 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         }
         dto.setDisease(diseaseList.get(selectedIndexDis));
         String itemText = evidenceCodeSelectionBox.getItemText(evidenceCodeSelectionBox.getSelectedIndex());
-        if (itemText.equals(SELECT)) {
-            setError("Please select a valid Evidence Code");
-            return null;
-        }
         dto.setEvidenceCode(itemText);
         PublicationDTO pubDto = new PublicationDTO();
         pubDto.setZdbID(publicationID);
