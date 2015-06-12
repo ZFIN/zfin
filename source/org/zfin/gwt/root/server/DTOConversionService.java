@@ -385,8 +385,9 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
-        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes()))
-            genotypeDTO.setPublicNote(genotype.getExternalNotes().iterator().next().getNote());
+        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
+            createNotesOnGenotype(genotype, genotypeDTO);
+        }
 
         List<PublicationDTO> associatedPublications = new ArrayList<>();
         for (int i = 0; i < genotype.getAssociatedPublications().size(); i++) {
@@ -410,9 +411,9 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
-        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes()))
-            genotypeDTO.setPublicNote(genotype.getExternalNotes().iterator().next().getNote());
-
+        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
+            createNotesOnGenotype(genotype, genotypeDTO);
+        }
         // add features
         if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
             List<FeatureDTO> featureDTOList = new ArrayList<>(4);
@@ -422,6 +423,19 @@ public class DTOConversionService {
             genotypeDTO.setFeatureList(featureDTOList);
         }
         return genotypeDTO;
+    }
+
+    private static void createNotesOnGenotype(Genotype genotype, GenotypeDTO genotypeDTO) {
+        List<ExternalNoteDTO> externalNoteDTOList = new ArrayList<>(genotype.getExternalNotes().size());
+        for (GenotypeExternalNote note : genotype.getExternalNotes()) {
+            ExternalNoteDTO noteDTO = new ExternalNoteDTO();
+            noteDTO.setZdbID(note.getZdbID());
+            noteDTO.setNoteData(note.getNote());
+            if (note.getSinglePubAttribution() != null)
+                noteDTO.setPublicationZdbID(note.getSinglePubAttribution().getSourceZdbID());
+            externalNoteDTOList.add(noteDTO);
+        }
+        genotypeDTO.setPublicNotes(externalNoteDTOList);
     }
 
     public static GenotypeDTO convertToGenotypeDTO(Genotype genotype, boolean includePubInfo) {
@@ -1290,10 +1304,12 @@ public class DTOConversionService {
         dto.setName(fish.getName());
         dto.setHandle(fish.getHandle());
         dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
-        List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
-        for (SequenceTargetingReagent str : fish.getStrList())
-            strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
-        dto.setStrList(strs);
+        if(CollectionUtils.isNotEmpty(fish.getStrList())) {
+            List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
+            for (SequenceTargetingReagent str : fish.getStrList())
+                strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
+            dto.setStrList(strs);
+        }
         return dto;
     }
 

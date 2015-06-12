@@ -67,7 +67,7 @@ public class FishExpressionController {
         model.addAttribute(summaryCriteria);
         MartFish fish = FishService.getFish(fishID);
         GenotypeBean form = new GenotypeBean();
-        form.setExpressionStatements(getMutantRepository().getExpressionStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
+//        form.setExpressionStatements(getMutantRepository().getExpressionStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
         model.addAttribute(form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Summary: " + fish.getName());
 

@@ -289,12 +289,48 @@
 </c:choose>
 
 <div id="genotype">
-    <zfin2:genotype-information genotypes="${formBean.featgenoStats}"/>
+<zfin2:subsection title="Genotypes comprising ${formBean.feature.name}" test="${!empty formBean.feature.genotypeFeatures}" showNoData="true">
+    <table id="genotypes-table" class="summary rowstripes">
+        <tr>
+            <th width="25%">
+                Zygocity
+            </th>
+            <th width="25%">
+                Genotype (Background)
+            </th>
+            <th width="25%">
+                Affected Genes
+            </th>
+            <th width="25%">
+                Parental Zygocity
+            </th>
+        </tr>
+
+        <c:forEach var="genotypeDisplay" items="${formBean.genotypeDisplays}" varStatus="loop">
+            <zfin:alternating-tr loopName="loop" groupBeanCollection="${formBean.genotypeDisplays}" groupByBean="zygosity" newGroup="true">
+                <td>
+                    <zfin:groupByDisplay loopName="loop" groupBeanCollection="${formBean.genotypeDisplays}" groupByBean="zygosity">
+                        ${genotypeDisplay.zygosity}
+                    </zfin:groupByDisplay>
+                </td>
+                <td>
+                    <zfin:link entity="${genotypeDisplay.genotype}"/>
+                </td>
+                <td>
+                    <zfin:link entity="${genotypeDisplay.affectedGenes}"/>
+                </td>
+                <td>
+                    <c:if test="${genotypeDisplay.zygosity ne 'Complex'}">${genotypeDisplay.parentalZygosityDisplay}</c:if>
+                </td>
+            </zfin:alternating-tr>
+        </c:forEach>
+    </table>
+</zfin2:subsection>
 </div>
 
 <hr width="80%">
 <a href='/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${formBean.feature.zdbID}&total_count=${formBean.numPubs}&rtype=genotype'><b>CITATIONS</b></a>&nbsp;&nbsp;(${formBean.numPubs})
 
 <script type="text/javascript">
-    jQuery('#genotype').tableCollapse({label: 'genotypes'});
+    jQuery('#genotype').tableCollapse({label: 'rows'});
 </script>

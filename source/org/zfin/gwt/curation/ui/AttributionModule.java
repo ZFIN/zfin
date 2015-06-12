@@ -4,6 +4,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.query.client.Console;
+import com.google.gwt.query.client.impl.ConsoleBrowser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -44,7 +46,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         }
 
         public static boolean isHeader(String value) {
-            return (value.startsWith(STARS));
+            return (value == null || value.startsWith(STARS));
         }
     }
 
@@ -170,11 +172,14 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
             public void onChange(ChangeEvent event) {
                 final String attributionToRemoveID = removeListBox.getSelectedValue();
                 final String attributionToRemoveLabel = removeListBox.getSelectedText();
+                ConsoleBrowser browser = new ConsoleBrowser();
+                browser.log(attributionToRemoveLabel);
+                browser.log(attributionToRemoveID);
+                Window.alert(attributionToRemoveLabel);
 
                 if (RemoveHeader.isHeader(attributionToRemoveID)) {
                     return;
                 }
-
                 String cannotRemove = getCannotRemoveMessage(attributionToRemoveID, attributionToRemoveLabel);
                 if (StringUtils.isNotEmpty(cannotRemove)) {
                     Window.alert(cannotRemove);
@@ -251,14 +256,6 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private String getConfirmationMessage(String attributionToRemoveID, String attributionToRemoveLabel) {
         // the default message
         String removeAttrPopupPrompt = "Are you sure you want to delete: " + attributionToRemoveLabel;
-
-        // when the related entity is a genotype and there is only one publication associated with it
-        if (attributionToRemoveID.startsWith("ZDB-GENO-") && relatedEntityDTOs.get(attributionToRemoveID).getAssociatedPublications().size() == 1) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("This is the last publication associated with ").append(attributionToRemoveLabel).append(".\nTo delete ")
-                    .append(attributionToRemoveLabel).append(", click Cancel and use the interface on the Genotype tab. To remove pub from genotype, click OK.");
-            removeAttrPopupPrompt = sb.toString();
-        }
         return removeAttrPopupPrompt;
     }
 

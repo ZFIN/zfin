@@ -22,7 +22,11 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<GenotypeDTO> addGenotypeToPublication(String publicationID, String zdbID) throws TermNotFoundException;
 
-    GenotypeDTO savePublicNote(String publicationID, GenotypeDTO genotypeDTO) throws TermNotFoundException;
+    ExternalNoteDTO savePublicNote(String publicationID, ExternalNoteDTO externalNoteDTO) throws TermNotFoundException;
+
+    List<GenotypeDTO> createPublicNote(String publicationID, GenotypeDTO genotypeDTO, String text) throws TermNotFoundException;
+
+    List<GenotypeDTO> deletePublicNote(String publicationID, ExternalNoteDTO note) throws TermNotFoundException;
 
     public static class App {
         private static final CurationDiseaseRPCAsync INSTANCE;
