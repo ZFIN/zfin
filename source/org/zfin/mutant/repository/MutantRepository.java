@@ -292,7 +292,7 @@ public interface MutantRepository {
      * @param genotypeExperimentIDs genox ids
      * @return list of expression statements
      */
-    List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs);
+    List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(Set<FishExperiment> genotypeExperimentIDs);
 
     /**
      * Retrieve citation list of pub ids
@@ -330,7 +330,7 @@ public interface MutantRepository {
      *
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionSummary(String genotypeID, Set<FishExperiment> fishOx, String geneID);
+    List<ExpressionResult> getExpressionSummary(Set<FishExperiment> fishOx, String geneID);
 
     List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds);
 
