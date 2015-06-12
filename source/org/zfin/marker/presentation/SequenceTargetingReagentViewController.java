@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gbrowse.presentation.GBrowseImage;
@@ -77,46 +78,11 @@ public class SequenceTargetingReagentViewController {
         // set targetGenes
         addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
 
-        // PHENOTYPE
-        List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
-        if (genotypeFigures == null || genotypeFigures.size() == 0)  {
-            sequenceTargetingReagentBean.setPhenotypeDisplays(null);
-        } else {
-            List<PhenotypeStatement> phenoStatements = new ArrayList<>();
-            for (GenotypeFigure genoFig : genotypeFigures) {
-                if (genoFig.getPhenotypeExperiment() != null) {
-                    if (genoFig.getPhenotypeExperiment().getPhenotypeStatements() != null)  {
-                        phenoStatements.addAll(genoFig.getPhenotypeExperiment().getPhenotypeStatements());
-                    }
-                }
-            }
-            sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenoStatements,"fish"));
-        }
-
-        // GENOTYPE (for CRISPR and TALEN only at this time)
+        // Genomic Features created by STR (CRISPR and TALEN only at this time)
         if (sequenceTargetingReagentBean.isTALEN() || sequenceTargetingReagentBean.isCRISPR()) {
-            List<Genotype> genotypes = markerRepository.getTALENorCRISPRcreatedGenotypes(zdbID);
-            sequenceTargetingReagentBean.setGenotypes(genotypes);
-            List<GenotypeInformation> genoData = new ArrayList<>();
-            if (genotypes == null) {
-                sequenceTargetingReagentBean.setGenotypeData(null);
-            } else {
-                for (Genotype geno : genotypes) {
-                    GenotypeInformation genoInfo = new GenotypeInformation(geno);
-                    genoData.add(genoInfo);
-                }
-                Collections.sort(genoData);
-                sequenceTargetingReagentBean.setGenotypeData(genoData);
-            }
+            List<Feature> features = markerRepository.getFeaturesBySTR(sequenceTargetingReagent);
+            sequenceTargetingReagentBean.setGenomicFeatures(features);
         }
-
-        // Expression data
-        List<ExpressionResult> strExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionResults(strExpressionResults);
-        List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionFigureIDs(expressionFigureIDs);
-        List<String> expressionPublicationIDs = RepositoryFactory.getExpressionRepository().getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionPublicationIDs(expressionPublicationIDs);
 
         // get sequence attribution
         if (sequenceTargetingReagent.getSequence() != null) {

@@ -289,7 +289,7 @@
 </c:choose>
 
 <div id="genotype">
-<zfin2:subsection title="Genotypes" test="${!empty formBean.feature.genotypeFeatures}" showNoData="true">
+<zfin2:subsection title="Genotypes" test="${!empty formBean.genotypeDisplays}" showNoData="true">
     <table id="genotypes-table" class="summary rowstripes">
         <tr>
             <th width="25%">
