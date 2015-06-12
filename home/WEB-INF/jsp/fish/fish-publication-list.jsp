@@ -18,9 +18,9 @@
         <a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.name}</a>  
 </div>
 
-<form:form commandName="formBean" name="Update Antibody Publication List" id="Update Antibody Publication List">
+<form:form commandName="formBean" name="Update Fish Publication List" id="Update Fish Publication List">
 
-    <c:if test="${formBean.numOfPublishedPublications > 1 || formBean.numOfUnpublishedPublications > 1}">
+    <c:if test="${formBean.numOfPublishedPublications > 1}">
         <c:choose>
             <c:when test="${formBean.orderBy == 'author'}">
                 <input type=button name=resultOrder
@@ -65,11 +65,6 @@
                        varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
                     <td align=left>
-                        <c:if test="${formBean.update && unpublishedPublication.deletable}">
-                            <font size=-1><input type=button value=delete
-                                                 onclick="disassociatePublication('disassociate-publication?antibodyID=${formBean.antibody.zdbID}&disassociatedPubId=${unpublishedPublication.zdbID}<c:if test="${formBean.orderBy == 'author'}">&orderBy=author</c:if><c:if test="${formBean.orderBy == 'date'}">&orderBy=date</c:if>&update=true')"></font>
-                        </c:if>
-
                         <div class="show_pubs">
                             <a href="/${unpublishedPublication.zdbID}">${unpublishedPublication.authors}
                                 &nbsp;(${unpublishedPublication.year})&nbsp;${unpublishedPublication.title}

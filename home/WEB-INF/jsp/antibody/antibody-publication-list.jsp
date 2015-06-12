@@ -35,11 +35,13 @@
         </form>
     </c:when>
     <c:otherwise>
-        <table class="data_manager">
+        <table class="summary rowstripes">
             <tbody>
             <tr>
                 <td>
-                    <strong>ZFIN ID:</strong>&nbsp;${formBean.antibody.zdbID}                      
+                    <font size="-1"><b>ZFIN ID:</b>
+                        ${formBean.antibody.zdbID}
+                    </font>
                 </td>
                 <authz:authorize ifAnyGranted="root">
                     <td>
@@ -55,7 +57,7 @@
                     </td>
                     <td>
                         <a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-update-vframeset.apg&OID=${formBean.antibody.zdbID}&rtype=antibody">
-                            <strong>Updated:</strong>
+                            <font size=-1><b>Updated:</b>
                                 <c:choose>
                                     <c:when test="${zfn:getLastUpdate(zdbID) != null}">
                                         <fmt:formatDate value="${zfn:getLastUpdate(zdbID).dateUpdated}"
@@ -65,6 +67,7 @@
                                         Never modified
                                     </c:otherwise>
                                 </c:choose>
+                            </font>
                         </a>
                     </td>
                 </authz:authorize>
@@ -76,14 +79,20 @@
 <table width=100%>
     <tr>
         <td bgcolor=#cccccc>
-            <span class="citation-heading">CITATIONS</span>&nbsp;(${formBean.numOfPublications} total)
+            <font size=+2><b>CITATIONS</b></font>
+
+            (${formBean.numOfPublications} total)
+
         </td>
     </tr>
 </table>
 
-<div class="name-label">
-    Antibody Name:&nbsp;<a href="/action/marker/view/${formBean.antibody.zdbID}">${formBean.antibody.name}</a>
-</div>
+<font size=+1>
+    <b>
+        Antibody Name:&nbsp;<a href="/action/marker/view/${formBean.antibody.zdbID}">${formBean.antibody.name}</a>
+        <br/>
+    </b>
+</font>
 
 <form:form commandName="formBean" name="Update Antibody Publication List" id="Update Antibody Publication List">
 
@@ -102,7 +111,7 @@
     </c:choose>
     &nbsp;&nbsp;&nbsp;
     </c:if>
-
+    <authz:authorize ifAnyGranted="root">
         <span id="enter-pub-id" style="display: none;">
                 <strong title="Global Reference used on this page" id="Def-Pub-field">Enter Pub ID:</strong><form:input
                 path="<%= AntibodyBean.AB_NEWPUB_ZDB_ID%>" size="20"></form:input>
@@ -116,6 +125,7 @@
                                        jQuery('#show-enter-pub-id').hide();" type="button">
          </c:if>
         </span>
+    </authz:authorize>
     <form:errors path="*" cssClass="error indented-error"/>
 
     <table class="summary rowstripes">
@@ -123,10 +133,12 @@
         <c:forEach var="publishedPublication" items="${formBean.sortedPublishedPublications}" varStatus="loop">
             <zfin:alternating-tr loopName="loop">
                 <td>
+                    <authz:authorize ifAnyGranted="root">
                     <c:if test="${formBean.update && publishedPublication.deletable}">
                         <font size=-1><input type=button value=delete
                                              onclick="disassociatePublication('antibody-citation-disassociate-publication?antibodyID=${formBean.antibody.zdbID}&disassociatedPubId=${publishedPublication.zdbID}<c:if test="${formBean.orderBy == 'author'}">&orderBy=author</c:if><c:if test="${formBean.orderBy == 'date'}">&orderBy=date</c:if>&update=true')"></font>
                     </c:if>
+                    </authz:authorize>
 
                     <div class="show_pubs">
                         <a href="/${publishedPublication.zdbID}">${publishedPublication.authors}

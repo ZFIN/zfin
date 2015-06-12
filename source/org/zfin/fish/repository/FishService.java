@@ -248,7 +248,7 @@ public class FishService {
 
 
 
-        List<ExpressionResult> results = getMutantRepository().getExpressionSummary(genotypeID, fishOx, geneID);
+        List<ExpressionResult> results = getMutantRepository().getExpressionSummary(fishOx, geneID);
         if (CollectionUtils.isEmpty(results))
             return null;
 

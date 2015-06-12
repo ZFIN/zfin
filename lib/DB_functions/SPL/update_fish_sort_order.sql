@@ -40,7 +40,7 @@ create function update_fish_sort_order (fishZdbId varchar(50))
 	   end foreach
 
   if (complexitySortValue is null)
-  then let complexitySortValue = '999999999';
+     then let complexitySortValue = '999999999';
   end if
 
   return complexitySortValue;
