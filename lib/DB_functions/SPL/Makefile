@@ -37,6 +37,7 @@ DBLINK_STATS = get_dblink_acc_num_display.sql p_dblink_has_parent.sql \
 FISH_STATS   = get_image_stats.sql \
 	       p_update_related_names.sql \
 	       p_update_related_genotype_names.sql \
+	       p_update_related_fish_names.sql \
 	       p_update_fmrel_genotype_names.sql \
                fhist_event.sql \
 	       p_update_unspecified_alleles.sql \
