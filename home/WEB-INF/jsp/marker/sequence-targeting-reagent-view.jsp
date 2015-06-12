@@ -105,6 +105,45 @@
     </div>
 </c:if>
 
+<%--// FISH UTILIZING STR --%>
+<div id="fish" class="summary">
+    <zfin2:subsection title="FISH UTILIZING ${formBean.marker.name}" test="${!empty formBean.fishList}" showNoData="true">
+        <table id="fish-table" class="summary rowstripes">
+            <tr>
+                <th width="25%">
+                    Fish
+                </th>
+                <th width="25%">
+                    Affected Genes
+                </th>
+                <th width="25%">
+                    &nbsp;
+                </th>
+                <th width="25%">
+                    &nbsp;
+                </th>
+            </tr>
+
+            <c:forEach var="fish" items="${formBean.fishList}" varStatus="loop">
+                <tr class=${loop.index%2==0 ? "even" : "odd"}>
+                    <td>
+                        <zfin:link entity="${fish}"/>
+                    </td>
+                    <td>
+                        <zfin:link entity="${fish.affectedGenes}"/>
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+    </zfin2:subsection>
+</div>
+
 <%--OTHER GENE/Marker Pages--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
 

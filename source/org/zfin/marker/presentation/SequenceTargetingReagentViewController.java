@@ -21,7 +21,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.GenotypeInformation;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -30,10 +30,7 @@ import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.Database;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  */
@@ -45,6 +42,9 @@ public class SequenceTargetingReagentViewController {
 
     @Autowired
     private MarkerRepository markerRepository;
+
+    @Autowired
+    private MutantRepository mutantRepository;
 
     @Autowired
     private LinkageRepository linkageRepository;
@@ -83,6 +83,12 @@ public class SequenceTargetingReagentViewController {
             List<Feature> features = markerRepository.getFeaturesBySTR(sequenceTargetingReagent);
             sequenceTargetingReagentBean.setGenomicFeatures(features);
         }
+
+        // Fish utilizing the STR
+        List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
+        SortedSet<Fish> sortedFishSet = new TreeSet<>();
+        sortedFishSet.addAll(fishList);
+        sequenceTargetingReagentBean.setFishList(sortedFishSet);
 
         // get sequence attribution
         if (sequenceTargetingReagent.getSequence() != null) {

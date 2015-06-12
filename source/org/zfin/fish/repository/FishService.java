@@ -16,6 +16,7 @@ import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinFigureEntity;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.Publication;
@@ -283,6 +284,19 @@ public class FishService {
         Set<Publication> publicationSet = new HashSet<>(pubs.size());
         publicationSet.addAll(pubs);
         return publicationSet;
+    }
+
+    public static List<Marker> getAffectedGenes(Fish fish) {
+        List<SequenceTargetingReagent> strList = fish.getStrList();
+        if (CollectionUtils.isEmpty(strList))
+            return null;
+        List<Marker> geneList = new ArrayList<>(strList.size());
+        Set<Marker> affectedMarkerOnGenotype = GenotypeService.getAffectedMarker(fish.getGenotype());
+        if (affectedMarkerOnGenotype != null)
+            geneList.addAll(affectedMarkerOnGenotype);
+        for (SequenceTargetingReagent str : strList)
+            geneList.addAll(str.getTargetGenes());
+        return geneList;
     }
 
 }
