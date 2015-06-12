@@ -12,16 +12,17 @@ import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
+import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -58,7 +59,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         List<Genotype> genotypeList = getMutantRepository().getGenotypesByFeatureAndBackground(feature, background, publication);
         List<GenotypeDTO> genotypeDTOList = new ArrayList<>(genotypeList.size());
         for (Genotype genotype : genotypeList)
-            genotypeDTOList.add(DTOConversionService.convertToGenotypeDTO(genotype));
+            genotypeDTOList.add(DTOConversionService.convertToPureGenotypeDTOs(genotype));
         return genotypeDTOList;
     }
 
@@ -139,6 +140,69 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
             String noteID = extNote.getZdbID();
             getInfrastructureRepository().deleteActiveDataByZdbID(noteID);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return getGenotypeList(publicationID);
+    }
+
+    @Override
+    public CuratorNoteDTO saveCuratorNote(String publicationID, CuratorNoteDTO curatorNoteDTO) throws TermNotFoundException {
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            String noteID = curatorNoteDTO.getZdbID();
+            DataNote note = getInfrastructureRepository().getDataNoteByID(noteID);
+            if (note == null)
+                throw new TermNotFoundException("No note with ID: " + noteID + " found");
+            note.setNote(curatorNoteDTO.getNoteData());
+            HibernateUtil.currentSession().saveOrUpdate(note);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return curatorNoteDTO;
+    }
+
+    @Override
+    public List<GenotypeDTO> deleteCuratorNote(String publicationID, CuratorNoteDTO note) throws TermNotFoundException {
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            String noteID = note.getZdbID();
+            getInfrastructureRepository().deleteActiveDataByZdbID(noteID);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return getGenotypeList(publicationID);
+    }
+
+    @Override
+    public List<GenotypeDTO> createCuratorNote(String publicationID, GenotypeDTO genotypeDTO, String text) throws TermNotFoundException {
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            String genotypeID = genotypeDTO.getZdbID();
+            Genotype genotype = getMutantRepository().getGenotypeByID(genotypeID);
+            if (genotype == null)
+                throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
+            DataNote note = new DataNote();
+            note.setDataZdbID(genotypeID);
+            note.setNote(text);
+            getInfrastructureRepository().saveDataNote(note, publication);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();

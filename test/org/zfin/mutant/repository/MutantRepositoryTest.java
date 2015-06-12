@@ -471,4 +471,14 @@ public class MutantRepositoryTest {
         assertNotNull(fishList);
         assertTrue(fishList.size() > 20);
     }
+
+    @Test
+    public void getGenotypesByFeatureAndBackground() {
+        String featureID ="ZDB-ALT-040917-2";
+        Feature feature = getFeatureRepository().getFeatureByID(featureID);
+        Publication publication = getPublicationRepository().getPublication("ZDB-PUB-140101-33");
+        Genotype background = getMutantRepository().getGenotypeByID("ZDB-GENO-010924-10");
+        List<Genotype> genotypeList= mutantRepository.getGenotypesByFeatureAndBackground(feature, background, publication);
+        assertNotNull(genotypeList);
+    }
 }
