@@ -156,5 +156,6 @@
         //jQuery('#expression').tableCollapse({label: 'expressed genes'});
         //jQuery('#phenotype').tableCollapse({label: 'phenotypes'});
         jQuery('#genomicFeature').tableCollapse({label: 'features'});
+        jQuery('#fish').tableCollapse({label: 'fish'});
     });
 </script>
