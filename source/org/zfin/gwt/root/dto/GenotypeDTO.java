@@ -19,7 +19,7 @@ public class GenotypeDTO extends RelatedEntityDTO {
         this.dataZdbID = relatedEntityDTO.getDataZdbID();
         this.name = relatedEntityDTO.getName();
         this.link = relatedEntityDTO.getLink();
-        if (relatedEntityDTO.getPublicationZdbID() != null && true == relatedEntityDTO.getPublicationZdbID().startsWith("ZDB-PUB-")) {
+        if (relatedEntityDTO.getPublicationZdbID() != null && relatedEntityDTO.getPublicationZdbID().startsWith("ZDB-PUB-")) {
             this.publicationZdbID = relatedEntityDTO.getPublicationZdbID();
         }
     }
@@ -40,11 +40,11 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("GenotypeDTO");
-        sb.append("{zdbID='").append(zdbID).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append('}');
-        return sb.toString();
+        final StringBuilder builder = new StringBuilder("GenotypeDTO");
+        builder.append("{zdbID='").append(zdbID).append('\'');
+        builder.append(", name='").append(name).append('\'');
+        builder.append('}');
+        return builder.toString();
     }
 
     public String getHandle() {

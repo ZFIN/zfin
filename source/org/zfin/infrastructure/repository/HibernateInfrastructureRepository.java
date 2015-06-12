@@ -1686,6 +1686,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         set.add(attribution);
         note.setPubAttributions(set);
     }
+
+    @Override
+    public void saveDataNote(DataNote note, Publication publication) {
+        note.setDate(new Date());
+        note.setCurator(ProfileService.getCurrentSecurityUser());
+        HibernateUtil.currentSession().save(note);
+    }
 }
 
 
