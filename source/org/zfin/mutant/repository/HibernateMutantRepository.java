@@ -1068,9 +1068,9 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return list of expression statements
      */
     @Override
-    public List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs) {
+    public List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(Set<FishExperiment> genotypeExperimentIDs) {
         String hql = " from ExpressionResult where " +
-                "expressionExperiment.fishExperiment.zdbID in (:genoxIds)";
+                "expressionExperiment.fishExperiment in (:genoxIds)";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("genoxIds", genotypeExperimentIDs);
@@ -1197,19 +1197,19 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public List<ExpressionResult> getExpressionSummary(String genotypeID, Set<FishExperiment> fishOx, String geneID) {
-        if (CollectionUtils.isEmpty(fishOx) || StringUtils.isEmpty(genotypeID))
+    public List<ExpressionResult> getExpressionSummary( Set<FishExperiment> fishOx, String geneID) {
+        if (CollectionUtils.isEmpty(fishOx))
             return null;
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
-                " expressionResult.expressionExperiment.fishExperiment.fish.genotype.zdbID = :genotypeID AND " +
+
                 " expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND ";
         if (geneID == null)
             hql += " expressionResult.expressionExperiment.gene is not null";
         else
             hql += " expressionResult.expressionExperiment.gene = :geneID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("genotypeID", genotypeID);
+
         query.setParameterList("fishOx", fishOx);
         if (geneID != null)
             query.setString("geneID", geneID);
