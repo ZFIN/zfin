@@ -4,4 +4,4 @@ create trigger fishstr_str_update_trigger update of fishstr_str_zdb_id, fishstr_
     for each row
         (
         execute procedure p_update_related_fish_names(new_fstr.fishstr_str_zdb_id) 
-    ));
+    );
