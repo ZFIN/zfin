@@ -67,7 +67,7 @@
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
     <div id="genomicFeature" class="summary">
-        <zfin2:subsection title="Genomic Features created with ${formBean.marker.name}" test="${!empty formBean.genomicFeatures}" showNoData="true">
+        <zfin2:subsection title="GENOMIC FEATURES CREATED WITH ${formBean.marker.name}" test="${!empty formBean.genomicFeatures}" showNoData="true">
             <table id="features-table" class="summary rowstripes">
                 <tr>
                     <th width="25%">
