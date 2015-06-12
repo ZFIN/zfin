@@ -951,7 +951,7 @@ where recattrib_data_zdb_id = mrkr_zdb_id
                datasource="db" query="
 select
 fish_zdb_id as id,
-'/' || fish_zdb_id,
+'/' || fish_zdb_id as url,
 fish_name as name,
 fish_name as full_name,
 fish_name as proper_name,
