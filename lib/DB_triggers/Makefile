@@ -56,6 +56,7 @@ TRIGGERS = \
 	fish_name_update_trigger.sql \
 	fish_str_insert_trigger.sql \
 	fish_str_update_trigger.sql \
+	fish_str_modified_trigger.sql \
 	genotype_insert_trigger.sql \
 	genofeat_insert_trigger.sql \
 	genofeat_update_trigger.sql \
