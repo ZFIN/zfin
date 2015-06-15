@@ -10,6 +10,7 @@ import org.zfin.feature.Feature;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gbrowse.presentation.GBrowseImageSimilarComparator;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.MarkerSupplier;
@@ -32,6 +33,7 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     private String sequenceAttribution;
     private List<Database> databases;
     private List<Feature> genomicFeatures;
+    private SortedSet<Fish> fishList;
     private List<PhenotypeDisplay> phenotypeDisplays;
     private List<ExpressionResult> expressionResults;
     private Set<GBrowseImage> gBrowseImages;
@@ -292,6 +294,14 @@ public class SequenceTargetingReagentBean extends MarkerBean{
             gBrowseImages = new TreeSet<>(new GBrowseImageSimilarComparator());
         }
         gBrowseImages.add(image);
+    }
+
+    public SortedSet<Fish> getFishList() {
+        return fishList;
+    }
+
+    public void setFishList(SortedSet<Fish> fishList) {
+        this.fishList = fishList;
     }
 }
 
