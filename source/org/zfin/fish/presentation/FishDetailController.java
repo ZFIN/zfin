@@ -59,10 +59,12 @@ public class FishDetailController {
 
         model.addAttribute("fish", fish);
 
-        List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
-        model.addAttribute("phenotypeStatements", phenotypeStatements);
-        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
-        addExpressionSummaryToModel(model, fishZdbId);
+        if (!fish.getGenotype().isWildtype()) {
+            List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
+            model.addAttribute("phenotypeStatements", phenotypeStatements);
+            model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
+            addExpressionSummaryToModel(model, fishZdbId);
+        }
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
 
