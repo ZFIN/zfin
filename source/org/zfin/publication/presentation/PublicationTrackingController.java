@@ -303,6 +303,20 @@ public class PublicationTrackingController {
         return CurationDTOConversionService.correspondenceToDTO(correspondence);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE)
+    public String deleteCorrespondence(@PathVariable long id) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+
+        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
+        session.delete(correspondence);
+
+        tx.commit();
+
+        return "";
+    }
+
     private Collection<PublicationNoteDTO> getPubNotes(Publication publication) {
         return CollectionUtils.collect(publication.getNotes(), new Transformer() {
             @Override

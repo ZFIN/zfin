@@ -123,6 +123,14 @@ angular.module('pubTrackingApp', [])
             return post;
         };
 
+        var updateCorrespondence = function (corr, idx) {
+            var post = $http.post('/action/publication/correspondences/' + corr.id, corr);
+            post.success(function (data) {
+                    pubTrack.correspondences[idx] = data;
+                });
+            return post;
+        };
+
         // not private because it gets called from notif_frame.apg
         pubTrack._addNote = function (txt) {
             var post = $http.post('/action/publication/' + pubId + '/notes', { text: txt });
@@ -280,9 +288,18 @@ angular.module('pubTrackingApp', [])
         pubTrack.closeCorrespondence = function (replied, corr, idx) {
             corr.closedDate = Date.now();
             corr.replyReceived = replied;
-            $http.post('/action/publication/correspondences/' + corr.id, corr)
-                .success(function (data) {
-                    pubTrack.correspondences[idx] = data;
+            updateCorrespondence(corr, idx);
+        };
+
+        pubTrack.reopenCorrespondence = function (corr, idx) {
+            corr.closedDate = null;
+            updateCorrespondence(corr, idx);
+        };
+
+        pubTrack.deleteCorrespondence = function (corr, idx) {
+            $http.delete('/action/publication/correspondences/' + corr.id)
+                .success(function () {
+                    pubTrack.correspondences.splice(idx, 1);
                 });
         };
 

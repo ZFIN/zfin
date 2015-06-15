@@ -134,12 +134,20 @@
             <td></td>
           </tr>
           <tr ng-repeat="corr in trackCtrl.correspondences" ng-cloak>
-            <td>{{ corr.openedDate | date:'yyyy-MM-dd' }}</td>
-            <td ng-if="corr.closedDate">
+            <td class="hover-trigger">
+              {{ corr.openedDate | date:'yyyy-MM-dd' }}
+              <a href class="hover-reveal" style="display: none;" ng-click="trackCtrl.deleteCorrespondence(corr, $index)">
+                <i class="fa fa-times-circle"></i>
+              </a>
+            </td>
+            <td ng-if="corr.closedDate" class="hover-trigger">
               <i class="fa fa-fw" ng-class="{'fa-check': corr.replyReceived, 'fa-times': !corr.replyReceived}"></i>
               {{ corr.closedDate | date:'yyyy-MM-dd' }}
+              <a href class="hover-reveal" style="display: none;" ng-click="trackCtrl.reopenCorrespondence(corr, $index)">
+                <i class="fa fa-times-circle"></i>
+              </a>
             </td>
-            <td ng-if="!corr.closedDate">
+            <td ng-if="!corr.closedDate" class="hover-trigger">
               <div class="btn-group">
                 <button class="btn btn-primary" ng-click="trackCtrl.closeCorrespondence(true, corr, $index)">
                   <i class="fa fa-check"></i> Received reply
@@ -231,7 +239,7 @@
 
 <script>
   $(function() {
-    $(".error", this).hide();
+    $("#edit-notification .error").hide();
     $("#edit-notification").submit(function (evt) {
       evt.preventDefault();
       var contactList = $(":checked", this).map(function () { return $(this).val(); }).get().join("|");
@@ -249,5 +257,13 @@
               "&sender_id=${loggedInUser}",
               "editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
     });
+
+    $("#pub-tracking-main")
+            .on("mouseenter", ".hover-trigger", function () {
+              $(".hover-reveal", this).show();
+            })
+            .on("mouseleave", ".hover-trigger", function () {
+              $(".hover-reveal", this).hide();
+            });
   });
 </script>
