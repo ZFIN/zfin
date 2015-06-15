@@ -4,15 +4,6 @@
 
 angular.module('pubTrackingApp', [])
 
-    .config(['$locationProvider', function ($locationProvider) {
-        $locationProvider.html5Mode(true);
-    }])
-
-    .factory('pubId', ['$location', function ($location) {
-        var match = $location.path().match('action/publication/([^/]+)/track');
-        return match ? match[1] : '';
-    }])
-
     .filter('timeago', function () {
         // from https://gist.github.com/rodyhaddad/5896883
 
@@ -72,9 +63,10 @@ angular.module('pubTrackingApp', [])
         }
     })
 
-    .controller('PubTrackingController', ['$http', '$filter', 'pubId', function ($http, $filter, pubId) {
+    .controller('PubTrackingController', ['$http', '$filter', '$attrs', function ($http, $filter, $attrs) {
         var pubTrack = this,
-            previousNote = '';
+            previousNote = '',
+            pubId = $attrs.zdbId;
         pubTrack.topics = [];
         pubTrack.status = null;
         pubTrack.notes = [];

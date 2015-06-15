@@ -59,8 +59,7 @@ public class PublicationTrackingController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Track Pub: " + publication.getTitle());
         model.addAttribute("publication", publication);
-        model.addAttribute("hasFile", StringUtils.isNotEmpty(publication.getFileName()));
-        model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser().getZdbID());
+        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
         return "publication/track-publication.page";
     }
 

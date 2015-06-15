@@ -835,3 +835,11 @@ label.curation-form-label { font-weight: bold; }
 .keep-breaks {
     white-space: pre-wrap;
 }
+
+.inline-upload {
+    display: inline-block;
+}
+
+a + .inline-upload {
+    margin-left: 20px;
+}

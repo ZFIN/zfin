@@ -9,85 +9,67 @@
 <script src="/javascript/angular/angular-route.min.js"></script>
 <script src="/javascript/pub-tracking.js"></script>
 
-<base href="/">
+<c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
+
+<c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
+
+<c:if test="${allowCuration}">
+  <c:set var="curateURL">/cgi-bin/webdriver?MIval=aa-curation.apg&OID=${publication.zdbID}</c:set>
+</c:if>
 
 <div class="container-fluid" ng-app="pubTrackingApp">
-  <div class="page-header">
-    <h1>
-      Track ${publication.zdbID}<br>
-      <small>${publication.title}</small>
-    </h1>
-  </div>
+  <zfin2:dataManager zdbID="${publication.zdbID}"
+                     editURL="${editURL}"
+                     linkURL="${linkURL}"
+                     curateURL="${curateURL}"
+                     rtype="publication"/>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">File</h3>
-    </div>
-    <div class="panel-body">
-      <c:if test="${hasFile}">
-        <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a>
-      </c:if>
-      <form action="/cgi-bin/upload.cgi" method="post" class="form-inline" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="pdfUploadFileInput">
-            ${hasFile ? "Replace File" : "Upload File"}
-          </label>
-          <input type="file" accept="application/pdf" name="upload" id="pdfUploadFileInput">
+  <%--<h2>Track ${publication.zdbID}</h2>--%>
+  <p class="lead">
+    <a href="/${publication.zdbID}">${publication.title}</a>
+    <c:if test="${!empty publication.fileName}"> <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}" target="_blank"><i class="fa fa-file-pdf-o"></i></a></c:if>
+  </p>
+
+  <div id="pub-tracking-main" ng-controller="PubTrackingController as trackCtrl" data-zdb-id="${publication.zdbID}">
+    <div ng-cloak ng-show="trackCtrl.status">
+      <div class="row bottom-buffer">
+        <div class="col-xs-4 col-xs-offset-1" >
+          <div ng-if="trackCtrl.status.indexed">
+            <h4>Indexed on {{trackCtrl.status.indexedDate | date:'yyyy-MM-dd'}}</h4>
+            <button class="btn btn-default btn-block" ng-click="trackCtrl.unindexPub()">Un-index</button>
+          </div>
+          <div ng-if="!trackCtrl.status.indexed">
+            <h4>Not indexed yet</h4>
+            <button class="btn btn-primary btn-block" ng-click="trackCtrl.indexPub()">Index</button>
+          </div>
         </div>
-        <input type="hidden" name="redirect_url" value="/action/publication/${publication.zdbID}/track">
-        <input type="hidden" name="OID" value="${publication.zdbID}">
-        <button type="submit" class="btn btn-default">Upload</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="pub-tracking-main" ng-controller="PubTrackingController as trackCtrl">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Status</h3>
+        <div class="col-xs-4 col-xs-offset-2">
+          <div ng-if="!trackCtrl.status.closedDate && !trackCtrl.hasTopics()">
+            <h4>Not closed yet</h4>
+            <button class="btn btn-primary btn-block" ng-click="trackCtrl.validateForClose()">Close with no data found</button>
+          </div>
+          <div ng-if="!trackCtrl.status.closedDate && trackCtrl.hasTopics()">
+            <h4>Not closed yet</h4>
+            <button class="btn btn-primary btn-block" ng-click="trackCtrl.validateForClose()">Close</button>
+          </div>
+          <div ng-if="trackCtrl.status.closedDate">
+            <h4>Closed on {{trackCtrl.status.closedDate | date:"yyyy-MM-dd"}}</h4>
+            <button class="btn btn-default btn-block" ng-click="trackCtrl.reopenPub()">Reopen</button>
+          </div>
+        </div>
       </div>
-      <div class="panel-body" ng-cloak ng-show="trackCtrl.status">
-        <div class="row bottom-buffer">
-          <div class="col-xs-4" >
-            <div ng-if="trackCtrl.status.indexed">
-              <strong>Indexed on {{trackCtrl.status.indexedDate | date:'yyyy-MM-dd'}}</strong>
-              <button class="btn btn-default btn-block" ng-click="trackCtrl.unindexPub()">Un-index</button>
-            </div>
-            <div ng-if="!trackCtrl.status.indexed">
-              <strong>Not indexed yet</strong>
-              <button class="btn btn-primary btn-block" ng-click="trackCtrl.indexPub()">Index</button>
-            </div>
-          </div>
-        </div>
-        <div class="row bottom-buffer">
-          <div class="col-xs-4">
-            <div ng-if="!trackCtrl.status.closedDate && !trackCtrl.hasTopics()">
-              <strong>Not closed yet</strong>
-              <button class="btn btn-primary btn-block" ng-click="trackCtrl.validateForClose()">Close with no data found</button>
-            </div>
-            <div ng-if="!trackCtrl.status.closedDate && trackCtrl.hasTopics()">
-              <strong>Not closed yet</strong>
-              <button class="btn btn-primary btn-block" ng-click="trackCtrl.validateForClose()">Close</button>
-            </div>
-            <div ng-if="trackCtrl.status.closedDate">
-              <strong>Closed on {{trackCtrl.status.closedDate | date:"yyyy-MM-dd"}}</strong>
-              <button class="btn btn-default btn-block" ng-click="trackCtrl.reopenPub()">Reopen</button>
-            </div>
-          </div>
-        </div>
-        <div class="alert alert-warning" role="alert" ng-show="trackCtrl.warnings.length > 0">
-          <h4>Heads up!</h4>
-          <p class="bottom-buffer-sm">You might not want to close this publication yet. Are you sure you want to close it?</p>
-          <ul class="bottom-buffer">
-            <li ng-repeat="warning in trackCtrl.warnings">
-              {{warning}}
-            </li>
-          </ul>
-          <p>
-            <button class="btn btn-warning" ng-click="trackCtrl.closePub()">Yes, close it</button>
-            <button class="btn btn-default" ng-click="trackCtrl.hideWarnings()">Cancel</button>
-          </p>
-        </div>
+      <div class="alert alert-warning" role="alert" ng-show="trackCtrl.warnings.length > 0">
+        <h4>Heads up!</h4>
+        <p class="bottom-buffer-sm">You might not want to close this publication yet. Are you sure you want to close it?</p>
+        <ul class="bottom-buffer">
+          <li ng-repeat="warning in trackCtrl.warnings">
+            {{warning}}
+          </li>
+        </ul>
+        <p>
+          <button class="btn btn-warning" ng-click="trackCtrl.closePub()">Yes, close it</button>
+          <button class="btn btn-default" ng-click="trackCtrl.hideWarnings()">Cancel</button>
+        </p>
       </div>
     </div>
 
@@ -114,11 +96,11 @@
             </td>
             <td>{{(!trackCtrl.isNewTopic(topic)) ? topic.curator.name : ""}}</td>
             <td>
-              <button class="btn btn-default" ng-show="trackCtrl.isNewTopic(topic)" ng-click="trackCtrl.openTopic(topic, $index)">Open</button>
+              <button class="btn btn-default btn-dense" ng-show="trackCtrl.isNewTopic(topic)" ng-click="trackCtrl.openTopic(topic, $index)">Open</button>
               <!-- Split button -->
               <div class="btn-group" ng-show="trackCtrl.isOpenTopic(topic)">
-                <button type="button" class="btn btn-default" ng-click="trackCtrl.closeTopic(topic, $index)">Close</button>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <button type="button" class="btn btn-default btn-dense" ng-click="trackCtrl.closeTopic(topic, $index)">Close</button>
+                <button type="button" class="btn btn-default dropdown-toggle btn-dense" data-toggle="dropdown">
                   <span class="caret"></span>
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
@@ -126,7 +108,7 @@
                   <li><a href ng-click="trackCtrl.unopenTopic(topic, $index)">Back to New</a></li>
                 </ul>
               </div>
-              <button class="btn btn-default" ng-show="trackCtrl.isClosedTopic(topic)" ng-click="trackCtrl.openTopic(topic, $index)">Re-open</button>
+              <button class="btn btn-default btn-dense" ng-show="trackCtrl.isClosedTopic(topic)" ng-click="trackCtrl.openTopic(topic, $index)">Re-open</button>
             </td>
           </tr>
         </tbody>
