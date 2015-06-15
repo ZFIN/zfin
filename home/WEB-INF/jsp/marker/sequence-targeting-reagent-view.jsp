@@ -64,44 +64,85 @@
     });
 </script>
 
-<%--// EXPRESSION --%>
-<div class="summary" id="expression">
-    <b>GENE EXPRESSION</b>
-    <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
-    <br/>
-    <b>Gene expression in Wild Types + ${formBean.marker.name}</b>
-    <c:choose>
-        <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
-            <zfin2:expressionData sequenceTargetingReagentID="${sequenceTargetingReagent.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showCondition="false" />
-        </c:when>
-        <c:otherwise>
-            <span class="no-data-tag">No data available</span>
-        </c:otherwise>
-    </c:choose>
-</div>
-
-<%--// PHENOTYPE --%>
-<div class="summary" id="phenotype">
-    <b>PHENOTYPE</b>&nbsp;
-    <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
-    <br/>
-    <b>Phenotype resulting from ${formBean.marker.name}</b>
-    <c:choose>
-        <c:when test="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
-            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" suppressMoDetails="true" secondColumn="fish"/>
-        </c:when>
-        <c:otherwise>
-            <span class="no-data-tag">No data available</span>
-        </c:otherwise>
-    </c:choose>
-</div>
-
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
-    <div id="genotype" class="summary">
-       <zfin2:genotype-information genotypes="${formBean.genotypeData}" sequenceTargetReagen="${formBean.marker.name}" />
+    <div id="genomicFeature" class="summary">
+        <zfin2:subsection title="GENOMIC FEATURES CREATED WITH ${formBean.marker.name}" test="${!empty formBean.genomicFeatures}" showNoData="true">
+            <table id="features-table" class="summary rowstripes">
+                <tr>
+                    <th width="25%">
+                        Genomic Feature
+                    </th>
+                    <th width="25%">
+                        Affected Genes
+                    </th>
+                    <th width="25%">
+                        &nbsp;
+                    </th>
+                    <th width="25%">
+                        &nbsp;
+                    </th>
+                </tr>
+
+                <c:forEach var="feature" items="${formBean.genomicFeatures}" varStatus="loop">
+                    <tr class=${loop.index%2==0 ? "even" : "odd"}>
+                        <td>
+                            <zfin:link entity="${feature}"/>
+                        </td>
+                        <td>
+                            <zfin:link entity="${feature.affectedGenes}"/>
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                        <td>
+                            &nbsp;
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </zfin2:subsection>
     </div>
 </c:if>
+
+<%--// FISH UTILIZING STR --%>
+<div id="fish" class="summary">
+    <zfin2:subsection title="FISH UTILIZING ${formBean.marker.name}" test="${!empty formBean.fishList}" showNoData="true">
+        <table id="fish-table" class="summary rowstripes">
+            <tr>
+                <th width="25%">
+                    Fish
+                </th>
+                <th width="25%">
+                    Affected Genes
+                </th>
+                <th width="25%">
+                    &nbsp;
+                </th>
+                <th width="25%">
+                    &nbsp;
+                </th>
+            </tr>
+
+            <c:forEach var="fish" items="${formBean.fishList}" varStatus="loop">
+                <tr class=${loop.index%2==0 ? "even" : "odd"}>
+                    <td>
+                        <zfin:link entity="${fish}"/>
+                    </td>
+                    <td>
+                        <zfin:link entity="${fish.affectedGenes}"/>
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+    </zfin2:subsection>
+</div>
 
 <%--OTHER GENE/Marker Pages--%>
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
@@ -112,8 +153,9 @@
 <script src="/javascript/table-collapse.js"></script>
 <script>
     jQuery(function () {
-        jQuery('#expression').tableCollapse({label: 'expressed genes'});
-        jQuery('#phenotype').tableCollapse({label: 'phenotypes'});
-        jQuery('#genotype').tableCollapse({label: 'genotypes'});
+        //jQuery('#expression').tableCollapse({label: 'expressed genes'});
+        //jQuery('#phenotype').tableCollapse({label: 'phenotypes'});
+        jQuery('#genomicFeature').tableCollapse({label: 'features'});
+        jQuery('#fish').tableCollapse({label: 'fish'});
     });
 </script>

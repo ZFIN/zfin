@@ -172,10 +172,6 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
             public void onChange(ChangeEvent event) {
                 final String attributionToRemoveID = removeListBox.getSelectedValue();
                 final String attributionToRemoveLabel = removeListBox.getSelectedText();
-                ConsoleBrowser browser = new ConsoleBrowser();
-                browser.log(attributionToRemoveLabel);
-                browser.log(attributionToRemoveID);
-                Window.alert(attributionToRemoveLabel);
 
                 if (RemoveHeader.isHeader(attributionToRemoveID)) {
                     return;

@@ -1,6 +1,7 @@
 package org.zfin.mutant.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.fish.repository.FishService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.GenotypeService;
@@ -44,16 +45,7 @@ public class GenotypeFishResult {
     }
 
     public List<Marker> getAffectedMarker() {
-        List<SequenceTargetingReagent> strList = fish.getStrList();
-        if (CollectionUtils.isEmpty(strList))
-            return null;
-        List<Marker> geneList = new ArrayList<>(strList.size());
-        Set<Marker> affectedMarkerOnGenotype = GenotypeService.getAffectedMarker(fish.getGenotype());
-        if (affectedMarkerOnGenotype != null)
-            geneList.addAll(affectedMarkerOnGenotype);
-        for (SequenceTargetingReagent str : strList)
-            geneList.addAll(str.getTargetGenes());
-        return geneList;
+        return FishService.getAffectedGenes(fish);
     }
 
 

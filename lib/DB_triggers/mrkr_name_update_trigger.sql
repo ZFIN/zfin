@@ -11,6 +11,6 @@ create trigger mrkr_name_update_trigger update of
     ,newm.mrkr_abbrev ,newm.mrkr_type ),
         execute function zero_pad(newm.mrkr_name ) 
     into marker.mrkr_name_order,
-    execute procedure p_update_fish_name(newm.mrkr_zdb_id),
+    execute procedure p_update_related_fish_names(newm.mrkr_zdb_id),
         execute procedure mhist_event(newm.mrkr_zdb_id 
     ,'renamed' ,newm.mrkr_name ,oldm.mrkr_name ));

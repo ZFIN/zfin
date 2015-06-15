@@ -37,7 +37,7 @@
 
 </head>
 <script type="text/javascript" language="javascript"
-        src="/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+        src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 <h1> Fish Tab</h1>
 
 <div id="show-hide-all-sections"></div>

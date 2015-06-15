@@ -14,6 +14,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
@@ -379,12 +380,12 @@ public interface MarkerRepository {
     List<Genotype> getMutantsAndTgsByGene(String geneID);
 
     /**
-     * Retrieve list of genotypes being created with a TALEN or CRISPR
+     * Retrieve list of Feature objects with the features created with a TALEN or CRISPR
      *
-     * @param streagentId TALEN or CRISPR ID
-     * @return list of genotypes
+     * @param sequenceTargetingReagent (TALEN or CRISPR)
+     * @return list of Feature
      */
-    List<Genotype> getTALENorCRISPRcreatedGenotypes(String streagentId);
+    List<Feature> getFeaturesBySTR(SequenceTargetingReagent sequenceTargetingReagent);
 
     SequenceTargetingReagent getSequenceTargetingReagent(String markerID);
 

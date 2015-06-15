@@ -96,7 +96,8 @@ public class OrthoEvidence implements Serializable {
         SL,
         SS,
         SU,
-        XH;
+        XH,
+        PT;
 
         public String toString() {
             return name();

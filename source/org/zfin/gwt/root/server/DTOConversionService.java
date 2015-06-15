@@ -386,7 +386,7 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
         if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
-            createNotesOnGenotype(genotype, genotypeDTO);
+            createExternalNotesOnGenotype(genotype, genotypeDTO);
         }
 
         List<PublicationDTO> associatedPublications = new ArrayList<>();
@@ -412,7 +412,10 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
         if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
-            createNotesOnGenotype(genotype, genotypeDTO);
+            createExternalNotesOnGenotype(genotype, genotypeDTO);
+        }
+        if (CollectionUtils.isNotEmpty(genotype.getDataNotes())) {
+            createCuratorNotesOnGenotype(genotype, genotypeDTO);
         }
         // add features
         if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
@@ -425,7 +428,26 @@ public class DTOConversionService {
         return genotypeDTO;
     }
 
-    private static void createNotesOnGenotype(Genotype genotype, GenotypeDTO genotypeDTO) {
+    public static GenotypeDTO convertToPureGenotypeDTOs(Genotype genotype) {
+        GenotypeDTO genotypeDTO = new GenotypeDTO();
+        genotypeDTO.setName(genotype.getName());
+        genotypeDTO.setZdbID(genotype.getZdbID());
+        genotypeDTO.setHandle(genotype.getHandle());
+        return genotypeDTO;
+    }
+
+    private static void createCuratorNotesOnGenotype(Genotype genotype, GenotypeDTO genotypeDTO) {
+        List<CuratorNoteDTO> CuratorNoteDTOList = new ArrayList<>(genotype.getDataNotes().size());
+        for (DataNote note : genotype.getDataNotes()) {
+            CuratorNoteDTO noteDTO = new CuratorNoteDTO();
+            noteDTO.setZdbID(note.getZdbID());
+            noteDTO.setNoteData(note.getNote());
+            CuratorNoteDTOList.add(noteDTO);
+        }
+        genotypeDTO.setPrivateNotes(CuratorNoteDTOList);
+    }
+
+    private static void createExternalNotesOnGenotype(Genotype genotype, GenotypeDTO genotypeDTO) {
         List<ExternalNoteDTO> externalNoteDTOList = new ArrayList<>(genotype.getExternalNotes().size());
         for (GenotypeExternalNote note : genotype.getExternalNotes()) {
             ExternalNoteDTO noteDTO = new ExternalNoteDTO();

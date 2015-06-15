@@ -17,7 +17,7 @@
                 <g:HorizontalPanel>
                 <g:Label text="ASSOCIATE EXISTING GENOTYPE:" styleName="bold" horizontalAlignment="left"/>
                     <g:InlineHTML text="&nbsp;"/>
-                    <g:Anchor text="Show" ui:field="showHideExistingGeno"/>
+                    <g:Hyperlink text="Show" ui:field="showHideExistingGeno"/>
                 </g:HorizontalPanel>
                 <zfin:ZfinFlexTable ui:field="genotypeSearchResultTable" numberOfColumns="3" styleName="searchresults groupstripes"
                                     cellSpacing="5" cellPadding="5" />
@@ -30,7 +30,7 @@
             <g:HorizontalPanel>
                 <g:Label text="FISH CONSTRUCTION:" styleName="bold"/>
                 <g:InlineHTML text="&nbsp;"/>
-                <g:Anchor text="Show" ui:field="showHideFishConstruction"/>
+                <g:Hyperlink text="Show" ui:field="showHideFishConstruction"/>
             </g:HorizontalPanel>
             <zfin:ZfinFlexTable ui:field="constructionTable" numberOfColumns="2" styleName="searchresults"
                                 cellSpacing="5" cellPadding="5" />

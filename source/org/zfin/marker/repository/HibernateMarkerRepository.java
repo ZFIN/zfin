@@ -44,6 +44,7 @@ import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.GenericTerm;
@@ -2422,25 +2423,24 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     /**
-     * Retrieve list of genotypes being created with a TALEN or CRISPR
+     * Retrieve list of Feature objects with the features created with a TALEN or CRISPR
      *
-     * @param streagentId TALEN or CRISPR ID
-     * @return list of genotypes
+     * @param sequenceTargetingReagent (TALEN or CRISPR)
+     * @return list of Feature
      */
-    public List<Genotype> getTALENorCRISPRcreatedGenotypes(String streagentId) {
+    public List<Feature> getFeaturesBySTR(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct mutant from Genotype mutant, GenotypeFeature genoFtr, FeatureMarkerRelationship fmRel " +
-                "      where fmRel.marker.zdbID = :streagentId " +
-                "        and fmRel.feature = genoFtr.feature" +
-                "        and genoFtr.genotype = mutant" +
+        String hql = "select distinct feat from Feature feat, FeatureMarkerRelationship fmRel " +
+                "      where fmRel.marker = :str " +
+                "        and fmRel.feature = feat" +
                 "        and fmRel.type = 'created by'" +
-                "   order by mutant.nameOrder ";
+                "   order by feat.name ";
 
         Query query = session.createQuery(hql);
-        query.setString("streagentId", streagentId);
+        query.setParameter("str", sequenceTargetingReagent);
 
-        return (List<Genotype>) query.list();
+        return (List<Feature>) query.list();
     }
 
     @Override

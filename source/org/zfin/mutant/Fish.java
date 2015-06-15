@@ -1,6 +1,8 @@
 package org.zfin.mutant;
 
+import org.zfin.fish.repository.FishService;
 import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.marker.Marker;
 
 import java.util.List;
 import java.util.Set;
@@ -105,4 +107,8 @@ public class Fish implements EntityZdbID, Comparable {
     }
 
     public String toString() { return name; }
+
+    public List<Marker> getAffectedGenes() {
+        return FishService.getAffectedGenes(this);
+    }
 }

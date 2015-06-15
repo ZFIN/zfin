@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.database.DbSystemUtil;
@@ -1237,7 +1238,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public boolean hasImagesOnExpressionFigures(String genotypeID,Set<FishExperiment> fishOx) {
+    public boolean hasImagesOnExpressionFigures(String genotypeID, Set<FishExperiment> fishOx) {
         if (CollectionUtils.isEmpty(fishOx) || StringUtils.isEmpty(genotypeID))
             return false;
 
@@ -1647,29 +1648,38 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication) {
         Session session = HibernateUtil.currentSession();
-        String hql =
-                "select gf.genotype as g from GenotypeFeature gf ";
-        hql += "WHERE  gf.feature = :feature ";
-/*
-        if (background != null)
-            hql += "AND :background member of g.associatedGenotypes ";
-*/
+        String hql = "from GenotypeFeature as gf WHERE ";
+        boolean hasFirstClause = false;
+        if (feature != null) {
+            hql += " gf.feature = :feature  ";
+            hasFirstClause = true;
+        }
+        if (background != null) {
+            if (hasFirstClause)
+                hql += "AND ";
+            hql += " :background member of gf.genotype.associatedGenotypes ";
+        }
         if (publication != null)
             hql += "AND gf.genotype.zdbID not in (select dataZdbID from RecordAttribution " +
                     "where publication = :publication and sourceType = :standard) ";
         hql += "ORDER BY gf.genotype.nameOrder ";
 
         Query query = session.createQuery(hql);
-        query.setParameter("feature", feature);
-/*
+        if (feature != null)
+            query.setParameter("feature", feature);
         if (background != null)
             query.setParameter("background", background);
-*/
         if (publication != null) {
             query.setParameter("publication", publication);
             query.setParameter("standard", RecordAttribution.SourceType.STANDARD);
         }
-        return (List<Genotype>) query.list();
+        List<GenotypeFeature> genotypeFeatureList = (List<GenotypeFeature>) query.list();
+        if (genotypeFeatureList == null)
+            return null;
+        List<Genotype> genotypeList = new ArrayList<>(genotypeFeatureList.size());
+        for (GenotypeFeature genotypeFeature : genotypeFeatureList)
+            genotypeList.add(genotypeFeature.getGenotype());
+        return genotypeList;
     }
 
     @Override
