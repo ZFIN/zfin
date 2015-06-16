@@ -128,8 +128,9 @@ where mrkr_type in ('GENE','GENEP','EFG')
                              ee.xpatex_gene_zdb_id as gene_zdb_id
                         from expression_result er
                             join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
-                            join genotype_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
-                            join genotype g on g.geno_zdb_id=ge.genox_geno_zdb_id
+                            join fish_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
+                            join fish on fish_zdb_id = ge.genox_fish_zdb_id
+                            join genotype g on g.geno_zdb_id=fish_genotype_zdb_id
                             join term on er.xpatres_superterm_zdb_id=term_zdb_id
                         where ge.genox_is_std_or_generic_control='t'
                             and er.xpatres_expression_found='t'
@@ -142,8 +143,9 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                  ee.xpatex_gene_zdb_id as gene_zdb_id
                             from expression_result er
                                 join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
-                                join genotype_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
-                                join genotype g on g.geno_zdb_id=ge.genox_geno_zdb_id
+                                join fish_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
+                                join fish on fish_zdb_id = ge.genox_fish_zdb_id
+                                join genotype g on g.geno_zdb_id=fish_genotype_zdb_id
                                 join term  on er.xpatres_subterm_zdb_id=term_zdb_id
                             where ge.genox_is_std_or_generic_control='t'
                                 and er.xpatres_expression_found='t'
@@ -161,8 +163,9 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                                                  ee.xpatex_gene_zdb_id as gene_zdb_id
                                                                             from expression_result er
                                                                                 join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
-                                                                                join genotype_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
-                                                                                join genotype g on g.geno_zdb_id=ge.genox_geno_zdb_id
+                                                                                join fish_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
+                                                                                join fish on fish_zdb_id = ge.genox_fish_zdb_id
+                                                                                join genotype g on g.geno_zdb_id=fish_genotype_zdb_id
                                                                                 join all_term_contains on alltermcon_contained_zdb_id = er.xpatres_superterm_zdb_id
                                                                                 join term on alltermcon_container_zdb_id=term_zdb_id
                                                                             where ge.genox_is_standard='t'
@@ -175,8 +178,9 @@ where mrkr_type in ('GENE','GENEP','EFG')
                                                                                  ee.xpatex_gene_zdb_id as gene_zdb_id
                                                                             from expression_result er
                                                                                 join expression_experiment ee on ee.xpatex_zdb_id=er.xpatres_xpatex_zdb_id
-                                                                                join genotype_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
-                                                                                join genotype g on g.geno_zdb_id=ge.genox_geno_zdb_id
+                                                                                join fish_experiment ge on ge.genox_zdb_id = ee.xpatex_genox_zdb_id
+                                                                                join fish on fish_zdb_id = ge.genox_fish_zdb_id
+                                                                                join genotype g on g.geno_zdb_id=fish_genotype_zdb_id
                                                                                 join all_term_contains on alltermcon_contained_zdb_id = er.xpatres_subterm_zdb_id
                                                                                 join term on alltermcon_container_zdb_id=term_zdb_id
                                                                             where ge.genox_is_standard='t'
@@ -1785,7 +1789,7 @@ select
                         'phenox-' || phenox_pk_id as id
                         from phenotype_experiment
                              join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                             join genotype on genox_geno_zdb_id = geno_zdb_id
+                             join genotype on fish_genotype_zdb_id = geno_zdb_id
                              join figure on phenox_fig_zdb_id = fig_zdb_id
                              join publication on publication.zdb_id = fig_source_zdb_id;
               ">
