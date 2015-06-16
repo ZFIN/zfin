@@ -11,41 +11,14 @@
 
 
 <c:if test="${empty title}">
-    <c:set var="title" value="MUTANTS AND TARGETED KNOCKDOWNS"/>
+    <c:set var="title" value="MUTATIONS AND KNOCKDOWN REAGENTS"/>
 </c:if>
 
 <zfin2:subsection title="${title}"
                   test="${!empty mutantsOnMarkerBean and (!empty mutantsOnMarkerBean.features or !empty mutantsOnMarkerBean.knockdownReagents)}"
                   showNoData="true">
 
-    <table class="summary horizontal-solidblock">
 
-        <c:if test="${!empty mutantsOnMarkerBean.genotypeList}">
-            <tr>
-                <td class="data-label"><b>Mutant lines:</b></td>
-                <td>
-                    <c:set var="numberOfGenotypes" value="${mutantsOnMarkerBean.genotypeList.size()}"/>
-                    <c:choose>
-                        <c:when test="${numberOfGenotypes == 1}">
-                            <zfin:link entity="${mutantsOnMarkerBean.genotypeList.get(0)}"/>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="/action/mutant/mutant-list?zdbID=${marker.zdbID}">${numberOfGenotypes}
-                                Genotypes</a>
-                        </c:otherwise>
-                    </c:choose>
-                </td>
-            </tr>
-            </c:if>
-            <c:if test="${!empty mutantsOnMarkerBean.knockdownReagents}">
-                <tr>
-                    <td class="data-label"><b>Knockdown reagents:</b> </td>
-                    <td>
-                        <zfin2:toggledProvidesLinkList collection="${mutantsOnMarkerBean.knockdownReagents}" maxNumber="5"/>
-                    </td>
-                </tr>
-            </c:if>
-    </table>
 
     <c:if test="${!empty mutantsOnMarkerBean.features}">
         <br/>
@@ -86,5 +59,36 @@
             </table>
         </div>
     </c:if>
+
+    <table class="summary horizontal-solidblock">
+
+        <c:if test="${!empty mutantsOnMarkerBean.genotypeList}">
+            <tr>
+                <td class="data-label"><b>Mutant lines:</b></td>
+                <td>
+                    <c:set var="numberOfGenotypes" value="${mutantsOnMarkerBean.genotypeList.size()}"/>
+                    <c:choose>
+                        <c:when test="${numberOfGenotypes == 1}">
+                            <zfin:link entity="${mutantsOnMarkerBean.genotypeList.get(0)}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="/action/mutant/mutant-list?zdbID=${marker.zdbID}">${numberOfGenotypes}
+                                Genotypes</a>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
+        </c:if>
+        <c:if test="${!empty mutantsOnMarkerBean.knockdownReagents}">
+            <tr>
+                <td class="data-label"><b>Knockdown reagents:</b> </td>
+                <td>
+                    <zfin2:toggledProvidesLinkList collection="${mutantsOnMarkerBean.knockdownReagents}" maxNumber="5"/>
+                </td>
+            </tr>
+        </c:if>
+    </table>
+
+
 </zfin2:subsection>
 

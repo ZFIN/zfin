@@ -1,5 +1,6 @@
 package org.zfin.gwt.root.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,6 +9,8 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     private String handle;
     private List<FeatureDTO> featureList;
+    private List<ExternalNoteDTO> publicNotes;
+    private List<CuratorNoteDTO> privateNotes;
 
     public GenotypeDTO() {
     }
@@ -16,7 +19,7 @@ public class GenotypeDTO extends RelatedEntityDTO {
         this.dataZdbID = relatedEntityDTO.getDataZdbID();
         this.name = relatedEntityDTO.getName();
         this.link = relatedEntityDTO.getLink();
-        if (relatedEntityDTO.getPublicationZdbID() != null && true == relatedEntityDTO.getPublicationZdbID().startsWith("ZDB-PUB-")) {
+        if (relatedEntityDTO.getPublicationZdbID() != null && relatedEntityDTO.getPublicationZdbID().startsWith("ZDB-PUB-")) {
             this.publicationZdbID = relatedEntityDTO.getPublicationZdbID();
         }
     }
@@ -37,11 +40,11 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("GenotypeDTO");
-        sb.append("{zdbID='").append(zdbID).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append('}');
-        return sb.toString();
+        final StringBuilder builder = new StringBuilder("GenotypeDTO");
+        builder.append("{zdbID='").append(zdbID).append('\'');
+        builder.append(", name='").append(name).append('\'');
+        builder.append('}');
+        return builder.toString();
     }
 
     public String getHandle() {
@@ -60,4 +63,29 @@ public class GenotypeDTO extends RelatedEntityDTO {
         this.featureList = featureList;
     }
 
+    public List<CuratorNoteDTO> getPrivateNotes() {
+        return privateNotes;
+    }
+
+    public void setPrivateNotes(List<CuratorNoteDTO> privateNotes) {
+        this.privateNotes = privateNotes;
+    }
+
+    public List<ExternalNoteDTO> getPublicNotes() {
+        return publicNotes;
+    }
+
+    public List<ExternalNoteDTO> getPublicNotes(String publicationID) {
+        if (publicNotes == null)
+            return null;
+        List<ExternalNoteDTO> truncatedList = new ArrayList<>();
+        for (ExternalNoteDTO note : publicNotes)
+            if (note.publicationZdbID.equals(publicationID))
+                truncatedList.add(note);
+        return truncatedList;
+    }
+
+    public void setPublicNotes(List<ExternalNoteDTO> publicNotes) {
+        this.publicNotes = publicNotes;
+    }
 }

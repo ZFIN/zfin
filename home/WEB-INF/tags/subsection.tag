@@ -18,6 +18,8 @@
               description="An anchor name to link directly to this section of the page" %>
 <%@ attribute name="additionalCssClass" required="false" rtexprvalue="true" type="java.lang.String"
               description="An additional class to add to the wrapping tag" %>
+<%@ attribute name="titleEntityAppended" required="false" rtexprvalue="true" type="org.zfin.infrastructure.EntityZdbID"
+              description="An additional class to add to the wrapping tag" %>
 
 
 
@@ -55,7 +57,7 @@
                 </span>
             </c:when>
             <c:otherwise>
-                <div class="summaryTitle">${title}
+                <div class="summaryTitle">${title} <c:if test="${not empty titleEntityAppended}"><zfin:name entity="${titleEntityAppended}"/></c:if>
                     <c:if test="${!test and showNoData}">
                         <span class="no-data-tag">${noDataText}</span>
                     </c:if>

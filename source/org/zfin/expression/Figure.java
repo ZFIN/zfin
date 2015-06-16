@@ -145,6 +145,7 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     }
 
     public int compareTo(Figure compFig) {
+        if (orderingLabel == null) { return -1; }
         return orderingLabel.compareTo(compFig.getOrderingLabel());
     }
 

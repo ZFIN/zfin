@@ -1,27 +1,29 @@
 package org.zfin.mutant.presentation;
 
-import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.mutant.*;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class is a statistics class about Fish for given genotype
  */
-public class FishGenotypeStatistics extends EntityStatistics {
+public class FishGenotypePhenotypeStatistics extends EntityStatistics {
 
     private Fish fish;
     private Set<Figure> figures;
-    private String targetGeneOrder;
     private List<FishExperiment> fishExperimentList = new ArrayList<>();
 
-    public FishGenotypeStatistics(Fish fish) {
+    public FishGenotypePhenotypeStatistics(Fish fish) {
         this.fish = fish;
     }
 
@@ -40,9 +42,7 @@ public class FishGenotypeStatistics extends EntityStatistics {
             figures = new HashSet<>(5);
             for (FishExperiment fishExperiment : fishExperimentList)
                 for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
-                    for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
-                        figures.add(phenotype.getFigure());
-                    }
+                    figures.add(phenotype.getFigure());
                 }
         }
         return figures.size();
@@ -97,20 +97,7 @@ public class FishGenotypeStatistics extends EntityStatistics {
     }
 
     public String getTargetGeneOrder() {
-        return targetGeneOrder;
+        return null;
     }
 
-    private class PhenotypeComparator implements Comparator<String> {
-        public int compare(String o1, String o2) {
-            if (o1 == null)
-                return -1;
-            if (o2 == null)
-                return +1;
-            if (!o1.startsWith("[") && o2.startsWith("["))
-                return -1;
-            if (!o2.startsWith("[") && o1.startsWith("["))
-                return +1;
-            return o1.compareTo(o2);
-        }
-    }
 }

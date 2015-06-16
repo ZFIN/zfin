@@ -12,11 +12,13 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.Transcript;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.Sequence;
 
 import java.util.*;
 
@@ -70,6 +72,19 @@ public class MarkerPresentation extends EntityPresentation {
             return getMarkerLink(marker);
         }
 
+    }
+
+    public static String getLink(SequenceTargetingReagent str, boolean suppressPopupLink) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getViewLinkWithID(str.getZdbID(), getName(str), str.getZdbID()));
+        if (!suppressPopupLink) {
+            sb.append(getPopupLink(str));
+        }
+        return sb.toString();
+    }
+
+    public static String getPopupLink(SequenceTargetingReagent str) {
+        return getPopupLink("/action/marker/popup/" + str.getZdbID());
     }
 
     /**

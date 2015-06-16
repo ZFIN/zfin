@@ -14,6 +14,7 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
+import org.zfin.mutant.GenotypeExternalNote;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.Person;
@@ -437,6 +438,10 @@ public interface InfrastructureRepository {
     void deleteActiveEntity(String zdbID);
 
     List<Publication> getTermReferences(GenericTerm term, String orderBy);
+
+    void saveExternalNote(GenotypeExternalNote note, Publication publication);
+
+    void saveDataNote(DataNote note, Publication publication);
 }
 
 

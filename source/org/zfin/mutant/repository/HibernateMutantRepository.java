@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.database.DbSystemUtil;
@@ -79,7 +80,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
                         "AND phenoeq.tag != :tag " +
                         "AND fishox.experiment.name in (:condition) " +
-                        "AND 0 = all elements(fishox.fish.strList)  ";
+                        "AND size(fishox.fish.strList) = 0  ";
 
         if (!wildtype) {
             hql += "AND fishox.fish.genotype.wildtype = 'f' ";
@@ -1068,9 +1069,9 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return list of expression statements
      */
     @Override
-    public List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(List<String> genotypeExperimentIDs) {
+    public List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(Set<FishExperiment> genotypeExperimentIDs) {
         String hql = " from ExpressionResult where " +
-                "expressionExperiment.fishExperiment.zdbID in (:genoxIds)";
+                "expressionExperiment.fishExperiment in (:genoxIds)";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("genoxIds", genotypeExperimentIDs);
@@ -1197,20 +1198,20 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public List<ExpressionResult> getExpressionSummary(String genotypeID, List<String> fishoxIds, String geneID) {
-        if (CollectionUtils.isEmpty(fishoxIds) || StringUtils.isEmpty(genotypeID))
+    public List<ExpressionResult> getExpressionSummary( Set<FishExperiment> fishOx, String geneID) {
+        if (CollectionUtils.isEmpty(fishOx))
             return null;
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
-                " expressionResult.expressionExperiment.fishExperiment.fish.genotype.zdbID = :genotypeID AND " +
-                " expressionResult.expressionExperiment.fishExperiment.zdbID in (:fishoxIds) AND ";
+
+                " expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND ";
         if (geneID == null)
             hql += " expressionResult.expressionExperiment.gene is not null";
         else
             hql += " expressionResult.expressionExperiment.gene = :geneID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("genotypeID", genotypeID);
-        query.setParameterList("fishoxIds", fishoxIds);
+
+        query.setParameterList("fishOx", fishOx);
         if (geneID != null)
             query.setString("geneID", geneID);
         return query.list();
@@ -1237,19 +1238,19 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public boolean hasImagesOnExpressionFigures(String genotypeID, List<String> genoxIds) {
-        if (CollectionUtils.isEmpty(genoxIds) || StringUtils.isEmpty(genotypeID))
+    public boolean hasImagesOnExpressionFigures(String genotypeID, Set<FishExperiment> fishOx) {
+        if (CollectionUtils.isEmpty(fishOx) || StringUtils.isEmpty(genotypeID))
             return false;
 
         String hql = " select count(figure) from Figure figure, ExpressionResult expressionResult where " +
                 " expressionResult.expressionExperiment.fishExperiment.fish.genotype.zdbID = :genotypeID AND " +
-                " expressionResult.expressionExperiment.fishExperiment.zdbID in (:genoxIds) AND " +
+                " expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND " +
                 " expressionResult.expressionExperiment.gene is not null AND " +
                 " figure member of expressionResult.figures AND " +
                 " figure.images is not empty ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotypeID", genotypeID);
-        query.setParameterList("genoxIds", genoxIds);
+        query.setParameterList("fishOx", fishOx);
         long numOfImages = (Long) query.uniqueResult();
         return numOfImages > 0;
     }
@@ -1573,13 +1574,13 @@ public class HibernateMutantRepository implements MutantRepository {
                 "     publication = :publication and " +
                 "     evidenceCode = :evidenceCode ";
         if (diseaseModel.getFishExperiment() != null)
-            hql += "  and fishModel = :fishModel   ";
+            hql += "  and fishExperiment = :fishExperiment   ";
         Query query = session.createQuery(hql);
         query.setParameter("disease", diseaseModel.getDisease());
         query.setParameter("publication", diseaseModel.getPublication());
         query.setString("evidenceCode", diseaseModel.getEvidenceCode());
         if (diseaseModel.getFishExperiment() != null)
-            query.setParameter("fishModel", diseaseModel.getFishExperiment());
+            query.setParameter("fishExperiment", diseaseModel.getFishExperiment());
         return (DiseaseModel) query.uniqueResult();
     }
 
@@ -1647,29 +1648,38 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication) {
         Session session = HibernateUtil.currentSession();
-        String hql =
-                "select gf.genotype as g from GenotypeFeature gf ";
-        hql += "WHERE  gf.feature = :feature ";
-/*
-        if (background != null)
-            hql += "AND :background member of g.associatedGenotypes ";
-*/
+        String hql = "from GenotypeFeature as gf WHERE ";
+        boolean hasFirstClause = false;
+        if (feature != null) {
+            hql += " gf.feature = :feature  ";
+            hasFirstClause = true;
+        }
+        if (background != null) {
+            if (hasFirstClause)
+                hql += "AND ";
+            hql += " :background member of gf.genotype.associatedGenotypes ";
+        }
         if (publication != null)
             hql += "AND gf.genotype.zdbID not in (select dataZdbID from RecordAttribution " +
                     "where publication = :publication and sourceType = :standard) ";
         hql += "ORDER BY gf.genotype.nameOrder ";
 
         Query query = session.createQuery(hql);
-        query.setParameter("feature", feature);
-/*
+        if (feature != null)
+            query.setParameter("feature", feature);
         if (background != null)
             query.setParameter("background", background);
-*/
         if (publication != null) {
             query.setParameter("publication", publication);
             query.setParameter("standard", RecordAttribution.SourceType.STANDARD);
         }
-        return (List<Genotype>) query.list();
+        List<GenotypeFeature> genotypeFeatureList = (List<GenotypeFeature>) query.list();
+        if (genotypeFeatureList == null)
+            return null;
+        List<Genotype> genotypeList = new ArrayList<>(genotypeFeatureList.size());
+        for (GenotypeFeature genotypeFeature : genotypeFeatureList)
+            genotypeList.add(genotypeFeature.getGenotype());
+        return genotypeList;
     }
 
     @Override

@@ -280,8 +280,9 @@ public class ConstructService {
 
     public static boolean hasImagesOnExpressionFigures(String constructID) {
 
-        List<String> genoxIds = getGenoxIds(constructID);
-        return getMutantRepository().hasImagesOnExpressionFigures("", genoxIds);
+        /*List<String> genoxIds = getGenoxIds(constructID);
+        return getMutantRepository().hasImagesOnExpressionFigures("", genoxIds);*/
+        return true;
     }
 
     public static List<String> getGenoxIds(String constructID) {

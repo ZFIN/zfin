@@ -6,11 +6,11 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResultTermComparator;
 import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.ExpressionDisplay;
+import org.zfin.feature.Feature;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gbrowse.presentation.GBrowseImageSimilarComparator;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.presentation.GenotypeInformation;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.MarkerSupplier;
@@ -32,8 +32,8 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     private String ncbiBlastUrl;
     private String sequenceAttribution;
     private List<Database> databases;
-    private List<Genotype> genotypes;
-    private List<GenotypeInformation> genotypeData;
+    private List<Feature> genomicFeatures;
+    private SortedSet<Fish> fishList;
     private List<PhenotypeDisplay> phenotypeDisplays;
     private List<ExpressionResult> expressionResults;
     private Set<GBrowseImage> gBrowseImages;
@@ -113,20 +113,12 @@ public class SequenceTargetingReagentBean extends MarkerBean{
         this.suppliers = suppliers;
     }
 
-    public List<Genotype> getGenotypes() {
-        return genotypes;
+    public List<Feature> getGenomicFeatures() {
+        return genomicFeatures;
     }
 
-    public void setGenotypes(List<Genotype> genotypes) {
-        this.genotypes = genotypes;
-    }
-
-    public List<GenotypeInformation> getGenotypeData() {
-        return genotypeData;
-    }
-
-    public void setGenotypeData(List<GenotypeInformation> genotypeData) {
-        this.genotypeData = genotypeData;
+    public void setGenomicFeatures(List<Feature> genomicFeatures) {
+        this.genomicFeatures = genomicFeatures;
     }
 
     public List<PhenotypeDisplay> getPhenotypeDisplays() {
@@ -302,6 +294,14 @@ public class SequenceTargetingReagentBean extends MarkerBean{
             gBrowseImages = new TreeSet<>(new GBrowseImageSimilarComparator());
         }
         gBrowseImages.add(image);
+    }
+
+    public SortedSet<Fish> getFishList() {
+        return fishList;
+    }
+
+    public void setFishList(SortedSet<Fish> fishList) {
+        this.fishList = fishList;
     }
 }
 

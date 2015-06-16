@@ -20,8 +20,6 @@ include $(TOP)/make.include
 
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/fish_files
 
-GENERICS = phenotype_miniview.apg
-
 STATICS = phenotype_note.apg  \
           genotype_name_match.apg wildtypePhenoAnat.apg  \
 	  allelelist.apg

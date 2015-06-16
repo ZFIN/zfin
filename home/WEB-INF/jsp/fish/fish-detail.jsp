@@ -52,61 +52,62 @@
 
 </p>
 
-<div class="summary">
-    <b>GENE EXPRESSION</b>&nbsp;
-    <small><a class='popup-link info-popup-link' href='/action/marker/note/expression'></a></small>
-    <br/>
-    <b>Gene expression in <zfin:name entity="${fish}"/></b>
-    <c:choose>
-        <c:when test="${geneCentricExpressionDataList != null }">
-            <zfin2:all-expression expressionSummaryDisplay="${geneCentricExpressionDataList}"
-                                  showNumberOfRecords="5" suppressMoDetails="true" queryKeyValuePair="fishID=${fish.fishID}"/>
-            <c:if test="${fn:length(geneCentricExpressionDataList)> 5}">
-                <table width="100%">
-                    <tr align="left">
-                        <td>
-                            Show all <a
-                                href="/action/fish/fish-show-all-expression/${fish.fishID}">${fn:length(geneCentricExpressionDataList)}
-                            expressed genes</a>
-                        </td>
-                    </tr>
-                </table>
-            </c:if>
-        </c:when>
+<c:if test="${!fish.genotype.wildtype}">
+    <div class="summary">
+        <b>GENE EXPRESSION</b>&nbsp;
+        <small><a class='popup-link info-popup-link' href='/action/marker/note/expression'></a></small>
+        <br/>
+        <b>Gene expression in <zfin:name entity="${fish}"/></b>
+        <c:choose>
+            <c:when test="${geneCentricExpressionDataList != null }">
+                <zfin2:all-expression expressionSummaryDisplay="${geneCentricExpressionDataList}"
+                                      showNumberOfRecords="5" suppressMoDetails="true" queryKeyValuePair="fishID=${fish.fishID}"/>
+                <c:if test="${fn:length(geneCentricExpressionDataList)> 5}">
+                    <table width="100%">
+                        <tr align="left">
+                            <td>
+                                Show all <a
+                                    href="/action/fish/fish-show-all-expression/${fish.fishID}">${fn:length(geneCentricExpressionDataList)}
+                                expressed genes</a>
+                            </td>
+                        </tr>
+                    </table>
+                </c:if>
+            </c:when>
 
-        <c:otherwise>
-            <br/>No data available
-        </c:otherwise>
-    </c:choose>
-</div>
+            <c:otherwise>
+                <br/>No data available
+            </c:otherwise>
+        </c:choose>
+    </div>
 
-<div class="summary">
-    <b>PHENOTYPE</b>&nbsp;
-    <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
-    <br/>
-    <b>Phenotype in <zfin:name entity="${fish}"/></b>
-    <c:choose>
-        <c:when test="${fn:length(phenotypeDisplays) > 0 }">
-            <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" showNumberOfRecords="5"
-                                 suppressMoDetails="true" secondColumn="condition"/>
-            <c:if test="${fn:length(phenotypeDisplays) > 5}">
-                <table width="100%">
-                    <tr align="left">
-                        <td>
-                            Show all <a
-                                href="/action/fish/fish-show-all-phenotypes/${fish.fishID}">${fn:length(phenotypeDisplays)}&nbsp;phenotypes</a>
-                        </td>
-                    </tr>
-                </table>
-            </c:if>
-        </c:when>
+    <div class="summary">
+        <b>PHENOTYPE</b>&nbsp;
+        <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
+        <br/>
+        <b>Phenotype in <zfin:name entity="${fish}"/></b>
+        <c:choose>
+            <c:when test="${fn:length(phenotypeDisplays) > 0 }">
+                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" showNumberOfRecords="5"
+                                     suppressMoDetails="true" secondColumn="condition"/>
+                <c:if test="${fn:length(phenotypeDisplays) > 5}">
+                    <table width="100%">
+                        <tr align="left">
+                            <td>
+                                Show all <a
+                                    href="/action/fish/fish-show-all-phenotypes/${fish.fishID}">${fn:length(phenotypeDisplays)}&nbsp;phenotypes</a>
+                            </td>
+                        </tr>
+                    </table>
+                </c:if>
+            </c:when>
 
-        <c:otherwise>
-            <br>No data available</br>
-        </c:otherwise>
-    </c:choose>
-</div>
-
+            <c:otherwise>
+                <br>No data available</br>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</c:if>
 <p>
 <c:choose>
     <c:when test="${totalNumberOfPublications > 0}">

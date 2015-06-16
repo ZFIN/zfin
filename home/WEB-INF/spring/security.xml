@@ -122,6 +122,7 @@
 
         <security:intercept-url pattern="/action/feature/alleleDesig-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/antibody/add" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/antibody/antibody-citation-disassociate-publication" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/devtool/view-global-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/devtool/view-session-info" access="permitAll" />
         <security:intercept-url pattern="/action/devtool/**" access="hasRole('root') or ${DISABLE_SECURITY}" />

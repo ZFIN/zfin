@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.gbrowse.presentation.GBrowseImage;
@@ -20,18 +21,16 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.GenotypeInformation;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.Database;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  */
@@ -43,6 +42,9 @@ public class SequenceTargetingReagentViewController {
 
     @Autowired
     private MarkerRepository markerRepository;
+
+    @Autowired
+    private MutantRepository mutantRepository;
 
     @Autowired
     private LinkageRepository linkageRepository;
@@ -76,46 +78,17 @@ public class SequenceTargetingReagentViewController {
         // set targetGenes
         addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
 
-        // PHENOTYPE
-        List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
-        if (genotypeFigures == null || genotypeFigures.size() == 0)  {
-            sequenceTargetingReagentBean.setPhenotypeDisplays(null);
-        } else {
-            List<PhenotypeStatement> phenoStatements = new ArrayList<>();
-            for (GenotypeFigure genoFig : genotypeFigures) {
-                if (genoFig.getPhenotypeExperiment() != null) {
-                    if (genoFig.getPhenotypeExperiment().getPhenotypeStatements() != null)  {
-                        phenoStatements.addAll(genoFig.getPhenotypeExperiment().getPhenotypeStatements());
-                    }
-                }
-            }
-            sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenoStatements,"fish"));
-        }
-
-        // GENOTYPE (for CRISPR and TALEN only at this time)
+        // Genomic Features created by STR (CRISPR and TALEN only at this time)
         if (sequenceTargetingReagentBean.isTALEN() || sequenceTargetingReagentBean.isCRISPR()) {
-            List<Genotype> genotypes = markerRepository.getTALENorCRISPRcreatedGenotypes(zdbID);
-            sequenceTargetingReagentBean.setGenotypes(genotypes);
-            List<GenotypeInformation> genoData = new ArrayList<>();
-            if (genotypes == null) {
-                sequenceTargetingReagentBean.setGenotypeData(null);
-            } else {
-                for (Genotype geno : genotypes) {
-                    GenotypeInformation genoInfo = new GenotypeInformation(geno);
-                    genoData.add(genoInfo);
-                }
-                Collections.sort(genoData);
-                sequenceTargetingReagentBean.setGenotypeData(genoData);
-            }
+            List<Feature> features = markerRepository.getFeaturesBySTR(sequenceTargetingReagent);
+            sequenceTargetingReagentBean.setGenomicFeatures(features);
         }
 
-        // Expression data
-        List<ExpressionResult> strExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionResults(strExpressionResults);
-        List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionFigureIDs(expressionFigureIDs);
-        List<String> expressionPublicationIDs = RepositoryFactory.getExpressionRepository().getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionPublicationIDs(expressionPublicationIDs);
+        // Fish utilizing the STR
+        List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
+        SortedSet<Fish> sortedFishSet = new TreeSet<>();
+        sortedFishSet.addAll(fishList);
+        sequenceTargetingReagentBean.setFishList(sortedFishSet);
 
         // get sequence attribution
         if (sequenceTargetingReagent.getSequence() != null) {
@@ -158,6 +131,32 @@ public class SequenceTargetingReagentViewController {
         
         return "marker/sequence-targeting-reagent-target-view.page";
     }
+
+
+    @RequestMapping(value="/popup/{zdbID}")
+    public String getPopup(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        //getView(model, zdbID);
+
+        SequenceTargetingReagentBean sequenceTargetingReagentBean = new SequenceTargetingReagentBean();
+
+        logger.info("zdbID: " + zdbID);
+        SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagent(zdbID);
+        logger.info("sequenceTargetingReagent: " + sequenceTargetingReagent);
+
+        sequenceTargetingReagentBean.setMarker(sequenceTargetingReagent);
+        model.addAttribute("sequenceTargetingReagent", sequenceTargetingReagent);
+
+        MarkerService.createDefaultViewForMarker(sequenceTargetingReagentBean);
+
+        // set targetGenes
+        addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
+
+
+        model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
+
+        return "marker/sequence-targeting-reagent-popup.popup";
+    }
+
 
     @RequestMapping(value = "/call-regen-genox", method = RequestMethod.GET)
     public

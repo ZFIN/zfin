@@ -1,15 +1,14 @@
 package org.zfin.feature.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Genotype;
+import org.zfin.mutant.GenotypeDisplay;
+import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.presentation.GenoExpStatistics;
-import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.sequence.FeatureDBLink;
 
 import java.util.List;
@@ -17,8 +16,6 @@ import java.util.Set;
 
 public class FeatureBean {
     private Feature feature;
-    private List<Genotype> genotypes;
-    private List<GenotypeInformation> featgenoStats;
     private Marker marker;
     private int numPubs;
     private List<GenoExpStatistics> genoexpStats;
@@ -34,6 +31,7 @@ public class FeatureBean {
     private Set<FeatureDBLink> summaryPageDbLinks;
     private Set<FeatureDBLink> genbankDbLinks;
     private GBrowseImage gBrowseImage;
+    private List<GenotypeDisplay> genotypeDisplays;
 
     public Set<FeatureDBLink> getGenbankDbLinks() {
         return genbankDbLinks;
@@ -50,15 +48,6 @@ public class FeatureBean {
     public void setSummaryPageDbLinks(Set<FeatureDBLink> summaryPageDbLinks) {
         this.summaryPageDbLinks = summaryPageDbLinks;
     }
-
-    public List<Genotype> getGenotypes() {
-        return genotypes;
-    }
-
-    public void setGenotypes(List<Genotype> genotypes) {
-        this.genotypes = genotypes;
-    }
-
 
     public int getNumPubs() {
         return numPubs;
@@ -93,19 +82,6 @@ public class FeatureBean {
     public void setGenoexpStats(List<GenoExpStatistics> genoexpStats) {
         this.genoexpStats = genoexpStats;
     }
-
-    public List<GenotypeInformation> getFeatgenoStats() {
-        return featgenoStats;
-    }
-
-    public void setFeatgenoStats(List<GenotypeInformation> featgenoStats) {
-        this.featgenoStats = featgenoStats;
-    }
-
-    public boolean isMutantsExist() {
-        return !CollectionUtils.isEmpty(featgenoStats);
-    }
-
 
     public Feature getFeature() {
         return feature;
@@ -194,6 +170,14 @@ public class FeatureBean {
 
     public void setgBrowseImage(GBrowseImage gBrowseImage) {
         this.gBrowseImage = gBrowseImage;
+    }
+
+    public List<GenotypeDisplay> getGenotypeDisplays() {
+        return genotypeDisplays;
+    }
+
+    public void setGenotypeDisplays(List<GenotypeDisplay> genotypeDisplays) {
+        this.genotypeDisplays = genotypeDisplays;
     }
 }
 

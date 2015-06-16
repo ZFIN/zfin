@@ -385,6 +385,9 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
+        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
+            createExternalNotesOnGenotype(genotype, genotypeDTO);
+        }
 
         List<PublicationDTO> associatedPublications = new ArrayList<>();
         for (int i = 0; i < genotype.getAssociatedPublications().size(); i++) {
@@ -401,6 +404,60 @@ public class DTOConversionService {
             genotypeDTO.setFeatureList(featureDTOList);
         }
         return genotypeDTO;
+    }
+
+    public static GenotypeDTO convertToGenotypeDTOShallow(Genotype genotype) {
+        GenotypeDTO genotypeDTO = new GenotypeDTO();
+        genotypeDTO.setName(genotype.getName());
+        genotypeDTO.setZdbID(genotype.getZdbID());
+        genotypeDTO.setHandle(genotype.getHandle());
+        if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
+            createExternalNotesOnGenotype(genotype, genotypeDTO);
+        }
+        if (CollectionUtils.isNotEmpty(genotype.getDataNotes())) {
+            createCuratorNotesOnGenotype(genotype, genotypeDTO);
+        }
+        // add features
+        if (CollectionUtils.isNotEmpty(genotype.getGenotypeFeatures())) {
+            List<FeatureDTO> featureDTOList = new ArrayList<>(4);
+            for (GenotypeFeature genotypeFeature : genotype.getGenotypeFeatures()) {
+                featureDTOList.add(convertToFeatureDTO(genotypeFeature.getFeature()));
+            }
+            genotypeDTO.setFeatureList(featureDTOList);
+        }
+        return genotypeDTO;
+    }
+
+    public static GenotypeDTO convertToPureGenotypeDTOs(Genotype genotype) {
+        GenotypeDTO genotypeDTO = new GenotypeDTO();
+        genotypeDTO.setName(genotype.getName());
+        genotypeDTO.setZdbID(genotype.getZdbID());
+        genotypeDTO.setHandle(genotype.getHandle());
+        return genotypeDTO;
+    }
+
+    private static void createCuratorNotesOnGenotype(Genotype genotype, GenotypeDTO genotypeDTO) {
+        List<CuratorNoteDTO> CuratorNoteDTOList = new ArrayList<>(genotype.getDataNotes().size());
+        for (DataNote note : genotype.getDataNotes()) {
+            CuratorNoteDTO noteDTO = new CuratorNoteDTO();
+            noteDTO.setZdbID(note.getZdbID());
+            noteDTO.setNoteData(note.getNote());
+            CuratorNoteDTOList.add(noteDTO);
+        }
+        genotypeDTO.setPrivateNotes(CuratorNoteDTOList);
+    }
+
+    private static void createExternalNotesOnGenotype(Genotype genotype, GenotypeDTO genotypeDTO) {
+        List<ExternalNoteDTO> externalNoteDTOList = new ArrayList<>(genotype.getExternalNotes().size());
+        for (GenotypeExternalNote note : genotype.getExternalNotes()) {
+            ExternalNoteDTO noteDTO = new ExternalNoteDTO();
+            noteDTO.setZdbID(note.getZdbID());
+            noteDTO.setNoteData(note.getNote());
+            if (note.getSinglePubAttribution() != null)
+                noteDTO.setPublicationZdbID(note.getSinglePubAttribution().getSourceZdbID());
+            externalNoteDTOList.add(noteDTO);
+        }
+        genotypeDTO.setPublicNotes(externalNoteDTOList);
     }
 
     public static GenotypeDTO convertToGenotypeDTO(Genotype genotype, boolean includePubInfo) {
@@ -1269,10 +1326,12 @@ public class DTOConversionService {
         dto.setName(fish.getName());
         dto.setHandle(fish.getHandle());
         dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
-        List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
-        for (SequenceTargetingReagent str : fish.getStrList())
-            strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
-        dto.setStrList(strs);
+        if(CollectionUtils.isNotEmpty(fish.getStrList())) {
+            List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
+            for (SequenceTargetingReagent str : fish.getStrList())
+                strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
+            dto.setStrList(strs);
+        }
         return dto;
     }
 

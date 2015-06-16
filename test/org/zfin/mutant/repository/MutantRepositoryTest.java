@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -342,10 +343,9 @@ public class MutantRepositoryTest {
         Genotype genotype = new Genotype();
         genotype.setZdbID("ZDB-GENO-070406-1");
         fish.setGenotype(genotype);
-
         List<Publication> attributions = mutantRepository.getFishAttributionList(fish);
-        assertNotNull(attributions);
-        assertTrue(attributions.size() > 1);
+     //   assertNotNull(attributions);
+        assertTrue(attributions.size() < 1);
     }
 
     @Test
@@ -470,5 +470,15 @@ public class MutantRepositoryTest {
         List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
         assertNotNull(fishList);
         assertTrue(fishList.size() > 20);
+    }
+
+    @Test
+    public void getGenotypesByFeatureAndBackground() {
+        String featureID ="ZDB-ALT-040917-2";
+        Feature feature = getFeatureRepository().getFeatureByID(featureID);
+        Publication publication = getPublicationRepository().getPublication("ZDB-PUB-140101-33");
+        Genotype background = getMutantRepository().getGenotypeByID("ZDB-GENO-010924-10");
+        List<Genotype> genotypeList= mutantRepository.getGenotypesByFeatureAndBackground(feature, background, publication);
+        assertNotNull(genotypeList);
     }
 }

@@ -26,6 +26,7 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
+import org.zfin.mutant.GenotypeExternalNote;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermAlias;
@@ -1671,6 +1672,26 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         for(Object[] o: objectList)
         pubList.add((Publication) o[0]);
         return pubList;
+    }
+
+    @Override
+    public void saveExternalNote(GenotypeExternalNote note, Publication publication) {
+        HibernateUtil.currentSession().save(note);
+        PublicationAttribution attribution = new PublicationAttribution();
+        attribution.setPublication(publication);
+        attribution.setDataZdbID(note.getZdbID());
+        attribution.setSourceType(RecordAttribution.SourceType.STANDARD);
+        HibernateUtil.currentSession().save(attribution);
+        Set<PublicationAttribution> set = new HashSet<>(1);
+        set.add(attribution);
+        note.setPubAttributions(set);
+    }
+
+    @Override
+    public void saveDataNote(DataNote note, Publication publication) {
+        note.setDate(new Date());
+        note.setCurator(ProfileService.getCurrentSecurityUser());
+        HibernateUtil.currentSession().save(note);
     }
 }
 

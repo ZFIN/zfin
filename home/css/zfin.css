@@ -677,6 +677,10 @@ label.curation-form-label { font-weight: bold; }
     text-align: center !important;
 }
 
+.center {
+    text-align: center;
+}
+
 .download-header-row table {
     margin: 0 auto;
 }

@@ -265,6 +265,9 @@ public class SearchResult implements ProvidesLink {
 
 
     public List<HashMap<String, Object>> getResultTableMap() {
+
+        if (resultTable == null) { return null; }
+
         List<HashMap<String, Object>> result = new ArrayList<HashMap<String, Object>>();
 
         for (String resultValue : resultTable) {

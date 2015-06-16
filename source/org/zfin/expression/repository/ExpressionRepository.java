@@ -7,6 +7,7 @@ import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -39,6 +40,8 @@ public interface ExpressionRepository {
     int getExpressionFigureCountForGene(Marker marker);
 
     int getExpressionFigureCountForGenotype(Genotype genotype);
+
+    int getExpressionFigureCountForFish(Fish fish);
 
     FigureLink getExpressionSingleFigure(Marker marker);
 
@@ -296,12 +299,12 @@ public interface ExpressionRepository {
     List<ExpressionResult> getExpressionsWithEntity(List<GenericTerm> terms);
 
     /**
-     * Retrieve all expression results for a given genotype
+     * Retrieve all expression results for a given fish
      *
-     * @param genotype genotype
+     * @param fish Fish
      * @return list of expression results
      */
-    List<ExpressionResult> getExpressionResultsByGenotype (Genotype genotype);
+    List<ExpressionResult> getExpressionResultsByFish (Fish fish);
 
     /**
      * Retrieve all expression results for a given Sequenec Targeting Reagent
