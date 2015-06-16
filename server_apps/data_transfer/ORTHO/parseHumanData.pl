@@ -32,10 +32,15 @@ while (<HUMAN>) {
  
  @fieldsHuman = split("\t");
 
+ $taxonomyID = $fieldsHuman[0];
+ ## make sure it is human being record
+ next if $taxonomyID ne "9606";
  $geneId = $fieldsHuman[1];
  $Chr = $fieldsHuman[6];
  $loc = $fieldsHuman[7];
- $symbol = $fieldsHuman[2]; 
+
+ ## Symbol_from_nomenclature_authority
+ $symbol = $fieldsHuman[10]; 
  $dbXrefs = $fieldsHuman[5];
  
  ### assumption: MIM numbers are always 6 digits

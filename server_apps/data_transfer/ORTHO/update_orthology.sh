@@ -65,7 +65,7 @@ echo "Begin Human update `date +'%Y-%m-%d %H:%M:%S'`"
 # wget -q --timestamping "ftp://ftp.ncbi.nih.gov/gene/DATA/mim2gene_partial"
 rm -f mim2gene.tab
 rm -f mim2gene.txt
-wget -q --timestamping "ftp://ftp.omim.org/OMIM/mim2gene.txt "
+wget -q --timestamping "ftp://ftp.omim.org/OMIM/mim2gene.txt"
 grep gene mim2gene.txt | cut -f1,3 | grep -v "-"> mim2gene.tab
 
 parseHumanData.pl
