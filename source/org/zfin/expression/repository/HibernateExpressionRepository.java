@@ -1,5 +1,6 @@
 package org.zfin.expression.repository;
 
+import com.sun.msv.reader.ExpressionState;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
@@ -54,6 +56,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 /**
  * Repository that is used for curation actions, such as dealing with expression experiments.
  */
+@Repository
 public class HibernateExpressionRepository implements ExpressionRepository {
 
     private Logger logger = Logger.getLogger(HibernateExpressionRepository.class);
@@ -1033,6 +1036,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public void deleteExpressionStructure(ExpressionStructure structure) {
         Session session = HibernateUtil.currentSession();
         session.delete(structure);
+    }
+
+    public void deleteExpressionStructuresForPub(Publication publication) {
+        List<ExpressionStructure> structures = HibernateUtil.currentSession()
+                .createCriteria(ExpressionStructure.class)
+                .add(Restrictions.eq("publication", publication))
+                .list();
+        for (ExpressionStructure structure : structures) {
+            getInfrastructureRepository().deleteActiveDataByZdbID(structure.getZdbID());
+        }
     }
 
     /**

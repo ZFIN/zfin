@@ -1,7 +1,9 @@
 package org.zfin.curation.service;
 
+import org.zfin.curation.Correspondence;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
+import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.CurationDTO;
 import org.zfin.curation.presentation.CuratorDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
@@ -26,6 +28,9 @@ public class CurationDTOConversionService {
     }
 
     public static CuratorDTO personToCuratorDTO(Person curator) {
+        if (curator == null) {
+            return null;
+        }
         CuratorDTO dto = new CuratorDTO();
         dto.setZdbID(curator.getZdbID());
         dto.setName(curator.getFirstName() + " " + curator.getLastName());
@@ -46,6 +51,17 @@ public class CurationDTOConversionService {
         dto.setEntryDate(curation.getEntryDate());
         dto.setOpenedDate(curation.getOpenedDate());
         dto.setClosedDate(curation.getClosedDate());
+        return dto;
+    }
+
+    public static CorrespondenceDTO correspondenceToDTO(Correspondence correspondence) {
+        CorrespondenceDTO dto = new CorrespondenceDTO();
+        dto.setPub(correspondence.getPublication().getZdbID());
+        dto.setCurator(personToCuratorDTO(ProfileService.getCurrentSecurityUser()));
+        dto.setId(correspondence.getId());
+        dto.setOpenedDate(correspondence.getContactedDate());
+        dto.setReplyReceived(correspondence.getRespondedDate() != null);
+        dto.setClosedDate(dto.isReplyReceived() ? correspondence.getRespondedDate() : correspondence.getGiveUpDate());
         return dto;
     }
 

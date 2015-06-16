@@ -107,6 +107,19 @@
         <security:intercept-url pattern="/action/construct/construct-add" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/construct/construct-update" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/people/edit-user*" access="hasAnyRole('root','submit') or ${DISABLE_SECURITY}" requires-channel="https"/>
+
+        <security:intercept-url pattern="/action/publication/new" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/correspondences/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/notes/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/topics/*" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/*/correspondences" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/*/edit" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/*/notes" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/*/status" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/*/topics" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/*/track" access="hasRole('root') or ${DISABLE_SECURITY}" />
+        <security:intercept-url pattern="/action/publication/*/validate" access="hasRole('root') or ${DISABLE_SECURITY}" />
+
         <security:intercept-url pattern="/action/feature/alleleDesig-add-form" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/antibody/add" access="hasRole('root') or ${DISABLE_SECURITY}" />
         <security:intercept-url pattern="/action/antibody/antibody-citation-disassociate-publication" access="hasRole('root') or ${DISABLE_SECURITY}" />

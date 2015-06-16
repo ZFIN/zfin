@@ -6,7 +6,7 @@
 
 # DESCRIPTION:
 # This is a cgi, called from image-upload.apg, imageupdate.apg,
-# xpatcuration.apg, and pubcuration.apg. It implements upload 
+# xpatcuration.apg, and the pub tracker. It implements upload
 # to filesytem functionality.  This script interacts with the database, 
 # and does under some conditions, create ZDB-IDs.  However, it does not
 # update or insert into any tables.  It merely does the work of adding
@@ -415,7 +415,7 @@ sub uploadFile() { # upload the file taking the directory (pdf or image)
     $vDir = $_[0];
 
     # "upload" comes from the webdatablade/html form: image-upload.apg,
-    # pubcuration.apg, and imageupdate.apg
+    # pub tracker, and imageupdate.apg
     
     $upload_filehandle = $query->upload("upload");
     
@@ -549,10 +549,18 @@ sub makeFiles () {# uploads the files, builds a thumbnail, gets the height
     else { # if OID is a pub zdb id
 	      
 	    $pub_file = $filename ;
-	    $redirect_build = $redirect_url.$redirect_OID_param.$OID.$redirect_pub_file_param.$pub_file ;
-	    if ($redirect_build !~ m/.apg/) {
-		&access_error ($redirect_build.'redirect_build not ZFIN type!') ;
-	    }
+	    if ($redirect_url =~ m/.apg/) {
+	        $redirect_build = $redirect_url.$redirect_OID_param.$OID.$redirect_pub_file_param.$pub_file ;
+	    } elsif ($redirect_url =~ m/^\/action\//) {
+	        $redirect_build = $redirect_url;
+	    } else {
+		    &access_error ($redirect_build.'redirect_build not ZFIN type!') ;
+		}
+
+		my $dbh = DBI->connect('DBI:Informix:<!--|DB_NAME|-->', '', '',  {AutoCommit => 1,RaiseError => 1}) || &emailError("Failed while connecting to <!--|DB_NAME|--> ");
+        my $cur = $dbh->prepare("update publication set pub_file = '$pub_file' where zdb_id = '$OID';");
+        $cur->execute;
+
 	    system ("/bin/rm -f /tmp/upload_report") and die "can't /bin/rm -f /tmp/upload_report";
 	    print $query->redirect ("$redirect_build");
 	    exit;
@@ -658,8 +666,8 @@ $query = new CGI();
 
 $redirect_url = $query->param("redirect_url");
 
-if ($redirect_url !~ m/.apg/) {
-    &filename_error('redirect url not ZFIN-esque '.$redirect_url); 
+if ($redirect_url !~ m/.apg/ && $redirect_url !~ m/^\/action\//) {
+    &filename_error('redirect url not ZFIN-esque '.$redirect_url);
 }
 $filename = $query->param("upload");
 
