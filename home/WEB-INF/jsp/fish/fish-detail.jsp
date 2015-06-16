@@ -23,7 +23,7 @@
         </td>
     </tr>
     <tr>
-        <th>Genotype Component:</th>
+        <th>Genotype:</th>
         <td>
             <c:choose>
                 <c:when test="${!empty fish.genotype}">
@@ -35,7 +35,7 @@
         </td>
     </tr>
     <tr>
-        <th>Reagent Component:</th>
+        <th>Targeting Reagent:</th>
         <td>
             <c:choose>
                 <c:when test="${!empty fish.strList}">

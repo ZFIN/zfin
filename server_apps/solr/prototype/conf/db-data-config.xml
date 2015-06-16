@@ -2899,6 +2899,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                         feature_abbrev as proper_name,
                         feature_name as full_name,
                         feature_abbrev_order as name_sort,
+                        feature_comments as note,
                         fto_priority as complexity,
                            '/' || feature_zdb_id as url,
                         (select case when fp_prefix = 'la' then 'Burgess / Lin'
@@ -3060,8 +3061,9 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                  join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
+                                  join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as super_1 on phenos_entity_1_superterm_zdb_id = super_1.term_zdb_id
                                  left outer join term as sub_1 on phenos_entity_1_subterm_zdb_id = sub_1.term_zdb_id
                                  join term as quality on phenos_quality_zdb_id = quality.term_zdb_id
@@ -3079,8 +3081,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_1_superterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'zebrafish_anatomy'
@@ -3092,8 +3094,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_1_subterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'zebrafish_anatomy'
@@ -3105,8 +3107,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_2_superterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'zebrafish_anatomy'
@@ -3118,8 +3120,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_2_subterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'zebrafish_anatomy' "
@@ -3134,8 +3136,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_1_superterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3148,8 +3150,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_1_subterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3162,8 +3164,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3176,8 +3178,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_2_subterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3194,8 +3196,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_1_superterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'biological_process'
@@ -3207,8 +3209,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_1_subterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'biological_process'
@@ -3220,8 +3222,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_2_superterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'biological_process'
@@ -3233,8 +3235,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_2_subterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'biological_process'; "
@@ -3249,8 +3251,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_1_superterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3263,8 +3265,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_1_subterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3277,8 +3279,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3291,8 +3293,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_2_subterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3309,8 +3311,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_1_superterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'cellular_component'
@@ -3322,8 +3324,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_1_subterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'cellular_component'
@@ -3335,8 +3337,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_2_superterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'cellular_component'
@@ -3348,8 +3350,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_2_subterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'cellular_component'; "
@@ -3364,8 +3366,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_1_superterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3378,8 +3380,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_1_subterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3392,8 +3394,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3406,8 +3408,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_2_subterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3423,8 +3425,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_1_superterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'molecular_function'
@@ -3436,8 +3438,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_1_subterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'molecular_function'
@@ -3449,8 +3451,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_2_superterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'molecular_function'
@@ -3462,8 +3464,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                  join term as term on phenos_entity_2_subterm_zdb_id = term.term_zdb_id
                             where phenos_tag = 'abnormal'
                               and term.term_ontology = 'molecular_function'; "
@@ -3478,8 +3480,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_1_superterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3492,8 +3494,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_1_subterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3506,8 +3508,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_2_superterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
@@ -3520,8 +3522,8 @@ where feature_zdb_id = ids_data_zdb_id
                                   join phenotype_experiment on phenos_phenox_pk_id = phenox_pk_id
                                   join mutant_fast_search on phenox_genox_zdb_id = mfs_genox_zdb_id
                                   join feature_marker_relationship on fmrel_mrkr_zdb_id = mfs_mrkr_zdb_id and fmrel_type = 'is allele of'
-                                  join genotype_experiment on phenox_genox_zdb_id = genox_zdb_id
-                                  join genotype_feature on genox_geno_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+                                   join fish_experiment on phenox_genox_zdb_id = genox_zdb_id join fish on genox_fish_zdb_id = fish_zdb_id
+                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
                                   join all_term_contains as allterm on alltermcon_contained_zdb_id = phenos_entity_2_subterm_zdb_id
                                   join term as term on allterm.alltermcon_container_zdb_id = term_zdb_id
                             where phenos_tag = 'abnormal'
