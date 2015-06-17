@@ -484,4 +484,10 @@ public class MutantRepositoryTest {
         List<Genotype> genotypeList= mutantRepository.getGenotypesByFeatureAndBackground(feature, background, publication);
         assertNotNull(genotypeList);
     }
+
+    @Test
+    public void getZygosityList() {
+        List<Zygosity> zygosityList= getMutantRepository().getListOfZygosity();
+        assertNotNull(zygosityList);
+    }
 }

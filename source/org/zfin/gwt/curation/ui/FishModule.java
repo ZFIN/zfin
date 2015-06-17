@@ -27,6 +27,8 @@ import java.util.Map;
 public class FishModule implements HandlesError, EntryPoint {
 
     public static final String FISH_TAB = "fishTab";
+    public static final String UNRECOVERED = "unrecovered";
+    public static final String UNSPECIFIED = "unspecified";
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("FishModule.ui.xml")
@@ -48,6 +50,7 @@ public class FishModule implements HandlesError, EntryPoint {
     Button addStrButton = new Button("Add STR");
     ListBox featureListBox = new ListBox();
     ListBox backgroundListBox = new ListBox();
+    ListBox backgroundNewGenoListBox = new ListBox();
     Button searchExistingGenotypes = new Button("Search");
 
     @UiField
@@ -55,12 +58,16 @@ public class FishModule implements HandlesError, EntryPoint {
 
     @UiField
     SimpleErrorElement errorLabelSearch;
+    @UiField
+    SimpleErrorElement errorCreateGenotype;
 
     @UiField
     SimpleErrorElement errorLabel;
 
     @UiField
     Image loadingImage;
+    @UiField
+    Image loadingImageCreateGenotype;
 
     @UiField
     Image loadingImageGenoSearch;
@@ -75,6 +82,14 @@ public class FishModule implements HandlesError, EntryPoint {
     ZfinFlexTable constructionTable;
 
     @UiField
+    ZfinFlexTable genotypeConstructionTable;
+    @UiField
+    VerticalPanel genotypeConstructionPanel;
+    @UiField
+    VerticalPanel importGenotypePanel;
+    @UiField
+    VerticalPanel fishConstructionPanel;
+    @UiField
     ZfinFlexTable fishListTable;
 
     @UiField
@@ -82,11 +97,21 @@ public class FishModule implements HandlesError, EntryPoint {
 
     @UiField
     ZfinFlexTable genotypeSearchResultTable;
+    @UiField
+    ZfinFlexTable newGenotypeInfoTable;
 
     @UiField
     Hyperlink showHideExistingGeno;
     @UiField
+    Button createGenotypeButton;
+    @UiField
     Hyperlink showHideFishConstruction;
+
+    private TextBox genotypeNickname = new TextBox();
+    private InlineHTML genotypeDisplayName = new InlineHTML();
+    private Label genotypeHandle = new Label();
+    @UiField
+    Hyperlink showHideGenotypeConstruction;
 
     public FishModule(String publicationID) {
         this.publicationID = publicationID;
@@ -102,12 +127,21 @@ public class FishModule implements HandlesError, EntryPoint {
 
     private boolean showExistingGenoBool = false;
     private boolean showFishConstruction = false;
+    private boolean showGenoConstruction = false;
+
+    private Button buttonUUU = new Button("[U,U,U]");
+    private Button button211 = new Button("[2,1,1]");
+    private Button button2UU = new Button("[2,U,U]");
 
     @Override
     public void onModuleLoad() {
 
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
+/*
+        genotypeSearchResultPanel.add(genotypeSearchResultTable);
+        genotypeSearchResultPanel.setHeight("500");
+*/
         errorLabel.setStyleName("error");
         genotypeListCallBack = new RetrieveDTOListCallBack<>(genotypeSelectionBox, "Genotypes", null);
         strListCallBack = new RetrieveRelatedEntityListCallBack(strSelectionBox, "STRs", null);
@@ -117,14 +151,14 @@ public class FishModule implements HandlesError, EntryPoint {
         attributionModule.setDTO(relatedEntityDTO);
         addHandlers();
         initConstructionTableHeader();
+        initGenotypeConstructionTableHeader();
+        initNewGenotypeInfo();
         initConstructionRow();
         initFishListTable();
-        loadingImageGenoSearch.setVisible(false);
         initConstructionGenotypeSearchResultRow(0);
+        initGenotypeConstructionRow(1);
         retrieveAllValues();
-        genotypeSearchResultTable.setVisible(showExistingGenoBool);
-        constructionTable.setVisible(showFishConstruction);
-        createFishButton.setVisible(showFishConstruction);
+        createGenotypeButton.setText("Create Genotype");
 
         // Add the widgets to the root panel.
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -281,7 +315,7 @@ public class FishModule implements HandlesError, EntryPoint {
                 diseaseCurationRPCAsync.getFishList(publicationID, new RetrieveFishListCallBack("Fish List", errorLabel));
                 diseaseCurationRPCAsync.getGenotypeList(publicationID, new RetrieveGenotypeListCallBack("Genotype List", errorLabelSearch));
                 // update feature list on geno search
-                diseaseCurationRPCAsync.getFeatureList(publicationID, new RetrieveRelatedEntityListCallBack(featureListBox, "Feature List", errorLabel));
+                diseaseCurationRPCAsync.getFeatureList(publicationID, new RetrieveRelatedEntityDTOListCallBack(featureListBox, "Feature List", errorLabel));
             }
 
             @Override
@@ -300,6 +334,12 @@ public class FishModule implements HandlesError, EntryPoint {
                 toggleVisibilityFishConstruction();
             }
         });
+        showHideGenotypeConstruction.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                toggleVisibilityGenotypeConstruction();
+            }
+        });
         featureListBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent changeEvent) {
@@ -312,7 +352,84 @@ public class FishModule implements HandlesError, EntryPoint {
                 searchForGenotypes();
             }
         });
+
+        buttonUUU.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                zygosityListBox.setSelectedIndex(3);
+                zygosityMaternalListBox.setSelectedIndex(3);
+                zygosityPaternalListBox.setSelectedIndex(3);
+            }
+        });
+        button2UU.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                zygosityListBox.setSelectedIndex(0);
+                zygosityMaternalListBox.setSelectedIndex(3);
+                zygosityPaternalListBox.setSelectedIndex(3);
+            }
+        });
+        button211.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                zygosityListBox.setSelectedIndex(0);
+                zygosityMaternalListBox.setSelectedIndex(1);
+                zygosityPaternalListBox.setSelectedIndex(1);
+            }
+        });
+
+        addGenotypeFeature.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                int selectedFeature = featureForGenotypeListBox.getSelectedIndex();
+                GenotypeFeatureDTO dto = new GenotypeFeatureDTO();
+                FeatureDTO feature = featureGenotypeListCallBack.getDtoList().get(selectedFeature);
+                dto.setFeatureDTO(feature);
+                dto.setZygosity(zygosityList.get(zygosityListBox.getSelectedIndex()));
+                dto.setMaternalZygosity(zygosityList.get(zygosityMaternalListBox.getSelectedIndex()));
+                dto.setPaternalZygosity(zygosityList.get(zygosityPaternalListBox.getSelectedIndex()));
+                genotypeFeatureDTOList.add(dto);
+                updateGenotypeFeatureList();
+            }
+        });
+        backgroundNewGenoListBox.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent changeEvent) {
+                getSelectedGenotypeBackground();
+                setGenotypeInfo();
+            }
+        });
+        createGenotypeButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                String nicknameString = genotypeNickname.getName();
+                if (nicknameString.equals(genotypeHandle))
+                    nicknameString = null;
+                diseaseCurationRPCAsync.createGenotypeFeature(publicationID,
+                        genotypeFeatureDTOList,
+                        getSelectedGenotypeBackground(),
+                        nicknameString,
+                        new CreateGenotypeCallBack("Create new Genotype", errorCreateGenotype));
+                loadingImageCreateGenotype.setVisible(true);
+            }
+        });
+
     }
+
+    private GenotypeDTO getSelectedGenotypeBackground() {
+        int index = backgroundNewGenoListBox.getSelectedIndex();
+        if (index == 0)
+            backgroundNewGeno = null;
+        else {
+            // offset empty first entry
+            backgroundNewGeno = retrieveBackgroundNewGenoCallback.getDtoList().get(index - 1);
+        }
+        return backgroundNewGeno;
+    }
+
+    private GenotypeDTO backgroundNewGeno;
+
+    private List<GenotypeFeatureDTO> genotypeFeatureDTOList = new ArrayList<>(4);
 
     private void searchForGenotypes() {
         String featureID = getSelectedFeatureID();
@@ -329,8 +446,18 @@ public class FishModule implements HandlesError, EntryPoint {
             showFishConstruction = true;
             showHideFishConstruction.setText("Hide");
         }
-        constructionTable.setVisible(showFishConstruction);
-        createFishButton.setVisible(showFishConstruction);
+        fishConstructionPanel.setVisible(showFishConstruction);
+    }
+
+    private void toggleVisibilityGenotypeConstruction() {
+        if (showGenoConstruction) {
+            showGenoConstruction = false;
+            showHideGenotypeConstruction.setText("Show");
+        } else {
+            showGenoConstruction = true;
+            showHideGenotypeConstruction.setText("Hide");
+        }
+        genotypeConstructionPanel.setVisible(showGenoConstruction);
     }
 
     private void toggleVisibilityExistingGenoTable() {
@@ -341,7 +468,7 @@ public class FishModule implements HandlesError, EntryPoint {
             showExistingGenoBool = true;
             showHideExistingGeno.setText("Hide");
         }
-        genotypeSearchResultTable.setVisible(showExistingGenoBool);
+        importGenotypePanel.setVisible(showExistingGenoBool);
     }
 
     private String getSelectedFeatureID() {
@@ -415,15 +542,21 @@ public class FishModule implements HandlesError, EntryPoint {
     private CurationExperimentRPCAsync curationExperimentRPCAsync = CurationExperimentRPC.App.getInstance();
     private RetrieveDTOListCallBack<GenotypeDTO> genotypeListCallBack;
     private RetrieveRelatedEntityListCallBack strListCallBack;
+    private RetrieveRelatedEntityDTOListCallBack<GenotypeDTO> retrieveBackgroundNewGenoCallback;
 
     private void retrieveAllValues() {
         // get genotype list
         curationExperimentRPCAsync.getGenotypes(publicationID, genotypeListCallBack);
 
         // get wildtype background list
-        RetrieveRelatedEntityListCallBack retrieveBackgroundCallback = new RetrieveRelatedEntityListCallBack(backgroundListBox, "Baclbground List", errorLabel);
+        RetrieveRelatedEntityDTOListCallBack<GenotypeDTO> retrieveBackgroundCallback = new RetrieveRelatedEntityDTOListCallBack(backgroundListBox, "Background List", errorLabel);
         retrieveBackgroundCallback.setLeaveFirstEntryBlank(true);
         curationExperimentRPCAsync.getBackgroundGenotypes(publicationID, retrieveBackgroundCallback);
+
+        // set wildtype background list for new Geno generation
+        retrieveBackgroundNewGenoCallback = new RetrieveRelatedEntityDTOListCallBack(backgroundNewGenoListBox, "Background List", errorLabel);
+        retrieveBackgroundNewGenoCallback.setLeaveFirstEntryBlank(true);
+        curationExperimentRPCAsync.getBackgroundGenotypes(publicationID, retrieveBackgroundNewGenoCallback);
 
         // get STR list
         diseaseCurationRPCAsync.getStrList(publicationID, strListCallBack);
@@ -435,11 +568,41 @@ public class FishModule implements HandlesError, EntryPoint {
         diseaseCurationRPCAsync.getGenotypeList(publicationID, new RetrieveGenotypeListCallBack("Genotype List", errorLabel));
 
         // get Feature List
-        RetrieveRelatedEntityListCallBack featureListCallBack = new RetrieveRelatedEntityListCallBack(featureListBox, "Feature List", errorLabel);
+        RetrieveRelatedEntityDTOListCallBack<FeatureDTO> featureListCallBack = new RetrieveRelatedEntityDTOListCallBack(featureListBox, "Feature List", errorLabel);
         featureListCallBack.setLeaveFirstEntryBlank(true);
         diseaseCurationRPCAsync.getFeatureList(publicationID, featureListCallBack);
 
+        // get Feature List  from new Genotypes
+        featureGenotypeListCallBack = new RetrieveRelatedEntityDTOListCallBack<>(featureForGenotypeListBox, "Feature Geno List", errorLabel);
+        diseaseCurationRPCAsync.getFeatureList(publicationID, featureGenotypeListCallBack);
+
+        diseaseCurationRPCAsync.getZygosityLists(new RetrieveZygosityListCallBack("Zygosity List", errorLabel));
+
     }
+
+    private RetrieveRelatedEntityDTOListCallBack<FeatureDTO> featureGenotypeListCallBack;
+
+    private void initNewGenotypeInfo() {
+        int column = 0;
+        int row = 0;
+        newGenotypeInfoTable.setText(row, column, "Display Name");
+        newGenotypeInfoTable.getCellFormatter().setStyleName(row, column++, "table-header bold");
+        newGenotypeInfoTable.setWidget(row, column, genotypeDisplayName);
+        newGenotypeInfoTable.getCellFormatter().setStyleName(row, column, "bold");
+        row++;
+        column = 0;
+        newGenotypeInfoTable.setText(row, column, "Handle");
+        newGenotypeInfoTable.getCellFormatter().setStyleName(row, column++, "table-header bold");
+        newGenotypeInfoTable.setWidget(row, column, genotypeHandle);
+        newGenotypeInfoTable.getCellFormatter().setStyleName(row, column, "bold");
+        column = 0;
+        row++;
+        newGenotypeInfoTable.setText(row, column, "Nickname");
+        newGenotypeInfoTable.getCellFormatter().setStyleName(row, column++, "table-header bold");
+        newGenotypeInfoTable.setWidget(row, column, genotypeNickname);
+        newGenotypeInfoTable.getCellFormatter().setStyleName(row, column, "bold");
+    }
+
 
     private void initConstructionTableHeader() {
         constructionTable.setText(0, 0, "Genotype");
@@ -447,6 +610,57 @@ public class FishModule implements HandlesError, EntryPoint {
         constructionTable.setText(0, 1, "ST Reagent");
         constructionTable.getCellFormatter().setStyleName(0, 1, "bold");
         constructionTable.getRowFormatter().setStyleName(0, "table-header");
+    }
+
+    private void initGenotypeConstructionTableHeader() {
+        int column = 0;
+        genotypeConstructionTable.setText(0, column, "Feature");
+        genotypeConstructionTable.getCellFormatter().setStyleName(0, column++, "bold");
+        genotypeConstructionTable.setText(0, column, "Zygosity");
+        genotypeConstructionTable.getCellFormatter().setStyleName(0, column++, "bold");
+        genotypeConstructionTable.setText(0, column, "Maternal Zygosity");
+        genotypeConstructionTable.getCellFormatter().setStyleName(0, column++, "bold");
+        genotypeConstructionTable.setText(0, column, "Paternal Zygosity");
+        genotypeConstructionTable.getCellFormatter().setStyleName(0, column++, "bold");
+        genotypeConstructionTable.setText(0, column, "Delete");
+        genotypeConstructionTable.getCellFormatter().setStyleName(0, column++, "bold");
+        genotypeConstructionTable.getRowFormatter().setStyleName(0, "table-header");
+    }
+
+    private ListBox featureForGenotypeListBox = new ListBox();
+    private ListBox zygosityListBox = new ListBox();
+    private ListBox zygosityMaternalListBox = new ListBox();
+    private ListBox zygosityPaternalListBox = new ListBox();
+    private Button addGenotypeFeature = new Button("Add");
+
+    private void initGenotypeConstructionRow(int row) {
+        int col = 0;
+        genotypeConstructionTable.setWidget(row, col, featureForGenotypeListBox);
+        genotypeConstructionTable.getCellFormatter().setStyleName(row, col++, "bold");
+        genotypeConstructionTable.setWidget(row, col, zygosityListBox);
+        genotypeConstructionTable.getCellFormatter().setStyleName(row, col++, "bold");
+        genotypeConstructionTable.setWidget(row, col, zygosityMaternalListBox);
+        genotypeConstructionTable.getCellFormatter().setStyleName(row, col++, "bold");
+        genotypeConstructionTable.setWidget(row, col, zygosityPaternalListBox);
+        genotypeConstructionTable.getCellFormatter().setStyleName(row, col++, "bold");
+        genotypeConstructionTable.setWidget(row, col, addGenotypeFeature);
+        genotypeConstructionTable.getCellFormatter().setStyleName(row, col++, "bold");
+        genotypeConstructionTable.getRowFormatter().setStyleName(row, "table-header");
+        col = 0;
+        row++;
+        genotypeConstructionTable.setText(row, col, "Set Zygosities");
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.add(buttonUUU);
+        panel.add(button2UU);
+        panel.add(button211);
+        genotypeConstructionTable.getCellFormatter().setStyleName(row, col++, "bold");
+        genotypeConstructionTable.setWidget(row, col, panel);
+        genotypeConstructionTable.getFlexCellFormatter().setColSpan(row, col, 4);
+        col = 0;
+        row++;
+        genotypeConstructionTable.getCellFormatter().setStyleName(row, col, "bold");
+        genotypeConstructionTable.setText(row, col++, "Background");
+        genotypeConstructionTable.setWidget(row, col, backgroundNewGenoListBox);
     }
 
     private void initConstructionGenotypeSearchResultRow(int row) {
@@ -468,6 +682,70 @@ public class FishModule implements HandlesError, EntryPoint {
         genotypeSearchResultTable.getCellFormatter().setStyleName(row, col, "bold");
         genotypeSearchResultTable.getFlexCellFormatter().setColSpan(row, col, 2);
         genotypeSearchResultTable.getRowFormatter().setStyleName(row, "table-header");
+    }
+
+    private void updateGenotypeFeatureList() {
+        genotypeConstructionTable.removeAllRows();
+        if (genotypeFeatureDTOList == null || genotypeFeatureDTOList.size() == 0) {
+            initGenotypeConstructionTableHeader();
+            initGenotypeConstructionRow(1);
+            return;
+        }
+        initGenotypeConstructionTableHeader();
+        int groupIndex = 0;
+        int rowIndex = 1;
+        for (GenotypeFeatureDTO genotypeFeature : genotypeFeatureDTOList) {
+            int col = 0;
+            genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getFeatureDTO()));
+            genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getZygosity()));
+            genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getMaternalZygosity()));
+            genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getPaternalZygosity()));
+            Anchor delete = new Anchor("X");
+            delete.addClickHandler(new RemoveGenotypeFeature(genotypeFeature));
+            genotypeConstructionTable.setWidget(rowIndex, col++, delete);
+            groupIndex = genotypeConstructionTable.setRowStyle(rowIndex++, null, genotypeFeature.getZdbID(), groupIndex);
+        }
+        setGenotypeInfo();
+        initGenotypeConstructionRow(rowIndex);
+    }
+
+    private void setGenotypeInfo() {
+        String genotypeHandleName = "";
+        String genotypeDisplayNameString = "";
+        for (GenotypeFeatureDTO genotypeFeature : genotypeFeatureDTOList) {
+            genotypeHandleName += genotypeFeature.getFeatureDTO().getName();
+            genotypeHandleName += " ";
+            genotypeHandleName += genotypeFeature.getZygosityInfo();
+            genotypeDisplayNameString += "<i>";
+            genotypeDisplayNameString += genotypeFeature.getFeatureDTO().getDisplayNameForGenotypeBase();
+            genotypeDisplayNameString += "<sup>";
+            genotypeDisplayNameString += genotypeFeature.getZygosity().getMutantZygosityDisplay(getDisplayFeawtureName(genotypeFeature.getFeatureDTO().getName()));
+            genotypeDisplayNameString += "</sup>";
+            genotypeDisplayNameString += "</i>";
+            genotypeDisplayNameString += " ; ";
+        }
+        if (backgroundNewGeno != null) {
+            genotypeHandleName += backgroundNewGeno.getName();
+        }
+        genotypeDisplayNameString = genotypeDisplayNameString.substring(0, genotypeDisplayNameString.length() - 3);
+        genotypeHandle.setText(genotypeHandleName);
+        genotypeDisplayName.setHTML(SafeHtmlUtils.fromTrustedString(genotypeDisplayNameString));
+        genotypeDisplayName.setHTML(SafeHtmlUtils.fromTrustedString(genotypeDisplayNameString));
+        genotypeNickname.setText(genotypeHandleName);
+    }
+
+    private String getDisplayFeawtureName(String name) {
+        if (name.endsWith("_" + UNRECOVERED))
+            return UNRECOVERED;
+        if (name.endsWith("_" + UNSPECIFIED))
+            return UNSPECIFIED;
+        return name;
+    }
+
+    private InlineHTML getHtml(RelatedEntityDTO dto) {
+        InlineHTML html = new InlineHTML(dto.getName());
+        html.setTitle(dto.getZdbID());
+        return html;
     }
 
     private void updateConstructionTable() {
@@ -811,6 +1089,30 @@ public class FishModule implements HandlesError, EntryPoint {
         }
     }
 
+    class CreateGenotypeCallBack extends ZfinAsyncCallback<GenotypeDTO> {
+
+        public CreateGenotypeCallBack(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel, loadingImage);
+        }
+
+        @Override
+        public void onSuccess(GenotypeDTO genotypeDTO) {
+            resetNewGenotypeUI();
+            loadingImageCreateGenotype.setVisible(false);
+            errorHandler.setError("Created successfully Genotype: " + genotypeDTO.getHandle());
+            // update genotype list on Create fish section
+            curationExperimentRPCAsync.getGenotypes(publicationID, genotypeListCallBack);
+            diseaseCurationRPCAsync.getGenotypeList(publicationID, new RetrieveGenotypeListCallBack("Genotype List", errorLabel));
+        }
+    }
+
+    private void resetNewGenotypeUI() {
+        genotypeNickname = new TextBox();
+        genotypeDisplayName = new InlineHTML();
+        genotypeHandle = new Label();
+        setGenotypeInfo();
+    }
+
     class RetrieveExistingGenotypeListCallBack extends ZfinAsyncCallback<List<GenotypeDTO>> {
 
         public RetrieveExistingGenotypeListCallBack(String errorMessage, ErrorHandler errorLabel) {
@@ -828,6 +1130,40 @@ public class FishModule implements HandlesError, EntryPoint {
                 existingGenotypeList = new ArrayList<>();
             }
             loadingImageGenoSearch.setVisible(false);
+        }
+    }
+
+    private List<ZygosityDTO> zygosityList = new ArrayList<>();
+
+    class RetrieveZygosityListCallBack extends ZfinAsyncCallback<List<ZygosityDTO>> {
+
+        public RetrieveZygosityListCallBack(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel, loadingImage);
+        }
+
+        @Override
+        public void onSuccess(List<ZygosityDTO> list) {
+            zygosityList = list;
+            for (ZygosityDTO dto : list) {
+                zygosityListBox.addItem(dto.getName(), dto.getZdbID());
+                zygosityMaternalListBox.addItem(dto.getName(), dto.getZdbID());
+                zygosityPaternalListBox.addItem(dto.getName(), dto.getZdbID());
+            }
+        }
+    }
+
+    class RemoveGenotypeFeature implements ClickHandler {
+
+        private GenotypeFeatureDTO dto;
+
+        public RemoveGenotypeFeature(GenotypeFeatureDTO dto) {
+            this.dto = dto;
+        }
+
+        @Override
+        public void onClick(ClickEvent clickEvent) {
+            genotypeFeatureDTOList.remove(dto);
+            updateGenotypeFeatureList();
         }
     }
 }
