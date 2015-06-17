@@ -1692,4 +1692,19 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return (List<FishExperiment>) query.list();
     }
+
+    @Override
+    public void updateGenotypeNicknameWithHandleForPublication(Publication publication) {
+        HibernateUtil.currentSession().createSQLQuery(
+                "UPDATE genotype " +
+                        "SET geno_nickname = geno_handle " +
+                        "WHERE EXISTS ( " +
+                        "  SELECT 'x' " +
+                        "  FROM record_attribution " +
+                        "  WHERE recattrib_data_zdb_id = geno_zdb_id " +
+                        "  AND recattrib_source_zdb_id = :pubID " +
+                        ");")
+                .setString("pubID", publication.getZdbID())
+                .executeUpdate();
+    }
 }

@@ -26,6 +26,4 @@
         <put-attribute name="staticTitle" value="ZFIN Publication list"/>
         <put-attribute name="body" value="/WEB-INF/jsp/publication/snp-publication-list.jsp"/>
     </definition>
-
-        <definition name="close-curation.response.ajax" template="/WEB-INF/jsp/publication/unfinished-annotations-close-publication.jsp"/>
 </tiles-definitions>

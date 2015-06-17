@@ -4,14 +4,13 @@
 --
 begin work;
 
-create table ent_chr_loc_sym_mim (
+create temp table ent_chr_loc_sym_mim (
 	eclsm_ent varchar(20),
 	eclsm_chr varchar(30),
 	eclsm_loc varchar(30),
 	eclsm_sym varchar(40),
 	eclsm_mim varchar(20))
-fragment by round robin in tbldbs1,tbldbs2,tbldbs3
-;
+with no log;
 
 load from 'hum_chr_loc_sym_mim.tab' delimiter '	' insert into ent_chr_loc_sym_mim;
 update statistics high for table  ent_chr_loc_sym_mim;
@@ -279,8 +278,8 @@ delete from  ent_chr_loc_sym_mim where exists(
 
 
 -- doubt we will allways get away with unique ...
-create unique index ent_chr_loc_sym_mim_eclsm_sym_idx on ent_chr_loc_sym_mim(eclsm_sym) in idxdbs3;
-create unique index ent_chr_loc_sym_mim_eclsm_ent_idx on ent_chr_loc_sym_mim(eclsm_ent) in idxdbs1;
+create index ent_chr_loc_sym_mim_eclsm_sym_idx on ent_chr_loc_sym_mim(eclsm_sym) in idxdbs3;
+create index ent_chr_loc_sym_mim_eclsm_ent_idx on ent_chr_loc_sym_mim(eclsm_ent) in idxdbs1;
 -- see if the OMIM are PKs... nope
 create index ent_chr_loc_sym_mim_eclsm_mim_idx on ent_chr_loc_sym_mim(eclsm_mim) in idxdbs2;
 update statistics medium for table ent_chr_loc_sym_mim;
@@ -458,7 +457,6 @@ select c_gene_id gene, ortho_abbrev orthology, dblink_acc_num acc_at_ZFIN, eclsm
 
 drop table omim_gene;
 drop table tmp_dup;
-drop table ent_chr_loc_sym_mim;
 
 -- rollback work;
 --

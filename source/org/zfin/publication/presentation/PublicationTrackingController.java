@@ -8,20 +8,24 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.curation.Correspondence;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
+import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.CurationDTO;
 import org.zfin.curation.presentation.CurationStatusDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
 import org.zfin.curation.service.CurationDTOConversionService;
+import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.presentation.JSONMessageList;
+import org.zfin.mutant.PhenotypeExperiment;
+import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -37,6 +41,15 @@ public class PublicationTrackingController {
     @Autowired
     private PublicationRepository publicationRepository;
 
+    @Autowired
+    private PhenotypeRepository phenotypeRepository;
+
+    @Autowired
+    private ExpressionRepository expressionRepository;
+
+    @Autowired
+    private MutantRepository mutantRepository;
+
     @RequestMapping(value = "/{zdbID}/track")
     public String showPubTracker(Model model, @PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
@@ -46,8 +59,7 @@ public class PublicationTrackingController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Track Pub: " + publication.getTitle());
         model.addAttribute("publication", publication);
-        model.addAttribute("hasFile", StringUtils.isNotEmpty(publication.getFileName()));
-        model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser().getZdbID());
+        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
         return "publication/track-publication.page";
     }
 
@@ -104,7 +116,7 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "{zdbID}/topics", method = RequestMethod.GET)
+    @RequestMapping(value = "/{zdbID}/topics", method = RequestMethod.GET)
     public Collection<CurationDTO> getCurationTopics(@PathVariable String zdbID) {
 
         Session session = HibernateUtil.currentSession();
@@ -161,10 +173,12 @@ public class PublicationTrackingController {
         publication.setIndexed(dto.isIndexed());
         publication.setIndexedDate((GregorianCalendar) dto.getIndexedDate());
         if (publication.getCloseDate() == null && dto.getClosedDate() != null) {
-            // looks like this paper's getting closed!
-            publicationRepository.closeOpenCurationTopics(publication, ProfileService.getCurrentSecurityUser());
-            publication.setCloseDate((GregorianCalendar) dto.getClosedDate());
+            // looks like this paper's getting closed. close all the topics and do some cleanup, too.
+            publicationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+            expressionRepository.deleteExpressionStructuresForPub(publication);
+            mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
         }
+        publication.setCloseDate((GregorianCalendar) dto.getClosedDate());
         session.update(publication);
         tx.commit();
 
@@ -175,17 +189,29 @@ public class PublicationTrackingController {
     @RequestMapping(value = "/{zdbID}/validate", method = RequestMethod.POST)
     public JSONMessageList validatePublication(@PathVariable String zdbID) {
         Collection<String> warnings = new ArrayList<>();
+
         List<Curation> openTopics = publicationRepository.getOpenCurationTopics(zdbID);
         if (CollectionUtils.isNotEmpty(openTopics)) {
             warnings.add("There are open topics which will be closed");
         }
+
         List<String> featureNames = publicationRepository.getFeatureNamesWithNoGenotypesForPub(zdbID);
         if (CollectionUtils.isNotEmpty(featureNames)) {
             warnings.add("The following features have no genotypes: " + StringUtils.join(featureNames, ", "));
         }
+
         featureNames = publicationRepository.getTalenOrCrisprFeaturesWithNoRelationship(zdbID);
         if (CollectionUtils.isNotEmpty(featureNames)) {
             warnings.add("The following features were created by a CRISPR or TALEN with no feature marker relationship: " + StringUtils.join(featureNames, ", "));
+        }
+
+        List<PhenotypeExperiment> phenotypeExperiments = phenotypeRepository.getPhenotypeExperimentsWithoutAnnotation(zdbID);
+        Set<String> figures = new TreeSet<>();
+        for (PhenotypeExperiment phenotypeExperiment : phenotypeExperiments) {
+            figures.add(phenotypeExperiment.getFigure().getLabel());
+        }
+        if (CollectionUtils.isNotEmpty(phenotypeExperiments)) {
+            warnings.add("The following figures still have mutants without phenotypes defined: " + StringUtils.join(figures, ", "));
         }
 
         JSONMessageList messages = new JSONMessageList();
@@ -229,6 +255,66 @@ public class PublicationTrackingController {
         tx.commit();
 
         return CurationDTOConversionService.curationToDTO(curation);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.GET)
+    public Collection<CorrespondenceDTO> getCorrespondences(@PathVariable String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        return CollectionUtils.collect(publication.getCorrespondences(), new Transformer() {
+            @Override
+            public Object transform(Object o) {
+                return CurationDTOConversionService.correspondenceToDTO((Correspondence) o);
+            }
+        });
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{zdbID}/correspondences", method = RequestMethod.POST)
+    public CorrespondenceDTO newCorrespondence(@PathVariable String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+
+        Correspondence correspondence = new Correspondence();
+        correspondence.setPublication(publicationRepository.getPublication(zdbID));
+        correspondence.setCurator(ProfileService.getCurrentSecurityUser());
+        correspondence.setContactedDate(new Date());
+        session.save(correspondence);
+        tx.commit();
+
+        return CurationDTOConversionService.correspondenceToDTO(correspondence);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.POST)
+    public CorrespondenceDTO editCorrespondence(@PathVariable long id, @RequestBody CorrespondenceDTO correspondenceDTO) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+
+        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
+        if (correspondenceDTO.isReplyReceived()) {
+            correspondence.setRespondedDate(correspondenceDTO.getClosedDate());
+        } else {
+            correspondence.setGiveUpDate(correspondenceDTO.getClosedDate());
+        }
+        session.update(correspondence);
+        tx.commit();
+
+        return CurationDTOConversionService.correspondenceToDTO(correspondence);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/correspondences/{id}", method = RequestMethod.DELETE)
+    public String deleteCorrespondence(@PathVariable long id) {
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+
+        Correspondence correspondence = (Correspondence) session.get(Correspondence.class, id);
+        session.delete(correspondence);
+
+        tx.commit();
+
+        return "";
     }
 
     private Collection<PublicationNoteDTO> getPubNotes(Publication publication) {

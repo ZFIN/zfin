@@ -27,4 +27,15 @@ div.allcontent {
 }
 
 html { font-size: 100%; }
-body { font-size: 16px; }
+#hdr-banner { font-size: 16px; }
+#footer { font-size: 12px; }
+
+.table tbody > tr > td{
+    vertical-align: middle;
+}
+
+.btn-dense, .btn-group-dense > .btn {
+    padding: 1px 8px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
