@@ -1,5 +1,7 @@
 package org.zfin.infrastructure.delete;
 
+import com.google.gwt.editor.client.Editor;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.service.DeleteService;
@@ -33,11 +35,26 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("expression records"));
-        assertTrue(reportList.get(1).getValidationMessage().contains("GO annotation"));
-        assertTrue(reportList.get(2).getValidationMessage().contains("phenotype annotation"));
-        assertTrue(reportList.get(3).getValidationMessage().contains("more than one publication"));
+        assertTrue(reportList.get(0).getValidationMessage().contains("GO annotation"));
+        assertTrue(reportList.get(1).getValidationMessage().contains("more than one publication"));
+        assertTrue(reportList.get(2).getValidationMessage().contains("more than one fish"));
     }
+    @Test
+    @Ignore
+    //TODO use stable fishID before release
+    public void fishValidation() {
+        // fgf8a^ti282a/ti282a
+        String zdbID = "ZDB-FISH-980202-822";
+        DeleteEntityRule feature = service.getDeleteRule(zdbID);
+        List<DeleteValidationReport> reportList = feature.validate();
+        assertNotNull(reportList);
+        assertTrue(reportList.size() > 0);
+        assertTrue(reportList.get(0).getValidationMessage().contains("more than one publication"));
+        assertTrue(reportList.get(1).getValidationMessage().contains("is used in more than one disease model"));
+        assertTrue(reportList.get(2).getValidationMessage().contains("phenotype"));
+        assertTrue(reportList.get(3).getValidationMessage().contains("expression"));
+    }
+
 
     @Test
     public void constructValidation() {
