@@ -154,6 +154,9 @@ public class FishMatchingService {
             return;
         // loop over all genotype experiments for a given fish
         for (String genoxID : fish.getGenotypeExperimentIDs()) {
+            /// ToDo
+            // need to get the real fish and then get phenotypeStatements by fish
+/*
             List<PhenotypeStatement> phenotypeStatementList = getPhenotypeRepository().getPhenotypeStatements(genoxID);
             if (phenotypeStatementList != null) {
                 Set<Term> allPhenotypeTerms = new HashSet<Term>();
@@ -163,6 +166,7 @@ public class FishMatchingService {
                 }
                 compareQueryTermWithPhenotypeTermList(queryTermID, allPhenotypeTerms);
             }
+*/
         }
     }
 
