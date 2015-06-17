@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.BasicTransformerAdapter;
+import org.springframework.stereotype.Repository;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
@@ -29,6 +30,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 /**
  * Class defines methods to retrieve phenotypic data for annotation purposes
  */
+@Repository
 public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     private static Logger LOG = Logger.getLogger(HibernatePhenotypeRepository.class);
@@ -538,13 +540,13 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param genoxID genotype experiment id
      * @return list of phenotypes
      */
-    public List<PhenotypeStatement> getPhenotypeStatements(String genoxID) {
+    public List<PhenotypeStatement> getPhenotypeStatements(FishExperiment genoxID) {
         if (genoxID == null)
             return null;
 
         Session session = HibernateUtil.currentSession();
         String sql = "from PhenotypeStatement where " +
-                " phenotypeExperiment.genotypeExperiment.zdbID = :genoxID";
+                " phenotypeExperiment.fishExperiment = :genoxID";
 
         Query query = session.createQuery(sql);
         query.setParameter("genoxID", genoxID);

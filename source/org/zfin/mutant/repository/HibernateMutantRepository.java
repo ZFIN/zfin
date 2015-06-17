@@ -1707,7 +1707,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     @Override
     public Zygosity getZygosity(String ID) {
-        return (Zygosity) HibernateUtil.currentSession().get(Zygosity.class,ID);
+        return (Zygosity) HibernateUtil.currentSession().get(Zygosity.class, ID);
     }
 
     @Override
@@ -1716,5 +1716,19 @@ public class HibernateMutantRepository implements MutantRepository {
         session.save(genotype);
         getInfrastructureRepository().insertPublicAttribution(genotype.getZdbID(), publicationID, RecordAttribution.SourceType.STANDARD);
 
+    }
+
+    public void updateGenotypeNicknameWithHandleForPublication(Publication publication) {
+        HibernateUtil.currentSession().createSQLQuery(
+                "UPDATE genotype " +
+                        "SET geno_nickname = geno_handle " +
+                        "WHERE EXISTS ( " +
+                        "  SELECT 'x' " +
+                        "  FROM record_attribution " +
+                        "  WHERE recattrib_data_zdb_id = geno_zdb_id " +
+                        "  AND recattrib_source_zdb_id = :pubID " +
+                        ");")
+                .setString("pubID", publication.getZdbID())
+                .executeUpdate();
     }
 }

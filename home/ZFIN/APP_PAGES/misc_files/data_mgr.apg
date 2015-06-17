@@ -166,7 +166,7 @@ c.clone_mrkr_zdb_id='$OID';
     <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">  
         &nbsp;
     <?MIELSE>
-        <?MIVAR><a href="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pubcuration.apg&OID=$OID">Track Curation</a><?/MIVAR>
+        <?MIVAR><a href="/action/publication/$OID/track">Track Curation</a><?/MIVAR>
     <?/MIBLOCK>
   </TD>
   <TD>

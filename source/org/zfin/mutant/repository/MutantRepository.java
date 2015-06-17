@@ -523,5 +523,7 @@ public interface MutantRepository {
      * @param genotype
      */
     void saveGenotype(Genotype genotype, String publicationID);
+
+    void updateGenotypeNicknameWithHandleForPublication(Publication publication);
 }
 

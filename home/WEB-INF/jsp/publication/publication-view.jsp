@@ -8,7 +8,7 @@
     <c:set var="deleteURL">/action/infrastructure/deleteRecord/${publication.zdbID}</c:set>
 </c:if>
 
-<c:set var="trackURL">/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=${publication.zdbID}</c:set>
+<c:set var="trackURL">/action/publication/${publication.zdbID}/track</c:set>
 
 <c:set var="linkURL">/cgi-bin/webdriver?MIval=aa-link_authors.apg&OID=${publication.zdbID}&anon1=zdb_id&anon1text=${publication.zdbID}</c:set>
 
@@ -100,16 +100,16 @@
         <tr>
             <th>File:</th>
             <td>
-                <c:choose>
-                    <c:when test="${not empty publication.fileName}">
-                        <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}">PDF</a>
-                    </c:when>
-                    <c:when test="${empty publication.fileName && allowCuration}">
-                        Upload a PDF from the
-                        <a href="/cgi-bin/webdriver?MIval=aa-pubcuration.apg&OID=${publication.zdbID}">Tracking</a>
-                        page.
-                    </c:when>
-                </c:choose>
+                <c:if test="${not empty publication.fileName}">
+                    <a href="<%=ZfinPropertiesEnum.PDF_LOAD.value()%>/${publication.fileName}">PDF</a>
+                </c:if>
+                <form action="/cgi-bin/upload.cgi" method="post" enctype="multipart/form-data" class="inline-upload">
+                    <label for="pdfUploadFileInput">${not empty publication.fileName ? "Replace File" : "Upload File"}</label>
+                    <input type="file" accept="application/pdf" name="upload" id="pdfUploadFileInput">
+                    <input type="hidden" name="redirect_url" value="/action/publication/view/${publication.zdbID}">
+                    <input type="hidden" name="OID" value="${publication.zdbID}">
+                    <button type="submit">Upload</button>
+                </form>
             </td>
         </tr>
 

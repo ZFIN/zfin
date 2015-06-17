@@ -4,23 +4,14 @@
 
 angular.module('pubTrackingApp', [])
 
-    .config(['$locationProvider', function ($locationProvider) {
-        $locationProvider.html5Mode(true);
-    }])
-
-    .factory('pubId', ['$location', function ($location) {
-        var match = $location.path().match("action/publication/([^/]+)/track");
-        return match ? match[1] : "";
-    }])
-
-    .filter("timeago", function () {
+    .filter('timeago', function () {
         // from https://gist.github.com/rodyhaddad/5896883
 
         //time: the time
         //local: compared to what time? default: now
-        //raw: wheter you want in a format of "5 minutes ago", or "5 minutes"
+        //raw: wheter you want in a format of '5 minutes ago', or '5 minutes'
         return function (time, local, raw) {
-            if (!time) return "never";
+            if (!time) return 'never';
 
             if (!local) {
                 (local = Date.now())
@@ -28,13 +19,13 @@ angular.module('pubTrackingApp', [])
 
             if (angular.isDate(time)) {
                 time = time.getTime();
-            } else if (typeof time === "string") {
+            } else if (typeof time === 'string') {
                 time = new Date(time).getTime();
             }
 
             if (angular.isDate(local)) {
                 local = local.getTime();
-            }else if (typeof local === "string") {
+            }else if (typeof local === 'string') {
                 local = new Date(local).getTime();
             }
 
@@ -72,196 +63,249 @@ angular.module('pubTrackingApp', [])
         }
     })
 
-    .controller('PubTrackingTopicsController', ['$http', '$filter', 'pubId', function ($http, $filter, pubId) {
-        var pubTopics = this,
-            previousNote = "";
-        pubTopics.topics = [];
-        pubTopics.status = null;
-        pubTopics.notes = [];
-        pubTopics.newNote = "";
-        pubTopics.warnings = [];
+    .controller('PubTrackingController', ['$http', '$filter', '$attrs', function ($http, $filter, $attrs) {
+        var pubTrack = this,
+            previousNote = '',
+            pubId = $attrs.zdbId;
+        pubTrack.topics = [];
+        pubTrack.status = null;
+        pubTrack.notes = [];
+        pubTrack.newNote = '';
+        pubTrack.warnings = [];
+        pubTrack.correspondences = [];
 
-        var addOrUpdateTopic = function (topic, idx) {
-            if (topic.zdbID) {
-                $http.post('/action/publication/topics/' + topic.zdbID, topic)
-                    .success(function (data) {
-                        pubTopics.topics[idx] = data;
-                    });
-            } else {
-                $http.post('/action/publication/' + pubId + '/topics', topic)
-                    .success(function (data) {
-                        pubTopics.topics[idx] = data;
-                    });
-            }
-        };
-
-        var updateStatus = function (status) {
-            $http.post('/action/publication/' + pubId + '/status', status)
+        var getTopics = function() {
+            $http.get('/action/publication/' + pubId + '/topics')
                 .success(function (data) {
-                    pubTopics.status = data;
+                    pubTrack.topics = data;
                 });
         };
 
-        pubTopics.toggleDataFound = function (topic, idx) {
+        var getStatus = function () {
+            $http.get('/action/publication/' + pubId + '/status')
+                .success(function (data) {
+                    pubTrack.status = data;
+                });
+        };
+
+        var getNotes = function () {
+            $http.get('/action/publication/' + pubId + '/notes')
+                .success(function (data) {
+                    pubTrack.notes = data;
+                });
+        };
+
+        var getCorrespondences = function () {
+            $http.get('/action/publication/' + pubId + '/correspondences')
+                .success(function (data) {
+                    pubTrack.correspondences = data;
+                });
+        };
+
+        var addOrUpdateTopic = function (topic, idx) {
+            var post;
+            if (topic.zdbID) {
+                post = $http.post('/action/publication/topics/' + topic.zdbID, topic);
+            } else {
+                post = $http.post('/action/publication/' + pubId + '/topics', topic)
+            }
+            post.success(function (data) {
+                pubTrack.topics[idx] = data;
+            });
+            return post;
+        };
+
+        var updateStatus = function () {
+            var post = $http.post('/action/publication/' + pubId + '/status', pubTrack.status);
+            post.success(function (data) {
+                pubTrack.status = data;
+            });
+            return post;
+        };
+
+        var updateCorrespondence = function (corr, idx) {
+            var post = $http.post('/action/publication/correspondences/' + corr.id, corr);
+            post.success(function (data) {
+                    pubTrack.correspondences[idx] = data;
+                });
+            return post;
+        };
+
+        // not private because it gets called from notif_frame.apg
+        pubTrack._addNote = function (txt) {
+            var post = $http.post('/action/publication/' + pubId + '/notes', { text: txt });
+            post.success(function (data) {
+                pubTrack.notes.unshift(data);
+            });
+            return post;
+        };
+
+        pubTrack.toggleTopicDataFound = function (topic, idx) {
             topic.dataFound = !topic.dataFound;
             addOrUpdateTopic(topic, idx);
         };
 
-        pubTopics.open = function(topic, idx) {
+        pubTrack.openTopic = function(topic, idx) {
             topic.openedDate = Date.now();
             topic.closedDate = null;
             topic.dataFound = true;
             addOrUpdateTopic(topic, idx);
         };
 
-        pubTopics.close = function(topic, idx) {
+        pubTrack.closeTopic = function(topic, idx) {
             topic.closedDate = Date.now();
             topic.dataFound = true;
             addOrUpdateTopic(topic, idx);
         };
 
-        pubTopics.unopen = function (topic, idx) {
+        pubTrack.unopenTopic = function (topic, idx) {
             topic.openedDate = null;
             addOrUpdateTopic(topic, idx);
         };
 
-        pubTopics.isNew = function(topic) {
+        pubTrack.isNewTopic = function(topic) {
             return !topic.openedDate && !topic.closedDate;
         };
 
-        pubTopics.isOpen = function(topic) {
+        pubTrack.isOpenTopic = function(topic) {
             return topic.openedDate && !topic.closedDate;
         };
 
-        pubTopics.isClosed = function(topic) {
+        pubTrack.isClosedTopic = function(topic) {
             return topic.closedDate;
         };
 
-        pubTopics.indexPub = function () {
-            pubTopics.status.indexed = true;
-            pubTopics.status.indexedDate = Date.now();
-            updateStatus(pubTopics.status);
-
-            $http.post('/action/publication/' + pubId + '/notes', { text: 'Indexed paper' })
-                .success(function (data) {
-                    pubTopics.notes.unshift(data);
+        pubTrack.indexPub = function () {
+            pubTrack.status.indexed = true;
+            pubTrack.status.indexedDate = Date.now();
+            updateStatus()
+                .success(function () {
+                    pubTrack._addNote('Indexed paper');
                 });
         };
 
-        pubTopics.unindexPub = function () {
-            pubTopics.status.indexed = false;
-            pubTopics.status.indexedDate = null;
-            updateStatus(pubTopics.status);
-
-            $http.post('/action/publication/' + pubId + '/notes', { text: 'Un-indexed paper' })
-                .success(function (data) {
-                    pubTopics.notes.unshift(data);
+        pubTrack.unindexPub = function () {
+            pubTrack.status.indexed = false;
+            pubTrack.status.indexedDate = null;
+            updateStatus()
+                .success(function () {
+                    pubTrack._addNote('Un-indexed paper');
                 });
         };
 
-        pubTopics.closePub = function () {
-            $http.post('/action/publication/' + pubId + '/validate')
+        pubTrack.validateForClose = function () {
+            $http.post('/action/publication/' + pubId + '/validate', {})
                 .success(function (data) {
-                    if (typeof data.warnings != "undefined" && data.warnings != null && data.warnings.length > 0) {
-                        pubTopics.warnings = data.warnings;
+                    if (typeof data.warnings !== 'undefined' && data.warnings !== null && data.warnings.length > 0) {
+                        pubTrack.warnings = data.warnings;
                     } else {
-                        pubTopics.closeWithoutWarning();
+                        pubTrack.closePub();
                     }
                 });
         };
 
-        pubTopics.closeWithoutWarning = function () {
-            var noteToAdd;
-            pubTopics.status.closedDate = Date.now();
-            if (pubTopics.hasTopics()) {
-                noteToAdd = "Closed paper";
-            } else {
-                noteToAdd = "Upon review, this publication contains no information currently curated by ZFIN"
-            }
-            updateStatus(pubTopics.status);
-            pubTopics.hideWarnings();
-            $http.post('/action/publication/' + pubId + '/notes', { text: noteToAdd })
-                .success(function (data) {
-                    pubTopics.notes.unshift(data);
+        pubTrack.closePub = function () {
+            var noteToAdd = pubTrack.hasTopics() ?
+                'Closed paper' : 'Upon review, this publication contains no information currently curated by ZFIN';
+            pubTrack.status.closedDate = Date.now();
+            updateStatus()
+                .success(function () {
+                    pubTrack.hideWarnings();
+                    pubTrack._addNote(noteToAdd);
+                    getTopics();
                 });
         };
 
-        pubTopics.hideWarnings = function () {
-            pubTopics.warnings = [];
+        pubTrack.reopenPub = function () {
+            pubTrack.status.closedDate = null;
+            updateStatus()
+                .success(function () {
+                    pubTrack._addNote('Reopened paper')
+                });
         };
 
-        pubTopics.getStatus = function (topic) {
-            if (pubTopics.isOpen(topic)) {
-                return "Opened " + $filter("timeago")(topic.openedDate);
-            } else if (pubTopics.isClosed(topic)) {
-                return "Closed";
+        pubTrack.hideWarnings = function () {
+            pubTrack.warnings = [];
+        };
+
+        pubTrack.getTopicStatus = function (topic) {
+            if (pubTrack.isOpenTopic(topic)) {
+                return 'Opened ' + $filter('timeago')(topic.openedDate);
+            } else if (pubTrack.isClosedTopic(topic)) {
+                return 'Closed';
             } else {
-                return "";
+                return '';
             }
         };
 
-        pubTopics.addNote = function () {
-            $http.post('/action/publication/' + pubId + '/notes', {
-                "zdbID": null,
-                "text": pubTopics.newNote,
-                "date": null,
-                "curator": null
-            }).success(function (data) {
-                pubTopics.notes.unshift(data);
-                pubTopics.newNote = "";
-            });
+        pubTrack.addNote = function () {
+            pubTrack._addNote(pubTrack.newNote)
+                .success(function () {
+                    pubTrack.newNote = '';
+                });
         };
 
-        pubTopics.beginEditing = function (note) {
+        pubTrack.beginEditingNote = function (note) {
             previousNote = note.text;
             note.editing = true;
         };
 
-        pubTopics.cancelEditing = function (note) {
+        pubTrack.cancelEditingNote = function (note) {
             note.text = previousNote;
             note.editing = false;
         };
 
-        pubTopics.editNote = function (note) {
-            $http.post('/action/publication/notes/' + note.zdbID, {
-                "zdbID": null,
-                "text": note.text,
-                "date": null,
-                "curator": null
-            }).success(function () {
-                note.editing = false;
-            });
-        };
-
-        pubTopics.deleteNote = function (note) {
-            $http.delete('/action/publication/notes/' + note.zdbID)
+        pubTrack.editNote = function (note) {
+            $http.post('/action/publication/notes/' + note.zdbID, { text: note.text })
                 .success(function () {
-                    var idx = pubTopics.notes.indexOf(note);
-                    pubTopics.notes.splice(idx, 1);
+                    note.editing = false;
                 });
         };
 
-        pubTopics.hasTopics = function () {
-            return pubTopics.topics.some(function (t) {
-                return t.dataFound;
-            });
+        pubTrack.deleteNote = function (note) {
+            $http.delete('/action/publication/notes/' + note.zdbID)
+                .success(function () {
+                    var idx = pubTrack.notes.indexOf(note);
+                    pubTrack.notes.splice(idx, 1);
+                });
         };
 
-        $http.get('/action/publication/' + pubId + '/topics')
-            .success(function (data) {
-                pubTopics.topics = data;
-            });
-        $http.get('/action/publication/' + pubId + '/status')
-            .success(function (data) {
-                pubTopics.status = data;
-            });
+        pubTrack.hasTopics = function () {
+            return pubTrack.topics.some(function (t) { return t.dataFound; });
+        };
 
-        $http.get('/action/publication/' + pubId + '/notes')
-            .success(function (data) {
-                pubTopics.notes = data;
-            })
-            .error(function (data) {
-                console.log(data);
-            });
+        pubTrack.allCorrespondencesClosed = function () {
+            return pubTrack.correspondences.length == 0 || pubTrack.correspondences[0].closedDate;
+        };
+
+        pubTrack.newCorrespondence = function () {
+            $http.post('/action/publication/' + pubId + '/correspondences', {})
+                .success(function (data) {
+                    pubTrack.correspondences.unshift(data);
+                });
+        };
+
+        pubTrack.closeCorrespondence = function (replied, corr, idx) {
+            corr.closedDate = Date.now();
+            corr.replyReceived = replied;
+            updateCorrespondence(corr, idx);
+        };
+
+        pubTrack.reopenCorrespondence = function (corr, idx) {
+            corr.closedDate = null;
+            updateCorrespondence(corr, idx);
+        };
+
+        pubTrack.deleteCorrespondence = function (corr, idx) {
+            $http.delete('/action/publication/correspondences/' + corr.id)
+                .success(function () {
+                    pubTrack.correspondences.splice(idx, 1);
+                });
+        };
+
+        getTopics();
+        getStatus();
+        getNotes();
+        getCorrespondences();
 
     }]);

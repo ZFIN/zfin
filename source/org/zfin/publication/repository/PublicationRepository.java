@@ -495,7 +495,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Curation> getOpenCurationTopics(String pubZdbID);
 
-    void closeOpenCurationTopics(Publication pub, Person curator);
+    void closeCurationTopics(Publication pub, Person curator);
 
 
     public Long getMarkerCount(Publication publication);

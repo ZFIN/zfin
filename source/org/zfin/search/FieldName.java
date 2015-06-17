@@ -31,6 +31,7 @@ public enum FieldName {
     EXPERIMENTAL_CONDITIONS("experimental_conditions"),
     EXPRESSIONS_ANATOMY_TF("expression_anatomy_tf"),
     EXPRESSED_IN_TF("expressed_in_tf"),
+    FISH("fish"),
     GENE("gene"),
     GENES_WITH_ALTERED_EXPRESSION("genes_with_altered_expression"),
     GENOTYPE("genotype"),

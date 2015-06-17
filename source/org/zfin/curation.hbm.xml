@@ -41,4 +41,17 @@
         <property name="openedDate" column="cur_opened_date"/>
     </class>
 
+    <class name="org.zfin.curation.Correspondence" table="publication_correspondence">
+        <id name="id" type="long">
+            <column name="pubcorr_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <many-to-one name="publication" column="pubcorr_pub_zdb_id" class="org.zfin.publication.Publication"/>
+        <many-to-one name="curator" column="pubcorr_curator_zdb_id" class="org.zfin.profile.Person"/>
+        <property name="contactedDate" column="pubcorr_contacted_date"/>
+        <property name="respondedDate" column="pubcorr_responded_date"/>
+        <property name="giveUpDate" column="pubcorr_gave_up_date"/>
+    </class>
+
 </hibernate-mapping>

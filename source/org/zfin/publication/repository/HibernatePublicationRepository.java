@@ -33,6 +33,7 @@ import org.zfin.ontology.Term;
 import org.zfin.orthology.OrthoEvidenceDisplay;
 import org.zfin.orthology.Orthology;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.DOIAttempt;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
@@ -632,7 +633,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql.append("      fishox.experiment = exp AND ");
         hql.append("      con.experiment = exp AND  ");
         hql.append("      marker = con.sequenceTargetingReagent AND  ");
-        hql.append("      phenotype.phenotypeExperiment.genotypeExperiment = geno AND  ");
+        hql.append("      phenotype.phenotypeExperiment.fishExperiment = geno AND  ");
         hql.append("      phenotype.phenotypeExperiment.figure = figure AND ");
         hql.append("      ( phenotype.entity.superterm = :term OR phenotype.entity.subterm = :term  OR" +
                 "           phenotype.relatedEntity.superterm = :term OR phenotype.relatedEntity.subterm = :term ) ");
@@ -824,9 +825,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   xpatfig.expressionResult = res AND " +
                 "   xpatfig.figure = fig AND " +
                 "   res.expressionFound = :expressionFound AND " +
-                "   exp.genotypeExperiment = fishox AND " +
-                "   genox.standardOrGenericControl = :condition AND " +
-                "   genox.genotype = geno AND " +
+                "   exp.fishExperiment = fishox AND " +
+                "   fishox.standardOrGenericControl = :condition AND " +
+                "   fishox.fish.genotype = geno AND " +
                 "   fishox.fish.geno.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
@@ -1202,11 +1203,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Genotype> getFishUsedInExperiment(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct fish from Genotype fish, ExpressionExperiment ee," +
+        String hql = "select distinct fish from Fish fish, ExpressionExperiment ee," +
                 "                               FishExperiment fishox " +
                 "     where ee.publication.zdbID = :pubID " +
                 "           and ee.fishExperiment = fishox " +
-                "           and genox.fish = fish" +
+                "           and fishox.fish = fish" +
                 "    order by fish.handle ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
@@ -2004,36 +2005,49 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return query.list();
     }
 
-    public void closeOpenCurationTopics(Publication pub, Person curator) {
+    public void closeCurationTopics(Publication pub, Person curator) {
+        for (Curation.Topic topic : Curation.Topic.values()) {
+            if (topic == Curation.Topic.LINKED_AUTHORS) {
+                continue;
+            }
 
-        // for topics that are already open, just close them without updating the curator
-        String hql = "update Curation c" +
-                " set c.closedDate = :now" +
-                " where c.publication = :pub" +
-                " and c.openedDate is not null" +
-                " and c.closedDate is null" +
-                " and c.topic != :linkedAuthors";
-        HibernateUtil.currentSession()
-                .createQuery(hql)
-                .setParameter("now", new Date())
-                .setParameter("pub", pub)
-                .setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS)
-                .executeUpdate();
-
-        // topics that aren't opened, should get and openedDate, closedDate, and curator
-        hql = "update Curation c" +
-                " set c.openedDate = :now, c.closedDate = :now, c.curator = :curator" +
-                " where c.publication = :pub" +
-                " and c.openedDate is null" +
-                " and c.closedDate is null" +
-                " and c.topic != :linkedAuthors";
-        HibernateUtil.currentSession()
-                .createQuery(hql)
-                .setParameter("now", new Date())
-                .setParameter("curator", curator)
-                .setParameter("pub", pub)
-                .setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS)
-                .executeUpdate();
+            Date now = new Date();
+            Session session = HibernateUtil.currentSession();
+            Curation curation = (Curation) session
+                    .createCriteria(Curation.class)
+                    .add(Restrictions.eq("publication", pub))
+                    .add(Restrictions.eq("topic", topic))
+                    .uniqueResult();
+            if (curation != null) {
+                if (curation.getClosedDate() == null) {
+                    // existing curation topics which haven't been closed yet need to be closed
+                    if (curation.getOpenedDate() == null) {
+                        // this is a topic in the "new" state -- not opened or closed. Need to set the
+                        // curator, opened and closed date.
+                        curation.setCurator(curator);
+                        curation.setOpenedDate(now);
+                        curation.setClosedDate(now);
+                        session.update(curation);
+                    } else {
+                        // a currently open curation topic. just close it, no need to set curator
+                        curation.setClosedDate(now);
+                        session.update(curation);
+                    }
+                }
+            } else {
+                // curation topic hasn't been created, so make one with no data found and closed
+                curation = new Curation();
+                curation.setTopic(topic);
+                curation.setPublication(pub);
+                curation.setCurator(curator);
+                curation.setEntryDate(new Date());
+                curation.setDataFound(false);
+                curation.setEntryDate(now);
+                curation.setOpenedDate(now);
+                curation.setClosedDate(now);
+                session.save(curation);
+            }
+        }
     }
 
     private Long getMarkerCountByMarkerType(String zdbID, String type) {

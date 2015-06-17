@@ -1,5 +1,6 @@
 package org.zfin.expression.repository;
 
+import com.sun.msv.reader.ExpressionState;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressedStructurePresentation;
@@ -54,6 +56,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 /**
  * Repository that is used for curation actions, such as dealing with expression experiments.
  */
+@Repository
 public class HibernateExpressionRepository implements ExpressionRepository {
 
     private Logger logger = Logger.getLogger(HibernateExpressionRepository.class);
@@ -1035,6 +1038,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         session.delete(structure);
     }
 
+    public void deleteExpressionStructuresForPub(Publication publication) {
+        List<ExpressionStructure> structures = HibernateUtil.currentSession()
+                .createCriteria(ExpressionStructure.class)
+                .add(Restrictions.eq("publication", publication))
+                .list();
+        for (ExpressionStructure structure : structures) {
+            getInfrastructureRepository().deleteActiveDataByZdbID(structure.getZdbID());
+        }
+    }
+
     /**
      * Delete an expression result record for a given figure.
      * If the result has more than one figure it only removes the figure-result association.
@@ -1615,7 +1628,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
             criteria.add(Restrictions.eq("genox.fish.genotype", expressionCriteria.getGenotype()));
             aliasMap.put("xpatex.fishExperiment", "genox");
-            criteria.add(Restrictions.eq("genox.fish.genotype", expressionCriteria.getGenotype()));
+          //  criteria.add(Restrictions.eq("genox.fish.genotype", expressionCriteria.getGenotype()));
             logger.debug("geno: " + expressionCriteria.getGenotype().getZdbID());
         }
 
@@ -1675,7 +1688,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (expressionCriteria.isWildtypeOnly()) {
             aliasMap.put("expressionResults", "xpatres");
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.fishExperiment", "genox");
+            //aliasMap.put("xpatex.fishExperiment", "genox");
             aliasMap.put("genox.fish", "fish");
             aliasMap.put("fish.genotype", "genotype");
             criteria.add(Restrictions.eq("genotype.wildtype", true));
