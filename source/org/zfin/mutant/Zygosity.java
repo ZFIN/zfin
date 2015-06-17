@@ -66,4 +66,51 @@ public class Zygosity {
             return "";
         }
     }
+
+    public Type getType() {
+        return Type.getZygosity(name);
+    }
+
+    public String getMutantZygosityDisplay(String featureName) {
+        StringBuilder builder = new StringBuilder(featureName);
+        if (Type.getZygosity(name).equals(Type.HOMOZYGOUS)) {
+            builder.append("/");
+            builder.append(featureName);
+        } else if (Type.getZygosity(name).equals(Type.HETEROZYGOUS)) {
+            builder.append("/");
+            builder.append("+");
+        }
+        return builder.toString();
+    }
+
+    enum Type {
+        HOMOZYGOUS("homozygous", "2"),
+        HETEROZYGOUS("heterozygous", "1"),
+        UNKNOWN("unknown", "U"),
+        WILDTYPE("wild type", "W"),
+        COMPLEX("complex", "C");
+        private String name;
+        private String symbol;
+
+        Type(String name, String symbol) {
+            this.name = name;
+            this.symbol = symbol;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getSymbol() {
+            return symbol;
+        }
+
+        public static Type getZygosity(String name) {
+            for (Type type : values())
+                if (type.getName().equals(name))
+                    return type;
+            return null;
+        }
+    }
+
 }

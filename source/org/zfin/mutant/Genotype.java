@@ -118,7 +118,7 @@ public class Genotype implements Comparable, EntityZdbID {
     public void setBackground(Genotype background) {
         if (!CollectionUtils.isEmpty(associatedGenotypes))
             throw new RuntimeException("Found already one associated genotype (Background)! " + associatedGenotypes);
-        associatedGenotypes = new HashSet<Genotype>();
+        associatedGenotypes = new HashSet<>();
         associatedGenotypes.add(background);
     }
 
@@ -167,7 +167,7 @@ public class Genotype implements Comparable, EntityZdbID {
 
     public Set<DataNote> getDataNotes() {
         if (dataNotes == null) {
-            return new HashSet<DataNote>();
+            return new HashSet<>();
         }
         return dataNotes;
     }

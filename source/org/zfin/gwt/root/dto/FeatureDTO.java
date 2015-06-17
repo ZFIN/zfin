@@ -28,6 +28,8 @@ public class FeatureDTO extends RelatedEntityDTO {
     protected List<String> featureAliases;
     protected String featureSequence;
     protected List<String> featureSequences;
+    protected String displayNameForGenotypeBase;
+    protected String displayNameForGenotypeSuperior;
 
     public String getFeatureSequence() {
         return featureSequence;
@@ -233,6 +235,22 @@ public class FeatureDTO extends RelatedEntityDTO {
         featureDTO.mutagee = mutagee ;
         featureDTO.mutagen = mutagen ;
         return featureDTO;
+    }
+
+    public String getDisplayNameForGenotypeBase() {
+        return displayNameForGenotypeBase;
+    }
+
+    public void setDisplayNameForGenotypeBase(String displayNameForGenotypeBase) {
+        this.displayNameForGenotypeBase = displayNameForGenotypeBase;
+    }
+
+    public String getDisplayNameForGenotypeSuperior() {
+        return displayNameForGenotypeSuperior;
+    }
+
+    public void setDisplayNameForGenotypeSuperior(String displayNameForGenotypeSuperior) {
+        this.displayNameForGenotypeSuperior = displayNameForGenotypeSuperior;
     }
 
     @Override

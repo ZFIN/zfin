@@ -173,6 +173,6 @@ public interface CurationExperimentRPCAsync {
      */
     void getGenotypes(String publicationID, AsyncCallback<List<GenotypeDTO>> async);
 
-    void getBackgroundGenotypes(String publicationID, AsyncCallback<List<RelatedEntityDTO>> callback);
+    void getBackgroundGenotypes(String publicationID, AsyncCallback<List<GenotypeDTO>> callback);
 }
 

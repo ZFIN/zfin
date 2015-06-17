@@ -501,5 +501,27 @@ public interface MutantRepository {
     List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication);
 
     List<FishExperiment> getFishExperiment(Genotype genotype);
+
+    /**
+     * Retrieve list of all zygosities
+     *
+     * @return
+     */
+    List<Zygosity> getListOfZygosity();
+
+    /**
+     * Retrieve Zygosity by ID
+     *
+     * @param ID
+     * @return
+     */
+    Zygosity getZygosity(String ID);
+
+    /**
+     * Create Genotype
+     *
+     * @param genotype
+     */
+    void saveGenotype(Genotype genotype, String publicationID);
 }
 

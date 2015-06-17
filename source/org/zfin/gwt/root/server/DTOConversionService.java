@@ -17,6 +17,7 @@ import org.zfin.feature.presentation.FeaturePresentation;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
@@ -617,6 +618,13 @@ public class DTOConversionService {
             featureDTO.setFeatureAliases(new ArrayList<>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
         if (feature.getDbLinks() != null)
             featureDTO.setFeatureSequences(new ArrayList<>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
+
+        for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
+            if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+                featureDTO.setDisplayNameForGenotypeBase(relationship.getMarker().getAbbreviation());
+                featureDTO.setDisplayNameForGenotypeSuperior(feature.getAbbreviation());
+            }
+        }
         return featureDTO;
     }
 
@@ -1326,7 +1334,7 @@ public class DTOConversionService {
         dto.setName(fish.getName());
         dto.setHandle(fish.getHandle());
         dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
-        if(CollectionUtils.isNotEmpty(fish.getStrList())) {
+        if (CollectionUtils.isNotEmpty(fish.getStrList())) {
             List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
             for (SequenceTargetingReagent str : fish.getStrList())
                 strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
@@ -1374,4 +1382,12 @@ public class DTOConversionService {
         dto.setEvidenceCode(model.getEvidenceCode());
         return dto;
     }
+
+    public static ZygosityDTO convertToZygosityDTO(Zygosity zygosity) {
+        ZygosityDTO dto = new ZygosityDTO();
+        dto.setName(zygosity.getName());
+        dto.setZdbID(zygosity.getZdbID());
+        return dto;
+    }
+
 }

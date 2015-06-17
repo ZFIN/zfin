@@ -20,9 +20,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -210,6 +208,47 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         }
         return getGenotypeList(publicationID);
     }
+
+    @Override
+    public List<ZygosityDTO> getZygosityLists() {
+        List<Zygosity> zygosityList = getMutantRepository().getListOfZygosity();
+        List<ZygosityDTO> dotList = new ArrayList<>(zygosityList.size());
+        for (Zygosity zygosity : zygosityList)
+            dotList.add(DTOConversionService.convertToZygosityDTO(zygosity));
+        return dotList;
+    }
+
+    @Override
+    public GenotypeDTO createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, GenotypeDTO genotypeBackgroundDTO, String nickname)
+            throws TermNotFoundException {
+        Genotype genotype;
+        HibernateUtil.createTransaction();
+        try {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null)
+                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
+            String backgroundGenotypeID = genotypeBackgroundDTO.getZdbID();
+            Genotype genotypeBackground = getMutantRepository().getGenotypeByID(backgroundGenotypeID);
+            if (genotypeBackground == null)
+                throw new TermNotFoundException("No genotype with ID: " + backgroundGenotypeID + " found");
+             genotype = GenotypeService.createGenotype(genotypeFeatureDTOList, genotypeBackground);
+            if (nickname != null)
+                genotype.setNickname(nickname);
+            getMutantRepository().saveGenotype(genotype, publicationID);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            String message = e.getMessage();
+            message += "\r\n";
+            message += e.getCause().getMessage();
+            throw new TermNotFoundException(message);
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new TermNotFoundException(e.getMessage());
+        }
+        return DTOConversionService.convertToPureGenotypeDTOs(genotype);
+    }
+
 
     public List<TermDTO> getHumanDiseaseList(String publicationID) {
         List<GenericTerm> diseaseList = getPhenotypeRepository().getHumanDiseases(publicationID);
