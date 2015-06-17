@@ -540,13 +540,13 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param genoxID genotype experiment id
      * @return list of phenotypes
      */
-    public List<PhenotypeStatement> getPhenotypeStatements(String genoxID) {
+    public List<PhenotypeStatement> getPhenotypeStatements(FishExperiment genoxID) {
         if (genoxID == null)
             return null;
 
         Session session = HibernateUtil.currentSession();
         String sql = "from PhenotypeStatement where " +
-                " phenotypeExperiment.genotypeExperiment.zdbID = :genoxID";
+                " phenotypeExperiment.fishExperiment = :genoxID";
 
         Query query = session.createQuery(sql);
         query.setParameter("genoxID", genoxID);

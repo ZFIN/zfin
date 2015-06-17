@@ -633,7 +633,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql.append("      fishox.experiment = exp AND ");
         hql.append("      con.experiment = exp AND  ");
         hql.append("      marker = con.sequenceTargetingReagent AND  ");
-        hql.append("      phenotype.phenotypeExperiment.genotypeExperiment = geno AND  ");
+        hql.append("      phenotype.phenotypeExperiment.fishExperiment = geno AND  ");
         hql.append("      phenotype.phenotypeExperiment.figure = figure AND ");
         hql.append("      ( phenotype.entity.superterm = :term OR phenotype.entity.subterm = :term  OR" +
                 "           phenotype.relatedEntity.superterm = :term OR phenotype.relatedEntity.subterm = :term ) ");
@@ -825,9 +825,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   xpatfig.expressionResult = res AND " +
                 "   xpatfig.figure = fig AND " +
                 "   res.expressionFound = :expressionFound AND " +
-                "   exp.genotypeExperiment = fishox AND " +
-                "   genox.standardOrGenericControl = :condition AND " +
-                "   genox.genotype = geno AND " +
+                "   exp.fishExperiment = fishox AND " +
+                "   fishox.standardOrGenericControl = :condition AND " +
+                "   fishox.fish.genotype = geno AND " +
                 "   fishox.fish.geno.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
@@ -1203,11 +1203,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Genotype> getFishUsedInExperiment(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct fish from Genotype fish, ExpressionExperiment ee," +
+        String hql = "select distinct fish from Fish fish, ExpressionExperiment ee," +
                 "                               FishExperiment fishox " +
                 "     where ee.publication.zdbID = :pubID " +
                 "           and ee.fishExperiment = fishox " +
-                "           and genox.fish = fish" +
+                "           and fishox.fish = fish" +
                 "    order by fish.handle ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);

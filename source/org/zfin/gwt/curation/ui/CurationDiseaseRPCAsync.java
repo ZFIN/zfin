@@ -28,7 +28,7 @@ public interface CurationDiseaseRPCAsync {
 
     void getGenotypeList(String publicationID, AsyncCallback<List<GenotypeDTO>> callback);
 
-    void getFeatureList(String publicationID, AsyncCallback<List<RelatedEntityDTO>> callback);
+    void getFeatureList(String publicationID, AsyncCallback<List<FeatureDTO>> callback);
 
     void searchGenotypes(String publicationID, String featureID, String genotypeID, AsyncCallback<List<GenotypeDTO>> callback);
 
@@ -45,6 +45,10 @@ public interface CurationDiseaseRPCAsync {
     void deleteCuratorNote(String publicationID, CuratorNoteDTO note, AsyncCallback<List<GenotypeDTO>> zfinAsyncCallback);
 
     void createCuratorNote(String publicationID, GenotypeDTO genotypeDTO, String text, AsyncCallback<List<GenotypeDTO>> async);
+
+    void getZygosityLists(AsyncCallback<List<ZygosityDTO>> async);
+
+    void createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, GenotypeDTO selectedGenotypeBackground, String nickname, AsyncCallback<GenotypeDTO> callBack);
 }
 
 

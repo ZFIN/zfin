@@ -16,7 +16,7 @@ import org.zfin.gwt.root.util.WidgetUtil;
 public class ZfinAsyncCallback<T> implements AsyncCallback<T> {
 
     private String message;
-    private ErrorHandler errorHandler;
+    protected ErrorHandler errorHandler;
     private RootPanel loadingPanel;
     private Widget loadingImage;
 

@@ -193,7 +193,7 @@ public interface PhenotypeRepository {
      * @param genoxID genotype experiment id
      * @return list of phenotypes
      */
-    List<PhenotypeStatement> getPhenotypeStatements(String genoxID);
+    List<PhenotypeStatement> getPhenotypeStatements(FishExperiment genoxID);
 
     /**
      * Retrieve list of phenotype figures associated with a genotype

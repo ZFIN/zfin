@@ -34,6 +34,11 @@ public interface CurationDiseaseRPC extends RemoteService {
 
     List<GenotypeDTO> createCuratorNote(String publicationID, GenotypeDTO genotypeDTO, String text) throws TermNotFoundException;
 
+    List<ZygosityDTO> getZygosityLists();
+
+    GenotypeDTO createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, GenotypeDTO selectedGenotypeBackground, String nickname)
+            throws TermNotFoundException;
+
     public static class App {
         private static final CurationDiseaseRPCAsync INSTANCE;
 

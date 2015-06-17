@@ -1,6 +1,5 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ListBox;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
@@ -27,7 +26,6 @@ public class RetrieveRelatedEntityListCallBack extends ZfinAsyncCallback<List<Re
         relatedEntityListBox.clear();
         if (leaveFirstEntryBlank) {
             relatedEntityListBox.addItem("");
-            dtoList.add(0, new RelatedEntityDTO());
         }
         this.dtoList = dtoList;
 
