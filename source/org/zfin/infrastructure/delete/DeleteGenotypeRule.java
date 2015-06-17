@@ -3,8 +3,12 @@ package org.zfin.infrastructure.delete;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.infrastructure.ZfinEntity;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -22,21 +26,10 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
         entity = genotype;
 
         // loo through all Fish using genotype
-        List<ExpressionResult> genoExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByFish(null);
+
+
         // Can't delete a genotype if it has expression data associated
-        if (CollectionUtils.isNotEmpty(genoExpressionResults)) {
-            Set<ExpressionExperiment> expressionExperiments = new HashSet<>();
-            for (ExpressionResult genoExpressionResult : genoExpressionResults) {
-                expressionExperiments.add(genoExpressionResult.getExpressionExperiment());
-            }
-            int numExpression = expressionExperiments.size();
-            Set<Publication> pubs = new HashSet<>();
-            for (ExpressionExperiment expressionExperiment : expressionExperiments) {
-                pubs.add(expressionExperiment.getPublication());
-            }
-            addToValidationReport(genotype.getAbbreviation() + " is used in " + numExpression +
-                    " expression records in the following " + pubs.size() + " publication(s): <br/>", pubs);
-        }
+
         List<String> publicationListGO = RepositoryFactory.getPublicationRepository().getPublicationIDsForGOwithField(zdbID);
         SortedSet<Publication> sortedGOpubs = new TreeSet<>();
         for (String pubId : publicationListGO) {
@@ -48,19 +41,20 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
             addToValidationReport(genotype.getAbbreviation() + " is used in the \"inferred from\" field of GO annotation in the following Publication", sortedGOpubs);
         }
 
-        List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getMutantRepository().getPhenotypeStatementsByGenotype(genotype);
-        // Can't delete a genotype if it has phenotypes associated
-        if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
-            SortedSet<PhenotypeStatement> sortedPhenotypesForGenotype = new TreeSet<>();
-            for (PhenotypeStatement pheno : phenotypeStatements) {
-                sortedPhenotypesForGenotype.add(pheno);
-            }
-            addToValidationReport(genotype.getAbbreviation() + " has the following phenotype annotation", sortedPhenotypesForGenotype);
-        }
         // can not delete if the genotype is associated with more than 1 publications
         SortedSet<Publication> genoPublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForGenotype(genotype);
         if (CollectionUtils.isNotEmpty(genoPublications) && genoPublications.size() > 1) {
             addToValidationReport(genotype.getAbbreviation() + " associated with more than one publication: ", genoPublications);
+        }
+        List<FishExperiment> fishExperimentList = RepositoryFactory.getMutantRepository().getFishExperiment(genotype);
+        SortedSet<Fish> sortedFish= new TreeSet<>();
+        for (FishExperiment fishExp: fishExperimentList){
+            Fish fish=fishExp.getFish();
+            sortedFish.add(fish);
+        }
+        if (CollectionUtils.isNotEmpty(sortedFish)) {
+
+            addToValidationReport(genotype.getAbbreviation() + " comprises following fish",sortedFish);
         }
         return validationReportList;
     }

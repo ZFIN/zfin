@@ -5,6 +5,7 @@ import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.mutant.DiseaseModel;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -55,6 +56,7 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
             addToValidationReport(fish.getAbbreviation() + " is used in " + numExpression +
                     " expression records in the following " + pubs.size() + " publication(s): <br/>", pubs);
         }
+
         return validationReportList;
     }
 
