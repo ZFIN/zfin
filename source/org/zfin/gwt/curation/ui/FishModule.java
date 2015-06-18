@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -179,6 +180,7 @@ public class FishModule implements HandlesError, EntryPoint {
         public PublicNotePopup(final GenotypeDTO genotypeDTO, boolean isPublic) {
             // set auto hide to true
             super(true);
+            makeBackgroundDarker();
             VerticalPanel vPanel = new VerticalPanel();
             final TextArea textArea = new TextArea();
             textArea.setHeight("100px");
@@ -206,9 +208,19 @@ public class FishModule implements HandlesError, EntryPoint {
             }
         }
 
+        private void makeBackgroundDarker() {
+            setGlassEnabled(true);
+            Style glassStyle = getGlassElement().getStyle();
+            glassStyle.setProperty("width", "100%");
+            glassStyle.setProperty("height", "100%");
+            glassStyle.setProperty("backgroundColor", "#000");
+            glassStyle.setProperty("opacity", "0.45");
+        }
+
         public PublicNotePopup(final NoteDTO externalNoteDTO, boolean isPublic) {
             // set auto hide to true
             super(true);
+            makeBackgroundDarker();
             VerticalPanel vPanel = new VerticalPanel();
             final TextArea textArea = new TextArea();
             textArea.setHeight("100px");
