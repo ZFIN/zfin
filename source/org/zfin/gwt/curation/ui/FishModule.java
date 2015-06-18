@@ -3,7 +3,6 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,11 +11,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.DeleteImage;
+import org.zfin.gwt.root.util.ShowHideWidget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,6 +102,8 @@ public class FishModule implements HandlesError, EntryPoint {
     ZfinFlexTable newGenotypeInfoTable;
 
     @UiField
+    Hyperlink showHideGenoList;
+    @UiField
     Hyperlink showHideExistingGeno;
     @UiField
     Button createGenotypeButton;
@@ -114,6 +115,11 @@ public class FishModule implements HandlesError, EntryPoint {
     private Label genotypeHandle = new Label();
     @UiField
     Hyperlink showHideGenotypeConstruction;
+
+    private ShowHideWidget genotypeListToggle;
+    private ShowHideWidget existingGenotypeListToggle;
+    private ShowHideWidget genotypeConstructionListToggle;
+    private ShowHideWidget fishConstructionListToggle;
 
     public FishModule(String publicationID) {
         this.publicationID = publicationID;
@@ -127,10 +133,6 @@ public class FishModule implements HandlesError, EntryPoint {
     private List<GenotypeDTO> genotypeList = new ArrayList<>(10);
     private List<GenotypeDTO> existingGenotypeList = new ArrayList<>(10);
 
-    private boolean showExistingGenoBool = false;
-    private boolean showFishConstruction = false;
-    private boolean showGenoConstruction = false;
-
     private Button buttonUUU = new Button("[U,U,U]");
     private Button button211 = new Button("[2,1,1]");
     private Button button2UU = new Button("[2,U,U]");
@@ -140,11 +142,11 @@ public class FishModule implements HandlesError, EntryPoint {
 
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
-/*
-        genotypeSearchResultPanel.add(genotypeSearchResultTable);
-        genotypeSearchResultPanel.setHeight("500");
-*/
         errorLabel.setStyleName("error");
+        genotypeListToggle = new ShowHideWidget(showHideGenoList, genotypeListTable, true);
+        existingGenotypeListToggle = new ShowHideWidget(showHideExistingGeno, importGenotypePanel);
+        genotypeConstructionListToggle = new ShowHideWidget(showHideGenotypeConstruction, genotypeConstructionPanel);
+        fishConstructionListToggle = new ShowHideWidget(showHideFishConstruction, fishConstructionPanel);
         genotypeListCallBack = new RetrieveDTOListCallBack<>(genotypeSelectionBox, "Genotypes", null);
         strListCallBack = new RetrieveRelatedEntityListCallBack(strSelectionBox, "STRs", null);
         attributionModule = new AttributionModule();
@@ -327,19 +329,25 @@ public class FishModule implements HandlesError, EntryPoint {
         showHideExistingGeno.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                toggleVisibilityExistingGenoTable();
+                existingGenotypeListToggle.toggleVisibility();
+            }
+        });
+        showHideGenoList.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                genotypeListToggle.toggleVisibility();
             }
         });
         showHideFishConstruction.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                toggleVisibilityFishConstruction();
+                fishConstructionListToggle.toggleVisibility();
             }
         });
         showHideGenotypeConstruction.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                toggleVisibilityGenotypeConstruction();
+                genotypeConstructionListToggle.toggleVisibility();
             }
         });
         featureListBox.addChangeHandler(new ChangeHandler() {
@@ -440,39 +448,6 @@ public class FishModule implements HandlesError, EntryPoint {
             return;
         diseaseCurationRPCAsync.searchGenotypes(publicationID, featureID, genotypeID, new RetrieveExistingGenotypeListCallBack("error", errorLabelSearch));
         loadingImageGenoSearch.setVisible(true);
-    }
-
-    private void toggleVisibilityFishConstruction() {
-        if (showFishConstruction) {
-            showFishConstruction = false;
-            showHideFishConstruction.setText("Show");
-        } else {
-            showFishConstruction = true;
-            showHideFishConstruction.setText("Hide");
-        }
-        fishConstructionPanel.setVisible(showFishConstruction);
-    }
-
-    private void toggleVisibilityGenotypeConstruction() {
-        if (showGenoConstruction) {
-            showGenoConstruction = false;
-            showHideGenotypeConstruction.setText("Show");
-        } else {
-            showGenoConstruction = true;
-            showHideGenotypeConstruction.setText("Hide");
-        }
-        genotypeConstructionPanel.setVisible(showGenoConstruction);
-    }
-
-    private void toggleVisibilityExistingGenoTable() {
-        if (showExistingGenoBool) {
-            showExistingGenoBool = false;
-            showHideExistingGeno.setText("Show");
-        } else {
-            showExistingGenoBool = true;
-            showHideExistingGeno.setText("Hide");
-        }
-        importGenotypePanel.setVisible(showExistingGenoBool);
     }
 
     private String getSelectedFeatureID() {
