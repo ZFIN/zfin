@@ -18,6 +18,7 @@ import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.infrastructure.ZdbFlag;
+import org.zfin.mutant.Fish;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -120,7 +121,8 @@ public class FishSearchController {
             LOG.error("Errors found during form binding: " + result);
         }
         if (formBean.getFishID().contains("GENO")){
-           MartFish fish = FishService.getFish(formBean.getFishID());
+         //  MartFish fish = FishService.getFish(formBean.getFishID());
+            Fish fish=RepositoryFactory.getMutantRepository().getFish(formBean.getFishID());
             FishSearchCriteria criteria = new FishSearchCriteria(formBean);
             FishMatchingService service = new FishMatchingService(fish);
             Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
@@ -132,7 +134,8 @@ public class FishSearchController {
         }
         else
         {
-            MartFish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(formBean.getFishID()).longValue());
+            //MartFish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(formBean.getFishID()).longValue());
+            Fish fish=RepositoryFactory.getMutantRepository().getFish(formBean.getFishID());
             FishSearchCriteria criteria = new FishSearchCriteria(formBean);
             FishMatchingService service = new FishMatchingService(fish);
             Set<MatchingText> matchingTextList = service.getMatchingText(criteria);
