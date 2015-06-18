@@ -1,5 +1,6 @@
 package org.zfin.feature;
 
+import org.zfin.feature.repository.FeatureService;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.DataNote;
@@ -53,7 +54,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Set<FeatureAlias> aliases;
     private FeatureAssay featureAssay;
     private Set<FeatureDBLink> dbLinks;
-
+    private Set<FeatureMarkerRelationship> sortedMarkerRelationships;
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -338,14 +339,11 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public SortedSet<Marker> getAffectedGenes() {
         SortedSet<Marker> affectedGenes = new TreeSet<Marker>();
-        for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
-            if (ftrmarkrel.isMarkerIsGene() && ftrmarkrel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                affectedGenes.add(ftrmarkrel.getMarker());
-            }
+        Set<FeatureMarkerRelationship> fmRelations = FeatureService.getSortedMarkerRelationships(this);
+        for (FeatureMarkerRelationship ftrmarkrel : fmRelations) {
+           affectedGenes.add(ftrmarkrel.getMarker());
         }
         return affectedGenes;
-
-
     }
 
     public SortedSet<Marker> getTgConstructs() {
@@ -467,5 +465,16 @@ public class Feature implements EntityNotes, EntityZdbID {
             return UNSPECIFIED;
         return abbreviation;
 
+    }
+
+    public Set<FeatureMarkerRelationship> getSortedMarkerRelationships() {
+        if (sortedMarkerRelationships == null || sortedMarkerRelationships.size() == 0) {
+            return FeatureService.getSortedMarkerRelationships(this);
+        }
+        return sortedMarkerRelationships;
+    }
+
+    public void setSortedMarkerRelationships(Set<FeatureMarkerRelationship> sortedMarkerRelationships) {
+        this.sortedMarkerRelationships = sortedMarkerRelationships;
     }
 }

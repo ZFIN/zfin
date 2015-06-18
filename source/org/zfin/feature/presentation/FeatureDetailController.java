@@ -85,7 +85,6 @@ public class FeatureDetailController {
         form.setFeature(feature);
 
         Set<FeatureMarkerRelationship> markerRelationships = FeatureService.getSortedMarkerRelationships(feature);
-        form.setSortedMarkerRelationships(markerRelationships);
         Collection<FeatureGenomeLocation> locations = FeatureService.getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN);
         if (CollectionUtils.isNotEmpty(locations)) {
             // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where

@@ -20,7 +20,6 @@ public class FeatureBean {
     private int numPubs;
     private List<GenoExpStatistics> genoexpStats;
     private MappedMarkerBean mappedMarkerBean;
-    private Set<FeatureMarkerRelationship> sortedMarkerRelationships ;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships ;
     private FeatureMarkerRelationship createdByRelationship;
     private List<RecordAttribution> featureTypeAttributions ;
@@ -89,14 +88,6 @@ public class FeatureBean {
 
     public void setFeature(Feature feature) {
         this.feature = feature;
-    }
-
-    public Set<FeatureMarkerRelationship> getSortedMarkerRelationships() {
-        return sortedMarkerRelationships;
-    }
-
-    public void setSortedMarkerRelationships(Set<FeatureMarkerRelationship> sortedMarkerRelationships) {
-        this.sortedMarkerRelationships = sortedMarkerRelationships;
     }
 
     public Set<FeatureMarkerRelationship> getSortedConstructRelationships() {

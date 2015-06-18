@@ -62,9 +62,9 @@
         Affected Genes:
     </th>
     <c:choose>
-        <c:when test="${fn:length(formBean.sortedMarkerRelationships) > 0 }">
+        <c:when test="${fn:length(formBean.feature.sortedMarkerRelationships) > 0 }">
             <td>
-                <c:forEach var="fmRel" items="${formBean.sortedMarkerRelationships}" varStatus="loop">
+                <c:forEach var="fmRel" items="${formBean.feature.sortedMarkerRelationships}" varStatus="loop">
                     <zfin:link entity="${fmRel.marker}"/>
                     <c:if test="${fmRel.publicationCount > 0}">
                         <c:choose>
