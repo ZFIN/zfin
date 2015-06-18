@@ -706,7 +706,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   xpatfig.expressionResult = res AND " +
                 "   xpatfig.figure = figure AND " +
                 "   exp.antibody is null AND " +
-                "   exp.genotypeExperiment = genox AND " +
+                "   exp.genotypeExperiment = genox  " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
@@ -1145,6 +1145,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameterList("markerType", markerTypes);
 
         return (List<Marker>) query.list();
+    }
+    public List<Feature> getFeaturesByPublication(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+
+
+        String hql = "select distinct feature from Feature feature, PublicationAttribution pub" +
+                "     where pub.dataZdbID = feature.zdbID" +
+                "           and pub.publication.zdbID = :pubID " +
+                "    order by feature.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+
+
+        return (List<Feature>) query.list();
     }
 
     public List<Marker> getGenesByExperiment(String pubID) {
@@ -1840,6 +1855,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 " \t  from figure, phenotype_experiment\n" +
                 " \t where fig_source_zdb_id = :zdbID\n" +
                 "         and phenox_fig_zdb_id = fig_zdb_id";
+        return getCount(sql, publication.getZdbID());
+    }
+
+    public Long getFeatureCount(Publication publication) {
+        String sql = "\tselect count(distinct recattrib_data_zdb_id)\n" +
+                "\t from  record_attribution\n" +
+                "\t where recattrib_source_zdb_id = :zdbID\n" +
+                "\t  and  recattrib_data_zdb_id like 'ZDB-ALT-%';";
         return getCount(sql, publication.getZdbID());
     }
 

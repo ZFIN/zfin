@@ -183,6 +183,12 @@
             <li><a href="/action/mapping/publication/${publication.zdbID}">Mapping Details</a> (${mappingDetailsCount})
             </li>
         </c:if>
+        <c:if test="${featureCount > 0}">
+
+            <li><a href="/action/publication/${publication.zdbID}/feature-list">Features</a> (${featureCount})</li>
+
+            </li>
+        </c:if>
         <c:if test="${phenotypeAlleleCount > 0}">
             <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Mutants / Transgenic Lines</a>
                 (${phenotypeAlleleCount})
