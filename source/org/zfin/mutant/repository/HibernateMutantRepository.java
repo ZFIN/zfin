@@ -1697,10 +1697,8 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<Zygosity> getListOfZygosity() {
         Session session = HibernateUtil.currentSession();
-        String hql = "FROM  Zygosity " +
-                "where name is not :exclusion";
+        String hql = "FROM  Zygosity ";
         Query query = session.createQuery(hql);
-        query.setParameter("exclusion", "wild type");
 
         return query.list();
     }

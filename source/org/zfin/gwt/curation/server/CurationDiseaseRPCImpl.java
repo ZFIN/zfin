@@ -44,8 +44,11 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         if (CollectionUtils.isEmpty(featureList))
             return null;
         List<FeatureDTO> featureDTOList = new ArrayList<>(featureList.size());
-        for (Feature feature : featureList)
-            featureDTOList.add(DTOConversionService.convertToFeatureDTO(feature));
+        for (Feature feature : featureList) {
+            // do not include features that do not have a feature_marker_relationship
+            if (CollectionUtils.isNotEmpty(feature.getFeatureMarkerRelations()))
+                featureDTOList.add(DTOConversionService.convertToFeatureDTO(feature));
+        }
         return featureDTOList;
     }
 

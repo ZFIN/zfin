@@ -697,7 +697,6 @@ public class FishModule implements HandlesError, EntryPoint {
         String genotypeDisplayNameString = "";
         for (GenotypeFeatureDTO genotypeFeature : genotypeFeatureDTOList) {
             genotypeHandleName += genotypeFeature.getFeatureDTO().getName();
-            genotypeHandleName += " ";
             genotypeHandleName += genotypeFeature.getZygosityInfo();
             genotypeDisplayNameString += "<i>";
             if (genotypeFeature.getFeatureDTO().getDisplayNameForGenotypeBase() != null) {
@@ -1132,7 +1131,8 @@ public class FishModule implements HandlesError, EntryPoint {
         public void onSuccess(List<ZygosityDTO> list) {
             zygosityList = list;
             for (ZygosityDTO dto : list) {
-                zygosityListBox.addItem(dto.getName(), dto.getZdbID());
+                if (!dto.getName().startsWith("wild"))
+                    zygosityListBox.addItem(dto.getName(), dto.getZdbID());
                 zygosityMaternalListBox.addItem(dto.getName(), dto.getZdbID());
                 zygosityPaternalListBox.addItem(dto.getName(), dto.getZdbID());
             }
