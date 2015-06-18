@@ -74,32 +74,42 @@ angular.module('pubTrackingApp', [])
         pubTrack.warnings = [];
         pubTrack.correspondences = [];
 
+        // TODO: more graceful error handling would be nice
+        var genericFailure = function () {
+            alert("Oops! There was a problem communicating with the server. Please try again later. If the problem " +
+                "persists, get in touch with a developer.")
+        };
+
         var getTopics = function() {
             $http.get('/action/publication/' + pubId + '/topics')
                 .success(function (data) {
                     pubTrack.topics = data;
-                });
+                })
+                .error(genericFailure);
         };
 
         var getStatus = function () {
             $http.get('/action/publication/' + pubId + '/status')
                 .success(function (data) {
                     pubTrack.status = data;
-                });
+                })
+                .error(genericFailure);
         };
 
         var getNotes = function () {
             $http.get('/action/publication/' + pubId + '/notes')
                 .success(function (data) {
                     pubTrack.notes = data;
-                });
+                })
+                .error(genericFailure);
         };
 
         var getCorrespondences = function () {
             $http.get('/action/publication/' + pubId + '/correspondences')
                 .success(function (data) {
                     pubTrack.correspondences = data;
-                });
+                })
+                .error(genericFailure);
         };
 
         var addOrUpdateTopic = function (topic, idx) {
@@ -112,6 +122,7 @@ angular.module('pubTrackingApp', [])
             post.success(function (data) {
                 pubTrack.topics[idx] = data;
             });
+            post.error(genericFailure);
             return post;
         };
 
@@ -120,14 +131,16 @@ angular.module('pubTrackingApp', [])
             post.success(function (data) {
                 pubTrack.status = data;
             });
+            post.error(genericFailure);
             return post;
         };
 
         var updateCorrespondence = function (corr, idx) {
             var post = $http.post('/action/publication/correspondences/' + corr.id, corr);
             post.success(function (data) {
-                    pubTrack.correspondences[idx] = data;
-                });
+                pubTrack.correspondences[idx] = data;
+            });
+            post.error(genericFailure);
             return post;
         };
 
@@ -137,6 +150,7 @@ angular.module('pubTrackingApp', [])
             post.success(function (data) {
                 pubTrack.notes.unshift(data);
             });
+            post.error(genericFailure);
             return post;
         };
 
@@ -201,7 +215,8 @@ angular.module('pubTrackingApp', [])
                     } else {
                         pubTrack.closePub();
                     }
-                });
+                })
+                .error(genericFailure);
         };
 
         pubTrack.closePub = function () {
@@ -259,7 +274,8 @@ angular.module('pubTrackingApp', [])
             $http.post('/action/publication/notes/' + note.zdbID, { text: note.text })
                 .success(function () {
                     note.editing = false;
-                });
+                })
+                .error(genericFailure);
         };
 
         pubTrack.deleteNote = function (note) {
@@ -267,7 +283,8 @@ angular.module('pubTrackingApp', [])
                 .success(function () {
                     var idx = pubTrack.notes.indexOf(note);
                     pubTrack.notes.splice(idx, 1);
-                });
+                })
+                .error(genericFailure);
         };
 
         pubTrack.hasTopics = function () {
@@ -282,7 +299,8 @@ angular.module('pubTrackingApp', [])
             $http.post('/action/publication/' + pubId + '/correspondences', {})
                 .success(function (data) {
                     pubTrack.correspondences.unshift(data);
-                });
+                })
+                .error(genericFailure);
         };
 
         pubTrack.closeCorrespondence = function (replied, corr, idx) {
@@ -300,7 +318,8 @@ angular.module('pubTrackingApp', [])
             $http.delete('/action/publication/correspondences/' + corr.id)
                 .success(function () {
                     pubTrack.correspondences.splice(idx, 1);
-                });
+                })
+                .error(genericFailure);
         };
 
         getTopics();

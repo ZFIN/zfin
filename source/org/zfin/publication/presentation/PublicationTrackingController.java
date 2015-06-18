@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.CurationDTO;
 import org.zfin.curation.presentation.CurationStatusDTO;
 import org.zfin.curation.presentation.PublicationNoteDTO;
+import org.zfin.curation.repository.CurationRepository;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateUtil;
@@ -50,6 +50,12 @@ public class PublicationTrackingController {
     @Autowired
     private MutantRepository mutantRepository;
 
+    @Autowired
+    private CurationRepository curationRepository;
+
+    @Autowired
+    private CurationDTOConversionService converter;
+
     @RequestMapping(value = "/{zdbID}/track")
     public String showPubTracker(Model model, @PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
@@ -60,13 +66,20 @@ public class PublicationTrackingController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Track Pub: " + publication.getTitle());
         model.addAttribute("publication", publication);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
+        model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser());
         return "publication/track-publication.page";
     }
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/notes", method = RequestMethod.GET)
     public Collection<PublicationNoteDTO> getPublicationNotes(@PathVariable String zdbID) {
-        return getPubNotes(publicationRepository.getPublication(zdbID));
+        Publication publication = publicationRepository.getPublication(zdbID);
+        return CollectionUtils.collect(publication.getNotes(), new Transformer() {
+            @Override
+            public Object transform(Object o) {
+                return converter.toPublicationNoteDTO((PublicationNote) o);
+            }
+        });
     }
 
     @ResponseBody
@@ -86,7 +99,7 @@ public class PublicationTrackingController {
         session.save(note);
         tx.commit();
         
-        return CurationDTOConversionService.publicationNoteToDTO(note);
+        return converter.toPublicationNoteDTO(note);
     }
 
     @ResponseBody
@@ -100,7 +113,7 @@ public class PublicationTrackingController {
         session.update(note);
         tx.commit();
 
-        return CurationDTOConversionService.publicationNoteToDTO(note);
+        return converter.toPublicationNoteDTO(note);
     }
 
     @ResponseBody
@@ -118,50 +131,16 @@ public class PublicationTrackingController {
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/topics", method = RequestMethod.GET)
     public Collection<CurationDTO> getCurationTopics(@PathVariable String zdbID) {
-
-        Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery(
-                "from Curation c " +
-                        "where c.publication = :pub " +
-                        "and c.topic != :linkedAuthors");
-        query.setParameter("pub", publicationRepository.getPublication(zdbID));
-        query.setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS);
-
-        Set<CurationDTO> curation = new TreeSet<>(new Comparator<CurationDTO>() {
-            @Override
-            public int compare(CurationDTO o1, CurationDTO o2) {
-                return o1.getTopic().compareTo(o2.getTopic());
-            }
-        });
-        List<Curation.Topic> topics = new ArrayList<>();
-        for (Object o : query.list()) {
-            Curation c = (Curation) o;
-            curation.add(CurationDTOConversionService.curationToDTO(c));
-            topics.add(c.getTopic());
-        }
-        for (Curation.Topic t : Curation.Topic.values()) {
-            if (!topics.contains(t) && t != Curation.Topic.LINKED_AUTHORS) {
-                CurationDTO dto = new CurationDTO();
-                dto.setTopic(t.toString());
-                curation.add(dto);
-            }
-        }
-        return curation;
+        Publication pub = publicationRepository.getPublication(zdbID);
+        List<Curation> curationList = curationRepository.getCurationForPub(pub);
+        return converter.allCurationTopics(curationList);
     }
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/status", method = RequestMethod.GET)
     public CurationStatusDTO getCurationStatus(@PathVariable String zdbID) {
         Publication publication = publicationRepository.getPublication(zdbID);
-
-        CurationStatusDTO dto = new CurationStatusDTO();
-        dto.setClosedDate(publication.getCloseDate());
-        dto.setIndexed(publication.isIndexed());
-        dto.setIndexedDate(publication.getIndexedDate());
-        dto.setPubZdbID(publication.getZdbID());
-        dto.setCurationAllowed(PublicationService.allowCuration(publication));
-
-        return dto;
+        return converter.toCurationStatusDTO(publication);
     }
 
     @ResponseBody
@@ -174,7 +153,7 @@ public class PublicationTrackingController {
         publication.setIndexedDate((GregorianCalendar) dto.getIndexedDate());
         if (publication.getCloseDate() == null && dto.getClosedDate() != null) {
             // looks like this paper's getting closed. close all the topics and do some cleanup, too.
-            publicationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
+            curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
             expressionRepository.deleteExpressionStructuresForPub(publication);
             mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
         }
@@ -182,7 +161,7 @@ public class PublicationTrackingController {
         session.update(publication);
         tx.commit();
 
-        return dto;
+        return converter.toCurationStatusDTO(publication);
     }
 
     @ResponseBody
@@ -190,7 +169,7 @@ public class PublicationTrackingController {
     public JSONMessageList validatePublication(@PathVariable String zdbID) {
         Collection<String> warnings = new ArrayList<>();
 
-        List<Curation> openTopics = publicationRepository.getOpenCurationTopics(zdbID);
+        List<Curation> openTopics = curationRepository.getOpenCurationTopics(zdbID);
         if (CollectionUtils.isNotEmpty(openTopics)) {
             warnings.add("There are open topics which will be closed");
         }
@@ -210,7 +189,7 @@ public class PublicationTrackingController {
         for (PhenotypeExperiment phenotypeExperiment : phenotypeExperiments) {
             figures.add(phenotypeExperiment.getFigure().getLabel());
         }
-        if (CollectionUtils.isNotEmpty(phenotypeExperiments)) {
+        if (CollectionUtils.isNotEmpty(figures)) {
             warnings.add("The following figures still have mutants without phenotypes defined: " + StringUtils.join(figures, ", "));
         }
 
@@ -237,7 +216,7 @@ public class PublicationTrackingController {
         session.save(curation);
         tx.commit();
 
-        return CurationDTOConversionService.curationToDTO(curation);
+        return converter.toCurationDTO(curation);
     }
 
     @ResponseBody
@@ -254,7 +233,7 @@ public class PublicationTrackingController {
         session.update(curation);
         tx.commit();
 
-        return CurationDTOConversionService.curationToDTO(curation);
+        return converter.toCurationDTO(curation);
     }
 
     @ResponseBody
@@ -264,7 +243,7 @@ public class PublicationTrackingController {
         return CollectionUtils.collect(publication.getCorrespondences(), new Transformer() {
             @Override
             public Object transform(Object o) {
-                return CurationDTOConversionService.correspondenceToDTO((Correspondence) o);
+                return converter.toCorrespondenceDTO((Correspondence) o);
             }
         });
     }
@@ -282,7 +261,7 @@ public class PublicationTrackingController {
         session.save(correspondence);
         tx.commit();
 
-        return CurationDTOConversionService.correspondenceToDTO(correspondence);
+        return converter.toCorrespondenceDTO(correspondence);
     }
 
     @ResponseBody
@@ -300,7 +279,7 @@ public class PublicationTrackingController {
         session.update(correspondence);
         tx.commit();
 
-        return CurationDTOConversionService.correspondenceToDTO(correspondence);
+        return converter.toCorrespondenceDTO(correspondence);
     }
 
     @ResponseBody
@@ -315,15 +294,6 @@ public class PublicationTrackingController {
         tx.commit();
 
         return "";
-    }
-
-    private Collection<PublicationNoteDTO> getPubNotes(Publication publication) {
-        return CollectionUtils.collect(publication.getNotes(), new Transformer() {
-            @Override
-            public Object transform(Object o) {
-                return CurationDTOConversionService.publicationNoteToDTO((PublicationNote) o);
-            }
-        });
     }
 
 }

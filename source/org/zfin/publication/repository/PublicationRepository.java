@@ -493,10 +493,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID);
 
-    List<Curation> getOpenCurationTopics(String pubZdbID);
-
-    void closeCurationTopics(Publication pub, Person curator);
-
 
     public Long getMarkerCount(Publication publication);
     public Long getMorpholinoCount(Publication publication);

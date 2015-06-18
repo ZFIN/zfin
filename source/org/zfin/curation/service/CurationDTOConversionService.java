@@ -1,33 +1,39 @@
 package org.zfin.curation.service;
 
+import org.springframework.stereotype.Service;
 import org.zfin.curation.Correspondence;
 import org.zfin.curation.Curation;
 import org.zfin.curation.PublicationNote;
-import org.zfin.curation.presentation.CorrespondenceDTO;
-import org.zfin.curation.presentation.CurationDTO;
-import org.zfin.curation.presentation.CuratorDTO;
-import org.zfin.curation.presentation.PublicationNoteDTO;
+import org.zfin.curation.presentation.*;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.publication.Publication;
+import org.zfin.publication.presentation.PublicationService;
 
+import java.util.*;
+
+@Service
 public class CurationDTOConversionService {
 
     private static final String DEFAULT_IMAGE = "/images/LOCAL/smallogo.gif";
 
-    public static PublicationNoteDTO publicationNoteToDTO(PublicationNote note) {
+    public PublicationNoteDTO toPublicationNoteDTO(PublicationNote note) {
         PublicationNoteDTO dto = new PublicationNoteDTO();
         dto.setZdbID(note.getZdbID());
         dto.setDate(note.getDate());
         dto.setText(note.getText());
-        dto.setCurator(personToCuratorDTO(note.getCurator()));
+        dto.setCurator(toCuratorDTO(note.getCurator()));
 
         Person currentUser = ProfileService.getCurrentSecurityUser();
-        dto.setEditable(currentUser != null && currentUser.equals(note.getCurator()));
+        dto.setEditable(
+                currentUser != null &&
+                !currentUser.getShortName().equals("Guest") &&
+                currentUser.equals(note.getCurator()));
 
         return dto;
     }
 
-    public static CuratorDTO personToCuratorDTO(Person curator) {
+    public CuratorDTO toCuratorDTO(Person curator) {
         if (curator == null) {
             return null;
         }
@@ -42,11 +48,11 @@ public class CurationDTOConversionService {
         return dto;
     }
 
-    public static CurationDTO curationToDTO(Curation curation) {
+    public CurationDTO toCurationDTO(Curation curation) {
         CurationDTO dto = new CurationDTO();
         dto.setZdbID(curation.getZdbID());
         dto.setTopic(curation.getTopic().toString());
-        dto.setCurator(personToCuratorDTO(curation.getCurator()));
+        dto.setCurator(toCuratorDTO(curation.getCurator()));
         dto.setDataFound(curation.isDataFound());
         dto.setEntryDate(curation.getEntryDate());
         dto.setOpenedDate(curation.getOpenedDate());
@@ -54,14 +60,48 @@ public class CurationDTOConversionService {
         return dto;
     }
 
-    public static CorrespondenceDTO correspondenceToDTO(Correspondence correspondence) {
+    public CorrespondenceDTO toCorrespondenceDTO(Correspondence correspondence) {
         CorrespondenceDTO dto = new CorrespondenceDTO();
         dto.setPub(correspondence.getPublication().getZdbID());
-        dto.setCurator(personToCuratorDTO(ProfileService.getCurrentSecurityUser()));
+        dto.setCurator(toCuratorDTO(ProfileService.getCurrentSecurityUser()));
         dto.setId(correspondence.getId());
         dto.setOpenedDate(correspondence.getContactedDate());
         dto.setReplyReceived(correspondence.getRespondedDate() != null);
         dto.setClosedDate(dto.isReplyReceived() ? correspondence.getRespondedDate() : correspondence.getGiveUpDate());
+        return dto;
+    }
+
+    public Collection<CurationDTO> allCurationTopics(Collection<Curation> curationRecords) {
+        Set<CurationDTO> curationSet = new TreeSet<>(new Comparator<CurationDTO>() {
+            @Override
+            public int compare(CurationDTO o1, CurationDTO o2) {
+                return o1.getTopic().compareTo(o2.getTopic());
+            }
+        });
+        List<Curation.Topic> existingTopics = new ArrayList<>();
+        // Add curation records which exist
+        for (Curation c : curationRecords) {
+            curationSet.add(toCurationDTO(c));
+            existingTopics.add(c.getTopic());
+        }
+        // Add placeholder records for other topics
+        for (Curation.Topic t : Curation.Topic.values()) {
+            if (!existingTopics.contains(t) && t != Curation.Topic.LINKED_AUTHORS) {
+                CurationDTO dto = new CurationDTO();
+                dto.setTopic(t.toString());
+                curationSet.add(dto);
+            }
+        }
+        return curationSet;
+    }
+
+    public CurationStatusDTO toCurationStatusDTO(Publication publication) {
+        CurationStatusDTO dto = new CurationStatusDTO();
+        dto.setClosedDate(publication.getCloseDate());
+        dto.setIndexed(publication.isIndexed());
+        dto.setIndexedDate(publication.getIndexedDate());
+        dto.setPubZdbID(publication.getZdbID());
+        dto.setCurationAllowed(PublicationService.allowCuration(publication));
         return dto;
     }
 
