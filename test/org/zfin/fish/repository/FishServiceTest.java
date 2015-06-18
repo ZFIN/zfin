@@ -59,8 +59,8 @@ public class FishServiceTest extends AbstractDatabaseTest {
         assertTrue(phenotypeStatements.size() > 3);
     }
 
-    @Test
-    public void matchingOnGeneAbbreviation() {
+//    @Test
+   /* public void matchingOnGeneAbbreviation() {
         String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7";
         MartFish fish = FishService.getFish(fishID);
         Assert.assertNotNull("Could not find MartFish with fishID: " + fishID, fish);
@@ -85,7 +85,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         return featureGene;
     }
 
-    @Test
+//    @Test
     public void matchingOnGeneName() {
         MartFish fish = FishService.getFish("ZDB-GENO-030619-2,ZDB-GENOX-090731-5,ZDB-GENOX-130614-8,ZDB-GENOX-141110-7");
         FishMatchingService service = new FishMatchingService(fish);
@@ -133,7 +133,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         assertNotNull(matchingTexts);
     }
 
-    @Test
+//    @Test
     public void matchingOnFeatureAlias() {
         MartFish fish = FishService.getFish("ZDB-GENO-101025-2,ZDB-GENOX-101025-22");
 
@@ -143,7 +143,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         assertNotNull(matchingTexts);
     }
 
-    @Test
+//    @Test
     public void matchingOnDirectAoTerm() {
         MartFish fish = FishService.getFish("ZDB-GENO-091027-2,ZDB-GENOX-091027-5");
         criteria.getPhenotypeAnatomyCriteria().setValue("ZDB-TERM-100331-2186");
@@ -157,7 +157,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         assertNotNull(matchingTexts);
     }
 
-    @Test
+//    @Test
     public void matchOnConstructNoPhenotype() {
         MartFish fish = FishService.getFish("ZDB-GENO-060619-1");
         criteria.getGeneOrFeatureNameCriteria().setValue("shha");
@@ -252,7 +252,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         MatchingText matchingText = matchingTexts.iterator().next();
         assertEquals(matchingText.getMatchingQuality(), MatchType.EXACT);
         assertEquals(matchingText.getType(), MatchingTextType.FEATURE_LINE_NUMBER);
-    }
+    }*/
 
     @Test
     public void getExpressionSummary() {
