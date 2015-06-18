@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -11,10 +12,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.*;
+import org.zfin.gwt.root.util.DeleteImage;
+import org.zfin.gwt.root.util.ShowHideWidget;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,6 +103,8 @@ public class FishModule implements HandlesError, EntryPoint {
     ZfinFlexTable newGenotypeInfoTable;
 
     @UiField
+    Hyperlink showHideGenoList;
+    @UiField
     Hyperlink showHideExistingGeno;
     @UiField
     Button createGenotypeButton;
@@ -112,6 +116,11 @@ public class FishModule implements HandlesError, EntryPoint {
     private Label genotypeHandle = new Label();
     @UiField
     Hyperlink showHideGenotypeConstruction;
+
+    private ShowHideWidget genotypeListToggle;
+    private ShowHideWidget existingGenotypeListToggle;
+    private ShowHideWidget genotypeConstructionListToggle;
+    private ShowHideWidget fishConstructionListToggle;
 
     public FishModule(String publicationID) {
         this.publicationID = publicationID;
@@ -125,10 +134,6 @@ public class FishModule implements HandlesError, EntryPoint {
     private List<GenotypeDTO> genotypeList = new ArrayList<>(10);
     private List<GenotypeDTO> existingGenotypeList = new ArrayList<>(10);
 
-    private boolean showExistingGenoBool = false;
-    private boolean showFishConstruction = false;
-    private boolean showGenoConstruction = false;
-
     private Button buttonUUU = new Button("[U,U,U]");
     private Button button211 = new Button("[2,1,1]");
     private Button button2UU = new Button("[2,U,U]");
@@ -138,11 +143,11 @@ public class FishModule implements HandlesError, EntryPoint {
 
         FlowPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
-/*
-        genotypeSearchResultPanel.add(genotypeSearchResultTable);
-        genotypeSearchResultPanel.setHeight("500");
-*/
         errorLabel.setStyleName("error");
+        genotypeListToggle = new ShowHideWidget(showHideGenoList, genotypeListTable, true);
+        existingGenotypeListToggle = new ShowHideWidget(showHideExistingGeno, importGenotypePanel);
+        genotypeConstructionListToggle = new ShowHideWidget(showHideGenotypeConstruction, genotypeConstructionPanel);
+        fishConstructionListToggle = new ShowHideWidget(showHideFishConstruction, fishConstructionPanel);
         genotypeListCallBack = new RetrieveDTOListCallBack<>(genotypeSelectionBox, "Genotypes", null);
         strListCallBack = new RetrieveRelatedEntityListCallBack(strSelectionBox, "STRs", null);
         attributionModule = new AttributionModule();
@@ -175,6 +180,7 @@ public class FishModule implements HandlesError, EntryPoint {
         public PublicNotePopup(final GenotypeDTO genotypeDTO, boolean isPublic) {
             // set auto hide to true
             super(true);
+            makeBackgroundDarker();
             VerticalPanel vPanel = new VerticalPanel();
             final TextArea textArea = new TextArea();
             textArea.setHeight("100px");
@@ -202,9 +208,19 @@ public class FishModule implements HandlesError, EntryPoint {
             }
         }
 
+        private void makeBackgroundDarker() {
+            setGlassEnabled(true);
+            Style glassStyle = getGlassElement().getStyle();
+            glassStyle.setProperty("width", "100%");
+            glassStyle.setProperty("height", "100%");
+            glassStyle.setProperty("backgroundColor", "#000");
+            glassStyle.setProperty("opacity", "0.45");
+        }
+
         public PublicNotePopup(final NoteDTO externalNoteDTO, boolean isPublic) {
             // set auto hide to true
             super(true);
+            makeBackgroundDarker();
             VerticalPanel vPanel = new VerticalPanel();
             final TextArea textArea = new TextArea();
             textArea.setHeight("100px");
@@ -325,19 +341,25 @@ public class FishModule implements HandlesError, EntryPoint {
         showHideExistingGeno.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                toggleVisibilityExistingGenoTable();
+                existingGenotypeListToggle.toggleVisibility();
+            }
+        });
+        showHideGenoList.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                genotypeListToggle.toggleVisibility();
             }
         });
         showHideFishConstruction.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                toggleVisibilityFishConstruction();
+                fishConstructionListToggle.toggleVisibility();
             }
         });
         showHideGenotypeConstruction.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                toggleVisibilityGenotypeConstruction();
+                genotypeConstructionListToggle.toggleVisibility();
             }
         });
         featureListBox.addChangeHandler(new ChangeHandler() {
@@ -402,14 +424,14 @@ public class FishModule implements HandlesError, EntryPoint {
         createGenotypeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                String nicknameString = genotypeNickname.getName();
-                if (nicknameString.equals(genotypeHandle))
+                String nicknameString = genotypeNickname.getText();
+                if (nicknameString.equals(genotypeHandle.getText()))
                     nicknameString = null;
                 diseaseCurationRPCAsync.createGenotypeFeature(publicationID,
                         genotypeFeatureDTOList,
                         getSelectedGenotypeBackground(),
                         nicknameString,
-                        new CreateGenotypeCallBack("Create new Genotype", errorCreateGenotype));
+                        new CreateGenotypeCallBack("Create new Genotype", errorCreateGenotype, loadingImageCreateGenotype));
                 loadingImageCreateGenotype.setVisible(true);
             }
         });
@@ -434,50 +456,23 @@ public class FishModule implements HandlesError, EntryPoint {
     private void searchForGenotypes() {
         String featureID = getSelectedFeatureID();
         String genotypeID = getSelectedGenotypeID();
+        if (featureID == null && genotypeID == null)
+            return;
         diseaseCurationRPCAsync.searchGenotypes(publicationID, featureID, genotypeID, new RetrieveExistingGenotypeListCallBack("error", errorLabelSearch));
         loadingImageGenoSearch.setVisible(true);
     }
 
-    private void toggleVisibilityFishConstruction() {
-        if (showFishConstruction) {
-            showFishConstruction = false;
-            showHideFishConstruction.setText("Show");
-        } else {
-            showFishConstruction = true;
-            showHideFishConstruction.setText("Hide");
-        }
-        fishConstructionPanel.setVisible(showFishConstruction);
-    }
-
-    private void toggleVisibilityGenotypeConstruction() {
-        if (showGenoConstruction) {
-            showGenoConstruction = false;
-            showHideGenotypeConstruction.setText("Show");
-        } else {
-            showGenoConstruction = true;
-            showHideGenotypeConstruction.setText("Hide");
-        }
-        genotypeConstructionPanel.setVisible(showGenoConstruction);
-    }
-
-    private void toggleVisibilityExistingGenoTable() {
-        if (showExistingGenoBool) {
-            showExistingGenoBool = false;
-            showHideExistingGeno.setText("Show");
-        } else {
-            showExistingGenoBool = true;
-            showHideExistingGeno.setText("Hide");
-        }
-        importGenotypePanel.setVisible(showExistingGenoBool);
-    }
-
     private String getSelectedFeatureID() {
         String id = featureListBox.getSelectedValue();
+        if (id.trim().equals(""))
+            return null;
         return id;
     }
 
     private String getSelectedGenotypeID() {
         String id = backgroundListBox.getSelectedValue();
+        if (id.trim().equals(""))
+            return null;
         return id;
     }
 
@@ -700,7 +695,7 @@ public class FishModule implements HandlesError, EntryPoint {
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getZygosity()));
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getMaternalZygosity()));
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getPaternalZygosity()));
-            Anchor delete = new Anchor("X");
+            DeleteImage delete = new DeleteImage("Remove Note");
             delete.addClickHandler(new RemoveGenotypeFeature(genotypeFeature));
             genotypeConstructionTable.setWidget(rowIndex, col++, delete);
             groupIndex = genotypeConstructionTable.setRowStyle(rowIndex++, null, genotypeFeature.getZdbID(), groupIndex);
@@ -714,13 +709,16 @@ public class FishModule implements HandlesError, EntryPoint {
         String genotypeDisplayNameString = "";
         for (GenotypeFeatureDTO genotypeFeature : genotypeFeatureDTOList) {
             genotypeHandleName += genotypeFeature.getFeatureDTO().getName();
-            genotypeHandleName += " ";
             genotypeHandleName += genotypeFeature.getZygosityInfo();
             genotypeDisplayNameString += "<i>";
-            genotypeDisplayNameString += genotypeFeature.getFeatureDTO().getDisplayNameForGenotypeBase();
-            genotypeDisplayNameString += "<sup>";
-            genotypeDisplayNameString += genotypeFeature.getZygosity().getMutantZygosityDisplay(getDisplayFeawtureName(genotypeFeature.getFeatureDTO().getName()));
-            genotypeDisplayNameString += "</sup>";
+            if (genotypeFeature.getFeatureDTO().getDisplayNameForGenotypeBase() != null) {
+                genotypeDisplayNameString += genotypeFeature.getFeatureDTO().getDisplayNameForGenotypeBase();
+                genotypeDisplayNameString += "<sup>";
+                genotypeDisplayNameString += genotypeFeature.getZygosity().getMutantZygosityDisplay(getDisplayFeatureName(genotypeFeature.getFeatureDTO().getName()));
+                genotypeDisplayNameString += "</sup>";
+            } else {
+                genotypeDisplayNameString += genotypeFeature.getZygosity().getMutantZygosityDisplay(getDisplayFeatureName(genotypeFeature.getFeatureDTO().getName()));
+            }
             genotypeDisplayNameString += "</i>";
             genotypeDisplayNameString += " ; ";
         }
@@ -734,7 +732,7 @@ public class FishModule implements HandlesError, EntryPoint {
         genotypeNickname.setText(genotypeHandleName);
     }
 
-    private String getDisplayFeawtureName(String name) {
+    private String getDisplayFeatureName(String name) {
         if (name.endsWith("_" + UNRECOVERED))
             return UNRECOVERED;
         if (name.endsWith("_" + UNSPECIFIED))
@@ -842,9 +840,9 @@ public class FishModule implements HandlesError, EntryPoint {
             InlineHTML handle = new InlineHTML(fish.getHandle());
             handle.setTitle(fish.getZdbID());
             fishListTable.setWidget(index, col++, handle);
-            Anchor anchor = new Anchor("X", "/action/infrastructure/deleteRecord/" + fish.getZdbID());
+            DeleteImage deleteFish = new DeleteImage("/action/infrastructure/deleteRecord/" + fish.getZdbID(), "Delete Fish");
             fishListTable.getCellFormatter().setHorizontalAlignment(index, col, HasHorizontalAlignment.ALIGN_CENTER);
-            fishListTable.setWidget(index++, col++, anchor);
+            fishListTable.setWidget(index++, col++, deleteFish);
             groupIndex = fishListTable.setRowStyle(rowIndex++, null, fish.getZdbID(), groupIndex);
 
         }
@@ -880,9 +878,9 @@ public class FishModule implements HandlesError, EntryPoint {
             VerticalPanel curatorNotePanel = addCuratorNotes(genotype);
             genotypeListTable.setWidget(index, col++, publicNotePanel);
             genotypeListTable.setWidget(index, col++, curatorNotePanel);
-            Anchor anchor = new Anchor("X", "/action/infrastructure/deleteRecord/" + genotype.getZdbID());
+            DeleteImage deleteImage = new DeleteImage("/action/infrastructure/deleteRecord/" + genotype.getZdbID(), "Delete Genotype");
             genotypeListTable.getCellFormatter().setHorizontalAlignment(index, col, HasHorizontalAlignment.ALIGN_CENTER);
-            genotypeListTable.setWidget(index++, col++, anchor);
+            genotypeListTable.setWidget(index++, col++, deleteImage);
             groupIndex = genotypeListTable.setRowStyle(rowIndex++, null, genotype.getZdbID(), groupIndex);
 
         }
@@ -895,7 +893,7 @@ public class FishModule implements HandlesError, EntryPoint {
                 Anchor publicNote = new Anchor(getNoteStub(note.getNoteData()));
                 HorizontalPanel panel = new HorizontalPanel();
                 panel.add(publicNote);
-                Anchor remove = new Anchor("[X]");
+                DeleteImage remove = new DeleteImage("Remove Note");
                 remove.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
@@ -922,7 +920,7 @@ public class FishModule implements HandlesError, EntryPoint {
                 Anchor curatorNote = new Anchor(getNoteStub(note.getNoteData()));
                 HorizontalPanel panel = new HorizontalPanel();
                 panel.add(curatorNote);
-                Anchor remove = new Anchor("[X]");
+                DeleteImage remove = new DeleteImage("Remove Note");
                 remove.addClickHandler(new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent clickEvent) {
@@ -1091,8 +1089,8 @@ public class FishModule implements HandlesError, EntryPoint {
 
     class CreateGenotypeCallBack extends ZfinAsyncCallback<GenotypeDTO> {
 
-        public CreateGenotypeCallBack(String errorMessage, ErrorHandler errorLabel) {
-            super(errorMessage, errorLabel, loadingImage);
+        public CreateGenotypeCallBack(String errorMessage, ErrorHandler errorLabel, Image loadingImg) {
+            super(errorMessage, errorLabel, loadingImg);
         }
 
         @Override
@@ -1145,7 +1143,8 @@ public class FishModule implements HandlesError, EntryPoint {
         public void onSuccess(List<ZygosityDTO> list) {
             zygosityList = list;
             for (ZygosityDTO dto : list) {
-                zygosityListBox.addItem(dto.getName(), dto.getZdbID());
+                if (!dto.getName().startsWith("wild"))
+                    zygosityListBox.addItem(dto.getName(), dto.getZdbID());
                 zygosityMaternalListBox.addItem(dto.getName(), dto.getZdbID());
                 zygosityPaternalListBox.addItem(dto.getName(), dto.getZdbID());
             }

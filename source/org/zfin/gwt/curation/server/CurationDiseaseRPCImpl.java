@@ -17,10 +17,10 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -44,15 +44,22 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         if (CollectionUtils.isEmpty(featureList))
             return null;
         List<FeatureDTO> featureDTOList = new ArrayList<>(featureList.size());
-        for (Feature feature : featureList)
-            featureDTOList.add(DTOConversionService.convertToFeatureDTO(feature));
+        for (Feature feature : featureList) {
+            // do not include features that do not have a feature_marker_relationship
+            if (CollectionUtils.isNotEmpty(feature.getFeatureMarkerRelations()))
+                featureDTOList.add(DTOConversionService.convertToFeatureDTO(feature));
+        }
         return featureDTOList;
     }
 
     @Override
     public List<GenotypeDTO> searchGenotypes(String publicationID, String featureID, String genotypeID) {
-        Feature feature = getFeatureRepository().getFeatureByID(featureID);
-        Genotype background = getMutantRepository().getGenotypeByID(genotypeID);
+        Feature feature = null;
+        if (featureID != null)
+            feature = getFeatureRepository().getFeatureByID(featureID);
+        Genotype background = null;
+        if (genotypeID != null)
+            background = getMutantRepository().getGenotypeByID(genotypeID);
         Publication publication = getPublicationRepository().getPublication(publicationID);
         List<Genotype> genotypeList = getMutantRepository().getGenotypesByFeatureAndBackground(feature, background, publication);
         List<GenotypeDTO> genotypeDTOList = new ArrayList<>(genotypeList.size());
@@ -227,14 +234,31 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             Publication publication = getPublicationRepository().getPublication(publicationID);
             if (publication == null)
                 throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
-            String backgroundGenotypeID = genotypeBackgroundDTO.getZdbID();
-            Genotype genotypeBackground = getMutantRepository().getGenotypeByID(backgroundGenotypeID);
-            if (genotypeBackground == null)
-                throw new TermNotFoundException("No genotype with ID: " + backgroundGenotypeID + " found");
-             genotype = GenotypeService.createGenotype(genotypeFeatureDTOList, genotypeBackground);
+
+            Genotype genotypeBackground = null;
+            if (genotypeBackgroundDTO != null && genotypeBackgroundDTO.getZdbID() != null) {
+                genotypeBackground = getMutantRepository().getGenotypeByID(genotypeBackgroundDTO.getZdbID());
+                if (genotypeBackground == null)
+                    throw new TermNotFoundException("No genotype with ID: " + genotypeBackgroundDTO.getZdbID() + " found");
+            }
+            genotype = GenotypeService.createGenotype(genotypeFeatureDTOList, genotypeBackground);
             if (nickname != null)
                 genotype.setNickname(nickname);
-            getMutantRepository().saveGenotype(genotype, publicationID);
+
+            // check if the genotype already exists
+            Genotype existentGenotype = getMutantRepository().getGenotypeByHandle(genotype.getHandle());
+            if (existentGenotype != null) {
+                PublicationAttribution attribution = new PublicationAttribution();
+                attribution.setPublication(publication);
+                attribution.setDataZdbID(existentGenotype.getZdbID());
+                if (getInfrastructureRepository().getPublicationAttribution(attribution) != null)
+                    throw new TermNotFoundException("Genotype already exists.");
+                else {
+                    getInfrastructureRepository().insertPublicAttribution(existentGenotype.getZdbID(), publicationID);
+                }
+            } else {
+                getMutantRepository().saveGenotype(genotype, publicationID);
+            }
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();

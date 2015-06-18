@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneBean;
@@ -69,6 +70,7 @@ public class PublicationViewController {
         Long expressionCount = publicationRepository.getExpressionCount(publication);
         Long phenotypeCount = publicationRepository.getPhenotypeCount(publication);
         Long phenotypeAlleleCount = publicationRepository.getPhenotypeAlleleCount(publication);
+        Long featureCount = publicationRepository.getFeatureCount(publication);
         Long orthologyCount = publicationRepository.getOrthologyCount(publication);
         Long mappingDetailsCount = publicationRepository.getMappingDetailsCount(publication);
 
@@ -81,6 +83,7 @@ public class PublicationViewController {
         model.addAttribute("cloneProbeCount", cloneProbeCount);
         model.addAttribute("expressionCount", expressionCount);
         model.addAttribute("phenotypeCount", phenotypeCount);
+        model.addAttribute("featureCount", featureCount);
         model.addAttribute("phenotypeAlleleCount", phenotypeAlleleCount);
         model.addAttribute("orthologyCount", orthologyCount);
         model.addAttribute("mappingDetailsCount", mappingDetailsCount);
@@ -98,7 +101,7 @@ public class PublicationViewController {
                     talenCount, crisprCount,
                     antibodyCount, efgCount,
                     cloneProbeCount, expressionCount,
-                    phenotypeCount, phenotypeAlleleCount,
+                    phenotypeCount, phenotypeAlleleCount,featureCount,
                     orthologyCount,new Long( diseaseModelList.size())
             ));
         } else {
@@ -141,6 +144,24 @@ public class PublicationViewController {
         model.addAttribute("orthologyBeanList", beanList);
         model.addAttribute("publication", publication);
         return "publication/publication-orthology-list.page";
+    }
+
+    @RequestMapping("/{pubID}/feature-list")
+    public String showFeatureList(@PathVariable String pubID,
+                                    @ModelAttribute("formBean") GeneBean geneBean,
+                                    Model model) {
+        logger.info("zdbID: " + pubID);
+
+       /* if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
+            return "redirect:/" + pubID;
+        }*/
+
+        List<Feature> featureList = getPublicationRepository().getFeaturesByPublication(pubID);
+        Publication publication = getPublicationRepository().getPublication(pubID);
+
+        model.addAttribute("featureList", featureList);
+        model.addAttribute("publication", publication);
+        return "feature/feature-per-publication.page";
     }
 
     @RequestMapping("/{zdbID}/disease")

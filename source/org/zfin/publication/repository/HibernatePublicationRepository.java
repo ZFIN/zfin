@@ -706,7 +706,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   xpatfig.expressionResult = res AND " +
                 "   xpatfig.figure = figure AND " +
                 "   exp.antibody is null AND " +
-                "   exp.genotypeExperiment = genox AND " +
+                "   exp.genotypeExperiment = genox  " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
@@ -1145,6 +1145,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameterList("markerType", markerTypes);
 
         return (List<Marker>) query.list();
+    }
+    public List<Feature> getFeaturesByPublication(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+
+
+        String hql = "select distinct feature from Feature feature, PublicationAttribution pub" +
+                "     where pub.dataZdbID = feature.zdbID" +
+                "           and pub.publication.zdbID = :pubID " +
+                "    order by feature.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+
+
+        return (List<Feature>) query.list();
     }
 
     public List<Marker> getGenesByExperiment(String pubID) {
@@ -1843,6 +1858,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return getCount(sql, publication.getZdbID());
     }
 
+    public Long getFeatureCount(Publication publication) {
+        String sql = "\tselect count(distinct recattrib_data_zdb_id)\n" +
+                "\t from  record_attribution\n" +
+                "\t where recattrib_source_zdb_id = :zdbID\n" +
+                "\t  and  recattrib_data_zdb_id like 'ZDB-ALT-%';";
+        return getCount(sql, publication.getZdbID());
+    }
+
     public Long getPhenotypeAlleleCount(Publication publication) {
         String sql = "\tselect count(distinct geno_zdb_id)\n" +
                 "\tfrom   record_attribution, genotype\n" +
@@ -1991,63 +2014,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("pubID", pubZdbID);
         return query.list();
-    }
-
-    public List<Curation> getOpenCurationTopics(String pubZdbID) {
-        String hql = "from Curation c" +
-                " where c.publication.zdbID = :pubID" +
-                " and c.openedDate is not null " +
-                " and c.closedDate is null " +
-                " and c.topic != :linkedAuthors";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("pubID", pubZdbID);
-        query.setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS);
-        return query.list();
-    }
-
-    public void closeCurationTopics(Publication pub, Person curator) {
-        for (Curation.Topic topic : Curation.Topic.values()) {
-            if (topic == Curation.Topic.LINKED_AUTHORS) {
-                continue;
-            }
-
-            Date now = new Date();
-            Session session = HibernateUtil.currentSession();
-            Curation curation = (Curation) session
-                    .createCriteria(Curation.class)
-                    .add(Restrictions.eq("publication", pub))
-                    .add(Restrictions.eq("topic", topic))
-                    .uniqueResult();
-            if (curation != null) {
-                if (curation.getClosedDate() == null) {
-                    // existing curation topics which haven't been closed yet need to be closed
-                    if (curation.getOpenedDate() == null) {
-                        // this is a topic in the "new" state -- not opened or closed. Need to set the
-                        // curator, opened and closed date.
-                        curation.setCurator(curator);
-                        curation.setOpenedDate(now);
-                        curation.setClosedDate(now);
-                        session.update(curation);
-                    } else {
-                        // a currently open curation topic. just close it, no need to set curator
-                        curation.setClosedDate(now);
-                        session.update(curation);
-                    }
-                }
-            } else {
-                // curation topic hasn't been created, so make one with no data found and closed
-                curation = new Curation();
-                curation.setTopic(topic);
-                curation.setPublication(pub);
-                curation.setCurator(curator);
-                curation.setEntryDate(new Date());
-                curation.setDataFound(false);
-                curation.setEntryDate(now);
-                curation.setOpenedDate(now);
-                curation.setClosedDate(now);
-                session.save(curation);
-            }
-        }
     }
 
     private Long getMarkerCountByMarkerType(String zdbID, String type) {

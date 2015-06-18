@@ -14,10 +14,7 @@ import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.PhenotypeService;
-import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.*;
 import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
@@ -35,9 +32,10 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class FishMatchingService {
 
     private MatchingService service;
-    private MartFish fish;
+    private Fish fish;
 
-    public FishMatchingService(MartFish fish) {
+    public FishMatchingService(
+            Fish fish) {
         this.fish = fish;
     }
 
@@ -67,7 +65,7 @@ public class FishMatchingService {
             }
             else{
                 if (genoID==null){
-                    String fishID=fish.getID();
+                    String fishID=fish.getFishID();
                     MartFish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(fishID).longValue());
                     List<ZfinEntity> ftrEntities=fish.getFeatures();
                     for (ZfinEntity ftrEntity : ftrEntities) {
@@ -150,13 +148,15 @@ public class FishMatchingService {
      */
     private void checkSingleTermMatch(String queryTermID) {
         // no phenotype associated
-        if (fish.getGenotypeExperimentIDs() == null)
+        if (fish.getFishExperiments() == null)
             return;
         // loop over all genotype experiments for a given fish
-        for (String genoxID : fish.getGenotypeExperimentIDs()) {
+
+        for (FishExperiment genoxID : fish.getFishExperiments()) {
             /// ToDo
             // need to get the real fish and then get phenotypeStatements by fish
-/*
+
+
             List<PhenotypeStatement> phenotypeStatementList = getPhenotypeRepository().getPhenotypeStatements(genoxID);
             if (phenotypeStatementList != null) {
                 Set<Term> allPhenotypeTerms = new HashSet<Term>();
@@ -166,7 +166,7 @@ public class FishMatchingService {
                 }
                 compareQueryTermWithPhenotypeTermList(queryTermID, allPhenotypeTerms);
             }
-*/
+
         }
     }
 
@@ -209,7 +209,7 @@ public class FishMatchingService {
     }
 
     private boolean addMatchingGeneSingleWord(String geneNameField) {
-        List<ZfinEntity> genes = fish.getAffectedGenes();
+       /* List<ZfinEntity> genes = fish.getAffectedGenes();
         if (CollectionUtils.isNotEmpty(genes)) {
             // the loop exists for the first match as this is enough!
             for (ZfinEntity entity : genes) {
@@ -221,7 +221,7 @@ public class FishMatchingService {
                 if (checkMarkerMatch(geneNameField, gene, MatchingTextType.AFFECTED_GENE_ABBREVIATION, MatchingTextType.AFFECTED_GENE_NAME, MatchingTextType.AFFECTED_GENE_ALIAS))
                     return true;
             }
-        }
+        }*/
         return false;
     }
 
@@ -273,16 +273,16 @@ public class FishMatchingService {
     }
 
     private void addMatchingFeatures(String geneNameField) {
-        if (geneNameField == null || StringUtils.isEmpty(geneNameField))
+        /*if (geneNameField == null || StringUtils.isEmpty(geneNameField))
             return;
         geneNameField = geneNameField.toLowerCase().trim();
-        List<ZfinEntity> features = fish.getFeatures();
+        List<ZfinEntity> features = fish.getGenotype().
         addMatchingFeature(geneNameField, features);
         if (geneNameField.contains(" ")) {
             String[] tokens = geneNameField.split(" ");
             for (String token : tokens)
                 addMatchingFeature(token, features);
-        }
+        }*/
 
     }
 

@@ -347,6 +347,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of markers
      */
     List<Marker> getGenesByPublication(String pubID);
+    List<Feature> getFeaturesByPublication(String pubID);
 
     /**
      * Retrieve distinct list of genes that are attributed to a given
@@ -493,10 +494,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID);
 
-    List<Curation> getOpenCurationTopics(String pubZdbID);
-
-    void closeCurationTopics(Publication pub, Person curator);
-
 
     public Long getMarkerCount(Publication publication);
     public Long getMorpholinoCount(Publication publication);
@@ -508,6 +505,7 @@ public interface PublicationRepository extends PaginationParameter {
     public Long getExpressionCount(Publication publication);
     public Long getPhenotypeCount(Publication publication);
     public Long getPhenotypeAlleleCount(Publication publication);
+    public Long getFeatureCount(Publication publication);
     public Long getOrthologyCount(Publication publication);
     public Long getMappingDetailsCount(Publication publication);
     public Boolean canDeletePublication(Publication publication);
