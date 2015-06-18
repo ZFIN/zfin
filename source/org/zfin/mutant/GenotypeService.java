@@ -64,16 +64,28 @@ public class GenotypeService {
             return;
         }
         String displayName = "";
-        String handle = "";
+        List<String> handleList = new ArrayList<>();
+
         for (GenotypeFeature gf : genotype.getGenotypeFeatures()) {
-            handle += gf.getFeature().getAbbreviation();
-            handle += getZygosity(gf.getZygosity(), gf.getMomZygosity(), gf.getDadZygosity());
+            String handleInt = gf.getFeature().getAbbreviation();
+            handleInt += getZygosity(gf.getZygosity(), gf.getMomZygosity(), gf.getDadZygosity());
+            handleList.add(handleInt);
+            if (gf.getFeature().getAllelicGene() != null) {
+                displayName += gf.getFeature().getAllelicGene().getAbbreviation();
+                displayName += "<sup>";
+                displayName += gf.getZygosity().getMutantZygosityDisplay(gf.getFeature().getDisplayAbbreviation());
+                displayName += "</sup>";
+                displayName += " ; ";
+            } else {
+                displayName += gf.getZygosity().getMutantZygosityDisplay(gf.getFeature().getDisplayAbbreviation());
+                displayName += " ; ";
+            }
+        }
+        Collections.sort(handleList);
+        String handle = "";
+        for (String hand : handleList) {
+            handle += hand;
             handle += " ";
-            displayName += gf.getFeature().getAllelicGene().getAbbreviation();
-            displayName += "<sup>";
-            displayName += gf.getZygosity().getMutantZygosityDisplay(gf.getFeature().getDisplayAbbreviation());
-            displayName += "</sup>";
-            displayName += " ; ";
         }
         handle = handle.trim();
         if (genotypeBackground != null)
@@ -97,7 +109,8 @@ public class GenotypeService {
     public static Genotype createGenotype(List<GenotypeFeatureDTO> genotypeFeatureDTOList, Genotype genotypeBackground) {
         Genotype genotype = new Genotype();
         genotype.setWildtype(false);
-        genotype.setBackground(genotypeBackground);
+        if (genotypeBackground != null)
+            genotype.setBackground(genotypeBackground);
         Set<GenotypeFeature> genotypeFeatureSet = new HashSet<>(genotypeFeatureDTOList.size());
         for (GenotypeFeatureDTO dto : genotypeFeatureDTOList) {
             GenotypeFeature genotypeFeature = new GenotypeFeature();
