@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.feature.Feature;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -94,22 +95,9 @@ public class ConstructViewController {
         });
         markerBean.setMarkerRelationshipPresentationList(cloneRelationships);
 
-        // Transgenic lines
-        //markerBean.setTransgenicLineLinks(RepositoryFactory.getMutantRepository().getTransgenicLines(construct));
-
-     //   List<GenotypeFeature> genotypeFeatures = RepositoryFactory.getMutantRepository().getGenotypeFeaturesForConstruct(construct);
-
-     //   List<Genotype> transgenicLines = new ArrayList<>();
-
-     //   for (GenotypeFeature genoFeat : genotypeFeatures) {
-     //       transgenicLines.add(genoFeat.getGenotype());
-     //   }
-
-       List<Genotype> genotypes = RepositoryFactory.getMutantRepository().getTransgenicLinesForConstruct(construct);
-       List<GenotypeInformation> genotypeInfo = GenotypeService.getGenotypeInfo(genotypes);
-       Collections.sort(genotypeInfo);
-       markerBean.setTransgenicLines(genotypeInfo);
-    //    markerBean.setTransgenicLines(transgenicLines);
+        // Transgenics that utilize the construct
+        List<Feature> features = RepositoryFactory.getFeatureRepository().getFeaturesByConstruct(construct);
+        markerBean.setTransgenics(features);
 
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());

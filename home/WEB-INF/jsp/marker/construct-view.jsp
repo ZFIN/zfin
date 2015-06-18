@@ -7,7 +7,7 @@
 
 <script>
     jQuery(function() {
-        jQuery('#genotype').tableCollapse({label: "transgenic lines"});
+        jQuery('#transgenics').tableCollapse({label: "transgenics"});
     });
 </script>
 
@@ -52,11 +52,11 @@
 
 <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}" />
 
-<%--Transgenic lines--%>
-<%--link to the facet search result if there are more than 50 lines--%>
+<%--Transgenics that utilize the construct--%>
+<%--link to the facet search result if there are more than 50 features --%>
 <c:choose>
-   <c:when test="${formBean.transgenicLines != null && fn:length(formBean.transgenicLines) > 50 }">
-       <zfin2:subsection title="TRANSGENIC LINES">
+   <c:when test="${formBean.transgenics != null && fn:length(formBean.transgenics) > 50 }">
+       <zfin2:subsection title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>">
            <table class="summary horizontal-solidblock">
              <tr>
                <td>
@@ -67,8 +67,42 @@
        </zfin2:subsection>
    </c:when>
    <c:otherwise>
-       <div id="genotype">
-          <zfin2:genotype-information genotypes="${formBean.transgenicLines}" title="TRANSGENIC LINES"/>
+       <div id="transgenics" class="summary">
+           <zfin2:subsection title="TRANSGENICS THAT UTILIZE <i>${formBean.marker.name}</i>" test="${!empty formBean.transgenics}" showNoData="true">
+               <table id="features-table" class="summary rowstripes">
+                   <tr>
+                       <th width="25%">
+                           Genomic Feature
+                       </th>
+                       <th width="25%">
+                           Affected Genes
+                       </th>
+                       <th width="25%">
+                           &nbsp;
+                       </th>
+                       <th width="25%">
+                           &nbsp;
+                       </th>
+                   </tr>
+
+                   <c:forEach var="feature" items="${formBean.transgenics}" varStatus="loop">
+                       <tr class=${loop.index%2==0 ? "even" : "odd"}>
+                           <td>
+                               <zfin:link entity="${feature}"/>
+                           </td>
+                           <td>
+                               <zfin:link entity="${feature.affectedGenes}"/>
+                           </td>
+                           <td>
+                               &nbsp;
+                           </td>
+                           <td>
+                               &nbsp;
+                           </td>
+                       </tr>
+                   </c:forEach>
+               </table>
+           </zfin2:subsection>
        </div>
     </c:otherwise>
 </c:choose>
