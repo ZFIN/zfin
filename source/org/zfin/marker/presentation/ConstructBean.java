@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.mutant.presentation.GenotypeInformation;
+import org.zfin.feature.Feature;
 
 import java.util.List;
 
@@ -8,13 +8,13 @@ import java.util.List;
  */
 public class ConstructBean extends MarkerBean{
 
-    private List<GenotypeInformation> transgenicLines;
+    private List<Feature> transgenics;
 
-    public List<GenotypeInformation> getTransgenicLines() {
-        return transgenicLines;
+    public List<Feature> getTransgenics() {
+        return transgenics;
     }
 
-    public void setTransgenicLines(List<GenotypeInformation> transgenicLines) {
-        this.transgenicLines = transgenicLines;
+    public void setTransgenics(List<Feature> transgenics) {
+        this.transgenics = transgenics;
     }
 }

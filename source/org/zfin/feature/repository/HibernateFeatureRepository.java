@@ -976,10 +976,11 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public List<Feature> getFeaturesByConstruct(Marker marker) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct fmrel.feature from  FeatureMarkerRelationship fmrel" +
+        String hql = "select distinct ftr from Feature ftr, FeatureMarkerRelationship fmrel" +
                 "     where fmrel.marker = :marker " +
-                " and fmrel.type in (:relation1, :relation2)  ";
-
+                " and fmrel.type in (:relation1, :relation2)  " +
+                " and fmrel.feature = ftr " +
+                " order by ftr.name ";
 
         Query query = session.createQuery(hql);
 
