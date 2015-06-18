@@ -33,26 +33,32 @@ public class TestConfiguration {
         File tempDir = new File("/tmp/");
         if (tempDir.canWrite()) {
             tempDir = new File(tempDir, ZfinPropertiesEnum.MUTANT_NAME.value());
-            if (!tempDir.exists())
+            if (!tempDir.exists()) {
                 tempDir.mkdir();
+            }
             tempDir = new File(tempDir, "unit-test");
-            if (!tempDir.exists())
+            if (!tempDir.exists()) {
                 tempDir.mkdir();
+            }
         }
-        if (tempDir.canWrite())
+        if (tempDir.canWrite()) {
             System.setProperty("java.io.tmpdir", tempDir.getAbsolutePath());
-        else
+        } else {
             System.setProperty("java.io.tmpdir", ZfinPropertiesEnum.CATALINA_BASE.value() + "/temp");
+        }
     }
 
-    public static void setAuthenticatedUser() {
+    public static void setAuthenticatedUser(Person person) {
         SecurityContext security = new SecurityContextImpl();
         AuthenticationManager manager = new MockAuthenticationManager(true);
-        Person person = createNonSecurityPerson();
         Authentication authentication = new UsernamePasswordAuthenticationToken(person, null);
         manager.authenticate(authentication);
         security.setAuthentication(authentication);
         SecurityContextHolder.setContext(security);
+    }
+
+    public static void setAuthenticatedUser() {
+        setAuthenticatedUser(createNonSecurityPerson());
     }
 
     public static void setAuthenticatedRootUser() {
@@ -89,7 +95,8 @@ public class TestConfiguration {
 
 
     public static void unsetAuthenticatedUser() {
-        if (SecurityContextHolder.getContext() != null)
+        if (SecurityContextHolder.getContext() != null) {
             SecurityContextHolder.setContext(null);
+        }
     }
 }

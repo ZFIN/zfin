@@ -847,3 +847,14 @@ label.curation-form-label { font-weight: bold; }
 a + .inline-upload {
     margin-left: 20px;
 }
+
+.thumb-container {
+    width: 64px;
+    height: 64px;
+    text-align: center;
+}
+
+.thumb-image {
+    max-width: 100%;
+    max-height: 100%;
+}

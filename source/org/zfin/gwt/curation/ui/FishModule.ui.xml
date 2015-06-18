@@ -6,7 +6,7 @@
         >
 
     <g:FlowPanel>
-        <g:VerticalPanel spacing="10" title="Disease">
+        <g:VerticalPanel spacing="10" title="Disease"  width="100%">
             <g:HorizontalPanel spacing="0">
                 <g:Label text="GENOTYPE LIST" styleName="summaryTitle"/>
                 <g:Label ui:field="noneDefinedGenoLabel" text="&nbsp;None defined" styleName="no-data-tag"/>

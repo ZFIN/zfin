@@ -186,8 +186,8 @@
         <p ng-if="!trackCtrl.notes.length" class="text-muted text-center">No notes yet</p>
         <div class="media" ng-repeat="note in trackCtrl.notes" ng-cloak>
           <div class="media-left">
-            <div style="width: 64px; height: 64px; text-align: center;">
-              <img style="max-width: 100%; max-height: 100%" ng-src="{{note.curator.imageURL}}">
+            <div class="thumb-container">
+              <img class="thumb-image" ng-src="{{note.curator.imageURL}}">
             </div>
           </div>
           <div class="media-body">
@@ -242,7 +242,7 @@
     $("#edit-notification .error").hide();
     $("#edit-notification").submit(function (evt) {
       evt.preventDefault();
-      var contactList = $(":checked", this).map(function () { return $(this).val(); }).get().join("|");
+      var contactList = $(":checked", this).map(function () { return $(this).val(); }).get().join("|") + "|";
       var additionalEaddr = $("#additional-emails").val();
       if (!contactList && !additionalEaddr) {
         $(".error", this).show();
@@ -254,7 +254,7 @@
               "&OID=${publication.zdbID}" +
               "&contact_list=" + contactList +
               "&additional_eaddr=" + additionalEaddr +
-              "&sender_id=${loggedInUser}",
+              "&sender_id=${loggedInUser.zdbID}",
               "editwindow","resizable=yes,toolbar=yes,scrollbars=yes,width=700,height=900");
     });
 
