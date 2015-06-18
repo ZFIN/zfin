@@ -44,6 +44,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 
@@ -1198,7 +1199,7 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     @Override
-    public List<ExpressionResult> getExpressionSummary( Set<FishExperiment> fishOx, String geneID) {
+    public List<ExpressionResult> getExpressionSummary(Set<FishExperiment> fishOx, String geneID) {
         if (CollectionUtils.isEmpty(fishOx))
             return null;
 
@@ -1694,6 +1695,29 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public List<Zygosity> getListOfZygosity() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "FROM  Zygosity " +
+                "where name is not :exclusion";
+        Query query = session.createQuery(hql);
+        query.setParameter("exclusion", "wild type");
+
+        return query.list();
+    }
+
+    @Override
+    public Zygosity getZygosity(String ID) {
+        return (Zygosity) HibernateUtil.currentSession().get(Zygosity.class, ID);
+    }
+
+    @Override
+    public void saveGenotype(Genotype genotype, String publicationID) {
+        Session session = HibernateUtil.currentSession();
+        session.save(genotype);
+        getInfrastructureRepository().insertPublicAttribution(genotype.getZdbID(), publicationID, RecordAttribution.SourceType.STANDARD);
+
+    }
+
     public void updateGenotypeNicknameWithHandleForPublication(Publication publication) {
         HibernateUtil.currentSession().createSQLQuery(
                 "UPDATE genotype " +

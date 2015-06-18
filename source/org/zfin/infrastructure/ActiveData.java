@@ -138,7 +138,7 @@ public class ActiveData implements ZdbID {
         GENEP,
         GENOX,
         GENO(DeleteGenotypeRule.class),
-        GENOFE,
+        GENOFEAT,
         GOTERM,
         GTCONSTRCT,
         IMAGE,

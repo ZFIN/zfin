@@ -11,6 +11,7 @@ public class RetrieveRelatedEntityDTOListCallBack<T extends RelatedEntityDTO> ex
 
     private ListBox entityList;
     private List<T> dtoList;
+    private boolean leaveFirstEntryBlank;
 
     public RetrieveRelatedEntityDTOListCallBack(ListBox listBox, String errorMessage, ErrorHandler errorLabel) {
         super(errorMessage, errorLabel);
@@ -20,6 +21,9 @@ public class RetrieveRelatedEntityDTOListCallBack<T extends RelatedEntityDTO> ex
     @Override
     public void onSuccess(List<T> dtoList) {
         entityList.clear();
+        if (leaveFirstEntryBlank) {
+            entityList.addItem("");
+        }
         this.dtoList = dtoList;
         for (T dto : dtoList) {
             entityList.addItem(dto.getName(), dto.getZdbID());
@@ -28,6 +32,10 @@ public class RetrieveRelatedEntityDTOListCallBack<T extends RelatedEntityDTO> ex
 
     public List<T> getDtoList() {
         return dtoList;
+    }
+
+    public void setLeaveFirstEntryBlank(boolean leaveFirstEntryBlank) {
+        this.leaveFirstEntryBlank = leaveFirstEntryBlank;
     }
 
 }

@@ -8,6 +8,7 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.MappedDeletion;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerHistory;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.profile.FeatureSource;
@@ -25,6 +26,8 @@ import java.util.TreeSet;
 public class Feature implements EntityNotes, EntityZdbID {
 
     public static final String MUTANT = "Mutant";
+    public static final String UNRECOGNIZED = "unrecognized";
+    public static final String UNSPECIFIED = "unspecified";
     private String zdbID;
     private String name;
     private String publicComments;
@@ -448,4 +451,21 @@ public class Feature implements EntityNotes, EntityZdbID {
         return true;
     }
 
+    public Marker getAllelicGene() {
+        if(featureMarkerRelations == null)
+        return null;
+        for(FeatureMarkerRelationship relationship:featureMarkerRelations)
+            if(relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF))
+                return relationship.getMarker();
+        return null;
+    }
+
+    public String getDisplayAbbreviation() {
+        if(abbreviation.endsWith("_"+ UNRECOGNIZED))
+            return UNRECOGNIZED;
+        if(abbreviation.endsWith("_"+ UNSPECIFIED))
+            return UNSPECIFIED;
+        return abbreviation;
+
+    }
 }
