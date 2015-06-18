@@ -8,6 +8,7 @@ import java.util.List;
 public class GenotypeDTO extends RelatedEntityDTO {
 
     private String handle;
+    private String nickName;
     private List<FeatureDTO> featureList;
     private List<ExternalNoteDTO> publicNotes;
     private List<CuratorNoteDTO> privateNotes;
@@ -53,6 +54,14 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     public void setHandle(String handle) {
         this.handle = handle;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public List<FeatureDTO> getFeatureList() {

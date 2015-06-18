@@ -412,6 +412,7 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
+        genotypeDTO.setNickName(genotype.getNickname());
         if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
             createExternalNotesOnGenotype(genotype, genotypeDTO);
         }

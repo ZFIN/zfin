@@ -865,7 +865,7 @@ public class FishModule implements HandlesError, EntryPoint {
             int col = 0;
             Anchor html = new Anchor(SafeHtmlUtils.fromTrustedString(genotype.getName()), "/" + genotype.getZdbID());
             genotypeListTable.setWidget(index, col++, html);
-            InlineHTML handle = new InlineHTML(genotype.getHandle());
+            InlineHTML handle = new InlineHTML(genotype.getNickName());
             handle.setTitle(genotype.getZdbID());
             genotypeListTable.setWidget(index, col++, handle);
             VerticalPanel featurePanel = new VerticalPanel();
@@ -1101,6 +1101,7 @@ public class FishModule implements HandlesError, EntryPoint {
             // update genotype list on Create fish section
             curationExperimentRPCAsync.getGenotypes(publicationID, genotypeListCallBack);
             diseaseCurationRPCAsync.getGenotypeList(publicationID, new RetrieveGenotypeListCallBack("Genotype List", errorLabel));
+            curationExperimentRPCAsync.getGenotypes(publicationID, genotypeListCallBack);
         }
     }
 
