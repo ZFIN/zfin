@@ -381,6 +381,7 @@ public class FishModule implements HandlesError, EntryPoint {
                 zygosityListBox.setSelectedIndex(3);
                 zygosityMaternalListBox.setSelectedIndex(3);
                 zygosityPaternalListBox.setSelectedIndex(3);
+                resetGenoConstructionZoneError();
             }
         });
         button2UU.addClickHandler(new ClickHandler() {
@@ -389,6 +390,7 @@ public class FishModule implements HandlesError, EntryPoint {
                 zygosityListBox.setSelectedIndex(0);
                 zygosityMaternalListBox.setSelectedIndex(3);
                 zygosityPaternalListBox.setSelectedIndex(3);
+                resetGenoConstructionZoneError();
             }
         });
         button211.addClickHandler(new ClickHandler() {
@@ -397,12 +399,14 @@ public class FishModule implements HandlesError, EntryPoint {
                 zygosityListBox.setSelectedIndex(0);
                 zygosityMaternalListBox.setSelectedIndex(1);
                 zygosityPaternalListBox.setSelectedIndex(1);
+                resetGenoConstructionZoneError();
             }
         });
 
         addGenotypeFeature.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
+                resetGenoConstructionZoneError();
                 int selectedFeature = featureForGenotypeListBox.getSelectedIndex();
                 GenotypeFeatureDTO dto = new GenotypeFeatureDTO();
                 FeatureDTO feature = featureGenotypeListCallBack.getDtoList().get(selectedFeature);
@@ -423,11 +427,13 @@ public class FishModule implements HandlesError, EntryPoint {
             public void onChange(ChangeEvent changeEvent) {
                 getSelectedGenotypeBackground();
                 setGenotypeInfo();
+                resetGenoConstructionZoneError();
             }
         });
         createGenotypeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
+                resetGenoConstructionZoneError();
                 String nicknameString = genotypeNickname.getText();
                 if (nicknameString.equals(genotypeHandle.getText()))
                     nicknameString = null;
@@ -439,7 +445,16 @@ public class FishModule implements HandlesError, EntryPoint {
                 loadingImageCreateGenotype.setVisible(true);
             }
         });
+        featureForGenotypeListBox.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent changeEvent) {
+                resetGenoConstructionZoneError();
+            }
+        });
+    }
 
+    private void resetGenoConstructionZoneError() {
+        errorCreateGenotype.setError("");
     }
 
     private boolean featureAlreadyInUse(FeatureDTO feature) {
@@ -1110,7 +1125,7 @@ public class FishModule implements HandlesError, EntryPoint {
         public void onSuccess(GenotypeDTO genotypeDTO) {
             resetNewGenotypeUI();
             loadingImageCreateGenotype.setVisible(false);
-            errorHandler.setError("Created successfully Genotype: " + genotypeDTO.getHandle());
+            errorHandler.setError("Successfully created new Genotype: " + genotypeDTO.getHandle());
             // update genotype list on Create fish section
             curationExperimentRPCAsync.getGenotypes(publicationID, genotypeListCallBack);
             diseaseCurationRPCAsync.getGenotypeList(publicationID, new RetrieveGenotypeListCallBack("Genotype List", errorLabel));
