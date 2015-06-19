@@ -434,6 +434,10 @@ public class FishModule implements HandlesError, EntryPoint {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 resetGenoConstructionZoneError();
+                if(genotypeFeatureDTOList.size() == 0){
+                    errorCreateGenotype.setError("No Feature selected");
+                    return;
+                }
                 String nicknameString = genotypeNickname.getText();
                 if (nicknameString.equals(genotypeHandle.getText()))
                     nicknameString = null;
