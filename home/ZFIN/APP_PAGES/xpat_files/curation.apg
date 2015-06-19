@@ -91,7 +91,6 @@ EFFECTS
 <?MIVAR NAME=pubcur_category>Construct<?/MIVAR>
 <?MIVAR>
   $(VECAPPEND,$pubcur_category,Feature)
-  $(VECAPPEND,$pubcur_category,Genotype)
   $(VECAPPEND,$pubcur_category,Fish)
   $(VECAPPEND,$pubcur_category,Figure)
   $(VECAPPEND,$pubcur_category,Environment)
@@ -718,7 +717,7 @@ function setMarkerTarget(featreli,anchor){
         <?MIVAR NAME=pubcur_G_max_exp_name>$1<?/MIVAR>
     <?/MISQL>
 
-    <?MIVAR COND=$(NXST,$pubcur_c_tab) NAME=pubcur_c_tab>Genotype<?/MIVAR>
+    <?MIVAR COND=$(NXST,$pubcur_c_tab) NAME=pubcur_c_tab>Fish<?/MIVAR>
 
 
 
