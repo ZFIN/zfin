@@ -134,9 +134,9 @@ public class FishModule implements HandlesError, EntryPoint {
     private List<GenotypeDTO> genotypeList = new ArrayList<>(10);
     private List<GenotypeDTO> existingGenotypeList = new ArrayList<>(10);
 
-    private Button buttonUUU = new Button("[U,U,U]");
-    private Button button211 = new Button("[2,1,1]");
-    private Button button2UU = new Button("[2,U,U]");
+    private Button buttonUUU = new Button("U,U,U");
+    private Button button211 = new Button("2,1,1");
+    private Button button2UU = new Button("2,U,U");
 
     @Override
     public void onModuleLoad() {
@@ -406,6 +406,10 @@ public class FishModule implements HandlesError, EntryPoint {
                 int selectedFeature = featureForGenotypeListBox.getSelectedIndex();
                 GenotypeFeatureDTO dto = new GenotypeFeatureDTO();
                 FeatureDTO feature = featureGenotypeListCallBack.getDtoList().get(selectedFeature);
+                if (featureAlreadyInUse(feature)) {
+                    errorCreateGenotype.setError("Feature already used.");
+                    return;
+                }
                 dto.setFeatureDTO(feature);
                 dto.setZygosity(zygosityList.get(zygosityListBox.getSelectedIndex()));
                 dto.setMaternalZygosity(zygosityList.get(zygosityMaternalListBox.getSelectedIndex()));
@@ -436,6 +440,15 @@ public class FishModule implements HandlesError, EntryPoint {
             }
         });
 
+    }
+
+    private boolean featureAlreadyInUse(FeatureDTO feature) {
+        if (genotypeFeatureDTOList == null)
+            return false;
+        for (GenotypeFeatureDTO dto : genotypeFeatureDTOList)
+            if (dto.getFeatureDTO().equals(feature))
+                return true;
+        return false;
     }
 
     private GenotypeDTO getSelectedGenotypeBackground() {
