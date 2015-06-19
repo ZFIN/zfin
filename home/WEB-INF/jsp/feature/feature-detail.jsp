@@ -62,22 +62,11 @@
         Affected Genes:
     </th>
     <c:choose>
-        <c:when test="${fn:length(formBean.feature.featureMarkerRelations) > 0 }">
+        <c:when test="${fn:length(formBean.feature.affectedGenes) > 0 }">
             <td>
-                <c:forEach var="fmRel" items="${formBean.feature.featureMarkerRelations}" varStatus="loop">
-                  <c:if test="${fmRel.markerIsGene && fmRel.featureMarkerRelationshipType.affectedMarkerFlag}">
-                    <zfin:link entity="${fmRel.marker}"/>
-                    <c:if test="${fmRel.publicationCount > 0}">
-                        <c:choose>
-                            <c:when test="${fmRel.publicationCount == 1}">
-                                (<a href="/${fmRel.singlePublication.zdbID}">${fmRel.publicationCount}</a>)
-                            </c:when>
-                            <c:otherwise>
-                                (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${fmRel.zdbID}&rtype=genotype">${fmRel.publicationCount}</a>)
-                            </c:otherwise>
-                        </c:choose>
-                    </c:if><c:if test="${!loop.last}">,&nbsp;</c:if>
-                  </c:if>
+                <c:forEach var="affectedGene" items="${formBean.feature.affectedGenes}" varStatus="loop">
+                    <zfin:link entity="${affectedGene}"/>
+                    <c:if test="${!loop.last}">,&nbsp;</c:if>
                 </c:forEach>
             </td>
         </c:when>

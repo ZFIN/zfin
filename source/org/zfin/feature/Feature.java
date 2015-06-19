@@ -1,6 +1,5 @@
 package org.zfin.feature;
 
-import org.zfin.feature.repository.FeatureService;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.DataNote;
@@ -32,7 +31,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     private String zdbID;
     private String name;
     private String publicComments;
-    //    private String ftrType;
     private String lineNumber;
     private FeaturePrefix featurePrefix;
     private String abbreviation;
@@ -47,7 +45,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Boolean isUnspecifiedFeature;
     private Set<MappedDeletion> mappedDeletions;
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
-    //    public FeatureType featureType;
     private FeatureTypeEnum type;
     private Set<FeatureSupplier> suppliers;
     private Set<FeatureSource> sources;
@@ -115,15 +112,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     public void setFeaturePrefix(FeaturePrefix featurePrefix) {
         this.featurePrefix = featurePrefix;
     }
-
-//    public String getFtrTypeString() {
-//        return ftrType;
-//    }
-//
-//    public void setFtrTypeString(String ftrType) {
-//        this.ftrType = ftrType;
-//    }
-
 
     public String getLineNumber() {
         return lineNumber;
