@@ -633,7 +633,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         hql.append("      fishox.experiment = exp AND ");
         hql.append("      con.experiment = exp AND  ");
         hql.append("      marker = con.sequenceTargetingReagent AND  ");
-        hql.append("      phenotype.phenotypeExperiment.fishExperiment = geno AND  ");
+        hql.append("      phenotype.phenotypeExperiment.fishExperiment = fishox AND  ");
         hql.append("      phenotype.phenotypeExperiment.figure = figure AND ");
         hql.append("      ( phenotype.entity.superterm = :term OR phenotype.entity.subterm = :term  OR" +
                 "           phenotype.relatedEntity.superterm = :term OR phenotype.relatedEntity.subterm = :term ) ");
@@ -706,7 +706,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   xpatfig.expressionResult = res AND " +
                 "   xpatfig.figure = figure AND " +
                 "   exp.antibody is null AND " +
-                "   exp.genotypeExperiment = genox  " +
+                "   exp.fishExperiment = fishox  " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setString("genoID", geno.getZdbID());
@@ -777,8 +777,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
         Criteria pubs = session.createCriteria(Publication.class);
         Criteria expression = pubs.createCriteria("expressionExperiments");
-        Criteria genox = expression.createCriteria("genotypeExperiment");
-        genox.add(Restrictions.eq("genotype", genotype));
+        Criteria genox = expression.createCriteria("fishExperiment");
+        Criteria fish = genox.createCriteria("fish");
+        fish.add(Restrictions.eq("genotype", genotype));
         Criteria result = expression.createCriteria("expressionResults");
         result.add(Restrictions.isNotEmpty("figures"));
         expression.add(Restrictions.isNull("antibody"));
@@ -795,7 +796,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "where " +
                 "      ( phenotype.entity.superterm = :aoTerm OR phenotype.entity.subterm = :aoTerm OR " +
                 "        phenotype.relatedEntity.superterm = :aoTerm OR phenotype.relatedEntity.subterm = :aoTerm ) AND " +
-                "      phenotype.phenotypeExperiment.genotypeExperiment.genotype.zdbID = :genoID AND " +
+                "      phenotype.phenotypeExperiment.fishExperiment.fish.genotype.zdbID = :genoID AND " +
                 "      phenotype.phenotypeExperiment.figure =figure " +
                 "";
         Query query = session.createQuery(hql);
@@ -828,7 +829,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "   exp.fishExperiment = fishox AND " +
                 "   fishox.standardOrGenericControl = :condition AND " +
                 "   fishox.fish.genotype = geno AND " +
-                "   fishox.fish.geno.wildtype = :isWildtype ";
+                "   fishox.fish.genotype.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
