@@ -294,14 +294,18 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getFiguresForGenotypeAndAoPlusSubstructures() {
         //  genotype Df(Chr03:sox8,sox9b)b971/b971
-        String genoZdbID = "ZDB-GENO-050322-1";
+        //String genoZdbID = "ZDB-GENO-050322-1";
+        //chnage to FishID
+        String fishName="";
+        Fish fish=mutantRepository.getFish("");
+
         Fish geno = new Fish();
-        geno.setZdbID(genoZdbID);
+//        geno.setZdbID(genoZdbID);
         // actinotrichium
         String aoZdbID = "ZDB-TERM-100614-30";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(geno, item, true);
+        PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(fish, item, true);
         assertNotNull(figs.getPopulatedResults());
         assertTrue(figs.getPopulatedResults().size() > 0);
     }
@@ -393,6 +397,16 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         item.setZdbID(aoZdbID);
         int publicationCount = publicationRepository.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
         assertTrue(publicationCount > 0);
+//        assertEquals("1 publication", 1, publications.size());
+
+    }
+    @Test
+    public void getFeatureCountForPub() {
+        //  genotype adss^hi1433Tg
+        String pubZdbID = "ZDB-PUB-140403-2 ";
+        Publication pub=publicationRepository.getPublication(pubZdbID);
+        long ftrCount = publicationRepository.getFeatureCount(pub);
+        assertTrue(ftrCount > 0);
 //        assertEquals("1 publication", 1, publications.size());
 
     }
