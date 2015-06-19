@@ -54,7 +54,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Set<FeatureAlias> aliases;
     private FeatureAssay featureAssay;
     private Set<FeatureDBLink> dbLinks;
-    private Set<FeatureMarkerRelationship> sortedMarkerRelationships;
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -339,9 +338,10 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public SortedSet<Marker> getAffectedGenes() {
         SortedSet<Marker> affectedGenes = new TreeSet<Marker>();
-        Set<FeatureMarkerRelationship> fmRelations = FeatureService.getSortedMarkerRelationships(this);
-        for (FeatureMarkerRelationship ftrmarkrel : fmRelations) {
-           affectedGenes.add(ftrmarkrel.getMarker());
+        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations) {
+            if (featureMarkerRelationship.isMarkerIsGene() && featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                affectedGenes.add(featureMarkerRelationship.getMarker());
+            }
         }
         return affectedGenes;
     }
@@ -465,16 +465,5 @@ public class Feature implements EntityNotes, EntityZdbID {
             return UNSPECIFIED;
         return abbreviation;
 
-    }
-
-    public Set<FeatureMarkerRelationship> getSortedMarkerRelationships() {
-        if (sortedMarkerRelationships == null || sortedMarkerRelationships.size() == 0) {
-            return FeatureService.getSortedMarkerRelationships(this);
-        }
-        return sortedMarkerRelationships;
-    }
-
-    public void setSortedMarkerRelationships(Set<FeatureMarkerRelationship> sortedMarkerRelationships) {
-        this.sortedMarkerRelationships = sortedMarkerRelationships;
     }
 }

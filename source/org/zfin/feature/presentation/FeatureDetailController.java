@@ -84,7 +84,7 @@ public class FeatureDetailController {
 
         form.setFeature(feature);
 
-        Set<FeatureMarkerRelationship> markerRelationships = FeatureService.getSortedMarkerRelationships(feature);
+        Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
         Collection<FeatureGenomeLocation> locations = FeatureService.getFeatureGenomeLocations(feature, GenomeLocation.Source.ZFIN);
         if (CollectionUtils.isNotEmpty(locations)) {
             // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
@@ -92,8 +92,8 @@ public class FeatureDetailController {
             // some appropriate amount of padding.
             GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder();
             FeatureGenomeLocation featureLocation = locations.iterator().next();
-            if (markerRelationships.size() == 1) {
-                Marker related = markerRelationships.iterator().next().getMarker();
+            if (featureMarkerRelationships.size() == 1) {
+                Marker related = featureMarkerRelationships.iterator().next().getMarker();
                 List<MarkerGenomeLocation> markerLocations = linkageRepository.getGenomeLocation(related, GenomeLocation.Source.ZFIN);
                 if (CollectionUtils.isNotEmpty(markerLocations)) {
                     imageBuilder.landmark(markerLocations.get(0))
