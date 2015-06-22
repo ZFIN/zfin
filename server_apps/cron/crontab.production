@@ -54,6 +54,6 @@
 # MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
 00 23 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
 # Nights   When      Comments
-# MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
+# MTWT    9:00pm   sync and checkin curated blastdbs to SVN and almost from production
 00 21 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/rotateInformixLogs.sh
 
