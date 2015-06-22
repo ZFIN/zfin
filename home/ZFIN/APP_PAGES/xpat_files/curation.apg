@@ -91,7 +91,6 @@ EFFECTS
 <?MIVAR NAME=pubcur_category>Construct<?/MIVAR>
 <?MIVAR>
   $(VECAPPEND,$pubcur_category,Feature)
-  $(VECAPPEND,$pubcur_category,Genotype)
   $(VECAPPEND,$pubcur_category,Fish)
   $(VECAPPEND,$pubcur_category,Figure)
   $(VECAPPEND,$pubcur_category,Environment)
@@ -512,9 +511,6 @@ function setMarkerTarget(featreli,anchor){
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-attribupdate.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 
-<?MICOMMENT> Perform update when pubcur_c_geno_update is set <?/MICOMMENT>
-<?MISQL COND="$(AND,$(XST,$pubcur_c_geno_update),$(EC,$pubcur_c_geno_update,update))" SQL="select WebExplode(object,'') from webPages where ID='aa-genoupdate.apg';">$1<?/MISQL>
-
 <?MICOMMENT>  Perform update when pubcur_c_pato_update is set <?/MICOMMENT>
 <?MISQL COND="$(AND,$(XST,$pubcur_c_pato_update),$(EC,$pubcur_c_pato_update,update))" SQL="select WebExplode(object,'') from webPages where ID='aa-patoupdate.apg';">$1<?/MISQL>
 
@@ -721,7 +717,7 @@ function setMarkerTarget(featreli,anchor){
         <?MIVAR NAME=pubcur_G_max_exp_name>$1<?/MIVAR>
     <?/MISQL>
 
-    <?MIVAR COND=$(NXST,$pubcur_c_tab) NAME=pubcur_c_tab>Genotype<?/MIVAR>
+    <?MIVAR COND=$(NXST,$pubcur_c_tab) NAME=pubcur_c_tab>Fish<?/MIVAR>
 
 
 
@@ -978,9 +974,6 @@ and feature_zdb_id=fmrel_ftr_zdb_id
 <?/MIBLOCK>
 <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Feature))">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-featcuration.apg';">$1<?/MISQL>
-<?/MIBLOCK>
-<?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Genotype))">
-  <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-genotypecuration.apg';">$1<?/MISQL>
 <?/MIBLOCK>
 <?MIBLOCK COND="$(AND,$(XST,$pubcur_c_tab),$(EC,$pubcur_c_tab,Construct))">
   <?MISQL SQL="select WebExplode(object,'') from webPages where ID='aa-constrctcuration.apg';">$1<?/MISQL>

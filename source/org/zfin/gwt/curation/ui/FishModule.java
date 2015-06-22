@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -133,9 +134,9 @@ public class FishModule implements HandlesError, EntryPoint {
     private List<GenotypeDTO> genotypeList = new ArrayList<>(10);
     private List<GenotypeDTO> existingGenotypeList = new ArrayList<>(10);
 
-    private Button buttonUUU = new Button("[U,U,U]");
-    private Button button211 = new Button("[2,1,1]");
-    private Button button2UU = new Button("[2,U,U]");
+    private Button buttonUUU = new Button("U,U,U");
+    private Button button211 = new Button("2,1,1");
+    private Button button2UU = new Button("2,U,U");
 
     @Override
     public void onModuleLoad() {
@@ -179,6 +180,7 @@ public class FishModule implements HandlesError, EntryPoint {
         public PublicNotePopup(final GenotypeDTO genotypeDTO, boolean isPublic) {
             // set auto hide to true
             super(true);
+            makeBackgroundDarker();
             VerticalPanel vPanel = new VerticalPanel();
             final TextArea textArea = new TextArea();
             textArea.setHeight("100px");
@@ -206,9 +208,19 @@ public class FishModule implements HandlesError, EntryPoint {
             }
         }
 
+        private void makeBackgroundDarker() {
+            setGlassEnabled(true);
+            Style glassStyle = getGlassElement().getStyle();
+            glassStyle.setProperty("width", "100%");
+            glassStyle.setProperty("height", "100%");
+            glassStyle.setProperty("backgroundColor", "#000");
+            glassStyle.setProperty("opacity", "0.45");
+        }
+
         public PublicNotePopup(final NoteDTO externalNoteDTO, boolean isPublic) {
             // set auto hide to true
             super(true);
+            makeBackgroundDarker();
             VerticalPanel vPanel = new VerticalPanel();
             final TextArea textArea = new TextArea();
             textArea.setHeight("100px");
@@ -369,6 +381,7 @@ public class FishModule implements HandlesError, EntryPoint {
                 zygosityListBox.setSelectedIndex(3);
                 zygosityMaternalListBox.setSelectedIndex(3);
                 zygosityPaternalListBox.setSelectedIndex(3);
+                resetGenoConstructionZoneError();
             }
         });
         button2UU.addClickHandler(new ClickHandler() {
@@ -377,6 +390,7 @@ public class FishModule implements HandlesError, EntryPoint {
                 zygosityListBox.setSelectedIndex(0);
                 zygosityMaternalListBox.setSelectedIndex(3);
                 zygosityPaternalListBox.setSelectedIndex(3);
+                resetGenoConstructionZoneError();
             }
         });
         button211.addClickHandler(new ClickHandler() {
@@ -385,15 +399,21 @@ public class FishModule implements HandlesError, EntryPoint {
                 zygosityListBox.setSelectedIndex(0);
                 zygosityMaternalListBox.setSelectedIndex(1);
                 zygosityPaternalListBox.setSelectedIndex(1);
+                resetGenoConstructionZoneError();
             }
         });
 
         addGenotypeFeature.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
+                resetGenoConstructionZoneError();
                 int selectedFeature = featureForGenotypeListBox.getSelectedIndex();
                 GenotypeFeatureDTO dto = new GenotypeFeatureDTO();
                 FeatureDTO feature = featureGenotypeListCallBack.getDtoList().get(selectedFeature);
+                if (featureAlreadyInUse(feature)) {
+                    errorCreateGenotype.setError("Feature already used.");
+                    return;
+                }
                 dto.setFeatureDTO(feature);
                 dto.setZygosity(zygosityList.get(zygosityListBox.getSelectedIndex()));
                 dto.setMaternalZygosity(zygosityList.get(zygosityMaternalListBox.getSelectedIndex()));
@@ -407,11 +427,17 @@ public class FishModule implements HandlesError, EntryPoint {
             public void onChange(ChangeEvent changeEvent) {
                 getSelectedGenotypeBackground();
                 setGenotypeInfo();
+                resetGenoConstructionZoneError();
             }
         });
         createGenotypeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
+                resetGenoConstructionZoneError();
+                if(genotypeFeatureDTOList.size() == 0){
+                    errorCreateGenotype.setError("No Feature selected");
+                    return;
+                }
                 String nicknameString = genotypeNickname.getText();
                 if (nicknameString.equals(genotypeHandle.getText()))
                     nicknameString = null;
@@ -423,7 +449,25 @@ public class FishModule implements HandlesError, EntryPoint {
                 loadingImageCreateGenotype.setVisible(true);
             }
         });
+        featureForGenotypeListBox.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent changeEvent) {
+                resetGenoConstructionZoneError();
+            }
+        });
+    }
 
+    private void resetGenoConstructionZoneError() {
+        errorCreateGenotype.setError("");
+    }
+
+    private boolean featureAlreadyInUse(FeatureDTO feature) {
+        if (genotypeFeatureDTOList == null)
+            return false;
+        for (GenotypeFeatureDTO dto : genotypeFeatureDTOList)
+            if (dto.getFeatureDTO().equals(feature))
+                return true;
+        return false;
     }
 
     private GenotypeDTO getSelectedGenotypeBackground() {
@@ -697,7 +741,6 @@ public class FishModule implements HandlesError, EntryPoint {
         String genotypeDisplayNameString = "";
         for (GenotypeFeatureDTO genotypeFeature : genotypeFeatureDTOList) {
             genotypeHandleName += genotypeFeature.getFeatureDTO().getName();
-            genotypeHandleName += " ";
             genotypeHandleName += genotypeFeature.getZygosityInfo();
             genotypeDisplayNameString += "<i>";
             if (genotypeFeature.getFeatureDTO().getDisplayNameForGenotypeBase() != null) {
@@ -854,7 +897,7 @@ public class FishModule implements HandlesError, EntryPoint {
             int col = 0;
             Anchor html = new Anchor(SafeHtmlUtils.fromTrustedString(genotype.getName()), "/" + genotype.getZdbID());
             genotypeListTable.setWidget(index, col++, html);
-            InlineHTML handle = new InlineHTML(genotype.getHandle());
+            InlineHTML handle = new InlineHTML(genotype.getNickName());
             handle.setTitle(genotype.getZdbID());
             genotypeListTable.setWidget(index, col++, handle);
             VerticalPanel featurePanel = new VerticalPanel();
@@ -1086,10 +1129,11 @@ public class FishModule implements HandlesError, EntryPoint {
         public void onSuccess(GenotypeDTO genotypeDTO) {
             resetNewGenotypeUI();
             loadingImageCreateGenotype.setVisible(false);
-            errorHandler.setError("Created successfully Genotype: " + genotypeDTO.getHandle());
+            errorHandler.setError("Successfully created new Genotype: " + genotypeDTO.getHandle());
             // update genotype list on Create fish section
             curationExperimentRPCAsync.getGenotypes(publicationID, genotypeListCallBack);
             diseaseCurationRPCAsync.getGenotypeList(publicationID, new RetrieveGenotypeListCallBack("Genotype List", errorLabel));
+            curationExperimentRPCAsync.getGenotypes(publicationID, genotypeListCallBack);
         }
     }
 
@@ -1132,7 +1176,8 @@ public class FishModule implements HandlesError, EntryPoint {
         public void onSuccess(List<ZygosityDTO> list) {
             zygosityList = list;
             for (ZygosityDTO dto : list) {
-                zygosityListBox.addItem(dto.getName(), dto.getZdbID());
+                if (!dto.getName().startsWith("wild"))
+                    zygosityListBox.addItem(dto.getName(), dto.getZdbID());
                 zygosityMaternalListBox.addItem(dto.getName(), dto.getZdbID());
                 zygosityPaternalListBox.addItem(dto.getName(), dto.getZdbID());
             }

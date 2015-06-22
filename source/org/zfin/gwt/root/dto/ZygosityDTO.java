@@ -50,7 +50,8 @@ public class ZygosityDTO extends RelatedEntityDTO implements IsSerializable, Ser
             HOMOZYGOUS("homozygous", "2"),
             HETEROZYGOUS("heterozygous", "1"),
             UNKNOWN("unknown", "U"),
-            COMPLEX("complex", "C");
+            COMPLEX("complex", "C"),
+            WILD_TYPE("wild type", "W");
             private String name;
             private String symbol;
 

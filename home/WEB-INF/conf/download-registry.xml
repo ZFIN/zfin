@@ -2674,20 +2674,32 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                     select fe_fish_zdb_id, fe_environment_zdb_id, "is_a_model", term_ont_id, term_name, da_pub_zdb_id, accession_no
-   from fish_environment, disease_annotation, publication, term
-   where fe_pk_id = da_fishenv_id
-   and da_term_zdb_id = term_zdb_id
-   and da_pub_zdb_id = zdb_id;
+                    SELECT genox_fish_zdb_id,
+                           genox_exp_zdb_id,
+                           CASE
+                             WHEN genox_fish_zdb_id IS NOT NULL THEN 'is_a_model'
+                             ELSE ' '
+                           END,
+                           term_ont_id,
+                           term_name,
+                           da_pub_zdb_id,
+                           accession_no
+                    FROM   disease_annotation,
+                           publication,
+                           term,
+                    OUTER  fish_experiment
+                    WHERE  genox_zdb_id = da_genox_zdb_id
+                           AND da_term_zdb_id = term_zdb_id
+                           AND da_pub_zdb_id = zdb_id;
                 ]]>
             </Query>
             <Column id="1" unique="true">Fish ZDB ID</Column>
             <Column id="2">Environment ZDB ID</Column>
             <Column id="3">is_a_model</Column>
             <Column id="4">DO Term ID</Column>
-	    <Column id="5">DO Term Name</Column>
+            <Column id="5">DO Term Name</Column>
             <Column id="6">Publication ZDB ID</Column>
-	    <Column id="7">PubMed ID</Column>
+            <Column id="7">PubMed ID</Column>
         </Download>
     </DownloadDefinitions>
     <DownloadCategories>

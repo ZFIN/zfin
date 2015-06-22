@@ -86,6 +86,8 @@ public interface ExpressionRepository {
      */
     MarkerDBLink getMarkDBLink(String genbankID);
 
+    FishExperiment getFishExperimentByID(String fishExpID);
+
     /**
      * Retrieve FishExperiment by Experiment ID
      *

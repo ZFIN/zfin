@@ -1,9 +1,11 @@
 package org.zfin.fish.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,16 +13,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.expression.presentation.GeneCentricExpressionData;
-import org.zfin.feature.presentation.GenotypeBean;
-import org.zfin.feature.presentation.GenotypeDetailController;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.MutationType;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PresentationConverter;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.*;
+import org.zfin.mutant.presentation.DiseaseModelDisplay;
+import org.zfin.ontology.GenericTerm;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
 
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
  * Controller that serves the fish detail page.
@@ -111,13 +114,21 @@ public class FishDetailController {
 
         model.addAttribute("fish", fish);
 
-        if (!fish.getGenotype().isWildtype()) {
+        if (!fish.isWildtypeWithoutReagents()) {
+            // phenotype
             List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
             model.addAttribute("phenotypeStatements", phenotypeStatements);
             model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
+
+            // disease model
+            List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
+            model.addAttribute("diseases", getDiseaseModelDisplay(diseaseModels));
+
+            // expression
             addExpressionSummaryToModel(model, fishZdbId);
         }
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
+        model.addAttribute("fishIsWildtypeWithoutReagents", fish.isWildtypeWithoutReagents());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
 
         return "fish/fish-detail.page";
@@ -199,8 +210,9 @@ public class FishDetailController {
         LOG.info("Start MartFish Detail Controller");
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
         //MartFish fish = RepositoryFactory.getFishRepository().getFish(fishID);
-        if (fish == null)
+        if (fish == null) {
             return LookupStrings.idNotFound(model, fishID);
+        }
 
         /*if (fish.getFishExperiments() != null && fish.getFishExperiments().size() == 1 && fish.getStrList().size() == 0) {
             *//*String genotypeExperimentIDsString = fish.getFishExperiments().g;*//*
@@ -231,6 +243,30 @@ public class FishDetailController {
             fishExperiments.add(getMutantRepository().getGenotypeExperiment(genoID));
         }
         form.setGenotypeExperimentsList(fishExperiments);
+    }
+
+    private static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseModel> models) {
+        MultiKeyMap map = new MultiKeyMap();
+        for (DiseaseModel model : models) {
+            if (!map.containsKey(model.getDisease(), model.getFishExperiment())) {
+                map.put(model.getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
+            }
+            ((Collection<Publication>) map.get(model.getDisease(), model.getFishExperiment())).add(model.getPublication());
+        }
+
+        List<DiseaseModelDisplay> modelDisplays = new ArrayList<>();
+        MapIterator it = map.mapIterator();
+        while (it.hasNext()) {
+            it.next();
+            MultiKey key = (MultiKey) it.getKey();
+            DiseaseModelDisplay display = new DiseaseModelDisplay();
+            display.setDisease((GenericTerm) key.getKey(0));
+            display.setExperiment((FishExperiment) key.getKey(1));
+            display.setPublications((Collection<Publication>) it.getValue());
+            modelDisplays.add(display);
+        }
+        Collections.sort(modelDisplays);
+        return modelDisplays;
     }
 
 

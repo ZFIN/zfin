@@ -269,24 +269,47 @@ public class PhenotypeService {
 
     public static List<Publication> getPublicationList(GenericTerm disease, Fish fish, String orderBy) {
         List<Publication> publicationList = getPublicationList(disease, fish);
-        if (publicationList == null)
+        if (publicationList == null) {
             return null;
-
-        if (orderBy != null && orderBy.equalsIgnoreCase("author"))
-            Collections.sort(publicationList, new PublicationAuthorComparator());
-        if (StringUtils.isEmpty(orderBy) || orderBy.equalsIgnoreCase("date"))
-            Collections.sort(publicationList);
+        }
+        orderPublications(publicationList, orderBy);
         return publicationList;
     }
 
     public static List<Publication> getPublicationList(GenericTerm disease, Fish fish) {
         List<FishModelDisplay> model = OntologyService.getDiseaseModels(disease);
-        if (CollectionUtils.isEmpty(model))
+        if (CollectionUtils.isEmpty(model)) {
             return null;
+        }
         Set<Publication> publicationSet = new HashSet<>();
         for (FishModelDisplay display : model) {
-            if (display.getFishModel().getFish().equals(fish))
+            if (display.getFishModel().getFish().equals(fish)) {
                 publicationSet.addAll(display.getPublications());
+            }
+        }
+        List<Publication> list = new ArrayList<>(publicationSet);
+        return list;
+    }
+
+    public static List<Publication> getPublicationList(GenericTerm disease, FishExperiment fishExperiment, String orderBy) {
+        List<Publication> publicationList = getPublicationList(disease, fishExperiment);
+        if (publicationList == null) {
+            return null;
+        }
+        orderPublications(publicationList, orderBy);
+        return publicationList;
+    }
+
+    public static List<Publication> getPublicationList(GenericTerm disease, FishExperiment fishExperiment) {
+        List<FishModelDisplay> model = OntologyService.getDiseaseModels(disease);
+        if (CollectionUtils.isEmpty(model)) {
+            return null;
+        }
+        Set<Publication> publicationSet = new HashSet<>();
+        for (FishModelDisplay display : model) {
+            if (display.getFishModel().equals(fishExperiment)) {
+                publicationSet.addAll(display.getPublications());
+            }
         }
         List<Publication> list = new ArrayList<>(publicationSet);
         return list;
@@ -295,9 +318,19 @@ public class PhenotypeService {
     public static List<DiseaseModelDTO> getDiseaseModelDTOs(String publicationID) {
         List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModels(publicationID);
         List<DiseaseModelDTO> dtoList = new ArrayList<>();
-        for (DiseaseModel diseaseModel : diseaseModelList)
+        for (DiseaseModel diseaseModel : diseaseModelList) {
             dtoList.add(DTOConversionService.convertToDiseaseModelDTO(diseaseModel));
+        }
         return dtoList;
+    }
+
+    private static void orderPublications(List<Publication> publications, String orderBy) {
+        if (orderBy != null && orderBy.equalsIgnoreCase("author")) {
+            Collections.sort(publications, new PublicationAuthorComparator());
+        }
+        if (StringUtils.isEmpty(orderBy) || orderBy.equalsIgnoreCase("date")) {
+            Collections.sort(publications);
+        }
     }
 
     private static class PhenotypeComparator implements Comparator<String> {

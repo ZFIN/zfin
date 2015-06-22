@@ -502,6 +502,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (MarkerDBLink) session.get(MarkerDBLink.class, genbankID);
     }
 
+    public FishExperiment getFishExperimentByID(String fishExpID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(FishExperiment.class);
+        criteria.add(Restrictions.eq("zdbID", fishExpID));
+        return (FishExperiment) criteria.uniqueResult();
+    }
+
     /**
      * Retrieve FishExperiment by Experiment ID
      *
@@ -1626,7 +1633,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (expressionCriteria.getGenotype() != null) {
             aliasMap.put("expressionResults", "xpatres");
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
-            criteria.add(Restrictions.eq("genox.fish.genotype", expressionCriteria.getGenotype()));
+            aliasMap.put("genox.fish", "fish");
+            criteria.add(Restrictions.eq("fish.genotype", expressionCriteria.getGenotype()));
             aliasMap.put("xpatex.fishExperiment", "genox");
           //  criteria.add(Restrictions.eq("genox.fish.genotype", expressionCriteria.getGenotype()));
             logger.debug("geno: " + expressionCriteria.getGenotype().getZdbID());
@@ -1761,7 +1769,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         if (expressionCriteria.getGenotype() != null) {
             aliasMap.put("xpatex.fishExperiment", "genox");
-            criteria.add(Restrictions.eq("genox.fish.genotype", expressionCriteria.getGenotype()));
+            aliasMap.put("genox.fish", "fish");
+            criteria.add(Restrictions.eq("fish.genotype", expressionCriteria.getGenotype()));
             logger.debug("geno: " + expressionCriteria.getGenotype().getZdbID());
         }
 

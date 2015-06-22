@@ -18,6 +18,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.*;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -337,17 +338,28 @@ public class OntologyTermDetailController {
             return getErrorPage(model);
         }
         Fish fish = getMutantRepository().getFish(fishID);
+        FishExperiment fishExperiment = null;
         if (fish == null) {
-            return getErrorPage(fishID, model);
+            fishExperiment = getExpressionRepository().getFishExperimentByID(fishID);
+            if (fishExperiment == null) {
+                return getErrorPage(fishID, model);
+            }
+            fish = fishExperiment.getFish();
         }
         GenericTerm disease = getOntologyRepository().getTermByOboID(termID);
         if (disease == null) {
             return getErrorPage(termID, model);
         }
+        List<Publication> citationList;
+        if (fishExperiment != null) {
+            citationList = PhenotypeService.getPublicationList(disease, fishExperiment, orderBy);
+        } else {
+            citationList = PhenotypeService.getPublicationList(disease, fish, orderBy);
+        }
         model.addAttribute("fish", fish);
         model.addAttribute("term", disease);
         model.addAttribute("orderBy", orderBy);
-        model.addAttribute("citationList", PhenotypeService.getPublicationList(disease, fish, orderBy));
+        model.addAttribute("citationList", citationList);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/fish-model-publication-list.page";
     }

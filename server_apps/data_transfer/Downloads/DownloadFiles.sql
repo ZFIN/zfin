@@ -1988,9 +1988,20 @@ from marker, marker_sequence
 !echo "unload disease.txt"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_model_disease.txt'
  DELIMITER "	"
-select genox_fish_zdb_id, genox_exp_zdb_id, "is_a_model", term_ont_id, term_name, da_pub_zdb_id, accession_no
-   from disease_annotation, publication, term,
-   outer fish_experiment
-   where genox_zdb_id = da_genox_zdb_id
-   and da_term_zdb_id = term_zdb_id
-   and da_pub_zdb_id = zdb_id;
+SELECT genox_fish_zdb_id,
+       genox_exp_zdb_id,
+       CASE
+         WHEN genox_fish_zdb_id IS NOT NULL THEN 'is_a_model'
+         ELSE ' '
+       END,
+       term_ont_id,
+       term_name,
+       da_pub_zdb_id,
+       accession_no
+FROM   disease_annotation,
+       publication,
+       term,
+OUTER  fish_experiment
+WHERE  genox_zdb_id = da_genox_zdb_id
+       AND da_term_zdb_id = term_zdb_id
+       AND da_pub_zdb_id = zdb_id;

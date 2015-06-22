@@ -31,7 +31,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     private String zdbID;
     private String name;
     private String publicComments;
-    //    private String ftrType;
     private String lineNumber;
     private FeaturePrefix featurePrefix;
     private String abbreviation;
@@ -46,14 +45,12 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Boolean isUnspecifiedFeature;
     private Set<MappedDeletion> mappedDeletions;
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
-    //    public FeatureType featureType;
     private FeatureTypeEnum type;
     private Set<FeatureSupplier> suppliers;
     private Set<FeatureSource> sources;
     private Set<FeatureAlias> aliases;
     private FeatureAssay featureAssay;
     private Set<FeatureDBLink> dbLinks;
-
 
     public String getTransgenicSuffix() {
         return transgenicSuffix;
@@ -115,15 +112,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     public void setFeaturePrefix(FeaturePrefix featurePrefix) {
         this.featurePrefix = featurePrefix;
     }
-
-//    public String getFtrTypeString() {
-//        return ftrType;
-//    }
-//
-//    public void setFtrTypeString(String ftrType) {
-//        this.ftrType = ftrType;
-//    }
-
 
     public String getLineNumber() {
         return lineNumber;
@@ -338,14 +326,12 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public SortedSet<Marker> getAffectedGenes() {
         SortedSet<Marker> affectedGenes = new TreeSet<Marker>();
-        for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
-            if (ftrmarkrel.isMarkerIsGene() && ftrmarkrel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                affectedGenes.add(ftrmarkrel.getMarker());
+        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations) {
+            if (featureMarkerRelationship.isMarkerIsGene() && featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
+                affectedGenes.add(featureMarkerRelationship.getMarker());
             }
         }
         return affectedGenes;
-
-
     }
 
     public SortedSet<Marker> getTgConstructs() {

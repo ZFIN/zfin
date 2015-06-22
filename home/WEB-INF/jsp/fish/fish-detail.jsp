@@ -52,7 +52,45 @@
 
 </p>
 
-<c:if test="${!fish.genotype.wildtype}">
+<c:if test="${!fishIsWildtypeWithoutReagents}">
+    <div class="summary">
+        <span class="summaryTitle">HUMAN DISEASE MODELED by ${fish.name}</span>
+        <c:choose>
+            <c:when test="${!empty diseases}">
+            <table class="summary rowstripes">
+                <thead>
+                    <tr>
+                        <th>Human Disease</th>
+                        <th>Conditions</th>
+                        <th>Citations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach items="${diseases}" var="disease" varStatus="loop">
+                        <zfin:alternating-tr loopName="loop" groupBeanCollection="${diseases}" groupByBean="disease.termName">
+                            <td>
+                                <zfin:groupByDisplay loopName="loop" groupBeanCollection="${diseases}" groupByBean="disease.termName">
+                                    <zfin:link entity="${disease.disease}"/>
+                                </zfin:groupByDisplay>
+                            </td>
+                            <td><zfin:link entity="${disease.experiment.experiment}"/></td>
+                            <td>
+                                <a href="/action/ontology/fish-model-publication-list/${disease.disease.oboID}/${disease.experiment.zdbID}">
+                                    (${fn:length(disease.publications)})
+                                </a>
+                            </td>
+                        </zfin:alternating-tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+            </c:when>
+            <c:otherwise>
+                <br/><span class="no-data-tag">No data available</span>
+            </c:otherwise>
+        </c:choose>
+    </div>
+
+
     <div class="summary">
         <b>GENE EXPRESSION</b>&nbsp;
         <small><a class='popup-link info-popup-link' href='/action/marker/note/expression'></a></small>
@@ -76,7 +114,7 @@
             </c:when>
 
             <c:otherwise>
-                <br/>No data available
+                <br/><span class="no-data-tag">No data available</span>
             </c:otherwise>
         </c:choose>
     </div>
@@ -103,7 +141,7 @@
             </c:when>
 
             <c:otherwise>
-                <br>No data available</br>
+                <br><span class="no-data-tag">No data available</span>
             </c:otherwise>
         </c:choose>
     </div>

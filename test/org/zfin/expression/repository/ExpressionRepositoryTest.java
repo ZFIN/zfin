@@ -77,6 +77,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
     public void getFishExperimentByExperiment() {
         //TODO provide stable fish ID and change assertion
         String experimentID = "ZDB-EXP-070511-5";
@@ -416,7 +417,9 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
 
 
-    //@Test Wait until stable fish id
+    @Test
+    @Ignore
+    //TODO substitute with stable FISH id
     public void getExpressionFigureCountForGivenFish() {
         Fish fish = getMutantRepository().getFish("ZDB-FISH-150602-4531");
         int count = expRep.getExpressionFigureCountForFish(fish);
