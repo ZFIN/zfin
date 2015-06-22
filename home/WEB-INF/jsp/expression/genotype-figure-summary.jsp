@@ -4,9 +4,9 @@
 <div style="float: right">
 
     <c:choose>
-        <c:when test="${!empty expressionCriteria.genotypeExperiment}">
+        <c:when test="${!empty expressionCriteria.fishExperiment}">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="${expressionCriteria.genotypeExperiment.genotype.name}"/>
+                <tiles:putAttribute name="subjectName" value="${expressionCriteria.fishExperiment.fish.genotype.name}"/>
             </tiles:insertTemplate>
         </c:when>
         <c:when test="${!empty expressionCriteria.genotype}">
