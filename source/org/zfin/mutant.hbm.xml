@@ -119,7 +119,7 @@
         <property name="evidenceCode" column="da_evidence_code"/>
         <many-to-one name="publication" column="da_pub_zdb_id" class="org.zfin.publication.Publication"/>
         <many-to-one name="disease" column="da_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
-        <many-to-one name="fishExperiment" column="da_genox_zdb_id" class="FishExperiment"/>
+        <many-to-one name="fishExperiment" column="da_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
 
     </class>
 

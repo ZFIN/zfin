@@ -4,8 +4,6 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
-import java.util.Set;
-
 /**
  * Disease model entity:
  */
@@ -16,8 +14,6 @@ public class DiseaseModel implements EntityZdbID {
     private Publication publication;
     private String evidenceCode;
     private FishExperiment fishExperiment;
-    private Set<FishExperiment> fishModelSet;
-
 
     public FishExperiment getFishExperiment() {
         return fishExperiment;
@@ -25,14 +21,6 @@ public class DiseaseModel implements EntityZdbID {
 
     public void setFishExperiment(FishExperiment fishExperiment) {
         this.fishExperiment = fishExperiment;
-    }
-
-    public Set<FishExperiment> getFishModelSet() {
-        return fishModelSet;
-    }
-
-    public void setFishModelSet(Set<FishExperiment> fishModelSet) {
-        this.fishModelSet = fishModelSet;
     }
 
     public String getEvidenceCode() {

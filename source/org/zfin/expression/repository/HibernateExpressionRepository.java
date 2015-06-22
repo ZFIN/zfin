@@ -502,6 +502,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (MarkerDBLink) session.get(MarkerDBLink.class, genbankID);
     }
 
+    public FishExperiment getFishExperimentByID(String fishExpID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(FishExperiment.class);
+        criteria.add(Restrictions.eq("zdbID", fishExpID));
+        return (FishExperiment) criteria.uniqueResult();
+    }
+
     /**
      * Retrieve FishExperiment by Experiment ID
      *
