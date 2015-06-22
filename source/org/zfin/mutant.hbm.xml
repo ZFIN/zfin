@@ -320,7 +320,7 @@
         <!--<property name="labPrefix" column="feature_lab_prefix_id" type="integer"/>-->
         <many-to-one name="featurePrefix" column="feature_lab_prefix_id" class="org.zfin.feature.FeaturePrefix"/>
 
-        <set name="featureMarkerRelations" lazy="true">
+        <set name="featureMarkerRelations" sort="natural" lazy="true">
             <key column="fmrel_ftr_zdb_id"/>
             <one-to-many class="org.zfin.feature.FeatureMarkerRelationship"/>
         </set>
