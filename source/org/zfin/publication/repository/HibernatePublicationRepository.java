@@ -817,7 +817,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp, " +
-                "     FishExperiment fishox, ExpressionResultFigure xpatfig " +
+                "     FishExperiment fishox, ExpressionResultFigure xpatfig, Genotype geno " +
                 "where " +
                 "   marker = :marker AND " +
                 "   exp.gene = marker AND " +

@@ -20,6 +20,7 @@ import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
 import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.infrastructure.ActiveData;
@@ -1396,7 +1397,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     /**
-     * Retrieve all expression results for a given Sequenec Targeting Reagent
+     * Retrieve all expression results for a given Sequence Targeting Reagent
      *
      * @param sequenceTargetingReagent sequenceTargetingReagent
      * @return list of expression results
@@ -1404,72 +1405,132 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox, ExperimentCondition expCond " +
-                "      where expCond.sequenceTargetingReagent.zdbID = :strZdbID " +
-                "        and expCond.experiment = fishox.experiment " +
-                "        and fishox = xpExp.fishExperiment " +
-                "        and xpRslt.expressionExperiment = xpExp ";
+        String hql = "select distinct xpRslt " +
+                "       from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishEx, Fish fish, Genotype geno, ExperimentCondition expCond1 " +
+                "      where expCond1.sequenceTargetingReagent = :str " +
+                "        and expCond1.experiment = fishEx.experiment " +
+                "        and fishEx = xpExp.fishExperiment " +
+                "        and xpRslt.expressionExperiment = xpExp " +
+                "        and fish = fishEx.fish " +
+                "        and fish.genotype = geno " +
+                "        and geno.wildtype = :isWT " +
+                "        and not exists ( " +
+                "                         select 'x' from ExperimentCondition expCond2 " +
+                "                                   where expCond2.experiment = fishEx.experiment " +
+                "                                     and expCond2.sequenceTargetingReagent != :str) ";
 
         Query query = session.createQuery(hql);
-        query.setString("strZdbID", sequenceTargetingReagent.getZdbID());
+        query.setParameter("str", sequenceTargetingReagent);
+        query.setBoolean("isWT", true);
 
-        return (List<ExpressionResult>) query.list();
+        List<ExpressionResult> expressionResults = (List<ExpressionResult>) query.list();
+
+        hql = "select distinct xpRslt " +
+                "  from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishEx, Fish fish, Genotype geno, ExperimentCondition expCond1" +
+                "      where expCond1.sequenceTargetingReagent = :str " +
+                "        and expCond1.experiment = fishEx.experiment " +
+                "        and fishEx = xpExp.fishExperiment " +
+                "        and xpRslt.expressionExperiment = xpExp " +
+                "        and fish = fishEx.fish " +
+                "        and fish.genotype = geno " +
+                "        and geno.wildtype = :isWT " +
+                "        and fishEx.standardOrGenericControl = :standardOrGenericCtrl " +
+                "        and not exists ( " +
+                "                         select 'x' from ExperimentCondition expCond2 " +
+                "                                   where expCond2.experiment = fishEx.experiment " +
+                "                                     and expCond2.sequenceTargetingReagent != :str) " +
+                "        and not exists ( " +
+                "                         select 'x' from GenotypeFeature genoFtr, FeatureMarkerRelationship fmRel " +
+                "                          where genoFtr.genotype = geno " +
+                "                            and genoFtr.feature = fmRel.feature " +
+                "                            and fmRel.type != :type) ";
+
+        query = session.createQuery(hql);
+        query.setParameter("str", sequenceTargetingReagent);
+        query.setBoolean("isWT", false);
+        query.setParameter("type", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE);
+        query.setBoolean("standardOrGenericCtrl", true);
+
+        List<ExpressionResult> additionalExpressionResults = (List<ExpressionResult>) query.list();
+        expressionResults.addAll(additionalExpressionResults);
+
+        return expressionResults;
     }
 
     public List<String> getExpressionFigureIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = "select distinct xpatfig_fig_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, experiment, experiment_condition ec1 " +
+                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, experiment_condition ec1 " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and genox_exp_zdb_id = exp_zdb_id " +
-                "   and ec1.expcond_exp_zdb_id = exp_zdb_id " +
+                "   and genox_fish_zdb_id = fish_zdb_id " +
+                "   and fish_genotype_zdb_id = geno_zdb_id " +
+                "   and geno_is_wildtype = 't' " +
+                "   and ec1.expcond_exp_zdb_id = genox_exp_zdb_id " +
                 "   and ec1.expcond_mrkr_zdb_id = :strID " +
                 "   and not exists(select 'x' from experiment_condition ec2 " +
-                "                   where ec2.expcond_exp_zdb_id = exp_zdb_id " +
-                "                     and ec2.expcond_zdb_id != ec1.expcond_zdb_id) " +
-                "   and exists(select 'x' from fish, genotype " +
-                "                   where fish_zdb_id = genox_fish_zdb_id " +
-                "                     and geno_zdb_id = fish_genotype_zdb_id " +
-                "                     and (geno_is_wildtype = 't' " +
-                "                          or " +
-                "                          geno_is_wildtype = 'f' " +
-                "                          and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
-                "                                     where genofeat_geno_zdb_id = geno_zdb_id " +
-                "                                       and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
-                "                                       and fmrel_type != 'contains innocuous sequence feature') " +
-                "                          ) " +
-                "              ) " ;
+                "                   where ec2.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "                     and ec2.expcond_mrkr_zdb_id != :strID) " +
+                "union " +
+                "select distinct xpatfig_fig_zdb_id  " +
+                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, experiment_condition ec1 " +
+                " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+                "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_is_std_or_generic_control = 't' " +
+                "   and genox_fish_zdb_id = fish_zdb_id " +
+                "   and fish_genotype_zdb_id = geno_zdb_id " +
+                "   and geno_is_wildtype = 'f' " +
+                "   and ec1.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "   and ec1.expcond_mrkr_zdb_id = :strID " +
+                "   and not exists(select 'x' from experiment_condition ec2 " +
+                "                   where ec2.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "                     and ec2.expcond_mrkr_zdb_id != :strID) " +
+                "   and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
+                "                   where genofeat_geno_zdb_id = geno_zdb_id " +
+                "                     and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
+                "                     and fmrel_type != 'contains innocuous sequence feature') ";                 ;
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
+
         return (List<String>) query.list();
     }
 
     public List<String> getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene (SequenceTargetingReagent sequenceTargetingReagent, Marker expressedGene) {
         String sql = "select distinct xpatfig_fig_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, experiment, experiment_condition ec1, fish " +
+                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, experiment_condition ec1 " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
-                "   and xpatex_fish_zdb_id = fish_zdb_id " +
-                "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and genox_exp_zdb_id = exp_zdb_id " +
-                "   and ec1.expcond_exp_zdb_id = exp_zdb_id " +
-                "   and ec1.expcond_mrkr_zdb_id = :strID " +
                 "   and xpatex_gene_zdb_id = :expressedGeneID " +
+                "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_fish_zdb_id = fish_zdb_id " +
+                "   and fish_genotype_zdb_id = geno_zdb_id " +
+                "   and geno_is_wildtype = 't' " +
+                "   and ec1.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "   and ec1.expcond_mrkr_zdb_id = :strID " +
                 "   and not exists(select 'x' from experiment_condition ec2 " +
-                "                   where ec2.expcond_exp_zdb_id = exp_zdb_id " +
-                "                     and ec2.expcond_zdb_id != ec1.expcond_zdb_id) " +
-                "   and exists(select 'x' from genotype " +
-                "                   where geno_zdb_id = genox_geno_zdb_id " +
-                "                     and (geno_is_wildtype = 't' " +
-                "                          or " +
-                "                          geno_is_wildtype = 'f' " +
-                "                          and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
-                "                                     where genofeat_geno_zdb_id = geno_zdb_id " +
-                "                                       and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
-                "                                       and fmrel_type != 'contains innocuous sequence feature') " +
-                "                          ) " +
-                "              ) " ;
+                "                   where ec2.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "                     and ec2.expcond_mrkr_zdb_id != :strID) " +
+                "union " +
+                "select distinct xpatfig_fig_zdb_id  " +
+                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, experiment_condition ec1 " +
+                " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+                "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "   and xpatex_gene_zdb_id = :expressedGeneID " +
+                "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_is_std_or_generic_control = 't' " +
+                "   and genox_fish_zdb_id = fish_zdb_id " +
+                "   and fish_genotype_zdb_id = geno_zdb_id " +
+                "   and geno_is_wildtype = 'f' " +
+                "   and ec1.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "   and ec1.expcond_mrkr_zdb_id = :strID " +
+                "   and not exists(select 'x' from experiment_condition ec2 " +
+                "                   where ec2.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "                     and ec2.expcond_mrkr_zdb_id != :strID) " +
+                "   and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
+                "                   where genofeat_geno_zdb_id = geno_zdb_id " +
+                "                     and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
+                "                     and fmrel_type != 'contains innocuous sequence feature') ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
         query.setString("expressedGeneID", expressedGene.getZdbID());
@@ -1478,29 +1539,40 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<String> getExpressionPublicationIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = "select distinct fig_source_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, experiment, experiment_condition ec1 " +
+                "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, fish, genotype, experiment_condition ec1 " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and fig_zdb_id = xpatfig_fig_zdb_id " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and genox_exp_zdb_id = exp_zdb_id " +
-                "   and ec1.expcond_exp_zdb_id = exp_zdb_id " +
+                "   and genox_fish_zdb_id = fish_zdb_id " +
+                "   and fish_genotype_zdb_id = geno_zdb_id " +
+                "   and geno_is_wildtype = 't' " +
+                "   and genox_exp_zdb_id = ec1.expcond_exp_zdb_id " +
                 "   and ec1.expcond_mrkr_zdb_id = :strID " +
                 "   and not exists(select 'x' from experiment_condition ec2 " +
-                "                   where ec2.expcond_exp_zdb_id = exp_zdb_id " +
-                "                     and ec2.expcond_zdb_id != ec1.expcond_zdb_id) " +
-                "   and exists(select 'x' from fish, genotype " +
-                "                   where fish_zdb_id = genox_fish_zdb_id " +
-                "                     and geno_zdb_id = fish_genotype_zdb_id " +
-                "                     and (geno_is_wildtype = 't' " +
-                "                          or " +
-                "                          geno_is_wildtype = 'f' " +
-                "                          and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
-                "                                     where genofeat_geno_zdb_id = geno_zdb_id " +
-                "                                       and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
-                "                                       and fmrel_type != 'contains innocuous sequence feature') " +
-                "                          ) " +
-                "              ) " ;
+                "                   where ec2.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "                     and ec2.expcond_mrkr_zdb_id != :strID) " +
+                "union " +
+                "select distinct fig_source_zdb_id  " +
+                "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, fish, genotype, experiment_condition ec1 " +
+                " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+                "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "   and fig_zdb_id = xpatfig_fig_zdb_id " +
+                "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_is_std_or_generic_control = 't' " +
+                "   and genox_fish_zdb_id = fish_zdb_id " +
+                "   and fish_genotype_zdb_id = geno_zdb_id " +
+                "   and geno_is_wildtype = 'f' " +
+                "   and genox_exp_zdb_id = ec1.expcond_exp_zdb_id " +
+                "   and ec1.expcond_mrkr_zdb_id = :strID " +
+                "   and not exists(select 'x' from experiment_condition ec2 " +
+                "                   where ec2.expcond_exp_zdb_id = genox_exp_zdb_id " +
+                "                     and ec2.expcond_mrkr_zdb_id != :strID) " +
+                "   and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
+                "                   where genofeat_geno_zdb_id = geno_zdb_id " +
+                "                     and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
+                "                     and fmrel_type != 'contains innocuous sequence feature') ";
+
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
         return (List<String>) query.list();

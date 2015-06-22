@@ -78,6 +78,14 @@ public class SequenceTargetingReagentViewController {
         // set targetGenes
         addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
 
+        // Expression data
+        List<ExpressionResult> strExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
+        sequenceTargetingReagentBean.setExpressionResults(strExpressionResults);
+        List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
+        sequenceTargetingReagentBean.setExpressionFigureIDs(expressionFigureIDs);
+        List<String> expressionPublicationIDs = RepositoryFactory.getExpressionRepository().getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
+        sequenceTargetingReagentBean.setExpressionPublicationIDs(expressionPublicationIDs);
+
         // Genomic Features created by STR (CRISPR and TALEN only at this time)
         if (sequenceTargetingReagentBean.isTALEN() || sequenceTargetingReagentBean.isCRISPR()) {
             List<Feature> features = markerRepository.getFeaturesBySTR(sequenceTargetingReagent);
