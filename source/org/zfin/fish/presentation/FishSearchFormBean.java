@@ -7,6 +7,7 @@ import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.ontology.Term;
+import org.zfin.mutant.Fish;
 
 import java.util.*;
 
@@ -17,7 +18,7 @@ public class FishSearchFormBean extends PaginationBean {
 
     public static final String SHOW_ALL = "showAll";
 
-    private List<MartFish> fishList;
+    private List<Fish> fishList;
     private String geneOrFeatureName;
     // default value: show all records in regards to filter elements
     private String filter1 = SHOW_ALL;
@@ -115,7 +116,7 @@ public class FishSearchFormBean extends PaginationBean {
     }
 
 
-    public List<MartFish> getFishList() {
+    public List<Fish> getFishList() {
         return fishList;
     }
 
@@ -238,7 +239,7 @@ public class FishSearchFormBean extends PaginationBean {
         SEARCH
     }
 
-    public void setFishList(List<MartFish> fishList) {
+    public void setFishList(List<Fish> fishList) {
         this.fishList = fishList;
 
     }

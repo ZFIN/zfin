@@ -1,23 +1,22 @@
 package org.zfin.fish;
 
-import org.zfin.fish.presentation.MartFish;
-
 import java.util.List;
+import org.zfin.mutant.Fish;
 
 /**
  * Class to pass search results back to the controller,
  * along with necessary stats about the search
  */
 public class FishSearchResult {
-    private List<MartFish> results;
+    private List<Fish> results;
     private int resultsFound;
     private int start;
 
-    public List<MartFish> getResults() {
+    public List<Fish> getResults() {
         return results;
     }
 
-    public void setResults(List<MartFish> results) {
+    public void setResults(List<Fish> results) {
         this.results = results;
     }
 

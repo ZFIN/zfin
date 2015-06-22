@@ -2,6 +2,10 @@ package org.zfin.fish.repository;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -18,10 +22,14 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.FieldName;
+import org.zfin.search.presentation.SearchResult;
+import org.zfin.search.service.SolrService;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -37,73 +45,77 @@ public class HibernateFishRepository implements FishRepository {
     public FishSearchResult getFish(FishSearchCriteria criteria) {
 
         FishSearchResult results = new FishSearchResult();
-        Query query = generateFishSearchQuery(criteria);
 
+        List<Fish> fishList = new ArrayList<>(0);
 
-        int start = criteria.getStart() - 1;
-        logger.debug("Setting start for jdbc to: " + start);
-        logger.debug("Setting rowcount for jdbc to: " + start + criteria.getRows());
+        SolrQuery query = generateFishSearchSolrQuery(criteria);
 
-        PaginationResult fishObjects = PaginationResultFactory.createResultFromScrollableResultAndClose(start, start + criteria.getRows(), query.scroll());
-
-        if (fishObjects.getTotalCount() == 0) {
-            results.setResultsFound(0);
-            return results;
+        SolrServer solrServer = SolrService.getSolrServer("prototype");
+        QueryResponse response = new QueryResponse();
+        try {
+            response = solrServer.query(query);
+        } catch (Exception e) {
+            logger.error(e);
         }
 
-        logger.debug("Results found: " + fishObjects.getTotalCount());
-        logger.debug("fishObjects.getPopulatedResults().size(): " + fishObjects.getPopulatedResults().size());
-        logger.debug("fishObjects: " + fishObjects.toString());
+        List<SearchResult> solrSearchResults = response.getBeans(SearchResult.class);
 
-        List<FishAnnotation> functionalAnnotations = new ArrayList<FishAnnotation>(fishObjects.getTotalCount());
-        for (Object obj : fishObjects.getPopulatedResults()) {
-            FishAnnotation annotation = new FishAnnotation();
-            Object[] annotationObj = (Object[]) obj;
-            BigInteger bigInteger = (BigInteger) annotationObj[0];
-            annotation.setID(bigInteger.longValue());
-//            annotation.setGenotypeID((String) annotationObj[1]);
-            annotation.setUniqueName((String) annotationObj[1]);
-            annotation.setGenotypeExperimentIds((String) annotationObj[8]);
-            annotation.setSequenceTargetingReagentGroupName((String) annotationObj[2]);
-            annotation.setFeatureGroupName((String) annotationObj[3]);
-            annotation.setPhenotypeFigureCount((Integer) annotationObj[4]);
-            annotation.setExpressionFigureCount((Integer) annotationObj[10]);
-            annotation.setPhenotypeFigureGroupName((String) annotationObj[5]);
-            annotation.setGeneOrFeatureText((String) annotationObj[6]);
-            annotation.setName((String) annotationObj[7]);
-            annotation.setGenotypeID((String) annotationObj[9]);
-            annotation.setHasExpressionImages((Boolean) annotationObj[11]);
-
-            String featureComplexity = (annotationObj[12]).toString();
-            String faAllScore = annotationObj[13].toString();
-            String simpleScore = (annotationObj[14]).toString();
-            String faGeneOrder = "";
-            String faFeatureOrder = "";
-            if (annotationObj[15] != null)
-                faGeneOrder = annotationObj[15].toString();
-            if (annotationObj[16] != null)
-                faFeatureOrder = annotationObj[16].toString();
-            String featureCount = (annotationObj[17]).toString();
-
-            annotation.setScoringText(generateScoringDebugOutput(featureComplexity, featureCount, faAllScore, simpleScore, faGeneOrder, faFeatureOrder));
-            functionalAnnotations.add(annotation);
+        for (SearchResult searchResult : solrSearchResults) {
+            Fish fish = (Fish) HibernateUtil.currentSession().load(Fish.class, searchResult.getId());
+            if (fish != null) {
+                fishList.add(fish);
+            }
         }
-
-        logger.debug("functionalAnnotations size: " + functionalAnnotations.size());
-
-        List<MartFish> fish = new ArrayList<MartFish>(fishObjects.getTotalCount());
-        for (FishAnnotation annotation : functionalAnnotations) {
-            fish.add(getFishFromFunctionalAnnotation(annotation, criteria));
-        }
-
-        logger.debug("MartFish size: " + fish.size());
-        logger.debug("FishObjects total count: " + fishObjects.getTotalCount());
-
-        results.setResults(fish);
-        results.setResultsFound(fishObjects.getTotalCount());
-        results.setStart(criteria.getStart());
+        results.setResultsFound((int) response.getResults().getNumFound());
+        results.setResults(fishList);
 
         return results;
+
+
+    }
+
+    private SolrQuery generateFishSearchSolrQuery(FishSearchCriteria criteria) {
+        SolrService.getSolrServer("prototype");
+        SolrQuery query = new SolrQuery();
+
+        query.addFilterQuery("category:Fish");
+
+        //the main query box, should probably be just matching against a subset of the record
+        query.setQuery(criteria.getGeneOrFeatureNameCriteria().getValue());
+
+        //results per page
+        query.setRows(criteria.getRows());
+
+        //page
+        query.setStart(criteria.getStart());
+
+        if (criteria.getExcludeSequenceTargetingReagentCriteria().isTrue()) {
+            query.addFilterQuery("-" + FieldName.SEQUENCE_TARGETING_REAGENT.getName() + ":[* TO *]");
+        }
+
+        if (criteria.getRequireSequenceTargetingReagentCriteria().isTrue()) {
+            query.addFilterQuery(FieldName.SEQUENCE_TARGETING_REAGENT.getName() + ":[* TO *]");
+        }
+
+        if (criteria.getExcludeTransgenicsCriteria().isTrue()) {
+            query.addFilterQuery("-" + FieldName.CONSTRUCT.getName() + ":[* TO *]");
+        }
+
+        if (criteria.getRequireTransgenicsCriteria().isTrue()) {
+            query.addFilterQuery(FieldName.CONSTRUCT.getName() + ":[* TO *]");
+        }
+
+        if (criteria.getMutationTypeCriteria().hasValues()) {
+            //todo: implement me!
+        }
+
+        if (criteria.getPhenotypeAnatomyCriteria().hasValues()) {
+            for (String term : criteria.getPhenotypeAnatomyCriteria().getNames()) {
+                query.addFilterQuery(FieldName.AFFECTED_ANATOMY_TF.getName() + ":\"" + term + "\"");
+            }
+        }
+
+        return query;
     }
 
     private Query generateFishSearchQuery(FishSearchCriteria criteria) {
@@ -324,6 +336,8 @@ public class HibernateFishRepository implements FishRepository {
         }
         return zfinFigureEntities;
     }
+
+
 
     /**
      * Retrieve fish by primary key

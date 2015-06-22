@@ -38,10 +38,62 @@ public class FishDetailController {
 
     private static final Logger LOG = Logger.getLogger(FishDetailController.class);
 
-
+    @Autowired
+    GenotypeDetailController genotypeDetailController;
 
     @RequestMapping(value = "/fish-detail/{ID}")
-    protected String showCuratedFish(@PathVariable("ID") String fishZdbId, Model model, HttpServletResponse response) {
+    protected String showFishDetail(Model model,
+                                    @PathVariable("ID") String fishID, HttpServletResponse response) {
+        LOG.info("Start MartFish Detail Controller");
+
+
+        if (fishID.startsWith("ZDB-FISH")) {
+            return showCuratedFish(fishID, model, response);
+        }
+
+        fishID = ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishID);
+
+        MartFish fish = RepositoryFactory.getFishRepository().getFish(fishID);
+        if (fish == null)    {
+            String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(fishID);
+            if (newZdbID != null) {
+                LOG.debug("found a replaced zdbID for: " + fishID + "->" + newZdbID);
+
+                return "redirect:/ZDB-PUB-121121-2";
+            }
+            else{
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                return LookupStrings.idNotFound(model, fishID);
+            }
+        }
+        if (fish.getGenotype() != null && fish.getStrList().size() == 0) {
+            return genotypeDetailController.getGenotypeDetail(fish.getGenotypeID(), model);
+            //return genotypeDetailController.getGenotypePopup(fish.getGenotypeID(), model);
+        }
+
+        model.addAttribute("fish", fish);
+        FishBean form = new FishBean();
+        retrieveGenotypeExperiment(form, fish);
+
+
+        List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs());
+        model.addAttribute("phenotypeStatements", phenotypeStatements);
+        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
+
+        model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+
+        addExpressionSummaryToModel(model, fishID);
+
+        // the following put the fish Id to page title as debugging for FB case 8817
+        // model.addAttribute(LookupStrings.DYNAMIC_TITLE, "MartFish: " + fishID);
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
+
+        return "fish/fish-detail.page";
+    }
+
+    protected String showCuratedFish(String fishZdbId, Model model, HttpServletResponse response) {
 
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishZdbId);
 

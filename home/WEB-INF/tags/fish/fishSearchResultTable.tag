@@ -3,7 +3,6 @@
 
 <%@ attribute name="formBean" type="org.zfin.fish.presentation.FishSearchFormBean" required="false" %>
 
-
 <div style="margin-top: 2em ; margin-bottom: .3em">
 
 <span style="text-align: center; margin-top: 8px; margin-left: 4px;">
@@ -120,42 +119,41 @@
         jQuery('#affected-gene-column-header, #feature-column-header').tipsy({gravity:'s', opacity:1, delayIn:650, delayOut:200});
         jQuery('#fish-column-header').tipsy({gravity:'sw', opacity:1, delayIn:750, delayOut:200});
     </script>
-
     <c:forEach var="fish" items="${formBean.fishList}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td class="bold" colspan="5">
-                <c:if test="${fish.genotypeID!=null}">
+                <c:if test="${!empty fish.genotype}">
                     <zfin:link entity="${fish}"/>
                 </c:if>
 
             </td>
             <td>
-               <c:if test="${fish.expressionFigureCount > 0}">
+<%--               <c:if test="${fish.expressionFigureCount > 0}">
                 <zfin2:fishSearchExpressionFigureLink queryKeyValuePair="fishID=${fish.fishID}"
                                                       figureCount="${fish.expressionFigureCount}"/>
                     <span id="image-icon-${loop.index}">
                     </span>
                 </c:if>
-                <zfin2:showCameraIcon hasImage="${fish.expressionImageAvailable}"/>
+                <zfin2:showCameraIcon hasImage="${fish.expressionImageAvailable}"/>--%>
             </td>
             <td>
-                <c:if test="${fish.phenotypeFigureCount > 0}">
-                    <%-- Case of a single figure --%>
+<%--                <c:if test="${fish.phenotypeFigureCount > 0}">
+                    &lt;%&ndash; Case of a single figure &ndash;%&gt;
                     <c:if test="${fish.phenotypeFigureCount ==1}">
                         <zfin:link entity="${fish.singleFigure}"/>
                     </c:if>
-                    <%-- case of multiple figures --%>
+                    &lt;%&ndash; case of multiple figures &ndash;%&gt;
                     <c:if test="${fish.phenotypeFigureCount > 1}">
-                        <a href="phenotype-summary?fishID=${fish.fishID}&<%= request.getQueryString()%>">
+                        <a href="phenotype-summary?fishID=${fish.zdbID}&<%= request.getQueryString()%>">
                             <zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
                                          integerEntity="${fish.phenotypeFigureCount}"/>
                         </a>
                     </c:if>
                     <zfin2:showCameraIcon hasImage="${fish.imageAvailable}"/>
-                </c:if>
+                </c:if>--%>
             </td>
         </zfin:alternating-tr>
-        <c:forEach var="featureGene" items="${fish.featureGenes}" varStatus="fgIndex">
+<%--        <c:forEach var="featureGene" items="${fish.featureGenes}" varStatus="fgIndex">
             <zfin:alternating-tr loopName="loop">
                 <td></td>
                 <td>
@@ -176,7 +174,7 @@
                     <c:if test="${(fgIndex.last) && (!formBean.showAllMutantFish)}">
                         <authz:authorize ifAnyGranted="root">
                         <span style="font-size:small ; opacity: 0.33;">
-                          <a style=" " class="clickable" onclick="jQuery('#${fish.ID}-text').slideToggle(); ">Score</a>
+                          <a style=" " class="clickable" onclick="jQuery('#${fish.zdbID}-text').slideToggle(); ">Score</a>
                           | <a style=" " href="/action/database/view-record/FISH-${fish.ID}">DB</a> | 
                         </span>
                         </authz:authorize>
@@ -208,8 +206,8 @@
                     </c:if>
                 </td>
             </zfin:alternating-tr>
-        </c:forEach>
-        <zfin:alternating-tr loopName="loop">
+        </c:forEach>--%>
+<%--        <zfin:alternating-tr loopName="loop">
             <td colspan="7">
                 <authz:authorize ifAnyGranted="root">
                     <div id="${fish.ID}-text"
@@ -220,7 +218,7 @@
                 </authz:authorize>
                 <div align="right" style="font-size:smaller;" id="matching-details-${loop.index}"></div>
             </td>
-        </zfin:alternating-tr>
+        </zfin:alternating-tr>--%>
     </c:forEach>
 </table>
 <input name="page" type="hidden" value="1" id="page"/>
