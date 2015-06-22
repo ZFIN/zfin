@@ -15,7 +15,7 @@
 
     <p></p>
 
-    <div style="float:left ; margin-top: 1px;">
+<%--    <div style="float:left ; margin-top: 1px;">
 
         Sort by
         <label for="sort-by-pulldown">
@@ -25,7 +25,7 @@
                 <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/Reagent</option>
             </select>
         </label>
-    </div>
+    </div>--%>
 
     <div style="float:right ; margin-top: 2px;">
         <select name="maxDisplayRecordsTop" id="max-display-records-top" class="max-results">
