@@ -1687,7 +1687,8 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<FishExperiment> getFishExperiment(Genotype genotype) {
         Session session = HibernateUtil.currentSession();
         String hql = "FROM  FishExperiment fishExperiment " +
-                "WHERE fishExperiment.fish.genotype = :genotype ";
+                "WHERE fishExperiment.fish.genotype = :genotype " +
+                "order by fishExperiment.fish.order";
         Query query = session.createQuery(hql);
         query.setParameter("genotype", genotype);
 

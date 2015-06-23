@@ -18,6 +18,7 @@ public class Fish implements EntityZdbID, Comparable {
     private Genotype genotype;
     private String name;
     private String handle;
+    private long order;
 
     private Set<FishExperiment> fishExperiments;
 
@@ -95,6 +96,13 @@ public class Fish implements EntityZdbID, Comparable {
         this.fishExperiments = fishExperiments;
     }
 
+    public long getOrder() {
+        return order;
+    }
+
+    public void setOrder(long order) {
+        this.order = order;
+    }
 
     public int compareTo(Object o) {
         Fish otherFish = (Fish)o;
