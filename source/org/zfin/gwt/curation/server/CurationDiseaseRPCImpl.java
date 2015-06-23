@@ -69,8 +69,9 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public List<GenotypeDTO> addGenotypeToPublication(String publicationID, String genotypeID) throws TermNotFoundException {
+    public GenotypeDTO addGenotypeToPublication(String publicationID, String genotypeID) throws TermNotFoundException {
         HibernateUtil.createTransaction();
+        GenotypeDTO genotypeDTO = null;
         try {
             Publication publication = getPublicationRepository().getPublication(publicationID);
             if (publication == null)
@@ -80,13 +81,14 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
             getInfrastructureRepository().insertPublicAttribution(genotypeID, publicationID, RecordAttribution.SourceType.STANDARD);
             HibernateUtil.flushAndCommitCurrentSession();
+            genotypeDTO = DTOConversionService.convertToGenotypeDTO(genotype);
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
         }
-        return getGenotypeList(publicationID);
+        return genotypeDTO;
     }
 
     @Override

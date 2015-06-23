@@ -32,7 +32,7 @@ public interface CurationDiseaseRPCAsync {
 
     void searchGenotypes(String publicationID, String featureID, String genotypeID, AsyncCallback<List<GenotypeDTO>> callback);
 
-    void addGenotypeToPublication(String publicationID, String zdbID, AsyncCallback<List<GenotypeDTO>> callback);
+    void addGenotypeToPublication(String publicationID, String zdbID, AsyncCallback<GenotypeDTO> callback);
 
     void savePublicNote(String publicationID, ExternalNoteDTO externalNoteDTO, AsyncCallback<ExternalNoteDTO> async);
 

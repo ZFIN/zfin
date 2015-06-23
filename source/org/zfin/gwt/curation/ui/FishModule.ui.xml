@@ -3,67 +3,16 @@
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
     <g:FlowPanel>
         <g:VerticalPanel spacing="10" title="Disease"  width="100%">
-            <g:HorizontalPanel spacing="0">
-                <g:Label text="GENOTYPE LIST: &nbsp;" styleName="summaryTitle"/>
-                <g:Hyperlink text="Hide" ui:field="showHideGenoList"/>
-                <g:Label ui:field="noneDefinedGenoLabel" text="&nbsp;None defined" styleName="no-data-tag"/>
-            </g:HorizontalPanel>
-            <zfin:ZfinFlexTable ui:field="genotypeListTable" numberOfColumns="3" styleName="searchresults groupstripes"
-                                cellSpacing="5" cellPadding="5"/>
-            <g:VerticalPanel>
-                <g:HorizontalPanel>
-                    <g:Label text="IMPORT GENOTYPE: &nbsp;" styleName="bold" horizontalAlignment="left"/>
-                    <g:Hyperlink text="Show" ui:field="showHideExistingGeno"/>
-                </g:HorizontalPanel>
-                <g:VerticalPanel ui:field="importGenotypePanel" visible="false">
-                    <zfin:ZfinFlexTable ui:field="genotypeSearchResultTable" numberOfColumns="3"
-                                        styleName="searchresults groupstripes"
-                                        cellSpacing="5" cellPadding="5"/>
-                    <g:Image ui:field="loadingImageGenoSearch" url="/images/ajax-loader.gif" visible="false"/>
-                    <zfin:SimpleErrorElement ui:field="errorLabelSearch"/>
-                </g:VerticalPanel>
-            </g:VerticalPanel>
-            <g:HorizontalPanel>
-                <g:Label text="GENOTYPE CONSTRUCTION:&nbsp;" styleName="bold"/>
-                <g:Hyperlink text="Show" ui:field="showHideGenotypeConstruction"/>
-            </g:HorizontalPanel>
-            <g:VerticalPanel ui:field="genotypeConstructionPanel" addStyleNames="newgroup oddgroup odd experiment-row"
-                             spacing="5" visible="false">
-                <zfin:ZfinFlexTable ui:field="genotypeConstructionTable" numberOfColumns="2" styleName="searchresults"
-                                    cellSpacing="5" cellPadding="5"/>
-                <g:Label text="New Genotype" styleName="bold" horizontalAlignment="left"/>
-                <g:HorizontalPanel>
-                    <g:Label text="&nbsp;&nbsp;&nbsp;"/>
-                    <zfin:ZfinFlexTable ui:field="newGenotypeInfoTable" numberOfColumns="2" styleName="searchresults"
-                                        cellSpacing="5" cellPadding="5"/>
-                </g:HorizontalPanel>
-                <g:Button ui:field="createGenotypeButton"/>
-                <zfin:SimpleErrorElement ui:field="errorCreateGenotype"/>
-                <g:Image ui:field="loadingImageCreateGenotype" url="/images/ajax-loader.gif" visible="false"/>
-            </g:VerticalPanel>
-            <g:HorizontalPanel>
-                <g:Label text="FISH CONSTRUCTION: &nbsp;" styleName="bold"/>
-                <g:Hyperlink text="Show" ui:field="showHideFishConstruction"/>
-            </g:HorizontalPanel>
-            <g:VerticalPanel ui:field="fishConstructionPanel" visible="false">
-                <zfin:ZfinFlexTable ui:field="constructionTable" numberOfColumns="2" styleName="searchresults"
-                                    cellSpacing="5" cellPadding="5"/>
-                <g:HorizontalPanel spacing="10">
-                    <g:Button text="Create Fish" ui:field="createFishButton"/>
-                    <zfin:SimpleErrorElement ui:field="errorLabel"/>
-                </g:HorizontalPanel>
-                <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif"/>
-            </g:VerticalPanel>
-            <g:HorizontalPanel spacing="0">
-                <g:Label text="FISH LIST" styleName="summaryTitle"/>
-                <g:Label ui:field="noneDefined" text="&nbsp;None defined" styleName="no-data-tag"/>
-            </g:HorizontalPanel>
-            <zfin:ZfinFlexTable ui:field="fishListTable" numberOfColumns="3" styleName="searchresults groupstripes"
-                                cellSpacing="5" cellPadding="5"/>
+            <zfin-mod:GenotypeView ui:field="genotypeView"/>
+            <zfin-mod:ImportGenotype ui:field="importGenotypeView"/>
+            <zfin-mod:GenotypeConstruction ui:field="genotypeConstructionView"/>
+            <zfin-mod:FishConstruction ui:field="fishConstructionView"/>
+            <zfin-mod:FishView ui:field="fishView"/>
         </g:VerticalPanel>
     </g:FlowPanel>
 </ui:UiBinder>
