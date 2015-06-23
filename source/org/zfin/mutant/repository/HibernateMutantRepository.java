@@ -1686,13 +1686,17 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<FishExperiment> getFishExperiment(Genotype genotype) {
         Session session = HibernateUtil.currentSession();
-        String hql = "FROM  FishExperiment fishExperiment " +
+        String hql = "select distinct fishExperiment, fishExperiment.fish.order FROM  FishExperiment fishExperiment " +
                 "WHERE fishExperiment.fish.genotype = :genotype " +
                 "order by fishExperiment.fish.order";
         Query query = session.createQuery(hql);
         query.setParameter("genotype", genotype);
 
-        return (List<FishExperiment>) query.list();
+        List<Object[]> list = query.list();
+        List<FishExperiment> result = new ArrayList<>(list.size());
+        for (Object[] o : list)
+            result.add((FishExperiment) o[0]);
+        return result;
     }
 
     @Override

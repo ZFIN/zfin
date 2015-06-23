@@ -42,7 +42,6 @@ public class FishService {
     }
 
 
-
     public static List<FigureSummaryDisplay> getPhenotypeSummary(String fishID, FishSearchCriteria criteria) {
         if (criteria == null) {
             criteria = new FishSearchCriteria();
@@ -205,9 +204,9 @@ public class FishService {
     }
 
     public static List<String> getFishOxIds(String fishID) {
-       // return getFish(fishID).getGenotypeExperimentIDs();
+        // return getFish(fishID).getGenotypeExperimentIDs();
         Set<FishExperiment> fishOx = getMutantRepository().getFish(fishID).getFishExperiments();
-        List<String>fishoxID=new ArrayList<>(fishOx.size());
+        List<String> fishoxID = new ArrayList<>(fishOx.size());
         for (FishExperiment genoID : getMutantRepository().getFish(fishID).getFishExperiments()) {
             fishoxID.add(genoID.getZdbID());
         }
@@ -244,9 +243,8 @@ public class FishService {
 
         String genotypeID = getGenotypeID(fishID);
         //List<String> genoxIds = getGenoxIds(fishID);
-        Fish fish=getMutantRepository().getFish(fishID);
+        Fish fish = getMutantRepository().getFish(fishID);
         Set<FishExperiment> fishOx = fish.getFishExperiments();
-
 
 
         List<ExpressionResult> results = getMutantRepository().getExpressionSummary(fishOx, geneID);
@@ -288,14 +286,15 @@ public class FishService {
 
     public static List<Marker> getAffectedGenes(Fish fish) {
         List<SequenceTargetingReagent> strList = fish.getStrList();
-        if (CollectionUtils.isEmpty(strList))
-            return null;
-        List<Marker> geneList = new ArrayList<>(strList.size());
+        Set<Marker> geneSet = new TreeSet<>();
         Set<Marker> affectedMarkerOnGenotype = GenotypeService.getAffectedMarker(fish.getGenotype());
         if (affectedMarkerOnGenotype != null)
-            geneList.addAll(affectedMarkerOnGenotype);
-        for (SequenceTargetingReagent str : strList)
-            geneList.addAll(str.getTargetGenes());
+            geneSet.addAll(affectedMarkerOnGenotype);
+        if (CollectionUtils.isNotEmpty(strList))
+            for (SequenceTargetingReagent str : strList)
+                geneSet.addAll(str.getTargetGenes());
+        List<Marker> geneList = new ArrayList<>(geneSet.size());
+        geneList.addAll(geneSet);
         return geneList;
     }
 

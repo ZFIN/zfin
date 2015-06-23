@@ -347,7 +347,7 @@ public class MutantRepositoryTest {
         genotype.setZdbID("ZDB-GENO-070406-1");
         fish.setGenotype(genotype);
         List<Publication> attributions = mutantRepository.getFishAttributionList(fish);
-     //   assertNotNull(attributions);
+        //   assertNotNull(attributions);
         assertTrue(attributions.size() < 1);
     }
 
@@ -468,6 +468,16 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void getFishExperiment() {
+        Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-980202-822");
+        List<FishExperiment> fishList = mutantRepository.getFishExperiment(genotype);
+        for (FishExperiment experiment : fishList)
+            System.out.println(experiment.getFish().getHandle());
+        assertNotNull(fishList);
+        assertTrue(fishList.size() > 5);
+    }
+
+    @Test
     public void fishListBySequenceTargetingReagent() {
         SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getSequenceTargetingReagentByID("ZDB-MRPHLNO-060317-4");
         List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
@@ -477,17 +487,17 @@ public class MutantRepositoryTest {
 
     @Test
     public void getGenotypesByFeatureAndBackground() {
-        String featureID ="ZDB-ALT-040917-2";
+        String featureID = "ZDB-ALT-040917-2";
         Feature feature = getFeatureRepository().getFeatureByID(featureID);
         Publication publication = getPublicationRepository().getPublication("ZDB-PUB-140101-33");
         Genotype background = getMutantRepository().getGenotypeByID("ZDB-GENO-010924-10");
-        List<Genotype> genotypeList= mutantRepository.getGenotypesByFeatureAndBackground(feature, background, publication);
+        List<Genotype> genotypeList = mutantRepository.getGenotypesByFeatureAndBackground(feature, background, publication);
         assertNotNull(genotypeList);
     }
 
     @Test
     public void getZygosityList() {
-        List<Zygosity> zygosityList= getMutantRepository().getListOfZygosity();
+        List<Zygosity> zygosityList = getMutantRepository().getListOfZygosity();
         assertNotNull(zygosityList);
     }
 }

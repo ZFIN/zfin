@@ -122,11 +122,6 @@ public class GenotypeDetailController {
             retrievePublicationData(form, genotype);
             List<FishExperiment> fishExperimentList = mutantRepository.getFishExperiment(genotype);
             List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList = createResult(fishExperimentList);
-            Collections.sort(fishGenotypePhenotypeStatisticsList, new Comparator<GenotypeFishResult>() {
-                public int compare(GenotypeFishResult one, GenotypeFishResult two) {
-                    return (one.getFish().compareTo(two.getFish()));
-                }
-            });
 
             model.addAttribute("fishList", fishGenotypePhenotypeStatisticsList);
             model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
@@ -141,7 +136,7 @@ public class GenotypeDetailController {
     }
 
     private List<GenotypeFishResult> createResult(List<FishExperiment> fishExperimentList) {
-        Map<Fish, GenotypeFishResult> statisticsMap = new HashMap<>();
+        Map<Fish, GenotypeFishResult> statisticsMap = new TreeMap<>();
         for (FishExperiment genoExp : fishExperimentList) {
             Fish fish = genoExp.getFish();
             GenotypeFishResult stat = statisticsMap.get(fish);

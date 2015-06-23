@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Fish entity
  */
-public class Fish implements EntityZdbID, Comparable {
+public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public static final String WT = "WT";
 
@@ -113,10 +113,10 @@ public class Fish implements EntityZdbID, Comparable {
         this.order = order;
     }
 
-    public int compareTo(Object o) {
-        Fish otherFish = (Fish)o;
-
-        return getAbbreviationOrder().compareTo(otherFish.getAbbreviationOrder());
+    public int compareTo(Fish otherFish) {
+        if(order != otherFish.getOrder())
+            return order < otherFish.getOrder()? -1: 1;
+        return getNameOrder().compareTo(otherFish.getNameOrder());
     }
 
     public boolean isWildtypeWithoutReagents() {
