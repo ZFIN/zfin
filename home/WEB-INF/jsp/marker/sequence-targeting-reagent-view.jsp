@@ -64,6 +64,22 @@
     });
 </script>
 
+<%--// EXPRESSION --%>
+<div class="summary" id="expression">
+    <b>GENE EXPRESSION</b>
+    <small><a class="popup-link info-popup-link" href="/action/marker/note/expression"></a></small>
+    <br/>
+    <b>Gene expression in Wild Types + ${formBean.marker.name}</b>
+    <c:choose>
+        <c:when test="${formBean.expressionDisplays != null && fn:length(formBean.expressionDisplays) > 0 }">
+            <zfin2:expressionData sequenceTargetingReagentID="${sequenceTargetingReagent.zdbID}" expressionDisplays="${formBean.expressionDisplays}" showCondition="false" />
+        </c:when>
+        <c:otherwise>
+            <span class="no-data-tag">No data available</span>
+        </c:otherwise>
+    </c:choose>
+</div>
+
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">
     <div id="genomicFeature" class="summary">
@@ -153,7 +169,7 @@
 <script src="/javascript/table-collapse.js"></script>
 <script>
     jQuery(function () {
-        //jQuery('#expression').tableCollapse({label: 'expressed genes'});
+        jQuery('#expression').tableCollapse({label: 'expressed genes'});
         //jQuery('#phenotype').tableCollapse({label: 'phenotypes'});
         jQuery('#genomicFeature').tableCollapse({label: 'features'});
         jQuery('#fish').tableCollapse({label: 'fish'});

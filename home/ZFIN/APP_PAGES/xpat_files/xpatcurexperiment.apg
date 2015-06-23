@@ -75,7 +75,7 @@ EFFECTS
 <?MICOMMENT>
 For bugz 9328, do not display delete button is experiment is used in experiment_condition
 <?/MICOMMENT>
-      <?MISQL SQL="select count(genox_zdb_id)  from  genotype_experiment where genox_exp_zdb_id=<?MIVAR>'$expZdbId'<?/MIVAR>;">
+      <?MISQL SQL="select count(genox_zdb_id)  from  fish_experiment where genox_exp_zdb_id=<?MIVAR>'$expZdbId'<?/MIVAR>;">
         <?MIVAR NAME=expCount>$1<?/MIVAR>
       <?MIBLOCK COND="$(=,$expCount,0)">
         <?MIVAR><input name="delete" type=button value=" X " onClick="deleteZDB('$expZdbId','environment')"><?/MIVAR>
