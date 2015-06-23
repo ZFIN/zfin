@@ -17,6 +17,7 @@ public class Fish implements EntityZdbID, Comparable {
     private String zdbID;
     private Genotype genotype;
     private String name;
+    private String nameOrder;
     private String handle;
     private long order;
 
@@ -46,6 +47,14 @@ public class Fish implements EntityZdbID, Comparable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNameOrder() {
+        return nameOrder;
+    }
+
+    public void setNameOrder(String nameOrder) {
+        this.nameOrder = nameOrder;
     }
 
     public List<SequenceTargetingReagent> getStrList() {
