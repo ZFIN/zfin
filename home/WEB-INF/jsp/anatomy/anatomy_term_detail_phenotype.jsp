@@ -19,27 +19,15 @@
     <script type="text/javascript">
         function show_${phenotypeSection}() {
             jQuery('#${phenotypeSection}-mutants').load('/action/ontology/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-mutants'); } );
-            jQuery('#${phenotypeSection}-sequence-targeting-reagents').load('/action/ontology/show-phenotype-wildtype-sequence-targeting-reagent/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-sequence-targeting-reagents'); });
-            jQuery('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents').load('/action/ontology/show-phenotype-non-wildtype-sequence-targeting-reagent/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents'); });
             showSection('${phenotypeSection}', true);
         }
     </script>
     <div id="${phenotypeSection}-id" style="display:none;">
         <div id="${phenotypeSection}-mutants" class="indented-section"><span
-                class="search-result-table-header">Mutants</span> loading
+                class="search-result-table-header">Phenotype for clean fish</span> loading
             <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
         <p></p>
 
-        <div id="${phenotypeSection}-sequence-targeting-reagents" class="indented-section"><span
-                class="search-result-table-header">Wildtype Sequence Targeting Reagents</span>
-            loading <img src="/images/ajax-loader.gif" alt="loading...">
-        </div>
-        <p></p>
-
-        <div id="${phenotypeSection}-non-wildtype-sequence-targeting-reagents" class="indented-section"><span
-                class="search-result-table-header">Non-wildtype Sequence Targeting Reagents</span>
-            loading <img src="/images/ajax-loader.gif" alt="loading...">
-        </div>
     </div>
 </div>

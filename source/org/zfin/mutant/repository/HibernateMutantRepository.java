@@ -71,7 +71,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct fishox.fish , fishox.fish.name from FishExperiment fishox, " +
+                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
                         "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
                         "WHERE phenox.fishExperiment = fishox " +
                         "AND phenoeq.phenotypeExperiment = phenox " +
@@ -86,7 +86,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (!wildtype) {
             hql += "AND fishox.fish.genotype.wildtype = 'f' ";
         }
-        hql += "ORDER BY fishox.fish.name asc";
+        hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
