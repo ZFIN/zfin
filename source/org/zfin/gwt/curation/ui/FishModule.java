@@ -6,16 +6,11 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Entry point for FX curation module.
@@ -29,15 +24,9 @@ public class FishModule extends Composite implements EntryPoint {
     interface MyUiBinder extends UiBinder<FlowPanel, FishModule> {
     }
 
-    // data
     private String publicationID;
 
     private AttributionModule attributionModule;
-
-    // listener
-    private List<HandlesError> handlesErrorListeners = new ArrayList<>();
-
-    Image loadingImage;
 
     public FishModule(String publicationID) {
         this.publicationID = publicationID;
@@ -57,6 +46,12 @@ public class FishModule extends Composite implements EntryPoint {
 
     private final HandlerManager eventBus = new HandlerManager(null);
 
+    private GenotypePresenter presenter;
+    private ImportGenotypePresenter importPresenter;
+    private GenotypeConstructionPresenter genotypeConstructionPresenter;
+    private FishConstructionPresenter fishConstructionPresenter;
+    private FishPresenter fishPresenter;
+
     @Override
     public void onModuleLoad() {
         bindEventBusHandler();
@@ -67,16 +62,16 @@ public class FishModule extends Composite implements EntryPoint {
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
         addHandlers();
-        GenotypePresenter presenter = new GenotypePresenter(eventBus, genotypeView, publicationID);
+        presenter = new GenotypePresenter(eventBus, genotypeView, publicationID);
         presenter.go();
-        ImportGenotypePresenter importPresenter = new ImportGenotypePresenter(eventBus, importGenotypeView, publicationID);
+        importPresenter = new ImportGenotypePresenter(eventBus, importGenotypeView, publicationID);
         importPresenter.go();
-        FishPresenter fishPresenter = new FishPresenter(eventBus, fishView, publicationID);
+        fishPresenter = new FishPresenter(eventBus, fishView, publicationID);
         fishPresenter.go();
-        FishConstructionPresenter fishConstructionPresenter = new FishConstructionPresenter(eventBus, fishConstructionView, publicationID);
-        fishConstructionPresenter.go();
+        fishConstructionPresenter = new FishConstructionPresenter(eventBus, fishConstructionView, publicationID);
         fishConstructionPresenter.setFishPresenter(fishPresenter);
-        GenotypeConstructionPresenter genotypeConstructionPresenter = new GenotypeConstructionPresenter(eventBus, genotypeConstructionView, publicationID);
+        fishConstructionPresenter.go();
+        genotypeConstructionPresenter = new GenotypeConstructionPresenter(eventBus, genotypeConstructionView, publicationID);
         genotypeConstructionPresenter.go();
     }
 
@@ -85,40 +80,36 @@ public class FishModule extends Composite implements EntryPoint {
                 new AddNewFishEventHandler() {
                     @Override
                     public void onAddFish(AddNewFishEvent event) {
-                        FishPresenter presenter = new FishPresenter(eventBus, fishView, publicationID);
-                        presenter.go();
+                        fishPresenter.go();
+                        attributionModule.populateAttributeRemoval();
                     }
                 });
         eventBus.addHandler(AddNewGenotypeEvent.TYPE,
                 new AddNewGenotypeEventHandler() {
                     @Override
                     public void onAddGenotype(AddNewGenotypeEvent event) {
-                        GenotypePresenter presenter = new GenotypePresenter(eventBus, genotypeView, publicationID);
                         presenter.go();
-                        FishConstructionPresenter constructionPresenter = new FishConstructionPresenter(eventBus, fishConstructionView, publicationID);
-                        constructionPresenter.retrieveInitialEntities();
+                        fishConstructionPresenter.updateGenotypeList();
+                        attributionModule.populateAttributeRemoval();
                     }
                 });
         eventBus.addHandler(RemoveAttributeEvent.TYPE,
                 new RemoveAttributeEventHandler() {
                     @Override
                     public void onRemoveAttribute(RemoveAttributeEvent event) {
-                        GenotypePresenter genotypePresenter = new GenotypePresenter(eventBus, genotypeView, publicationID);
-                        genotypePresenter.go();
-                        FishPresenter presenter = new FishPresenter(eventBus, fishView, publicationID);
+                        importPresenter.updateFeatureList();
                         presenter.go();
-                        FishConstructionPresenter constructionPresenter = new FishConstructionPresenter(eventBus, fishConstructionView, publicationID);
-                        constructionPresenter.retrieveInitialEntities();
+                        genotypeConstructionPresenter.updateFeatureList();
+                        fishConstructionPresenter.retrieveInitialEntities();
+                        attributionModule.populateAttributeRemoval();
                     }
                 });
         eventBus.addHandler(ImportGenotypeEvent.TYPE,
                 new ImportGenotypeEventHandler() {
                     @Override
                     public void onImportGenotype(ImportGenotypeEvent event) {
-                        GenotypePresenter presenter = new GenotypePresenter(eventBus, genotypeView, publicationID);
                         presenter.go();
-                        FishConstructionPresenter constructionPresenter = new FishConstructionPresenter(eventBus, fishConstructionView, publicationID);
-                        constructionPresenter.retrieveInitialEntities();
+                        fishConstructionPresenter.updateGenotypeList();
                         attributionModule.populateAttributeRemoval();
                     }
                 });

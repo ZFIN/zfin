@@ -172,6 +172,12 @@ public class GenotypeConstructionPresenter implements Presenter {
     }
 
     public void resetGUI() {
+        genotypeFeatureDTOList.clear();
+        backgroundGeno = null;
+        view.updateGenotypeFeatureList(genotypeFeatureDTOList, backgroundGeno);
+        view.getBackgroundListBox().setSelectedIndex(0);
+        view.setGenotypeInfo(genotypeFeatureDTOList, backgroundGeno);
+        view.getGenotypeHandle().setText("");
     }
 
     @Override
@@ -187,13 +193,14 @@ public class GenotypeConstructionPresenter implements Presenter {
         retrieveBackgroundNewGenoCallback = new RetrieveRelatedEntityDTOListCallBack<>(view.getBackgroundListBox(), "Background List", view.getErrorLabel());
         retrieveBackgroundNewGenoCallback.setLeaveFirstEntryBlank(true);
         curationExperimentRpcService.getBackgroundGenotypes(publicationID, retrieveBackgroundNewGenoCallback);
+        updateFeatureList();
+        diseaseRpcService.getZygosityLists(new RetrieveZygosityListCallBack("Zygosity List", view.getErrorLabel()));
+    }
 
+    public void updateFeatureList() {
         // get Feature List  from new Genotypes
         featureGenotypeListCallBack = new RetrieveRelatedEntityDTOListCallBack<>(view.getFeatureForGenotypeListBox(), "Feature Geno List", view.getErrorLabel());
         diseaseRpcService.getFeatureList(publicationID, featureGenotypeListCallBack);
-
-        diseaseRpcService.getZygosityLists(new RetrieveZygosityListCallBack("Zygosity List", view.getErrorLabel()));
-
     }
 
     class RetrieveZygosityListCallBack extends ZfinAsyncCallback<List<ZygosityDTO>> {
@@ -224,7 +231,8 @@ public class GenotypeConstructionPresenter implements Presenter {
         public void onSuccess(GenotypeDTO genotypeDTO) {
             resetNewGenotypeUI();
             view.getLoadingImage().setVisible(false);
-            errorHandler.setError("Successfully created new Genotype: " + genotypeDTO.getHandle());
+            errorHandler.setError("Created new Genotype: " + genotypeDTO.getHandle());
+            resetGUI();
             eventBus.fireEvent(new AddNewGenotypeEvent());
         }
     }

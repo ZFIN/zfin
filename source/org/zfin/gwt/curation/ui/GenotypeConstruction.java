@@ -5,6 +5,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
@@ -49,7 +50,6 @@ public class GenotypeConstruction extends Composite {
     Image loadingImage;
 
 
-
     public GenotypeConstruction() {
         initWidget(binder.createAndBindUi(this));
         genotypeConstructionToggle = new ShowHideWidget(showHideSection, genotypeConstructionPanel);
@@ -83,7 +83,7 @@ public class GenotypeConstruction extends Composite {
         genotypeConstructionTable.setText(0, column, "Paternal Zygosity");
         genotypeConstructionTable.getCellFormatter().setStyleName(0, column++, "bold");
         genotypeConstructionTable.setText(0, column, "Delete");
-        genotypeConstructionTable.getCellFormatter().setStyleName(0, column++, "bold");
+        genotypeConstructionTable.getCellFormatter().setStyleName(0, column, "bold");
         genotypeConstructionTable.getRowFormatter().setStyleName(0, "table-header");
     }
 
@@ -99,7 +99,7 @@ public class GenotypeConstruction extends Composite {
         genotypeConstructionTable.setWidget(row, col, zygosityPaternalListBox);
         genotypeConstructionTable.getCellFormatter().setStyleName(row, col++, "bold");
         genotypeConstructionTable.setWidget(row, col, addGenotypeFeature);
-        genotypeConstructionTable.getCellFormatter().setStyleName(row, col++, "bold");
+        genotypeConstructionTable.getCellFormatter().setStyleName(row, col, "bold");
         genotypeConstructionTable.getRowFormatter().setStyleName(row, "table-header");
         col = 0;
         row++;
@@ -118,8 +118,8 @@ public class GenotypeConstruction extends Composite {
         genotypeConstructionTable.setWidget(row, col, backgroundListBox);
     }
 
-    private Map<DeleteImage, GenotypeFeatureDTO> deleteGenoeFeatureMap = new HashMap<>(); 
-    
+    private Map<DeleteImage, GenotypeFeatureDTO> deleteGenoeFeatureMap = new HashMap<>();
+
     public void updateGenotypeFeatureList(List<GenotypeFeatureDTO> genotypeFeatureDTOList, GenotypeDTO backgroundGenotype) {
         genotypeConstructionTable.removeAllRows();
         if (genotypeFeatureDTOList == null || genotypeFeatureDTOList.size() == 0) {
@@ -138,7 +138,7 @@ public class GenotypeConstruction extends Composite {
             genotypeConstructionTable.setWidget(rowIndex, col++, getHtml(genotypeFeature.getPaternalZygosity()));
             DeleteImage delete = new DeleteImage("Remove Note");
             deleteGenoeFeatureMap.put(delete, genotypeFeature);
-            genotypeConstructionTable.setWidget(rowIndex, col++, delete);
+            genotypeConstructionTable.setWidget(rowIndex, col, delete);
             groupIndex = genotypeConstructionTable.setRowStyle(rowIndex++, null, genotypeFeature.getZdbID(), groupIndex);
         }
         setGenotypeInfo(genotypeFeatureDTOList, backgroundGenotype);
@@ -166,9 +166,9 @@ public class GenotypeConstruction extends Composite {
         if (backgroundGenotype != null) {
             genotypeHandleName += backgroundGenotype.getName();
         }
-        genotypeDisplayNameString = genotypeDisplayNameString.substring(0, genotypeDisplayNameString.length() - 3);
+        if (genotypeDisplayNameString.length() > 3)
+            genotypeDisplayNameString = genotypeDisplayNameString.substring(0, genotypeDisplayNameString.length() - 3);
         genotypeHandle.setText(genotypeHandleName);
-        genotypeDisplayName.setHTML(SafeHtmlUtils.fromTrustedString(genotypeDisplayNameString));
         genotypeDisplayName.setHTML(SafeHtmlUtils.fromTrustedString(genotypeDisplayNameString));
         genotypeNickname.setText(genotypeHandleName);
     }
@@ -221,10 +221,6 @@ public class GenotypeConstruction extends Composite {
         return errorLabel;
     }
 
-    public VerticalPanel getGenotypeConstructionPanel() {
-        return genotypeConstructionPanel;
-    }
-
     public Image getLoadingImage() {
         return loadingImage;
     }
@@ -247,10 +243,6 @@ public class GenotypeConstruction extends Composite {
 
     public ListBox getBackgroundListBox() {
         return backgroundListBox;
-    }
-
-    public void setBackgroundListBox(ListBox backgroundListBox) {
-        this.backgroundListBox = backgroundListBox;
     }
 
     public Button getAddGenotypeFeature() {
@@ -283,10 +275,6 @@ public class GenotypeConstruction extends Composite {
 
     public Button getButtonUUU() {
         return buttonUUU;
-    }
-
-    public InlineHTML getGenotypeDisplayName() {
-        return genotypeDisplayName;
     }
 
     public Label getGenotypeHandle() {

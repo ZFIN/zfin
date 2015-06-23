@@ -4,16 +4,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
-import org.zfin.gwt.root.dto.CuratorNoteDTO;
-import org.zfin.gwt.root.dto.ExternalNoteDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
-import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,12 +16,10 @@ import java.util.List;
  */
 public class GenotypePresenter implements Presenter {
 
-    private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();;
+    private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
     private final HandlerManager eventBus;
     private GenotypeView view;
     private String publicationID;
-
-    private List<GenotypeDTO> genotypeList = new ArrayList<>(10);
 
     public GenotypePresenter(HandlerManager eventBus, GenotypeView view, String publicationID) {
         this.eventBus = eventBus;
@@ -149,7 +142,6 @@ public class GenotypePresenter implements Presenter {
 
         @Override
         public void onSuccess(List<GenotypeDTO> list) {
-            genotypeList = list;
             if (list != null && list.size() > 0)
                 view.getNoneDefinedGenoLabel().setVisible(false);
             view.setData(list);

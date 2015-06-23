@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
@@ -156,6 +157,11 @@ public class FishConstructionPresenter implements Presenter {
     public void retrieveInitialEntities() {
         // get STR list
         updateSTRListBox();
+        updateGenotypeList();
+
+    }
+
+    public void updateGenotypeList() {
         // get genotype list
         curationExperimentRpcService.getGenotypes(publicationID, genotypeListCallBack);
     }

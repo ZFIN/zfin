@@ -5,9 +5,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HasWidgets;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
@@ -118,12 +116,14 @@ public class ImportGenotypePresenter implements Presenter {
         RetrieveRelatedEntityDTOListCallBack<GenotypeDTO> retrieveBackgroundCallback = new RetrieveRelatedEntityDTOListCallBack<>(view.getBackgroundListBox(), "Background List", view.getErrorLabel());
         retrieveBackgroundCallback.setLeaveFirstEntryBlank(true);
         curationExperimentRpcService.getBackgroundGenotypes(publicationID, retrieveBackgroundCallback);
+        updateFeatureList();
+    }
 
+    public void updateFeatureList() {
         // get Feature List
         RetrieveRelatedEntityDTOListCallBack<FeatureDTO> featureListCallBack = new RetrieveRelatedEntityDTOListCallBack<>(view.getFeatureListBox(), "Feature List", view.getErrorLabel());
         featureListCallBack.setLeaveFirstEntryBlank(true);
         diseaseRpcService.getFeatureList(publicationID, featureListCallBack);
-
     }
 
     class RetrieveExistingGenotypeListCallBack extends ZfinAsyncCallback<List<GenotypeDTO>> {
