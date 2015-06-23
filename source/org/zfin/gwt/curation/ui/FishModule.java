@@ -103,12 +103,10 @@ public class FishModule extends Composite implements EntryPoint {
                 new RemoveAttributeEventHandler() {
                     @Override
                     public void onRemoveAttribute(RemoveAttributeEvent event) {
-                        Window.alert("RemoveAttr");
                         GenotypePresenter genotypePresenter = new GenotypePresenter(eventBus, genotypeView, publicationID);
                         genotypePresenter.go();
                         FishPresenter presenter = new FishPresenter(eventBus, fishView, publicationID);
                         presenter.go();
-                        Window.alert("RemoveAttr after");
                         FishConstructionPresenter constructionPresenter = new FishConstructionPresenter(eventBus, fishConstructionView, publicationID);
                         constructionPresenter.retrieveInitialEntities();
                     }
