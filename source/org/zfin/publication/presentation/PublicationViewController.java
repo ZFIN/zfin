@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
@@ -71,6 +73,7 @@ public class PublicationViewController {
         Long phenotypeCount = publicationRepository.getPhenotypeCount(publication);
         Long phenotypeAlleleCount = publicationRepository.getPhenotypeAlleleCount(publication);
         Long featureCount = publicationRepository.getFeatureCount(publication);
+        Long fishCount = publicationRepository.getFishCount(publication);
         Long orthologyCount = publicationRepository.getOrthologyCount(publication);
         Long mappingDetailsCount = publicationRepository.getMappingDetailsCount(publication);
 
@@ -84,7 +87,8 @@ public class PublicationViewController {
         model.addAttribute("expressionCount", expressionCount);
         model.addAttribute("phenotypeCount", phenotypeCount);
         model.addAttribute("featureCount", featureCount);
-        model.addAttribute("phenotypeAlleleCount", phenotypeAlleleCount);
+        //model.addAttribute("phenotypeAlleleCount", phenotypeAlleleCount);
+        model.addAttribute("fishCount", fishCount);
         model.addAttribute("orthologyCount", orthologyCount);
         model.addAttribute("mappingDetailsCount", mappingDetailsCount);
 
@@ -102,7 +106,7 @@ public class PublicationViewController {
                     antibodyCount, efgCount,
                     cloneProbeCount, expressionCount,
                     phenotypeCount, phenotypeAlleleCount,featureCount,
-                    orthologyCount,new Long( diseaseModelList.size())
+                    fishCount,orthologyCount,new Long( diseaseModelList.size())
             ));
         } else {
             model.addAttribute("showAdditionalData", false);
@@ -156,13 +160,32 @@ public class PublicationViewController {
             return "redirect:/" + pubID;
         }*/
 
-        List<Feature> featureList = getPublicationRepository().getFeaturesByPublication(pubID);
+        List<FeatureMarkerRelationship> featureList = getPublicationRepository().getFeatureMarkerRelationshipsByPubID(pubID);
         Publication publication = getPublicationRepository().getPublication(pubID);
 
         model.addAttribute("featureList", featureList);
         model.addAttribute("publication", publication);
         return "feature/feature-per-publication.page";
     }
+
+    @RequestMapping("/{pubID}/fish-list")
+    public String showFishList(@PathVariable String pubID,
+                                  @ModelAttribute("formBean") GeneBean geneBean,
+                                  Model model) {
+        logger.info("zdbID: " + pubID);
+
+       /* if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
+            return "redirect:/" + pubID;
+        }*/
+
+        List<Fish> featureList = getPublicationRepository().getFishByPublication(pubID);
+        Publication publication = getPublicationRepository().getPublication(pubID);
+
+        model.addAttribute("fishList", featureList);
+        model.addAttribute("publication", publication);
+        return "fish/fish-per-publication.page";
+    }
+
 
     @RequestMapping("/{zdbID}/disease")
     public String disease(@PathVariable String zdbID, Model model, HttpServletResponse response) {
