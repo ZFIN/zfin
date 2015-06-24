@@ -11,7 +11,7 @@ select zdb_id, entry_time, b.mrkr_zdb_id, b.mrkr_abbrev, a.mrkr_zdb_id, a.mrkr_a
                     feature_marker_relationship)
         and a.mrkr_zdb_id not in (Select expcond_mrkr_zdb_id
                         from experiment_condition,
-                            genotype_experiment,
+                            fish_experiment,
                             experiment,
                             phenotype_experiment
             where phenox_genox_zdb_id = genox_zdb_id
@@ -38,7 +38,7 @@ insert into data_reporting (dr_data_zdb_id, dr_report_generated_date, dr_report_
                     feature_marker_relationship)
         and a.mrkr_zdb_id not in (Select expcond_mrkr_zdb_id
                         from experiment_condition,
-                            genotype_experiment,
+                            fish_experiment,
                             experiment,
                             phenotype_experiment
             where phenox_genox_zdb_id = genox_zdb_id
