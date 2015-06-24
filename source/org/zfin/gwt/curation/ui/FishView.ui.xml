@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
+        >
+
+    <g:FlowPanel>
+        <g:HorizontalPanel spacing="0">
+            <g:Label text="FISH LIST" styleName="summaryTitle"/>
+            <g:Label ui:field="noneDefined" text="&nbsp;None defined" styleName="no-data-tag"/>
+        </g:HorizontalPanel>
+        <zfin:ZfinFlexTable ui:field="fishListTable" numberOfColumns="3" styleName="searchresults groupstripes"
+                            cellSpacing="5" cellPadding="5"/>
+    </g:FlowPanel>
+</ui:UiBinder>

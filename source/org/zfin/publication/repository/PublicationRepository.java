@@ -348,6 +348,7 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Marker> getGenesByPublication(String pubID);
     List<Feature> getFeaturesByPublication(String pubID);
+    List<Fish> getFishByPublication(String pubID);
 
     /**
      * Retrieve distinct list of genes that are attributed to a given
@@ -506,6 +507,7 @@ public interface PublicationRepository extends PaginationParameter {
     public Long getPhenotypeCount(Publication publication);
     public Long getPhenotypeAlleleCount(Publication publication);
     public Long getFeatureCount(Publication publication);
+    public Long getFishCount(Publication publication);
     public Long getOrthologyCount(Publication publication);
     public Long getMappingDetailsCount(Publication publication);
     public Boolean canDeletePublication(Publication publication);
