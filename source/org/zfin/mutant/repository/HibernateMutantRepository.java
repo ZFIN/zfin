@@ -1363,6 +1363,27 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<PhenotypeStatement>) query.list();
     }
 
+    @Override
+    public List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
+        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeTermFastSearch fastSearch, " +
+                "PhenotypeExperiment phenox, FishExperiment fishox " +
+                "where fastSearch.phenotypeStatement = pheno and " +
+                "pheno.phenotypeExperiment.fishExperiment.fish = :fish and " +
+                "fastSearch.directAnnotation = :directAnnotation " +
+                "AND pheno.phenotypeExperiment = phenox " +
+                "AND phenox.fishExperiment = fishox ";
+
+        if (term != null)
+            hql += " and fastSearch.term = :term ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (term != null)
+            query.setParameter("term", term);
+        query.setParameter("fish", fish);
+        query.setBoolean("directAnnotation", !includeSubstructures);
+        return (List<PhenotypeStatement>) query.list();
+    }
+
     /**
      * Retrieve phenotype statements for given structure and genotype.
      *
