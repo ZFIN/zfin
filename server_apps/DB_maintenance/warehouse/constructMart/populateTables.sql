@@ -287,12 +287,13 @@ update construct_search_temp
 
 insert into figure_term_construct_search_temp (ftcs_cs_id, ftcs_fig_zdb_id, ftcs_genox_zdb_id, ftcs_geno_handle, ftcs_geno_name)
   select distinct cons_pk_id, xpatfig_fig_zdb_id, genox_zdb_id, geno_handle, geno_display_name
-     from construct_search_temp, feature_marker_relationship, genotype_experiment,
-     	  expression_Experiment, expression_Result, expression_pattern_figure, genotype_feature, marker, genotype
+     from construct_search_temp, feature_marker_relationship, fish_experiment,
+     	  expression_Experiment, expression_Result, expression_pattern_figure, genotype_feature, marker, genotype, fish
      where cons_construct_zdb_id = fmrel_mrkr_zdb_id
      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-     and genofeat_geno_zdb_id = genox_geno_Zdb_id
-     and genox_geno_zdb_id = geno_zdb_id
+     and genofeat_geno_zdb_id = fish_genotype_Zdb_id
+     and genox_fish_zdb_id = fish_Zdb_id
+     and fish_genotype_Zdb_id = geno_zdb_id
      and genox_zdb_id = xpatex_genox_Zdb_id
      and genox_is_std_or_generic_control = 't'
      and xpatex_zdb_id =xpatres_xpatex_zdb_id
@@ -305,7 +306,7 @@ with no log;
 
 insert into tmp_anat (fig_id, anat_id, genox_id)
     select distinct xpatfig_fig_zdb_id, alltermcon_container_zdb_id, ftcs_genox_zdb_id
-     from all_Term_contains, expression_result, expression_pattern_figure, expression_experiment,figure_term_construct_search_temp, term, marker, genotype_experiment
+     from all_Term_contains, expression_result, expression_pattern_figure, expression_experiment,figure_term_construct_search_temp, term, marker, fish_experiment
      where alltermcon_contained_zdb_id = xpatres_superterm_zdb_id
      and xpatex_zdb_id = xpatres_xpatex_zdb_id
      and xpatres_zdb_id = xpatfig_xpatres_zdb_id
@@ -321,7 +322,7 @@ and term_zdb_id = alltermcon_container_zdb_id;
 
 insert into tmp_anat (fig_id, anat_id, genox_id)
     select distinct xpatfig_fig_zdb_id, alltermcon_container_zdb_id, ftcs_genox_zdb_id
-     from all_Term_contains, expression_result, expression_pattern_figure, expression_experiment,figure_term_construct_search_temp, term, marker, genotype_Experiment
+     from all_Term_contains, expression_result, expression_pattern_figure, expression_experiment,figure_term_construct_search_temp, term, marker, fish_Experiment
      where alltermcon_contained_zdb_id = xpatres_subterm_zdb_id
      and xpatex_zdb_id = xpatres_xpatex_zdb_id
      and xpatres_zdb_id = xpatfig_xpatres_zdb_id
@@ -354,4 +355,4 @@ update figure_term_construct_search_temp
 
 
 update construct 
-  set construct_name = get_construct_name(mrkr_zdb_id);
+  set construct_name = get_construct_name(construct_zdb_id);

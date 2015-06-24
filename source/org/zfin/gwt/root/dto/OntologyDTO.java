@@ -137,6 +137,7 @@ public enum OntologyDTO implements IsSerializable {
         }
     },
 
+
      MPATH_NEOPLASM(16, "MPATH-Neoplasm","mouse_pathology.ontology","mpath_neoplasm", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
@@ -149,7 +150,18 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
-
+    ZECO(15, "ZECO", "zeco", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
+    CHEBI(15, "CHEBI", "chebi", false) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
     BEHAVIOR(18, "BEHAVIOR", "behavior_ontology", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {

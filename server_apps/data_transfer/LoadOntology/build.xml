@@ -12,7 +12,8 @@
     <property name="sequenceOboURL" value="http://www.berkeleybop.org/ontologies/obo-all/sequence/sequence.obo"/>
     <property name="spatialOboURL"
               value="http://purl.obolibrary.org/obo/bspo.obo"/>
-
+    <property name="chebiOboURL" value="http://www.berkeleybop.org/ontologies/chebi.obo"/>
+    <property name="zecoOboURL" value="http://swirl.zfin.org/zeco.obo"/>
     <property name="root.dir" value="${basedir}/../../../"/>
     <property name="web.dir" value="${root.dir}/home"/>
     <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
@@ -74,8 +75,16 @@
         <antcall target="load-ontology-with-stages"/>
     </target>
 
+    <target name="load-zeco-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" />
+    </target>
+
     <target name="load-gene-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo" />
+    </target>
+
+    <target name="load-chebi-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="chebi-ontology.obo" />
     </target>
 
     <target name="load-disease-ontology" depends="init">
@@ -89,6 +98,18 @@
     <target name="download-gene-ontology">
         <property name="localOboFile" value="gene-ontology.obo"/>
         <property name="oboFileURL" value="${geneOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-chebi-ontology">
+        <property name="localOboFile" value="chebi-ontology.obo"/>
+        <property name="oboFileURL" value="${chebiOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-zeco-ontology">
+        <property name="localOboFile" value="zeco-ontology.obo"/>
+        <property name="oboFileURL" value="${zecoOboURL}"/>
         <antcall target="download-ontology"/>
     </target>
 
@@ -114,11 +135,15 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="quality.obo" />
     </target>
 
+    <target name="load-zeco" depends="download-zeco-ontology,load-zeco-ontology"/>
+
     <target name="load-quality" depends="download-quality-ontology,load-quality-ontology"/>
 
     <target name="load-spatial" depends="download-spatial-ontology,load-spatial-ontology"/>
 
     <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
+
+    <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
 
     <target name="load-disease" depends="download-disease-ontology,load-disease-ontology,run-omim-mapping-updates">
     </target>
@@ -171,6 +196,7 @@
                 <arg value="${basedir}"/>
                 <arg value="-jobName"/>
                 <arg value="${JobName}"/>
+               <!-- <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5555"/>-->
             </java>
         </sequential>
     </macrodef>
@@ -200,6 +226,7 @@
             <arg value="${basedir}"/>
             <arg value="-jobName"/>
             <arg value="${JobName}"/>
+
         </java>
 
     </target>
@@ -215,6 +242,7 @@
             <arg value="term-stage-updates.txt"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
+
         </java>
     </target>
 
@@ -227,6 +255,7 @@
             <arg value="expression-result-update.txt"/>
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
+
         </java>
     </target>
 
@@ -259,6 +288,7 @@
                 <arg value="@{db-query-file}"/>
                 <arg value="${basedir}"/>
                 <arg value="${basedir}/../../../home/"/>
+                <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5555"/>
             </java>
         </sequential>
     </macrodef>
@@ -304,7 +334,11 @@
             download-spatial-ontology
             download-mpath-ontology
             download-sequence-ontology
+            download-chebi-ontology
+            download-zeco-ontology
 
+            load-zeco-ontology
+            load-chebi-ontology
             load-quality-ontology
             load-anatomy-ontology
             load-gene-ontology
@@ -312,6 +346,8 @@
             load-mpath-ontology
             load-sequence-ontology
 
+            load-zeco
+            load-chebi
             load-quality
             load-gene
             load-quality

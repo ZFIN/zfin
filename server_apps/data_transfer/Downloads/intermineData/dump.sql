@@ -197,7 +197,7 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
    and phenos_quality_Zdb_id = e.term_zdb_id
    and phenox_pk_id = phenos_phenox_pk_id
    and genox_zdb_id = phenox_genox_zdb_id
-   and genox_fish_id = fish_zdb_id
+   and genox_fish_zdb_id = fish_zdb_id
 ;
 
 update tmp_pato
@@ -290,7 +290,7 @@ select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
  ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genoenvs/1genoenvs.txt"
- select genox_zdb_id, genox_geno_zdb_id, genox_exp_zdb_id
+ select genox_zdb_id, fish_genotype_zdb_id, genox_exp_zdb_id
    from fish_experiment, fish
    where fish_zdb_id = genox_fish_zdb_id
 ;
