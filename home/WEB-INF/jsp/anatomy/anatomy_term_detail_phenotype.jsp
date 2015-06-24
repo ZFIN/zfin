@@ -18,28 +18,32 @@
     <%--    see fogbugz 6268, body tag movement kills javascript definition of Ajax --%>
     <script type="text/javascript">
         function show_${phenotypeSection}() {
-            jQuery('#${phenotypeSection}-mutants').load('/action/ontology/show-phenotype-mutants/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-mutants'); } );
-            jQuery('#${phenotypeSection}-sequence-targeting-reagents').load('/action/ontology/show-phenotype-wildtype-sequence-targeting-reagent/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-sequence-targeting-reagents'); });
-            jQuery('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents').load('/action/ontology/show-phenotype-non-wildtype-sequence-targeting-reagent/${formBean.term.zdbID}', function() { processPopupLinks('#${phenotypeSection}-non-wildtype-sequence-targeting-reagents'); });
+            jQuery('#${phenotypeSection}-clean-fish').load('/action/ontology/show-clean-fish/${formBean.term.zdbID}', function () {
+                processPopupLinks('#${phenotypeSection}-clean-fish');
+            });
+/*
+            in case we want to display dirty fish as well. For now we decided to hold on to it as the AO page does
+            not get much traffic.
+            jQuery('#${phenotypeSection}-dirty-fish').load('/action/ontology/show-dirty-fish/${formBean.term.zdbID}', function () {
+                processPopupLinks('#${phenotypeSection}-dirty-fish');
+            });
+*/
             showSection('${phenotypeSection}', true);
         }
     </script>
     <div id="${phenotypeSection}-id" style="display:none;">
-        <div id="${phenotypeSection}-mutants" class="indented-section"><span
-                class="search-result-table-header">Mutants</span> loading
+        <div id="${phenotypeSection}-clean-fish" class="indented-section"><span
+                class="search-result-table-header">Phenotypes caused by Genes</span>
+            loading
             <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
+<%--
         <p></p>
-
-        <div id="${phenotypeSection}-sequence-targeting-reagents" class="indented-section"><span
-                class="search-result-table-header">Wildtype Sequence Targeting Reagents</span>
-            loading <img src="/images/ajax-loader.gif" alt="loading...">
+        <div id="${phenotypeSection}-dirty-fish" class="indented-section"><span
+                class="search-result-table-header">Phenotypes Influenced by Experimental Conditions</span>
+            loading
+            <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
-        <p></p>
-
-        <div id="${phenotypeSection}-non-wildtype-sequence-targeting-reagents" class="indented-section"><span
-                class="search-result-table-header">Non-wildtype Sequence Targeting Reagents</span>
-            loading <img src="/images/ajax-loader.gif" alt="loading...">
-        </div>
+--%>
     </div>
 </div>

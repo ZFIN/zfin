@@ -71,7 +71,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct fishox.fish , fishox.fish.name from FishExperiment fishox, " +
+                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
                         "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
                         "WHERE phenox.fishExperiment = fishox " +
                         "AND phenoeq.phenotypeExperiment = phenox " +
@@ -86,7 +86,44 @@ public class HibernateMutantRepository implements MutantRepository {
         if (!wildtype) {
             hql += "AND fishox.fish.genotype.wildtype = 'f' ";
         }
-        hql += "ORDER BY fishox.fish.name asc";
+        hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("aoTerm", item);
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        query.setParameterList("condition", Experiment.STANDARD_CONDITIONS);
+        // have to add extra select because of ordering, but we only want to return the first
+        query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                return tuple[0];
+            }
+        });
+
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+    }
+
+    @Override
+    public PaginationResult<Fish> getDirtyFishByAnatomyTerm(GenericTerm item, boolean wildtype, PaginationBean bean) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql =
+                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
+                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
+                        "WHERE phenox.fishExperiment = fishox " +
+                        "AND phenoeq.phenotypeExperiment = phenox " +
+                        "AND (phenoeq.entity.superterm = :aoTerm " +
+                        "     or phenoeq.entity.subterm = :aoTerm " +
+                        "     or phenoeq.relatedEntity.superterm = :aoTerm " +
+                        "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
+                        "AND phenoeq.tag != :tag " +
+                        "AND fishox.experiment.name not in (:condition) " +
+                        "AND size(fishox.fish.strList) = 0  ";
+
+        if (!wildtype) {
+            hql += "AND fishox.fish.genotype.wildtype = 'f' ";
+        }
+        hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);

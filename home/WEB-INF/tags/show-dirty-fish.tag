@@ -4,12 +4,15 @@
 <%@ attribute name="includingSubstructures" type="java.lang.Boolean" required="false" %>
 
 <div class="summary">
-    <div class="summaryTitle">Phenotypes in <i><zfin:name entity="${formBean.aoTerm}"/></i> caused by Genes</div>
+    <div class="summaryTitle">Phenotypes in <i><zfin:name entity="${formBean.aoTerm}"/></i> influenced by Experimental Conditions</div>
 
     <c:if test="${formBean.mutantsExist}">
         <table class="summary rowstripes">
             <tbody>
             <tr>
+                <th width="15%">
+                    Condition
+                </th>
                 <th width="15%">
                     Affected Genes
                 </th>
@@ -25,6 +28,7 @@
             </tr>
             <c:forEach var="genoStat" items="${formBean.genotypeStatistics}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
+                    <td></td>
                     <td>
                         <zfin:link entity="${genoStat.affectedMarkers}"/>
                     </td>

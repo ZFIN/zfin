@@ -16,6 +16,6 @@
     </tbody>
 </table>
 
-<zfin2:show-phenotype-mutants formBean="${formBean}" includingSubstructures="${includingSubstructures}"/>
+<zfin2:show-dirty-fish formBean="${formBean}" includingSubstructures="${includingSubstructures}"/>
 
 <zfin2:pagination paginationBean="${formBean}"/>
