@@ -288,7 +288,8 @@ insert into sec_unload_report
         phenotype_statement,
         phenotype_experiment,
         genotype,
-        genotype_experiment,
+        fish,
+        fish_experiment,
         experiment,
         figure
     where sec_id = term_ont_id
@@ -297,7 +298,8 @@ insert into sec_unload_report
     and phenox_pk_id = phenos_phenox_pk_id
     and phenox_fig_zdb_id = fig_zdb_id
     and genox_exP_zdb_id = exp_zdb_id
-    and genox_geno_zdb_id = geno_zdb_id ;
+    and genox_fish_zdb_id = fish_zdb_id
+    and fish_genotype_zdb_id = geno_zdb_id ;
 
 unload to 'sec_unload_report.unl'
   select * from sec_unload_report;
