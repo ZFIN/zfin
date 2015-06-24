@@ -308,9 +308,10 @@ create temp table pub_count
 
 insert into pub_count
 select distinct xpatex_source_zdb_id
-from expression_experiment, genotype_experiment, genotype_feature, feature_marker_relationship, marker_relationship
+from expression_experiment, fish_experiment, genotype_feature, feature_marker_relationship, marker_relationship, fish
 where xpatex_genox_zdb_id = genox_zdb_id
-  and genox_geno_zdb_id = genofeat_geno_zdb_id
+  and genox_fish_Zdb_id = fish_zdb_id
+  and fish_zdb_id = fish_genotype_zdb_id
   and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
   and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
   and mrel_mrkr_2_zdb_id like "ZDB-EFG%" ;
@@ -332,9 +333,10 @@ create temp table fig_count
 
 insert into fig_count
 select distinct xpatfig_fig_zdb_id
-from expression_experiment, genotype_experiment, genotype_feature, feature_marker_relationship, marker_relationship, expression_pattern_figure,expression_result
+from expression_experiment, fish,fish_experiment, genotype_feature, feature_marker_relationship, marker_relationship, expression_pattern_figure,expression_result
 where xpatex_genox_zdb_id = genox_zdb_id
-  and genox_geno_zdb_id = genofeat_geno_zdb_id
+  and fish_genotype_zdb_id = genofeat_geno_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
   and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
   and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
   and mrel_mrkr_2_zdb_id like "ZDB-EFG%" 
@@ -359,9 +361,10 @@ create temp table figimg_count
 
 insert into figimg_count
 select distinct xpatfig_fig_zdb_id
-from expression_experiment, genotype_experiment, genotype_feature, feature_marker_relationship, marker_relationship, expression_pattern_figure,expression_result,image
+from expression_experiment, fish,fish_experiment, genotype_feature, feature_marker_relationship, marker_relationship, expression_pattern_figure,expression_result,image
 where xpatex_genox_zdb_id = genox_zdb_id
-  and genox_geno_zdb_id = genofeat_geno_zdb_id
+  and fish_zdb_id = genox_fish_zdb_id
+  and fish_genotype_zdb_id = genofeat_geno_zdb_id
   and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
   and fmrel_mrkr_zdb_id = mrel_mrkr_1_zdb_id
   and mrel_mrkr_2_zdb_id like "ZDB-EFG%" 

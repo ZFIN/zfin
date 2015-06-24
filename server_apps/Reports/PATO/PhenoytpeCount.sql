@@ -11,10 +11,12 @@ insert into tmp_genes_with_phenos
 select distinct fmrel_mrkr_zdb_id
  from genotype, 
 	phenotype_experiment,
-	genotype_experiment,
+	fish_experiment,
 	genotype_feature, 
-	feature_marker_relationship
- where genox_geno_Zdb_id = genofeat_geno_zdb_id
+	feature_marker_relationship,
+	fish
+ where fish_genotype_Zdb_id = genofeat_geno_zdb_id
+ and fish_Zdb_id = genx_fish_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
@@ -32,16 +34,18 @@ insert into tmp_genes_with_phenos_m
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship, 
 	experiment_condition,
-        genotype_experiment, 
+        fish_experiment, 
 	genotype_feature,
 	genotype,
         phenotype_experiment,
-	feature_marker_relationship
+	feature_marker_relationship,
+	fish
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
    and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
-   and genox_geno_Zdb_id = genofeat_geno_zdb_id
+   and fish_genotype_Zdb_id = genofeat_geno_zdb_id
+   and fish_zdb_id = genox_fish_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
    and phenox_genox_zdb_id = genox_zdb_id
    and mrel_mrkr_1_zdb_id != fmrel_mrkr_zdb_id
@@ -60,16 +64,17 @@ insert into tmp_genes_with_phenos_m_w
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship,
 	experiment_condition,
-        genotype_experiment,
+        fish_experiment,
 	genotype,
-        phenotype_experiment
+        phenotype_experiment, fish
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
    and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
    and phenox_genox_zdb_id = genox_zdb_id
    and geno_is_wildtype = 't'
-   and geno_zdb_id = genox_geno_Zdb_id;
+   and fish_zdb_id = genox_fish_zdb_id
+   and geno_zdb_id = fish_genotype_Zdb_id;
 
 select count(*) from tmp_genes_with_phenos_m_w;
 
@@ -82,7 +87,7 @@ insert into tmp_genes_with_phenos_imgs
 select distinct fmrel_mrkr_zdb_id
  from genotype, 
 	phenotype_experiment,
-	genotype_experiment,
+	fish_experiment,fish,
 	genotype_feature, 
 	feature_marker_relationship,
 	image,
@@ -90,7 +95,8 @@ select distinct fmrel_mrkr_zdb_id
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
- and genox_geno_zdb_id = geno_Zdb_id
+ and genox_fish_zdb_id = fish_Zdb_id
+ and fish_genotype_zdb_id = genofeat_geno_Zdb_id
  and fmrel_type = 'is allele of' 
  and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
@@ -108,7 +114,7 @@ insert into tmp_genes_with_phenos_imgs_m
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship, 
 	experiment_condition,
-        genotype_experiment, 
+        fish_experiment, fish,
 	genotype_feature,
         phenotype_experiment,
 	figure, 
@@ -117,8 +123,8 @@ insert into tmp_genes_with_phenos_imgs_m
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
    and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
-   and genox_geno_Zdb_id = genofeat_geno_zdb_id
-   and genox_geno_zdb_id = geno_zdb_id
+   and genox_fish_Zdb_id = fish_Zdb_id
+   and fish_genotype_zdb_id = genofeat_geno_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
    and phenox_genox_zdb_id = genox_zdb_id
    and phenox_fig_zdb_id = fig_zdb_id
@@ -138,12 +144,13 @@ with no log ;
 
 insert into tmp_genes_with_phenos_non_tg
 select distinct fmrel_ftr_zdb_id
- from genotype, phenotype_experiment, genotype_experiment,
-	genotype_feature, feature_marker_relationship
+ from genotype, phenotype_experiment, fish_experiment,
+	genotype_feature, feature_marker_relationship, fish
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
- and genox_geno_zdb_id = geno_Zdb_id
+ and fish_genotype_zdb_id = geno_Zdb_id
+ and genox_fish_zdb_id = fish_zdb_id
  and fmrel_type = 'is allele of' 
  and get_feature_type(fmrel_ftr_zdb_id) != 'TRANSGENIC_INSERTION';
 
@@ -156,15 +163,16 @@ with no log ;
 
 insert into tmp_genes_with_phenos_imgs_non_tgs
 select distinct fmrel_ftr_zdb_id
- from genotype, phenotype_experiment, genotype_experiment,
+ from genotype, phenotype_experiment, fish_experiment,
 	genotype_feature, feature_marker_relationship,
-	image, figure
+	image, figure, fish
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
- and genox_geno_zdb_id = geno_Zdb_id
+ and fish_genotype_zdb_id = geno_Zdb_id
  and fmrel_type = 'is allele of' 
  and phenox_fig_zdb_id = fig_zdb_id
+ and fish_genotype_zdb_id = genofeat_geno_zdb_id
  and img_fig_zdb_id = fig_zdb_id
  and img_image is not null
  and get_feature_type(fmrel_ftr_zdb_id) != 'TRANSGENIC_INSERTION';
@@ -183,11 +191,12 @@ insert into tmp_tg_genes_with_phenos
 select distinct fmrel_mrkr_zdb_id
  from genotype, 
 	phenotype_experiment,
-	genotype_experiment,
+	fish_experiment,fish,
         genotype_feature, 
 	feature_marker_relationship, 
 	feature
- where genox_geno_Zdb_id = geno_zdb_id
+ where fish_genotype_Zdb_id = geno_zdb_id
+ and fish_Zdb_id = genox_Fish_zdb_id
 and genofeat_geno_zdb_id = geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
 and genofeat_feature_zdb_id = feature_zdb_id
@@ -206,10 +215,11 @@ with no log ;
 
 insert into tmp_genes_with_phenos_imgs_tgs
 select distinct fmrel_mrkr_zdb_id
- from genotype, phenotype_experiment, genotype_experiment,
+ from genotype, phenotype_experiment, fish_experiment,
 	genotype_feature, feature_marker_relationship,
-	image, figure
- where genox_geno_Zdb_id = genofeat_geno_zdb_id
+	image, figure, fish
+ where genox_fish_Zdb_id = fish_zdb_id
+ and fish_genotype_zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
  and genox_geno_zdb_id = geno_Zdb_id
@@ -231,7 +241,7 @@ insert into tmp_genes_with_phenos_m_tg
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship, 
 	experiment_condition,
-        genotype_experiment, 
+        fish_experiment, fish,
 	genotype_feature,
 	genotype,
         phenotype_experiment
@@ -239,7 +249,8 @@ insert into tmp_genes_with_phenos_m_tg
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
    and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
-   and genox_geno_Zdb_id = genofeat_geno_zdb_id
+   and fish_genotype_Zdb_id = genofeat_geno_zdb_id
+   and fish_zdb_id = genox_fish_zdb_id
    and geno_zdb_id =genox_geno_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
    and get_feature_type(genofeat_feature_zdb_id) = 'TRANSGENIC_INSERTION'
@@ -258,7 +269,7 @@ insert into tmp_genes_with_phenos_imgs_tgs_m
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship, 
 	experiment_condition,
-        genotype_experiment, 
+        fish_experiment,fish, 
 	genotype_feature,
         phenotype_experiment,
 	figure, 
@@ -267,7 +278,8 @@ insert into tmp_genes_with_phenos_imgs_tgs_m
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
    and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
    and expcond_exp_zdb_id = genox_exp_zdb_id
-   and genox_geno_Zdb_id = genofeat_geno_zdb_id
+   and fish_zdb_id = genox_fish_zdb_id
+   and fish_genotype_Zdb_id = genofeat_geno_zdb_id
    and phenox_genox_zdb_id = genox_zdb_id
    and phenox_fig_zdb_id = fig_zdb_id
    and img_fig_zdb_id = fig_zdb_id
@@ -283,11 +295,11 @@ with no log ;
 
 insert into tmp_genes_with_phenos_tg
 select distinct genofeat_feature_zdb_id
- from genotype, phenotype_experiment, genotype_experiment,
-	genotype_feature
- where genox_geno_Zdb_id = genofeat_geno_zdb_id
+ from genotype, phenotype_experiment, fish_experiment,
+	genotype_feature, fish
+ where fish_genotype_Zdb_id = genofeat_geno_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
- and genox_geno_zdb_id = geno_Zdb_id
+and fish_zdb_id = genox_fish_zdb_id
  and get_feature_type(genofeat_feature_zdb_id) = 'TRANSGENIC_INSERTION';
 
 select count(*) from tmp_genes_with_phenos_tg ;
@@ -299,11 +311,12 @@ with no log ;
 
 insert into tmp_genes_with_phenos_tg
 select distinct genofeat_feature_zdb_id
- from genotype, phenotype_experiment, genotype_experiment,
-	genotype_feature, image, figure
+ from genotype, phenotype_experiment, fish_experiment,
+	genotype_feature, image, figure, fish
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
- and genox_geno_zdb_id = geno_Zdb_id
+ and fish_genotype_zdb_id = geno_Zdb_id
+ and fish_zdb_id = genox_fish_zdb_id
  and get_feature_type(genofeat_feature_zdb_id) = 'TRANSGENIC_INSERTION'
  and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
@@ -316,7 +329,7 @@ select count(*) from tmp_genes_with_phenos_imgs_trans ;
 select distinct fmrel_mrkr_zdb_id as gene_id
  from genotype, 
 	phenotype_experiment,
-	genotype_experiment,
+	fish_experiment,fish,
 	genotype_feature, 
 	feature_marker_relationship,
 	image,
@@ -324,7 +337,8 @@ select distinct fmrel_mrkr_zdb_id as gene_id
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
- and genox_geno_zdb_id = geno_Zdb_id
+ and genox_fish_zdb_id = fish_Zdb_id
+ and fish_genotype_zdb_id = geno_Zdb_id
  and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
  and img_image is not null
@@ -337,7 +351,7 @@ union
 	feature_marker_relationship,
 	expression_result,
 	genotype, 
-	genotype_experiment,
+	fish_experiment,fish,
 	expression_pattern_figure, 
 	figure, 
 	image, 
@@ -349,7 +363,8 @@ union
 	and fig_zdb_id = img_fig_zdb_id
 	and img_image is not null
         and xpatex_genox_zdb_id = genox_zdb_id
-        and genox_geno_zdb_id = geno_Zdb_id
+        and genox_fish_zdb_id = fish_Zdb_id
+	and fish_genotype_zdb_id = geno_Zdb_id
 	and geno_zdb_id = genofeat_geno_zdb_id
 	and feature_zdb_id = genofeat_feature_zdb_id
         and feature_type = 'TRANSGENIC_INSERTION' 
@@ -440,13 +455,14 @@ select count(*) from tmp_genes_with_expression_images ;
 !echo "total number of distinct genes with images (either FX or PATO images).  genes included: those in non-transgenic genotypes with phenotype images, those in non-transgeinc genotype-backgrounds with FX images, those in FX experiments" ;
 
 select distinct fmrel_mrkr_zdb_id as gene_id
- from genotype, phenotype_experiment, genotype_experiment,
+ from genotype, phenotype_experiment, fish_experiment,fish,
 	genotype_feature, feature_marker_relationship,
 	image, figure
  where genox_geno_Zdb_id = genofeat_geno_zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
- and genox_geno_zdb_id = geno_Zdb_id
+ and fish_genotype_zdb_id = geno_Zdb_id
+ and genox_fish_zdb_id = fish_zdb_id
  and fmrel_type = 'is allele of' 
  and phenox_fig_zdb_id = fig_zdb_id
  and img_fig_zdb_id = fig_zdb_id
@@ -455,7 +471,7 @@ select distinct fmrel_mrkr_zdb_id as gene_id
 union
   select distinct xpatex_gene_zdb_id
 	from expression_Experiment,
-	expression_result,genotype, genotype_experiment,
+	expression_result,genotype, fish_experiment,fish,
 	expression_pattern_figure, figure, image, genotype_feature, feature
 	where xpatex_zdb_id = xpatres_xpatex_zdb_id
 	and xpatres_zdb_id = xpatfig_xpatres_zdb_id
@@ -463,7 +479,8 @@ union
 	and fig_zdb_id = img_fig_zdb_id
 	and img_image is not null
         and xpatex_genox_zdb_id = genox_zdb_id
-        and genox_geno_zdb_id = geno_Zdb_id
+        and genox_fish_zdb_id = fish_Zdb_id
+	and fish_genotype_Zdb_id = geno_Zdb_id
 	and geno_zdb_id = genofeat_geno_zdb_id
 	and feature_zdb_id = genofeat_feature_zdb_id
         and feature_type != 'TRANSGENIC_INSERTION'
