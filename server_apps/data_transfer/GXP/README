@@ -1,7 +1,0 @@
-======================
-== GXP data load
-======================
-
-This directory contains general scripts for image process, blast effort, and loading. You will find specific preload processing scripts in corresponding subdirectories. Each subdirectory has a README file documenting the whole loading process. The usage of common scripts are duplicated there to give a complete view. 
-
-For example, to process a new Thisse sending, create a new directory under your user account, copy over all the scripts in this directory and Thisse/ subdirectory. Follow the README file in the Thisse directory to proceed. 
