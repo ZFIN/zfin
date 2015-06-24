@@ -269,6 +269,24 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getDirtyFishByAnatomy() {
+        //  brain
+        String termID = "ZDB-TERM-100331-8";
+        GenericTerm item = new GenericTerm();
+        item.setZdbID(termID);
+        PaginationBean bean = new PaginationBean();
+        bean.setMaxDisplayRecords(5);
+
+        PaginationResult<Fish> genotypeResult = mutantRepository.getDirtyFishByAnatomyTerm(item, false, bean);
+
+        assertNotNull(genotypeResult);
+        assertNotNull(genotypeResult.getPopulatedResults());
+        assertEquals(5, genotypeResult.getPopulatedResults().size());
+        assertTrue(genotypeResult.getTotalCount() > 5);
+
+    }
+
+    @Test
     public void getFiguresForGenotype() {
         //  genotype adss^hi1433Tg
         String genoZdbID = "ZDB-FISH-020426-5";
