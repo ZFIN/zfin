@@ -217,8 +217,12 @@ public class FacetBuilderService {
         List<FacetGroup> facetGroups = new ArrayList<>();
 
         FacetGroup affectedGene = new FacetGroup("Affected Gene", true);
-        affectedGene.addFacet(buildFacet("affected_gene", true, response, filterQuerySelectionMap, baseUrl));
+        affectedGene.addFacet(buildFacet(AFFECTED_GENE.getName(), true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(affectedGene);
+
+        FacetGroup modelOf = new FacetGroup("Is Model Of", true);
+        modelOf.addFacet(buildFacet(DISEASE.getName(), true, response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(modelOf);
 
         FacetGroup expressionAnatomy = new FacetGroup("Expression Anatomy", true);
         expressionAnatomy.addFacet(buildFacet(EXPRESSIONS_ANATOMY_TF.getName(), true, response, filterQuerySelectionMap, baseUrl));
