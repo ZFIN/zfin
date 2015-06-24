@@ -395,6 +395,6 @@ system("rm -rf <!--|ROOT_PATH|-->/home/data_transfer/Downloads/intermineData/*")
 system("cp <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/*  <!--|ROOT_PATH|-->/home/data_transfer/Downloads/") and die "can not cp files to production location";
 
 
-system("<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dumper.sh");
+system("<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dumper.sh") and die "error running dumper.sh";
 
 system("/private/bin/ant -f <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/build.xml archive-download-files");
