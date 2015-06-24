@@ -3,25 +3,39 @@
 
 <table class="primary-entity-attributes">
     <tr>
-        <th><span class="name-label">Features:</span></th>
-        <td><span class="name-value"><zfin:link entity="${publication}"/></span> (${featureList.size()} features)</td>
+        <th><span class="name-label">Mutations and Transgenics:</span></th>
+        <td><span class="name-value"><zfin:link entity="${publication}"/></span></td>
     </tr>
 </table>
 
-<TABLE width="100%">
+<table class="summary rowstripes">
     <tbody>
-        <TR class="search-result-table-header">
-            <TD width="20%">
-                Feature
-            </TD>
-        </TR>
-<c:forEach var="feature" items="${featureList}"  varStatus="loop">
+    <tr>
 
-            <zfin:alternating-tr loopName="loop">
-                <td>
-                    <zfin:link entity="${feature}"/>
-                </td>
-            </zfin:alternating-tr>
-        </c:forEach>
+
+
+
+                    <th>Allele</th>
+                    <th>Construct</th>
+                    <th>Type</th>
+                    <th>Affected Gene(s)</th>
+
+    </tr>
+    <c:forEach var="fmRel" items="${featureList}"  varStatus="loop">
+        <zfin:alternating-tr loopName="loop">
+
+
+                            <td><zfin:link entity="${fmRel.feature}"/></td>
+                            <td>
+                                <zfin2:listOfTgConstructs markerCollection="${fmRel.feature.tgConstructs}"/></td>
+                            <td>${fmRel.feature.type.display}</td>
+                            <td>
+                                <zfin2:listOfAffectedGenes markerCollection="${fmRel.feature.affectedGenes}"/>
+                            </td>
+
+
+        </zfin:alternating-tr>
+    </c:forEach>
+
     </tbody>
-</TABLE>
+</table>

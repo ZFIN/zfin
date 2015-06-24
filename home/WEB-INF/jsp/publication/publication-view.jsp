@@ -77,6 +77,18 @@
         </td>
     </tr>
     <tr>
+        <th>MeSH Terms:</th>
+        <td>
+
+            <c:forEach var="relationshipPresentation" items="${publication.meshHeadings}" varStatus="index">
+
+        <td>
+            <zfin2:createExpandCollapseList items="${relationshipPresentation.getDisplayList}" id="${index.count}"/>
+        </td>
+        </c:forEach>
+    </tr>
+
+    <tr>
         <th>PubMed:</th>
         <td>
             <c:choose>
@@ -185,20 +197,25 @@
         </c:if>
         <c:if test="${featureCount > 0}">
 
-            <li><a href="/action/publication/${publication.zdbID}/feature-list">Features</a> (${featureCount})</li>
+            <li><a href="/action/publication/${publication.zdbID}/feature-list">Mutations and Transgenics</a> (${featureCount})</li>
 
             </li>
         </c:if>
-        <c:if test="${phenotypeAlleleCount > 0}">
-            <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Mutants / Transgenic Lines</a>
+        <%--<c:if test="${phenotypeAlleleCount > 0}">
+            <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Fish</a>
                 (${phenotypeAlleleCount})
+            </li>
+        </c:if>--%>
+        <c:if test="${fishCount > 0}">
+            <li><a href="/action/publication/${publication.zdbID}/fish-list">Fish</a>
+                (${fishCount})
             </li>
         </c:if>
         <c:if test="${orthologyCount > 0}">
             <li><a href="/action/publication/${publication.zdbID}/orthology-list">Orthology</a> (${orthologyCount})</li>
         </c:if>
         <c:if test="${diseaseCount > 0}">
-            <li><a href="/action/publication/${publication.zdbID}/disease">Disease / Model Data</a>
+            <li><a href="/action/publication/${publication.zdbID}/disease">Human Disease / Zebrafish Model Data</a>
             </li>
         </c:if>
     </ul>
