@@ -20,7 +20,10 @@
                 <zfin:ZfinFlexTable ui:field="newGenotypeInfoTable" numberOfColumns="2" styleName="searchresults"
                                     cellSpacing="5" cellPadding="5"/>
             </g:HorizontalPanel>
-            <g:Button ui:field="createGenotypeButton"/>
+            <g:HorizontalPanel>
+                <g:Button ui:field="createGenotypeButton" text="Create Genotype"/>
+                <g:Button ui:field="resetButton" text="Reset"/>
+            </g:HorizontalPanel>
             <zfin:SimpleErrorElement ui:field="errorLabel"/>
             <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
         </g:VerticalPanel>

@@ -5,6 +5,8 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
@@ -65,6 +67,12 @@ public class GenotypeConstructionPresenter implements Presenter {
                         nicknameString,
                         new CreateGenotypeCallBack("Create new Genotype", view.getErrorLabel(), view.getLoadingImage()));
                 view.getLoadingImage().setVisible(true);
+            }
+        });
+        view.getResetButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                resetGUI();
             }
         });
         view.getAddGenotypeFeature().addClickHandler(new ClickHandler() {
@@ -177,7 +185,6 @@ public class GenotypeConstructionPresenter implements Presenter {
         view.updateGenotypeFeatureList(genotypeFeatureDTOList, backgroundGeno);
         view.getBackgroundListBox().setSelectedIndex(0);
         view.setGenotypeInfo(genotypeFeatureDTOList, backgroundGeno);
-        view.getGenotypeHandle().setText("");
     }
 
     @Override

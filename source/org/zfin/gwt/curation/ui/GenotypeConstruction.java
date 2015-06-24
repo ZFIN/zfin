@@ -45,6 +45,8 @@ public class GenotypeConstruction extends Composite {
     @UiField
     Button createGenotypeButton;
     @UiField
+    Button resetButton;
+    @UiField
     SimpleErrorElement errorLabel;
     @UiField
     Image loadingImage;
@@ -53,7 +55,6 @@ public class GenotypeConstruction extends Composite {
     public GenotypeConstruction() {
         initWidget(binder.createAndBindUi(this));
         genotypeConstructionToggle = new ShowHideWidget(showHideSection, genotypeConstructionPanel);
-        createGenotypeButton.setText("Create Genotype");
     }
 
     private String publicationID;
@@ -116,6 +117,7 @@ public class GenotypeConstruction extends Composite {
         genotypeConstructionTable.getCellFormatter().setStyleName(row, col, "bold");
         genotypeConstructionTable.setText(row, col++, "Background");
         genotypeConstructionTable.setWidget(row, col, backgroundListBox);
+        genotypeConstructionTable.getFlexCellFormatter().setColSpan(row, col, 4);
     }
 
     private Map<DeleteImage, GenotypeFeatureDTO> deleteGenoeFeatureMap = new HashMap<>();
@@ -292,4 +294,11 @@ public class GenotypeConstruction extends Composite {
 
     }
 
+    public InlineHTML getGenotypeDisplayName() {
+        return genotypeDisplayName;
+    }
+
+    public Button getResetButton() {
+        return resetButton;
+    }
 }
