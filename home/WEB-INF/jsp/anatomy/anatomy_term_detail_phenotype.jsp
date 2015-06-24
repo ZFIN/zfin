@@ -21,9 +21,13 @@
             jQuery('#${phenotypeSection}-clean-fish').load('/action/ontology/show-clean-fish/${formBean.term.zdbID}', function () {
                 processPopupLinks('#${phenotypeSection}-clean-fish');
             });
+/*
+            in case we want to display dirty fish as well. For now we decided to hold on to it as the AO page does
+            not get much traffic.
             jQuery('#${phenotypeSection}-dirty-fish').load('/action/ontology/show-dirty-fish/${formBean.term.zdbID}', function () {
                 processPopupLinks('#${phenotypeSection}-dirty-fish');
             });
+*/
             showSection('${phenotypeSection}', true);
         }
     </script>
@@ -33,11 +37,13 @@
             loading
             <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
+<%--
         <p></p>
         <div id="${phenotypeSection}-dirty-fish" class="indented-section"><span
                 class="search-result-table-header">Phenotypes Influenced by Experimental Conditions</span>
             loading
             <img src="/images/ajax-loader.gif" alt="loading...">
         </div>
+--%>
     </div>
 </div>

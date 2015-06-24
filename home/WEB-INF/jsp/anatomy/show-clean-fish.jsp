@@ -8,7 +8,7 @@
                                        recordsExist="${formBean.mutantsExist}"
                                        anatomyStatistics="${formBean.anatomyStatisticsMutant}"
                                        structureSearchLink="/action/ontology/show-all-clean-fish/${formBean.aoTerm.zdbID}"
-                                       choicePattern="0# genotypes| 1# genotype| 2# genotypes"
+                                       choicePattern="0# Fish| 1# Fish| 2# Fish"
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"
                                        totalRecordCount="${formBean.fishCount}"
                                        useWebdriverURL="false"
