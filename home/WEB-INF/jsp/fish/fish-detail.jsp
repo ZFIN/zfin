@@ -75,9 +75,16 @@
                             </td>
                             <td><zfin:link entity="${disease.experiment.experiment}"/></td>
                             <td>
-                                <a href="/action/ontology/fish-model-publication-list/${disease.disease.oboID}/${disease.experiment.zdbID}">
-                                    (${fn:length(disease.publications)})
-                                </a>
+                                <c:choose>
+                                    <c:when test="${fn:length(disease.publications) == 1}">
+                                        <a href="${disease.publications[0].zdbID}">(1)</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="/action/ontology/fish-model-publication-list/${disease.disease.oboID}/${disease.experiment.zdbID}">
+                                            (${fn:length(disease.publications)})
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </zfin:alternating-tr>
                     </c:forEach>
