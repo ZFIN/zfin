@@ -23,6 +23,7 @@ import org.zfin.util.MatchingService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -65,13 +66,15 @@ public class FishMatchingService {
             }
             else{
                 if (genoID==null){
-                    String fishID=fish.getFishID();
-                    MartFish fish = RepositoryFactory.getFishRepository().getFish(Long.valueOf(fishID).longValue());
-                    List<ZfinEntity> ftrEntities=fish.getFeatures();
-                    for (ZfinEntity ftrEntity : ftrEntities) {
-                        Feature ftr = getFeatureRepository().getFeatureByID(ftrEntity.getID());
-                        addMatchingConstruct(criteria.getGeneOrFeatureNameCriteria().getValue(),ftr);
+
+                    Set<Feature> features = new TreeSet<Feature>();
+                    for (GenotypeFeature genotypeFeature : fish.getGenotype().getGenotypeFeatures()) {
+                        features.add(genotypeFeature.getFeature());
                     }
+                    for (Feature feature : features) {
+                        addMatchingConstruct(criteria.getGeneOrFeatureNameCriteria().getValue(),feature);
+                    }
+
             }
         }
         }

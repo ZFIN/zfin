@@ -6,6 +6,7 @@ import org.zfin.fish.WarehouseSummary;
 import org.zfin.fish.presentation.MartFish;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinFigureEntity;
+import org.zfin.mutant.Fish;
 
 import java.util.List;
 import java.util.Set;
@@ -15,8 +16,6 @@ import java.util.Set;
  */
 public interface FishRepository {
 
-    public FishSearchResult getFish(FishSearchCriteria criteria);
-
     /**
      * Retrieve figures for a given fish.
      *
@@ -25,21 +24,10 @@ public interface FishRepository {
      */
     Set<ZfinFigureEntity> getAllFigures(String fishID);
 
-    /**
-     * Retrieve fish by primary key
-     *
-     * @param fishID ID
-     * @return fish
-     */
-    MartFish getFish(Long fishID);
 
-    /**
-     * Retrieve fish by genotype experiment ids
-     *
-     * @param genoxIDs IDs
-     * @return fish
-     */
-    MartFish getFish(String genoxIDs);
+    Fish getFish(String zdbID);
+
+    Fish getFishByName(String name);
 
     /**
      * retrieve all figures for given fish id

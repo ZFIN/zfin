@@ -71,9 +71,8 @@ public class FishSearchController {
         FishSearchCriteria criteria = FishService.getFishSearchCriteria(formBean);
         FishSearchResult searchResult = FishService.getFish(criteria);
         if (searchResult != null) {
-            List<Fish> fishList = searchResult.getResults();
             formBean.setTotalRecords(searchResult.getResultsFound());
-            formBean.setFishList(fishList);
+            formBean.setFishSearchResult(searchResult);
         }
         attachMetaData(model, formBean);
 

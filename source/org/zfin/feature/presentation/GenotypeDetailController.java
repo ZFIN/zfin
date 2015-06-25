@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.presentation.AllSequenceTargetingReagentExperimentController;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.FishGenotypeExpressionStatistics;
@@ -42,7 +41,7 @@ public class GenotypeDetailController {
         GenotypeBean form = new GenotypeBean();
 
         if (zdbID.contains(",")) {
-            MartFish fish = getFishRepository().getFish(zdbID);
+            Fish fish = getFishRepository().getFish(zdbID);
             form.setFishName(fish.getName());
             Genotype geno = fish.getGenotype();
             Genotype genotype = mutantRepository.getGenotypeByID(geno.getZdbID());
@@ -197,13 +196,13 @@ public class GenotypeDetailController {
 */
     }
 
-    private void retrieveSequenceTargetingReagentData(GenotypeBean form, MartFish fish) {
+    private void retrieveSequenceTargetingReagentData(GenotypeBean form, Fish fish) {
         if (fish.getStrList() == null || fish.getStrList().size() == 0)
             return;
         form.setSequenceTargetingReagents(getSequenceTargetingReagent(fish));
     }
 
-    private List<SequenceTargetingReagent> getSequenceTargetingReagent(MartFish fish) {
+    private List<SequenceTargetingReagent> getSequenceTargetingReagent(Fish fish) {
         return fish.getStrList();
     }
 

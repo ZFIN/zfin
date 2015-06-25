@@ -1,11 +1,8 @@
 package org.zfin.fish.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocumentList;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -14,24 +11,18 @@ import org.springframework.stereotype.Repository;
 import org.zfin.database.BtsContainsService;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.fish.*;
+import org.zfin.fish.presentation.FishResult;
 import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.framework.search.SortType;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.search.FieldName;
-import org.zfin.search.presentation.SearchResult;
-import org.zfin.search.service.SolrService;
 
-import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -42,81 +33,7 @@ public class HibernateFishRepository implements FishRepository {
 
     private static Logger logger = Logger.getLogger(HibernateFishRepository.class);
 
-    public FishSearchResult getFish(FishSearchCriteria criteria) {
 
-        FishSearchResult results = new FishSearchResult();
-
-        List<Fish> fishList = new ArrayList<>(0);
-
-        SolrQuery query = generateFishSearchSolrQuery(criteria);
-
-        SolrServer solrServer = SolrService.getSolrServer("prototype");
-        QueryResponse response = new QueryResponse();
-        try {
-            response = solrServer.query(query);
-        } catch (Exception e) {
-            logger.error(e);
-        }
-
-        List<SearchResult> solrSearchResults = response.getBeans(SearchResult.class);
-
-        for (SearchResult searchResult : solrSearchResults) {
-            Fish fish = (Fish) HibernateUtil.currentSession().load(Fish.class, searchResult.getId());
-            if (fish != null) {
-                fishList.add(fish);
-            }
-        }
-        results.setResultsFound((int) response.getResults().getNumFound());
-        results.setResults(fishList);
-
-        return results;
-
-
-    }
-
-    private SolrQuery generateFishSearchSolrQuery(FishSearchCriteria criteria) {
-        SolrService.getSolrServer("prototype");
-        SolrQuery query = new SolrQuery();
-
-        query.addFilterQuery("category:Fish");
-
-        //the main query box, should probably be just matching against a subset of the record
-        query.setQuery(criteria.getGeneOrFeatureNameCriteria().getValue());
-
-        //results per page
-        query.setRows(criteria.getRows());
-
-        //page
-        query.setStart(criteria.getStart());
-
-        if (criteria.getExcludeSequenceTargetingReagentCriteria().isTrue()) {
-            query.addFilterQuery("-" + FieldName.SEQUENCE_TARGETING_REAGENT.getName() + ":[* TO *]");
-        }
-
-        if (criteria.getRequireSequenceTargetingReagentCriteria().isTrue()) {
-            query.addFilterQuery(FieldName.SEQUENCE_TARGETING_REAGENT.getName() + ":[* TO *]");
-        }
-
-        if (criteria.getExcludeTransgenicsCriteria().isTrue()) {
-            query.addFilterQuery("-" + FieldName.CONSTRUCT.getName() + ":[* TO *]");
-        }
-
-        if (criteria.getRequireTransgenicsCriteria().isTrue()) {
-            query.addFilterQuery(FieldName.CONSTRUCT.getName() + ":[* TO *]");
-        }
-
-        if (criteria.getMutationTypeCriteria().hasValues()) {
-            //todo: implement me!
-        }
-
-        if (criteria.getPhenotypeAnatomyCriteria().hasValues()) {
-            for (String term : criteria.getPhenotypeAnatomyCriteria().getNames()) {
-                query.addFilterQuery(FieldName.AFFECTED_ANATOMY_TF.getName() + ":\"" + term + "\"");
-            }
-        }
-
-        return query;
-    }
 
     private Query generateFishSearchQuery(FishSearchCriteria criteria) {
         Session session = HibernateUtil.currentSession();
@@ -284,45 +201,30 @@ public class HibernateFishRepository implements FishRepository {
         return sb.toString();
     }
 
-    private void addAllFigures(MartFish fish) {
-        Set<ZfinFigureEntity> figures = getAllFigures(fish.getFishID());
-        setImageAttributeOnFish(fish, figures);
-    }
 
-    private void addFiguresByTermValues(MartFish fish, List<String> values) {
-        Set<ZfinFigureEntity> figures = getFiguresByFishAndTerms(fish.getFishID(), values);
-        setImageAttributeOnFish(fish, figures);
-    }
-
-    private void setImageAttributeOnFish(MartFish fish, Set<ZfinFigureEntity> figures) {
-        if (figures == null || figures.size() == 0)
-            return;
-        fish.setPhenotypeFigures(figures);
-        for (ZfinFigureEntity figure : figures)
-            if (figure.isHasImage())
-                fish.setImageAvailable(true);
-    }
-
-    /**
-     * Retrieve figures for a given fish.
-     *
-     * @param fishID fish ID
-     * @return set of figures.
-     */
-    public Set<ZfinFigureEntity> getAllFigures(String fishID) {
-        String sql = "select distinct ftfs_fig_zdb_id, " +
-                "CASE " +
-                " WHEN img_fig_zdb_id is not null then 'true'" +
-                " ELSE 'false'" +
-                "END as hasImage" +
-                " from figure_term_fish_search, fish_annotation_search , OUTER image " +
-                "where img_fig_zdb_id = ftfs_fig_zdb_id " +
-                "and (fas_genox_group = :genoxIds AND fas_genotype_group = :genoID)" +
-                "and ftfs_fas_id = fas_pk_id ";
+    public Set<ZfinFigureEntity> getAllFigures(String fishZdbID) {
+        String sql = "select phenox_fig_zdb_id,\n" +
+                "        CASE\n" +
+                "         WHEN img_fig_zdb_id is not null then 'true'\n" +
+                "         ELSE 'false'\n" +
+                "        END as hasImage\n" +
+                "from phenotype_experiment\n" +
+                "     join fish_experiment on phenox_genox_zdb_id = genox_zdb_id\n" +
+                "     left outer join image on img_fig_zdb_id = phenox_fig_zdb_id\n" +
+                "where genox_fish_zdb_id = :fishZdbID " +
+                "UNION\n" +
+                "select xedg_fig_zdb_id,\n" +
+                "        CASE\n" +
+                "         WHEN img_fig_zdb_id is not null then 'true'\n" +
+                "         ELSE 'false'\n" +
+                "        END as hasImage\n" +
+                "from xpat_exp_details_generated\n" +
+                "     join fish_experiment on xedg_genox_zdb_id = genox_zdb_id\n" +
+                "     left outer join image on img_fig_zdb_id = xedg_fig_zdb_id\n" +
+                "where genox_fish_zdb_id = :fishZdbID ;";
         Session session = HibernateUtil.currentSession();
         Query query = session.createSQLQuery(sql);
-        query.setParameter("genoxIds", FishService.getGenotypeExperimentIDsString(fishID));
-        query.setParameter("genoID", FishService.getGenotypeID(fishID));
+        query.setParameter("fishZdbID", fishZdbID);
         List<Object[]> fishObjects = query.list();
         if (fishObjects == null)
             return null;
@@ -337,87 +239,18 @@ public class HibernateFishRepository implements FishRepository {
         return zfinFigureEntities;
     }
 
-
-
-    /**
-     * Retrieve fish by primary key
-     *
-     * @param fishID ID
-     * @return fish
-     */
-    public MartFish getFish(Long fishID) {
-        Session session = HibernateUtil.currentSession();
-        FishAnnotation annotation = (FishAnnotation) session.load(FishAnnotation.class, fishID);
-        MartFish fish = getFishFromFunctionalAnnotation(annotation, null);
+    public Fish getFish(String zdbID) {
+        Fish fish = (Fish) HibernateUtil.currentSession().load(Fish.class, zdbID);
         return fish;
     }
 
-    /**
-     * Retrieve fish by genotype experiment ids
-     * or by genotype IDs
-     *
-     * @param genoGenoxIDs IDs
-     * @return fish
-     */
-    public MartFish getFish(String genoGenoxIDs) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(FishAnnotation.class);
-        MartFish minimalFish = FishService.getGenoGenoxByFishID(genoGenoxIDs);
-        if (minimalFish == null)
-            return null;
-        if (StringUtils.isEmpty(minimalFish.getGenotypeExperimentIDsString())) {
-            criteria.add(Restrictions.and(
-                    Restrictions.isNull("genotypeExperimentIds"),
-                    Restrictions.eq("genotypeID", genoGenoxIDs)
-            ));
-            criteria.add(Restrictions.eq("genotypeID", genoGenoxIDs));
-        } else if (minimalFish.getGenotype() == null) {
-            criteria.add(Restrictions.and(
-                    Restrictions.isNull("genotypeID"),
-                    Restrictions.eq("genotypeExperimentIds", genoGenoxIDs)
-            ));
-        } else
-            criteria.add(Restrictions.and(
-                    Restrictions.eq("genotypeExperimentIds", minimalFish.getGenotypeExperimentIDsString()),
-                    Restrictions.eq("genotypeID", minimalFish.getGenotype().getZdbID())
-            ));
-        FishAnnotation annotation = (FishAnnotation) criteria.uniqueResult();
-        if (annotation == null)
-            return null;
-        MartFish fish = getFishFromFunctionalAnnotation(annotation, null);
-        return fish;
+    public Fish getFishByName(String name) {
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);
+        criteria.add(Restrictions.eq("name",name));
+        return (Fish)criteria.uniqueResult();
     }
 
-    private MartFish getFishFromFunctionalAnnotation(FishAnnotation annotation, FishSearchCriteria criteria) {
-        MartFish singleFish = new MartFish();
-        singleFish.setID(String.valueOf(annotation.getID()));
-        if (!StringUtils.isEmpty(annotation.getGenotypeID())) {
-            singleFish.setGenotype(RepositoryFactory.getMutantRepository().getGenotypeByID(annotation.getGenotypeID()));
-        }
-        singleFish.setName(annotation.getName());
-        singleFish.setGenotypeExperimentIDs(getIdList(annotation.getGenotypeExperimentIds()));
-        singleFish.setGenotypeExperimentIDsString(annotation.getGenotypeExperimentIds());
-        singleFish.setExpressionFigureCount(annotation.getExpressionFigureCount());
-        singleFish.setExpressionImageAvailable(annotation.isHasExpressionImages());
-        populateGeneFeatureConstruct(singleFish, annotation);
-        if (singleFish.getGenotypeID()!=null){
-        addFigures(singleFish, criteria);
-    }
-        singleFish.setGeneOrFeatureText(annotation.getGeneOrFeatureText());
-        singleFish.setScoringText(annotation.getScoringText());
-        //
-        singleFish.setStrList(getSequenceTargetingReagents(annotation));
-        return singleFish;
-    }
 
-    private void addFigures(MartFish fish, FishSearchCriteria criteria) {
-        if (criteria == null)
-            addAllFigures(fish);
-        else {
-            List<String> values = criteria.getPhenotypeAnatomyCriteria().getValues();
-            addFiguresByTermValues(fish, values);
-        }
-    }
 
     /**
      * Turn comma-delimited list of IDs into a list of strings.
@@ -432,31 +265,6 @@ public class HibernateFishRepository implements FishRepository {
         List<String> idList = new ArrayList<String>(token.length);
         Collections.addAll(idList, token);
         return idList;
-    }
-
-    private void populateGeneFeatureConstruct(MartFish singleFish, FishAnnotation annotation) {
-        String hql = "from FeatureGene " +
-                "where fishAnnotation = :fishAnnotation " +
-                "order by gene.nameOrder, feature.nameOrder";
-        Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery(hql);
-        query.setParameter("fishAnnotation", annotation);
-        List<FeatureGene> genotypeFeatures = query.list();
-        Collections.sort(genotypeFeatures, new Comparator<FeatureGene>() {
-            public int compare(FeatureGene o1, FeatureGene o2) {
-                if (o1.getGene() == null && o2.getGene() == null)
-                    return o1.getFeature().getNameOrder().compareTo(o2.getFeature().getNameOrder());
-                if (o1.getGene() != null && o2.getGene() == null)
-                    return -1;
-                if (o1.getGene() == null && o2.getGene() != null)
-                    return 1;
-                return o1.getGene().getNameOrder().compareTo(o2.getGene().getNameOrder());
-                //debug this!!
-            }
-        });
-        for (FeatureGene geneFeature : genotypeFeatures) {
-            singleFish.addFeatureGene(geneFeature);
-        }
     }
 
 
@@ -507,11 +315,17 @@ public class HibernateFishRepository implements FishRepository {
      * @return set of figures
      */
     public Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs) {
-        if (termIDs == null)
+        if (CollectionUtils.isEmpty(termIDs)) {
             return getAllFigures(fishID);
+        }
+
 
         Session session = HibernateUtil.currentSession();
-        BtsContainsService btsService = new BtsContainsService("ftfs_term_group");
+
+
+        //todo: implement me!
+
+/*        BtsContainsService btsService = new BtsContainsService("ftfs_term_group");
         btsService.addBtsValueList("ftfs_term_group", termIDs);
         String sqlFeatures = "select distinct ftfs_fig_zdb_id, " +
                 "CASE " +
@@ -541,7 +355,8 @@ public class HibernateFishRepository implements FishRepository {
                 figures.add(figure);
             }
         }
-        return figures;
+        return figures;*/
+        return new HashSet<ZfinFigureEntity>();
     }
 
     public String getGenoxMaxLength() {
@@ -616,53 +431,6 @@ public class HibernateFishRepository implements FishRepository {
         return sequenceTargetingReagentList;
     }
 
-    private List<FeatureGene> getTransgenicFeature(String featureID) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select featureRelation from FeatureMarkerRelationship as featureRelation where " +
-                " featureRelation.feature.zdbID = :featureID and featureRelation.featureMarkerRelationshipType = :type";
-        Query query = session.createQuery(hql);
-        query.setParameter("featureID", featureID);
-        query.setString("type", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
-        List<FeatureMarkerRelationship> relationships = query.list();
-        if (relationships == null)
-            return null;
-
-        List<FeatureGene> featureGenes = new ArrayList<FeatureGene>();
-        for (FeatureMarkerRelationship relation : relationships) {
-            FeatureGene featureGene = new FeatureGene();
-            ZfinEntity feature = getZfinEntity(relation.getFeature().getZdbID(), relation.getFeature().getAbbreviation());
-            featureGene.setType(relation.getFeature().getType().getDisplay());
-            featureGene.setFeature(feature);
-            ZfinEntity construct = getZfinEntity(relation.getMarker().getZdbID(), relation.getMarker().getAbbreviation());
-            featureGene.setConstruct(construct);
-            featureGenes.add(featureGene);
-        }
-        return featureGenes;
-    }
-
-    private List<FeatureGene> getFeatureGene(String featureID) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select featureRelation from FeatureMarkerRelationship as featureRelation where " +
-                " featureRelation.feature.zdbID = :featureID and featureRelation.featureMarkerRelationshipType = :type";
-        Query query = session.createQuery(hql);
-        query.setParameter("featureID", featureID);
-        query.setString("type", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
-        List<FeatureMarkerRelationship> relationships = query.list();
-        if (relationships == null)
-            return null;
-
-        List<FeatureGene> featureGenes = new ArrayList<FeatureGene>();
-        for (FeatureMarkerRelationship relation : relationships) {
-            FeatureGene featureGene = new FeatureGene();
-            ZfinEntity feature = getZfinEntity(relation.getFeature().getZdbID(), relation.getFeature().getAbbreviation());
-            featureGene.setType(relation.getFeature().getType().getDisplay());
-            ZfinEntity gene = getZfinEntity(relation.getMarker().getZdbID(), relation.getMarker().getAbbreviation());
-            featureGene.setFeature(feature);
-            featureGene.setGene(gene);
-            featureGenes.add(featureGene);
-        }
-        return featureGenes;
-    }
 
     private ZfinEntity getZfinEntity(String zdbID, String name) {
         ZfinEntity entity = new ZfinEntity();
