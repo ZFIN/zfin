@@ -224,10 +224,10 @@ public class AnatomyAjaxController {
         return "anatomy/show-phenotype-wildtype-sequence-targeting-reagent.ajax";
     }
 
-    @RequestMapping(value = "/{oboID}/phenotype-summary/{genoypteID}")
+    @RequestMapping(value = "/{oboID}/phenotype-summary/{fishID}")
     public String genotypeSummary(Model model
             , @PathVariable("oboID") String oboID
-            , @PathVariable("genoypteID") String genotypeID
+            , @PathVariable("fishID") String fishID
     ) throws Exception {
         GenericTerm term = ontologyRepository.getTermByOboID(oboID);
         if (term == null) {
@@ -235,9 +235,9 @@ public class AnatomyAjaxController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        Genotype geno = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
-        if (geno == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, genotypeID);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+        if (fish == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, fishID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
@@ -246,13 +246,13 @@ public class AnatomyAjaxController {
 
         form.setAoTerm(term);
 
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(term, geno, true);
+        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(term, fish, true);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         retrieveMutantData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute("includingSubstructures", true);
-        model.addAttribute("genotype", geno);
+        model.addAttribute("fish", fish);
         model.addAttribute("entity", term);
         return "anatomy/phenotype-summary.page";
     }

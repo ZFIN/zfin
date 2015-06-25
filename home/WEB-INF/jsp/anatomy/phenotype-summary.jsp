@@ -4,10 +4,10 @@
 
 
 <table class="primary-entity-attributes">
-    <c:if test="${!empty genotype}">
+    <c:if test="${!empty fish}">
         <tr>
-            <th class="genotype-name-label">Genotype:</th>
-            <td class="genotype-name-value"><zfin:link entity="${genotype}"/></td>
+            <th class="genotype-name-label">Fish:</th>
+            <td class="genotype-name-value"><zfin:link entity="${fish}"/></td>
         </tr>
     </c:if>
     <c:if test="${!empty entity}">
