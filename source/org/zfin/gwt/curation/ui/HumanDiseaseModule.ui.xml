@@ -3,37 +3,26 @@
         xmlns:ui='urn:ui:com.google.gwt.uibinder'
         xmlns:g='urn:import:com.google.gwt.user.client.ui'
         xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
     <g:FlowPanel>
-        <g:VerticalPanel spacing="10" title="Disease">
-            <g:HorizontalPanel>
-                <g:Label text="Disease Models:" styleName="bold"/>
-                <g:Label text="None" ui:field="diseaseModelTableContent" styleName="summary-title"/>
-            </g:HorizontalPanel>
-            <zfin:ZfinFlexTable ui:field="diseaseModelTable" numberOfColumns="6" styleName="searchresults groupstripes"
-                                cellSpacing="5" cellPadding="5" />
-            <zfin:SimpleErrorElement ui:field="errorLabel"/>
-            <g:Image ui:field="loadingImageDiseaseModels" url="/images/ajax-loader.gif"/>
-        </g:VerticalPanel>
-        <g:HTMLPanel>
-            <hr/>
-        </g:HTMLPanel>
-        <g:VerticalPanel spacing="10" title="Construction Zone">
-            <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
-                <g:VerticalPanel spacing="10" title="Pile">
-                    <zfin:TermEntry ui:field="termEntry" listOFOntologies="disease_ontology"
-                                    entityPart="ENTITY_SUPERTERM"/>
-                    <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
-                        <g:Button ui:field="addButton" text="Add"/>
-                        <g:Button ui:field="resetButton" text="Reset"/>
-                        <g:HTML>&nbsp;</g:HTML>
-                        <zfin:SimpleErrorElement ui:field="diseaseErrorLabel"/>
-                    </g:HorizontalPanel>
-                </g:VerticalPanel>
-                <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0' cellPadding='5'
-                                        ontologyName="disease_ontology"/>
-            </g:HorizontalPanel>
-        </g:VerticalPanel>
+        <zfin-mod:AttributionModule ui:field="attributionModule"/>
+        <zfin-mod:DiseaseModelView ui:field="diseaseModelView"/>
+        <g:HTML><hr/></g:HTML>
+        <g:HorizontalPanel verticalAlignment="top" horizontalAlignment="left">
+            <g:VerticalPanel spacing="10" title="Pile">
+                <zfin:TermEntry ui:field="termEntry" listOFOntologies="disease_ontology"
+                                entityPart="ENTITY_SUPERTERM"/>
+                <g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="left">
+                    <g:Button ui:field="addButton" text="Add"/>
+                    <g:Button ui:field="resetButton" text="Reset"/>
+                    <g:HTML>&nbsp;</g:HTML>
+                    <zfin:SimpleErrorElement ui:field="diseaseErrorLabel"/>
+                </g:HorizontalPanel>
+            </g:VerticalPanel>
+            <zfin:TermInfoComposite ui:field='termInfoBox' styleName="searchresults" cellSpacing='0' cellPadding='5'
+                                    ontologyName="disease_ontology"/>
+        </g:HorizontalPanel>
     </g:FlowPanel>
 </ui:UiBinder>
