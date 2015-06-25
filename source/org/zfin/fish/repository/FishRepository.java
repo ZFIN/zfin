@@ -24,9 +24,6 @@ public interface FishRepository {
      */
     Set<ZfinFigureEntity> getAllFigures(String fishID);
 
-
-    Fish getFish(String zdbID);
-
     Fish getFishByName(String name);
 
     /**

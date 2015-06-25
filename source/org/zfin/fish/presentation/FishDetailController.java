@@ -94,7 +94,7 @@ public class FishDetailController {
 
     @RequestMapping(value = "/fish-detail-popup/{ID}")
     protected String showFishDetailPopup(Model model, @PathVariable("ID") String fishZdbId) {
-        Fish fish = RepositoryFactory.getFishRepository().getFish(fishZdbId);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishZdbId);
         FishBean form = new FishBean();
         model.addAttribute("fish", fish);
 

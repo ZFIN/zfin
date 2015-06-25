@@ -239,10 +239,6 @@ public class HibernateFishRepository implements FishRepository {
         return zfinFigureEntities;
     }
 
-    public Fish getFish(String zdbID) {
-        Fish fish = (Fish) HibernateUtil.currentSession().load(Fish.class, zdbID);
-        return fish;
-    }
 
     public Fish getFishByName(String name) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);

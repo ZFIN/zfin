@@ -41,7 +41,7 @@ public class GenotypeDetailController {
         GenotypeBean form = new GenotypeBean();
 
         if (zdbID.contains(",")) {
-            Fish fish = getFishRepository().getFish(zdbID);
+            Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
             form.setFishName(fish.getName());
             Genotype geno = fish.getGenotype();
             Genotype genotype = mutantRepository.getGenotypeByID(geno.getZdbID());

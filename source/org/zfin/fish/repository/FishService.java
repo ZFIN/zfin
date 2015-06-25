@@ -69,7 +69,7 @@ public class FishService {
         List<FishResult> solrSearchResults = response.getBeans(FishResult.class);
 
         for (FishResult fishResult : solrSearchResults) {
-            Fish fish = getFish(fishResult.getId());
+            Fish fish = RepositoryFactory.getMutantRepository().getFish(fishResult.getId());
             if (fish != null) {
                 fishResult.setFish(fish);
                 fishResult.setFeatureGenes(getFeatureGenes(fish));
@@ -167,7 +167,7 @@ public class FishService {
         for (Marker str : fish.getStrList()) {
             Set<MarkerRelationship> mrels = str.getFirstMarkerRelationships();
             for (MarkerRelationship mrel : mrels) {
-                if (mrel.getMarkerRelationshipType().equals(MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE)) {
+                if (StringUtils.equals(mrel.getMarkerRelationshipType().getName(),MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())) {
                     FeatureGene featureGene = new FeatureGene();
                     featureGene.setSequenceTargetingReagent(str);
                     featureGene.setGene(mrel.getSecondMarker());
@@ -240,7 +240,7 @@ public class FishService {
     }
 
     public static PhenotypeSummaryCriteria getPhenotypeSummaryCriteria(String fishID) {
-        Fish fish = getFishRepository().getFish(fishID);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
         PhenotypeSummaryCriteria criteria = new PhenotypeSummaryCriteria();
         criteria.setFish(fish);
         //todo: implement me!
@@ -278,9 +278,6 @@ public class FishService {
         return true;
     }
 
-    public static Fish getFish(String zdbID) {
-        return getFishRepository().getFish(zdbID);
-    }
 
     public static FishSearchCriteria getFishSearchCriteria(FishSearchFormBean bean) {
         return new FishSearchCriteria(bean);

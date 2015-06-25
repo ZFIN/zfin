@@ -157,7 +157,13 @@
                     <zfin:link entity="${featureGene.gene}"/>
                 </td>
                 <td>
-                    <zfin:link entity="${featureGene.feature}"/>
+                    <%-- will be one or the other--%>
+                    <c:if test="${!empty featureGene.feature}">
+                        <zfin:link entity="${featureGene.feature}"/>
+                    </c:if>
+                    <c:if test="${!empty featureGene.sequenceTargetingReagent}">
+                        <zfin:link entity="${featureGene.sequenceTargetingReagent}"/>
+                    </c:if>
                 </td>
                 <td>
                     <zfin:link entity="${featureGene.construct}"/>
