@@ -1,21 +1,20 @@
-<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="formBean" type="org.zfin.anatomy.presentation.AnatomySearchBean" required="true" %>
 <%@ attribute name="includingSubstructures" type="java.lang.Boolean" required="false" %>
 
 <div class="summary">
-    <div class="summaryTitle">Mutant and Transgenic Lines</div>
+    <div class="summaryTitle">Phenotypes in <i><zfin:name entity="${formBean.aoTerm}"/></i> caused by Genes</div>
 
     <c:if test="${formBean.mutantsExist}">
         <table class="summary rowstripes">
             <tbody>
             <tr>
                 <th width="15%">
-                    Fish
+                    Affected Genes
                 </th>
                 <th width="15%">
-                    Affected Genes
+                    Fish
                 </th>
                 <th width="50%">
                     Phenotype
@@ -27,10 +26,10 @@
             <c:forEach var="genoStat" items="${formBean.genotypeStatistics}" varStatus="loop">
                 <zfin:alternating-tr loopName="loop">
                     <td>
-                        <zfin:link entity="${genoStat.fish}"/>
+                        <zfin:link entity="${genoStat.affectedMarkers}"/>
                     </td>
                     <td>
-                        <zfin:link entity="${genoStat.affectedMarkers}"/>
+                        <zfin:link entity="${genoStat.fish}"/>
                     </td>
                     <td>
                         <c:forEach var="statement" items="${genoStat.phenotypeStatements}" varStatus="loop">
@@ -40,7 +39,7 @@
                     <td>
                         <c:if test="${genoStat.numberOfFigures > 0}">
                             <c:if test="${genoStat.numberOfFigures > 1}">
-                                <a href="/action/ontology/${formBean.aoTerm.oboID}/phenotype-summary/${genoStat.fish.genotype.zdbID}">
+                                <a href="/action/ontology/${formBean.aoTerm.oboID}/phenotype-summary/${genoStat.fish.zdbID}">
                                     <zfin:choice choicePattern="0#figures| 1#figure| 2#figures"
                                                  integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
                             </c:if>

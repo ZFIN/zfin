@@ -1,7 +1,6 @@
 <ac:structured-macro ac:name="show-if"><ac:parameter ac:name="users"><ri:user ri:username="@authenticated" /></ac:parameter><ac:rich-text-body>
 <p>
-<ac:structured-macro ac:name="add-page"><ac:parameter ac:name="template">antibody</ac:parameter><ac:parameter ac:name="linkText">Create New Antibody</ac:parameter><ac:parameter ac:name="labels">community_antibody</ac:parameter><ac:parameter ac:name="parent">@home</ac:parameter><ac:parameter ac:name="allowRename">true</ac:parameter><ac:parameter ac:name="live">true</ac:parameter></ac:structured-macro>
-</p>
+<ac:structured-macro ac:name="add-page-form"><ac:parameter ac:name="linkText">Create New Antibody</ac:parameter><ac:parameter ac:name="source">community-antibody</ac:parameter><ac:parameter ac:name="labels">community_antibody</ac:parameter><ac:parameter ac:name="parent"><ac:link><ri:page ri:content-title="@home" /></ac:link></ac:parameter></ac:structured-macro></p>
 </ac:rich-text-body></ac:structured-macro>
 <p />
 
@@ -47,13 +46,7 @@
 </tr>
 <tr>
 <th><p> Recognized target molecules (gene names, domains, epitopes ...)  </p></th>
-<td><p />
-<ac:structured-macro ac:name="text-data"><ac:parameter ac:name="content">wiki</ac:parameter><ac:parameter ac:name="name">RecognizedTargetMolecules</ac:parameter><ac:parameter ac:name="atlassian-macro-output-type">INLINE</ac:parameter><ac:parameter ac:name="type">line</ac:parameter></ac:structured-macro><p /></td>
-</tr>
-<tr>
-<th><p> Recognized ZFIN genes <br class="atl-forced-newline" />
-current ZFIN-gene symbols only <a href="http://zfin.org/cgi-bin/webdriver?MIval=aa-newmrkrselect.apg">ZFIN Gene Search</a> </p></th>
-<td><p>
+<td><p /><p>
 {text-data:ZFINGenes}{text-data}
 </p></td>
 </tr>

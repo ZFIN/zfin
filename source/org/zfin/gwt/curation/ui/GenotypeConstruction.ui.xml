@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <g:FlowPanel>
+        <g:HorizontalPanel>
+            <g:Label text="GENOTYPE CONSTRUCTION:&nbsp;" styleName="bold"/>
+            <g:Hyperlink text="Show" ui:field="showHideSection"/>
+        </g:HorizontalPanel>
+        <g:VerticalPanel ui:field="genotypeConstructionPanel" addStyleNames="newgroup oddgroup odd experiment-row"
+                         spacing="5" visible="false">
+            <zfin:ZfinFlexTable ui:field="genotypeConstructionTable" numberOfColumns="2" styleName="searchresults"
+                                cellSpacing="5" cellPadding="5"/>
+            <g:Label text="New Genotype" styleName="bold" horizontalAlignment="left"/>
+            <g:HorizontalPanel>
+                <g:Label text="&nbsp;&nbsp;&nbsp;"/>
+                <zfin:ZfinFlexTable ui:field="newGenotypeInfoTable" numberOfColumns="2" styleName="searchresults"
+                                    cellSpacing="5" cellPadding="5"/>
+            </g:HorizontalPanel>
+            <g:HorizontalPanel>
+                <g:Button ui:field="createGenotypeButton" text="Create Genotype"/>
+                <g:Button ui:field="resetButton" text="Reset"/>
+            </g:HorizontalPanel>
+            <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+        </g:VerticalPanel>
+    </g:FlowPanel>
+</ui:UiBinder>

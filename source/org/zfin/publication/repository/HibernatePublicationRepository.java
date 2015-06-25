@@ -1163,6 +1163,22 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Feature>) query.list();
     }
 
+   public List<Fish> getFishByPublication(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+
+
+        String hql = "select distinct fish from Fish fish, PublicationAttribution pub" +
+                "     where pub.dataZdbID = fish.zdbID" +
+                "           and pub.publication.zdbID = :pubID " +
+                "    order by fish.nameOrder ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+
+
+        return (List<Fish>) query.list();
+    }
+
     public List<Marker> getGenesByExperiment(String pubID) {
         Session session = HibernateUtil.currentSession();
 
@@ -1873,6 +1889,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "\twhere  recattrib_source_zdb_id = :zdbID\n" +
                 "\t  and  recattrib_data_zdb_id = geno_zdb_id\n" +
                 "\t  and  geno_is_wildtype = 'f';";
+        return getCount(sql, publication.getZdbID());
+    }
+    public Long getFishCount(Publication publication) {
+        String sql = "\tselect count(distinct fish_zdb_id)\n" +
+                "\tfrom   record_attribution, fish\n" +
+                "\twhere  recattrib_source_zdb_id = :zdbID\n" +
+                "\t  and  recattrib_data_zdb_id = fish_zdb_id;";
         return getCount(sql, publication.getZdbID());
     }
 

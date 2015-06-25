@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Domain object.
  */
-public class FishExperiment {
+public class FishExperiment implements Comparable<FishExperiment> {
     private String zdbID;
     private boolean standard;
     private boolean standardOrGenericControl;
@@ -73,5 +73,13 @@ public class FishExperiment {
         this.phenotypeExperiments = phenotypeExperiments;
     }
 
+    @Override
+    public int compareTo(FishExperiment o) {
+        int fishCompare = fish.compareTo(o.getFish());
+        if (fishCompare != 0) {
+            return fishCompare;
+        }
+        return experiment.compareTo(o.getExperiment());
+    }
 
 }

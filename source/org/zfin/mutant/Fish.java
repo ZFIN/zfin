@@ -10,14 +10,16 @@ import java.util.Set;
 /**
  * Fish entity
  */
-public class Fish implements EntityZdbID, Comparable {
+public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public static final String WT = "WT";
 
     private String zdbID;
     private Genotype genotype;
     private String name;
+    private String nameOrder;
     private String handle;
+    private long order;
 
     private Set<FishExperiment> fishExperiments;
 
@@ -45,6 +47,14 @@ public class Fish implements EntityZdbID, Comparable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNameOrder() {
+        return nameOrder;
+    }
+
+    public void setNameOrder(String nameOrder) {
+        this.nameOrder = nameOrder;
     }
 
     public List<SequenceTargetingReagent> getStrList() {
@@ -95,11 +105,18 @@ public class Fish implements EntityZdbID, Comparable {
         this.fishExperiments = fishExperiments;
     }
 
+    public long getOrder() {
+        return order;
+    }
 
-    public int compareTo(Object o) {
-        Fish otherFish = (Fish)o;
+    public void setOrder(long order) {
+        this.order = order;
+    }
 
-        return getAbbreviationOrder().compareTo(otherFish.getAbbreviationOrder());
+    public int compareTo(Fish otherFish) {
+        if(order != otherFish.getOrder())
+            return order < otherFish.getOrder()? -1: 1;
+        return getNameOrder().compareTo(otherFish.getNameOrder());
     }
 
     public boolean isWildtypeWithoutReagents() {

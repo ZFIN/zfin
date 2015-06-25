@@ -50,10 +50,9 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
     @Override
     public int compareTo(FishModelDisplay o) {
-        if (o == null)
+        if (o == null || o.getFishModel() == null) {
             return 1;
-        if (fishModel.getFish().getName().equals(o.getFishModel().getFish().getName()))
-            return fishModel.getExperiment().getName().compareTo(o.getFishModel().getExperiment().getName());
-        return fishModel.getFish().getName().compareTo(o.getFishModel().getFish().getName());
+        }
+        return fishModel.compareTo(o.getFishModel());
     }
 }

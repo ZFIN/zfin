@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <g:FlowPanel>
+            <g:HorizontalPanel>
+                <g:Label text="Disease Models:" styleName="bold"/>
+            </g:HorizontalPanel>
+            <zfin:ZfinFlexTable ui:field="diseaseModelTable" numberOfColumns="6" styleName="searchresults groupstripes"
+                                cellSpacing="5" cellPadding="5" />
+            <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+    </g:FlowPanel>
+</ui:UiBinder>

@@ -49,7 +49,7 @@ public enum Category {
             ONTOLOGY,
             OBSOLETE
     ),
-    DISEASE("Disease",
+    DISEASE("Human Disease",
             FieldName.GENE),  //todo: later will add DISEASE_MODEL and HAS_MODEL
     MUTANT("Mutation / Tg",
             TYPE,
@@ -149,6 +149,7 @@ public enum Category {
         ),
     */
     FISH("Fish", AFFECTED_GENE,
+            FieldName.DISEASE,
             EXPRESSIONS_ANATOMY_TF,
             AFFECTED_ANATOMY_TF,
             AFFECTED_BIOLOGICAL_PROCESS_TF,
