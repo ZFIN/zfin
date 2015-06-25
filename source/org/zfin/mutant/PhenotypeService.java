@@ -277,7 +277,7 @@ public class PhenotypeService {
     }
 
     public static List<Publication> getPublicationList(GenericTerm disease, Fish fish) {
-        List<FishModelDisplay> model = OntologyService.getDiseaseModels(disease);
+        List<FishModelDisplay> model = OntologyService.getDiseaseModelsWithFishModel(disease);
         if (CollectionUtils.isEmpty(model)) {
             return null;
         }
@@ -287,8 +287,7 @@ public class PhenotypeService {
                 publicationSet.addAll(display.getPublications());
             }
         }
-        List<Publication> list = new ArrayList<>(publicationSet);
-        return list;
+        return new ArrayList<>(publicationSet);
     }
 
     public static List<Publication> getPublicationList(GenericTerm disease, FishExperiment fishExperiment, String orderBy) {
@@ -301,7 +300,7 @@ public class PhenotypeService {
     }
 
     public static List<Publication> getPublicationList(GenericTerm disease, FishExperiment fishExperiment) {
-        List<FishModelDisplay> model = OntologyService.getDiseaseModels(disease);
+        List<FishModelDisplay> model = OntologyService.getDiseaseModelsWithFishModel(disease);
         if (CollectionUtils.isEmpty(model)) {
             return null;
         }
@@ -311,8 +310,7 @@ public class PhenotypeService {
                 publicationSet.addAll(display.getPublications());
             }
         }
-        List<Publication> list = new ArrayList<>(publicationSet);
-        return list;
+        return new ArrayList<>(publicationSet);
     }
 
     public static List<DiseaseModelDTO> getDiseaseModelDTOs(String publicationID) {
