@@ -132,9 +132,6 @@
         </tr>
     </table>
     </th>
-    <th width="15%">
-        Phenotype
-    </th>
     </tr>
     <c:forEach var="geno" items="${formBean.mutants}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
@@ -159,21 +156,6 @@
                         </tr>
                     </c:forEach>
                 </table>
-            </td>
-            <td width="15%">
-                <c:if test="${geno.phenotypeFigures != null && fn:length(geno.phenotypeFigures) > 0}">
-                    <c:choose>
-                        <c:when test="${fn:length(geno.phenotypeFigures) == 1}">
-                            <a href="/${geno.phenotypeSingleFigure.zdbID}">1
-                                figure</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value() %>?MIval=aa-pheno_summary.apg&OID=${geno.zdbID}">${fn:length(geno.phenotypeFigures)}
-                                figures</a>
-                        </c:otherwise>
-                    </c:choose>
-                    <zfin2:showCameraIcon hasImage="${geno.phenoFiguresHaveImg}"/>
-                </c:if>
             </td>
         </zfin:alternating-tr>
     </c:forEach>
