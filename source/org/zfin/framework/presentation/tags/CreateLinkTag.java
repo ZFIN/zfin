@@ -125,6 +125,8 @@ public class CreateLinkTag extends BodyTagSupport {
             link = FigurePresentation.getLink((Figure) o);
         else if (o instanceof MartFish)
             link = FishPresentation.getLink((MartFish) o);
+        else if (o instanceof Fish)
+            link = FishPresentation.getLink((Fish) o, suppressPopupLink);
         else if (o instanceof FishAnnotation)
             link = FishAnnotationPresentation.getLink((FishAnnotation) o);
         else if (o instanceof Image)
