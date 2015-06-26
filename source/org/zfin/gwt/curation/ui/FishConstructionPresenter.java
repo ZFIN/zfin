@@ -1,12 +1,11 @@
 package org.zfin.gwt.curation.ui;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Widget;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
@@ -16,12 +15,12 @@ import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import java.util.*;
 
 /**
- * Table of associated genotypes
+ * Construction zone for new Fish: genotype plus zero or more STRs
  */
 public class FishConstructionPresenter implements Presenter {
 
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
-    ;
+
     private CurationExperimentRPCAsync curationExperimentRpcService = CurationExperimentRPC.App.getInstance();
     private final HandlerManager eventBus;
     private FishConstruction view;
@@ -33,7 +32,7 @@ public class FishConstructionPresenter implements Presenter {
         this.eventBus = eventBus;
         this.view = view;
         this.publicationID = publicationID;
-        view.setPublicationID(publicationID);
+        this.view.setFishConstructionPresenter(this);
     }
 
     public void setFishPresenter(FishPresenter fishPresenter) {
@@ -48,65 +47,8 @@ public class FishConstructionPresenter implements Presenter {
     private RetrieveSTRListCallBack strListCallBack;
 
     public void bind() {
-        view.getShowHideConstruction().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                view.getConstructionToggle().toggleVisibility();
-                retrieveInitialEntities();
-            }
-        });
-
         genotypeListCallBack = new RetrieveGenotypeListCallBack(view.getGenotypeSelectionBox(), "Genotypes", null);
         strListCallBack = new RetrieveSTRListCallBack(view.getStrSelectionBox(), "STRs", null);
-
-        view.getCreateFishButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                FishDTO newFish = getNewFish();
-                if (validate(newFish)) {
-                    RetrieveFishListCallBack fishListCallBack = new RetrieveFishListCallBack("error", view.getErrorLabel());
-                    diseaseRpcService.createFish(publicationID, newFish, fishListCallBack);
-                    view.getLoadingImage().setVisible(true);
-                } else {
-                    view.getErrorLabel().setText("Fish already exists");
-                }
-            }
-        });
-        view.getGenotypeSelectionBox().addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                int index = view.getGenotypeSelectionBox().getSelectedIndex();
-                List<GenotypeDTO> dtoList = genotypeListCallBack.getDtoList();
-                newGenotype = dtoList.get(index);
-                view.updateConstructionTable(newGenotype, newStrList);
-                view.getErrorLabel().setText("");
-            }
-        });
-        Button addStrButton = view.getAddStrButton();
-        addStrButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                int index = view.getStrSelectionBox().getSelectedIndex();
-                List<RelatedEntityDTO> strList = strListCallBack.getStrList();
-                RelatedEntityDTO str = strList.get(index);
-                if (!newStrList.contains(str)) {
-                    newStrList.add(str);
-                    view.updateConstructionTable(newGenotype, newStrList);
-                    view.getErrorLabel().setText("");
-                } else {
-                    view.getErrorLabel().setText("STR already added");
-                }
-                bindStrLinkRemovers();
-            }
-        });
-
-        // change handler for STR change selection
-        view.getStrSelectionBox().addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                view.getErrorLabel().setText("");
-            }
-        });
     }
 
     private void bindStrLinkRemovers() {
@@ -117,7 +59,7 @@ public class FishConstructionPresenter implements Presenter {
                 @Override
                 public void onClick(ClickEvent clickEvent) {
                     newStrList.remove(strAnchorMap.get(removeStr));
-                    view.updateConstructionTable(newGenotype, newStrList);
+                    view.reCreateStrPanel(newStrList);
                     bindStrLinkRemovers();
                 }
             });
@@ -144,21 +86,19 @@ public class FishConstructionPresenter implements Presenter {
     public void resetGUI() {
         newGenotype = null;
         newStrList.clear();
-        view.updateConstructionTable(newGenotype, newStrList);
+        view.resetGUI();
     }
 
 
     @Override
     public void go() {
         bind();
-        view.updateConstructionTable(newGenotype, newStrList);
     }
 
     public void retrieveInitialEntities() {
         // get STR list
         updateSTRListBox();
         updateGenotypeList();
-
     }
 
     public void updateGenotypeList() {
@@ -168,6 +108,46 @@ public class FishConstructionPresenter implements Presenter {
 
     public void updateSTRListBox() {
         diseaseRpcService.getStrList(publicationID, strListCallBack);
+    }
+
+    public void onCreateFishButtonClick() {
+        FishDTO newFish = getNewFish();
+        if (validate(newFish)) {
+            RetrieveFishListCallBack fishListCallBack = new RetrieveFishListCallBack("error", view.getErrorLabel());
+            diseaseRpcService.createFish(publicationID, newFish, fishListCallBack);
+            view.getLoadingImage().setVisible(true);
+        } else {
+            view.getErrorLabel().setText("Fish already exists");
+        }
+    }
+
+    public void onShowHideClick() {
+        view.getConstructionToggle().toggleVisibility();
+        retrieveInitialEntities();
+    }
+
+    public void onGenotypeSelection(int index) {
+        List<GenotypeDTO> dtoList = genotypeListCallBack.getDtoList();
+        newGenotype = dtoList.get(index);
+        view.getErrorLabel().setText("");
+        view.setGenotypeName(newGenotype);
+    }
+
+    public void onStrClick(int index) {
+        List<RelatedEntityDTO> strList = strListCallBack.getStrList();
+        RelatedEntityDTO str = strList.get(index);
+        if (!newStrList.contains(str)) {
+            newStrList.add(str);
+            view.reCreateStrPanel(newStrList);
+            view.getErrorLabel().setText("");
+        } else {
+            view.getErrorLabel().setText("STR already added");
+        }
+        bindStrLinkRemovers();
+    }
+
+    public void onSTRSelection() {
+        view.getErrorLabel().setText("");
     }
 
     class RetrieveFishListCallBack extends ZfinAsyncCallback<List<FishDTO>> {
@@ -212,7 +192,6 @@ public class FishConstructionPresenter implements Presenter {
                     entityList.addItem(dto.getName(), dto.getZdbID());
                 index++;
             }
-            view.updateConstructionTable(newGenotype, newStrList);
         }
 
         public List<GenotypeDTO> getDtoList() {

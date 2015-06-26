@@ -102,6 +102,7 @@ public class FishModule extends Composite implements EntryPoint {
                         genotypeConstructionPresenter.updateFeatureList();
                         fishConstructionPresenter.retrieveInitialEntities();
                         attributionModule.populateAttributeRemoval();
+                        fishPresenter.go();
                     }
                 });
         eventBus.addHandler(ImportGenotypeEvent.TYPE,

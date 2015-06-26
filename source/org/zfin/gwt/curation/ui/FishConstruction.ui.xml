@@ -11,11 +11,23 @@
             <g:Hyperlink text="Show" ui:field="showHideConstruction"/>
         </g:HorizontalPanel>
         <g:VerticalPanel ui:field="constructionPanel" visible="false">
-            <zfin:ZfinFlexTable ui:field="constructionTable" numberOfColumns="2" styleName="searchresults"
-                                cellSpacing="5" cellPadding="5"/>
+            <g:HTMLPanel tag="table" styleName="searchresults">
+                <tr>
+                    <th><g:InlineLabel>Genotype</g:InlineLabel></th>
+                    <th><g:InlineLabel>ST Reagents</g:InlineLabel></th>
+                </tr>
+                <tr>
+                    <td style="vertical-align: middle;"><g:InlineHTML ui:field="genotypeName"/></td>
+                    <td><g:HorizontalPanel ui:field="sTRPanel"/></td>
+                </tr>
+                <tr>
+                    <td><g:ListBox ui:field="genotypeSelectionBox"/></td>
+                    <td><g:ListBox ui:field="strSelectionBox"/><g:Button ui:field="addStrButton">Add STR</g:Button>
+                    </td>
+                </tr>
+            </g:HTMLPanel>
             <g:HorizontalPanel spacing="10">
                 <g:Button text="Create Fish" ui:field="createFishButton"/>
-                <g:Button text="Create Fish" ui:field="resetGUI"/>
                 <zfin:SimpleErrorElement ui:field="errorLabel"/>
             </g:HorizontalPanel>
             <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
