@@ -26,10 +26,7 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.Construct;
-import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FieldName;
@@ -131,47 +128,46 @@ public class FishService {
         return query;
     }
 
-
     public static List<FeatureGene> getFeatureGenes(Fish fish) {
+        return getFeatureGenes(fish, true);
+    }
+
+    public static List<FeatureGene> getFeatureGenes(Fish fish, boolean includeStrs) {
         List<FeatureGene> featureGenes = new ArrayList<>();
-        List<Feature> features = new ArrayList<>();
 
         if (fish == null) { return null; }
 
         if (fish.getGenotype() != null) {
+            Map<Feature, FeatureGene> featureMap = new HashMap<>();
             for (GenotypeFeature genotypeFeature : fish.getGenotype().getGenotypeFeatures()) {
-                features.add(genotypeFeature.getFeature());
-            }
-        }
-
-        for (Feature feature : features) {
-            for (Marker gene : feature.getAffectedGenes()) {
-                if (feature.getConstructs() == null) {
-                    FeatureGene featureGene = new FeatureGene();
-                    featureGene.setFeature(feature);
-                    featureGene.setGene(gene);
-                    featureGenes.add(featureGene);
-                } else {
-                    for (FeatureMarkerRelationship fmr : feature.getConstructs()) {
-                        FeatureGene featureGene = new FeatureGene();
-                        featureGene.setFeature(feature);
-                        featureGene.setGene(gene);
-                        featureGene.setConstruct(fmr.getMarker());
-                        featureGenes.add(featureGene);
+                Feature feature = genotypeFeature.getFeature();
+                for (FeatureMarkerRelationship rel : feature.getFeatureMarkerRelations()) {
+                    if (!featureMap.containsKey(feature)) {
+                        FeatureGene fg = new FeatureGene();
+                        fg.setFeature(feature);
+                        featureMap.put(feature, fg);
+                    }
+                    Marker marker = rel.getMarker();
+                    if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                        featureMap.get(feature).setGene(marker);
+                    } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
+                        featureMap.get(feature).setConstruct(marker);
                     }
                 }
-
             }
+            featureGenes.addAll(featureMap.values());
         }
 
-        for (Marker str : fish.getStrList()) {
-            Set<MarkerRelationship> mrels = str.getFirstMarkerRelationships();
-            for (MarkerRelationship mrel : mrels) {
-                if (StringUtils.equals(mrel.getMarkerRelationshipType().getName(),MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())) {
-                    FeatureGene featureGene = new FeatureGene();
-                    featureGene.setSequenceTargetingReagent(str);
-                    featureGene.setGene(mrel.getSecondMarker());
-                    featureGenes.add(featureGene);
+        if (includeStrs) {
+            for (Marker str : fish.getStrList()) {
+                Set<MarkerRelationship> mrels = str.getFirstMarkerRelationships();
+                for (MarkerRelationship mrel : mrels) {
+                    if (StringUtils.equals(mrel.getMarkerRelationshipType().getName(), MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())) {
+                        FeatureGene featureGene = new FeatureGene();
+                        featureGene.setSequenceTargetingReagent(str);
+                        featureGene.setGene(mrel.getSecondMarker());
+                        featureGenes.add(featureGene);
+                    }
                 }
             }
         }
@@ -180,9 +176,9 @@ public class FishService {
     }
 
     private static void addFigures(FishResult fishResult, FishSearchCriteria criteria) {
-        if (criteria == null)
+        if (criteria == null) {
             addAllFigures(fishResult);
-        else {
+        } else {
             List<String> values = criteria.getPhenotypeAnatomyCriteria().getValues();
             addFiguresByTermValues(fishResult, values);
         }
@@ -200,8 +196,9 @@ public class FishService {
 
     private static void setImageAttributeOnFish(FishResult fishResult, Set<ZfinFigureEntity> figures) {
 
-        if (figures == null || figures.size() == 0)
+        if (figures == null || figures.size() == 0) {
             return;
+        }
         fishResult.setPhenotypeFigures(figures);
         for (ZfinFigureEntity figure : figures) {
             if (figure.isHasImage()) {
@@ -216,8 +213,9 @@ public class FishService {
             criteria.setPhenotypeAnatomyCriteria(new SearchCriterion(SearchCriterionType.PHENOTYPE_ANATOMY_ID, true));
         }
         Set<ZfinFigureEntity> zfinFigureEntities = getFishRepository().getFiguresByFishAndTerms(fishID, criteria.getPhenotypeAnatomyCriteria().getValues());
-        if (zfinFigureEntities == null)
+        if (zfinFigureEntities == null) {
             return null;
+        }
 
         List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<>(zfinFigureEntities.size());
         Set<Figure> figures = new HashSet<>(zfinFigureEntities.size());
@@ -256,24 +254,28 @@ public class FishService {
      * @return list of phenotype statements
      */
     public static List<PhenotypeStatement> getDistinctPhenotypeStatements(List<PhenotypeStatement> phenotypeStatementList) {
-        if (phenotypeStatementList == null)
+        if (phenotypeStatementList == null) {
             return null;
+        }
 
         List<PhenotypeStatement> phenotypeStatements = new ArrayList<>(phenotypeStatementList.size());
         for (PhenotypeStatement phenotypeStatement : phenotypeStatementList) {
-            if (isDistinctPhenotype(phenotypeStatement, phenotypeStatements))
+            if (isDistinctPhenotype(phenotypeStatement, phenotypeStatements)) {
                 phenotypeStatements.add(phenotypeStatement);
+            }
         }
         Collections.sort(phenotypeStatements);
         return phenotypeStatements;
     }
 
     private static boolean isDistinctPhenotype(PhenotypeStatement phenotypeStatement, List<PhenotypeStatement> phenotypeStatements) {
-        if (phenotypeStatements == null)
+        if (phenotypeStatements == null) {
             return true;
+        }
         for (PhenotypeStatement phenoStatement : phenotypeStatements) {
-            if (phenoStatement.equalsByName(phenotypeStatement))
+            if (phenoStatement.equalsByName(phenotypeStatement)) {
                 return false;
+            }
         }
         return true;
     }
@@ -284,35 +286,41 @@ public class FishService {
     }
 
     public static String getGenotypeExperimentIDsString(String fishID) {
-        if (fishID == null)
+        if (fishID == null) {
             return null;
+        }
         String[] ids = fishID.split(",");
         String returnId = null;
-        for (String id : ids)
+        for (String id : ids) {
             if (ActiveData.isValidActiveData(id, ActiveData.Type.GENOX)) {
-                if (returnId == null)
+                if (returnId == null) {
                     returnId = id + ",";
-                else
+                } else {
                     returnId += id + ",";
+                }
             }
-        if (returnId == null)
+        }
+        if (returnId == null) {
             return null;
+        }
         return returnId.substring(0, returnId.length() - 1);
     }
 
     public static String getGenotypeID(String fishID) {
-        if (fishID == null)
+        if (fishID == null) {
             return null;
+        }
         String[] ids = fishID.split(",");
         String returnId = null;
-        for (String id : ids)
+        for (String id : ids) {
             if (ActiveData.validateID(id).equals(ActiveData.Type.GENO)) {
-                if (returnId == null)
+                if (returnId == null) {
                     returnId = id;
-                else
+                } else {
                     throw new RuntimeException("Found more than one GENO id: " + fishID);
-
+                }
             }
+        }
         return returnId;
     }
 
@@ -365,8 +373,9 @@ public class FishService {
 
 
         List<ExpressionResult> results = getMutantRepository().getExpressionSummary(fishOx, geneID);
-        if (CollectionUtils.isEmpty(results))
+        if (CollectionUtils.isEmpty(results)) {
             return null;
+        }
 
         return ExpressionService.createExpressionFigureSummaryFromExpressionResults(results);
     }
@@ -405,11 +414,14 @@ public class FishService {
         List<SequenceTargetingReagent> strList = fish.getStrList();
         Set<Marker> geneSet = new TreeSet<>();
         Set<Marker> affectedMarkerOnGenotype = GenotypeService.getAffectedMarker(fish.getGenotype());
-        if (affectedMarkerOnGenotype != null)
+        if (affectedMarkerOnGenotype != null) {
             geneSet.addAll(affectedMarkerOnGenotype);
-        if (CollectionUtils.isNotEmpty(strList))
-            for (SequenceTargetingReagent str : strList)
+        }
+        if (CollectionUtils.isNotEmpty(strList)) {
+            for (SequenceTargetingReagent str : strList) {
                 geneSet.addAll(str.getTargetGenes());
+            }
+        }
         List<Marker> geneList = new ArrayList<>(geneSet.size());
         geneList.addAll(geneSet);
         return geneList;

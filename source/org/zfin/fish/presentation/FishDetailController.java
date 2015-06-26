@@ -26,7 +26,6 @@ import org.zfin.mutant.presentation.DiseaseModelDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.util.ZfinStringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -95,23 +94,19 @@ public class FishDetailController {
     @RequestMapping(value = "/fish-detail-popup/{ID}")
     protected String showFishDetailPopup(Model model, @PathVariable("ID") String fishZdbId) {
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishZdbId);
-        FishBean form = new FishBean();
-        model.addAttribute("fish", fish);
-
         List<FeatureGene> genomicFeatures = new ArrayList<>();
-
         // remove any featureGenes that have an STR mutation type and use the resulting list
         // to populate the form's genomicFeatures field
-/*        CollectionUtils.select(fish.getFeatureGenes(), new Predicate() {
+        CollectionUtils.select(FishService.getFeatureGenes(fish, false), new Predicate() {
             @Override
             public boolean evaluate(Object featureGene) {
                 MutationType m = ((FeatureGene) featureGene).getMutationTypeDisplay();
                 return m != MutationType.MORPHOLINO && m != MutationType.CRISPR && m != MutationType.TALEN;
             }
         }, genomicFeatures);
-        form.setGenomicFeatures(genomicFeatures);*/
 
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute("fish", fish);
+        model.addAttribute("fishGenomicFeatures", genomicFeatures);
         return "fish/fish-detail-popup.popup";
     }
 
@@ -174,7 +169,7 @@ public class FishDetailController {
         /*if (StringUtils.isNotEmpty(fish.getGenotypeID()))
             form.setGenotype(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));*/
         addExpressionSummaryToModel(model, fishID);
-       // model.addAttribute(LookupStrings.FORM_BEAN, form);
+        // model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(fish);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(fish.getName()));
 
