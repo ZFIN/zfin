@@ -18,9 +18,9 @@
 
 <c:choose>
     <c:when test="${hit.hasPhenotypeImages}">
-        <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${hit.gene.zdbID}"><img src="/images/P_camera.png" title="view phenotype data" alt="has phenotype annotation" border="0" class="blast"></a>
+        <a href="/action/marker/${hit.gene.zdbID}/phenotype-summary"><img src="/images/P_camera.png" title="view phenotype data" alt="has phenotype annotation" border="0" class="blast"></a>
     </c:when>
     <c:when test="${hit.hasPhenotype}">
-        <a href="/<%=ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-pheno_summary.apg&OID=${hit.gene.zdbID}"><img src="/images/P_letter.png" title="view phenotype data" alt="has phenotype annotation" border="0" class="blast"></a>
+        <a href="/action/marker/${hit.gene.zdbID}/phenotype-summary"><img src="/images/P_letter.png" title="view phenotype data" alt="has phenotype annotation" border="0" class="blast"></a>
     </c:when>
 </c:choose>

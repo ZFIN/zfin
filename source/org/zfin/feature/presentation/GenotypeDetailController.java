@@ -1,13 +1,11 @@
 package org.zfin.feature.presentation;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.anatomy.presentation.AllSequenceTargetingReagentExperimentController;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
@@ -20,8 +18,6 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getFishRepository;
-
 
 @Controller
 @RequestMapping(value = "/genotype")
@@ -30,9 +26,6 @@ public class GenotypeDetailController {
     private static final Logger LOG = Logger.getLogger(GenotypeDetailController.class);
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
-
-    @Autowired
-    AllSequenceTargetingReagentExperimentController strController;
 
     @RequestMapping(value = {"/genotype-detail-popup"})
     public String getGenotypePopup(@RequestParam String zdbID, Model model) {

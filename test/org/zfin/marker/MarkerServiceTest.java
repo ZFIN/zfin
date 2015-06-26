@@ -371,4 +371,12 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         Set<Marker> set = MarkerService.getRelatedMarker(efg, types);
         assertNotNull(set);
     }
+
+    @Test
+    public void getPhenotypeOnGene() {
+        String geneAbbreviation = "ZDB-GENE-000627-2";
+        Marker gene = getMarkerRepository().getMarkerByID(geneAbbreviation);
+        PhenotypeOnMarkerBean bean = MarkerService.getPhenotypeOnGene(gene);
+        assertNotNull(bean);
+    }
 }

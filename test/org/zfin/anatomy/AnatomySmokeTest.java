@@ -121,23 +121,9 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     // brain
     public void testShowAllMutantMorpholinos() {
         try {
-            HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-sequence-targeting-reagents/ZDB-TERM-100331-8/false");
+            HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish/ZDB-TERM-100331-8");
             assertTrue(page.getTitleText().startsWith("ZFIN"));
-            assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-980526-362']").get(0));
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-    }
-
-    // neural tube
-    @Test
-    public void testShowAllWTMorpholinos() {
-        try {
-            HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-sequence-targeting-reagents/ZDB-TERM-100331-1095/true");
-            assertTrue(page.getTitleText().startsWith("ZFIN"));
-            assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-030826-1']"));
-            assertTrue(page.getByXPath("//a[@id = 'ZDB-GENE-030826-1']").size() > 0);
-            assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-030826-1']").get(0));
+            assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-070117-2052']").get(0));
         } catch (Exception e) {
             fail(e.toString());
         }

@@ -209,21 +209,6 @@ public class AnatomyAjaxController {
         return "anatomy/show-all-phenotype-mutants.page";
     }
 
-    @RequestMapping(value = "/show-phenotype-wildtype-sequence-targeting-reagent/{zdbID}")
-    public String showWildtypePhenotypeSTR(Model model
-            , @PathVariable("zdbID") String termID
-    ) throws Exception {
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return "";
-
-        AnatomySearchBean form = new AnatomySearchBean();
-        form.setAoTerm(term);
-        retrieveSequenceTargetingReagentData(term, form, true);
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-phenotype-wildtype-sequence-targeting-reagent.ajax";
-    }
-
     @RequestMapping(value = "/{oboID}/phenotype-summary/{fishID}")
     public String genotypeSummary(Model model
             , @PathVariable("oboID") String oboID
@@ -279,21 +264,6 @@ public class AnatomyAjaxController {
         model.addAttribute("includingSubstructures", true);
         model.addAttribute("genotype", geno);
         return "anatomy/phenotype-summary.page";
-    }
-
-    @RequestMapping(value = "/show-phenotype-non-wildtype-sequence-targeting-reagent/{zdbID}")
-    public String showNonWildtypePhenotypeSTR(Model model
-            , @PathVariable("zdbID") String termID
-    ) throws Exception {
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return "";
-
-        AnatomySearchBean form = new AnatomySearchBean();
-        form.setAoTerm(term);
-        retrieveSequenceTargetingReagentData(term, form, false);
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-phenotype-non-wildtype-sequence-targeting-reagent.ajax";
     }
 
     private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form) {

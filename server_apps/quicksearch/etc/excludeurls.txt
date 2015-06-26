@@ -67,6 +67,5 @@ aa-externalredirect.apg
 aa-externallink.apg
 aa-pubmedredirect.apg
 aa-markergoview.apg
-aa-pheno_summary.apg
 
 action/marker/note/external
