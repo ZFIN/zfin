@@ -538,5 +538,7 @@ public interface MutantRepository {
     void saveGenotype(Genotype genotype, String publicationID);
 
     void updateGenotypeNicknameWithHandleForPublication(Publication publication);
+
+    List<PhenotypeStatement> getPhenotypeStatementForMarker(Marker marker);
 }
 

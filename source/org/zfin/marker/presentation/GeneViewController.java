@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.zfin.anatomy.presentation.AnatomySearchBean;
+import org.zfin.expression.FigureService;
+import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
@@ -15,6 +18,8 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.mutant.Fish;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Orthology;
 import org.zfin.orthology.OrthologyEvidenceService;
 import org.zfin.repository.RepositoryFactory;
@@ -25,6 +30,7 @@ import org.zfin.sequence.service.TranscriptService;
 import java.util.Collections;
 import java.util.List;
 
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
@@ -158,5 +164,25 @@ public class GeneViewController {
 
         return "marker/marker-orthology-detail.page";
     }
+
+
+    @RequestMapping(value = "/{geneID}/phenotype-summary")
+    public String genotypeSummary(Model model
+            , @PathVariable("geneID") String geneID) throws Exception {
+
+        Marker marker = getMarkerRepository().getMarkerByID(geneID);
+        if (marker == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, geneID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(marker);
+        model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
+
+        //retrieveMutantData(term, form, true);
+        //model.addAttribute(LookupStrings.FORM_BEAN, form);
+        model.addAttribute("marker", marker);
+        return "marker/phenotype-summary.page";
+    }
+
 
 }

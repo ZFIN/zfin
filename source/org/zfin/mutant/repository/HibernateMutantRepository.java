@@ -1792,4 +1792,17 @@ public class HibernateMutantRepository implements MutantRepository {
                 .setString("pubID", publication.getZdbID())
                 .executeUpdate();
     }
+
+    @Override
+    public List<PhenotypeStatement> getPhenotypeStatementForMarker(Marker marker) {
+        String hql = "select distinct pheno from PhenotypeStatement pheno, GeneGenotypeExperiment gge " +
+                "where pheno.phenotypeExperiment.fishExperiment = gge.fishExperiment " +
+                "AND gge.gene = :gene " +
+                "AND pheno.tag != :tag";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("gene", marker);
+        query.setParameter("tag", "normal");
+        return (List<PhenotypeStatement>) query.list();
+    }
 }

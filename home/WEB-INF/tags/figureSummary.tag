@@ -20,12 +20,12 @@
                 <%--<th align="left" width="15%">Conditions</th>--%>
                 <th align="left" width="15%">Fish</th>
             </c:if>
-            <%--<th align="left" width="5%"> &nbsp; </th>--%>
+                <%--<th align="left" width="5%"> &nbsp; </th>--%>
             <c:if test="${showMarker}">
                 <th align="left" width="15%">Expressed Genes</th>
             </c:if>
             <th align="left">
-                Anatomy
+                Phenotype
             </th>
         </tr>
         <c:forEach var="figureExpressionSummaryDisplay" items="${figureExpressionSummaryList}" varStatus="status">
@@ -58,35 +58,27 @@
                                      alt=""
                                      style="margin:0px -4px"/>
                                 <c:if test="${figureExpressionSummaryDisplay.imgCount > 1}">
-                                    <img border="0" src="/images/multibars.gif" alt="multiple images" />
+                                    <img border="0" src="/images/multibars.gif" alt="multiple images"/>
                                 </c:if>
                             </zfin:link>
                         </c:if>
                     </zfin:groupByDisplay>
                 </td>
                 <c:if test="${showGenotype}">
-                <%--<c:if test="${!empty figureExpressionSummaryDisplay.exp}">
                     <td>
-                        <zfin:link entity="${figureExpressionSummaryDisplay.exp}"/>
+                    <c:if test="${!empty figureExpressionSummaryDisplay.fishList}">
+                        <c:forEach var="fish" items="${figureExpressionSummaryDisplay.fishList}" varStatus="status">
+                            <zfin:link entity="${figureExpressionSummaryDisplay.fishList[status.index]}"/>
 
-                            &lt;%&ndash;${figureExpressionSummaryDisplay.geno}&ndash;%&gt;
-
-                    </td>
-                </c:if>
---%>
-                    <td>
-                <c:if test="${!empty figureExpressionSummaryDisplay.fishList}">
-                    <c:forEach var="fish" items="${figureExpressionSummaryDisplay.fishList}" varStatus="status">
-                        <zfin:link entity="${figureExpressionSummaryDisplay.fishList[status.index]}"/>
-
-                    <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=${figureExpressionSummaryDisplay.fishList[status.index].zdbID}"></a>
+                            <a class="popup-link data-popup-link"
+                               href="/action/genotype/genotype-detail-popup?zdbID=${figureExpressionSummaryDisplay.fishList[status.index].zdbID}"></a>
                             <%--${figureExpressionSummaryDisplay.geno}--%>
 
-                        <c:if test="${!status.last}">,&nbsp&nbsp;</c:if>
-                    </c:forEach>
+                            <c:if test="${!status.last}">,&nbsp&nbsp;</c:if>
+                        </c:forEach>
 
-</td>
-                </c:if>
+                        </td>
+                    </c:if>
                 </c:if>
                 <c:if test="${showMarker}">
                     <td>

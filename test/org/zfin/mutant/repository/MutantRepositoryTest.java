@@ -487,6 +487,13 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void getPhenotypeStatementForMarker() {
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-000627-2");
+        List<PhenotypeStatement> fishList = mutantRepository.getPhenotypeStatementForMarker(marker);
+        assertNotNull(fishList);
+    }
+
+    @Test
     public void fishListBySequenceTargetingReagent() {
         SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getSequenceTargetingReagentByID("ZDB-MRPHLNO-060317-4");
         List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
