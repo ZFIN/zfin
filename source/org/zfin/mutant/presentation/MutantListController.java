@@ -85,8 +85,6 @@ public class MutantListController {
             MutantListBean form = new MutantListBean();
             form.setGene(gene);
 
-            retrieveMutantListByGene(form, zdbID);
-
             model.addAttribute(LookupStrings.FORM_BEAN, form);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mutant and Transgenic Line List for" + gene.getAbbreviation());
 
@@ -107,22 +105,5 @@ public class MutantListController {
             form.setFmRels(ftrMarkers);
         }
 
-    }
-
-    private void retrieveMutantListByGene(MutantListBean form, String geneId) {
-        List<Genotype> mutantsAndTgs = mrkrRepository.getMutantsAndTgsByGene(geneId);
-        for (Genotype geno : mutantsAndTgs) {
-            List<Figure> figs = phenoRepository.getPhenoFiguresByGenotype(geno.getZdbID());
-            Set<Figure> phenoFigs = new HashSet<>();
-            phenoFigs.addAll(figs);
-            geno.setPhenotypeFigures(phenoFigs);
-            if (phenoFigs.size() == 1) {
-                for (Figure figure : phenoFigs) {
-                    geno.setPhenotypeSingleFigure(figure);
-                }
-            }
-        }
-        Collections.sort(mutantsAndTgs);
-        form.setMutants(mutantsAndTgs);
     }
 }

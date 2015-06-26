@@ -39,8 +39,7 @@ public class Genotype implements Comparable, EntityZdbID {
     private Set<DataNote> dataNotes;
     private Set<GenotypeSupplier> suppliers;
     private Set<GenotypeAlias> aliases;
-    private Set<Figure> phenotypeFigures;
-    private Figure phenotypeSingleFigure;
+
     private String complexity;
     private List<Publication> associatedPulications;
 
@@ -194,36 +193,6 @@ public class Genotype implements Comparable, EntityZdbID {
 
     public void setAliases(Set<GenotypeAlias> aliases) {
         this.aliases = aliases;
-    }
-
-    public Set<Figure> getPhenotypeFigures() {
-        return phenotypeFigures;
-    }
-
-    public void setPhenotypeFigures(Set<Figure> phenotypeFigures) {
-        this.phenotypeFigures = phenotypeFigures;
-    }
-
-    public Figure getPhenotypeSingleFigure() {
-        return phenotypeSingleFigure;
-    }
-
-    public boolean isPhenoFiguresHaveImg() {
-        if (phenotypeFigures == null || phenotypeFigures.isEmpty())  {
-            return false;
-        }
-        boolean img = false;
-        for (Figure phenoFig : phenotypeFigures) {
-            if (!phenoFig.isImgless()) {
-                img = true;
-                break;
-            }
-        }
-        return img;
-    }
-
-    public void setPhenotypeSingleFigure(Figure phenotypeSingleFigure) {
-        this.phenotypeSingleFigure = phenotypeSingleFigure;
     }
 
     public String getComplexity() {

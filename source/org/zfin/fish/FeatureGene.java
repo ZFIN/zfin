@@ -1,6 +1,10 @@
 package org.zfin.fish;
 
+import org.zfin.feature.Feature;
 import org.zfin.infrastructure.ZfinEntity;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.presentation.Construct;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -8,13 +12,14 @@ import org.zfin.infrastructure.ZfinEntity;
 public class FeatureGene {
 
     private long ID;
-    private ZfinEntity feature;
-    private ZfinEntity gene;
-    private ZfinEntity construct;
+    private Feature feature;
+    private Marker sequenceTargetingReagent;
+    private Marker gene;
+    private Marker construct;
     private String type;
     private String typeDisplay;
     private MutationType mutationTypeDisplay;
-    private FishAnnotation fishAnnotation;
+
 
     public long getID() {
         return ID;
@@ -24,27 +29,35 @@ public class FeatureGene {
         this.ID = ID;
     }
 
-    public ZfinEntity getFeature() {
+    public Feature getFeature() {
         return feature;
     }
 
-    public void setFeature(ZfinEntity feature) {
+    public void setFeature(Feature feature) {
         this.feature = feature;
     }
 
-    public ZfinEntity getGene() {
+    public Marker getSequenceTargetingReagent() {
+        return sequenceTargetingReagent;
+    }
+
+    public void setSequenceTargetingReagent(Marker sequenceTargetingReagent) {
+        this.sequenceTargetingReagent = sequenceTargetingReagent;
+    }
+
+    public Marker getGene() {
         return gene;
     }
 
-    public void setGene(ZfinEntity gene) {
+    public void setGene(Marker gene) {
         this.gene = gene;
     }
 
-    public ZfinEntity getConstruct() {
+    public Marker getConstruct() {
         return construct;
     }
 
-    public void setConstruct(ZfinEntity construct) {
+    public void setConstruct(Marker construct) {
         this.construct = construct;
     }
 
@@ -54,14 +67,6 @@ public class FeatureGene {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public FishAnnotation getFishAnnotation() {
-        return fishAnnotation;
-    }
-
-    public void setFishAnnotation(FishAnnotation fishAnnotation) {
-        this.fishAnnotation = fishAnnotation;
     }
 
     public String getTypeDisplay() {

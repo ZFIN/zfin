@@ -2,6 +2,7 @@ package org.zfin.fish.presentation;
 
 
 import org.apache.commons.lang.StringUtils;
+import org.zfin.fish.FishSearchResult;
 import org.zfin.fish.MutationType;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.presentation.PaginationBean;
@@ -18,11 +19,20 @@ public class FishSearchFormBean extends PaginationBean {
 
     public static final String SHOW_ALL = "showAll";
 
-    private List<Fish> fishList;
+    private FishSearchResult fishSearchResult;
     private String geneOrFeatureName;
     // default value: show all records in regards to filter elements
     private String filter1 = SHOW_ALL;
     private WarehouseSummary summary;
+
+
+    public FishSearchResult getFishSearchResult() {
+        return fishSearchResult;
+    }
+
+    public void setFishSearchResult(FishSearchResult fishSearchResult) {
+        this.fishSearchResult = fishSearchResult;
+    }
 
     public WarehouseSummary getSummary() {
         return summary;
@@ -114,12 +124,6 @@ public class FishSearchFormBean extends PaginationBean {
     public void setGeneOrFeatureName(String geneOrFeatureName) {
         this.geneOrFeatureName = geneOrFeatureName.trim();
     }
-
-
-    public List<Fish> getFishList() {
-        return fishList;
-    }
-
 
     public boolean isMorphantsOnly() {
         return StringUtils.equals(filter1, "morphantsOnly");
@@ -239,10 +243,6 @@ public class FishSearchFormBean extends PaginationBean {
         SEARCH
     }
 
-    public void setFishList(List<Fish> fishList) {
-        this.fishList = fishList;
-
-    }
 
     public Map<String, String> getMutationTypeList() {
         LinkedHashMap<String, String> mutationTypeList = new LinkedHashMap<String, String>();

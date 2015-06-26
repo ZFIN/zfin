@@ -1101,6 +1101,38 @@ select gfrv_gene_abbrev as affected_gene,
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
+<!--
+           <entity name="fish_image"
+                   datasource="db"
+                   query="select
+                     case
+                       when img_image_with_annotation is not null
+                       then img_image_with_annotation
+                       else img_image end as image,
+                       img_thumbnail as thumbnail,
+                       'true' as has_image,
+                       genox_fish_zdb_id as fish_zdb_id
+                       from phenotype_experiment
+                            join image on img_fig_zdb_id = phenox_fig_zdb_id
+                            join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
+                    UNION
+                    select
+                     case
+                       when img_image_with_annotation is not null
+                       then img_image_with_annotation
+                       else img_image end as image,
+                       img_thumbnail as thumbnail,
+                       'true' as has_image,
+                       genox_fish_zdb_id as fish_zdb_id
+                       from xpat_exp_details_generated
+                            join image on img_fig_zdb_id = xedg_fig_zdb_id
+                            join fish_experiment on xedg_genox_zdb_id = genox_zdb_id"
+                   where="fish_zdb_id=fish.id"
+                   processor="CachedSqlEntityProcessor"/>
+-->
+
+
+
            <entity name="fish_phenotype_statement"
                    datasource="db" query="select distinct
 super_1.term_name
