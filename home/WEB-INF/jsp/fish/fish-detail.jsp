@@ -4,7 +4,7 @@
 
 <authz:authorize ifAnyGranted="root">
     <zfin2:dataManager zdbID="${fish.fishID}"
-                       rtype="genotype"/>
+                       rtype="fish"/>
 </authz:authorize>
 
 <div style="float: right;">
