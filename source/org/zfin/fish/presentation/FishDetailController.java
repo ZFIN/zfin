@@ -142,7 +142,7 @@ public class FishDetailController {
         return fishName;
     }
 
-    @RequestMapping(value = "/fish-detail-popup/{ID}")
+    /*@RequestMapping(value = "/fish-detail-popup/{ID}")
     protected String showFishDetailPopup(Model model, @PathVariable("ID") String fishId) {
         MartFish fish = RepositoryFactory.getFishRepository().getFish(
                 ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishId)
@@ -164,7 +164,7 @@ public class FishDetailController {
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "fish/fish-detail-popup.popup";
-    }
+    }*/
 
     private void addExpressionSummaryToModel(Model model, String fishID) {
         List<FigureExpressionSummary> figureExpressionSummaryList = FishService.getExpressionSummary(fishID);
