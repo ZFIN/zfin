@@ -1,5 +1,5 @@
 create function getFishOrder (vFishId varchar(50))
-returning varchar(50);
+returning varchar(50), int8;
 
 define fishOrder like fish.fish_order;
 define numAffectedGene int8;
@@ -106,6 +106,6 @@ else
 
 end if;
 
-return fishOrder;
+return fishOrder, numAffectedGene;
 
 end function;
