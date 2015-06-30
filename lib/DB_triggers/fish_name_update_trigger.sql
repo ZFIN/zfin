@@ -2,9 +2,9 @@ create trigger fish_name_update_trigger update of fish_name on fish
   referencing new as new_fish
  for each row (
      execute function scrub_char(new_fish.fish_name)
-     	     into fish.fish_name,
+     	     into fish_name,
      execute function zero_pad (new_fish.fish_name)
-     	     into fish.fish_name_order,
+     	     into fish_name_order,
 	     execute function getFishOrder(new_fish.fish_zdb_id)
-    into fish.fish_order 
+    into fish_order, fish_functional_affected_gene_count
 );
