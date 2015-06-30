@@ -138,17 +138,7 @@ FILTERs section
 
 
 
-<?MICOMMENT>
-<a name=featcreation>
-<p><b><font size=3>Construct Builder:</font></b>
-<p><b><font size=3>Create New Construct:</font></b>
-  <div id="markerviewtranscriptdetails">Loading Transcript Data... <img src="/images/ajax-loader.gif"/></div>
-  <?MIVAR>
-  <script type="text/javascript">
-    jQuery('#markerviewtranscriptdetails').load('/action/construct/construct-add?constructPublicationZdbID=$OID');
-  </script>
 
-<?/MICOMMENT>
 
 
 
@@ -169,72 +159,37 @@ FILTERs section
     <?/MIBLOCK>
 
 
-    <?MICOMMENT>
-<?MIBLOCK COND=$(OR,$(NXST,$featcur_featcreation),$(EC,$featcur_featcreation,hide))>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
-  <br>
-<?MIELSE>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featcreation','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
-
-  <div id="constructadd">Loading Form... <img src="/images/ajax-loader.gif"/></div>
-    <?MIVAR>
-    <script type="text/javascript">
-      jQuery('#constructadd').load('/action/construct/construct-add?constructPublicationZdbID=$OID');
-    </script>
-    <?/MIVAR>
-
-
-<?/MIBLOCK>
-<?/MICOMMENT>
-
-<?MISQL COND=$(XST,$debug_timing) SQL="
+  <?MISQL COND=$(XST,$debug_timing) SQL="
   execute function get_time()">
   <br>$1 Starting Condition
 <?/MISQL>
 
 
 
-<?MICOMMENT> 
-	  ===============
-	  =  Construct Editing  =
-	  ===============
+<p>
 
-
-<p><b><font size=3>Edit Construct:</font></b><?/MICOMMENT>
-    <br>
-
-
-
-<?MICOMMENT>
-<?MIBLOCK COND=$(OR,$(NXST,$featcur_featediting),$(EC,$featcur_featediting,hide))>
-
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide</a><?/MIVAR>
-  <br>
-<?MIELSE>
-  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide</a><?/MIVAR>
-  <p>
-  <?/MIBLOCK>
-<?/MICOMMENT>
-
-<?MICOMMENT>
 <?MIBLOCK COND=$(OR,$(NXST,$featcur_featediting),$(EC,$featcur_featediting,hide))>
   <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','show','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$unhide
-    <font color="blue"><u>[Edit Construct]</u></font></a><?/MIVAR>
-    <br>
-  <?MIELSE>
-    <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide
-    <font color="blue"><u> [Edit Construct]</u></font></a><?/MIVAR>
-    <p>
-    <font color=green>Reminder: any constructs generated prior to year/month/day may not render properly,
-               therefore may not be editable. Please file a bug if an update is needed.</font>
-  <div id="constructedit">Loading Form... <img src="/images/ajax-loader.gif"/></div>
-    <?MIVAR>
+  <font color="blue"><u>[Edit Construct]</u></font></a><?/MIVAR>
+  <br>
+<?MIELSE>
+  <?MIVAR><a href="javascript:;" onClick="storeSessionAndRefresh('$ZDB_ident','$OID','featcur_featediting','hide','/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-curation.apg&OID=$OID&randomNum='+Math.random()+'');">$hide
+  <font color="blue"><u>[Edit Construct]</u></font></a><?/MIVAR>
+<div id="constructedit">Loading Form... <img src="/images/ajax-loader.gif"/></div>
+<?MIVAR>
     <script type="text/javascript">
       jQuery('#constructedit').load('/action/construct/construct-update?constructPublicationZdbID=$OID');
     </script>
     <?/MIVAR>
-    <?/MIBLOCK>
-<?/MICOMMENT>
+<?/MIBLOCK>
+
+
+  <?MISQL COND=$(XST,$debug_timing) SQL="
+  execute function get_time()">
+  <br>$1 Starting Condition
+<?/MISQL>
+
+
 
 
 
@@ -246,7 +201,7 @@ FILTERs section
  <div id="edit-feature"></div>
  <br>
  <div id="construct-relationship-link"></div>
- <div id="construct-relationship"></div
+ <div id="construct-relationship"></div>
 
 <?MICOMMENT>
 

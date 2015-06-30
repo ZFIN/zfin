@@ -32,6 +32,8 @@ TRIGGERS = \
 	dalias_alias_update_trigger.sql \
 	db_link_insert_trigger.sql \
 	db_link_update_trigger.sql \
+	disease_annotation_insert_trigger.sql \
+	disease_annotation_update_trigger.sql \
 	external_reference_insert_trigger.sql \
 	experiment_insert_trigger.sql \
 	experiment_update_trigger.sql \

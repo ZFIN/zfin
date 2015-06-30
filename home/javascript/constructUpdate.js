@@ -503,243 +503,11 @@ function deleteComponent(divToAttachTo, thisId, component,buttonClassName){
 function generateConstructName() {
 
 
-    jQuery("#submitConstruct").attr("enabled", "enabled");
-    jQuery('#relText').text('');
-    var partCodingString = "";
-    var partPromoterString = "";
-    var cass2CodingString = "";
-    var cass2PromoterString = "";
-    var cass3CodingString = "";
-    var cass3PromoterString = "";
-    var constructDisplayName = ""
-    var constructDisplayName1 = ""
-    var constructDisplayName2 = ""
-    var consStoreName = ""
-    var consStoreName1 = ""
-    var storedPromString = "";
-    var storedCodingString = "";
-    var storedPromString2 = "";
-    var storedCodingString2 = "";
-    var consStoreName2 = ""
-    var storedPromString3 = "";
-    var storedCodingString3 = "";
-
-    var prefixStr = "";
-    var closeP = ")";
-
-
-    jQuery.each(jQuery('.update_cassette1Promoter'), function (index) {
-
-       // alert(jQuery(this).val());
-        partPromoterString += jQuery(this).val();
-
-        storedPromString = storedPromString + "Prom" + jQuery(this).val() + "#";
-    });
-
-    jQuery.each(jQuery('.update_cassette1Coding'), function (index) {
-        partCodingString += jQuery(this).val();
-        storedCodingString = storedCodingString + "Coding" + jQuery(this).val() + "#";
-    });
-
-    if (jQuery("#prefix").val() == "") {
-        prefixStr = "";
-    }
-    else {
-        prefixStr = "Prefix" + jQuery("#prefix").val() + "#";
-    }
-
-    if (partCodingString != "") {
-        if (partPromoterString != "") {
-            // jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partPromoterString+":"+partCodingString);
-            constructDisplayName = jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val() + "(" + partPromoterString + ":" + partCodingString;
-            consStoreName = jQuery('#chosenType').find(":selected").text() + "#" + prefixStr + "(" + "#" + storedPromString + "#" + "Prom:" + "#" + storedCodingString;
-            jQuery("#constructStoredName").val(consStoreName);
-            jQuery("#constructDisplayName").val(constructDisplayName);
-            jQuery("#constructName").val(constructDisplayName);
-        } else {
-            //      jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partCodingString);
-            constructDisplayName = jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val() + "(" + partCodingString;
-            consStoreName = jQuery('#chosenType').find(":selected").text() + "#" + prefixStr + "(" + "#" + storedCodingString;
-            jQuery("#constructName").val(constructDisplayName);
-            jQuery("#constructDisplayName").val(constructDisplayName);
-            jQuery("#constructStoredName").val(consStoreName);
-        }
-    }
-    else {
-        //jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partPromoterString);
-        constructDisplayName = jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val() + "(" + partPromoterString;
-        consStoreName = jQuery('#chosenType').find(":selected").text() + "#" + prefixStr + "(" + "#" + storedPromString;
-        jQuery("#constructDisplayName").val(constructDisplayName);
-        jQuery("#constructName").val(constructDisplayName);
-        jQuery("#constructStoredName").val(consStoreName);
-    }
-
-    //for cassette 2
-
-    jQuery.each(jQuery('.update_cassette2promoter'), function (index) {
-
-        cass2PromoterString += jQuery(this).val();
-
-
-            if (jQuery(this).val()!='') {
-        storedPromString2 = storedPromString2 + "Prom" + jQuery(this).val() + "#";
-           }
-
-
-    });
-
-    jQuery.each(jQuery('.update_cassette2Coding'), function (index) {
-        cass2CodingString += jQuery(this).val();
-
-          if (jQuery(this).val()!='') {
-        storedCodingString2 = storedCodingString2 + "Coding" + jQuery(this).val() + "#";
-         }
-
-    });
-
-    if (cass2CodingString != "") {
-        if (cass2PromoterString != "") {
-            // jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partPromoterString+":"+partCodingString);
-            constructDisplayName1 = cass2PromoterString + ":" + cass2CodingString;
-
-
-            consStoreName1 = storedPromString2 + "#" + "Prom:" + "#" + storedCodingString2;
-            if (constructDisplayName1.length == 0) {
-
-                jQuery("#constructName").val(constructDisplayName);
-                jQuery("#constructDisplayName").val(constructDisplayName);
-
-            }
-            else {
-
-                jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1);
-                jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1);
-                consStoreName = consStoreName + "#" + "%" + "#" + "Cassette," + "#" + consStoreName1;
-                jQuery("#constructStoredName").val(consStoreName);
-
-            }
-        } else {
-
-            //      jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partCodingString);
-            constructDisplayName1 = cass2CodingString;
-            if (constructDisplayName1.length == 0) {
-
-                jQuery("#constructName").val(constructDisplayName);
-                jQuery("#constructDisplayName").val(constructDisplayName);
-
-            }
-            else {
-
-                jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1);
-                jQuery("#constructdisplayName").val(constructDisplayName + "," + constructDisplayName1);
-                consStoreName = consStoreName + "%" + "#" + "Cassette," + "#" + consStoreName1;
-                jQuery("#constructStoredName").val(consStoreName);
-            }
-        }
-    }
-    else {
-        //jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partPromoterString);
-
-        constructDisplayName1 = cass2PromoterString;
-        consStoreName1 = storedPromString2;
-
-        if (constructDisplayName1.length == 0) {
-
-            jQuery("#constructName").val(constructDisplayName);
-            jQuery("#constructDisplayName").val(constructDisplayName);
-        }
-        else {
-
-            jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1);
-            jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1);
-            consStoreName = consStoreName + "%" + "Cassette," + "#" + consStoreName1;
-            jQuery("#constructStoredName").val(consStoreName);
-
-        }
-
-    }
-
-    //for cassette 2
-    jQuery.each(jQuery('.update_cassette3promoter'), function () {
-
-        cass3PromoterString += jQuery(this).val();
-        if (jQuery(this).val()!='') {
-            storedPromString3 = storedPromString3 + "Prom" + jQuery(this).val() + "#";
-
-        }
-    });
-    jQuery.each(jQuery('.update_cassette3coding'), function () {
-        cass3CodingString += jQuery(this).val();
-        if (jQuery(this).val()!='') {
-            storedCodingString3 = storedCodingString3 + "Coding" + jQuery(this).val() + "#";
-        }
-    });
-    if (cass3CodingString != "") {
-
-        if (cass3PromoterString != "") {
-            // jQuery("#constructName").attr('value',jQuery('#chosenType').find(":selected").text() + jQuery("#prefix").val()+"(" +partPromoterString+":"+partCodingString);
-            constructDisplayName2 = cass3PromoterString + ":" + cass3CodingString;
-            consStoreName2 = storedPromString3 + "#" + "Prom:" + "#" + storedCodingString3;
-            jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-            jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-        } else {
-            constructDisplayName2 = cass3CodingString;
-            consStoreName = consStoreName + "#" + "%" + "#" + "Cassette," + "#" + consStoreName2;
-            jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-            jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-            jQuery("#constructStoredName").val(consStoreName);
-        }
-    }
-    else {
-
-        constructDisplayName2 = cass3PromoterString;
-        jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-        jQuery("#constructDisplayName").val(constructDisplayName + "," + constructDisplayName1 + "," + constructDisplayName2);
-        consStoreName = consStoreName + "%" + "#" + "Cassette," + "#" + consStoreName2;
-        jQuery("#constructStoredName").val(consStoreName);
-    }
-    if (constructDisplayName2.length == 0) {
-        if (constructDisplayName1.length == 0) {
-            jQuery("#constructName").val(constructDisplayName);
-        }
-        else {
-            jQuery("#constructName").val(constructDisplayName + "," + constructDisplayName1);
-            consStoreName = consStoreName + "%" + "Cassette," + "#" + consStoreName1;
-
-            jQuery("#constructStoredName").val(consStoreName);
-        }
-    }
-    else {
-        consStoreName = consStoreName + "%" + "Cassette," + "#" + consStoreName2;
-
-        jQuery("#constructStoredName").val(consStoreName);
-    }
-    jQuery("#constructName").css({ 'color': 'red'});
-    finalConName = jQuery("#constructName").val();
-    finalStoredName = jQuery("#constructStoredName").val();
-
-    constructLength = finalConName.length;
-    if (finalConName.indexOf(closeP) != constructLength) {
-        jQuery('#constructDisplayName').val(finalConName + closeP);
-    }
-    else {
-        jQuery('#constructDisplayName').val(finalConName);
-    }
-    finalDisplayName = jQuery("#constructDisplayName").val();
-    jQuery('#constructDisplayName').val(finalDisplayName);
-    jQuery('#constructName').val(finalDisplayName);
-    if (finalStoredName.indexOf(closeP) == -1) {
-        jQuery('#constructStoredName').val(finalStoredName + "#" + closeP);
-
-    }
-    else {
-        jQuery('#constructStoredName').val(finalStoredName);
-
-    }
 
 }
 
 function updateConstruct() {
+    alert("updating construct");
 //   document.getElementById("thisform").submit();
 
         var param = jQuery("#thisform").serialize();
@@ -764,18 +532,21 @@ function updateConstruct() {
         });
 }
 function addAlias() {
-    var alias = jQuery("#constructAlias").val();
-    var constructID = jQuery('#constructEdit').val();
-    var pubID = jQuery('#constructPublicationZdbID').val();
+    var param = jQuery("form").serialize();
+    var pubID=jQuery('#constructPublicationZdbID').val();
+    var constructID=jQuery('#constructEdit').val();
+    console.log(param);
 
 
     jQuery.ajax({
-        url: "/action/construct/add-alias/" + constructID
-            + "/alias/" + alias + "/publication/" + pubID,
+        url: '/action/construct/construct-add-alias/',
         type: 'POST',
-        //data: param,
+        data: jQuery("form").serialize(),
+
         success: function (response) {
-            getConstructDetails(constructID);
+
+           getConstructDetails(constructID);
+
             jQuery("#constructAlias").val("");
 
 
@@ -788,21 +559,23 @@ function addAlias() {
 
 
 }
-
-function updatePublicNotes() {
-    var constructComments = jQuery("#constructComments").val();
-    var constructID = jQuery('#constructEdit').val();
-    
+function addSequence() {
+    var param = jQuery("form").serialize();
+    var pubID=jQuery('#constructPublicationZdbID').val();
+    var constructID=jQuery('#constructEdit').val();
+    console.log(param);
 
 
     jQuery.ajax({
-        url: "/action/construct/update-comments/" + constructID
-            + "/constructComments/" + constructComments,
+        url: '/action/construct/construct-add-sequence/',
         type: 'POST',
-        //data: param,
+        data: jQuery("form").serialize(),
+
         success: function (response) {
-          
+
             getConstructDetails(constructID);
+
+            jQuery("#constructSequence").val("");
 
 
         },
@@ -814,6 +587,8 @@ function updatePublicNotes() {
 
 
 }
+
+
 function addNotes() {
     var notes = jQuery("#curatorNotes").val();
     var constructID = jQuery('#constructEdit').val();
@@ -827,6 +602,7 @@ function addNotes() {
         //data: param,
         success: function (response) {
             getConstructDetails(constructID);
+alert("added Notes");
             jQuery("#curatorNotes").val("");
 
 
@@ -859,9 +635,29 @@ function deleteAlias(aliasID) {
         }
     );
 }
+function deleteSequence(sequenceID) {
+
+    var constructID = jQuery('#constructEdit').val();
+
+    jQuery.ajax(
+        {
+            url:  "/action/construct/delete-sequence/" + constructID
+            + "/sequenceID/" + sequenceID ,
+            type: "DELETE",
+            success: function (data) {
+                getConstructDetails(constructID);
+//                                            jQuery('#member-delete-button-'+personZdbID+"'").html('') ;
+
+            },
+            error: function (data) {
+                alert('There was a problem with your request: ' + data);
+            }
+        }
+    );
+}
 
 function deleteNote(noteID) {
-
+alert(noteID);
     var constructID = jQuery('#constructEdit').val();
 
     jQuery.ajax(
@@ -881,26 +677,7 @@ function deleteNote(noteID) {
     );
 }
 
-/*function getDetails(construct){
-    jQuery.ajax({
-        url: '/action/construct/construct-do-update/' + construct,
-=======
-    $('a[href^="http://"]').attr('target', '_blank');
 
-    jQuery.ajax({
-        url: '/action/construct/construct-do-update/' + test,
->>>>>>> .r32325
-//               data: ({constructID:test}),
-<<<<<<< .mine
-        type: "GET",
-        dataType: "JSON",
-        success: function(data){
-            jQuery.each(data, function(key, value) {
-                alert(value);
-            });
-        }
-    });
-}*/
 function resetFields(){
 
 
@@ -979,6 +756,7 @@ function getConstructDetails(constructID) {
 
     jQuery("#constructSynonyms").empty();
     jQuery("#constructNotes").empty();
+    jQuery("#constructSequences").empty();
     jQuery("#update-construct-error").hide();
 
 
@@ -988,131 +766,11 @@ function getConstructDetails(constructID) {
 //               data: ({constructID:test}),
         type: "GET",
         success: function (data) {
-            var promoterCount = 1;
-            var codingCount = 1;
-            var cvs = ["-", ",", "."];
-            var codingItems = "";
-            for (l = 0; l < 4; l++) {
-                window['items' + l] = "";
-                window['codingItems' + l] = "";
-            }
+
 
             jQuery.each(data, function (i, constructComponentPresentation) {
 
-                if (constructComponentPresentation.constructComponentName != "") {
-                    if (constructComponentPresentation.constructComponentName in {Tg: 1, Pt: 1, Et: 1, Gt: 1}) {
-                        jQuery("#chosenType").val(constructComponentPresentation.constructComponentName);
-                    }
-                    if (constructComponentPresentation.constructComponentCategory == "prefix component") {
-
-                        jQuery("#prefix").val(constructComponentPresentation.constructComponentName);
-                    }
-                    jQuery("#constructCassettes").val(constructComponentPresentation.maxCassettes);
-                    if (constructComponentPresentation.maxCassettes == 2) {
-
-                        jQuery("#newCassette1").show();
-                    }
-                    else {
-                        alert("number of casettes" + constructComponentPresentation.maxCassettes);
-                        jQuery("#newCassette1").hide();
-
-                        /*Query("#newCassette1").val('');
-                         jQuery("#newCassette1").html('');
-                         jQuery("#newCassette1").empty();*/
-                        jQuery("#newCassette2").hide();
-                    }
-                    if (constructComponentPresentation.maxCassettes == 3) {
-                        jQuery("#newCassette1").show();
-                        jQuery("#newCassette2").show();
-                    }
-                    else {
-
-                        jQuery("#newCassette2").hide();
-                        jQuery("#newCassette1").show();
-                        /*                            jQuery("#newCassette2").val('');
-                         jQuery("#newCassette2").html('');
-                         jQuery("#newCassette2").empty();*/
-                    }
-                    if (constructComponentPresentation.constructComponentCategory != "construct wrapper component") {
-
-
-                        var cassetteNumber = constructComponentPresentation.constructCassetteNumber;
-
-
-                        var j = constructComponentPresentation.constructComponentOrder
-                        if (constructComponentPresentation.constructComponentName != ":") {
-                            if (constructComponentPresentation.constructComponentCategory == "promoter component") {
-                               // window['items' + cassetteNumber] += "<span class='promoterControl1'>";
-
-                                //window['items'+cassetteNumber] += "<input class='"+"promoterCassette"+cassetteNumber+ " name=promoter" + promoterCount + " id=promoter" + j + " size=10" + " value=" + constructComponentPresentation.constructComponentName + ">";
-                                window['items' + cassetteNumber] += "<input  name=promoter" + promoterCount + " class=update_cassette" + cassetteNumber+"Promoter" + "  id=update_cassette" + cassetteNumber + "Promoter" + promoterCount + " size=10" + " value=" + constructComponentPresentation.constructComponentName + ">";
-                                window['items' + cassetteNumber] += "<button   class=" + cassetteNumber + " id='" + "update_addPromoter" + promoterCount + "' >+</button>" + "<button class=" + cassetteNumber + " id='" + "update_delPromoter" + promoterCount + "' >-</button>";
-                                window['items' + cassetteNumber] += "</span>";
-                              /*  if (cvs.indexOf(constructComponentPresentation.constructComponentName) == -1) {
-
-
-
-
-
-                                }*/
-                               /* else {
-                                    var selectListPromoter = "<select class=promoter" + cassetteNumber + " id=selectListPromoter" + promoterCount + ">";
-
-
-                                    selectListPromoter += "<option>" + "-" + "</option>";
-                                    selectListPromoter += "<option>" + "," + "</option>";
-                                    selectListPromoter += "<option>" + "." + "</option>";
-                                    selectListPromoter += "<option>" + "" + "</option>";
-
-                                    selectListPromoter += "</select>";
-                                    window['items' + cassetteNumber] += selectListPromoter;
-                                    var selOption = constructComponentPresentation.constructComponentName;
-                                    //jQuery("#selectListPromoter").find( 'option[value="'+selOption+'"]' ).prop( "selected", true );
-                                }*/
-                                promoterCount++;
-                            }
-                        }
-                      /*  jQuery('#promoterTest' + cassetteNumber).empty();
-                        jQuery('#promoterTest' + cassetteNumber).html('');*/
-                        //jQuery('#update_promoterCassette' + cassetteNumber).html(window['items' + cassetteNumber]);
-                        jQuery('#update_promoterCassette' + cassetteNumber).html(window['items' + cassetteNumber]);
-
-
-                     //   jQuery("#selectListPromoter").find('option[value="' + selOption + '"]').prop("selected", true);
-
-
-                        if (constructComponentPresentation.constructComponentCategory == "coding sequence component") {
-
-                          //  if (cvs.indexOf(constructComponentPresentation.constructComponentName) == -1) {
-                              //  window['codingItems' + cassetteNumber] += "<span class='codingControl1'>";
-                                window['codingItems' + cassetteNumber] += "<input class=update_cassette" + cassetteNumber+"Coding" + " name=coding" + codingCount + " id=update_cassette" + cassetteNumber + "Coding" +codingCount + " size=10" + " value=" + constructComponentPresentation.constructComponentName + ">";
-                                window['codingItems' + cassetteNumber] += "<button class=" + cassetteNumber + " id='" + "update_addCoding" + codingCount + "' >+</button>" + "<button class=" + cassetteNumber + " id='" + "update_delCoding" + codingCount + "' >-</button>";
-
-
-                           // }
-                           /* else {
-                                var selectListCoding = "<select class=coding" + cassetteNumber + "  id=selectListCoding name=coding" + codingCount + ">";
-
-
-                                selectListCoding += "<option>" + "-" + "</option>";
-                                selectListCoding += "<option>" + "," + "</option>";
-                                selectListCoding += "<option>" + "." + "</option>";
-                                selectListCoding += "<option>" + "" + "</option>";
-
-                                selectListCoding += "</select>";
-                                window['codingItems' + cassetteNumber] += selectListCoding;
-                                jQuery('#selectListCoding').val(constructComponentPresentation.constructComponentName);
-                            }*/
-                            codingCount++;
-                        }
-            /*            jQuery('#codingTest' + cassetteNumber).empty();
-                        jQuery('#codingTest' + cassetteNumber).html('');*/
-                        //actually attachhing and rendering the html to the div for the cassette.
-                        jQuery('#update_codingCassette' + cassetteNumber).html(window['codingItems' + cassetteNumber]);
-                        //jQuery('#constructDisplayName').val(constructComponentPresentation.constructDisplayName);
-                      jQuery('#constructDisplayName').val(constructComponentPresentation.constructDisplayName);
-                        jQuery('#constructName').val(constructComponentPresentation.constructDisplayName);
-                        jQuery('#constructComments').val(constructComponentPresentation.constructComments);
+                                        jQuery('#constructComments').val(constructComponentPresentation.constructComments);
 
                         if (jQuery("#synonym").length==0) {
                             jQuery.each(constructComponentPresentation.constructAliases, function () {
@@ -1125,33 +783,31 @@ function getConstructDetails(constructID) {
 
                             });
                         }
+                if (jQuery("#privateNote").length==0) {
+                    jQuery.each(constructComponentPresentation.constructCuratorNotes, function () {
 
-                        if (jQuery("#privateNote").length==0) {
-                            jQuery.each(constructComponentPresentation.constructCuratorNotes, function () {
+                        jQuery('#constructNotes').append("<div id='privateNote'>"
+                        + "<img  src='/images/delete-button.png' "
+                        + "  title='Delete Note.' onclick=deleteNote('" + this.zdbID + "');> "
+                        + this.noteData
+                        + "</div>");
 
-                                jQuery('#constructNotes').append("<div id='privateNote'>"
-                                    + "<img  src='/images/delete-button.png' "
-                                    + "  title='Delete Note.' onclick=deleteNote('" + this.zdbID + "');> "
-                                    + this.noteData
-                                                                                        + "</div>");
-
-                            });
-                        }
-                        /*for (galias in constructComponentPresentation.constructAliases) {
-                            alert(galias.name);
-                            jQuery('#constructSynonyms').append(
-                                + "<img class='clickable' src='/images/delete-button.png' "
-                                + "  title='Remove person from lab.' onclick=deleteAlias('" + data[constructAliases].aliaszdbID + "');> "
-                                +  data[constructAliases].alias + "</a>"
-                                + " "
-                                + "");
-                        }*/
-                      //  jQuery('#constructSynonyms').html(constructComponentPresentation.constructAlias);
-                       // jQuery('#constructNotes').html(constructComponentPresentation.curatorNotes);
-
-
-                    }
+                    });
                 }
+                if (jQuery("#sequence").length==0) {
+                    jQuery.each(constructComponentPresentation.constructSequences, function () {
+
+                        jQuery('#constructSequences').append("<div id='sequence'>"
+                        + "<img  src='/images/delete-button.png' "
+                        + "  title='Delete Sequence.' onclick=deleteSequence('" + this.zdbID + "');> "
+                        + this.link
+                        + "</div>");
+
+                    });
+                }
+
+
+
 
 
             });

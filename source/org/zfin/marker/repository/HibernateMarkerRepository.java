@@ -596,7 +596,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             updateComment = "Added alias: '" + markerAlias.getAlias() + " with no attribution";
         }
 
-        InfrastructureService.insertUpdate(marker, updateComment);
+       // InfrastructureService.insertUpdate(marker, updateComment);
         runMarkerNameFastSearchUpdate(marker);
         return markerAlias;
     }
@@ -2615,33 +2615,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
         final int maxCassettes = (Integer) query.uniqueResult();
 
-        String sql = " select a.construct_name,a.construct_comments ,b.cc_component,b.cc_component_type,b.cc_order,b.cc_cassette_number,b.cc_component_category,a.construct_zdb_id" +
-                " from construct a, construct_component b " +
-                " where b.cc_construct_zdb_id=a.construct_zdb_id and b.cc_construct_zdb_id=:zdbID " +
-                " order by b.cc_cassette_number,b.cc_order ";
+        String sql = " select a.construct_name,a.construct_comments,a.construct_zdb_id" +
+                " from construct a " +
+                " where a.construct_zdb_id =:zdbID " ;
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("zdbID", zdbID)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public ConstructComponentPresentation transformTuple(Object[] tuple, String[] aliases) {
                         ConstructComponentPresentation constructComponentPresentation = new ConstructComponentPresentation();
-                        constructComponentPresentation.setConstructDisplayName(tuple[0].toString());
-                        if (tuple[1] != null) {
+
+                        if (tuple[0] != null) {
                             constructComponentPresentation.setConstructComments(tuple[1].toString());
                         }
-                        constructComponentPresentation.setConstructComponentName(tuple[2].toString());
-                        if (tuple[3] != null) {
-                            constructComponentPresentation.setConstructComponentType(tuple[3].toString());
-                        }
-                        constructComponentPresentation.setConstructComponentOrder(Integer.parseInt(tuple[4].toString()));
-                        constructComponentPresentation.setConstructCassetteNumber(Integer.parseInt(tuple[5].toString()));
-                        if (tuple[6] != null) {
-                            constructComponentPresentation.setConstructComponentCategory(tuple[6].toString());
-                        }
-                        constructComponentPresentation.setConstructZdbID(tuple[7].toString());
-                        constructComponentPresentation.setMaxCassettes(maxCassettes);
-                        constructComponentPresentation.setConstructCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(getMarkerByID(tuple[7].toString())));
-                        constructComponentPresentation.setConstructAliases(getPreviousNamesLight(getMarkerByID(tuple[7].toString())));
+
+                        constructComponentPresentation.setConstructZdbID(tuple[2].toString());
+
+                        constructComponentPresentation.setConstructCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(getMarkerByID(tuple[2].toString())));
+                        constructComponentPresentation.setConstructAliases(getPreviousNamesLight(getMarkerByID(tuple[2].toString())));
+                        constructComponentPresentation.setConstructSequences(DTOMarkerService.getSupportingSequenceDTOs(getMarkerByID(tuple[2].toString())));
 
                         return constructComponentPresentation;
                     }

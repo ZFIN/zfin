@@ -3,6 +3,7 @@ package org.zfin.mutant.presentation;
 import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
@@ -15,6 +16,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -27,6 +29,7 @@ public class FishStatistics extends EntityStatistics {
     private Fish fish;
     private GenericTerm anatomyItem;
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
+    private Set<Publication> publicationSet = null; // null indicates that this has not been populated yet
     private boolean includeSubstructures;
 
     public FishStatistics(Fish fish) {
@@ -48,9 +51,20 @@ public class FishStatistics extends EntityStatistics {
         return fish;
     }
 
+    @Override
+    protected PaginationResult<Publication> getPublicationPaginationResult() {
+        return null;
+    }
+
     public int getNumberOfFigures() {
         if (figureResults == null) {
             figureResults = RepositoryFactory.getPublicationRepository().getFiguresByFishAndAnatomy(fish, anatomyItem, includeSubstructures);
+            if (publicationSet == null) {
+                publicationSet = new TreeSet<>();
+                for (Figure figure : figureResults.getPopulatedResults()) {
+                    publicationSet.add(figure.getPublication());
+                }
+            }
         }
         return figureResults.getTotalCount();
     }
@@ -82,30 +96,12 @@ public class FishStatistics extends EntityStatistics {
         return figureResults.getPopulatedResults().get(0);
     }
 
-    protected PaginationResult<Publication> getPublicationPaginationResult() {
-        PublicationRepository repository = RepositoryFactory.getPublicationRepository();
-        return repository.getPublicationsWithFigures(fish, anatomyItem, includeSubstructures);
+    public Set<Publication> getPublicationSet() {
+        return publicationSet;
     }
 
-    public SortedSet<Marker> getAffectedMarkers() {
-        Set<GenotypeFeature> features = fish.getGenotype().getGenotypeFeatures();
-        SortedSet<Marker> markers = new TreeSet<>();
-        for (GenotypeFeature feat : features) {
-            Feature feature = feat.getFeature();
-            Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
-            for (FeatureMarkerRelationship rel : rels) {
-                if (rel.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                    Marker marker = rel.getMarker();
-                    // Only add true genes
-                    if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                        markers.add(marker);
-                    }
-                }
-            }
-
-
-        }
-        return markers;
+    public List<Marker> getAffectedMarkers() {
+        return FishService.getAffectedGenes(fish);
     }
 
 

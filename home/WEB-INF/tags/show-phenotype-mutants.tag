@@ -11,7 +11,7 @@
             <tbody>
             <tr>
                 <th width="15%">
-                    Affected Genes
+                    Affected Gene
                 </th>
                 <th width="15%">
                     Fish
@@ -54,12 +54,12 @@
                             --
                         </c:if>
                         <zfin2:showCameraIcon hasImage="${genoStat.imgInFigure}"/> from
-                        <c:if test="${genoStat.numberOfPublications ==1}">
-                            <zfin:link entity="${genoStat.singlePublication}"/>
+                        <c:if test="${genoStat.publicationSet.size() ==1 }">
+                            <zfin:link entity="${genoStat.publicationSet.iterator().next()}"/>
                         </c:if>
-                        <c:if test="${genoStat.numberOfPublications > 1}">
+                        <c:if test="${genoStat.publicationSet.size() > 1}">
                             <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
-                                         integerEntity="${genoStat.numberOfPublications}"
+                                         collectionEntity="${genoStat.publicationSet}"
                                          includeNumber="true"/>
                         </c:if>
                         <c:if test="${genoStat.numberOfFigures == 0}">

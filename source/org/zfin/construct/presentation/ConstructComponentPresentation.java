@@ -2,10 +2,14 @@ package org.zfin.construct.presentation;
 
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructComponent;
+import org.zfin.gwt.root.dto.DBLinkDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.marker.presentation.PreviousNameLight;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Prita on 5/23/2014.
@@ -16,6 +20,7 @@ public class ConstructComponentPresentation {
     private String constructType;
     private String constructComponentCategory;
     private String constructComponentName;
+
 
     public ConstructCuration getConstruct() {
         return construct;
@@ -45,6 +50,8 @@ public class ConstructComponentPresentation {
         return constructAliases;
     }
 
+
+
     public List<NoteDTO> getConstructCuratorNotes() {
         return constructCuratorNotes;
     }
@@ -57,9 +64,12 @@ public class ConstructComponentPresentation {
         this.constructAliases = constructAliases;
     }
 
+
     private String constructComponentType;
 
-
+    public List<DBLinkDTO> getConstructSequences() {
+        return constructSequences;
+    }
 
     public int maxCassettes;
     private String curatorNotes;
@@ -67,9 +77,16 @@ public class ConstructComponentPresentation {
 
 
     private ConstructCuration construct;
+
+
     private List<ConstructComponent> constructComponent;
     private List<NoteDTO> constructCuratorNotes;
+    private List<DBLinkDTO> constructSequences;
     private List<PreviousNameLight> constructAliases;
+
+    public void setConstructSequences(List<DBLinkDTO> constructSequences) {
+        this.constructSequences = constructSequences;
+    }
 
 
     public String getCuratorNotes() {

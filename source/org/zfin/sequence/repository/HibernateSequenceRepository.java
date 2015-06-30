@@ -13,6 +13,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
+import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -31,7 +32,7 @@ import org.zfin.sequence.blast.Origination;
 import org.zfin.sequence.presentation.AccessionPresentation;
 
 import java.util.*;
-
+@Repository
 public class HibernateSequenceRepository implements SequenceRepository {
 
     private final Logger logger = Logger.getLogger(HibernateSequenceRepository.class);
