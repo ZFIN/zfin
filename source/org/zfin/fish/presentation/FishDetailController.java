@@ -91,9 +91,20 @@ public class FishDetailController {
         return fishName;
     }
 
+
+  /* @RequestMapping(value = "/fish-detail-popup/{ID}")
+    protected String showFishDetailPopup(Model model, @PathVariable("ID") String fishId) {
+        MartFish fish = RepositoryFactory.getFishRepository().getFish(
+                ZfinStringUtils.cleanUpConcatenatedZDBIdsDelimitedByComma(fishId)
+        );
+        FishBean form = new FishBean();
+        model.addAttribute("fish", fish);
+        retrieveGenotypeExperiment(form, fish);
+
     @RequestMapping(value = "/fish-detail-popup/{ID}")
     protected String showFishDetailPopup(Model model, @PathVariable("ID") String fishZdbId) {
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishZdbId);
+>>>>>>> 902fc9d5bab7a8dd35dfaa87b15770abaf5b3787
         List<FeatureGene> genomicFeatures = new ArrayList<>();
         // remove any featureGenes that have an STR mutation type and use the resulting list
         // to populate the form's genomicFeatures field
@@ -108,7 +119,7 @@ public class FishDetailController {
         model.addAttribute("fish", fish);
         model.addAttribute("fishGenomicFeatures", genomicFeatures);
         return "fish/fish-detail-popup.popup";
-    }
+    }*/
 
     private void addExpressionSummaryToModel(Model model, String fishID) {
         List<FigureExpressionSummary> figureExpressionSummaryList = FishService.getExpressionSummary(fishID);

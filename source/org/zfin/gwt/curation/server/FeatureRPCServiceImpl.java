@@ -439,7 +439,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 featureAssay.setMutagen(Mutagen.NOT_SPECIFIED);
             } else {
                 List<String> allowedMutagens=featureRepository.getMutagensForFeatureType(feature.getType());
-                if(allowedMutagens.indexOf(featureDTO.getMutagen())==0){
+                if(allowedMutagens.indexOf(featureDTO.getMutagen())==-1){
                     throw new ValidationException("Invalid mutagen for feature type"+ feature.getType().getDisplay());
                 }
                 else {

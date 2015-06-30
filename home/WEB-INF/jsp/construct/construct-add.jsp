@@ -51,6 +51,9 @@
 <tr>
 <td><b>Synonym</b>:</td><td><input  id="constructAlias" name="constructAlias" autocomplete="off" value="" type="text" size=50/>
 
+    <tr>
+        <td><b>Sequence</b>:</td><td><input  id="constructSequence" name="constructSequence" autocomplete="off" value="" type="text" size=50/>
+
 <tr>
 <td><b>Public Note</b>:</td><td>
     <textarea id="constructComments" name="constructComments" value="" rows="3" cols="50" ></textarea>

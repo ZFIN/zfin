@@ -12,7 +12,7 @@ import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 import org.zfin.sequence.presentation.AccessionPresentation;
-
+import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

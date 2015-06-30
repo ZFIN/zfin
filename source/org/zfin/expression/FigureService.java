@@ -69,7 +69,7 @@ public class FigureService {
     /**
      * This method (parameter set) will be used for str expression display
      *
-     * @param str         SequenceTargetingReagent
+     * @param str          SequenceTargetingReagent
      * @param gene         gene
      * @param withImgsOnly require that figures joined in have images
      * @return ExpressionSummaryCriteria object
@@ -267,16 +267,14 @@ public class FigureService {
                 FigureSummaryDisplay figureData = new FigureSummaryDisplay();
                 figureData.setPublication(pub);
                 figureData.setFigure(figure);
-                figureData.addPhenotypeStatement(statement);
                 for (Image img : figure.getImages()) {
                     if (figureData.getThumbnail() == null)
                         figureData.setThumbnail(img.getThumbnail());
                 }
                 map.put(key, figureData);
-            } else {
-                map.get(key).addPhenotypeStatement(statement);
-                map.get(key).addFish(statement.getPhenotypeExperiment().getFishExperiment().getFish());
             }
+            map.get(key).addPhenotypeStatement(statement);
+            map.get(key).addFish(statement.getPhenotypeExperiment().getFishExperiment().getFish());
         }
         List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
         if (map.values().size() > 0) {

@@ -26,9 +26,14 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.repository.MarkerRepository;
 
+import org.zfin.orthology.Species;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +56,8 @@ public class ConstructAddController {
     private InfrastructureRepository ir;
     @Autowired
     private ConstructRepository cr;
+    @Autowired
+    private SequenceRepository sr;
 
 
     @ModelAttribute("formBean")
@@ -80,6 +87,7 @@ public class ConstructAddController {
         String constructName = request.getParameter("constructName");
         String pubZdbID = request.getParameter("constructPublicationZdbID");
         String constructAlias = request.getParameter("constructAlias");
+        String constructSequence = request.getParameter("constructSequence");
         String constructComments = request.getParameter("constructComments");
         String constructCuratorNote = request.getParameter("constructCuratorNote");
         String constructStoredName = request.getParameter("constructStoredName");
@@ -178,6 +186,11 @@ public class ConstructAddController {
 
                 if (!StringUtils.isEmpty(constructCuratorNote)) {
                     mr.addMarkerDataNote(latestConstruct, constructCuratorNote);
+                }
+                if (!StringUtils.isEmpty(constructSequence)) {
+                    ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                            ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+                    mr.addDBLink(latestConstruct, constructSequence, genBankRefDB,pubZdbID);
                 }
 
 
