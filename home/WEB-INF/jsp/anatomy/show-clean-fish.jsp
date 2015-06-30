@@ -12,4 +12,4 @@
                                        allRecordsAreDisplayed="${formBean.allGenotypesAreDisplayed}"
                                        totalRecordCount="${formBean.fishCount}"
                                        useWebdriverURL="false"
-                                       substructureSearchLink="/action/ontology/show-all-phenotype-mutants-substructures/${formBean.aoTerm.zdbID}"/>
+                                       substructureSearchLink="/action/ontology/show-all-clean-fish-include-substructures/${formBean.aoTerm.zdbID}"/>

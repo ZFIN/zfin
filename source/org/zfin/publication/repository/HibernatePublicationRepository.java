@@ -652,19 +652,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure from Figure figure, PhenotypeStatement phenos, " +
-                "FishExperiment fishox, TransitiveClosure transitiveClosure " +
+                "FishExperiment fishox, TransitiveClosure transitiveClosure, GeneGenotypeExperiment fastSearch " +
                 "where fishox.fish = :fish AND " +
                 "      phenos.phenotypeExperiment.fishExperiment = fishox  AND " +
                 "      phenos.phenotypeExperiment.figure = figure AND " +
                 "      transitiveClosure.root = :aoTerm AND " +
                 "      ( phenos.entity.superterm = transitiveClosure.child OR phenos.entity.subterm = transitiveClosure.child OR " +
                 "        phenos.relatedEntity.superterm = transitiveClosure.child OR phenos.relatedEntity.subterm = transitiveClosure.child) " +
-                "      and 0 = all elements(fishox.fish.strList) " +
+                " AND exists (select 'x' from fastSearch where fishExperiment = fishox) " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
         query.setParameter("aoTerm", term);
-        PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
+        PaginationResult<Figure> paginationResult = new PaginationResult<>(query.list());
         return paginationResult;
     }
 
@@ -717,34 +717,31 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     /**
      * Retrieve publications that have phenotype data for a given term and genotype
      *
-     * @param genotype Genotype
      * @param fish
      * @param aoTerm   ao term  @return Number of publications with figures per genotype and anatomy
      */
     public PaginationResult<Publication> getPublicationsWithFigures(Fish fish, GenericTerm aoTerm, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
         String hql = "select publication from Publication as publication, PhenotypeStatement as phenotype, " +
-                "     TransitiveClosure transitiveClosure " +
+                "     TransitiveClosure transitiveClosure, GeneGenotypeExperiment fastSearch " +
                 "where " +
                 " phenotype.phenotypeExperiment.figure.publication = publication and " +
                 " transitiveClosure.root = :aoTerm and " +
                 "(phenotype.entity.superterm = transitiveClosure.child OR phenotype.entity.subterm = transitiveClosure.child OR " +
                 " phenotype.relatedEntity.superterm = transitiveClosure.child OR phenotype.relatedEntity.subterm = transitiveClosure.child) " +
                 " AND phenotype.phenotypeExperiment.fishExperiment.fish = :fish" +
-                " AND phenotype.phenotypeExperiment.fishExperiment.fish.genotype.wildtype = :wildtype" +
-                " AND 0 = all elements(phenotype.phenotypeExperiment.fishExperiment.fish.strList) ";
+                " AND exists (select 'x' from fastSearch where fishExperiment = phenotype.phenotypeExperiment.fishExperiment) ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", aoTerm);
         query.setParameter("fish", fish);
-        query.setBoolean("wildtype", false);
 
 /*
         Criteria experiment = genox.createCriteria("experiment");
         experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 */
         query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<Publication>((List<Publication>) query.list());
+        return new PaginationResult<>((List<Publication>) query.list());
     }
 
     public PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype) {
@@ -1147,9 +1144,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         return (List<Marker>) query.list();
     }
+
     public List<Feature> getFeaturesByPublication(String pubID) {
         Session session = HibernateUtil.currentSession();
-
 
 
         String hql = "select distinct feature from Feature feature, PublicationAttribution pub" +
@@ -1163,9 +1160,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Feature>) query.list();
     }
 
-   public List<Fish> getFishByPublication(String pubID) {
+    public List<Fish> getFishByPublication(String pubID) {
         Session session = HibernateUtil.currentSession();
-
 
 
         String hql = "select distinct fish from Fish fish, PublicationAttribution pub" +
@@ -1891,6 +1887,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "\t  and  geno_is_wildtype = 'f';";
         return getCount(sql, publication.getZdbID());
     }
+
     public Long getFishCount(Publication publication) {
         String sql = "\tselect count(distinct fish_zdb_id)\n" +
                 "\tfrom   record_attribution, fish\n" +

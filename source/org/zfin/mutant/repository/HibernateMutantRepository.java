@@ -29,6 +29,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
+import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
@@ -72,7 +73,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql =
                 "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
-                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
+                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq, GeneGenotypeExperiment fastSearch " +
                         "WHERE phenox.fishExperiment = fishox " +
                         "AND phenoeq.phenotypeExperiment = phenox " +
                         "AND (phenoeq.entity.superterm = :aoTerm " +
@@ -80,18 +81,12 @@ public class HibernateMutantRepository implements MutantRepository {
                         "     or phenoeq.relatedEntity.superterm = :aoTerm " +
                         "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
                         "AND phenoeq.tag != :tag " +
-                        "AND fishox.experiment.name in (:condition) " +
-                        "AND size(fishox.fish.strList) = 0  ";
-
-        if (!wildtype) {
-            hql += "AND fishox.fish.genotype.wildtype = 'f' ";
-        }
+                        "AND exists (select 'x' from fastSearch where fishExperiment = fishox) ";
         hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
-        query.setParameterList("condition", Experiment.STANDARD_CONDITIONS);
         // have to add extra select because of ordering, but we only want to return the first
         query.setResultTransformer(new BasicTransformerAdapter() {
             @Override
@@ -154,23 +149,21 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct fishox.fish,fishox.fish.name from FishExperiment fishox, " +
-                        "PhenotypeTermFastSearch fastSearch " +
-                        "WHERE fastSearch.phenotypeStatement.phenotypeExperiment.fishExperiment = fishox " +
-                        "AND fastSearch.term = :aoTerm " +
-                        "AND fastSearch.phenotypeStatement.tag != :tag " +
-                        "AND fishox.standardOrGenericControl = :standardOrGeneric " +
-                        "AND size(fishox.fish.strList) = 0 ";
-
-        if (!wildtype) {
-            hql += "AND fishox.fish.genotype.wildtype = 'f' ";
-        }
-        hql += "ORDER BY fishox.fish.name asc";
+                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
+                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq, GeneGenotypeExperiment fastSearch," +
+                        "TransitiveClosure transitiveClosure " +
+                        "WHERE phenox.fishExperiment = fishox " +
+                        "AND phenoeq.phenotypeExperiment = phenox " +
+                        "AND transitiveClosure.root = :aoTerm and " +
+                        "(phenoeq.entity.superterm = transitiveClosure.child OR phenoeq.entity.subterm = transitiveClosure.child OR " +
+                        " phenoeq.relatedEntity.superterm = transitiveClosure.child OR phenoeq.relatedEntity.subterm = transitiveClosure.child) " +
+                        "AND phenoeq.tag != :tag " +
+                        "AND exists (select 'x' from fastSearch where fishExperiment = fishox) ";
+        hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
-        query.setBoolean("standardOrGeneric", true);
         // have to add extra select because of ordering, but we only want to return the first
         query.setResultTransformer(new BasicTransformerAdapter() {
             @Override
