@@ -142,9 +142,10 @@ public class GenotypePresenter implements Presenter {
 
         @Override
         public void onSuccess(List<GenotypeDTO> list) {
-            if (list != null && list.size() > 0)
+            if (list != null && list.size() > 0) {
                 view.getNoneDefinedGenoLabel().setVisible(false);
-            view.setData(list);
+                view.setData(list);
+            }
             bind();
         }
     }

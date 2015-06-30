@@ -40,6 +40,17 @@ public interface MutantRepository {
      */
     PaginationResult<Fish> getFishByAnatomyTerm(GenericTerm item, boolean wildtype, PaginationBean bean);
 
+    /**
+     * This returns a list genotypes (mutants) that are annotated
+     * to a given anatomy item.
+     *
+     * @param item     Anatomy Item
+     * @param wildtype return wildtype genotypes
+     * @param bean     Pagination bean info
+     * @return list of genotypes
+     */
+    PaginationResult<Fish> getDirtyFishByAnatomyTerm(GenericTerm item, boolean wildtype, PaginationBean bean);
+
     List<Genotype> getGenotypesByFeature(Feature feature);
 
     List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype);
@@ -364,6 +375,8 @@ public interface MutantRepository {
 
     List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures);
 
+    List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
+
     /**
      * Retrieve phenotype statements for given structure and genotype.
      *
@@ -525,5 +538,7 @@ public interface MutantRepository {
     void saveGenotype(Genotype genotype, String publicationID);
 
     void updateGenotypeNicknameWithHandleForPublication(Publication publication);
+
+    List<PhenotypeStatement> getPhenotypeStatementForMarker(Marker marker);
 }
 

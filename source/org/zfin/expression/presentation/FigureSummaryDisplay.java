@@ -6,29 +6,33 @@ import org.zfin.expression.ExpressionStatement;
 import org.zfin.expression.Figure;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
 
     private Publication publication;
     private Figure figure;
     private int imgCount;
+
     public List<Experiment> getExp() {
         return exp;
     }
+
     public void setExp(List<Experiment> exp) {
         this.exp = exp;
     }
+
     private String thumbnail;
     private List<Experiment> exp;
 
     // for phenotype summary page
-    private List<PhenotypeStatement> phenotypeStatementList;
+    private Set<PhenotypeStatement> phenotypeStatementList;
     public List<String> geno;
 
     public List<String> getGeno() {
@@ -45,7 +49,7 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     private DevelopmentStage earliestStartStage;
     private DevelopmentStage latestEndStage;
     private List<Marker> expressedGenes;
-    private List<Fish> fishList;
+    private Set<Fish> fishList;
 
     private boolean publicationDisplayed;
 
@@ -82,11 +86,20 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     }
 
     public List<Fish> getFishList() {
-        return fishList;
+        if(fishList == null)
+            return null;
+        return new ArrayList<>(fishList);
     }
 
     public void setFishList(List<Fish> fish) {
-        this.fishList = fish;
+        if(fish != null)
+        fishList = new HashSet<>(fish);
+    }
+
+    public void addFish(Fish fish) {
+        if (fishList == null)
+            fishList = new HashSet<>();
+        fishList.add(fish);
     }
 
     public List<ExpressionStatement> getExpressionStatementList() {
@@ -98,11 +111,15 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     }
 
     public List<PhenotypeStatement> getPhenotypeStatementList() {
-        return phenotypeStatementList;
+        if (phenotypeStatementList == null)
+            return null;
+        return new ArrayList<>(phenotypeStatementList);
     }
 
     public void setPhenotypeStatementList(List<PhenotypeStatement> phenotypeStatementList) {
-        this.phenotypeStatementList = phenotypeStatementList;
+        if (this.phenotypeStatementList == null)
+            this.phenotypeStatementList = new HashSet<>();
+        this.phenotypeStatementList.addAll(phenotypeStatementList);
     }
 
     public List<Marker> getExpressedGenes() {
@@ -130,7 +147,6 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
     }
 
 
-
     public int compareTo(FigureSummaryDisplay anotherFigureSummary) {
         if (anotherFigureSummary.publication == null)
             return 1;
@@ -154,7 +170,7 @@ public class FigureSummaryDisplay implements Comparable<FigureSummaryDisplay> {
 
     public void addPhenotypeStatement(PhenotypeStatement statement) {
         if (phenotypeStatementList == null)
-            phenotypeStatementList = new ArrayList<PhenotypeStatement>();
+            phenotypeStatementList = new HashSet<>();
         phenotypeStatementList.add(statement);
     }
 

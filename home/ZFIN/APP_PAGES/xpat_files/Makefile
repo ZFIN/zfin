@@ -21,8 +21,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/home/ZFIN/APP_PAGES/xpat_files
 
 GENERICS = curation.apg experimentcuration.apg \
-figurecuration.apg \
-pheno_summary.apg xpatcurcondition.apg \
+figurecuration.apg xpatcurcondition.apg \
 xpatcurexperiment.apg xpatcurfigure.apg xpatcurimage.apg xpatcurpermission.apg \
  xpatselect.apg \
 xpatselect_detailedresults.apg xpatselect_note.apg xpatselect_summaryresults.apg \

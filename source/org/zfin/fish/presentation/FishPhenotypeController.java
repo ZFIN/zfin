@@ -56,6 +56,8 @@ public class FishPhenotypeController {
                                           @ModelAttribute("formBean") FishSearchFormBean formBean,
                                           Model model) throws Exception {
 
+        //todo: implement me!
+/*
         LOG.info("Start MartFish Phenotype Controller");
         FishSearchCriteria criteria = new FishSearchCriteria(formBean);
         List<FigureSummaryDisplay> figureSummaryDisplayList = FishService.getPhenotypeSummary(fishID, criteria);
@@ -70,6 +72,7 @@ public class FishPhenotypeController {
         form.setPhenoStatements(getMutantRepository().getPhenotypeStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
         model.addAttribute("genotypeFormBean", form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Summary");
+*/
 
         return "fish/fish-phenotype-figure-summary.page";
     }

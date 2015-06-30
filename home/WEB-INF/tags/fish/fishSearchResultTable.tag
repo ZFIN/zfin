@@ -119,48 +119,51 @@
         jQuery('#affected-gene-column-header, #feature-column-header').tipsy({gravity:'s', opacity:1, delayIn:650, delayOut:200});
         jQuery('#fish-column-header').tipsy({gravity:'sw', opacity:1, delayIn:750, delayOut:200});
     </script>
-    <c:forEach var="fish" items="${formBean.fishList}" varStatus="loop">
+    <c:forEach var="result" items="${formBean.fishSearchResult.results}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td class="bold" colspan="5">
-                <c:if test="${!empty fish.genotype}">
-                    <zfin:link entity="${fish}"/>
-                </c:if>
-
+                <zfin:link entity="${result.fish}"/>
             </td>
             <td>
-<%--               <c:if test="${fish.expressionFigureCount > 0}">
-                <zfin2:fishSearchExpressionFigureLink queryKeyValuePair="fishID=${fish.fishID}"
-                                                      figureCount="${fish.expressionFigureCount}"/>
+               <c:if test="${result.expressionFigureCount > 0}">
+                <zfin2:fishSearchExpressionFigureLink queryKeyValuePair="fishID=${result.fish.zdbID}"
+                                                      figureCount="${result.expressionFigureCount}"/>
                     <span id="image-icon-${loop.index}">
                     </span>
                 </c:if>
-                <zfin2:showCameraIcon hasImage="${fish.expressionImageAvailable}"/>--%>
+                <zfin2:showCameraIcon hasImage="${result.expressionImageAvailable}"/>
             </td>
             <td>
-<%--                <c:if test="${fish.phenotypeFigureCount > 0}">
-                    &lt;%&ndash; Case of a single figure &ndash;%&gt;
-                    <c:if test="${fish.phenotypeFigureCount ==1}">
-                        <zfin:link entity="${fish.singleFigure}"/>
+                <c:if test="${result.phenotypeFigureCount > 0}">
+                    <%-- Case of a single figure --%>
+                    <c:if test="${result.phenotypeFigureCount ==1}">
+                        <zfin:link entity="${result.singleFigure}"/>
                     </c:if>
-                    &lt;%&ndash; case of multiple figures &ndash;%&gt;
-                    <c:if test="${fish.phenotypeFigureCount > 1}">
-                        <a href="phenotype-summary?fishID=${fish.zdbID}&<%= request.getQueryString()%>">
+                    <%-- case of multiple figures --%>
+                    <c:if test="${result.phenotypeFigureCount > 1}">
+                        <a href="phenotype-summary?fishID=${result.fish.zdbID}&<%= request.getQueryString()%>">
                             <zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
-                                         integerEntity="${fish.phenotypeFigureCount}"/>
+                                         integerEntity="${result.phenotypeFigureCount}"/>
                         </a>
                     </c:if>
-                    <zfin2:showCameraIcon hasImage="${fish.imageAvailable}"/>
-                </c:if>--%>
+                    <zfin2:showCameraIcon hasImage="${result.imageAvailable}"/>
+                </c:if>
             </td>
         </zfin:alternating-tr>
-<%--        <c:forEach var="featureGene" items="${fish.featureGenes}" varStatus="fgIndex">
+        <c:forEach var="featureGene" items="${result.featureGenes}" varStatus="fgIndex">
             <zfin:alternating-tr loopName="loop">
                 <td></td>
                 <td>
                     <zfin:link entity="${featureGene.gene}"/>
                 </td>
                 <td>
-                    <zfin:link entity="${featureGene.feature}"/>
+                    <%-- will be one or the other--%>
+                    <c:if test="${!empty featureGene.feature}">
+                        <zfin:link entity="${featureGene.feature}"/>
+                    </c:if>
+                    <c:if test="${!empty featureGene.sequenceTargetingReagent}">
+                        <zfin:link entity="${featureGene.sequenceTargetingReagent}"/>
+                    </c:if>
                 </td>
                 <td>
                     <zfin:link entity="${featureGene.construct}"/>
@@ -174,26 +177,26 @@
                     <c:if test="${(fgIndex.last) && (!formBean.showAllMutantFish)}">
                         <authz:authorize ifAnyGranted="root">
                         <span style="font-size:small ; opacity: 0.33;">
-                          <a style=" " class="clickable" onclick="jQuery('#${fish.zdbID}-text').slideToggle(); ">Score</a>
+                          <a style=" " class="clickable" onclick="jQuery('#${result.fish.zdbID}-text').slideToggle(); ">Score</a>
                           | <a style=" " href="/action/database/view-record/FISH-${fish.ID}">DB</a> | 
                         </span>
                         </authz:authorize>
 
                         <span style="float:right" id="matching-details-show-link${loop.index}">
-                            <c:if test="${fish.genotypeID!=null}">
+                            <c:if test="${result.fish.genotype!=null}">
                             <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
                                onclick="jQuery('#matching-details-show-link${loop.index}').hide();
                                        jQuery('#matching-details-hide-detail${loop.index}').show();
                                        jQuery('#matching-details-${loop.index}').show();
-                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.fishID}&<%= request.getQueryString()%>', function() { processPopupLinks('#matching-details-${loop.index}'); });">
+                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${result.fish.zdbID}&<%= request.getQueryString()%>', function() { processPopupLinks('#matching-details-${loop.index}'); });">
                                 Matching Detail</a>
                                 </c:if>
-                            <c:if test="${fish.genotypeID==null}">
+                            <c:if test="${result.fish.genotype==null}">
                             <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
                                onclick="jQuery('#matching-details-show-link${loop.index}').hide();
                                        jQuery('#matching-details-hide-detail${loop.index}').show();
                                        jQuery('#matching-details-${loop.index}').show();
-                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${fish.ID}&<%= request.getQueryString()%>', function() { processPopupLinks('#matching-details-${loop.index}'); });">
+                                       jQuery('#matching-details-${loop.index}').load('/action/fish/matching-detail?fishID=${result.fish.zdbID}&<%= request.getQueryString()%>', function() { processPopupLinks('#matching-details-${loop.index}'); });">
                                 Matching Detail</a>
                         </span>
                             </c:if>
@@ -206,19 +209,19 @@
                     </c:if>
                 </td>
             </zfin:alternating-tr>
-        </c:forEach>--%>
-<%--        <zfin:alternating-tr loopName="loop">
+        </c:forEach>
+        <zfin:alternating-tr loopName="loop">
             <td colspan="7">
                 <authz:authorize ifAnyGranted="root">
-                    <div id="${fish.ID}-text"
+                    <div id="${result.fish.zdbID}-text"
                          style="width: 800px ; display:none; margin: 0.5em 2em; padding: .5em; ">
-                        <strong>Gene Or Feature Text:</strong> ${fish.geneOrFeatureText}
-                        <div>${fish.scoringText}</div>
+                        <strong>Gene Or Feature Text:</strong> ${result.geneOrFeatureText}
+                        <div>${result.scoringText}</div>
                     </div>
                 </authz:authorize>
                 <div align="right" style="font-size:smaller;" id="matching-details-${loop.index}"></div>
             </td>
-        </zfin:alternating-tr>--%>
+        </zfin:alternating-tr>
     </c:forEach>
 </table>
 <input name="page" type="hidden" value="1" id="page"/>

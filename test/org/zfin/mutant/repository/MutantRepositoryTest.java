@@ -478,6 +478,22 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    @Ignore
+    public void getPhenotypeStatementForMutantSummary() {
+        Fish genotype = getMutantRepository().getFish("ZDB-FISH-150624-1296");
+        GenericTerm term = getOntologyRepository().getTermByOboID("ZFA:0000386/");
+        List<PhenotypeStatement> fishList = mutantRepository.getPhenotypeStatementForMutantSummary(term, genotype, false);
+        assertNotNull(fishList);
+    }
+
+    @Test
+    public void getPhenotypeStatementForMarker() {
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-000627-2");
+        List<PhenotypeStatement> fishList = mutantRepository.getPhenotypeStatementForMarker(marker);
+        assertNotNull(fishList);
+    }
+
+    @Test
     public void fishListBySequenceTargetingReagent() {
         SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getSequenceTargetingReagentByID("ZDB-MRPHLNO-060317-4");
         List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);

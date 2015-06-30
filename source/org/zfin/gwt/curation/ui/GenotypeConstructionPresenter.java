@@ -36,37 +36,12 @@ public class GenotypeConstructionPresenter implements Presenter {
     public GenotypeConstructionPresenter(HandlerManager eventBus, GenotypeConstruction view, String publicationID) {
         this.eventBus = eventBus;
         this.view = view;
+        this.view.setPresenter(this);
         this.publicationID = publicationID;
         view.setPublicationID(publicationID);
     }
 
     public void bind() {
-        view.getShowHideSection().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                view.getGenotypeConstructionToggle().toggleVisibility();
-                retrieveInitialEntities();
-            }
-        });
-        view.getCreateGenotypeButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                resetError();
-                if (genotypeFeatureDTOList.size() == 0) {
-                    view.getErrorLabel().setError("No Feature selected");
-                    return;
-                }
-                String nicknameString = view.getGenotypeNickname().getText();
-                if (nicknameString.equals(view.getGenotypeHandle().getText()))
-                    nicknameString = null;
-                diseaseRpcService.createGenotypeFeature(publicationID,
-                        genotypeFeatureDTOList,
-                        getSelectedGenotypeBackground(),
-                        nicknameString,
-                        new CreateGenotypeCallBack("Create new Genotype", view.getErrorLabel(), view.getLoadingImage()));
-                view.getLoadingImage().setVisible(true);
-            }
-        });
         view.getAddGenotypeFeature().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -93,46 +68,11 @@ public class GenotypeConstructionPresenter implements Presenter {
                 resetError();
             }
         });
-        view.getBackgroundListBox().addChangeHandler(new ChangeHandler() {
-            @Override
-            public void onChange(ChangeEvent changeEvent) {
-                getSelectedGenotypeBackground();
-                view.setGenotypeInfo(genotypeFeatureDTOList, backgroundGeno);
-                resetError();
-            }
-        });
-        view.getButtonUUU().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                view.getZygosityListBox().setSelectedIndex(3);
-                view.getZygosityMaternalListBox().setSelectedIndex(3);
-                view.getZygosityPaternalListBox().setSelectedIndex(3);
-                resetError();
-            }
-        });
-        view.getButton2UU().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                view.getZygosityListBox().setSelectedIndex(0);
-                view.getZygosityMaternalListBox().setSelectedIndex(3);
-                view.getZygosityPaternalListBox().setSelectedIndex(3);
-                resetError();
-            }
-        });
-        view.getButton211().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                view.getZygosityListBox().setSelectedIndex(0);
-                view.getZygosityMaternalListBox().setSelectedIndex(1);
-                view.getZygosityPaternalListBox().setSelectedIndex(1);
-                resetError();
-            }
-        });
         bindRemoveGenotypeFeatureClickHandler();
     }
 
     private void bindRemoveGenotypeFeatureClickHandler() {
-        Map<DeleteImage, GenotypeFeatureDTO> deleteGenoeFeatureMap = view.getDeleteGenoeFeatureMap();
+        Map<DeleteImage, GenotypeFeatureDTO> deleteGenoeFeatureMap = view.getDeleteGenoFeatureMap();
         for (DeleteImage removeGenotypeFeature : deleteGenoeFeatureMap.keySet()) {
             removeGenotypeFeature.addClickHandler(new RemoveGenotypeFeature(deleteGenoeFeatureMap.get(removeGenotypeFeature)));
         }
@@ -177,15 +117,12 @@ public class GenotypeConstructionPresenter implements Presenter {
         view.updateGenotypeFeatureList(genotypeFeatureDTOList, backgroundGeno);
         view.getBackgroundListBox().setSelectedIndex(0);
         view.setGenotypeInfo(genotypeFeatureDTOList, backgroundGeno);
-        view.getGenotypeHandle().setText("");
     }
 
     @Override
     public void go() {
         bind();
         view.updateGenotypeFeatureList(genotypeFeatureDTOList, backgroundGeno);
-        view.initNewGenotypeInfo();
-
     }
 
     public void retrieveInitialEntities() {
@@ -201,6 +138,59 @@ public class GenotypeConstructionPresenter implements Presenter {
         // get Feature List  from new Genotypes
         featureGenotypeListCallBack = new RetrieveRelatedEntityDTOListCallBack<>(view.getFeatureForGenotypeListBox(), "Feature Geno List", view.getErrorLabel());
         diseaseRpcService.getFeatureList(publicationID, featureGenotypeListCallBack);
+    }
+
+    public void onShowHideClick() {
+        view.getGenotypeConstructionToggle().toggleVisibility();
+        retrieveInitialEntities();
+    }
+
+    public void onCreateGenotypeButtonClick() {
+        resetError();
+        if (genotypeFeatureDTOList.size() == 0) {
+            view.getErrorLabel().setError("No Feature selected");
+            return;
+        }
+        String nicknameString = view.getGenotypeNickname().getText();
+        if (nicknameString.equals(view.getGenotypeHandle().getText()))
+            nicknameString = null;
+        diseaseRpcService.createGenotypeFeature(publicationID,
+                genotypeFeatureDTOList,
+                getSelectedGenotypeBackground(),
+                nicknameString,
+                new CreateGenotypeCallBack("Create new Genotype", view.getErrorLabel(), view.getLoadingImage()));
+        view.getLoadingImage().setVisible(true);
+    }
+
+    public void onResetClick() {
+        resetGUI();
+    }
+
+    public void onBackgroundClick() {
+        getSelectedGenotypeBackground();
+        view.setGenotypeInfo(genotypeFeatureDTOList, backgroundGeno);
+        resetError();
+    }
+
+    public void on211Click() {
+        view.getZygosityListBox().setSelectedIndex(0);
+        view.getZygosityMaternalListBox().setSelectedIndex(1);
+        view.getZygosityPaternalListBox().setSelectedIndex(1);
+        resetError();
+    }
+
+    public void on2UUClick() {
+        view.getZygosityListBox().setSelectedIndex(0);
+        view.getZygosityMaternalListBox().setSelectedIndex(3);
+        view.getZygosityPaternalListBox().setSelectedIndex(3);
+        resetError();
+    }
+
+    public void onUUUClick() {
+        view.getZygosityListBox().setSelectedIndex(3);
+        view.getZygosityMaternalListBox().setSelectedIndex(3);
+        view.getZygosityPaternalListBox().setSelectedIndex(3);
+        resetError();
     }
 
     class RetrieveZygosityListCallBack extends ZfinAsyncCallback<List<ZygosityDTO>> {

@@ -13,7 +13,7 @@ import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 
 /**
- * Entry point for FX curation module.
+ * Entry point for FISH curation module.
  */
 public class FishModule extends Composite implements EntryPoint {
 
@@ -102,6 +102,7 @@ public class FishModule extends Composite implements EntryPoint {
                         genotypeConstructionPresenter.updateFeatureList();
                         fishConstructionPresenter.retrieveInitialEntities();
                         attributionModule.populateAttributeRemoval();
+                        fishPresenter.go();
                     }
                 });
         eventBus.addHandler(ImportGenotypeEvent.TYPE,

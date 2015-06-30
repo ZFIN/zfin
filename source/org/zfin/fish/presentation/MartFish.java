@@ -67,59 +67,11 @@ public class MartFish extends ZfinEntity {
         this.genotypeExperimentIDsString = genotypeExperimentIDsString;
     }
 
-    public List<ZfinEntity> getFeatures() {
-        if (CollectionUtils.isEmpty(featureGenes))
-            return null;
-
-        if (features != null)
-            return features;
-
-        features = new ArrayList<ZfinEntity>(featureGenes.size());
-        for (FeatureGene featureGene : featureGenes)
-            if (!featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO)||!featureGene.getMutationTypeDisplay().equals(MutationType.CRISPR)||!featureGene.getMutationTypeDisplay().equals(MutationType.TALEN))
-                features.add(featureGene.getFeature());
-        return features;
-    }
 
     public void setFeatures(List<ZfinEntity> features) {
         this.features = features;
     }
 
-    public List<SequenceTargetingReagent> getStrList() {
-            if (CollectionUtils.isEmpty(featureGenes))
-            return null;
-
-        if (strList != null)
-            return strList;
-
-        strList = new ArrayList<SequenceTargetingReagent>(featureGenes.size());
-        for (FeatureGene featureGene : featureGenes) {
-            if (featureGene.getMutationTypeDisplay().equals(MutationType.MORPHOLINO) || featureGene.getMutationTypeDisplay().equals(MutationType.TALEN) || featureGene.getMutationTypeDisplay().equals(MutationType.CRISPR)) {
-                SequenceTargetingReagent str = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent(featureGene.getFeature().getID());
-                strList.add(str);
-
-            }
-
-        }
-        return strList;
-    }
-
-    public void setStrList(List<SequenceTargetingReagent> strList) {
-        this.strList = strList;
-    }
-
-    public List<ZfinEntity> getAffectedGenes() {
-        if (CollectionUtils.isEmpty(featureGenes))
-            return null;
-
-        if (affectedGenes != null)
-            return affectedGenes;
-
-        affectedGenes = new ArrayList<ZfinEntity>(featureGenes.size());
-        for (FeatureGene featureGene : featureGenes)
-            affectedGenes.add(featureGene.getGene());
-        return affectedGenes;
-    }
 
     public List<String> getMutationTypes() {
         return mutationTypes;

@@ -1071,7 +1071,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
               <?MIVAR COND="$(=,$mrkrsel_pheno_fig_count,1)"><A HREF=/$mrkrsel_pheno_fig_zdb_id>1 figure</A><?/MIVAR>
 
               <?MIVAR COND="$(>,$mrkrsel_pheno_fig_count,1)">
-                  <A HREF=/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-pheno_summary.apg&OID=$OID>$mrkrsel_pheno_fig_count figures</A>
+                  <A HREF=/action/marker/$OID/phenotype-summary>$mrkrsel_pheno_fig_count figures</A>
               <?/MIVAR>
 
               <?MIBLOCK COND="$(>,$mrkrsel_pheno_fig_count,0)">

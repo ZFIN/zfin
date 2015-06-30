@@ -7,6 +7,7 @@ import org.zfin.fish.FishSearchCriteria;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.ConstructSearchCriteria;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.presentation.Construct;
@@ -28,11 +29,20 @@ public class PhenotypeSummaryCriteria {
     private DevelopmentStage start;
     private DevelopmentStage end;
 
+    private Fish fish;
+    private Construct construct;
+    private List<FishExperiment> fishExperiments;
+    private FishSearchCriteria criteria;
+    private ConstructSearchCriteria constructCriteria;
+    private Genotype genotype;
+
 
     private boolean isWildtypeOnly;
     private boolean withImagesOnly;
     private boolean isStandardEnvironment;
     private boolean isChemicalEnvironment;
+
+
 
 
     public PhenotypeSummaryCriteria clone() {
@@ -159,13 +169,6 @@ public class PhenotypeSummaryCriteria {
         this.construct = construct;
     }
 
-    private MartFish fish;
-    private Construct construct;
-    private List<FishExperiment> fishExperiments;
-    private FishSearchCriteria criteria;
-    private ConstructSearchCriteria constructCriteria;
-    private Genotype genotype;
-
     public ConstructSearchCriteria getConstructCriteria() {
         return constructCriteria;
     }
@@ -174,12 +177,11 @@ public class PhenotypeSummaryCriteria {
         this.constructCriteria = constructCriteria;
     }
 
-    public MartFish getFish() {
-
+    public Fish getFish() {
         return fish;
     }
 
-    public void setFish(MartFish fish) {
+    public void setFish(Fish fish) {
         this.fish = fish;
     }
 

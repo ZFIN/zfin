@@ -26,10 +26,12 @@ public class FishPresentation extends EntityPresentation {
         }
     }
 
-
-    //todo: this is probably going to need a popup link...
     public static String getLink(Fish fish, Boolean suppressPopupLink) {
-        return getViewLink(fish.getZdbID(), fish.getName(), fish.getName(),null);
+        String link = getViewLink(fish.getZdbID(), fish.getName(), fish.getName(), null);
+        if (!suppressPopupLink) {
+            link += getTomcatPopupLink(popupUri, fish.getZdbID(), "More details about this fish");
+        }
+        return link;
     }
 
     /**

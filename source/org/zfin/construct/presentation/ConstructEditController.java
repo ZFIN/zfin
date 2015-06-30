@@ -2,11 +2,14 @@ package org.zfin.construct.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.construct.ConstructCuration;
+import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
@@ -15,11 +18,13 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.orthology.Species;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,10 +41,14 @@ public class ConstructEditController {
 
     @Autowired
     private MarkerRepository mr;
+    @Autowired
     private PublicationRepository pr;
-    private InfrastructureRepository ir ;
+    @Autowired
+    private InfrastructureRepository ir;
+    @Autowired
+    private ConstructRepository cr;
+    @Autowired
     private SequenceRepository sr;
-    private ProfileRepository profileRepository;
 
 
     private static Logger logger = Logger.getLogger(ConstructEditController.class);
@@ -71,63 +80,47 @@ public class ConstructEditController {
     private
     @Autowired
     HttpServletRequest request;
-
-   /* @RequestMapping(value = "/construct-do-update", method = RequestMethod.GET)
-
-    public String doSearch(Model model, @RequestParam("constructID") String zdbID,
-                           @Valid @ModelAttribute("formBean") ConstructUpdateBean constructBean,
-                           BindingResult result
-    ) throws Exception {
-
-        Marker ct=mr.getMarkerByID(zdbID);
-
-        List<ConstructComponent> cc=mr.getConstructComponent(ct.getZdbID());
-        constructBean.setConstructDisplayName(ct.name);
-
-        constructBean.setConstructSynonym(ct.getPublicComments());
-        constructBean.setConstructComponent(cc);
-            return "construct/construct-update.page";
-
-
-
-}*/
-
-
     @RequestMapping(value = "/construct-do-update/{constructID}", method = RequestMethod.GET)
     public
     @ResponseBody
     List<ConstructComponentPresentation> listComponents(@PathVariable String constructID,@ModelAttribute("formBean") ConstructUpdateBean constructBean) {
-            // constructBean.setConstructAlias(mr.getPreviousNamesLight(mr.getMarkerByID(constructID)));
+        constructBean.setConstructAlias(mr.getPreviousNamesLight(mr.getMarkerByID(constructID)));
         constructBean.setConstructDisplayName(mr.getConstructByID(constructID).getName());
-            return mr.getConstructComponents(constructID);
-       // return mr.getConstructComponentsForDisplay(constructID);
-
+        return mr.getConstructComponents(constructID);
     }
 
-
-
-    @RequestMapping(value = "/add-alias/{constructID}/alias/{alias}/publication/{pubID}"
-            , method = RequestMethod.POST)
+    @RequestMapping(value = "/construct-add-alias", method = RequestMethod.POST)
     public
     @ResponseBody
-    boolean addConstructAlias(
-            @PathVariable String constructID,
-            @PathVariable String alias,
-            @PathVariable String pubID
 
-    ) {
-        //Person currentUser = ProfileService.getCurrentSecurityUser();
-        MarkerAlias newConstructAlias;
+    void addConstructAlias(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String constructID=request.getParameter("constructEdit");
+        String cAlias=request.getParameter("constructAlias");
+        String pubid=request.getParameter("constructPublicationZdbID");
         HibernateUtil.createTransaction();
-        newConstructAlias= mr.addMarkerAlias(mr.getMarkerByID(constructID),alias,pr.getPublication(pubID));
-        ir.insertUpdatesTable(mr.getMarkerByID(constructID),"alias","added data alias");
-        HibernateUtil.currentSession().getTransaction().commit();
-        if (newConstructAlias!=null) {
-            return true;
-        }
-        return true;
+        Marker m=mr.getMarkerByID(constructID);
 
+      mr.addMarkerAlias(m,cAlias,pr.getPublication(pubid));
+        // ir.insertUpdatesTable(mr.getMarkerByID(constructID),"alias","added data alias");
+        HibernateUtil.flushAndCommitCurrentSession();
     }
+    @RequestMapping(value = "/construct-add-sequence", method = RequestMethod.POST)
+    public
+    @ResponseBody
+
+    void addConstructSequence(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String constructID=request.getParameter("constructEdit");
+        String constructSequence=request.getParameter("constructSequence");
+        String pubid=request.getParameter("constructPublicationZdbID");
+        HibernateUtil.createTransaction();
+        Marker m=mr.getMarkerByID(constructID);
+        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+        mr.addDBLink(m, constructSequence, genBankRefDB,pubid);
+        ir.insertUpdatesTable(mr.getMarkerByID(constructID),"sequence","added sequence");
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
     @RequestMapping(value = "/update-comments/{constructID}/constructComments/{constructComments}"
             , method = RequestMethod.POST)
     public
@@ -138,39 +131,30 @@ public class ConstructEditController {
 
 
     ) {
-
-        //Person currentUser = Person.getCurrentSecurityUser();
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
         m.setPublicComments(constructComments);
+        ConstructCuration c=cr.getConstructByID(constructID);
+        c.setPublicComments(constructComments);
         ir.insertUpdatesTable(m,"comments","updated public notes");
-        HibernateUtil.currentSession().getTransaction().commit();
-
+        HibernateUtil.flushAndCommitCurrentSession();
         return true;
-
     }
 
     @RequestMapping(value = "/add-notes/{constructID}/notes/{notes}/publication/{pubID}"
             , method = RequestMethod.POST)
     public
     @ResponseBody
-    boolean addCuratorNotes(
+    void addCuratorNotes(
             @PathVariable String constructID,
             @PathVariable String notes,
             @PathVariable String pubID
 
     ) {
-        DataNote newConstructNote ;
-     //  Person currentUser = Person.getCurrentSecurityUser();
         HibernateUtil.createTransaction();
-        newConstructNote= mr.addMarkerDataNote(mr.getMarkerByID(constructID),notes);
+        mr.addMarkerDataNote(mr.getMarkerByID(constructID),notes);
         ir.insertUpdatesTable(mr.getMarkerByID(constructID),"curator notes","added new curator note");
         HibernateUtil.currentSession().getTransaction().commit();
-        if (newConstructNote!=null) {
-            return true;
-        }
-        return true;
-
     }
 
     @RequestMapping(value = "/delete-alias/{constructID}/aliasID/{aliasID}", method = RequestMethod.DELETE)
@@ -178,51 +162,52 @@ public class ConstructEditController {
     @ResponseBody
     void deleteAlias(@PathVariable String constructID,@PathVariable String aliasID) throws Exception{
         HibernateUtil.createTransaction();
-
-        //if the person being removed is the contact person, set the contact person to null
-
-       // Person currentUser = Person.getCurrentSecurityUser();
         Marker m=mr.getMarkerByID(constructID);
         MarkerAlias constructAlias=mr.getMarkerAlias(aliasID);
         mr.deleteMarkerAlias(m,constructAlias);
-        ir.insertUpdatesTable(m,"alias","deleted data alias");
+       ir.insertUpdatesTable(m,"alias","deleted data alias");
         HibernateUtil.flushAndCommitCurrentSession();
 
     }
+
+    @RequestMapping(value = "/delete-sequence/{constructID}/sequenceID/{sequenceID}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    void deleteSequence(@PathVariable String constructID,@PathVariable String sequenceID) throws Exception{
+        HibernateUtil.createTransaction();
+        Session session = HibernateUtil.currentSession();
+        Marker m=mr.getMarkerByID(constructID);
+        ReferenceDatabase genBankRefDB = sr.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.ZEBRAFISH);
+        ir.deleteActiveDataByZdbID(sequenceID);
+        String hql = "" +
+                "delete from MarkerDBLink dbl where dbl.id = :sequenceID";
+        Query query = session.createQuery(hql);
+        query.setParameter("sequenceID", sequenceID);
+        query.executeUpdate();
+        ir.insertUpdatesTable(m,"sequence","deleted sequence");
+        HibernateUtil.flushAndCommitCurrentSession();
+
+    }
+
     @RequestMapping(value = "/delete-note/{constructID}/noteID/{noteID}", method = RequestMethod.DELETE)
     public
     @ResponseBody
     void deleteNote(@PathVariable String constructID,@PathVariable String noteID) throws Exception{
-
-
-        //if the person being removed is the contact person, set the contact person to null
-      //  Person currentUser = Person.getCurrentSecurityUser();
-        Marker m=mr.getMarkerByID(constructID);
         DataNote curatorNote=ir.getDataNoteByID(noteID);
+        Marker m=mr.getMarkerByID(constructID);
         ir.insertUpdatesTable(m,"curator note","deleted curator note");
         mr.removeCuratorNote(m,curatorNote);
-
-
-
-
     }
 
-        @RequestMapping(value = "/construct-run-update/", method = RequestMethod.POST)
+   @RequestMapping(value = "/construct-run-update/", method = RequestMethod.POST)
     public @ResponseBody String updateConstruct(HttpServletRequest request,HttpServletResponse response)  {
-        String validationMessage;
         String constructName=request.getParameter("constructName");
         String constructPrefix=request.getParameter("prefix");
         String pubZdbID=request.getParameter("constructPublicationZdbID");
         String constructID=request.getParameter("constructEdit");
         String constructAlias = request.getParameter("constructSynonym");
-            String constructComments = request.getParameter("constructComments");
-        String weirdString="),";
-        String replaceString=")";
-
-
-        String constructStoredName = request.getParameter("constructStoredName");
-        //  String[] cpt= getComponentsFromName(constructStoredName);
-
+        String constructComments = request.getParameter("constructComments");
 
         List<Marker> markerList = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(constructName);
         if (markerList.size() > 0) {
@@ -232,7 +217,7 @@ public class ConstructEditController {
             // code to delete the construct component group and the relationships by construct id.
             // Relationships to be deleted should be restricted to promoter and coding.
             HibernateUtil.createTransaction();
-            mr.deleteConstructComponentByID(constructID);
+
             ConstructCuration construct=mr.getConstructByID(constructID);
 //            construct.setConstructGeneratedName(constructName);
             construct.setName(constructName);
@@ -240,7 +225,7 @@ public class ConstructEditController {
 
             construct.setPublicComments(constructComments);
            // Marker marker=mr.getMarkerByID(constructID);
-            construct.setName(constructName);
+
             //marker.setAbbreviation(constructName);
 
             currentSession().save(construct);

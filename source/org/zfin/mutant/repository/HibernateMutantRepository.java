@@ -71,7 +71,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct fishox.fish , fishox.fish.name from FishExperiment fishox, " +
+                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
                         "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
                         "WHERE phenox.fishExperiment = fishox " +
                         "AND phenoeq.phenotypeExperiment = phenox " +
@@ -86,7 +86,44 @@ public class HibernateMutantRepository implements MutantRepository {
         if (!wildtype) {
             hql += "AND fishox.fish.genotype.wildtype = 'f' ";
         }
-        hql += "ORDER BY fishox.fish.name asc";
+        hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("aoTerm", item);
+        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        query.setParameterList("condition", Experiment.STANDARD_CONDITIONS);
+        // have to add extra select because of ordering, but we only want to return the first
+        query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                return tuple[0];
+            }
+        });
+
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+    }
+
+    @Override
+    public PaginationResult<Fish> getDirtyFishByAnatomyTerm(GenericTerm item, boolean wildtype, PaginationBean bean) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql =
+                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
+                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
+                        "WHERE phenox.fishExperiment = fishox " +
+                        "AND phenoeq.phenotypeExperiment = phenox " +
+                        "AND (phenoeq.entity.superterm = :aoTerm " +
+                        "     or phenoeq.entity.subterm = :aoTerm " +
+                        "     or phenoeq.relatedEntity.superterm = :aoTerm " +
+                        "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
+                        "AND phenoeq.tag != :tag " +
+                        "AND fishox.experiment.name not in (:condition) " +
+                        "AND size(fishox.fish.strList) = 0  ";
+
+        if (!wildtype) {
+            hql += "AND fishox.fish.genotype.wildtype = 'f' ";
+        }
+        hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
@@ -1326,6 +1363,27 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<PhenotypeStatement>) query.list();
     }
 
+    @Override
+    public List<PhenotypeStatement> getPhenotypeStatementForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
+        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeTermFastSearch fastSearch, " +
+                "PhenotypeExperiment phenox, FishExperiment fishox " +
+                "where fastSearch.phenotypeStatement = pheno and " +
+                "pheno.phenotypeExperiment.fishExperiment.fish = :fish and " +
+                "fastSearch.directAnnotation = :directAnnotation " +
+                "AND pheno.phenotypeExperiment = phenox " +
+                "AND phenox.fishExperiment = fishox ";
+
+        if (term != null)
+            hql += " and fastSearch.term = :term ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (term != null)
+            query.setParameter("term", term);
+        query.setParameter("fish", fish);
+        query.setBoolean("directAnnotation", !includeSubstructures);
+        return (List<PhenotypeStatement>) query.list();
+    }
+
     /**
      * Retrieve phenotype statements for given structure and genotype.
      *
@@ -1733,5 +1791,18 @@ public class HibernateMutantRepository implements MutantRepository {
                         ");")
                 .setString("pubID", publication.getZdbID())
                 .executeUpdate();
+    }
+
+    @Override
+    public List<PhenotypeStatement> getPhenotypeStatementForMarker(Marker marker) {
+        String hql = "select distinct pheno from PhenotypeStatement pheno, GeneGenotypeExperiment gge " +
+                "where pheno.phenotypeExperiment.fishExperiment = gge.fishExperiment " +
+                "AND gge.gene = :gene " +
+                "AND pheno.tag != :tag";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("gene", marker);
+        query.setParameter("tag", "normal");
+        return (List<PhenotypeStatement>) query.list();
     }
 }
