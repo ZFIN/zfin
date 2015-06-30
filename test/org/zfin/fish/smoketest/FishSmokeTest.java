@@ -25,7 +25,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
     @Test
     public void testFishSearchPageOk() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/search");
-        assertTrue(page.getTitleText().contains("ZFIN MartFish Search"));
+        assertTrue(page.getTitleText().contains("ZFIN Fish Search"));
     }
 
 

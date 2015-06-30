@@ -1789,7 +1789,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (expressionCriteria.isChemicalEnvironment()) {
             aliasMap.put("expressionResults", "xpatres");
             aliasMap.put("xpatres.expressionExperiment", "xpatex");
-            aliasMap.put("xpatex.genotypeExperiment", "genox");
+            aliasMap.put("xpatex.fishExperiment", "genox");
             aliasMap.put("genox.experiment", "exp");
             aliasMap.put("exp.experimentConditions", "cond");
             aliasMap.put("cond.conditionDataType", "cdt");

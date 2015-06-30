@@ -15,7 +15,7 @@
     <c:if test="${!empty criteria.fishExperiment}">
         <tr>
             <th>Genotype:</th>
-            <td><zfin:link entity="${criteria.fishExperiment.genotype}"/>
+            <td><zfin:link entity="${criteria.fishExperiment.fish.genotype}"/>
         </tr>
         <tr>
             <th>Conditions:</th>

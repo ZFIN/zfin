@@ -466,13 +466,13 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     public FishExperiment getGenotypeExperiment(String genotypeZdbID, String experimentZdbID) {
-        Session session = HibernateUtil.currentSession();
-        Criteria crit = session.createCriteria(FishExperiment.class);
-        crit.createAlias("genotype", "geno");
-        crit.createAlias("experiment", "exp");
-        crit.add(Restrictions.eq("geno.zdbID", genotypeZdbID));
-        crit.add(Restrictions.eq("exp.zdbID", experimentZdbID));
-        return (FishExperiment) crit.uniqueResult();
+        Query query = HibernateUtil.currentSession().createQuery("" +
+                "from FishExperiment fe " +
+                "where fe.fish.genotype.zdbID = :genoID " +
+                "and fe.experiment.zdbID = :expID");
+        query.setParameter("genoID", genotypeZdbID);
+        query.setParameter("expID", experimentZdbID);
+        return (FishExperiment) query.uniqueResult();
     }
 
     /**
