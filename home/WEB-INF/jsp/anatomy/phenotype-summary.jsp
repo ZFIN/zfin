@@ -1,6 +1,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-
-<div class="data-sub-page-title">Phenotype Figure Summary</div>
+<div style="float: right;">
+    <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
+        <tiles:putAttribute name="subjectName" value="${fish.name}"/>
+    </tiles:insertTemplate>
+</div>
+<div class="data-sub-page-title">Phenotype Figure Summary </div>
 
 
 <table class="primary-entity-attributes">
