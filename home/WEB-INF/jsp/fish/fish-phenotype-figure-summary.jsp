@@ -5,7 +5,7 @@
 <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
         <td width="100%" class="titlebar">
-            <span style="font-size: larger; margin-left: 0.5em; font-weight: bold;">
+            <span style="font-size: larger; font-weight: bold;">
             Phenotype Summary
                 </span>
 
