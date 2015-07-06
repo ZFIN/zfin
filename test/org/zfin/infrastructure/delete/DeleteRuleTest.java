@@ -1,6 +1,5 @@
 package org.zfin.infrastructure.delete;
 
-import com.google.gwt.editor.client.Editor;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
@@ -37,7 +36,7 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         assertTrue(reportList.size() > 0);
         assertTrue(reportList.get(0).getValidationMessage().contains("GO annotation"));
         assertTrue(reportList.get(1).getValidationMessage().contains("more than one publication"));
-        assertTrue(reportList.get(2).getValidationMessage().contains("more than one fish"));
+        assertTrue(reportList.get(2).getValidationMessage().contains("component of the following fish"));
     }
     @Test
     @Ignore

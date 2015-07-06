@@ -25,19 +25,19 @@ Detailed process of the NCBI Gene Load
 Step 1: Download and decompress NCBI data files
 -------------------------------------------------
 
-ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz
+ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz
 
                 (6.3M decompressed, 33K+ rows)
 
-ftp://ftp.ncbi.nih.gov/gene/DATA/gene2unigene     (about 10M,  597K+ rows)
+ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene     (about 10M,  597K+ rows)
 
 #Format: GeneID UniGene_cluster
 30037   Dr.33789
 30560   Dr.88553
 
-ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz           (2.37G decompressed, 28,964,915 rows)
+ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz           (2.37G decompressed, 28,964,915 rows)
 
-ftp://ftp.ncbi.nih.gov/refseq/release/release-catalog/RefSeq-release59.catalog.gz
+ftp://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/RefSeq-release59.catalog.gz
 
                             (3.8G decompressed, 39M+ rows)
 

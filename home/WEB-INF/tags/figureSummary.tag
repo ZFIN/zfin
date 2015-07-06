@@ -70,8 +70,8 @@
                         <c:forEach var="fish" items="${figureExpressionSummaryDisplay.fishList}" varStatus="status">
                             <zfin:link entity="${figureExpressionSummaryDisplay.fishList[status.index]}"/>
 
-                            <a class="popup-link data-popup-link"
-                               href="/action/genotype/genotype-detail-popup?zdbID=${figureExpressionSummaryDisplay.fishList[status.index].zdbID}"></a>
+                           <%-- <a class="popup-link data-popup-link"
+                               href="/action/fish/fish-detail-popup?zdbID=${figureExpressionSummaryDisplay.fishList[status.index].zdbID}"></a>--%>
                             <%--${figureExpressionSummaryDisplay.geno}--%>
 
                             <c:if test="${!status.last}">,&nbsp&nbsp;</c:if>

@@ -237,13 +237,13 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         List<ExpressionExperiment> experiments = expRep.getExperiments(zdbID);
         assertThat(experiments.size(), greaterThan(3));
-        assertThat(experiments.size(), lessThan(5));
+        assertThat(experiments.size(), lessThan(40));
 
         // alcam
         String geneID = "ZDB-GENE-990415-30";
         experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, null);
         assertThat(experiments.size(), greaterThan(2));
-        assertThat(experiments.size(), lessThan(4));
+        assertThat(experiments.size(), lessThan(40));
 
         // alcam and WT
         // TODO: once we have fish in prod we can adjust this test

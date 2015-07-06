@@ -34,13 +34,13 @@ public interface CurationDiseaseRPCAsync {
 
     void addGenotypeToPublication(String publicationID, String zdbID, AsyncCallback<GenotypeDTO> callback);
 
-    void savePublicNote(String publicationID, ExternalNoteDTO externalNoteDTO, AsyncCallback<ExternalNoteDTO> async);
+    void savePublicNote(String publicationID, ExternalNoteDTO externalNoteDTO, AsyncCallback<List<GenotypeDTO>> async);
 
     void createPublicNote(String publicationID, GenotypeDTO genotypeDTO, String text, AsyncCallback<List<GenotypeDTO>> async);
 
     void deletePublicNote(String publicationID, ExternalNoteDTO note, AsyncCallback<List<GenotypeDTO>> listZfinAsyncCallback);
 
-    void saveCuratorNote(String publicationID, CuratorNoteDTO externalNoteDTO, AsyncCallback<CuratorNoteDTO> zfinAsyncCallback);
+    void saveCuratorNote(String publicationID, CuratorNoteDTO externalNoteDTO, AsyncCallback<List<GenotypeDTO>> zfinAsyncCallback);
 
     void deleteCuratorNote(String publicationID, CuratorNoteDTO note, AsyncCallback<List<GenotypeDTO>> zfinAsyncCallback);
 

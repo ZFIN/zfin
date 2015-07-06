@@ -200,44 +200,6 @@ public class ConstructEditController {
         mr.removeCuratorNote(m,curatorNote);
     }
 
-   @RequestMapping(value = "/construct-run-update/", method = RequestMethod.POST)
-    public @ResponseBody String updateConstruct(HttpServletRequest request,HttpServletResponse response)  {
-        String constructName=request.getParameter("constructName");
-        String constructPrefix=request.getParameter("prefix");
-        String pubZdbID=request.getParameter("constructPublicationZdbID");
-        String constructID=request.getParameter("constructEdit");
-        String constructAlias = request.getParameter("constructSynonym");
-        String constructComments = request.getParameter("constructComments");
-
-        List<Marker> markerList = RepositoryFactory.getMarkerRepository().getMarkersByAbbreviation(constructName);
-        if (markerList.size() > 0) {
-
-            return "\"" + constructName + "\" is not a unique name";
-        } else{
-            // code to delete the construct component group and the relationships by construct id.
-            // Relationships to be deleted should be restricted to promoter and coding.
-            HibernateUtil.createTransaction();
-
-            ConstructCuration construct=mr.getConstructByID(constructID);
-//            construct.setConstructGeneratedName(constructName);
-            construct.setName(constructName);
-            /*construct.setNameOrder(constructName);*/
-
-            construct.setPublicComments(constructComments);
-           // Marker marker=mr.getMarkerByID(constructID);
-
-            //marker.setAbbreviation(constructName);
-
-            currentSession().save(construct);
-            //ConstructComponentService.setConstructComponents(constructStoredName, pubZdbID, constructID);
-            HibernateUtil.flushAndCommitCurrentSession();
-            InformixUtil.runInformixProcedure("regen_construct_marker", constructID + "");
-
-
-            return "\"" + constructName + "\" successfully updated";
-        }
-
-
 
     }
 
@@ -245,7 +207,7 @@ public class ConstructEditController {
 
 
 
-}
+
 
 
 
