@@ -1,18 +1,15 @@
 package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.PhenotypeStatement;
-import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements DeleteEntityRule {
 
@@ -48,13 +45,12 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
         }
         List<FishExperiment> fishExperimentList = RepositoryFactory.getMutantRepository().getFishExperiment(genotype);
         SortedSet<Fish> sortedFish= new TreeSet<>();
-        for (FishExperiment fishExp: fishExperimentList){
+        for (FishExperiment fishExp: fishExperimentList) {
             Fish fish=fishExp.getFish();
             sortedFish.add(fish);
         }
         if (CollectionUtils.isNotEmpty(sortedFish)) {
-
-            addToValidationReport(genotype.getAbbreviation() + " comprises following fish",sortedFish);
+            addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish", sortedFish);
         }
         return validationReportList;
     }
@@ -69,8 +65,9 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
         Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(zdbID);
         SortedSet<Publication> genoPublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForGenotype(genotype);
         // FB case 11678, provide link back to pub.
-        if (CollectionUtils.isNotEmpty(genoPublications) && genoPublications.size() == 1)
+        if (CollectionUtils.isNotEmpty(genoPublications) && genoPublications.size() == 1) {
             return genoPublications.first();
+        }
         return null;
     }
 }
