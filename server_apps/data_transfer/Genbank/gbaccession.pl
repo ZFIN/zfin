@@ -46,14 +46,14 @@ $accfile = $prefix."_zf_acc.unl";
 my $count = 0;
 my $retry = 1;
 #verify the file is downloaded
-while( !(-e "$newfile") ){
+while( !(-e "$newfile") && $retry < 5){
 
   $count++;
   if ($count > 10) {
 
       if ($retry) {
 	  $count = 0;
-	  $retry = 0;
+	  $retry = $retry +1;
 	  &downloadDailyUpdateFile();
       }
       else {
