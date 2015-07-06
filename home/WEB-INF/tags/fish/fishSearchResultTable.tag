@@ -169,7 +169,9 @@
                     <zfin:link entity="${featureGene.construct}"/>
                 </td>
                 <td>
-                        ${featureGene.typeDisplay}
+                    <c:if test="${!empty featureGene.feature}">
+                        ${featureGene.feature.type.display}
+                    </c:if>
                 </td>
                 <td>
                 </td>
