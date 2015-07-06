@@ -62,7 +62,6 @@ echo ""
 echo "Begin Human update `date +'%Y-%m-%d %H:%M:%S'`"
 
 # use to distinguish gene omim from phenotype omin
-# wget -q --timestamping "ftp://ftp.ncbi.nih.gov/gene/DATA/mim2gene_partial"
 rm -f mim2gene.tab
 rm -f mim2gene.txt
 wget -q --timestamping "ftp://ftp.omim.org/OMIM/mim2gene.txt"
