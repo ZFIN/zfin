@@ -73,7 +73,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql =
                 "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
-                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq, GeneGenotypeExperiment fastSearch " +
+                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
                         "WHERE phenox.fishExperiment = fishox " +
                         "AND phenoeq.phenotypeExperiment = phenox " +
                         "AND (phenoeq.entity.superterm = :aoTerm " +
@@ -81,8 +81,8 @@ public class HibernateMutantRepository implements MutantRepository {
                         "     or phenoeq.relatedEntity.superterm = :aoTerm " +
                         "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
                         "AND phenoeq.tag != :tag " +
-                        "AND exists (select 'x' from fastSearch where fishExperiment = fishox) ";
-        hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
+                        "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) " +
+                        "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);

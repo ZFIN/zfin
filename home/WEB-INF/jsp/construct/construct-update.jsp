@@ -33,21 +33,17 @@
 
 <form:form commandName="formBean" id="thisform" style="background-color:#EEEEEE;">
 
-<%--<label>Add a new Construct</label>--%>
+
 <table>
 
 
 
-       <%-- <form:select path="attribution"
-                     onchange="changeDefPubFromSelectionBox(this.value)"
-                     id="curatorPubs">
-            <form:options items="${formBean.defPubList}"/> <option value="">--</option>
-        </form:select>--%>
+
 
    <tr> <td><b>Construct:</b>
      <td>
          <form:select path="constructEdit" onchange="getConstructDetails(this.value)">
-             <%--<form:select path="constructEdit" onchange="getDetails(this.value)">--%>
+
          <option value="">--</option>
            <form:options items="${formBean.constructsInPub}" itemLabel="name" itemValue="zdbID"/>
        </form:select>
@@ -80,17 +76,18 @@
 <td><b>Public Note</b>:</td><td>
 
     <textarea id="constructComments" name="constructComments" value="" rows="3" cols="50" ></textarea>&nbsp;&nbsp;
+
             <input type="button" value="Save" id="updatePublicNotes"  onClick=updatePNotes(); />
 </td>
                </tr>
-               </tr>
+
 
 <tr>
                <td>
 
 <b>Curator Note</b>: </td>
                <td>&nbsp;<div id="constructNotes">
-           <%--<tr><td></td><td><textarea id="constructPrivateNotes" name="constructPrivateNotes" value="" rows="3" cols="50" ></textarea>--%>
+
            </tr></div>
                <tr><td></td><td><textarea id="curatorNotes" name="constructComments" value="" rows="3" cols="50" ></textarea> &nbsp;&nbsp;<a onclick="addNotes(); return false;" href="#"><img height= 10 src="/images/plus.png"></a></td><tr>
 </tr>
@@ -101,26 +98,13 @@
 
 
 
-    <%--<input type="button" value="DONE" id="submitConstruct"  onClick=updateConstruct(); />--%>
-<!-- /Embeded sheepIt Form -->
-
-
-
-
-  <%--//  <input type="button" value="No Promoter/Coding" id="noRel" />--%>
-
-
-
-
-
-
 </form:form>
 <script type="text/javascript">
     function updatePNotes() {
 
         var constructComments = jQuery("#constructComments").val();
         var constructID = jQuery('#constructEdit').val();
-        alert(constructComments);
+
 
 
 

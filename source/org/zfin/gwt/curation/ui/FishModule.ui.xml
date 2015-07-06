@@ -6,13 +6,11 @@
         xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui'
         >
 
-    <g:FlowPanel>
-        <g:VerticalPanel spacing="10" title="Disease"  width="100%">
-            <zfin-mod:GenotypeView ui:field="genotypeView"/>
-            <zfin-mod:ImportGenotype ui:field="importGenotypeView"/>
-            <zfin-mod:GenotypeConstruction ui:field="genotypeConstructionView"/>
-            <zfin-mod:FishConstruction ui:field="fishConstructionView"/>
-            <zfin-mod:FishView ui:field="fishView"/>
-        </g:VerticalPanel>
-    </g:FlowPanel>
+    <g:VerticalPanel spacing="10" width="100%">
+        <zfin-mod:GenotypeView ui:field="genotypeView"/>
+        <zfin-mod:ImportGenotype ui:field="importGenotypeView"/>
+        <zfin-mod:GenotypeConstruction ui:field="genotypeConstructionView"/>
+        <zfin-mod:FishConstruction ui:field="fishConstructionView"/>
+        <zfin-mod:FishView ui:field="fishView"/>
+    </g:VerticalPanel>
 </ui:UiBinder>

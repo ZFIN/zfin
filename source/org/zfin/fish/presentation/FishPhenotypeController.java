@@ -43,40 +43,6 @@ public class FishPhenotypeController {
 
     private static Logger LOG = Logger.getLogger(FishPhenotypeController.class);
 
-    /**
-     * Search submission handling.
-     *
-     * @param fishID genotype ID or genox Ids
-     * @param model  Model
-     * @return view page
-     * @throws Exception exception
-     */
-    @RequestMapping(value = "/phenotype-summary", method = RequestMethod.GET)
-    protected String showPhenotypeSummary(@RequestParam(value = "fishID", required = true) String fishID,
-                                          @ModelAttribute("formBean") FishSearchFormBean formBean,
-                                          Model model) throws Exception {
-
-        //todo: implement me!
-/*
-        LOG.info("Start MartFish Phenotype Controller");
-        FishSearchCriteria criteria = new FishSearchCriteria(formBean);
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FishService.getPhenotypeSummary(fishID, criteria);
-        Collections.sort(figureSummaryDisplayList);
-        model.addAttribute("figureSummaryDisplay", figureSummaryDisplayList);
-        PhenotypeSummaryCriteria summaryCriteria = FishService.getPhenotypeSummaryCriteria(fishID);
-        summaryCriteria.setCriteria(criteria);
-        model.addAttribute("phenotypeSummaryCriteria", summaryCriteria);
-        MartFish fish = FishService.getFish(fishID);
-        // get the all phenotype per genotype experiment data
-        GenotypeBean form = new GenotypeBean();
-        form.setPhenoStatements(getMutantRepository().getPhenotypeStatementsByGenotypeExperiments(fish.getGenotypeExperimentIDs()));
-        model.addAttribute("genotypeFormBean", form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Summary");
-*/
-
-        return "fish/fish-phenotype-figure-summary.page";
-    }
-
     @RequestMapping("/fish-publication-list")
     public String fishCitationList(@RequestParam(value = "fishID", required = true) String fishID,
                                    @RequestParam(value = "orderBy", required = false) String orderBy,

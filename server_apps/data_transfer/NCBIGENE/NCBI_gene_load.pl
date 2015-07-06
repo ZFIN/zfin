@@ -76,7 +76,7 @@ print LOG "Start ... \n";
 ## only the following RefSeq catalog file may remain unchanged over a period of time
 ## the rest 3 are changing every day
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/refseq/release/RELEASE_NUMBER");
+&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/RELEASE_NUMBER");
 
 open (REFSEQRELEASENUM, "RELEASE_NUMBER") ||  die "Cannot open RELEASE_NUMBER : $!\n";
 
@@ -91,7 +91,7 @@ close REFSEQRELEASENUM;
 
 print LOG "RefSeq Catalog Release Number is $releaseNum.\n\n";
 
-$catlogFolder = "ftp://ftp.ncbi.nih.gov/refseq/release/release-catalog/";
+$catlogFolder = "ftp://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/";
 
 $catalogFile = "RefSeq-release" . $releaseNum . ".catalog.gz";
 
@@ -101,13 +101,13 @@ $ftpNCBIrefSeqCatalog = $catlogFolder . $catalogFile;
 
 &doSystemCommand("/local/bin/gunzip -c $catalogFile >RefSeqCatalog");
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2accession.gz");
+&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz");
 
 &doSystemCommand("/local/bin/gunzip gene2accession.gz");
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/gene2unigene");
+&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2unigene");
 
-&doSystemCommand("/local/bin/wget -O zf_gene_info.gz ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz");
+&doSystemCommand("/local/bin/wget -O zf_gene_info.gz ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz");
 
 &doSystemCommand("/local/bin/gunzip zf_gene_info.gz");
 
