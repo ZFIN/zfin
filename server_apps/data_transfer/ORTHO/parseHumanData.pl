@@ -13,7 +13,7 @@ system("rm -f Homo_sapiens.gene_info.gz");
 system("rm -f hum_chr_loc_sym_mim.tab");
 
 if (!-e "Homo_sapiens.gene_info") {
-  system("wget ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
+  system("wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
   system("gunzip Homo_sapiens.gene_info.gz");
 }
 
