@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
@@ -58,6 +59,11 @@ public class GenotypeView extends Composite {
 
     private ShowHideWidget genotypeListToggle;
     private String publicationID;
+
+    @UiHandler("showHideGenoList")
+    void onShowHideClick(@SuppressWarnings("unused") ClickEvent event) {
+        presenter.onShowHideClick();
+    }
 
     public void setData(List<GenotypeDTO> genotypeDTOList) {
         genotypeListTable.removeAllRows();
