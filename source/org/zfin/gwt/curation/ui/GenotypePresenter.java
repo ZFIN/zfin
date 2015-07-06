@@ -30,13 +30,6 @@ public class GenotypePresenter implements Presenter {
     }
 
     public void bind() {
-        // show / hide genotype list
-        view.getShowHideGenoList().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                view.getGenotypeListToggle().toggleVisibility();
-            }
-        });
         addDeleteClickHandlerToPublicNotes();
         addDeleteClickHandlerToCuratorNotes();
     }
@@ -121,6 +114,10 @@ public class GenotypePresenter implements Presenter {
                 diseaseRpcService.saveCuratorNote(publicationID, noteDTO, new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
             }
         });
+    }
+
+    public void onShowHideClick() {
+        view.getGenotypeListToggle().toggleVisibility();
     }
 
     class RetrieveGenotypeListCallBack extends ZfinAsyncCallback<List<GenotypeDTO>> {
