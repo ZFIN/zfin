@@ -46,41 +46,31 @@ $accfile = $prefix."_zf_acc.unl";
 my $count = 0;
 my $retry = 1;
 #verify the file is downloaded
-while( !(-e "$newfile") ){
+while( !(-e "$newfile") && $retry < 5){
 
   $count++;
   if ($count > 10) {
 
-      if ($retry) {
 	  $count = 0;
-	  $retry = 0;
+	  $retry = $retry +1;
 	  &downloadDailyUpdateFile();
-      }
-      else {
-	  &writeReport("Failed to download GenBank daily update file.")
-	  }
+	  
   }
 }
 
+if (!(-e "$newfile")) {
+    die "failed to download genbank file" ;
+}
 
 #decompress files
 system("/local/bin/gunzip $newfile");
 
 $count = 0;
-$retry = 1;
 #wait until the files are decompressed
 while( !(-e "$unzipfile") ) {
     $count++;
-    if ($count > 10){
-	if ($retry) {
-
-	    $count = 0;
-	    $retry = 0;
+    if ($count < 10){
 	    system("/local/bin/gunzip -f $newfile");
-	}
-	else{
-	    &writeReport("Gunzip failed to extract the file.")
-	    }
     }
 }
 
