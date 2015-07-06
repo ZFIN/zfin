@@ -92,7 +92,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public ExternalNoteDTO savePublicNote(String publicationID, ExternalNoteDTO externalNoteDTO) throws TermNotFoundException {
+    public List<GenotypeDTO> savePublicNote(String publicationID, ExternalNoteDTO externalNoteDTO) throws TermNotFoundException {
         HibernateUtil.createTransaction();
         try {
             Publication publication = getPublicationRepository().getPublication(publicationID);
@@ -103,6 +103,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             if (note == null)
                 throw new TermNotFoundException("No note with ID: " + noteID + " found");
             note.setNote(externalNoteDTO.getNoteData());
+            note.setType("genotype");
             HibernateUtil.currentSession().saveOrUpdate(note);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
@@ -111,7 +112,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
         }
-        return externalNoteDTO;
+        return getGenotypeList(publicationID);
     }
 
     @Override
@@ -126,7 +127,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             if (genotype == null)
                 throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
             GenotypeExternalNote note = new GenotypeExternalNote();
-            note.setType("genotype");
+            //note.setType("genotype");
             note.setGenotype(genotype);
             note.setNote(text);
             getInfrastructureRepository().saveExternalNote(note, publication);
@@ -156,7 +157,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public CuratorNoteDTO saveCuratorNote(String publicationID, CuratorNoteDTO curatorNoteDTO) throws TermNotFoundException {
+    public List<GenotypeDTO> saveCuratorNote(String publicationID, CuratorNoteDTO curatorNoteDTO) throws TermNotFoundException {
         HibernateUtil.createTransaction();
         try {
             Publication publication = getPublicationRepository().getPublication(publicationID);
@@ -175,7 +176,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
         }
-        return curatorNoteDTO;
+        return getGenotypeList(publicationID);
     }
 
     @Override

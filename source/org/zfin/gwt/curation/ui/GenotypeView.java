@@ -28,6 +28,15 @@ import java.util.Map;
 public class GenotypeView extends Composite {
 
     private static MyUiBinder binder = GWT.create(MyUiBinder.class);
+    private GenotypePresenter presenter;
+
+    public void setPresenter(GenotypePresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    public GenotypePresenter getPresenter() {
+        return presenter;
+    }
 
     @UiTemplate("GenotypeView.ui.xml")
     interface MyUiBinder extends UiBinder<FlowPanel, GenotypeView> {
@@ -70,9 +79,8 @@ public class GenotypeView extends Composite {
                     featurePanel.add(new InlineHTML(featureDTO.getAbbreviation()));
             genotypeListTable.setWidget(index, col++, featurePanel);
 
-            VerticalPanel publicNotePanel = addPublicNotes(genotype);
             VerticalPanel curatorNotePanel = addCuratorNotes(genotype);
-            genotypeListTable.setWidget(index, col++, publicNotePanel);
+            genotypeListTable.setWidget(index, col++, getPublicNotesPanel(genotype));
             genotypeListTable.setWidget(index, col++, curatorNotePanel);
             DeleteImage deleteImage = new DeleteImage("/action/infrastructure/deleteRecord/" + genotype.getZdbID(), "Delete Genotype");
             genotypeListTable.getCellFormatter().setHorizontalAlignment(index, col, HasHorizontalAlignment.ALIGN_CENTER);
@@ -87,61 +95,94 @@ public class GenotypeView extends Composite {
     private List<PublicNoteWidgets> publicNoteWidgetsList = new ArrayList<>();
     private List<PublicNoteWidgets> privateNoteWidgetsList = new ArrayList<>();
 
-    private VerticalPanel addPublicNotes(GenotypeDTO genotype) {
+    private VerticalPanel getPublicNotesPanel(GenotypeDTO genotype) {
         VerticalPanel publicNotePanel = new VerticalPanel();
+        publicNotePanel.setWidth("100%");
         if (genotype.getPublicNotes(publicationID) != null) {
             for (final ExternalNoteDTO note : genotype.getPublicNotes(publicationID)) {
                 Anchor publicNote = new Anchor(getNoteStub(note.getNoteData()));
-                HorizontalPanel panel = new HorizontalPanel();
-                panel.add(publicNote);
                 DeleteImage remove = new DeleteImage("Remove Note");
-                panel.add(remove);
-                publicNotePanel.add(panel);
-                NotePopup publicNotePopup = new NotePopup(note, true);
-                publicNoteWidgetsList.add(new PublicNoteWidgets(remove, note, publicNote, publicNotePopup));
+                publicNoteWidgetsList.add(new PublicNoteWidgets(remove, note, publicNote));
+                TextArea textNote = new TextArea();
+                textNote.setWidth("100%");
+                textNote.setText(note.getNoteData());
+                Button savePublicNoteButton = getNotesUI(publicNotePanel, textNote, publicNote, remove);
+                presenter.addSavePublicNoteButtonClickHandler(savePublicNoteButton, textNote, note);
             }
         }
-        Anchor publicNoteAnchor = new Anchor("Add");
-        addClickHandler(genotype, publicNoteAnchor, true);
-        NotePopup publicNotePopup = new NotePopup(genotype, true);
-        publicNoteWidgetsList.add(new PublicNoteWidgets(publicNotePopup, publicNoteAnchor));
-        publicNotePanel.add(publicNoteAnchor);
+        TextArea publicNote = new TextArea();
+        Button savePublicNoteButton = getNotesUI(publicNotePanel, publicNote, new Anchor("Add"));
+        presenter.addCreatePublicNoteButtonClickHandler(savePublicNoteButton, publicNote, genotype);
         return publicNotePanel;
     }
 
     private VerticalPanel addCuratorNotes(GenotypeDTO genotype) {
         VerticalPanel curatorNotesPanel = new VerticalPanel();
+        curatorNotesPanel.setWidth("100%");
         if (genotype.getPrivateNotes() != null) {
             for (final CuratorNoteDTO note : genotype.getPrivateNotes()) {
                 Anchor curatorNote = new Anchor(getNoteStub(note.getNoteData()));
-                HorizontalPanel panel = new HorizontalPanel();
-                panel.add(curatorNote);
                 DeleteImage remove = new DeleteImage("Remove Note");
-                panel.add(remove);
-                curatorNotesPanel.add(panel);
-                NotePopup notePopup = new NotePopup(note, false);
-                privateNoteWidgetsList.add(new PublicNoteWidgets(remove, note, curatorNote, notePopup));
+                TextArea textNote = new TextArea();
+                textNote.setWidth("100%");
+                textNote.setText(note.getNoteData());
+                Button savePublicNoteButton = getNotesUI(curatorNotesPanel, textNote, curatorNote, remove);
+                presenter.addSaveCuratorNoteButtonClickHandler(savePublicNoteButton, textNote, note);
+                privateNoteWidgetsList.add(new PublicNoteWidgets(remove, note, curatorNote));
             }
         }
-        Anchor curatorNote = new Anchor("Add");
-        NotePopup notePopup = new NotePopup(genotype, false);
-        //privateNoteWidgetsList.add(new PublicNoteWidgets(remove, note, notePopup, notePopup));
-        addClickHandler(genotype, curatorNote, false);
-        curatorNoteAnchor.put(genotype.getDataZdbID(), curatorNote);
-        curatorNotesPanel.add(curatorNote);
-
+        TextArea publicNote = new TextArea();
+        Button saveCuratorNoteButton = getNotesUI(curatorNotesPanel, publicNote, new Anchor("Add"));
+        presenter.addCreateCuratorNoteButtonClickHandler(saveCuratorNoteButton, publicNote, genotype);
         return curatorNotesPanel;
     }
 
-    private void addClickHandler(final GenotypeDTO noteDTO, final Anchor publicNote, final boolean isPublic) {
-        publicNote.addClickHandler(new ClickHandler() {
+    private Button getNotesUI(VerticalPanel notePanel, final TextArea publicNote, final Anchor publicNoteAnchor) {
+        return getNotesUI(notePanel, publicNote, publicNoteAnchor, null);
+    }
+
+    private Button getNotesUI(VerticalPanel notePanel, final TextArea publicNote, final Anchor publicNoteAnchor, final DeleteImage deleteImage) {
+        final FlowPanel editPanel = new FlowPanel();
+        Button savePublicNoteButton = new Button("Save");
+        Button cancelPublicNoteButton = new Button("Cancel");
+        editPanel.add(publicNote);
+        addButtonsToPanel(editPanel, savePublicNoteButton, cancelPublicNoteButton);
+        notePanel.add(editPanel);
+        if (deleteImage != null) {
+            HorizontalPanel hNotePanel = new HorizontalPanel();
+            hNotePanel.add(publicNoteAnchor);
+            hNotePanel.add(deleteImage);
+            notePanel.add(hNotePanel);
+        } else {
+            notePanel.add(publicNoteAnchor);
+        }
+        editPanel.setVisible(false);
+        publicNoteAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                NotePopup publicNotePopup = new NotePopup(noteDTO, isPublic);
-                publicNotePopup.show();
-                publicNotePopup.center();
+                editPanel.setVisible(true);
+                publicNoteAnchor.setVisible(false);
+                if (deleteImage != null)
+                    deleteImage.setVisible(false);
             }
         });
+        cancelPublicNoteButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                editPanel.setVisible(false);
+                publicNoteAnchor.setVisible(true);
+                if (deleteImage != null)
+                    deleteImage.setVisible(true);
+            }
+        });
+        return savePublicNoteButton;
+    }
+
+    private void addButtonsToPanel(Panel notePanel, Button savePublicNoteButton, Button cancelPublicNoteButton) {
+        HorizontalPanel buttonPanel = new HorizontalPanel();
+        buttonPanel.add(savePublicNoteButton);
+        buttonPanel.add(cancelPublicNoteButton);
+        notePanel.add(buttonPanel);
     }
 
     public static String getNoteStub(String note) {
@@ -149,14 +190,6 @@ public class GenotypeView extends Composite {
             return note;
         else
             return note.substring(0, 15) + "...";
-    }
-
-    public Map<GenotypeDTO, Anchor> getPublicNoteAnchor() {
-        return publicNoteAnchor;
-    }
-
-    public Map<String, Anchor> getCuratorNoteAnchor() {
-        return curatorNoteAnchor;
     }
 
     private void initGenotypeListTable() {
@@ -201,32 +234,32 @@ public class GenotypeView extends Composite {
         return publicNoteWidgetsList;
     }
 
+    public List<PublicNoteWidgets> getPrivateNoteWidgetsList() {
+        return privateNoteWidgetsList;
+    }
+
     class PublicNoteWidgets {
 
         private ExternalNoteDTO note;
         private CuratorNoteDTO curatorNote;
         private DeleteImage deleteImage;
         private Anchor viewAnchor;
-        private NotePopup notePopup;
 
 
         public PublicNoteWidgets(NotePopup notePopup, Anchor viewAnchor) {
-            this.notePopup = notePopup;
             this.viewAnchor = viewAnchor;
         }
 
-        public PublicNoteWidgets(DeleteImage deleteImage, ExternalNoteDTO note, Anchor viewAnchor, NotePopup notePopup) {
+        public PublicNoteWidgets(DeleteImage deleteImage, ExternalNoteDTO note, Anchor viewAnchor) {
             this.deleteImage = deleteImage;
             this.note = note;
             this.viewAnchor = viewAnchor;
-            this.notePopup = notePopup;
         }
 
-        public PublicNoteWidgets(DeleteImage deleteImage, CuratorNoteDTO note, Anchor viewAnchor, NotePopup notePopup) {
+        public PublicNoteWidgets(DeleteImage deleteImage, CuratorNoteDTO note, Anchor viewAnchor) {
             this.deleteImage = deleteImage;
             this.curatorNote = note;
             this.viewAnchor = viewAnchor;
-            this.notePopup = notePopup;
         }
 
         public DeleteImage getDeleteImage() {
@@ -239,10 +272,6 @@ public class GenotypeView extends Composite {
 
         public Anchor getViewAnchor() {
             return viewAnchor;
-        }
-
-        public NotePopup getNotePopup() {
-            return notePopup;
         }
 
         public CuratorNoteDTO getCuratorNote() {

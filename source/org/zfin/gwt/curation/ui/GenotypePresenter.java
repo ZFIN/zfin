@@ -2,9 +2,11 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
+import org.zfin.gwt.root.dto.CuratorNoteDTO;
+import org.zfin.gwt.root.dto.ExternalNoteDTO;
 import org.zfin.gwt.root.dto.GenotypeDTO;
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
@@ -17,14 +19,13 @@ import java.util.List;
 public class GenotypePresenter implements Presenter {
 
     private CurationDiseaseRPCAsync diseaseRpcService = CurationDiseaseRPC.App.getInstance();
-    private final HandlerManager eventBus;
     private GenotypeView view;
     private String publicationID;
 
-    public GenotypePresenter(HandlerManager eventBus, GenotypeView view, String publicationID) {
-        this.eventBus = eventBus;
+    public GenotypePresenter(GenotypeView view, String publicationID) {
         this.view = view;
         this.publicationID = publicationID;
+        this.view.setPresenter(this);
         view.setPublicationID(publicationID);
     }
 
@@ -37,6 +38,24 @@ public class GenotypePresenter implements Presenter {
             }
         });
         addDeleteClickHandlerToPublicNotes();
+        addDeleteClickHandlerToCuratorNotes();
+    }
+
+    private void addDeleteClickHandlerToCuratorNotes() {
+        List<GenotypeView.PublicNoteWidgets> list = view.getPrivateNoteWidgetsList();
+        if (list.size() == 0)
+            return;
+        for (final GenotypeView.PublicNoteWidgets widget : list) {
+            // add Delete-Note click handler
+            if (widget.hasDeleteLink()) {
+                widget.getDeleteImage().addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent clickEvent) {
+                        diseaseRpcService.deleteCuratorNote(publicationID, widget.getCuratorNote(), new RetrieveGenotypeListCallBack("delete note", view.getErrorElement()));
+                    }
+                });
+            }
+        }
     }
 
     private void addDeleteClickHandlerToPublicNotes() {
@@ -54,74 +73,6 @@ public class GenotypePresenter implements Presenter {
                 });
             }
         }
-        for (final GenotypeView.PublicNoteWidgets widget : list) {
-            // add Save-Note click handler
-            final NotePopup notePopup = widget.getNotePopup();
-            if (notePopup.isPublicNewNote()) {
-                notePopup.getSave().addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent clickEvent) {
-                        Window.alert("Save Button now");
-                        diseaseRpcService.createPublicNote(publicationID, notePopup.getGenotypeDTO(), notePopup.getTextArea().getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
-                        notePopup.hide();
-                    }
-                });
-            }
-        }
-/*
-        for (final GenotypeView.PublicNoteWidgets widget : list) {
-            // add Save-Note click handler
-            final NotePopup notePopup = widget.getNotePopup();
-            if (notePopup.isPublicNewNote()) {
-                Window.alert("HI dfdfg");
-                notePopup.getSave().addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent clickEvent) {
-                        diseaseRpcService.createPublicNote(publicationID, notePopup.getGenotypeDTO(), notePopup.getTextArea().getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
-                        notePopup.hide();
-                    }
-                });
-            } else if (notePopup.isPrivateNewNote()) {
-                notePopup.getSave().addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent clickEvent) {
-                        diseaseRpcService.createCuratorNote(publicationID, notePopup.getGenotypeDTO(), notePopup.getTextArea().getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
-                        notePopup.hide();
-                    }
-                });
-            } else if (notePopup.isPublicExistingNote()) {
-                notePopup.getSave().addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent clickEvent) {
-                        NoteDTO noteDTO = notePopup.getNoteDTO();
-                        noteDTO.setNoteData(GenotypeView.getNoteStub(notePopup.getTextArea().getText()));
-                        diseaseRpcService.savePublicNote(publicationID, (ExternalNoteDTO) noteDTO, new ZfinAsyncCallback<ExternalNoteDTO>("public note ", view.getErrorElement()) {
-                            @Override
-                            public void onSuccess(ExternalNoteDTO noteDTO) {
-                                view.getPublicNoteAnchor().get(noteDTO.getZdbID()).setText(noteDTO.getNoteData());
-                            }
-                        });
-                        notePopup.hide();
-                    }
-                });
-            } else if (notePopup.isPrivateExistingNote()) {
-                notePopup.getSave().addClickHandler(new ClickHandler() {
-                    @Override
-                    public void onClick(ClickEvent clickEvent) {
-                        NoteDTO noteDTO = notePopup.getNoteDTO();
-                        noteDTO.setNoteData(GenotypeView.getNoteStub(notePopup.getTextArea().getText()));
-                        diseaseRpcService.saveCuratorNote(publicationID, (CuratorNoteDTO) noteDTO, new ZfinAsyncCallback<CuratorNoteDTO>("curator note ", view.getErrorElement()) {
-                            @Override
-                            public void onSuccess(CuratorNoteDTO noteDTO) {
-                                view.getCuratorNoteAnchor().get(noteDTO.getZdbID()).setText(noteDTO.getNoteData());
-                            }
-                        });
-                        notePopup.hide();
-                    }
-                });
-            }
-        }
-*/
     }
 
 
@@ -132,6 +83,44 @@ public class GenotypePresenter implements Presenter {
 
     private void createGenotypeList() {
         diseaseRpcService.getGenotypeList(publicationID, new RetrieveGenotypeListCallBack("Genotype List", null));
+    }
+
+    public void addCreatePublicNoteButtonClickHandler(final Button saveButton, final TextArea textArea, final GenotypeDTO genotypeDTO) {
+        saveButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                diseaseRpcService.createPublicNote(publicationID, genotypeDTO, textArea.getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
+            }
+        });
+    }
+
+    public void addCreateCuratorNoteButtonClickHandler(final Button saveButton, final TextArea textArea, final GenotypeDTO genotypeDTO) {
+        saveButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                diseaseRpcService.createCuratorNote(publicationID, genotypeDTO, textArea.getText(), new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
+            }
+        });
+    }
+
+    public void addSavePublicNoteButtonClickHandler(final Button saveButton, final TextArea textArea, final ExternalNoteDTO noteDTO) {
+        saveButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                noteDTO.setNoteData(textArea.getText());
+                diseaseRpcService.savePublicNote(publicationID, noteDTO, new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
+            }
+        });
+    }
+
+    public void addSaveCuratorNoteButtonClickHandler(final Button saveButton, final TextArea textArea, final CuratorNoteDTO noteDTO) {
+        saveButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                noteDTO.setNoteData(textArea.getText());
+                diseaseRpcService.saveCuratorNote(publicationID, noteDTO, new RetrieveGenotypeListCallBack("Genotype List", view.getErrorElement()));
+            }
+        });
     }
 
     class RetrieveGenotypeListCallBack extends ZfinAsyncCallback<List<GenotypeDTO>> {
