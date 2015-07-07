@@ -253,11 +253,11 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getMutantByAnatomyExpression() {
         //  midbrain
-        String aoZdbID = "ZDB-TERM-100331-121";
+        String aoZdbID = "ZDB-TERM-100331-1421";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         PaginationBean bean = new PaginationBean();
-        bean.setMaxDisplayRecords(5);
+        bean.setMaxDisplayRecords(50);
 
         PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTerm(item, false, bean);
 
@@ -319,12 +319,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         //String genoZdbID = "ZDB-GENO-050322-1";
         //chnage to FishID
         String fishName="";
-        Fish fish=mutantRepository.getFish("");
+        Fish fish=mutantRepository.getFish("ZDB-FISH-150624-4247");
 
         Fish geno = new Fish();
 //        geno.setZdbID(genoZdbID);
         // actinotrichium
-        String aoZdbID = "ZDB-TERM-100614-30";
+        String aoZdbID = "ZDB-TERM-100331-1421";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(fish, item, true);
@@ -333,15 +333,15 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     //TODO Provide valid FISH id instead of geno ID.
     public void getPublicationsForGenoAndAoIncludingSubstructures() {
         //  genotype Df(Chr03:sox8,sox9b)b971/b971
         String genoZdbID = "ZDB-GENO-050322-1";
         Fish geno = new Fish();
-        geno.setZdbID(genoZdbID);
+        geno.setZdbID("ZDB-FISH-150624-12564");
         // actinotrichium
-        String aoZdbID = "ZDB-TERM-100614-30";
+        String aoZdbID = "ZDB-TERM-100331-1421";
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         PaginationResult<Publication> publications = publicationRepository.getPublicationsWithFigures(geno, item, true);
