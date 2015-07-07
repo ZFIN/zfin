@@ -1,3 +1,12 @@
+unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/1fish.txt"
+select fish_zdb_id, fish_name, fish_handle, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, ""
+ where not exists (Select 'x' from fish_str
+       	   	  	  where fish_Zdb_id = fishstr_fish_zdb_id)
+union
+select fish_zdb_id, fish_name, fish_handle, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, fishstr_str_zdb_id
+from fish, fish_str
+   where fish_Zdb_id = fishstr_fish_zdb_id;
+
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/dataDate/dateUnloaded.txt"
 select di_pk_id, di_date_unloaded
   from database_info;
@@ -10,11 +19,10 @@ select featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee, feature_t
  where feature_zdb_id = featassay_feature_zdb_id;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/cleanPhenotype/cleanPhenotype.txt"
-select mfs_mrkr_zdb_id, fish_genotype_zdb_id, genox_exp_zdb_id
- from mutant_fast_search, fish_experiment, fish
+select mfs_mrkr_zdb_id, genox_fish_zdb_id, genox_exp_zdb_id
+ from mutant_fast_search, fish_experiment
   where mfs_mrkr_zdb_id like 'ZDB-GENE%'
  and mfs_genox_zdb_id = genox_zdb_id
- and fish_zdb_id = genox_fish_zdb_id
 ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/images/images.txt"
@@ -136,7 +144,7 @@ select source_id, target_id from int_person_pub;
 --   where exists (select 'x' from expression_result where xpatres_xpatex_zdb_id =xpatex_zdb_id) ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_expression/2xpatres.txt"
- select res.*, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.*, xpatfig.*,termt.term_ont_id, fish_genotype_zdb_id, genox_exp_zdb_id
+ select res.*, anat.term_ont_id, a.stg_obo_id, b.stg_obo_id,xpatex.*, xpatfig.*,termt.term_ont_id, fish_zdb_id, genox_exp_zdb_id
  	  
   from expression_experiment xpatex,expression_pattern_figure xpatfig, expression_result res, stage a, stage b, term anat, outer term termt,fish_experiment,fish
   where res.xpatres_superterm_zdb_id = anat.term_zdb_id
@@ -185,7 +193,7 @@ insert into tmp_pato (id, genox_id, superterm, subterm, superterm2, subterm2, qu
 	 g.stg_obo_id,
 	 phenox_fig_zdb_id, 
           phenos_tag,
-	  fish_genotype_zdb_id,
+	  fish_zdb_id,
 	  genox_exp_zdb_id
    from phenotype_experiment, phenotype_statement, stage f, stage g,term a, outer term b, outer term c, outer term d, term e, fish_experiment, fish
    where phenox_start_Stg_zdb_id = f.stg_zdb_id
@@ -217,14 +225,6 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 
 --genotypesFeatures
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/1fish.txt"
-  select fas_line_handle, fas_geno_long_name, fas_geno_name, fas_pk_id, fas_genotype_group||","||fas_genox_group
-    from fish_annotation_Search
-    where fas_genox_group is not null
-union
-  select fas_line_handle, fas_geno_long_name, fas_geno_name, fas_pk_id, fas_genotype_group
-    from fish_annotation_Search
-    where fas_genox_group is null;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/2geneFeatureResultView.txt"
   select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
@@ -290,7 +290,7 @@ select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
  ;
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genoenvs/1genoenvs.txt"
- select genox_zdb_id, fish_genotype_zdb_id, genox_exp_zdb_id
+ select genox_zdb_id, fish_zdb_id, genox_exp_zdb_id
    from fish_experiment, fish
    where fish_zdb_id = genox_fish_zdb_id
 ;
