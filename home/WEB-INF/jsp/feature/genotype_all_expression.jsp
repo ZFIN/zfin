@@ -46,15 +46,15 @@
                        <c:choose>
                            <c:when test="${(xp.numberOfFigures >1) && !xp.experiment.standard && !xp.experiment.chemical}">
                              <a href='/action/expression/genotype-figure-summary?genoZdbID=${formBean.genotype.zdbID}&expZdbID=${xp.experiment.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                 ${xp.numberOfFigures} figures</a>
+                                 ${xp.numberOfFigures} </a>
                          </c:when>
                          <c:when test="${(xp.numberOfFigures >1) && xp.experiment.standard && !xp.experiment.chemical}">
                              <a href='/action/expression/genotype-figure-summary-standard?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                 ${xp.numberOfFigures} figures</a>
+                                 ${xp.numberOfFigures} </a>
                          </c:when>
                          <c:when test="${(xp.numberOfFigures >1) && !xp.experiment.standard && xp.experiment.chemical}">
                              <a href='/action/expression/genotype-figure-summary-chemical?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                 ${xp.numberOfFigures} figures</a>
+                                 ${xp.numberOfFigures} </a>
                          </c:when>
 
                          <c:otherwise>

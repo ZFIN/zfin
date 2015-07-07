@@ -96,6 +96,32 @@
        <antcall target="check-indexer"/>
     </target>
 
+    <target name="delete-solr-fish-documents">
+        <exec executable="curl">
+            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/update?commit=true"/>
+            <arg value="-sH" />
+            <arg value="Content-Type: text/xml"/>
+            <arg value="--data-binary"/>
+            <arg value="&lt;delete&gt;&lt;query&gt;category:Fish&lt;/query&gt;&lt;/delete&gt;"/>
+        </exec>
+    </target>
+
+    <target name="build-solr-fish-index">
+        <echo message="Starting Solr index build via http..."/>
+        <exec executable="curl">
+            <arg value="-s"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;clean=false&amp;commit=true&amp;entity=fish&amp;wt=json&amp;indent=true"/>
+        </exec>
+        <echo message=" ---- "/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/prototype/dataimport"/>
+    </target>
+
+    <target name="build-solr-fish-index-jenkins">
+        <antcall target="build-solr-publication-index"/>
+        <antcall target="check-indexer"/>
+    </target>
+
+
     <target name="check-indexer">
         <groovy>
             import groovy.json.JsonSlurper

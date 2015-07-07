@@ -1663,10 +1663,12 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql = "select fish from Fish fish, PublicationAttribution attrib " +
                 "     where attrib.publication.zdbID = :publicationID AND " +
-                "attrib.dataZdbID = fish.zdbID " +
+                "attrib.dataZdbID = fish.zdbID AND " +
+                "attrib.sourceType = :sourceType " +
                 "order by fish.name";
         Query query = session.createQuery(hql);
         query.setParameter("publicationID", publicationID);
+        query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD);
         return (List<Fish>) query.list();
     }
 

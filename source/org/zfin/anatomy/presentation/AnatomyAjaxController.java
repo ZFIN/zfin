@@ -160,6 +160,22 @@ public class AnatomyAjaxController {
         return "anatomy/show-all-clean-fish.page";
     }
 
+    @RequestMapping(value = "/show-all-clean-fish-include-substructures/{zdbID}")
+    public String showAllPhenotypeCleanFishIncludingSubs(Model model
+            , @ModelAttribute("formBean") AnatomySearchBean form
+            , @PathVariable("zdbID") String termID
+    ) throws Exception {
+
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        if (term == null)
+            return "";
+
+        form.setAoTerm(term);
+        retrieveMutantData(term, form, true);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-all-clean-fish.page";
+    }
+
     @RequestMapping(value = "/show-all-dirty-fish/{zdbID}")
     public String showAllPhenotypeDirtyFish(Model model
             , @ModelAttribute("formBean") AnatomySearchBean form
