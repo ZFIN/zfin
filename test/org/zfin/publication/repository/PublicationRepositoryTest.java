@@ -333,7 +333,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    //@Ignore
+    @Ignore
     //TODO Provide valid FISH id instead of geno ID.
     public void getPublicationsForGenoAndAoIncludingSubstructures() {
         //  genotype Df(Chr03:sox8,sox9b)b971/b971
