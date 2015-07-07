@@ -17,9 +17,9 @@
 
 <table class="primary-entity-attributes">
     <tr>
-        <th>Genotype:</th>
+        <th>Fish:</th>
         <td>
-            <zfin:link entity="${fish.genotype}"/>
+            <zfin:link entity="${fish}"/>
         </td>
     </tr>
     <c:if test="${!empty fish.strList}">

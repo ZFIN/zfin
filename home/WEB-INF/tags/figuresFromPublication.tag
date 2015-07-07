@@ -13,7 +13,7 @@
     </c:when>
     <c:otherwise>
         <zfin2:fishSearchExpressionFigureLink queryKeyValuePair="${queryKeyValuePair}"
-                                              figureCount="${fn:length(figureData.figures)}"/> figures from
+                                              figureCount="${fn:length(figureData.figures)}"/> from
         <c:choose>
             <c:when test="${figureData.numberOfPublication ==1}">
                 <zfin:link entity="${figureData.figure.publication}"/>
