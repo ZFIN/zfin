@@ -160,9 +160,9 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     public void testShowGenotypesPerAOSubstructures() throws IOException {
         webClient.waitForBackgroundJavaScriptStartingBefore(1000);
         // 	actinotrichium [ZDB-TERM-100614-30]
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-phenotype-mutants-substructures/ZDB-TERM-100614-30");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish-include-substructures/ZDB-TERM-100614-30");
         // Genotype Df(Chr03:sox8,sox9b)b971/b971
-        assertThat(page.getAnchorByText("Df(Chr03:sox8b,sox9b)b971/b971"), is(notNullValue()));
+        assertThat(page.getAnchorByText("AB+MO1-plod1a"), is(notNullValue()));
     }
 
 
