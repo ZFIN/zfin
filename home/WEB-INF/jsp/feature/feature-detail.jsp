@@ -95,10 +95,10 @@
                 <c:if test="${mRel.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${mRel.publicationCount == 1}">
-                            (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
+                            (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                         </c:when>
                         <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                         </c:otherwise>
                     </c:choose>
                 </c:if>
