@@ -9,7 +9,6 @@ import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -17,7 +16,6 @@ import org.zfin.marker.MarkerType;
 import org.zfin.mutant.GenotypeExternalNote;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
@@ -107,10 +105,9 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments);
 
-    void insertUpdatesTable(Marker marker, String fieldName, String comments, String newValue, String oldValue);
+    void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments, String newValue, String oldValue);
 
-
-    void insertUpdatesTable(Marker marker, String fieldName, String comments);
+    void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments);
 
     void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate);
 

@@ -1,7 +1,6 @@
 package org.zfin.publication.presentation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +9,8 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.infrastructure.CustomCalendarEditor;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -18,8 +19,9 @@ import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/publication")
@@ -28,13 +30,16 @@ public class PublicationEditController {
     @Autowired
     private PublicationRepository publicationRepository;
 
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         // insert nulls instead of empty strings
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+        binder.registerCustomEditor(GregorianCalendar.class, new CustomCalendarEditor(dateFormat));
 
         binder.registerCustomEditor(Journal.class, new PropertyEditorSupport() {
             @Override
@@ -78,8 +83,12 @@ public class PublicationEditController {
         }
 
         Publication publication = new Publication();
+        Map<String, List<String>> updates = PublicationService.getUpdates(publication, publicationForm);
         PublicationService.applyFormToPublication(publication, publicationForm);
         publicationRepository.addPublication(publication);
+        for (Map.Entry<String, List<String>> update : updates.entrySet()) {
+            infrastructureRepository.insertUpdatesTable(publication, update.getKey(), "Add pub", update.getValue().get(1), update.getValue().get(0));
+        }
         return "redirect:/" + publication.getZdbID();
     }
 
@@ -108,8 +117,12 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
+        Map<String, List<String>> updates = PublicationService.getUpdates(publication, publicationForm);
         PublicationService.applyFormToPublication(publication, publicationForm);
         publicationRepository.updatePublications(Arrays.asList(publication));
+        for (Map.Entry<String, List<String>> update : updates.entrySet()) {
+            infrastructureRepository.insertUpdatesTable(publication, update.getKey(), "Edit pub", update.getValue().get(1), update.getValue().get(0));
+        }
         return "redirect:/" + publication.getZdbID();
     }
 

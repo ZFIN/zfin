@@ -1,22 +1,27 @@
 package org.zfin.publication.presentation;
 
+import org.apache.commons.beanutils.NestedNullException;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.zfin.expression.Figure;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 
 import javax.servlet.ServletContext;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  */
 public class PublicationService {
 
     public static final String SESSION_PUBLICATIONS = "SessionPublications";
+
+    private static final Logger LOG = Logger.getLogger(PublicationService.class);
 
     private static String generateKey(String key) {
         String user = getUserName();
@@ -116,13 +121,11 @@ public class PublicationService {
         PublicationForm publicationForm = new PublicationForm();
         publicationForm.setZdbID(publication.getZdbID());
         publicationForm.setTitle(publication.getTitle());
-        publicationForm.setStatus(Publication.Status.getStatus(publication.getStatus()));
+        publicationForm.setStatus(publication.getStatus());
         publicationForm.setPubMedID(publication.getAccessionNumber());
         publicationForm.setDoi(publication.getDoi());
         publicationForm.setAuthors(publication.getAuthors());
-        if (publication.getPublicationDate() != null) {
-            publicationForm.setDate(publication.getPublicationDate().getTime());
-        }
+        publicationForm.setDate(publication.getPublicationDate());
         publicationForm.setJournal(publication.getJournal());
         publicationForm.setVolume(publication.getVolume());
         publicationForm.setPages(publication.getPages());
@@ -133,19 +136,13 @@ public class PublicationService {
         return publicationForm;
     }
 
-    public static Publication getPublicationFromPublicationForm(PublicationForm publicationForm) {
-        return null;
-    }
-
     public static void applyFormToPublication(Publication publication, PublicationForm form) {
         publication.setTitle(form.getTitle());
-        publication.setStatus(form.getStatus().getDisplay());
+        publication.setStatus(form.getStatus());
         publication.setAccessionNumber(form.getPubMedID());
         publication.setDoi(form.getDoi());
         publication.setAuthors(form.getAuthors());
-        GregorianCalendar publicationDate = new GregorianCalendar();
-        publicationDate.setTime(form.getDate());
-        publication.setPublicationDate(publicationDate);
+        publication.setPublicationDate(form.getDate());
         publication.setJournal(form.getJournal());
         publication.setVolume(form.getVolume());
         publication.setPages(form.getPages());
@@ -153,5 +150,85 @@ public class PublicationService {
         publication.setKeywords(form.getKeywords());
         publication.setAbstractText(form.getAbstractText());
         publication.setErrataAndNotes(form.getNotes());
+    }
+
+    public static Map<String, List<String>> getUpdates(Publication publication, PublicationForm form) {
+        Map<String, List<String>> updates = new HashMap<>();
+        PublicationFormUpdateHelper updateHelper = new PublicationFormUpdateHelper(publication, form);
+        updateHelper.compareField(updates, "Title");
+        updateHelper.compareField(updates, "Status");
+        updateHelper.compareField(updates, "PubMed ID", "accessionNumber", "pubMedID");
+        updateHelper.compareField(updates, "DOI");
+        updateHelper.compareField(updates, "Authors");
+
+        // handle date separately because 1) we don't want to compare hours, minutes, seconds and 2) need to get the
+        // display right
+        Calendar pubDate = publication.getPublicationDate();
+        truncateDateToDay(pubDate);
+        Calendar formDate = form.getDate();
+        truncateDateToDay(formDate);
+        if (!Objects.equals(pubDate, formDate)) {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            updates.put("Publication Date", Arrays.asList(
+                    pubDate == null ? "" : df.format(pubDate.getTime()),
+                    formDate == null ? "" : df.format(formDate.getTime())
+            ));
+        }
+
+        updateHelper.compareField(updates, "Journal", "journal.abbreviation");
+        updateHelper.compareField(updates, "Volume");
+        updateHelper.compareField(updates, "Pages");
+        updateHelper.compareField(updates, "Type");
+        updateHelper.compareField(updates, "Keywords");
+        updateHelper.compareField(updates, "Abstract", "abstractText");
+        updateHelper.compareField(updates, "Errata & Notes", "errataAndNotes", "notes");
+        return updates;
+    }
+
+    private static void truncateDateToDay(Calendar cal) {
+        if (cal != null) {
+            cal.set(Calendar.HOUR, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+        }
+    }
+
+    private static class PublicationFormUpdateHelper {
+
+        private Publication pub;
+        private PublicationForm form;
+
+        public PublicationFormUpdateHelper(Publication pub, PublicationForm form) {
+            this.pub = pub;
+            this.form = form;
+        }
+
+        public void compareField(Map<String, List<String>> updates, String fieldName) {
+            compareField(updates, fieldName, fieldName.toLowerCase());
+        }
+
+        public void compareField(Map<String, List<String>> updates, String fieldName, String propertyName) {
+            compareField(updates, fieldName, propertyName, propertyName);
+        }
+
+        public void compareField(Map<String, List<String>> updates, String fieldName, String pubProperty, String formProperty) {
+            Object pubValue = getProperty(pub, pubProperty);
+            Object formValue = getProperty(form, formProperty);
+            if (!Objects.equals(formValue, pubValue)) {
+                updates.put(fieldName, Arrays.asList(
+                        Objects.toString(pubValue, ""),
+                        Objects.toString(formValue, "")));
+            }
+        }
+
+        private static Object getProperty(Object bean, String field) {
+            try {
+                return PropertyUtils.getProperty(bean, field);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NestedNullException e) {
+                return null;
+            }
+        }
+
     }
 }
