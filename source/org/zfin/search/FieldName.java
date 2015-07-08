@@ -61,6 +61,7 @@ public enum FieldName {
     SEQUENCE_ALTERATION("sequence_alteration", "Mutation / Tg"),
 //    SCREEN("screen"),   <!--screen used to be here, removed as a result of case 11323-->
     MUTAGEN("mutagen"),
+    MUTATION_TYPE("mutation_type"),
     SEQUENCE_TARGETING_REAGENT("sequence_targeting_reagent"),
     SOURCE("source"),
     STAGE("stage"),

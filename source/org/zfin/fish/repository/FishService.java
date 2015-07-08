@@ -88,7 +88,7 @@ public class FishService {
         SolrService.getSolrServer("prototype");
         SolrQuery query = new SolrQuery();
 
-        query.addFilterQuery("category:Fish");
+        query.setRequestHandler("/fish-search");
 
         //the main query box, should probably be just matching against a subset of the record
         query.setQuery(criteria.getGeneOrFeatureNameCriteria().getValue());
@@ -116,7 +116,7 @@ public class FishService {
         }
 
         if (criteria.getMutationTypeCriteria().hasValues()) {
-            //todo: implement me!
+            query.addFilterQuery(FieldName.MUTATION_TYPE.getName() + ":\"" + criteria.getMutationTypeCriteria().getValue() + "\"");
         }
 
         if (criteria.getPhenotypeAnatomyCriteria().hasValues()) {
