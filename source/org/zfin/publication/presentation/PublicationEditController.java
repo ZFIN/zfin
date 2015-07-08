@@ -67,6 +67,8 @@ public class PublicationEditController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String showNewPublicationForm(Model model,
                                          @ModelAttribute PublicationForm form) {
+        // default type should be journal
+        form.setType(Publication.Type.JOURNAL);
         model.addAttribute("publicationForm", form);
         return "publication/add-publication.page";
     }
