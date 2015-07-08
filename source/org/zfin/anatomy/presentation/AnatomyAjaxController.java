@@ -145,10 +145,9 @@ public class AnatomyAjaxController {
     }
 
     @RequestMapping(value = "/show-all-clean-fish/{zdbID}")
-    public String showAllPhenotypeCleanFish(Model model
-            , @ModelAttribute("formBean") AnatomySearchBean form
-            , @PathVariable("zdbID") String termID
-    ) throws Exception {
+    public String showAllPhenotypeCleanFish(Model model,
+                                            @ModelAttribute("formBean") AnatomySearchBean form,
+                                            @PathVariable("zdbID") String termID) throws Exception {
 
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)

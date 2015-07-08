@@ -652,14 +652,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct figure from Figure figure, PhenotypeStatement phenos, " +
-                "FishExperiment fishox, TransitiveClosure transitiveClosure, GeneGenotypeExperiment fastSearch " +
+                "FishExperiment fishox, TransitiveClosure transitiveClosure " +
                 "where fishox.fish = :fish AND " +
                 "      phenos.phenotypeExperiment.fishExperiment = fishox  AND " +
                 "      phenos.phenotypeExperiment.figure = figure AND " +
                 "      transitiveClosure.root = :aoTerm AND " +
                 "      ( phenos.entity.superterm = transitiveClosure.child OR phenos.entity.subterm = transitiveClosure.child OR " +
                 "        phenos.relatedEntity.superterm = transitiveClosure.child OR phenos.relatedEntity.subterm = transitiveClosure.child) " +
-                " AND exists (select 'x' from fastSearch where fishExperiment = fishox) " +
+                " AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) " +
                 "order by figure.orderingLabel    ";
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);

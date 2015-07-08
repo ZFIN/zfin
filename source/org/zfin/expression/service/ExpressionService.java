@@ -568,4 +568,94 @@ public class ExpressionService {
         }
         return figureExpressionSummaries;
     }
+
+    /**
+     * Create a list of expressionDisplay objects organized by expressed gene.
+     */
+    public static List<ExpressionDisplay> createExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs) {
+        if (expressionResults == null || expressionResults.size() == 0 || expressionFigureIDs == null || expressionFigureIDs.size() == 0 || expressionPublicationIDs == null || expressionPublicationIDs.size() == 0)
+            return null;
+
+        // a map of zdbIDs of expressed genes as keys and display objects as values
+        Map<String, ExpressionDisplay> map = new HashMap<String, ExpressionDisplay>();
+
+        String keySTR = initialKey;
+
+        for (ExpressionResult xpResult : expressionResults) {
+            Marker expressedGene = xpResult.getExpressionExperiment().getGene();
+            if (expressedGene != null) {
+                Experiment exp = xpResult.getExpressionExperiment().getFishExperiment().getExperiment();
+
+                String key = keySTR + expressedGene.getZdbID();
+
+                Set<Figure> figs = xpResult.getFigures();
+                Set<Figure> qualifiedFigures = new HashSet<Figure>();
+
+                for (Figure fig : figs)  {
+                    if (expressionFigureIDs.contains(fig.getZdbID())) {
+                        qualifiedFigures.add(fig);
+                    }
+                }
+
+                GenericTerm term = xpResult.getSuperTerm();
+                Publication pub = xpResult.getExpressionExperiment().getPublication();
+
+                ExpressionDisplay xpDisplay;
+                // if the key not in the map, instantiate a display object and add it to the map
+                // otherwise, get the display object from the map
+                if (!map.containsKey(key)) {
+                    xpDisplay = new ExpressionDisplay(expressedGene);
+                    xpDisplay.setExpressionResults(new ArrayList<ExpressionResult>());
+                    xpDisplay.setExperiment(exp);
+                    xpDisplay.setExpressionTerms(new HashSet<GenericTerm>());
+
+                    xpDisplay.getExpressionResults().add(xpResult);
+                    xpDisplay.getExpressionTerms().add(term);
+
+                    xpDisplay.setExpressedGene(expressedGene);
+
+                    xpDisplay.setFigures(new HashSet<Figure>());
+                    xpDisplay.getFigures().addAll(qualifiedFigures);
+
+                    xpDisplay.setPublications(new HashSet<Publication>());
+                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                        xpDisplay.getPublications().add(pub);
+
+                        if (!xpDisplay.noFigureOrFigureWithNoLabel()) {
+                            map.put(key, xpDisplay);
+                        }
+                    }
+                } else {
+                    xpDisplay = map.get(key);
+
+                    if (!xpDisplay.getExpressionTerms().contains(term)) {
+                        xpDisplay.getExpressionResults().add(xpResult);
+                        xpDisplay.getExpressionTerms().add(term);
+                    }
+
+                    Collections.sort(xpDisplay.getExpressionResults(), new ExpressionResultTermComparator());
+
+                    xpDisplay.getFigures().addAll(qualifiedFigures);
+                    if (expressionPublicationIDs.contains(pub.getZdbID())) {
+                        xpDisplay.getPublications().add(pub);
+                    }
+                }
+
+            }
+        }
+
+        List<ExpressionDisplay> expressionDisplays = new ArrayList<ExpressionDisplay>(map.size());
+
+        if (map.values().size() > 0) {
+            expressionDisplays.addAll(map.values());
+            Collections.sort(expressionDisplays);
+            return expressionDisplays;
+        }  else {
+            return null;
+        }
+
+
+
+    }
+
 }
