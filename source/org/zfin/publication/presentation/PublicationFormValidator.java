@@ -45,9 +45,10 @@ public class PublicationFormValidator implements Validator {
                 }
             }
         }
-        if(form.getType() !=null && form.getType()== Publication.Type.THESIS){
-            if (!form.getJournal().getName().contains("Thesis")){
-                errors.rejectValue("journal", "journal.invalid", "This publication can only be associated with Thesis type journals");
+
+        if (form.getType() != null && form.getType() == Publication.Type.THESIS) {
+            if (!form.getJournal().getName().contains("Thesis")) {
+                errors.rejectValue("journal", "journal.type.thesis");
             }
         }
     }

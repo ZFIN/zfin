@@ -653,7 +653,7 @@ $(IF,$(XST,$return_rec),"<DIV class="show_pubs"><A HREF="/<!--|WEBDRIVER_PATH_FR
 	<option $(IF,$(EC,$jtype,Book),SELECTED) value=Book>Book
 	<option $(IF,$(EC,$jtype,Chapter),SELECTED) value=Chapter>Chapter
 	<option $(IF,$(EC,$jtype,Curation),SELECTED) value=Curation>Curation
-	<option $(IF,$(EC,$jtype,Active_Curation),SELECTED) value=Active_Curation>Active Curation
+	<option $(IF,$(EC,$jtype,"Active Curation"),SELECTED) value="Active Curation">Active Curation
 	<option $(IF,$(EC,$jtype,Other),SELECTED) value=Other>Other
 	<option $(IF,$(EC,$jtype,Unpublished),SELECTED) value=Unpublished>Unpublished
 	<?MIVAR COND="$(EC,$ZDB_access,root)"><option value=Unknown>Unknown<?/MIVAR>

@@ -244,27 +244,27 @@ create function regen_anatomy_counts()
 	     			     	      	      where anatstat_term_zdb_id = term_zdb_id)
          where anatstat_object_type ='GENE';
 
-     let errorhint = "Create genos_with_phenos";
+     let errorhint = "Create fish_with_phenos";
 
-      -- a temp table to hold genotypes that have phenotype in an anatomy term
+      -- a temp table to hold fish that have phenotype in an anatomy term
       -- and all its child terms, and to count the distinct number.
 
-      create temp table genos_with_phenos
+      create temp table fish_with_phenos
 	(
-	  geno_zdb_id	varchar(50), term_zdb_id varchar(50), type varchar(2)
+	  fish_zdb_id	varchar(50), term_zdb_id varchar(50), type varchar(2)
 	)
       with no log;
       
-    let errorhint = "Create genos_with_phenos tmp index tmp_term_genos_zdb_id_index";
+    let errorhint = "Create fish_with_phenos tmp index tmp_term_fish_zdb_id_index";
 
-      create index tmp_term_genos_zdb_id_index
-        on genos_with_phenos(term_zdb_id)
+      create index tmp_term_fish_zdb_id_index
+        on fish_with_phenos(term_zdb_id)
        using btree in idxdbs1;
 
-    let errorhint = "Create genos_with_phenos tmp index tmp_term_geno_genos_zdb_id_index";
+    let errorhint = "Create fish_with_phenos tmp index tmp_term_fish_genos_zdb_id_index";
 
-     create index tmp_geno_genos_zdb_id_index
-        on genos_with_phenos(geno_zdb_id)
+     create index tmp_fish_genos_zdb_id_index
+        on fish_with_phenos(fish_zdb_id)
        using btree in idxdbs1;
 
     let errorhint = "Create base records for GENO objects in anatomy_stats_new";
@@ -290,76 +290,181 @@ create function regen_anatomy_counts()
 
 
 	-- get list of genes that have expression patterns for this
-	-- anatomy item. Suppress wildtype genos in this list.
+	-- anatomy item. Suppress wildtype fish in this list.
 
-    let errorhint = "first genos_with_phenos insert";
+    let errorhint = "first fish_with_phenos insert";
 
-     insert into genos_with_phenos
-	  select distinct gffs_geno_zdb_id,term_zdb_id,'p'
-	    from genotype_figure_fast_search, term, genotype
-	    where gffs_superterm_zdb_id = term_Zdb_id
-	      and gffs_morph_zdb_id is null
-	      and geno_zdb_id = gffs_geno_zdb_id
-	      and geno_is_wildtype = 'f';
+     insert into fish_with_phenos
+SELECT DISTINCT fish_zdb_id, 
+                phenos_entity_1_superterm_zdb_id, 'p' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_experiment, 
+       phenotype_statement,
+       term 
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND phenox_genox_zdb_id = genox_zdb_id 
+       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND phenos_entity_1_superterm_zdb_id = term_zdb_id 
+       AND phenos_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-    let errorhint = "second genos_with_phenos insert";
+     insert into fish_with_phenos
+SELECT DISTINCT fish_zdb_id, 
+                phenos_entity_1_subterm_zdb_id, 'p' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_experiment, 
+       phenotype_statement,
+       term 
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND phenox_genox_zdb_id = genox_zdb_id 
+       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND phenos_entity_1_subterm_zdb_id = term_zdb_id 
+       AND phenos_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-     insert into genos_with_phenos
-	  select distinct gffs_geno_zdb_id,term_zdb_id,'p'
-	    from genotype_figure_fast_search,term, genotype
-	    where gffs_subterm_zdb_id = term_zdb_id
-	      and gffs_morph_zdb_id is null
-	      and geno_zdb_id = gffs_geno_zdb_id
-	      and geno_is_wildtype = 'f';
+     insert into fish_with_phenos
+SELECT DISTINCT fish_zdb_id, 
+                phenos_entity_2_superterm_zdb_id, 'p' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_experiment, 
+       phenotype_statement,
+       term 
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND phenox_genox_zdb_id = genox_zdb_id 
+       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND phenos_entity_2_superterm_zdb_id = term_zdb_id 
+       AND phenos_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-    let errorhint = "update stats for genos_with_phenos";
 
-    update statistics high for table genos_with_phenos;
+     insert into fish_with_phenos
+SELECT DISTINCT fish_zdb_id, 
+                phenos_entity_2_subterm_zdb_id, 'p' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_experiment, 
+       phenotype_statement,
+       term 
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND phenox_genox_zdb_id = genox_zdb_id 
+       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND phenos_entity_2_subterm_zdb_id = term_zdb_id 
+       AND phenos_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
+
+
+    let errorhint = "update stats for fish_with_phenos";
+
+    update statistics high for table fish_with_phenos;
 
     let errorhint = "update object count for anatstat with GENOs";
 
     update anatomy_stats_new
-         set anatstat_object_count = (select count(distinct geno_zdb_id) 
-	     			     	     from genos_with_phenos
+         set anatstat_object_count = (select count(distinct fish_zdb_id) 
+	     			     	     from fish_with_phenos
 	     			     	     where anatstat_term_zdb_id = term_zdb_id
 					     and type = 'p'
 					     )
          where anatstat_object_type = 'GENO';
 
 	-- get list of genes that have expression patterns for this
-	-- anatomy item's children. Suppress wildtype genos.
+	-- anatomy item's children. Suppress wildtype fish.
 
-    let errorhint = "third genos with phenos insert";
+    let errorhint = "third fish with phenos insert";
 
-    insert into genos_with_phenos
-	  select distinct gffs_geno_zdb_id, term_zdb_id, 'c'
-	    from all_term_contains, term,
-		 genotype_figure_fast_search, genotype
-	    where alltermcon_contained_zdb_id = gffs_subterm_zdb_id
-	      and alltermcon_container_zdb_id = term_zdb_id
-	      and gffs_morph_zdb_id is null
-	      and geno_zdb_id = gffs_geno_zdb_id
-	      and geno_is_wildtype = 'f';
+     insert into fish_with_phenos
+SELECT DISTINCT fish_zdb_id, 
+                term_zdb_id, 'c' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_experiment, 
+       phenotype_statement,
+       term,
+       all_term_contains
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND phenox_genox_zdb_id = genox_zdb_id 
+       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND alltermcon_container_zdb_id = term_zdb_id
+       AND phenos_entity_1_superterm_zdb_id =alltermcon_contained_zdb_id 
+       AND phenos_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-    let errorhint = "fourth genos with phenos insert";
+     insert into fish_with_phenos
+SELECT DISTINCT fish_zdb_id, 
+                term_zdb_id, 'c' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_experiment, 
+       phenotype_statement,
+       term,
+       all_term_contains
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND phenox_genox_zdb_id = genox_zdb_id 
+       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND alltermcon_container_zdb_id = term_zdb_id
+       AND phenos_entity_1_subterm_zdb_id =alltermcon_contained_zdb_id 
+       AND phenos_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-    insert into genos_with_phenos
-	  select distinct gffs_geno_zdb_id, term_zdb_id, 'c'
-	    from all_term_contains, term,
-		 genotype_figure_fast_search, genotype
-	    where alltermcon_contained_zdb_id = gffs_superterm_zdb_id
-	      and alltermcon_container_zdb_id = term_zdb_id
-	      and gffs_morph_zdb_id is null
-	      and geno_zdb_id = gffs_geno_zdb_id
-	      and geno_is_wildtype = 'f';
+     insert into fish_with_phenos
+SELECT DISTINCT fish_zdb_id, 
+                term_zdb_id, 'c' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_experiment, 
+       phenotype_statement,
+       term,
+       all_term_contains
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND phenox_genox_zdb_id = genox_zdb_id 
+       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND alltermcon_container_zdb_id = term_zdb_id
+       AND phenos_entity_2_superterm_zdb_id =alltermcon_contained_zdb_id 
+       AND phenos_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
-	      update statistics high for table genos_with_phenos;
+
+     insert into fish_with_phenos
+SELECT DISTINCT fish_zdb_id, 
+                term_zdb_id, 'c' 
+FROM   fish, 
+       fish_experiment, 
+       phenotype_experiment, 
+       phenotype_statement,
+       term,
+       all_term_contains 
+WHERE  genox_fish_zdb_id = fish_zdb_id 
+       AND phenox_genox_zdb_id = genox_zdb_id 
+       AND phenos_phenox_pk_id = phenox_pk_id 
+       AND alltermcon_container_zdb_id = term_zdb_id
+       AND phenos_entity_2_subterm_zdb_id =alltermcon_contained_zdb_id 
+       AND phenos_tag != 'normal' 
+       AND EXISTS (SELECT 'x' 
+                   FROM   mutant_fast_search 
+                   WHERE  mfs_genox_zdb_id = genox_zdb_id); 
 
     let errorhint = "update anatstat_new with contains object count";
  
     update anatomy_stats_new
-         set anatstat_contains_object_count = (select count(distinct geno_zdb_id) 
-	     				      	      from genos_with_phenos
+         set anatstat_contains_object_count = (select count(distinct fish_zdb_id) 
+	     				      	      from fish_with_phenos
 	     			     	      	      where anatstat_term_zdb_id = term_zdb_id
 					      	      and type = 'c')
          where anatstat_object_type = 'GENO';
@@ -367,8 +472,8 @@ create function regen_anatomy_counts()
     let errorhint = "update anatstat_new with total distinct object count";
 
     update anatomy_stats_new
-         	set anatstat_total_distinct_count = (select count(distinct geno_zdb_id) 
-	     				      	      from genos_with_phenos
+         	set anatstat_total_distinct_count = (select count(distinct fish_zdb_id) 
+	     				      	      from fish_with_phenos
 	     			     	      	      where anatstat_term_zdb_id = term_zdb_id)
 		where anatstat_object_type = 'GENO';
 

@@ -10,6 +10,10 @@
         <param name="enumClassname">org.zfin.publication.Publication$Type</param>
     </typedef>
 
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="publicationStatus">
+        <param name="enumClassname">org.zfin.publication.Publication$Status</param>
+    </typedef>
+
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="meshTermType">
         <param name="enumClassname">org.zfin.publication.MeshTerm$Type</param>
     </typedef>
@@ -49,7 +53,7 @@
         <property name="indexed" column="pub_is_indexed"/>
         <property name="indexedDate" column="pub_indexed_date"/>
         <property name="acknowledgment" column="pub_acknowledgment"/>
-        <property name="status" column="status"/>
+        <property name="status" column="status" type="publicationStatus"/>
         <property name="errataAndNotes" column="pub_errata_and_notes"/>
         <property name="keywords" column="keywords"/>
 

@@ -66,7 +66,7 @@ EFFECTS
         ==================
      <?/MICOMMENT> 
      
-  <?MIBLOCK COND=$(AND,$(EC,$pubackn_cur_status,$pubackn_FFC),$(NC,$pubackn_jtype,Unpublished),$(NC,$pubackn_jtype,Curation),$(NC,$pubackn_jtype,Active_Curation))>
+  <?MIBLOCK COND=$(AND,$(EC,$pubackn_cur_status,$pubackn_FFC),$(NC,$pubackn_jtype,Unpublished),$(NC,$pubackn_jtype,Curation),$(NC,$pubackn_jtype,"Active Curation"))>
     
     <?MIVAR NAME=pubackn_hidden><?/MIVAR>
     <?MIVAR NAME=pubackn_show><?/MIVAR>
