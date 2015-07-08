@@ -246,7 +246,6 @@
 
 
 
-
           <!-- fast vector highlighter config -->
          <str name="hl.tag.pre"><![CDATA[<span class="search-result-highlight">]]></str>
          <str name="hl.tag.post"><![CDATA[</span>]]></str>
@@ -843,6 +842,62 @@
         <str name="mlt.mintf">1</str>
         <str name="mlt.mindf">2</str>
       </lst>
+    </requestHandler>
+
+    <requestHandler name="/fish-search" class="org.apache.solr.handler.component.SearchHandler">
+        <lst name="appends">
+            <str name="fq">category:Fish</str>
+        </lst>
+        <lst name="defaults">
+            <str name="echoParams">explicit</str>
+            <str name="sort">score desc, name_sort asc</str>
+
+            <str name="q.alt">*:*</str>
+            <str name="defType">edismax</str>
+            <!-- This list needs to match the fl for the primary requesthandler, or, more importantly, it needs to match the annotations in SearchResult.java  -->
+            <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, result_table,  has_orthology, xpat_zdb_id, fig_zdb_id, score</str>
+            <str name="qf">proper_name^10.0
+                name
+                category_t
+                type_t
+                name_t
+
+                full_name^2.0
+
+                id_t
+                alias^4.0
+                alias_t^4.0
+
+                construct
+                construct_t
+
+                sequence_targeting_reagent
+                sequence_targeting_reagent_t
+
+                affected_gene_full_name^0.8
+                affected_gene_previous_name^0.7
+                affected_gene
+
+                allele_t
+                background background_t
+                sequence_alteration sequence_alteration_t
+
+                feature feature_t
+
+            </str>
+
+            <str name="bf">
+                sum($complexity_boost,$popularity_boost,$recency_boost,$images_boost,$jtype_boost)
+            </str>
+
+            <str name="complexity_boost">mul(recip(complexity,1,1,1),10000)</str>
+            <str name="popularity_boost">mul(sqrt(popularity),0.00001)</str>
+            <str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>
+            <str name="images_boost">mul(exists(has_image),0.1)</str>
+            <str name="jtype_boost">mul(exists(query({!v='publication_type:Journal'})),0.001)</str>
+
+
+        </lst>
     </requestHandler>
 
   <requestHandler name="/search" class="org.apache.solr.handler.component.SearchHandler">

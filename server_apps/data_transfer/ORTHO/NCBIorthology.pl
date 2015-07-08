@@ -2,9 +2,9 @@
 
 # NCBIorthology.pl
 # First, the script downloads the following NCBI data files:
-# ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz
-# ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz
-# ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Invertebrates/Drosophila_melanogaster.gene_info.gz
+# ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz
+# ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz
+# ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Invertebrates/Drosophila_melanogaster.gene_info.gz
 # The script then parses data in the above files and store related data in a series of data structures and then compare data stored at ZFIN to decide what
 # should be updated. Updating the orthology name would be done automatically by calling updateOrthologyNames.sql. Report of zebrafish names that may be updated 
 # is generated and emailed to Ken, who will update the zebrafish names in place on the report. Then that report will be used by another script, updateZebrafishGeneNames.pl.
@@ -41,14 +41,14 @@ open LOG, '>', "logOrthologyUpdateName" or die "can not open logOrthologyUpdateN
 
 &doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
+&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Homo_sapiens.gene_info.gz");
 
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz");
+&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Mus_musculus.gene_info.gz");
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Invertebrates/Drosophila_melanogaster.gene_info.gz");
+&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Invertebrates/Drosophila_melanogaster.gene_info.gz");
 &doSystemCommand("/local/bin/gunzip Drosophila_melanogaster.gene_info.gz");
 
 &doSystemCommand("/bin/cat Mus_musculus.gene_info >> Homo_sapiens.gene_info");

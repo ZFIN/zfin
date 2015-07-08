@@ -145,7 +145,22 @@ public class AnatomyAjaxController {
     }
 
     @RequestMapping(value = "/show-all-clean-fish/{zdbID}")
-    public String showAllPhenotypeCleanFish(Model model
+    public String showAllPhenotypeCleanFish(Model model,
+                                            @ModelAttribute("formBean") AnatomySearchBean form,
+                                            @PathVariable("zdbID") String termID) throws Exception {
+
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        if (term == null)
+            return "";
+
+        form.setAoTerm(term);
+        retrieveMutantData(term, form, false);
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        return "anatomy/show-all-clean-fish.page";
+    }
+
+    @RequestMapping(value = "/show-all-clean-fish-include-substructures/{zdbID}")
+    public String showAllPhenotypeCleanFishIncludingSubs(Model model
             , @ModelAttribute("formBean") AnatomySearchBean form
             , @PathVariable("zdbID") String termID
     ) throws Exception {
@@ -155,7 +170,7 @@ public class AnatomyAjaxController {
             return "";
 
         form.setAoTerm(term);
-        retrieveMutantData(term, form, false);
+        retrieveMutantData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         return "anatomy/show-all-clean-fish.page";
     }

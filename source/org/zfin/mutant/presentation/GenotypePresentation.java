@@ -41,9 +41,13 @@ public class GenotypePresentation extends EntityPresentation {
     public static String getLink(Genotype genotype, boolean suppressPopupLink) {
         StringBuilder sb = new StringBuilder();
         if (getBackground(genotype) != null)
-            sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype)+"("+getBackground(genotype)+")", null));
+            sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype) + "(" + getBackground(genotype) + ")", null));
         else
+        if (!genotype.isWildtype())
             sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null));
+        else{
+            sb.append(getTomcatLink(uri, genotype.getZdbID(), genotype.getHandle(), null));
+        }
 //        if (genotype.isWildtype()) suppressPopupLink = true;
         if (!suppressPopupLink)
             sb.append(getPopupLink(genotype));

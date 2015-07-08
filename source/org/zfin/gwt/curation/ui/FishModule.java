@@ -7,8 +7,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.HandlesError;
 
@@ -21,7 +21,7 @@ public class FishModule extends Composite implements EntryPoint {
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("FishModule.ui.xml")
-    interface MyUiBinder extends UiBinder<FlowPanel, FishModule> {
+    interface MyUiBinder extends UiBinder<VerticalPanel, FishModule> {
     }
 
     private String publicationID;
@@ -55,14 +55,14 @@ public class FishModule extends Composite implements EntryPoint {
     @Override
     public void onModuleLoad() {
         bindEventBusHandler();
-        FlowPanel outer = uiBinder.createAndBindUi(this);
+        VerticalPanel outer = uiBinder.createAndBindUi(this);
         RootPanel.get(FISH_TAB).add(outer);
         attributionModule = new AttributionModule();
         RelatedEntityDTO relatedEntityDTO = new RelatedEntityDTO();
         relatedEntityDTO.setPublicationZdbID(publicationID);
         attributionModule.setDTO(relatedEntityDTO);
         addHandlers();
-        presenter = new GenotypePresenter(eventBus, genotypeView, publicationID);
+        presenter = new GenotypePresenter(genotypeView, publicationID);
         presenter.go();
         importPresenter = new ImportGenotypePresenter(eventBus, importGenotypeView, publicationID);
         importPresenter.go();
