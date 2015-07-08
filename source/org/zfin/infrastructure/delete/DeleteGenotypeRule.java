@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -48,10 +49,17 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
         for (FishExperiment fishExp: fishExperimentList) {
             Fish fish=fishExp.getFish();
             sortedFish.add(fish);
+            if (CollectionUtils.isNotEmpty(sortedFish)) {
+                addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish", sortedFish);
+            }
+            if (CollectionUtils.isNotEmpty(fishExp.getPhenotypeExperiments())){
+                addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish that has Phenotype",sortedFish);
+            }
+            if (CollectionUtils.isNotEmpty(fishExp.getExpressionExperiments())){
+                addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish that has Expression",sortedFish);
+            }
         }
-        if (CollectionUtils.isNotEmpty(sortedFish)) {
-            addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish", sortedFish);
-        }
+
         return validationReportList;
     }
 

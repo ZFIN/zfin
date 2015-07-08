@@ -150,7 +150,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql =
                 "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
-                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq, GeneGenotypeExperiment fastSearch," +
+                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq," +
                         "TransitiveClosure transitiveClosure " +
                         "WHERE phenox.fishExperiment = fishox " +
                         "AND phenoeq.phenotypeExperiment = phenox " +
@@ -158,7 +158,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "(phenoeq.entity.superterm = transitiveClosure.child OR phenoeq.entity.subterm = transitiveClosure.child OR " +
                         " phenoeq.relatedEntity.superterm = transitiveClosure.child OR phenoeq.relatedEntity.subterm = transitiveClosure.child) " +
                         "AND phenoeq.tag != :tag " +
-                        "AND exists (select 'x' from fastSearch where fishExperiment = fishox) ";
+                        "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) ";
         hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
