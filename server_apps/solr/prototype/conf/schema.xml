@@ -714,6 +714,9 @@
    <field name="thumbnail" type="string" indexed="true" stored="true" multiValued="true"  />
    <field name="image" type="string" indexed="true" stored="true" multiValued="true"  />
 
+     <!-- used by parameterized fish search -->
+   <field name="figure_id" type="string" indexed="true" stored="true" />
+
    <field name="mutation_type" type="keyword" indexed="true" stored="true" />
 
    <!-- using string rather than boolean so these can be facet values -->
