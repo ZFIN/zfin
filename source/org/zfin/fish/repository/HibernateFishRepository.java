@@ -3,6 +3,10 @@ package org.zfin.fish.repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -21,7 +25,10 @@ import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.FieldName;
+import org.zfin.search.service.SolrService;
 
 import java.util.*;
 
@@ -319,7 +326,46 @@ public class HibernateFishRepository implements FishRepository {
         Session session = HibernateUtil.currentSession();
 
 
-        //todo: implement me!
+        SolrServer server = SolrService.getSolrServer("prototype");
+        SolrQuery query = new SolrQuery();
+        //todo: drop the figure id in directly?
+        query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
+        query.addFilterQuery(FieldName.XREF.getName() + ":\"" + fishID + "\"");
+
+        for (String termID : termIDs) {
+            Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+            query.addFilterQuery(FieldName.ANATOMY_TF.getName()            + ":\"" + term.getTermName() + "\""
+                      + " OR " + FieldName.BIOLOGICAL_PROCESS_TF.getName() + ":\"" + term.getTermName() + "\""
+                      + " OR " + FieldName.MOLECULAR_FUNCTION_TF.getName() + ":\"" + term.getTermName() + "\""
+                      + " OR " + FieldName.CELLULAR_COMPONENT_TF.getName() + ":\"" + term.getTermName() + "\""
+            );
+        }
+
+
+        QueryResponse response = new QueryResponse();
+        try {
+            response = server.query(query);
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        Set<ZfinFigureEntity> figureEntitySet = new HashSet<>();
+
+        for (SolrDocument doc : response.getResults()) {
+            ZfinFigureEntity figure = new ZfinFigureEntity();
+            //get the figure id from the url
+            String figureZdbID = (String) doc.get(FieldName.FIGURE_ID.getName());
+            figure.setID(figureZdbID);
+            if (CollectionUtils.isNotEmpty((Collection)doc.get(FieldName.THUMBNAIL.getName()))) {
+                figure.setHasImage(true);
+            } else {
+                figure.setHasImage(false);
+            }
+            figureEntitySet.add(figure);
+        }
+
+        return figureEntitySet;
+
 
 /*        BtsContainsService btsService = new BtsContainsService("ftfs_term_group");
         btsService.addBtsValueList("ftfs_term_group", termIDs);
@@ -352,7 +398,7 @@ public class HibernateFishRepository implements FishRepository {
             }
         }
         return figures;*/
-        return new HashSet<ZfinFigureEntity>();
+        //return new HashSet<ZfinFigureEntity>();
     }
 
     public String getGenoxMaxLength() {

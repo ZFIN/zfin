@@ -12,8 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.FigureExpressionSummary;
+import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.expression.presentation.GeneCentricExpressionData;
+import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.presentation.GenotypeDetailController;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.MutationType;
@@ -75,9 +79,16 @@ public class FishDetailController {
             List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
             model.addAttribute("diseases", getDiseaseModelDisplay(diseaseModels));
 
-            // expression
-            addExpressionSummaryToModel(model, fishZdbId);
+            // Expression data
+            ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+            List<ExpressionResult> fishExpressionResults = expressionRepository.getExpressionResultsByFish(fish);
+            List<String> fishExpressionFigureIDs = expressionRepository.getExpressionFigureIDsByFish(fish);
+            List<String> fishExpressionPublicationIDs = expressionRepository.getExpressionPublicationIDsByFish(fish);
+            List<ExpressionDisplay> fishExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs);
+            model.addAttribute("geneCentricExpressionDataList", fishExpressionDisplays);
+            model.addAttribute("expressionFigureCount", fishExpressionDisplays.size());
         }
+
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute("fishIsWildtypeWithoutReagents", fish.isWildtypeWithoutReagents());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
@@ -113,16 +124,6 @@ public class FishDetailController {
         return "fish/fish-detail-popup.popup";
     }
 
-    private void addExpressionSummaryToModel(Model model, String fishID) {
-        List<FigureExpressionSummary> figureExpressionSummaryList = FishService.getExpressionSummary(fishID);
-        if (figureExpressionSummaryList != null) {
-            List<GeneCentricExpressionData> geneCentricExpressionData = PresentationConverter.getGeneCentricExpressionData(figureExpressionSummaryList);
-            Collections.sort(geneCentricExpressionData, new MarkerCentricOrdering());
-            model.addAttribute("geneCentricExpressionDataList", geneCentricExpressionData);
-            model.addAttribute("expressionFigureCount", figureExpressionSummaryList.size());
-        }
-    }
-
     @RequestMapping(value = "/fish-show-all-phenotypes/{ID}")
     protected String showAllPhenotypes(Model model, HttpServletResponse response,
                                        @PathVariable("ID") String zdbID) throws Exception {
@@ -145,6 +146,7 @@ public class FishDetailController {
         model.addAttribute("fish", fish);
 
         List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
+
         model.addAttribute("phenotypeStatements", phenotypeStatements);
         model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
 
@@ -152,33 +154,6 @@ public class FishDetailController {
 
         return "fish/fish-all-phenotype.page";
     }
-
-    @RequestMapping(value = "/fish-show-all-expression/{ID}")
-    protected String showAllExpression(Model model,
-                                       @PathVariable("ID") String fishID) throws Exception {
-        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
-        if (fish == null) {
-            return LookupStrings.idNotFound(model, fishID);
-        }
-
-        /*if (fish.getFishExperiments() != null && fish.getFishExperiments().size() == 1 && fish.getStrList().size() == 0) {
-            *//*String genotypeExperimentIDsString = fish.getFishExperiments().g;*//*
-            FishExperiment fishExperiment = getMutantRepository().getGenotypeExperiment(genotypeExperimentIDsString);
-            return genotypeDetailController.getAllExpressionsPerGenotype(fishExperiment.getFish().getGenotype().getZdbID(), model);
-        }*/
-
-        //FishBean form = new FishBean();
-        model.addAttribute("expressionStatements", getMutantRepository().getExpressionStatementsByGenotypeExperiments(fish.getFishExperiments()));
-        /*if (StringUtils.isNotEmpty(fish.getGenotypeID()))
-            form.setGenotype(getMutantRepository().getGenotypeByID(fish.getGenotypeID()));*/
-        addExpressionSummaryToModel(model, fishID);
-        // model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(fish);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(fish.getName()));
-
-        return "genotype/fish-all-expressions.page";
-    }
-
 
     private static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseModel> models) {
         MultiKeyMap map = new MultiKeyMap();
