@@ -7,7 +7,6 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.zfin.search.FieldName.*;
-import static org.zfin.search.FieldName.DISEASE;
 
 /**
  * Enumeration of categories used in Faceted search including field names per category
@@ -108,7 +107,7 @@ public enum Category {
             TYPE,
             CHROMOSOME
     ),
-    SEQUENCE_TARGETING_REAGENT("Sequence Targeting Reagent",
+    SEQUENCE_TARGETING_REAGENT("Sequence Targeting Reagent (STR)",
             TYPE,
             TARGETED_GENE
     ),

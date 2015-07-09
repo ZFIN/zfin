@@ -44,7 +44,7 @@
 <c:if test="${fn:length(formBean.sequenceTargetingReagents) > 0 }">
         <tr>
             <th class="fish-name-label" style="vertical-align: bottom;">
-                <span class="name-label">Genotype + Knockdowns:</span>
+                <span class="name-label">Genotype + <abbr title="Sequence Targeting Reagent">STR</abbr>:</span>
             </th>
             <td class="fish-name-value" style="vertical-align: bottom;">
                 <span class="name-value">${formBean.fishName}</span>

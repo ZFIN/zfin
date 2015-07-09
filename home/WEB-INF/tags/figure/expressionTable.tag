@@ -11,7 +11,7 @@
             <tr>
                 <th class="gene">Gene</th>
                 <th class="antibody">Antibody</th>
-                <th class="fish"><span class="fish-label" title="Fish = Genotype + Reagents">Fish</span></th>
+                <th class="fish"><span class="fish-label" title="Fish = Genotype + STR">Fish</span></th>
                 <th>Conditions</th>
                 <th class="stage">Stage</th>
                 <c:if test="${showQualifierColumn}">

@@ -72,7 +72,7 @@
                     class="secretly-clickable sortable-column ${fishColumnClass}"
         --%>
             style="vertical-align: text-top;"
-            title="Fish = genotype + reagents">
+            title="Fish = Genotype + STR">
             Fish
             <img class="column-sort-button fish-column-sort-button " src="/images/transp.gif" alt=""/>
         </th>

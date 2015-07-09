@@ -9,7 +9,7 @@
         <tr>
             <th class="antibody">Antibody</th>
             <th> Assay <a class="popup-link info-popup-link" href="/action/expression/assay-abbrev-popup"></a></th>
-            <th class="fish"><span class="fish-label" title="Fish = Genotype + Reagents">Fish</span></th>
+            <th class="fish"><span class="fish-label" title="Fish = Genotype + STR">Fish</span></th>
             <th>Conditions</th>
             <th class="stage">Stage</th>
             <c:if test="${showQualifierColumn}">
