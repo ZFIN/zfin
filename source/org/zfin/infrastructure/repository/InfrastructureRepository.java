@@ -13,6 +13,8 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExternalNote;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -94,6 +96,8 @@ public interface InfrastructureRepository {
     RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID);
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
+
+    void insertPublicAttribution(Genotype genotype, String sourceZdbID);
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
@@ -439,6 +443,10 @@ public interface InfrastructureRepository {
     void saveExternalNote(GenotypeExternalNote note, Publication publication);
 
     void saveDataNote(DataNote note, Publication publication);
+
+    void insertPublicAttribution(Genotype genotype, Publication publication);
+
+    void insertRecordAttribution(Fish fish, Publication publication);
 }
 
 

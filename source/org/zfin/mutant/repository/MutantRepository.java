@@ -419,8 +419,6 @@ public interface MutantRepository {
 
     void createFish(Fish fish, Publication publication);
 
-    public boolean existsAttribution(PublicationAttribution attribution);
-
     /**
      * Retrieve all fish attributed to a given pub
      *

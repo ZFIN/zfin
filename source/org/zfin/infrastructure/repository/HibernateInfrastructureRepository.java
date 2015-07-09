@@ -20,12 +20,16 @@ import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExternalNote;
+import org.zfin.mutant.GenotypeFeature;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermAlias;
@@ -150,6 +154,25 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID) {
         return insertPublicAttribution(dataZdbID, sourceZdbID, RecordAttribution.SourceType.STANDARD);
+    }
+
+    @Override
+    public void insertPublicAttribution(Genotype genotype, String sourceZdbID) {
+        Publication publication = (Publication) HibernateUtil.currentSession().get(Publication.class, sourceZdbID);
+        insertPublicAttribution(genotype, publication);
+    }
+
+    public void insertStandardPubAttribution(String dataZdbID, Publication publication) {
+        PublicationAttribution publicationAttribution = new PublicationAttribution();
+        publicationAttribution.setDataZdbID(dataZdbID);
+        publicationAttribution.setPublication(publication);
+        publicationAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
+        if (!existAttribution(publicationAttribution))
+            HibernateUtil.currentSession().save(publicationAttribution);
+    }
+
+    private boolean existAttribution(PublicationAttribution attribution) {
+        return getRecordAttribution(attribution.getDataZdbID(), attribution.getSourceZdbID(), attribution.getSourceType()) != null;
     }
 
     public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType) {
@@ -1635,8 +1658,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
         List<Object[]> objectList = (List<Object[]>) query.list();
         List<Publication> pubList = new ArrayList<>(objectList.size());
-        for(Object[] o: objectList)
-        pubList.add((Publication) o[0]);
+        for (Object[] o : objectList)
+            pubList.add((Publication) o[0]);
         return pubList;
     }
 
@@ -1658,6 +1681,23 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         note.setDate(new Date());
         note.setCurator(ProfileService.getCurrentSecurityUser());
         HibernateUtil.currentSession().save(note);
+    }
+
+    @Override
+    public void insertPublicAttribution(Genotype genotype, Publication publication) {
+        insertStandardPubAttribution(genotype.getZdbID(), publication);
+        for (GenotypeFeature gFeature : genotype.getGenotypeFeatures()) {
+            Feature feature = gFeature.getFeature();
+            insertStandardPubAttribution(feature.getZdbID(), publication);
+            insertStandardPubAttribution(feature.getAllelicGene().getZdbID(), publication);
+        }
+
+    }
+
+    @Override
+    public void insertRecordAttribution(Fish fish, Publication publication) {
+        insertStandardPubAttribution(fish.getZdbID(), publication);
+        insertStandardPubAttribution(fish.getGenotype().getZdbID(), publication);
     }
 }
 
