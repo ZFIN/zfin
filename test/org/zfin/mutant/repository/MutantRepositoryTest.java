@@ -469,12 +469,12 @@ public class MutantRepositoryTest {
 
     @Test
     public void getFishExperiment() {
-        Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-980202-822");
+        Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-071127-8");
         List<FishExperiment> fishList = mutantRepository.getFishExperiment(genotype);
         for (FishExperiment experiment : fishList)
             System.out.println(experiment.getFish().getHandle());
         assertNotNull(fishList);
-        assertTrue(fishList.size() > 5);
+        assertTrue(fishList.size() > 0);
     }
 
     @Test

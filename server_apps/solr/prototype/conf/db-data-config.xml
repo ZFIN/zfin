@@ -1921,6 +1921,7 @@ select
                datasource="db" query="select
                         'Phenotype' as category,
                         '/' || phenox_fig_zdb_id as url,
+                        phenox_fig_zdb_id as figure_id,
                         fish_name || ' from ' || nvl(pub_mini_ref,'--')
                                   || ' ' ||  nvl(fig_label,'') as name,
                         fish_name || ' from ' || nvl(pub_mini_ref,'--')

@@ -1342,6 +1342,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         return (List<ExpressionResult>) query.list();
     }
+
     public List<ExpressionResult> getExpressionResultsByFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
@@ -1354,6 +1355,39 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setParameter("fish", fish);
 
         return (List<ExpressionResult>) query.list();
+    }
+
+    public List<String> getExpressionFigureIDsByFish(Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String sql = "select distinct xpatfig_fig_zdb_id " +
+                     "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment " +
+                     " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+                     "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
+                     "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                     "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                     "   and genox_fish_zdb_id = :fishID ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("fishID", fish.getZdbID());
+
+        return (List<String>) query.list();
+    }
+
+    public List<String> getExpressionPublicationIDsByFish(Fish fish) {
+        Session session = HibernateUtil.currentSession();
+
+        String sql = "select distinct fig_source_zdb_id  " +
+                     "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment " +
+                     " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
+                     "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
+                     "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                     "   and fig_zdb_id = xpatfig_fig_zdb_id " +
+                     "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                     "   and genox_fish_zdb_id = :fishID ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("fishID", fish.getZdbID());
+
+        return (List<String>) query.list();
     }
 
     public List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID) {
