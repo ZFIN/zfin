@@ -1,8 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="sequenceTargetingReagentID" type="java.lang.String" required="false" %>
+<%@ attribute name="fishZdbID" type="java.lang.String" required="false" %>
 <%@ attribute name="expressionDisplays" type="java.util.Collection" required="false" %>
-<%@ attribute name="showCondition" type="java.lang.Boolean" required="false" %>
+<%@ attribute name="showCondition" type="java.lang.Boolean" required="true" %>
 
 <table width="100%" class="summary rowstripes">
     <thead>
@@ -38,11 +39,11 @@
     </thead>
     <c:forEach var="xp" items="${expressionDisplays}" varStatus="loop">
         <zfin:alternating-tr loopName="loop"
-                             groupBeanCollection="${formBean.expressionDisplays}"
+                             groupBeanCollection="${expressionDisplays}"
                              groupByBean="expressedGene">
             <td valign="top">
                 <zfin:groupByDisplay loopName="loop"
-                                     groupBeanCollection="${formBean.expressionDisplays}"
+                                     groupBeanCollection="${expressionDisplays}"
                                      groupByBean="expressedGene">
                     <zfin:link entity="${xp.expressedGene}"/>
                 </zfin:groupByDisplay>
@@ -67,21 +68,21 @@
                         <c:choose>
                             <c:when test="${showCondition}">
                                 <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && !xp.experiment.chemical}">
-                                    <a href='/action/expression/genotype-figure-summary?genoZdbID=${formBean.genotype.zdbID}&expZdbID=${xp.experiment.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                        ${xp.numberOfFigures} figures</a>
+                                    <a href='/action/expression/fish-expression-figure-summary?genoZdbID=${fishZdbID}&expZdbID=${xp.experiment.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
+                                            ${xp.numberOfFigures} figures</a>
                                 </c:if>
                                 <c:if test="${(xp.numberOfFigures >1) && xp.experiment.standard && !xp.experiment.chemical}">
-                                    <a href='/action/expression/genotype-figure-summary-standard?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                        ${xp.numberOfFigures} figures</a>
+                                    <a href='/action/expression/fish-expression-figure-summary-standard?genoZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
+                                            ${xp.numberOfFigures} figures</a>
                                 </c:if>
                                 <c:if test="${(xp.numberOfFigures >1) && !xp.experiment.standard && xp.experiment.chemical}">
-                                    <a href='/action/expression/genotype-figure-summary-chemical?genoZdbID=${formBean.genotype.zdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                        ${xp.numberOfFigures} figures</a>
+                                    <a href='/action/expression/fish-expression-figure-summary-chemical?genoZdbID=${fishZdbID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
+                                            ${xp.numberOfFigures} figures</a>
                                 </c:if>
                             </c:when>
                             <c:otherwise>
                                 <a href='/action/expression/sequence-targeting-reagent-expression-figure-summary?strZdbID=${sequenceTargetingReagentID}&geneZdbID=${xp.expressedGene.zdbID}&imagesOnly=false'>
-                                    ${xp.numberOfFigures} figures</a>
+                                        ${xp.numberOfFigures} figures</a>
                             </c:otherwise>
                         </c:choose>
                     </c:otherwise>

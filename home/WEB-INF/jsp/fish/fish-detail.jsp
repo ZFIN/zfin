@@ -97,31 +97,18 @@
         </c:choose>
     </div>
 
-
-    <div class="summary">
-        <b>GENE EXPRESSION</b>&nbsp;
+    <%--// EXPRESSION --%>
+    <div class="summary" id="expression">
+        <b>GENE EXPRESSION</b>
         <small><a class='popup-link info-popup-link' href='/action/marker/note/expression'></a></small>
         <br/>
         <b>Gene expression in <zfin:name entity="${fish}"/></b>
         <c:choose>
-            <c:when test="${geneCentricExpressionDataList != null }">
-                <zfin2:all-expression expressionSummaryDisplay="${geneCentricExpressionDataList}"
-                                      showNumberOfRecords="5" suppressMoDetails="true" queryKeyValuePair="fishID=${fish.fishID}"/>
-                <c:if test="${fn:length(geneCentricExpressionDataList)> 5}">
-                    <table width="100%">
-                        <tr align="left">
-                            <td>
-                                Show all <a
-                                    href="/action/fish/fish-show-all-expression/${fish.fishID}">${fn:length(geneCentricExpressionDataList)}
-                                expressed genes</a>
-                            </td>
-                        </tr>
-                    </table>
-                </c:if>
+            <c:when test="${geneCentricExpressionDataList != null && fn:length(geneCentricExpressionDataList) > 0 }">
+                <zfin2:expressionData fishZdbID="${fish.zdbID}" expressionDisplays="${geneCentricExpressionDataList}" showCondition="true" />
             </c:when>
-
             <c:otherwise>
-                <br/><span class="no-data-tag">No data available</span>
+                <span class="no-data-tag">No data available</span>
             </c:otherwise>
         </c:choose>
     </div>
@@ -163,3 +150,9 @@
     </c:otherwise>
 </c:choose>
 
+<script src="/javascript/table-collapse.js"></script>
+<script>
+   jQuery(function () {
+       jQuery('#expression').tableCollapse({label: 'expressed genes'});
+   });
+</script>
