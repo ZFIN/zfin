@@ -153,26 +153,6 @@ public class GenotypeDetailController {
         return new ArrayList<>(statisticsMap.values());
     }
 
-
-    @RequestMapping(value = {"/show_all_expression"})
-    public String getAllExpressionsPerGenotype(@RequestParam String genoID, Model model) {
-        LOG.debug("Start All Expressions for Genotype");
-        Genotype genotype = mutantRepository.getGenotypeByID(genoID);
-        if (genotype == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, genoID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        GenotypeBean form = new GenotypeBean();
-        form.setGenotype(genotype);
-
-        //retrieveExpressionData(form, genotype);
-
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotype.getName());
-        return "genotype/genotype_all_expression.page";
-    }
-
     private void retrieveGenotypeAndFeatureData(GenotypeBean form, Genotype genotype) {
         List<GenotypeFeature> genotypeFeatures = mutantRepository.getGenotypeFeaturesByGenotype(genotype);
         form.setGenotypeFeatures(genotypeFeatures);

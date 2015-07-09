@@ -1,6 +1,9 @@
 package org.zfin.infrastructure.delete;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
@@ -44,21 +47,21 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
         if (CollectionUtils.isNotEmpty(genoPublications) && genoPublications.size() > 1) {
             addToValidationReport(genotype.getAbbreviation() + " associated with more than one publication: ", genoPublications);
         }
-        List<FishExperiment> fishExperimentList = RepositoryFactory.getMutantRepository().getFishExperiment(genotype);
-        SortedSet<Fish> sortedFish= new TreeSet<>();
-        for (FishExperiment fishExp: fishExperimentList) {
-            Fish fish=fishExp.getFish();
-            sortedFish.add(fish);
-            if (CollectionUtils.isNotEmpty(sortedFish)) {
-                addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish", sortedFish);
+
+        //cannot delete a genotype if it is used in making a fish
+
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select fish from Fish fish " +
+                "     where fish.genotype = :genotype ";
+        Query query = session.createQuery(hql);
+        query.setParameter("genotype", genotype);
+        List<Fish> fishList = query.list();
+
+            if (CollectionUtils.isNotEmpty(fishList)) {
+                addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish", fishList);
             }
-            if (CollectionUtils.isNotEmpty(fishExp.getPhenotypeExperiments())){
-                addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish that has Phenotype",sortedFish);
-            }
-            if (CollectionUtils.isNotEmpty(fishExp.getExpressionExperiments())){
-                addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish that has Expression",sortedFish);
-            }
-        }
+
 
         return validationReportList;
     }

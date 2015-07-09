@@ -47,36 +47,5 @@ public class FigureSummarySmokeTest extends AbstractSmokeTest {
         // check that publication Liu et al is present.
         assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
     }
-
-
-    /**
-     * Check specific genox genotype expression figure summary page
-     */
-    @Test
-    public void testGenotypeExpressionFigureSummaryForGenox() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/expression/genotype-figure-summary?genoZdbID=ZDB-GENO-070912-1&expZdbID=ZDB-EXP-080331-13&geneZdbID=ZDB-GENE-000210-8&imagesOnly=false");
-        // check that Thummel pub is present
-        assertNotNull(page.getElementById("ZDB-PUB-080102-6"));
-    }
-
-    /**
-     * Test isStandard (or GC) genotype expression figure summary page
-     */
-    @Test
-    public void testGenotypeExpressionFigureSummaryForStandard() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/expression/genotype-figure-summary-standard?genoZdbID=ZDB-GENO-980202-822&geneZdbID=ZDB-GENE-990415-17&imagesOnly=false");
-        // check that Jaszai pub is present
-        assertNotNull(page.getElementById("ZDB-PUB-081031-1"));
-    }
-
-    /**
-     * Test isChemcial  genotype expression figure summary page
-     */
-    @Test
-    public void testGenotypeExpressionFigureSummaryForChemical() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/expression/genotype-figure-summary-chemical?genoZdbID=ZDB-GENO-070411-2&geneZdbID=ZDB-GENE-980526-283&imagesOnly=false");
-        // check that Hernandez pub is present
-        assertNotNull(page.getElementById("ZDB-PUB-061227-41"));
-    }
 }
 
