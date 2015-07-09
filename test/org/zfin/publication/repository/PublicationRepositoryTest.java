@@ -257,7 +257,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         PaginationBean bean = new PaginationBean();
-        bean.setMaxDisplayRecords(50);
+        bean.setMaxDisplayRecords(5);
 
         PaginationResult<Fish> genotypeResult = mutantRepository.getFishByAnatomyTerm(item, false, bean);
 

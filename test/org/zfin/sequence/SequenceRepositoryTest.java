@@ -217,7 +217,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getDBLinksForSecondRelatedMarker() {
-        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030616-338");
+        Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-030616-116");
         Collection<RelatedMarkerDBLinkDisplay> dbLinkList = sequenceRepository.getDBLinksForSecondRelatedMarker(m
                 , DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE
                 , MarkerRelationship.Type.CLONE_CONTAINS_GENE

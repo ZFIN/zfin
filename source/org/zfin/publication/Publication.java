@@ -29,7 +29,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String fileName;
     private String doi;
     private String acknowledgment;
-    private String status;
+    private Status status;
     private String keywords;
     private String errataAndNotes;
     private GregorianCalendar publicationDate;
@@ -47,12 +47,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private boolean indexed;
     private boolean canShowImages;
     private GregorianCalendar indexedDate;
-
-    //todo: make type into a proper enum, with tests
-    //for now I only need one value, so I'll just be quick and dirty
-    public static final String CURATION = "Curation";
-    public static final String UNPUBLISHED = "Unpublished";
-    public static final String ACTIVE_CURATION = "Active Curation";
 
     public String getZdbID() {
         return zdbID;
@@ -198,11 +192,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.acknowledgment = acknowledgment;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -391,9 +385,9 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         return title;
     }
 
-    public static enum Type {
+    public enum Type {
         ABSTRACT("Abstract", false),
-        ACTIVE_CURATION("Active_Curation", false),
+        ACTIVE_CURATION("Active Curation", false),
         BOOK("Book", false),
         CHAPTER("Chapter", false),
         CURATION("Curation", false),
@@ -403,26 +397,35 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         REVIEW("Review", false),
         UNKNOWN("Unknown", false),
         UNPUBLISHED("Unpublished", false),
-        THESIS("Thesis",false);
+        THESIS("Thesis", false);
 
         private final String display;
 
-        private Type(String type, Boolean allowCuration) {
+        Type(String type, Boolean allowCuration) {
             this.display = type;
         }
 
-        public String toString() {
-            return this.display;
+        public String getDisplay() {
+            return display;
         }
 
-        /* Just enough to turn Active_Curation into Active Curation */
-        public String getDisplay() {
-            return display.replace("_"," ");
+        @Override
+        public String toString() {
+            return display;
+        }
+
+        public static Type fromString(String display) {
+            for (Type type : values()) {
+                if (type.display.equals(display)) {
+                    return type;
+                }
+            }
+            return null;
         }
 
     }
 
-    public static enum Status {
+    public enum Status {
         ACTIVE("active"),
         INACTIVE("inactive"),
         EPUB("Epub ahead of print"),
@@ -430,7 +433,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
         private final String display;
 
-        private Status(String display) {
+        Status(String display) {
             this.display = display;
         }
 
@@ -438,7 +441,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
             return display;
         }
 
-        public static Status getStatus(String display) {
+        @Override
+        public String toString() {
+            return display;
+        }
+
+        public static Status fromString(String display) {
             for (Status status : values()) {
                 if (status.display.equals(display)) {
                     return status;

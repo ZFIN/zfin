@@ -21,7 +21,6 @@ import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -472,37 +471,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate) {
-        Session session = HibernateUtil.currentSession();
-
-        Updates up = new Updates();
-        Date date = new Date();
-        up.setRecID(recID);
-
-        up.setSubmitterID(submitterZdbID);
-
-        up.setComments(comments);
-        up.setWhenUpdated(date);
-        session.save(up);
+        insertUpdatesTable(recID, submitterZdbID, null, null, null, null, comments, updateDate);
     }
 
-    public void insertUpdatesTable(String recID, String fieldName, String new_value, String comments) {
-        Session session = HibernateUtil.currentSession();
-
-        Updates up = new Updates();
-        Date date = new Date();
-        up.setRecID(recID);
-        up.setFieldName(fieldName);
-
+    @Override
+    public void insertUpdatesTable(String recID, String fieldName, String newValue, String comments) {
         Person person = ProfileService.getCurrentSecurityUser();
-        if (person != null) {
-            up.setSubmitterID(person.getZdbID());
-            up.setSubmitterName(person.getFullName());
-        }
-
-        up.setComments(comments);
-        up.setNewValue(new_value);
-        up.setWhenUpdated(date);
-        session.save(up);
+        insertUpdatesTable(recID, person, fieldName, null, newValue, comments);
     }
 
 
@@ -525,53 +500,44 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments) {
-        Session session = HibernateUtil.currentSession();
-
-        Updates update = new Updates();
-        update.setRecID(recID);
-        update.setFieldName(fieldName);
         Person person = ProfileService.getCurrentSecurityUser();
-        if (person != null) {
-            update.setSubmitterID(person.getZdbID());
-            update.setSubmitterName(person.getFullName());
-        }
-        update.setComments(comments);
-        update.setNewValue(newValue);
-        update.setOldValue(oldValue);
-        update.setWhenUpdated(new Date());
-        session.save(update);
+        insertUpdatesTable(recID, person, fieldName, oldValue, newValue, comments);
     }
 
-
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments, String newValue, String oldValue) {
-        Session session = HibernateUtil.currentSession();
-
+    @Override
+    public void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments, String newValue, String oldValue) {
         Person person = ProfileService.getCurrentSecurityUser();
-        Updates up = new Updates();
-        up.setRecID(marker.getZdbID());
-        up.setFieldName(fieldName);
-        if (person != null) {
-            up.setSubmitterID(person.getZdbID());
-            up.setSubmitterName(person.getUsername());
-        }
-        up.setComments(comments);
-        up.setNewValue(newValue);
-        up.setOldValue(oldValue);
-        up.setWhenUpdated(new Date());
-        session.save(up);
-        session.flush();
+        insertUpdatesTable(entity.getZdbID(), person, fieldName, oldValue, newValue, comments);
     }
 
-    /**
-     * todo: how is the "old value set"
-     *
-     * @param marker
-     * @param fieldName
-     * @param comments
-     */
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments) {
-        insertUpdatesTable(marker, fieldName, comments, marker.getAbbreviation(), "");
-        //To change body of implemented methods use File | Settings | File Templates.
+    @Override
+    public void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments) {
+        insertUpdatesTable(entity, fieldName, comments, entity.getAbbreviation(), null);
+    }
+
+    private void insertUpdatesTable(String recId, Person submitter, String fieldName, String oldValue, String newValue, String comments) {
+        Date when = new Date();
+        if (submitter == null) {
+            insertUpdatesTable(recId, null, null, fieldName, oldValue, newValue, comments, when);
+        } else {
+            insertUpdatesTable(recId, submitter.getZdbID(), submitter.getFullName(), fieldName, oldValue, newValue, comments, when);
+        }
+    }
+
+    private void insertUpdatesTable(String recID, String submitterID, String submitterName, String fieldName,
+                                    String oldValue, String newValue, String comments, Date when) {
+        Session session = HibernateUtil.currentSession();
+
+        Updates updates = new Updates();
+        updates.setRecID(recID);
+        updates.setSubmitterID(submitterID);
+        updates.setSubmitterName(submitterName);
+        updates.setFieldName(fieldName);
+        updates.setOldValue(oldValue);
+        updates.setNewValue(newValue);
+        updates.setComments(comments);
+        updates.setWhenUpdated(when);
+        session.save(updates);
     }
 
     public int deleteRecordAttributionForPub(String zdbID) {
