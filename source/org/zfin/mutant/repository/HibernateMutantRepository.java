@@ -1533,26 +1533,7 @@ public class HibernateMutantRepository implements MutantRepository {
             fish = existingFish;
         else
             HibernateUtil.currentSession().save(fish);
-        PublicationAttribution attribution = new PublicationAttribution();
-        attribution.setPublication(publication);
-        attribution.setDataZdbID(fish.getZdbID());
-        attribution.setSourceType(RecordAttribution.SourceType.STANDARD);
-
-        if (!existsAttribution(attribution))
-            HibernateUtil.currentSession().save(attribution);
-    }
-
-    public boolean existsAttribution(PublicationAttribution attribution) {
-        String hql = "select attribution from PublicationAttribution as attribution where " +
-                "attribution.publication = :publication AND " +
-                "attribution.dataZdbID = :dataZdbID AND " +
-                "attribution.sourceType = :type";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("publication", attribution.getPublication());
-        query.setParameter("dataZdbID", attribution.getDataZdbID());
-        query.setParameter("type", attribution.getSourceType());
-        List<PublicationAttribution> list = query.list();
-        return CollectionUtils.isNotEmpty(list);
+        getInfrastructureRepository().insertRecordAttribution(fish, publication);
     }
 
     @Override

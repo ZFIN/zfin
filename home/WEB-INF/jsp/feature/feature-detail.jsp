@@ -284,7 +284,7 @@
     <table id="genotypes-table" class="summary rowstripes">
         <tr>
             <th width="25%">
-                Zygocity
+                Zygosity
             </th>
             <th width="25%">
                 Genotype (Background)
@@ -293,7 +293,7 @@
                 Affected Genes
             </th>
             <th width="25%">
-                Parental Zygocity
+                Parental Zygosity
             </th>
         </tr>
 
