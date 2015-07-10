@@ -163,7 +163,7 @@ create dba function regen_genox() returning integer
 
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
-    --   CREATE mutant_fast_search_new (mutant_fast_search) TABLE
+    --   CREATE mutant_fast_search_newb (mutant_fast_search) TABLE
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
 

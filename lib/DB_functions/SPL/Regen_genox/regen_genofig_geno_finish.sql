@@ -12,26 +12,6 @@ create procedure regen_genofig_geno_finish(phenoxId like phenotype_experiment.ph
   --     to generate marker_zdb_id genox_zdb_id pairs for records in mutant_fast_search table
   --   regen_genox_temp table contains marker_zdb_id genox_zdb_id pairs
   --
-  -- INPUT VARS
-  --   none.
-  --
-  -- OUTPUT VARS:
-  --   none
-  --
-  -- RETURNS:
-  --   Success: Nothing
-  --   Failure: Throws whatever exception happened.
-  --
-  -- EFFECTS:
-  --   Success:
-  --     records in genotype_figure_fast_search table have been 
-  --       updated for the input phenox id
-  --   Error:
-  --     records in mutant_fast_search table may or may not
-  --       have been updated 
-  --     regen_genox_input_zdb_id_temp may or may not be empty.
-  --     regen_genox_temp may or may not be empty.
-  --     transaction is not committed or rolled back.
   -- -------------------------------------------------------------------------------------------
 
   -- remove all records for given phenox id
@@ -39,9 +19,21 @@ create procedure regen_genofig_geno_finish(phenoxId like phenotype_experiment.ph
     where gffs_phenox_pk_id = phenoxId;
 
   insert into genotype_figure_fast_search
-      (gffs_geno_zdb_id,gffs_fig_zdb_id,gffs_superterm_zdb_id,gffs_subterm_zdb_id,gffs_quality_zdb_id,gffs_tag,gffs_morph_zdb_id, gffs_Phenox_pk_id )
-    select rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_morph_zdb_id, rgf_phenox_pk_id,rgf_fish_Zdb_id
-      from regen_genofig_temp;
+      (gffs_geno_zdb_id,
+	gffs_fig_zdb_id,
+	gffs_morph_zdb_id, 
+	gffs_Phenox_pk_id,
+	gffs_fish_zdb_id,
+	gffs_phenos_id,
+	gffs_genox_zdb_id )
+    select rgf_geno_zdb_id,
+    	   rgf_fig_zdb_id,
+	   rgf_morph_zdb_id, 
+	   rgf_phenox_pk_id,
+	   rgf_fish_Zdb_id,
+	   rgf_phenos_id,
+	   rgf_genox_Zdb_id
+ from regen_genofig_temp;
 
   delete from regen_genofig_temp;
   delete from regen_genofig_clean_exp_with_morph_temp;

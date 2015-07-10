@@ -27,37 +27,33 @@ create procedure regen_genofig_clean_exp()
   set pdqpriority high;
 
   -- gather the clean environments with sequence-targeting reagents
+
   insert into regen_genofig_clean_exp_with_morph_temp
       ( rgfcx_clean_exp_zdb_id, rgfcx_morph_zdb_id )
-  select distinct exp_zdb_id, expcond_mrkr_zdb_id
-  from experiment, experiment_condition xc1, marker
-  where exp_zdb_id = xc1.expcond_exp_zdb_id
-    and xc1.expcond_mrkr_zdb_id = mrkr_zdb_id
-    and not exists (select 'x'
-                      from experiment_condition xc2 , condition_data_type
-                     where xc1.expcond_exp_zdb_id = xc2.expcond_exp_zdb_id
-                       and xc2.expcond_cdt_zdb_id = cdt_zdb_id
-                       and cdt_group not in ("morpholino","TALEN","CRISPR"))
-    and not exists (select 'x'
-                      from experiment_condition xc3
-                     where exp_zdb_id = xc3.expcond_exp_zdb_id
-                       and xc3.expcond_mrkr_zdb_id != xc1.expcond_mrkr_zdb_id);
+  select distinct genox_exp_zdb_id, fishstr_str_zdb_id
+    from fish_experiment, marker, 
+         phenotype_experiment, genotype, fish_str, fish
+   where genox_zdb_id = phenox_genox_zdb_id
+     and fish_genotype_zdb_id = geno_zdb_id
+     and fish_zdb_id = genox_fish_zdb_id
+     and not exists (select 'x' 
+                       from experiment_condition xc2 , condition_data_type
+                      where genox_exp_zdb_id = xc2.expcond_exp_zdb_id
+                        and xc2.expcond_cdt_zdb_id = cdt_zdb_id
+                        and cdt_group not in ("morpholino","TALEN","CRISPR"));
 
 
   -- gather the "not normal" phenotype records
   insert into regen_genofig_not_normal_temp
-    (rgfnna_zdb_id,rgfnna_genox_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag)
-    select distinct phenox_pk_id,phenox_genox_zdb_id,phenos_entity_1_superterm_zdb_id,phenos_entity_1_subterm_zdb_id,phenos_quality_zdb_id,phenos_tag
+    (rgfnna_zdb_id,
+	rgfnna_genox_zdb_id,
+	rgfnna_phenos_id
+)
+    select distinct phenox_pk_id,
+    	   	    phenox_genox_zdb_id,
+		    phenos_pk_id
       from phenotype_experiment, phenotype_statement
      where phenox_pk_id = phenos_phenox_pk_id
        and phenos_tag != 'normal';
-
-  insert into regen_genofig_not_normal_temp
-    (rgfnna_zdb_id,rgfnna_genox_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag)
-    select distinct phenox_pk_id,phenox_genox_zdb_id,phenos_entity_2_superterm_zdb_id,phenos_entity_2_subterm_zdb_id,phenos_quality_zdb_id,phenos_tag
-      from phenotype_experiment, phenotype_statement
-     where phenox_pk_id = phenos_phenox_pk_id
-       and phenos_tag != 'normal'
-       and phenos_entity_2_superterm_zdb_id is not null;
 
 end procedure;
