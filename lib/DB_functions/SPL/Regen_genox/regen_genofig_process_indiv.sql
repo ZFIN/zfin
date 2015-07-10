@@ -34,9 +34,26 @@ create procedure regen_genofig_process_indiv(phenoxId like phenotype_experiment.
   end
 
 -- Any genotype which has a morpholino environment
-insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_morph_zdb_id,rgf_phenox_pk_id,rgf_fish_zdb_id)
-  select distinct geno_zdb_id,phenox_fig_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag,rgfcx_morph_zdb_id,phenox_pk_id,fish_zdb_id
-    from fish_experiment, genotype, 
+insert into regen_genofig_temp (rgf_geno_zdb_id,
+				rgf_fig_zdb_id,
+				rgf_superterm_zdb_id,
+				rgf_subterm_zdb_id,
+				rgf_quality_zdb_id,
+				rgf_tag,
+				rgf_morph_zdb_id,
+				rgf_phenox_pk_id,
+				rgf_fish_zdb_id)
+  select distinct geno_zdb_id,
+  	 	  phenox_fig_zdb_id,
+		  rgfnna_superterm_zdb_id,
+		  rgfnna_subterm_zdb_id,
+		  rgfnna_quality_zdb_id,
+		  rgfnna_tag,
+		  rgfcx_morph_zdb_id,
+		  phenox_pk_id,
+		  fish_zdb_id
+    from fish_experiment, 
+    	 genotype, 
          regen_genofig_clean_exp_with_morph_temp, 
          regen_genofig_not_normal_temp,
          phenotype_statement,
@@ -51,10 +68,24 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb
      and phenox_pk_id = rgfnna_zdb_id;
 
 -- Any which has a standard or genetic control environment
-insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_phenox_pk_id,rgf_fish_Zdb_id)
-  select distinct geno_zdb_id,phenox_fig_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag,phenox_pk_id,fish_zdb_id
-    from fish_experiment, genotype,
- 
+insert into regen_genofig_temp (rgf_geno_zdb_id,
+       	    		        rgf_fig_zdb_id,
+				rgf_superterm_zdb_id,
+				rgf_subterm_zdb_id,
+				rgf_quality_zdb_id,
+				rgf_tag,
+				rgf_phenox_pk_id,
+				rgf_fish_Zdb_id)
+  select distinct geno_zdb_id,
+  	 	  phenox_fig_zdb_id,
+		  rgfnna_superterm_zdb_id,
+		  rgfnna_subterm_zdb_id,
+		  rgfnna_quality_zdb_id,
+		  rgfnna_tag,
+		  phenox_pk_id,
+		  fish_zdb_id
+    from fish_experiment, 
+    	 genotype,
          experiment, 
          regen_genofig_not_normal_temp,
          phenotype_statement,
