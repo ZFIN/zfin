@@ -72,7 +72,7 @@
                     class="secretly-clickable sortable-column ${fishColumnClass}"
         --%>
             style="vertical-align: text-top;"
-            title="Fish = genotype + reagents">
+            title="Fish = Genotype + STR">
             Fish
             <img class="column-sort-button fish-column-sort-button " src="/images/transp.gif" alt=""/>
         </th>
@@ -107,12 +107,12 @@
         <th width="15%">Mutation Type</th>
         <th></th>
         <th width="18%">
-            <div id="showAllLink" style="float: right; font-size:small; font-weight:normal;">
+<%--            <div id="showAllLink" style="float: right; font-size:small; font-weight:normal;">
                 <a href="#">All Matching Details</a>
             </div>
             <div id="hideAllLink" style="float: right; display: none;font-size:small; font-weight:normal;">
                 <a href="#">Hide Matching Details</a>
-            </div>
+            </div>--%>
         </th>
     </tr>
     <script>
@@ -184,6 +184,7 @@
                         </span>
                         </authz:authorize>
 
+<%--
                         <span style="float:right" id="matching-details-show-link${loop.index}">
                             <c:if test="${result.fish.genotype!=null}">
                             <a style="font-size:smaller; margin-right: 1em;" class="clickable showAll"
@@ -208,6 +209,7 @@
                                        jQuery('#matching-details-hide-detail${loop.index}').hide();
                                        jQuery('#matching-details-show-link${loop.index}').show();">Hide Detail</a>
                         </span>
+--%>
                     </c:if>
                 </td>
             </zfin:alternating-tr>

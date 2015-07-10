@@ -356,7 +356,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
         featureTypeBox.clear();
         featureTypeBox.addNull();
         for(FeatureTypeEnum featureTypeEnum : FeatureTypeEnum.values()){
-            if (!featureTypeEnum.name().equalsIgnoreCase("Inversion"))
+
                 featureTypeBox.addItem(featureTypeEnum.getDisplay(),featureTypeEnum.name());
         }
         table.setHTML(FeatureTableLayout.TYPE.row(), 0, "<b>Feature type:</b>");

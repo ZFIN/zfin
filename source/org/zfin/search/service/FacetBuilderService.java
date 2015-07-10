@@ -230,7 +230,7 @@ public class FacetBuilderService {
 
         facetGroups.add(buildPhenotypeBlock(response, filterQuerySelectionMap, baseUrl));
 
-        FacetGroup str = new FacetGroup("Sequence Targeting Reagent");
+        FacetGroup str = new FacetGroup("Sequence Targeting Reagent (STR)");
         str.addFacet(buildFacet(SEQUENCE_TARGETING_REAGENT.getName(), true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(str);
 

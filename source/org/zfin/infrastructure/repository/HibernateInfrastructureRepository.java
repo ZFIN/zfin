@@ -20,13 +20,16 @@ import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExternalNote;
+import org.zfin.mutant.GenotypeFeature;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.TermAlias;
@@ -151,6 +154,25 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID) {
         return insertPublicAttribution(dataZdbID, sourceZdbID, RecordAttribution.SourceType.STANDARD);
+    }
+
+    @Override
+    public void insertPublicAttribution(Genotype genotype, String sourceZdbID) {
+        Publication publication = (Publication) HibernateUtil.currentSession().get(Publication.class, sourceZdbID);
+        insertPublicAttribution(genotype, publication);
+    }
+
+    public void insertStandardPubAttribution(String dataZdbID, Publication publication) {
+        PublicationAttribution publicationAttribution = new PublicationAttribution();
+        publicationAttribution.setDataZdbID(dataZdbID);
+        publicationAttribution.setPublication(publication);
+        publicationAttribution.setSourceType(RecordAttribution.SourceType.STANDARD);
+        if (!existAttribution(publicationAttribution))
+            HibernateUtil.currentSession().save(publicationAttribution);
+    }
+
+    private boolean existAttribution(PublicationAttribution attribution) {
+        return getRecordAttribution(attribution.getDataZdbID(), attribution.getSourceZdbID(), attribution.getSourceType()) != null;
     }
 
     public PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType) {
@@ -472,37 +494,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertUpdatesTable(String recID, String comments, String submitterZdbID, Date updateDate) {
-        Session session = HibernateUtil.currentSession();
-
-        Updates up = new Updates();
-        Date date = new Date();
-        up.setRecID(recID);
-
-        up.setSubmitterID(submitterZdbID);
-
-        up.setComments(comments);
-        up.setWhenUpdated(date);
-        session.save(up);
+        insertUpdatesTable(recID, submitterZdbID, null, null, null, null, comments, updateDate);
     }
 
-    public void insertUpdatesTable(String recID, String fieldName, String new_value, String comments) {
-        Session session = HibernateUtil.currentSession();
-
-        Updates up = new Updates();
-        Date date = new Date();
-        up.setRecID(recID);
-        up.setFieldName(fieldName);
-
+    @Override
+    public void insertUpdatesTable(String recID, String fieldName, String newValue, String comments) {
         Person person = ProfileService.getCurrentSecurityUser();
-        if (person != null) {
-            up.setSubmitterID(person.getZdbID());
-            up.setSubmitterName(person.getFullName());
-        }
-
-        up.setComments(comments);
-        up.setNewValue(new_value);
-        up.setWhenUpdated(date);
-        session.save(up);
+        insertUpdatesTable(recID, person, fieldName, null, newValue, comments);
     }
 
 
@@ -525,53 +523,44 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments) {
-        Session session = HibernateUtil.currentSession();
-
-        Updates update = new Updates();
-        update.setRecID(recID);
-        update.setFieldName(fieldName);
         Person person = ProfileService.getCurrentSecurityUser();
-        if (person != null) {
-            update.setSubmitterID(person.getZdbID());
-            update.setSubmitterName(person.getFullName());
-        }
-        update.setComments(comments);
-        update.setNewValue(newValue);
-        update.setOldValue(oldValue);
-        update.setWhenUpdated(new Date());
-        session.save(update);
+        insertUpdatesTable(recID, person, fieldName, oldValue, newValue, comments);
     }
 
-
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments, String newValue, String oldValue) {
-        Session session = HibernateUtil.currentSession();
-
+    @Override
+    public void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments, String newValue, String oldValue) {
         Person person = ProfileService.getCurrentSecurityUser();
-        Updates up = new Updates();
-        up.setRecID(marker.getZdbID());
-        up.setFieldName(fieldName);
-        if (person != null) {
-            up.setSubmitterID(person.getZdbID());
-            up.setSubmitterName(person.getUsername());
-        }
-        up.setComments(comments);
-        up.setNewValue(newValue);
-        up.setOldValue(oldValue);
-        up.setWhenUpdated(new Date());
-        session.save(up);
-        session.flush();
+        insertUpdatesTable(entity.getZdbID(), person, fieldName, oldValue, newValue, comments);
     }
 
-    /**
-     * todo: how is the "old value set"
-     *
-     * @param marker
-     * @param fieldName
-     * @param comments
-     */
-    public void insertUpdatesTable(Marker marker, String fieldName, String comments) {
-        insertUpdatesTable(marker, fieldName, comments, marker.getAbbreviation(), "");
-        //To change body of implemented methods use File | Settings | File Templates.
+    @Override
+    public void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments) {
+        insertUpdatesTable(entity, fieldName, comments, entity.getAbbreviation(), null);
+    }
+
+    private void insertUpdatesTable(String recId, Person submitter, String fieldName, String oldValue, String newValue, String comments) {
+        Date when = new Date();
+        if (submitter == null) {
+            insertUpdatesTable(recId, null, null, fieldName, oldValue, newValue, comments, when);
+        } else {
+            insertUpdatesTable(recId, submitter.getZdbID(), submitter.getFullName(), fieldName, oldValue, newValue, comments, when);
+        }
+    }
+
+    private void insertUpdatesTable(String recID, String submitterID, String submitterName, String fieldName,
+                                    String oldValue, String newValue, String comments, Date when) {
+        Session session = HibernateUtil.currentSession();
+
+        Updates updates = new Updates();
+        updates.setRecID(recID);
+        updates.setSubmitterID(submitterID);
+        updates.setSubmitterName(submitterName);
+        updates.setFieldName(fieldName);
+        updates.setOldValue(oldValue);
+        updates.setNewValue(newValue);
+        updates.setComments(comments);
+        updates.setWhenUpdated(when);
+        session.save(updates);
     }
 
     public int deleteRecordAttributionForPub(String zdbID) {
@@ -1669,8 +1658,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
         List<Object[]> objectList = (List<Object[]>) query.list();
         List<Publication> pubList = new ArrayList<>(objectList.size());
-        for(Object[] o: objectList)
-        pubList.add((Publication) o[0]);
+        for (Object[] o : objectList)
+            pubList.add((Publication) o[0]);
         return pubList;
     }
 
@@ -1692,6 +1681,23 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         note.setDate(new Date());
         note.setCurator(ProfileService.getCurrentSecurityUser());
         HibernateUtil.currentSession().save(note);
+    }
+
+    @Override
+    public void insertPublicAttribution(Genotype genotype, Publication publication) {
+        insertStandardPubAttribution(genotype.getZdbID(), publication);
+        for (GenotypeFeature gFeature : genotype.getGenotypeFeatures()) {
+            Feature feature = gFeature.getFeature();
+            insertStandardPubAttribution(feature.getZdbID(), publication);
+            insertStandardPubAttribution(feature.getAllelicGene().getZdbID(), publication);
+        }
+
+    }
+
+    @Override
+    public void insertRecordAttribution(Fish fish, Publication publication) {
+        insertStandardPubAttribution(fish.getZdbID(), publication);
+        insertStandardPubAttribution(fish.getGenotype().getZdbID(), publication);
     }
 }
 

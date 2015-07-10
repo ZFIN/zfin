@@ -4,7 +4,7 @@ package org.zfin.publication.presentation;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class PublicationForm {
 
@@ -14,7 +14,7 @@ public class PublicationForm {
     private String pubMedID;
     private String doi;
     private String authors;
-    private Date date;
+    private GregorianCalendar date;
     private Journal journal;
     private String volume;
     private String pages;
@@ -39,11 +39,11 @@ public class PublicationForm {
         this.authors = authors;
     }
 
-    public Date getDate() {
+    public GregorianCalendar getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(GregorianCalendar date) {
         this.date = date;
     }
 

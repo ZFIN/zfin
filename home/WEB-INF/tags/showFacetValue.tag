@@ -10,10 +10,10 @@
 <c:set var="showHover">false</c:set>
 <c:choose>
     <c:when test="${value.label == 'Fish'}">
-        <c:set var="specialTitle">Fish = genotype + reagents</c:set>
+        <c:set var="specialTitle">Fish = Genotype + STR</c:set>
         <c:set var="showHover">true</c:set>
     </c:when>
-    <c:when test="${value.label == 'Sequence Targeting Reagent'}">
+    <c:when test="${value.label == 'Sequence Targeting Reagent (STR)'}">
         <c:set var="specialTitle">MO, CRISPR, TALEN</c:set>
         <c:set var="showHover">true</c:set>
     </c:when>

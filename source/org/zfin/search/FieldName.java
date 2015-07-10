@@ -32,11 +32,13 @@ public enum FieldName {
     EXPRESSIONS_ANATOMY_TF("expression_anatomy_tf"),
     EXPRESSED_IN_TF("expressed_in_tf"),
     FISH("fish"),
+    FIGURE_ID("figure_id"),
     GENE("gene"),
     GENES_WITH_ALTERED_EXPRESSION("genes_with_altered_expression"),
     GENOTYPE("genotype"),
     HAS_IMAGE("has_image"),
     HOST_ORGANISM("host_organism"),
+    ID("id"),
     INDEXING_STATUS("indexing_status"),
     INSERTED_IN_GENE("inserted_in_gene"),
     INSTITUTION("institution"),
@@ -61,14 +63,18 @@ public enum FieldName {
     SEQUENCE_ALTERATION("sequence_alteration", "Mutation / Tg"),
 //    SCREEN("screen"),   <!--screen used to be here, removed as a result of case 11323-->
     MUTAGEN("mutagen"),
+    MUTATION_TYPE("mutation_type"),
     SEQUENCE_TARGETING_REAGENT("sequence_targeting_reagent"),
     SOURCE("source"),
     STAGE("stage"),
     TARGETED_GENE("targeted_gene"),
+    THUMBNAIL("thumbnail"),
     TOPIC("topic"),
     STATUS("pub_status"),
     TYPE("type"),
-    ZEBRAFISH_GENE("zebrafish_gene"),;
+    URL("url"),
+    XREF("xref"),
+    ZEBRAFISH_GENE("zebrafish_gene");
 
     private String name;
     private String prettyName;

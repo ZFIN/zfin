@@ -8,6 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.presentation.ExpressionDisplay;
+import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.LookupStrings;
@@ -81,12 +84,12 @@ public class SequenceTargetingReagentViewController {
         addKnockdownRelationships(sequenceTargetingReagent, sequenceTargetingReagentBean);
 
         // Expression data
-        List<ExpressionResult> strExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionResults(strExpressionResults);
-        List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionFigureIDs(expressionFigureIDs);
-        List<String> expressionPublicationIDs = RepositoryFactory.getExpressionRepository().getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
-        sequenceTargetingReagentBean.setExpressionPublicationIDs(expressionPublicationIDs);
+        ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+        List<ExpressionResult> strExpressionResults = expressionRepository.getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
+        List<String> expressionFigureIDs = expressionRepository.getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
+        List<String> expressionPublicationIDs = expressionRepository.getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
+        List<ExpressionDisplay> strExpressionDisplays = ExpressionService.createExpressionDisplays(sequenceTargetingReagent.getZdbID(), strExpressionResults, expressionFigureIDs, expressionPublicationIDs);
+        sequenceTargetingReagentBean.setExpressionDisplays(strExpressionDisplays);
 
         // PHENOTYPE
         List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);

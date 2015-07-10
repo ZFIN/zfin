@@ -45,10 +45,10 @@
                 <c:if test="${featureAlias.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${featureAlias.publicationCount == 1}">
-                            (<a href="/${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
+                            (<a href="/${featureAlias.singlePublication.zdbID}">${featureAlias.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                         </c:when>
                         <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${featureAlias.zdbID}&rtype=genotype">${featureAlias.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                         </c:otherwise>
                     </c:choose>
                 </c:if>
@@ -95,10 +95,10 @@
                 <c:if test="${mRel.publicationCount > 0}">
                     <c:choose>
                         <c:when test="${mRel.publicationCount == 1}">
-                            (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
+                            (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                         </c:when>
                         <c:otherwise>
-                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">,&nbsp;</c:if>
+                            (<a href="/<%= ZfinPropertiesEnum.WEBDRIVER_PATH_FROM_ROOT.value()%>?MIval=aa-showpubs.apg&OID=${mRel.zdbID}&rtype=genotype">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
                         </c:otherwise>
                     </c:choose>
                 </c:if>
@@ -284,7 +284,7 @@
     <table id="genotypes-table" class="summary rowstripes">
         <tr>
             <th width="25%">
-                Zygocity
+                Zygosity
             </th>
             <th width="25%">
                 Genotype (Background)
@@ -293,7 +293,7 @@
                 Affected Genes
             </th>
             <th width="25%">
-                Parental Zygocity
+                Parental Zygosity
             </th>
         </tr>
 

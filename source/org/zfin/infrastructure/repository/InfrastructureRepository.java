@@ -9,15 +9,15 @@ import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerType;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeExternalNote;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
-import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
@@ -97,6 +97,8 @@ public interface InfrastructureRepository {
 
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
 
+    void insertPublicAttribution(Genotype genotype, String sourceZdbID);
+
     PublicationAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID, RecordAttribution.SourceType sourceType);
 
     void insertUpdatesTable(String recID, String comments, String submitterZdbID,Date updateDate);
@@ -107,10 +109,9 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(String recID, String fieldName, String oldValue, String newValue, String comments);
 
-    void insertUpdatesTable(Marker marker, String fieldName, String comments, String newValue, String oldValue);
+    void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments, String newValue, String oldValue);
 
-
-    void insertUpdatesTable(Marker marker, String fieldName, String comments);
+    void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments);
 
     void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate);
 
@@ -442,6 +443,10 @@ public interface InfrastructureRepository {
     void saveExternalNote(GenotypeExternalNote note, Publication publication);
 
     void saveDataNote(DataNote note, Publication publication);
+
+    void insertPublicAttribution(Genotype genotype, Publication publication);
+
+    void insertRecordAttribution(Fish fish, Publication publication);
 }
 
 
