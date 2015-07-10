@@ -628,16 +628,16 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
-                        " select count(*) from marker_go_term_evidence  ev  " +
-                        " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
-                        " where " +
-                        " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
-                        " and " +
-                        " inf.infgrmem_inferred_from=:zdbID " +
-                        " ")
-                        .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
-                        .setString("pubZdbID", publicationZdbID)
-                        .uniqueResult().toString()
+                " select count(*) from marker_go_term_evidence  ev  " +
+                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                " where " +
+                " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
+                " and " +
+                " inf.infgrmem_inferred_from=:zdbID " +
+                " ")
+                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
+                .setString("pubZdbID", publicationZdbID)
+                .uniqueResult().toString()
         );
     }
 
@@ -1172,40 +1172,40 @@ public class HibernateMutantRepository implements MutantRepository {
 
         publications = (List<Publication>) query.list();
         if (publications != null)
-           publicationList.addAll(publications);
+            publicationList.addAll(publications);
 
         Set<FishExperiment> fishExperiments = fish.getFishExperiments();
         if (fishExperiments != null && fishExperiments.size() > 0) {
-           // expression experiment
-           hql = "select distinct experiment.publication from ExpressionExperiment experiment " +
-                 " where experiment.fishExperiment in (:fishExperiments)";
+            // expression experiment
+            hql = "select distinct experiment.publication from ExpressionExperiment experiment " +
+                    " where experiment.fishExperiment in (:fishExperiments)";
 
-           query = session.createQuery(hql);
-           query.setParameterList("fishExperiments", fishExperiments);
-           publications = (List<Publication>) query.list();
+            query = session.createQuery(hql);
+            query.setParameterList("fishExperiments", fishExperiments);
+            publications = (List<Publication>) query.list();
 
-           if (publications != null)
-               publicationList.addAll(publications);
+            if (publications != null)
+                publicationList.addAll(publications);
 
-           // phenotype experiments
-           hql = "select distinct experiment.figure.publication from PhenotypeExperiment experiment " +
-                 " where experiment.fishExperiment in (:fishExperiments)";
-           query = session.createQuery(hql);
-           query.setParameterList("fishExperiments", fishExperiments);
-           publications = (List<Publication>) query.list();
+            // phenotype experiments
+            hql = "select distinct experiment.figure.publication from PhenotypeExperiment experiment " +
+                    " where experiment.fishExperiment in (:fishExperiments)";
+            query = session.createQuery(hql);
+            query.setParameterList("fishExperiments", fishExperiments);
+            publications = (List<Publication>) query.list();
 
-           if (publications != null)
-               publicationList.addAll(publications);
+            if (publications != null)
+                publicationList.addAll(publications);
 
-           // experiments
-           hql = "select distinct experiment.experiment.publication from FishExperiment experiment " +
-                 " where experiment in (:fishExperiments)";
-           query = session.createQuery(hql);
-           query.setParameterList("fishExperiments", fishExperiments);
+            // experiments
+            hql = "select distinct experiment.experiment.publication from FishExperiment experiment " +
+                    " where experiment in (:fishExperiments)";
+            query = session.createQuery(hql);
+            query.setParameterList("fishExperiments", fishExperiments);
 
 
-           if (publications != null)
-               publicationList.addAll(publications);
+            if (publications != null)
+                publicationList.addAll(publications);
         }
 
         return publicationList;
@@ -1793,5 +1793,14 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("gene", marker);
         query.setParameter("tag", "normal");
         return (List<PhenotypeStatement>) query.list();
+    }
+
+    @Override
+    public FishExperiment getFishExperimentByFishAndExperimentID(String fishID, String experimentID) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(FishExperiment.class);
+        criteria.add(Restrictions.eq("fish.zdbID", fishID));
+        criteria.add(Restrictions.eq("experiment.zdbID", experimentID));
+        return (FishExperiment) criteria.uniqueResult();
     }
 }

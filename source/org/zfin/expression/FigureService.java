@@ -87,18 +87,18 @@ public class FigureService {
     /**
      * This method (parameter set) will be used for genotype expression display of chemical envs
      *
-     * @param geno         genotype
+     * @param fish         fish
      * @param gene         gene
      * @param withImgsOnly require that figures joined in have images
      * @return expressionsummarycriteria object
      */
-    public static ExpressionSummaryCriteria createExpressionCriteriaChemicalEnvironment(Genotype geno, Marker gene, boolean withImgsOnly) {
+    public static ExpressionSummaryCriteria createExpressionCriteriaChemicalEnvironment(Fish fish, Marker gene, boolean withImgsOnly) {
         //assumed by title, this method is only relevant for getting the chemical environments, not for getting
         //everything *but* chemical
         boolean isChemicalEnvironment = true;
 
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
-        criteria.setGenotype(geno);
+        criteria.setFish(fish);
         criteria.setGene(gene);
         criteria.setWithImagesOnly(withImgsOnly);
         criteria.setChemicalEnvironment(isChemicalEnvironment);
@@ -124,7 +124,6 @@ public class FigureService {
                 Figure fig = RepositoryFactory.getPublicationRepository().getFigureByID(figId);
                 figures.add(fig);
             }
-
         } else {
             figures = expressionRepository.getFigures(expressionCriteria);
         }

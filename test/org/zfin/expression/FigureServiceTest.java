@@ -130,25 +130,6 @@ public class FigureServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void chemicalOnlyGenotypeExpressionFigureSummaryTest() {
-
-        Genotype geno = mutantRepository.getGenotypeByID("ZDB-GENO-041129-4");
-        Marker gene = markerRepository.getMarkerByID("ZDB-EFG-070117-1");
-
-        Figure figure = publicationRepository.getFigure("ZDB-FIG-081107-10");
-
-        ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0009080",null,true);
-        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0009292",null,true);
-
-        boolean imagesOnly = false;
-
-        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaChemicalEnvironment(geno, gene, imagesOnly);
-        genericGenotypeExpressionFigureSummaryTest(expressionCriteria, figure, presentStatement, notPresentStatement);
-
-
-    }
-
-    @Test
     public void standardEnvironmentOnlyGenotypeExprsesionFigureSummaryTest() {
 
         Genotype geno = mutantRepository.getGenotypeByID("ZDB-GENO-980202-822");
