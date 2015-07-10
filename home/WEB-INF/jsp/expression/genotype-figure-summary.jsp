@@ -9,9 +9,9 @@
                 <tiles:putAttribute name="subjectName" value="${expressionCriteria.fishExperiment.fish.genotype.name}"/>
             </tiles:insertTemplate>
         </c:when>
-        <c:when test="${!empty expressionCriteria.genotype}">
+        <c:when test="${!empty expressionCriteria.fish}">
             <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
-                <tiles:putAttribute name="subjectName" value="${expressionCriteria.genotype.name}"/>
+                <tiles:putAttribute name="subjectName" value="${expressionCriteria.fish.name}"/>
             </tiles:insertTemplate>
         </c:when>
 
@@ -26,7 +26,7 @@
 <zfin2:expressionSummaryCriteria criteria="${expressionCriteria}"/>
 
 <div class="summary">
-    <c:if test="${!empty expressionCriteria.genotype}"><span class="summaryTitle">Genotype Expression</span></c:if>
+    <c:if test="${!empty expressionCriteria.fish}"><span class="summaryTitle">Fish Expression</span></c:if>
     <c:if test="${!empty expressionCriteria.sequenceTargetingReagent}"><span class="summaryTitle">Sequence Targeting Reagent Expression</span></c:if>
     <zfin2:figureSummary figureExpressionSummaryList="${figureSummaryDisplayList}" expressionGenotypeData="true"/>
 </div>

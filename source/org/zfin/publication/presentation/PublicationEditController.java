@@ -102,6 +102,7 @@ public class PublicationEditController {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
         model.addAttribute("publicationForm", PublicationService.getPublicationFormFromPublication(publication));
+        model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
         return "publication/edit-publication.page";
     }
 

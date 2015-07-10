@@ -538,5 +538,15 @@ public interface MutantRepository {
     void updateGenotypeNicknameWithHandleForPublication(Publication publication);
 
     List<PhenotypeStatement> getPhenotypeStatementForMarker(Marker marker);
+
+    /**
+     * Retrieve FishExperiment by Fish ID and Experiment ID
+     *
+     * @param fishID   fish id
+     * @param experimentID id
+     * @return FishExperiment
+     */
+    FishExperiment getFishExperimentByFishAndExperimentID (String fishID, String experimentID);
+
 }
 
