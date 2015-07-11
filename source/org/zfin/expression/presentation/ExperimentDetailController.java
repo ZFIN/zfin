@@ -34,6 +34,8 @@ public class ExperimentDetailController {
         model.addAttribute("experiment", experiment);
 
         Set<ExperimentCondition> conditions = getSortedConditions(experiment);
+
+        // Todo: need to refactor the following code; no STR Experiment Conditions any more
         model.addAttribute("sequenceTargetingReagentConditions", getSTRconditions(conditions));
         model.addAttribute("nonSequenceTargetingReagentConditions", getNonSTRconditions(conditions));
 
@@ -54,6 +56,8 @@ public class ExperimentDetailController {
         model.addAttribute("experiment", experiment);
 
         Set<ExperimentCondition> conditions = getSortedConditions(experiment);
+
+        // Todo: need to refactor the following code; no STR Experiment Conditions any more
         model.addAttribute("sequenceTargetingReagentConditions", getSTRconditions(conditions));
         model.addAttribute("nonSequenceTargetingReagentConditions", getNonSTRconditions(conditions));
 
@@ -69,7 +73,7 @@ public class ExperimentDetailController {
     protected List<ExperimentCondition> getSTRconditions(Set<ExperimentCondition> conditions) {
         List<ExperimentCondition> moConditions = new ArrayList<>();
         for (ExperimentCondition condition : conditions) {
-            if (condition.getSequenceTargetingReagent() != null)
+          //  if (condition.getSequenceTargetingReagent() != null)
                 moConditions.add(condition);
         }
         return moConditions;
@@ -78,9 +82,9 @@ public class ExperimentDetailController {
     protected List<ExperimentCondition> getNonSTRconditions(Set<ExperimentCondition> conditions) {
         List<ExperimentCondition> nonMoConditions = new ArrayList<>();
         for (ExperimentCondition condition : conditions) {
-            if (condition.getSequenceTargetingReagent() == null) {
+          //  if (condition.getSequenceTargetingReagent() == null) {
                 nonMoConditions.add(condition);
-            }
+          //  }
         }
         return nonMoConditions;
     }
