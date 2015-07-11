@@ -21,7 +21,7 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,
 				rgf_fish_Zdb_id,
 				rgf_phenos_id,
 				rgf_genox_zdb_id)
-  select distinct rgf_zdb_id,
+  select distinct rgf_geno_zdb_id,
   	 	  phenox_fig_zdb_id,
 		  rgfcx_morph_zdb_id,
 		  phenox_pk_id,
