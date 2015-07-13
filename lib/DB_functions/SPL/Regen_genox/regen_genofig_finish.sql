@@ -19,7 +19,7 @@ create procedure regen_genofig_finish()
 	gffs_fig_zdb_id,
 	gffs_morph_zdb_id,
 	gffs_phenox_pk_id,
-	gffs_fish_zdb_id
+	gffs_fish_zdb_id,
 	gffs_phenos_id,
 	gffs_genox_Zdb_id)
     select rgf_geno_zdb_id,

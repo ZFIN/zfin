@@ -6,10 +6,7 @@ import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.PhenotypeExperiment;
-import org.zfin.mutant.PhenotypeService;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
@@ -45,7 +42,9 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
     }
 
     public Set<Marker> getSequenceTargetingReagents() {
+        /*
         Set<ExperimentCondition> experimentConditions = fishExperiment.getExperiment().getExperimentConditions();
+
         Set<Marker> sequenceTargetingReagents = new TreeSet<>(new Comparator<Marker>() {
             public int compare(Marker one, Marker two) {
                 return (one.getAbbreviation().compareTo(two.getAbbreviation()));
@@ -60,7 +59,12 @@ public class SequenceTargetingReagentStatistics extends EntityStatistics {
                 }
             }
         }
+
         return sequenceTargetingReagents;
+        */
+        // Todo: need another way to get the STRs and return them as a Set of Markers
+        List<SequenceTargetingReagent> sequenceTargetingReagents = fishExperiment.getFish().getStrList();
+        return null;
     }
 
     public Set<PhenotypeStatement> getPhenotypeStatements() {

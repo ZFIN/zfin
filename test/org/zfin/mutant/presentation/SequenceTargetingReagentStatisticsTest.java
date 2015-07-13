@@ -38,14 +38,14 @@ public class SequenceTargetingReagentStatisticsTest {
         sequenceTargetingReagentTwo.setAbbreviation("MO-slit1b");
         sequenceTargetingReagentTwo.setZdbID("ZDB-MRPHlNO-090311-1");
 
-        conditionTwo.setSequenceTargetingReagent(sequenceTargetingReagentTwo);
+        //conditionTwo.setSequenceTargetingReagent(sequenceTargetingReagentTwo);
 
         ExperimentCondition conditionOne = new ExperimentCondition();
         SequenceTargetingReagent sequenceTargetingReagentOne = new SequenceTargetingReagent();
         sequenceTargetingReagentOne.setAbbreviation("MO-slit1a");
         sequenceTargetingReagentOne.setZdbID("ZDB-MRPHlNO-090311-2");
-        conditionOne.setSequenceTargetingReagent(sequenceTargetingReagentOne);
-        conditionTwo.setSequenceTargetingReagent(sequenceTargetingReagentTwo);
+        //conditionOne.setSequenceTargetingReagent(sequenceTargetingReagentOne);
+        //conditionTwo.setSequenceTargetingReagent(sequenceTargetingReagentTwo);
 
         Set<ExperimentCondition> conditions = new HashSet<ExperimentCondition>();
         conditions.add(conditionOne);
@@ -53,8 +53,8 @@ public class SequenceTargetingReagentStatisticsTest {
         experimentOne.setExperimentConditions(conditions);
 
         // create markers for each MO
-        createMarkerForMo("slit1a", sequenceTargetingReagentOne);
-        createMarkerForMo("slit1b", sequenceTargetingReagentTwo);
+        //createMarkerForMo("slit1a", sequenceTargetingReagentOne);
+        //createMarkerForMo("slit1b", sequenceTargetingReagentTwo);
 
         createAnatomyTerm();
     }

@@ -158,10 +158,14 @@ public class EQReport {
             buffer = new StringBuffer();
             buffer.append(phenotype.getPhenotypeExperiment().getFishExperiment().getFish().getGenotype().getName());
             buffer.append("\t");
-            Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getFishExperiment().getExperiment().getSequenecTargetingReagentConditions();
+           // Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getFishExperiment().getExperiment().getSequenecTargetingReagentConditions();
+            Set<ExperimentCondition> conditions = phenotype.getPhenotypeExperiment().getFishExperiment().getExperiment().getExperimentConditions() ;
+          // Todo: The above conditions are not related to STR any more; may need to try something else
             if (conditions != null && conditions.size() > 0) {
                 for (ExperimentCondition condition : conditions) {
-                    buffer.append(condition.getSequenceTargetingReagent().getName());
+                    //buffer.append(condition.getSequenceTargetingReagent().getName());
+                    // Todo: try to get the STR from somewhere else and replace the following line
+                    buffer.append(" ");
                     buffer.append(",");
                 }
                 buffer.deleteCharAt(buffer.length() - 1);

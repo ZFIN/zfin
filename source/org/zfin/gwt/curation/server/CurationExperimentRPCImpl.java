@@ -431,8 +431,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
         List<EnvironmentDTO> assayDtos = new ArrayList<>(experiments.size());
         for (Experiment experiment : experiments) {
-            if (experiment.isSequenceTargetingReagent())
-                continue;
+          //  if (experiment.isSequenceTargetingReagent())
+          //      continue;
+          // Todo: code for the above
             EnvironmentDTO env = new EnvironmentDTO();
             env.setName(experiment.getName());
             env.setZdbID(experiment.getZdbID());
