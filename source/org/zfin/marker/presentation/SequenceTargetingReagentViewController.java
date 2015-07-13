@@ -91,54 +91,7 @@ public class SequenceTargetingReagentViewController {
         List<ExpressionDisplay> strExpressionDisplays = ExpressionService.createExpressionDisplays(sequenceTargetingReagent.getZdbID(), strExpressionResults, expressionFigureIDs, expressionPublicationIDs);
         sequenceTargetingReagentBean.setExpressionDisplays(strExpressionDisplays);
 
-        // PHENOTYPE
-        List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
-        Set<PhenotypeStatement> phenotypeStatements;
-        boolean clean = true;
-        if (genotypeFigures == null || genotypeFigures.size() == 0)  {
-            sequenceTargetingReagentBean.setPhenotypeDisplays(null);
-        } else {
-            List<PhenotypeStatement> phenoStatements = new ArrayList<>();
-            List<Feature> features = new ArrayList<>();
-            List<FeatureMarkerRelationship> featureMarkerRelationships = new ArrayList<>();
-            String tag;
-            for (GenotypeFigure cleanPheno : genotypeFigures) {
-                if (cleanPheno.getPhenotypeExperiment() != null) {
-                    phenotypeStatements = cleanPheno.getPhenotypeExperiment().getPhenotypeStatements();
-                    if (phenotypeStatements != null)  {
-                        for (PhenotypeStatement phenotypeStatement : phenotypeStatements) {
-                            if (!phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getFish().getGenotype().isWildtype()) {
-                                Set<GenotypeFeature> genotypeFeatures = phenotypeStatement.getPhenotypeExperiment().getFishExperiment().getFish().getGenotype().getGenotypeFeatures();
-                                for (GenotypeFeature genotypeFeature : genotypeFeatures) {
-                                    features.add(genotypeFeature.getFeature());
-                                }
-                                if (features != null || features.size() > 0) {
-                                    for (Feature feature : features) {
-                                        featureMarkerRelationships.addAll(feature.getFeatureMarkerRelations());
-                                    }
-                                }
-                                if (featureMarkerRelationships != null || featureMarkerRelationships.size() > 0) {
-                                    for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelationships) {
-                                        if (!featureMarkerRelationship.getFeatureMarkerRelationshipType().getName().equals(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString())) {
-                                            clean = false;
-                                        }
-                                    }
-                                }
 
-                            }
-                            if (clean) {
-                                tag = phenotypeStatement.getTag();
-                                if (cleanPheno.getTag().equals(tag)) {
-                                    phenoStatements.add(phenotypeStatement);
-                                }
-                            }
-                        }
-
-                    }
-                }
-            }
-            sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenoStatements,"fish"));
-        }
 
         // Genomic Features created by STR (CRISPR and TALEN only at this time)
         if (sequenceTargetingReagentBean.isTALEN() || sequenceTargetingReagentBean.isCRISPR()) {
