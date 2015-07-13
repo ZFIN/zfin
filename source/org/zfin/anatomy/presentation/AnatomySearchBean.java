@@ -1,7 +1,8 @@
 package org.zfin.anatomy.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.anatomy.*;
+import org.zfin.anatomy.AnatomyStatistics;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
@@ -11,7 +12,6 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.FishStatistics;
-import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
@@ -62,9 +62,7 @@ public class AnatomySearchBean extends PaginationBean {
     private int totalNumberOfFiguresPerAnatomyItem;
     private int totalNumberOfImagesPerAnatomyItem;
     private List<FishStatistics> genoStats;
-    private List<SequenceTargetingReagentStatistics> allSequenceTargetingReagents;
     private List<AntibodyStatistics> antibodyStatistics;
-    private List<SequenceTargetingReagentStatistics> nonWildtypeSTRs;
     private Term aoTerm;
     private String ontologyName = Ontology.ANATOMY.getOntologyName();
 
@@ -79,7 +77,7 @@ public class AnatomySearchBean extends PaginationBean {
         return stageListDisplay;
     }
 
-    static List<Ontology> ontologyBrowsingList = new ArrayList<Ontology>(5);
+    static List<Ontology> ontologyBrowsingList = new ArrayList<>(5);
 
     static {
         ontologyBrowsingList.add(Ontology.ANATOMY);
@@ -89,7 +87,7 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public Map<String, String> getOntologyList() {
-        LinkedHashMap<String, String> ontologyList = new LinkedHashMap<String, String>(5);
+        LinkedHashMap<String, String> ontologyList = new LinkedHashMap<>(5);
         for (Ontology stage : ontologyBrowsingList) {
             ontologyList.put(stage.getOntologyName(), stage.getCommonName());
         }
@@ -251,29 +249,12 @@ public class AnatomySearchBean extends PaginationBean {
         return genoStats;
     }
 
-    public void setAllSequenceTargetingReagents(List<SequenceTargetingReagentStatistics> sequenceTargetingReagents) {
-        allSequenceTargetingReagents = sequenceTargetingReagents;
-    }
-
-
-    public List<SequenceTargetingReagentStatistics> getAllSequenceTargetingReagents() {
-        return allSequenceTargetingReagents;
-    }
-
     public List<AntibodyStatistics> getAntibodyStatistics() {
         return antibodyStatistics;
     }
 
     public void setAntibodyStatistics(List<AntibodyStatistics> antibodyStatistics) {
         this.antibodyStatistics = antibodyStatistics;
-    }
-
-    public List<SequenceTargetingReagentStatistics> getNonWildtypeSTRs() {
-        return nonWildtypeSTRs;
-    }
-
-    public void setNonWildtypeSTRs(List<SequenceTargetingReagentStatistics> nonWildtypeSTRs) {
-        this.nonWildtypeSTRs = nonWildtypeSTRs;
     }
 
     public String getOntologyName() {
@@ -307,14 +288,14 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public List<RelationshipPresentation> getRelations() {
-        Set<String> types = new HashSet<String>();
+        Set<String> types = new HashSet<>();
         List<TermRelationship> relatedItems = aoTerm.getAllDirectlyRelatedTerms();
         if (relatedItems != null) {
             for (TermRelationship rel : relatedItems) {
                 types.add(rel.getType());
             }
         }
-        List<String> uniqueTypes = new ArrayList<String>(types);
+        List<String> uniqueTypes = new ArrayList<>(types);
         Collections.sort(uniqueTypes, new RelationshipSorting());
         return AnatomyPresentation.createRelationshipPresentation(uniqueTypes, aoTerm);
 
@@ -392,7 +373,7 @@ public class AnatomySearchBean extends PaginationBean {
     }
 
     public List<TermDTO> getOrderedTerms() {
-        List<TermDTO> termList = new ArrayList<TermDTO>(terms);
+        List<TermDTO> termList = new ArrayList<>(terms);
         Collections.sort(termList);
         return termList;
     }
@@ -520,14 +501,6 @@ public class AnatomySearchBean extends PaginationBean {
         return numberOfHighQualityProbes <= MAX_NUMBER_GENOTYPES;
     }
 
-    public boolean isAllWildtypeSTRsDisplayed() {
-        return wildtypeSTRcount <= MAX_NUMBER_GENOTYPES;
-    }
-
-    public boolean isAllMutantSTRsDisplayed() {
-        return mutantSTRcount <= MAX_NUMBER_GENOTYPES;
-    }
-
     public boolean isExpressedGenesExist() {
         return !CollectionUtils.isEmpty(allExpressedMarkers);
     }
@@ -540,16 +513,8 @@ public class AnatomySearchBean extends PaginationBean {
         return !CollectionUtils.isEmpty(highQualityProbeGenes);
     }
 
-    public boolean isSequenceTargetingReagentExist() {
-        return !CollectionUtils.isEmpty(allSequenceTargetingReagents);
-    }
-
     public boolean isAntibodiesExist() {
         return !CollectionUtils.isEmpty(antibodyStatistics);
-    }
-
-    public boolean isNonWildtypeSTRExist() {
-        return !CollectionUtils.isEmpty(nonWildtypeSTRs);
     }
 
     public SectionVisibility getSectionVisibility() {
