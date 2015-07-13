@@ -87,6 +87,7 @@ public class FishDetailController {
             List<ExpressionDisplay> fishExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs);
             model.addAttribute("geneCentricExpressionDataList", fishExpressionDisplays);
             model.addAttribute("expressionFigureCount", fishExpressionDisplays.size());
+
         }
 
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
