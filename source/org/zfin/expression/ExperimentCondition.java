@@ -10,7 +10,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     private String zdbID;
     private Experiment experiment;
-    private String value;
     private ConditionDataType conditionDataType;
     private String comments;
 
@@ -31,14 +30,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     public void setExperiment(Experiment experiment) {
         this.experiment = experiment;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public String getComments() {

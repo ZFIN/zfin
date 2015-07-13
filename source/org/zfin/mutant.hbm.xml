@@ -422,8 +422,6 @@
             </generator>
         </id>
 
-        <property name="value" column="expcond_value"/>
-
         <property name="comments" column="expcond_comments"/>
 
         <many-to-one name="experiment" class="org.zfin.expression.Experiment">
