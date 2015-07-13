@@ -70,7 +70,7 @@
                         <c:forEach var="fish" items="${figureExpressionSummaryDisplay.fishList}" varStatus="status">
                             <zfin:link entity="${figureExpressionSummaryDisplay.fishList[status.index]}"/>
 
-                           
+
                             <c:if test="${!status.last}">,&nbsp&nbsp;</c:if>
                         </c:forEach>
 
