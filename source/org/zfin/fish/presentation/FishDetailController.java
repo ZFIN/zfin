@@ -123,37 +123,6 @@ public class FishDetailController {
         return "fish/fish-detail-popup.popup";
     }
 
-    @RequestMapping(value = "/fish-show-all-phenotypes/{ID}")
-    protected String showAllPhenotypes(Model model, HttpServletResponse response,
-                                       @PathVariable("ID") String zdbID) throws Exception {
-        LOG.info("Start MartFish Detail Controller");
-
-        Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
-
-        if (fish == null) {
-            String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(zdbID);
-            if (newZdbID != null) {
-                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + newZdbID);
-                return "redirect:/" + newZdbID;
-            }
-            else{
-                response.setStatus(HttpStatus.NOT_FOUND.value());
-                return LookupStrings.idNotFound(model, zdbID);
-            }
-        }
-
-        model.addAttribute("fish", fish);
-
-        List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
-
-        model.addAttribute("phenotypeStatements", phenotypeStatements);
-        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(fish.getName()));
-
-        return "fish/fish-all-phenotype.page";
-    }
-
     private static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseModel> models) {
         MultiKeyMap map = new MultiKeyMap();
         for (DiseaseModel model : models) {
