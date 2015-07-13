@@ -394,22 +394,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFiguresForMorpholino() {
-        //  morhpolino MO1-nkx2.2a
-        String morpholinoZdbID = "ZDB-MRPHLNO-070305-1";
-        SequenceTargetingReagent sequenceTargetingReagent = new SequenceTargetingReagent();
-        sequenceTargetingReagent.setZdbID(morpholinoZdbID);
-        //  lateral floor plate
-        String aoZdbID = "ZDB-TERM-100331-1214";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        List<Figure> figs = publicationRepository.getFiguresBySequenceTargetingReagentAndAnatomy(sequenceTargetingReagent, item);
-        assertTrue(figs != null);
-//        assertEquals("1 figure", 1, figs.size());
-
-    }
-
-    @Test
     public void getPublicationsForFiguresForGenotype() {
         //  genotype adss^hi1433Tg
         String genoZdbID = "ZDB-GENO-020426-5";

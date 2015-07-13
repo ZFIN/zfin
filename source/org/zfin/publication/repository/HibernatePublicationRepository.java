@@ -613,32 +613,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (DOIAttempt) query.uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresBySequenceTargetingReagentAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term) {
-        Session session = HibernateUtil.currentSession();
-
-        StringBuilder hql = new StringBuilder("select figure ");
-        getBaseQueryForSequenceTargetingReagentFigureData(hql);
-        hql.append("order by figure.orderingLabel    ");
-        Query query = session.createQuery(hql.toString());
-        query.setString("markerID", sequenceTargetingReagent.getZdbID());
-        query.setParameter("term", term);
-        return (List<Figure>) query.list();
-    }
-
-    private void getBaseQueryForSequenceTargetingReagentFigureData(StringBuilder hql) {
-        hql.append("from Figure figure, PhenotypeStatement phenotype, ");
-        hql.append("FishExperiment fishox, Marker marker, Experiment exp, ExperimentCondition con ");
-        hql.append("where marker.zdbID = :markerID AND ");
-        hql.append("      fishox.experiment = exp AND ");
-        hql.append("      con.experiment = exp AND  ");
-        hql.append("      marker = con.sequenceTargetingReagent AND  ");
-        hql.append("      phenotype.phenotypeExperiment.fishExperiment = fishox AND  ");
-        hql.append("      phenotype.phenotypeExperiment.figure = figure AND ");
-        hql.append("      ( phenotype.entity.superterm = :term OR phenotype.entity.subterm = :term  OR" +
-                "           phenotype.relatedEntity.superterm = :term OR phenotype.relatedEntity.subterm = :term ) ");
-    }
-
     /**
      * Retrieve list of figures for a given genotype and anatomy term
      * for mutant genotypes excluding sequenceTargetingReagent.
