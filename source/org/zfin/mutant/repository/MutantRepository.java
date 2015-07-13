@@ -546,5 +546,8 @@ public interface MutantRepository {
      */
     FishExperiment getFishExperimentByFishAndExperimentID (String fishID, String experimentID);
 
+    List<Fish> getFishByGenotype(Genotype genotype);
+
+    List<Fish> getFishByGenotypeNoExperiment(Genotype genotype);
 }
 

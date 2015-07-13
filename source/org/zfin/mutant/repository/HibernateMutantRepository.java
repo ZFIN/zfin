@@ -1792,4 +1792,23 @@ public class HibernateMutantRepository implements MutantRepository {
         criteria.add(Restrictions.eq("experiment.zdbID", experimentID));
         return (FishExperiment) criteria.uniqueResult();
     }
+
+    @Override
+    public List<Fish> getFishByGenotype(Genotype genotype) {
+        String hql = "select fish from Fish as fish " +
+                "where fish.genotype = :genotype";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotype", genotype);
+        return query.list();
+    }
+
+    @Override
+    public List<Fish> getFishByGenotypeNoExperiment(Genotype genotype) {
+        String hql = "select fish from Fish as fish " +
+                "where fish.genotype = :genotype and " +
+                "fish.fishExperiments is empty";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotype", genotype);
+        return query.list();
+    }
 }
