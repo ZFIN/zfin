@@ -230,8 +230,6 @@ public interface MutantRepository {
 
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<GenericTerm> terms);
 
-    List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype);
-
     PhenotypeExperiment getPhenotypeExperiment(Long id);
 
     PhenotypeStatement getPhenotypeStatementById(Long Id);

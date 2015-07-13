@@ -36,15 +36,14 @@ import org.zfin.infrastructure.TrieMapTest;
 import org.zfin.infrastructure.ant.ReportConfigurationTest;
 import org.zfin.marker.MergeMarkerUnitTest;
 import org.zfin.marker.presentation.DbLinkDisplayComparatorTest;
-import org.zfin.ontology.presentation.DiseaseDisplayComparatorTest;
 import org.zfin.marker.presentation.MarkerPresentationTest;
 import org.zfin.mutant.PhenotypeServiceTest;
 import org.zfin.mutant.PhenotypeStatementTest;
 import org.zfin.mutant.PhenotypeStructureTest;
-import org.zfin.mutant.presentation.SequenceTargetingReagentStatisticsTest;
 import org.zfin.ontology.GenericTermTest;
 import org.zfin.ontology.MatchingTermServiceTest;
 import org.zfin.ontology.OntologyTokenizationTest;
+import org.zfin.ontology.presentation.DiseaseDisplayComparatorTest;
 import org.zfin.ontology.presentation.ExpressionResultPresentationTest;
 import org.zfin.ontology.service.OntologyServiceTest;
 import org.zfin.orthology.OrthologyEvidenceFastSearchTest;
@@ -138,7 +137,6 @@ import org.zfin.util.*;
         SectionVisibilityTest.class,
         SearchCriterionTest.class,
         SequenceTest.class,
-        SequenceTargetingReagentStatisticsTest.class,
         SerializationTests.class,
         SiteSearchTest.class,
         SortAnatomyResultsTest.class,
