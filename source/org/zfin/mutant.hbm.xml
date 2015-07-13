@@ -431,14 +431,6 @@
         </many-to-one>
 
 
-       <!-- <many-to-one name="unit" class="org.zfin.expression.ExperimentUnit">
-            <column name="expcond_expunit_zdb_id"/>
-        </many-to-one>-->
-
-       <!-- <many-to-one name="sequenceTargetingReagent" class="SequenceTargetingReagent">
-            <column name="expcond_mrkr_zdb_id"/>
-        </many-to-one>-->
-
         <many-to-one name="conditionDataType" class="org.zfin.expression.ConditionDataType">
             <column name="expcond_cdt_zdb_id"/>
         </many-to-one>

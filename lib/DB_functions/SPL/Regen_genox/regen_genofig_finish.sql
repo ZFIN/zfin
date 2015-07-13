@@ -11,33 +11,24 @@ create procedure regen_genofig_finish()
   --   regen_genofig_input_zdb_id_temp table exists and contains a list of genotype ZDB IDs
   --     to generate records in genotype_figure_fast_search table
   --
-  -- INPUT VARS
-  --   none.
-  --
-  -- OUTPUT VARS:
-  --   none
-  --
-  -- RETURNS:
-  --   Success: Nothing
-  --   Failure: Throws whatever exception happened.
-  --
-  -- EFFECTS:
-  --   Success:
-  --     records in genotype_figure_fast_search table have been 
-  --       updated for the input ZDB ID(s)
-  --   Error:
-  --     records in genotype_figure_fast_search table may or may not
-  --       have been updated 
-  --     regen_genofig_input_zdb_id_temp may or may not be empty.
-  --     regen_genofig_temp may or may not be empty.
-  --     transaction is not committed or rolled back.
   -- -------------------------------------------------------------------------------------------
-
   delete from genotype_figure_fast_search_new;
 
   insert into genotype_figure_fast_search_new
-      (gffs_geno_zdb_id,gffs_fig_zdb_id,gffs_superterm_zdb_id,gffs_subterm_zdb_id,gffs_quality_zdb_id,gffs_tag,gffs_morph_zdb_id,gffs_phenox_pk_id,gffs_fish_zdb_id)
-    select rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_morph_zdb_id,rgf_phenox_pk_id,rgf_fish_zdb_id
+      (gffs_geno_zdb_id,
+	gffs_fig_zdb_id,
+	gffs_morph_zdb_id,
+	gffs_phenox_pk_id,
+	gffs_fish_zdb_id,
+	gffs_phenos_id,
+	gffs_genox_Zdb_id)
+    select rgf_geno_zdb_id,
+    	   rgf_fig_zdb_id,
+	   rgf_morph_zdb_id,
+	   rgf_phenox_pk_id,
+	   rgf_fish_zdb_id,
+	   rgf_phenos_id,
+	   rgf_genox_zdb_id
       from regen_genofig_temp;
      
   delete from regen_genofig_temp;

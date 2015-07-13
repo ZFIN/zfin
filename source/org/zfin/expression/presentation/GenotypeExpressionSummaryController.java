@@ -33,20 +33,20 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 public class GenotypeExpressionSummaryController {
 
 
-    @RequestMapping(value = {"/genotype-figure-summary"})
-    protected String getGenotypeExpressionFigureSummary(@RequestParam String genoZdbID,
+    @RequestMapping(value = {"/fish-expression-figure-summary-experiment"})
+    protected String getFishExpressionFigureSummaryNoneStandard(@RequestParam String fishZdbID,
                                                         @RequestParam String expZdbID,
                                                         @RequestParam String geneZdbID,
                                                         @RequestParam boolean imagesOnly,
                                                         Model model) {
 
 
-        FishExperiment genox = getMutantRepository().getGenotypeExperiment(genoZdbID, expZdbID);
+        FishExperiment genox = getMutantRepository().getFishExperimentByFishAndExperimentID(fishZdbID, expZdbID);
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
 
         //I would prefer the record not found show both ids...maybe it would be best if we just used genox?
         if (genox == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
+            model.addAttribute(LookupStrings.ZDB_ID, fishZdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
@@ -62,64 +62,65 @@ public class GenotypeExpressionSummaryController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genox.getFish().getName() + " Expression Figure Summary");
         return "expression/genotype-figure-summary.page";
-
     }
 
 
-    @RequestMapping(value = {"/genotype-figure-summary-standard"})
-    protected String getGenotypeExpressionFigureSummary(@RequestParam String genoZdbID,
+    @RequestMapping(value = {"/fish-expression-figure-summary-standard"})
+    protected String getFishExpressionFigureSummaryStandard(@RequestParam String fishZdbID,
                                                         @RequestParam String geneZdbID,
                                                         @RequestParam boolean imagesOnly,
                                                         Model model) {
 
 
-        Genotype geno = getMutantRepository().getGenotypeByID(genoZdbID);
+        Fish fish = getMutantRepository().getFish(fishZdbID);
+
+        if (fish == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, fishZdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
 
-        if (geno == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
         if (gene == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
+            model.addAttribute(LookupStrings.ZDB_ID, fishZdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(geno, gene, imagesOnly);
+        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(fish, gene, imagesOnly);
         model.addAttribute("expressionCriteria", expressionCriteria);
         List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, geno.getName() + " Expression Figure Summary");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
         return "expression/genotype-figure-summary.page";
 
     }
 
-    @RequestMapping("/genotype-figure-summary-chemical")
-    protected String getGenotypeExpressionFigureSummaryChemical(@RequestParam String genoZdbID,
+    @RequestMapping("/fish-expression-figure-summary-chemical")
+    protected String getFishExpressionFigureSummaryChemical(@RequestParam String fishZdbID,
                                                                 @RequestParam String geneZdbID,
                                                                 @RequestParam boolean imagesOnly,
                                                                 Model model) {
-        Genotype geno = getMutantRepository().getGenotypeByID(genoZdbID);
+        Fish fish = getMutantRepository().getFish(fishZdbID);
+
+        if (fish == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, fishZdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
 
-        if (geno == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
         if (gene == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, geneZdbID);
+            model.addAttribute(LookupStrings.ZDB_ID, fishZdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaChemicalEnvironment(geno, gene, imagesOnly);
+        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaChemicalEnvironment(fish, gene, imagesOnly);
         model.addAttribute("expressionCriteria", expressionCriteria);
         List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createExpressionFigureSummary(expressionCriteria);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, geno.getName() + " Expression Figure Summary");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
         return "expression/genotype-figure-summary.page";
 
     }

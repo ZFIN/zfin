@@ -25,7 +25,7 @@
                 <th align="left" width="15%">Expressed Genes</th>
             </c:if>
             <th align="left">
-                Phenotype
+                Anatomy
             </th>
         </tr>
         <c:forEach var="figureExpressionSummaryDisplay" items="${figureExpressionSummaryList}" varStatus="status">

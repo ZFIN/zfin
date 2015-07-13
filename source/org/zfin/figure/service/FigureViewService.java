@@ -215,14 +215,15 @@ public class FigureViewService {
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
             for (ExperimentCondition experimentCondition: expressionResult.getExpressionExperiment().getFishExperiment().getExperiment().getExperimentConditions()){
-                if (experimentCondition.getSequenceTargetingReagent()!= null &&
-                        !strs.contains(experimentCondition.getSequenceTargetingReagent())) {
-                    strs.add(experimentCondition.getSequenceTargetingReagent());
-                }
+              //  if (experimentCondition.getSequenceTargetingReagent()!= null &&
+              //          !strs.contains(experimentCondition.getSequenceTargetingReagent())) {
+              //      strs.add(experimentCondition.getSequenceTargetingReagent());
+                // Todo: Need to replace the above commented-out code; check STR in another way
+               // }
             }
         }
 
-        Collections.sort(strs);
+      //  Collections.sort(strs);
         return strs;
     }
 
@@ -401,14 +402,15 @@ public class FigureViewService {
 
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
             for (ExperimentCondition experimentCondition: phenotypeExperiment.getFishExperiment().getExperiment().getExperimentConditions()){
-                if (experimentCondition.getSequenceTargetingReagent()!= null &&
-                    !strs.contains(experimentCondition.getSequenceTargetingReagent())) {
-                    strs.add(experimentCondition.getSequenceTargetingReagent());
-                }
+             //   if (experimentCondition.getSequenceTargetingReagent()!= null &&
+             //       !strs.contains(experimentCondition.getSequenceTargetingReagent())) {
+             //       strs.add(experimentCondition.getSequenceTargetingReagent());
+             //   }
+                // Todo: Need to replace the above commented-out code; check STR in another way
             }
         }
 
-        Collections.sort(strs);
+      //  Collections.sort(strs);
         return strs;
     }
 
@@ -450,7 +452,9 @@ public class FigureViewService {
 
         for (ExperimentCondition experimentCondition: fishExperiment.getExperiment().getExperimentConditions()) {
             // if none is null, then the figure page has only experiments with reagents, so nothing should be in the list
-            if (experimentCondition.getSequenceTargetingReagent() == null) return true;
+            //if (experimentCondition.getSequenceTargetingReagent() == null) return true;
+            return true;
+            // Todo: need to do something else, since experimentCondition.getSequenceTargetingReagent() not there any more
         }
 
         return false;

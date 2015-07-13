@@ -23,10 +23,10 @@
         </tr>
     </c:if>
     <%--sometimes rather than a genox, it's just a genotype--%>
-    <c:if test="${!empty criteria.genotype}">
+    <c:if test="${!empty criteria.fish}">
         <tr>
-            <th class="genotype-name-label">Genotype:</th>
-            <td class="genotype-name-value"><zfin:link entity="${criteria.genotype}"/>
+            <th class="genotype-name-label">Fish:</th>
+            <td class="genotype-name-value"><zfin:link entity="${criteria.fish}"/>
         </tr>
     </c:if>
     <c:if test="${!empty criteria.antibody}">

@@ -35,6 +35,7 @@ public class ExperimentPresentation extends EntityPresentation {
         for (ExperimentCondition experimentCondition : conditions) {
             if (i > 0)
                 sb.append(", ");
+            // Todo: may need to check STR from somewhere else?
             if (experimentCondition.isSequenceTargetingReagentCondition() && suppressMoDetails) {
                 if (!sequenceTargetingReagentFound) {
                     sb.append("Sequence Targeting Reagent");
@@ -99,6 +100,7 @@ public class ExperimentPresentation extends EntityPresentation {
         StringBuilder sb = new StringBuilder(50);
         int i = 0;
         for (ExperimentCondition experimentCondition : conditions) {
+            // Todo: may need to check STR from somewhere else?
             if (!experimentCondition.isSequenceTargetingReagentCondition()) {
                 if (i > 0) {
                     sb.append(", ");

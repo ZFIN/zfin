@@ -50,26 +50,18 @@ create procedure regen_genofig_genotype(phenoxId varchar(100))
                         and xc2.expcond_cdt_zdb_id = cdt_zdb_id
                         and cdt_group not in ("morpholino","TALEN","CRISPR"));
 
-
-  -- gather the "not normal" phenotype recordsyes
+  -- gather the "not normal" phenotype records
   insert into regen_genofig_not_normal_temp
-      (rgfnna_zdb_id,rgfnna_genox_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag)
-  select distinct phenox_pk_id,phenox_genox_zdb_id,phenos_entity_1_superterm_zdb_id,phenos_entity_1_subterm_zdb_id,phenos_quality_zdb_id,phenos_tag
-    from phenotype_experiment, phenotype_statement, fish_experiment
-   where phenox_pk_id = phenoxId
-     and phenox_genox_zdb_id = genox_zdb_id
-     and phenox_pk_id = phenos_phenox_pk_id
-     and phenos_tag != 'normal';
-
-  insert into regen_genofig_not_normal_temp
-      (rgfnna_zdb_id,rgfnna_genox_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag)
-  select distinct phenox_pk_id,phenox_genox_zdb_id,phenos_entity_2_superterm_zdb_id,phenos_entity_2_subterm_zdb_id,phenos_quality_zdb_id,phenos_tag
-    from phenotype_experiment, phenotype_statement, fish_experiment
-   where phenox_pk_id = phenoxId
-     and phenox_genox_zdb_id = genox_zdb_id
-     and phenox_pk_id = phenos_phenox_pk_id
-     and phenos_tag != 'normal'
-     and phenos_entity_2_superterm_zdb_id is not null;
+    (rgfnna_zdb_id,
+	rgfnna_genox_zdb_id,
+	rgfnna_phenos_id
+)
+    select distinct phenox_pk_id,
+    	   	    phenox_genox_zdb_id,
+		    phenos_pk_id
+      from phenotype_experiment, phenotype_statement
+     where phenox_pk_id = phenos_phenox_pk_id
+       and phenos_tag != 'normal';
 
   -- takes regen_genofig_input_zdb_id_temp as input, adds recs to regen_genofig_temp
   execute procedure regen_genofig_process_indiv(phenoxId);
