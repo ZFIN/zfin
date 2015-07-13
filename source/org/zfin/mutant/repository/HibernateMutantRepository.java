@@ -807,17 +807,6 @@ public class HibernateMutantRepository implements MutantRepository {
         return phenotypeArrayList;
     }
 
-    public List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select cleanPheno from GenotypeFigure cleanPheno " +
-                "     where cleanPheno.genotype.zdbID = :genotypeID";
-        Query query = session.createQuery(hql);
-        query.setString("genotypeID", genotype.getZdbID());
-
-        return (List<GenotypeFigure>) query.list();
-    }
-
     public PhenotypeExperiment getPhenotypeExperiment(Long id) {
         return (PhenotypeExperiment) currentSession().get(PhenotypeExperiment.class, id);
     }
