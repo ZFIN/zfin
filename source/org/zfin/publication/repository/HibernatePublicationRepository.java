@@ -692,7 +692,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * Retrieve publications that have phenotype data for a given term and genotype
      *
      * @param fish
-     * @param aoTerm   ao term  @return Number of publications with figures per genotype and anatomy
+     * @param aoTerm ao term  @return Number of publications with figures per genotype and anatomy
      */
     public PaginationResult<Publication> getPublicationsWithFigures(Fish fish, GenericTerm aoTerm, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
@@ -1949,6 +1949,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("pubID", publicationID);
 
         return (List<Fish>) query.list();
+    }
+
+    @Override
+    public List<Fish> getWildtypeFish() {
+        String hql = "from Fish as fish where " +
+                "   fish.genotype.wildtype = 't' AND" +
+                "   fish.strList is empty " +
+                "   order by fish.name";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        return query.list();
     }
 
     public List<Journal> findJournalByAbbreviationAndName(String query) {

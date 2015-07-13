@@ -506,4 +506,6 @@ public interface PublicationRepository extends PaginationParameter {
     Fish getFishByHandle(String handle);
 
     List<Fish> getNonWTFishByPublication(String publicationID);
+
+    List<Fish> getWildtypeFish();
 }
