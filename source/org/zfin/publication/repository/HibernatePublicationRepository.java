@@ -613,32 +613,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (DOIAttempt) query.uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresBySequenceTargetingReagentAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term) {
-        Session session = HibernateUtil.currentSession();
-
-        StringBuilder hql = new StringBuilder("select figure ");
-        getBaseQueryForSequenceTargetingReagentFigureData(hql);
-        hql.append("order by figure.orderingLabel    ");
-        Query query = session.createQuery(hql.toString());
-        query.setString("markerID", sequenceTargetingReagent.getZdbID());
-        query.setParameter("term", term);
-        return (List<Figure>) query.list();
-    }
-
-    private void getBaseQueryForSequenceTargetingReagentFigureData(StringBuilder hql) {
-        hql.append("from Figure figure, PhenotypeStatement phenotype, ");
-        hql.append("FishExperiment fishox, Marker marker, Experiment exp, ExperimentCondition con ");
-        hql.append("where marker.zdbID = :markerID AND ");
-        hql.append("      fishox.experiment = exp AND ");
-        hql.append("      con.experiment = exp AND  ");
-        hql.append("      marker = con.sequenceTargetingReagent AND  ");
-        hql.append("      phenotype.phenotypeExperiment.fishExperiment = fishox AND  ");
-        hql.append("      phenotype.phenotypeExperiment.figure = figure AND ");
-        hql.append("      ( phenotype.entity.superterm = :term OR phenotype.entity.subterm = :term  OR" +
-                "           phenotype.relatedEntity.superterm = :term OR phenotype.relatedEntity.subterm = :term ) ");
-    }
-
     /**
      * Retrieve list of figures for a given genotype and anatomy term
      * for mutant genotypes excluding sequenceTargetingReagent.
@@ -718,7 +692,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * Retrieve publications that have phenotype data for a given term and genotype
      *
      * @param fish
-     * @param aoTerm   ao term  @return Number of publications with figures per genotype and anatomy
+     * @param aoTerm ao term  @return Number of publications with figures per genotype and anatomy
      */
     public PaginationResult<Publication> getPublicationsWithFigures(Fish fish, GenericTerm aoTerm, boolean includeSubstructures) {
         Session session = HibernateUtil.currentSession();
@@ -1975,6 +1949,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("pubID", publicationID);
 
         return (List<Fish>) query.list();
+    }
+
+    @Override
+    public List<Fish> getWildtypeFish() {
+        String hql = "from Fish as fish where " +
+                "   fish.genotype.wildtype = 't' AND" +
+                "   fish.strList is empty " +
+                "   order by fish.name";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        return query.list();
     }
 
     public List<Journal> findJournalByAbbreviationAndName(String query) {

@@ -1,5 +1,6 @@
 package org.zfin.feature.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -114,6 +115,8 @@ public class GenotypeDetailController {
             retrievePublicationData(form, genotype);
             List<FishExperiment> fishExperimentList = mutantRepository.getFishExperiment(genotype);
             List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList = createResult(fishExperimentList);
+            List<Fish> fishList = mutantRepository.getFishByGenotypeNoExperiment(genotype);
+            addPureFish(fishGenotypePhenotypeStatisticsList, fishList);
 
             model.addAttribute("fishList", fishGenotypePhenotypeStatisticsList);
             model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
@@ -126,6 +129,19 @@ public class GenotypeDetailController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
         return "genotype/genotype-detail.page";
     }
+
+    private void addPureFish(List<GenotypeFishResult> fishGenotypePhenotypeStatisticsList, List<Fish> fishList) {
+        if (CollectionUtils.isEmpty(fishList))
+            return;
+        if (fishGenotypePhenotypeStatisticsList == null)
+            fishGenotypePhenotypeStatisticsList = new ArrayList<>(fishList.size());
+        for (Fish fish : fishList) {
+            GenotypeFishResult result = new GenotypeFishResult(fish);
+            if (!fishGenotypePhenotypeStatisticsList.contains(result))
+                fishGenotypePhenotypeStatisticsList.add(result);
+        }
+    }
+
 
     private List<GenotypeFishResult> createResult(List<FishExperiment> fishExperimentList) {
         Map<Fish, GenotypeFishResult> statisticsMap = new TreeMap<>();

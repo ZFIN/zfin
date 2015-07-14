@@ -413,6 +413,8 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
         genotypeDTO.setNickName(genotype.getNickname());
+        if (genotype.getBackground() != null)
+            genotypeDTO.setBackgroundGenotype(convertToPureGenotypeDTOs(genotype.getBackground()));
         if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
             createExternalNotesOnGenotype(genotype, genotypeDTO);
         }
@@ -435,6 +437,8 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
+        if (genotype.getBackground() != null)
+            genotypeDTO.setBackgroundGenotype(convertToPureGenotypeDTOs(genotype.getBackground()));
         return genotypeDTO;
     }
 

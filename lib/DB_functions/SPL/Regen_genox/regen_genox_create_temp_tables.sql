@@ -7,17 +7,6 @@ create procedure regen_genox_create_temp_tables()
   -- PRECONDITIONS:
   --   regen_genox_input_zdb_id_temp may already exist.
   --   regen_genox_temp may already exist.
-  --
-  -- INPUT VARS
-  --   none.
-  --
-  -- OUTPUT VARS:
-  --   none
-  --
-  -- RETURNS:
-  --   Success: Nothing
-  --   Failure: Throws whatever exception happened.
-  --
   -- EFFECTS:
   --   Success:
   --     regen_genox_input_zdb_id_temp exists and is empty.
@@ -39,6 +28,7 @@ create procedure regen_genox_create_temp_tables()
     end exception with resume;
 
     create temp table regen_genox_input_zdb_id_temp  
+    -- can be either a marker or a genox zdb_id
       (
 	rggz_zdb_id		varchar(50),
         primary key (rggz_zdb_id)
@@ -55,6 +45,7 @@ create procedure regen_genox_create_temp_tables()
       ) with no log;
 
   end 
+
   delete from regen_genox_input_zdb_id_temp;
   delete from regen_genox_temp;
 

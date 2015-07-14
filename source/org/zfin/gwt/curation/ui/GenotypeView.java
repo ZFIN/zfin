@@ -19,9 +19,7 @@ import org.zfin.gwt.root.util.DeleteImage;
 import org.zfin.gwt.root.util.ShowHideWidget;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Table of associated genotypes
@@ -74,7 +72,7 @@ public class GenotypeView extends Composite {
         int rowIndex = 1;
         for (final GenotypeDTO genotype : genotypeDTOList) {
             int col = 0;
-            Anchor html = new Anchor(SafeHtmlUtils.fromTrustedString(genotype.getName()), "/" + genotype.getZdbID());
+            Anchor html = new Anchor(SafeHtmlUtils.fromTrustedString(genotype.getNamePlusBackground()), "/" + genotype.getZdbID());
             genotypeListTable.setWidget(index, col++, html);
             InlineHTML handle = new InlineHTML(genotype.getNickName());
             handle.setTitle(genotype.getZdbID());
@@ -90,14 +88,12 @@ public class GenotypeView extends Composite {
             genotypeListTable.setWidget(index, col++, curatorNotePanel);
             DeleteImage deleteImage = new DeleteImage("/action/infrastructure/deleteRecord/" + genotype.getZdbID(), "Delete Genotype");
             genotypeListTable.getCellFormatter().setHorizontalAlignment(index, col, HasHorizontalAlignment.ALIGN_CENTER);
-            genotypeListTable.setWidget(index++, col++, deleteImage);
+            genotypeListTable.setWidget(index++, col, deleteImage);
             groupIndex = genotypeListTable.setRowStyle(rowIndex++, null, genotype.getZdbID(), groupIndex);
 
         }
     }
 
-    private Map<GenotypeDTO, Anchor> publicNoteAnchor = new HashMap<>();
-    private Map<String, Anchor> curatorNoteAnchor = new HashMap<>();
     private List<PublicNoteWidgets> publicNoteWidgetsList = new ArrayList<>();
     private List<PublicNoteWidgets> privateNoteWidgetsList = new ArrayList<>();
 
@@ -224,10 +220,6 @@ public class GenotypeView extends Composite {
         return genotypeListToggle;
     }
 
-    public Hyperlink getShowHideGenoList() {
-        return showHideGenoList;
-    }
-
     public void setPublicationID(String publicationID) {
         this.publicationID = publicationID;
     }
@@ -250,11 +242,6 @@ public class GenotypeView extends Composite {
         private CuratorNoteDTO curatorNote;
         private DeleteImage deleteImage;
         private Anchor viewAnchor;
-
-
-        public PublicNoteWidgets(NotePopup notePopup, Anchor viewAnchor) {
-            this.viewAnchor = viewAnchor;
-        }
 
         public PublicNoteWidgets(DeleteImage deleteImage, ExternalNoteDTO note, Anchor viewAnchor) {
             this.deleteImage = deleteImage;

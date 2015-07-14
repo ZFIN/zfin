@@ -7,7 +7,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.database.DbSystemUtil;
@@ -25,17 +24,14 @@ import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.sequence.STRMarkerSequence;
 
@@ -54,7 +50,6 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  */
 @Repository
 public class HibernateMutantRepository implements MutantRepository {
-    private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     private Logger logger = Logger.getLogger(HibernateMutantRepository.class);
 
@@ -252,65 +247,6 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("genoZdbID", genotype.getZdbID());
 
         return ((Number) query.uniqueResult()).intValue();
-    }
-
-    /**
-     * Retrieve the genotype experiment objects that are associated to a str.
-     * Disregard all experiments that have non-str conditions, such as chemical or physical
-     * attached.
-     *
-     * @param item            anatomy structure
-     * @param isWildtype      wildtype of genotype
-     * @param numberOfRecords defines the first n records to retrieve
-     * @return list of genotype experiment object
-     */
-    public PaginationResult<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, int numberOfRecords) {
-        PaginationBean bean = new PaginationBean();
-        bean.setMaxDisplayRecords(numberOfRecords);
-        return getGenotypeExperimentSequenceTargetingReagents(item, isWildtype, bean);
-    }
-
-    public List<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype) {
-        return getGenotypeExperimentSequenceTargetingReagents(item, isWildtype, null).getPopulatedResults();
-    }
-
-    @SuppressWarnings("unchecked")
-    public PaginationResult<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, PaginationBean bean) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "SELECT distinct fishExperiment " +
-                "FROM  FishExperiment fishExperiment, Experiment exp, Genotype geno, " +
-                "      PhenotypeExperiment phenox, PhenotypeStatement phenoeq, ExperimentCondition con " +
-                "WHERE   " +
-                "      fishExperiment.experiment = exp AND phenoeq.phenotypeExperiment = phenox AND " +
-                "       (phenoeq.entity.superterm = :aoTerm " +
-                "        or phenoeq.entity.subterm = :aoTerm " +
-                "        or phenoeq.relatedEntity.superterm = :aoTerm " +
-                "        or phenoeq.relatedEntity.subterm = :aoTerm ) AND " +
-                "       phenox.fishExperiment = fishExperiment AND " +
-                "       phenoeq.tag != :tag AND " +
-                "       con.experiment = exp AND " +
-                "       fishExperiment.fish.genotype = geno AND " +
-                "       con.sequenceTargetingReagent is not null";
-        if (isWildtype != null) {
-            hql += " AND geno.wildtype = :isWildtype ";
-        }
-        Query query = session.createQuery(hql);
-        query.setParameter("aoTerm", item);
-        query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
-
-        if (isWildtype != null) {
-            query.setBoolean("isWildtype", isWildtype);
-        }
-
-        // no boundaries defined, all records
-        if (bean == null) {
-            @SuppressWarnings("unchecked")
-            List<FishExperiment> genos = (List<FishExperiment>) query.list();
-            return new PaginationResult<FishExperiment>(genos);
-        }
-
-        // use boundary definitions
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
     @SuppressWarnings("unchecked")
@@ -1791,5 +1727,24 @@ public class HibernateMutantRepository implements MutantRepository {
         criteria.add(Restrictions.eq("fish.zdbID", fishID));
         criteria.add(Restrictions.eq("experiment.zdbID", experimentID));
         return (FishExperiment) criteria.uniqueResult();
+    }
+
+    @Override
+    public List<Fish> getFishByGenotype(Genotype genotype) {
+        String hql = "select fish from Fish as fish " +
+                "where fish.genotype = :genotype";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotype", genotype);
+        return query.list();
+    }
+
+    @Override
+    public List<Fish> getFishByGenotypeNoExperiment(Genotype genotype) {
+        String hql = "select fish from Fish as fish " +
+                "where fish.genotype = :genotype and " +
+                "fish.fishExperiments is empty";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotype", genotype);
+        return query.list();
     }
 }

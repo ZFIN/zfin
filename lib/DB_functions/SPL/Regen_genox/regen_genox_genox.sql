@@ -1,4 +1,4 @@
-create procedure regen_genox_marker(mrkrZdbId like marker.mrkr_zdb_id)
+create procedure regen_genox_genox(genoxZdbId like fish_experiment.genox_zdb_id)
 
   -- ---------------------------------------------------------------------------------------------
   -- regenerates the marker_zdb_id genox_zdb_id pairs in fast search tables for a given marker.
@@ -7,12 +7,12 @@ create procedure regen_genox_marker(mrkrZdbId like marker.mrkr_zdb_id)
   --   zdbId    ZDB ID of the marker (gene or MO) to regenerate marker_zdb_id genox_zdb_id pairs for.
   -- EFFECTS:
   --   Success:
-  --     Entries for this marker ZDB ID in mutant_fast_search table have been
+  --     Entries for this genox ZDB ID in mutant_fast_search table have been
   --       replaced with current marker_zdb_id genox_zdb_id pairs for the marker.
   --     Several temp tables, used only by regen_genox routines, will have 
   --       been created.  All of them will be empty.
   --   Error:
-  --     Entries for this marker ZDB ID in mutant_fast_search table
+  --     Entries for this genox ZDB ID in mutant_fast_search table
   --       may or may not have been replaced, or may have been dropped.
   --     Various temp table may or may not have been created.  If created,
   --       they may have data in them.
@@ -26,16 +26,16 @@ create procedure regen_genox_marker(mrkrZdbId like marker.mrkr_zdb_id)
   -- create regen_genox_input_zdb_id_temp, regen_genox_temp
   execute procedure regen_genox_create_temp_tables();
 
-  -- gather the marker zdbIDs to be processed
+  -- gather the genox zdbIDs to be processed
   insert into regen_genox_input_zdb_id_temp
       ( rggz_zdb_id )
     values
-      ( mrkrZdbId );
+      ( genoxZdbId );
 
   -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
-  execute procedure regen_genox_process_marker();
+  execute procedure regen_genox_process_genox();
 
   -- Move from temp tables to permanent tables
-  execute procedure regen_genox_finish_marker();
+  execute procedure regen_genox_finish_genox();
 
 end procedure;

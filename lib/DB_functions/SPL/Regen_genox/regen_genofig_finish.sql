@@ -12,7 +12,12 @@ create procedure regen_genofig_finish()
   --     to generate records in genotype_figure_fast_search table
   --
   -- -------------------------------------------------------------------------------------------
-  delete from genotype_figure_fast_search_new;
+  delete from genotype_figure_fast_search
+   where exists (Select 'x' from regen_genofig_input_zdb_id_temp
+   	 		where gffs_phenos_id = rgfg_id);
+
+  insert into genotype_figure_fast_search_new
+    select * from genotype_Figure_fast_Search;
 
   insert into genotype_figure_fast_search_new
       (gffs_geno_zdb_id,
@@ -22,7 +27,7 @@ create procedure regen_genofig_finish()
 	gffs_fish_zdb_id,
 	gffs_phenos_id,
 	gffs_genox_Zdb_id)
-    select rgf_geno_zdb_id,
+    select distinct rgf_geno_zdb_id,
     	   rgf_fig_zdb_id,
 	   rgf_morph_zdb_id,
 	   rgf_phenox_pk_id,
@@ -31,10 +36,5 @@ create procedure regen_genofig_finish()
 	   rgf_genox_zdb_id
       from regen_genofig_temp;
      
-  delete from regen_genofig_temp;
-  delete from regen_genofig_clean_exp_with_morph_temp;
-  delete from regen_genofig_not_normal_temp;
-
-  delete from regen_genofig_input_zdb_id_temp;
 
 end procedure;

@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * This class is a statistics class about Fish for given genotype
  */
-public class GenotypeFishResult {
+public class GenotypeFishResult implements Comparable<GenotypeFishResult> {
 
     private Fish fish;
     private FishGenotypePhenotypeStatistics fishGenotypePhenotypeStatistics;
@@ -49,4 +49,24 @@ public class GenotypeFishResult {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GenotypeFishResult that = (GenotypeFishResult) o;
+
+        return fish.equals(that.fish);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return fish.hashCode();
+    }
+
+    @Override
+    public int compareTo(GenotypeFishResult o) {
+        return fish.compareTo(o.getFish());
+    }
 }

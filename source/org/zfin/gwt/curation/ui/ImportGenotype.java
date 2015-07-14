@@ -101,7 +101,7 @@ public class ImportGenotype extends Composite {
             CheckBox checkBox = new CheckBox();
             genotypeCheckboxMap.put(checkBox, genotype);
             genotypeSearchResultTable.setWidget(rowIndex, col++, checkBox);
-            InlineHTML genoName = new InlineHTML(genotype.getName());
+            InlineHTML genoName = new InlineHTML(genotype.getNamePlusBackground());
             genotypeSearchResultTable.setWidget(rowIndex, col++, genoName);
             InlineHTML geno = new InlineHTML(genotype.getHandle());
             geno.setTitle(genotype.getZdbID());

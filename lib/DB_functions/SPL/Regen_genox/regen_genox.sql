@@ -208,7 +208,9 @@ create dba function regen_genox() returning integer
       select mrkr_zdb_id from marker where mrkr_type in ("GENE","MRPHLNO","TALEN", "CRISPR");
 
     -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
-    execute procedure regen_genox_process();
+    execute procedure regen_genox_process_marker();
+
+    execute procedure regen_genox_finish_marker();
 
     delete from regen_genox_input_zdb_id_temp;
 
@@ -237,8 +239,11 @@ create dba function regen_genox() returning integer
         gffs_phenox_pk_id int8 not null,
 	gffs_date_created DATETIME YEAR TO SECOND 
 			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
-        gffs_serial_id serial8 not null,
-	gffs_fish_zdb_id varchar(50) not null
+        gffs_phenos_id int8 not null,
+	gffs_fish_zdb_id varchar(50) not null,
+	gffs_genox_zdb_id varchar(50),
+    gffs_serial_id serial8 not null 
+
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
     extent size 512 next size 512 ;
@@ -263,12 +268,8 @@ create dba function regen_genox() returning integer
 
     let errorHint = "populate regen_genofig_input_zdb_id_temp";
 
-    insert into regen_genofig_input_zdb_id_temp ( rgfg_zdb_id )
-      select geno_zdb_id from genotype;
-
-    let errorHint = "find clean experiments";
-    execute procedure regen_genofig_clean_exp();
-    
+    insert into regen_genofig_input_zdb_id_temp ( rgfg_id )
+      select phenox_pk_id from phenotype_experiment;
 
     let errorHint = "fill fast search tables";
     execute procedure regen_genofig_process();
@@ -289,13 +290,6 @@ create dba function regen_genox() returning integer
         ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
       select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
         from regen_genox_temp;
-
-    -- Be paranoid and delete everything from the temp tables.  Shouldn't
-    -- need to do this, as this routine is called in it's own session
-    -- and therefore the temp tables will be dropped when the routine ends.
-
-    delete from regen_genox_temp;
-
 
     -- -------------------------------------------------------------------
     --   create indexes; constraints that use them are added at the end.
@@ -446,7 +440,8 @@ create dba function regen_genox() returning integer
         to genotype_figure_fast_search_fig_zdb_id_foreign_key_index;
       rename index genotype_figure_fast_search_morph_foreign_key_index_transient 
         to genotype_figure_fast_search_morph_zdb_id_foreign_key_index;
-
+     rename index genotype_figure_fast_search_fish_foreign_key_index_transient 
+        to genotype_figure_fast_search_fish_zdb_id_foreign_key_index;
 
       let errorHint = "genotype_figure_fast_search add PK";
       alter table genotype_figure_fast_search add constraint primary key 
@@ -455,6 +450,10 @@ create dba function regen_genox() returning integer
       let errorHint = "genotype_figure_fast_search add foreign key to reference genotype";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_geno_zdb_id) references genotype on 
       delete cascade constraint gffs_geno_zdb_id_foreign_key);
+ 
+     let errorHint = "genotype_figure_fast_search add foreign key to reference fish";
+      alter table genotype_figure_fast_search add constraint (foreign key (gffs_fish_zdb_id) references fish on 
+      delete cascade constraint gffs_fish_zdb_id_foreign_key);
     
       let errorHint = "genotype_figure_fast_search add foreign key to reference figure";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_fig_zdb_id) references figure on 
