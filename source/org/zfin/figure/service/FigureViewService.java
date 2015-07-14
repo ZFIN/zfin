@@ -34,8 +34,9 @@ public class FigureViewService {
         List<ExpressionTableRow> rows = new ArrayList<>();
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (expressionResult.getExpressionExperiment().getGene() != null)
+            if (expressionResult.getExpressionExperiment().getGene() != null) {
                 rows.add(new ExpressionTableRow(expressionResult));
+            }
         }
 
 
@@ -46,9 +47,11 @@ public class FigureViewService {
     }
 
     public boolean showExpressionQualifierColumn(List<ExpressionTableRow> rows) {
-        for(ExpressionTableRow row : rows)
-            if (row.getExpressionFound() == false)
+        for (ExpressionTableRow row : rows) {
+            if (!row.getExpressionFound()) {
                 return true;
+            }
+        }
 
         return false;
     }
@@ -62,10 +65,9 @@ public class FigureViewService {
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
             if ((expressionResult.getExpressionExperiment().getGene() == null) &&
-                    (expressionResult.getExpressionExperiment().getAntibody() != null)){
+                    (expressionResult.getExpressionExperiment().getAntibody() != null)) {
                 rows.add(new AntibodyTableRow(expressionResult));
             }
-
         }
 
         Collections.sort(rows, ComparatorCreator.orderBy("antibody", "assay", "fishNameOrder", "experiment", "start", "end", "entity"));
@@ -74,9 +76,11 @@ public class FigureViewService {
     }
 
     public boolean showAntibodyQualifierColumn(List<AntibodyTableRow> rows) {
-        for(AntibodyTableRow row : rows)
-            if (row.getExpressionFound() == false)
+        for (AntibodyTableRow row : rows) {
+            if (!row.getExpressionFound()) {
                 return true;
+            }
+        }
 
         return false;
     }
@@ -92,8 +96,9 @@ public class FigureViewService {
 
 
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            for (PhenotypeStatement phenotypeStatement : phenotypeExperiment.getPhenotypeStatements())
+            for (PhenotypeStatement phenotypeStatement : phenotypeExperiment.getPhenotypeStatements()) {
                 rows.add(new PhenotypeTableRow(phenotypeStatement));
+            }
         }
 
         //taking advantage of domain objects having their own comparators, though, in the case of genotype, we don't want it!
@@ -131,8 +136,9 @@ public class FigureViewService {
     public Map<Figure, List<Marker>> getExpressionGenes(List<Figure> figures) {
         Map<Figure, List<Marker>> map = new HashMap<>();
 
-        for (Figure figure : figures)
+        for (Figure figure : figures) {
             map.put(figure, getExpressionGenes(figure));
+        }
 
         return map;
     }
@@ -168,8 +174,9 @@ public class FigureViewService {
     public Map<Figure, List<Marker>> getAntibodies(List<Figure> figures) {
         Map<Figure, List<Marker>> map = new HashMap<>();
 
-        for (Figure figure : figures)
+        for (Figure figure : figures) {
             map.put(figure, getAntibodies(figure));
+        }
 
         return map;
     }
@@ -180,17 +187,11 @@ public class FigureViewService {
      * Sorted/unique list of genotypes from the gene expression in this figure
      */
     public List<Fish> getExpressionFish(Figure figure) {
-        List<Fish> fishList = new ArrayList<>();
-
+        Set<Fish> fishSet = new TreeSet<>();
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (!fishList.contains(expressionResult.getExpressionExperiment().getFishExperiment().getFish())
-                    && !expressionResult.getExpressionExperiment().getFishExperiment().getFish().isWildtypeWithoutReagents()) {
-                fishList.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish());
-            }
+            fishSet.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish());
         }
-
-        Collections.sort(fishList);
-        return fishList;
+        return new ArrayList<>(fishSet);
     }
 
     /**
@@ -199,8 +200,9 @@ public class FigureViewService {
     public Map<Figure, List<Fish>> getExpressionFish(List<Figure> figures) {
         Map<Figure, List<Fish>> map = new HashMap<>();
 
-        for (Figure figure : figures)
+        for (Figure figure : figures) {
             map.put(figure, getExpressionFish(figure));
+        }
 
         return map;
     }
@@ -276,9 +278,9 @@ public class FigureViewService {
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
             if (expressionResult.isExpressionFound()) {
-                if (!entities.contains(expressionResult.getEntity()))
+                if (!entities.contains(expressionResult.getEntity())) {
                     entities.add(expressionResult.getEntity());
-
+                }
             }
         }
         Collections.sort(entities);
@@ -293,8 +295,9 @@ public class FigureViewService {
     public Map<Figure, List<PostComposedEntity>> getExpressionEntities(List<Figure> figures) {
         Map<Figure, List<PostComposedEntity>> map = new HashMap<>();
 
-        for (Figure figure : figures)
+        for (Figure figure : figures) {
             map.put(figure, getExpressionEntities(figure));
+        }
 
         return map;
     }
@@ -311,8 +314,9 @@ public class FigureViewService {
             stages.add(expressionResult.getStartStage());
         }
 
-        if (stages.size() == 0)
+        if (stages.size() == 0) {
             return null;
+        }
 
         return Collections.min(stages);
     }
@@ -325,7 +329,7 @@ public class FigureViewService {
         Map<Figure, DevelopmentStage> map = new HashMap<>();
 
         for (Figure figure : figures) {
-            map.put(figure,getExpressionStartStage(figure));
+            map.put(figure, getExpressionStartStage(figure));
         }
 
         return map;
@@ -345,8 +349,9 @@ public class FigureViewService {
             stages.add(expressionResult.getEndStage());
         }
 
-        if (stages.size() == 0)
+        if (stages.size() == 0) {
             return null;
+        }
 
         return Collections.max(stages);
     }
@@ -389,8 +394,9 @@ public class FigureViewService {
     public Map<Figure, List<Fish>> getPhenotypeFish(List<Figure> figures) {
         Map<Figure, List<Fish>> map = new HashMap<>();
 
-        for (Figure figure : figures)
+        for (Figure figure : figures) {
             map.put(figure, getPhenotypeFish(figure));
+        }
 
         return map;
     }
@@ -420,8 +426,9 @@ public class FigureViewService {
     public Map<Figure, List<SequenceTargetingReagent>> getPhenotypeSTRs (List<Figure> figures) {
         Map<Figure, List<SequenceTargetingReagent>> map = new HashMap<>();
 
-        for (Figure figure : figures)
+        for (Figure figure : figures) {
             map.put(figure, getPhenotypeSTR(figure));
+        }
 
         return map;
     }
@@ -433,7 +440,7 @@ public class FigureViewService {
         List<Experiment> conditions = new ArrayList<>();
 
         for (PhenotypeExperiment phenotypeExperiment: figure.getPhenotypeExperiments()) {
-            if (canAddExperimentToConditionsList(phenotypeExperiment.getFishExperiment(),conditions)){
+            if (canAddExperimentToConditionsList(phenotypeExperiment.getFishExperiment(),conditions)) {
                 conditions.add(phenotypeExperiment.getFishExperiment().getExperiment());
             }
         }
@@ -467,8 +474,9 @@ public class FigureViewService {
     public Map<Figure, List<Experiment>>  getPhenotypeConditions(List<Figure> figures) {
         Map<Figure, List<Experiment>> map = new HashMap<>();
 
-        for (Figure figure : figures)
+        for (Figure figure : figures) {
             map.put(figure, getPhenotypeCondition(figure));
+        }
 
         return map;
     }
@@ -503,8 +511,9 @@ public class FigureViewService {
     public Map<Figure, List<PostComposedEntity>> getPhenotypeEntities(List<Figure> figures) {
         Map<Figure, List<PostComposedEntity>> map = new HashMap<>();
 
-        for (Figure figure : figures)
+        for (Figure figure : figures) {
             map.put(figure, getPhenotypeEntities(figure));
+        }
 
         return map;
     }
@@ -521,8 +530,9 @@ public class FigureViewService {
             stages.add(phenotypeExperiment.getStartStage());
         }
 
-        if (stages.size() == 0)
+        if (stages.size() == 0) {
             return null;
+        }
 
         return Collections.min(stages);
 
@@ -536,7 +546,7 @@ public class FigureViewService {
         Map<Figure, DevelopmentStage> map = new HashMap<>();
 
         for (Figure figure : figures) {
-            map.put(figure,getPhenotypeStartStage(figure));
+            map.put(figure, getPhenotypeStartStage(figure));
         }
 
         return map;
@@ -554,8 +564,9 @@ public class FigureViewService {
             stages.add(phenotypeExperiment.getEndStage());
         }
 
-        if (stages.size() == 0)
+        if (stages.size() == 0) {
             return null;
+        }
 
         return Collections.max(stages);
     }
@@ -568,7 +579,7 @@ public class FigureViewService {
         Map<Figure, DevelopmentStage> map = new HashMap<>();
 
         for (Figure figure : figures) {
-            map.put(figure,getPhenotypeEndStage(figure));
+            map.put(figure, getPhenotypeEndStage(figure));
         }
 
         return map;
@@ -584,8 +595,9 @@ public class FigureViewService {
         Clone probe = null;
         if (!CollectionUtils.isEmpty(figure.getExpressionResults())) {
             ExpressionResult firstExpressionResult = figure.getExpressionResults().iterator().next();
-            if (firstExpressionResult != null)
+            if (firstExpressionResult != null) {
                 probe = firstExpressionResult.getExpressionExperiment().getProbe();
+            }
         }
 
         return probe;

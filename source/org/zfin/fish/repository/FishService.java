@@ -43,12 +43,6 @@ public class FishService {
 
     private static Logger logger = Logger.getLogger(FishService.class);
 
-    private MartFish fish;
-
-    public FishService(MartFish fish) {
-        this.fish = fish;
-    }
-
     public static FishSearchResult getFish(FishSearchCriteria criteria) {
 
         FishSearchResult results = new FishSearchResult();
@@ -66,22 +60,30 @@ public class FishService {
         List<FishResult> solrSearchResults = response.getBeans(FishResult.class);
 
         for (FishResult fishResult : solrSearchResults) {
-            Fish fish = RepositoryFactory.getMutantRepository().getFish(fishResult.getId());
-            if (fish != null) {
-                fishResult.setFish(fish);
-                fishResult.setFeatureGenes(getFeatureGenes(fish));
-                addFigures(fishResult, criteria);
-
+            String category = fishResult.getCategory();
+            switch (category) {
+                case "Fish":
+                    Fish fish = RepositoryFactory.getMutantRepository().getFish(fishResult.getId());
+                    if (fish != null) {
+                        fishResult.setFish(fish);
+                        fishResult.setFeatureGenes(getFeatureGenes(fish));
+                        addFigures(fishResult, criteria);
+                    }
+                    break;
+                case "Mutation / Tg":
+                    Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(fishResult.getId());
+                    if (feature != null) {
+                        fishResult.setFeatureGenes(getFeatureGenes(feature));
+                    }
+                    break;
+                default:
+                    break;
             }
-
-
         }
         results.setResultsFound((int) response.getResults().getNumFound());
         results.setResults(solrSearchResults);
 
         return results;
-
-
     }
 
     private static SolrQuery generateFishSearchSolrQuery(FishSearchCriteria criteria) {
@@ -145,19 +147,7 @@ public class FishService {
             Map<Feature, FeatureGene> featureMap = new HashMap<>();
             for (GenotypeFeature genotypeFeature : fish.getGenotype().getGenotypeFeatures()) {
                 Feature feature = genotypeFeature.getFeature();
-                for (FeatureMarkerRelationship rel : feature.getFeatureMarkerRelations()) {
-                    if (!featureMap.containsKey(feature)) {
-                        FeatureGene fg = new FeatureGene();
-                        fg.setFeature(feature);
-                        featureMap.put(feature, fg);
-                    }
-                    Marker marker = rel.getMarker();
-                    if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                        featureMap.get(feature).setGene(marker);
-                    } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
-                        featureMap.get(feature).setConstruct(marker);
-                    }
-                }
+                addFeatureGenesToMap(featureMap, feature);
             }
             featureGenes.addAll(featureMap.values());
         }
@@ -177,6 +167,28 @@ public class FishService {
         }
 
         return featureGenes;
+    }
+
+    public static List<FeatureGene> getFeatureGenes(Feature feature) {
+        Map<Feature, FeatureGene> featureMap = new HashMap<>();
+        addFeatureGenesToMap(featureMap, feature);
+        return new ArrayList<>(featureMap.values());
+    }
+
+    private static void addFeatureGenesToMap(Map<Feature, FeatureGene> featureMap, Feature feature) {
+        for (FeatureMarkerRelationship rel : feature.getFeatureMarkerRelations()) {
+            if (!featureMap.containsKey(feature)) {
+                FeatureGene fg = new FeatureGene();
+                fg.setFeature(feature);
+                featureMap.put(feature, fg);
+            }
+            Marker marker = rel.getMarker();
+            if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                featureMap.get(feature).setGene(marker);
+            } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
+                featureMap.get(feature).setConstruct(marker);
+            }
+        }
     }
 
     private static void addFigures(FishResult fishResult, FishSearchCriteria criteria) {
