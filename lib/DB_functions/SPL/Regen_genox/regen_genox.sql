@@ -209,6 +209,7 @@ create dba function regen_genox() returning integer
 
     -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
     execute procedure regen_genox_process_marker();
+    execute procedure regen_genox_finish_marker();
 
     delete from regen_genox_input_zdb_id_temp;
 
@@ -237,8 +238,11 @@ create dba function regen_genox() returning integer
         gffs_phenox_pk_id int8 not null,
 	gffs_date_created DATETIME YEAR TO SECOND 
 			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
-        gffs_serial_id serial8 not null,
-	gffs_fish_zdb_id varchar(50) not null
+        gffs_phenos_id int8 not null,
+	gffs_fish_zdb_id varchar(50) not null,
+	gffs_genox_zdb_id varchar(50),
+    gffs_serial_id serial8 not null 
+
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
     extent size 512 next size 512 ;
@@ -291,6 +295,7 @@ create dba function regen_genox() returning integer
     -- and therefore the temp tables will be dropped when the routine ends.
 
     delete from regen_genox_temp;
+
 
 
     -- -------------------------------------------------------------------
@@ -442,7 +447,8 @@ create dba function regen_genox() returning integer
         to genotype_figure_fast_search_fig_zdb_id_foreign_key_index;
       rename index genotype_figure_fast_search_morph_foreign_key_index_transient 
         to genotype_figure_fast_search_morph_zdb_id_foreign_key_index;
-
+     rename index genotype_figure_fast_search_fish_foreign_key_index_transient 
+        to genotype_figure_fast_search_fish_zdb_id_foreign_key_index;
 
       let errorHint = "genotype_figure_fast_search add PK";
       alter table genotype_figure_fast_search add constraint primary key 

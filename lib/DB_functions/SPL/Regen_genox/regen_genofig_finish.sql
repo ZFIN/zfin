@@ -16,7 +16,7 @@ create procedure regen_genofig_finish()
    where exists (Select 'x' from regen_genofig_input_zdb_id_temp
    	 		where gffs_phenos_id = rgfg_id);
 
-  insert into genotype_figure_fast_search
+  insert into genotype_figure_fast_search_new
       (gffs_geno_zdb_id,
 	gffs_fig_zdb_id,
 	gffs_morph_zdb_id,

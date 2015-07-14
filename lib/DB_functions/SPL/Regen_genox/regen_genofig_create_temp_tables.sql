@@ -27,18 +27,18 @@ create procedure regen_genofig_create_temp_tables()
       --  -316: Index name already exists.
     end exception with resume;
 
-    create table regen_genofig_input_zdb_id_temp  
+    create temp table regen_genofig_input_zdb_id_temp  
       (
 	rgfg_id		varchar(50),
         primary key (rgfg_id)
-      ) --with NO LOG
+      ) with NO LOG
 ;
 
 
     -- -------------------------------------------------------------------
     --   create regen_genofig_temp
     -- -------------------------------------------------------------------    
-    create  table regen_genofig_temp
+    create temp table regen_genofig_temp
       (
 	rgf_geno_zdb_id		varchar(50) not null,
 	rgf_fig_zdb_id		varchar(50) not null,
@@ -47,7 +47,7 @@ create procedure regen_genofig_create_temp_tables()
 	rgf_fish_zdb_id		varchar(50) not null,
 	rgf_phenos_id 		int8,
 	rgf_genox_zdb_id	varchar(50)
-      ) --with no log
+      ) 
 ;
 
   end 

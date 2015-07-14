@@ -29,11 +29,6 @@ create procedure regen_genox_finish_marker()
           ( select rggz_zdb_id
               from regen_genox_input_zdb_id_temp );
 
-  insert into mutant_fast_search
-      ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
-    select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
-      from regen_genox_temp;
-
   delete from regen_genox_temp;
   delete from regen_genox_input_zdb_id_temp;
 
