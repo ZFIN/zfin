@@ -230,7 +230,7 @@ create dba function regen_genox() returning integer
       select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
         from regen_genox_temp;
 
-    let errorHint = "add any old mfs records in the case of regening a certain id instead of the entire table."
+    let errorHint = "add any old mfs records in the case of regening a certain id instead of the entire table.";
 
      insert into mutant_fast_search_new 
         ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
@@ -364,8 +364,6 @@ create dba function regen_genox() returning integer
 				c.gffs_genox_Zdb_id from genotype_Figure_fast_Search c
         where not exists (Select 'x' from genotype_figure_fast_search_new d
 	      	  	 	 where  c.gffs_phenos_id = d.gffs_phenos_id);
-
-
 
     let errorHint = "genotype_figure_fast_search_new create PK index";
     create unique index genotype_figure_fast_search_primary_key_index_transient
