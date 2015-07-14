@@ -166,6 +166,17 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
             fishy.setName(nonWTFish.getHandle());
             fishDTOList.add(fishy);
         }
+        FishDTO separator = new FishDTO();
+        separator.setZdbID(null);
+        separator.setName("---------");
+        fishDTOList.add(separator);
+        List<Fish> wildtypeList = pubRepository.getWildtypeFish();
+        for (Fish wFish : wildtypeList) {
+            FishDTO fishy = new FishDTO();
+            fishy.setZdbID(wFish.getZdbID());
+            fishy.setName(wFish.getHandle());
+            fishDTOList.add(fishy);
+        }
         return fishDTOList;
     }
 

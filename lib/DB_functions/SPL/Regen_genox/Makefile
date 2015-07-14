@@ -20,12 +20,11 @@ DIR = lib/DB_functions/SPL/Regen_genox
 TARGETDIR = $(TARGETROOT)/$(DIR)
 TESTDIR = /tmp/$(DBNAME)/$(DIR)
 
-STATIC_PROCS = regen_genox_finish_marker.sql regen_genox_finish_genox.sql \
-	       regen_genox_create_temp_tables.sql \
+STATIC_PROCS = regen_genox_create_temp_tables.sql \
                regen_genox_process_marker.sql regen_genox_marker.sql  \
 	       regen_genox_process_genox.sql regen_genox_genox.sql \
 	       regen_genofig_create_temp_tables.sql \
-               regen_genofig_finish.sql regen_genofig_process.sql \
+		 regen_genofig_process.sql \
                regen_genofig_genotype.sql regen_genofig_geno_finish.sql regen_genofig_process_indiv.sql 
 GENERIC_PROCS = regen_genox.sql 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))

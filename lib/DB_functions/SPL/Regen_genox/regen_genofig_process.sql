@@ -50,7 +50,7 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,
 		  fish_zdb_id,
 		  phenos_pk_id,
 		  genox_Zdb_id
-    from fish_experiment, fish
+    from fish_experiment, fish,
          phenotype_statement,
          phenotype_experiment,
 	 regen_genofig_input_zdb_id_temp
