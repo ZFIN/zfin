@@ -17,6 +17,9 @@ create procedure regen_genofig_finish()
    	 		where gffs_phenos_id = rgfg_id);
 
   insert into genotype_figure_fast_search_new
+    select * from genotype_Figure_fast_Search;
+
+  insert into genotype_figure_fast_search_new
       (gffs_geno_zdb_id,
 	gffs_fig_zdb_id,
 	gffs_morph_zdb_id,
@@ -33,7 +36,5 @@ create procedure regen_genofig_finish()
 	   rgf_genox_zdb_id
       from regen_genofig_temp;
      
-  delete from regen_genofig_temp;
-  delete from regen_genofig_input_zdb_id_temp;
 
 end procedure;

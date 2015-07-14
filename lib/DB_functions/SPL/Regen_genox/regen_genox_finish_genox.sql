@@ -30,7 +30,4 @@ create procedure regen_genox_finish_genox()
               from regen_genox_input_zdb_id_temp );
 
 
-  delete from regen_genox_temp;
-  delete from regen_genox_input_zdb_id_temp;
-
 end procedure;

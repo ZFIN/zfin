@@ -209,6 +209,7 @@ create dba function regen_genox() returning integer
 
     -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
     execute procedure regen_genox_process_marker();
+
     execute procedure regen_genox_finish_marker();
 
     delete from regen_genox_input_zdb_id_temp;
@@ -289,14 +290,6 @@ create dba function regen_genox() returning integer
         ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
       select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
         from regen_genox_temp;
-
-    -- Be paranoid and delete everything from the temp tables.  Shouldn't
-    -- need to do this, as this routine is called in it's own session
-    -- and therefore the temp tables will be dropped when the routine ends.
-
-    delete from regen_genox_temp;
-
-
 
     -- -------------------------------------------------------------------
     --   create indexes; constraints that use them are added at the end.
