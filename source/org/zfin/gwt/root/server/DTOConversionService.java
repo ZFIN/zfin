@@ -620,12 +620,12 @@ public class DTOConversionService {
         if (feature.getDbLinks() != null)
             featureDTO.setFeatureSequences(new ArrayList<>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
 
-        for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
+       /* for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
             if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
                 featureDTO.setDisplayNameForGenotypeBase(relationship.getMarker().getAbbreviation());
                 featureDTO.setDisplayNameForGenotypeSuperior(feature.getAbbreviation());
             }
-        }
+        }*/
         return featureDTO;
     }
 
