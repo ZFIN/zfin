@@ -281,10 +281,6 @@ create dba function regen_genox() returning integer
       (  
         gffs_geno_zdb_id  varchar(50) not null,
         gffs_fig_zdb_id varchar(50) not null,
-        gffs_superterm_zdb_id varchar(50) not null,
-        gffs_subterm_zdb_id varchar(50),
-        gffs_quality_zdb_id varchar(50) not null,
-        gffs_tag varchar(25) not null,
         gffs_morph_zdb_id varchar(50),
         gffs_phenox_pk_id int8 not null,
 	gffs_date_created DATETIME YEAR TO SECOND 
@@ -321,9 +317,11 @@ create dba function regen_genox() returning integer
     insert into regen_genofig_input_zdb_id_temp ( rgfg_id )
       select phenox_pk_id from phenotype_experiment;
 
+    let errorHint = "remove regening records";
+
     delete from genotype_figure_fast_search
       where exists (Select 'x' from regen_genofig_input_zdb_id_temp
-   	 		where gffs_phenox_id = rgfg_id);
+   	 		where gffs_phenox_pk_id = rgfg_id);
 
 
     let errorHint = "fill fast search tables";
@@ -363,7 +361,7 @@ create dba function regen_genox() returning integer
 				c.gffs_phenos_id,
 				c.gffs_genox_Zdb_id from genotype_Figure_fast_Search c
         where not exists (Select 'x' from genotype_figure_fast_search_new d
-	      	  	 	 where  c.gffs_phenos_id = d.gffs_phenos_id);
+	      	  	 	 where  c.gffs_phenox_pk_id = d.gffs_phenox_pk_id);
 
     let errorHint = "genotype_figure_fast_search_new create PK index";
     create unique index genotype_figure_fast_search_primary_key_index_transient

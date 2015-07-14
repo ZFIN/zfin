@@ -10,10 +10,6 @@ begin work;
       (  
         gffs_geno_zdb_id  varchar(50) not null,
         gffs_fig_zdb_id varchar(50) not null,
-        gffs_superterm_zdb_id varchar(50) not null,
-        gffs_subterm_zdb_id varchar(50),
-        gffs_quality_zdb_id varchar(50) not null,
-        gffs_tag varchar(25) not null,
         gffs_morph_zdb_id varchar(50),
         gffs_phenox_pk_id int8 not null,
 	gffs_date_created DATETIME YEAR TO SECOND 
@@ -99,10 +95,9 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,
 
   delete from genotype_figure_fast_search
    where exists (Select 'x' from regen_genofig_input_zdb_id_temp
-   	 		where gffs_phenos_id = rgfg_id);
+   	 		where gffs_phenox_pk_id = rgfg_id);
 
-  insert into genotype_figure_fast_search_new
-    select * from genotype_Figure_fast_Search;
+
 
   insert into genotype_figure_fast_search_new
       (gffs_geno_zdb_id,
@@ -122,6 +117,23 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,
       from regen_genofig_temp;
 
 
-select * From genotype_figure_fast_search_new;
+ insert into genotype_figure_fast_search_new(gffs_geno_zdb_id,
+						gffs_fig_zdb_id,
+						gffs_morph_zdb_id,
+						gffs_phenox_pk_id,
+						gffs_fish_zdb_id,
+						gffs_phenos_id,
+						gffs_genox_Zdb_id)
+      select distinct c.gffs_geno_zdb_id,
+				c.gffs_fig_zdb_id,
+				c.gffs_morph_zdb_id,
+				c.gffs_phenox_pk_id,
+				c.gffs_fish_zdb_id,
+				c.gffs_phenos_id,
+				c.gffs_genox_Zdb_id from genotype_Figure_fast_Search c
+        where not exists (Select 'x' from genotype_figure_fast_search_new d
+	      	  	 	 where  c.gffs_phenox_pk_id = d.gffs_phenox_pk_id);
+
+select count(*) From genotype_figure_fast_search_new;
 
 rollback work;
