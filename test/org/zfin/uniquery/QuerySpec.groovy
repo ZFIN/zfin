@@ -90,6 +90,8 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.GENE.name             | "fgf8 CH211-194I8 id:ZDB-GENE-990415-72"         | "11657"
         Category.GENE.name             | "fgf8 CH211-176L1 id:ZDB-GENE-010122-1"          | "11657"
         Category.FISH.name             | "t24412 MO4-tp53"                                | "11415"
+        Category.FISH.name             | "Tg(5xUAS:casp3a,5xUAS:Hsa.HIST1H2BJ-Citrine-YFP,cryaa:RFP)" | "0"
+        Category.FISH.name             | "casper mitfa"                                   | "13079"
         Category.PUBLICATION.name      | "kraus 1993"                                     | "11699"
         Category.PUBLICATION.name      | "bohni"                                          | "11699"
         Category.PUBLICATION.name      | "abstract:\"motor control requires circuits\""   | "n/a"

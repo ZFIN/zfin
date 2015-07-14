@@ -69,7 +69,7 @@ public class FishPhenotypeController {
         if (criteria == null)
             criteria = new FishSearchCriteria();
 
-        Set<ZfinFigureEntity> zfinFigureEntities = getFishRepository().getFiguresByFishAndTerms(fishID, criteria.getPhenotypeAnatomyCriteria().getValues());
+        Set<ZfinFigureEntity> zfinFigureEntities = FishService.getFiguresByFishAndTerms(fishID, criteria.getPhenotypeAnatomyCriteria().getValues());
 
         if (zfinFigureEntities == null)
             return "record-not-found.popup";

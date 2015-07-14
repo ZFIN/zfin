@@ -15,12 +15,14 @@ import org.zfin.expression.Image;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
+import org.zfin.fish.repository.FishService;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.MarkerRelationshipPresentation;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -220,7 +222,15 @@ public class ResultService {
     }
 
     public void injectFishAttributes(SearchResult result) {
-        //do nothing...yet!
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(result.getId());
+
+
+        result.setDisplayedID(result.getId());
+
+        if (fish != null) {
+            result.setFeatureGenes(FishService.getFeatureGenes(fish));
+        }
+
     }
 
     public void injectFigureAttributes(SearchResult result) {

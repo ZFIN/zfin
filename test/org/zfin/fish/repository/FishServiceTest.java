@@ -1,5 +1,7 @@
 package org.zfin.fish.repository;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -16,18 +18,21 @@ import org.zfin.fish.presentation.FishResult;
 import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.FishSearchFormBean;
 import org.zfin.fish.presentation.SortBy;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ZfinEntity;
+import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +43,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.junit.Assert.assertTrue;
 import static org.zfin.repository.RepositoryFactory.getFishRepository;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 public class FishServiceTest extends AbstractDatabaseTest {
 
@@ -57,8 +63,12 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void getPhenotypeStatementsPerFigureAndFish() {
+        //todo: this should be done by fish_zdb_id, once they're generated
         // WT+MO1-pitx3
-        String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-050512-12,ZDB-GENOX-050512-3,ZDB-GENOX-061218-1,ZDB-GENOX-080512-4";
+        Fish fish = getFishRepository().getFishByName("WT+MO1-pitx3");
+
+        assertNotNull(fish);
+        String fishID = fish.getZdbID();
         // Fig S11
         String figureID = "ZDB-FIG-080512-1";
         Figure figure = RepositoryFactory.getPublicationRepository().getFigure(figureID);
@@ -66,6 +76,49 @@ public class FishServiceTest extends AbstractDatabaseTest {
         assertNotNull(phenotypeStatements);
         assertTrue(phenotypeStatements.size() > 3);
     }
+
+    @Test
+    public void getPhenotypeFiguresForSingleTerm() {
+        // brain
+        String termID = "ZDB-TERM-100331-8";
+        // WT (unspecified) + MO1-acd
+        String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-110325-3";
+        List<String> termList = new ArrayList<String>(1);
+        termList.add(termID);
+
+        Set<ZfinFigureEntity> zfinFigureEntities = FishService.getFiguresByFishAndTerms(fishID, termList);
+        assertNotNull(zfinFigureEntities);
+    }
+
+    @Test
+    public void getPhenotypeFiguresForMultipleTerms() {
+        // brain nucleus
+        String brainNucleus = "ZDB-TERM-110313-4";
+        // eye
+        String eye = "ZDB-TERM-100331-100";
+        // gli2aty17a/ty17a
+
+        String fishName = "gli2a<sup>ty17a/ty17a</sup>";
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);
+        criteria.add(Restrictions.eq("name", fishName));
+        criteria.add(Restrictions.eq("genotype.zdbID", "ZDB-GENO-980202-1115"));
+        Fish fish = (Fish) criteria.uniqueResult();
+        assertNotNull(fish);
+        String fishID = fish.getZdbID();
+
+        assertNotNull(fishID);
+
+        List<String> termList = new ArrayList<String>(2);
+        termList.add(brainNucleus);
+        termList.add(eye);
+
+        Set<ZfinFigureEntity> zfinFigureEntities = FishService.getFiguresByFishAndTerms(fishID, termList);
+        assertNotNull(zfinFigureEntities);
+        assertTrue(zfinFigureEntities.size() >= 2);
+    }
+
+
+
 
 //    @Test
    /* public void matchingOnGeneAbbreviation() {
@@ -415,7 +468,8 @@ public class FishServiceTest extends AbstractDatabaseTest {
     @Test
     public void termTest() {
         FishSearchFormBean formBean = new FishSearchFormBean();
-        formBean.setAnatomyTermIDs("ZDB-TERM-100331-449"); //pre-optic area, a small number of results
+        formBean.setAnatomyTermIDs("ZDB-TERM-100331-449"); //preoptic area, a small number of results
+        formBean.setAnatomyTermNames("preoptic area");
         formBean.setFilter1("showAll");
         formBean.setMaxDisplayRecords(20);
         formBean.setFirstPageRecord(1);
@@ -431,6 +485,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         FishSearchFormBean formBean = new FishSearchFormBean();
         formBean.setGeneOrFeatureName("fez");
         formBean.setAnatomyTermIDs("ZDB-TERM-100331-449"); //preoptic area, a small number of results
+        formBean.setAnatomyTermNames("preoptic area");
         formBean.setFilter1("showAll");
         formBean.setMaxDisplayRecords(20);
         formBean.setFirstPageRecord(1);
@@ -446,6 +501,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     public void includeSubstructuresTest() {
         FishSearchFormBean formBean = new FishSearchFormBean();
         formBean.setAnatomyTermIDs("ZDB-TERM-100331-1442"); //cavitated compound organ, no direct phenotype or expression, all from subs
+        formBean.setAnatomyTermNames("cavitated compound organ");
         formBean.setFilter1("showAll");
         formBean.setMaxDisplayRecords(20);
         formBean.setFirstPageRecord(1);
