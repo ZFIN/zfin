@@ -41,6 +41,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
@@ -374,6 +375,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
             expRepository.createExpressionExperiment(expressionExperiment);
             experimentDTO.setExperimentZdbID(expressionExperiment.getZdbID());
+            getInfrastructureRepository().insertRecordAttribution(expressionExperiment.getFishExperiment().getFish(), expressionExperiment.getPublication());
             tx.commit();
         } catch (ConstraintViolationException e) {
             tx.rollback();

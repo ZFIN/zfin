@@ -9,6 +9,7 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     private String handle;
     private String nickName;
+    private GenotypeDTO backgroundGenotype;
     private List<FeatureDTO> featureList;
     private List<ExternalNoteDTO> publicNotes;
     private List<CuratorNoteDTO> privateNotes;
@@ -97,4 +98,23 @@ public class GenotypeDTO extends RelatedEntityDTO {
     public void setPublicNotes(List<ExternalNoteDTO> publicNotes) {
         this.publicNotes = publicNotes;
     }
+
+    public GenotypeDTO getBackgroundGenotype() {
+        return backgroundGenotype;
+    }
+
+    public void setBackgroundGenotype(GenotypeDTO backgroundGenotype) {
+        this.backgroundGenotype = backgroundGenotype;
+    }
+
+    public String getNamePlusBackground(){
+        StringBuilder builder = new StringBuilder(name);
+        if(backgroundGenotype != null)                {
+            builder.append(" (") ;
+            builder.append(backgroundGenotype.getName())   ;
+            builder.append(")")  ;
+        }
+        return builder.toString();
+    }
+
 }
