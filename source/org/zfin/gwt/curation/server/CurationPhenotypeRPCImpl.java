@@ -78,12 +78,14 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             for (PhenotypeExperimentDTO pfs : newFigureAnnotations) {
                 PhenotypeExperiment phenoExperiment = createPhenotypeExperiment(pfs);
                 returnRecords.add(DTOConversionService.convertToPhenotypeFigureStageDTO(phenoExperiment));
+                Publication pub = getPublicationRepository().getPublication(pfs.getPublicationID());
+                getInfrastructureRepository().insertRecordAttribution(phenoExperiment.getFishExperiment().getFish(), pub);
             }
             tx.commit();
         } catch (HibernateException e) {
-            logger.error("failed to create mutant figure stages",e);
-            if(tx != null)
-            tx.rollback();
+            logger.error("failed to create mutant figure stages", e);
+            if (tx != null)
+                tx.rollback();
         }
         return returnRecords;
     }
@@ -172,7 +174,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
                     }
                 }
             }
-            for(PhenotypeExperiment phenotypeExperiment: phenotypeExperiments){
+            for (PhenotypeExperiment phenotypeExperiment : phenotypeExperiments) {
                 getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
             }
             tx.commit();
@@ -230,7 +232,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
      * @return expressedTermDTO used to return to RPC caller
      */
     private PhenotypeStatementDTO addExpressionToAnnotation(PhenotypeExperiment phenoExperiment,
-                                                       PhenotypeStructure phenotypeStructure) {
+                                                            PhenotypeStructure phenotypeStructure) {
         // do nothing term already exists for mutant
         if (hasMutantGivenPhenotypeStructure(phenoExperiment, phenotypeStructure))
             return null;

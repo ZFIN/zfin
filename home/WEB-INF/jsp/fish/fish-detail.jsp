@@ -113,27 +113,17 @@
         </c:choose>
     </div>
 
-    <div class="summary">
+    <%--// PHENOTYPE --%>
+    <div class="summary" id="phenotype">
         <b>PHENOTYPE</b>&nbsp;
         <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
         <br/>
         <b>Phenotype in <zfin:name entity="${fish}"/></b>
         <c:choose>
-            <c:when test="${fn:length(phenotypeDisplays) > 0 }">
-                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" showNumberOfRecords="5"
+            <c:when test="${phenotypeDisplays != null && fn:length(phenotypeDisplays) > 0 }">
+                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}"
                                      suppressMoDetails="true" secondColumn="condition"/>
-                <c:if test="${fn:length(phenotypeDisplays) > 5}">
-                    <table width="100%">
-                        <tr align="left">
-                            <td>
-                                Show all <a
-                                    href="/action/fish/fish-show-all-phenotypes/${fish.fishID}">${fn:length(phenotypeDisplays)}&nbsp;phenotypes</a>
-                            </td>
-                        </tr>
-                    </table>
-                </c:if>
             </c:when>
-
             <c:otherwise>
                 <br><span class="no-data-tag">No data available</span>
             </c:otherwise>
@@ -154,5 +144,6 @@
 <script>
    jQuery(function () {
        jQuery('#expression').tableCollapse({label: 'expressed genes'});
+       jQuery('#phenotype').tableCollapse({label: 'phenotypes'});
    });
 </script>

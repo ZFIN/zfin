@@ -15,22 +15,11 @@ create procedure regen_genofig_create_temp_tables()
   --
   -- OUTPUT VARS:
   --   none
-  --
-  -- RETURNS:
-  --   Success: Nothing
-  --   Failure: Throws whatever exception happened.
-  --
-  -- EFFECTS:
-  --   Success:
-  --     regen_genofig_clean_exp_with_morph_temp exists and is empty.
-  --     regen_genofig_not_normal_temp exists and is empty.
-  --     regen_genofig_temp exists and is empty
-  --     regen_genofig_input_zdb_id_temp exists and is empty
-  --   Error:
-  --     None, some, or all of the tables may exist and have data in them.
-  --     transaction is not committed or rolled back.
   -- ---------------------------------------------------------------------
 
+    -- -------------------------------------------------------------------
+    --   create regen_genofig_input_zdb_id_temp
+    -- -------------------------------------------------------------------
   begin
     on exception in (-958, -316)
       -- Ignore these errors:
@@ -38,52 +27,12 @@ create procedure regen_genofig_create_temp_tables()
       --  -316: Index name already exists.
     end exception with resume;
 
-
-    -- -------------------------------------------------------------------
-    --   create regen_genofig_input_zdb_id_temp
-    -- -------------------------------------------------------------------
-
     create temp table regen_genofig_input_zdb_id_temp  
       (
-	rgfg_zdb_id		varchar(50),
-        primary key (rgfg_zdb_id)
-      ) with NO LOG;
-
-    -- -------------------------------------------------------------------
-    --   create regen_genofig_clean_exp_with_morph_temp
-    -- -------------------------------------------------------------------
-
-    create temp table regen_genofig_clean_exp_with_morph_temp  
-      (
-	rgfcx_clean_exp_zdb_id		varchar(50),
-	rgfcx_morph_zdb_id		varchar(50)
-      ) with NO LOG;
-
-    create index regen_genofig_clean_exp_with_morph_temp_foreign_key
-    on regen_genofig_clean_exp_with_morph_temp (rgfcx_clean_exp_zdb_id) 
-    using btree ;
-
-
-
-    -- -------------------------------------------------------------------
-    --   create regen_genofig_not_normal_temp
-    -- -------------------------------------------------------------------
-
-    create temp table regen_genofig_not_normal_temp  
-      (        
-	rgfnna_zdb_id		int8,
-	rgfnna_genox_zdb_id	varchar(50),
-	rgfnna_superterm_zdb_id	varchar(50),
-	rgfnna_subterm_zdb_id	varchar(50),
-	rgfnna_quality_zdb_id	varchar(50),
-	rgfnna_tag	        varchar(25)
-      ) with NO LOG;
-
-    create index regen_genofig_not_normal_temp_primary_foreign_key 
-    on regen_genofig_not_normal_temp (rgfnna_genox_zdb_id) 
-    using btree ;
-
-     
+	rgfg_id		varchar(50),
+        primary key (rgfg_id)
+      ) with NO LOG
+;
 
 
     -- -------------------------------------------------------------------
@@ -93,18 +42,14 @@ create procedure regen_genofig_create_temp_tables()
       (
 	rgf_geno_zdb_id		varchar(50) not null,
 	rgf_fig_zdb_id		varchar(50) not null,
-	rgf_superterm_zdb_id	varchar(50) not null,
-	rgf_subterm_zdb_id	varchar(50),
-	rgf_quality_zdb_id	varchar(50) not null,
-	rgf_tag 	        varchar(25) not null,
 	rgf_morph_zdb_id	varchar(50),
 	rgf_phenox_pk_id	int8,
-	rgf_fish_zdb_id		varchar(50) not null
-      ) with no log;
+	rgf_fish_zdb_id		varchar(50) not null,
+	rgf_phenos_id 		int8,
+	rgf_genox_zdb_id	varchar(50)
+      ) 
+;
 
-  end
-
-  delete from regen_genofig_clean_exp_with_morph_temp;
-  delete from regen_genofig_temp;
+  end 
 
 end procedure;

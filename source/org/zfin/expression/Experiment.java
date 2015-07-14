@@ -62,17 +62,20 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         this.experimentConditions = experimentConditions;
     }
 
+    /*
     public Set<ExperimentCondition> getSequenecTargetingReagentConditions() {
         if (experimentConditions == null)
             return null;
 
         Set<ExperimentCondition> strConditions = new HashSet<ExperimentCondition>(4);
         for (ExperimentCondition condition : experimentConditions) {
-            if (condition.getSequenceTargetingReagent() != null)
+           // if (condition.getSequenceTargetingReagent() != null)
+            // Todo: check STR
                 strConditions.add(condition);
         }
         return strConditions;
     }
+    */
 
     public boolean isStandard() {
 
@@ -138,6 +141,8 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return "Experiment";
     }
 
+    // Todo: no way to know an experiment is related to STR any more?
+    /*
     public boolean isSequenceTargetingReagent() {
         if (CollectionUtils.isEmpty(experimentConditions))
             return false;
@@ -148,4 +153,5 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         }
         return false;
     }
+    */
 }

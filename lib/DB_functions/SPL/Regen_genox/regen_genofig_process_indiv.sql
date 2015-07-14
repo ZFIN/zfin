@@ -6,67 +6,58 @@ create procedure regen_genofig_process_indiv(phenoxId like phenotype_experiment.
   -- PRECONDITONS:
   --   regen_genofig_clean_exp has run successfully. 
   --
-  -- INPUT VARS:
-  --   none
-  --
-  -- OUTPUT VARS:
-  --   none
-  --
-  -- RETURNS:
-  --   Success: nothing
-  --   Failure: throws whatever exception happened.
-  -- 
-  -- EFFECTS:
-  --   Success:
-  --     regen_genofig_temp contains Geno - Fig pairs and related AO/GO term and MO data.
-  --   Error:
-  --     regen_genofig_temp may or may not have had data added to it.
-  --     transaction is not committed or rolled back.
   -- --------------------------------------------------------------------------------------------
+-- Any fish which has STR(s)
 
-  begin
-    on exception in (-958, -316)
-      -- Ignore these errors:
-      --  -958: Temp table already exists.
-      --  -316: Index name already exists.
-    end exception with resume;
-
-  end
-
--- Any genotype which has a morpholino environment
-insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_morph_zdb_id,rgf_phenox_pk_id,rgf_fish_zdb_id)
-  select distinct geno_zdb_id,phenox_fig_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag,rgfcx_morph_zdb_id,phenox_pk_id,fish_zdb_id
-    from fish_experiment, genotype, 
-         regen_genofig_clean_exp_with_morph_temp, 
-         regen_genofig_not_normal_temp,
+insert into regen_genofig_temp (rgf_geno_zdb_id,
+				rgf_fig_zdb_id,
+				rgf_morph_zdb_id,
+				rgf_phenox_pk_id,
+				rgf_fish_Zdb_id,
+				rgf_phenos_id,
+				rgf_genox_zdb_id)
+  select distinct fish_genotype_zdb_id,
+  	 	  phenox_fig_zdb_id,
+		  fishstr_str_zdb_id,
+		  phenox_pk_id,
+		  fish_zdb_id,
+		  phenos_pk_id,
+		  genox_Zdb_id
+    from fish_experiment, fish, fish_str,
          phenotype_statement,
-         phenotype_experiment, fish
-   where genox_fish_zdb_id = fish_zdb_id
-     and fish_genotype_zdb_id = geno_zdb_id
-     and phenox_pk_id = phenoxId
-     and phenox_genox_zdb_id = genox_zdb_id
+         phenotype_experiment,
+	 regen_genofig_input_zdb_id_temp
+   where fish_genotype_zdb_id = rgf_zdb_id
+     and fish_zdb_id = genox_fish_zdb_id
      and phenox_pk_id = phenos_phenox_pk_id
-     and genox_exp_zdb_id = rgfcx_clean_exp_zdb_id
-     and genox_zdb_id = rgfnna_genox_zdb_id
-     and phenox_pk_id = rgfnna_zdb_id;
+     and phenos_pk_id = phenoxId
+     and exists (Select 'x' from mutant_fast_Search
+     	 		where mfs_genox_zdb_id = genox_zdb_id)
+;
 
--- Any which has a standard or genetic control environment
-insert into regen_genofig_temp (rgf_geno_zdb_id,rgf_fig_zdb_id,rgf_superterm_zdb_id,rgf_subterm_zdb_id,rgf_quality_zdb_id,rgf_tag,rgf_phenox_pk_id,rgf_fish_Zdb_id)
-  select distinct geno_zdb_id,phenox_fig_zdb_id,rgfnna_superterm_zdb_id,rgfnna_subterm_zdb_id,rgfnna_quality_zdb_id,rgfnna_tag,phenox_pk_id,fish_zdb_id
-    from fish_experiment, genotype,
- 
-         experiment, 
-         regen_genofig_not_normal_temp,
+insert into regen_genofig_temp (rgf_geno_zdb_id,
+				rgf_fig_zdb_id,
+				rgf_phenox_pk_id,
+				rgf_fish_Zdb_id,
+				rgf_phenos_id,
+				rgf_genox_zdb_id)
+  select distinct fish_genotype_zdb_id,
+  	 	  phenox_fig_zdb_id,
+		  phenox_pk_id,
+		  fish_zdb_id,
+		  phenos_pk_id,
+		  genox_Zdb_id
+    from fish_experiment, fish
          phenotype_statement,
-         phenotype_experiment, fish
-   where genox_fish_zdb_id = fish_zdb_id
-     and fish_genotype_zdb_id = geno_zdb_id
-     and phenox_pk_id = phenoxId
-     and phenox_genox_zdb_id = genox_zdb_id
-     and genox_exp_zdb_id = exp_zdb_id
+         phenotype_experiment,
+	 regen_genofig_input_zdb_id_temp
+   where fish_genotype_zdb_id = rgf_zdb_id
+     and fish_zdb_id = genox_fish_zdb_id
      and phenox_pk_id = phenos_phenox_pk_id
-     and exp_name like '\_%'
-     and genox_zdb_id = rgfnna_genox_zdb_id
-     and phenox_pk_id = rgfnna_zdb_id;     
+     and phenos_pk_id = phenoxId
+     and exists (Select 'x' from mutant_fast_Search
+     	 		where mfs_genox_zdb_id = genox_zdb_id)	
+   and not exists (Select 'x' from fish_Str where fishstr_fish_zdb_id = fish_Zdb_id);
+
 
 end procedure;

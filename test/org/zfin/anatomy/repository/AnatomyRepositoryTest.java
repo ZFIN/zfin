@@ -56,34 +56,6 @@ public class AnatomyRepositoryTest extends AbstractDatabaseTest {
 
     }
 
-    @Test
-    public void compareWildTypeSelectionToFullForMorphs() {
-        GenericTerm item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
-        PaginationResult<FishExperiment> genotypeWildtype = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true, null);
-        PaginationResult<FishExperiment> genotypeNonWildtype = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, false, null);
-
-        assertNotNull(genotypeWildtype.getPopulatedResults());
-        assertNotNull(genotypeNonWildtype.getPopulatedResults());
-        assertNotSame("It is feasible, but unlikely that these will ever be the same", genotypeWildtype.getTotalCount(), genotypeNonWildtype.getTotalCount()); // its feasible, but not likely
-
-
-    }
-
-    @Test
-    public void getWildtypeMorpholinos() {
-        // String neuralPlateZdbID = "ZDB-ANAT-010921-560";
-        GenericTerm item = getOntologyRepository().getTermByName("neural plate", Ontology.ANATOMY);
-        PaginationResult<FishExperiment> genos = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true, null);
-        assertNotNull(genos.getPopulatedResults());
-        assertTrue(genos.getPopulatedResults().size() > 1);
-
-        List<FishExperiment> genotypeList = getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(item, true);
-        assertNotNull(genotypeList);
-        assertTrue(genotypeList.size() > 1);
-
-    }
-
-
     /**
      * 1 - find anatomy item term
      * 2 - find anatomy item term by synonym

@@ -67,16 +67,10 @@
 <table class="searchresults rowstripes" style="clear: both;">
 
     <tr>
-        <th rowspan="2" width="10%" id="fish-column-header"
-        <%--
-                    class="secretly-clickable sortable-column ${fishColumnClass}"
-        --%>
-            style="vertical-align: text-top;"
-            title="Fish = genotype + reagents">
+        <th rowspan="2" width="10%" id="fish-column-header" style="vertical-align: text-top;" title="Fish = Genotype + STR">
             Fish
             <img class="column-sort-button fish-column-sort-button " src="/images/transp.gif" alt=""/>
         </th>
-
         <th>&nbsp;</th>
         <th></th>
         <th></th>
@@ -85,22 +79,11 @@
         <th>Phenotype</th>
     </tr>
     <tr>
-        <th width="12%"
-        <%--
-                    class="secretly-clickable sortable-column ${geneColumnClass}"
-        --%>
-            id="affected-gene-column-header" style="white-space: nowrap;">
+        <th width="12%" id="affected-gene-column-header" style="white-space: nowrap;">
             Affected Gene
-            <%--
-                        <img class="column-sort-button gene-column-sort-button" src="/images/transp.gif"/>
-            --%>
         </th>
-
-        <th width="15%" id="feature-column-header"
-        <%--
-                    class="secretly-clickable sortable-column ${featureColumnClass}"
-        --%>
-            style="white-space: nowrap;">Line/Reagent
+        <th width="15%" id="feature-column-header" style="white-space: nowrap;">
+            Line/Reagent
             <img class="column-sort-button feature-column-sort-button" src="/images/transp.gif" alt=""/>
         </th>
         <th>Construct</th>

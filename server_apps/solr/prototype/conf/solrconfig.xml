@@ -858,7 +858,7 @@
 
     <requestHandler name="/fish-search" class="org.apache.solr.handler.component.SearchHandler">
         <lst name="appends">
-            <str name="fq">category:Fish</str>
+            <str name="fq">(category:Fish) OR (category:"Mutation / Tg" AND (lab_of_origin:"Stemple Lab" OR lab_of_origin:"Burgess &amp; Lin Lab"))</str>
         </lst>
         <lst name="defaults">
             <str name="echoParams">explicit</str>
@@ -907,8 +907,6 @@
             <str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>
             <str name="images_boost">mul(exists(has_image),0.1)</str>
             <str name="jtype_boost">mul(exists(query({!v='publication_type:Journal'})),0.001)</str>
-
-
         </lst>
     </requestHandler>
 

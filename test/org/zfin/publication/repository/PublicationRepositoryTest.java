@@ -318,8 +318,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         //  genotype Df(Chr03:sox8,sox9b)b971/b971
         //String genoZdbID = "ZDB-GENO-050322-1";
         //chnage to FishID
-        String fishName="";
-        Fish fish=mutantRepository.getFish("ZDB-FISH-150624-4247");
+        String fishName = "";
+        Fish fish = mutantRepository.getFish("ZDB-FISH-150624-4247");
 
         Fish geno = new Fish();
 //        geno.setZdbID(genoZdbID);
@@ -394,22 +394,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFiguresForMorpholino() {
-        //  morhpolino MO1-nkx2.2a
-        String morpholinoZdbID = "ZDB-MRPHLNO-070305-1";
-        SequenceTargetingReagent sequenceTargetingReagent = new SequenceTargetingReagent();
-        sequenceTargetingReagent.setZdbID(morpholinoZdbID);
-        //  lateral floor plate
-        String aoZdbID = "ZDB-TERM-100331-1214";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        List<Figure> figs = publicationRepository.getFiguresBySequenceTargetingReagentAndAnatomy(sequenceTargetingReagent, item);
-        assertTrue(figs != null);
-//        assertEquals("1 figure", 1, figs.size());
-
-    }
-
-    @Test
     public void getPublicationsForFiguresForGenotype() {
         //  genotype adss^hi1433Tg
         String genoZdbID = "ZDB-GENO-020426-5";
@@ -424,11 +408,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 //        assertEquals("1 publication", 1, publications.size());
 
     }
+
     @Test
     public void getFeatureCountForPub() {
         //  genotype adss^hi1433Tg
         String pubZdbID = "ZDB-PUB-140403-2 ";
-        Publication pub=publicationRepository.getPublication(pubZdbID);
+        Publication pub = publicationRepository.getPublication(pubZdbID);
         long ftrCount = publicationRepository.getFeatureCount(pub);
         assertTrue(ftrCount > 0);
 //        assertEquals("1 publication", 1, publications.size());
@@ -757,5 +742,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(pubs);
     }
 
+    @Test
+    public void getWildtypeFish() {
+        List<Fish> wildtypeFish = publicationRepository.getWildtypeFish();
+        assertNotNull(wildtypeFish);
+        assertThat(wildtypeFish.size(), greaterThan(15));
+
+    }
 }
 

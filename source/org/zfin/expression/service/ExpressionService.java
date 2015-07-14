@@ -588,6 +588,12 @@ public class ExpressionService {
 
                 String key = keySTR + expressedGene.getZdbID();
 
+                if (exp.isStandard())
+                    key += "standard";
+
+                if (exp.isChemical())
+                    key += "chemical";
+
                 Set<Figure> figs = xpResult.getFigures();
                 Set<Figure> qualifiedFigures = new HashSet<Figure>();
 

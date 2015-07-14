@@ -34,8 +34,8 @@ public class ExperimentDetailController {
         model.addAttribute("experiment", experiment);
 
         Set<ExperimentCondition> conditions = getSortedConditions(experiment);
-        model.addAttribute("sequenceTargetingReagentConditions", getSTRconditions(conditions));
-        model.addAttribute("nonSequenceTargetingReagentConditions", getNonSTRconditions(conditions));
+
+        model.addAttribute("conditions", conditions);
 
         return "expression/experiment.page";
     }
@@ -54,8 +54,8 @@ public class ExperimentDetailController {
         model.addAttribute("experiment", experiment);
 
         Set<ExperimentCondition> conditions = getSortedConditions(experiment);
-        model.addAttribute("sequenceTargetingReagentConditions", getSTRconditions(conditions));
-        model.addAttribute("nonSequenceTargetingReagentConditions", getNonSTRconditions(conditions));
+
+        model.addAttribute("conditions", conditions);
 
         return "expression/experiment-popup.popup";
     }
@@ -64,25 +64,6 @@ public class ExperimentDetailController {
         TreeSet<ExperimentCondition> conditions = new TreeSet<>();
         conditions.addAll(experiment.getExperimentConditions());
         return conditions;
-    }
-
-    protected List<ExperimentCondition> getSTRconditions(Set<ExperimentCondition> conditions) {
-        List<ExperimentCondition> moConditions = new ArrayList<>();
-        for (ExperimentCondition condition : conditions) {
-            if (condition.getSequenceTargetingReagent() != null)
-                moConditions.add(condition);
-        }
-        return moConditions;
-    }
-
-    protected List<ExperimentCondition> getNonSTRconditions(Set<ExperimentCondition> conditions) {
-        List<ExperimentCondition> nonMoConditions = new ArrayList<>();
-        for (ExperimentCondition condition : conditions) {
-            if (condition.getSequenceTargetingReagent() == null) {
-                nonMoConditions.add(condition);
-            }
-        }
-        return nonMoConditions;
     }
 
 }

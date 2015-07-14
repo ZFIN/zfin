@@ -240,15 +240,6 @@ public interface PublicationRepository extends PaginationParameter {
     boolean updatePublications(List<Publication> publicationList);
 
     /**
-     * Retrieve list of figures for a given SequenceTargetingReagent and anatomy term
-     *
-     * @param sequenceTargetingReagent SequenceTargetingReagent
-     * @param term       anatomy term
-     * @return list of figures.
-     */
-    List<Figure> getFiguresBySequenceTargetingReagentAndAnatomy(SequenceTargetingReagent sequenceTargetingReagent, GenericTerm term);
-
-    /**
      * Retrieve list of figures for a given genotype and anatomy term
      * for mutant genotypes excluding SequenceTargetingReagent.
      *
@@ -515,4 +506,6 @@ public interface PublicationRepository extends PaginationParameter {
     Fish getFishByHandle(String handle);
 
     List<Fish> getNonWTFishByPublication(String publicationID);
+
+    List<Fish> getWildtypeFish();
 }

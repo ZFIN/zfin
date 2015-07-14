@@ -41,6 +41,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
@@ -374,6 +375,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
             expRepository.createExpressionExperiment(expressionExperiment);
             experimentDTO.setExperimentZdbID(expressionExperiment.getZdbID());
+            getInfrastructureRepository().insertRecordAttribution(expressionExperiment.getFishExperiment().getFish(), expressionExperiment.getPublication());
             tx.commit();
         } catch (ConstraintViolationException e) {
             tx.rollback();
@@ -431,8 +433,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
         List<EnvironmentDTO> assayDtos = new ArrayList<>(experiments.size());
         for (Experiment experiment : experiments) {
-            if (experiment.isSequenceTargetingReagent())
-                continue;
+          //  if (experiment.isSequenceTargetingReagent())
+          //      continue;
+          // Todo: code for the above
             EnvironmentDTO env = new EnvironmentDTO();
             env.setName(experiment.getName());
             env.setZdbID(experiment.getZdbID());

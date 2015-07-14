@@ -104,7 +104,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     public void testShowAllMutantMorpholinos() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish/ZDB-TERM-100331-8");
         assertTrue(page.getTitleText().startsWith("ZFIN"));
-        assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-070117-2052']").get(0));
+        assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-040822-29']").get(0));
     }
 
     //floor plate

@@ -2,7 +2,6 @@ package org.zfin.expression;
 
 import org.apache.log4j.Logger;
 import org.zfin.infrastructure.EntityZdbID;
-import org.zfin.mutant.SequenceTargetingReagent;
 
 /**
  * Entity class that maps to experiment table.
@@ -11,9 +10,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     private String zdbID;
     private Experiment experiment;
-    private SequenceTargetingReagent sequenceTargetingReagent;
-    private String value;
-    private ExperimentUnit unit;
     private ConditionDataType conditionDataType;
     private String comments;
 
@@ -36,30 +32,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         this.experiment = experiment;
     }
 
-    public SequenceTargetingReagent getSequenceTargetingReagent() {
-        return sequenceTargetingReagent;
-    }
-
-    public void setSequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
-        this.sequenceTargetingReagent = sequenceTargetingReagent;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public ExperimentUnit getUnit() {
-        return unit;
-    }
-
-    public void setUnit(ExperimentUnit unit) {
-        this.unit = unit;
-    }
-
     public String getComments() {
         return comments;
     }
@@ -78,7 +50,9 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
 
     public boolean isSequenceTargetingReagentCondition() {
         boolean strCondition = conditionDataType.getGroup().equalsIgnoreCase("morpholino") || conditionDataType.getGroup().equalsIgnoreCase("CRISPR") || conditionDataType.getGroup().equalsIgnoreCase("TALEN");
-        if (strCondition && sequenceTargetingReagent == null) {
+      //  if (strCondition && sequenceTargetingReagent == null) {
+      // Todo: may need to modify the above code to check for STR condition
+        if (strCondition) {
             String message = "No Sequence Targeting Reagent found for experiment " + experiment.getName() + " [" + zdbID + "]. ";
             message += "Publication: " + experiment.getPublication().getZdbID();
             logger.error(message);
@@ -98,8 +72,8 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
             return -1;
         if (conditionDataType.compareTo(o.getConditionDataType()) != 0)
             return conditionDataType.compareTo(o.getConditionDataType());
-        else if (isSequenceTargetingReagentCondition() && o.isSequenceTargetingReagentCondition())
-            return sequenceTargetingReagent.compareTo(o.getSequenceTargetingReagent());
+     //   else if (isSequenceTargetingReagentCondition() && o.isSequenceTargetingReagentCondition())
+     //       return sequenceTargetingReagent.compareTo(o.getSequenceTargetingReagent());
         else //even if it's the same condition type, we still want consistent order, so use id..
             return getZdbID().compareTo(o.getZdbID());
     }

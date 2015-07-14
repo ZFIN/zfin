@@ -32,10 +32,10 @@ public class FishSearchCriteria extends AbstractSearchCriteria {
 
     //set defaults in constructor, all criteria to the list
     public FishSearchCriteria(FishSearchFormBean formBean) {
-        allCriteria = new ArrayList<SearchCriterion>();
-        sort = new ArrayList<SortType>();
+        allCriteria = new ArrayList<>();
+        sort = new ArrayList<>();
 
-        setStart(formBean.getFirstRecord());
+        setStart(formBean.getFirstRecord() - 1); // PaginationBean is 1-based index, SearchCriteria is 0-based
         setRows(formBean.getMaxDisplayRecordsInteger());
 
         geneOrFeatureNameCriteria = new SearchCriterion(SearchCriterionType.GENE_OR_FEATURE_NAME, true);
@@ -71,8 +71,9 @@ public class FishSearchCriteria extends AbstractSearchCriteria {
         allCriteria.add(requireTransgenicsCriteria);
 
         mutationTypeCriteria = new SearchCriterion(SearchCriterionType.MUTATION_TYPE, false);
-        if (formBean.hasMutationTypeSelected())
+        if (formBean.hasMutationTypeSelected()) {
             mutationTypeCriteria.setValue(formBean.getMutationType());
+        }
         allCriteria.add(mutationTypeCriteria);
 
         if (formBean.getSortBy().equals(SortBy.FEATURES.toString())) {

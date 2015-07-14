@@ -22,11 +22,9 @@ import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.FishStatistics;
-import org.zfin.mutant.presentation.SequenceTargetingReagentStatistics;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -364,10 +362,6 @@ public class AnatomyAjaxController {
         populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
     }
 
-    private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Fish> genotypeResult) {
-        populateFormBeanForMutantList(ai, form, genotypeResult, false);
-    }
-
     private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Fish> fishResult, boolean includeSubstructures) {
         form.setFishCount(fishResult.getTotalCount());
         form.setTotalRecords(fishResult.getTotalCount());
@@ -394,44 +388,5 @@ public class AnatomyAjaxController {
         }
         return stats;
     }
-
-    /**
-     * Note: method 1 - very slow to do one query and then split
-     * because you need to rehydrate each instance
-     * in order to compare. So instead did as two separate queries.
-     *
-     * @param ai       ao term
-     * @param form     form bean
-     * @param wildtype wild type or not
-     */
-    protected void retrieveSequenceTargetingReagentData(GenericTerm ai, AnatomySearchBean form, boolean wildtype) {
-
-        PaginationResult<FishExperiment> wildtypeSTRresults =
-                mutantRepository.getGenotypeExperimentSequenceTargetingReagents(ai, wildtype, AnatomySearchBean.MAX_NUMBER_GENOTYPES);
-        int count = wildtypeSTRresults.getTotalCount();
-        List<FishExperiment> experiments = wildtypeSTRresults.getPopulatedResults();
-
-        List<SequenceTargetingReagentStatistics> strStats = createSequenceTargetingReagenStats(experiments, ai);
-        if (wildtype) {
-            form.setWildtypeSTRcount(count);
-            form.setAllSequenceTargetingReagents(strStats);
-        } else {
-            form.setMutantSTRcount(count);
-            form.setNonWildtypeSTRs(strStats);
-        }
-    }
-
-    protected static List<SequenceTargetingReagentStatistics> createSequenceTargetingReagenStats(List<FishExperiment> strExperiments, GenericTerm ai) {
-        if (strExperiments == null || ai == null)
-            return null;
-
-        List<SequenceTargetingReagentStatistics> stats = new ArrayList<>();
-        for (FishExperiment genoExp : strExperiments) {
-            SequenceTargetingReagentStatistics stat = new SequenceTargetingReagentStatistics(genoExp, ai);
-            stats.add(stat);
-        }
-        return stats;
-    }
-
 
 }

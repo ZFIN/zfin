@@ -163,7 +163,7 @@ create dba function regen_genox() returning integer
 
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
-    --   CREATE mutant_fast_search_new (mutant_fast_search) TABLE
+    --   CREATE mutant_fast_search_newb (mutant_fast_search) TABLE
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
 
@@ -207,96 +207,43 @@ create dba function regen_genox() returning integer
     insert into regen_genox_input_zdb_id_temp ( rggz_zdb_id )
       select mrkr_zdb_id from marker where mrkr_type in ("GENE","MRPHLNO","TALEN", "CRISPR");
 
+    let errorHint = "insert into mutant_fast_search_new";
+
     -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
-    execute procedure regen_genox_process();
-
-    delete from regen_genox_input_zdb_id_temp;
-
-
-    -- -------------------------------------------------------------------
-    -- -------------------------------------------------------------------
-    --   Create genotype_figure_fast_search_new
-    -- -------------------------------------------------------------------
-    -- -------------------------------------------------------------------
-
-    let errorHint = "genotype_figure_fast_search";
-
-    if (exists (select * from systables where tabname = "genotype_figure_fast_search_new")) then
-      drop table genotype_figure_fast_search_new;
-    end if
-
-    create table genotype_figure_fast_search_new 
-      (  
-        gffs_geno_zdb_id  varchar(50) not null,
-        gffs_fig_zdb_id varchar(50) not null,
-        gffs_superterm_zdb_id varchar(50) not null,
-        gffs_subterm_zdb_id varchar(50),
-        gffs_quality_zdb_id varchar(50) not null,
-        gffs_tag varchar(25) not null,
-        gffs_morph_zdb_id varchar(50),
-        gffs_phenox_pk_id int8 not null,
-	gffs_date_created DATETIME YEAR TO SECOND 
-			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
-        gffs_serial_id serial8 not null,
-	gffs_fish_zdb_id varchar(50) not null
-      )
-    fragment by round robin in tbldbs1, tbldbs2, tbldbs3
-    extent size 512 next size 512 ;
-    
-
-
-    -- --------------------------------------------------------------------------------------
-    -- --------------------------------------------------------------------------------------
-    --   create regen_genofig_clean_exp_with_morph_temp, regen_genofig_not_normal_temp,
-    --          regen_genofig_temp, regen_genofig_input_zdb_id_temp
-    -- --------------------------------------------------------------------------------------
-    -- --------------------------------------------------------------------------------------
-
-    let errorHint = "create genofig temp tables";
-    execute procedure regen_genofig_create_temp_tables();
-
-    -- -------------------------------------------------------------------
-    -- -------------------------------------------------------------------
-    --   Get new records into genotype_figure_fast_search_new
-    -- -------------------------------------------------------------------
-    -- -------------------------------------------------------------------
-
-    let errorHint = "populate regen_genofig_input_zdb_id_temp";
-
-    insert into regen_genofig_input_zdb_id_temp ( rgfg_zdb_id )
-      select geno_zdb_id from genotype;
-
-    let errorHint = "find clean experiments";
-    execute procedure regen_genofig_clean_exp();
-    
-
-    let errorHint = "fill fast search tables";
-    execute procedure regen_genofig_process();
-
-
-    let errorHint = "consolidate fast search tables";
-    execute procedure regen_genofig_finish();
-
+    execute procedure regen_genox_process_marker();
 
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
     --   Move from temp tables to permanent tables
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
+  
+   let errorHint = "add any old mfs records in the case of regening a certain id instead of the entire table.";
 
-    let errorHint = "insert into mutant_fast_search_new";
+     insert into mutant_fast_search_new 
+        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
+      select distinct a.mfs_mrkr_zdb_id, a.mfs_genox_zdb_id
+        from mutant_fast_search a
+	where not exists (Select 'x' from mutant_fast_search_new b
+	      	  	 	 where a.mfs_mrkr_zdb_id = b.mfs_mrkr_zdb_id
+				 and a.mfs_genox_zdb_id =b.mfs_genox_zdb_id);
+
+
+    let errorHint = "delete regenning records";
+
+    delete from mutant_fast_search_new
+      where mfs_mrkr_zdb_id in
+          ( select rggz_zdb_id
+              from regen_genox_input_zdb_id_temp ); 
+
+    let errorHint = "add new mfs_new records";
+
     insert into mutant_fast_search_new 
         ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
       select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
         from regen_genox_temp;
 
-    -- Be paranoid and delete everything from the temp tables.  Shouldn't
-    -- need to do this, as this routine is called in it's own session
-    -- and therefore the temp tables will be dropped when the routine ends.
-
-    delete from regen_genox_temp;
-
-
+  
     -- -------------------------------------------------------------------
     --   create indexes; constraints that use them are added at the end.
     -- -------------------------------------------------------------------
@@ -322,6 +269,103 @@ create dba function regen_genox() returning integer
     update statistics high for table mutant_fast_search_new;
 
 --trace on;
+   -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Create genotype_figure_fast_search_new
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+
+    let errorHint = "genotype_figure_fast_search";
+
+    if (exists (select * from systables where tabname = "genotype_figure_fast_search_new")) then
+      drop table genotype_figure_fast_search_new;
+    end if
+
+    create table genotype_figure_fast_search_new 
+      (  
+        gffs_geno_zdb_id  varchar(50) not null,
+        gffs_fig_zdb_id varchar(50) not null,
+        gffs_morph_zdb_id varchar(50),
+        gffs_phenox_pk_id int8 not null,
+	gffs_date_created DATETIME YEAR TO SECOND 
+			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
+        gffs_phenos_id int8 not null,
+	gffs_fish_zdb_id varchar(50) not null,
+	gffs_genox_zdb_id varchar(50),
+    gffs_serial_id serial8 not null 
+
+      )
+    fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+    extent size 512 next size 512 ;
+    
+
+
+    -- --------------------------------------------------------------------------------------
+    -- --------------------------------------------------------------------------------------
+    --   create regen_genofig_clean_exp_with_morph_temp, regen_genofig_not_normal_temp,
+    --          regen_genofig_temp, regen_genofig_input_zdb_id_temp
+    -- --------------------------------------------------------------------------------------
+    -- --------------------------------------------------------------------------------------
+
+    let errorHint = "create genofig temp tables";
+    execute procedure regen_genofig_create_temp_tables();
+
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Get new records into genotype_figure_fast_search_new
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+
+    let errorHint = "populate regen_genofig_input_zdb_id_temp";
+
+    insert into regen_genofig_input_zdb_id_temp ( rgfg_id )
+      select phenox_pk_id from phenotype_experiment;
+
+
+    let errorHint = "fill fast search tables";
+    execute procedure regen_genofig_process();
+
+  let errorHint = "populate gffs with old, not affected records";
+    insert into genotype_figure_fast_search_new(gffs_geno_zdb_id,
+						gffs_fig_zdb_id,
+						gffs_morph_zdb_id,
+						gffs_phenox_pk_id,
+						gffs_fish_zdb_id,
+						gffs_phenos_id,
+						gffs_genox_Zdb_id)
+      select distinct c.gffs_geno_zdb_id,
+				c.gffs_fig_zdb_id,
+				c.gffs_morph_zdb_id,
+				c.gffs_phenox_pk_id,
+				c.gffs_fish_zdb_id,
+				c.gffs_phenos_id,
+				c.gffs_genox_Zdb_id from genotype_Figure_fast_Search c
+        where not exists (Select 'x' from genotype_figure_fast_search_new d
+	      	  	 	 where  c.gffs_phenox_pk_id = d.gffs_phenox_pk_id);
+
+    let errorHint = "remove regening records";
+
+    delete from genotype_figure_fast_search_new
+      where exists (Select 'x' from regen_genofig_input_zdb_id_temp
+   	 		where gffs_phenox_pk_id = rgfg_id);
+
+   let errorHint = "populate gffs with new records";
+    insert into genotype_figure_fast_search_new
+      (gffs_geno_zdb_id,
+	gffs_fig_zdb_id,
+	gffs_morph_zdb_id,
+	gffs_phenox_pk_id,
+	gffs_fish_zdb_id,
+	gffs_phenos_id,
+	gffs_genox_Zdb_id)
+    select distinct rgf_geno_zdb_id,
+    	   rgf_fig_zdb_id,
+	   rgf_morph_zdb_id,
+	   rgf_phenox_pk_id,
+	   rgf_fish_zdb_id,
+	   rgf_phenos_id,
+	   rgf_genox_zdb_id
+      from regen_genofig_temp;
 
 
     let errorHint = "genotype_figure_fast_search_new create PK index";
@@ -446,7 +490,8 @@ create dba function regen_genox() returning integer
         to genotype_figure_fast_search_fig_zdb_id_foreign_key_index;
       rename index genotype_figure_fast_search_morph_foreign_key_index_transient 
         to genotype_figure_fast_search_morph_zdb_id_foreign_key_index;
-
+     rename index genotype_figure_fast_search_fish_foreign_key_index_transient 
+        to genotype_figure_fast_search_fish_zdb_id_foreign_key_index;
 
       let errorHint = "genotype_figure_fast_search add PK";
       alter table genotype_figure_fast_search add constraint primary key 
@@ -455,6 +500,10 @@ create dba function regen_genox() returning integer
       let errorHint = "genotype_figure_fast_search add foreign key to reference genotype";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_geno_zdb_id) references genotype on 
       delete cascade constraint gffs_geno_zdb_id_foreign_key);
+ 
+     let errorHint = "genotype_figure_fast_search add foreign key to reference fish";
+      alter table genotype_figure_fast_search add constraint (foreign key (gffs_fish_zdb_id) references fish on 
+      delete cascade constraint gffs_fish_zdb_id_foreign_key);
     
       let errorHint = "genotype_figure_fast_search add foreign key to reference figure";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_fig_zdb_id) references figure on 

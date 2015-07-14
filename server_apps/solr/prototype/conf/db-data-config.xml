@@ -1834,7 +1834,7 @@ select
        <entity name="str"
                datasource="db" query="select
                         mrkr_zdb_id as id,
-                        'Sequence Targeting Reagent' as category,
+                        'Sequence Targeting Reagent (STR)' as category,
                         mrkr_abbrev as name,
                         mrkr_abbrev as proper_name,
                         mrkr_abbrev as marker_abbrev,
