@@ -14,7 +14,7 @@ create procedure regen_genofig_finish()
   -- -------------------------------------------------------------------------------------------
   delete from genotype_figure_fast_search
    where exists (Select 'x' from regen_genofig_input_zdb_id_temp
-   	 		where gffs_phenos_id = rgfg_id);
+   	 		where gffs_phenox_id = rgfg_id);
 
   insert into genotype_figure_fast_search_new
     select * from genotype_Figure_fast_Search;

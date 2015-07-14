@@ -24,10 +24,7 @@ create procedure regen_genox_finish_marker()
   --     transaction is not committed or rolled back.
   -- -------------------------------------------------------------------------------------------
 
-  delete from mutant_fast_search
-    where mfs_mrkr_zdb_id in
-          ( select rggz_zdb_id
-              from regen_genox_input_zdb_id_temp );
+
 
  
 
