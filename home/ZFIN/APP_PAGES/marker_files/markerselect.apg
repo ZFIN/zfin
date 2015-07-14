@@ -1050,7 +1050,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
                   <?MIVAR>$(SETVAR,$mrkrsel_pheno_img_count,$1)<?/MIVAR>
                 <?/MISQL>
 
-                <?MICOMMENT> *** deciding on displaying MO icon or not <?/MICOMMENT>
+                <?MICOMMENT> *** deciding on displaying MO icon or not
                 <?MISQL COND="$(<,$mrkrsel_MO_flag,1)"
                         SQL="select count(expcond_mrkr_zdb_id)
        	                       from mutant_fast_search,fish_experiment,experiment_condition,phenotype_experiment
@@ -1062,6 +1062,7 @@ $(IF,$(EC,$mtype,MUTANT),$(SETVAR,$curviewer,"/action/fish/search?fsel_allele_id
        	                        and expcond_mrkr_zdb_id is not null;">
                   <?MIVAR>$(SETVAR,$mrkrsel_MO_flag,$1)<?/MIVAR>
                 <?/MISQL>
+                <?/MICOMMENT>
               <?/MISQL>
 
 	      <?MIVAR NAME=mrkrsel_pheno_fig_count>$MI_ROWCOUNT<?/MIVAR>

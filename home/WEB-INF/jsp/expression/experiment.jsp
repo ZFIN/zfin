@@ -18,6 +18,5 @@
     </tr>
 </table>
 
-<zfin2:experimentConditions nonSequenceTargetingReagentConditions="${nonSequenceTargetingReagentConditions}"
-                            sequenceTargetingReagentConditions="${sequenceTargetingReagentConditions}"/>
+<zfin2:experimentConditions conditions="${conditions}" />
 

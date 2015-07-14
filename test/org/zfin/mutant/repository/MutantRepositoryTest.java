@@ -82,17 +82,6 @@ public class MutantRepositoryTest {
 
 
     @Test
-    public void checkPhenotypeDescriptions() {
-        String name = "otic placode";
-        OntologyRepository ar = RepositoryFactory.getOntologyRepository();
-        GenericTerm ai = ar.getTermByName(name, Ontology.ANATOMY);
-        PaginationResult<FishExperiment> morphs =
-                getMutantRepository().getGenotypeExperimentSequenceTargetingReagents(ai, true, null);
-        assertNotNull("morphs exist", morphs.getPopulatedResults());
-
-    }
-
-    @Test
     public void checkQualityTerms() {
         //  quality term: red
         String name = "red";
@@ -235,16 +224,6 @@ public class MutantRepositoryTest {
         LOG.info("# of sequence targeting reagents: " + sequenceTargetingReagents.size());
         assertTrue(sequenceTargetingReagents.size() > 3000);
         assertNotNull(sequenceTargetingReagents.get(0).getSequence());
-    }
-
-    @Test
-    public void phenotypeExistForAOTerm() {
-        // bile canaliculus
-        String oboID = "ZFA:0005163 ";
-        GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(oboID);
-        List<FishExperiment> genox = mutantRepository.getGenotypeExperimentSequenceTargetingReagents(term, null);
-        assertNotNull(genox);
-        assertTrue(genox.size() >= 0);
     }
 
     @Test
@@ -475,6 +454,22 @@ public class MutantRepositoryTest {
             System.out.println(experiment.getFish().getHandle());
         assertNotNull(fishList);
         assertTrue(fishList.size() > 0);
+    }
+
+    @Test
+    public void getFishByGenotype() {
+        Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-140109-26");
+        List<Fish> list = mutantRepository.getFishByGenotype(genotype);
+        assertNotNull(list);
+        assertTrue(list.size() > 0);
+    }
+
+    @Test
+    public void getFishByGenotypeNoExperiment() {
+        Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-140109-26");
+        List<Fish> list = mutantRepository.getFishByGenotypeNoExperiment(genotype);
+        assertNotNull(list);
+        assertTrue(list.size() > 0);
     }
 
     @Test

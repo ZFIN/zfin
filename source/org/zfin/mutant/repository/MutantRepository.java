@@ -88,51 +88,6 @@ public interface MutantRepository {
 
     Genotype getGenotypeByName(String genotypeName);
 
-
-    /*List<Marker> getDeletedMarker(Feature feat);
-
-    List<String> getDeletedMarkerLG(Feature feat);*/
-
-    /*List<String> getMappedFeatureLG(Feature feat);
-    List<String> getLinkageFeatureLG(Feature feat);*/
-
-
-    /**
-     * Retrieve the genotype experiment objects that are associated to a str.
-     * Disregard all experiments that have non-str conditions, such as chemical or physical
-     * attached.
-     *
-     * @param item            anatomy structure
-     * @param isWildtype      wildtype of genotype
-     * @param numberOfRecords defines the first n records to retrieve
-     * @return list of genotype experiment object
-     */
-    PaginationResult<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, int numberOfRecords);
-
-    /**
-     * Retrieve all genotype experiment objects that are associated to a str.
-     * Disregard all experiments that have non-str conditions, such as chemical or physical
-     * attached.
-     *
-     * @param item       anatomy structure
-     * @param isWildtype wildtype of genotype
-     * @return list of genotype experiment object
-     */
-    List<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype);
-
-    /**
-     * Retrieve genotype experiment objects that are associated to a str within the range specified
-     * in the pagination bean object.
-     * Disregard all experiments that have non-str conditions, such as chemical or physical
-     * attached.
-     *
-     * @param item       anatomy structure
-     * @param isWildtype wildtype of genotype
-     * @param bean       PaginationBean
-     * @return list of genotype experiment object
-     */
-    PaginationResult<FishExperiment> getGenotypeExperimentSequenceTargetingReagents(GenericTerm item, Boolean isWildtype, PaginationBean bean);
-
     /**
      * @param name name of quality term
      * @return A list of GoTerms that contain the parameter handed in.
@@ -229,8 +184,6 @@ public interface MutantRepository {
     List<PhenotypeStatement> getPhenotypeWithEntity(List<GenericTerm> terms);
 
     List<MarkerGoTermEvidence> getMarkerGoEvidence(List<GenericTerm> terms);
-
-    List<GenotypeFigure> getCleanGenoFigsByGenotype(Genotype genotype);
 
     PhenotypeExperiment getPhenotypeExperiment(Long id);
 
@@ -548,5 +501,8 @@ public interface MutantRepository {
      */
     FishExperiment getFishExperimentByFishAndExperimentID (String fishID, String experimentID);
 
+    List<Fish> getFishByGenotype(Genotype genotype);
+
+    List<Fish> getFishByGenotypeNoExperiment(Genotype genotype);
 }
 

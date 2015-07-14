@@ -3,14 +3,9 @@
 
 <%@ attribute name="phenotypeDisplays" type="java.util.Collection" required="false" %>
 <%@ attribute name="suppressMoDetails" type="java.lang.Boolean" required="false" %>
-<%@ attribute name="showNumberOfRecords" type="java.lang.Integer" required="false" %>
 <%@ attribute name="secondColumn" type="java.lang.String" required="true" %>
 
-<c:if test="${empty showNumberOfRecords}">
-    <c:set var="showNumberOfRecords" value="${fn:length(phenotypeDisplays)}" />
-</c:if>
-
-<table class="summary rowstripes">
+<table width="100%" class="summary rowstripes">
     <thead>
     <tr>
         <th width="48%">
@@ -31,7 +26,7 @@
         </th>
     </tr>
     </thead>
-    <c:forEach var="phenotypeDisplay" items="${phenotypeDisplays}" varStatus="loop" end="${showNumberOfRecords-1}">
+    <c:forEach var="phenotypeDisplay" items="${phenotypeDisplays}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td>
                 <zfin:link entity="${phenotypeDisplay.phenoStatement}"/>

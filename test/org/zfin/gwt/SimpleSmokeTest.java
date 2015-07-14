@@ -1,12 +1,9 @@
 package org.zfin.gwt;
 
-import com.gargoylesoftware.htmlunit.AlertHandler;
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.zfin.AbstractSecureSmokeTest;
@@ -55,7 +52,6 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
 
         // init satate
         assertTrue(saveButton.isDisabled());
-        assertTrue(saveButton.isDisabled());
 
         String oldText = textArea.getText();
         String newText = "very unique updated text super uniqueness";
@@ -70,7 +66,6 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
         revertButton.click();
         assertEquals(oldText, textArea.getText());
         assertTrue(saveButton.isDisabled());
-        assertTrue(saveButton.isDisabled());
 
         // try saving this time
         textArea.setText(newText);
@@ -79,7 +74,6 @@ public class SimpleSmokeTest extends AbstractSecureSmokeTest {
         saveButton.click();
         webClient.waitForBackgroundJavaScriptStartingBefore(2000);
         assertEquals(newText, textArea.getText());
-        assertTrue(saveButton.isDisabled());
         assertTrue(saveButton.isDisabled());
 
 
