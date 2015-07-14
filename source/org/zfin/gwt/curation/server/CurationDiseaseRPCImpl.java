@@ -14,7 +14,6 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
@@ -79,7 +78,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             Genotype genotype = getMutantRepository().getGenotypeByID(genotypeID);
             if (genotype == null)
                 throw new TermNotFoundException("No genotype with ID: " + genotypeID + " found");
-            getInfrastructureRepository().insertPublicAttribution(genotypeID, publicationID, RecordAttribution.SourceType.STANDARD);
+            getInfrastructureRepository().insertPublicAttribution(genotype, publication);
             HibernateUtil.flushAndCommitCurrentSession();
             genotypeDTO = DTOConversionService.convertToGenotypeDTO(genotype);
         } catch (ConstraintViolationException e) {
@@ -288,8 +287,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
     @Override
     public List<DiseaseModelDTO> getHumanDiseaseModelList(String publicationID) throws TermNotFoundException {
-        List<DiseaseModelDTO> dtoList = PhenotypeService.getDiseaseModelDTOs(publicationID);
-        return dtoList;
+        return PhenotypeService.getDiseaseModelDTOs(publicationID);
     }
 
     @Override
@@ -331,24 +329,12 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
         try {
             Publication publication = getPublicationRepository().getPublication(publicationID);
             Fish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
-            PublicationAttribution attrib = new PublicationAttribution();
-            attrib.setPublication(publication);
-            attrib.setDataZdbID(fish.getZdbID());
-            attrib.setSourceType(RecordAttribution.SourceType.STANDARD);
-/*
-            Boolean fishExists = getMutantRepository().existsAttribution(attrib);
-            Fish existingFish = getMutantRepository().getFishByGenoStr(fish);
-            if (existingFish != null)
-                throw new TermNotFoundException("Fish already exists: " + existingFish.getName() + " [" + existingFish.getZdbID() + "]");
-
-*/
             getMutantRepository().createFish(fish, publication);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
         }
-
         return getFishList(publicationID);
     }
 
