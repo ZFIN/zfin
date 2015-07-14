@@ -12,12 +12,8 @@ create procedure regen_genofig_finish()
   --     to generate records in genotype_figure_fast_search table
   --
   -- -------------------------------------------------------------------------------------------
-  delete from genotype_figure_fast_search
-   where exists (Select 'x' from regen_genofig_input_zdb_id_temp
-   	 		where gffs_phenox_id = rgfg_id);
 
-  insert into genotype_figure_fast_search_new
-    select * from genotype_Figure_fast_Search;
+ 
 
   insert into genotype_figure_fast_search_new
       (gffs_geno_zdb_id,

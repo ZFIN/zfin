@@ -207,10 +207,65 @@ create dba function regen_genox() returning integer
     insert into regen_genox_input_zdb_id_temp ( rggz_zdb_id )
       select mrkr_zdb_id from marker where mrkr_type in ("GENE","MRPHLNO","TALEN", "CRISPR");
 
+    let errorHint = "insert into mutant_fast_search_new";
+
+    delete from mutant_fast_search
+      where mfs_mrkr_zdb_id in
+          ( select rggz_zdb_id
+              from regen_genox_input_zdb_id_temp ); 
+
     -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
     execute procedure regen_genox_process_marker();
 
     -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Move from temp tables to permanent tables
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+
+    let errorHint = "add new mfs_new records";
+
+    insert into mutant_fast_search_new 
+        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
+      select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
+        from regen_genox_temp;
+
+    let errorHint = "add any old mfs records in the case of regening a certain id instead of the entire table."
+
+     insert into mutant_fast_search_new 
+        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
+      select distinct a.mfs_mrkr_zdb_id, a.mfs_genox_zdb_id
+        from mutant_fast_search a
+	where not exists (Select 'x' from mutant_fast_search_new b
+	      	  	 	 where a.mfs_mrkr_zdb_id = b.mfs_mrkr_zdb_id
+				 and a.mfs_genox_zdb_id =b.mfs_genox_zdb_id);
+
+    -- -------------------------------------------------------------------
+    --   create indexes; constraints that use them are added at the end.
+    -- -------------------------------------------------------------------
+
+    let errorHint = "mutant_fast_search_new create PK index";
+    create unique index mutant_fast_search_primary_key_index_transient
+      on mutant_fast_search_new (mfs_mrkr_zdb_id, mfs_genox_zdb_id)
+      fillfactor 100
+      in idxdbs1;
+
+    let errorHint = "mutant_fast_search_new create another index";
+    create index mutant_fast_search_mrkr_zdb_id_foreign_key_index_transient
+      on mutant_fast_search_new (mfs_mrkr_zdb_id)
+      fillfactor 100
+      in idxdbs1;
+
+    let errorHint = "mutant_fast_search_new create the third index";
+    create index mutant_fast_search_genox_zdb_id_foreign_key_index_transient
+      on mutant_fast_search_new (mfs_genox_zdb_id)
+      fillfactor 100
+      in idxdbs1;
+
+    update statistics high for table mutant_fast_search_new;
+
+--trace on;
+   -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
     --   Create genotype_figure_fast_search_new
     -- -------------------------------------------------------------------
@@ -266,69 +321,50 @@ create dba function regen_genox() returning integer
     insert into regen_genofig_input_zdb_id_temp ( rgfg_id )
       select phenox_pk_id from phenotype_experiment;
 
+    delete from genotype_figure_fast_search
+      where exists (Select 'x' from regen_genofig_input_zdb_id_temp
+   	 		where gffs_phenox_id = rgfg_id);
+
+
     let errorHint = "fill fast search tables";
     execute procedure regen_genofig_process();
 
+    let errorHint = "populate gffs with new records";
+    insert into genotype_figure_fast_search_new
+      (gffs_geno_zdb_id,
+	gffs_fig_zdb_id,
+	gffs_morph_zdb_id,
+	gffs_phenox_pk_id,
+	gffs_fish_zdb_id,
+	gffs_phenos_id,
+	gffs_genox_Zdb_id)
+    select distinct rgf_geno_zdb_id,
+    	   rgf_fig_zdb_id,
+	   rgf_morph_zdb_id,
+	   rgf_phenox_pk_id,
+	   rgf_fish_zdb_id,
+	   rgf_phenos_id,
+	   rgf_genox_zdb_id
+      from regen_genofig_temp;
 
-    let errorHint = "consolidate fast search tables";
-    execute procedure regen_genofig_finish();
+  let errorHint = "populate gffs with old, not affected records";
+    insert into genotype_figure_fast_search_new(gffs_geno_zdb_id,
+						gffs_fig_zdb_id,
+						gffs_morph_zdb_id,
+						gffs_phenox_pk_id,
+						gffs_fish_zdb_id,
+						gffs_phenos_id,
+						gffs_genox_Zdb_id)
+      select distinct c.gffs_geno_zdb_id,
+				c.gffs_fig_zdb_id,
+				c.gffs_morph_zdb_id,
+				c.gffs_phenox_pk_id,
+				c.gffs_fish_zdb_id,
+				c.gffs_phenos_id,
+				c.gffs_genox_Zdb_id from genotype_Figure_fast_Search c
+        where not exists (Select 'x' from genotype_figure_fast_search_new d
+	      	  	 	 where  c.gffs_phenos_id = d.gffs_phenos_id);
 
-
-    -- -------------------------------------------------------------------
-    -- -------------------------------------------------------------------
-    --   Move from temp tables to permanent tables
-    -- -------------------------------------------------------------------
-    -- -------------------------------------------------------------------
-
-    let errorHint = "insert into mutant_fast_search_new";
-
-    delete from mutant_fast_search
-      where mfs_mrkr_zdb_id in
-          ( select rggz_zdb_id
-              from regen_genox_input_zdb_id_temp ); 
-
-    let errorHint = "add new mfs_new records";
-
-    insert into mutant_fast_search_new 
-        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
-      select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
-        from regen_genox_temp;
-
-    let errorHint = "add any old mfs records in the case of regening a certain id instead of the entire table."
-
-     insert into mutant_fast_search_new 
-        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
-      select distinct a.mfs_mrkr_zdb_id, a.mfs_genox_zdb_id
-        from mutant_fast_search a
-	where not exists (Select 'x' from mutant_fast_search_new b
-	      	  	 	 where a.mfs_mrkr_zdb_id = b.mfs_mrkr_zdb_id
-				 and a.mfs_genox_zdb_id =b.mfs_genox_zdb_id);
-
-    -- -------------------------------------------------------------------
-    --   create indexes; constraints that use them are added at the end.
-    -- -------------------------------------------------------------------
-
-    let errorHint = "mutant_fast_search_new create PK index";
-    create unique index mutant_fast_search_primary_key_index_transient
-      on mutant_fast_search_new (mfs_mrkr_zdb_id, mfs_genox_zdb_id)
-      fillfactor 100
-      in idxdbs1;
-
-    let errorHint = "mutant_fast_search_new create another index";
-    create index mutant_fast_search_mrkr_zdb_id_foreign_key_index_transient
-      on mutant_fast_search_new (mfs_mrkr_zdb_id)
-      fillfactor 100
-      in idxdbs1;
-
-    let errorHint = "mutant_fast_search_new create the third index";
-    create index mutant_fast_search_genox_zdb_id_foreign_key_index_transient
-      on mutant_fast_search_new (mfs_genox_zdb_id)
-      fillfactor 100
-      in idxdbs1;
-
-    update statistics high for table mutant_fast_search_new;
-
---trace on;
 
 
     let errorHint = "genotype_figure_fast_search_new create PK index";
