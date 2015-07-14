@@ -27,50 +27,18 @@ create procedure regen_genofig_create_temp_tables()
       --  -316: Index name already exists.
     end exception with resume;
 
-    create temp table regen_genofig_input_zdb_id_temp  
+    create table regen_genofig_input_zdb_id_temp  
       (
-	rgfg_zdb_id		varchar(50),
-        primary key (rgfg_zdb_id)
-      ) with NO LOG;
-
-    -- -------------------------------------------------------------------
-    --   create regen_genofig_clean_exp_with_morph_temp
-    -- -------------------------------------------------------------------
-
-    create temp table regen_genofig_clean_exp_with_morph_temp  
-      (
-	rgfcx_clean_exp_zdb_id		varchar(50),
-	rgfcx_morph_zdb_id		varchar(50)
-      ) with NO LOG;
-
-    create index regen_genofig_clean_exp_with_morph_temp_foreign_key
-    on regen_genofig_clean_exp_with_morph_temp (rgfcx_clean_exp_zdb_id) 
-    using btree in idxdbs1;
-
-
-
-    -- -------------------------------------------------------------------
-    --   create regen_genofig_not_normal_temp
-    -- -------------------------------------------------------------------
-
-    create temp table regen_genofig_not_normal_temp  
-      (        
-	rgfnna_id		int8,
-	rgfnna_genox_zdb_id	varchar(50),
-	rgfnna_phenos_id	int8
-      ) with NO LOG;
-
-    create index regen_genofig_not_normal_temp_primary_foreign_key 
-    on regen_genofig_not_normal_temp (rgfnna_genox_zdb_id) 
-    using btree in idxdbs2;
-
-     
+	rgfg_id		varchar(50),
+        primary key (rgfg_id)
+      ) --with NO LOG
+;
 
 
     -- -------------------------------------------------------------------
     --   create regen_genofig_temp
     -- -------------------------------------------------------------------    
-    create temp table regen_genofig_temp
+    create  table regen_genofig_temp
       (
 	rgf_geno_zdb_id		varchar(50) not null,
 	rgf_fig_zdb_id		varchar(50) not null,
@@ -79,10 +47,9 @@ create procedure regen_genofig_create_temp_tables()
 	rgf_fish_zdb_id		varchar(50) not null,
 	rgf_phenos_id 		int8,
 	rgf_genox_zdb_id	varchar(50)
-      ) with no log;
+      ) --with no log
+;
 
   end 
-  delete from regen_genofig_clean_exp_with_morph_temp;
-  delete from regen_genofig_temp;
 
 end procedure;

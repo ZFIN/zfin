@@ -1,18 +1,10 @@
-create procedure regen_genox_marker(zdbId like zdb_active_data.zactvd_zdb_id)
+create procedure regen_genox_marker(mrkrZdbId like marker.mrkr_zdb_id)
 
   -- ---------------------------------------------------------------------------------------------
   -- regenerates the marker_zdb_id genox_zdb_id pairs in fast search tables for a given marker.
   -- here the marker types are restricted to gene and MO
   -- INPUT VARS:
   --   zdbId    ZDB ID of the marker (gene or MO) to regenerate marker_zdb_id genox_zdb_id pairs for.
-  --
-  -- OUTPUT VARS:
-  --   none
-  --
-  -- RETURNS:
-  --   Success: nothing
-  --   Error:   throws whatever exception occurred.
-  --
   -- EFFECTS:
   --   Success:
   --     Entries for this marker ZDB ID in mutant_fast_search table have been
@@ -38,12 +30,12 @@ create procedure regen_genox_marker(zdbId like zdb_active_data.zactvd_zdb_id)
   insert into regen_genox_input_zdb_id_temp
       ( rggz_zdb_id )
     values
-      ( zdbId );
+      ( mrkrZdbId );
 
   -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
-  execute procedure regen_genox_process();
+  execute procedure regen_genox_process_marker();
 
   -- Move from temp tables to permanent tables
-  execute procedure regen_genox_finish();
+  execute procedure regen_genox_finish_marker();
 
 end procedure;

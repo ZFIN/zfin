@@ -1,4 +1,4 @@
-create procedure regen_genofig_genotype(phenoxId varchar(100))
+create procedure regen_genofig_genotype(phenoxId like phenotype_Experiment.phenox_pk_id, genoxId like fish_Experiment.genox_zdb_id)
 
   -- ---------------------------------------------------------------------------------------------
   -- regenerates records in fast search table genotype_figure_fast_search for a given genotype.
@@ -11,19 +11,6 @@ create procedure regen_genofig_genotype(phenoxId varchar(100))
   -- RETURNS:
   --   Success: nothing
   --   Error:   throws whatever exception occurred.
-  --
-  -- EFFECTS:
-  --   Success:
-  --     Entries for those phenotype experiments in genotype_figure_fast_search table have been
-  --       replaced.
-  --     Several temp tables, used only by regen_genofig routines, will have 
-  --       been created.  All of them will be empty.
-  --   Error:
-  --     Entries for this phenox id in genotype_figure_fast_search table
-  --       may or may not have been replaced, or may have been dropped.
-  --     Various temp table may or may not have been created.  If created,
-  --       they may have data in them.
-  --     Transaction has not been committed or rolled back.
   -- ---------------------------------------------------------------------------------------------
 
 
@@ -34,35 +21,9 @@ create procedure regen_genofig_genotype(phenoxId varchar(100))
   --        regen_genofig_temp, regen_genofig_input_zdb_id_temp
   execute procedure regen_genofig_create_temp_tables();
 
-  -- gather the clean environments with sequence-targeting reagents
-  insert into regen_genofig_clean_exp_with_morph_temp
-      ( rgfcx_clean_exp_zdb_id, rgfcx_morph_zdb_id )
-  select distinct genox_exp_zdb_id, fishstr_str_zdb_id
-    from fish_experiment, marker, 
-         phenotype_experiment, genotype, fish_str, fish
-   where phenox_pk_id = phenoxId
-     and genox_zdb_id = phenox_genox_zdb_id
-     and fish_genotype_zdb_id = geno_zdb_id
-     and fish_zdb_id = genox_fish_zdb_id
-     and not exists (select 'x' 
-                       from experiment_condition xc2 , condition_data_type
-                      where genox_exp_zdb_id = xc2.expcond_exp_zdb_id
-                        and xc2.expcond_cdt_zdb_id = cdt_zdb_id
-                        and cdt_group not in ("morpholino","TALEN","CRISPR"));
+  execute procedure regen_genox_create_temp_tables();
 
-  -- gather the "not normal" phenotype records
-  insert into regen_genofig_not_normal_temp
-    (rgfnna_zdb_id,
-	rgfnna_genox_zdb_id,
-	rgfnna_phenos_id
-)
-    select distinct phenox_pk_id,
-    	   	    phenox_genox_zdb_id,
-		    phenos_pk_id
-      from phenotype_experiment, phenotype_statement
-     where phenox_pk_id = phenos_phenox_pk_id
-       and phenos_tag != 'normal';
-
+  execute procedure regen_genox_fish_experiment();
   -- takes regen_genofig_input_zdb_id_temp as input, adds recs to regen_genofig_temp
   execute procedure regen_genofig_process_indiv(phenoxId);
 

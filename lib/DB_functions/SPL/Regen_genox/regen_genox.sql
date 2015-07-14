@@ -208,7 +208,7 @@ create dba function regen_genox() returning integer
       select mrkr_zdb_id from marker where mrkr_type in ("GENE","MRPHLNO","TALEN", "CRISPR");
 
     -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
-    execute procedure regen_genox_process();
+    execute procedure regen_genox_process_marker();
 
     delete from regen_genox_input_zdb_id_temp;
 
@@ -263,12 +263,8 @@ create dba function regen_genox() returning integer
 
     let errorHint = "populate regen_genofig_input_zdb_id_temp";
 
-    insert into regen_genofig_input_zdb_id_temp ( rgfg_zdb_id )
-      select geno_zdb_id from genotype;
-
-    let errorHint = "find clean experiments";
-    execute procedure regen_genofig_clean_exp();
-    
+    insert into regen_genofig_input_zdb_id_temp ( rgfg_id )
+      select phenox_pk_id from phenotype_experiment;
 
     let errorHint = "fill fast search tables";
     execute procedure regen_genofig_process();
@@ -455,6 +451,10 @@ create dba function regen_genox() returning integer
       let errorHint = "genotype_figure_fast_search add foreign key to reference genotype";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_geno_zdb_id) references genotype on 
       delete cascade constraint gffs_geno_zdb_id_foreign_key);
+ 
+     let errorHint = "genotype_figure_fast_search add foreign key to reference fish";
+      alter table genotype_figure_fast_search add constraint (foreign key (gffs_fish_zdb_id) references fish on 
+      delete cascade constraint gffs_fish_zdb_id_foreign_key);
     
       let errorHint = "genotype_figure_fast_search add foreign key to reference figure";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_fig_zdb_id) references figure on 
