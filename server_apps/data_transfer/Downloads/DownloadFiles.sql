@@ -355,7 +355,7 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
         xpatex_assay_name, xpatex_zdb_id xpat_zdb,
         xpatex_source_zdb_id,
-        fish.fish_genotype_zdb_id, genox_exp_zdb_id,
+        fish.fish_zdb_id, genox_exp_zdb_id,
         clone_rating
  from expression_experiment
  join fish_experiment
@@ -381,7 +381,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  DELIMITER "	"
  select antibody.atb_zdb_id, atb.mrkr_abbrev,gene.mrkr_zdb_id as gene_zdb,
 	gene.mrkr_abbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
-	xpatex_source_zdb_id, fish_genotype_zdb_id, genox_exp_zdb_id
+	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
  from expression_experiment
  join fish_experiment
    on genox_zdb_id = xpatex_genox_zdb_id
@@ -396,7 +396,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 UNION
  select antibody.atb_zdb_id, atb.mrkr_abbrev, gene.mrkr_zdb_id as gene_zdb,
 	gene.mrkr_abbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
-	xpatex_source_zdb_id, fish_genotype_zdb_id, genox_exp_zdb_id
+	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
  from expression_experiment
  join fish_experiment
    on genox_zdb_id = xpatex_genox_zdb_id
@@ -415,15 +415,10 @@ UNION
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment.txt'
  DELIMITER "	"
-select exp_zdb_id, cdt_group,
- case when expcond_mrkr_zdb_id is not null
-	then expcond_mrkr_zdb_id
-	else cdt_name
- end, expcond_value , expunit_name, expcond_comments
- from experiment, experiment_condition, condition_data_type, experiment_unit
+select exp_zdb_id, cdt_group, cdt_name, expcond_comments
+ from experiment, experiment_condition, condition_data_type
  where exp_zdb_id = expcond_exp_zdb_id
    and expcond_cdt_zdb_id = cdt_zdb_id
-   and expcond_expunit_zdb_id = expunit_zdb_id
    and exists (
 	select 't' from fish_experiment, expression_experiment
 	 where exp_zdb_id = genox_exp_zdb_id
@@ -431,7 +426,7 @@ select exp_zdb_id, cdt_group,
 )
 -- special handling for _Generic-control ;;insert into tmp_env
 union
-select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used for non-standard conditions used in control treatments."
+select exp_zdb_id, exp_name,exp_name, "This environment is used for non-standard conditions used in control treatments."
  from experiment
  where exp_name = "_Generic-control"
  order by  1,2
@@ -442,7 +437,7 @@ select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used f
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype.txt'
  DELIMITER "	"
- select distinct g.geno_zdb_id, g.geno_display_name,
+ select distinct f.fish_zdb_id, f.fish_name,
             phenox_start_stg_zdb_id,
             (select stg_name
                 from stage
@@ -473,7 +468,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
    and f.fish_zdb_id = gx.genox_fish_zdb_id
    and phenox_fig_zdb_id = fig_zdb_id
    and ps.phenos_pk_Id = tps.phenos_pk_id
- order by geno_zdb_id, fig_source_zdb_id;
+ order by fish_zdb_id, fig_source_zdb_id;
 
 -- generate a file with xpatex and associated figure zdbid's
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig.txt'"
@@ -490,25 +485,20 @@ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig.txt'
  DELIMITER "	"
- select distinct fish_genotype_zdb_id, phenox_fig_zdb_id
+ select distinct fish_zdb_id, phenox_fig_zdb_id
  from fish_experiment, phenotype_experiment, fish
  where genox_zdb_id = phenox_genox_zdb_id
  and genox_fish_zdb_id = fish_zdb_id
- order by fish_genotype_zdb_id;
+ order by fish_zdb_id;
 
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'
  DELIMITER "	"
-select exp_zdb_id, cdt_group,
- case when expcond_mrkr_zdb_id is not null
-	then expcond_mrkr_zdb_id
-	else cdt_name
- end, expcond_value, expunit_name, expcond_comments
- from experiment, experiment_condition, condition_data_type, experiment_unit
+select exp_zdb_id, cdt_group, cdt_name, expcond_comments
+ from experiment, experiment_condition, condition_data_type
  where exp_zdb_id = expcond_exp_zdb_id
    and expcond_cdt_zdb_id = cdt_zdb_id
-   and expcond_expunit_zdb_id = expunit_zdb_id
    and exists (
 	select 't'
 	 from fish_experiment, phenotype_experiment
@@ -517,7 +507,7 @@ select exp_zdb_id, cdt_group,
 )
 union
 -- special handling for _Generic-control--insert into tmp_env
-select exp_zdb_id, exp_name, exp_name, "N/A", "N/A", "This environment is used for non-standard conditions used in control treatments."
+select exp_zdb_id, exp_name, exp_name,"This environment is used for non-standard conditions used in control treatments."
  from experiment
  where exp_name = "_Generic-control"
  order by 1,2
@@ -949,9 +939,10 @@ select distinct geno_zdb_id, geno_display_name, genoback_background_zdb_id
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes.tx'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes.txt'
  DELIMITER "	"
-select distinct geno_zdb_id, geno_display_name, geno_handle
- from genotype
+select distinct fish_zdb_id, fish_name, fish_handle, geno_zdb_id
+ from genotype, fish
  where geno_is_wildtype = 't'
+  and fish_genotype_Zdb_id = fish_zdb_id
 ;
 
 -- generate a file with zdb history data
@@ -1096,6 +1087,16 @@ unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStag
 select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_zdb_id
  from record_attribution, genotype
  where recattrib_data_zdb_id = geno_zdb_id
+   and recattrib_source_type = 'standard'
+;
+
+-- unload publication - genotype association file
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_publication.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_publication.txt'
+ DELIMITER "	"
+select recattrib_data_zdb_id as fish_zdb_id, recattrib_Source_zdb_id as pub_zdb_id
+ from record_attribution, fish
+ where recattrib_data_zdb_id = fish_zdb_id
    and recattrib_source_type = 'standard'
 ;
 
@@ -1253,11 +1254,11 @@ ORDER BY LOWER(mrkr_abbrev)
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression.txt'"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression.txt'
  DELIMITER "	"
-select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
+select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
         xpatex_source_zdb_id,
         case when xpatex_probe_feature_zdb_id = "" then " " else xpatex_probe_feature_zdb_id end as probe_id,
-        case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id
+        case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
  from marker
  join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
@@ -1273,10 +1274,9 @@ select mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.ter
    --and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5') -- this ia a slow query
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5') -- might help
    and xpatres_expression_found = 't'
- group by mrkr_zdb_id, mrkr_abbrev, geno_display_name, super.term_ont_id, super.term_name,
+ group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
-        xpatex_source_zdb_id, probe_id, antibody_id
- order by mrkr_zdb_id
+        xpatex_source_zdb_id, probe_id, antibody_id, fish_Zdb_id
 ;
 
 
@@ -1634,18 +1634,6 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  DELIMITER "	"
 select * from tmp_features;
 
--- a list of all features ordered by abbreviation (case insensitive)
-
-
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishMartMembers.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishMartMembers.txt'
- DELIMITER "	"
-select case when fas_geno_long_name = "" then " " else fas_geno_long_name end as fishName, 
-  case when fas_line_handle = "" then " " else fas_line_handle end, gfrv_affector_id, gfrv_affector_abbrev, gfrv_affector_type_display, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_construct_name,  gfrv_construct_zdb_id
-  from gene_Feature_result_View, fish_annotation_search
-  where gfrv_fas_id = fas_pk_id
-  order by fishName, fas_line_handle, gfrv_affector_id;
-
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/snpData.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/snpData.txt'
@@ -1720,13 +1708,13 @@ where fmrel_ftr_zdb_id = feature_zdb_id
 
 
 ! echo "generating clean phenotype download" ;
-create temp table tmp_pheno_gene (id varchar(50), genox_zdb_id varchar(50), gene_abbrev varchar(50), gene_zdb_id varchar(50), term_ont_id varchar(30), term_name varchar(100), whereFrom varchar(20), geno_id varchar(50), mo_id varchar(50), stage_start_id varchar(50), stage_end_id varchar(50))
+create temp table tmp_pheno_gene (id varchar(50), genox_zdb_id varchar(50), gene_abbrev varchar(50), gene_zdb_id varchar(50), term_ont_id varchar(30), term_name varchar(100), whereFrom varchar(20), fish_id varchar(50), mo_id varchar(50), stage_start_id varchar(50), stage_end_id varchar(50))
  with no log;
 
 ! echo "add direct phenotype annotations with genes"
 ! echo "Entity 2 subterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id, mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id, mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from all_term_contains,
        fish_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where mfs_genox_zdb_id = genox_zdb_id
@@ -1746,7 +1734,7 @@ select distinct phenos_pk_id, genox_Zdb_id, mrkr_abbrev, mrkr_zdb_id, b.term_ont
 
 ! echo "Entity 2 superterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from all_term_contains,
        fish_Experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where mfs_genox_zdb_id = genox_zdb_id
@@ -1765,7 +1753,7 @@ and mrkr_zdb_id like 'ZDB-GENE%'
 
 ! echo "Entity 1 subterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from all_term_contains,
        fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where mfs_genox_zdb_id = genox_zdb_id
@@ -1785,7 +1773,7 @@ and mrkr_zdb_id like 'ZDB-GENE%'
 
 ! echo "Entity 1 superterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from all_term_contains,
        fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where mfs_genox_zdb_id = genox_zdb_id
@@ -1807,7 +1795,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 ! echo "Entity 1 superterms"
 ---ALLELES
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
        fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
@@ -1830,7 +1818,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 
 ! echo "Entity 1 subterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
        fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b, experiment, experiment_condition, fish
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
@@ -1852,7 +1840,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 
 ! echo "Entity 2 superterm"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
        fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b,experiment, experiment_condition, fish
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
@@ -1874,7 +1862,7 @@ select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_
 
 ! echo "Entity 2 superterms"
 insert into tmp_pheno_gene
-select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_genotype_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
+select distinct phenos_pk_id, genox_Zdb_id,mrkr_abbrev, mrkr_zdb_id, b.term_ont_id, b.term_name, 'pheno', fish_zdb_id, expcond_mrkr_zdb_id, phenox_start_stg_zdb_id, phenox_end_stg_zdb_id
   from feature_marker_Relationship, genotype_Feature, all_term_contains,
        fish_experiment, mutant_Fast_search, phenotype_statement, phenotype_experiment, term a, marker, term b,experiment, experiment_condition, fish
   where fmrel_ftr_zdb_id = genofeat_feature_zdb_id
@@ -1914,8 +1902,8 @@ create temp table tmp_dumpPheno (
        bsubterm_name varchar(255),
        quality_id varchar(30),
        quality_name varchar(255),
-       geno_id varchar(50),
-       geno_display_name varchar(255),
+       fish_id varchar(50),
+       fish_name varchar(255),
        mo_id varchar(50),
        stage_start_id varchar(50),
        stage_end_id varchar(50),
@@ -1928,8 +1916,8 @@ create temp table tmp_dumpPheno (
 with no log;
 
 ! echo "Insert all tmp_pheno_gene records into tmp_dumpPheno "
-insert into tmp_dumpPheno (phenos_id, id,genox_id, gene_abbrev, gene_zdb_id, geno_id, mo_id, stage_start_id, stage_end_id, asuperterm_ont_id, asuperterm_name, pub_id, fig_id)
-  select distinct phenos_pk_id, id, genox_zdb_id, gene_abbrev, gene_zdb_id, geno_id, mo_id, stage_start_id, stage_end_id, term.term_ont_id, term.term_name, fig_source_zdb_id, fig_zdb_id
+insert into tmp_dumpPheno (phenos_id, id,genox_id, gene_abbrev, gene_zdb_id, fish_id, mo_id, stage_start_id, stage_end_id, asuperterm_ont_id, asuperterm_name, pub_id, fig_id)
+  select distinct phenos_pk_id, id, genox_zdb_id, gene_abbrev, gene_zdb_id, fish_id, mo_id, stage_start_id, stage_end_id, term.term_ont_id, term.term_name, fig_source_zdb_id, fig_zdb_id
     from tmp_pheno_gene, phenotype_statement, phenotype_experiment, term, figure
     where id = phenos_pk_id
     and fig_zdb_id = phenox_fig_zdb_id
@@ -1939,9 +1927,9 @@ insert into tmp_dumpPheno (phenos_id, id,genox_id, gene_abbrev, gene_zdb_id, gen
 
 ! echo "update gene_display name"
 update tmp_dumpPheno
-  set geno_display_name = (select geno_display_name
-      			  	  from genotype
-				  where geno_zdb_id = geno_id);
+  set fish_name = (select fish_name
+      			  	  from fish
+				  where fish_zdb_id = fish_id);
 
 
 !echo "unload phenoGeneCleanData.txt"
@@ -1957,7 +1945,7 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 	 tps.brelationship_id,
 	 tps.brelationship_name,
 	 tps.bsuperterm_ont_id,tps.bsuperterm_name,
-	 geno_id,geno_display_name,
+	 fish_id,fish_name,
 	 mo_id,
 	 stage_start_id,stage_end_id,
 	 genox_id,

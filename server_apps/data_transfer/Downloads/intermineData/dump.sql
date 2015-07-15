@@ -309,9 +309,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_experiments/1exps.txt"
   select expcond_zdb_id,
   	 expcond_exp_zdb_id,
-  	 expcond_value, 
 	 expcond_cdt_zdb_id, 
-	 expcond_mrkr_zdb_id, 
 	 expunit_name, 
 	 cdt_name, 
 	 cdt_group,
@@ -324,8 +322,6 @@ union
   select exp_zdb_id,
   	 exp_zdb_id,
   	 '',
-	 '',
-	 '',
 	 '',
 	 '',
 	 '',
