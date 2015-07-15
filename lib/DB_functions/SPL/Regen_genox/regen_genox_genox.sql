@@ -36,6 +36,6 @@ create procedure regen_genox_genox(genoxZdbId like fish_experiment.genox_zdb_id)
   execute procedure regen_genox_process_genox();
 
   -- Move from temp tables to permanent tables
-  execute procedure regen_genox_finish_genox();
+  execute procedure regen_genox_finish_marker();
 
 end procedure;

@@ -4,22 +4,20 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.query.client.Console;
-import com.google.gwt.query.client.impl.ConsoleBrowser;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.gwt.root.dto.DeAttributionException;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.LookupRPCService;
-
 import org.zfin.gwt.root.util.StringUtils;
 
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  */
@@ -32,6 +30,8 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
     private HTML messageBox = new HTML("");
     private boolean working = false;
     private HashMap<String, RelatedEntityDTO> relatedEntityDTOs = new HashMap<>(); // entities in the Remove Attr drop-down list
+
+    private MarkerRPCServiceAsync markerService = MarkerRPCService.App.getInstance();
 
     public enum RemoveHeader {
         MARKER,
@@ -187,29 +187,9 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
                 }
 
                 working();
-                MarkerRPCService.App.getInstance().removeAttribution(attributionToRemoveID, dto.getPublicationZdbID(),
-                        new MarkerEditCallBack<String>("Failed to remove attribution: " + attributionToRemoveLabel, handlesError) {
 
-                            @Override
-                            public void onFailure(Throwable throwable) {
-                                super.onFailure(throwable);
-                                notWorking();
-                            }
-
-                            @Override
-                            public void onSuccess(String message) {
-                                notWorking();
-                                if (message == null) {
-                                    fireEventSuccess();
-                                    clearError();
-                                    setMessage("Removed attribution: " + attributionToRemoveLabel);
-                                    resetInput();
-                                } else if (!message.isEmpty()) {
-                                    setError(message);
-                                    clearMessage();
-                                }
-                            }
-                        });
+                markerService.checkDeattributionRules(attributionToRemoveID, dto.getPublicationZdbID(),
+                        new DeAttributionRuleCallBack(attributionToRemoveID, handlesError));
             }
         });
     }
@@ -260,7 +240,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         if (isWorking()) return;
         if (checkAttributionExists(value)) return;
         working();
-        MarkerRPCService.App.getInstance().addAttributionForMarkerName(value, dto.getPublicationZdbID(),
+        markerService.addAttributionForMarkerName(value, dto.getPublicationZdbID(),
                 new MarkerEditCallBack<Void>("Failed to add attribution for: " + value, this) {
 
                     @Override
@@ -293,7 +273,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         if (isWorking()) return;
         if (checkAttributionExists(value)) return;
         working();
-        MarkerRPCService.App.getInstance().addAttributionForFeatureName(value, dto.getPublicationZdbID(),
+        markerService.addAttributionForFeatureName(value, dto.getPublicationZdbID(),
                 new MarkerEditCallBack<Void>("Failed to add attribution for: " + value, this) {
 
                     @Override
@@ -358,5 +338,54 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         revertGUI();
     }
 
+
+    class DeAttributionRuleCallBack extends ZfinAsyncCallback<Void> {
+
+        private String entityID;
+        private HandlesError errorLabel;
+
+        public DeAttributionRuleCallBack(String entityID, HandlesError errorLabel) {
+            super(entityID, null);
+            this.entityID = entityID;
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            markerService.removeAttribution(entityID, dto.getPublicationZdbID(),
+                    new MarkerEditCallBack<String>("Failed to remove attribution: ", errorLabel) {
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);
+                            notWorking();
+                        }
+
+                        @Override
+                        public void onSuccess(String message) {
+                            notWorking();
+                            if (message == null) {
+                                fireEventSuccess();
+                                clearError();
+                                setMessage("Removed attribution: ");
+                                resetInput();
+                            } else if (!message.isEmpty()) {
+                                setError(message);
+                                clearMessage();
+                            }
+                            notWorking();
+                        }
+                    });
+
+        }
+
+        @Override
+        public void onFailure(Throwable throwable) {
+            if (throwable instanceof DeAttributionException)
+                Window.alert(throwable.getMessage());
+            else
+                super.onFailure(throwable);
+            notWorking();
+        }
+    }
 
 }

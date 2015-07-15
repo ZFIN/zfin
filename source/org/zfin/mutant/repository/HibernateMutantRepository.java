@@ -564,16 +564,16 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
-                " select count(*) from marker_go_term_evidence  ev  " +
-                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
-                " where " +
-                " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
-                " and " +
-                " inf.infgrmem_inferred_from=:zdbID " +
-                " ")
-                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
-                .setString("pubZdbID", publicationZdbID)
-                .uniqueResult().toString()
+                        " select count(*) from marker_go_term_evidence  ev  " +
+                        " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                        " where " +
+                        " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
+                        " and " +
+                        " inf.infgrmem_inferred_from=:zdbID " +
+                        " ")
+                        .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
+                        .setString("pubZdbID", publicationZdbID)
+                        .uniqueResult().toString()
         );
     }
 
@@ -1081,59 +1081,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         Query query = session.createQuery(hql);
         query.setString("fishZdbID", fish.getZdbID());
-        List<Publication> publications = (List<Publication>) query.list();
-
-        if (publications != null)
-            publicationList.addAll(publications);
-
-        // alias
-        hql = "select p.publication " +
-                " from PublicationAttribution p , DataAlias  da " +
-                " where p.dataZdbID = da.zdbID " +
-                " and da.dataZdbID = :fishZdbID ";
-
-        query = session.createQuery(hql);
-        query.setString("fishZdbID", fish.getZdbID());
-
-        publications = (List<Publication>) query.list();
-        if (publications != null)
-            publicationList.addAll(publications);
-
-        Set<FishExperiment> fishExperiments = fish.getFishExperiments();
-        if (fishExperiments != null && fishExperiments.size() > 0) {
-            // expression experiment
-            hql = "select distinct experiment.publication from ExpressionExperiment experiment " +
-                    " where experiment.fishExperiment in (:fishExperiments)";
-
-            query = session.createQuery(hql);
-            query.setParameterList("fishExperiments", fishExperiments);
-            publications = (List<Publication>) query.list();
-
-            if (publications != null)
-                publicationList.addAll(publications);
-
-            // phenotype experiments
-            hql = "select distinct experiment.figure.publication from PhenotypeExperiment experiment " +
-                    " where experiment.fishExperiment in (:fishExperiments)";
-            query = session.createQuery(hql);
-            query.setParameterList("fishExperiments", fishExperiments);
-            publications = (List<Publication>) query.list();
-
-            if (publications != null)
-                publicationList.addAll(publications);
-
-            // experiments
-            hql = "select distinct experiment.experiment.publication from FishExperiment experiment " +
-                    " where experiment in (:fishExperiments)";
-            query = session.createQuery(hql);
-            query.setParameterList("fishExperiments", fishExperiments);
-
-
-            if (publications != null)
-                publicationList.addAll(publications);
-        }
-
-        return publicationList;
+        return (List<Publication>) query.list();
     }
 
     /**
@@ -1746,5 +1694,32 @@ public class HibernateMutantRepository implements MutantRepository {
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotype", genotype);
         return query.list();
+    }
+
+    @Override
+    public long getFishCountByGenotype(String genotypeID, String publicationID) {
+        String hql = "select distinct fish from Fish as fish, PublicationAttribution pubAtt " +
+                "where fish.genotype.zdbID = :genotypeID AND " +
+                "pubAtt.publication.zdbID = :publicationID AND " +
+                "pubAtt.dataZdbID = fish.zdbID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotypeID", genotypeID);
+        query.setParameter("publicationID", publicationID);
+        List<Fish> fishList = query.list();
+        if (fishList == null)
+            return 0;
+        return (long) fishList.size();
+    }
+
+    @Override
+    public long getInferredFromCountByGenotype(String genotypeID, String publicationID) {
+        String hql = "select count(inferred.markerGoTermEvidenceZdbID) from InferenceGroupMember as inferred, MarkerGoTermEvidence as mgt " +
+                "where inferred.inferredFrom = :genotypeID AND " +
+                "mgt.source.zdbID = :publicationID AND " +
+                "inferred.markerGoTermEvidenceZdbID = mgt.zdbID ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotypeID", "ZFIN:" + genotypeID);
+        query.setParameter("publicationID", publicationID);
+        return (long) query.uniqueResult();
     }
 }

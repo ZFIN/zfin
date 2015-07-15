@@ -216,9 +216,13 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.errataAndNotes = errataAndNotes;
     }
 
-    public String getKeywords() { return keywords; }
+    public String getKeywords() {
+        return keywords;
+    }
 
-    public void setKeywords(String keywords) { this.keywords = keywords; }
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
 
     public Set<MeshHeading> getMeshHeadings() {
         return meshHeadings;
@@ -247,9 +251,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     public String getCitation() {
         StringBuilder sb = new StringBuilder();
         sb.append(authors);
-        sb.append(" (");
-        sb.append(publicationDate.get(GregorianCalendar.YEAR));
-        sb.append(") ");
+        if (publicationDate != null) {
+            sb.append(" (");
+            sb.append(publicationDate.get(GregorianCalendar.YEAR));
+            sb.append(") ");
+        }
         sb.append(title);
         sb.append(". ");
         if (journal != null) {

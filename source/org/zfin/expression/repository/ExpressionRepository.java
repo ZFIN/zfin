@@ -395,6 +395,4 @@ public interface ExpressionRepository {
      */
     List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
 
-    List<ExperimentCondition> getSequenceTargetingReagentExperiments(SequenceTargetingReagent sequenceTargetingReagent);
-
 }

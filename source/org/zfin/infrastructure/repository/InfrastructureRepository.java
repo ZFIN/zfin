@@ -449,6 +449,8 @@ public interface InfrastructureRepository {
     void insertPublicAttribution(Genotype genotype, Publication publication);
 
     void insertRecordAttribution(Fish fish, Publication publication);
+
+    long getDistinctPublicationsByData(String entityID);
 }
 
 
