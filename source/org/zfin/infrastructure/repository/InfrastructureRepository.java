@@ -115,6 +115,8 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate);
 
+    void insertUpdatesTable(EntityZdbID entity, BeanFieldUpdate beanFieldUpdate, String comment);
+
 
 //    void deleteRecordAttribution(RecordAttribution recordAttribution);
 

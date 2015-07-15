@@ -15,25 +15,25 @@ public class PublicationFormValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return PublicationForm.class.equals(aClass);
+        return Publication.class.equals(aClass);
     }
 
     @Override
     public void validate(Object o, Errors errors) {
-        final PublicationForm form = (PublicationForm) o;
+        final Publication form = (Publication) o;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "title.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "authors", "authors.empty");
         ValidationUtils.rejectIfEmpty(errors, "journal", "journal.empty");
-        ValidationUtils.rejectIfEmpty(errors, "date", "date.empty");
+        ValidationUtils.rejectIfEmpty(errors, "publicationDate", "publicationDate.empty");
 
-        if (form.getPubMedID() != null && !form.getPubMedID().isEmpty()) {
-            if (!form.getPubMedID().matches("^\\d+$")) {
-                errors.rejectValue("pubMedID", "pubmedid.not.number");
+        if (form.getAccessionNumber() != null && !form.getAccessionNumber().isEmpty()) {
+            if (!form.getAccessionNumber().matches("^\\d+$")) {
+                errors.rejectValue("accessionNumber", "accessionNumber.not.number");
             }
 
-            if (!errors.hasFieldErrors("pubMedID")) {
-                List<Publication> pubsWithSamePubMedId = RepositoryFactory.getPublicationRepository().getPublicationByPmid(form.getPubMedID());
+            if (!errors.hasFieldErrors("accessionNumber")) {
+                List<Publication> pubsWithSamePubMedId = RepositoryFactory.getPublicationRepository().getPublicationByPmid(form.getAccessionNumber());
                 CollectionUtils.filter(pubsWithSamePubMedId, new Predicate() {
                     @Override
                     public boolean evaluate(Object o) {
@@ -41,7 +41,7 @@ public class PublicationFormValidator implements Validator {
                         }
                 });
                 if (CollectionUtils.isNotEmpty(pubsWithSamePubMedId)) {
-                    errors.rejectValue("pubMedID", "pubmedid.duplicate", "This PubMedID is already used by " + pubsWithSamePubMedId.get(0).getZdbID());
+                    errors.rejectValue("accessionNumber", "accessionNumber.duplicate", "This PubMedID is already used by " + pubsWithSamePubMedId.get(0).getZdbID());
                 }
             }
         }

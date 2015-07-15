@@ -48,7 +48,6 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             List<BeanFieldUpdate> beanFieldUpdateList = new ArrayList<>();
             BeanFieldUpdate beanFieldUpdate = new BeanFieldUpdate();
             beanFieldUpdate.setField("phone");
-            beanFieldUpdate.setFieldType(String.class);
             beanFieldUpdate.setFrom("(541) 346-4607");
             beanFieldUpdate.setTo("(541) 346-1234");
             beanFieldUpdateList.add(beanFieldUpdate);
@@ -78,7 +77,6 @@ public class ProfileServiceTest extends AbstractDatabaseTest {
             List<BeanFieldUpdate> beanFieldUpdateList = new ArrayList<>();
             BeanFieldUpdate beanFieldUpdate = new BeanFieldUpdate();
             beanFieldUpdate.setField("address");
-            beanFieldUpdate.setFieldType(String.class);
             beanFieldUpdate.setFrom(oldAddress);
             beanFieldUpdate.setTo(newAddress);
 

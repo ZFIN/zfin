@@ -1,12 +1,13 @@
 package org.zfin.profile.service;
 
+import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A poor man's BeanUtils for our specific bean copying reasons.
@@ -17,11 +18,12 @@ public class BeanCompareService {
     private Logger logger = Logger.getLogger(BeanCompareService.class);
 
     public BeanFieldUpdate compareBeanField(String field, Object oldObject, Object newObject) throws Exception {
-        return compareBeanField(field, oldObject, newObject, String.class, false);
+        return compareBeanField(field, oldObject, newObject, false);
     }
 
-    public BeanFieldUpdate compareBeanField(String field, Object oldObject, Object newObject,Class fieldClass) throws Exception {
-        return compareBeanField(field, oldObject, newObject, fieldClass, false);
+    public BeanFieldUpdate compareBeanField(String field, Object oldObject, Object newObject, boolean doCopy)
+            throws Exception {
+        return compareBeanField(field, oldObject, newObject, doCopy, false);
     }
 
     /**
@@ -32,52 +34,29 @@ public class BeanCompareService {
      * @param newObject
      * @return
      */
-    public BeanFieldUpdate compareBeanField(String field, Object oldObject, Object newObject, Class fieldClass, boolean doCopy)
+    public BeanFieldUpdate compareBeanField(String field, Object oldObject, Object newObject, boolean doCopy, boolean nullAsBoolean)
             throws Exception {
-        Object oldField = PropertyUtils.getProperty(oldObject,field);
-        Object newField = PropertyUtils.getProperty(newObject,field);
+        Object oldField = getProperty(oldObject,field);
+        Object newField = getProperty(newObject,field);
 
         BeanFieldUpdate beanFieldUpdate = null;
 
-        if (fieldClass.equals(Boolean.class)
-                || fieldClass.equals(boolean.class)
-                ) {
+        if (nullAsBoolean) {
             oldField = (oldField == null ? false : oldField);
             newField = (newField == null ? false : newField);
         }
 
-        // TODO: this can only be simpler
-        // check for the null comparisons
-        if ((oldField == null && newField == null)) {
-            return beanFieldUpdate; // null
-        } else
-        if(!ObjectUtils.equals(oldField,newField)){
+        if (!Objects.equals(oldField, newField)) {
             beanFieldUpdate = new BeanFieldUpdate();
             beanFieldUpdate.setField(field);
             beanFieldUpdate.setFrom(oldField);
             beanFieldUpdate.setTo(newField);
-            beanFieldUpdate.setFieldType(fieldClass);
             if (doCopy) {
-                PropertyUtils.setProperty(oldObject,field,newField);
+                PropertyUtils.setProperty(oldObject, field, newField);
             }
-        } else if (oldField.equals(newField)) {
-            // do nothing!
-        } else {
-            logger.error("not sure how we got here: " + oldField + " " + newField + " " + oldField + " " + newObject + " " + fieldClass);
         }
 
         return beanFieldUpdate;
-    }
-
-
-    protected String generateGetterNameFromFieldName(String field, Class fieldClass) {
-//        return (fieldClass.equals(Boolean.class) || fieldClass.equals(boolean.class) ? "is": "get")
-//                + field.substring(0, 1).toUpperCase() + field.substring(1);
-        return "get" + field.substring(0, 1).toUpperCase() + field.substring(1);
-    }
-
-    protected String generateSetterNameFromFieldName(String field) {
-        return "set" + field.substring(0, 1).toUpperCase() + field.substring(1);
     }
 
     protected void applyUpdates(Object objectToBeUpdated, List<BeanFieldUpdate> fields) throws Exception {
@@ -87,7 +66,14 @@ public class BeanCompareService {
     }
 
     protected void applyUpdate(Object objectToBeUpdated, BeanFieldUpdate field) throws Exception{
+        PropertyUtils.setProperty(objectToBeUpdated, field.getField(), field.getTo());
+    }
 
-        PropertyUtils.setProperty(objectToBeUpdated,field.getField(),field.getTo());
+    private static Object getProperty(Object bean, String field) {
+        try {
+            return PropertyUtils.getProperty(bean, field);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NestedNullException e) {
+            return null;
+        }
     }
 }

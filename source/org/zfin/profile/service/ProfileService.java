@@ -138,11 +138,11 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("phone", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldPerson, newPerson));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("orcidID", oldPerson, newPerson));
-        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailList", oldPerson, newPerson, Boolean.class));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("emailList", oldPerson, newPerson, false, true));
 
         if (getCurrentSecurityUser() != null   // it's a logged-in user
                 && isCurrentSecurityUserRoot()) {  //  the user logged in as root
-            CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("deceased", oldPerson, newPerson, Boolean.class));
+            CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("deceased", oldPerson, newPerson, false, true));
         }
 
 
@@ -311,7 +311,7 @@ public class ProfileService {
         }
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanFieldUpdate);
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("bio", oldLab, newLab));
-        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("contactPerson", oldLab, newLab, Person.class));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("contactPerson", oldLab, newLab));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("prefix", oldLab, newLab));
 
         return fieldUpdateList;
@@ -350,7 +350,7 @@ public class ProfileService {
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("url", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("address", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("bio", oldCompany, newCompany));
-        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("contactPerson", oldCompany, newCompany, Person.class));
+        CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("contactPerson", oldCompany, newCompany));
         CollectionUtils.addIgnoreNull(fieldUpdateList, beanCompareService.compareBeanField("prefix", oldCompany, newCompany));
         return fieldUpdateList;
     }

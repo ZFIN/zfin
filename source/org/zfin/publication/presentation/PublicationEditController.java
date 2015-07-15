@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.infrastructure.CustomCalendarEditor;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -19,9 +20,9 @@ import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/publication")
@@ -32,6 +33,9 @@ public class PublicationEditController {
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
+
+    @Autowired
+    private PublicationService publicationService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -65,33 +69,34 @@ public class PublicationEditController {
 
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String showNewPublicationForm(Model model,
-                                         @ModelAttribute PublicationForm form) {
+    public String showNewPublicationForm(@ModelAttribute Publication publication) {
         // default type should be journal
-        form.setType(Publication.Type.JOURNAL);
-        model.addAttribute("publicationForm", form);
+        publication.setType(Publication.Type.JOURNAL);
         return "publication/add-publication.page";
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public String processNewPublication(@Valid @ModelAttribute PublicationForm publicationForm,
+    public String processNewPublication(Model model,
+                                        @Valid @ModelAttribute Publication publication,
                                         BindingResult result,
-                                        RedirectAttributes ra) {
-        // the RedirectAttributes parameter keeps the query parameters off of the redirect URL
-        // See: http://stackoverflow.com/questions/13247239/spring-mvc-controller-redirect-without-parameters-being-added-to-my-url
+                                        RedirectAttributes ra) { // keeps the query parameters off of the redirect URL
 
         if (result.hasErrors()) {
             return "publication/add-publication.page";
         }
 
-        Publication publication = new Publication();
-        Map<String, List<String>> updates = PublicationService.getUpdates(publication, publicationForm);
-        PublicationService.applyFormToPublication(publication, publicationForm);
-        publicationRepository.addPublication(publication);
-        for (Map.Entry<String, List<String>> update : updates.entrySet()) {
-            infrastructureRepository.insertUpdatesTable(publication, update.getKey(), "Add pub", update.getValue().get(1), update.getValue().get(0));
+        Publication newPublication = new Publication();
+        try {
+            Collection<BeanFieldUpdate> updates = publicationService.mergePublicationFromForm(publication, newPublication);
+            publicationRepository.addPublication(newPublication);
+            for (BeanFieldUpdate update : updates) {
+                infrastructureRepository.insertUpdatesTable(newPublication, update, "Add pub");
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", "Error saving publication.");
+            return "publication/add-publication.page";
         }
-        return "redirect:/" + publication.getZdbID();
+        return "redirect:/" + newPublication.getZdbID();
     }
 
     @RequestMapping(value = "/{zdbID}/edit", method = RequestMethod.GET)
@@ -101,32 +106,37 @@ public class PublicationEditController {
         if (publication == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-        model.addAttribute("publicationForm", PublicationService.getPublicationFormFromPublication(publication));
+        model.addAttribute("publication", publication);
         model.addAttribute("allowCuration", PublicationService.allowCuration(publication));
         return "publication/edit-publication.page";
     }
 
     @RequestMapping(value = "/{zdbID}/edit", method = RequestMethod.POST)
-    public String processUpdatedPublication(@PathVariable String zdbID,
-                                            @Valid @ModelAttribute PublicationForm publicationForm,
+    public String processUpdatedPublication(Model model,
+                                            @PathVariable String zdbID,
+                                            @Valid @ModelAttribute Publication publication,
                                             BindingResult result,
                                             RedirectAttributes ra) {
         if (result.hasErrors()) {
             return "publication/edit-publication.page";
         }
 
-        Publication publication = publicationRepository.getPublication(zdbID);
-        if (publication == null) {
+        Publication existingPublication = publicationRepository.getPublication(zdbID);
+        if (existingPublication == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
-        Map<String, List<String>> updates = PublicationService.getUpdates(publication, publicationForm);
-        PublicationService.applyFormToPublication(publication, publicationForm);
-        publicationRepository.updatePublications(Arrays.asList(publication));
-        for (Map.Entry<String, List<String>> update : updates.entrySet()) {
-            infrastructureRepository.insertUpdatesTable(publication, update.getKey(), "Edit pub", update.getValue().get(1), update.getValue().get(0));
+        try {
+            Collection<BeanFieldUpdate> updates = publicationService.mergePublicationFromForm(publication, existingPublication);
+            publicationRepository.updatePublications(Arrays.asList(existingPublication));
+            for (BeanFieldUpdate update : updates) {
+                infrastructureRepository.insertUpdatesTable(publication, update, "Edit pub");
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", "Error saving publication.");
+            return "publication/edit-publication.page";
         }
-        return "redirect:/" + publication.getZdbID();
+        return "redirect:/" + existingPublication.getZdbID();
     }
 
 

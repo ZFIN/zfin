@@ -12,30 +12,21 @@ import static org.junit.Assert.*;
  */
 public class BeanCompareServiceTest {
 
-
-//    @Autowired
     private BeanCompareService beanCompareService = new BeanCompareService();
-
-    @Test
-    public void testGetter() throws Exception{
-//        assertEquals("isName", beanCompareService.generateGetterNameFromFieldName("name",Boolean.class)) ;
-//        assertEquals("isName", beanCompareService.generateGetterNameFromFieldName("name",boolean.class)) ;
-        assertEquals("getName", beanCompareService.generateGetterNameFromFieldName("name",String.class)) ;
-        assertEquals("setName", beanCompareService.generateSetterNameFromFieldName("name")) ;
-    }
 
     @Test
     public void test1() throws Exception{
         Person p1 = new Person();
-        String oldField =  "bob" ;
+        String oldField = "bob" ;
         p1.setFirstName(oldField);
         Person p2 = new Person();
-        String newField =  "john" ;
+        String newField = "john" ;
         p2.setFirstName(newField);
 
         BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("firstName", p1, p2) ;
 
-        assertEquals("BeanFieldUpdate{field='firstName', from=bob, to=john, fieldType=class java.lang.String}",beanFieldUpdate.toString() ) ;
+        assertEquals("BeanFieldUpdate{field='firstName', from=bob, to=john, fieldType=class java.lang.String}",
+                beanFieldUpdate.toString()) ;
         assertNotNull(beanCompareService.compareBeanField("firstName", p1, p2));
         beanCompareService.applyUpdate(p1, beanFieldUpdate);
         assertNull(beanCompareService.compareBeanField("firstName", p1, p2));
@@ -52,23 +43,24 @@ public class BeanCompareServiceTest {
         String newField =  null ;
         p2.setFirstName(newField);
 
-        assertEquals("BeanFieldUpdate{field='firstName', from=bob, to=null, fieldType=class java.lang.String}"
-                ,beanCompareService.compareBeanField("firstName", p1, p2,String.class,true).toString()) ;
-        assertNull(beanCompareService.compareBeanField("firstName", p1, p2)) ;
+        assertEquals("BeanFieldUpdate{field='firstName', from=bob, to=null, fieldType=class java.lang.String}",
+                beanCompareService.compareBeanField("firstName", p1, p2, true).toString());
+        assertNull(beanCompareService.compareBeanField("firstName", p1, p2));
 
 
-        oldField = null  ;
+        oldField = null;
         p1.setFirstName(oldField);
-        newField = "john"  ;
+        newField = "john";
         p2.setFirstName(newField);
-        BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("firstName", p1, p2) ;
-        assertEquals("BeanFieldUpdate{field='firstName', from=null, to=john, fieldType=class java.lang.String}",beanFieldUpdate.toString()) ;
+        BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("firstName", p1, p2);
+        assertEquals("BeanFieldUpdate{field='firstName', from=null, to=john, fieldType=class java.lang.String}",
+                beanFieldUpdate.toString());
         assertNotNull(beanCompareService.compareBeanField("firstName", p1, p2));
 
-        List<BeanFieldUpdate> updateList = new ArrayList<BeanFieldUpdate>();
+        List<BeanFieldUpdate> updateList = new ArrayList<>();
         updateList.add(beanFieldUpdate);
-        beanCompareService.applyUpdates(p1, updateList) ;
-        assertNull(beanCompareService.compareBeanField("firstName", p1, p2)) ;
+        beanCompareService.applyUpdates(p1, updateList);
+        assertNull(beanCompareService.compareBeanField("firstName", p1, p2));
 
     }
 
@@ -79,14 +71,13 @@ public class BeanCompareServiceTest {
         Person p2 = new Person();
         String field = "emailList" ;
 
-        Boolean oldField =  true ;
+        Boolean oldField = true ;
         p1.setEmailList(oldField);
-        Boolean newField =  null ;
-//        p2.setEmailList(newField);
+        Boolean newField = null;
 
-        assertEquals("BeanFieldUpdate{field='emailList', from=true, to=false, fieldType=class java.lang.Boolean}"
-                ,beanCompareService.compareBeanField("emailList", p1, p2, Boolean.class, true).toString()) ;
-        assertNull(beanCompareService.compareBeanField("emailList", p1, p2, Boolean.class, true));
+        assertEquals("BeanFieldUpdate{field='emailList', from=true, to=false, fieldType=class java.lang.Boolean}",
+                beanCompareService.compareBeanField("emailList", p1, p2, true, true).toString());
+        assertNull(beanCompareService.compareBeanField("emailList", p1, p2, true, true));
 
     }
 }
