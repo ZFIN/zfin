@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.feature.Feature;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -27,13 +28,10 @@ public class DeleteSTRRule extends AbstractDeleteEntityRule implements DeleteEnt
             addToValidationReport(entity.getAbbreviation() + " is used in the following features: ", featuresCreatedBySTR);
         }
 
-        List<ExperimentCondition> sequenceTargetingReagentExperiments = RepositoryFactory.getExpressionRepository().getSequenceTargetingReagentExperiments(sequenceTargetingReagent);
+        List<Fish> fishList = RepositoryFactory.getMutantRepository().getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
         // Can't delete if used in an environment
-        if (CollectionUtils.isNotEmpty(sequenceTargetingReagentExperiments)) {
-            List<Experiment> experimentList = new ArrayList<>(sequenceTargetingReagentExperiments.size());
-            for (ExperimentCondition expCond : sequenceTargetingReagentExperiments)
-                experimentList.add(expCond.getExperiment());
-            addToValidationReport(entity.getAbbreviation() + " is used in the following environments: ", experimentList);
+        if (CollectionUtils.isNotEmpty(fishList)) {
+            addToValidationReport(entity.getAbbreviation() + " is used in the following fish: ", fishList);
         }
         List<String> publicationListGO = RepositoryFactory.getPublicationRepository().getPublicationIDsForGOwithField(zdbID);
         SortedSet<Publication> sortedGOpubs = new TreeSet<>();

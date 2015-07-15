@@ -2094,17 +2094,4 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionExperiment>) criteria.list();
     }
 
-    @Override
-    public List<ExperimentCondition> getSequenceTargetingReagentExperiments(SequenceTargetingReagent sequenceTargetingReagent) {
-        if (sequenceTargetingReagent == null)
-            return null;
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(ExperimentCondition.class);
-        criteria.add(Restrictions.eq("sequenceTargetingReagent", sequenceTargetingReagent));
-        List<ExperimentCondition> experimentConditions = (List<ExperimentCondition>) criteria.list();
-
-        return experimentConditions;
-    }
-
-
 }

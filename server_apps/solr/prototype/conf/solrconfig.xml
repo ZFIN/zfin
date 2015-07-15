@@ -242,7 +242,7 @@
           <str name="defType">edismax</str>
           <!-- there is an override in SearchPrototypeController that mirrors this list but includes an extra, so they should be updated in tandem -->
           <!--screen used to be here, removed as a result of case 11323-->
-          <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, result_table,  has_orthology, xpat_zdb_id, fig_zdb_id, score</str>
+          <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, has_orthology, xpat_zdb_id, fig_zdb_id, score</str>
 
 
 
@@ -318,6 +318,10 @@
              alias_t^4.0
              construct_name^2.0
              construct_alias
+
+             construct
+             construct_t
+
 
              orthologue_name
              disease_model_t
@@ -407,6 +411,11 @@
 
              construct_name^2.0
              construct_alias
+
+             construct
+             construct_t
+
+
              orthologue_name
              disease_model_t
              disease_t
@@ -536,6 +545,9 @@
              orthologue_abbrev_t^2.0
              construct_name^2.0
              construct_alias
+
+             construct
+             construct_t
 
              full_name_ac^0.1
              alias_ac^0.1
@@ -846,7 +858,7 @@
 
     <requestHandler name="/fish-search" class="org.apache.solr.handler.component.SearchHandler">
         <lst name="appends">
-            <str name="fq">category:Fish</str>
+            <str name="fq">(category:Fish) OR (category:"Mutation / Tg" AND (lab_of_origin:"Stemple Lab" OR lab_of_origin:"Burgess &amp; Lin Lab"))</str>
         </lst>
         <lst name="defaults">
             <str name="echoParams">explicit</str>
@@ -855,7 +867,7 @@
             <str name="q.alt">*:*</str>
             <str name="defType">edismax</str>
             <!-- This list needs to match the fl for the primary requesthandler, or, more importantly, it needs to match the annotations in SearchResult.java  -->
-            <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count, result_table,  has_orthology, xpat_zdb_id, fig_zdb_id, score</str>
+            <str name="fl">name, type, id, category, full_name, url, thumbnail, image, snapshot, date, attribution_count,  has_orthology, xpat_zdb_id, fig_zdb_id, score</str>
             <str name="qf">proper_name^10.0
                 name
                 category_t
@@ -895,8 +907,6 @@
             <str name="recency_boost">mul(recip(ms(NOW/HOUR,tdate),3.16e-11,1,1),0.001)</str>
             <str name="images_boost">mul(exists(has_image),0.1)</str>
             <str name="jtype_boost">mul(exists(query({!v='publication_type:Journal'})),0.001)</str>
-
-
         </lst>
     </requestHandler>
 

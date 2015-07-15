@@ -58,8 +58,6 @@ select mrel_mrkr_2_zdb_id, genox_zdb_id
 and not exists (Select 'x' from regen_genox_temp
       	  	 	 where mrel_mrkr_2_zdb_id = rggt_mrkr_Zdb_id
 			 and genox_zdb_id = rggt_genox_zdb_id);
-       
-
 
 
 --    end if

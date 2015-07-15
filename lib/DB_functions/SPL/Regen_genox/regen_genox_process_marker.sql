@@ -15,9 +15,6 @@ create procedure regen_genox_process_marker()
   --   none
   -- --------------------------------------------------------------------------------------------
 
-
--- The genotypes include any of the WT lines, which (cannot be with 'Standard' or 'Generic Control' environments),
--- and has MO(s) which target ONLY this gene
 insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
   select distinct fmrel_mrkr_zdb_id , genox_zdb_id
     from fish, fish_experiment, feature_marker_relationship, genotype_Feature, regen_genox_input_zdb_id_temp

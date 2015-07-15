@@ -1,6 +1,8 @@
 package org.zfin.fish.repository;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,38 +36,6 @@ public class FishRepositoryTest extends AbstractDatabaseTest {
         Set<ZfinFigureEntity> zfinFigureEntities = RepositoryFactory.getFishRepository().getAllFigures("ZDB-GENOX-100423-2");
         assertNotNull(zfinFigureEntities);
     }
-
-    @Test
-    public void getPhenotypeFiguresForSingleTerm() {
-        // brain
-        String termID = "ZDB-TERM-100331-8";
-        // WT (unspecified) + MO1-acd
-        String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-110325-3";
-        List<String> termList = new ArrayList<String>(1);
-        termList.add(termID);
-
-        Set<ZfinFigureEntity> zfinFigureEntities = RepositoryFactory.getFishRepository().getFiguresByFishAndTerms(fishID, termList);
-        assertNotNull(zfinFigureEntities);
-    }
-
-    @Test
-    public void getPhenotypeFiguresForMultipleTerms() {
-        // brain nucleus
-        String brainNucleus = "ZDB-TERM-110313-4";
-        // eye
-        String eye = "ZDB-TERM-100331-100";
-        // gli2aty17a/ty17a
-        String fishID = "ZDB-GENO-980202-1115,ZDB-GENOX-041102-68,ZDB-GENOX-081006-2";
-        List<String> termList = new ArrayList<String>(2);
-        termList.add(brainNucleus);
-        termList.add(eye);
-
-        Set<ZfinFigureEntity> zfinFigureEntities = RepositoryFactory.getFishRepository().getFiguresByFishAndTerms(fishID, termList);
-        assertNotNull(zfinFigureEntities);
-        assertTrue(zfinFigureEntities.size() >= 2);
-    }
-
-
 
     @Test
     public void warehouseReleaseTrackingInfo() {
