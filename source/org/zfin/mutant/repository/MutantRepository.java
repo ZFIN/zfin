@@ -504,5 +504,9 @@ public interface MutantRepository {
     List<Fish> getFishByGenotype(Genotype genotype);
 
     List<Fish> getFishByGenotypeNoExperiment(Genotype genotype);
+
+    long getFishCountByGenotype(String genotypeID, String publicationID);
+
+    long getInferredFromCountByGenotype(String genotypeID, String publicationID);
 }
 

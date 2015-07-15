@@ -1689,7 +1689,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         for (GenotypeFeature gFeature : genotype.getGenotypeFeatures()) {
             Feature feature = gFeature.getFeature();
             insertStandardPubAttribution(feature.getZdbID(), publication);
-            insertStandardPubAttribution(feature.getAllelicGene().getZdbID(), publication);
+            if (feature.getAllelicGene() != null)
+                insertStandardPubAttribution(feature.getAllelicGene().getZdbID(), publication);
         }
 
     }
@@ -1698,6 +1699,19 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void insertRecordAttribution(Fish fish, Publication publication) {
         insertStandardPubAttribution(fish.getZdbID(), publication);
         insertStandardPubAttribution(fish.getGenotype().getZdbID(), publication);
+    }
+
+    @Override
+    public long getDistinctPublicationsByData(String entityID) {
+        String hql = "select distinct pubAtt.publication from PublicationAttribution as pubAtt " +
+                "where pubAtt.dataZdbID = :genotypeID AND " +
+                "pubAtt.sourceType = :type ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotypeID", entityID);
+        query.setParameter("type", RecordAttribution.SourceType.STANDARD);
+        List<Publication> list = query.list();
+        return list.size();
+
     }
 }
 

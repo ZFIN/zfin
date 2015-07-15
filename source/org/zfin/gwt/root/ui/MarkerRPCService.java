@@ -16,6 +16,8 @@ public interface MarkerRPCService extends RemoteService {
 
     void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO);
 
+    void checkDeattributionRules(String attributionToRemoveID, String publicationZdbID) throws DeAttributionException;
+
     /**
      */
     public static class App {

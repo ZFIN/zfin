@@ -14,6 +14,8 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
@@ -30,7 +32,9 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
@@ -44,7 +48,9 @@ import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
  */
@@ -1164,6 +1170,42 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 //        infrastructureRepository.insertUpdatesTable(markerRelationship.getZdbID(), "ConstructMarkerRelationship", markerRelationship.toString(), "Created construct marker relationship");
         HibernateUtil.flushAndCommitCurrentSession();
         InformixUtil.runInformixProcedure("regen_construct_marker", construct.getZdbID() + "");
+    }
+
+    @Override
+    public void checkDeattributionRules(String entityID, String publicationID)
+            throws DeAttributionException {
+        if (ActiveData.Type.GENO.equals(ActiveData.getType(entityID))) {
+            long count = getMutantRepository().getFishCountByGenotype(entityID, publicationID);
+            if (count > 0)
+                throw new DeAttributionException("Cannot remove attribution as there are  " + count + " fish using this genotype");
+            count = getMutantRepository().getInferredFromCountByGenotype(entityID, publicationID);
+            if (count > 0)
+                throw new DeAttributionException("Cannot remove attribution as there are  " + count + " inferred-from usage in GO annotation for this genotype");
+            count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
+            if (count == 1)
+                throw new DeAttributionException("It's the last attribution. Please use the delete genotype feature");
+
+
+        }
+        if (ActiveData.Type.FISH.equals(ActiveData.getType(entityID))) {
+            Fish fish = getMutantRepository().getFish(entityID);
+            List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID);
+            if (CollectionUtils.isNotEmpty(diseaseModelList)) {
+                throw new DeAttributionException("Cannot remove attribution as there is human disease data associated to this fish");
+            }
+            List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getMutantRepository().getPhenotypeStatementsByFish(fish);
+            if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
+                throw new DeAttributionException("Cannot remove attribution as there is phenotype data associated to this fish");
+            }
+            List<ExpressionResult> fishExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByFish(fish);
+            if (CollectionUtils.isNotEmpty(fishExpressionResults)) {
+                throw new DeAttributionException("Cannot remove attribution as there is expression data associated to this fish");
+            }
+            long count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
+            if (count == 1)
+                throw new DeAttributionException("It's the last attribution. Please use the delete fish feature");
+        }
     }
 
 
