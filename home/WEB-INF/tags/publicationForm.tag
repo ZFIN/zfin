@@ -1,11 +1,16 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<%@ attribute name="publicationForm" type="org.zfin.publication.presentation.PublicationForm" required="true" %>
+<%@ attribute name="publication" type="org.zfin.publication.Publication" required="true" %>
+<%@ attribute name="error" type="java.lang.String" %>
+
+<c:if test="${!empty error}">
+    <div class="alert alert-danger">${error}</div>
+</c:if>
 
 <link rel=stylesheet type="text/css" href="/css/datepicker3.css">
 <script src="/javascript/bootstrap-datepicker.js"></script>
 
-<form:form method="POST" commandName="publicationForm" cssClass="form-horizontal">
+<form:form method="POST" commandName="publication" cssClass="form-horizontal">
     <div class="form-group">
         <label for="title" class="col-sm-3 control-label">Title</label>
         <div class="col-sm-8">
@@ -22,10 +27,10 @@
     </div>
 
     <div class="form-group">
-        <label for="pubMedID" class="col-sm-3 control-label">PubMed ID</label>
+        <label for="accessionNumber" class="col-sm-3 control-label">PubMed ID</label>
         <div class="col-sm-8">
-            <form:input path="pubMedID" cssClass="form-control"/>
-            <form:errors path="pubMedID" cssClass="text-danger" />
+            <form:input path="accessionNumber" cssClass="form-control"/>
+            <form:errors path="accessionNumber" cssClass="text-danger" />
         </div>
     </div>
 
@@ -62,10 +67,10 @@
     </div>
 
     <div class="form-group">
-        <label for="date" class="col-sm-3 control-label">Date</label>
+        <label for="publicationDate" class="col-sm-3 control-label">Date</label>
         <div class="col-sm-8">
-            <form:input path="date" cssClass="form-control datepicker" data-provide="datepicker"/>
-            <form:errors path="date" cssClass="text-danger" />
+            <form:input path="publicationDate" cssClass="form-control datepicker" data-provide="datepicker"/>
+            <form:errors path="publicationDate" cssClass="text-danger" />
             <span class="help-block">(MM/DD/YYYY)</span>
         </div>
     </div>
@@ -116,16 +121,16 @@
     </div>
 
     <div class="form-group">
-        <label for="notes" class="col-sm-3 control-label">Errata & Notes</label>
+        <label for="errataAndNotes" class="col-sm-3 control-label">Errata & Notes</label>
         <div class="col-sm-8">
-            <form:textarea path="notes" cssClass="form-control"/>
+            <form:textarea path="errataAndNotes" cssClass="form-control"/>
         </div>
     </div>
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-8">
             <button type="submit" class="btn btn-primary">Submit</button>
-            <a class="btn btn-default" href="/${publicationForm.zdbID}">Cancel</a>
+            <a class="btn btn-default" href="/${publication.zdbID}">Cancel</a>
         </div>
     </div>
 </form:form>

@@ -11,7 +11,6 @@ public class BeanFieldUpdateTest {
 
     @Test
     public void testNull() {
-        beanFieldUpdate.setFieldType(String.class);
         beanFieldUpdate.setTo("null");
         beanFieldUpdate.setNullToTrueNull();
         assertNull(beanFieldUpdate.getTo());
@@ -31,7 +30,6 @@ public class BeanFieldUpdateTest {
 
     @Test
     public void testNotNull() {
-        beanFieldUpdate.setFieldType(String.class);
         beanFieldUpdate.setTo("");
         beanFieldUpdate.setNullToTrueNull();
         assertNotNull(beanFieldUpdate.getTo());

@@ -1,23 +1,30 @@
 package org.zfin.publication.presentation;
 
-import org.apache.commons.beanutils.NestedNullException;
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.BeanCompareService;
+import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 
 import javax.servlet.ServletContext;
-import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
  */
+@Service
 public class PublicationService {
+
+    @Autowired
+    private BeanCompareService beanCompareService;
 
     public static final String SESSION_PUBLICATIONS = "SessionPublications";
 
@@ -117,71 +124,50 @@ public class PublicationService {
         return label;
     }
 
-    public static PublicationForm getPublicationFormFromPublication(Publication publication) {
-        PublicationForm publicationForm = new PublicationForm();
-        publicationForm.setZdbID(publication.getZdbID());
-        publicationForm.setTitle(publication.getTitle());
-        publicationForm.setStatus(publication.getStatus());
-        publicationForm.setPubMedID(publication.getAccessionNumber());
-        publicationForm.setDoi(publication.getDoi());
-        publicationForm.setAuthors(publication.getAuthors());
-        publicationForm.setDate(publication.getPublicationDate());
-        publicationForm.setJournal(publication.getJournal());
-        publicationForm.setVolume(publication.getVolume());
-        publicationForm.setPages(publication.getPages());
-        publicationForm.setType(publication.getType());
-        publicationForm.setKeywords(publication.getKeywords());
-        publicationForm.setAbstractText(publication.getAbstractText());
-        publicationForm.setNotes(publication.getErrataAndNotes());
-        return publicationForm;
-    }
+    public Collection<BeanFieldUpdate> mergePublicationFromForm(Publication formPub, Publication existingPub) throws Exception {
+        Collection<BeanFieldUpdate> updates = new ArrayList<>();
 
-    public static void applyFormToPublication(Publication publication, PublicationForm form) {
-        publication.setTitle(form.getTitle());
-        publication.setStatus(form.getStatus());
-        publication.setAccessionNumber(form.getPubMedID());
-        publication.setDoi(form.getDoi());
-        publication.setAuthors(form.getAuthors());
-        publication.setPublicationDate(form.getDate());
-        publication.setJournal(form.getJournal());
-        publication.setVolume(form.getVolume());
-        publication.setPages(form.getPages());
-        publication.setType(form.getType());
-        publication.setKeywords(form.getKeywords());
-        publication.setAbstractText(form.getAbstractText());
-        publication.setErrataAndNotes(form.getNotes());
-    }
-
-    public static Map<String, List<String>> getUpdates(Publication publication, PublicationForm form) {
-        Map<String, List<String>> updates = new HashMap<>();
-        PublicationFormUpdateHelper updateHelper = new PublicationFormUpdateHelper(publication, form);
-        updateHelper.compareField(updates, "Title");
-        updateHelper.compareField(updates, "Status");
-        updateHelper.compareField(updates, "PubMed ID", "accessionNumber", "pubMedID");
-        updateHelper.compareField(updates, "DOI");
-        updateHelper.compareField(updates, "Authors");
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("title", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("status", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("accessionNumber", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("doi", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("authors", existingPub, formPub, true));
 
         // handle date separately because 1) we don't want to compare hours, minutes, seconds and 2) need to get the
         // display right
-        Calendar pubDate = publication.getPublicationDate();
+        GregorianCalendar pubDate = existingPub.getPublicationDate();
         truncateDateToDay(pubDate);
-        Calendar formDate = form.getDate();
+        GregorianCalendar formDate = formPub.getPublicationDate();
         truncateDateToDay(formDate);
         if (!Objects.equals(pubDate, formDate)) {
+            existingPub.setPublicationDate(formDate);
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            updates.put("Publication Date", Arrays.asList(
-                    pubDate == null ? "" : df.format(pubDate.getTime()),
-                    formDate == null ? "" : df.format(formDate.getTime())
-            ));
+            BeanFieldUpdate update = new BeanFieldUpdate();
+            update.setField("publicationDate");
+            update.setFrom(pubDate == null ? "" : df.format(pubDate.getTime()));
+            update.setTo(formDate == null ? "" : df.format(formDate.getTime()));
+            updates.add(update);
         }
 
-        updateHelper.compareField(updates, "Journal", "journal.abbreviation");
-        updateHelper.compareField(updates, "Volume");
-        updateHelper.compareField(updates, "Pages");
-        updateHelper.compareField(updates, "Type");
-        updateHelper.compareField(updates, "Keywords");
-        updateHelper.compareField(updates, "Abstract", "abstractText");
-        updateHelper.compareField(updates, "Errata & Notes", "errataAndNotes", "notes");
+        // handle journal separately to get the display right
+        Journal pubJournal = existingPub.getJournal();
+        Journal formJournal = formPub.getJournal();
+        if (!Objects.equals(pubJournal, formJournal)) {
+            existingPub.setJournal(formJournal);
+            BeanFieldUpdate update = new BeanFieldUpdate();
+            update.setField("journal");
+            update.setFrom(pubJournal == null ? "" : pubJournal.getAbbreviation());
+            update.setTo(formJournal == null ? "" : formJournal.getAbbreviation());
+            updates.add(update);
+        }
+
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("volume", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("pages", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("type", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("keywords", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("abstractText", existingPub, formPub, true));
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("errataAndNotes", existingPub, formPub, true));
+
         return updates;
     }
 
@@ -192,43 +178,5 @@ public class PublicationService {
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
         }
-    }
-
-    private static class PublicationFormUpdateHelper {
-
-        private Publication pub;
-        private PublicationForm form;
-
-        public PublicationFormUpdateHelper(Publication pub, PublicationForm form) {
-            this.pub = pub;
-            this.form = form;
-        }
-
-        public void compareField(Map<String, List<String>> updates, String fieldName) {
-            compareField(updates, fieldName, fieldName.toLowerCase());
-        }
-
-        public void compareField(Map<String, List<String>> updates, String fieldName, String propertyName) {
-            compareField(updates, fieldName, propertyName, propertyName);
-        }
-
-        public void compareField(Map<String, List<String>> updates, String fieldName, String pubProperty, String formProperty) {
-            Object pubValue = getProperty(pub, pubProperty);
-            Object formValue = getProperty(form, formProperty);
-            if (!Objects.equals(formValue, pubValue)) {
-                updates.put(fieldName, Arrays.asList(
-                        Objects.toString(pubValue, ""),
-                        Objects.toString(formValue, "")));
-            }
-        }
-
-        private static Object getProperty(Object bean, String field) {
-            try {
-                return PropertyUtils.getProperty(bean, field);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NestedNullException e) {
-                return null;
-            }
-        }
-
     }
 }

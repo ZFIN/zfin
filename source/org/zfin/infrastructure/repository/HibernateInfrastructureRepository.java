@@ -506,14 +506,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate) {
-        String from = (beanFieldUpdate.getFrom() == null) ? null : beanFieldUpdate.getFrom().toString();
-        String to = (beanFieldUpdate.getTo() == null) ? null : beanFieldUpdate.getTo().toString();
+        insertUpdatesTable(recID, beanFieldUpdate, null);
+    }
 
-        insertUpdatesTable(recID,
-                beanFieldUpdate.getField(),
-                from,
-                to,
-                null);
+    @Override
+    public void insertUpdatesTable(EntityZdbID entity, BeanFieldUpdate beanFieldUpdate, String comment) {
+        insertUpdatesTable(entity.getZdbID(), beanFieldUpdate, comment);
     }
 
     @Override
@@ -536,6 +534,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments) {
         insertUpdatesTable(entity, fieldName, comments, entity.getAbbreviation(), null);
+    }
+
+    private void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate, String comments) {
+        String from = (beanFieldUpdate.getFrom() == null) ? null : beanFieldUpdate.getFrom().toString();
+        String to = (beanFieldUpdate.getTo() == null) ? null : beanFieldUpdate.getTo().toString();
+
+        insertUpdatesTable(recID, beanFieldUpdate.getField(), from, to, comments);
     }
 
     private void insertUpdatesTable(String recId, Person submitter, String fieldName, String oldValue, String newValue, String comments) {
