@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.util.CollectionUtils;
+import org.zfin.fish.FeatureGene;
 import org.zfin.framework.presentation.ProvidesLink;
 
 /*
@@ -41,8 +42,7 @@ public class SearchResult implements ProvidesLink {
     Date date;
     @Field("attribution_count")
     Integer attributionCount;
-    @Field("result_table")
-    List<String> resultTable;
+
     @Field("has_orthology")
     String hasOrthology;
 
@@ -65,6 +65,10 @@ public class SearchResult implements ProvidesLink {
     String displayedID;
     List<String> relatedLinks;
     Map attributes;
+
+    //maybe this belongs directly on the fish?
+    private List<FeatureGene> featureGenes;
+
 
 
     private Logger logger = Logger.getLogger(SearchResult.class);
@@ -201,14 +205,6 @@ public class SearchResult implements ProvidesLink {
         this.attributionCount = attributionCount;
     }
 
-    public List<String> getResultTable() {
-        return resultTable;
-    }
-
-    public void setResultTable(List<String> resultTable) {
-        this.resultTable = resultTable;
-    }
-
     public void setAttributionCount(Integer attributionCount) {
         this.attributionCount = attributionCount;
     }
@@ -263,22 +259,12 @@ public class SearchResult implements ProvidesLink {
         attributes.put(label, value);
     }
 
+    public List<FeatureGene> getFeatureGenes() {
+        return featureGenes;
+    }
 
-    public List<HashMap<String, Object>> getResultTableMap() {
-
-        if (resultTable == null) { return null; }
-
-        List<HashMap<String, Object>> result = new ArrayList<HashMap<String, Object>>();
-
-        for (String resultValue : resultTable) {
-            try {
-                result.add(new ObjectMapper().readValue(resultValue, HashMap.class));
-            } catch (IOException e) {
-                logger.error(resultValue);
-                e.printStackTrace();
-            }
-        }
-        return result;
+    public void setFeatureGenes(List<FeatureGene> featureGenes) {
+        this.featureGenes = featureGenes;
     }
 
     public String getHasOrthology() {

@@ -14,9 +14,6 @@ public class FishResult extends SearchResult {
 
     private Fish fish;
 
-    //maybe this belongs directly on the fish?
-    private List<FeatureGene> featureGenes;
-
     private Integer expressionFigureCount;
     private Boolean expressionImageAvailable;
 
@@ -37,13 +34,6 @@ public class FishResult extends SearchResult {
         this.fish = fish;
     }
 
-    public List<FeatureGene> getFeatureGenes() {
-        return featureGenes;
-    }
-
-    public void setFeatureGenes(List<FeatureGene> featureGenes) {
-        this.featureGenes = featureGenes;
-    }
 
     public Integer getExpressionFigureCount() {
         return expressionFigureCount;

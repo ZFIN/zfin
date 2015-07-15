@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureExpressionSummary;
@@ -27,6 +28,7 @@ import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
+import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FieldName;
@@ -101,27 +103,27 @@ public class FishService {
         //page
         query.setStart(criteria.getStart());
 
-        if (criteria.getExcludeSequenceTargetingReagentCriteria().isTrue()) {
+        if (criteria.getExcludeSequenceTargetingReagentCriteria() != null && criteria.getExcludeSequenceTargetingReagentCriteria().isTrue()) {
             query.addFilterQuery("-" + FieldName.SEQUENCE_TARGETING_REAGENT.getName() + ":[* TO *]");
         }
 
-        if (criteria.getRequireSequenceTargetingReagentCriteria().isTrue()) {
+        if (criteria.getRequireSequenceTargetingReagentCriteria() != null && criteria.getRequireSequenceTargetingReagentCriteria().isTrue()) {
             query.addFilterQuery(FieldName.SEQUENCE_TARGETING_REAGENT.getName() + ":[* TO *]");
         }
 
-        if (criteria.getExcludeTransgenicsCriteria().isTrue()) {
+        if (criteria.getExcludeTransgenicsCriteria() != null && criteria.getExcludeTransgenicsCriteria().isTrue()) {
             query.addFilterQuery("-" + FieldName.CONSTRUCT.getName() + ":[* TO *]");
         }
 
-        if (criteria.getRequireTransgenicsCriteria().isTrue()) {
+        if (criteria.getRequireTransgenicsCriteria() != null && criteria.getRequireTransgenicsCriteria().isTrue()) {
             query.addFilterQuery(FieldName.CONSTRUCT.getName() + ":[* TO *]");
         }
 
-        if (criteria.getMutationTypeCriteria().hasValues()) {
+        if (criteria.getMutationTypeCriteria() != null && criteria.getMutationTypeCriteria().hasValues()) {
             query.addFilterQuery(FieldName.MUTATION_TYPE.getName() + ":\"" + criteria.getMutationTypeCriteria().getValue() + "\"");
         }
 
-        if (criteria.getPhenotypeAnatomyCriteria().hasValues()) {
+        if (criteria.getPhenotypeAnatomyCriteria() != null && criteria.getPhenotypeAnatomyCriteria().hasValues()) {
             for (String term : criteria.getPhenotypeAnatomyCriteria().getNames()) {
                 query.addFilterQuery(FieldName.AFFECTED_ANATOMY_TF.getName()   + ":\"" + term + "\""
                           + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF.getName() + ":\"" + term + "\""
@@ -192,7 +194,7 @@ public class FishService {
     }
 
     private static void addFigures(FishResult fishResult, FishSearchCriteria criteria) {
-        if (criteria == null) {
+        if (criteria.getPhenotypeAnatomyCriteria() == null) {
             addAllFigures(fishResult);
         } else {
             List<String> values = criteria.getPhenotypeAnatomyCriteria().getValues();
@@ -206,7 +208,7 @@ public class FishService {
     }
 
     private static void addFiguresByTermValues(FishResult fishResult, List<String> values) {
-        Set<ZfinFigureEntity> figures = RepositoryFactory.getFishRepository().getFiguresByFishAndTerms(fishResult.getFish().getZdbID(), values);
+        Set<ZfinFigureEntity> figures = FishService.getFiguresByFishAndTerms(fishResult.getFish().getZdbID(), values);
         setImageAttributeOnFish(fishResult, figures);
     }
 
@@ -228,7 +230,7 @@ public class FishService {
             criteria = new FishSearchCriteria();
             criteria.setPhenotypeAnatomyCriteria(new SearchCriterion(SearchCriterionType.PHENOTYPE_ANATOMY_ID, true));
         }
-        Set<ZfinFigureEntity> zfinFigureEntities = getFishRepository().getFiguresByFishAndTerms(fishID, criteria.getPhenotypeAnatomyCriteria().getValues());
+        Set<ZfinFigureEntity> zfinFigureEntities = FishService.getFiguresByFishAndTerms(fishID, criteria.getPhenotypeAnatomyCriteria().getValues());
         if (zfinFigureEntities == null) {
             return null;
         }
@@ -441,6 +443,63 @@ public class FishService {
         List<Marker> geneList = new ArrayList<>(geneSet.size());
         geneList.addAll(geneSet);
         return geneList;
+    }
+
+
+    /**
+     * Retrieve all figures for given fish id
+     * that have phenotypes associated with the termID list
+     * directly or indirectly through a substructure.
+     *
+     * @param fishID  fish ID
+     * @param termIDs term ID list
+     * @return set of figures
+     */
+    public static Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs) {
+        if (CollectionUtils.isEmpty(termIDs)) {
+            return RepositoryFactory.getFishRepository().getAllFigures(fishID);
+        }
+
+        SolrServer server = SolrService.getSolrServer("prototype");
+
+        SolrQuery query = new SolrQuery();
+        query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
+        query.addFilterQuery(FieldName.XREF.getName() + ":\"" + fishID + "\"");
+
+        for (String termID : termIDs) {
+            Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+            query.addFilterQuery(FieldName.ANATOMY_TF.getName()            + ":\"" + term.getTermName() + "\""
+                            + " OR " + FieldName.BIOLOGICAL_PROCESS_TF.getName() + ":\"" + term.getTermName() + "\""
+                            + " OR " + FieldName.MOLECULAR_FUNCTION_TF.getName() + ":\"" + term.getTermName() + "\""
+                            + " OR " + FieldName.CELLULAR_COMPONENT_TF.getName() + ":\"" + term.getTermName() + "\""
+            );
+        }
+
+
+        QueryResponse response = new QueryResponse();
+        try {
+            response = server.query(query);
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        Set<ZfinFigureEntity> figureEntitySet = new HashSet<>();
+
+        for (SolrDocument doc : response.getResults()) {
+            ZfinFigureEntity figure = new ZfinFigureEntity();
+
+            String figureZdbID = (String) doc.get(FieldName.FIGURE_ID.getName());
+            figure.setID(figureZdbID);
+            if (CollectionUtils.isNotEmpty((Collection)doc.get(FieldName.THUMBNAIL.getName()))) {
+                figure.setHasImage(true);
+            } else {
+                figure.setHasImage(false);
+            }
+            figureEntitySet.add(figure);
+        }
+
+        return figureEntitySet;
+
     }
 
 }

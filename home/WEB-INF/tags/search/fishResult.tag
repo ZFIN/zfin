@@ -5,7 +5,7 @@
 <zfin-search:resultTemplate result="${result}">
     <jsp:attribute name="metadata">${result.category}</jsp:attribute>
     <jsp:body>
-        <c:if test="${!empty result.resultTableMap}">
+        <c:if test="${!empty result.featureGenes}">
             <table class="fish-result-table">
                 <tr>
                     <th>Affected Gene</th>
@@ -13,29 +13,30 @@
                     <th>Mutation Type</th>
                     <th>Construct</th>
                 </tr>
-                <c:forEach var="resultRowMap" items="${result.resultTableMap}">
+                <c:forEach var="featureGene" items="${result.featureGenes}">
                     <tr>
                         <td title="Affected Gene">
-                            <span class="genedom">${resultRowMap["gene"]}</span>
+                            <zfin:link entity="${featureGene.gene}"/>
                         </td>
                         <td title="Line / Reagent">
-                                ${resultRowMap["affector"]}
+                            <c:if test="${!empty featureGene.feature}">
+                                <zfin:link entity="${featureGene.feature}"/>
+                            </c:if>
+                            <c:if test="${!empty featureGene.sequenceTargetingReagent}">
+                                <zfin:link entity="${featureGene.sequenceTargetingReagent}"/>
+                            </c:if>
                         </td>
                         <td title="Mutation Type">
-                                ${resultRowMap["affectorType"]}
+                            <c:if test="${!empty featureGene.feature}">
+                                ${featureGene.feature.type.display}
+                            </c:if>
                         </td>
                         <td title="Construct">
-                                ${resultRowMap["construct"]}
+                            <zfin:link entity="${featureGene.construct}"/>
                         </td>
                     </tr>
                 </c:forEach>
             </table>
-        </c:if>
-        <%-- todo: remove this later! --%>
-        <c:if test="${empty result.resultTableMap}">
-            <span style="font-size: small; font-style: italic; color: #ccc">
-                Component table not yet implemented for non-warehouse fish.
-            </span>
         </c:if>
     </jsp:body>
 </zfin-search:resultTemplate>
