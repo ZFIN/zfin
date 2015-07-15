@@ -23,6 +23,7 @@ import org.zfin.figure.service.ImageServiceSpec;
 import org.zfin.figure.service.VideoServiceSpec;
 import org.zfin.fish.repository.FishRepositoryTest;
 //import org.zfin.fish.repository.FishServiceTest;
+import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.framework.presentation.ZfinJSPFunctionsTest;
 import org.zfin.gbrowse.GBrowseServiceTest;
 import org.zfin.gbrowse.presentation.GBrowseImageSpec;
@@ -93,8 +94,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         FigureServiceTest.class,
         FigureViewServiceSpec.class,
         FishRepositoryTest.class,
-        //TODO fix fishservice tests first beforeincluding in test suite
-//        FishServiceTest.class,
+        FishServiceTest.class,
         FpInferenceGafServiceTest.class,
         GafParserUnitTest.class,
         GafServiceTest.class,

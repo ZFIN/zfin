@@ -1,40 +1,21 @@
-create procedure regen_genox_finish_genox()
+create procedure regen_genox_finish_genox ()
 
-  -- -------------------------------------------------------------------------------------------
-  -- Finishes the processing for the regen_genox_* routines:
-  -- 1. Deletes any records in the mutant_fast_search table associated with the input ZDB ID(s)
-  --    in regen_zdb_id_temp.
-  -- 2. Inserts into the mutant_fast_search table the new records for the input ZDB ID(s)
-  -- 3. Deletes all records from the temp tables.
-  --
-  -- PRECONDITIONS:
-  --   regen_genox_input_zdb_id_temp table exists and contains a list of gene and/or MO ZDB IDs
-  --     to generate marker_zdb_id genox_zdb_id pairs for records in mutant_fast_search table
-  --   regen_genox_temp table contains marker_zdb_id genox_zdb_id pairs
-  --
-  -- EFFECTS:
-  --   Success:
-  --     marker_zdb_id genox_zdb_id pairs for records in mutant_fast_search table have been 
-  --       updated for the input ZDB ID(s)
-  --   Error:
-  --     marker_zdb_id genox_zdb_id pairs for records in mutant_fast_search table may or may not
-  --       have been updated 
-  --     regen_genox_input_zdb_id_temp may or may not be empty.
-  --     regen_genox_temp may or may not be empty.
-  --     transaction is not committed or rolled back.
-  -- -------------------------------------------------------------------------------------------
+     insert into mutant_fast_search_new 
+        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
+      select distinct a.mfs_mrkr_zdb_id, a.mfs_genox_zdb_id
+        from mutant_fast_search a
+	where not exists (Select 'x' from mutant_fast_search_new b
+	      	  	 	 where a.mfs_mrkr_zdb_id = b.mfs_mrkr_zdb_id
+				 and a.mfs_genox_zdb_id =b.mfs_genox_zdb_id);
 
-  delete from mutant_fast_search
-    where mfs_genox_zdb_id in
+    delete from mutant_fast_search_new
+      where mfs_genox_zdb_id in
           ( select rggz_zdb_id
-              from regen_genox_input_zdb_id_temp );
+              from regen_genox_input_zdb_id_temp ); 
 
-  insert into mutant_fast_search
-      ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
-    select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
-      from regen_genox_temp;
-
-  delete from regen_genox_temp;
-  delete from regen_genox_input_zdb_id_temp;
+    insert into mutant_fast_search_new 
+        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
+      select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
+        from regen_genox_temp;
 
 end procedure;

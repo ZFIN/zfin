@@ -1,40 +1,117 @@
-create procedure regen_genox_finish_marker()
+create procedure regen_genox_finish_marker ()
 
-  -- -------------------------------------------------------------------------------------------
-  -- Finishes the processing for the regen_genox_marker* routines:
-  -- 1. Deletes any records in the mutant_fast_search table associated with the input ZDB ID(s)
-  --    in regen_zdb_id_temp.
-  -- 2. Inserts into the mutant_fast_search table the new records for the input ZDB ID(s)
-  -- 3. Deletes all records from the temp tables.
-  --
-  -- PRECONDITIONS:
-  --   regen_genox_input_zdb_id_temp table exists and contains a list of gene and/or MO ZDB IDs
-  --     to generate marker_zdb_id genox_zdb_id pairs for records in mutant_fast_search table
-  --   regen_genox_temp table contains marker_zdb_id genox_zdb_id pairs
-  --
-  -- EFFECTS:
-  --   Success:
-  --     marker_zdb_id genox_zdb_id pairs for records in mutant_fast_search table have been 
-  --       updated for the input ZDB ID(s)
-  --   Error:
-  --     marker_zdb_id genox_zdb_id pairs for records in mutant_fast_search table may or may not
-  --       have been updated 
-  --     regen_genox_input_zdb_id_temp may or may not be empty.
-  --     regen_genox_temp may or may not be empty.
-  --     transaction is not committed or rolled back.
-  -- -------------------------------------------------------------------------------------------
 
-  delete from mutant_fast_search
-    where mfs_mrkr_zdb_id in
+     insert into mutant_fast_search_new 
+        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
+      select distinct a.mfs_mrkr_zdb_id, a.mfs_genox_zdb_id
+        from mutant_fast_search a
+	where not exists (Select 'x' from mutant_fast_search_new b
+	      	  	 	 where a.mfs_mrkr_zdb_id = b.mfs_mrkr_zdb_id
+				 and a.mfs_genox_zdb_id =b.mfs_genox_zdb_id);
+
+    delete from mutant_fast_search_new
+      where mfs_mrkr_zdb_id in
           ( select rggz_zdb_id
-              from regen_genox_input_zdb_id_temp );
+              from regen_genox_input_zdb_id_temp ); 
 
-  insert into mutant_fast_search
-      ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
-    select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
-      from regen_genox_temp;
+    insert into mutant_fast_search_new 
+        ( mfs_mrkr_zdb_id, mfs_genox_zdb_id )
+      select distinct rggt_mrkr_zdb_id, rggt_genox_zdb_id
+        from regen_genox_temp
+	where not exists (Select 'x' from mutant_fast_search_new c
+	      	  	 	 where rggt_mrkr_zdb_id = c.mfs_mrkr_zdb_id
+				 and rggt_genox_zdb_id =c.mfs_genox_zdb_id);
 
-  delete from regen_genox_temp;
-  delete from regen_genox_input_zdb_id_temp;
+  
+    -- -------------------------------------------------------------------
+    --   create indexes; constraints that use them are added at the end.
+    -- -------------------------------------------------------------------
+
+  --  let errorHint = "mutant_fast_search_new create PK index";
+    create unique index mutant_fast_search_primary_key_index_transient
+      on mutant_fast_search_new (mfs_mrkr_zdb_id, mfs_genox_zdb_id)
+      fillfactor 100
+      in idxdbs1;
+
+ --   let errorHint = "mutant_fast_search_new create another index";
+    create index mutant_fast_search_mrkr_zdb_id_foreign_key_index_transient
+      on mutant_fast_search_new (mfs_mrkr_zdb_id)
+      fillfactor 100
+      in idxdbs1;
+
+  --  let errorHint = "mutant_fast_search_new create the third index";
+    create index mutant_fast_search_genox_zdb_id_foreign_key_index_transient
+      on mutant_fast_search_new (mfs_genox_zdb_id)
+      fillfactor 100
+      in idxdbs1;
+
+    update statistics high for table mutant_fast_search_new;
+
+    begin work;
+
+    begin -- local exception handler dropping, renaming, and constraints
+
+      define esql, eisam int;
+
+      on exception set esql, eisam
+	-- Any error at this point, just rollback.  The rollback will
+	-- restore all the old tables and their indices.
+	rollback work;
+	-- Now pass the error to the master handler to drop the new tables
+	raise exception esql, eisam;
+      end exception;
+
+      on exception in (-206, -535)
+	-- 206 ignore error when dropping a table that doesn't already exist
+        -- 535 ignore error of already in transaction
+      end exception with resume;
+
+
+      -- Now rename our new table and indexes to have the permanent name.
+      -- Also define primary keys and foreign keys.
+
+      -- Note that the exception-handler at the top of this file is still active
+
+     -- let errorHint = "drop mutant_fast_search table ";
+      drop table mutant_fast_search;
+
+     -- let errorHint = "rename table ";
+      rename table mutant_fast_search_new to mutant_fast_search;
+
+    --  let errorHint = "rename indexes";
+      rename index mutant_fast_search_primary_key_index_transient
+        to mutant_fast_search_primary_key_index;
+      rename index mutant_fast_search_mrkr_zdb_id_foreign_key_index_transient
+        to mutant_fast_search_mrkr_zdb_id_foreign_key_index;
+      rename index mutant_fast_search_genox_zdb_id_foreign_key_index_transient 
+        to mutant_fast_search_genox_zdb_id_foreign_key_index;
+
+      -- define constraints, indexes are defined earlier.
+
+    --  let errorHint = "mutant_fast_search PK constraint";
+      alter table mutant_fast_search add constraint
+	primary key (mfs_mrkr_zdb_id, mfs_genox_zdb_id)
+	constraint mutant_fast_search_primary_key;
+
+   --   let errorHint = "mfs_mrkr_zdb_id FK constraint";
+      alter table mutant_fast_search add constraint
+        foreign key (mfs_mrkr_zdb_id)
+        references marker 
+        on delete cascade 
+        constraint mutant_fast_search_mrkr_Zdb_id_foreign_key_odc;
+  
+
+   --   let errorHint = "mfs_genox_zdb_id FK constraint";
+      alter table mutant_fast_search add constraint 
+        foreign key (mfs_genox_zdb_id)
+        references fish_experiment on delete cascade 
+        constraint mutant_fast_search_genox_Zdb_id_foreign_key_odc;
+
+      grant select on mutant_fast_search to "public";
+
+     --trace off;
+    end -- Local exception handler
+
+    commit work;
 
 end procedure;

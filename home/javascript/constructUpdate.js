@@ -27,7 +27,7 @@ function addAlias() {
 
            getConstructDetails(constructID);
 
-            jQuery("#constructAlias").val("");
+            jQuery("#constructEditAlias").val("");
 
 
         },
@@ -55,7 +55,7 @@ function addSequence() {
 
             getConstructDetails(constructID);
 
-            jQuery("#constructSequence").val("");
+            jQuery("#constructEditSequence").val("");
 
 
         },
@@ -70,7 +70,7 @@ function addSequence() {
 
 
 function addNotes() {
-    var notes = jQuery("#curatorNotes").val();
+    var notes = jQuery("#curatorEditNotes").val();
     var constructID = jQuery('#constructEdit').val();
     var pubID = jQuery('#constructPublicationZdbID').val();
 
@@ -83,7 +83,7 @@ function addNotes() {
         success: function (response) {
             getConstructDetails(constructID);
 
-            jQuery("#curatorNotes").val("");
+            jQuery("#curatorEditNotes").val("");
 
 
         },
@@ -176,9 +176,9 @@ function getConstructDetails(constructID) {
 
      jQuery("#newCassette2").hide();*/
 
-    jQuery("#constructSynonyms").empty();
-    jQuery("#constructNotes").empty();
-    jQuery("#constructSequences").empty();
+    jQuery("#constructEditSynonyms").empty();
+    jQuery("#constructEditNotes").empty();
+    jQuery("#constructEditSequences").empty();
     jQuery("#update-construct-error").hide();
 
 
@@ -191,12 +191,12 @@ function getConstructDetails(constructID) {
 
             jQuery.each(data, function (i, constructComponentPresentation) {
 
-                jQuery('#constructComments').val(constructComponentPresentation.constructComments);
+                jQuery('#constructEditComments').val(constructComponentPresentation.constructComments);
 
                 if (jQuery("#synonym").length == 0) {
                     jQuery.each(constructComponentPresentation.constructAliases, function () {
 
-                        jQuery('#constructSynonyms').append("<div id='synonym'>"
+                        jQuery('#constructEditSynonyms').append("<div id='synonym'>"
                         + "<img  src='/images/delete-button.png' "
                         + "  title='Delete Alias.' onclick=deleteAlias('" + this.aliasZdbID + "');> "
                         + this.alias
@@ -207,7 +207,7 @@ function getConstructDetails(constructID) {
                 if (jQuery("#privateNote").length == 0) {
                     jQuery.each(constructComponentPresentation.constructCuratorNotes, function () {
 
-                        jQuery('#constructNotes').append("<div id='privateNote'>"
+                        jQuery('#constructEditNotes').append("<div id='privateNote'>"
                         + "<img  src='/images/delete-button.png' "
                         + "  title='Delete Note.' onclick=deleteNote('" + this.zdbID + "');> "
                         + this.noteData
@@ -218,7 +218,7 @@ function getConstructDetails(constructID) {
                 if (jQuery("#sequence").length == 0) {
                     jQuery.each(constructComponentPresentation.constructSequences, function () {
 
-                        jQuery('#constructSequences').append("<div id='sequence'>"
+                        jQuery('#constructEditSequences').append("<div id='sequence'>"
                         + "<img  src='/images/delete-button.png' "
                         + "  title='Delete Sequence.' onclick=deleteSequence('" + this.zdbID + "');> "
                         + this.link

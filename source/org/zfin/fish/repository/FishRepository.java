@@ -34,18 +34,6 @@ public interface FishRepository {
      */
     Set<ZfinFigureEntity> getPhenotypeFigures(String fishID);
 
-
-    /**
-     * Retrieve all figures for given fish id
-     * that have phenotypes associated with the termID list
-     * directly or indirectly through a substructure.
-     *
-     * @param fishID  fish ID
-     * @param termIDs term ID list
-     * @return set of figures
-     */
-    Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs);
-
     /**
      * Retrieve the longest genotype experiment group id for all fish
      *

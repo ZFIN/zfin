@@ -711,17 +711,19 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @return list of phenotype statements
      */
     public List<PhenotypeStatement> getPhenotypeStatements(Figure figure, String fishID) {
-        Fish fish=getMutantRepository().getFish(fishID);
-        Set<FishExperiment> fishOx = getMutantRepository().getFish(fishID).getFishExperiments();
-        List<String>fishoxID=new ArrayList<>(fishOx.size());
-        for (FishExperiment genoID : getMutantRepository().getFish(fishID).getFishExperiments()) {
+        Fish fish = getMutantRepository().getFish(fishID);
+
+        if (fish == null ) { return null; }
+
+        List<String>fishoxID=new ArrayList<>();
+        for (FishExperiment genoID : fish.getFishExperiments()) {
             fishoxID.add(genoID.getZdbID());
         }
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct pheno from PhenotypeStatement pheno  " +
                 "      where pheno.phenotypeExperiment.figure = :figure " +
-                "        and pheno.phenotypeExperiment.genotypeExperiment.zdbID in (:genoxIDs)";
+                "        and pheno.phenotypeExperiment.fishExperiment.zdbID in (:genoxIDs)";
 
         Query query = session.createQuery(hql);
         query.setParameter("figure", figure);
