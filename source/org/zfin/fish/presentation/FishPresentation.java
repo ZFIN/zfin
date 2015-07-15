@@ -27,7 +27,9 @@ public class FishPresentation extends EntityPresentation {
     }
 
     public static String getLink(Fish fish, Boolean suppressPopupLink) {
-        String link = getViewLink(fish.getZdbID(), fish.getName(), fish.getName(), null);
+
+        String name = fish.getDisplayName();
+        String link = getViewLink(fish.getZdbID(), name, name, null);
         if (!suppressPopupLink) {
             link += getTomcatPopupLink(popupUri, fish.getZdbID(), "More details about this fish");
         }
@@ -48,6 +50,8 @@ public class FishPresentation extends EntityPresentation {
     }
 
 
-    public static String getName(Fish fish) { return getSpanTag("fish", fish.getName(), fish.getName());  }
+    public static String getName(Fish fish) {
+        return getSpanTag("fish", fish.getName(), fish.getDisplayName());
+    }
 
 }
