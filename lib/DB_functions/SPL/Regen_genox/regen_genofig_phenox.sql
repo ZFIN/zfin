@@ -21,8 +21,6 @@ create procedure regen_genofig_phenox(phenoxId like phenotype_Experiment.phenox_
   --        regen_genofig_temp, regen_genofig_input_zdb_id_temp
   execute procedure regen_genofig_create_temp_tables();
 
-  execute procedure regen_genox_create_temp_tables();
-
   execute procedure regen_genox_genox(genoxId);
   -- takes regen_genofig_input_zdb_id_temp as input, adds recs to regen_genofig_temp
 

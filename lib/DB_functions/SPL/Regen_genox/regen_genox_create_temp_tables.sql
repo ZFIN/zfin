@@ -17,6 +17,8 @@ create procedure regen_genox_create_temp_tables()
   -- --------------------------------------------------------------------
 
 
+
+
     -- -------------------------------------------------------------------
     --   create regen_genox_input_zdb_id_temp
     -- -------------------------------------------------------------------
@@ -26,6 +28,31 @@ create procedure regen_genox_create_temp_tables()
       --  -958: Temp table already exists.
       --  -316: Index name already exists.
     end exception with resume;
+
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   CREATE mutant_fast_search_newb (mutant_fast_search) TABLE
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+
+    -- Contains all the gene zdbIDs/MO zdbIDs and their phenotype-data-related 
+    --   genox_zdb_id
+
+    --let errorHint = "mutant_fast_search";
+
+    if (exists (select * from systables where tabname = "mutant_fast_search_new")) then
+      drop table mutant_fast_search_new;
+    end if
+
+    create table mutant_fast_search_new 
+      (
+        mfs_mrkr_zdb_id varchar(50) not null,
+        mfs_genox_zdb_id varchar(50) not null
+      )
+    fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+    extent size 512 next size 512 ;
+    
+
 
     create temp table regen_genox_input_zdb_id_temp  
     -- can be either a marker or a genox zdb_id
