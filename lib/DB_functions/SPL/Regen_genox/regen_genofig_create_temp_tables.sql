@@ -46,7 +46,7 @@ create procedure regen_genofig_create_temp_tables()
         gffs_phenox_pk_id int8 not null,
 	gffs_date_created DATETIME YEAR TO SECOND 
 			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
-        gffs_phenos_id int8 not null,
+        gffs_phenos_id int8,
 	gffs_fish_zdb_id varchar(50) not null,
 	gffs_genox_zdb_id varchar(50),
     gffs_serial_id serial8 not null 
