@@ -22,7 +22,13 @@ public class GenotypePresentation extends EntityPresentation {
      */
     public static String getName(Genotype genotype) {
         String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
-        return getSpanTag(cssClassName, genotype.getName(), genotype.getName()+"("+getBackground(genotype)+")");
+        if (getBackground(genotype) != null) {
+            return getSpanTag(cssClassName, genotype.getName(), genotype.getName() + "(" + getBackground(genotype) + ")");
+        }
+        else
+        {
+            return getSpanTag(cssClassName, genotype.getName(), genotype.getName());
+        }
     }
 
     /**
