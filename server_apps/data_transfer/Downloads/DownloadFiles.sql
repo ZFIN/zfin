@@ -1706,63 +1706,39 @@ where fmrel_ftr_zdb_id = feature_zdb_id
   )
   order by lower( feature_name);
 
-
 ! echo "generating clean phenotype download" ;
-create temp table tmp_pheno_gene (id varchar(50), genox_zdb_id varchar(50), gene_abbrev varchar(50), gene_zdb_id varchar(50), term_ont_id varchar(30), term_name varchar(100), whereFrom varchar(20), fish_id varchar(50), mo_id varchar(50), stage_start_id varchar(50), stage_end_id varchar(50))
- with no log;
-
-! echo "add direct phenotype annotations with genes"
-! echo "Entity 2 subterms"
-insert into tmp_pheno_gene
 
 
-insert into tmp_pheno_gene (id, 
-       	    		   	genox_zdb_id, 
-				gene_abbrev, 
-				gene_zdb_id,
-				term_ont_id,
-				term_name,
-				whereFrom,
-				fish_id,
-				mo_id, 
-				stage_start_id,
-				stage_end_id)
- select distinct phenos_pk_id,
- 		 mrkr_abbrev,
-		 mrkr_zdb_id,
-		 term_ont_id,
-		 term_name,
-		 "pheno",
-		 genox_fish_zdb_id,
-		 fishstr_str_zdb_id,
-		 phenox_start_stage_zdb_id,
-		 phenox_end_stage_Zdb_id
+ select distinct phenos_pk_id as id,
+ 		 genox_zdb_id as genox_Zdb_id,
+ 		 mrkr_abbrev as gene_abbrev,
+		 mrkr_zdb_id as gene_zdb_id,
+		 term_ont_id as term_ont_id,
+		 term_name as term_name,
+		 "pheno" as whereFrom,
+		 genox_fish_zdb_id as fish_id,
+		 fishstr_str_zdb_id as mo_id,
+		 phenox_start_stg_zdb_id as stage_start_id,
+		 phenox_end_stg_Zdb_id as stage_end_id
    from mutant_fast_search,
    	fish_Experiment,
 	phenotype_experiment,
 	all_term_Contains,
 	term,
 	fish_str,
-	phenotype_statement
-    where mfs_genox_zdb_id = genox_zdb_id
+	phenotype_statement,
+	marker
+    where mrkr_Zdb_id = mfs_mrkr_Zdb_id
+    and mrkr_type = 'GENE' 
+    and mfs_genox_zdb_id = genox_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
     and fishstr_fish_Zdb_id = genox_fish_zdb_id
     and phenos_entity_1_superterm_zdb_id = alltermcon_container_zdb_id
 union
-insert into tmp_pheno_gene (id, 
-       	    		   	genox_zdb_id, 
-				gene_abbrev, 
-				gene_zdb_id,
-				term_ont_id,
-				term_name,
-				whereFrom,
-				fish_id,
-				mo_id, 
-				stage_start_id,
-				stage_end_id)
  select distinct phenos_pk_id,
+ 		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
 		 term_ont_id,
@@ -1770,16 +1746,19 @@ insert into tmp_pheno_gene (id,
 		 "pheno",
 		 genox_fish_zdb_id,
 		 fishstr_str_zdb_id,
-		 phenox_start_stage_zdb_id,
-		 phenox_end_stage_Zdb_id
+		 phenox_start_stg_zdb_id,
+		 phenox_end_stg_Zdb_id
    from mutant_fast_search,
    	fish_Experiment,
 	phenotype_experiment,
 	all_term_Contains,
 	term,
 	fish_str,
-	phenotype_statement
-    where mfs_genox_zdb_id = genox_zdb_id
+	phenotype_statement,
+	marker
+    where mrkr_Zdb_id = mfs_mrkr_Zdb_id
+    and mrkr_type = 'GENE' 
+    and mfs_genox_zdb_id = genox_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
@@ -1788,6 +1767,7 @@ insert into tmp_pheno_gene (id,
     and phenos_entity_1_subterm_zdb_id is not null
 union
  select distinct phenos_pk_id,
+ 		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
 		 term_ont_id,
@@ -1795,16 +1775,19 @@ union
 		 "pheno",
 		 genox_fish_zdb_id,
 		 fishstr_str_zdb_id,
-		 phenox_start_stage_zdb_id,
-		 phenox_end_stage_Zdb_id
+		 phenox_start_stg_zdb_id,
+		 phenox_end_stg_Zdb_id
    from mutant_fast_search,
    	fish_Experiment,
 	phenotype_experiment,
 	all_term_Contains,
 	term,
 	fish_str,
-	phenotype_statement
-    where mfs_genox_zdb_id = genox_zdb_id
+	phenotype_statement,
+	marker
+    where mrkr_Zdb_id = mfs_mrkr_Zdb_id
+    and mrkr_type = 'GENE' 
+    and mfs_genox_zdb_id = genox_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
@@ -1813,6 +1796,7 @@ union
     and phenos_entity_2_superterm_zdb_id is not null
 union
  select distinct phenos_pk_id,
+ 		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
 		 term_ont_id,
@@ -1820,16 +1804,19 @@ union
 		 "pheno",
 		 genox_fish_zdb_id,
 		 fishstr_str_zdb_id,
-		 phenox_start_stage_zdb_id,
-		 phenox_end_stage_Zdb_id
+		 phenox_start_stg_zdb_id,
+		 phenox_end_stg_Zdb_id
    from mutant_fast_search,
    	fish_Experiment,
 	phenotype_experiment,
 	all_term_Contains,
 	term,
 	fish_str,
-	phenotype_statement
-    where mfs_genox_zdb_id = genox_zdb_id
+	phenotype_statement,
+	marker
+    where mrkr_Zdb_id = mfs_mrkr_Zdb_id
+    and mrkr_type = 'GENE' 
+    and mfs_genox_zdb_id = genox_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
@@ -1838,6 +1825,7 @@ union
     and phenos_entity_2_subterm_zdb_id is not null
 union
  select distinct phenos_pk_id,
+ 		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
 		 term_ont_id,
@@ -1845,22 +1833,26 @@ union
 		 "pheno",
 		 genox_fish_zdb_id,
 		 "",
-		 phenox_start_stage_zdb_id,
-		 phenox_end_stage_Zdb_id
+		 phenox_start_stg_zdb_id,
+		 phenox_end_stg_Zdb_id
    from mutant_fast_search,
    	fish_Experiment,
 	phenotype_experiment,
 	all_term_Contains,
 	term,
-	phenotype_statement
-    where mfs_genox_zdb_id = genox_zdb_id
+	phenotype_statement,
+	marker
+    where mrkr_Zdb_id = mfs_mrkr_Zdb_id
+    and mrkr_type = 'GENE' 
+    and mfs_genox_zdb_id = genox_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
     and alltermcon_container_zdb_id = phenos_entity_1_superterm_zdb_id
-    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = fish_Zdb_id)
+    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
  select distinct phenos_pk_id,
+ 		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
 		 term_ont_id,
@@ -1868,23 +1860,27 @@ union
 		 "pheno",
 		 genox_fish_zdb_id,
 		 "",
-		 phenox_start_stage_zdb_id,
-		 phenox_end_stage_Zdb_id
+		 phenox_start_stg_zdb_id,
+		 phenox_end_stg_Zdb_id
    from mutant_fast_search,
    	fish_Experiment,
 	phenotype_experiment,
 	all_term_Contains,
 	term,
-	phenotype_statement
-    where mfs_genox_zdb_id = genox_zdb_id
+	phenotype_statement,
+	marker
+    where mrkr_Zdb_id = mfs_mrkr_Zdb_id
+    and mrkr_type = 'GENE' 
+    and mfs_genox_zdb_id = genox_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
     and alltermcon_container_zdb_id = phenos_entity_1_subterm_zdb_id
     and phenos_entity_1_subterm_zdb_id is not null
-    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = fish_Zdb_id)
+    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
  select distinct phenos_pk_id,
+ 		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
 		 term_ont_id,
@@ -1892,23 +1888,27 @@ union
 		 "pheno",
 		 genox_fish_zdb_id,
 		 "",
-		 phenox_start_stage_zdb_id,
-		 phenox_end_stage_Zdb_id
+		 phenox_start_stg_zdb_id,
+		 phenox_end_stg_Zdb_id
    from mutant_fast_search,
    	fish_Experiment,
 	phenotype_experiment,
 	all_term_Contains,
 	term,
-	phenotype_statement
-    where mfs_genox_zdb_id = genox_zdb_id
+	phenotype_statement,
+	marker
+    where mrkr_Zdb_id = mfs_mrkr_Zdb_id
+    and mrkr_type = 'GENE' 
+    and mfs_genox_zdb_id = genox_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
     and alltermcon_container_zdb_id = phenos_entity_2_superterm_zdb_id
     and phenos_entity_2_superterm_zdb_id is not null
-    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = fish_Zdb_id)
+    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
  select distinct phenos_pk_id,
+ 		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
 		 term_ont_id,
@@ -1916,22 +1916,25 @@ union
 		 "pheno",
 		 genox_fish_zdb_id,
 		 "",
-		 phenox_start_stage_zdb_id,
-		 phenox_end_stage_Zdb_id
+		 phenox_start_stg_zdb_id,
+		 phenox_end_stg_Zdb_id
    from mutant_fast_search,
    	fish_Experiment,
 	phenotype_experiment,
 	all_term_Contains,
 	term,
-	phenotype_statement
-    where mfs_genox_zdb_id = genox_zdb_id
+	phenotype_statement,
+	marker
+    where mrkr_Zdb_id = mfs_mrkr_Zdb_id
+    and mrkr_type = 'GENE' 
+    and mfs_genox_zdb_id = genox_zdb_id
     and phenox_genox_zdb_id = genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
     and alltermcon_container_zdb_id = phenos_entity_2_subterm_zdb_id
     and phenos_entity_2_subterm_zdb_id is not null
-    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = fish_Zdb_id)
-;			
+    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
+into temp tmp_pheno_gene;			
 
 ! echo "Create tmp_dumpPheno temp table"
 create temp table tmp_dumpPheno (
@@ -1981,6 +1984,7 @@ update tmp_dumpPheno
   set fish_name = (select fish_name
       			  	  from fish
 				  where fish_zdb_id = fish_id);
+
 
 
 !echo "unload phenoGeneCleanData.txt"
