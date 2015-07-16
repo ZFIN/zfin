@@ -452,17 +452,7 @@
 
     </class>
 
-    <class name="org.zfin.expression.ExperimentUnit" table="experiment_unit">
-        <id name="zdbID" type="string">
-            <column name="expunit_zdb_id" not-null="true"/>
-            <generator class="org.zfin.database.ZdbIdGenerator">
-                <param name="type">EXPUNIT</param>
-            </generator>
-        </id>
 
-        <property name="name" column="expunit_name"/>
-        <property name="group" column="expunit_condition_group"/>
-    </class>
 
     <class name="org.zfin.feature.FeatureHistory" table="feature_history">
         <id name="zdbID">

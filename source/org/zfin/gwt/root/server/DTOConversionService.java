@@ -1338,7 +1338,7 @@ public class DTOConversionService {
     public static FishDTO convertToFishDtoFromFish(Fish fish) {
         FishDTO dto = new FishDTO();
         dto.setZdbID(fish.getZdbID());
-        dto.setName(fish.getName());
+        dto.setName(fish.getDisplayName());
         dto.setHandle(fish.getHandle());
         dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
         if (CollectionUtils.isNotEmpty(fish.getStrList())) {

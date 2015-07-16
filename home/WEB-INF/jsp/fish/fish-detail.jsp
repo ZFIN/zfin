@@ -19,7 +19,7 @@
             <span class="name-label">Fish name:</span>
         </th>
         <td class="fish-name-value" style="vertical-align: bottom;">
-            <span class="name-value">${fish.name}</span>
+            <span class="name-value">${fish.displayName}</span>
         </td>
     </tr>
     <tr>
@@ -54,7 +54,7 @@
 
 <c:if test="${!fishIsWildtypeWithoutReagents}">
     <div class="summary">
-        <span class="summaryTitle">HUMAN DISEASE MODELED by ${fish.name}</span>
+        <span class="summaryTitle">HUMAN DISEASE MODELED by ${fish.displayName}</span>
         <c:choose>
             <c:when test="${!empty diseases}">
             <table class="summary rowstripes">

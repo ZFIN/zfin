@@ -95,7 +95,9 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         return "Fish";
     }
 
-    public String getFishID() { return zdbID; }
+    public String getFishID() {
+        return zdbID;
+    }
 
     public Set<FishExperiment> getFishExperiments() {
         return fishExperiments;
@@ -114,8 +116,8 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     }
 
     public int compareTo(Fish otherFish) {
-        if(order != otherFish.getOrder())
-            return order < otherFish.getOrder()? -1: 1;
+        if (order != otherFish.getOrder())
+            return order < otherFish.getOrder() ? -1 : 1;
         return getNameOrder().compareTo(otherFish.getNameOrder());
     }
 
@@ -123,9 +125,18 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         return genotype.isWildtype() && strList.size() == 0;
     }
 
-    public String toString() { return name; }
+    public String toString() {
+        return name;
+    }
 
     public List<Marker> getAffectedGenes() {
         return FishService.getAffectedGenes(this);
+    }
+
+    public String getDisplayName() {
+        String newGenoName = genotype.getName();
+        if (genotype.getBackground() != null)
+            newGenoName += " (" + genotype.getBackground().getAbbreviation() + ")";
+        return name.replace(genotype.getName(), newGenoName);
     }
 }

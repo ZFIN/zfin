@@ -14,33 +14,22 @@
             expcond_zdb_id,
             expcond_exp_zdb_id,
             expcond_cdt_zdb_id,
-            expcond_value,
-            expcond_expunit_zdb_id,
+
             expcond_comments
     <?/MIVAR>
     <?MIVAR NAME=xpcur_G_expcond_insert_values>
             '$xpcurup_expcond_zdb_id',
             '$xpcur_G_cond_add_exp',
             '$xpcur_G_cond_add_cond_type',
-            '$xpcur_G_cond_add_value',
-            '$xpcur_G_cond_add_unit',
+
             '$xpcur_G_cond_add_comments'
     <?/MIVAR>
-    <?MIVAR COND=$(AND,$(XST,$xpcur_G_cond_add_attribute),$(NE,$xpcur_G_cond_add_attribute,))>
-        <?MIVAR NAME=xpcur_G_expcond_insert_columns>$xpcur_G_expcond_insert_columns, expcond_mrkr_zdb_id<?/MIVAR>
-        <?MIVAR NAME=xpcur_G_expcond_insert_values>$xpcur_G_expcond_insert_values, '$xpcur_G_cond_add_attribute'<?/MIVAR>
-    <?/MIVAR>
+
     
     <?MISQL SQL="
         SELECT * 
         FROM experiment_condition
-        WHERE expcond_exp_zdb_id = '$xpcur_G_cond_add_exp'
-          AND  expcond_cdt_zdb_id = '$xpcur_G_cond_add_cond_type'
-          AND  expcond_value = '$xpcur_G_cond_add_value'
-          AND  expcond_expunit_zdb_id = '$xpcur_G_cond_add_unit'
-          <?MIVAR COND=$(AND,$(XST,$xpcur_G_cond_add_attribute),$(NE,$xpcur_G_cond_add_attribute,))>
-          AND  expcond_mrkr_zdb_id = '$xpcur_G_cond_add_attribute'
-          <?/MIVAR>
+        WHERE expcond_exp_zdb_id = '$xpcur_G_cond_add_exp'  AND   expcond_cdt_zdb_id = '$xpcur_G_cond_add_cond_type'
         ;">
         <?MIVAR NAME=xpcur_cond_exists>$1<?/MIVAR>
     <?/MISQL>
@@ -68,9 +57,8 @@
       
     <?MIVAR>   
       $(UNSETVAR,$xpcur_G_cond_add_cond_type)
-      $(UNSETVAR,$xpcur_G_cond_add_value)
-      $(UNSETVAR,$xpcur_G_cond_add_unit)
+
       $(UNSETVAR,$xpcur_G_cond_add_comments)
-      $(UNSETVAR,$xpcur_G_cond_add_attribute)
+
       $(UNSETVAR,$xpcur_cond_exists)
     <?/MIVAR> 
