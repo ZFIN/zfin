@@ -23,16 +23,11 @@ public class GenotypePresentation extends EntityPresentation {
      */
     public static String getName(Genotype genotype) {
         String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
+        return getSpanTag(cssClassName, getDisplayName(genotype), getDisplayName(genotype));
+    }
 
-        if (getBackground(genotype) != null) {
-            return getSpanTag(cssClassName, genotype.getName(), genotype.getName() + "(" + getBackground(genotype) + ")");
-        }
-        else
-        {
-            return getSpanTag(cssClassName, genotype.getName(), genotype.getName());
-        }
-
-        
+    public static String getDisplayName(Genotype genotype) {
+        return genotype.getName() + getBackground(genotype);
     }
 
     /**
@@ -43,15 +38,15 @@ public class GenotypePresentation extends EntityPresentation {
      */
     public static String getLink(Genotype genotype) {
         if (getBackground(genotype) != null) {
-            return getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null);
+            return getTomcatLink(uri, genotype.getZdbID(), getDisplayName(genotype), null);
         }
-        return getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null);
+        return getTomcatLink(uri, genotype.getZdbID(), getDisplayName(genotype), null);
     }
 
     public static String getLink(Genotype genotype, boolean suppressPopupLink) {
         StringBuilder sb = new StringBuilder();
         if (getBackground(genotype) != null)
-            sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null));
+            sb.append(getTomcatLink(uri, genotype.getZdbID(), getDisplayName(genotype), null));
         else if (!genotype.isWildtype())
             sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null));
         else {
@@ -65,16 +60,14 @@ public class GenotypePresentation extends EntityPresentation {
     }
 
     public static String getBackground(Genotype genotype) {
-        if (!genotype.getAssociatedGenotypes().isEmpty()) {
+        if (genotype.getBackground() != null) {
             String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
-            String backgroundNames = new String("");
-            for (Genotype bkgrd : genotype.getAssociatedGenotypes()) {
-                backgroundNames = backgroundNames + bkgrd.getName();
-            }
-            return getSpanTag(cssClassName, backgroundNames, backgroundNames);
+            String backgroundAppendix = " (";
+            backgroundAppendix += genotype.getBackground().getAbbreviation();
+            backgroundAppendix += ")";
+            return getSpanTag(cssClassName, backgroundAppendix, backgroundAppendix);
         }
-
-        return null;
+        return "";
     }
 
     public static String getPopupLink(Genotype genotype) {
