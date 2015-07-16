@@ -310,14 +310,14 @@ DEBUGGING:
                              when 'Current symbol' then 'MO symbol'
                              when 'Current name' then 'MO name'
                         end, xtmn_name_significance
-                   from $xselqry_tmp_mo_sig, marker_relationship,experiment_condition,
-		        fish_experiment, all_map_names $xpatselqry_nameEndsTable
+                   from $xselqry_tmp_mo_sig, marker_relationship,
+		        fish_experiment, fish_str, all_map_names $xpatselqry_nameEndsTable
                   where $xpatselqry_nameCond
                     and xtmn_mrkr_zdb_id = allmapnm_zdb_id
                     and xtmn_name_significance = allmapnm_significance
                     and xtmn_mrkr_zdb_id = mrel_mrkr_2_zdb_id
-                    and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-                    and expcond_exp_zdb_id = genox_exp_zdb_id;">
+                    and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
+                    and fishstr_fish_zdb_id = genox_fish_zdb_id;">
   <?/MISQL>
 
   <?MIVAR NAME=xpatselqry_join>

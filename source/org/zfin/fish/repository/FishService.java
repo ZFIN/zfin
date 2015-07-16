@@ -57,6 +57,7 @@ public class FishService {
             response = solrServer.query(query);
         } catch (Exception e) {
             logger.error(e);
+            throw new RuntimeException(e);
         }
 
         List<FishResult> solrSearchResults = response.getBeans(FishResult.class);
