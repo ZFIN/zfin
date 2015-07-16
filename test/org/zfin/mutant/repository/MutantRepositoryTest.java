@@ -14,14 +14,12 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.presentation.TermHistogramBean;
-import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.STRMarkerSequence;
@@ -510,5 +508,21 @@ public class MutantRepositoryTest {
     public void getZygosityList() {
         List<Zygosity> zygosityList = getMutantRepository().getListOfZygosity();
         assertNotNull(zygosityList);
+    }
+
+    @Test
+    public void getFishByGenotypeCount() {
+        // TU
+        String genoID = "ZDB-GENO-110914-4";
+        long count = getMutantRepository().getFishCountByGenotype(genoID, "ZDB-PUB-040617-4");
+        assertThat((int) (long) count, greaterThan(-1));
+    }
+
+    @Test
+    public void getInferredFromCountByGenotype() {
+        String genoID = "ZDB-GENO-000412-4";
+        String publicationID = "ZDB-PUB-040617-4";
+        long count = getMutantRepository().getInferredFromCountByGenotype(genoID, publicationID);
+        assertThat((int) (long) count, greaterThan(0));
     }
 }

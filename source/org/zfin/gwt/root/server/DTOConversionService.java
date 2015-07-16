@@ -624,12 +624,12 @@ public class DTOConversionService {
         if (feature.getDbLinks() != null)
             featureDTO.setFeatureSequences(new ArrayList<>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
 
-        for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
+       /* for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
             if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
                 featureDTO.setDisplayNameForGenotypeBase(relationship.getMarker().getAbbreviation());
                 featureDTO.setDisplayNameForGenotypeSuperior(feature.getAbbreviation());
             }
-        }
+        }*/
         return featureDTO;
     }
 
@@ -1338,7 +1338,7 @@ public class DTOConversionService {
     public static FishDTO convertToFishDtoFromFish(Fish fish) {
         FishDTO dto = new FishDTO();
         dto.setZdbID(fish.getZdbID());
-        dto.setName(fish.getName());
+        dto.setName(fish.getDisplayName());
         dto.setHandle(fish.getHandle());
         dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
         if (CollectionUtils.isNotEmpty(fish.getStrList())) {

@@ -1,4 +1,4 @@
-create procedure regen_genofig_phenox(phenoxId like phenotype_Experiment.phenox_pk_id, genoxId like fish_Experiment.genox_zdb_id)
+create procedure regen_genofig_phenox(phenoxId like phenotype_Experiment.phenox_pk_id)
 
   -- ---------------------------------------------------------------------------------------------
   -- regenerates records in fast search table genotype_figure_fast_search for a given genotype.
@@ -13,6 +13,9 @@ create procedure regen_genofig_phenox(phenoxId like phenotype_Experiment.phenox_
   --   Error:   throws whatever exception occurred.
   -- ---------------------------------------------------------------------------------------------
 
+ define genoxId like fish_experiment.genox_zdb_id;
+ let genoxId = (select phenox_genox_zdb_id from phenotype_experiment
+     	       	       			   where phenox_pk_id = phenoxId);
 
   -- crank up the parallelism.
   set pdqpriority high;
@@ -21,13 +24,16 @@ create procedure regen_genofig_phenox(phenoxId like phenotype_Experiment.phenox_
   --        regen_genofig_temp, regen_genofig_input_zdb_id_temp
   execute procedure regen_genofig_create_temp_tables();
 
-  execute procedure regen_genox_create_temp_tables();
-
   execute procedure regen_genox_genox(genoxId);
   -- takes regen_genofig_input_zdb_id_temp as input, adds recs to regen_genofig_temp
-  execute procedure regen_genofig_process(phenoxId);
+
+  insert into  regen_genofig_input_zdb_id_temp ( rgfg_id )
+      select phenox_pk_id from phenotype_experiment
+        where phenox_pk_id = phenoxId;
+
+  execute procedure regen_genofig_process();
 
   -- Move from temp tables to permanent tables
-  execute procedure regen_genofig_finish(phenoxId);
+  execute procedure regen_genofig_finish();
 
 end procedure;

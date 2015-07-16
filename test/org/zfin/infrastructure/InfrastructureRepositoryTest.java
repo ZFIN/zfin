@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
 /**
@@ -548,6 +549,12 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
         GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID("DOID:5082");
         List<Publication> paginationResult = infrastructureRepository.getTermReferences(term, "author");
         assertNotNull(paginationResult);
+    }
+
+    @Test
+    public void getDistinctPublicationsByData() {
+        long count = infrastructureRepository.getDistinctPublicationsByData("ZDB-GENO-100511-2");
+        assertThat((int) (long) count, greaterThan(1));
     }
 
 }

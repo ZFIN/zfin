@@ -115,6 +115,8 @@ public interface InfrastructureRepository {
 
     void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate);
 
+    void insertUpdatesTable(EntityZdbID entity, BeanFieldUpdate beanFieldUpdate, String comment);
+
 
 //    void deleteRecordAttribution(RecordAttribution recordAttribution);
 
@@ -447,6 +449,8 @@ public interface InfrastructureRepository {
     void insertPublicAttribution(Genotype genotype, Publication publication);
 
     void insertRecordAttribution(Fish fish, Publication publication);
+
+    long getDistinctPublicationsByData(String entityID);
 }
 
 

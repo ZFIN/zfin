@@ -9,10 +9,9 @@ import java.io.Serializable;
  */
 public class BeanFieldUpdate implements Serializable{
 
-    String field ;
-    Object from ;
-    Object to ;
-    Class fieldType ;
+    private String field;
+    private Object from;
+    private Object to;
 
     public String getField() {
         return field;
@@ -38,14 +37,6 @@ public class BeanFieldUpdate implements Serializable{
         this.to = to;
     }
 
-    public Class getFieldType() {
-        return fieldType;
-    }
-
-    public void setFieldType(Class fieldType) {
-        this.fieldType = fieldType;
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -53,19 +44,20 @@ public class BeanFieldUpdate implements Serializable{
         sb.append("{field='").append(field).append('\'');
         sb.append(", from=").append(from);
         sb.append(", to=").append(to);
-        sb.append(", fieldType=").append(fieldType.toString());
         sb.append('}');
         return sb.toString();
     }
 
     public void setNullToTrueNull() {
-        if (fieldType == String.class && StringUtils.equalsIgnoreCase((String)to, "null"))
+        if (to instanceof String && StringUtils.equalsIgnoreCase((String) to, "null")) {
             setTo(null);
+        }
     }
 
     public void setEmptyToNull() {
-        if (fieldType == String.class && StringUtils.equals((String)to, ""))
+        if (to instanceof String && StringUtils.equals((String) to, "")) {
             setTo(null);
+        }
     }
 
 }

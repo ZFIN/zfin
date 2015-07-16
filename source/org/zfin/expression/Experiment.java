@@ -62,21 +62,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         this.experimentConditions = experimentConditions;
     }
 
-    /*
-    public Set<ExperimentCondition> getSequenecTargetingReagentConditions() {
-        if (experimentConditions == null)
-            return null;
-
-        Set<ExperimentCondition> strConditions = new HashSet<ExperimentCondition>(4);
-        for (ExperimentCondition condition : experimentConditions) {
-           // if (condition.getSequenceTargetingReagent() != null)
-            // Todo: check STR
-                strConditions.add(condition);
-        }
-        return strConditions;
-    }
-    */
-
     public boolean isStandard() {
 
         return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));

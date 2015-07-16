@@ -55,27 +55,27 @@
 
 <tr>
 <td><b>Synonym</b>:</td>
-               <td><div id ="constructSynonyms"></div></td>
+               <td><div id ="constructEditSynonyms"></div></td>
 
     <tr><td></td>
 
-               <td><input  id="constructAlias" name="constructAlias" autocomplete="off" value="" type="text" size=50/>
-               &nbsp;&nbsp;<a onclick="addAlias(); return false;" href="#"><img height= 10 src="/images/plus.png"></a></td><tr>
+               <td><input  id="constructEditAlias" name="constructEditAlias" autocomplete="off" value="" type="text" size=50/>
+               &nbsp;&nbsp;<input type="button" value="Add" id="addNewAlias"  onClick=addAlias(); /></td><tr>
 
 <tr>
                <tr>
                    <td><b>Sequence</b>:</td>
-                   <td><div id ="constructSequences"></div></td>
+                   <td><div id ="constructEditSequences"></div></td>
 
-               <tr><td></td>
+               <tr>
 
-                   <td><input  id="constructSequence" name="constructSequence" autocomplete="off" value="" type="text" size=50/>
-                       &nbsp;&nbsp;<a onclick="addSequence(); return false;" href="#"><img height= 10 src="/images/plus.png"></a></td><tr>
+                   <td><input  id="constructEditSequence" name="constructEditSequence" autocomplete="off" value="" type="text" size=50/>
+                       &nbsp;&nbsp; <input type="button" value="Add" id="addNewSequence"  onClick=addSequence(); /></td></tr>
 
                <tr>
 <td><b>Public Note</b>:</td><td>
 
-    <textarea id="constructComments" name="constructComments" value="" rows="3" cols="50" ></textarea>&nbsp;&nbsp;
+    <textarea id="constructEditComments" name="constructEditComments" value="" rows="3" cols="50" ></textarea>&nbsp;&nbsp;
 
             <input type="button" value="Save" id="updatePublicNotes"  onClick=updatePNotes(); />
 </td>
@@ -86,10 +86,10 @@
                <td>
 
 <b>Curator Note</b>: </td>
-               <td>&nbsp;<div id="constructNotes">
+               <td>&nbsp;<div id="constructEditNotes">
 
            </tr></div>
-               <tr><td></td><td><textarea id="curatorNotes" name="constructComments" value="" rows="3" cols="50" ></textarea> &nbsp;&nbsp;<a onclick="addNotes(); return false;" href="#"><img height= 10 src="/images/plus.png"></a></td><tr>
+               <tr><td></td><td><textarea id="curatorEditNotes" name="curatorEditNotes" value="" rows="3" cols="50" ></textarea> &nbsp;&nbsp; <input type="button" value="Add" id="addConstructEditNotes"  onClick=addNotes(); /></td><tr>
 </tr>
 </table>
 <div id="constructSynonym"> </div>
@@ -102,15 +102,18 @@
 <script type="text/javascript">
     function updatePNotes() {
 
-        var constructComments = jQuery("#constructComments").val();
+        var constructUpdateComments = jQuery("#constructEditComments").val();
+
         var constructID = jQuery('#constructEdit').val();
+         if (constructUpdateComments==""){
+             constructUpdateComments="null"
+         }
 
-
-
+       
 
         jQuery.ajax({
             url: "/action/construct/update-comments/" + constructID
-            + "/constructComments/" + constructComments,
+            + "/constructEditComments/" + constructUpdateComments,
             type: 'POST',
             //data: param,
             success: function (response) {

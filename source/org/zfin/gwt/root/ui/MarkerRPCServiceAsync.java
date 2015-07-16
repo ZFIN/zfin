@@ -1,6 +1,7 @@
 package org.zfin.gwt.root.ui;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.zfin.gwt.curation.ui.AttributionModule;
 import org.zfin.gwt.root.dto.*;
 
 import java.util.List;
@@ -105,4 +106,6 @@ public interface MarkerRPCServiceAsync {
     void getMarkersForRelation(String mrkrzdbid,String pubZdbID,AsyncCallback<List<MarkerDTO>> markerEditCallBack);
     void deleteConstructMarkerRelationship(ConstructRelationshipDTO markerRelationshipDTO, AsyncCallback<Void> markerEditCallBack);
     void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO, AsyncCallback<Void> markerEditCallBack);
+
+    void checkDeattributionRules(String attributionToRemoveID, String publicationZdbID, AsyncCallback<Void> callback);
 }

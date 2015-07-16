@@ -27,6 +27,36 @@ create procedure regen_genofig_create_temp_tables()
       --  -316: Index name already exists.
     end exception with resume;
 
+  -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+    --   Create genotype_figure_fast_search_new
+    -- -------------------------------------------------------------------
+    -- -------------------------------------------------------------------
+
+
+    if (exists (select * from systables where tabname = "genotype_figure_fast_search_new")) then
+      drop table genotype_figure_fast_search_new;
+    end if
+
+    create table genotype_figure_fast_search_new 
+      (  
+        gffs_geno_zdb_id  varchar(50) not null,
+        gffs_fig_zdb_id varchar(50) not null,
+        gffs_morph_zdb_id varchar(50),
+        gffs_phenox_pk_id int8 not null,
+	gffs_date_created DATETIME YEAR TO SECOND 
+			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
+        gffs_phenos_id int8 not null,
+	gffs_fish_zdb_id varchar(50) not null,
+	gffs_genox_zdb_id varchar(50),
+    gffs_serial_id serial8 not null 
+
+      )
+    fragment by round robin in tbldbs1, tbldbs2, tbldbs3
+    extent size 512 next size 512 ;
+    
+
+
     create temp table regen_genofig_input_zdb_id_temp  
       (
 	rgfg_id		varchar(50),

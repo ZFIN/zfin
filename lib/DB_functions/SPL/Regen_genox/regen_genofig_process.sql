@@ -35,7 +35,7 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,
      and phenox_pk_id = rgfg_id
      and fishstr_fish_zdb_id = fish_Zdb_id
      and phenox_genox_zdb_id = genox_zdb_id
-     and exists (Select 'x' from mutant_fast_search_new
+     and exists (Select 'x' from mutant_fast_search
      	 		where mfs_genox_zdb_id = genox_zdb_id);
 
 insert into regen_genofig_temp (rgf_geno_zdb_id,
@@ -59,7 +59,7 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,
    and phenox_pk_id = rgfg_id
  and phenox_genox_zdb_id = genox_zdb_id
    and not exists (Select 'x' from fish_Str where fishstr_fish_zdb_id = fish_Zdb_id)
-     and exists (Select 'x' from mutant_fast_search_new
+     and exists (Select 'x' from mutant_fast_search
      	 		where mfs_genox_zdb_id = genox_zdb_id);
 
 end procedure;

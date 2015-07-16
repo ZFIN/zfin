@@ -95,7 +95,7 @@ public class ConstructEditController {
 
     void addConstructAlias(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String constructID=request.getParameter("constructEdit");
-        String cAlias=request.getParameter("constructAlias");
+        String cAlias=request.getParameter("constructEditAlias");
         String pubid=request.getParameter("constructPublicationZdbID");
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
@@ -110,7 +110,7 @@ public class ConstructEditController {
 
     void addConstructSequence(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String constructID=request.getParameter("constructEdit");
-        String constructSequence=request.getParameter("constructSequence");
+        String constructSequence=request.getParameter("constructEditSequence");
         String pubid=request.getParameter("constructPublicationZdbID");
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
@@ -121,24 +121,40 @@ public class ConstructEditController {
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    @RequestMapping(value = "/update-comments/{constructID}/constructComments/{constructComments}"
+    @RequestMapping(value = "/update-comments/{constructID}/constructEditComments/{constructUpdateComments}"
             , method = RequestMethod.POST)
     public
     @ResponseBody
-    boolean updateConstructComments(
+    void updateConstructComments(
             @PathVariable String constructID,
-            @PathVariable String constructComments
+            @PathVariable String constructUpdateComments
 
 
     ) {
         HibernateUtil.createTransaction();
         Marker m=mr.getMarkerByID(constructID);
-        m.setPublicComments(constructComments);
-        ConstructCuration c=cr.getConstructByID(constructID);
-        c.setPublicComments(constructComments);
-        ir.insertUpdatesTable(m,"comments","updated public notes");
-        HibernateUtil.flushAndCommitCurrentSession();
-        return true;
+        if (!constructUpdateComments.equals("null")) {
+            m.setPublicComments(constructUpdateComments);
+
+            ConstructCuration c = cr.getConstructByID(constructID);
+            c.setPublicComments(constructUpdateComments);
+            ir.insertUpdatesTable(m, "comments", "updated public notes");
+            HibernateUtil.flushAndCommitCurrentSession();
+
+
+        }
+        else{
+            m.setPublicComments("");
+
+            ConstructCuration c = cr.getConstructByID(constructID);
+            c.setPublicComments("");
+            ir.insertUpdatesTable(m, "comments", "updated public notes");
+            HibernateUtil.flushAndCommitCurrentSession();
+
+
+        }
+
+
     }
 
     @RequestMapping(value = "/add-notes/{constructID}/notes/{notes}/publication/{pubID}"

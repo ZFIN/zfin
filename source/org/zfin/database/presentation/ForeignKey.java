@@ -194,7 +194,7 @@ public enum ForeignKey {
     GENOFEAT_ZYGO(Table.ZYGOSITY, Table.GENOTYPE_FEATURE, "genofeat_zygocity"),
     FEATURE_FEATURE_TRACKING(Table.FEATURE, Table.FEATURE_TRACKING, "ft_feature_zdb_id"),
     MO_EXP_COND(Table.MORPHOLINO, Table.EXPERIMENT_CONDITION, "expcond_mrkr_zdb_id"),
-    UNIT_EXP_COND(Table.EXPERIMENT_UNIT, Table.EXPERIMENT_CONDITION, "expcond_expunit_zdb_id"),
+    //UNIT_EXP_COND(Table.EXPERIMENT_UNIT, Table.EXPERIMENT_CONDITION, "expcond_expunit_zdb_id"),
     IMAGE_FIGURE(Table.FIGURE, Table.IMAGE, "img_fig_zdb_id"),
     DATA_ALIAS_TERM(Table.TERM, Table.DATA_ALIAS, "term:dalias_data_zdb_id"),
     TERM_ONTOLOGY(Table.ONTOLOGY, Table.TERM, "term_ontology_id"),

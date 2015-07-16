@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishPublicationBean" scope="request"/>
@@ -15,7 +14,7 @@
 
 <div class="name-label">
         Fish:&nbsp;
-        <a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.name}</a>  
+        <a href="fish-detail/${formBean.fish.fishID}">${formBean.fish.displayName}</a>
 </div>
 
 <form:form commandName="formBean" name="Update Fish Publication List" id="Update Fish Publication List">

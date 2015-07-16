@@ -162,11 +162,6 @@ get_obj_name(zdbId varchar(50))
       into objName
       from experiment_condition
       where expcond_zdb_id = zdbId;
-   elif (objType = "EXPUNIT") then    --no name so return zdb_id
-    select expunit_name
-      into objName
-      from experiment_unit
-      where expunit_zdb_id = zdbId;
   elif (objType = "EXTNOTE") then
     select extnote_zdb_id
       into objName

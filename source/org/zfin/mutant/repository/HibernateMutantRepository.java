@@ -564,16 +564,16 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public int getZFINInferences(String zdbID, String publicationZdbID) {
         return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery("" +
-                " select count(*) from marker_go_term_evidence  ev  " +
-                " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
-                " where " +
-                " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
-                " and " +
-                " inf.infgrmem_inferred_from=:zdbID " +
-                " ")
-                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
-                .setString("pubZdbID", publicationZdbID)
-                .uniqueResult().toString()
+                        " select count(*) from marker_go_term_evidence  ev  " +
+                        " join  inference_group_member inf on ev.mrkrgoev_zdb_id=inf.infgrmem_mrkrgoev_zdb_id " +
+                        " where " +
+                        " ev.mrkrgoev_source_zdb_id=:pubZdbID " +
+                        " and " +
+                        " inf.infgrmem_inferred_from=:zdbID " +
+                        " ")
+                        .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
+                        .setString("pubZdbID", publicationZdbID)
+                        .uniqueResult().toString()
         );
     }
 
@@ -1694,5 +1694,32 @@ public class HibernateMutantRepository implements MutantRepository {
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotype", genotype);
         return query.list();
+    }
+
+    @Override
+    public long getFishCountByGenotype(String genotypeID, String publicationID) {
+        String hql = "select distinct fish from Fish as fish, PublicationAttribution pubAtt " +
+                "where fish.genotype.zdbID = :genotypeID AND " +
+                "pubAtt.publication.zdbID = :publicationID AND " +
+                "pubAtt.dataZdbID = fish.zdbID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotypeID", genotypeID);
+        query.setParameter("publicationID", publicationID);
+        List<Fish> fishList = query.list();
+        if (fishList == null)
+            return 0;
+        return (long) fishList.size();
+    }
+
+    @Override
+    public long getInferredFromCountByGenotype(String genotypeID, String publicationID) {
+        String hql = "select count(inferred.markerGoTermEvidenceZdbID) from InferenceGroupMember as inferred, MarkerGoTermEvidence as mgt " +
+                "where inferred.inferredFrom = :genotypeID AND " +
+                "mgt.source.zdbID = :publicationID AND " +
+                "inferred.markerGoTermEvidenceZdbID = mgt.zdbID ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotypeID", "ZFIN:" + genotypeID);
+        query.setParameter("publicationID", publicationID);
+        return (long) query.uniqueResult();
     }
 }

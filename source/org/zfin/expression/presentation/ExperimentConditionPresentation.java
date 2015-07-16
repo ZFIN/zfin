@@ -22,10 +22,7 @@ public class ExperimentConditionPresentation extends EntityPresentation {
      */
     public static String getLink(ExperimentCondition condition, boolean suppressPopupLink) {
         StringBuilder sb = new StringBuilder(100);
-      //  if (condition.getSequenceTargetingReagent() != null)
-      //      return MarkerPresentation.getLink(condition.getSequenceTargetingReagent());
-      //  else
-            sb.append(getTomcatLink(uri,condition.getExperiment().getZdbID(),getName(condition)));
+        sb.append(getTomcatLink(uri,condition.getExperiment().getZdbID(),getName(condition)));
 
         if (!suppressPopupLink)
             sb.append(getPopupLink(condition));
@@ -41,10 +38,7 @@ public class ExperimentConditionPresentation extends EntityPresentation {
      * @return
      */
     public static String getName(ExperimentCondition condition) {
-      //  if (condition.getSequenceTargetingReagent() != null) {
-      //      return MarkerPresentation.getName(condition.getSequenceTargetingReagent());
-      //  } else
-            return condition.getConditionDataType().getGroup() + ":" + condition.getConditionDataType().getName();
+        return condition.getConditionDataType().getGroup() + ":" + condition.getConditionDataType().getName();
     }
 
     public static String getPopupLink(ExperimentCondition condition) {

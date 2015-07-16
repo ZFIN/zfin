@@ -506,14 +506,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate) {
-        String from = (beanFieldUpdate.getFrom() == null) ? null : beanFieldUpdate.getFrom().toString();
-        String to = (beanFieldUpdate.getTo() == null) ? null : beanFieldUpdate.getTo().toString();
+        insertUpdatesTable(recID, beanFieldUpdate, null);
+    }
 
-        insertUpdatesTable(recID,
-                beanFieldUpdate.getField(),
-                from,
-                to,
-                null);
+    @Override
+    public void insertUpdatesTable(EntityZdbID entity, BeanFieldUpdate beanFieldUpdate, String comment) {
+        insertUpdatesTable(entity.getZdbID(), beanFieldUpdate, comment);
     }
 
     @Override
@@ -536,6 +534,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public void insertUpdatesTable(EntityZdbID entity, String fieldName, String comments) {
         insertUpdatesTable(entity, fieldName, comments, entity.getAbbreviation(), null);
+    }
+
+    private void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate, String comments) {
+        String from = (beanFieldUpdate.getFrom() == null) ? null : beanFieldUpdate.getFrom().toString();
+        String to = (beanFieldUpdate.getTo() == null) ? null : beanFieldUpdate.getTo().toString();
+
+        insertUpdatesTable(recID, beanFieldUpdate.getField(), from, to, comments);
     }
 
     private void insertUpdatesTable(String recId, Person submitter, String fieldName, String oldValue, String newValue, String comments) {
@@ -1689,7 +1694,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         for (GenotypeFeature gFeature : genotype.getGenotypeFeatures()) {
             Feature feature = gFeature.getFeature();
             insertStandardPubAttribution(feature.getZdbID(), publication);
-            insertStandardPubAttribution(feature.getAllelicGene().getZdbID(), publication);
+            if (feature.getAllelicGene() != null)
+                insertStandardPubAttribution(feature.getAllelicGene().getZdbID(), publication);
         }
 
     }
@@ -1698,6 +1704,19 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void insertRecordAttribution(Fish fish, Publication publication) {
         insertStandardPubAttribution(fish.getZdbID(), publication);
         insertStandardPubAttribution(fish.getGenotype().getZdbID(), publication);
+    }
+
+    @Override
+    public long getDistinctPublicationsByData(String entityID) {
+        String hql = "select distinct pubAtt.publication from PublicationAttribution as pubAtt " +
+                "where pubAtt.dataZdbID = :genotypeID AND " +
+                "pubAtt.sourceType = :type ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("genotypeID", entityID);
+        query.setParameter("type", RecordAttribution.SourceType.STANDARD);
+        List<Publication> list = query.list();
+        return list.size();
+
     }
 }
 
