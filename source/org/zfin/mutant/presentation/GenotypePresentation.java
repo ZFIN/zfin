@@ -14,14 +14,16 @@ public class GenotypePresentation extends EntityPresentation {
 
     private static final String uri = "genotype/view/";
     private static final String popupUri = "genotype/genotype-detail-popup?zdbID=";
+
     /**
      * Generates an html formatted Genotype name
      *
-     * @return html for Genotype link
      * @param genotype Genotype
+     * @return html for Genotype link
      */
     public static String getName(Genotype genotype) {
         String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
+
         if (getBackground(genotype) != null) {
             return getSpanTag(cssClassName, genotype.getName(), genotype.getName() + "(" + getBackground(genotype) + ")");
         }
@@ -29,6 +31,8 @@ public class GenotypePresentation extends EntityPresentation {
         {
             return getSpanTag(cssClassName, genotype.getName(), genotype.getName());
         }
+
+        
     }
 
     /**
@@ -39,7 +43,7 @@ public class GenotypePresentation extends EntityPresentation {
      */
     public static String getLink(Genotype genotype) {
         if (getBackground(genotype) != null) {
-            return getTomcatLink(uri, genotype.getZdbID(), getName(genotype)+"("+getBackground(genotype)+")", null);
+            return getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null);
         }
         return getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null);
     }
@@ -47,11 +51,10 @@ public class GenotypePresentation extends EntityPresentation {
     public static String getLink(Genotype genotype, boolean suppressPopupLink) {
         StringBuilder sb = new StringBuilder();
         if (getBackground(genotype) != null)
-            sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype) + "(" + getBackground(genotype) + ")", null));
-        else
-        if (!genotype.isWildtype())
             sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null));
-        else{
+        else if (!genotype.isWildtype())
+            sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null));
+        else {
             sb.append(getTomcatLink(uri, genotype.getZdbID(), genotype.getHandle(), null));
         }
 //        if (genotype.isWildtype()) suppressPopupLink = true;
@@ -66,7 +69,7 @@ public class GenotypePresentation extends EntityPresentation {
             String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
             String backgroundNames = new String("");
             for (Genotype bkgrd : genotype.getAssociatedGenotypes()) {
-                 backgroundNames = backgroundNames + bkgrd.getName();
+                backgroundNames = backgroundNames + bkgrd.getName();
             }
             return getSpanTag(cssClassName, backgroundNames, backgroundNames);
         }

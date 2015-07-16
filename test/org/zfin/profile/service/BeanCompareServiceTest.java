@@ -25,7 +25,7 @@ public class BeanCompareServiceTest {
 
         BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("firstName", p1, p2) ;
 
-        assertEquals("BeanFieldUpdate{field='firstName', from=bob, to=john, fieldType=class java.lang.String}",
+        assertEquals("BeanFieldUpdate{field='firstName', from=bob, to=john}",
                 beanFieldUpdate.toString()) ;
         assertNotNull(beanCompareService.compareBeanField("firstName", p1, p2));
         beanCompareService.applyUpdate(p1, beanFieldUpdate);
@@ -43,7 +43,7 @@ public class BeanCompareServiceTest {
         String newField =  null ;
         p2.setFirstName(newField);
 
-        assertEquals("BeanFieldUpdate{field='firstName', from=bob, to=null, fieldType=class java.lang.String}",
+        assertEquals("BeanFieldUpdate{field='firstName', from=bob, to=null}",
                 beanCompareService.compareBeanField("firstName", p1, p2, true).toString());
         assertNull(beanCompareService.compareBeanField("firstName", p1, p2));
 
@@ -53,7 +53,7 @@ public class BeanCompareServiceTest {
         newField = "john";
         p2.setFirstName(newField);
         BeanFieldUpdate beanFieldUpdate = beanCompareService.compareBeanField("firstName", p1, p2);
-        assertEquals("BeanFieldUpdate{field='firstName', from=null, to=john, fieldType=class java.lang.String}",
+        assertEquals("BeanFieldUpdate{field='firstName', from=null, to=john}",
                 beanFieldUpdate.toString());
         assertNotNull(beanCompareService.compareBeanField("firstName", p1, p2));
 
@@ -75,7 +75,7 @@ public class BeanCompareServiceTest {
         p1.setEmailList(oldField);
         Boolean newField = null;
 
-        assertEquals("BeanFieldUpdate{field='emailList', from=true, to=false, fieldType=class java.lang.Boolean}",
+        assertEquals("BeanFieldUpdate{field='emailList', from=true, to=false}",
                 beanCompareService.compareBeanField("emailList", p1, p2, true, true).toString());
         assertNull(beanCompareService.compareBeanField("emailList", p1, p2, true, true));
 
