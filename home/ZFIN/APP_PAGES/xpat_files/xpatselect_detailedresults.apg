@@ -125,7 +125,7 @@ $xpdetres_imagesOnlyConstraint
     <th>Publication <span nowrap><small>(<a href="javascript:start_note();">current status</a>)</small></span></th>
     <th>Data</th>
     <th> &nbsp; </th>
-    <th>Genotype or Background </th>
+    <th><span title="Fish = Genotype + STR">Fish</span></th>
     <th>Stage Range</th>
     <th>Anatomy</th>
   </tr>

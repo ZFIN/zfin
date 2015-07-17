@@ -3,16 +3,14 @@ package org.zfin.fish.presentation;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFigure;
-import org.zfin.mutant.PhenotypeService;
-import org.zfin.mutant.PhenotypeStatement;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.*;
 
+// TODO: looks like a lot of copied code in GenotypeBean, AbstractFishViewBean, and GenotypeExperimentBean. Can some be refactored out?
 
 public class AbstractFishViewBean {
     protected Genotype genotype;
@@ -49,11 +47,13 @@ public class AbstractFishViewBean {
     }
 
     public List<ExpressionDisplay> getExpressionDisplays() {
-        if (expressionResults == null || expressionResults.size() == 0)
+        if (expressionResults == null || expressionResults.size() == 0) {
             return null;
+        }
 
-        if (expressionDisplays == null)
+        if (expressionDisplays == null) {
             createExpressionDisplays();
+        }
 
         return expressionDisplays;
     }
@@ -62,13 +62,15 @@ public class AbstractFishViewBean {
         if (expressionResults == null || expressionResults.size() == 0) {
             return 0;
         } else {
-            if (expressionDisplays == null)
+            if (expressionDisplays == null) {
                 createExpressionDisplays();
+            }
 
-            if (expressionDisplays == null)
+            if (expressionDisplays == null) {
                 return 0;
-            else
+            } else {
                 return expressionDisplays.size();
+            }
         }
     }
 
@@ -90,8 +92,9 @@ public class AbstractFishViewBean {
      * 2) chemical condition(s), there could be one more experiments associated.
      */
     private void createExpressionDisplays() {
-        if (expressionResults == null || expressionResults.size() == 0)
+        if (expressionResults == null || expressionResults.size() == 0) {
             return;
+        }
 
         // a map of zdbIDs of expressed genes etc as keys and display obejects as values
         Map<String, ExpressionDisplay> map = new HashMap<String, ExpressionDisplay>();
@@ -102,16 +105,18 @@ public class AbstractFishViewBean {
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
-                Experiment exp = xpResult.getExpressionExperiment().getFishExperiment().getExperiment();
+                FishExperiment fishExp = xpResult.getExpressionExperiment().getFishExperiment();
+                Experiment exp = fishExp.getExperiment();
 
                 String key = keyGeno + expressedGene.getZdbID();
 
-                if (exp.isStandard())
+                if (fishExp.isStandardOrGenericControl()) {
                     key = key + "standard";
-                else if (exp.isChemical())
+                } else if (exp.isChemical()) {
                     key = key + "chemical";
-                else
+                } else {
                     key = key + exp.getZdbID();
+                }
 
                 Set<Figure> figs = xpResult.getFigures();
                 GenericTerm term = xpResult.getSuperTerm();
@@ -157,7 +162,7 @@ public class AbstractFishViewBean {
             }
         }
 
-        expressionDisplays = new ArrayList<ExpressionDisplay>(map.size());
+        expressionDisplays = new ArrayList<>(map.size());
 
         if (map.values().size() > 0) {
             expressionDisplays.addAll(map.values());
@@ -170,11 +175,12 @@ public class AbstractFishViewBean {
         if (expressionResults == null || expressionResults.size() == 0) {
             return 0;
         } else {
-            if (expressionDisplays == null)
+            if (expressionDisplays == null) {
                 createExpressionDisplays();
+            }
 
             if (expressionDisplays != null) {
-                Set<Marker> allExpressedGenes = new HashSet<Marker>();
+                Set<Marker> allExpressedGenes = new HashSet<>();
                 for (ExpressionDisplay xpDisp : expressionDisplays) {
                     allExpressedGenes.add(xpDisp.getExpressedGene());
                 }
@@ -186,8 +192,9 @@ public class AbstractFishViewBean {
     }
 
     public List<PhenotypeDisplay> getPhenoDisplays() {
-        if (phenoStatements == null)
+        if (phenoStatements == null) {
             return null;
+        }
 
         return PhenotypeService.getPhenotypeDisplays(phenoStatements,"conditon");
     }
@@ -200,13 +207,15 @@ public class AbstractFishViewBean {
         if (phenoStatements == null || phenoStatements.size() == 0) {
             return 0;
         } else {
-            if (phenoDisplays == null)
-                phenoDisplays = PhenotypeService.getPhenotypeDisplays(phenoStatements,"condition");
+            if (phenoDisplays == null) {
+                phenoDisplays = PhenotypeService.getPhenotypeDisplays(phenoStatements, "condition");
+            }
 
-            if (phenoDisplays == null)
+            if (phenoDisplays == null) {
                 return 0;
-            else
+            } else {
                 return phenoDisplays.size();
+            }
         }
     }
 

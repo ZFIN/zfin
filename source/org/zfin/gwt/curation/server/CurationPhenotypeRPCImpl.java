@@ -144,7 +144,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             return null;
 
         // Collect all phenotype experiments being used
-        Set<PhenotypeExperiment> phenotypeExperiments = new HashSet<>();
+        Set<PhenotypeExperiment> phenotypeExperimentsToRunRegen = new HashSet<>();
         List<PhenotypeExperimentDTO> updatedAnnotations = new ArrayList<>(5);
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
@@ -152,7 +152,6 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             for (PhenotypeExperimentDTO dto : mutantsToBeAnnotated) {
                 PhenotypeExperiment filterMutantFigureStage = DTOConversionService.convertToPhenotypeExperimentFilter(dto);
                 PhenotypeExperiment phenoExperiment = getPhenotypeRepository().getPhenotypeExperiment(filterMutantFigureStage);
-                phenotypeExperiments.add(phenoExperiment);
                 // ToDo: handle case mutant is not found: throw exception (make sure a finally clause is added!
                 for (PileStructureAnnotationDTO pileStructure : pileStructures) {
                     PhenotypeStructure phenotypePileStructure = getPhenotypeRepository().getPhenotypePileStructure(pileStructure.getZdbID());
@@ -166,6 +165,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
                         if (phenotypeTermDTO != null) {
                             dto.addExpressedTerm(phenotypeTermDTO);
                             updatedAnnotations.add(dto);
+                            phenotypeExperimentsToRunRegen.add(phenoExperiment);
                         }
                     }
                     // remove expression if marked as such
@@ -174,7 +174,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
                     }
                 }
             }
-            for (PhenotypeExperiment phenotypeExperiment : phenotypeExperiments) {
+            for (PhenotypeExperiment phenotypeExperiment : phenotypeExperimentsToRunRegen) {
                 getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
             }
             tx.commit();

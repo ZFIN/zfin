@@ -6,6 +6,8 @@ define mrkrAbbrev like marker.mrkr_abbrev;
 define genoWT like genotype.geno_is_wildtype;
 
 let fishName = '';
+
+
 let genoWT = (Select geno_is_wildtype from fish,genotype
     	     	     where geno_zdb_id = fish_genotype_zdb_id
 		     and fish_zdb_id = vFishZdbId);
@@ -17,7 +19,7 @@ let fishName = (Select geno_handle from genotype, fish
 			 and fish_zdb_id = vFishZdbId);
 else
 
-let fishName = (Select geno_display_name from genotype, fish
+let fishName = (Select geno_display_name||" "||backgroundList from genotype, fish
     	       	 	 where fish_genotype_zdb_id = geno_Zdb_id
 			 and fish_zdb_id = vFishZdbId);
 

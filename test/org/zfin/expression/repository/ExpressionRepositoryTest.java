@@ -372,21 +372,19 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-GENE-980526-333";
         String sql = "SELECT distinct term_zdb_id, term_name " +
                 "FROM " +
-                "expression_result , expression_experiment, term , fish_experiment, experiment , fish, genotype " +
+                "expression_result , expression_experiment, term , fish_experiment , fish, genotype " +
                 "WHERE " +
                 "xpatex_gene_zdb_id = :zdbID " +
                 "AND  xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "AND xpatres_expression_found= :expressionFound " +
                 "AND xpatres_superterm_zdb_id = term_zdb_id " +
                 "AND xpatex_genox_zdb_id = genox_zdb_id " +
-                "AND exp_zdb_id = genox_exp_zdb_id and exp_name = :experiment  " +
                 "AND fish_zdb_id  = genox_fish_zdb_id " +
                 "AND fish_genotype_zdb_id  = geno_zdb_id " +
                 "AND geno_is_wildtype = :wildType " +
                 "ORDER BY term_name asc";
         List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("zdbID", zdbID)
-                .setParameter("experiment", "_Standard")
                 .setBoolean("expressionFound", true)
                 .setBoolean("wildType", true)
                 .list();

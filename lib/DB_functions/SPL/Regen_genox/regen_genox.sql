@@ -161,7 +161,7 @@ create  function regen_genox() returning integer
     execute procedure regen_genofig_process();
 
     let errorHint = "regen_genofig_finish procedure";
-    execute procedure regen_genofig_finish();
+    execute procedure regen_genofig_finish('f','');
 
     -- --------------------------------------------------------------------
     -- -------------------------------------------------------------------

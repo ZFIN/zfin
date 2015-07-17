@@ -706,17 +706,6 @@ function setMarkerTarget(featreli,anchor){
         <?MIVAR NAME=pubcur_G_max_geno COND=$(NE,$1,NULL)>$(IF,$(<,$1,13),$1,$(-,$1,8))<?/MIVAR>
     <?/MISQL>
 
-    <?MISQL SQL="
-        select max(LENGTH(exp_name))::integer
-         from experiment
-        where exp_zdb_id in (select recattrib_data_zdb_id
-                               from  record_attribution
-                              where recattrib_source_zdb_id = '$OID'
-                                and recattrib_source_type = 'standard')
-          or exp_name in ('$pubcur_G_exp_standard_name','$pubcur_G_exp_generic_name');">
-        <?MIVAR NAME=pubcur_G_max_exp_name>$1<?/MIVAR>
-    <?/MISQL>
-
     <?MIVAR COND=$(NXST,$pubcur_c_tab) NAME=pubcur_c_tab>Fish<?/MIVAR>
 
 

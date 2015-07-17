@@ -13,12 +13,11 @@ public class GenotypeFigure implements Serializable {
     private Genotype genotype;
     private Fish fish;
     private Figure figure;
-    private GenericTerm superTerm;
-    private GenericTerm subTerm;
-    private GenericTerm qualityTerm;
     private String tag;
     private Marker sequenceTargetingReagent;
     private PhenotypeExperiment phenotypeExperiment;
+    private PhenotypeStatement phenotypeStatement;
+    private FishExperiment fishExperiment;
 
     public int getId() {
         return id;
@@ -60,30 +59,6 @@ public class GenotypeFigure implements Serializable {
         this.tag = tag;
     }
 
-    public GenericTerm getSuperTerm() {
-        return superTerm;
-    }
-
-    public void setSuperTerm(GenericTerm superTerm) {
-        this.superTerm = superTerm;
-    }
-
-    public GenericTerm getSubTerm() {
-        return subTerm;
-    }
-
-    public void setSubTerm(GenericTerm subTerm) {
-        this.subTerm = subTerm;
-    }
-
-    public GenericTerm getQualityTerm() {
-        return qualityTerm;
-    }
-
-    public void setQualityTerm(GenericTerm qualityTerm) {
-        this.qualityTerm = qualityTerm;
-    }
-
     public PhenotypeExperiment getPhenotypeExperiment() {
         return phenotypeExperiment;
     }
@@ -98,5 +73,21 @@ public class GenotypeFigure implements Serializable {
 
     public void setFish(Fish fish) {
         this.fish = fish;
+    }
+
+    public PhenotypeStatement getPhenotypeStatement() {
+        return phenotypeStatement;
+    }
+
+    public void setPhenotypeStatement(PhenotypeStatement phenotypeStatement) {
+        this.phenotypeStatement = phenotypeStatement;
+    }
+
+    public FishExperiment getFishExperiment() {
+        return fishExperiment;
+    }
+
+    public void setFishExperiment(FishExperiment fishExperiment) {
+        this.fishExperiment = fishExperiment;
     }
 }

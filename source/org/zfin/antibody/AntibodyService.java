@@ -12,6 +12,7 @@ import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -22,8 +23,6 @@ import org.zfin.util.MatchType;
 import org.zfin.util.MatchingService;
 
 import java.util.*;
-
-//import org.zfin.ontology.OntologyManager;
 
 /**
  * Class that contains various methods retrieving aggregated info from
@@ -42,8 +41,9 @@ public class AntibodyService {
     private List<FigureSummaryDisplay> figureSummary;
 
     public AntibodyService(Antibody antibody) {
-        if (antibody == null)
+        if (antibody == null) {
             throw new RuntimeException("No antibody object provided");
+        }
         this.antibody = antibody;
     }
 
@@ -53,30 +53,36 @@ public class AntibodyService {
      * @return ist of distinct and sorted AO terms.
      */
     public List<Term> getDistinctAnatomyTerms() {
-        List<Term> distinctAoTerms = new ArrayList<Term>();
+        List<Term> distinctAoTerms = new ArrayList<>();
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
-        if (labelings == null)
+        if (labelings == null) {
             return null;
+        }
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getFishExperiment().getExperiment();
+            // need to get a FishExperiment object to check for standard environment; do nothing if not standard
+            FishExperiment exp = experiment.getFishExperiment();
 
-            if (!(geno.isWildtype() && exp.isStandard()))
+            if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
+            }
             if (results != null) {
                 for (ExpressionResult result : results) {
-                    if (!result.isExpressionFound())
+                    if (!result.isExpressionFound()) {
                         continue;
+                    }
                     Term term = result.getSuperTerm();
-                    if (!distinctAoTerms.contains(term))
+                    if (!distinctAoTerms.contains(term)) {
                         distinctAoTerms.add(term);
+                    }
                     // add the secondary term if available
                     Term subterm = result.getSubTerm();
-                    if (subterm != null)
-                        if (!distinctAoTerms.contains(subterm))
+                    if (subterm != null) {
+                        if (!distinctAoTerms.contains(subterm)) {
                             distinctAoTerms.add(subterm);
+                        }
+                    }
                 }
             }
         }
@@ -92,27 +98,31 @@ public class AntibodyService {
      * @return ist of distinct and sorted AO terms.
      */
     public int getNumberOfDistinctComposedTerms() {
-        Collection<String> distinctTerms = new HashSet<String>();
+        Collection<String> distinctTerms = new HashSet<>();
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
-        if (labelings == null)
+        if (labelings == null) {
             return 0;
+        }
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getFishExperiment().getExperiment();
+            // need to get a FishExperiment object to check for standard environment; do nothing if not standard
+            FishExperiment exp = experiment.getFishExperiment();
 
-            if (!(geno.isWildtype() && exp.isStandard()))
+            if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
+            }
             if (results != null) {
                 for (ExpressionResult result : results) {
-                    if (!result.isExpressionFound())
+                    if (!result.isExpressionFound()) {
                         continue;
+                    }
                     Term term = result.getSuperTerm();
                     Term subterm = result.getSubTerm();
                     String composedTermName = term.getZdbID();
-                    if (subterm != null)
+                    if (subterm != null) {
                         composedTermName += subterm.getZdbID();
+                    }
                     distinctTerms.add(composedTermName);
                 }
             }
@@ -127,30 +137,34 @@ public class AntibodyService {
      * @return ist of distinct and sorted GO terms.
      */
     public SortedSet<Term> getDistinctGoTermsWTAndStandard() {
-        SortedSet<Term> distinctGoTerms = new TreeSet<Term>();
+        SortedSet<Term> distinctGoTerms = new TreeSet<>();
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
-        if (labelings == null || labelings.isEmpty())
+        if (labelings == null || labelings.isEmpty()) {
             return null;
+        }
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getFishExperiment().getExperiment();
+            // need to get a FishExperiment object to check for standard environment; do nothing if not standard
+            FishExperiment exp = experiment.getFishExperiment();
 
-            if (!(geno.isWildtype() && exp.isStandard()))
+            if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
+            }
 
             if (results != null && !results.isEmpty()) {
                 for (ExpressionResult result : results) {
                     // only record if expression is found.
-                    if (!result.isExpressionFound())
+                    if (!result.isExpressionFound()) {
                         continue;
+                    }
 
                     Term goTerm = result.getSubTerm();
                     if (goTerm != null && Ontology.isGoOntology(goTerm.getOntology())) {
-                        if (!distinctGoTerms.contains(goTerm))
+                        if (!distinctGoTerms.contains(goTerm)) {
                             distinctGoTerms.add(goTerm);
+                        }
                     }
                 }
             }
@@ -167,20 +181,23 @@ public class AntibodyService {
     public DevelopmentStage getEarliestStartStage() {
         DevelopmentStage stage = null;
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
-        if (labelings == null)
+        if (labelings == null) {
             return null;
+        }
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getFishExperiment().getExperiment();
-            if (!(geno.isWildtype() && exp.isStandard()))
+            // need to get a FishExperiment object to check for standard environment; do nothing if not standard
+            FishExperiment exp = experiment.getFishExperiment();
+            if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
+            }
             if (results != null) {
                 for (ExpressionResult result : results) {
                     DevelopmentStage testStage = result.getStartStage();
-                    if (stage == null || testStage.earlierThan(stage))
+                    if (stage == null || testStage.earlierThan(stage)) {
                         stage = testStage;
+                    }
                 }
             }
         }
@@ -196,20 +213,23 @@ public class AntibodyService {
     public DevelopmentStage getLatestEndStage() {
         DevelopmentStage stage = null;
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
-        if (labelings == null)
+        if (labelings == null) {
             return null;
+        }
         for (ExpressionExperiment experiment : labelings) {
             Set<ExpressionResult> results = experiment.getExpressionResults();
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
-            // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getFishExperiment().getExperiment();
-            if (!(geno.isWildtype() && exp.isStandard()))
+            // need to get a FishExperiment object to check for standard environment; do nothing if not standard
+            FishExperiment exp = experiment.getFishExperiment();
+            if (!(geno.isWildtype() && exp.isStandardOrGenericControl())) {
                 continue;
+            }
             if (results != null) {
                 for (ExpressionResult result : results) {
                     DevelopmentStage testStage = result.getEndStage();
-                    if (stage == null || !testStage.earlierThan(stage))
+                    if (stage == null || !testStage.earlierThan(stage)) {
                         stage = testStage;
+                    }
                 }
             }
         }
@@ -224,13 +244,14 @@ public class AntibodyService {
      * @return matching text collection
      */
     public Set<MatchingText> getMatchingText() {
-        if (antibodySearchCriteria == null)
+        if (antibodySearchCriteria == null) {
             return null;
+        }
         // return cached version.
-        if (matchingService != null)
+        if (matchingService != null) {
             return matchingService.getMatchingTextList();
+        }
 
-        MatchType[] honoredMatchTypes = {MatchType.EXACT, MatchType.EXACT_WORD, MatchType.STARTS_WITH, MatchType.CONTAINS};
         matchingService = new MatchingService();
         // check antibody name
         addMatchOnAntibody();
@@ -247,16 +268,16 @@ public class AntibodyService {
     private void addMatchOnAnatomyTerm() {
         String[] anatomyTerms = antibodySearchCriteria.getTermIDs();
         // do nothing if no search terms were entered
-        if (anatomyTerms == null || anatomyTerms.length == 0)
+        if (anatomyTerms == null || anatomyTerms.length == 0) {
             return;
+        }
 
         Set<Term> labelingTerms = getDistinctAoTerms();
         // check for direct matches
-        MatchingText match = new MatchingText(MatchingTextType.AO_TERM);
-        List<String> directMatchesFound = new ArrayList<String>();
         for (String searchTermID : anatomyTerms) {
-            if (matchingService.checkExactTermMatches(searchTermID, labelingTerms))
+            if (matchingService.checkExactTermMatches(searchTermID, labelingTerms)) {
                 continue;
+            }
             matchingService.checkSubstructureTermMatches(searchTermID, labelingTerms);
         }
 
@@ -268,17 +289,19 @@ public class AntibodyService {
             List<Marker> genes = antibody.getAllRelatedMarker();
             // the loop exists for the first match as this is enough!
             for (Marker gene : genes) {
-                if (!matchingService.addMatchingText(antigenNameFilterString, gene.getAbbreviation(), MatchingTextType.GENE_ABBREVIATION).equals(MatchType.NO_MATCH))
+                if (!matchingService.addMatchingText(antigenNameFilterString, gene.getAbbreviation(), MatchingTextType.GENE_ABBREVIATION).equals(MatchType.NO_MATCH)) {
                     return;
-                if (!matchingService.addMatchingText(antigenNameFilterString, gene.getName(), MatchingTextType.GENE_NAME).equals(MatchType.NO_MATCH))
+                }
+                if (!matchingService.addMatchingText(antigenNameFilterString, gene.getName(), MatchingTextType.GENE_NAME).equals(MatchType.NO_MATCH)) {
                     return;
+                }
                 Set<MarkerAlias> prevNames = gene.getAliases();
-                MatchingText match = new MatchingText(MatchingTextType.GENE_ALIAS);
                 if (prevNames != null) {
                     // loop until the first match is encountered
                     for (MarkerAlias prevName : prevNames) {
-                        if (!matchingService.addMatchingText(antigenNameFilterString, prevName.getAlias(), MatchingTextType.GENE_ALIAS).equals(MatchType.NO_MATCH))
+                        if (!matchingService.addMatchingText(antigenNameFilterString, prevName.getAlias(), MatchingTextType.GENE_ALIAS).equals(MatchType.NO_MATCH)) {
                             return;
+                        }
                     }
                 }
             }
@@ -287,37 +310,41 @@ public class AntibodyService {
 
     protected void addMatchOnAntibody() {
 
-        if (StringUtils.isEmpty(antibodySearchCriteria.getName()))
+        if (StringUtils.isEmpty(antibodySearchCriteria.getName())) {
             return;
+        }
 
         String antibodyNameFilterString = antibodySearchCriteria.getName().trim();
         if (antibodyNameFilterString != null && antibodyNameFilterString.trim().length() != 0) {
             // if a match was found stop here
-            if (!matchingService.addMatchingText(antibodyNameFilterString, antibody.getName(), MatchingTextType.ANTIBODY_NAME).equals(MatchType.NO_MATCH))
+            if (!matchingService.addMatchingText(antibodyNameFilterString, antibody.getName(), MatchingTextType.ANTIBODY_NAME).equals(MatchType.NO_MATCH)) {
                 return;
+            }
             // check for aliases
             Set<MarkerAlias> aliases = antibody.getAliases();
             if (aliases != null) {
                 for (MarkerAlias alias : aliases) {
-                    if (!matchingService.addMatchingText(antibodyNameFilterString, alias.getAlias(), MatchingTextType.ANTIBODY_ALIAS).equals(MatchType.NO_MATCH))
+                    if (!matchingService.addMatchingText(antibodyNameFilterString, alias.getAlias(), MatchingTextType.ANTIBODY_ALIAS).equals(MatchType.NO_MATCH)) {
                         return;
+                    }
                 }
             }
         }
     }
 
     public Set<Term> getDistinctAoTerms() {
-        Set<Term> terms = new HashSet<Term>();
+        Set<Term> terms = new HashSet<>();
         Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
-        if (experiments == null)
+        if (experiments == null) {
             return terms;
+        }
         for (ExpressionExperiment experiment : experiments) {
             Genotype geno = experiment.getFishExperiment().getFish().getGenotype();
 
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment exp = experiment.getFishExperiment().getExperiment();
+            FishExperiment exp = experiment.getFishExperiment();
 
-            if (geno.isWildtype() && exp.isStandard()) {
+            if (geno.isWildtype() && exp.isStandardOrGenericControl()) {
                 Set<ExpressionResult> results = experiment.getExpressionResults();
                 if (results != null) {
                     for (ExpressionResult result : results) {
@@ -338,16 +365,17 @@ public class AntibodyService {
     public SortedSet<String> getDistinctAssayNames() {
         Set<ExpressionExperiment> antibodyLabelings = antibody.getAntibodyLabelings();
         if (antibodyLabelings == null) {
-            return new TreeSet<String>();
+            return new TreeSet<>();
         }
-        SortedSet<String> assayNames = new TreeSet<String>();
+        SortedSet<String> assayNames = new TreeSet<>();
         for (ExpressionExperiment labeling : antibodyLabelings) {
             Set<ExpressionResult> results = labeling.getExpressionResults();
             // exclude those assays with no expression result record
             if (results != null && !results.isEmpty()) {
                 String assayName = labeling.getAssay().getName();
-                if (assayName != null)
+                if (assayName != null) {
                     assayNames.add(assayName);
+                }
             }
         }
         return assayNames;
@@ -356,12 +384,13 @@ public class AntibodyService {
     public Set<MarkerRelationship> getSortedAntigenRelationships() {
         Set<MarkerRelationship> relationships = antibody.getSecondMarkerRelationships();
         if (relationships == null) {
-            return new TreeSet<MarkerRelationship>();
+            return new TreeSet<>();
         }
-        SortedSet<MarkerRelationship> antigenGenes = new TreeSet<MarkerRelationship>();
+        SortedSet<MarkerRelationship> antigenGenes = new TreeSet<>();
         for (MarkerRelationship mrkrRelation : relationships) {
-            if (mrkrRelation != null && mrkrRelation.getType() == MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY)
+            if (mrkrRelation != null && mrkrRelation.getType() == MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY) {
                 antigenGenes.add(mrkrRelation);
+            }
         }
         return antigenGenes;
     }
@@ -377,7 +406,7 @@ public class AntibodyService {
 
     public List<AnatomyLabel> getAntibodyLabelings() {
         // a map of AOname-CCnames as keys and display objects as values
-        Map<String, AnatomyLabel> map = new HashMap<String, AnatomyLabel>();
+        Map<String, AnatomyLabel> map = new HashMap<>();
 
         // get a set of ExpressionExperiment objects associated with the antibody
         Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
@@ -387,10 +416,11 @@ public class AntibodyService {
             processExperiments(map, experiments);
         }
 
-        List<AnatomyLabel> labelingDisplays = new ArrayList<AnatomyLabel>();
+        List<AnatomyLabel> labelingDisplays = new ArrayList<>();
 
-        if (map.values().size() > 0)
+        if (map.values().size() > 0) {
             labelingDisplays.addAll(map.values());
+        }
 
         Collections.sort(labelingDisplays);
 
@@ -408,7 +438,7 @@ public class AntibodyService {
 
         // get a set of ExpressionExperiment objects associated with the antibody
         Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
-        List<ExpressionStatement> labelingDisplays = new ArrayList<ExpressionStatement>();
+        List<ExpressionStatement> labelingDisplays = new ArrayList<>();
 
         // loop through the set of ExpressionExperiment objects to get the related data
         if (CollectionUtils.isNotEmpty(experiments)) {
@@ -420,14 +450,15 @@ public class AntibodyService {
     }
 
     private List<ExpressionStatement> getDistinctExpressionStatements(Set<ExpressionExperiment> experiments) {
-        if (experiments == null)
+        if (experiments == null) {
             return null;
-        Set<ExpressionStatement> statementSet = new HashSet<ExpressionStatement>();
+        }
+        Set<ExpressionStatement> statementSet = new HashSet<>();
 
         for (ExpressionExperiment exp : experiments) {
             Genotype geno = exp.getFishExperiment().getFish().getGenotype();
             if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl()) {
-                if (exp.getExpressionResults() != null)
+                if (exp.getExpressionResults() != null) {
                     for (ExpressionResult result : exp.getExpressionResults()) {
                         if (result.isExpressionFound()) {
                             ExpressionStatement statement = new ExpressionStatement();
@@ -436,9 +467,10 @@ public class AntibodyService {
                             statementSet.add(statement);
                         }
                     }
+                }
             }
         }
-        List<ExpressionStatement> statements = new ArrayList<ExpressionStatement>(statementSet.size());
+        List<ExpressionStatement> statements = new ArrayList<>(statementSet.size());
         statements.addAll(statementSet);
         return statements;
     }
@@ -450,9 +482,9 @@ public class AntibodyService {
             Genotype geno = exp.getFishExperiment().getFish().getGenotype();
 
             // need to get an Experiment object to check for standard environment; do nothing if not standard
-            Experiment experiment = exp.getFishExperiment().getExperiment();
+            FishExperiment experiment = exp.getFishExperiment();
 
-            if (geno.isWildtype() && experiment.isStandard()) {
+            if (geno.isWildtype() && experiment.isStandardOrGenericControl()) {
 
                 // get a set of ExpressionResult objects
                 Set<ExpressionResult> results = exp.getExpressionResults();
@@ -512,8 +544,9 @@ public class AntibodyService {
                         }
 
                         Publication pub = exp.getPublication();
-                        if (pub != null)
+                        if (pub != null) {
                             labeling.getPublications().add(pub);
+                        }
 
                         Set<Figure> allFigures = labeling.getFigures();
                         for (Figure fig : allFigures) {
@@ -530,7 +563,7 @@ public class AntibodyService {
 
     public List<AnatomyLabel> getAntibodyDetailedLabelings() {
         // a map of AOname-CCname-startStageName-EndStageNames as keys and display objects as values
-        Map<String, AnatomyLabel> map = new HashMap<String, AnatomyLabel>();
+        Map<String, AnatomyLabel> map = new HashMap<>();
 
         // get a set of ExpressionExperiment objects associated with the antibody
         Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
@@ -557,22 +590,25 @@ public class AntibodyService {
                         DevelopmentStage startStage = result.getStartStage();
                         String startStageName;
 
-                        if (startStage == null)
+                        if (startStage == null) {
                             startStageName = "";
-                        else
+                        } else {
                             startStageName = startStage.getName();
+                        }
 
                         DevelopmentStage endStage = result.getEndStage();
                         String endStageName;
-                        if (endStage == null)
+                        if (endStage == null) {
                             endStageName = "";
-                        else
+                        } else {
                             endStageName = endStage.getName();
+                        }
 
                         // form the key
                         String key = superterm.getZdbID() + startStageName + endStageName;
-                        if (subterm != null)
+                        if (subterm != null) {
                             key += subterm.getZdbID();
+                        }
 
                         AnatomyLabel labeling;
 
@@ -586,20 +622,22 @@ public class AntibodyService {
                         }
 
                         if (labeling.getAssays() == null) {
-                            SortedSet<ExpressionAssay> assays = new TreeSet<ExpressionAssay>();
+                            SortedSet<ExpressionAssay> assays = new TreeSet<>();
                             labeling.setAssays(assays);
                         }
 
-                        if (assay != null)
+                        if (assay != null) {
                             labeling.getAssays().add(assay);
+                        }
 
                         if (labeling.getGenes() == null) {
-                            SortedSet<Marker> genes = new TreeSet<Marker>();
+                            SortedSet<Marker> genes = new TreeSet<>();
                             labeling.setGenes(genes);
                         }
 
-                        if (gene != null)
+                        if (gene != null) {
                             labeling.getGenes().add(gene);
+                        }
 
                         // get the figures associated
                         Set<Figure> figures = result.getFigures();
@@ -609,8 +647,9 @@ public class AntibodyService {
                         }
 
                         Publication pub = exp.getPublication();
-                        if (pub != null)
+                        if (pub != null) {
                             labeling.getPublications().add(pub);
+                        }
 
                         Set<Figure> allFigures = labeling.getFigures();
                         for (Figure fig : allFigures) {
@@ -625,10 +664,11 @@ public class AntibodyService {
         }
 
         // use SortedSet to hold the values of the map so that the data could be displayed in order
-        List<AnatomyLabel> labelingDisplays = new ArrayList<AnatomyLabel>();
+        List<AnatomyLabel> labelingDisplays = new ArrayList<>();
 
-        if (map.values().size() > 0)
+        if (map.values().size() > 0) {
             labelingDisplays.addAll(map.values());
+        }
         ////ToDo
         Collections.sort(labelingDisplays, new AntibodyLabelingDetailComparator());
 
@@ -644,8 +684,9 @@ public class AntibodyService {
         //decide which parameter set we're using to figure out which kind of term to fill in the criteria object
 
         boolean superOrSubTerm = false;
-        if (subterm == null && startStage == null && endStage == null)
+        if (subterm == null && startStage == null && endStage == null) {
             superOrSubTerm = true;
+        }
 
         //values used when called from the antibody page
         if (!superOrSubTerm) {
@@ -670,7 +711,7 @@ public class AntibodyService {
 
 
     public void createFigureSummary(ExpressionSummaryCriteria criteria) {
-        Set<Publication> publications = new HashSet<Publication>();
+        Set<Publication> publications = new HashSet<>();
 
         List<FigureSummaryDisplay> summaryRows = FigureService.createExpressionFigureSummary(criteria);
 

@@ -43,18 +43,18 @@ EFFECTS
 <?/MICOMMENT>
 <?MIBLOCK COND="$(AND,$(XST,$fxfigfi_resultTable),$(XST,$fxfigfi_gene_zdb_id))">
   <?MIVAR NAME=$fxfigfl_sql>
-       SELECT distinct get_geno_name_html_link(geno_zdb_id), geno_name_order,geno_zdb_id,geno_is_wildtype
+       SELECT distinct fish_name, fish_order, fish_zdb_id, geno_is_wildtype
          FROM expression_experiment, fish_experiment, fish, genotype, $fxfigfi_resultTable
         WHERE xpat_fig_zdb_id = '$fxfigfi_fig_zdb_id'
           AND xpat_gene_zdb_id = '$fxfigfi_gene_zdb_id'
           AND xpat_xpatex_zdb_id = xpatex_zdb_id
           AND xpatex_genox_zdb_id = genox_zdb_id
           AND fish_zdb_id = genox_fish_zdb_id AND fish_genotype_zdb_id = geno_zdb_id
-     ORDER BY geno_name_order;
+     ORDER BY fish_order;
   <?/MIVAR>
 <?MIELSE>
   <?MIVAR NAME=$fxfigfl_sql>
-       SELECT distinct get_geno_name_html_link(geno_zdb_id), geno_name_order,geno_zdb_id,geno_is_wildtype
+       SELECT distinct fish_name, fish_order, fish_zdb_id, geno_is_wildtype
          FROM expression_experiment, fish_experiment, fish, genotype, figure, expression_result, expression_pattern_figure
         WHERE fig_zdb_id = '$fxfigfi_fig_zdb_id'
           AND fig_zdb_id=xpatfig_fig_zdb_id
@@ -63,7 +63,7 @@ EFFECTS
 	      AND fig_source_zdb_id =  xpatex_source_zdb_id
           AND xpatex_genox_zdb_id = genox_zdb_id
           AND fish_zdb_id = genox_fish_zdb_id AND fish_genotype_zdb_id = geno_zdb_id
-     ORDER BY geno_name_order;
+     ORDER BY fish_order;
   <?/MIVAR>
 <?/MIBLOCK>
 <?MICOMMENT> 
@@ -72,33 +72,12 @@ EFFECTS
    ============================================================================
 <?/MICOMMENT>
 <?MISQL SQL="$fxfigfl_sql">
-  <?MIVAR NAME=$popuplink> <a class="popup-link data-popup-link" href="/action/genotype/genotype-detail-popup?zdbID=$<?MIVAR>$3<?/MIVAR>"></a><?/MIVAR>
-  <?MIVAR NAME=$geno_is_wild>$4<?/MIVAR>
-    <?MIBLOCK COND=$(=,$MI_CURRENTROW,1)>
-     <?MIBLOCK COND=$(EC,f,$geno_is_wild)>
-      <?MIVAR NAME=fxfigfish_list_items>$1$popuplink</a><?/MIVAR>
-      <?MIELSE>
-      <?MIVAR NAME=fxfigfish_list_items>$1<?/MIVAR>
-      <?/MIBLOCK>
-    <?MIELSE>
-    <?MIBLOCK COND=$(EC,f,$geno_is_wild)>
-      <?MIVAR>$(VECAPPEND,fxfigfish_list_items,$1$popuplink)<?/MIVAR>
-      <?MIELSE>
-       <?MIVAR>$(VECAPPEND,fxfigfish_list_items,$1)<?/MIVAR>
-      <?/MIBLOCK>
-    <?/MIBLOCK>
+  <?MIVAR NAME=$popuplink><a class="popup-link data-popup-link" href="/action/fish/fish-detail-popup/<?MIVAR>$3<?/MIVAR>"></a><?/MIVAR>
+  <?MIVAR NAME=$fishlink><a href="/$3" title="$1">$1</a><?/MIVAR>
+  <div class="nowrap">
+    $fishlink$popuplink
+  </div>
 <?/MISQL>
-
-<?MIBLOCK COND="$(XST,$fxfigfi_is_displayed)">
-  <?MIVAR NAME="fxfigfi_Label"><b>Genotype(s): </b><?/MIVAR>
-<?MIELSE>
-  <?MIVAR NAME="fxfigfi_Label"><?/MIVAR>
-<?/MIBLOCK>
-
-<?MIBLOCK COND="$(<,0,$MI_ROWCOUNT)">
-    <?MIVAR NAME=fxfigfish_separate_items SEPARATE=", ">$fxfigfish_list_items<?/MIVAR>
-    <?MIVAR>$fxfigfi_Label$fxfigfish_separate_items<?/MIVAR>
-<?/MIBLOCK>
 
 <?MICOMMENT>
   ============================================================================
