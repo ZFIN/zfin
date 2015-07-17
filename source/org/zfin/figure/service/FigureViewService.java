@@ -451,8 +451,7 @@ public class FigureViewService {
 
     private boolean canAddExperimentToConditionsList(FishExperiment fishExperiment, List<Experiment> conditions) {
         if (fishExperiment == null
-           || fishExperiment.getExperiment() == null
-           || fishExperiment.getExperiment().isStandard() // the experiment is standard or generic control
+           || fishExperiment.isStandardOrGenericControl()
            || conditions.contains(fishExperiment.getExperiment())) {
             return false;
         }

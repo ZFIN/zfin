@@ -56,7 +56,7 @@ EFFECTS
     from experiment
     where exp_source_zdb_id = '$OID'
        or exp_name = '$pubcur_G_exp_standard_name'
-       or exp_name = '_Generic-control'
+       or exp_name = '$pubcur_G_exp_generic_name'
     order by 3;">
     <?MIVAR NAME=$expZdbId>$1<?/MIVAR>
 <form action="/<!--|WEBDRIVER_PATH_FROM_ROOT|-->#environment" method=post name=env >

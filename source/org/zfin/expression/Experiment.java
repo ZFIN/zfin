@@ -1,12 +1,8 @@
 package org.zfin.expression;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.publication.Publication;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,12 +13,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
 
     public static final String STANDARD = "_Standard";
     public static final String GENERIC_CONTROL = "_Generic-control";
-    public static final List<String> STANDARD_CONDITIONS = new ArrayList<String>(2);
-
-    static {
-        STANDARD_CONDITIONS.add(STANDARD);
-        STANDARD_CONDITIONS.add(GENERIC_CONTROL);
-    }
 
     private String zdbID;
     private String name;
@@ -63,7 +53,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     }
 
     public boolean isStandard() {
-
         return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }
 

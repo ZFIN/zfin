@@ -1,6 +1,5 @@
 package org.zfin.expression.repository;
 
-import com.sun.msv.reader.ExpressionState;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -20,7 +19,6 @@ import org.zfin.expression.presentation.ExpressedStructurePresentation;
 import org.zfin.expression.presentation.PublicationExpressionBean;
 import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.infrastructure.ActiveData;
@@ -604,8 +602,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             hql += "       join experiment.fishExperiment.fish.genotype geno";
         }
         hql += "     where experiment.publication.zdbID = :pubID ";
-        if (geneZdbID != null)
+        if (geneZdbID != null) {
             hql += "           and experiment.marker.zdbID = :geneID ";
+        }
         if (fishID != null) {
             hql += "           and geno.zdbID = :fishID ";
         }
@@ -614,10 +613,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "             experiment.assay.displayOrder ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
-        if (geneZdbID != null)
+        if (geneZdbID != null) {
             query.setString("geneID", geneZdbID);
-        if (fishID != null)
+        }
+        if (fishID != null) {
             query.setString("fishID", fishID);
+        }
 
         return (List<ExpressionExperiment>) query.list();
     }
@@ -707,7 +708,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             @Override
             public List transformList(List collection) {
                 List<ExperimentFigureStage> fullList = (List<ExperimentFigureStage>) collection;
-                List<ExperimentFigureStage> returnList = new ArrayList<ExperimentFigureStage>();
+                List<ExperimentFigureStage> returnList = new ArrayList<>();
 
                 for (ExperimentFigureStage efs : fullList) {
                     if (returnList.contains(efs)) {
@@ -734,8 +735,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 + "       left join experiment.gene as gene "
                 + "       left join experiment.fishExperiment as fishox"
                 + "     where experiment.publication.zdbID = :pubID ";
-        if (geneZdbID != null)
+        if (geneZdbID != null) {
             hql += "           and gene.zdbID = :geneID ";
+        }
         if (fishID != null) {
             hql += "           and fishox.fish.zdbID = :fishID ";
         }
@@ -764,7 +766,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "                               FishExperiment fishox " +
                 "     where ee.publication.zdbID = :pubID " +
                 "           and ee.fishExperiment = fishox " +
-                "           and genox.fish = fish" +
+                "           and fishox.fish = fish" +
                 "    order by fish.handle ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
@@ -787,17 +789,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      */
     public void createExpressionResult(ExpressionResult result, Figure singleFigure) {
 
-        if (result == null)
+        if (result == null) {
             return;
+        }
 
         Session session = HibernateUtil.currentSession();
         ExpressionResult unspecifiedResult = getUnspecifiedExpressResult(result);
 
         // ignore unspecified addition if not the first creation.
-        if (result.getSuperTerm().getTermName().equals(Term.UNSPECIFIED))
-            if (result.getZdbID() != null)
+        if (result.getSuperTerm().getTermName().equals(Term.UNSPECIFIED)) {
+            if (result.getZdbID() != null) {
                 return;
-            else {
+            } else {
                 // new unspecified record
                 // if there is an 'unspecified' add figure to it.
                 if (unspecifiedResult != null) {
@@ -808,13 +811,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 }
                 return;
             }
+        }
 
 
         List<ExpressionResult> existingResult = checkForExpressionResultRecord(result);
 
         if (existingResult != null && existingResult.size() > 0) {
-            if (existingResult.size() > 1)
+            if (existingResult.size() > 1) {
                 throw new RuntimeException("More than one expression result found");
+            }
             existingResult.get(0).addFigure(singleFigure);
             // check if unspecified exists
             // unspecified expression result record exists
@@ -881,10 +886,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Criteria criteria;
         criteria = session.createCriteria(ExpressionResult.class);
         Term subterm = result.getSubTerm();
-        if (subterm == null)
+        if (subterm == null) {
             criteria.add(Restrictions.isNull("entity.subterm"));
-        else
+        } else {
             criteria.add(Restrictions.eq("entity.subterm", result.getSubTerm()));
+        }
         criteria.add(Restrictions.eq("expressionExperiment", result.getExpressionExperiment()));
         criteria.add(Restrictions.eq("startStage", result.getStartStage()));
         criteria.add(Restrictions.eq("endStage", result.getEndStage()));
@@ -909,12 +915,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         } catch (SQLException e) {
             logger.error("Could not run: " + sql, e);
         } finally {
-            if (statement != null)
+            if (statement != null) {
                 try {
                     statement.close();
                 } catch (SQLException e) {
                     logger.error(e);
                 }
+            }
         }
     }
 
@@ -925,21 +932,25 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param figureAnnotation experiment figure stage.
      */
     public void deleteFigureAnnotation(ExperimentFigureStage figureAnnotation) {
-        if (figureAnnotation == null)
+        if (figureAnnotation == null) {
             throw new NullPointerException("No Figure Annotation provided");
+        }
         ExpressionExperiment experiment = figureAnnotation.getExpressionExperiment();
-        if (experiment == null || experiment.getZdbID() == null)
+        if (experiment == null || experiment.getZdbID() == null) {
             throw new NullPointerException("No expression experiment provided");
+        }
         Set<ExpressionResult> expressionResults = figureAnnotation.getExpressionResults();
-        if (expressionResults == null || expressionResults.size() == 0)
+        if (expressionResults == null || expressionResults.size() == 0) {
             return;
+        }
 
         // delete all expression result records.
         for (ExpressionResult result : expressionResults) {
             // if only a single figure is associated to it just remove the record
             Set<Figure> figures = result.getFigures();
-            if (figures.size() == 1)
+            if (figures.size() == 1) {
                 getInfrastructureRepository().deleteActiveDataByZdbID(result.getZdbID());
+            }
             // if more than one is associated we cannot remove the expression_result (shared among figures)
             // but need to remove just the association to the figure.
             for (Figure figure : figures) {
@@ -963,14 +974,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      */
     @SuppressWarnings("unchecked")
     public ExperimentFigureStage getExperimentFigureStage(String experimentZdbID, String figureID, String startStageID, String endStageID) {
-        if (StringUtils.isEmpty(experimentZdbID))
+        if (StringUtils.isEmpty(experimentZdbID)) {
             return null;
-        if (StringUtils.isEmpty(figureID))
+        }
+        if (StringUtils.isEmpty(figureID)) {
             return null;
-        if (StringUtils.isEmpty(startStageID))
+        }
+        if (StringUtils.isEmpty(startStageID)) {
             return null;
-        if (StringUtils.isEmpty(endStageID))
+        }
+        if (StringUtils.isEmpty(endStageID)) {
             return null;
+        }
         validateFigureAnnotationKey(experimentZdbID, figureID, startStageID, endStageID);
 
         Session session = HibernateUtil.currentSession();
@@ -990,15 +1005,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setString("figureID", figureID);
 
         List<Object[]> objects = query.list();
-        if (objects == null)
+        if (objects == null) {
             return null;
+        }
 
         List<ExperimentFigureStage> efses = populateExperimentFigureStage(objects);
-        if (efses == null || efses.size() == 0)
+        if (efses == null || efses.size() == 0) {
             return null;
+        }
 
-        if (efses.size() > 1)
+        if (efses.size() > 1) {
             throw new RuntimeException("More than one Figure annotation found.");
+        }
         return efses.get(0);
     }
 
@@ -1066,13 +1084,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param figure Figure
      */
     public void deleteExpressionResultPerFigure(ExpressionResult result, Figure figure) {
-        if (result == null)
+        if (result == null) {
             return;
+        }
 
         Session session = HibernateUtil.currentSession();
         Set<Figure> figures = result.getFigures();
-        if (figures == null)
+        if (figures == null) {
             return;
+        }
 
         boolean lastResultOnExpression = true;
         for (ExpressionResult expResult : result.getExpressionExperiment().getExpressionResults()) {
@@ -1142,19 +1162,22 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @return boolean
      */
     public boolean pileStructureExists(ExpressedTermDTO expressedTerm, String publicationID) {
-        if (publicationID == null)
+        if (publicationID == null) {
             throw new NullPointerException("No Publication provided.");
+        }
         String supertermName = expressedTerm.getEntity().getSuperTerm().getTermName();
-        if (supertermName == null)
+        if (supertermName == null) {
             throw new NullPointerException("No superterm provided.");
+        }
 
         Session session = HibernateUtil.currentSession();
         Criteria crit;
 
         if (expressedTerm.getEntity().getSubTerm() != null) {
             OntologyDTO subtermOntology = expressedTerm.getEntity().getSubTerm().getOntology();
-            if (subtermOntology == null)
+            if (subtermOntology == null) {
                 throw new NullPointerException("No subterm ontology provided.");
+            }
             crit = session.createCriteria(ExpressionStructure.class);
             Criteria subterm = crit.createCriteria("subterm");
             subterm.add(Restrictions.eq("termName", expressedTerm.getEntity().getSubTerm().getTermName()));
@@ -1195,15 +1218,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public void createExpressionPile(String publicationID) {
         List<ExpressionResult> expressionResults = getAllExpressionResults(publicationID);
-        if (expressionResults == null || expressionResults.isEmpty())
+        if (expressionResults == null || expressionResults.isEmpty()) {
             return;
+        }
         Publication publication = getPublicationRepository().getPublication(publicationID);
         Set<ExpressionStructure> distinctStructures = new HashSet<ExpressionStructure>();
         for (ExpressionResult expressionResult : expressionResults) {
             ExpressionStructure expressionStructure = instantiateExpressionStructure(expressionResult, publication);
             // only create structures that are not already on the pile.
-            if (distinctStructures.add(expressionStructure))
+            if (distinctStructures.add(expressionStructure)) {
                 createPileStructure(expressionStructure);
+            }
         }
 
     }
@@ -1266,7 +1291,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      */
     @Override
     public List<ExpressionResult> getExpressionsWithEntity(List<GenericTerm> terms) {
-        List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>(50);
+        List<ExpressionResult> allExpressions = new ArrayList<>(50);
         for (GenericTerm term : terms) {
             List<ExpressionResult> phenotypes = getExpressionsWithEntity(term);
             allExpressions.addAll(phenotypes);
@@ -1277,11 +1302,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     private List<ExpressionResult> removeDuplicateExpressions(List<ExpressionResult> allExpressions) {
-        Set<ExpressionResult> results = new HashSet<ExpressionResult>();
+        Set<ExpressionResult> results = new HashSet<>();
         for (ExpressionResult result : allExpressions) {
             results.add(result);
         }
-        List<ExpressionResult> expressionResults = new ArrayList<ExpressionResult>(results.size());
+        List<ExpressionResult> expressionResults = new ArrayList<>(results.size());
         expressionResults.addAll(results);
         return expressionResults;
     }
@@ -1299,7 +1324,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     private List<ExperimentFigureStage> populateExperimentFigureStage
             (List<Object[]> objects) {
-        List<ExperimentFigureStage> efses = new ArrayList<ExperimentFigureStage>();
+        List<ExperimentFigureStage> efses = new ArrayList<>();
         for (Object[] object : objects) {
             //ExpressionExperiment exp = (ExpressionExperiment) object[0];
             ExpressionResult result = (ExpressionResult) object[0];
@@ -1625,7 +1650,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public Set<String> getAllDistinctExpressionTermIDs() {
         String hql = "select distinct result.entity.superterm.id from ExpressionResult as result";
         List<String> results = HibernateUtil.currentSession().createQuery(hql).list();
-        Set<String> expressedTerms = new HashSet<String>(2000);
+        Set<String> expressedTerms = new HashSet<>(2000);
         expressedTerms.addAll(results);
         // sub terms
         hql = "select distinct result.entity.subterm.id from ExpressionResult as result";
@@ -1643,7 +1668,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public Set<String> getAllDistinctPhenotypeTermIDs() {
         String hql = "select distinct pheno.entity.superterm.id from PhenotypeStatement as pheno";
         List<String> results = HibernateUtil.currentSession().createQuery(hql).list();
-        Set<String> expressedTerms = new HashSet<String>(2000);
+        Set<String> expressedTerms = new HashSet<>(2000);
         expressedTerms.addAll(results);
         // sub terms
         hql = "select distinct pheno.entity.subterm.id from PhenotypeStatement as pheno";
@@ -1856,8 +1881,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
         if (expressionCriteria.getFigure() != null) {
             //if there were hql, I would do member of..
-            if (figureCriteria == null)
+            if (figureCriteria == null) {
                 figureCriteria = criteria.createCriteria("figures", "figure");
+            }
             figureCriteria.add(Restrictions.eq("zdbID", expressionCriteria.getFigure().getZdbID()));
             logger.debug("figure: " + expressionCriteria.getFigure().getZdbID());
         }
@@ -1898,14 +1924,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             logger.debug("end stage: " + expressionCriteria.getEnd().getZdbID());
         }
 
-        if (expressionCriteria.isWithImagesOnly() == true) {
-            if (figureCriteria == null)
+        if (expressionCriteria.isWithImagesOnly()) {
+            if (figureCriteria == null) {
                 figureCriteria = criteria.createCriteria("figures", "figure");
+            }
             figureCriteria.add(Restrictions.isNotEmpty("images"));
             logger.debug("with images only");
         }
 
-        if (expressionCriteria.isWildtypeOnly() == true) {
+        if (expressionCriteria.isWildtypeOnly()) {
             aliasMap.put("expressionExperiment", "xpatex");
             aliasMap.put("xpatex.fishExperiment", "genox");
             aliasMap.put("genox.fish", "fish");
@@ -1917,9 +1944,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         if (expressionCriteria.isStandardEnvironment()) {
             aliasMap.put("expressionExperiment", "xpatex");
             aliasMap.put("xpatex.fishExperiment", "genox");
-            aliasMap.put("genox.experiment", "exp");
-            criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
-                    Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+            criteria.add(Restrictions.eq("genox.standardOrGenericControl", true));
             logger.debug("standard or generic-control only");
         }
 
@@ -1951,7 +1976,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<ExpressionResult> getExpressionOnSecondaryTerms() {
         Session session = HibernateUtil.currentSession();
-        List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
+        List<ExpressionResult> allExpressions = new ArrayList<>();
 
         String hql = "select result from ExpressionResult result " +
                 "     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.secondary = :secondary";
@@ -1977,7 +2002,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     @Override
     public List<ExpressionResult> getExpressionOnObsoletedTerms() {
         Session session = HibernateUtil.currentSession();
-        List<ExpressionResult> allExpressions = new ArrayList<ExpressionResult>();
+        List<ExpressionResult> allExpressions = new ArrayList<>();
 
         String hql = "select result from ExpressionResult result " +
                 "     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.obsolete = :obsolete";

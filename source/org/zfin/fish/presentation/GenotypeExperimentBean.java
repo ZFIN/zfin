@@ -17,6 +17,8 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
+// TODO: looks like a lot of copied code in GenotypeBean, AbstractFishViewBean, and GenotypeExperimentBean. Can some be refactored out?
+
 public class GenotypeExperimentBean {
     private FishExperiment fishExperiment;
     private Genotype genotype;
@@ -55,8 +57,9 @@ public class GenotypeExperimentBean {
 
     public FishStatistics getFishStatistics() {
         if (fishStatistics == null) {
-            if (fishExperiment == null && fishExperiment.getFish() == null)
+            if (fishExperiment == null || fishExperiment.getFish() == null) {
                 return null;
+            }
             return new FishStatistics(fishExperiment.getFish());
         }
         return fishStatistics;
@@ -91,11 +94,13 @@ public class GenotypeExperimentBean {
     }
 
     public List<ExpressionDisplay> getExpressionDisplays() {
-        if (expressionResults == null || expressionResults.size() == 0)
+        if (expressionResults == null || expressionResults.size() == 0) {
             return null;
+        }
 
-        if (expressionDisplays == null)
+        if (expressionDisplays == null) {
             createExpressionDisplays();
+        }
 
         return expressionDisplays;
     }
@@ -104,13 +109,15 @@ public class GenotypeExperimentBean {
         if (expressionResults == null || expressionResults.size() == 0) {
             return 0;
         } else {
-            if (expressionDisplays == null)
+            if (expressionDisplays == null) {
                 createExpressionDisplays();
+            }
 
-            if (expressionDisplays == null)
+            if (expressionDisplays == null) {
                 return 0;
-            else
+            } else {
                 return expressionDisplays.size();
+            }
         }
     }
 
@@ -124,27 +131,30 @@ public class GenotypeExperimentBean {
      * 2) chemical condition(s), there could be one more experiments associated.
      */
     private void createExpressionDisplays() {
-        if (expressionResults == null || expressionResults.size() == 0)
+        if (expressionResults == null || expressionResults.size() == 0) {
             return;
+        }
 
         // a map of zdbIDs of expressed genes etc as keys and display obejects as values
-        Map<String, ExpressionDisplay> map = new HashMap<String, ExpressionDisplay>();
+        Map<String, ExpressionDisplay> map = new HashMap<>();
 
         String keyGeno = genotype.getZdbID();
 
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
-                Experiment exp = xpResult.getExpressionExperiment().getFishExperiment().getExperiment();
+                FishExperiment fishExp = xpResult.getExpressionExperiment().getFishExperiment();
+                Experiment exp = fishExp.getExperiment();
 
                 String key = keyGeno + expressedGene.getZdbID();
 
-                if (exp.isStandard())
-				    key = key + "standard";
-				else if (exp.isChemical())
-				    key = key + "chemical";
-				else
+                if (fishExp.isStandardOrGenericControl()) {
+                    key = key + "standard";
+                } else if (exp.isChemical()) {
+                    key = key + "chemical";
+                } else {
                     key = key + exp.getZdbID();
+                }
 
                 Set<Figure> figs = xpResult.getFigures();
                 GenericTerm term = xpResult.getSuperTerm();
@@ -190,7 +200,7 @@ public class GenotypeExperimentBean {
             }
         }
 
-        expressionDisplays = new ArrayList<ExpressionDisplay>(map.size());
+        expressionDisplays = new ArrayList<>(map.size());
 
         if (map.values().size() > 0) {
             expressionDisplays.addAll(map.values());
@@ -203,11 +213,12 @@ public class GenotypeExperimentBean {
         if (expressionResults == null || expressionResults.size() == 0) {
             return 0;
         } else {
-            if (expressionDisplays == null)
+            if (expressionDisplays == null) {
                 createExpressionDisplays();
+            }
 
             if (expressionDisplays != null) {
-                Set<Marker> allExpressedGenes = new HashSet<Marker>();
+                Set<Marker> allExpressedGenes = new HashSet<>();
                 for (ExpressionDisplay xpDisp : expressionDisplays) {
                     allExpressedGenes.add(xpDisp.getExpressedGene());
                 }
@@ -219,11 +230,13 @@ public class GenotypeExperimentBean {
     }
 
     public List<PhenotypeDisplay> getPhenoDisplays() {
-        if (phenoStatements == null)
+        if (phenoStatements == null) {
             return null;
+        }
 
-        if (phenoDisplays == null || phenoDisplays.size() == 0)
+        if (phenoDisplays == null || phenoDisplays.size() == 0) {
             createPhenoDisplays();
+        }
 
         return phenoDisplays;
     }
@@ -236,23 +249,25 @@ public class GenotypeExperimentBean {
         if (phenoStatements != null && phenoStatements.size() > 0) {
 
             // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
-            Map<String, PhenotypeDisplay> phenoMap = new HashMap<String, PhenotypeDisplay>();
+            Map<String, PhenotypeDisplay> phenoMap = new HashMap<>();
 
             for (PhenotypeStatement pheno : phenoStatements) {
 
                 Figure fig = pheno.getPhenotypeExperiment().getFigure();
                 Publication pub = fig.getPublication();
 
-                Experiment exp = pheno.getPhenotypeExperiment().getFishExperiment().getExperiment();
+                FishExperiment fishExp = pheno.getPhenotypeExperiment().getFishExperiment();
+                Experiment exp = fishExp.getExperiment();
 
                 String keyPheno = pheno.getPhenoStatementString();
                 String key;
-                if (exp.isStandard())
-				    key = keyPheno + "standard";
-				else if (exp.isChemical())
-				    key = keyPheno + "chemical";
-				else
+                if (fishExp.isStandardOrGenericControl()) {
+                    key = keyPheno + "standard";
+                } else if (exp.isChemical()) {
+                    key = keyPheno + "chemical";
+                } else {
                     key = keyPheno + exp.getZdbID();
+                }
 
                 PhenotypeDisplay phenoDisplay;
 
@@ -262,8 +277,8 @@ public class GenotypeExperimentBean {
                     phenoDisplay = new PhenotypeDisplay(pheno);
                     phenoDisplay.setPhenoStatement(pheno);
 
-                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<Publication, SortedSet<Figure>>();
-                    SortedSet<Figure> figures = new TreeSet<Figure>();
+                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
+                    SortedSet<Figure> figures = new TreeSet<>();
                     figures.add(fig);
                     figuresPerPub.put(pub, figures);
 
@@ -276,14 +291,14 @@ public class GenotypeExperimentBean {
                     if (phenoDisplay.getFiguresPerPub().containsKey(pub)) {
                         phenoDisplay.getFiguresPerPub().get(pub).add(fig);
                     } else {
-                        SortedSet<Figure> figures = new TreeSet<Figure>();
+                        SortedSet<Figure> figures = new TreeSet<>();
                         figures.add(fig);
                         phenoDisplay.getFiguresPerPub().put(pub, figures);
                     }
                 }
             }
 
-            phenoDisplays = new ArrayList<PhenotypeDisplay>(phenoMap.size());
+            phenoDisplays = new ArrayList<>(phenoMap.size());
 
             if (phenoMap.values().size() > 0) {
                 phenoDisplays.addAll(phenoMap.values());
@@ -301,13 +316,15 @@ public class GenotypeExperimentBean {
         if (phenoStatements == null || phenoStatements.size() == 0) {
             return 0;
         } else {
-            if (phenoDisplays == null)
+            if (phenoDisplays == null) {
                 createPhenoDisplays();
+            }
 
-            if (phenoDisplays == null)
+            if (phenoDisplays == null) {
                 return 0;
-            else
+            } else {
                 return phenoDisplays.size();
+            }
         }
     }
 

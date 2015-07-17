@@ -170,6 +170,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
 
     private Set<ExpressionExperiment> createWildtypeAndStandardGenotypeExperiment(ExpressionExperiment experiment) {
         FishExperiment genox = new FishExperiment();
+        genox.setStandard(true);
         experiment.setFishExperiment(genox);
         Fish fish = new Fish();
         Genotype geno = new Genotype();
@@ -177,7 +178,6 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         fish.setGenotype(geno);
         genox.setFish(fish);
         Experiment exp = new Experiment();
-        exp.setName(Experiment.STANDARD);
         genox.setExperiment(exp);
         Set<ExpressionExperiment> experiments = new HashSet<>();
         experiments.add(experiment);
@@ -490,8 +490,9 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         //find the figure 6 summary, test against it
         FigureSummaryDisplay figS3Summary = null;
         for (FigureSummaryDisplay fs : figureSummaryList) {
-            if (fs.getFigure().equals(figS3))
+            if (fs.getFigure().equals(figS3)) {
                 figS3Summary = fs;
+            }
         }
         assertNotNull("figureSummaryList should have " + figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel(), figS3Summary);
         assertTrue(figS3.getPublication().getShortAuthorList() + " " + figS3.getLabel() + "expression statement list should contain myotome", figS3Summary.getExpressionStatementList().contains(myotomeStatement));

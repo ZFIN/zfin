@@ -7,20 +7,23 @@ import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.marker.Marker;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.presentation.ConstructSearchFormBean;
 import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
 import org.zfin.infrastructure.ZfinFigureEntity;
-import org.zfin.mutant.*;
+import org.zfin.marker.Marker;
+import org.zfin.mutant.ConstructSearchCriteria;
+import org.zfin.mutant.ConstructSearchResult;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.presentation.Construct;
+import org.zfin.mutant.presentation.ConstructSearchFormBean;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getConstructRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Service class to provide methods for retrieving fish records from the data warehouse.
@@ -29,7 +32,6 @@ public class ConstructService {
 
     private Marker construct;
     private int numberOfPublications;
-    private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
 
     public int getNumberOfPublications() {
         return numberOfPublications;
@@ -51,8 +53,9 @@ public class ConstructService {
     private List<FigureSummaryDisplay> figureSummary;
 
     public ConstructService(Marker construct) {
-        if (construct == null)
+        if (construct == null) {
             throw new RuntimeException("No construct object provided");
+        }
         this.construct = construct;
     }
 
@@ -102,7 +105,7 @@ public class ConstructService {
 
 
     public void createFigureSummary(ConstructSearchCriteria criteria, String constructID) {
-        Set<Publication> publications = new HashSet<Publication>();
+        Set<Publication> publications = new HashSet<>();
 
         List<FigureSummaryDisplay> summaryRows = getExpressionSummary(constructID, criteria);
 
@@ -128,10 +131,10 @@ public class ConstructService {
             criteria = new ConstructSearchCriteria();
             criteria.setPhenotypeAnatomyCriteria(new SearchCriterion(SearchCriterionType.PHENOTYPE_ANATOMY_ID, true));
         }
-        Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
+        Map<String, FigureSummaryDisplay> map = new HashMap<>();
 
         Set<ZfinFigureEntity> zfinFigureEntities = RepositoryFactory.getConstructRepository().getFiguresByConstructAndTerms(constructID, criteria.getPhenotypeAnatomyCriteria().getValues());
-        List<Figure> figures = new ArrayList<Figure>(zfinFigureEntities.size());
+        List<Figure> figures = new ArrayList<>(zfinFigureEntities.size());
         for (ZfinFigureEntity figureEntity : zfinFigureEntities) {
             Figure figure = getPublicationRepository().getFigure(figureEntity.getID());
             figures.add(figure);
@@ -152,15 +155,16 @@ public class ConstructService {
                 figureData.setExpressionStatementList(getFigureExpressionStatementList(figure, criteria, fishList));
 
                 for (Image img : figure.getImages()) {
-                    if (figureData.getThumbnail() == null)
+                    if (figureData.getThumbnail() == null) {
                         figureData.setThumbnail(img.getThumbnail());
+                    }
                 }
 
                 map.put(key, figureData);
             }
         }
 
-        List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
+        List<FigureSummaryDisplay> summaryRows = new ArrayList<>();
         if (map.values().size() > 0) {
             summaryRows.addAll(map.values());
         }
@@ -179,7 +183,7 @@ public class ConstructService {
         clone.setEntity(null);
         clone.setSingleTermEitherPosition(null);
         Set<ExpressionStatement> expressionResultSet = getExpressionStatements(clone);
-        List<ExpressionStatement> expressionStatementList = new ArrayList<ExpressionStatement>();
+        List<ExpressionStatement> expressionStatementList = new ArrayList<>();
         expressionStatementList.addAll(expressionResultSet);
         return expressionStatementList;
 
@@ -187,12 +191,12 @@ public class ConstructService {
 
 
     public static Set<ExpressionStatement> getExpressionStatements(ConstructSearchCriteria expressionCriteria) {
-        Set<ExpressionResult> results = new HashSet<ExpressionResult>();
-        Set<ExpressionStatement> expressionStatements = new TreeSet<ExpressionStatement>();
+        Set<ExpressionResult> results = new HashSet<>();
+        Set<ExpressionStatement> expressionStatements = new TreeSet<>();
         Session session = HibernateUtil.currentSession();
 
         //store strings for createAlias here, then only create what's necessary at the end.
-        Map<String, String> aliasMap = new HashMap<String, String>();
+        Map<String, String> aliasMap = new HashMap<>();
 
         Criteria criteria = session.createCriteria(ExpressionResult.class);
         Criteria figureCriteria = null;
@@ -201,8 +205,9 @@ public class ConstructService {
 
         if (expressionCriteria.getFigure() != null) {
             //if there were hql, I would do member of..
-            if (figureCriteria == null)
+            if (figureCriteria == null) {
                 figureCriteria = criteria.createCriteria("figures", "figure");
+            }
             figureCriteria.add(Restrictions.eq("zdbID", expressionCriteria.getFigure().getZdbID()));
 
         }
@@ -214,9 +219,7 @@ public class ConstructService {
 
         aliasMap.put("expressionExperiment", "xpatex");
         aliasMap.put("xpatex.fishExperiment", "fishox");
-        aliasMap.put("fishox.experiment", "exp");
-        criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
-                Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+        criteria.add(Restrictions.eq("fishox.standardOrGenericControl", true));
 
 
         for (Map.Entry<String, String> entry : aliasMap.entrySet()) {
@@ -241,12 +244,12 @@ public class ConstructService {
         //set the figure we're limiting to
         clone.setFigure(figure);
 
-        Set<ExpressionResult> results = new HashSet<ExpressionResult>();
+        Set<ExpressionResult> results = new HashSet<>();
         Experiment exp = new Experiment();
         Session session = HibernateUtil.currentSession();
 
         //store strings for createAlias here, then only create what's necessary at the end.
-        Map<String, String> aliasMap = new HashMap<String, String>();
+        Map<String, String> aliasMap = new HashMap<>();
 
         Criteria criteria = session.createCriteria(ExpressionResult.class);
         Criteria figureCriteria = null;
@@ -255,8 +258,9 @@ public class ConstructService {
 
         if (expressionCriteria.getFigure() != null) {
             //if there were hql, I would do member of..
-            if (figureCriteria == null)
+            if (figureCriteria == null) {
                 figureCriteria = criteria.createCriteria("figures", "figure");
+            }
             figureCriteria.add(Restrictions.eq("zdbID", expressionCriteria.getFigure().getZdbID()));
 
         }
@@ -268,8 +272,9 @@ public class ConstructService {
         results.addAll(criteria.list());
         Experiment experiment = null;
         for (ExpressionResult result : results) {
-            if (!result.getExpressionExperiment().getFishExperiment().getExperiment().isChemical())
+            if (!result.getExpressionExperiment().getFishExperiment().getExperiment().isChemical()) {
                 experiment = result.getExpressionExperiment().getFishExperiment().getExperiment();
+            }
         }
 
         return experiment;

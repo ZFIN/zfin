@@ -42,14 +42,11 @@ public class PhenotypeService {
      * @return HashMap
      */
     public static Map<String, Set<String>> getPhenotypesGroupedByOntology(FishExperiment fishExperiment, GenericTerm anatomyItem) {
-        if (fishExperiment == null)
+        if (fishExperiment == null || anatomyItem == null || fishExperiment.getPhenotypeExperiments() == null) {
             return null;
-        if (anatomyItem == null)
-            return null;
-        if (fishExperiment.getPhenotypeExperiments() == null)
-            return null;
+        }
 
-        Map<String, Set<String>> map = new TreeMap<String, Set<String>>(new PhenotypeComparator());
+        Map<String, Set<String>> map = new TreeMap<>(new PhenotypeComparator());
 
         for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
             for (PhenotypeStatement phenoStatement : phenotype.getPhenotypeStatements()) {
@@ -77,16 +74,17 @@ public class PhenotypeService {
                     String termName = phenoStatement.getQuality().getTermName();
                     StringBuilder termNameBuilder = new StringBuilder(50);
                     String tag = phenoStatement.getTag();
-                    if (termName.equals(GenericTerm.QUALITY) && tag.equals(PhenotypeStatement.Tag.ABNORMAL.toString()))
+                    if (termName.equals(GenericTerm.QUALITY) && tag.equals(PhenotypeStatement.Tag.ABNORMAL.toString())) {
                         termNameBuilder.append(PhenotypeStatement.Tag.ABNORMAL.toString());
-                    else if (tag != null && tag.equals(PhenotypeStatement.Tag.NORMAL.toString()))
+                    } else if (tag != null && tag.equals(PhenotypeStatement.Tag.NORMAL.toString())) {
                         continue;
-                    else
+                    } else {
                         termNameBuilder.append(termName);
+                    }
 
                     Set<String> phenotypes = map.get(keyBuilder.toString());
                     if (phenotypes == null) {
-                        phenotypes = new TreeSet<String>();
+                        phenotypes = new TreeSet<>();
                     }
                     phenotypes.add(termNameBuilder.toString());
                     map.put(keyBuilder.toString(), phenotypes);
@@ -116,21 +114,22 @@ public class PhenotypeService {
      * @return list of phenotype statements
      */
     public static Set<PhenotypeStatement> getPhenotypeStatements(FishExperiment genoExperiment, GenericTerm term) {
-        if (genoExperiment == null)
+        if (genoExperiment == null) {
             return null;
+        }
 
         boolean includeAll = term == null;
-        Set<PhenotypeStatement> phenoStatements = new HashSet<PhenotypeStatement>(5);
+        Set<PhenotypeStatement> phenoStatements = new HashSet<>(5);
         for (PhenotypeExperiment phenox : genoExperiment.getPhenotypeExperiments()) {
             for (PhenotypeStatement statement : phenox.getPhenotypeStatements()) {
-                if (includeAll || statement.contains(term))
+                if (includeAll || statement.contains(term)) {
                     phenoStatements.add(statement);
-
+                }
             }
         }
         // since I do not want to change the equals() method to ignore the PK id
         // I have to create a distinct list myself.
-        Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<PhenotypeStatement>(phenoStatements.size());
+        Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<>(phenoStatements.size());
         for (PhenotypeStatement statement : phenoStatements) {
             boolean recordFound = false;
             for (PhenotypeStatement distinctStatement : distinctPhenoStatements) {
@@ -139,8 +138,9 @@ public class PhenotypeService {
                     break;
                 }
             }
-            if (!recordFound)
+            if (!recordFound) {
                 distinctPhenoStatements.add(statement);
+            }
         }
         return distinctPhenoStatements;
     }
@@ -154,13 +154,14 @@ public class PhenotypeService {
      * @return list of phenotype statements
      */
     public static Set<PhenotypeStatement> getPhenotypeStatements(Fish fish, GenericTerm term, boolean includSubstructures) {
-        if (fish == null)
+        if (fish == null) {
             return null;
+        }
 
         List<PhenotypeStatement> phenotypeStatementList = getMutantRepository().getPhenotypeStatement(term, fish, includSubstructures);
         // since I do not want to change the equals() method to ignore the PK id
         // I have to create a distinct list myself.
-        Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<PhenotypeStatement>(phenotypeStatementList.size());
+        Set<PhenotypeStatement> distinctPhenoStatements = new HashSet<>(phenotypeStatementList.size());
         for (PhenotypeStatement statement : phenotypeStatementList) {
             boolean recordFound = false;
             for (PhenotypeStatement distinctStatement : distinctPhenoStatements) {
@@ -169,8 +170,9 @@ public class PhenotypeService {
                     break;
                 }
             }
-            if (!recordFound)
+            if (!recordFound) {
                 distinctPhenoStatements.add(statement);
+            }
         }
         return distinctPhenoStatements;
     }
@@ -182,7 +184,7 @@ public class PhenotypeService {
      * @return list of obsoleted terms
      */
     public static Set<GenericTerm> getObsoleteTerm(PhenotypeStatement phenotypeStatement) {
-        Set<GenericTerm> obsoletedTerms = new HashSet<GenericTerm>(3);
+        Set<GenericTerm> obsoletedTerms = new HashSet<>(3);
         if (phenotypeStatement.getEntity().getSuperterm().isObsolete()) {
             obsoletedTerms.add(phenotypeStatement.getEntity().getSuperterm());
         } else if (phenotypeStatement.getEntity().getSubterm() != null && phenotypeStatement.getEntity().getSubterm().isObsolete()) {
@@ -191,10 +193,12 @@ public class PhenotypeService {
             obsoletedTerms.add(phenotypeStatement.getQuality());
         } else if (phenotypeStatement.getRelatedEntity() != null) {
             PostComposedEntity entity = phenotypeStatement.getRelatedEntity();
-            if (entity.getSuperterm() != null && entity.getSuperterm().isObsolete())
+            if (entity.getSuperterm() != null && entity.getSuperterm().isObsolete()) {
                 obsoletedTerms.add(entity.getSuperterm());
-            if (entity.getSubterm() != null && entity.getSubterm().isObsolete())
+            }
+            if (entity.getSubterm() != null && entity.getSubterm().isObsolete()) {
                 obsoletedTerms.add(entity.getSubterm());
+            }
         }
         return obsoletedTerms;
     }
@@ -206,7 +210,7 @@ public class PhenotypeService {
      * @return list of obsoleted terms
      */
     public static Set<GenericTerm> getSecondaryTerm(PhenotypeStatement phenotypeStatement) {
-        Set<GenericTerm> secondaryTerms = new HashSet<GenericTerm>(3);
+        Set<GenericTerm> secondaryTerms = new HashSet<>(3);
         if (phenotypeStatement.getEntity().getSuperterm().isSecondary()) {
             secondaryTerms.add(phenotypeStatement.getEntity().getSuperterm());
         } else if (phenotypeStatement.getEntity().getSubterm() != null && phenotypeStatement.getEntity().getSubterm().isSecondary()) {
@@ -215,10 +219,12 @@ public class PhenotypeService {
             secondaryTerms.add(phenotypeStatement.getQuality());
         } else if (phenotypeStatement.getRelatedEntity() != null) {
             PostComposedEntity entity = phenotypeStatement.getRelatedEntity();
-            if (entity.getSuperterm() != null && entity.getSuperterm().isSecondary())
+            if (entity.getSuperterm() != null && entity.getSuperterm().isSecondary()) {
                 secondaryTerms.add(entity.getSuperterm());
-            if (entity.getSubterm() != null && entity.getSubterm().isSecondary())
+            }
+            if (entity.getSubterm() != null && entity.getSubterm().isSecondary()) {
                 secondaryTerms.add(entity.getSubterm());
+            }
         }
         return secondaryTerms;
     }
@@ -227,42 +233,55 @@ public class PhenotypeService {
         PostComposedEntity entity = phenotypeStatement.getEntity();
         if (entity != null) {
             GenericTerm superterm = entity.getSuperterm();
-            if (superterm != null)
-                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, superterm))
+            if (superterm != null) {
+                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, superterm)) {
                     return superterm.getTermName();
+                }
+            }
             Term subterm = entity.getSubterm();
-            if (subterm != null)
-                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, subterm))
+            if (subterm != null) {
+                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, subterm)) {
                     return subterm.getTermName();
+                }
+            }
         }
         PostComposedEntity relatedEntity = phenotypeStatement.getRelatedEntity();
         if (relatedEntity != null) {
             GenericTerm superterm = relatedEntity.getSuperterm();
-            if (superterm != null)
-                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, superterm))
+            if (superterm != null) {
+                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, superterm)) {
                     return superterm.getTermName();
+                }
+            }
             Term subterm = relatedEntity.getSubterm();
-            if (subterm != null)
-                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, subterm))
+            if (subterm != null) {
+                if (getOntologyRepository().isParentChildRelationshipExist(parentTerm, subterm)) {
                     return subterm.getTermName();
+                }
+            }
         }
         return null;
     }
 
     public static boolean hasStructureOrSubstructure(GenericTerm anatomyItem, PhenotypeStatement statement) {
         PostComposedEntity entity = statement.getEntity();
-        if (getOntologyRepository().isParentChildRelationshipExist(anatomyItem, entity.getSuperterm()))
+        if (getOntologyRepository().isParentChildRelationshipExist(anatomyItem, entity.getSuperterm())) {
             return true;
-        if (entity.getSubterm() != null && getOntologyRepository().isParentChildRelationshipExist(anatomyItem, entity.getSubterm()))
+        }
+        if (entity.getSubterm() != null && getOntologyRepository().isParentChildRelationshipExist(anatomyItem, entity.getSubterm())) {
             return true;
+        }
 
         PostComposedEntity relatedEntity = statement.getRelatedEntity();
-        if (relatedEntity == null)
+        if (relatedEntity == null) {
             return false;
-        if (getOntologyRepository().isParentChildRelationshipExist(anatomyItem, relatedEntity.getSuperterm()))
+        }
+        if (getOntologyRepository().isParentChildRelationshipExist(anatomyItem, relatedEntity.getSuperterm())) {
             return true;
-        if (entity.getSubterm() != null && getOntologyRepository().isParentChildRelationshipExist(anatomyItem, relatedEntity.getSubterm()))
+        }
+        if (entity.getSubterm() != null && getOntologyRepository().isParentChildRelationshipExist(anatomyItem, relatedEntity.getSubterm())) {
             return true;
+        }
 
         return false;
     }
@@ -333,14 +352,18 @@ public class PhenotypeService {
 
     private static class PhenotypeComparator implements Comparator<String> {
         public int compare(String o1, String o2) {
-            if (o1 == null)
+            if (o1 == null) {
                 return -1;
-            if (o2 == null)
+            }
+            if (o2 == null) {
                 return +1;
-            if (o1.equals(ANATOMY) && !o2.equals(ANATOMY))
+            }
+            if (o1.equals(ANATOMY) && !o2.equals(ANATOMY)) {
                 return -1;
-            if (o2.equals(ANATOMY) && !o1.equals(ANATOMY))
+            }
+            if (o2.equals(ANATOMY) && !o1.equals(ANATOMY)) {
                 return +1;
+            }
             return o1.compareTo(o2);
         }
 
@@ -354,10 +377,11 @@ public class PhenotypeService {
      * @return list of terms
      */
     public static Set<Term> getAllAnatomyTerms(PhenotypeStatement phenotypeStatement) {
-        if (phenotypeStatement == null)
+        if (phenotypeStatement == null) {
             return null;
+        }
         // at most 4 entries
-        Set<Term> termList = new HashSet<Term>(2);
+        Set<Term> termList = new HashSet<>(2);
         PostComposedEntity entity = phenotypeStatement.getEntity();
         if (entity != null) {
             addIfAnatomyTerm(termList, entity.getSuperterm());
@@ -372,10 +396,11 @@ public class PhenotypeService {
     }
 
     public static Set<Term> getAllGOTerms(PhenotypeStatement phenotypeStatement) {
-        if (phenotypeStatement == null)
+        if (phenotypeStatement == null) {
             return null;
+        }
         // at most 4 entries
-        Set<Term> termList = new HashSet<Term>(2);
+        Set<Term> termList = new HashSet<>(2);
         PostComposedEntity entity = phenotypeStatement.getEntity();
         if (entity != null) {
             addIfGOTerm(termList, entity.getSuperterm());
@@ -390,15 +415,19 @@ public class PhenotypeService {
     }
 
     private static void addIfAnatomyTerm(Set<Term> termList, GenericTerm superterm) {
-        if (superterm != null)
-            if (superterm.getOntology().equals(Ontology.ANATOMY))
+        if (superterm != null) {
+            if (superterm.getOntology().equals(Ontology.ANATOMY)) {
                 termList.add(superterm);
+            }
+        }
     }
 
     private static void addIfGOTerm(Set<Term> termList, GenericTerm superterm) {
-        if (superterm != null)
-            if (superterm.getOntology().equals(Ontology.GO_BP) || (superterm.getOntology().equals(Ontology.GO_MF)) || (superterm.getOntology().equals(Ontology.GO_CC)))
+        if (superterm != null) {
+            if (superterm.getOntology().equals(Ontology.GO_BP) || (superterm.getOntology().equals(Ontology.GO_MF)) || (superterm.getOntology().equals(Ontology.GO_CC))) {
                 termList.add(superterm);
+            }
+        }
     }
 
     /**
@@ -409,24 +438,26 @@ public class PhenotypeService {
         if (phenotypeStatements != null && phenotypeStatements.size() > 0) {
 
             // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
-            Map<String, PhenotypeDisplay> phenoMap = new HashMap<String, PhenotypeDisplay>();
+            Map<String, PhenotypeDisplay> phenoMap = new HashMap<>();
 
             for (PhenotypeStatement pheno : phenotypeStatements) {
 
                 Figure fig = pheno.getPhenotypeExperiment().getFigure();
                 Publication pub = fig.getPublication();
 
-                Experiment exp = pheno.getPhenotypeExperiment().getFishExperiment().getExperiment();
+                FishExperiment fishExp = pheno.getPhenotypeExperiment().getFishExperiment();
+                Experiment exp = fishExp.getExperiment();
 
                 String key;
                 String keyPheno = pheno.getPhenoStatementString();
                 if (groupBy.equals("condition")) {
-                    if (exp.isStandard())
+                    if (fishExp.isStandardOrGenericControl()) {
                         key = keyPheno + "standard";
-                    else if (exp.isChemical())
+                    } else if (exp.isChemical()) {
                         key = keyPheno + "chemical";
-                    else
+                    } else {
                         key = keyPheno + exp.getZdbID();
+                    }
                 } else {
                     key = keyPheno + pheno.getPhenotypeExperiment().getFishExperiment().getFish().getZdbID();
                 }
@@ -439,8 +470,8 @@ public class PhenotypeService {
                     phenoDisplay = new PhenotypeDisplay(pheno);
                     phenoDisplay.setPhenoStatement(pheno);
 
-                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<Publication, SortedSet<Figure>>();
-                    SortedSet<Figure> figures = new TreeSet<Figure>();
+                    SortedMap<Publication, SortedSet<Figure>> figuresPerPub = new TreeMap<>();
+                    SortedSet<Figure> figures = new TreeSet<>();
                     figures.add(fig);
                     figuresPerPub.put(pub, figures);
 
@@ -453,14 +484,14 @@ public class PhenotypeService {
                     if (phenoDisplay.getFiguresPerPub().containsKey(pub)) {
                         phenoDisplay.getFiguresPerPub().get(pub).add(fig);
                     } else {
-                        SortedSet<Figure> figures = new TreeSet<Figure>();
+                        SortedSet<Figure> figures = new TreeSet<>();
                         figures.add(fig);
                         phenoDisplay.getFiguresPerPub().put(pub, figures);
                     }
                 }
             }
 
-            List<PhenotypeDisplay> phenoDisplays = new ArrayList<PhenotypeDisplay>(phenoMap.size());
+            List<PhenotypeDisplay> phenoDisplays = new ArrayList<>(phenoMap.size());
 
             if (phenoMap.values().size() > 0) {
                 phenoDisplays.addAll(phenoMap.values());
@@ -479,8 +510,8 @@ public class PhenotypeService {
      */
     public static List<FigureSummaryDisplay> getPhenotypeFigureSummaryForGenotype(Genotype genotype) {
         List<Figure> phenotypeFigures = RepositoryFactory.getPhenotypeRepository().getPhenotypeFiguresForGenotype(genotype);
-        List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<FigureSummaryDisplay>(phenotypeFigures.size());
-        Set<Figure> figures = new HashSet<Figure>(phenotypeFigures.size());
+        List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<>(phenotypeFigures.size());
+        Set<Figure> figures = new HashSet<>(phenotypeFigures.size());
 
         for (Figure figure : phenotypeFigures) {
             FigureSummaryDisplay figureSummaryDisplay = new FigureSummaryDisplay();
@@ -507,7 +538,7 @@ public class PhenotypeService {
     public static List<FigureSummaryDisplay> getPhenotypeFigureSummaryForFish(Fish fish) {
         List<Figure> phenotypeFigures = RepositoryFactory.getPhenotypeRepository().getPhenotypeFiguresForFish(fish);
         List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<>(phenotypeFigures.size());
-        Set<Figure> figures = new HashSet<Figure>(phenotypeFigures.size());
+        Set<Figure> figures = new HashSet<>(phenotypeFigures.size());
 
         for (Figure figure : phenotypeFigures) {
             FigureSummaryDisplay figureSummaryDisplay = new FigureSummaryDisplay();
