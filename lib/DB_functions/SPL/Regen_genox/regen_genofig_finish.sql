@@ -1,5 +1,6 @@
-create procedure regen_genofig_finish()
+create procedure regen_genofig_finish(vUpdate boolean,phenoxId int8)
   
+if (vUpdate != 't') then
 
     insert into genotype_figure_fast_search_new(gffs_geno_zdb_id,
 						gffs_fig_zdb_id,
@@ -14,9 +15,8 @@ create procedure regen_genofig_finish()
 				c.gffs_phenox_pk_id,
 				c.gffs_fish_zdb_id,
 				c.gffs_phenos_id,
-				c.gffs_genox_Zdb_id from genotype_Figure_fast_Search c
-        where not exists (Select 'x' from genotype_figure_fast_search_new d
-	      	  	 	 where  c.gffs_phenox_pk_id = d.gffs_phenox_pk_id);
+				c.gffs_genox_Zdb_id 
+        from genotype_Figure_fast_Search c;
 
  
 
@@ -112,6 +112,29 @@ create procedure regen_genofig_finish()
       --let errorHint = "genotype_figure_fast_search add foreign key to reference marker";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_morph_zdb_id) references marker on 
       delete cascade constraint gffs_morph_zdb_id_foreign_key);
+else 
+
+delete from genotype_figure_fast_search
+ where gffs_phenox_pk_id = phenoxId;
+ 
+    insert into genotype_figure_fast_search
+      (gffs_geno_zdb_id,
+	gffs_fig_zdb_id,
+	gffs_morph_zdb_id,
+	gffs_phenox_pk_id,
+	gffs_fish_zdb_id,
+	gffs_phenos_id,
+	gffs_genox_Zdb_id)
+    select distinct rgf_geno_zdb_id,
+    	   rgf_fig_zdb_id,
+	   rgf_morph_zdb_id,
+	   rgf_phenox_pk_id,
+	   rgf_fish_zdb_id,
+	   rgf_phenos_id,
+	   rgf_genox_zdb_id
+      from regen_genofig_temp;
+
+end if;
 
       grant select on genotype_figure_fast_search to "public";
 
