@@ -12,28 +12,29 @@ create procedure regen_genofig_phenox(phenoxId like phenotype_Experiment.phenox_
   --   Success: nothing
   --   Error:   throws whatever exception occurred.
   -- ---------------------------------------------------------------------------------------------
-
- define genoxId like fish_experiment.genox_zdb_id;
- let genoxId = (select phenox_genox_zdb_id from phenotype_experiment
-     	       	       			   where phenox_pk_id = phenoxId);
+  define genoxId like fish_experiment.genox_zdb_id;
 
   -- crank up the parallelism.
   set pdqpriority high;
 
+
+
   -- create regen_genofig_clean_exp_with_morph_temp, regen_genofig_not_normal_temp,
   --        regen_genofig_temp, regen_genofig_input_zdb_id_temp
+  let genoxId = (select phenox_genox_zdb_id from phenotype_Experiment 
+      	      		where phenox_pk_id = phenoxId);
+
   execute procedure regen_genofig_create_temp_tables();
 
   execute procedure regen_genox_genox(genoxId);
   -- takes regen_genofig_input_zdb_id_temp as input, adds recs to regen_genofig_temp
 
   insert into  regen_genofig_input_zdb_id_temp ( rgfg_id )
-      select phenox_pk_id from phenotype_experiment
-        where phenox_pk_id = phenoxId;
+     values (phenoxId);
 
   execute procedure regen_genofig_process();
 
   -- Move from temp tables to permanent tables
-  execute procedure regen_genofig_finish();
+  execute procedure regen_genofig_finish('t',phenoxId);
 
 end procedure;

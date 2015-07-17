@@ -17,6 +17,7 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.service.ExpressionResultUpdateRecord;
 import org.zfin.publication.Publication;
@@ -61,7 +62,7 @@ public class ExpressionService {
 
     public Set<String> getThissePublicationZdbIDs() {
         if (thissePubs == null) {
-            thissePubs = new HashSet<String>();
+            thissePubs = new HashSet<>();
             thissePubs.add("ZDB-PUB-051025-1");
             thissePubs.add("ZDB-PUB-040907-1");
             thissePubs.add("ZDB-PUB-010810-1");
@@ -192,13 +193,11 @@ public class ExpressionService {
 
     public String getGeoLinkForMarkerIfExists(Marker marker) {
         if (marker.getZdbID().startsWith("ZDB-GENE")) {
-            if (false == infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB
-            )) {
+            if (!infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB)) {
                 return null;
             }
         } else {
-            if (false == infrastructureRepository.hasStandardPublicationAttribution(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB
-            )) {
+            if (!infrastructureRepository.hasStandardPublicationAttribution(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB)) {
                 return null;
             }
         }
@@ -336,14 +335,14 @@ public class ExpressionService {
             existingMarkerPubs = existingMarkerPubs.subList(0, maxSize);
         }
 
-        Set<String> addSet = new HashSet<String>();
-        Set<String> removeSet = new HashSet<String>();
+        Set<String> addSet = new HashSet<>();
+        Set<String> removeSet = new HashSet<>();
 
         for (String zdbID : allMarkerZdbIds) {
             marker = markerRepository.getMarkerByID(zdbID);
             if (getGeoLinkForMarkerIfExists(marker) != null) {
                 // if it is not there add
-                if (false == existingMarkerPubs.contains(zdbID)) {
+                if (!existingMarkerPubs.contains(zdbID)) {
                     addSet.add(zdbID);
                 }
                 // else, in both places do nothing
@@ -381,7 +380,7 @@ public class ExpressionService {
      * @return set of obsolseted terms
      */
     public Set<GenericTerm> getObsoleteTerm(ExpressionResult expressionResult) {
-        Set<GenericTerm> obsoletedTerms = new HashSet<GenericTerm>(2);
+        Set<GenericTerm> obsoletedTerms = new HashSet<>(2);
         if (expressionResult.getEntity().getSuperterm().isObsolete()) {
             obsoletedTerms.add(expressionResult.getEntity().getSuperterm());
         } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isObsolete()) {
@@ -398,7 +397,7 @@ public class ExpressionService {
      * @return set of obsolseted terms
      */
     public Set<GenericTerm> getSecondaryTerm(ExpressionResult expressionResult) {
-        Set<GenericTerm> obsoletedTerms = new HashSet<GenericTerm>(2);
+        Set<GenericTerm> obsoletedTerms = new HashSet<>(2);
         if (expressionResult.getEntity().getSuperterm().isSecondary()) {
             obsoletedTerms.add(expressionResult.getEntity().getSuperterm());
         } else if (expressionResult.getEntity().getSubterm() != null && expressionResult.getEntity().getSubterm().isSecondary()) {
@@ -414,13 +413,14 @@ public class ExpressionService {
      * @return list of expression experiments
      */
     public static List<ExpressionExperiment> getDistinctExpressionExperiments(List<ExpressionResult> results) {
-        if (results == null)
+        if (results == null) {
             return null;
-        Set<ExpressionExperiment> expressionExperimentSet = new HashSet<ExpressionExperiment>(results.size());
+        }
+        Set<ExpressionExperiment> expressionExperimentSet = new HashSet<>(results.size());
         for (ExpressionResult result : results) {
             expressionExperimentSet.add(result.getExpressionExperiment());
         }
-        return new ArrayList<ExpressionExperiment>(expressionExperimentSet);
+        return new ArrayList<>(expressionExperimentSet);
     }
 
     public static String populateEntities(TermFigureStageRange stageRange) {
@@ -434,8 +434,9 @@ public class ExpressionService {
         }
         try {
             DevelopmentStage start = getOntologyRepository().getStageByExample(stageRange.getStart());
-            if (start == null)
+            if (start == null) {
                 throw new RuntimeException("");
+            }
             stageRange.setStart(start);
         } catch (Exception e) {
             String error = "Stage not found by abbreviation: " + stageRange.getStart().getAbbreviation();
@@ -461,8 +462,9 @@ public class ExpressionService {
     public static ExpressionResultSplitStatement splitExpressionAnnotations(TermStageSplitStatement statement) {
         // find expression Result records matching the original term-stage-range
         List<ExpressionResult> expressionResultList = getExpressionRepository().getExpressionResultsByTermAndStage(statement.getOriginalTermFigureStageRange());
-        if (CollectionUtils.isEmpty(expressionResultList))
+        if (CollectionUtils.isEmpty(expressionResultList)) {
             return null;
+        }
         logger.info("Found " + expressionResultList.size() + " expression_result records");
         ExpressionResultSplitStatement splitStatement = new ExpressionResultSplitStatement();
         for (ExpressionResult result : expressionResultList) {
@@ -499,7 +501,7 @@ public class ExpressionService {
                     for (Figure figure : result.getFigures()) {
                         Set<Figure> figures = splitResult.getFigures();
                         if (figures == null) {
-                            figures = new HashSet<Figure>(2);
+                            figures = new HashSet<>(2);
                             splitResult.setFigures(figures);
                         }
                         figures.add(figure);
@@ -522,12 +524,8 @@ public class ExpressionService {
         return DevelopmentStage.stageRangeOverlapsRange(superTerm.getStart(), superTerm.getEnd(), startStage, endStage);
     }
 
-    public static ExpressionResultSplitStatement updateExpressionResult(ExpressionResultUpdateRecord statement) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
-
     public static List<FigureExpressionSummary> createExpressionFigureSummaryFromExpressionResults(List<ExpressionResult> results) {
-        Map<Figure, Set<ExpressionResult>> figureListMap = new HashMap<Figure, Set<ExpressionResult>>(results.size());
+        Map<Figure, Set<ExpressionResult>> figureListMap = new HashMap<>(results.size());
         for (ExpressionResult result : results) {
             for (Figure figure : result.getFigures()) {
                 Set<ExpressionResult> expressionResults = figureListMap.get(figure);
@@ -539,24 +537,27 @@ public class ExpressionService {
             }
         }
 
-        List<FigureExpressionSummary> figureExpressionSummaries = new ArrayList<FigureExpressionSummary>(figureListMap.keySet().size());
+        List<FigureExpressionSummary> figureExpressionSummaries = new ArrayList<>(figureListMap.keySet().size());
         List<ExpressionExperiment> expressionExperiments = ExpressionService.getDistinctExpressionExperiments(results);
         for (Figure figure : figureListMap.keySet()) {
             FigureExpressionSummary figureExpressionSummary = new FigureExpressionSummary(figure);
-            List<ExpressedGene> expressedGenes = new ArrayList<ExpressedGene>(figureListMap.get(figure).size());
+            List<ExpressedGene> expressedGenes = new ArrayList<>(figureListMap.get(figure).size());
             for (ExpressionExperiment expressionExperiment : expressionExperiments) {
-                List<ExpressionStatement> expressionStatements = new ArrayList<ExpressionStatement>(figureListMap.get(figure).size());
-                if (!expressionExperiment.getAllFigures().contains(figure))
+                List<ExpressionStatement> expressionStatements = new ArrayList<>(figureListMap.get(figure).size());
+                if (!expressionExperiment.getAllFigures().contains(figure)) {
                     continue;
+                }
                 for (ExpressionResult result : expressionExperiment.getExpressionResults()) {
                     ExpressionStatement statement = new ExpressionStatement();
-                    if (!result.getFigures().contains(figure))
+                    if (!result.getFigures().contains(figure)) {
                         continue;
+                    }
                     statement.setEntity(result.getEntity());
                     statement.setExpressionFound(result.isExpressionFound());
                     // ensure distinctness
-                    if (!expressionStatements.contains(statement))
+                    if (!expressionStatements.contains(statement)) {
                         expressionStatements.add(statement);
+                    }
                 }
                 Collections.sort(expressionStatements);
                 ExpressedGene expressedGene = new ExpressedGene(expressionExperiment.getGene());
@@ -573,29 +574,38 @@ public class ExpressionService {
      * Create a list of expressionDisplay objects organized by expressed gene.
      */
     public static List<ExpressionDisplay> createExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs) {
-        if (expressionResults == null || expressionResults.size() == 0 || expressionFigureIDs == null || expressionFigureIDs.size() == 0 || expressionPublicationIDs == null || expressionPublicationIDs.size() == 0)
+        if (expressionResults == null ||
+                expressionResults.size() == 0 ||
+                expressionFigureIDs == null ||
+                expressionFigureIDs.size() == 0 ||
+                expressionPublicationIDs == null ||
+                expressionPublicationIDs.size() == 0) {
             return null;
+        }
 
         // a map of zdbIDs of expressed genes as keys and display objects as values
-        Map<String, ExpressionDisplay> map = new HashMap<String, ExpressionDisplay>();
+        Map<String, ExpressionDisplay> map = new HashMap<>();
 
         String keySTR = initialKey;
 
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
-                Experiment exp = xpResult.getExpressionExperiment().getFishExperiment().getExperiment();
+                FishExperiment fishox = xpResult.getExpressionExperiment().getFishExperiment();
+                Experiment exp = fishox.getExperiment();
 
                 String key = keySTR + expressedGene.getZdbID();
 
-                if (exp.isStandard())
+                if (fishox.isStandardOrGenericControl()) {
                     key += "standard";
+                }
 
-                if (exp.isChemical())
+                if (exp.isChemical()) {
                     key += "chemical";
+                }
 
                 Set<Figure> figs = xpResult.getFigures();
-                Set<Figure> qualifiedFigures = new HashSet<Figure>();
+                Set<Figure> qualifiedFigures = new HashSet<>();
 
                 for (Figure fig : figs)  {
                     if (expressionFigureIDs.contains(fig.getZdbID())) {
@@ -650,7 +660,7 @@ public class ExpressionService {
             }
         }
 
-        List<ExpressionDisplay> expressionDisplays = new ArrayList<ExpressionDisplay>(map.size());
+        List<ExpressionDisplay> expressionDisplays = new ArrayList<>(map.size());
 
         if (map.values().size() > 0) {
             expressionDisplays.addAll(map.values());

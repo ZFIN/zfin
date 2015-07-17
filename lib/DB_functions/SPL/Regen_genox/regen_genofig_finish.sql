@@ -1,5 +1,6 @@
-create procedure regen_genofig_finish()
+create procedure regen_genofig_finish(vUpdate boolean,phenoxId int8)
   
+if (vUpdate != 't') then
 
     insert into genotype_figure_fast_search_new(gffs_geno_zdb_id,
 						gffs_fig_zdb_id,
@@ -14,9 +15,8 @@ create procedure regen_genofig_finish()
 				c.gffs_phenox_pk_id,
 				c.gffs_fish_zdb_id,
 				c.gffs_phenos_id,
-				c.gffs_genox_Zdb_id from genotype_Figure_fast_Search c
-        where not exists (Select 'x' from genotype_figure_fast_search_new d
-	      	  	 	 where  c.gffs_phenox_pk_id = d.gffs_phenox_pk_id);
+				c.gffs_genox_Zdb_id 
+        from genotype_Figure_fast_Search c;
 
  
 
@@ -71,6 +71,12 @@ create procedure regen_genofig_finish()
       on genotype_figure_fast_search_new (gffs_morph_zdb_id)
       fillfactor 100
       in idxdbs3;
+
+  
+    create index genotype_figure_fast_search_phenox_foreign_key_index_transient
+      on genotype_figure_fast_search_new (gffs_phenox_pk_id)
+      fillfactor 100
+      in idxdbs3;
         
     update statistics high for table genotype_figure_fast_search_new;
 
@@ -92,6 +98,8 @@ create procedure regen_genofig_finish()
         to genotype_figure_fast_search_morph_zdb_id_foreign_key_index;
      rename index genotype_figure_fast_search_fish_foreign_key_index_transient 
         to genotype_figure_fast_search_fish_zdb_id_foreign_key_index;
+    rename index genotype_figure_fast_search_phenox_foreign_key_index_transient 
+        to genotype_figure_fast_search_phenox_zdb_id_foreign_key_index;
 
       --let errorHint = "genotype_figure_fast_search add PK";
       alter table genotype_figure_fast_search add constraint primary key 
@@ -112,6 +120,34 @@ create procedure regen_genofig_finish()
       --let errorHint = "genotype_figure_fast_search add foreign key to reference marker";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_morph_zdb_id) references marker on 
       delete cascade constraint gffs_morph_zdb_id_foreign_key);
+
+     --let errorHint = "genotype_figure_fast_search add foreign key to reference phenotype_experiment";
+      alter table genotype_figure_fast_search add constraint (foreign key (gffs_phenox_pk_id) references phenotype_Experiment on 
+      delete cascade constraint gffs_phenox_pk_id_foreign_key);
+
+else 
+
+delete from genotype_figure_fast_search
+ where gffs_phenox_pk_id = phenoxId;
+ 
+    insert into genotype_figure_fast_search
+      (gffs_geno_zdb_id,
+	gffs_fig_zdb_id,
+	gffs_morph_zdb_id,
+	gffs_phenox_pk_id,
+	gffs_fish_zdb_id,
+	gffs_phenos_id,
+	gffs_genox_Zdb_id)
+    select distinct rgf_geno_zdb_id,
+    	   rgf_fig_zdb_id,
+	   rgf_morph_zdb_id,
+	   rgf_phenox_pk_id,
+	   rgf_fish_zdb_id,
+	   rgf_phenos_id,
+	   rgf_genox_zdb_id
+      from regen_genofig_temp;
+
+end if;
 
       grant select on genotype_figure_fast_search to "public";
 
