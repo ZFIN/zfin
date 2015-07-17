@@ -1708,8 +1708,21 @@ where fmrel_ftr_zdb_id = feature_zdb_id
 
 ! echo "generating clean phenotype download" ;
 
+create temp table tmp_pheno_gene (id int8,
+       	    	  		  genox_zdb_id varchar(50),
+				  gene_abbrev varchar(255),
+				  gene_zdb_id varchar(50),
+				  term_ont_id varchar(30),
+				  term_name varchar(255),
+				  whereFrom varchar(20),
+				  fish_id varchar(50),
+				  mo_id varchar(50),
+				  stage_start_id varchar(50),
+				  stage_end_id varchar(50))
+with no log;
 
- select distinct phenos_pk_id as id,
+insert into tmp_pheno_gene
+ select  phenos_pk_id as id,
  		 genox_zdb_id as genox_Zdb_id,
  		 mrkr_abbrev as gene_abbrev,
 		 mrkr_zdb_id as gene_zdb_id,
@@ -1735,9 +1748,10 @@ where fmrel_ftr_zdb_id = feature_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
     and fishstr_fish_Zdb_id = genox_fish_zdb_id
-    and phenos_entity_1_superterm_zdb_id = alltermcon_container_zdb_id
-union
- select distinct phenos_pk_id,
+    and phenos_entity_1_superterm_zdb_id = alltermcon_container_zdb_id;
+
+insert into tmp_pheno_gene
+ select  phenos_pk_id,
  		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
@@ -1764,9 +1778,10 @@ union
     and alltermcon_contained_zdb_id = term_zdb_id
     and fishstr_fish_Zdb_id = genox_fish_zdb_id
     and phenos_entity_1_subterm_zdb_id = alltermcon_container_zdb_id
-    and phenos_entity_1_subterm_zdb_id is not null
-union
- select distinct phenos_pk_id,
+    and phenos_entity_1_subterm_zdb_id is not null;
+
+insert into tmp_pheno_gene
+ select  phenos_pk_id,
  		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
@@ -1793,9 +1808,10 @@ union
     and alltermcon_contained_zdb_id = term_zdb_id
     and fishstr_fish_Zdb_id = genox_fish_zdb_id
     and phenos_entity_2_superterm_zdb_id = alltermcon_container_zdb_id
-    and phenos_entity_2_superterm_zdb_id is not null
-union
- select distinct phenos_pk_id,
+    and phenos_entity_2_superterm_zdb_id is not null;
+
+insert into tmp_pheno_gene
+ select  phenos_pk_id,
  		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
@@ -1822,9 +1838,10 @@ union
     and alltermcon_contained_zdb_id = term_zdb_id
     and fishstr_fish_Zdb_id = genox_fish_zdb_id
     and phenos_entity_2_subterm_zdb_id = alltermcon_container_zdb_id
-    and phenos_entity_2_subterm_zdb_id is not null
-union
- select distinct phenos_pk_id,
+    and phenos_entity_2_subterm_zdb_id is not null;
+
+insert into tmp_pheno_gene
+ select  phenos_pk_id,
  		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
@@ -1849,9 +1866,10 @@ union
     and phenox_pk_id = phenos_phenox_pk_id
     and alltermcon_contained_zdb_id = term_zdb_id
     and alltermcon_container_zdb_id = phenos_entity_1_superterm_zdb_id
-    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
-union
- select distinct phenos_pk_id,
+    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id);
+
+insert into tmp_pheno_gene
+ select  phenos_pk_id,
  		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
@@ -1877,9 +1895,10 @@ union
     and alltermcon_contained_zdb_id = term_zdb_id
     and alltermcon_container_zdb_id = phenos_entity_1_subterm_zdb_id
     and phenos_entity_1_subterm_zdb_id is not null
-    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
-union
- select distinct phenos_pk_id,
+    and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id);
+
+insert into tmp_pheno_gene
+ select  phenos_pk_id,
  		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
@@ -1906,8 +1925,9 @@ union
     and alltermcon_container_zdb_id = phenos_entity_2_superterm_zdb_id
     and phenos_entity_2_superterm_zdb_id is not null
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
-union
- select distinct phenos_pk_id,
+;
+insert into tmp_pheno_gene
+ select  phenos_pk_id,
  		 genox_zdb_id,
  		 mrkr_abbrev,
 		 mrkr_zdb_id,
@@ -1934,7 +1954,7 @@ union
     and alltermcon_container_zdb_id = phenos_entity_2_subterm_zdb_id
     and phenos_entity_2_subterm_zdb_id is not null
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
-into temp tmp_pheno_gene;			
+;			
 
 ! echo "Create tmp_dumpPheno temp table"
 create temp table tmp_dumpPheno (
@@ -1984,8 +2004,6 @@ update tmp_dumpPheno
   set fish_name = (select fish_name
       			  	  from fish
 				  where fish_zdb_id = fish_id);
-
-
 
 !echo "unload phenoGeneCleanData.txt"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData.txt'
