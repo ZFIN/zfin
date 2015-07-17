@@ -8,6 +8,87 @@
 --begin work ;
 
 -- Phenotype-related updates after a new ontology is loaded.
+
+
+create temp table delete_phenotype_statement
+  (
+    phenos_id serial
+  );
+
+insert into delete_phenotype_statement (phenos_id)
+select phenos_pk_id from phenotype_statement as ps
+where exists (
+select 'x' from phenotype_statement as psc, sec_oks
+where ps.phenos_pk_id != psc.phenos_pk_id AND
+      ps.phenos_phenox_pk_id = psc.phenos_phenox_pk_id AND
+      prim_zdb_id =  psc.phenos_entity_1_superterm_zdb_id AND
+      nvl(ps.phenos_entity_1_subterm_zdb_id,'1') =  nvl(psc.phenos_entity_1_subterm_zdb_id,'1') AND
+      nvl(ps.phenos_entity_2_subterm_zdb_id,'1') =  nvl(psc.phenos_entity_2_subterm_zdb_id,'1') AND
+      nvl(ps.phenos_entity_2_superterm_zdb_id,'1') =  nvl(psc.phenos_entity_2_superterm_zdb_id,'1') AND
+      ps.phenos_quality_zdb_id =  psc.phenos_quality_zdb_id AND
+      ps.phenos_tag =  psc.phenos_tag  AND
+      ps.phenos_tag =  psc.phenos_tag  AND
+      ps.phenos_entity_1_superterm_zdb_id = sec_zdb_id
+);
+
+insert into delete_phenotype_statement (phenos_id)
+select phenos_pk_id from phenotype_statement as ps
+where exists (
+select 'x' from phenotype_statement as psc, sec_oks
+where ps.phenos_pk_id != psc.phenos_pk_id AND
+      ps.phenos_phenox_pk_id = psc.phenos_phenox_pk_id AND
+      prim_zdb_id =  psc.phenos_entity_1_subterm_zdb_id AND
+      nvl(ps.phenos_entity_1_superterm_zdb_id,'1') =  nvl(psc.phenos_entity_1_superterm_zdb_id,'1') AND
+      nvl(ps.phenos_entity_2_subterm_zdb_id,'1') =  nvl(psc.phenos_entity_2_subterm_zdb_id,'1') AND
+      nvl(ps.phenos_entity_2_superterm_zdb_id,'1') =  nvl(psc.phenos_entity_2_superterm_zdb_id,'1') AND
+      ps.phenos_quality_zdb_id =  psc.phenos_quality_zdb_id AND
+      ps.phenos_tag =  psc.phenos_tag  AND
+      ps.phenos_tag =  psc.phenos_tag  AND
+      nvl(ps.phenos_entity_1_subterm_zdb_id,'') = sec_zdb_id
+);
+
+insert into delete_phenotype_statement (phenos_id)
+select phenos_pk_id from phenotype_statement as ps
+where exists (
+select 'x' from phenotype_statement as psc, sec_oks
+where ps.phenos_pk_id != psc.phenos_pk_id AND
+      ps.phenos_phenox_pk_id = psc.phenos_phenox_pk_id AND
+      prim_zdb_id =  psc.phenos_entity_2_subterm_zdb_id AND
+      nvl(ps.phenos_entity_1_superterm_zdb_id,'1') =  nvl(psc.phenos_entity_1_superterm_zdb_id,'1') AND
+      nvl(ps.phenos_entity_1_subterm_zdb_id,'1') =  nvl(psc.phenos_entity_1_subterm_zdb_id,'1') AND
+      nvl(ps.phenos_entity_2_superterm_zdb_id,'1') =  nvl(psc.phenos_entity_2_superterm_zdb_id,'1') AND
+      ps.phenos_quality_zdb_id =  psc.phenos_quality_zdb_id AND
+      ps.phenos_tag =  psc.phenos_tag  AND
+      ps.phenos_tag =  psc.phenos_tag  AND
+      nvl(ps.phenos_entity_2_subterm_zdb_id,'') = sec_zdb_id
+);
+
+insert into delete_phenotype_statement (phenos_id)
+select phenos_pk_id from phenotype_statement as ps
+where exists (
+select 'x' from phenotype_statement as psc, sec_oks
+where ps.phenos_pk_id != psc.phenos_pk_id AND
+      ps.phenos_phenox_pk_id = psc.phenos_phenox_pk_id AND
+      prim_zdb_id =  psc.phenos_entity_2_superterm_zdb_id AND
+      nvl(ps.phenos_entity_1_superterm_zdb_id,'1') =  nvl(psc.phenos_entity_1_superterm_zdb_id,'1') AND
+      nvl(ps.phenos_entity_1_subterm_zdb_id,'1') =  nvl(psc.phenos_entity_1_subterm_zdb_id,'1') AND
+      nvl(ps.phenos_entity_2_subterm_zdb_id,'1') =  nvl(psc.phenos_entity_2_subterm_zdb_id,'1') AND
+      ps.phenos_quality_zdb_id =  psc.phenos_quality_zdb_id AND
+      ps.phenos_tag =  psc.phenos_tag  AND
+      ps.phenos_tag =  psc.phenos_tag  AND
+      nvl(ps.phenos_entity_2_superterm_zdb_id,'') = sec_zdb_id
+);
+
+select * From delete_phenotype_statement;
+
+delete from phenotype_statement
+where exists(
+select 'x' from delete_phenotype_statement
+where phenos_id = phenos_pk_id
+);
+
+drop table delete_phenotype_statement;
+
 -- update super terms
 unload to 'phenotype-superterm-updates.unl'
     select distinct phenos_pk_id, super.term_zdb_id, super.term_name, replacement.term_zdb_id, replacement.term_name
