@@ -590,7 +590,7 @@
             <column name="gffs_phenox_pk_id" not-null="true"/>
         </many-to-one>
         <many-to-one name="phenotypeStatement" class="org.zfin.mutant.PhenotypeStatement">
-            <column name="gffs_phenox_pk_id" not-null="true"/>
+            <column name="gffs_phenos_id" not-null="true"/>
         </many-to-one>
         <many-to-one name="fishExperiment" class="org.zfin.mutant.FishExperiment">
             <column name="gffs_genox_zdb_id" not-null="true"/>
