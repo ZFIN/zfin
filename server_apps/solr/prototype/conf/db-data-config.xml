@@ -1040,6 +1040,20 @@ select gfrv_gene_abbrev as affected_gene,
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
+           <!-- this probably shouldn't actually come in as alias because it will get boosted higher, but
+                adding a sequence_alteration_alias field seems like a bit too much... -->
+           <entity name="fish_feature_alias"
+                   query="select
+                            dalias_alias as alias,
+                            fish_zdb_id
+                            from fish
+                                 join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
+                                 join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+                                 join data_alias on dalias_data_zdb_id = fmrel_ftr_zdb_id
+                            where fmrel_type in ('is allele of','markers present', 'markers moved');"
+                   where="fish_zdb_id=fish.id"
+                   processor="CachedSqlEntityProcessor"/>
+
            <entity name="fish_feature_gene"
                    query="select
                             mrkr_abbrev as affected_gene,
@@ -1054,6 +1068,7 @@ select gfrv_gene_abbrev as affected_gene,
                                   and mrkr_type in ('GENE','GENEP');"
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
+
            <entity name="fish_feature_gene_previous_name"
                    query="select
                             dalias_alias as affected_gene_previous_name,
@@ -1147,6 +1162,7 @@ select gfrv_gene_abbrev as affected_gene,
            <entity name="fish_construct"
                    query="select
                             mrkr_name as construct,
+                            mrkr_name as construct_name,
                             mrkr_zdb_id as xref,
                             fish_zdb_id
                             from fish
@@ -1154,6 +1170,20 @@ select gfrv_gene_abbrev as affected_gene,
                                  join feature on genofeat_feature_zdb_id = feature_zdb_id
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
                                  join marker on mrkr_zdb_id = fmrel_mrkr_zdb_id
+                            where fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');"
+                   where="fish_zdb_id=fish.id"
+                   processor="CachedSqlEntityProcessor"/>
+
+           <entity name="fish_construct_alias"
+                   query="select
+                            dalias_alias as construct,
+                            dalias_alias as construct_name,
+                            fish_zdb_id
+                            from fish
+                                 join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
+                                 join feature on genofeat_feature_zdb_id = feature_zdb_id
+                                 join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
+                                 join data_alias on dalias_data_zdb_id = fmrel_mrkr_zdb_id
                             where fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');"
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
