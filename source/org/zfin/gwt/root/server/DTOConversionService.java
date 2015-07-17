@@ -413,8 +413,9 @@ public class DTOConversionService {
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
         genotypeDTO.setNickName(genotype.getNickname());
-        if (genotype.getBackground() != null)
+        if (genotype.getBackground() != null) {
             genotypeDTO.setBackgroundGenotype(convertToPureGenotypeDTOs(genotype.getBackground()));
+        }
         if (CollectionUtils.isNotEmpty(genotype.getExternalNotes())) {
             createExternalNotesOnGenotype(genotype, genotypeDTO);
         }
@@ -437,8 +438,9 @@ public class DTOConversionService {
         genotypeDTO.setName(genotype.getName());
         genotypeDTO.setZdbID(genotype.getZdbID());
         genotypeDTO.setHandle(genotype.getHandle());
-        if (genotype.getBackground() != null)
+        if (genotype.getBackground() != null) {
             genotypeDTO.setBackgroundGenotype(convertToPureGenotypeDTOs(genotype.getBackground()));
+        }
         return genotypeDTO;
     }
 
@@ -459,8 +461,9 @@ public class DTOConversionService {
             ExternalNoteDTO noteDTO = new ExternalNoteDTO();
             noteDTO.setZdbID(note.getZdbID());
             noteDTO.setNoteData(note.getNote());
-            if (note.getSinglePubAttribution() != null)
+            if (note.getSinglePubAttribution() != null) {
                 noteDTO.setPublicationZdbID(note.getSinglePubAttribution().getSourceZdbID());
+            }
             externalNoteDTOList.add(noteDTO);
         }
         genotypeDTO.setPublicNotes(externalNoteDTOList);
@@ -619,10 +622,12 @@ public class DTOConversionService {
             logger.debug("Feature does not have a lab: " + feature.getAbbreviation() + " " + feature.getZdbID());
         }
 
-        if (feature.getAliases() != null)
+        if (feature.getAliases() != null) {
             featureDTO.setFeatureAliases(new ArrayList<>(unescapeStrings(FeatureService.getFeatureAliases(feature))));
-        if (feature.getDbLinks() != null)
+        }
+        if (feature.getDbLinks() != null) {
             featureDTO.setFeatureSequences(new ArrayList<>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
+        }
 
        /* for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
             if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
@@ -634,8 +639,9 @@ public class DTOConversionService {
     }
 
     public static CuratorSessionDTO convertToCuratorSessionDTO(CuratorSession session) {
-        if (session == null)
+        if (session == null) {
             return null;
+        }
 
         CuratorSessionDTO dto = new CuratorSessionDTO();
         dto.setField(session.getField());
@@ -653,15 +659,17 @@ public class DTOConversionService {
      * @return mutant figure stage
      */
     public static MutantFigureStage convertToMutantFigureStageFromDTO(PhenotypeExperimentDTO mutantFigureStage) {
-        if (mutantFigureStage == null)
+        if (mutantFigureStage == null) {
             return null;
+        }
 
         MutantFigureStage mfs = new MutantFigureStage();
         FishExperiment fishExperiment =
                 getExpressionRepository().getFishExperimentByExperimentIDAndGenotype(mutantFigureStage.getEnvironment().getZdbID(),
                         mutantFigureStage.getFish().getZdbID());
-        if (fishExperiment != null)
+        if (fishExperiment != null) {
             mfs.setGenotypeExperiment(fishExperiment);
+        }
 
         Figure figure = RepositoryFactory.getPublicationRepository().getFigureByID(mutantFigureStage.getFigure().getZdbID());
         mfs.setFigure(figure);
@@ -684,8 +692,9 @@ public class DTOConversionService {
         if (figure.getPublication() == null) {
             figure = RepositoryFactory.getPublicationRepository().getFigureByID(figure.getZdbID());
             dto.setFigure(convertToFigureDTO(figure));
-        } else
+        } else {
             dto.setFigure(convertToFigureDTO(mutantFigureStage.getFigure()));
+        }
         dto.setPublicationID(figure.getPublication().getZdbID());
         dto.setEnvironment(convertToEnvironmentDTO(mutantFigureStage.getFishExperiment().getExperiment()));
         dto.setStart(convertToStageDTO(mutantFigureStage.getStartStage()));
@@ -719,18 +728,21 @@ public class DTOConversionService {
         structure.setEntity(populatePostComposedEntity(entityDTO));
         structure.setRelatedEntity(populatePostComposedEntity(phenotypeDTO.getRelatedEntity()));
         GenericTerm quality = convertToTerm(phenotypeDTO.getQuality());
-        if (quality == null)
+        if (quality == null) {
             throw new TermNotFoundException("No valid quality term found: " + phenotypeDTO.getQuality().getTermName() +
                     " and " + phenotypeDTO.getQuality().getOntology());
+        }
         structure.setQualityTerm(quality);
-        if (phenotypeDTO.getTag() != null)
+        if (phenotypeDTO.getTag() != null) {
             structure.setTag(PhenotypeStatement.Tag.getTagFromName(phenotypeDTO.getTag()));
+        }
         return structure;
     }
 
     private static PostComposedEntity populatePostComposedEntity(EntityDTO entityDTO) throws TermNotFoundException {
-        if (entityDTO == null)
+        if (entityDTO == null) {
             return null;
+        }
         PostComposedEntity entity = new PostComposedEntity();
         entity.setSuperterm(convertToTerm(entityDTO.getSuperTerm()));
         entity.setSubterm(convertToTerm(entityDTO.getSubTerm()));
@@ -803,20 +815,25 @@ public class DTOConversionService {
      * @return term
      */
     public static GenericTerm convertToTerm(TermDTO termDTO) throws TermNotFoundException {
-        if (termDTO == null)
+        if (termDTO == null) {
             return null;
-        if (termDTO.getOntology() == null || StringUtils.isEmpty(termDTO.getTermName()))
+        }
+        if (termDTO.getOntology() == null || StringUtils.isEmpty(termDTO.getTermName())) {
             return null;
+        }
         Ontology ontology = convertToOntology(termDTO.getOntology());
         // first search by
         GenericTerm term = null;
-        if (!StringUtils.isEmpty(termDTO.getOboID()))
+        if (!StringUtils.isEmpty(termDTO.getOboID())) {
             term = RepositoryFactory.getOntologyRepository().getTermByOboID(termDTO.getOboID());
-        if (term == null)
+        }
+        if (term == null) {
             term = RepositoryFactory.getOntologyRepository().getTermByName(termDTO.getTermName(), ontology);
+        }
         // if no term found throw exception
-        if (term == null)
+        if (term == null) {
             throw new TermNotFoundException("Could not find valid term for: " + ontology.getCommonName() + ":" + termDTO.getTermName());
+        }
         return term;
     }
 
@@ -865,8 +882,9 @@ public class DTOConversionService {
     }
 
     public static TermDTO convertQualityToTermDTO(PhenotypeStructure structure) {
-        if (structure == null)
+        if (structure == null) {
             return null;
+        }
 
         GenericTerm term = structure.getQualityTerm();
         Ontology entityOntology = getDefiningOntology(structure);
@@ -877,10 +895,11 @@ public class DTOConversionService {
         Ontology ontology = term.getOntology();
         // ToDo: generalize this better...
         if (ontology == Ontology.QUALITY) {
-            if (entityOntology == Ontology.GO_BP || entityOntology == Ontology.GO_MF)
+            if (entityOntology == Ontology.GO_BP || entityOntology == Ontology.GO_MF) {
                 ontology = Ontology.QUALITY_PROCESSES;
-            else
+            } else {
                 ontology = Ontology.QUALITY_QUALITIES;
+            }
         }
         dto.setSubsets(convertToSubsetDTO(term.getSubsets()));
         OntologyDTO ontologyDTO = convertToOntologyDTO(ontology);
@@ -890,19 +909,23 @@ public class DTOConversionService {
     }
 
     private static Ontology getDefiningOntology(PhenotypeStructure structure) {
-        if (structure == null)
+        if (structure == null) {
             return null;
+        }
         PostComposedEntity entity = structure.getEntity();
-        if (entity == null)
+        if (entity == null) {
             return null;
-        if (entity.getSubterm() != null)
+        }
+        if (entity.getSubterm() != null) {
             return entity.getSubterm().getOntology();
+        }
         return entity.getSuperterm().getOntology();
     }
 
     private static Set<String> convertToSubsetDTO(Set<Subset> subsets) {
-        if (subsets == null)
+        if (subsets == null) {
             return null;
+        }
         Set<String> subsetDtos = new HashSet<>(subsets.size());
         for (Subset subset : subsets) {
             subsetDtos.add(subset.getInternalName());
@@ -946,10 +969,11 @@ public class DTOConversionService {
         if (experiment.getName() == null) {
             experiment = RepositoryFactory.getExpressionRepository().getExperimentByID(experiment.getZdbID());
         }
-        if (experiment.getName().startsWith("_"))
+        if (experiment.getName().startsWith("_")) {
             environment.setName(experiment.getName().substring(1));
-        else
+        } else {
             environment.setName(experiment.getName());
+        }
         return environment;
     }
 
@@ -996,8 +1020,9 @@ public class DTOConversionService {
         experimentDTO.setPublicationID(experiment.getPublication().getZdbID());
         // check if there are expressions associated
         Set<ExpressionResult> expressionResults = experiment.getExpressionResults();
-        if (expressionResults != null)
+        if (expressionResults != null) {
             experimentDTO.setNumberOfExpressions(experiment.getDistinctExpressions());
+        }
         // check if a clone is available
         Marker probe = experiment.getProbe();
         if (probe != null) {
@@ -1008,8 +1033,9 @@ public class DTOConversionService {
     }
 
     public static PhenotypeExperiment convertToPhenotypeExperimentFilter(PhenotypeExperimentDTO dto) {
-        if (dto == null)
+        if (dto == null) {
             return null;
+        }
 
         PhenotypeExperiment phenoExperiment = new PhenotypeExperiment();
         phenoExperiment.setId(dto.getId());
@@ -1047,8 +1073,9 @@ public class DTOConversionService {
         ExpressedTermDTO termDto = new ExpressedTermDTO();
         EntityDTO entity = new EntityDTO();
         entity.setSuperTerm(convertToTermDTO(term.getSuperTerm()));
-        if (term.getSubterm() != null)
+        if (term.getSubterm() != null) {
             entity.setSubTerm(convertToTermDTO(term.getSubterm()));
+        }
         termDto.setEntity(entity);
         termDto.setExpressionFound(term.isExpressionFound());
         termDto.setZdbID(term.getZdbID());
@@ -1074,15 +1101,17 @@ public class DTOConversionService {
 
 
     public static OntologyDTO convertToOntologyDTO(Ontology ontology) {
-        if (ontology == null)
+        if (ontology == null) {
             return null;
+        }
 
         return OntologyDTO.valueOf(ontology.name());
     }
 
     public static Ontology convertToOntology(OntologyDTO ontology) {
-        if (ontology == null)
+        if (ontology == null) {
             return null;
+        }
 
         return Ontology.valueOf(ontology.name());
     }
@@ -1213,8 +1242,9 @@ public class DTOConversionService {
     }
 
     public static EntityDTO convertToEntityDTO(PostComposedEntity entity) {
-        if (entity == null)
+        if (entity == null) {
             return null;
+        }
 
         EntityDTO dto = new EntityDTO();
         dto.setSuperTerm(convertToTermDTO(entity.getSuperterm()));
@@ -1262,8 +1292,9 @@ public class DTOConversionService {
     }
 
     public static List<PileStructureAnnotationDTO> getPileStructureDTO(ExpressionFigureStageDTO expressionFigureStageDTO, PileStructureAnnotationDTO.Action action) {
-        if (expressionFigureStageDTO == null)
+        if (expressionFigureStageDTO == null) {
             return null;
+        }
 
         List<PileStructureAnnotationDTO> list = new ArrayList<>();
         for (ExpressedTermDTO termDto : expressionFigureStageDTO.getExpressedTerms()) {
@@ -1279,14 +1310,16 @@ public class DTOConversionService {
     }
 
     public static PostComposedEntity getPostComposedEntityFromDTO(ExpressedTermDTO expressedTerm) {
-        if (expressedTerm == null)
+        if (expressedTerm == null) {
             return null;
+        }
         PostComposedEntity entity = new PostComposedEntity();
         try {
             EntityDTO entityDTO = expressedTerm.getEntity();
             entity.setSuperterm(convertToTerm(entityDTO.getSuperTerm()));
-            if (entityDTO.getSubTerm() != null)
+            if (entityDTO.getSubTerm() != null) {
                 entity.setSubterm(convertToTerm(entityDTO.getSubTerm()));
+            }
         } catch (TermNotFoundException e) {
             return null;
         }
@@ -1302,8 +1335,9 @@ public class DTOConversionService {
 
     public static Fish convertToFishFromFishDTO(FishDTO newFish) {
         Fish fish = new Fish();
-        if (newFish.getZdbID() != null)
+        if (newFish.getZdbID() != null) {
             fish.setZdbID(newFish.getZdbID());
+        }
         fish.setGenotype(convertToGenotypeFromGenotypeDTO(newFish.getGenotypeDTO()));
         fish.setName(fish.getGenotype().getName());
         fish.setNameOrder(fish.getName());
@@ -1328,8 +1362,9 @@ public class DTOConversionService {
     }
 
     public static Genotype convertToGenotypeFromGenotypeDTO(GenotypeDTO genotypeDTO) {
-        if (genotypeDTO.getZdbID() != null)
+        if (genotypeDTO.getZdbID() != null) {
             return getMutantRepository().getGenotypeByID(genotypeDTO.getZdbID());
+        }
         Genotype genotype = new Genotype();
         genotype.setName(genotypeDTO.getName());
         return genotype;
@@ -1343,8 +1378,9 @@ public class DTOConversionService {
         dto.setGenotypeDTO(DTOConversionService.convertToGenotypeDTO(fish.getGenotype(), false));
         if (CollectionUtils.isNotEmpty(fish.getStrList())) {
             List<RelatedEntityDTO> strs = new ArrayList<>(fish.getStrList().size());
-            for (SequenceTargetingReagent str : fish.getStrList())
+            for (SequenceTargetingReagent str : fish.getStrList()) {
                 strs.add(DTOConversionService.convertStrToRelatedEntityDTO(str));
+            }
             dto.setStrList(strs);
         }
         return dto;
@@ -1368,7 +1404,7 @@ public class DTOConversionService {
         Experiment experiment = getExpressionRepository().getExperimentByID(diseaseModelDTO.getEnvironment().getZdbID());
         model.setExperiment(experiment);
         model.setStandard(experiment.isOnlyStandard());
-        model.setStandard(experiment.isStandard());
+        model.setStandardOrGenericControl(experiment.isStandard());
         return model;
     }
 

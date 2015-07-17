@@ -27,7 +27,7 @@ xpatcurexperiment.apg xpatcurfigure.apg xpatcurimage.apg xpatcurpermission.apg \
 xpatselect_detailedresults.apg xpatselect_note.apg xpatselect_summaryresults.apg \
 xpatselectanatverify.apg xpatselectrowdisplay.apg
 
-STATICS = xpatexpcdnsummary.apg xpatexpcdnlist.apg xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
+STATICS = xpatselectquery.apg xpatcuration.apg xpatexdisplayname.apg xpatcurupdate.apg \
 diseasecuration.apg fishcuration.apg\
 fxfigstgrng.apg fxfigfishlist.apg \
 fxgenestgrng.apg record_web_update.apg attribupdate.apg \

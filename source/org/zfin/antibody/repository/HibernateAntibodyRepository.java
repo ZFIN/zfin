@@ -82,34 +82,44 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         hql.append("order by antibody.abbreviationOrder");
         Query query = session.createQuery(hql.toString());
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
-            if (searchCriteria.getAntibodyNameFilterType() == FilterType.CONTAINS)
+            if (searchCriteria.getAntibodyNameFilterType() == FilterType.CONTAINS) {
                 query.setParameter("name", "%" + searchCriteria.getName().toLowerCase() + "%");
-            if (searchCriteria.getAntibodyNameFilterType() == FilterType.BEGINS)
+            }
+            if (searchCriteria.getAntibodyNameFilterType() == FilterType.BEGINS) {
                 query.setParameter("name", searchCriteria.getName().toLowerCase() + "%");
+            }
         }
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
-            if (searchCriteria.getAntigenNameFilterType() == FilterType.CONTAINS)
+            if (searchCriteria.getAntigenNameFilterType() == FilterType.CONTAINS) {
                 query.setParameter("markerName", "%" + searchCriteria.getAntigenGeneName().toLowerCase().trim() + "%");
-            if (searchCriteria.getAntigenNameFilterType() == FilterType.BEGINS)
+            }
+            if (searchCriteria.getAntigenNameFilterType() == FilterType.BEGINS) {
                 query.setParameter("markerName", searchCriteria.getAntigenGeneName().toLowerCase().trim() + "%");
+            }
             query.setParameterList("genePrecedence", getGenePrecedenceInClause());
         }
-        if (searchCriteria.isHostSpeciesDefined())
+        if (searchCriteria.isHostSpeciesDefined()) {
             query.setParameter("hostSpecies", searchCriteria.getHostSpecies());
-        if (searchCriteria.isAssaySearch())
+        }
+        if (searchCriteria.isAssaySearch()) {
             query.setParameter("assay", searchCriteria.getAssay());
-        if (searchCriteria.isZircOnly())
+        }
+        if (searchCriteria.isZircOnly()) {
             query.setParameter("zircLabID", "ZDB-LAB-991005-53");
-        if (!AntibodyType.isTypeAny(searchCriteria.getClonalType()))
+        }
+        if (!AntibodyType.isTypeAny(searchCriteria.getClonalType())) {
             query.setParameter("antibodyType", searchCriteria.getClonalType());
-        if (searchCriteria.isStageDefined())
+        }
+        if (searchCriteria.isStageDefined()) {
             bindStageFilterValues(searchCriteria, query);
+        }
         if (searchCriteria.isAnatomyDefined()) {
             applyAnatomyTermsFilter(searchCriteria, query);
         }
         int start = 0;
-        if (searchCriteria.getPaginationBean() != null)
+        if (searchCriteria.getPaginationBean() != null) {
             start = searchCriteria.getPaginationBean().getFirstRecord() - 1;
+        }
         PaginationResult<Antibody> antibodyObjects = PaginationResultFactory.createResultFromScrollableResultAndClose(start, start + searchCriteria.getPaginationBean().getMaxDisplayRecordsInteger(), query.scroll());
 
         return antibodyObjects;
@@ -117,8 +127,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     private List<String> getGenePrecedenceInClause() {
         AllNamesFastSearch.Precedence[] genePrecedence = AllNamesFastSearch.getGenePrecedences();
-        if (genePrecedence == null)
+        if (genePrecedence == null) {
             return null;
+        }
         List<String> list = new ArrayList<>(genePrecedence.length);
         for (AllMarkerNamesFastSearch.Precedence precedence : genePrecedence) {
             list.add(precedence.toString());
@@ -133,28 +144,35 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Query query = session.createQuery(hql.toString());
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
             // antibody name and abbreviation is the same
-            if (searchCriteria.getAntibodyNameFilterType() == FilterType.CONTAINS)
+            if (searchCriteria.getAntibodyNameFilterType() == FilterType.CONTAINS) {
                 query.setParameter("name", "%" + searchCriteria.getName().toLowerCase() + "%");
-            else if (searchCriteria.getAntibodyNameFilterType() == FilterType.BEGINS)
+            } else if (searchCriteria.getAntibodyNameFilterType() == FilterType.BEGINS) {
                 query.setParameter("name", searchCriteria.getName().toLowerCase() + "%");
+            }
         }
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
-            if (searchCriteria.getAntigenNameFilterType() == FilterType.CONTAINS)
+            if (searchCriteria.getAntigenNameFilterType() == FilterType.CONTAINS) {
                 query.setParameter("markerName", "%" + searchCriteria.getAntigenGeneName().toLowerCase() + "%");
-            else if (searchCriteria.getAntigenNameFilterType() == FilterType.BEGINS)
+            } else if (searchCriteria.getAntigenNameFilterType() == FilterType.BEGINS) {
                 query.setParameter("markerName", searchCriteria.getAntigenGeneName().toLowerCase() + "%");
+            }
             query.setParameterList("genePrecedence", getGenePrecedenceInClause());
         }
-        if (searchCriteria.isHostSpeciesDefined())
+        if (searchCriteria.isHostSpeciesDefined()) {
             query.setParameter("hostSpecies", searchCriteria.getHostSpecies());
-        if (searchCriteria.isAssaySearch())
+        }
+        if (searchCriteria.isAssaySearch()) {
             query.setParameter("assay", searchCriteria.getAssay());
-        if (searchCriteria.isZircOnly())
+        }
+        if (searchCriteria.isZircOnly()) {
             query.setParameter("zircLabID", "ZDB-LAB-991005-53");
-        if (!AntibodyType.isTypeAny(searchCriteria.getClonalType()))
+        }
+        if (!AntibodyType.isTypeAny(searchCriteria.getClonalType())) {
             query.setParameter("antibodyType", searchCriteria.getClonalType());
-        if (searchCriteria.isStageDefined())
+        }
+        if (searchCriteria.isStageDefined()) {
             bindStageFilterValues(searchCriteria, query);
+        }
         if (searchCriteria.isAnatomyDefined()) {
             applyAnatomyTermsFilter(searchCriteria, query);
         }
@@ -163,8 +181,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @SuppressWarnings("unchecked")
     public List<Species> getHostSpeciesList() {
-        if (hostSpeciesList != null)
+        if (hostSpeciesList != null) {
             return hostSpeciesList;
+        }
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Species.class);
@@ -189,8 +208,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @SuppressWarnings("unchecked")
     public List<Species> getImmunogenSpeciesList() {
-        if (immunogenSpeciesList != null)
+        if (immunogenSpeciesList != null) {
             return immunogenSpeciesList;
+        }
 
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Species.class);
@@ -207,6 +227,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         criteria.setProjection(Projections.countDistinct("zdbID"));
         Criteria labeling = criteria.createCriteria("antibodyLabelings");
         Criteria fishExperiment = labeling.createCriteria("fishExperiment");
+        fishExperiment.add(Restrictions.eq("standardOrGenericControl", true));
         Criteria fish = fishExperiment.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
@@ -216,8 +237,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 Restrictions.eq("entity.superterm", aoTerm),
                 Restrictions.eq("entity.subterm", aoTerm)));
         results.add(eq("expressionFound", true));
-        Criteria experiment = fishExperiment.createCriteria("experiment");
-        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
 
         return ((Long) results.list().get(0)).intValue();
     }
@@ -242,28 +261,27 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                     "                                       OR exists ( select 1 from TransitiveClosure child " +
                     "                  where res.entity.subterm = child.child AND child.root = :aoTerm ) " +
                     ") ");
-        } else
+        } else {
             hql.append("       and (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) ");
+        }
         hql.append("       and res.expressionFound = :expressionFound ");
-        hql.append("       and exp = fishox.experiment ");
-        hql.append("       and exp.name in (:standard , :generic ) ");
+        hql.append("       and fishox.genox_is_std_or_generic_control ");
         hql.append("order by antibody.abbreviationOrder");
         Query query = session.createQuery(hql.toString());
         query.setParameter("wildType", true);
         query.setParameter("aoTerm", aoTerm);
         query.setParameter("expressionFound", true);
-        query.setParameter("standard", Experiment.STANDARD);
-        query.setParameter("generic", Experiment.GENERIC_CONTROL);
         return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
     }
 
     public int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, Figure.Type figureType) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria;
-        if (figureType != null && figureType == Figure.Type.TOD)
+        if (figureType != null && figureType == Figure.Type.TOD) {
             criteria = session.createCriteria(TextOnlyFigure.class);
-        else
+        } else {
             criteria = session.createCriteria(FigureFigure.class);
+        }
         criteria.setProjection(Projections.countDistinct("zdbID"));
         Criteria results = criteria.createCriteria("expressionResults");
         // check AO1 and AO2
@@ -274,11 +292,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
         Criteria fishExperiment = labeling.createCriteria("fishExperiment");
+        fishExperiment.add(Restrictions.eq("standard", true));
         Criteria fish = fishExperiment.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
-        Criteria experiment = fishExperiment.createCriteria("experiment");
-        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD}));
         return ((Long) criteria.list().get(0)).intValue();
     }
 
@@ -296,11 +313,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
         Criteria fishExperiment = labeling.createCriteria("fishExperiment");
+        fishExperiment.add(Restrictions.eq("standard", true));
         Criteria fish = fishExperiment.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
-        Criteria experiment = fishExperiment.createCriteria("experiment");
-        experiment.add(Restrictions.eq("name", Experiment.STANDARD));
 
         return (List<Figure>) labeling.list();
     }
@@ -319,11 +335,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         results.add(isNotEmpty("figures"));
         results.add(eq("expressionFound", true));
         Criteria fishExperiment = labeling.createCriteria("fishExperiment");
+        fishExperiment.add(Restrictions.eq("standardOrGenericControl", true));
         Criteria fish = fishExperiment.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
-        Criteria experiment = fishExperiment.createCriteria("experiment");
-        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
         pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return new PaginationResult<>((List<Publication>) pubs.list());
     }
@@ -390,28 +405,36 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         boolean hasOneWhereClause = false;
         StringBuilder hql = new StringBuilder(" from Antibody antibody ");
 
-        if (searchCriteria.isZircOnly())
+        if (searchCriteria.isZircOnly()) {
             hql.append(", MarkerSupplier markerSupplier ");
-        if (searchCriteria.isAssaySearch() || searchCriteria.isAnatomyDefined())
+        }
+        if (searchCriteria.isAssaySearch() || searchCriteria.isAnatomyDefined()) {
             hql.append(", ExpressionExperiment experiment ");
-        if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
+        }
+        if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
             hql.append(",  AbstractMarkerRelationshipInterface rel   ");
-        if (!StringUtils.isEmpty(searchCriteria.getName()))
+        }
+        if (!StringUtils.isEmpty(searchCriteria.getName())) {
             hql.append(",  AllMarkerNamesFastSearch mapAntibody   ");
-        if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName()))
+        }
+        if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
             hql.append(",  AllMarkerNamesFastSearch mapGene   ");
-        if (searchCriteria.isAnatomyDefined())
+        }
+        if (searchCriteria.isAnatomyDefined()) {
             hql.append(",  ExpressionTermFastSearch expressionTerm, ExpressionResult expressionResult ");
+        }
 
-        if (searchCriteria.isAny())
+        if (searchCriteria.isAny()) {
             hql.append("where ");
+        }
         if (!StringUtils.isEmpty(searchCriteria.getName())) {
             hql.append(" mapAntibody.marker =  antibody AND mapAntibody.nameLowerCase like :name ");
             hasOneWhereClause = true;
         }
         if (!StringUtils.isEmpty(searchCriteria.getAntigenGeneName())) {
-            if (hasOneWhereClause)
+            if (hasOneWhereClause) {
                 hql.append(" AND ");
+            }
             hql.append("    rel.secondMarker = antibody ");
             hql.append("    AND mapGene.marker =  rel.firstMarker ");
             hql.append("    AND mapGene.nameLowerCase like :markerName ");
@@ -419,33 +442,38 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hasOneWhereClause = true;
         }
         if (searchCriteria.isAssaySearch()) {
-            if (hasOneWhereClause)
+            if (hasOneWhereClause) {
                 hql.append(" AND ");
+            }
             hql.append(" experiment.assay.name = :assay AND experiment.antibody = antibody ");
             hasOneWhereClause = true;
         }
         if (!AntibodyType.isTypeAny(searchCriteria.getClonalType())) {
-            if (hasOneWhereClause)
+            if (hasOneWhereClause) {
                 hql.append(" AND ");
+            }
             hql.append(" antibody.clonalType = :antibodyType ");
             hasOneWhereClause = true;
         }
         if (searchCriteria.isHostSpeciesDefined()) {
-            if (hasOneWhereClause)
+            if (hasOneWhereClause) {
                 hql.append(" AND ");
+            }
             hql.append(" antibody.hostSpecies = :hostSpecies ");
             hasOneWhereClause = true;
         }
         if (searchCriteria.isZircOnly()) {
-            if (hasOneWhereClause)
+            if (hasOneWhereClause) {
                 hql.append(" AND ");
+            }
             hql.append(" markerSupplier.organization.zdbID = :zircLabID AND markerSupplier.marker = antibody ");
             hasOneWhereClause = true;
         }
         // only stage range defined
         if (searchCriteria.isStageDefined() && !searchCriteria.isAnatomyDefined()) {
-            if (hasOneWhereClause)
+            if (hasOneWhereClause) {
                 hql.append(" AND ");
+            }
             hasOneWhereClause = true;
             hql.append("  exists ( select result from ExpressionResult result " +
                     "                  where result.startStage.hoursStart >= :hoursStart " +
@@ -453,8 +481,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                     "                    AND result.expressionExperiment.antibody = antibody ) ");
         }
         if (searchCriteria.isAnatomyDefined()) {
-            if (hasOneWhereClause)
+            if (hasOneWhereClause) {
                 hql.append(" AND ");
+            }
             //hql.append(" experiment.antibody = antibody AND ( ");
             hql.append("  ( ");
             int numberOfTerms = searchCriteria.getTermIDs().length;
@@ -463,18 +492,21 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                     "                     AND experiment.antibody = antibody " +
                     "                     AND expressionTerm.expressionResult = expressionResult" +
                     "                     AND expressionResult.expressionExperiment = experiment ");
-            if (searchCriteria.isStageDefined())
+            if (searchCriteria.isStageDefined()) {
                 hql.append("                  AND expressionResult.startStage.hoursStart >= :hoursStart " +
                         "                     AND expressionResult.endStage.hoursEnd <= :hoursEnd ");
-            if (!searchCriteria.isIncludeSubstructures())
+            }
+            if (!searchCriteria.isIncludeSubstructures()) {
                 hql.append("    AND expressionTerm.originalAnnotation = 't' ");
+            }
 
             if (numberOfTerms > 1) {
                 for (int i = 1; i < numberOfTerms; i++) {
-                    if (searchCriteria.isAnatomyEveryTerm())
+                    if (searchCriteria.isAnatomyEveryTerm()) {
                         hql.append(" AND ");
-                    else
+                    } else {
                         hql.append(" OR ");
+                    }
                     hql.append(" exists (select expressionTerm from ExpressionTermFastSearch expressionTerm, " +
                             "ExpressionResult expressionResult2, ExpressionExperiment experiment2 " +
                             "   where " +
@@ -482,11 +514,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                             "                     AND expressionResult2.expressionExperiment = experiment2 " +
                             "                     AND experiment2.antibody = antibody " +
                             "                     AND expressionTerm.expressionResult = expressionResult2 ");
-                    if (searchCriteria.isStageDefined())
+                    if (searchCriteria.isStageDefined()) {
                         hql.append("                  AND expressionResult2.startStage.hoursStart >= :hoursStart " +
                                 "                     AND expressionResult2.endStage.hoursEnd <= :hoursEnd ");
-                    if (!searchCriteria.isIncludeSubstructures())
+                    }
+                    if (!searchCriteria.isIncludeSubstructures()) {
                         hql.append("    AND expressionTerm.originalAnnotation = 't' ");
+                    }
                     hql.append(" ) ");
                 }
             }
@@ -497,8 +531,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     private void setPaginationParameters(Query query, PaginationBean paginationBean) {
-        if (paginationBean == null)
+        if (paginationBean == null) {
             return;
+        }
         query.setMaxResults(paginationBean.getMaxDisplayRecordsInteger());
         query.setFirstResult(paginationBean.getFirstRecord() - 1);
     }
@@ -521,18 +556,19 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         String hql;
         // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination
         // bean is reached.
-        if (includeSubstructures)
+        if (includeSubstructures) {
             hql = "  from AntibodyAOStatistics stat fetch all properties" +
                     "     where stat.superterm = :aoterm";
-        else
+        } else {
             hql = " select distinct stat, stat.antibody.abbreviation from AntibodyAOStatistics stat fetch all properties" +
                     "     where stat.superterm = :aoterm and " +
                     "           stat.subterm = :aoterm " +
                     "           order by stat.antibody.abbreviation";
+        }
 
         ScrollableResults scrollableResults = HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("aoterm", aoTerm).scroll();
-        List<AntibodyStatistics> list = new ArrayList<AntibodyStatistics>();
+        List<AntibodyStatistics> list = new ArrayList<>();
 
         while (scrollableResults.next() && list.size() < pagination.getMaxDisplayRecordsInteger() + 1) {
             AntibodyAOStatistics antibodyStat = (AntibodyAOStatistics) scrollableResults.get(0);
@@ -578,7 +614,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @Override
     public List<Antibody> getAntibodiesByName(String query) {
-        List<Antibody> antibodies = new ArrayList<Antibody>();
+        List<Antibody> antibodies = new ArrayList<>();
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria1 = session.createCriteria(Antibody.class);
@@ -604,15 +640,17 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      */
     private void populateAntibodyStatisticsRecord(AntibodyAOStatistics record, List<AntibodyStatistics> list, GenericTerm aoTerm) {
 
-        if (record == null || record.getAntibody() == null)
+        if (record == null || record.getAntibody() == null) {
             return;
+        }
 
         AntibodyStatistics abStat;
         if (list.size() == 0) {
             abStat = new AntibodyStatistics(record.getAntibody(), aoTerm);
             list.add(abStat);
-        } else
+        } else {
             abStat = list.get(list.size() - 1);
+        }
 
         // if antibody from records is the same as the one on the statistics object
         // add new info to that object.
@@ -626,23 +664,27 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         }
 
         Marker gene = record.getGene();
-        if (gene != null)
+        if (gene != null) {
             newAntibodyStat.addGene(gene);
+        }
         Figure figure = record.getFigure();
-        if (figure != null)
+        if (figure != null) {
             newAntibodyStat.addFigure(figure);
+        }
         Publication publication = record.getPublication();
-        if (publication != null)
+        if (publication != null) {
             newAntibodyStat.addPublication(publication);
+        }
 
-        if (isNew)
+        if (isNew) {
             list.add(newAntibodyStat);
+        }
     }
 
     public List<Figure> getFiguresForAntibodyWithTermsAtStage(Antibody antibody, GenericTerm superTerm, GenericTerm subTerm,
                                                               DevelopmentStage start, DevelopmentStage end, boolean withImgOnly) {
 
-        List<Figure> figures = new ArrayList<Figure>();
+        List<Figure> figures = new ArrayList<>();
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(Figure.class);
@@ -651,28 +693,30 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         criteria.createAlias("xpatex.fishExperiment", "fishox");
         criteria.createAlias("fishox.fish", "fish");
         criteria.createAlias("fish.genotype", "geno");
-        criteria.createAlias("fishox.experiment", "exp");
         criteria.createAlias("publication", "pub");
 
 
         criteria.add(Restrictions.eq("xpatex.antibody", antibody));
         criteria.add(Restrictions.eq("xpatres.expressionFound", true));
         criteria.add(Restrictions.eq("geno.wildtype", true));
-        criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
-                Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+        criteria.add(Restrictions.eq("fishox.standardOrGenericControl", true));
         criteria.add(Restrictions.eq("xpatres.entity.superterm", superTerm));
 
-        if (subTerm != null)
+        if (subTerm != null) {
             criteria.add(Restrictions.eq("xpatres.entity.subterm", subTerm));
-        else
+        } else {
             criteria.add(Restrictions.isNull("xpatres.entity.subterm"));
+        }
 
-        if (start != null)
+        if (start != null) {
             criteria.add(Restrictions.eq("xpatres.startStage", start));
-        if (end != null)
+        }
+        if (end != null) {
             criteria.add(Restrictions.eq("xpatres.endStage", end));
-        if (withImgOnly)
+        }
+        if (withImgOnly) {
             criteria.add(Restrictions.isNotEmpty("images"));
+        }
 
         figures.addAll(criteria.list());
         return figures;
@@ -690,7 +734,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
      * @return list of figures
      */
     public List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, GenericTerm term, boolean withImgOnly) {
-        List<Figure> figures = new ArrayList<Figure>();
+        List<Figure> figures = new ArrayList<>();
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(Figure.class);
@@ -699,20 +743,19 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         criteria.createAlias("xpatex.fishExperiment", "fishox");
         criteria.createAlias("fishox.fish", "fish");
         criteria.createAlias("fish.genotype", "geno");
-        criteria.createAlias("fishox.experiment", "exp");
         criteria.createAlias("publication", "pub");
 
 
         criteria.add(Restrictions.eq("xpatex.antibody", antibody));
         criteria.add(Restrictions.eq("xpatres.expressionFound", true));
         criteria.add(Restrictions.eq("geno.wildtype", true));
-        criteria.add(Restrictions.or(Restrictions.eq("exp.name", Experiment.STANDARD),
-                Restrictions.eq("exp.name", Experiment.GENERIC_CONTROL)));
+        criteria.add(Restrictions.eq("fishox.standardOrGenericControl", true));
         criteria.add(Restrictions.or(Restrictions.eq("xpatres.entity.superterm", term),
                 Restrictions.eq("xpatres.entity.subterm", term)));
 
-        if (withImgOnly)
+        if (withImgOnly) {
             criteria.add(Restrictions.isNotEmpty("images"));
+        }
 
         figures.addAll(criteria.list());
         return figures;
@@ -720,7 +763,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     public Set<GenericTerm> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
                                                           DevelopmentStage start, DevelopmentStage end) {
-        Set<GenericTerm> terms = new TreeSet<GenericTerm>();
+        Set<GenericTerm> terms = new TreeSet<>();
 
         String hql = "select xpatres from ExpressionResult xpatres " +
                 "   join xpatres.expressionExperiment " +
@@ -731,33 +774,35 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 "   and xpatres.expressionFound = :expressionFound " +
                 "   and xpatres.expressionExperiment.antibody = :antibody " +
                 "   and xpatres.expressionExperiment.fishExperiment.fish.genotype.wildtype = :isWildtype " +
-                "   and ( xpatres.expressionExperiment.fishExperiment.experiment.name = :standard  " +
-                "         or xpatres.expressionExperiment.fishExperiment.experiment.name = :gc ) ";
-        if (start != null)
+                "   and xpatres.expressionExperiment.fishExperiment.standardOrGenericControl  ";
+        if (start != null) {
             hql += "  and  xpatres.startStage = :startStage ";
-        if (end != null)
+        }
+        if (end != null) {
             hql += "  and xpatres.endStage = :endStage ";
+        }
 
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("figure", figure);
-        if (start != null)
+        if (start != null) {
             query.setParameter("startStage", start);
-        if (end != null)
+        }
+        if (end != null) {
             query.setParameter("endStage", end);
+        }
         query.setParameter("antibody", antibody);
         query.setParameter("isWildtype", true);
         query.setParameter("expressionFound", true);
-        query.setParameter("standard", Experiment.STANDARD);
-        query.setParameter("gc", Experiment.GENERIC_CONTROL);
 
         List<ExpressionResult> expressionResults = query.list();
 
 
         for (ExpressionResult expressionResult : expressionResults) {
             terms.add(expressionResult.getSuperTerm());
-            if (expressionResult.getSubTerm() != null)
+            if (expressionResult.getSubTerm() != null) {
                 terms.add(expressionResult.getSubTerm());
+            }
         }
 
         return terms;
