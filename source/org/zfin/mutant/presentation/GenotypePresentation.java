@@ -3,7 +3,6 @@ package org.zfin.mutant.presentation;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
-import org.zfin.ontology.Term;
 
 /**
  * Presentation Class to create output from a Genotype object.
@@ -22,12 +21,17 @@ public class GenotypePresentation extends EntityPresentation {
      * @return html for Genotype link
      */
     public static String getName(Genotype genotype) {
+        return getHtmlTag(getDisplayName(genotype));
+    }
+
+    public static String getHtmlTag(String displayName) {
         String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
-        return getSpanTag(cssClassName, getDisplayName(genotype), getDisplayName(genotype));
+        return getSpanTag(cssClassName, displayName, displayName);
+
     }
 
     public static String getDisplayName(Genotype genotype) {
-        return genotype.getName() + getBackground(genotype);
+        return genotype.getAbbreviation() + getBackground(genotype);
     }
 
     /**
@@ -38,21 +42,17 @@ public class GenotypePresentation extends EntityPresentation {
      */
     public static String getLink(Genotype genotype) {
         if (getBackground(genotype) != null) {
-            return getTomcatLink(uri, genotype.getZdbID(), getDisplayName(genotype), null);
+            return getTomcatLink(uri, genotype.getZdbID(), getHtmlTag(getDisplayName(genotype)), null);
         }
-        return getTomcatLink(uri, genotype.getZdbID(), getDisplayName(genotype), null);
+        return getTomcatLink(uri, genotype.getZdbID(), getHtmlTag(getDisplayName(genotype)), null);
     }
 
     public static String getLink(Genotype genotype, boolean suppressPopupLink) {
         StringBuilder sb = new StringBuilder();
-        if (getBackground(genotype) != null)
-            sb.append(getTomcatLink(uri, genotype.getZdbID(), getDisplayName(genotype), null));
-        else if (!genotype.isWildtype())
-            sb.append(getTomcatLink(uri, genotype.getZdbID(), getName(genotype), null));
-        else {
-            sb.append(getTomcatLink(uri, genotype.getZdbID(), genotype.getHandle(), null));
-        }
-//        if (genotype.isWildtype()) suppressPopupLink = true;
+        if (genotype.isWildtype())
+            sb.append(getTomcatLink(uri, genotype.getZdbID(), getHtmlTag(genotype.getHandle()), null));
+        else
+            sb.append(getTomcatLink(uri, genotype.getZdbID(), getHtmlTag(getDisplayName(genotype)), null));
         if (!suppressPopupLink)
             sb.append(getPopupLink(genotype));
 
@@ -61,20 +61,17 @@ public class GenotypePresentation extends EntityPresentation {
 
     public static String getBackground(Genotype genotype) {
         if (genotype.getBackground() != null) {
-            String cssClassName = Marker.TypeGroup.GENEDOM.toString().toLowerCase();
             String backgroundAppendix = " (";
-            backgroundAppendix += genotype.getBackground().getAbbreviation();
+            backgroundAppendix += genotype.getBackground().getHandle();
             backgroundAppendix += ")";
-            return getSpanTag(cssClassName, backgroundAppendix, backgroundAppendix);
+            return backgroundAppendix;
         }
         return "";
     }
 
     public static String getPopupLink(Genotype genotype) {
-        StringBuilder sb = new StringBuilder(100);
-        sb.append(getTomcatPopupLink(popupUri, String.valueOf(genotype.getZdbID()),
-                "More details about this genotype"));
-        return sb.toString();
+        return getTomcatPopupLink(popupUri, String.valueOf(genotype.getZdbID()),
+                "More details about this genotype");
     }
 
 }
