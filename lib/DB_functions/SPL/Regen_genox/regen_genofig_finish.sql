@@ -98,6 +98,8 @@ if (vUpdate != 't') then
         to genotype_figure_fast_search_morph_zdb_id_foreign_key_index;
      rename index genotype_figure_fast_search_fish_foreign_key_index_transient 
         to genotype_figure_fast_search_fish_zdb_id_foreign_key_index;
+    rename index genotype_figure_fast_search_phenox_foreign_key_index_transient 
+        to genotype_figure_fast_search_phenox_zdb_id_foreign_key_index;
 
       --let errorHint = "genotype_figure_fast_search add PK";
       alter table genotype_figure_fast_search add constraint primary key 
