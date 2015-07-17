@@ -31,7 +31,7 @@ public class GenotypePresentation extends EntityPresentation {
     }
 
     public static String getDisplayName(Genotype genotype) {
-        return genotype.getName() + getBackground(genotype);
+        return genotype.getAbbreviation() + getBackground(genotype);
     }
 
     /**
@@ -62,7 +62,7 @@ public class GenotypePresentation extends EntityPresentation {
     public static String getBackground(Genotype genotype) {
         if (genotype.getBackground() != null) {
             String backgroundAppendix = " (";
-            backgroundAppendix += genotype.getBackground().getAbbreviation();
+            backgroundAppendix += genotype.getBackground().getHandle();
             backgroundAppendix += ")";
             return backgroundAppendix;
         }
