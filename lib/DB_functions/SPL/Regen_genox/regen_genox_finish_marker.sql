@@ -47,31 +47,6 @@ create procedure regen_genox_finish_marker ()
 
     update statistics high for table mutant_fast_search_new;
 
-    begin work;
-
-    begin -- local exception handler dropping, renaming, and constraints
-
-      define esql, eisam int;
-
-      on exception set esql, eisam
-	-- Any error at this point, just rollback.  The rollback will
-	-- restore all the old tables and their indices.
-	rollback work;
-	-- Now pass the error to the master handler to drop the new tables
-	raise exception esql, eisam;
-      end exception;
-
-      on exception in (-206, -535)
-	-- 206 ignore error when dropping a table that doesn't already exist
-        -- 535 ignore error of already in transaction
-      end exception with resume;
-
-
-      -- Now rename our new table and indexes to have the permanent name.
-      -- Also define primary keys and foreign keys.
-
-      -- Note that the exception-handler at the top of this file is still active
-
      -- let errorHint = "drop mutant_fast_search table ";
       drop table mutant_fast_search;
 
@@ -108,10 +83,5 @@ create procedure regen_genox_finish_marker ()
         constraint mutant_fast_search_genox_Zdb_id_foreign_key_odc;
 
       grant select on mutant_fast_search to "public";
-
-     --trace off;
-    end -- Local exception handler
-
-    commit work;
 
 end procedure;

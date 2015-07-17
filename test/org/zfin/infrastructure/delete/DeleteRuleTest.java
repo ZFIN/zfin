@@ -155,11 +155,11 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
     public void sTRValidation() {
         // Talen1-cdh5
         String zdbID = "ZDB-TALEN-131118-4";
-        DeleteEntityRule feature = service.getDeleteRule(zdbID);
-        List<DeleteValidationReport> reportList = feature.validate();
+        DeleteEntityRule deleteRule = service.getDeleteRule(zdbID);
+        List<DeleteValidationReport> reportList = deleteRule.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("environment"));
+        assertTrue(reportList.get(0).getValidationMessage().contains("fish"));
         assertTrue(reportList.get(1).getValidationMessage().contains("GO annotation"));
         assertTrue(reportList.get(2).getValidationMessage().contains("publication"));
     }
