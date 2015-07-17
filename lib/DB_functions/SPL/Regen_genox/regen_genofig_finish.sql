@@ -145,7 +145,9 @@ delete from genotype_figure_fast_search
 	   rgf_fish_zdb_id,
 	   rgf_phenos_id,
 	   rgf_genox_zdb_id
-      from regen_genofig_temp;
+      from regen_genofig_temp
+      where not exists (Select 'x' from genotype_figure_fast_Search
+      	    	       	       where gffs_phenos_id = rgf_phenos_id);
 
 end if;
 
