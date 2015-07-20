@@ -216,16 +216,12 @@ public class FigureViewService {
         List<SequenceTargetingReagent> strs = new ArrayList<>();
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            for (ExperimentCondition experimentCondition: expressionResult.getExpressionExperiment().getFishExperiment().getExperiment().getExperimentConditions()){
-              //  if (experimentCondition.getSequenceTargetingReagent()!= null &&
-              //          !strs.contains(experimentCondition.getSequenceTargetingReagent())) {
-              //      strs.add(experimentCondition.getSequenceTargetingReagent());
-                // Todo: Need to replace the above commented-out code; check STR in another way
-               // }
+            for (SequenceTargetingReagent str : expressionResult.getExpressionExperiment().getFishExperiment().getFish().getStrList()){
+                if (str != null && !strs.contains(str)) { strs.add(str); }
             }
         }
 
-      //  Collections.sort(strs);
+        Collections.sort(strs);
         return strs;
     }
 
@@ -407,16 +403,12 @@ public class FigureViewService {
         List<SequenceTargetingReagent> strs = new ArrayList<>();
 
         for (PhenotypeExperiment phenotypeExperiment : figure.getPhenotypeExperiments()) {
-            for (ExperimentCondition experimentCondition: phenotypeExperiment.getFishExperiment().getExperiment().getExperimentConditions()){
-             //   if (experimentCondition.getSequenceTargetingReagent()!= null &&
-             //       !strs.contains(experimentCondition.getSequenceTargetingReagent())) {
-             //       strs.add(experimentCondition.getSequenceTargetingReagent());
-             //   }
-                // Todo: Need to replace the above commented-out code; check STR in another way
+            for (SequenceTargetingReagent str: phenotypeExperiment.getFishExperiment().getFish().getStrList()){
+                if (str != null && !strs.contains(str)) { strs.add(str); }
             }
         }
 
-      //  Collections.sort(strs);
+        Collections.sort(strs);
         return strs;
     }
 
