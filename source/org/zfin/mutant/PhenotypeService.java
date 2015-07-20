@@ -536,7 +536,7 @@ public class PhenotypeService {
      * Create a list of FigureSummaryDisplay objects for a given fish
      */
     public static List<FigureSummaryDisplay> getPhenotypeFigureSummaryForFish(Fish fish) {
-        List<Figure> phenotypeFigures = RepositoryFactory.getPhenotypeRepository().getPhenotypeFiguresForFish(fish);
+        List<Figure> phenotypeFigures = FishService.getCleanPhenotypeFiguresForFish(fish);
         List<FigureSummaryDisplay> figureSummaryDisplays = new ArrayList<>(phenotypeFigures.size());
         Set<Figure> figures = new HashSet<>(phenotypeFigures.size());
 

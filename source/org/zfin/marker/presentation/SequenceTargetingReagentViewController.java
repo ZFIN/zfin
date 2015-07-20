@@ -91,7 +91,20 @@ public class SequenceTargetingReagentViewController {
         List<ExpressionDisplay> strExpressionDisplays = ExpressionService.createExpressionDisplays(sequenceTargetingReagent.getZdbID(), strExpressionResults, expressionFigureIDs, expressionPublicationIDs);
         sequenceTargetingReagentBean.setExpressionDisplays(strExpressionDisplays);
 
+        // PHENOTYPE
+        List<GenotypeFigure> genotypeFigures = MarkerService.getPhenotypeDataForSTR(sequenceTargetingReagent);
 
+        if (genotypeFigures == null || genotypeFigures.size() == 0)  {
+            sequenceTargetingReagentBean.setPhenotypeDisplays(null);
+        } else {
+            List<PhenotypeStatement> phenotypeStatements = new ArrayList<>();
+            for (GenotypeFigure genotypeFigure : genotypeFigures) {
+                PhenotypeStatement phenotypeStatement = genotypeFigure.getPhenotypeStatement();
+                if (phenotypeStatement != null)
+                    phenotypeStatements.add(phenotypeStatement);
+            }
+            sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenotypeStatements,"str"));
+        }
 
         // Genomic Features created by STR (CRISPR and TALEN only at this time)
         if (sequenceTargetingReagentBean.isTALEN() || sequenceTargetingReagentBean.isCRISPR()) {

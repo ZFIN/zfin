@@ -566,7 +566,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void superNastyTgTest() {
-        genericGeneAlleleBoxTest("Tg(5xUAS:casp3a,5xUAS:Hsa.HIST1H2BJ-Citrine-YFP,cryaa:RFP)");
+        genericGeneAlleleBoxTest("Tg(5xUAS:casp3a,5xUAS:Hsa.HIST1H2BJ-Citrine,cryaa:RFP)");
     }
 
     @Test

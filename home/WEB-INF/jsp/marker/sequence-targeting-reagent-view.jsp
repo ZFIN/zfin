@@ -80,7 +80,21 @@
     </c:choose>
 </div>
 
-
+<%--// PHENOTYPE --%>
+<div class="summary" id="phenotype">
+    <b>PHENOTYPE</b>&nbsp;
+    <small><a class='popup-link info-popup-link' href='/action/marker/note/phenotype'></a></small>
+    <br/>
+    <b>Phenotype resulting from ${formBean.marker.name}</b>
+    <c:choose>
+        <c:when test="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
+            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" suppressMoDetails="true" secondColumn="fish"/>
+        </c:when>
+        <c:otherwise>
+            <span class="no-data-tag">No data available</span>
+        </c:otherwise>
+    </c:choose>
+</div>
 
 <%--// GENOTYPE CREATED BY TALEN OR CRISPR --%>
 <c:if test="${formBean.marker.markerType.name eq 'TALEN' || formBean.marker.markerType.name eq 'CRISPR'}">

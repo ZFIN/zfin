@@ -33,17 +33,8 @@ public class ExperimentPresentation extends EntityPresentation {
         int i = 0;
         boolean sequenceTargetingReagentFound = false;
         for (ExperimentCondition experimentCondition : conditions) {
-            if (i > 0)
+            if (i > 0) {
                 sb.append(", ");
-            // Todo: may need to check STR from somewhere else?
-            if (experimentCondition.isSequenceTargetingReagentCondition() && suppressMoDetails) {
-                if (!sequenceTargetingReagentFound) {
-                    sb.append("Sequence Targeting Reagent");
-                    sequenceTargetingReagentFound = true;
-                } else { // remove comma and white space.
-                    if (i > 0)
-                        sb.delete(sb.length() - 2, sb.length() - 1);
-                }
             } else
                 sb.append(ExperimentConditionPresentation.getLink(experimentCondition, suppressPopupLink));
             i++;
@@ -100,14 +91,11 @@ public class ExperimentPresentation extends EntityPresentation {
         StringBuilder sb = new StringBuilder(50);
         int i = 0;
         for (ExperimentCondition experimentCondition : conditions) {
-            // Todo: may need to check STR from somewhere else?
-            if (!experimentCondition.isSequenceTargetingReagentCondition()) {
                 if (i > 0) {
                     sb.append(", ");
                 }
                 sb.append(ExperimentConditionPresentation.getName(experimentCondition));
                 i++;
-            }
 
         }
         return sb.toString();

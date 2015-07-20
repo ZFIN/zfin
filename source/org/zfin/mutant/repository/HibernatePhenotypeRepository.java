@@ -284,22 +284,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
      * @param phenotypeExperiment Phenotype
      */
     public void runRegenGenotypeFigureScript(PhenotypeExperiment phenotypeExperiment) {
-        InformixUtil.runInformixProcedure("regen_genofig_genotype", phenotypeExperiment.getId() + "");
-
-        // Todo: need to refactor the following code, since some properties and the related methods are not there any more
-
-        /*
-        Set<ExperimentCondition> conditions = phenotypeExperiment.getFishExperiment().getExperiment().getSequenecTargetingReagentConditions();
-        if (conditions != null) {
-            for (ExperimentCondition condition : conditions) {
-                SequenceTargetingReagent sequenceTargetingReagent = condition.getSequenceTargetingReagent();
-                InformixUtil.runInformixProcedure("regen_genox_marker", sequenceTargetingReagent.getZdbID());
-                List<Marker> targetGenes = markerRepository.getTargetGenesAsMarkerForSequenceTargetingReagent(sequenceTargetingReagent);
-                for (Marker targetGene : targetGenes)
-                    InformixUtil.runInformixProcedure("regen_genox_marker", targetGene.getZdbID());
-            }
-        }
-        */
+        InformixUtil.runInformixProcedure("regen_genofig_phenox", phenotypeExperiment.getId() + "");
     }
 
     /**

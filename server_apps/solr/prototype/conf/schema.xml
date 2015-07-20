@@ -532,6 +532,10 @@
 
    <field name="allele" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="sequence_alteration" type="keyword" indexed="true" stored="true" multiValued="true"   />
+     <!-- this means it'll do starts-with matching of feature aliases, but not features, that seems a little odd... -->
+<!--
+   <field name="sequence_alteration_alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
+-->
    <field name="background" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="complexity" type="integer" indexed="true" stored="true" multiValued="false" default="100001"/>
 

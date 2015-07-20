@@ -181,7 +181,7 @@
             <echo>OBO dir : @{oboFileName}</echo>
             <echo>OBO file: @{oboDirectory}</echo>
             <antcall target="clear-output-directory"/>
-            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="1024m"
+            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="2024m"
                   failonerror="true">
                 <classpath refid="classpath"/>
                 <arg value="-localOboFileName"/>
@@ -211,7 +211,7 @@
         <antcall target="clear-output-directory"/>
         <property name="dbScriptFiles"
                   value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
-        <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="1024m"
+        <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="2024m"
               failonerror="true">
             <classpath refid="classpath"/>
             <arg value="-localOboFileName"/>
