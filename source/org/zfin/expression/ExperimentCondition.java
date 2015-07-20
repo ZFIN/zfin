@@ -48,19 +48,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
         this.conditionDataType = conditionDataType;
     }
 
-    public boolean isSequenceTargetingReagentCondition() {
-        boolean strCondition = conditionDataType.getGroup().equalsIgnoreCase("morpholino") || conditionDataType.getGroup().equalsIgnoreCase("CRISPR") || conditionDataType.getGroup().equalsIgnoreCase("TALEN");
-      //  if (strCondition && sequenceTargetingReagent == null) {
-      // Todo: may need to modify the above code to check for STR condition
-        if (strCondition) {
-            String message = "No Sequence Targeting Reagent found for experiment " + experiment.getName() + " [" + zdbID + "]. ";
-            message += "Publication: " + experiment.getPublication().getZdbID();
-            logger.error(message);
-            return false;
-        }
-        return strCondition;
-    }
-
     public boolean isChemicalCondition() {
         return (conditionDataType.getGroup().equalsIgnoreCase("chemical"));
     }
@@ -72,9 +59,7 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
             return -1;
         if (conditionDataType.compareTo(o.getConditionDataType()) != 0)
             return conditionDataType.compareTo(o.getConditionDataType());
-     //   else if (isSequenceTargetingReagentCondition() && o.isSequenceTargetingReagentCondition())
-     //       return sequenceTargetingReagent.compareTo(o.getSequenceTargetingReagent());
-        else //even if it's the same condition type, we still want consistent order, so use id..
+        else
             return getZdbID().compareTo(o.getZdbID());
     }
 
