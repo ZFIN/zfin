@@ -124,7 +124,7 @@
                     </c:if>
                     <%-- case of multiple figures --%>
                     <c:if test="${result.phenotypeFigureCount > 1}">
-                        <a href="/action/genotype/fish-phenotype-figure-summary?fishID=${result.fish.zdbID}&imagesOnly=false>">
+                        <a href="/action/genotype/fish-phenotype-figure-summary?fishID=${result.fish.zdbID}&imagesOnly=false">
                             <zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
                                          integerEntity="${result.phenotypeFigureCount}"/>
                         </a>
