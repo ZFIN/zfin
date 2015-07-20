@@ -1710,23 +1710,11 @@ where fmrel_ftr_zdb_id = feature_zdb_id
 
 
 ! echo "Create tmp_dumpPheno temp table"
-create temp table tmp_dumpCleanPheno (
-       phenos_id serial,
-       genox_zdb_id varchar(50),
-       fish_id varchar(50),
-       fish_name varchar(255),
-       mo_id varchar(50),
-       stage_start_id varchar(50),
-       stage_end_id varchar(50),
-       genox_id varchar(50),
-       pub_id varchar(50),
-       fig_id varchar(50)
-)
-with no log;
+
 
  select  phenos_pk_id as phenos_id,
- 	 mrkr_abbrev as gene_abbrev,
-	 mrkr_zdb_id as gene_Zdb_id,
+ 	 phenox_pk_id as phenox_id,
+	 mfs_mrkr_zdb_id as gene_Zdb_id,
  	 "" as fish_name,
  	 	 phenox_fig_zdb_id as fig_id,
 		 fig_source_zdb_id as pub_id,
@@ -1734,23 +1722,21 @@ with no log;
 		 genox_fish_zdb_id as fish_id,
 		 "" as mo_id,
 		 phenox_start_stg_zdb_id as stage_start_id,
-		 phenox_end_stg_Zdb_id as stage_end_id
+		 phenox_end_stg_Zdb_id as stage_end_id,
+		 genox_Zdb_id as genox_id
    from fish_Experiment,
 	phenotype_experiment,
 	phenotype_statement,
-	mutant_fasT_search,
-	publication,
-	marker
+	mutant_fasT_search, figure
     where phenox_genox_zdb_id = genox_zdb_id
-    and mfs_mrkr_Zdb_id = mrkr_zdb_id
-    and phenox_fig_zdb_id = fig_Zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and mfs_genox_zdb_id = genox_zdb_id
+    and fig_zdb_id = phenox_fig_zdb_id
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
  select  phenos_pk_id,
- 	 mrkr_abbrev as gene_abbrev,
-	 mrkr_zdb_id as gene_Zdb_id,
+ 	 phenox_pk_id as phenox_id,
+	 mfs_mrkr_zdb_id as gene_Zdb_id,
  	 "" as fish_name,
 	 phenox_fig_zdb_id,
 	 fig_source_zdb_id,
@@ -1759,35 +1745,29 @@ union
 		 fishstr_str_zdb_id,
 		 phenox_start_stg_zdb_id,
 		 phenox_end_stg_Zdb_id,
-		 mfs_mrkr_zdb_id
+		 genox_zdb_id
    from fish_Experiment,
 	phenotype_experiment,
 	phenotype_statement, 
 	fish_str, 
-	mutant_fast_Search,
-	publication,
-	marker
+	mutant_fast_Search, figure
     where phenox_genox_zdb_id = genox_zdb_id
-    and mrkr_Zdb_id = mfs_mrkr_Zdb_id
-    and phenox_fig_zdb_id = fig_Zdb_id
+    and phenox_fig_zdb_id = fig_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and genox_fish_zdb_id = fishstr_fish_Zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
 into temp tmp_dumpCleanPheno;
 
+! echo "update gene_display name"
+update tmp_dumpCleanPheno
+  set fish_name = (select fish_name
+      			  	  from fish
+				  where fish_zdb_id = fish_id);
 
-! echo "Insert all tmp_pheno_gene records into tmp_dumpPheno "
-insert into tmp_dumpPheno (phenos_id, id,genox_id, gene_abbrev, gene_zdb_id, fish_id, mo_id, stage_start_id, stage_end_id, asuperterm_ont_id, asuperterm_name, pub_id, fig_id)
-  select distinct phenos_pk_id, id, genox_zdb_id, gene_abbrev, gene_zdb_id, fish_id, mo_id, stage_start_id, stage_end_id, term.term_ont_id, term.term_name, fig_source_zdb_id, fig_zdb_id
-    from tmp_pheno_gene, phenotype_statement, phenotype_experiment, term, figure
-    where id = phenos_pk_id
-    and fig_zdb_id = phenox_fig_zdb_id
-    and phenox_pk_id = phenos_phenox_pk_id
-    and phenos_entity_1_superterm_zdb_id = term_zdb_id
- and whereFrom like 'pheno%';
+
 
 ! echo "update gene_display name"
-update tmp_dumpPheno
+update tmp_dumpCleanPheno
   set fish_name = (select fish_name
       			  	  from fish
 				  where fish_zdb_id = fish_id);
@@ -1796,8 +1776,8 @@ update tmp_dumpPheno
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData.txt'
  DELIMITER "	"
   select phenos_id,
-		gene_abbrev,
-		gene_zdb_id,
+		mrkr_abbrev,
+		mrkr_zdb_id,
    		tps.asubterm_ont_id,
 		tps.asubterm_name,
 	 tps.arelationship_id,
@@ -1821,9 +1801,10 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 	 genox_id,
 	 pub_id,
 	 fig_id
-  From tmp_dumpCleanPheno, tmp_phenotype_statement tps
+  From tmp_dumpCleanPheno, tmp_phenotype_statement tps, marker
   where tps.phenos_pk_id = phenos_id
-  order by gene_abbrev;
+and mrkr_Zdb_id = gene_zdb_id
+  order by mrkr_abbrev;
 
 
 !echo "unload crispr fasta file" 
