@@ -171,6 +171,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
     private Set<ExpressionExperiment> createWildtypeAndStandardGenotypeExperiment(ExpressionExperiment experiment) {
         FishExperiment genox = new FishExperiment();
         genox.setStandard(true);
+        genox.setStandardOrGenericControl(true);
         experiment.setFishExperiment(genox);
         Fish fish = new Fish();
         Genotype geno = new Genotype();
