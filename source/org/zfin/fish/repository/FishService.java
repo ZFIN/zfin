@@ -211,7 +211,7 @@ public class FishService {
 
         Set<ZfinFigureEntity> figureEntities = getCleanPhenotypeFigureEntitiesForFish(fishResult.getFish());
 
-        setImageAttributeOnFish(fishResult, figureEntities);
+        setImageAttributeOnFish(fishResult, figureEntities,expFigures);
 
     }
 
