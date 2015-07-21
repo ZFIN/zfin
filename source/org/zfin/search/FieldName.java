@@ -7,9 +7,13 @@ import org.zfin.ontology.Ontology;
  */
 public enum FieldName {
 
+    AFFECTED_ANATOMY("affected_anatomy"),
     AFFECTED_ANATOMY_TF("affected_anatomy_tf"),
+    AFFECTED_BIOLOGICAL_PROCESS("affected_biological_process"),
     AFFECTED_BIOLOGICAL_PROCESS_TF("affected_biological_process_tf"),
+    AFFECTED_MOLECULAR_FUNCTION("affected_molecular_function"),
     AFFECTED_MOLECULAR_FUNCTION_TF("affected_molecular_function_tf"),
+    AFFECTED_CELLULAR_COMPONENT("affected_cellular_component"),
     AFFECTED_CELLULAR_COMPONENT_TF("affected_cellular_component_tf"),
     AFFECTED_GENE("affected_gene"),
     ANATOMY_TF("anatomy_tf"),
