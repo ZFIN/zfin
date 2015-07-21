@@ -1430,6 +1430,7 @@ public class HibernateMutantRepository implements MutantRepository {
             fish = existingFish;
         } else {
             HibernateUtil.currentSession().save(fish);
+            getInfrastructureRepository().insertUpdatesTable(publication, "fish_zdb_id", "create new record", fish.getZdbID(), null);
         }
         getInfrastructureRepository().insertRecordAttribution(fish, publication);
     }
@@ -1674,7 +1675,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
         session.save(genotype);
         getInfrastructureRepository().insertPublicAttribution(genotype.getZdbID(), publicationID, RecordAttribution.SourceType.STANDARD);
-
+        getInfrastructureRepository().insertUpdatesTable(publicationID, "geno_zdb_id", null, genotype.getZdbID(), "create new record");
     }
 
     public void updateGenotypeNicknameWithHandleForPublication(Publication publication) {
