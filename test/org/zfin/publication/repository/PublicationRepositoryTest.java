@@ -1,6 +1,5 @@
 package org.zfin.publication.repository;
 
-import com.google.gwt.editor.client.Editor;
 import org.hibernate.Session;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -8,7 +7,10 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.*;
+import org.zfin.expression.Experiment;
+import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
+import org.zfin.expression.ImageStage;
 import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.HibernateUtil;
@@ -18,7 +20,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -30,8 +31,8 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -312,8 +313,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
-    //TODO Provide valid FISH id instead of geno ID.
+    @Ignore("Provide valid FISH id instead of geno ID.")
     public void getFiguresForGenotypeAndAoPlusSubstructures() {
         //  genotype Df(Chr03:sox8,sox9b)b971/b971
         //String genoZdbID = "ZDB-GENO-050322-1";
@@ -333,8 +333,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
-    //TODO Provide valid FISH id instead of geno ID.
+    @Ignore("Provide valid FISH id instead of geno ID.")
     public void getPublicationsForGenoAndAoIncludingSubstructures() {
         //  genotype Df(Chr03:sox8,sox9b)b971/b971
         String genoZdbID = "ZDB-GENO-050322-1";
@@ -738,8 +737,9 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getPubMedPublications() {
-        List<Publication> pubs = publicationRepository.getPublicationWithPubMedId(null);
+        List<Publication> pubs = publicationRepository.getPublicationWithPubMedId(200);
         assertNotNull(pubs);
+        assertThat(pubs, hasSize(200));
     }
 
     @Test

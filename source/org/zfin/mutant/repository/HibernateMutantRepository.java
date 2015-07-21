@@ -107,7 +107,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "     or phenoeq.relatedEntity.superterm = :aoTerm " +
                         "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
                         "AND phenoeq.tag != :tag " +
-                        "AND NOT fishox.standardOrGenericControl " +
+                        "AND fishox.standardOrGenericControl = :standardOrGeneric " +
                         "AND size(fishox.fish.strList) = 0  ";
 
         if (!wildtype) {
@@ -118,6 +118,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        query.setParameter("standardOrGeneric", false);
         // have to add extra select because of ordering, but we only want to return the first
         query.setResultTransformer(new BasicTransformerAdapter() {
             @Override

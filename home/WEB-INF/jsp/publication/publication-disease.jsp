@@ -12,7 +12,7 @@
                              showErrataAndNotes="false"/>
 
 <table class="summary groupstripes" style="margin-top: 1em;">
-    <caption>Disease / Model Data
+    <caption>Human Disease / Model Data
         (<zfin:choice choicePattern="0#Records| 1#Record| 2#Records"
                       integerEntity="${fn:length(diseases)}"
                       includeNumber="true"/>)

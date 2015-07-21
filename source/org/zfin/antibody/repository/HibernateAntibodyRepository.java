@@ -265,12 +265,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             hql.append("       and (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) ");
         }
         hql.append("       and res.expressionFound = :expressionFound ");
-        hql.append("       and fishox.genox_is_std_or_generic_control ");
+        hql.append("       and fishox.standardOrGenericControl = :standardOrGeneric ");
         hql.append("order by antibody.abbreviationOrder");
         Query query = session.createQuery(hql.toString());
         query.setParameter("wildType", true);
         query.setParameter("aoTerm", aoTerm);
         query.setParameter("expressionFound", true);
+        query.setParameter("standardOrGeneric", true);
         return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
     }
 
