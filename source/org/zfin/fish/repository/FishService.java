@@ -126,10 +126,10 @@ public class FishService {
 
         if (criteria.getPhenotypeAnatomyCriteria() != null && criteria.getPhenotypeAnatomyCriteria().hasValues()) {
             for (String term : criteria.getPhenotypeAnatomyCriteria().getNames()) {
-                query.addFilterQuery(FieldName.AFFECTED_ANATOMY_TF.getName()   + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF.getName() + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_MOLECULAR_FUNCTION_TF.getName() + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT_TF.getName() + ":\"" + term + "\""
+                query.addFilterQuery(FieldName.AFFECTED_ANATOMY.getName()   + ":\"" + term + "\""
+                          + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS.getName() + ":\"" + term + "\""
+                          + " OR " + FieldName.AFFECTED_MOLECULAR_FUNCTION.getName() + ":\"" + term + "\""
+                          + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT.getName() + ":\"" + term + "\""
                 );
             }
         }

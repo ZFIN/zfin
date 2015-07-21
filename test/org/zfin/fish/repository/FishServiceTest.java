@@ -57,7 +57,14 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void getPhenotypeFigures() {
-        List<FigureSummaryDisplay> figureSummaryDisplays = FishService.getPhenotypeSummary("ZDB-GENO-030619-2,ZDB-GENOX-090731-5", criteria);
+
+        // WT+MO1-pitx3
+        Fish fish = getFishRepository().getFishByName("WT+MO1-pitx3");
+
+        assertNotNull(fish);
+        String fishID = fish.getZdbID();
+
+        List<FigureSummaryDisplay> figureSummaryDisplays = FishService.getPhenotypeSummary(fishID, criteria);
         assertNotNull(figureSummaryDisplays);
     }
 
@@ -99,6 +106,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         // gli2aty17a/ty17a
 
         String fishName = "gli2a<sup>ty17a/ty17a</sup>";
+//        String fishName = "fgf8a<sup>ti282a/ti282a</sup>+MO1-otx1a+MO1-otx2";
         Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);
         criteria.add(Restrictions.eq("name", fishName));
         criteria.add(Restrictions.eq("genotype.zdbID", "ZDB-GENO-980202-1115"));
@@ -589,7 +597,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     //double gene morpoholino
     @Test
     public void doubleGeneMorpholinoNameTest() {
-        genericGeneAlleleBoxTest("MO1-epcam,zgc:110304");
+        genericGeneAlleleBoxTest("MO1-epcam zgc:110304");
     }
 
     public void genericGeneAlleleBoxTest(String value) {
