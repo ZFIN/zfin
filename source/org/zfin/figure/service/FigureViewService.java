@@ -448,11 +448,8 @@ public class FigureViewService {
             return false;
         }
 
-        for (ExperimentCondition experimentCondition: fishExperiment.getExperiment().getExperimentConditions()) {
-            // if none is null, then the figure page has only experiments with reagents, so nothing should be in the list
-            //if (experimentCondition.getSequenceTargetingReagent() == null) return true;
+        if (fishExperiment.getFish().getStrList() == null) {
             return true;
-            // Todo: need to do something else, since experimentCondition.getSequenceTargetingReagent() not there any more
         }
 
         return false;
