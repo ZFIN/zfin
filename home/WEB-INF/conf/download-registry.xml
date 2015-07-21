@@ -2309,10 +2309,10 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
         <Download orderIndex="1">
             <Name>
-                Disease/Models
+                Human Disease/Models
             </Name>
             <Category>
-                Disease
+                Human Disease
             </Category>
             <FileName>fish_model_disease</FileName>
             <FileExtension>txt</FileExtension>
@@ -2400,7 +2400,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <name>Image Data</name>
         </Category>
         <Category orderIndex="180">
-            <name>Disease</name>
+            <name>Human Disease</name>
         </Category>
         <Category orderIndex="1000">
             <name>Unofficial Download Files</name>
