@@ -85,19 +85,6 @@ public class FishServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getPhenotypeFiguresForSingleTerm() {
-        // brain
-        String termID = "ZDB-TERM-100331-8";
-        // WT (unspecified) + MO1-acd
-        String fishID = "ZDB-GENO-030619-2,ZDB-GENOX-110325-3";
-        List<String> termList = new ArrayList<String>(1);
-        termList.add(termID);
-
-        Set<ZfinFigureEntity> zfinFigureEntities = FishService.getFiguresByFishAndTerms(fishID, termList);
-        assertNotNull(zfinFigureEntities);
-    }
-
-    @Test
     public void getPhenotypeFiguresForMultipleTerms() {
         // brain nucleus
         String brainNucleus = "ZDB-TERM-110313-4";
@@ -111,18 +98,18 @@ public class FishServiceTest extends AbstractDatabaseTest {
         criteria.add(Restrictions.eq("name", fishName));
         criteria.add(Restrictions.eq("genotype.zdbID", "ZDB-GENO-980202-1115"));
         Fish fish = (Fish) criteria.uniqueResult();
-        assertNotNull(fish);
+        assertNotNull("Fish should not be null", fish);
         String fishID = fish.getZdbID();
 
-        assertNotNull(fishID);
+        assertNotNull("Fish id should not be null", fishID);
 
         List<String> termList = new ArrayList<String>(2);
         termList.add(brainNucleus);
         termList.add(eye);
 
         Set<ZfinFigureEntity> zfinFigureEntities = FishService.getFiguresByFishAndTerms(fishID, termList);
-        assertNotNull(zfinFigureEntities);
-        assertTrue(zfinFigureEntities.size() >= 2);
+        assertNotNull("FigureEntity collection should not be null", zfinFigureEntities);
+        assertTrue("Should be more than 2 figure entities", zfinFigureEntities.size() >= 2);
     }
 
 
@@ -326,11 +313,18 @@ public class FishServiceTest extends AbstractDatabaseTest {
     @Test
     public void getExpressionSummary() {
 
+        //todo: replace with zdb_id once 1068 has been released
         // genotype: apchu745/hu745> no MOs just generic and std-control genox ids
-        String fishID = "ZDB-GENO-090916-1,ZDB-GENOX-090916-4,ZDB-GENOX-120518-7";
 
-        List<FigureExpressionSummary> summaryList = FishService.getExpressionSummary(fishID, null);
-        assertNotNull(summaryList);
+        Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);
+        criteria.add(Restrictions.eq("name", "apc<sup>hu745/hu745</sup>"));
+        criteria.add(Restrictions.eq("genotype.zdbID", "ZDB-GENO-050914-1"));
+        Fish fish = (Fish) criteria.uniqueResult();
+
+        assertNotNull("fish should not be null", fish);
+
+        List<FigureExpressionSummary> summaryList = FishService.getExpressionSummary(fish.getZdbID(), null);
+        assertNotNull("The expression summary list should not be null", summaryList);
 
         //
         String figID = "ZDB-FIG-101206-3";
@@ -344,7 +338,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         }
 
         List<FigureExpressionSummaryDisplay> list = PresentationConverter.getFigureExpressionSummaryDisplay(summaryList);
-        assertNotNull(list);
+        assertNotNull("Should have expression summary list",list);
         for (FigureExpressionSummaryDisplay display : list) {
             if (display.getFigure().getZdbID().equals(figID)) {
                 if (display.getExpressedGene().getGene().getAbbreviation().equals(geneAbbreviation))
