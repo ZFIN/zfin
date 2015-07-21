@@ -132,9 +132,9 @@ class FigureViewServiceSpec extends AbstractZfinIntegrationSpec {
         count | figZdbID
         0     | figures.hasNoData
         1     | figures.singleXpatRes
-        1     | figures.tenXpatRes
+        2     | figures.tenXpatRes
         0     | figures.hasOnlyPhenotype
-        5     | figures.hasAllThree
+        6     | figures.hasAllThree
 
     }
 

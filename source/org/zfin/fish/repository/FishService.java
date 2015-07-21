@@ -204,9 +204,15 @@ public class FishService {
     }
 
     private static void addAllFigures(FishResult fishResult) {
+
         Set<ZfinFigureEntity> figures = RepositoryFactory.getFishRepository().getAllFigures(fishResult.getFish().getZdbID());
         Set<ZfinFigureEntity> expFigures = RepositoryFactory.getFishRepository().getExpFigures(fishResult.getFish().getZdbID());
         setImageAttributeOnFish(fishResult, figures,expFigures);
+
+        Set<ZfinFigureEntity> figureEntities = getCleanPhenotypeFigureEntitiesForFish(fishResult.getFish());
+
+        setImageAttributeOnFish(fishResult, figureEntities);
+
     }
 
     private static void addFiguresByTermValues(FishResult fishResult, List<String> values) {
@@ -464,7 +470,10 @@ public class FishService {
      */
     public static Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs) {
         if (CollectionUtils.isEmpty(termIDs)) {
-            return RepositoryFactory.getFishRepository().getAllFigures(fishID);
+            Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+            if (fish == null)
+                return null;
+            return getCleanPhenotypeFigureEntitiesForFish(fish);
         }
 
         SolrServer server = SolrService.getSolrServer("prototype");
@@ -507,6 +516,27 @@ public class FishService {
 
         return figureEntitySet;
 
+    }
+
+    public static List<Figure> getCleanPhenotypeFiguresForFish(Fish fish) {
+        return RepositoryFactory.getPhenotypeRepository().getPhenotypeFiguresForFish(fish);
+    }
+
+    public static Set<ZfinFigureEntity> getCleanPhenotypeFigureEntitiesForFish (Fish fish) {
+        List<Figure> figures = getCleanPhenotypeFiguresForFish(fish);
+        Set<ZfinFigureEntity> figureEntities = new HashSet<>();
+        ZfinFigureEntity figureEntity;
+        for (Figure figure : figures) {
+            figureEntity = new ZfinFigureEntity();
+            figureEntity.setID(figure.getZdbID());
+            if (figure.getImages() != null)
+                figureEntity.setHasImage(true);
+            else
+                figureEntity.setHasImage(false);
+            figureEntities.add(figureEntity);
+        }
+
+        return figureEntities;
     }
 
 }
