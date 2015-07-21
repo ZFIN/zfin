@@ -108,11 +108,12 @@
                 <zfin:link entity="${result.fish}"/>
             </td>
             <td>
-               <c:if test="${result.expressionFigureCount > 0}">
-                <zfin2:fishSearchExpressionFigureLink queryKeyValuePair="fishID=${result.fish.zdbID}"
-                                                      figureCount="${result.expressionFigureCount}"/>
-                    <span id="image-icon-${loop.index}">
-                    </span>
+
+                <c:if test="${result.expressionFigureCount > 1}">
+                    <a href="/action/expression/fish-expression-figure-summary?fishID=${result.fish.zdbID}&imagesOnly=false">
+                        <zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
+                                     integerEntity="${result.expressionFigureCount}"/>
+                    </a>
                 </c:if>
                 <zfin2:showCameraIcon hasImage="${result.expressionImageAvailable}"/>
             </td>

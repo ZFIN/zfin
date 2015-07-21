@@ -1,5 +1,6 @@
 package org.zfin.fish.presentation;
 
+import org.zfin.expression.FigureExpressionSummary;
 import org.zfin.fish.FeatureGene;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.Fish;
@@ -23,6 +24,12 @@ public class FishResult extends SearchResult {
     private String scoringText;
 
     private Set<ZfinFigureEntity> phenotypeFigures;
+    private  Set<ZfinFigureEntity> expressionFigures;
+
+    public void setExpressionFigures(Set<ZfinFigureEntity> expressionFigures) {
+        this.expressionFigures = expressionFigures;
+    }
+
     private Boolean imageAvailable;
 
 
@@ -36,6 +43,8 @@ public class FishResult extends SearchResult {
 
 
     public Integer getExpressionFigureCount() {
+        if (expressionFigures == null) { return 0; }
+        expressionFigureCount= expressionFigures.size();
         return expressionFigureCount;
     }
 
@@ -59,6 +68,8 @@ public class FishResult extends SearchResult {
     public Boolean getPhenotypeImageAvailable() {
         return phenotypeImageAvailable;
     }
+
+
 
     public void setPhenotypeImageAvailable(Boolean phenotypeImageAvailable) {
         this.phenotypeImageAvailable = phenotypeImageAvailable;
