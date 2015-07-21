@@ -126,10 +126,10 @@ public class FishService {
 
         if (criteria.getPhenotypeAnatomyCriteria() != null && criteria.getPhenotypeAnatomyCriteria().hasValues()) {
             for (String term : criteria.getPhenotypeAnatomyCriteria().getNames()) {
-                query.addFilterQuery(FieldName.AFFECTED_ANATOMY_TF.getName()   + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS_TF.getName() + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_MOLECULAR_FUNCTION_TF.getName() + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT_TF.getName() + ":\"" + term + "\""
+                query.addFilterQuery(FieldName.AFFECTED_ANATOMY.getName()   + ":\"" + term + "\""
+                          + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS.getName() + ":\"" + term + "\""
+                          + " OR " + FieldName.AFFECTED_MOLECULAR_FUNCTION.getName() + ":\"" + term + "\""
+                          + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT.getName() + ":\"" + term + "\""
                 );
             }
         }
@@ -204,22 +204,30 @@ public class FishService {
     }
 
     private static void addAllFigures(FishResult fishResult) {
+
+        Set<ZfinFigureEntity> figures = RepositoryFactory.getFishRepository().getAllFigures(fishResult.getFish().getZdbID());
+        Set<ZfinFigureEntity> expFigures = RepositoryFactory.getFishRepository().getExpFigures(fishResult.getFish().getZdbID());
+        setImageAttributeOnFish(fishResult, figures,expFigures);
+
         Set<ZfinFigureEntity> figureEntities = getCleanPhenotypeFigureEntitiesForFish(fishResult.getFish());
 
-        setImageAttributeOnFish(fishResult, figureEntities);
+        setImageAttributeOnFish(fishResult, figureEntities,expFigures);
+
     }
 
     private static void addFiguresByTermValues(FishResult fishResult, List<String> values) {
         Set<ZfinFigureEntity> figures = FishService.getFiguresByFishAndTerms(fishResult.getFish().getZdbID(), values);
-        setImageAttributeOnFish(fishResult, figures);
+        Set<ZfinFigureEntity> expFigures = RepositoryFactory.getFishRepository().getExpFigures(fishResult.getFish().getZdbID());
+        setImageAttributeOnFish(fishResult, figures,expFigures);
     }
 
-    private static void setImageAttributeOnFish(FishResult fishResult, Set<ZfinFigureEntity> figures) {
+    private static void setImageAttributeOnFish(FishResult fishResult, Set<ZfinFigureEntity> figures,Set<ZfinFigureEntity> expFigures) {
 
         if (figures == null || figures.size() == 0) {
             return;
         }
         fishResult.setPhenotypeFigures(figures);
+        fishResult.setExpressionFigures(expFigures);
         for (ZfinFigureEntity figure : figures) {
             if (figure.isHasImage()) {
                 fishResult.setImageAvailable(true);
@@ -374,7 +382,10 @@ public class FishService {
      * @return list of expression statements records grouped by figure.
      */
     public static List<FigureExpressionSummary> getExpressionSummary(String fishID) {
-        return getExpressionSummary(fishID, null);
+        Fish fish = getMutantRepository().getFish(fishID);
+        List<ExpressionResult> expressionResults = getExpressionRepository().getExpressionResultsByFish(fish);
+        return ExpressionService.createExpressionFigureSummaryFromExpressionResults(expressionResults);
+        //return getExpressionSummary(fishID, null);
     }
 
     /**

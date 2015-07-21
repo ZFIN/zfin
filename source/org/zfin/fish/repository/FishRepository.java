@@ -22,7 +22,7 @@ public interface FishRepository {
      * @param fishID fish ID
      * @return set of figures.
      */
-    Set<ZfinFigureEntity> getAllFigures(String fishID);
+   Set<ZfinFigureEntity> getAllFigures(String fishID);
 
     Fish getFishByName(String name);
 
@@ -33,7 +33,7 @@ public interface FishRepository {
      * @return set of figures
      */
     Set<ZfinFigureEntity> getPhenotypeFigures(String fishID);
-
+     Set<ZfinFigureEntity> getExpFigures(String fishZdbID);
     /**
      * Retrieve the longest genotype experiment group id for all fish
      *

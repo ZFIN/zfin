@@ -218,8 +218,8 @@ public class HibernateFishRepository implements FishRepository {
                 "from phenotype_experiment\n" +
                 "     join fish_experiment on phenox_genox_zdb_id = genox_zdb_id\n" +
                 "     left outer join image on img_fig_zdb_id = phenox_fig_zdb_id\n" +
-                "where genox_fish_zdb_id = :fishZdbID " +
-                "UNION\n" +
+                "where genox_fish_zdb_id = :fishZdbID " ;
+               /* "UNION\n" +
                 "select xedg_fig_zdb_id,\n" +
                 "        CASE\n" +
                 "         WHEN img_fig_zdb_id is not null then 'true'\n" +
@@ -228,7 +228,7 @@ public class HibernateFishRepository implements FishRepository {
                 "from xpat_exp_details_generated\n" +
                 "     join fish_experiment on xedg_genox_zdb_id = genox_zdb_id\n" +
                 "     left outer join image on img_fig_zdb_id = xedg_fig_zdb_id\n" +
-                "where genox_fish_zdb_id = :fishZdbID ;";
+                "where genox_fish_zdb_id = :fishZdbID ;"*/;
         Session session = HibernateUtil.currentSession();
         Query query = session.createSQLQuery(sql);
         query.setParameter("fishZdbID", fishZdbID);
@@ -245,6 +245,38 @@ public class HibernateFishRepository implements FishRepository {
         }
         return zfinFigureEntities;
     }
+
+    public Set<ZfinFigureEntity> getExpFigures(String fishZdbID) {
+        String sql =
+
+                "select xedg_fig_zdb_id,\n" +
+                "        CASE\n" +
+                "         WHEN img_fig_zdb_id is not null then 'true'\n" +
+                "         ELSE 'false'\n" +
+                "        END as hasImage\n" +
+                "from xpat_exp_details_generated\n" +
+                "     join fish_experiment on xedg_genox_zdb_id = genox_zdb_id\n" +
+                "     left outer join image on img_fig_zdb_id = xedg_fig_zdb_id\n" +
+                "where genox_fish_zdb_id = :fishZdbID ";
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createSQLQuery(sql);
+        query.setParameter("fishZdbID", fishZdbID);
+        List<Object[]> fishObjects = query.list();
+        if (fishObjects == null)
+            return null;
+
+        Set<ZfinFigureEntity> zfinFigureEntities = new HashSet<ZfinFigureEntity>(fishObjects.size());
+        for (Object[] annotationObj : fishObjects) {
+            ZfinFigureEntity zfinFigureEntity = new ZfinFigureEntity();
+            zfinFigureEntity.setID((String) annotationObj[0]);
+            zfinFigureEntity.setHasImage(Boolean.parseBoolean(((String) annotationObj[1]).trim()));
+            zfinFigureEntities.add(zfinFigureEntity);
+        }
+        return zfinFigureEntities;
+    }
+
+
+    @Override
 
 
     public Fish getFishByName(String name) {
