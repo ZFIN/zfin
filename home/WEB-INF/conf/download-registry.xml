@@ -1429,7 +1429,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
         <Download orderIndex="3">
             <Name>
-                Fish-Publication relation
+                Genotype-Publication relation
             </Name>
             <Category>
                 Fish Data
@@ -1459,15 +1459,11 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>fish_publication</FileName>
+            <FileName>fishPub</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                    select recattrib_data_zdb_id as fish_zdb_id, recattrib_Source_zdb_id as pub_zdb_id
-                     from record_attribution, fish
-                     where recattrib_data_zdb_id = fish_zdb_id
-                       and recattrib_source_type = 'standard'
                          ]]>
             </Query>
             <Column id="1" unique="true">Fish ID</Column>

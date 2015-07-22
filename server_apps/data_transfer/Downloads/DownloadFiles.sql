@@ -513,6 +513,14 @@ select exp_zdb_id, exp_name, exp_name,"This environment is used for non-standard
  order by 1,2
 ;
 
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fishPub.txt'
+ DELIMITER "	" select zdb_id, accession_no, recattrib_data_zdb_id from publication, fish, record_attribution
+ 	   where recattrib_Data_zdb_id = fish_Zdb_id 
+	   and recattrib_source_zdb_id = zdb_id
+	   and recattrib_type = 'standard' ;
+
+
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pub_to_pubmed_id_translation.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pub_to_pubmed_id_translation.txt'
  DELIMITER "	" select zdb_id, accession_no from publication ;
@@ -1090,15 +1098,6 @@ select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_
    and recattrib_source_type = 'standard'
 ;
 
--- unload publication - genotype association file
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_publication.txt'"
-unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_publication.txt'
- DELIMITER "	"
-select recattrib_data_zdb_id as fish_zdb_id, recattrib_Source_zdb_id as pub_zdb_id
- from record_attribution, fish
- where recattrib_data_zdb_id = fish_zdb_id
-   and recattrib_source_type = 'standard'
-;
 
 -- unload publication - gene/genep association file
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'"
