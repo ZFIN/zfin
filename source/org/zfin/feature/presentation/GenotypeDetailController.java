@@ -163,6 +163,9 @@ public class GenotypeDetailController {
                 pheno.addFishExperiment(genoExp);
                 expression.addFishExperiment(genoExp);
                 statisticsMap.put(fish, stat);
+            } else {
+                stat.getFishGenotypePhenotypeStatistics().addFishExperiment(genoExp);
+                stat.getFishGenotypeExpressionStatistics().addFishExperiment(genoExp);
             }
         }
 
