@@ -1,5 +1,6 @@
 package org.zfin.database.presentation;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -86,7 +87,8 @@ public class ForeignKeyTest {
         assertNotNull(map);
     }
 
-    //@Test
+    @Test
+    @Ignore
     public void getJoinedForeignKeys() {
         Table genox = Table.FISH_EXPERIMENT;
         List<ForeignKey> foreignKeyList = ForeignKey.getJoinedForeignKeys("phenos_phenox_pk_id", genox.getTableName());

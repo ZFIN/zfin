@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.server;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -25,6 +26,8 @@ import static org.zfin.repository.RepositoryFactory.*;
 
 
 public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements CurationDiseaseRPC {
+
+    private static Logger LOG = Logger.getLogger(CurationDiseaseRPCImpl.class);
 
     @Override
     public List<GenotypeDTO> getGenotypeList(String publicationID) {
@@ -332,6 +335,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             getMutantRepository().createFish(fish, publication);
             HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
+            LOG.error(e);
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
         }
