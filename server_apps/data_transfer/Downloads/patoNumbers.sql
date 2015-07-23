@@ -206,7 +206,7 @@ union
 	 d.term_ont_id as d_ont_id,d.term_name as e2subname, d.term_ontology as e2subTermOntology,
 	 e.term_ont_id as e_ont_id, e.term_name as qualityName, phenos_tag,
 	 '' as a_relationship_id,'' as a_relationship_name,'' as b_relationship_id,'' as b_relationship_name, phenos_pk_id as phenos_id
-    from tmp_o_with_p, marker_relationship, experiment_condition, fish_experiment,
+    from tmp_o_with_p, marker_relationship, fish_str, fish_experiment,
     	 phenotype_Experiment, phenotype_statement, marker,
 	 term a, 
 	 outer term b, 
@@ -216,8 +216,8 @@ union
 	 mutant_fast_search
     where mrel_mrkr_2_zdb_id = gene_id
     and mrkr_zdb_id = mrel_mrkr_2_zdb_id
-    and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-    and expcond_exp_zdb_id = genox_exp_Zdb_id
+    and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
+    and fishstr_fish_zdb_id = genox_fish_zdb_id
     and genox_zdb_id = phenox_genox_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
    and a.term_Zdb_id = phenos_entity_1_superterm_zdb_id

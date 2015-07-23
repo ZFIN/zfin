@@ -12,8 +12,6 @@ public enum ForeignKey {
     STAGE_AO_DISPLAY(Table.STAGE, Table.ANATOMY_DISPLAY, "anatdisp_stg_zdb_id"),
     FISHOX_FISH(Table.FISH, Table.FISH_EXPERIMENT, "genox_fish_zdb_id"),
     FISHOX_EXP(Table.EXPERIMENT, Table.FISH_EXPERIMENT, "genox_exp_zdb_id"),
-    EXPCOND_EXP(Table.EXPERIMENT, Table.EXPERIMENT_CONDITION, "expcond_exp_zdb_id"),
-    EXPCOND_CDT(Table.CONDITION_DATA_TYPE, Table.EXPERIMENT_CONDITION, "expcond_cdt_zdb_id"),
     XPATEX_GENOX(Table.FISH_EXPERIMENT, Table.EXPRESSION_EXPERIMENT, "xpatex_genox_zdb_id"),
     PHENOX_FISHOX(Table.FISH_EXPERIMENT, Table.PHENOTYPE_EXPERIMENT, "phenox_genox_zdb_id"),
     PHENOS_PHENOX(Table.PHENOTYPE_EXPERIMENT, Table.PHENOTYPE_STATEMENT, "phenos_phenox_pk_id"),
@@ -166,7 +164,6 @@ public enum ForeignKey {
     RECORD_ATTR_FEATURE(Table.FEATURE, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_EXT_NOTE(Table.EXTERNAL_NOTE, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_EXP(Table.EXPERIMENT, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
-    RECORD_ATTR_EXP_COND(Table.EXPERIMENT_CONDITION, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_FIG(Table.FIGURE, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_GENE(Table.MARKER, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_MREL(Table.MARKER_RELATION, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
@@ -193,7 +190,6 @@ public enum ForeignKey {
     GENOFEAT_MOM_ZYGO(Table.ZYGOSITY, Table.GENOTYPE_FEATURE, "genofeat_mom_zygocity"),
     GENOFEAT_ZYGO(Table.ZYGOSITY, Table.GENOTYPE_FEATURE, "genofeat_zygocity"),
     FEATURE_FEATURE_TRACKING(Table.FEATURE, Table.FEATURE_TRACKING, "ft_feature_zdb_id"),
-    MO_EXP_COND(Table.MORPHOLINO, Table.EXPERIMENT_CONDITION, "expcond_mrkr_zdb_id"),
     //UNIT_EXP_COND(Table.EXPERIMENT_UNIT, Table.EXPERIMENT_CONDITION, "expcond_expunit_zdb_id"),
     IMAGE_FIGURE(Table.FIGURE, Table.IMAGE, "img_fig_zdb_id"),
     DATA_ALIAS_TERM(Table.TERM, Table.DATA_ALIAS, "term:dalias_data_zdb_id"),
@@ -351,7 +347,7 @@ public enum ForeignKey {
      * @return list of FKs
      */
     public static List<ForeignKey> getJoinedForeignKeys(String columnName, String rootTable) {
-        List<ForeignKey> joinTables = new ArrayList<ForeignKey>(3);
+        List<ForeignKey> joinTables = new ArrayList<>(3);
         ForeignKey foreignKey = getForeignKeyByColumnName(columnName);
         joinTables.add(foreignKey);
         Table firstJoinTable = foreignKey.getForeignKeyTable();

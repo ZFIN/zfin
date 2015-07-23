@@ -207,7 +207,7 @@ public class FishService {
     private static void addAllFigures(FishResult fishResult) {
 
         Set<ZfinFigureEntity> figures = RepositoryFactory.getFishRepository().getAllFigures(fishResult.getFish().getZdbID());
-        Set<ZfinFigureEntity> expFigures = RepositoryFactory.getFishRepository().getExpFigures(fishResult.getFish().getZdbID());
+        Set<ZfinFigureEntity> expFigures = getAllExpressionFigureEntitiesForFish(fishResult.getFish());
         setImageAttributeOnFish(fishResult, figures,expFigures);
 
         Set<ZfinFigureEntity> figureEntities = getCleanPhenotypeFigureEntitiesForFish(fishResult.getFish());
@@ -218,7 +218,7 @@ public class FishService {
 
     private static void addFiguresByTermValues(FishResult fishResult, List<String> values) {
         Set<ZfinFigureEntity> figures = FishService.getFiguresByFishAndTerms(fishResult.getFish().getZdbID(), values);
-        Set<ZfinFigureEntity> expFigures = RepositoryFactory.getFishRepository().getExpFigures(fishResult.getFish().getZdbID());
+        Set<ZfinFigureEntity> expFigures = getAllExpressionFigureEntitiesForFish(fishResult.getFish());
         setImageAttributeOnFish(fishResult, figures,expFigures);
     }
 
@@ -531,6 +531,28 @@ public class FishService {
         Set<ZfinFigureEntity> figureEntities = new HashSet<>();
         ZfinFigureEntity figureEntity;
         for (Figure figure : figures) {
+            figureEntity = new ZfinFigureEntity();
+            figureEntity.setID(figure.getZdbID());
+            if (figure.getImages() != null)
+                figureEntity.setHasImage(true);
+            else
+                figureEntity.setHasImage(false);
+            figureEntities.add(figureEntity);
+        }
+
+        return figureEntities;
+    }
+
+    public static Set<ZfinFigureEntity> getAllExpressionFigureEntitiesForFish (Fish fish) {
+        List<ExpressionResult> expressionResults = getExpressionRepository().getExpressionResultsByFish(fish);
+        Set<ZfinFigureEntity> figureEntities = new HashSet<>();
+        ZfinFigureEntity figureEntity;
+        Set<Figure> expressionFigures = new HashSet<>();
+        for (ExpressionResult expressionResult : expressionResults) {
+            expressionFigures.addAll(expressionResult.getFigures());
+        }
+
+        for (Figure figure : expressionFigures) {
             figureEntity = new ZfinFigureEntity();
             figureEntity.setID(figure.getZdbID());
             if (figure.getImages() != null)

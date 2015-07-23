@@ -12,7 +12,7 @@ Most recent constructs first.</description>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
     <hudson.triggers.TimerTrigger>
-      <spec>00 07 * * 1</spec>
+      <spec></spec>
     </hudson.triggers.TimerTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
@@ -51,7 +51,7 @@ Most recent constructs first.</description>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>smoxon@zfin.org</recipientList>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-EST-One-Marker_w.report.html&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
