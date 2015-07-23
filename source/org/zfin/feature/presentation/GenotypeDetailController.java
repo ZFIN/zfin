@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
-import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.FishGenotypeExpressionStatistics;
@@ -26,7 +25,6 @@ public class GenotypeDetailController {
 
     private static final Logger LOG = Logger.getLogger(GenotypeDetailController.class);
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-    private ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
 
     @RequestMapping(value = {"/genotype-detail-popup"})
     public String getGenotypePopup(@RequestParam String zdbID, Model model) {
