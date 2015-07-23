@@ -33,7 +33,7 @@ with no log ;
 insert into tmp_genes_with_phenos_m
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship, 
-	experiment_condition,
+	fish_str,
         fish_experiment, 
 	genotype_feature,
 	genotype,
@@ -42,8 +42,8 @@ insert into tmp_genes_with_phenos_m
 	fish
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
-   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-   and expcond_exp_zdb_id = genox_exp_zdb_id
+   and fishstr_fish_zdb_id = fish_Zdb_id
+   and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
    and fish_genotype_Zdb_id = genofeat_geno_zdb_id
    and fish_zdb_id = genox_fish_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
@@ -63,14 +63,14 @@ with no log ;
 insert into tmp_genes_with_phenos_m_w
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship,
-	experiment_condition,
+	fish_str,
         fish_experiment,
 	genotype,
         phenotype_experiment, fish
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
-   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-   and expcond_exp_zdb_id = genox_exp_zdb_id
+   and mrel_mrkr_1_zdb_id =fishstr_str_zdb_id
+   and fishstr_fish_zdb_id = fish_zdb_id
    and phenox_genox_zdb_id = genox_zdb_id
    and geno_is_wildtype = 't'
    and fish_zdb_id = genox_fish_zdb_id
@@ -113,7 +113,7 @@ with no log ;
 insert into tmp_genes_with_phenos_imgs_m
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship, 
-	experiment_condition,
+	fish_str,
         fish_experiment, fish,
 	genotype_feature,
         phenotype_experiment,
@@ -121,8 +121,8 @@ insert into tmp_genes_with_phenos_imgs_m
 	image, genotype
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
-   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-   and expcond_exp_zdb_id = genox_exp_zdb_id
+   and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
+   and fishstr_fish_Zdb_id = fish_zdb_id
    and genox_fish_Zdb_id = fish_Zdb_id
    and fish_genotype_zdb_id = genofeat_geno_zdb_id
    and geno_zdb_id = genofeat_geno_zdb_id
@@ -247,8 +247,8 @@ insert into tmp_genes_with_phenos_m_tg
         phenotype_experiment
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
-   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-   and expcond_exp_zdb_id = genox_exp_zdb_id
+   and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
+   and fishstr_fish_zdb_id = fish_Zdb_id
    and fish_genotype_Zdb_id = genofeat_geno_zdb_id
    and fish_zdb_id = genox_fish_zdb_id
    and geno_zdb_id =genox_geno_zdb_id
@@ -268,7 +268,6 @@ with no log ;
 insert into tmp_genes_with_phenos_imgs_tgs_m
  select distinct mrel_mrkr_2_zdb_id
    from marker_relationship, 
-	experiment_condition,
         fish_experiment,fish, 
 	genotype_feature,
         phenotype_experiment,
@@ -276,8 +275,8 @@ insert into tmp_genes_with_phenos_imgs_tgs_m
 	image
    where mrel_type = "knockdown reagent targets gene"
    and mrel_mrkr_1_zdb_id like "ZDB-MRPHLNO%" 
-   and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-   and expcond_exp_zdb_id = genox_exp_zdb_id
+   and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
+   and fishstr_fish_zdb_id = fish_zdb_id
    and fish_zdb_id = genox_fish_zdb_id
    and fish_genotype_Zdb_id = genofeat_geno_zdb_id
    and phenox_genox_zdb_id = genox_zdb_id

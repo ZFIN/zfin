@@ -1,5 +1,6 @@
 package org.zfin.fish.repository;
 
+import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -206,7 +207,7 @@ public class FishService {
     private static void addAllFigures(FishResult fishResult) {
 
         Set<ZfinFigureEntity> figures = RepositoryFactory.getFishRepository().getAllFigures(fishResult.getFish().getZdbID());
-        Set<ZfinFigureEntity> expFigures = RepositoryFactory.getFishRepository().getExpFigures(fishResult.getFish().getZdbID());
+        Set<ZfinFigureEntity> expFigures = getAllExpressionFigureEntitiesForFish(fishResult.getFish());
         setImageAttributeOnFish(fishResult, figures,expFigures);
 
         Set<ZfinFigureEntity> figureEntities = getCleanPhenotypeFigureEntitiesForFish(fishResult.getFish());
@@ -217,7 +218,7 @@ public class FishService {
 
     private static void addFiguresByTermValues(FishResult fishResult, List<String> values) {
         Set<ZfinFigureEntity> figures = FishService.getFiguresByFishAndTerms(fishResult.getFish().getZdbID(), values);
-        Set<ZfinFigureEntity> expFigures = RepositoryFactory.getFishRepository().getExpFigures(fishResult.getFish().getZdbID());
+        Set<ZfinFigureEntity> expFigures = getAllExpressionFigureEntitiesForFish(fishResult.getFish());
         setImageAttributeOnFish(fishResult, figures,expFigures);
     }
 
@@ -482,15 +483,18 @@ public class FishService {
         query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
         query.addFilterQuery(FieldName.XREF.getName() + ":\"" + fishID + "\"");
 
+        List<String> terms = new ArrayList<String>();
         for (String termID : termIDs) {
             Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
-            query.addFilterQuery(FieldName.ANATOMY_TF.getName()            + ":\"" + term.getTermName() + "\""
-                            + " OR " + FieldName.BIOLOGICAL_PROCESS_TF.getName() + ":\"" + term.getTermName() + "\""
-                            + " OR " + FieldName.MOLECULAR_FUNCTION_TF.getName() + ":\"" + term.getTermName() + "\""
-                            + " OR " + FieldName.CELLULAR_COMPONENT_TF.getName() + ":\"" + term.getTermName() + "\""
-            );
+            terms.add("\"" + term.getTermName() + "\"");
         }
 
+        String termQuery = Joiner.on(" OR ").join(terms);
+        query.addFilterQuery(FieldName.ANATOMY.getName()            + ":(" + termQuery + ")"
+                        + " OR " + FieldName.BIOLOGICAL_PROCESS.getName() + ":(" + termQuery + ")"
+                        + " OR " + FieldName.MOLECULAR_FUNCTION.getName() + ":(" + termQuery + ")"
+                        + " OR " + FieldName.CELLULAR_COMPONENT.getName() + ":(" + termQuery + ")"
+        );
 
         QueryResponse response = new QueryResponse();
         try {
@@ -527,6 +531,28 @@ public class FishService {
         Set<ZfinFigureEntity> figureEntities = new HashSet<>();
         ZfinFigureEntity figureEntity;
         for (Figure figure : figures) {
+            figureEntity = new ZfinFigureEntity();
+            figureEntity.setID(figure.getZdbID());
+            if (figure.getImages() != null)
+                figureEntity.setHasImage(true);
+            else
+                figureEntity.setHasImage(false);
+            figureEntities.add(figureEntity);
+        }
+
+        return figureEntities;
+    }
+
+    public static Set<ZfinFigureEntity> getAllExpressionFigureEntitiesForFish (Fish fish) {
+        List<ExpressionResult> expressionResults = getExpressionRepository().getExpressionResultsByFish(fish);
+        Set<ZfinFigureEntity> figureEntities = new HashSet<>();
+        ZfinFigureEntity figureEntity;
+        Set<Figure> expressionFigures = new HashSet<>();
+        for (ExpressionResult expressionResult : expressionResults) {
+            expressionFigures.addAll(expressionResult.getFigures());
+        }
+
+        for (Figure figure : expressionFigures) {
             figureEntity = new ZfinFigureEntity();
             figureEntity.setID(figure.getZdbID());
             if (figure.getImages() != null)

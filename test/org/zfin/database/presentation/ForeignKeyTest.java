@@ -1,6 +1,9 @@
 package org.zfin.database.presentation;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.zfin.AbstractDatabaseTest;
+import org.zfin.database.DatabaseService;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class ForeignKeyTest {
+public class ForeignKeyTest extends AbstractDatabaseTest {
 
     @Test
     public void getForeignKeys() {
@@ -86,7 +89,17 @@ public class ForeignKeyTest {
         assertNotNull(map);
     }
 
-    //@Test
+    @Test
+    public void ExpressionResult() {
+
+        List<ForeignKeyResult> foreignKeyResultList = DatabaseService.createFKResultList(Table.FISH, "ZDB-FISH-150721-100");
+        ForeignKey.createDagMap(Table.ONTOLOGY);
+        Map map = ForeignKey.dagMap;
+        assertNotNull(map);
+    }
+
+    @Test
+    @Ignore
     public void getJoinedForeignKeys() {
         Table genox = Table.FISH_EXPERIMENT;
         List<ForeignKey> foreignKeyList = ForeignKey.getJoinedForeignKeys("phenos_phenox_pk_id", genox.getTableName());

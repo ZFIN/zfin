@@ -188,26 +188,6 @@ public class DatabaseServiceTest {
     }
 
     @Test
-    public void testPublicationRecord() {
-
-        TableValueLookup lookup = new TableValueLookup(Table.PUBLICATION);
-        String figZdbID = "ZDB-PUB-050309-6";
-        ColumnValue columnValue = new ColumnValue(Table.PUBLICATION.getPkName(), figZdbID);
-        lookup.addColumnValue(columnValue);
-
-        List<ForeignKey> foreignKeyList = createForeignKeyList(ForeignKey.EXP_PUBLICATION, ForeignKey.EXPCOND_EXP);
-        DatabaseJdbcStatement statement = DatabaseService.createJoinJdbcStatement(lookup, foreignKeyList, true);
-        assertEquals("SELECT COUNT(*) FROM " +
-                "publication as publication_1, " +
-                "experiment as experiment_1, " +
-                "experiment_condition as experiment_condition_1 " +
-                "WHERE publication_1.zdb_id = 'ZDB-PUB-050309-6' AND " +
-                "publication_1.zdb_id = experiment_1.exp_source_zdb_id AND " +
-                "experiment_1.exp_zdb_id = experiment_condition_1.expcond_exp_zdb_id", statement.getQuery());
-
-    }
-
-    @Test
     public void testFeatureLabAssoc() {
 
         TableValueLookup lookup = new TableValueLookup(Table.FEATURE);

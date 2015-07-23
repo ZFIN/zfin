@@ -12,8 +12,6 @@ public enum ForeignKey {
     STAGE_AO_DISPLAY(Table.STAGE, Table.ANATOMY_DISPLAY, "anatdisp_stg_zdb_id"),
     FISHOX_FISH(Table.FISH, Table.FISH_EXPERIMENT, "genox_fish_zdb_id"),
     FISHOX_EXP(Table.EXPERIMENT, Table.FISH_EXPERIMENT, "genox_exp_zdb_id"),
-    EXPCOND_EXP(Table.EXPERIMENT, Table.EXPERIMENT_CONDITION, "expcond_exp_zdb_id"),
-    EXPCOND_CDT(Table.CONDITION_DATA_TYPE, Table.EXPERIMENT_CONDITION, "expcond_cdt_zdb_id"),
     XPATEX_GENOX(Table.FISH_EXPERIMENT, Table.EXPRESSION_EXPERIMENT, "xpatex_genox_zdb_id"),
     PHENOX_FISHOX(Table.FISH_EXPERIMENT, Table.PHENOTYPE_EXPERIMENT, "phenox_genox_zdb_id"),
     PHENOS_PHENOX(Table.PHENOTYPE_EXPERIMENT, Table.PHENOTYPE_STATEMENT, "phenos_phenox_pk_id"),
@@ -51,6 +49,8 @@ public enum ForeignKey {
     PHENOX_END_STAGE(Table.STAGE, Table.PHENOTYPE_EXPERIMENT, "phenox_end_stg_zdb_id"),
     XPATRES_XPAT(Table.EXPRESSION_EXPERIMENT, Table.EXPRESSION_RESULT, "xpatres_xpatex_zdb_id"),
     FIGURE_XPATRES_ASSOC(Table.FIGURE, Table.EXPRESSION_RESULT, Table.FIGURE_XPATRES),
+    FISH_MORPHOLINO_ASSOC(Table.FISH, Table.MORPHOLINO, Table.FISH_STR),
+    MORPHOLINO_FISH_ASSOC(Table.MORPHOLINO, Table.FISH, Table.FISH_STR),
     XPATRES_FIGURE_ASSOC(Table.EXPRESSION_RESULT, Table.FIGURE, Table.XPATRES_FIGURE),
     GENOTEYPE_FEATURE_ASSOC(Table.GENOTYPE, Table.FEATURE, Table.GENOTYPE_FEATURE),
     FEATURE_GENOTYPE_ASSOC(Table.FEATURE, Table.GENOTYPE, Table.FEATURE_GENOTYPE),
@@ -151,9 +151,10 @@ public enum ForeignKey {
     NOTE_EXT_ANTIBODY(Table.ANTIBODY, Table.EXTERNAL_NOTE, "extnote_data_zdb_id"),
     MARKER_TYPE_MARKER(Table.MARKER_TYPE, Table.MARKER, "mrkr_type"),
     MARKER_TYPE_GROUP_MARKER(Table.MARKER_TYPE, Table.MARKER_TYPE_GROUP, "mtgrp_name"),
-    MARKER_MARKER_SEQUENCE(Table.MARKER, Table.MARKER_SEQUENCE, "seq_mrkr_zdb_id"),
-    TYPE_MARKER_SEQUENCE(Table.SEQUENCE_TYPE, Table.MARKER_SEQUENCE, "seq_seq_type"),
-    AMBIGUITY_MARKER_SEQUENCE(Table.SEQUENCE_AMBIGUITY_CODE, Table.MARKER_SEQUENCE, "seq_ambiguity_code"),
+    MO_MARKER_SEQUENCE(Table.MARKER, Table.MORPHOLINO, "seq_mrkr_zdb_id"),
+    TYPE_MARKER_SEQUENCE(Table.SEQUENCE_TYPE, Table.MORPHOLINO, "seq_type"),
+    FISH_GENOTYPE(Table.GENOTYPE, Table.FISH, "fish_genotype_zdb_id"),
+    //AMBIGUITY_MARKER_SEQUENCE(Table.SEQUENCE_AMBIGUITY_CODE, Table.MORPHOLINO, "seq_ambiguity_code"),
     PUBNOTE_PERSON(Table.PERSON, Table.PUBLICATION_NOTE, "pnote_curator_zdb_id"),
     CURATION_PERSON(Table.PERSON, Table.CURATION, "cur_curator_zdb_id"),
     CURATION_PUBLICATION(Table.PUBLICATION, Table.CURATION, "cur_pub_zdb_id"),
@@ -166,7 +167,6 @@ public enum ForeignKey {
     RECORD_ATTR_FEATURE(Table.FEATURE, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_EXT_NOTE(Table.EXTERNAL_NOTE, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_EXP(Table.EXPERIMENT, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
-    RECORD_ATTR_EXP_COND(Table.EXPERIMENT_CONDITION, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_FIG(Table.FIGURE, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_GENE(Table.MARKER, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
     RECORD_ATTR_MREL(Table.MARKER_RELATION, Table.RECORD_ATTRIBUTION, "recattrib_data_zdb_id"),
@@ -193,7 +193,6 @@ public enum ForeignKey {
     GENOFEAT_MOM_ZYGO(Table.ZYGOSITY, Table.GENOTYPE_FEATURE, "genofeat_mom_zygocity"),
     GENOFEAT_ZYGO(Table.ZYGOSITY, Table.GENOTYPE_FEATURE, "genofeat_zygocity"),
     FEATURE_FEATURE_TRACKING(Table.FEATURE, Table.FEATURE_TRACKING, "ft_feature_zdb_id"),
-    MO_EXP_COND(Table.MORPHOLINO, Table.EXPERIMENT_CONDITION, "expcond_mrkr_zdb_id"),
     //UNIT_EXP_COND(Table.EXPERIMENT_UNIT, Table.EXPERIMENT_CONDITION, "expcond_expunit_zdb_id"),
     IMAGE_FIGURE(Table.FIGURE, Table.IMAGE, "img_fig_zdb_id"),
     DATA_ALIAS_TERM(Table.TERM, Table.DATA_ALIAS, "term:dalias_data_zdb_id"),
@@ -351,7 +350,7 @@ public enum ForeignKey {
      * @return list of FKs
      */
     public static List<ForeignKey> getJoinedForeignKeys(String columnName, String rootTable) {
-        List<ForeignKey> joinTables = new ArrayList<ForeignKey>(3);
+        List<ForeignKey> joinTables = new ArrayList<>(3);
         ForeignKey foreignKey = getForeignKeyByColumnName(columnName);
         joinTables.add(foreignKey);
         Table firstJoinTable = foreignKey.getForeignKeyTable();

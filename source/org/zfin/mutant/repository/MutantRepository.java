@@ -464,6 +464,8 @@ public interface MutantRepository {
 
     List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication);
 
+    FishExperiment getFishExperiment(String zdbID);
+
     List<FishExperiment> getFishExperiment(Genotype genotype);
 
     /**

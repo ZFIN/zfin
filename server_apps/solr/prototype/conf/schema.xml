@@ -1141,7 +1141,7 @@
     <copyField source="zebrafish_gene" dest="related_gene_symbol"/>
     <copyField source="reporter_gene" dest="related_gene_symbol"/>
     <copyField source="targeted_gene" dest="related_gene_symbol"/>
-    <copyField source="expressed_gene" dest="related_gene_symbol"/>
+<!--    <copyField source="expressed_gene" dest="related_gene_symbol"/>-->
 
 
     <!-- experimenting with joins -->
