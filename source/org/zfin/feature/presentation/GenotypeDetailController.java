@@ -267,4 +267,5 @@ public class GenotypeDetailController {
 
         return "fish/fish-phenotype-figure-summary.page";
     }
+
 }
