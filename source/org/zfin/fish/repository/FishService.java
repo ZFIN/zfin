@@ -1,5 +1,6 @@
 package org.zfin.fish.repository;
 
+import com.google.common.base.Joiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -482,15 +483,18 @@ public class FishService {
         query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
         query.addFilterQuery(FieldName.XREF.getName() + ":\"" + fishID + "\"");
 
+        List<String> terms = new ArrayList<String>();
         for (String termID : termIDs) {
             Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
-            query.addFilterQuery(FieldName.ANATOMY_TF.getName()            + ":\"" + term.getTermName() + "\""
-                            + " OR " + FieldName.BIOLOGICAL_PROCESS_TF.getName() + ":\"" + term.getTermName() + "\""
-                            + " OR " + FieldName.MOLECULAR_FUNCTION_TF.getName() + ":\"" + term.getTermName() + "\""
-                            + " OR " + FieldName.CELLULAR_COMPONENT_TF.getName() + ":\"" + term.getTermName() + "\""
-            );
+            terms.add("\"" + term.getTermName() + "\"");
         }
 
+        String termQuery = Joiner.on(" OR ").join(terms);
+        query.addFilterQuery(FieldName.ANATOMY.getName()            + ":(" + termQuery + ")"
+                        + " OR " + FieldName.BIOLOGICAL_PROCESS.getName() + ":(" + termQuery + ")"
+                        + " OR " + FieldName.MOLECULAR_FUNCTION.getName() + ":(" + termQuery + ")"
+                        + " OR " + FieldName.CELLULAR_COMPONENT.getName() + ":(" + termQuery + ")"
+        );
 
         QueryResponse response = new QueryResponse();
         try {
