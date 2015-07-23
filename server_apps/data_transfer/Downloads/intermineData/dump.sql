@@ -310,14 +310,12 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
   select expcond_zdb_id,
   	 expcond_exp_zdb_id,
 	 expcond_cdt_zdb_id, 
-	 expunit_name, 
 	 cdt_name, 
 	 cdt_group,
 	 exp_name
-    from experiment_condition, condition_data_type, experiment_unit, experiment
+    from experiment_condition, condition_data_type,experiment
     where expcond_cdt_zdb_id = cdt_zdb_id
     and exp_zdb_id = expcond_exp_Zdb_id
-    and expcond_expunit_zdb_id = expunit_zdb_id
 union
   select exp_zdb_id,
   	 exp_zdb_id,
