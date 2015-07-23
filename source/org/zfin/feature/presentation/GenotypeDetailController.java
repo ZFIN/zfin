@@ -145,8 +145,8 @@ public class GenotypeDetailController {
 
     private List<GenotypeFishResult> createResult(List<FishExperiment> fishExperimentList) {
         Map<Fish, GenotypeFishResult> statisticsMap = new TreeMap<>();
-        for (FishExperiment genoExp : fishExperimentList) {
-            Fish fish = genoExp.getFish();
+        for (FishExperiment fishExperiment : fishExperimentList) {
+            Fish fish = fishExperiment.getFish();
             GenotypeFishResult stat = statisticsMap.get(fish);
             if (stat == null) {
                 stat = new GenotypeFishResult(fish);
@@ -160,13 +160,10 @@ public class GenotypeDetailController {
                     expression = new FishGenotypeExpressionStatistics(fish);
                     stat.setFishGenotypeExpressionStatistics(expression);
                 }
-                pheno.addFishExperiment(genoExp);
-                expression.addFishExperiment(genoExp);
                 statisticsMap.put(fish, stat);
-            } else {
-                stat.getFishGenotypePhenotypeStatistics().addFishExperiment(genoExp);
-                stat.getFishGenotypeExpressionStatistics().addFishExperiment(genoExp);
             }
+            stat.getFishGenotypePhenotypeStatistics().addFishExperiment(fishExperiment);
+            stat.getFishGenotypeExpressionStatistics().addFishExperiment(fishExperiment);
         }
 
         return new ArrayList<>(statisticsMap.values());
