@@ -161,8 +161,8 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
  order by 1;
 
 -- create antibody expression download file
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions_fish.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions_fish.txt'
  DELIMITER "	"
 select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
  from marker, expression_experiment, expression_result, fish, term as super,
@@ -348,8 +348,8 @@ select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, mgi, entrez
 drop table tmp_ortho_exp;
 
 -- generate a file with genes and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt'
  DELIMITER "	"
 select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
@@ -376,8 +376,8 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
 ;
 
 -- generate a file with antibodies and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt'
  DELIMITER "	"
  select antibody.atb_zdb_id, atb.mrkr_abbrev,gene.mrkr_zdb_id as gene_zdb,
 	gene.mrkr_abbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
@@ -412,8 +412,8 @@ UNION
 ;
 
 -- generate a file to map experiment id to environment condition description
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_environment_fish.txt'
  DELIMITER "	"
 select exp_zdb_id, cdt_group, cdt_name, expcond_comments
  from experiment, experiment_condition, condition_data_type
@@ -434,8 +434,8 @@ select exp_zdb_id, exp_name,exp_name, "This environment is used for non-standard
 
 
 -- generate a file with genes and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype._fishtxt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'
  DELIMITER "	"
  select distinct f.fish_zdb_id, f.fish_name,
             phenox_start_stg_zdb_id,
@@ -471,8 +471,8 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  order by fish_zdb_id, fig_source_zdb_id;
 
 -- generate a file with xpatex and associated figure zdbid's
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt'
  DELIMITER "	"
 select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
  from expression_experiment, expression_result,expression_pattern_figure
@@ -482,8 +482,8 @@ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
 
 
 -- generate a file with genotype id's and associated figure zdbid's
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genofig_fish.txt'
  DELIMITER "	"
  select distinct fish_zdb_id, phenox_fig_zdb_id
  from fish_experiment, phenotype_experiment, fish
@@ -492,8 +492,8 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  order by fish_zdb_id;
 
 
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_environment_fish.txt'
  DELIMITER "	"
 select exp_zdb_id, cdt_group, cdt_name, expcond_comments
  from experiment, experiment_condition, condition_data_type
@@ -944,8 +944,8 @@ select distinct geno_zdb_id, geno_display_name, genoback_background_zdb_id
  where geno_Zdb_id = genoback_geno_Zdb_id
 ;
 
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes.tx'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes_fish.tx'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtypes_fish.txt'
  DELIMITER "	"
 select distinct fish_zdb_id, fish_name, fish_handle, geno_zdb_id
  from genotype, fish
@@ -1250,8 +1250,8 @@ ORDER BY LOWER(mrkr_abbrev)
 
 -- create full expression file for WT fish: standard condition, expression shown and
 -- only wildtype fish
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression.txt'"
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression.txt'
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt'
  DELIMITER "	"
 select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
@@ -1772,7 +1772,7 @@ update tmp_dumpCleanPheno
 				  where fish_zdb_id = fish_id);
 
 !echo "unload phenoGeneCleanData.txt"
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData.txt'
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData_fish.txt'
  DELIMITER "	"
   select phenos_id,
 		mrkr_abbrev,
