@@ -28,6 +28,7 @@ import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
@@ -92,12 +93,19 @@ public class FishServiceTest extends AbstractDatabaseTest {
         String eye = "ZDB-TERM-100331-100";
         // gli2aty17a/ty17a
 
+
+        FishExperiment fishExperiment = RepositoryFactory.getMutantRepository().getFishExperiment("ZDB-GENOX-041102-68");
+
+        Fish fish = fishExperiment.getFish();
+
+/*
         String fishName = "gli2a<sup>ty17a/ty17a</sup>";
 //        String fishName = "fgf8a<sup>ti282a/ti282a</sup>+MO1-otx1a+MO1-otx2";
         Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);
         criteria.add(Restrictions.eq("name", fishName));
         criteria.add(Restrictions.eq("genotype.zdbID", "ZDB-GENO-980202-1115"));
         Fish fish = (Fish) criteria.uniqueResult();
+*/
         assertNotNull("Fish should not be null", fish);
         String fishID = fish.getZdbID();
 

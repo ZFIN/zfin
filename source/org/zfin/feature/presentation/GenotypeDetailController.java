@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
-import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.FishGenotypeExpressionStatistics;
@@ -26,7 +25,6 @@ public class GenotypeDetailController {
 
     private static final Logger LOG = Logger.getLogger(GenotypeDetailController.class);
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-    private ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
 
     @RequestMapping(value = {"/genotype-detail-popup"})
     public String getGenotypePopup(@RequestParam String zdbID, Model model) {
@@ -145,8 +143,8 @@ public class GenotypeDetailController {
 
     private List<GenotypeFishResult> createResult(List<FishExperiment> fishExperimentList) {
         Map<Fish, GenotypeFishResult> statisticsMap = new TreeMap<>();
-        for (FishExperiment genoExp : fishExperimentList) {
-            Fish fish = genoExp.getFish();
+        for (FishExperiment fishExperiment : fishExperimentList) {
+            Fish fish = fishExperiment.getFish();
             GenotypeFishResult stat = statisticsMap.get(fish);
             if (stat == null) {
                 stat = new GenotypeFishResult(fish);
@@ -160,13 +158,10 @@ public class GenotypeDetailController {
                     expression = new FishGenotypeExpressionStatistics(fish);
                     stat.setFishGenotypeExpressionStatistics(expression);
                 }
-                pheno.addFishExperiment(genoExp);
-                expression.addFishExperiment(genoExp);
                 statisticsMap.put(fish, stat);
-            } else {
-                stat.getFishGenotypePhenotypeStatistics().addFishExperiment(genoExp);
-                stat.getFishGenotypeExpressionStatistics().addFishExperiment(genoExp);
             }
+            stat.getFishGenotypePhenotypeStatistics().addFishExperiment(fishExperiment);
+            stat.getFishGenotypeExpressionStatistics().addFishExperiment(fishExperiment);
         }
 
         return new ArrayList<>(statisticsMap.values());
@@ -270,4 +265,5 @@ public class GenotypeDetailController {
 
         return "fish/fish-phenotype-figure-summary.page";
     }
+
 }
