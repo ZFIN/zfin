@@ -629,12 +629,14 @@ public class DTOConversionService {
             featureDTO.setFeatureSequences(new ArrayList<>(unescapeStrings(FeatureService.getFeatureSequences(feature))));
         }
 
-       /* for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
-            if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
-                featureDTO.setDisplayNameForGenotypeBase(relationship.getMarker().getAbbreviation());
-                featureDTO.setDisplayNameForGenotypeSuperior(feature.getAbbreviation());
+        if (feature.getFeatureMarkerRelations() != null) {
+            for (FeatureMarkerRelationship relationship : feature.getFeatureMarkerRelations()) {
+                if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+                    featureDTO.setDisplayNameForGenotypeBase(relationship.getMarker().getAbbreviation());
+                    featureDTO.setDisplayNameForGenotypeSuperior(feature.getAbbreviation());
+                }
             }
-        }*/
+        }
         return featureDTO;
     }
 

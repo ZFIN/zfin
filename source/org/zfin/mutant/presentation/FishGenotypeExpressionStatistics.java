@@ -40,7 +40,8 @@ public class FishGenotypeExpressionStatistics extends EntityStatistics {
             figures = new HashSet<>(5);
             for (FishExperiment fishExperiment : fishExperimentList)
                 for (ExpressionExperiment expressionExperiment : fishExperiment.getExpressionExperiments()) {
-                    figures.addAll(expressionExperiment.getAllFigures());
+                    if (expressionExperiment.getGene() != null)
+                        figures.addAll(expressionExperiment.getAllFigures());
                 }
         }
         return figures.size();
@@ -85,17 +86,12 @@ public class FishGenotypeExpressionStatistics extends EntityStatistics {
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         Set<Publication> pubs = new HashSet<>(5);
         for (FishExperiment fishExperiment : fishExperimentList)
-            for (ExpressionExperiment phenotype : fishExperiment.getExpressionExperiments()) {
-                for (Figure figure : phenotype.getAllFigures()) {
-                    pubs.add(figure.getPublication());
-                }
+            for (ExpressionExperiment expressionExperiment : fishExperiment.getExpressionExperiments()) {
+                if (expressionExperiment.getGene() != null)
+                    pubs.add(expressionExperiment.getPublication());
             }
         List<Publication> pubList = new ArrayList<>(pubs);
         return new PaginationResult<>(pubList);
-    }
-
-    public String getTargetGeneOrder() {
-        return null;
     }
 
 }

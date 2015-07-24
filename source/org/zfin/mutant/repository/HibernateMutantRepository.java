@@ -1640,6 +1640,13 @@ public class HibernateMutantRepository implements MutantRepository {
         return genotypeList;
     }
 
+    public FishExperiment getFishExperiment(String zdbID) {
+
+        Session session = HibernateUtil.currentSession();
+        return (FishExperiment) session.get(FishExperiment.class,zdbID);
+
+    }
+
     @Override
     public List<FishExperiment> getFishExperiment(Genotype genotype) {
         Session session = HibernateUtil.currentSession();
