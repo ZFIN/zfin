@@ -950,7 +950,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 select distinct fish_zdb_id, fish_name, fish_handle, geno_zdb_id
  from genotype, fish
  where geno_is_wildtype = 't'
-  and fish_genotype_Zdb_id = fish_zdb_id
+  and fish_genotype_Zdb_id = geno_zdb_id
 ;
 
 -- generate a file with zdb history data
