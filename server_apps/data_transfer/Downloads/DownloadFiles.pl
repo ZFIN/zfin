@@ -356,7 +356,6 @@ close SA;
 
 system("rm <!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/saAlleles2.txt");
 
-system("./FBcase8787.pl") and die "there was an error in FBcase8787.pl";
 
 # This part checks for any failed download files (those with 0 bytes), and ends the script if it finds some.
 
