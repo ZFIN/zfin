@@ -122,7 +122,7 @@
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>antibody_expressions</FileName>
+            <FileName>antibody_expressions_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -911,7 +911,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>wildtype-expression</FileName>
+            <FileName>wildtype-expression_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -941,7 +941,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>xpat_environment</FileName>
+            <FileName>xpat_environment_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -961,7 +961,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>xpatfig</FileName>
+            <FileName>xpatfig_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1021,7 +1021,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>abxpat</FileName>
+            <FileName>abxpat_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1046,7 +1046,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>xpat</FileName>
+            <FileName>xpat_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1072,7 +1072,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>genofig</FileName>
+            <FileName>genofig_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1090,7 +1090,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>phenotype</FileName>
+            <FileName>phenotype_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1129,7 +1129,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description/>
             <WikiLink/>
-            <FileName>phenoGeneCleanData</FileName>
+            <FileName>phenoGeneCleanData_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1174,7 +1174,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>pheno_environment</FileName>
+            <FileName>pheno_environment_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1193,7 +1193,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>pheno</FileName>
+            <FileName>pheno_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1232,7 +1232,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>pheno</FileName>
+            <FileName>pheno_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
@@ -1576,7 +1576,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Category>
             <Description></Description>
             <WikiLink></WikiLink>
-            <FileName>wildtypes</FileName>
+            <FileName>wildtypes_fish</FileName>
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>

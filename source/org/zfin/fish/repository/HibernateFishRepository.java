@@ -1,34 +1,24 @@
 package org.zfin.fish.repository;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.database.BtsContainsService;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.fish.*;
-import org.zfin.fish.presentation.FishResult;
-import org.zfin.fish.presentation.MartFish;
+import org.zfin.fish.FishAnnotation;
+import org.zfin.fish.FishSearchCriteria;
+import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.search.SortType;
-import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.ontology.Term;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.search.FieldName;
-import org.zfin.search.service.SolrService;
 
 import java.util.*;
 
