@@ -316,17 +316,16 @@ create dba function "informix".regen_names() returning integer
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
 
-    let errorHint = "Fish";
+ let errorHint = "Fish";
     -- gather names
     insert into regen_zdb_id_temp
         ( rgnz_zdb_id )
       select fish_zdb_id from fish;
 
     -- takes regen_zdb_id_temp as input, adds recs to regen_all_names_temp
-    execute procedure regen_names_fish_list();
+    execute procedure regen_names_genotype_list();
 
     delete from regen_zdb_id_temp;
-
 
     -- -------------------------------------------------------------------
     -- -------------------------------------------------------------------
