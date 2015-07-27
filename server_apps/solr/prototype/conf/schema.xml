@@ -537,7 +537,7 @@
    <field name="sequence_alteration_alias" type="abbrev" indexed="true" stored="true" multiValued="true"  termVectors="true" termPositions="true" termOffsets="true" />
 -->
    <field name="background" type="keyword" indexed="true" stored="true" multiValued="true"   />
-   <field name="complexity" type="integer" indexed="true" stored="true" multiValued="false" default="100001"/>
+   <field name="complexity" type="long" indexed="true" stored="true" multiValued="false" default="10000000000"/>
 
    <field name="affected_gene" type="keyword" indexed="true" stored="true" multiValued="true"   />
    <field name="affected_gene_full_name" type="text" indexed="true" stored="true" multiValued="true"   />

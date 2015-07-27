@@ -321,34 +321,41 @@ public class OntologyTermDetailController {
         return "ontology/disease-publication-list.page";
     }
 
-    @RequestMapping("/fish-model-publication-list/{termID}/{fishID}")
+    @RequestMapping("/fish-model-publication-list/{termID}/{id}")
     public String fishModelPublicationList(@PathVariable String termID,
-                                           @PathVariable String fishID,
+                                           @PathVariable String id,
                                            @RequestParam(required = false) String orderBy,
                                            Model model) throws Exception {
 
-        if (fishID == null) {
+        if (id == null) {
             return getErrorPage(model);
         }
-        Fish fish = getMutantRepository().getFish(fishID);
-        FishExperiment fishExperiment = null;
-        if (fish == null) {
-            fishExperiment = getExpressionRepository().getFishExperimentByID(fishID);
-            if (fishExperiment == null) {
-                return getErrorPage(fishID, model);
-            }
-            fish = fishExperiment.getFish();
-        }
+
         GenericTerm disease = getOntologyRepository().getTermByOboID(termID);
         if (disease == null) {
             return getErrorPage(termID, model);
         }
+
+        Fish fish;
         List<Publication> citationList;
-        if (fishExperiment != null) {
-            citationList = PhenotypeService.getPublicationList(disease, fishExperiment, orderBy);
-        } else {
-            citationList = PhenotypeService.getPublicationList(disease, fish, orderBy);
+        // The id parameter is intended to either be a Fish ID or FishExperiment ID
+        ActiveData.Type type = ActiveData.getType(id);
+        switch (type) {
+            case FISH:
+                fish = getMutantRepository().getFish(id);
+                citationList = PhenotypeService.getPublicationList(disease, fish, orderBy);
+                break;
+
+            case GENOX:
+                FishExperiment fishExperiment = getExpressionRepository().getFishExperimentByID(id);
+                fish = fishExperiment.getFish();
+                citationList = PhenotypeService.getPublicationList(disease, fishExperiment, orderBy);
+                break;
+
+            default:
+                return getErrorPage(id, model);
         }
+
         model.addAttribute("fish", fish);
         model.addAttribute("term", disease);
         model.addAttribute("orderBy", orderBy);

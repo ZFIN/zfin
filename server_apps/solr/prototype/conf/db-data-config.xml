@@ -961,9 +961,16 @@ fish_name as full_name,
 fish_name as proper_name,
 fish_name_order as name_sort,
 'Fish' as category,
-'100' as complexity
+fish_order as complexity
 from fish
-where fish_zdb_id is not null;
+     join genotype on fish_genotype_zdb_id = geno_zdb_id
+where not geno_is_wildtype
+      OR (
+          geno_is_wildtype
+          and exists (select 'x' from fish_str where fishstr_fish_zdb_id = fish_zdb_id)
+         );
+
+
                  ">
 
 

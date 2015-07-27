@@ -32,6 +32,7 @@ import org.zfin.mutant.*;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
@@ -196,12 +197,12 @@ public class FishService {
     }
 
     private static void addFigures(FishResult fishResult, FishSearchCriteria criteria) {
-        if (criteria.getPhenotypeAnatomyCriteria() == null) {
+/*        if (criteria.getPhenotypeAnatomyCriteria() == null) {
             addAllFigures(fishResult);
-        } else {
+        } else {*/
             List<String> values = criteria.getPhenotypeAnatomyCriteria().getValues();
             addFiguresByTermValues(fishResult, values);
-        }
+  /*      }*/
     }
 
     private static void addAllFigures(FishResult fishResult) {
@@ -470,31 +471,39 @@ public class FishService {
      * @return set of figures
      */
     public static Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs) {
+/*
         if (CollectionUtils.isEmpty(termIDs)) {
             Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
             if (fish == null)
                 return null;
             return getCleanPhenotypeFigureEntitiesForFish(fish);
         }
+*/
 
         SolrServer server = SolrService.getSolrServer("prototype");
 
         SolrQuery query = new SolrQuery();
+
         query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
+        query.addFilterQuery(FieldName.CATEGORY.getName() + ":\"" + Category.PHENOTYPE.getName() + "\"");
         query.addFilterQuery(FieldName.XREF.getName() + ":\"" + fishID + "\"");
 
-        List<String> terms = new ArrayList<String>();
-        for (String termID : termIDs) {
-            Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
-            terms.add("\"" + term.getTermName() + "\"");
-        }
+        if (CollectionUtils.isNotEmpty(termIDs)) {
 
-        String termQuery = Joiner.on(" OR ").join(terms);
-        query.addFilterQuery(FieldName.ANATOMY.getName()            + ":(" + termQuery + ")"
-                        + " OR " + FieldName.BIOLOGICAL_PROCESS.getName() + ":(" + termQuery + ")"
-                        + " OR " + FieldName.MOLECULAR_FUNCTION.getName() + ":(" + termQuery + ")"
-                        + " OR " + FieldName.CELLULAR_COMPONENT.getName() + ":(" + termQuery + ")"
-        );
+            List<String> terms = new ArrayList<String>();
+            for (String termID : termIDs) {
+                Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+                terms.add("\"" + term.getTermName() + "\"");
+            }
+
+            String termQuery = Joiner.on(" OR ").join(terms);
+            query.addFilterQuery(FieldName.ANATOMY.getName() + ":(" + termQuery + ")"
+                            + " OR " + FieldName.BIOLOGICAL_PROCESS.getName() + ":(" + termQuery + ")"
+                            + " OR " + FieldName.MOLECULAR_FUNCTION.getName() + ":(" + termQuery + ")"
+                            + " OR " + FieldName.CELLULAR_COMPONENT.getName() + ":(" + termQuery + ")"
+            );
+
+        }
 
         QueryResponse response = new QueryResponse();
         try {

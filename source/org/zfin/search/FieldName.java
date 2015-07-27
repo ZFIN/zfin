@@ -24,6 +24,7 @@ public enum FieldName {
     BACKGROUND("background"),
     BIOLOGICAL_PROCESS("biological_process"),
     BIOLOGICAL_PROCESS_TF("biological_process_tf"),
+    CATEGORY("category"),
     CELLULAR_COMPONENT("cellular_component"),
     CELLULAR_COMPONENT_TF("cellular_component_tf"),
     CHROMOSOME("chromosome", "Location"),
