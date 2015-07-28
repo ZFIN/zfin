@@ -1,25 +1,19 @@
 package org.zfin.database;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.database.presentation.*;
-import org.zfin.util.DatabaseJdbcStatement;
+import org.zfin.database.presentation.ForeignKeyResult;
+import org.zfin.database.presentation.Table;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class ForeignKeyResultTest extends AbstractDatabaseTest{
 
-    private List<ForeignKeyResult> foreignKeyResults;
-
     @Test
     public void ForeignKeyResultHierarchySimple() {
-        String combinedForeignKey = "genox_geno_zdb_id,xpatex_genox_zdb_id";
+        String combinedForeignKey = "genofeat_geno_zdb_id,genofeat_feature_zdb_id";
         List<ForeignKeyResult> result = DatabaseService.createFKResultList(combinedForeignKey, "ZDB-GENO-070215-11");
         assertNotNull(result);
     }
