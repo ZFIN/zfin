@@ -39,8 +39,6 @@ public interface ExpressionRepository {
 
     int getExpressionFigureCountForGene(Marker marker);
 
-    int getExpressionFigureCountForGenotype(Genotype genotype);
-
     int getExpressionFigureCountForFish(Fish fish);
 
     FigureLink getExpressionSingleFigure(Marker marker);

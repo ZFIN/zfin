@@ -12,10 +12,6 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.GenotypeService;
-import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
