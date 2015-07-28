@@ -197,12 +197,11 @@ public class FishService {
     }
 
     private static void addFigures(FishResult fishResult, FishSearchCriteria criteria) {
-/*        if (criteria.getPhenotypeAnatomyCriteria() == null) {
-            addAllFigures(fishResult);
-        } else {*/
-            List<String> values = criteria.getPhenotypeAnatomyCriteria().getValues();
+            List<String> values = null;
+            if (criteria.getPhenotypeAnatomyCriteria() != null) {
+               values = criteria.getPhenotypeAnatomyCriteria().getValues();
+            }
             addFiguresByTermValues(fishResult, values);
-  /*      }*/
     }
 
     private static void addAllFigures(FishResult fishResult) {
