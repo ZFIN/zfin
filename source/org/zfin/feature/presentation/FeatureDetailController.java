@@ -20,12 +20,8 @@ import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
-import org.zfin.mutant.GenotypeService;
-import org.zfin.mutant.presentation.GenoExpStatistics;
-import org.zfin.mutant.presentation.GenotypeInformation;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -159,11 +155,6 @@ public class FeatureDetailController {
         }
         Collections.sort(genotypeDisplays);
         form.setGenotypeDisplays(genotypeDisplays);
-     //   List<GenotypeInformation> genotypeInfo = GenotypeService.getGenotypeInfo(genotypes);
-     //   Collections.sort(genotypeInfo);
-     //   form.setFeatgenoStats(genotypeInfo);
-     //   List<GenoExpStatistics> genoexpStats = GenotypeService.getGenotypeExpStats(genotypes, fr);
-     //   form.setGenoexpStats(genoexpStats);
     }
 
     private void retrievePubData(Feature fr, FeatureBean form) {

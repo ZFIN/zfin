@@ -45,12 +45,10 @@ public class DatabaseServiceDbTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
-    // Needs to be hooked up with FISH records...
     public void getExpressionExperimentInfoFromGenoID() {
-        String parentPkValue = "ZDB-GENO-070215-11";
+        String parentPkValue = "ZDB-FISH-070215-11";
         DatabaseQueryFormBean formBean = new DatabaseQueryFormBean();
-        formBean.setForeignKeyName("genox_geno_zdb_id|xpatex_genox_zdb_id");
+        formBean.setForeignKeyName("genox_fish_zdb_id|xpatex_genox_zdb_id");
         formBean.setParentPkValue(parentPkValue);
         List<ForeignKeyResult> resultList = DatabaseService.createFKResultList(formBean.getForeignKeyName(), formBean.getParentPkValue());
         assertNotNull(resultList);
