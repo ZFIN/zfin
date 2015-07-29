@@ -58,7 +58,7 @@ create procedure regen_genofig_create_temp_tables()
 
     create temp table regen_genofig_input_zdb_id_temp  
       (
-	rgfg_id		varchar(50),
+	rgfg_id		int8,
         primary key (rgfg_id)
       ) with NO LOG
 ;
