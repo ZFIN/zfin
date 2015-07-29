@@ -151,6 +151,4 @@ delete from genotype_figure_fast_search
 
 end if;
 
-      grant select on genotype_figure_fast_search to "public";
-
 end procedure;
