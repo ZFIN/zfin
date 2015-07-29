@@ -48,8 +48,7 @@ create procedure regen_genofig_create_temp_tables()
 			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
         gffs_phenos_id int8,
 	gffs_fish_zdb_id varchar(50) not null,
-	gffs_genox_zdb_id varchar(50),
-    gffs_serial_id serial8 not null 
+	gffs_genox_zdb_id varchar(50)
 
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
