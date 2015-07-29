@@ -52,6 +52,9 @@ create procedure regen_genox_create_temp_tables()
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
     extent size 512 next size 512 ;
     
+  if (exists (select * from systables where tabname = "regen_genox_input_zdb_id_temp ")) then
+      drop table regen_genox_input_zdb_id_temp ;
+    end if
 
 
     create temp table regen_genox_input_zdb_id_temp  
@@ -60,6 +63,11 @@ create procedure regen_genox_create_temp_tables()
 	rggz_zdb_id		varchar(50),
         primary key (rggz_zdb_id)
       ) with NO LOG;
+
+ if (exists (select * from systables where tabname = "regen_genox_temp ")) then
+      drop table regen_genox_temp ;
+    end if
+
 
 
     -- -------------------------------------------------------------------

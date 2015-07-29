@@ -141,4 +141,8 @@ delete from genotype_figure_fast_search
 
 end if;
 
+delete from regen_genofig_temp;
+delete from regen_genofig_input_zdb_id_temp;
+
+
 end procedure;
