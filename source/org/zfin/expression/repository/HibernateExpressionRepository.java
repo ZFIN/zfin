@@ -261,23 +261,6 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return Integer.parseInt(result.toString());
     }
 
-    public int getExpressionFigureCountForGenotype(Genotype genotype) {
-        String sql = "   select count(distinct xpatfig_fig_zdb_id) " +
-                "           from expression_pattern_figure " +
-                "                join expression_result " +
-                "			on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
-                "                join expression_experiment " +
-                "			on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
-                "                join fish_experiment " +
-                "           on xpatex_genox_zdb_id = genox_zdb_id " +
-                "          where genox_geno_zdb_id = :genotypeZdbID " +
-                "         and xpatex_atb_zdb_id is null ";
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("genotypeZdbID", genotype.getZdbID());
-        Object result = query.uniqueResult();
-        return Integer.parseInt(result.toString());
-    }
-
     public int getExpressionFigureCountForFish(Fish fish) {
         String sql = "   select count(distinct xpatfig_fig_zdb_id) " +
                 "           from expression_pattern_figure " +
