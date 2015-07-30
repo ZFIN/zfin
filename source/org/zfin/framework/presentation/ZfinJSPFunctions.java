@@ -1,7 +1,6 @@
 package org.zfin.framework.presentation;
 
 import com.opensymphony.clickstream.ClickstreamRequest;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContext;
@@ -9,8 +8,6 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.zfin.anatomy.presentation.AnatomyPresentation;
 import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.audit.AuditLogItem;
-import org.zfin.gbrowse.GBrowseService;
-import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -19,9 +16,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
-import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MappingService;
-import org.zfin.marker.Marker;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.Ontology;
@@ -38,8 +33,6 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
-
 /**
  * Class that is called from JSP through a function call.
  */
@@ -54,10 +47,12 @@ public class ZfinJSPFunctions {
      * @return String
      */
     public static String escapeJavaScript(String string) {
-        if (string.contains("\r\n"))
+        if (string.contains("\r\n")) {
             string = string.replaceAll("\r\n", "<br/>");
-        if (string.contains("\n"))
+        }
+        if (string.contains("\n")) {
             string = string.replaceAll("\n", "<br/>");
+        }
 
         return StringEscapeUtils.escapeEcmaScript(string);
     }
@@ -78,12 +73,18 @@ public class ZfinJSPFunctions {
             string = StringEscapeUtils.unescapeXml(string);
         }
 
-        if (string.contains("\r\n"))
+        if (string.contains("\r\n")) {
             string = string.replaceAll("\r\n", "<br/>");
-        if (string.contains("\n"))
+        }
+        if (string.contains("\n")) {
             string = string.replaceAll("\n", "<br/>");
+        }
 
         return string;
+    }
+
+    public static String makeDomIdentifier(String identifier) {
+        return identifier.replaceAll("[^A-Za-z0-9-_:\\.]", "");
     }
 
     /**
@@ -119,16 +120,20 @@ public class ZfinJSPFunctions {
      * @return string
      */
     public static String removeQueryParameter(String queryString, String key, String value) {
-        if (queryString == null)
+        if (queryString == null) {
             return "";
-        if (key == null)
+        }
+        if (key == null) {
             return "";
-        if (value == null)
+        }
+        if (value == null) {
             value = "";
+        }
         String pair = key + "=" + value;
         String pairPlusAmpersand = "&" + pair;
-        if (queryString.indexOf(pairPlusAmpersand) > 0)
+        if (queryString.indexOf(pairPlusAmpersand) > 0) {
             return queryString.replace(pairPlusAmpersand, "");
+        }
         return queryString.replace(pair, "");
     }
 
@@ -142,10 +147,12 @@ public class ZfinJSPFunctions {
      * @return string
      */
     public static String removeAllVisibleQueryParameters(String queryString, String prefix) {
-        if (queryString == null)
+        if (queryString == null) {
             return "";
-        if (prefix == null)
+        }
+        if (prefix == null) {
             prefix = "";
+        }
 
         String valueTrue = "=true";
         String valueFalse = "=false";
@@ -174,17 +181,20 @@ public class ZfinJSPFunctions {
      */
 
     public static String removeAllVisibilityQueryParameters(String queryString, String prefix, String[] enumerations) {
-        if (queryString == null)
+        if (queryString == null) {
             return "";
-        if (prefix == null)
+        }
+        if (prefix == null) {
             prefix = "sectionVisibility.";
+        }
 
         for (SectionVisibility.Action action : SectionVisibility.Action.getActionItems()) {
             String prefixedValue = prefix + action.toString();
             queryString = removeBooleanParameters(queryString, prefixedValue);
         }
-        if (enumerations == null)
+        if (enumerations == null) {
             return queryString;
+        }
 
         for (String value : enumerations) {
             queryString = removeShowAndHideSections(queryString, prefix, value);
@@ -228,8 +238,9 @@ public class ZfinJSPFunctions {
     }
 
     public static boolean isOntologyLoaded(OntologyManager manager, Ontology ontology) {
-        if (manager == null || ontology == null)
+        if (manager == null || ontology == null) {
             return false;
+        }
         return manager.isOntologyLoaded(ontology);
     }
 
@@ -238,17 +249,20 @@ public class ZfinJSPFunctions {
     }
 
     public static String getTimeDuration(Date start) {
-        if (start == null)
+        if (start == null) {
             return null;
+        }
         return DateUtil.getTimeDuration(start, new Date());
     }
 
     public static String getTimeBetweenRequests(List<ClickstreamRequest> list, int loopIndex) {
-        if (loopIndex < 0 || list == null)
+        if (loopIndex < 0 || list == null) {
             return "";
+        }
 
-        if (list.size() <= loopIndex + 1)
+        if (list.size() <= loopIndex + 1) {
             return "";
+        }
 
         Date start = list.get(loopIndex).getTimestamp();
         Date end = list.get(loopIndex + 1).getTimestamp();
@@ -256,8 +270,9 @@ public class ZfinJSPFunctions {
     }
 
     public static String getPerson(HttpSession session) {
-        if (session == null)
+        if (session == null) {
             return null;
+        }
         String name = "Guest";
         SecurityContext securityContext = (SecurityContext) session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
         if (securityContext != null && securityContext.getAuthentication() != null) {
@@ -311,12 +326,14 @@ public class ZfinJSPFunctions {
     public static String lastZfinCall(int threadID) {
         ThreadMXBean mxbean = ManagementFactory.getThreadMXBean();
         ThreadInfo threadInfo = mxbean.getThreadInfo(threadID, Integer.MAX_VALUE);
-        if (threadInfo == null)
+        if (threadInfo == null) {
             return null;
+        }
         StackTraceElement[] stackTraceElements = threadInfo.getStackTrace();
         for (StackTraceElement element : stackTraceElements) {
-            if (element.getClassName().startsWith("org.zfin"))
+            if (element.getClassName().startsWith("org.zfin")) {
                 return element.toString();
+            }
         }
         return null;
     }
@@ -327,8 +344,9 @@ public class ZfinJSPFunctions {
      * @return column name or column names (comma delimited)
      */
     public static String getForeignKeyColumn(org.zfin.database.presentation.ForeignKey foreignKey) {
-        if (foreignKey.isManyToManyRelationship())
+        if (foreignKey.isManyToManyRelationship()) {
             return foreignKey.getManyToManyTable().getPkName();
+        }
         return foreignKey.getForeignKey();
     }
 
@@ -336,8 +354,9 @@ public class ZfinJSPFunctions {
      * @return substructure name of a phenotype statement that matches a given parent Term.
      */
     public static String getSubstructure(PhenotypeStatement statement, Term parentTerm) {
-        if (statement == null || parentTerm == null)
+        if (statement == null || parentTerm == null) {
             return null;
+        }
 
         return PhenotypeService.getSubstructureName(statement, parentTerm);
     }
@@ -365,8 +384,9 @@ public class ZfinJSPFunctions {
     private static Map<String, String> stageListDisplay;
 
     public static Map<String, String> getDisplayStages() {
-        if (stageListDisplay != null)
+        if (stageListDisplay != null) {
             return stageListDisplay;
+        }
 
         stageListDisplay = AnatomyService.getDisplayStages();
         return stageListDisplay;
