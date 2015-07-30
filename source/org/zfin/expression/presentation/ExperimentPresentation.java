@@ -14,12 +14,10 @@ public class ExperimentPresentation extends EntityPresentation {
     private static final String experimentUri = "expression/experiment?id=";
     private static final String experimentPopupUri = "expression/experiment-popup?id=";
 
-    public static String getLink(Experiment experiment, boolean suppressPopupLink, boolean suppressMoDetails) {
+    public static String getLink(Experiment experiment, boolean suppressPopupLink) {
         if (experiment == null)
             return null;
 
-        if (experiment.isChemical())
-            return "chemical";
         if (experiment.isOnlyStandard())
             return "standard";
         if (experiment.isOnlyControl())
@@ -29,14 +27,7 @@ public class ExperimentPresentation extends EntityPresentation {
         TreeSet<ExperimentCondition> conditions = new TreeSet<>();
         conditions.addAll(experiment.getExperimentConditions());
 
-        StringBuilder sb = new StringBuilder(50);
-        for (ExperimentCondition experimentCondition : conditions) {
-            sb.append(ExperimentConditionPresentation.getLink(experimentCondition, suppressPopupLink));
-            sb.append(", ");
-        }
-        sb = sb.deleteCharAt(sb.length() - 1);
-        sb = sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
+        return ExperimentConditionPresentation.getLink(conditions, experiment, suppressPopupLink);
     }
 
 
