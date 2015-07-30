@@ -141,6 +141,8 @@ public class ImportGenotypePresenter implements Presenter {
             }
             view.getLoadingImage().setVisible(false);
             bindAddGenotypeLinkHandler();
+            if(list == null || list.size() == 0)
+                view.getErrorLabel().setError("No more genotypes found");
         }
     }
 
