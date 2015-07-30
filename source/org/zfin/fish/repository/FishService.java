@@ -270,8 +270,10 @@ public class FishService {
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
         PhenotypeSummaryCriteria criteria = new PhenotypeSummaryCriteria();
         criteria.setFish(fish);
-        //todo: implement me!
-//        criteria.setFishExperiments(fish.getFishExperiments());
+        Set<FishExperiment> fishExperiments = getMutantRepository().getFish(fishID).getFishExperiments();
+        List<FishExperiment> fishExperimentList = new ArrayList<>(fishExperiments.size());
+        fishExperimentList.addAll(fishExperiments);
+        criteria.setFishExperiments(fishExperimentList);
         return criteria;
     }
 

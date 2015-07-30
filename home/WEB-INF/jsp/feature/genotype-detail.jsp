@@ -280,7 +280,7 @@
                         <td>
                             <zfin2:showFigureData entity="${genotype}"
                                                   fishGenotypeStatistics="${fishGenotypeStatistics.fishGenotypePhenotypeStatistics}"
-                                                  link="/action/genotype/fish-phenotype-figure-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
+                                                  link="/action/fish/phenotype-summary?fishID=${fishGenotypeStatistics.fish.zdbID}&imagesOnly=false"/>
                         </td>
                         <td>
                             <zfin2:showFigureData entity="${genotype}"
