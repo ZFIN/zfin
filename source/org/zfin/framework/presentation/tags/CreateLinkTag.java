@@ -146,7 +146,7 @@ public class CreateLinkTag extends BodyTagSupport {
         else if (o instanceof FeaturePresentationBean)
             link = FeaturePresentation.getLink((FeaturePresentationBean) o);
         else if (o instanceof Experiment)
-            link = ExperimentPresentation.getLink((Experiment) o, suppressPopupLink, suppressMoDetails);
+            link = ExperimentPresentation.getLink((Experiment) o, suppressPopupLink);
         else if (o instanceof FishExperiment)
             link = FishExperimentPresentation.getLink((FishExperiment) o, suppressPopupLink, suppressMoDetails);
         else if (o instanceof ExperimentCondition)

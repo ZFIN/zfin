@@ -9,7 +9,7 @@ public class GenotypeDTO extends RelatedEntityDTO {
 
     private String handle;
     private String nickName;
-    private GenotypeDTO backgroundGenotype;
+    private List<GenotypeDTO> backgroundGenotypeList;
     private List<FeatureDTO> featureList;
     private List<ExternalNoteDTO> publicNotes;
     private List<CuratorNoteDTO> privateNotes;
@@ -99,22 +99,32 @@ public class GenotypeDTO extends RelatedEntityDTO {
         this.publicNotes = publicNotes;
     }
 
-    public GenotypeDTO getBackgroundGenotype() {
-        return backgroundGenotype;
+    public List<GenotypeDTO> getBackgroundGenotypeList() {
+        return backgroundGenotypeList;
     }
 
-    public void setBackgroundGenotype(GenotypeDTO backgroundGenotype) {
-        this.backgroundGenotype = backgroundGenotype;
+    public void setBackgroundGenotypeList(List<GenotypeDTO> backgroundGenotypeList) {
+        this.backgroundGenotypeList = backgroundGenotypeList;
     }
 
-    public String getNamePlusBackground(){
+    public String getNamePlusBackground() {
         StringBuilder builder = new StringBuilder(name);
-        if(backgroundGenotype != null)                {
-            builder.append(" (") ;
-            builder.append(backgroundGenotype.getName())   ;
-            builder.append(")")  ;
+        if (backgroundGenotypeList != null) {
+            for (GenotypeDTO genoDTO : backgroundGenotypeList) {
+                builder.append(" (");
+                builder.append(genoDTO.getName());
+                builder.append(")");
+                builder.append(", ");
+            }
+            builder.deleteCharAt(builder.length() - 1);
+            builder.deleteCharAt(builder.length() - 1);
         }
         return builder.toString();
     }
 
+    public void addBackgroundGenotype(GenotypeDTO genotypeDTO) {
+        if(backgroundGenotypeList == null)
+            backgroundGenotypeList = new ArrayList<>(2);
+        backgroundGenotypeList.add(genotypeDTO);
+    }
 }

@@ -84,7 +84,7 @@ public class FishDetailController {
             List<ExpressionResult> fishExpressionResults = expressionRepository.getExpressionResultsByFish(fish);
             List<String> fishExpressionFigureIDs = expressionRepository.getExpressionFigureIDsByFish(fish);
             List<String> fishExpressionPublicationIDs = expressionRepository.getExpressionPublicationIDsByFish(fish);
-            List<ExpressionDisplay> fishExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs);
+            List<ExpressionDisplay> fishExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
             model.addAttribute("geneCentricExpressionDataList", fishExpressionDisplays);
         }
 

@@ -573,7 +573,7 @@ public class ExpressionService {
     /**
      * Create a list of expressionDisplay objects organized by expressed gene.
      */
-    public static List<ExpressionDisplay> createExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs) {
+    public static List<ExpressionDisplay> createExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs, boolean showCondition) {
         if (expressionResults == null ||
                 expressionResults.size() == 0 ||
                 expressionFigureIDs == null ||
@@ -586,21 +586,19 @@ public class ExpressionService {
         // a map of zdbIDs of expressed genes as keys and display objects as values
         Map<String, ExpressionDisplay> map = new HashMap<>();
 
-        String keySTR = initialKey;
-
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
             if (expressedGene != null) {
                 FishExperiment fishox = xpResult.getExpressionExperiment().getFishExperiment();
                 Experiment exp = fishox.getExperiment();
 
-                String key = keySTR + expressedGene.getZdbID();
+                String key = initialKey + expressedGene.getZdbID();
 
-                if (fishox.isStandardOrGenericControl()) {
+                if (showCondition && fishox.isStandardOrGenericControl()) {
                     key += "standard";
                 }
 
-                if (exp.isChemical()) {
+                if (showCondition && exp.isChemical()) {
                     key += "chemical";
                 }
 

@@ -88,7 +88,7 @@ public class SequenceTargetingReagentViewController {
         List<ExpressionResult> strExpressionResults = expressionRepository.getExpressionResultsBySequenceTargetingReagent(sequenceTargetingReagent);
         List<String> expressionFigureIDs = expressionRepository.getExpressionFigureIDsBySequenceTargetingReagent(sequenceTargetingReagent);
         List<String> expressionPublicationIDs = expressionRepository.getExpressionPublicationIDsBySequenceTargetingReagent(sequenceTargetingReagent);
-        List<ExpressionDisplay> strExpressionDisplays = ExpressionService.createExpressionDisplays(sequenceTargetingReagent.getZdbID(), strExpressionResults, expressionFigureIDs, expressionPublicationIDs);
+        List<ExpressionDisplay> strExpressionDisplays = ExpressionService.createExpressionDisplays(sequenceTargetingReagent.getZdbID(), strExpressionResults, expressionFigureIDs, expressionPublicationIDs, false);
         sequenceTargetingReagentBean.setExpressionDisplays(strExpressionDisplays);
 
         // PHENOTYPE

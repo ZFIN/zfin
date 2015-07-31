@@ -10,9 +10,7 @@
 
 <%-- to make a DOM class/id, just strip spaces, and maybe slashes... there aren't any yet, but we can't seem
      to help ourselves when it comes to naming with slashes --%>
-<c:set var="name" value="${fn:replace(facetGroup.label, ' ', '')}" />
-<c:set var="name" value="${fn:replace(name, '/', '')}" />
-
+<c:set var="name" value="${zfn:makeDomIdentifier(facetGroup.label)}" />
 
 <%-- this is a little awkard, but the goal is that it should be hidden for non-root users if facetGroup.rootOnly is true --%>
 <c:set var="hidden" value="false"/>

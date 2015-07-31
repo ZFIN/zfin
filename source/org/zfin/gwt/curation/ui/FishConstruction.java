@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -96,10 +97,10 @@ public class FishConstruction extends Composite {
     }
 
     public void reCreateStrPanel(final Set<RelatedEntityDTO> newStrList) {
-        if (newStrList == null || newStrList.size() == 0)
-            return;
         sTRPanel.clear();
         sTRPanel.setSpacing(5);
+        if (newStrList == null || newStrList.size() == 0)
+            return;
         if (newStrList.size() > 0) {
             int index = 0;
             for (RelatedEntityDTO str : newStrList) {
