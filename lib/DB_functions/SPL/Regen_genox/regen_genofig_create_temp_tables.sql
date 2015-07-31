@@ -40,6 +40,7 @@ create procedure regen_genofig_create_temp_tables()
 
     create table genotype_figure_fast_search_new 
       (  
+      	gffs_serial_id serial8 not null,
         gffs_geno_zdb_id  varchar(50) not null,
         gffs_fig_zdb_id varchar(50) not null,
         gffs_morph_zdb_id varchar(50),
@@ -48,7 +49,8 @@ create procedure regen_genofig_create_temp_tables()
 			  DEFAULT CURRENT YEAR TO SECOND NOT NULL,         
         gffs_phenos_id int8,
 	gffs_fish_zdb_id varchar(50) not null,
-	gffs_genox_zdb_id varchar(50)
+	gffs_genox_zdb_id varchar(50),
+primary key (gffs_serial_id)	
 
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
