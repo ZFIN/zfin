@@ -44,8 +44,8 @@ public class ExperimentConditionPresentation extends EntityPresentation {
             sb.append(getName(condition));
             sb.append(", ");
         }
-        sb = sb.deleteCharAt(sb.length() - 1);
-        sb = sb.deleteCharAt(sb.length() - 1);
+      //  sb = sb.deleteCharAt(sb.length() - 1);
+      //  sb = sb.deleteCharAt(sb.length() - 1);
         sb = new StringBuilder(getTomcatLink(uri, experiment.getZdbID(), sb.toString()));
 
         if (!suppressPopupLink)
