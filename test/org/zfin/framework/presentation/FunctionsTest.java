@@ -9,6 +9,8 @@ import org.zfin.ontology.presentation.OntologyBean;
 import java.util.Calendar;
 import java.util.Date;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -132,6 +134,21 @@ public class FunctionsTest {
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(Calendar.DAY_OF_MONTH, -1);
         assertTrue(ZfinJSPFunctions.isYesterday(yesterday.getTime()));
+    }
+
+    @Test
+    public void makeDomIdentifierShouldRemoveIllegalCharacters() {
+        assertThat("makeDomIdentifier should remove spaces from input",
+                ZfinJSPFunctions.makeDomIdentifier("Affected Gene"), is("AffectedGene"));
+
+        assertThat("makeDomIdentifier should remove slashes from input",
+                ZfinJSPFunctions.makeDomIdentifier("Mutation / Tg"), is("MutationTg"));
+
+        assertThat("makeDomIdentifier should remove parens from input",
+                ZfinJSPFunctions.makeDomIdentifier("Sequence Targeting Reagent (STR)"), is("SequenceTargetingReagentSTR"));
+
+        assertThat("makeDomIdentifier should remove ampersand from input",
+                ZfinJSPFunctions.makeDomIdentifier("Cookies & Cream"), is("CookiesCream"));
     }
 }
 

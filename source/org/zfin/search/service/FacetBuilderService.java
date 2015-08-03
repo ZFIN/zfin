@@ -186,7 +186,7 @@ public class FacetBuilderService {
         }
         e.setFacetQueries(facetQueryList);
 
-        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent", "sequence_targeting_reagent", false, response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", "sequence_targeting_reagent", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Experimental Conditions", "experimental_conditions", false, response, filterQuerySelectionMap, baseUrl));
 
 
@@ -293,7 +293,7 @@ public class FacetBuilderService {
         phenotype.addFacet(buildFacet(CELLULAR_COMPONENT_TF.getName(), false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(phenotype);
         //facetGroups.add(buildSingleFacetGroup("Genes With Altered Expression","genes_with_altered_expression",false, response, filterQuerySelectionMap, baseUrl));
-        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent", SEQUENCE_TARGETING_REAGENT.getName(), false, response, filterQuerySelectionMap, baseUrl));
+        facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Is Monogenic", "is_monogenic", false, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", false, response, filterQuerySelectionMap, baseUrl));
         //todo: stage, conditions, author, data_source

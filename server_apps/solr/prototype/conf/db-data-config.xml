@@ -953,24 +953,51 @@ where recattrib_data_zdb_id = mrkr_zdb_id
 
        <entity name="fish"
                datasource="db" query="
-select
-fish_zdb_id as id,
-'/' || fish_zdb_id as url,
-fish_name as name,
-fish_name as full_name,
-fish_name as proper_name,
-fish_name_order as name_sort,
-'Fish' as category,
-fish_order as complexity
-from fish
-     join genotype on fish_genotype_zdb_id = geno_zdb_id
-where not geno_is_wildtype
-      OR (
-          geno_is_wildtype
-          and exists (select 'x' from fish_str where fishstr_fish_zdb_id = fish_zdb_id)
-         );
-
-
+SELECT fish_zdb_id     AS id, 
+       '/' 
+       || fish_zdb_id  AS url, 
+       fish_name       AS name, 
+       fish_name       AS full_name, 
+       fish_name       AS proper_name, 
+       fish_name_order AS name_sort, 
+       'Fish'          AS category, 
+       fish_order      AS complexity 
+FROM   fish 
+       JOIN genotype 
+         ON fish_genotype_zdb_id = geno_zdb_id 
+WHERE  ( NOT geno_is_wildtype 
+          OR ( geno_is_wildtype 
+               AND EXISTS (SELECT 'x' 
+                           FROM   fish_str 
+                           WHERE  fishstr_fish_zdb_id = fish_zdb_id) ) ) 
+       AND NOT EXISTS (SELECT 'x' 
+                       FROM   genotype_background 
+                       WHERE  genoback_geno_zdb_id = geno_zdb_id) 
+UNION 
+SELECT fish_zdb_id     AS id, 
+       '/' 
+       || fish_zdb_id  AS url, 
+       fish_name 
+       || ' (' 
+       || bg.geno_handle 
+       || ')'          AS name, 
+       fish_name       AS full_name, 
+       fish_name       AS proper_name, 
+       fish_name_order AS name_sort, 
+       'Fish'          AS category, 
+       fish_order      AS complexity 
+FROM   fish, 
+       genotype AS g, 
+       genotype AS bg, 
+       genotype_background 
+WHERE  ( NOT g.geno_is_wildtype 
+          OR ( g.geno_is_wildtype 
+               AND EXISTS (SELECT 'x' 
+                           FROM   fish_str 
+                           WHERE  fishstr_fish_zdb_id = fish_zdb_id) ) ) 
+       AND fish_genotype_zdb_id = g.geno_zdb_id 
+       AND genoback_geno_zdb_id = g.geno_zdb_id 
+       AND genoback_background_zdb_id = bg.geno_zdb_id;
                  ">
 
 
@@ -1247,13 +1274,12 @@ select gfrv_gene_abbrev as affected_gene,
            <entity name="fish_disease"
                    datasource="db" query="select distinct term_name as disease,
                                                  term_ont_id as xref,
-                                                 fish_zdb_id
+                                                 genox_fish_zdb_id
                                           from term
                                           inner join disease_annotation on term.term_zdb_id = disease_annotation.da_term_zdb_id
-                                          inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id
-                                          inner join fish on fish.fish_zdb_id = fish_experiment.genox_fish_zdb_id;"
+                                          inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id;"
                    processor="CachedSqlEntityProcessor"
-                   where="fish_zdb_id=fish.id"/>
+                   where="genox_fish_zdb_id=fish.id"/>
 
            <!--
                       <entity name="fish_image"
@@ -3644,11 +3670,10 @@ where feature_zdb_id = ids_data_zdb_id
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="disease_fish_xref"
-                   datasource="db" query="select distinct term_zdb_id, fish_zdb_id as xref
+                   datasource="db" query="select distinct term_zdb_id, genox_fish_zdb_id as xref
                                           from term
                                           inner join disease_annotation on term.term_zdb_id = disease_annotation.da_term_zdb_id
-                                          inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id
-                                          inner join fish on fish.fish_zdb_id = fish_experiment.genox_fish_zdb_id;"
+                                          inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id;"
                    where="term_zdb_id=term.internal_id"
                    processor="CachedSqlEntityProcessor"/>
 

@@ -40,6 +40,7 @@ create procedure regen_genofig_create_temp_tables()
 
     create table genotype_figure_fast_search_new 
       (  
+      	gffs_serial_id serial8 not null,
         gffs_geno_zdb_id  varchar(50) not null,
         gffs_fig_zdb_id varchar(50) not null,
         gffs_morph_zdb_id varchar(50),
@@ -49,21 +50,27 @@ create procedure regen_genofig_create_temp_tables()
         gffs_phenos_id int8,
 	gffs_fish_zdb_id varchar(50) not null,
 	gffs_genox_zdb_id varchar(50),
-    gffs_serial_id serial8 not null 
+primary key (gffs_serial_id)	
 
       )
     fragment by round robin in tbldbs1, tbldbs2, tbldbs3
     extent size 512 next size 512 ;
     
 
+    if (exists (select * from systables where tabname = "regen_genofig_input_zdb_id_temp")) then
+      drop table regen_genofig_input_zdb_id_temp;
+    end if
 
     create temp table regen_genofig_input_zdb_id_temp  
       (
-	rgfg_id		varchar(50),
+	rgfg_id		int8,
         primary key (rgfg_id)
       ) with NO LOG
 ;
 
+  if (exists (select * from systables where tabname = "regen_genofig_temp")) then
+      drop table regen_genofig_temp;
+    end if
 
     -- -------------------------------------------------------------------
     --   create regen_genofig_temp
@@ -79,6 +86,9 @@ create procedure regen_genofig_create_temp_tables()
 	rgf_genox_zdb_id	varchar(50)
       ) 
 ;
+
+delete from regen_genofig_temp;
+delete from regen_genofig_input_zdb_id_temp;
 
   end 
 

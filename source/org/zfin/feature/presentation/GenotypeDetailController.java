@@ -243,27 +243,4 @@ public class GenotypeDetailController {
         return "genotype/genotype-phenotype-figure-summary.page";
     }
 
-    @RequestMapping(value = {"fish-phenotype-figure-summary"})
-    public String getPhenotypeSummaryForFish(@RequestParam(value = "fishID", required = true) String fishID,
-                                             Model model) throws Exception {
-        LOG.debug("Start Genotype Controller");
-        Fish fish = mutantRepository.getFish(fishID);
-        if (fish == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, fishID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-        GenotypeBean form = new GenotypeBean();
-        form.setFish(fish);
-
-        List<FigureSummaryDisplay> figureSummaryDisplayList = PhenotypeService.getPhenotypeFigureSummaryForFish(fish);
-        Collections.sort(figureSummaryDisplayList);
-        model.addAttribute("figureSummaryDisplay", figureSummaryDisplayList);
-        model.addAttribute("fish", fish);
-
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + fish.getName());
-
-        return "fish/fish-phenotype-figure-summary.page";
-    }
-
 }

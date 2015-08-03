@@ -573,20 +573,15 @@ public class ExpressionService {
     /**
      * Create a list of expressionDisplay objects organized by expressed gene.
      */
-    public static List<ExpressionDisplay> createExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs) {
-        if (expressionResults == null ||
-                expressionResults.size() == 0 ||
-                expressionFigureIDs == null ||
-                expressionFigureIDs.size() == 0 ||
-                expressionPublicationIDs == null ||
-                expressionPublicationIDs.size() == 0) {
+    public static List<ExpressionDisplay> createExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs, boolean showCondition) {
+        if (CollectionUtils.isEmpty(expressionResults) ||
+                CollectionUtils.isEmpty(expressionFigureIDs) ||
+                CollectionUtils.isEmpty(expressionPublicationIDs)) {
             return null;
         }
 
         // a map of zdbIDs of expressed genes as keys and display objects as values
         Map<String, ExpressionDisplay> map = new HashMap<>();
-
-        String keySTR = initialKey;
 
         for (ExpressionResult xpResult : expressionResults) {
             Marker expressedGene = xpResult.getExpressionExperiment().getGene();
@@ -594,13 +589,13 @@ public class ExpressionService {
                 FishExperiment fishox = xpResult.getExpressionExperiment().getFishExperiment();
                 Experiment exp = fishox.getExperiment();
 
-                String key = keySTR + expressedGene.getZdbID();
+                String key = initialKey + expressedGene.getZdbID();
 
-                if (fishox.isStandardOrGenericControl()) {
+                if (showCondition && fishox.isStandardOrGenericControl()) {
                     key += "standard";
                 }
 
-                if (exp.isChemical()) {
+                if (showCondition && exp.isChemical()) {
                     key += "chemical";
                 }
 

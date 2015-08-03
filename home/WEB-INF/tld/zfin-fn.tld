@@ -34,6 +34,13 @@
             ${fn:escapeHtml(name)}">
         </example>
     </function>
+    
+    <function>
+        <description>Remove any character which is not part of a valid DOM identifier from a string</description>
+        <name>makeDomIdentifier</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>java.lang.String makeDomIdentifier(java.lang.String)</function-signature>
+    </function>
 
     <function>
         <description>

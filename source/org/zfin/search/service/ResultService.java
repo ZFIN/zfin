@@ -483,7 +483,7 @@ public class ResultService {
                 result.addAttribute(PROBE, MarkerPresentation.getName(xpatex.getProbe()));
 
             result.addAttribute(GENOTYPE, xpatex.getFishExperiment().getFish().getGenotype().getName());
-            String conditions = ExperimentPresentation.getLink(xpatex.getFishExperiment().getExperiment(), true, false);
+            String conditions = ExperimentPresentation.getLink(xpatex.getFishExperiment().getExperiment(), true);
            // String conditions = ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(), true, false);
             result.addAttribute(CONDITIONS, conditions);
 
@@ -568,7 +568,7 @@ public class ResultService {
             result.addAttribute(GENOTYPE, phenotypeExperiment.getFishExperiment().getFish().getGenotype().getName());
 
 
-            result.addAttribute(CONDITIONS, ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true, false));
+            result.addAttribute(CONDITIONS, ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true));
 
             if (phenotypeExperiment.getStartStage().equals(phenotypeExperiment.getEndStage()))
                 result.addAttribute(STAGE, phenotypeExperiment.getStartStage().getName());
@@ -592,7 +592,7 @@ public class ResultService {
 
 
             //todo: add more?
-            if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true, false), "standard or control")) {
+            if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true), "standard or control")) {
 
                     StringBuilder sb = new StringBuilder();
 
