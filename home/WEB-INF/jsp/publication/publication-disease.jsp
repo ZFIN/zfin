@@ -19,7 +19,7 @@
     </caption>
     <tr>
         <th>Human Disease</th>
-        <th>Fish Model</th>
+        <th>Fish</th>
         <th>Environment</th>
         <th>Evidence Code</th>
     </tr>
@@ -34,13 +34,13 @@
                 </zfin:groupByDisplay>
             </td>
             <td>
-                <c:if test="${not empty disease.fishModel }">
-                    <zfin:link entity="${disease.fishModel.fish}"/>
+                <c:if test="${not empty disease.fishExperiment }">
+                    <zfin:link entity="${disease.fishExperiment.fish}"/>
                 </c:if>
             </td>
             <td>
-                <c:if test="${not empty disease.fishModel }">
-                    <zfin:link entity="${disease.fishModel.experiment}"/>
+                <c:if test="${not empty disease.fishExperiment }">
+                    <zfin:link entity="${disease.fishExperiment.experiment}"/>
                 </c:if>
             </td>
             <td>${disease.evidenceCode}</td>
