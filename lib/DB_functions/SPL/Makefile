@@ -56,7 +56,6 @@ FISH_STATS   = get_image_stats.sql \
 	       get_genotype_handle.sql \
 	       p_update_geno_nickname.sql \
 	       update_geno_sort_order.sql \
-	       update_fish_sort_order.sql \
 	       get_feature_type.sql \
 	       p_update_fish_name.sql \
 	       p_check_pato_postcomposed_terms.sql \
