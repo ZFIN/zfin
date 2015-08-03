@@ -574,12 +574,9 @@ public class ExpressionService {
      * Create a list of expressionDisplay objects organized by expressed gene.
      */
     public static List<ExpressionDisplay> createExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs, boolean showCondition) {
-        if (expressionResults == null ||
-                expressionResults.size() == 0 ||
-                expressionFigureIDs == null ||
-                expressionFigureIDs.size() == 0 ||
-                expressionPublicationIDs == null ||
-                expressionPublicationIDs.size() == 0) {
+        if (CollectionUtils.isEmpty(expressionResults) ||
+                CollectionUtils.isEmpty(expressionFigureIDs) ||
+                CollectionUtils.isEmpty(expressionPublicationIDs)) {
             return null;
         }
 

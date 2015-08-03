@@ -205,9 +205,7 @@ public class ConstructService {
 
         if (expressionCriteria.getFigure() != null) {
             //if there were hql, I would do member of..
-            if (figureCriteria == null) {
-                figureCriteria = criteria.createCriteria("figures", "figure");
-            }
+            figureCriteria = criteria.createCriteria("figures", "figure");
             figureCriteria.add(Restrictions.eq("zdbID", expressionCriteria.getFigure().getZdbID()));
 
         }

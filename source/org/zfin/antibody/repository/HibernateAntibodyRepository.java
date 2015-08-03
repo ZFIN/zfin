@@ -14,7 +14,9 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
-import org.zfin.expression.*;
+import org.zfin.expression.Figure;
+import org.zfin.expression.FigureFigure;
+import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -33,8 +35,6 @@ import org.zfin.util.FilterType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNotEmpty;
@@ -293,7 +293,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Criteria labeling = results.createCriteria("expressionExperiment");
         labeling.add(eq("antibody", antibody));
         Criteria fishExperiment = labeling.createCriteria("fishExperiment");
-        fishExperiment.add(Restrictions.eq("standard", true));
+        fishExperiment.add(Restrictions.eq("standardOrGenericControl", true));
         Criteria fish = fishExperiment.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
         genotype.add(Restrictions.eq("wildtype", true));
@@ -761,55 +761,5 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         figures.addAll(criteria.list());
         return figures;
     }
-
-    public Set<GenericTerm> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
-                                                          DevelopmentStage start, DevelopmentStage end) {
-        Set<GenericTerm> terms = new TreeSet<>();
-
-        String hql = "select xpatres from ExpressionResult xpatres " +
-                "   join xpatres.expressionExperiment " +
-                "   join xpatres.figures " +
-                "   join fetch xpatres.entity.superterm " +
-                "   left outer join fetch xpatres.entity.subterm " +
-                " where :figure member of xpatres.figures " +
-                "   and xpatres.expressionFound = :expressionFound " +
-                "   and xpatres.expressionExperiment.antibody = :antibody " +
-                "   and xpatres.expressionExperiment.fishExperiment.fish.genotype.wildtype = :isWildtype " +
-                "   and xpatres.expressionExperiment.fishExperiment.standardOrGenericControl  ";
-        if (start != null) {
-            hql += "  and  xpatres.startStage = :startStage ";
-        }
-        if (end != null) {
-            hql += "  and xpatres.endStage = :endStage ";
-        }
-
-
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("figure", figure);
-        if (start != null) {
-            query.setParameter("startStage", start);
-        }
-        if (end != null) {
-            query.setParameter("endStage", end);
-        }
-        query.setParameter("antibody", antibody);
-        query.setParameter("isWildtype", true);
-        query.setParameter("expressionFound", true);
-
-        List<ExpressionResult> expressionResults = query.list();
-
-
-        for (ExpressionResult expressionResult : expressionResults) {
-            terms.add(expressionResult.getSuperTerm());
-            if (expressionResult.getSubTerm() != null) {
-                terms.add(expressionResult.getSubTerm());
-            }
-        }
-
-        return terms;
-    }
-
-
-
 
 }

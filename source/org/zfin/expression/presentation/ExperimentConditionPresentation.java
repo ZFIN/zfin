@@ -1,5 +1,6 @@
 package org.zfin.expression.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.EntityPresentation;
@@ -40,12 +41,14 @@ public class ExperimentConditionPresentation extends EntityPresentation {
      */
     public static String getLink(Set<ExperimentCondition> conditions, Experiment experiment, boolean suppressPopupLink) {
         StringBuilder sb = new StringBuilder(50);
-        for (ExperimentCondition condition : conditions) {
-            sb.append(getName(condition));
-            sb.append(", ");
+        if (CollectionUtils.isNotEmpty(conditions)) {
+            for (ExperimentCondition condition : conditions) {
+                sb.append(getName(condition));
+                sb.append(", ");
+            }
+            sb = sb.deleteCharAt(sb.length() - 1);
+            sb = sb.deleteCharAt(sb.length() - 1);
         }
-      //  sb = sb.deleteCharAt(sb.length() - 1);
-      //  sb = sb.deleteCharAt(sb.length() - 1);
         sb = new StringBuilder(getTomcatLink(uri, experiment.getZdbID(), sb.toString()));
 
         if (!suppressPopupLink)

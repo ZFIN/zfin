@@ -14,7 +14,6 @@ import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Main repository.
@@ -211,16 +210,6 @@ public interface AntibodyRepository {
      * @return  list of figures
      */
     List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, GenericTerm term, boolean withImgOnly);
-
-
-    /**
-     * Get terms (sub & super) present in slice of specified figure where the antibody and
-     * (optionally) stages match.
-     *
-     * @return terms associated with expression data about the antibody within the figure
-     */
-    Set<GenericTerm> getAntibodyFigureSummaryTerms(Figure figure, Antibody antibody,
-                                            DevelopmentStage start, DevelopmentStage end);
 
 
 }

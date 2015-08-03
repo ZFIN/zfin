@@ -1517,19 +1517,11 @@ union
 	       ==============================
    <?/MICOMMENT>
 <?MIBLOCK COND="$(XST,$type_of_genedom)">
-   <?MIVAR NAME="mrkrview_allele_display"><?/MIVAR>
-   <?MISQL SQL="
- 	 execute function get_mutants_html_link('$OID');">
-
-       	 <?MIVAR NAME=mrkrview_mutants_display>$1<?/MIVAR>
-   <?/MISQL>
-   <?MIBLOCK COND="$(NC,$mrkrview_mutants_display,)">
 
    <?MISQL SQL="select WebExplode(object,'OID=$OID') from webPages where ID='aa-allelelist.apg';">
      <?MIVAR NAME="mrkrview_allele_display">$1<?/MIVAR>
    <?/MISQL>
 
-  <?/MIBLOCK><?MICOMMENT> -- end if there is mutants --<?/MICOMMENT>
 <?/MIBLOCK><?MICOMMENT> -- end if genedom ---<?/MICOMMENT>
 
   <?MICOMMENT>=========================================================
@@ -1603,18 +1595,12 @@ union
     <?MICOMMENT> *** DISPLAY MUTANTS & MORPHOLINOS TABLE *** <?/MICOMMENT>
 
 
-  <?MIBLOCK COND="$(OR,$(NC,$mrkrview_mutants_display,),$(NC,$mrkrview_allele_display,),$(NC,$mrkrview_morpholino_display,))">
+  <?MIBLOCK COND="$(OR,$(NC,$mrkrview_allele_display,),$(NC,$mrkrview_morpholino_display,))">
 
   <div class="summary">
 	<div class="summaryTitle">MUTANTS AND TARGETED KNOCKDOWNS</div>
 
     <table class="summary horizontal-solidblock">
-        <?MIBLOCK COND="$(NC,$mrkrview_mutants_display,)">
-          <tr>
-            <th>Mutant&nbsp;lines:</th>
-            <td><?MIVAR>$mrkrview_mutants_display<?/MIVAR></td>
-          </tr>
-        <?/MIBLOCK>
 
         <?MIBLOCK COND="$(NC,$mrkrview_allele_display,)">
           <tr>
