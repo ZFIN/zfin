@@ -30,7 +30,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  */
 @Controller
 @RequestMapping("/expression")
-public class GenotypeExpressionSummaryController {
+public class FishExpressionSummaryController {
 
 
     @RequestMapping(value = {"/fish-expression-figure-summary-experiment"})
