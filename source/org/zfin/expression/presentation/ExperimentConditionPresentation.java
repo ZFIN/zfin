@@ -1,6 +1,7 @@
 package org.zfin.expression.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.EntityPresentation;
@@ -49,10 +50,17 @@ public class ExperimentConditionPresentation extends EntityPresentation {
             sb = sb.deleteCharAt(sb.length() - 1);
             sb = sb.deleteCharAt(sb.length() - 1);
         }
-        sb = new StringBuilder(getTomcatLink(uri, experiment.getZdbID(), sb.toString()));
 
-        if (!suppressPopupLink)
+        String linkText = sb.toString();
+        if (StringUtils.isBlank(linkText)) {
+            return "";
+        }
+
+        sb = new StringBuilder(getTomcatLink(uri, experiment.getZdbID(), linkText));
+
+        if (!suppressPopupLink) {
             sb.append(getPopupLink(experiment));
+        }
 
         return sb.toString();
     }
