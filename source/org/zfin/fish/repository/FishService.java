@@ -6,6 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.response.Group;
+import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.zfin.expression.ExpressionResult;
@@ -419,7 +421,12 @@ public class FishService {
 
         query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
         query.addFilterQuery(FieldName.CATEGORY.getName() + ":\"" + Category.PHENOTYPE.getName() + "\"");
-        query.addFilterQuery(FieldName.XREF.getName() + ":\"" + fishID + "\"");
+        query.addFilterQuery(FieldName.XREF.getName() + ":" + fishID);
+        query.setRows(500);
+        query.add("group", "true");
+        query.add("group.field","figure_id");
+        query.add("group.ngroups", "true");
+
 
         if (CollectionUtils.isNotEmpty(termIDs)) {
 
@@ -447,17 +454,24 @@ public class FishService {
 
         Set<ZfinFigureEntity> figureEntitySet = new HashSet<>();
 
-        for (SolrDocument doc : response.getResults()) {
-            ZfinFigureEntity figure = new ZfinFigureEntity();
+        for (GroupCommand groupCommand : response.getGroupResponse().getValues()) {
 
-            String figureZdbID = (String) doc.get(FieldName.FIGURE_ID.getName());
-            figure.setID(figureZdbID);
-            if (CollectionUtils.isNotEmpty((Collection) doc.get(FieldName.THUMBNAIL.getName()))) {
-                figure.setHasImage(true);
-            } else {
-                figure.setHasImage(false);
+            if (CollectionUtils.isNotEmpty(groupCommand.getValues()) ) {
+                for (Group group : groupCommand.getValues()) {
+                    for (SolrDocument doc : group.getResult()) {
+                        ZfinFigureEntity figure = new ZfinFigureEntity();
+
+                        String figureZdbID = (String) doc.get(FieldName.FIGURE_ID.getName());
+                        figure.setID(figureZdbID);
+                        if (CollectionUtils.isNotEmpty((Collection) doc.get(FieldName.THUMBNAIL.getName()))) {
+                            figure.setHasImage(true);
+                        } else {
+                            figure.setHasImage(false);
+                        }
+                        figureEntitySet.add(figure);
+                    }
+                }
             }
-            figureEntitySet.add(figure);
         }
 
         return figureEntitySet;

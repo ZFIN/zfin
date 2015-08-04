@@ -8,7 +8,6 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.MappedDeletion;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerHistory;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.profile.FeatureSource;
@@ -438,18 +437,18 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public Marker getAllelicGene() {
-        if(featureMarkerRelations == null)
-        return null;
-        for(FeatureMarkerRelationship relationship:featureMarkerRelations)
-            if(relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF))
+        if (featureMarkerRelations == null)
+            return null;
+        for (FeatureMarkerRelationship relationship : featureMarkerRelations)
+            if (relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF))
                 return relationship.getMarker();
         return null;
     }
 
     public String getDisplayAbbreviation() {
-        if(abbreviation.endsWith("_"+ UNRECOGNIZED))
+        if (abbreviation.endsWith("_" + UNRECOGNIZED))
             return UNRECOGNIZED;
-        if(abbreviation.endsWith("_"+ UNSPECIFIED))
+        if (abbreviation.endsWith("_" + UNSPECIFIED))
             return UNSPECIFIED;
         return abbreviation;
 
