@@ -337,6 +337,8 @@ insert into tmp_anat (fig_id, anat_id, genox_id)
 
 --and term_zdb_id = alltermcon_container_zdb_id;
 
+create index genox_id_index on tmp_anat (genox_id)
+ using btree in idxdbs2;
 
 update figure_term_construct_search_temp 
   set ftcs_term_group = replace(replace(replace(substr(multiset (select distinct 
