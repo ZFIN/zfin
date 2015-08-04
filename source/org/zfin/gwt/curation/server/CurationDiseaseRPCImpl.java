@@ -97,9 +97,6 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     public List<GenotypeDTO> savePublicNote(String publicationID, ExternalNoteDTO externalNoteDTO) throws TermNotFoundException {
         HibernateUtil.createTransaction();
         try {
-            Publication publication = getPublicationRepository().getPublication(publicationID);
-            if (publication == null)
-                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
             String noteID = externalNoteDTO.getZdbID();
             ExternalNote note = getInfrastructureRepository().getExternalNoteByID(noteID);
             if (note == null)
@@ -145,9 +142,6 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     public List<GenotypeDTO> deletePublicNote(String publicationID, ExternalNoteDTO extNote) throws TermNotFoundException {
         HibernateUtil.createTransaction();
         try {
-            Publication publication = getPublicationRepository().getPublication(publicationID);
-            if (publication == null)
-                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
             String noteID = extNote.getZdbID();
             getInfrastructureRepository().deleteActiveDataByZdbID(noteID);
             HibernateUtil.flushAndCommitCurrentSession();
@@ -162,9 +156,6 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     public List<GenotypeDTO> saveCuratorNote(String publicationID, CuratorNoteDTO curatorNoteDTO) throws TermNotFoundException {
         HibernateUtil.createTransaction();
         try {
-            Publication publication = getPublicationRepository().getPublication(publicationID);
-            if (publication == null)
-                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
             String noteID = curatorNoteDTO.getZdbID();
             DataNote note = getInfrastructureRepository().getDataNoteByID(noteID);
             if (note == null)
@@ -185,9 +176,6 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     public List<GenotypeDTO> deleteCuratorNote(String publicationID, CuratorNoteDTO note) throws TermNotFoundException {
         HibernateUtil.createTransaction();
         try {
-            Publication publication = getPublicationRepository().getPublication(publicationID);
-            if (publication == null)
-                throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
             String noteID = note.getZdbID();
             getInfrastructureRepository().deleteActiveDataByZdbID(noteID);
             HibernateUtil.flushAndCommitCurrentSession();
