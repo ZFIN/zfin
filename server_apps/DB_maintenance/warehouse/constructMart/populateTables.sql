@@ -340,6 +340,9 @@ insert into tmp_anat (fig_id, anat_id, genox_id)
 create index genox_id_index on tmp_anat (genox_id)
  using btree in idxdbs2;
 
+create index fig_id_index on tmp_anat (fig_id) 
+ using btree in idxdbs1;
+
 update figure_term_construct_search_temp 
   set ftcs_term_group = replace(replace(replace(substr(multiset (select distinct 
 						  	  item anat_id from tmp_anat
