@@ -161,8 +161,6 @@ public interface CurationExperimentRPCAsync {
 
     void copyExpressions(List<ExpressionFigureStageDTO> copyFromExpressions, List<ExpressionFigureStageDTO> copyToExpressions, AsyncCallback<List<ExpressionFigureStageDTO>> callback);
 
-    void getEnvironmentsWithoutSTR(String publicationID, AsyncCallback<List<EnvironmentDTO>> async);
-
     /**
      * Retrieve all genotypes for a given publication:
      * 1) WT

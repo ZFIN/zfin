@@ -805,12 +805,6 @@
         <!--</java>-->
     <!--</target>-->
 
-    <target name="report" depends="compile">
-        <java classname="org.zfin.expression.EQReport" fork="yes"
-              classpathref="extended.classpath">
-        </java>
-    </target>
-
     <target name="generateWebServiceClasses">
         <exec executable="xjc">
             <arg value="home/WEB-INF/conf/zfin.xsd"/>
