@@ -30,7 +30,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
  */
 @Controller
 @RequestMapping("/expression")
-public class GenotypeExpressionSummaryController {
+public class FishExpressionSummaryController {
 
 
     @RequestMapping(value = {"/fish-expression-figure-summary-experiment"})
@@ -152,40 +152,6 @@ public class GenotypeExpressionSummaryController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, sequenceTargetingReagent.getName() + " Expression Figure Summary");
         return "expression/genotype-figure-summary.page";
-
-    }
-
-    @RequestMapping(value = {"/genotype-expression-figure-summary"})
-    protected String getExpressionFigureSummaryForGenotype(@RequestParam String genoZdbID,
-                                                           @RequestParam boolean imagesOnly,
-                                                           Model model) {
-
-        Genotype genotype = getMutantRepository().getGenotypeByID(genoZdbID);
-
-        if (genotype == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, genoZdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        ExpressionSummaryCriteria expressionCriteria = FigureService.createExpressionCriteriaStandardEnvironment(genotype, null, imagesOnly);
-        expressionCriteria.setShowCondition(false);
-        model.addAttribute("expressionCriteria", expressionCriteria);
-
-        // use Fish instead of genotupe
-        List<ExpressionResult> expressionResults = getExpressionRepository().getExpressionResultsByFish(null);
-
-        List<FigureExpressionSummary> figureExpressionSummaries = ExpressionService.createExpressionFigureSummaryFromExpressionResults(expressionResults);
-
-        Collections.sort(figureExpressionSummaries);
-
-        List<FigureExpressionSummaryDisplay> figureExpressionSummaryDisplayList = PresentationConverter.getFigureExpressionSummaryDisplay(figureExpressionSummaries);
-
-        model.addAttribute("figureCount", getExpressionRepository().getExpressionFigureCountForGenotype(genotype));
-
-        model.addAttribute("figureSummaryDisplayList", figureExpressionSummaryDisplayList);
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotype.getName() + " Expression Figure Summary");
-        return "expression/genotype-expression-figure-summary.page";
 
     }
 

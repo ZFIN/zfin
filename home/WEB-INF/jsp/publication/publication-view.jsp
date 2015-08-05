@@ -201,11 +201,6 @@
 
             </li>
         </c:if>
-        <%--<c:if test="${phenotypeAlleleCount > 0}">
-            <li><a href="/action/mutant/mutant-list?zdbID=${publication.zdbID}">Fish</a>
-                (${phenotypeAlleleCount})
-            </li>
-        </c:if>--%>
         <c:if test="${fishCount > 0}">
             <li><a href="/action/publication/${publication.zdbID}/fish-list">Fish</a>
                 (${fishCount})

@@ -43,6 +43,25 @@ public class FishPhenotypeController {
 
     private static Logger LOG = Logger.getLogger(FishPhenotypeController.class);
 
+    @RequestMapping(value = "/phenotype-summary", method = RequestMethod.GET)
+    protected String showPhenotypeSummary(@RequestParam(value = "fishID", required = true) String fishID,
+                                          @ModelAttribute("formBean") FishSearchFormBean formBean,
+                                          Model model) throws Exception {
+
+        LOG.info("Start Fish Phenotype Controller");
+        FishSearchCriteria criteria = new FishSearchCriteria(formBean);
+        List<FigureSummaryDisplay> figureSummaryDisplayList = FishService.getPhenotypeSummary(fishID, criteria);
+        Collections.sort(figureSummaryDisplayList);
+        model.addAttribute("figureSummaryDisplay", figureSummaryDisplayList);
+        PhenotypeSummaryCriteria summaryCriteria = FishService.getPhenotypeSummaryCriteria(fishID);
+        summaryCriteria.setCriteria(criteria);
+        model.addAttribute("phenotypeSummaryCriteria", summaryCriteria);
+        Fish fish = getMutantRepository().getFish(fishID);
+        model.addAttribute("fish", fish);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Summary");
+        return "fish/fish-phenotype-figure-summary.page";
+    }
+
     @RequestMapping("/fish-publication-list")
     public String fishCitationList(@RequestParam(value = "fishID", required = true) String fishID,
                                    @RequestParam(value = "orderBy", required = false) String orderBy,

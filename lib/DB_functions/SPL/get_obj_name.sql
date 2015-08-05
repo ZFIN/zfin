@@ -50,6 +50,11 @@ get_obj_name(zdbId varchar(50))
       into objName
       from figure
       where fig_zdb_id = zdbId ;
+  elif (objType = "FISH") then
+    select fish_name 
+      into objName
+      from fish
+      where fish_zdb_id = zdbId ;
   elif (objType = "XPATRES") then
     select get_obj_name(xpatres_xpatex_zdb_id) || ", " || 
            get_obj_name(xpatres_superterm_zdb_id) || ", " ||

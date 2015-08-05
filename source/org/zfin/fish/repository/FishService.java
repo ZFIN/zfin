@@ -6,6 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.response.Group;
+import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.zfin.expression.ExpressionResult;
@@ -20,7 +22,6 @@ import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.FishSearchResult;
 import org.zfin.fish.presentation.FishResult;
 import org.zfin.fish.presentation.FishSearchFormBean;
-import org.zfin.fish.presentation.MartFish;
 import org.zfin.fish.presentation.PhenotypeSummaryCriteria;
 import org.zfin.framework.search.SearchCriterion;
 import org.zfin.framework.search.SearchCriterionType;
@@ -32,6 +33,7 @@ import org.zfin.mutant.*;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
 import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 
@@ -53,7 +55,7 @@ public class FishService {
         SolrQuery query = generateFishSearchSolrQuery(criteria);
 
         SolrServer solrServer = SolrService.getSolrServer("prototype");
-        QueryResponse response = new QueryResponse();
+        QueryResponse response;
         try {
             response = solrServer.query(query);
         } catch (Exception e) {
@@ -77,7 +79,7 @@ public class FishService {
                 case "Mutation / Tg":
                     Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(fishResult.getId());
                     if (feature != null) {
-                        fishResult.setFeatureGenes(getFeatureGenes(feature));
+                        fishResult.setFeatureGenes(getFeatureGeneList(feature));
                     }
                     break;
                 default:
@@ -127,10 +129,10 @@ public class FishService {
 
         if (criteria.getPhenotypeAnatomyCriteria() != null && criteria.getPhenotypeAnatomyCriteria().hasValues()) {
             for (String term : criteria.getPhenotypeAnatomyCriteria().getNames()) {
-                query.addFilterQuery(FieldName.AFFECTED_ANATOMY.getName()   + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS.getName() + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_MOLECULAR_FUNCTION.getName() + ":\"" + term + "\""
-                          + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT.getName() + ":\"" + term + "\""
+                query.addFilterQuery(FieldName.AFFECTED_ANATOMY.getName() + ":\"" + term + "\""
+                                + " OR " + FieldName.AFFECTED_BIOLOGICAL_PROCESS.getName() + ":\"" + term + "\""
+                                + " OR " + FieldName.AFFECTED_MOLECULAR_FUNCTION.getName() + ":\"" + term + "\""
+                                + " OR " + FieldName.AFFECTED_CELLULAR_COMPONENT.getName() + ":\"" + term + "\""
                 );
             }
         }
@@ -145,17 +147,18 @@ public class FishService {
     public static List<FeatureGene> getFeatureGenes(Fish fish, boolean includeStrs) {
         List<FeatureGene> featureGenes = new ArrayList<>();
 
-        if (fish == null) { return null; }
-
-        if (fish.getGenotype() != null) {
-            Map<Feature, FeatureGene> featureMap = new HashMap<>();
-            for (GenotypeFeature genotypeFeature : fish.getGenotype().getGenotypeFeatures()) {
-                Feature feature = genotypeFeature.getFeature();
-                addFeatureGenesToMap(featureMap, feature);
-            }
-            featureGenes.addAll(featureMap.values());
+        if (fish == null) {
+            return null;
         }
 
+        if (fish.getGenotype() != null) {
+            Set<FeatureGene> featureGeneSet = new HashSet<>();
+            for (GenotypeFeature genotypeFeature : fish.getGenotype().getGenotypeFeatures()) {
+                Feature feature = genotypeFeature.getFeature();
+                featureGeneSet.addAll(getFeatureGeneList(feature));
+            }
+            featureGenes.addAll(featureGeneSet);
+        }
         if (includeStrs) {
             for (Marker str : fish.getStrList()) {
                 Set<MarkerRelationship> mrels = str.getFirstMarkerRelationships();
@@ -173,56 +176,47 @@ public class FishService {
         return featureGenes;
     }
 
-    public static List<FeatureGene> getFeatureGenes(Feature feature) {
-        Map<Feature, FeatureGene> featureMap = new HashMap<>();
-        addFeatureGenesToMap(featureMap, feature);
-        return new ArrayList<>(featureMap.values());
-    }
-
-    private static void addFeatureGenesToMap(Map<Feature, FeatureGene> featureMap, Feature feature) {
+    private static List<FeatureGene> getFeatureGeneList(Feature feature) {
+        List<FeatureGene> featureGeneList = new ArrayList<>(feature.getFeatureMarkerRelations().size());
         for (FeatureMarkerRelationship rel : feature.getFeatureMarkerRelations()) {
-            if (!featureMap.containsKey(feature)) {
-                FeatureGene fg = new FeatureGene();
-                fg.setFeature(feature);
-                featureMap.put(feature, fg);
-            }
+            FeatureGene fg = new FeatureGene();
+            fg.setFeature(feature);
+            boolean hasMarkerOrConstruct = false;
             Marker marker = rel.getMarker();
             if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                featureMap.get(feature).setGene(marker);
+                fg.setGene(marker);
+                hasMarkerOrConstruct = true;
             } else if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT)) {
-                featureMap.get(feature).setConstruct(marker);
+                fg.setConstruct(marker);
+                hasMarkerOrConstruct = true;
             }
+            if (hasMarkerOrConstruct)
+                featureGeneList.add(fg);
         }
+        // at least have a feature in this list
+        if (CollectionUtils.isEmpty(featureGeneList)) {
+            FeatureGene featureGene = new FeatureGene();
+            featureGene.setFeature(feature);
+            featureGeneList.add(featureGene);
+        }
+        return featureGeneList;
     }
 
     private static void addFigures(FishResult fishResult, FishSearchCriteria criteria) {
-        if (criteria.getPhenotypeAnatomyCriteria() == null) {
-            addAllFigures(fishResult);
-        } else {
-            List<String> values = criteria.getPhenotypeAnatomyCriteria().getValues();
-            addFiguresByTermValues(fishResult, values);
+        List<String> values = null;
+        if (criteria.getPhenotypeAnatomyCriteria() != null) {
+            values = criteria.getPhenotypeAnatomyCriteria().getValues();
         }
-    }
-
-    private static void addAllFigures(FishResult fishResult) {
-
-        Set<ZfinFigureEntity> figures = RepositoryFactory.getFishRepository().getAllFigures(fishResult.getFish().getZdbID());
-        Set<ZfinFigureEntity> expFigures = getAllExpressionFigureEntitiesForFish(fishResult.getFish());
-        setImageAttributeOnFish(fishResult, figures,expFigures);
-
-        Set<ZfinFigureEntity> figureEntities = getCleanPhenotypeFigureEntitiesForFish(fishResult.getFish());
-
-        setImageAttributeOnFish(fishResult, figureEntities,expFigures);
-
+        addFiguresByTermValues(fishResult, values);
     }
 
     private static void addFiguresByTermValues(FishResult fishResult, List<String> values) {
         Set<ZfinFigureEntity> figures = FishService.getFiguresByFishAndTerms(fishResult.getFish().getZdbID(), values);
         Set<ZfinFigureEntity> expFigures = getAllExpressionFigureEntitiesForFish(fishResult.getFish());
-        setImageAttributeOnFish(fishResult, figures,expFigures);
+        setImageAttributeOnFish(fishResult, figures, expFigures);
     }
 
-    private static void setImageAttributeOnFish(FishResult fishResult, Set<ZfinFigureEntity> figures,Set<ZfinFigureEntity> expFigures) {
+    private static void setImageAttributeOnFish(FishResult fishResult, Set<ZfinFigureEntity> figures, Set<ZfinFigureEntity> expFigures) {
 
         if (figures == null || figures.size() == 0) {
             return;
@@ -270,8 +264,10 @@ public class FishService {
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
         PhenotypeSummaryCriteria criteria = new PhenotypeSummaryCriteria();
         criteria.setFish(fish);
-        //todo: implement me!
-//        criteria.setFishExperiments(fish.getFishExperiments());
+        Set<FishExperiment> fishExperiments = getMutantRepository().getFish(fishID).getFishExperiments();
+        List<FishExperiment> fishExperimentList = new ArrayList<>(fishExperiments.size());
+        fishExperimentList.addAll(fishExperiments);
+        criteria.setFishExperiments(fishExperimentList);
         return criteria;
     }
 
@@ -314,27 +310,6 @@ public class FishService {
         return new FishSearchCriteria(bean);
     }
 
-    public static String getGenotypeExperimentIDsString(String fishID) {
-        if (fishID == null) {
-            return null;
-        }
-        String[] ids = fishID.split(",");
-        String returnId = null;
-        for (String id : ids) {
-            if (ActiveData.isValidActiveData(id, ActiveData.Type.GENOX)) {
-                if (returnId == null) {
-                    returnId = id + ",";
-                } else {
-                    returnId += id + ",";
-                }
-            }
-        }
-        if (returnId == null) {
-            return null;
-        }
-        return returnId.substring(0, returnId.length() - 1);
-    }
-
     public static String getGenotypeID(String fishID) {
         if (fishID == null) {
             return null;
@@ -357,38 +332,6 @@ public class FishService {
         return RepositoryFactory.getPhenotypeRepository().getPhenotypeStatements(figure, fishID);
     }
 
-    public static List<String> getFishOxIds(String fishID) {
-        // return getFish(fishID).getGenotypeExperimentIDs();
-        Set<FishExperiment> fishOx = getMutantRepository().getFish(fishID).getFishExperiments();
-        List<String> fishoxID = new ArrayList<>(fishOx.size());
-        for (FishExperiment genoID : getMutantRepository().getFish(fishID).getFishExperiments()) {
-            fishoxID.add(genoID.getZdbID());
-        }
-        return fishoxID;
-    }
-
-    /**
-     * Retrieve the longest genotype experiment group id for all fish
-     *
-     * @return String
-     */
-    public static String getGenoxMaxLength() {
-        return RepositoryFactory.getFishRepository().getGenoxMaxLength();
-    }
-
-    /**
-     * Retrieve Summary of expression statements, figures and pub info
-     *
-     * @param fishID fish ID
-     * @return list of expression statements records grouped by figure.
-     */
-    public static List<FigureExpressionSummary> getExpressionSummary(String fishID) {
-        Fish fish = getMutantRepository().getFish(fishID);
-        List<ExpressionResult> expressionResults = getExpressionRepository().getExpressionResultsByFish(fish);
-        return ExpressionService.createExpressionFigureSummaryFromExpressionResults(expressionResults);
-        //return getExpressionSummary(fishID, null);
-    }
-
     /**
      * Retrieve Summary of expression statements, figures and pub info
      *
@@ -398,11 +341,8 @@ public class FishService {
      */
     public static List<FigureExpressionSummary> getExpressionSummary(String fishID, String geneID) {
 
-        String genotypeID = getGenotypeID(fishID);
-        //List<String> genoxIds = getGenoxIds(fishID);
         Fish fish = getMutantRepository().getFish(fishID);
         Set<FishExperiment> fishOx = fish.getFishExperiments();
-
 
         List<ExpressionResult> results = getMutantRepository().getExpressionSummary(fishOx, geneID);
         if (CollectionUtils.isEmpty(results)) {
@@ -416,7 +356,7 @@ public class FishService {
      * Check if a given fish has expression data with at least one figure that has an image.
      *
      * @param fishID fish ID
-     * @return
+     * @return boolean
      */
     public static boolean hasImagesOnExpressionFigures(String fishID) {
         String genotypeID = getGenotypeID(fishID);
@@ -429,10 +369,6 @@ public class FishService {
 
     public static Integer getCitationCount(Fish fish) {
         return getFishPublications(fish).size();
-    }
-
-    public static Integer getCitationCount(MartFish fish) {
-        return RepositoryFactory.getMutantRepository().getGenoxAttributions(fish.getGenotypeExperimentIDs()).size();
     }
 
     public static Set<Publication> getFishPublications(Fish fish) {
@@ -470,31 +406,44 @@ public class FishService {
      * @return set of figures
      */
     public static Set<ZfinFigureEntity> getFiguresByFishAndTerms(String fishID, List<String> termIDs) {
+/*
         if (CollectionUtils.isEmpty(termIDs)) {
             Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
             if (fish == null)
                 return null;
             return getCleanPhenotypeFigureEntitiesForFish(fish);
         }
+*/
 
         SolrServer server = SolrService.getSolrServer("prototype");
 
         SolrQuery query = new SolrQuery();
+
         query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());
-        query.addFilterQuery(FieldName.XREF.getName() + ":\"" + fishID + "\"");
+        query.addFilterQuery(FieldName.CATEGORY.getName() + ":\"" + Category.PHENOTYPE.getName() + "\"");
+        query.addFilterQuery(FieldName.XREF.getName() + ":" + fishID);
+        query.setRows(500);
+        query.add("group", "true");
+        query.add("group.field","figure_id");
+        query.add("group.ngroups", "true");
 
-        List<String> terms = new ArrayList<String>();
-        for (String termID : termIDs) {
-            Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
-            terms.add("\"" + term.getTermName() + "\"");
+
+        if (CollectionUtils.isNotEmpty(termIDs)) {
+
+            List<String> terms = new ArrayList<>();
+            for (String termID : termIDs) {
+                Term term = RepositoryFactory.getInfrastructureRepository().getTermByID(termID);
+                terms.add("\"" + term.getTermName() + "\"");
+            }
+
+            String termQuery = Joiner.on(" OR ").join(terms);
+            query.addFilterQuery(FieldName.ANATOMY.getName() + ":(" + termQuery + ")"
+                            + " OR " + FieldName.BIOLOGICAL_PROCESS.getName() + ":(" + termQuery + ")"
+                            + " OR " + FieldName.MOLECULAR_FUNCTION.getName() + ":(" + termQuery + ")"
+                            + " OR " + FieldName.CELLULAR_COMPONENT.getName() + ":(" + termQuery + ")"
+            );
+
         }
-
-        String termQuery = Joiner.on(" OR ").join(terms);
-        query.addFilterQuery(FieldName.ANATOMY.getName()            + ":(" + termQuery + ")"
-                        + " OR " + FieldName.BIOLOGICAL_PROCESS.getName() + ":(" + termQuery + ")"
-                        + " OR " + FieldName.MOLECULAR_FUNCTION.getName() + ":(" + termQuery + ")"
-                        + " OR " + FieldName.CELLULAR_COMPONENT.getName() + ":(" + termQuery + ")"
-        );
 
         QueryResponse response = new QueryResponse();
         try {
@@ -505,45 +454,31 @@ public class FishService {
 
         Set<ZfinFigureEntity> figureEntitySet = new HashSet<>();
 
-        for (SolrDocument doc : response.getResults()) {
-            ZfinFigureEntity figure = new ZfinFigureEntity();
+        for (GroupCommand groupCommand : response.getGroupResponse().getValues()) {
 
-            String figureZdbID = (String) doc.get(FieldName.FIGURE_ID.getName());
-            figure.setID(figureZdbID);
-            if (CollectionUtils.isNotEmpty((Collection)doc.get(FieldName.THUMBNAIL.getName()))) {
-                figure.setHasImage(true);
-            } else {
-                figure.setHasImage(false);
+            if (CollectionUtils.isNotEmpty(groupCommand.getValues()) ) {
+                for (Group group : groupCommand.getValues()) {
+                    for (SolrDocument doc : group.getResult()) {
+                        ZfinFigureEntity figure = new ZfinFigureEntity();
+
+                        String figureZdbID = (String) doc.get(FieldName.FIGURE_ID.getName());
+                        figure.setID(figureZdbID);
+                        if (CollectionUtils.isNotEmpty((Collection) doc.get(FieldName.THUMBNAIL.getName()))) {
+                            figure.setHasImage(true);
+                        } else {
+                            figure.setHasImage(false);
+                        }
+                        figureEntitySet.add(figure);
+                    }
+                }
             }
-            figureEntitySet.add(figure);
         }
 
         return figureEntitySet;
 
     }
 
-    public static List<Figure> getCleanPhenotypeFiguresForFish(Fish fish) {
-        return RepositoryFactory.getPhenotypeRepository().getPhenotypeFiguresForFish(fish);
-    }
-
-    public static Set<ZfinFigureEntity> getCleanPhenotypeFigureEntitiesForFish (Fish fish) {
-        List<Figure> figures = getCleanPhenotypeFiguresForFish(fish);
-        Set<ZfinFigureEntity> figureEntities = new HashSet<>();
-        ZfinFigureEntity figureEntity;
-        for (Figure figure : figures) {
-            figureEntity = new ZfinFigureEntity();
-            figureEntity.setID(figure.getZdbID());
-            if (figure.getImages() != null)
-                figureEntity.setHasImage(true);
-            else
-                figureEntity.setHasImage(false);
-            figureEntities.add(figureEntity);
-        }
-
-        return figureEntities;
-    }
-
-    public static Set<ZfinFigureEntity> getAllExpressionFigureEntitiesForFish (Fish fish) {
+    public static Set<ZfinFigureEntity> getAllExpressionFigureEntitiesForFish(Fish fish) {
         List<ExpressionResult> expressionResults = getExpressionRepository().getExpressionResultsByFish(fish);
         Set<ZfinFigureEntity> figureEntities = new HashSet<>();
         ZfinFigureEntity figureEntity;

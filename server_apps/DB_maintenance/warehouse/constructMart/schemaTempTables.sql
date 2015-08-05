@@ -12,13 +12,13 @@ create table construct_search_backup (cons_pk_id serial8 not null constraint con
  fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
   extent size 16384 next size 16384 lock mode row;
 
-create unique index consp_pk_id_primary_key_index
-  on construct_search_temp (cons_pk_id)
-  using btree in idxdbs1;
+--create unique index consp_pk_id_primary_key_index
+--  on construct_search_temp (cons_pk_id)
+--  using btree in idxdbs1;
 
-create unique index consp_alternate_key_index
-  on construct_search_temp (cons_construct_zdb_id)
-  using btree in idxdbs1;
+--create unique index consp_alternate_key_index
+--  on construct_search_temp (cons_construct_zdb_id)
+--  using btree in idxdbs1;
 
 create table construct_search_temp (cons_pk_id serial8 not null constraint const_pk_id_not_null,
        	     		      cons_construct_zdb_id varchar(50) not null constraint const_construct_zdb_id_not_null,
@@ -32,13 +32,13 @@ create table construct_search_temp (cons_pk_id serial8 not null constraint const
  fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3 
   extent size 16384 next size 16384 lock mode row;
 
-create unique index const_pk_id_primary_key_index
-  on construct_search_temp (cons_pk_id)
-  using btree in idxdbs1;
+--create unique index const_pk_id_primary_key_index
+--  on construct_search_temp (cons_pk_id)
+--  using btree in idxdbs1;
 
-create unique index const_alternate_key_index
-  on construct_search_temp (cons_construct_zdb_id)
-  using btree in idxdbs1;
+--create unique index const_alternate_key_index
+--  on construct_search_temp (cons_construct_zdb_id)
+--  using btree in idxdbs1;
 
 create table construct_component_search_backup (ccs_pk_id serial8
                                                         not null constraint ccsb_pk_id_not_null,
@@ -54,17 +54,17 @@ fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
  extent size 16384 next size 16384 lock mode row;
 
 
-create unique index ccsb_primary_key_index
-  on construct_component_search_backup (ccs_pk_id)
-  using btree in idxdbs3;
+--create unique index ccsb_primary_key_index
+--  on construct_component_search_backup (ccs_pk_id)
+--  using btree in idxdbs3;
 
-create index ccsb_cons_id_foreign_key_index
-  on construct_component_search_backup (ccs_cons_id)
-  using btree in idxdbs2;
+--create index ccsb_cons_id_foreign_key_index
+--  on construct_component_search_backup (ccs_cons_id)
+--  using btree in idxdbs2;
 
-create index ccsb_gene_zdb_id_index
-  on construct_component_search_backup (ccs_gene_zdb_id)
-using btree in idxdbs1;
+--create index ccsb_gene_zdb_id_index
+--  on construct_component_search_backup (ccs_gene_zdb_id)
+--using btree in idxdbs1;
 
 
 create table construct_component_search_temp (ccs_pk_id serial8
@@ -81,17 +81,17 @@ fragment by round robin in tbldbs1 , tbldbs2 , tbldbs3
  extent size 16384 next size 16384 lock mode row;
 
 
-create unique index ccst_primary_key_index
-  on construct_component_search_temp (ccs_pk_id)
-  using btree in idxdbs3;
+--create unique index ccst_primary_key_index
+--  on construct_component_search_temp (ccs_pk_id)
+--  using btree in idxdbs3;
 
-create index ccst_cons_id_foreign_key_index
-  on construct_component_search_Temp (ccs_cons_id)
-  using btree in idxdbs2;
+--create index ccst_cons_id_foreign_key_index
+--  on construct_component_search_Temp (ccs_cons_id)
+--  using btree in idxdbs2;
 
-create index ccst_gene_zdb_id_index
-  on construct_component_search_temp (ccs_gene_zdb_id)
-using btree in idxdbs1;					 
+--create index ccst_gene_zdb_id_index
+--  on construct_component_search_temp (ccs_gene_zdb_id)
+--using btree in idxdbs1;					 
 
 
 create table construct_gene_feature_result_view_backup (cgfrv_pk_id serial8 not null constraint cgfrvb_pk_id_not_null,
@@ -120,7 +120,7 @@ create index cgfrvb_cs_id_foreign_key_index
 
 
 create index cgfrvb_allele_gene_zdb_id_index
-  on construct_gene_feature_result_view_backup (cgfrv_allele_gene_zdb_id)
+ on construct_gene_feature_result_view_backup (cgfrv_allele_gene_zdb_id)
 using btree in idxdbs1;
 
 
@@ -141,8 +141,8 @@ create table construct_gene_feature_result_view_temp (cgfrv_pk_id serial8 not nu
   extent size 16384 next size 16384 lock mode row;
 
 create unique index cgfrvt_primary_key_index
-  on construct_gene_feature_result_view_temp (cgfrv_pk_id)
-  using btree in idxdbs3;
+ on construct_gene_feature_result_view_temp (cgfrv_pk_id)
+ using btree in idxdbs3;
 
 create index cgfrvt_cs_id_foreign_key_index
   on construct_gene_feature_result_view_Temp (cgfrv_cs_id)

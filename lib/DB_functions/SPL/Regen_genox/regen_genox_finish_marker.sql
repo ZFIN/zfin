@@ -82,6 +82,4 @@ create procedure regen_genox_finish_marker ()
         references fish_experiment on delete cascade 
         constraint mutant_fast_search_genox_Zdb_id_foreign_key_odc;
 
-      grant select on mutant_fast_search to "public";
-
 end procedure;

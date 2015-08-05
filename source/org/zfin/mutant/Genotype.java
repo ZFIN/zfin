@@ -1,7 +1,6 @@
 package org.zfin.mutant;
 
 import org.springframework.util.CollectionUtils;
-import org.zfin.expression.Figure;
 import org.zfin.fish.FishAnnotation;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
@@ -103,16 +102,6 @@ public class Genotype implements Comparable, EntityZdbID {
     public void setAssociatedGenotypes(Set<Genotype> associatedGenotypes) {
         this.associatedGenotypes = associatedGenotypes;
     }
-    public Genotype getBackground() {
-        if (CollectionUtils.isEmpty(associatedGenotypes))
-            return null;
-
-        if (associatedGenotypes.size() > 1)
-            throw new RuntimeException("Found more than one associated genotype (Background)! " + associatedGenotypes);
-        Iterator<Genotype> iterator = associatedGenotypes.iterator();
-        return iterator.next();
-    }
-
 
     public void setBackground(Genotype background) {
         if (!CollectionUtils.isEmpty(associatedGenotypes))
@@ -131,23 +120,24 @@ public class Genotype implements Comparable, EntityZdbID {
 
     /**
      * Only checking against the zdb id for now
+     *
      * @param otherGenotype to compare for equality
      * @return boolean for equality
      */
     public boolean equals(Object otherGenotype) {
-        if (!(otherGenotype instanceof Genotype)){
+        if (!(otherGenotype instanceof Genotype)) {
             if (otherGenotype instanceof FishAnnotation) {
-                return ((FishAnnotation)otherGenotype).getGenotypeID().equals(getZdbID());
+                return ((FishAnnotation) otherGenotype).getGenotypeID().equals(getZdbID());
             } else {
                 return false;
             }
         }
-        Genotype og = (Genotype)otherGenotype;
+        Genotype og = (Genotype) otherGenotype;
         return getZdbID().equals(og.getZdbID());
     }
 
     public int compareTo(Object o) {
-        Genotype otherGenotype = (Genotype)o;
+        Genotype otherGenotype = (Genotype) o;
 
         if (getComplexity().compareTo(otherGenotype.getComplexity()) != 0) {
             return getComplexity().compareTo(otherGenotype.getComplexity());
@@ -223,10 +213,23 @@ public class Genotype implements Comparable, EntityZdbID {
         return name;
     }
 
+    public String getBackgroundDisplayName() {
+        String backgroundDisplay = "";
+        if (!CollectionUtils.isEmpty(associatedGenotypes)) {
+            for (Genotype background : associatedGenotypes) {
+                backgroundDisplay = " (";
+                backgroundDisplay += background.getHandle();
+                backgroundDisplay += "), ";
+            }
+            backgroundDisplay = backgroundDisplay.substring(0, backgroundDisplay.length() - 2);
+        }
+        return backgroundDisplay;
+    }
+
 
     /* Only putting TU in for now, since it's the only wildtype that's specified by name
      * rather than generically looking at the isWildtype boolean */
-    public static enum Wildtype {
+    public enum Wildtype {
         TU("TU");
 
         private final String value;

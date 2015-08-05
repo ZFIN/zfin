@@ -21,7 +21,7 @@ public class ForeignKeyResult {
      * Store all pathways in a map for easy access of each node
      */
     private void buildMap() {
-        nodeMap = new HashMap<String, ForeignKeyResult>();
+        nodeMap = new HashMap<>();
         String baseNodeName = foreignKey.getForeignKey();
         nodeMap.put(baseNodeName, this);
         if (!hasChildren()) {

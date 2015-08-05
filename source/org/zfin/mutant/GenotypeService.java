@@ -6,7 +6,6 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.presentation.GenoExpStatistics;
-import org.zfin.mutant.presentation.GenotypeInformation;
 
 import java.util.*;
 

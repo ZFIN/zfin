@@ -104,7 +104,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     public void testShowAllMutantMorpholinos() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish/ZDB-TERM-100331-8");
         assertTrue(page.getTitleText().startsWith("ZFIN"));
-        assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-040822-29']").get(0));
+        assertNotNull(page.getByXPath("//a[@id = 'ZDB-GENE-070521-2']").get(0));
     }
 
     //floor plate
@@ -162,7 +162,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
         // 	actinotrichium [ZDB-TERM-100614-30]
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/show-all-clean-fish-include-substructures/ZDB-TERM-100614-30");
         // Genotype Df(Chr03:sox8,sox9b)b971/b971
-        assertThat(page.getAnchorByText("AB+MO1-plod1a"), is(notNullValue()));
+        assertThat(page.getAnchorByText("AB +MO1-plod1a"), is(notNullValue()));
     }
 
 

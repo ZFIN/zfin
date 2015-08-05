@@ -56,7 +56,6 @@ FISH_STATS   = get_image_stats.sql \
 	       get_genotype_handle.sql \
 	       p_update_geno_nickname.sql \
 	       update_geno_sort_order.sql \
-	       update_fish_sort_order.sql \
 	       get_feature_type.sql \
 	       p_update_fish_name.sql \
 	       p_check_pato_postcomposed_terms.sql \
@@ -137,7 +136,7 @@ STATIC_PROCS  = $(DBLINK_STATS) $(FISH_STATS) $(MRKR_STATS) $(PUB_STATS) \
 		get_mrkr_name_html_link.sql get_mrkr_abbrev_html_link.sql \
 		get_geno_name_html_link.sql get_geno_name_with_bg_html_link.sql \
 		get_genotype_backgrounds_html_link.sql  \
-		get_mutants_html_link.sql get_feature_name_html_link.sql get_ao_name_html_link.sql
+		get_feature_name_html_link.sql get_ao_name_html_link.sql
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))
 #MULTIPLE_PROC_TARGETS_G = $(foreach MPG, $(MULTIPLE_PROCS_GENERIC), $(TARGETDIR)/$(MPG))

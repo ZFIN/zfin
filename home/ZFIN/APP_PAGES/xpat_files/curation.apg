@@ -864,21 +864,6 @@ $(INDEX,$(-,$4,1),"Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec") $2,$5
 <p>
 
  <?MIVAR>
-<?MICOMMENT>
- <?MISQL SQL="select *
-              from record_attribution, feature_marker_relationship
-              where recattrib_data_zdb_id=fmrel_zdb_id
-              and fmrel_mrkr_zdb_id like '%CONSTRCT%'
-              and recattrib_source_zdb_id='$OID'">
-
- <?/MISQL>
-
- <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
-    <?MIVAR>
-   <a class="small-new-link" href="javascript:;" onClick=open("/action/mutant/mutant-list?zdbID=$OID&callingPage=curation","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")>Genotype Components</a>
-   <?/MIVAR>
- <?/MIBLOCK>
-<?/MICOMMENT>
 
   <a class="small-new-link" href="javascript:;" onClick=open("/<!--|WEBDRIVER_PATH_FROM_ROOT|-->?MIval=aa-new_marker.apg&marker_type=GENE&newmrkrSource=\'$OID\'","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>Add New Gene</a>
   &nbsp;
@@ -916,7 +901,7 @@ and feature_zdb_id=fmrel_ftr_zdb_id
 
  <?MIBLOCK COND="$(>,$MI_ROWCOUNT,0)">
     <?MIVAR>
-   <a class="small-new-link" href="javascript:;" onClick=open("/action/mutant/mutant-list?zdbID=$OID&callingPage=curation","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")><size=15>FEATURE TABLE</a>
+   <a class="small-new-link" href="javascript:;" onClick=open("/action/publication/$OID/feature-list","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")><size=15>FEATURE TABLE</a>
    <?/MIVAR>
  <?/MIBLOCK>
 

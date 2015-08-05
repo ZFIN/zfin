@@ -1076,7 +1076,6 @@ public class HibernateMutantRepository implements MutantRepository {
      * @return
      */
     public List<Publication> getFishAttributionList(Fish fish) {
-        List<Publication> publicationList = new ArrayList<>();
         Session session = HibernateUtil.currentSession();
 
         // direct attribution
@@ -1643,7 +1642,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public FishExperiment getFishExperiment(String zdbID) {
 
         Session session = HibernateUtil.currentSession();
-        return (FishExperiment) session.get(FishExperiment.class,zdbID);
+        return (FishExperiment) session.get(FishExperiment.class, zdbID);
 
     }
 

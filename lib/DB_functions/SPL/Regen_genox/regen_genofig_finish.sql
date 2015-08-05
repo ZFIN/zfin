@@ -42,12 +42,6 @@ if (vUpdate != 't') then
 	   rgf_genox_zdb_id
       from regen_genofig_temp;
 
-    --let errorHint = "genotype_figure_fast_search_new create PK index";
-    create unique index genotype_figure_fast_search_primary_key_index_transient
-      on genotype_figure_fast_search_new (gffs_serial_id)
-      fillfactor 100
-      in idxdbs1;
-
     --let errorHint = "genotype_figure_fast_search_new create geno index";
     create index genotype_figure_fast_search_geno_foreign_key_index_transient
       on genotype_figure_fast_search_new (gffs_geno_zdb_id)
@@ -88,8 +82,7 @@ if (vUpdate != 't') then
       rename table genotype_figure_fast_search_new to genotype_figure_fast_search;
       
       --let errorHint = "rename gffs indexes";
-      rename index genotype_figure_fast_search_primary_key_index_transient
-        to genotype_figure_fast_search_primary_key_index;
+    
       rename index genotype_figure_fast_search_geno_foreign_key_index_transient
         to genotype_figure_fast_search_geno_zdb_id_foreign_key_index;
       rename index genotype_figure_fast_search_fig_foreign_key_index_transient 
@@ -101,9 +94,6 @@ if (vUpdate != 't') then
     rename index genotype_figure_fast_search_phenox_foreign_key_index_transient 
         to genotype_figure_fast_search_phenox_zdb_id_foreign_key_index;
 
-      --let errorHint = "genotype_figure_fast_search add PK";
-      alter table genotype_figure_fast_search add constraint primary key 
-      (gffs_serial_id) constraint gffs_primary_key ;
 
       --let errorHint = "genotype_figure_fast_search add foreign key to reference genotype";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_geno_zdb_id) references genotype on 
@@ -151,6 +141,8 @@ delete from genotype_figure_fast_search
 
 end if;
 
-      grant select on genotype_figure_fast_search to "public";
+delete from regen_genofig_temp;
+delete from regen_genofig_input_zdb_id_temp;
+
 
 end procedure;

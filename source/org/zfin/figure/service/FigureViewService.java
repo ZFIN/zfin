@@ -447,12 +447,7 @@ public class FigureViewService {
            || conditions.contains(fishExperiment.getExperiment())) {
             return false;
         }
-
-        if (fishExperiment.getFish().getStrList() == null) {
-            return true;
-        }
-
-        return false;
+        return true;
 
     }
 

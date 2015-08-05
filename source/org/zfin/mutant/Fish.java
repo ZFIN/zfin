@@ -135,8 +135,10 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public String getDisplayName() {
         String newGenoName = genotype.getName();
-        if (genotype.getBackground() != null)
-            newGenoName += " (" + genotype.getBackground().getHandle() + ")";
+        if (genotype.getAssociatedGenotypes() != null) {
+            newGenoName += " ";
+            newGenoName += genotype.getBackgroundDisplayName();
+        }
         return name.replace(genotype.getName(), newGenoName);
     }
 }

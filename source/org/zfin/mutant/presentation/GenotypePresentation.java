@@ -60,13 +60,7 @@ public class GenotypePresentation extends EntityPresentation {
     }
 
     public static String getBackground(Genotype genotype) {
-        if (genotype.getBackground() != null) {
-            String backgroundAppendix = " (";
-            backgroundAppendix += genotype.getBackground().getHandle();
-            backgroundAppendix += ")";
-            return backgroundAppendix;
-        }
-        return "";
+        return genotype.getBackgroundDisplayName();
     }
 
     public static String getPopupLink(Genotype genotype) {

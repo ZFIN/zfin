@@ -84,4 +84,28 @@ public class FeatureGene {
             return MutationType.UNKNOWN;
         return MutationType.getMutationType(typeDisplay);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FeatureGene that = (FeatureGene) o;
+
+        if (!feature.equals(that.feature)) return false;
+        if (sequenceTargetingReagent != null ? !sequenceTargetingReagent.equals(that.sequenceTargetingReagent) : that.sequenceTargetingReagent != null)
+            return false;
+        if (gene != null ? !gene.equals(that.gene) : that.gene != null) return false;
+        return !(construct != null ? !construct.equals(that.construct) : that.construct != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = feature.hashCode();
+        result = 31 * result + (sequenceTargetingReagent != null ? sequenceTargetingReagent.hashCode() : 0);
+        result = 31 * result + (gene != null ? gene.hashCode() : 0);
+        result = 31 * result + (construct != null ? construct.hashCode() : 0);
+        return result;
+    }
 }

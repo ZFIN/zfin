@@ -192,6 +192,7 @@ public class FishConstructionPresenter implements Presenter {
                     entityList.addItem(dto.getName(), dto.getZdbID());
                 index++;
             }
+            onGenotypeSelection(0);
         }
 
         public List<GenotypeDTO> getDtoList() {
@@ -213,8 +214,11 @@ public class FishConstructionPresenter implements Presenter {
         @Override
         public void onSuccess(List<RelatedEntityDTO> dtoList) {
             listBox.clear();
-            strList = dtoList;
+            strList = new ArrayList<>();
+            strList.add(new RelatedEntityDTO());
+            strList.addAll(dtoList);
 
+            listBox.addItem("--", "");
             for (RelatedEntityDTO entityDTO : dtoList) {
                 listBox.addItem(entityDTO.getName(), entityDTO.getZdbID());
             }

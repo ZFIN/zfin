@@ -89,23 +89,4 @@ public class GenotypeFeature {
         else
             return displayString.toString();
     }
-
-    public SortedSet<Marker> getAffectedGenes() {
-        SortedSet<Marker> affectedGenes = new TreeSet<>();
-        Marker affectedGene;
-        Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
-        SortedSet<FeatureMarkerRelationship> affectedGeneFeatureMarkerRelationships = new TreeSet<>();
-        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelationships) {
-            if (featureMarkerRelationship != null) {
-                if (featureMarkerRelationship.getFeatureMarkerRelationshipType().isAffectedMarkerFlag()) {
-                    affectedGeneFeatureMarkerRelationships.add(featureMarkerRelationship);
-                    affectedGene = featureMarkerRelationship.getMarker();
-                    if (affectedGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                        affectedGenes.add(affectedGene);
-                    }
-                }
-            }
-        }
-        return affectedGenes;
-    }
 }
