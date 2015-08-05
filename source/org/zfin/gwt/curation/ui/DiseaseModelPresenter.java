@@ -126,7 +126,7 @@ public class DiseaseModelPresenter implements Presenter {
 
         // environment list
         String message = "Error while reading the environment";
-        curationRPCService.getEnvironmentsWithoutSTR(publicationID, new RetrieveEnvironmentListCallBack(message, view.getErrorLabel()));
+        curationRPCService.getEnvironments(publicationID, new RetrieveEnvironmentListCallBack(message, view.getErrorLabel()));
 
         updateFishList();
     }

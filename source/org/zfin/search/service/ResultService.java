@@ -529,7 +529,7 @@ public class ResultService {
 
             sb.append(GenotypePresentation.getName(xpatex.getFishExperiment().getFish().getGenotype()));
             sb.append(" + ");
-            sb.append(ExperimentPresentation.getNameForFaceted(xpatex.getFishExperiment().getExperiment(),true));
+            sb.append(ExperimentPresentation.getNameForFaceted(xpatex.getFishExperiment().getExperiment()));
 
             sb.append(" from ");
 
@@ -605,7 +605,7 @@ public class ResultService {
 
                     sb.append(GenotypePresentation.getName(phenotypeExperiment.getFishExperiment().getFish().getGenotype()));
                     sb.append(" + ");
-                    sb.append(ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment(),true));
+                    sb.append(ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment()));
 
                     sb.append(" from ");
 

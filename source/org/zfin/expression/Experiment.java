@@ -115,17 +115,4 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return "Experiment";
     }
 
-    // Todo: no way to know an experiment is related to STR any more?
-    /*
-    public boolean isSequenceTargetingReagent() {
-        if (CollectionUtils.isEmpty(experimentConditions))
-            return false;
-        for (ExperimentCondition condition : experimentConditions) {
-            if (condition.getSequenceTargetingReagent() != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-    */
 }
