@@ -174,9 +174,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
         List<EnvironmentDTO> assayDtos = new ArrayList<>();
         for (Experiment experiment : experiments) {
-            EnvironmentDTO env = new EnvironmentDTO();
-            env.setName(experiment.getName());
-            env.setZdbID(experiment.getZdbID());
+            EnvironmentDTO env = DTOConversionService.convertToEnvironmentDTO(experiment);
             assayDtos.add(env);
         }
 
@@ -426,22 +424,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<ExperimentFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish(publicationID, null, null, null);
         Collection<ExpressionStructure> structures = expRepository.retrieveExpressionStructures(publicationID);
         return CollectionUtils.isNotEmpty(experiments) && CollectionUtils.isEmpty(structures);
-    }
-
-    @Override
-    public List<EnvironmentDTO> getEnvironmentsWithoutSTR(String publicationID) {
-        List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
-        List<EnvironmentDTO> assayDtos = new ArrayList<>(experiments.size());
-        for (Experiment experiment : experiments) {
-          //  if (experiment.isSequenceTargetingReagent())
-          //      continue;
-          // Todo: code for the above
-            EnvironmentDTO env = new EnvironmentDTO();
-            env.setName(experiment.getName());
-            env.setZdbID(experiment.getZdbID());
-            assayDtos.add(env);
-        }
-        return assayDtos;
     }
 
     @Override

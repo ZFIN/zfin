@@ -83,7 +83,7 @@
             <c:forEach var="relationshipPresentation" items="${publication.meshHeadings}" varStatus="index">
 
         <td>
-            <zfin2:createExpandCollapseList items="${relationshipPresentation.getDisplayList}" id="${index.count}"/>
+            <zfin2:createExpandCollapseList items="${relationshipPresentation.displayList}" id="${index.count}"/>
         </td>
         </c:forEach>
     </tr>

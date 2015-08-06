@@ -9,8 +9,6 @@ import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,15 +26,12 @@ public class ExperimentDetailController {
 
         if (experiment == null) {
             model.addAttribute(LookupStrings.ZDB_ID, id);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE ;
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         model.addAttribute("experiment", experiment);
-
         Set<ExperimentCondition> conditions = getSortedConditions(experiment);
-
         model.addAttribute("conditions", conditions);
-
         return "expression/experiment.page";
     }
 
@@ -50,13 +45,9 @@ public class ExperimentDetailController {
             return "record-not-found.popup";
         }
 
-
         model.addAttribute("experiment", experiment);
-
         Set<ExperimentCondition> conditions = getSortedConditions(experiment);
-
         model.addAttribute("conditions", conditions);
-
         return "expression/experiment-popup.popup";
     }
 

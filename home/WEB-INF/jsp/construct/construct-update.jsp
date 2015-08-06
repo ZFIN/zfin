@@ -63,14 +63,14 @@
                &nbsp;&nbsp;<input type="button" value="Add" id="addNewAlias"  onClick=addAlias(); /></td><tr>
 
 <tr>
-               <tr>
+
                    <td><b>Sequence</b>:</td>
                    <td><div id ="constructEditSequences"></div></td>
 
-               <tr>
+               <tr><td></td>
 
                    <td><input  id="constructEditSequence" name="constructEditSequence" autocomplete="off" value="" type="text" size=50/>
-                       &nbsp;&nbsp; <input type="button" value="Add" id="addNewSequence"  onClick=addSequence(); /></td></tr>
+                       &nbsp;&nbsp; <input type="button" value="Add" id="addNewSequence"  onClick=addSequence(); /></td><tr>
 
                <tr>
 <td><b>Public Note</b>:</td><td>

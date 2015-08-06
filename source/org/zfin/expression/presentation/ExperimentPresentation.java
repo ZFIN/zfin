@@ -89,7 +89,7 @@ public class ExperimentPresentation extends EntityPresentation {
         return getName(experiment, true);
     }
 
-    public static String getNameForFaceted(Experiment experiment, boolean suppressChemicalDetails) {
+    public static String getNameForFaceted(Experiment experiment) {
         if (experiment == null)
             return null;
 
