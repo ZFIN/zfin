@@ -50,13 +50,8 @@ public class DeleteGenotypeRule extends AbstractDeleteEntityRule implements Dele
 
         //cannot delete a genotype if it is used in making a fish
 
-        Session session = HibernateUtil.currentSession();
 
-        String hql = "select fish from Fish fish " +
-                "     where fish.genotype = :genotype ";
-        Query query = session.createQuery(hql);
-        query.setParameter("genotype", genotype);
-        List<Fish> fishList = query.list();
+        List<Fish> fishList = RepositoryFactory.getMutantRepository().getFishByGenotype(genotype);
 
             if (CollectionUtils.isNotEmpty(fishList)) {
                 addToValidationReport(genotype.getAbbreviation() + " is a component of the following fish", fishList);
