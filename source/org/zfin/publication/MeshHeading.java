@@ -37,8 +37,7 @@ public class MeshHeading {
         this.qualifiers = qualifiers;
     }
 
-
-    public String getDisplayListString() {
+    public List<String> getDisplayList() {
         String base = descriptor.toString();
         List<String> displayList = new ArrayList<>();
         if (CollectionUtils.isEmpty(qualifiers)) {
@@ -48,10 +47,13 @@ public class MeshHeading {
                 displayList.add(base + "/" + qualifier.toString());
             }
         }
-
+        return displayList;
+    }
+    public String getDisplayListString() {
+        List<String> displayList=getDisplayList();
         StringBuilder sb = new StringBuilder();
         for(String str : displayList){
-            sb.append(str); 
+            sb.append(str);
         }
 
         String displayListString = sb.toString();
