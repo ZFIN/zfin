@@ -12,7 +12,8 @@ create function updatestandardorgenericcontrol(vExpZdbId like fish_experiment.ge
 	       select 't'
 	       	      from experiment
 		      where not exists (Select 'x' from experiment_condition
-		      	    	       	       where expcond_exp_zdb_id = exp_zdb_id))
+		      	    	       	       where expcond_exp_zdb_id = exp_zdb_id)
+					       and exp_Zdb_id = vExpZdbId)
   
 then 
      let stdGc = 't';
