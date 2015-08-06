@@ -1,6 +1,7 @@
 package org.zfin.publication;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.zfin.gwt.root.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,8 @@ public class MeshHeading {
         this.qualifiers = qualifiers;
     }
 
-    public List<String> getDisplayList() {
+
+    public String getDisplayListString() {
         String base = descriptor.toString();
         List<String> displayList = new ArrayList<>();
         if (CollectionUtils.isEmpty(qualifiers)) {
@@ -46,7 +48,15 @@ public class MeshHeading {
                 displayList.add(base + "/" + qualifier.toString());
             }
         }
-        return displayList;
+
+        StringBuilder sb = new StringBuilder();
+        for(String str : displayList){
+            sb.append(str); 
+        }
+
+        String displayListString = sb.toString();
+        return displayListString;
+
     }
 
 }
