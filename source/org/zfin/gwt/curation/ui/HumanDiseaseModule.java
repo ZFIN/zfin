@@ -2,11 +2,13 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -63,6 +65,19 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
         onModuleLoad();
     }
 
+    @UiHandler("resetButton")
+    void onClickReset(@SuppressWarnings("unused") ClickEvent event) {
+        termEntry.reset();
+        diseaseErrorLabel.clearError();
+    }
+
+    @UiHandler("addButton")
+    void onClickAdd(@SuppressWarnings("unused") ClickEvent event) {
+        TermDTO disease = termInfoBox.getCurrentTermInfoDTO();
+        eventBus.fireEvent(new AddNewDiseaseTermEvent(disease));
+        diseaseModelPresenter.clearErrorMessages();
+    }
+
     @Override
     public void onModuleLoad() {
         FlowPanel outer = uiBinder.createAndBindUi(this);
@@ -83,20 +98,6 @@ public class HumanDiseaseModule implements HandlesError, EntryPoint {
     }
 
     public void addHandlerEvents() {
-        resetButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                termEntry.reset();
-                diseaseErrorLabel.clearError();
-            }
-        });
-        addButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                TermDTO disease = termInfoBox.getCurrentTermInfoDTO();
-                eventBus.fireEvent(new AddNewDiseaseTermEvent(disease));
-            }
-        });
         attributionModule.addHandlesErrorListener(new HandlesError() {
             @Override
             public void setError(String message) {
