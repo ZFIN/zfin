@@ -82,7 +82,7 @@
 
             <c:forEach var="relationshipPresentation" items="${publication.meshHeadings}" varStatus="index">
 
-            ${relationshipPresentation.displayList}
+            ${relationshipPresentation.displayListString}
                 <c:if test="${!index.last}">,&nbsp;</c:if>
 
         </c:forEach>
