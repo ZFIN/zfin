@@ -208,6 +208,7 @@ public class GenotypeConstructionPresenter implements Presenter {
                 view.getZygosityMaternalListBox().addItem(dto.getName(), dto.getZdbID());
                 view.getZygosityPaternalListBox().addItem(dto.getName(), dto.getZdbID());
             }
+            on211Click();
         }
     }
 
