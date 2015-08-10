@@ -29,10 +29,8 @@ my $sql = 'select distinct mrel_mrkr_2_zdb_id
             where mrel_type = "knockdown reagent targets gene"
               and mrel_mrkr_1_zdb_id like "ZDB-TALEN%" 
               and exists(select "x" 
-                           from experiment_condition, fish_experiment, phenotype_experiment
-                          where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id 
-                            and expcond_exp_zdb_id = genox_exp_zdb_id 
-                            and genox_zdb_id = phenox_genox_zdb_id);';
+                           from fish_str
+                           where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id);';
                                                  
 
 my $ctGenes1 = ZFINPerlModules->countData($sql);
@@ -41,11 +39,8 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
           from marker_relationship 
          where mrel_type = "knockdown reagent targets gene"
            and mrel_mrkr_1_zdb_id like "ZDB-CRISPR%" 
-           and exists(select "x" 
-                        from experiment_condition, fish_experiment, phenotype_experiment
-                       where mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id 
-                         and expcond_exp_zdb_id = genox_exp_zdb_id 
-                         and genox_zdb_id = phenox_genox_zdb_id);';
+           and exists(select "x" from fish_str
+                        where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id);';
                                                  
 
 my $ctGenes2 = ZFINPerlModules->countData($sql);
@@ -71,11 +66,10 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
 my $ctGenes3 = ZFINPerlModules->countData($sql);
 
 $sql = 'select distinct mrel_mrkr_2_zdb_id
-          from marker_relationship, experiment_condition, fish f1, fish_experiment fx1, phenotype_experiment px1, genotype
+          from marker_relationship, fish_str, fish f1, fish_experiment fx1, phenotype_experiment px1, genotype
          where mrel_type = "knockdown reagent targets gene"
            and mrel_mrkr_1_zdb_id like "ZDB-CRISPR%"
-           and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-           and expcond_exp_zdb_id = fx1.genox_exp_zdb_id
+           and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
            and fx1.genox_zdb_id = px1.phenox_genox_zdb_id
            and fx1.genox_fish_zdb_id = f1.fish_zdb_id
            and f1.fish_genotype_zdb_id = geno_zdb_id
@@ -90,11 +84,10 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
 my $ctGenes4 = ZFINPerlModules->countData($sql);
 
 $sql =  'select distinct mrel_mrkr_2_zdb_id
-           from marker_relationship, experiment_condition, fish, fish_experiment, genotype_feature, genotype, phenotype_experiment
+           from marker_relationship, fish_str, fish, fish_experiment, genotype_feature, genotype, phenotype_experiment
           where mrel_type = "knockdown reagent targets gene"
             and mrel_mrkr_1_zdb_id like "ZDB-TALEN%"
-            and mrel_mrkr_1_zdb_id = expcond_mrkr_zdb_id
-            and expcond_exp_zdb_id = genox_exp_zdb_id
+            and mrel_mrkr_1_zdb_id = fishstr_str_zdb_id
             and genox_fish_zdb_id = fish_zdb_id
             and fish_genotype_zdb_id = genofeat_geno_zdb_id
             and geno_zdb_id = fish_genotype_zdb_id
