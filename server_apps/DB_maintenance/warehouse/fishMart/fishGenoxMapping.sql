@@ -1,6 +1,0 @@
-delete from genox_fish_annotation_search_temp;
-
-insert into genox_fish_annotation_search (genoxfas_genox_zdb_id, genoxfas_fas_id)
-select distinct ftfs_genox_zdb_id, ftfs_fas_id from figure_term_fish_search_temp;
-
-!echo "done fishGenoxMapping" ;
