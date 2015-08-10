@@ -84,18 +84,6 @@ EFFECTS
       var TALENcondText = "$2";
   <?/MISQL> 
   
-  // expunit_zdb_id of "N/A" for ST Reagents
-  <?MICOMMENT>
-  <?MISQL SQL="select expunit_zdb_id from experiment_unit where expunit_name = 'N/A' and expunit_condition_group = 'morpholino'">
-      var moNAunitId = "$1";
-  <?/MISQL>  
-  <?MISQL SQL="select expunit_zdb_id from experiment_unit where expunit_name = 'N/A' and expunit_condition_group = 'CRISPR'">
-      var CRISPRnaUnitId = "$1";
-  <?/MISQL> 
-  <?MISQL SQL="select expunit_zdb_id from experiment_unit where expunit_name = 'N/A' and expunit_condition_group = 'TALEN'">
-      var TALENnaUnitId = "$1";
-  <?/MISQL>
-  <?/MICOMMENT>
   
   var array1 = null;
   var array2 = null;
@@ -111,25 +99,6 @@ EFFECTS
     order by cdt_group;">
       
     <?MIVAR NAME=$xpcurcond_aUnit_cg>$1<?/MIVAR>
-    <?MICOMMENT>
-    <?MISQL SQL="
-      select expunit_zdb_id, expunit_name
-      from experiment_unit
-      where expunit_condition_group = '$xpcurcond_aUnit_cg'
-      order by expunit_name;">
-      
-      <?MIVAR NAME=$xpcurcond_aUnit_zdb>$1<?/MIVAR>
-      <?MIVAR NAME=$xpcurcond_aUnit_name>$2<?/MIVAR>
-      
-      <?MIVAR COND=$(EC,$MI_CURRENTROW,1)>
-        var $xpcurcond_aUnit_cg = new Array();
-        var $xpcurcond_aUnit_cg$descrip = new Array();
-      <?/MIVAR>
-
-      $xpcurcond_aUnit_cg$xpcurOB$(-,$MI_CURRENTROW,1)$xpcurCB = "$xpcurcond_aUnit_zdb";
-      $xpcurcond_aUnit_cg$descrip$xpcurOB$(-,$MI_CURRENTROW,1)$xpcurCB = "$xpcurcond_aUnit_name";
-    <?/MISQL>
-    <?/MICOMMENT>
   <?/MISQL>
 
   <?MICOMMENT> Create the Arrays for the condition data type select box<?/MICOMMENT>	
