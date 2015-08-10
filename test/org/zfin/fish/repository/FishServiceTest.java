@@ -602,6 +602,9 @@ public class FishServiceTest extends AbstractDatabaseTest {
         genericGeneAlleleBoxTest("MO1-epcam zgc:110304");
     }
 
+    @Test
+    public void geneStartsWithTest() { genericGeneAlleleBoxTest("adssl sa11426"); }
+
     public void genericGeneAlleleBoxTest(String value) {
         FishSearchFormBean formBean = new FishSearchFormBean();
         formBean.setGeneOrFeatureName(value);
