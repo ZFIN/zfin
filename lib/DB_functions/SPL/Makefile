@@ -73,6 +73,7 @@ FISH_STATS   = get_image_stats.sql \
 		update_construct_name_component.sql \
 		updateAbbrevEqualName.sql \
 		regen_construct_marker.sql \
+	        regen_fish_components.sql \
 		regen_construct.sql
 LOAD_STATS   = p_zgc_load.sql 
 XPAT_STATS   = populate_direct_submission_date.sql p_check_EFG_WT_expression.sql
