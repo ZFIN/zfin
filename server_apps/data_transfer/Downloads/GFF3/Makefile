@@ -21,7 +21,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/Downloads/GFF3
 
 GENERICS = unload_pheno_gff.sql unload_zfin_genes_gff.sql \
-unload_mutant_gff.sql unload_xpat_gff.sql unload_alias_scattered.sql \
+unload_xpat_gff.sql unload_alias_scattered.sql \
 GenerateZFINGFF3.pl unload_zfin_transcript.sql unload_antibody_gff.sql \
 unload_zfin_morpholino.sql unload_vega_chromosome_gff.sql \
 unload_assembly_clone_gff.sql E_unload_alias_scattered.sql \
