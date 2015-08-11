@@ -29,6 +29,7 @@ if (get_obj_type(vZdbId) in ('TALEN','CRISPR','MRPHLNO'))
 		update fish
        	      	   set fish_handle = vFishHandle
 	           where fish_zdb_id = vFish;
+
            end foreach
          end if;
 elif (get_obj_type(vZdbId) = 'GENO')
