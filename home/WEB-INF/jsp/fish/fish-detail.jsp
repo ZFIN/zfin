@@ -2,10 +2,10 @@
 
 <jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishBean" scope="request"/>
 
-<authz:authorize ifAnyGranted="root">
+
     <zfin2:dataManager zdbID="${fish.fishID}"
                        rtype="fish"/>
-</authz:authorize>
+
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
