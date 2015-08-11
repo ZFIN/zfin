@@ -1731,6 +1731,7 @@ where fmrel_ftr_zdb_id = feature_zdb_id
     and phenox_pk_id = phenos_phenox_pk_id
     and mfs_genox_zdb_id = genox_zdb_id
     and fig_zdb_id = phenox_fig_zdb_id
+    and mfs_mrkr_zdb_id like 'ZDB-GENE%'
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
  select  phenos_pk_id,
@@ -1755,6 +1756,7 @@ union
     and phenox_pk_id = phenos_phenox_pk_id
     and genox_fish_zdb_id = fishstr_fish_Zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
+    and mfs_mrkr_zdb_id like 'ZDB-GENE%'
 into temp tmp_dumpCleanPheno;
 
 ! echo "update gene_display name"
