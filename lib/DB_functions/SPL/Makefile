@@ -39,6 +39,7 @@ FISH_STATS   = get_image_stats.sql \
 	       p_update_related_genotype_names.sql \
 	       p_update_related_fish_names.sql \
 	       p_update_related_fish_name.sql \
+	       p_update_related_fish_for_str.sql \
 	       p_set_fish_to_modified.sql \
 	       p_update_fmrel_genotype_names.sql \
                fhist_event.sql \
@@ -73,7 +74,6 @@ FISH_STATS   = get_image_stats.sql \
 		update_construct_name_component.sql \
 		updateAbbrevEqualName.sql \
 		regen_construct_marker.sql \
-	        regen_fish_components.sql \
 		regen_construct.sql
 LOAD_STATS   = p_zgc_load.sql 
 XPAT_STATS   = populate_direct_submission_date.sql p_check_EFG_WT_expression.sql
