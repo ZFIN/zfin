@@ -58,7 +58,7 @@ $cur->finish();
 $dbh->disconnect(); 
 
 $prephenofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/preprocessed_pheno.txt";
-$phenofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno.txt";
+$phenofile = "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pheno_fish.txt";
 
 
 
