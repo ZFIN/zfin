@@ -15,6 +15,7 @@ import org.zfin.expression.Image;
 import org.zfin.expression.presentation.ExperimentPresentation;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeaturePrefix;
+import org.zfin.fish.presentation.FishPresentation;
 import org.zfin.fish.repository.FishService;
 import org.zfin.mapping.MappingService;
 import org.zfin.marker.Clone;
@@ -567,45 +568,37 @@ public class ResultService {
         if (phenotypeExperiment != null) {
             result.addAttribute(GENOTYPE, phenotypeExperiment.getFishExperiment().getFish().getGenotype().getName());
 
+            String conditionsLink = ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true);
+            if (StringUtils.isNotBlank(conditionsLink)) {
+                result.addAttribute(CONDITIONS, conditionsLink);
+            }
+            
 
-            result.addAttribute(CONDITIONS, ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true));
-
-            if (phenotypeExperiment.getStartStage().equals(phenotypeExperiment.getEndStage()))
+            if (phenotypeExperiment.getStartStage().equals(phenotypeExperiment.getEndStage())) {
                 result.addAttribute(STAGE, phenotypeExperiment.getStartStage().getName());
-            else
+            } else {
                 result.addAttribute(STAGE, phenotypeExperiment.getStartStage().getName() + " to " + phenotypeExperiment.getEndStage().getName());
-
+            }
 
             List<String> statements = new ArrayList<>();
             for (PhenotypeStatement statement : phenotypeExperiment.getPhenotypeStatements()) {
                 statements.add(PhenotypePresentation.getName(statement));
             }
-            if (CollectionUtils.isNotEmpty(statements))
+            if (CollectionUtils.isNotEmpty(statements)) {
                 result.addAttribute(PHENOTYPE, withBreaks(statements));
+            }
 
-            //            result.addAttribute(PUBLICATION, "<a href=\"/" + phenotypeExperiment.getFigure().getPublication().getZdbID()
-            //        + "\">" + phenotypeExperiment.getFigure().getPublication().getTitle() + "</a>");
-
-
-            //if (StringUtils.isNotEmpty(phenotypeExperiment.getFigure().getCaption()))
-            //    result.addAttribute(CAPTION, collapsible(phenotypeExperiment.getFigure().getCaption()));
-
-
-            //todo: add more?
             if (!StringUtils.contains(ExperimentPresentation.getLink(phenotypeExperiment.getFishExperiment().getExperiment(), true), "standard or control")) {
 
                     StringBuilder sb = new StringBuilder();
 
-                /*if (xpatex.getGene() != null)
-                    sb.append(MarkerPresentation.getAbbreviation(xpatex.getGene()));
-                else if (xpatex.getAntibody() != null)
-                    sb.append(MarkerPresentation.getName(xpatex.getAntibody()));*/
+                sb.append(FishPresentation.getName(phenotypeExperiment.getFishExperiment().getFish()));
 
-                    // sb.append(" expression in ");
-
-                    sb.append(GenotypePresentation.getName(phenotypeExperiment.getFishExperiment().getFish().getGenotype()));
-                    sb.append(" + ");
-                    sb.append(ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment()));
+                    String experimentText = ExperimentPresentation.getNameForFaceted(phenotypeExperiment.getFishExperiment().getExperiment());
+                if (StringUtils.isNotBlank(experimentText)) {
+                        sb.append(" + ");
+                    sb.append(experimentText);
+                    }
 
                     sb.append(" from ");
 

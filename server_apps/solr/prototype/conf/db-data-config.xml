@@ -1000,65 +1000,6 @@ WHERE  ( NOT g.geno_is_wildtype
        AND genoback_background_zdb_id = bg.geno_zdb_id;
                  ">
 
-
-
-           <!--<entity name="fish_publication_xref"
-                   datasource="db" query="select distinct exp_source_zdb_id as xref, ftfs_fas_id as internal_id
-                            from figure_term_fish_search, fish_experiment, experiment
-                            where ftfs_genox_zdb_id = genox_zdb_id
-                              and genox_exp_zdb_id = exp_zdb_id;"
-                   where="internal_id=fish.internal_id"
-                   processor="CachedSqlEntityProcessor"/>-->
-
-
-<!--           <entity name="fish_genes"
-                   datasource="db" query="
-select gfrv_gene_abbrev as affected_gene,
-       gfrv_construct_name as construct,
-       gfrv_fish_zdb_id as fish_zdb_id,
-       '{' || '&quot;gene&quot; : &quot;' || nvl(gfrv_gene_abbrev,'') || '&quot;' ||
-           ',' || '&quot;affector&quot; : &quot;' || nvl(gfrv_affector_abbrev,'') || '&quot;' ||
-           ',' || '&quot;affectorType&quot; : &quot;' || nvl(gfrv_affector_type_display,'') || '&quot;' ||
-           ',' || '&quot;construct&quot; : &quot;' || nvl(gfrv_construct_name,'') || '&quot;' ||
-           '}' as result_table
-           from gene_feature_result_view
-           where gfrv_gene_zdb_id[1,8] = 'ZDB-GENE'
-           order by gfrv_fas_id asc, gfrv_gene_abbrev_order asc, gfrv_affector_abbrev_order asc, gfrv_construct_abbrev_order asc;"
-                   where="fish_zdb_id=fish.id"
-                   processor="CachedSqlEntityProcessor"/>
-
-           <entity name="fish_feature"
-                   datasource="db" query="select feature_abbrev as sequence_alteration,
-                           '{' || '&quot;gene&quot; : &quot;' || nvl(gfrv_gene_abbrev,'') || '&quot;' ||
-                               ',' || '&quot;affector&quot; : &quot;' || nvl(gfrv_affector_abbrev,'') || '&quot;' ||
-                               ',' || '&quot;affectorType&quot; : &quot;' || nvl(gfrv_affector_type_display,'') || '&quot;' ||
-                               ',' || '&quot;construct&quot; : &quot;' || nvl(gfrv_construct_name,'') || '&quot;' ||
-                               '}' as result_table,
-                                 feature_zdb_id as xref,
-                                 gfrv_fish_zdb_id
-                          from gene_feature_result_view
-                               join feature on feature_zdb_id = gfrv_affector_id;"
-                   where="fish_zdb_id=fish.id"
-                   processor="CachedSqlEntityProcessor"/>
-
-
-           <entity name="fish_gene_names"
-                   datasource="db" query="select mrkr_name as affected_gene_full_name, gfrv_fish_zdb_id
-                   from gene_feature_result_view, marker
-                   where gfrv_gene_zdb_id = mrkr_zdb_id
-                     and gfrv_gene_zdb_id[1,8] = 'ZDB-GENE';"
-                   where="gfrv_fish_zdb_id=fish.id"
-                   processor="CachedSqlEntityProcessor"/>
-
-
-           <entity name="fish_gene_previous_names"
-                   datasource="db" query=" select dalias_alias as affected_gene_previous_name, gfrv_fish_zdb_id
-                   from gene_feature_result_view, data_alias
-                   where gfrv_gene_zdb_id = dalias_data_zdb_id
-                     and gfrv_gene_zdb_id[1,8] = 'ZDB-GENE';"
-                   where="gfrv_fish_zdb_id=fish.id"
-                   processor="CachedSqlEntityProcessor"/>-->
-
            <entity name="fish_feature"
                    query="select
                             feature_abbrev as sequence_alteration,
@@ -1224,31 +1165,27 @@ select gfrv_gene_abbrev as affected_gene,
 
 
            <entity name="fish_expressed_gene_names"
-                   datasource="db" query="select distinct mrkr_abbrev as expressed_gene,
-                                   mrkr_name as expressed_gene_full_name,
-                                   ftfs_fish_zdb_id as fish_zdb_id
-                            from figure_term_fish_search,
-                                 expression_experiment,
-                                 expression_result,
-                                 marker
-                            where ftfs_genox_zdb_id = xpatex_genox_zdb_id
-                              and xpatex_gene_zdb_id = mrkr_zdb_id
-                              and xpatex_zdb_id = xpatres_xpatex_zdb_id
-                              and xpatres_expression_found='t';"
+                   datasource="db" query="select mrkr_abbrev as expressed_gene,
+                                                 mrkr_name as expressed_gene_full_name,
+                                                 genox_fish_zdb_id as fish_zdb_id
+                                          from fish_experiment
+                                               join expression_experiment on xpatex_genox_zdb_id = genox_zdb_id
+                                               join marker on xpatex_gene_zdb_id = mrkr_zdb_id
+                                          where exists (select 'x' from expression_result
+                                                        where xpatres_xpatex_zdb_id = xpatex_zdb_id
+                                                          and xpatres_expression_found = 't');"
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_expressed_gene_alias"
-                   datasource="db" query="select distinct dalias_alias as expressed_gene_previous_name,
-                                   genox_fish_zdb_id as fish_zdb_id
-                            from fish_experiment,
-                                 expression_experiment,
-                                 expression_result,
-                                 data_alias
-                            where genox_zdb_id = xpatex_genox_zdb_id
-                              and xpatex_gene_zdb_id = dalias_data_zdb_id
-                              and xpatex_zdb_id = xpatres_xpatex_zdb_id
-                              and xpatres_expression_found='t';"
+                   datasource="db" query="select dalias_alias as expressed_gene_previous_name,
+                                                 genox_fish_zdb_id as fish_zdb_id
+                                            from fish_experiment
+                                                 join expression_experiment on xpatex_genox_zdb_id = genox_zdb_id
+                                                 join data_alias on xpatex_gene_zdb_id = dalias_data_zdb_id
+                                            where exists (select 'x' from expression_result
+                                                          where xpatres_xpatex_zdb_id = xpatex_zdb_id
+                                                            and xpatres_expression_found = 't');"
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
@@ -1280,36 +1217,6 @@ select gfrv_gene_abbrev as affected_gene,
                                           inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id;"
                    processor="CachedSqlEntityProcessor"
                    where="genox_fish_zdb_id=fish.id"/>
-
-           <!--
-                      <entity name="fish_image"
-                              datasource="db"
-                              query="select
-                                case
-                                  when img_image_with_annotation is not null
-                                  then img_image_with_annotation
-                                  else img_image end as image,
-                                  img_thumbnail as thumbnail,
-                                  'true' as has_image,
-                                  genox_fish_zdb_id as fish_zdb_id
-                                  from phenotype_experiment
-                                       join image on img_fig_zdb_id = phenox_fig_zdb_id
-                                       join fish_experiment on phenox_genox_zdb_id = genox_zdb_id
-                               UNION
-                               select
-                                case
-                                  when img_image_with_annotation is not null
-                                  then img_image_with_annotation
-                                  else img_image end as image,
-                                  img_thumbnail as thumbnail,
-                                  'true' as has_image,
-                                  genox_fish_zdb_id as fish_zdb_id
-                                  from xpat_exp_details_generated
-                                       join image on img_fig_zdb_id = xedg_fig_zdb_id
-                                       join fish_experiment on xedg_genox_zdb_id = genox_zdb_id"
-                              where="fish_zdb_id=fish.id"
-                              processor="CachedSqlEntityProcessor"/>
-           -->
 
 
 
