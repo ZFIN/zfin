@@ -15,6 +15,37 @@
     </tr>
 </table>
 
+<section class="zfin-warning" style="display: none;">
+    <button class="zfin-warning-close"></button>
+    <div class="zfin-warning-sidebar">
+        <i class="fa fa-warning"></i>
+    </div>
+    <div class="zfin-warning-content">
+        <h1 class="zfin-warning-header">Data Model Changes</h1>
+        <div class="zfin-warning-body">
+            <p>As part of the data model changes outlined in <a href="/ZDB-PUB-150729-10">this publication</a>, there have
+                been changes to the structure of download files which may affect how you process these files.</p>
+            <ol>
+                <li>Most instances of Genotype IDs (e.g. <code>ZDB-GENO-XXXXXX-X</code>) have been replace by Fish IDs (e.g.
+                    <code>ZDB-FISH-YYYYYY-Y</code>). For example, the <code>genofig.txt</code> file previously looked like:
+                <pre>Genotype ID         Figure ID
+ZDB-GENO-000209-20  ZDB-FIG-070117-1869
+ZDB-GENO-000412-1   ZDB-FIG-070117-1870
+...</pre>
+                    Now it will look like:
+                <pre>Fish ID              Figure ID
+ZDB-FISH-150803-1    ZDB-FIG-070117-1874
+ZDB-FISH-150803-100  ZDB-FIG-110224-4
+...</pre>
+                </li>
+                <li>The names of files which have been affected are now appended with <code>_fish</code>. For example,
+                    <code>genofig.txt</code> is now named <code>genofig_fish.txt</code>.</li>
+            </ol>
+            <p>If you have questions about these changes, please <a href="mailto:zfinadmn@zfin.org">contact us</a>.</p>
+        </div>
+    </div>
+</section>
+
 <table width="75%">
     <tr>
         <td>
@@ -205,13 +236,27 @@ To obtain previous versions you have to check the archive of the external source
     </c:choose>
     }
 
-    jQuery(function () {
-        jQuery(".header-toggle").click(function (evt) {
+    $(function () {
+        $(".header-toggle").click(function (evt) {
             evt.preventDefault();
-            var $this = jQuery(this);
+            var $this = $(this);
             $this.text($this.text() == "Show" ? "Hide" : "Show");
-            jQuery($this.data("toggle")).slideToggle(200);
+            $($this.data("toggle")).slideToggle(200);
         });
+
+        <%-- TODO: take warning stuff out after expiration date --%>
+        var expDate = new Date(2015, 7, 15);
+        $(".zfin-warning-close").click(function (evt) {
+            evt.preventDefault();
+            $(this).closest(".zfin-warning").toggleClass('zfin-collapsed');
+            localStorage.setItem('zfin-downloads-fish-dismiss', 'true');
+        });
+        if (localStorage.getItem('zfin-downloads-fish-dismiss')) {
+            $(".zfin-warning").addClass('zfin-collapsed');
+        }
+        if (new Date() < expDate) {
+            $(".zfin-warning").show();
+        }
     });
 </script>
 
