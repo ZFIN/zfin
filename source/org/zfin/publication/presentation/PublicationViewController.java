@@ -160,7 +160,8 @@ public class PublicationViewController {
             return "redirect:/" + pubID;
         }*/
 
-        List<FeatureMarkerRelationship> featureList = getPublicationRepository().getFeatureMarkerRelationshipsByPubID(pubID);
+       // List<FeatureMarkerRelationship> featureList = getPublicationRepository().getFeatureMarkerRelationshipsByPubID(pubID);
+        List<Feature> featureList = getPublicationRepository().getFeaturesByPublication(pubID);
         Publication publication = getPublicationRepository().getPublication(pubID);
 
         model.addAttribute("featureList", featureList);

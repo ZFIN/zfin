@@ -21,17 +21,24 @@
                     <th>Affected Gene(s)</th>
 
     </tr>
-    <c:forEach var="fmRel" items="${featureList}"  varStatus="loop">
+    <c:forEach var="feature" items="${featureList}"  varStatus="loop">
         <zfin:alternating-tr loopName="loop">
 
 
-                            <td><zfin:link entity="${fmRel.feature}"/></td>
+                           <%-- <td><zfin:link entity="${fmRel.feature}"/></td>
                             <td>
                                 <zfin2:listOfTgConstructs markerCollection="${fmRel.feature.tgConstructs}"/></td>
                             <td>${fmRel.feature.type.display}</td>
                             <td>
                                 <zfin2:listOfAffectedGenes markerCollection="${fmRel.feature.affectedGenes}"/>
-                            </td>
+                            </td>--%>
+            <td><zfin:link entity="${feature}"/></td>
+            <td>
+                <zfin2:listOfTgConstructs markerCollection="${feature.tgConstructs}"/></td>
+            <td>${feature.type.display}</td>
+            <td>
+                <zfin2:listOfAffectedGenes markerCollection="${feature.affectedGenes}"/>
+            </td>
 
 
         </zfin:alternating-tr>
