@@ -572,7 +572,7 @@ public class ResultService {
             if (StringUtils.isNotBlank(conditionsLink)) {
                 result.addAttribute(CONDITIONS, conditionsLink);
             }
-            
+
 
             if (phenotypeExperiment.getStartStage().equals(phenotypeExperiment.getEndStage())) {
                 result.addAttribute(STAGE, phenotypeExperiment.getStartStage().getName());
