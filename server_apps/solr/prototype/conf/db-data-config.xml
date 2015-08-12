@@ -1163,6 +1163,23 @@ WHERE  ( NOT g.geno_is_wildtype
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
+           <entity name="fish_construct_coding_sequence"
+                   datasource="db" query="select
+                            mrkr_name as coding_sequence,
+                            dalias_alias as coding_sequence_full_name,
+                            mrkr_zdb_id as xref,
+              	            fish_zdb_id
+                            from fish
+                                 join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
+                                 join feature on genofeat_feature_zdb_id = feature_zdb_id
+                              	 join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
+                                 join marker_relationship on mrel_mrkr_1_zdb_id	= fmrel_mrkr_zdb_id
+       	       	       	       	 join marker on mrkr_zdb_id = mrel_mrkr_2_zdb_id
+      	      	      	      	 left outer join data_alias on dalias_data_zdb_id = mrkr_zdb_id
+                            where fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature')
+       	       	       	      and mrel_type = 'coding sequence of';"
+                   where="fish_zdb_id=fish.id"
+                   processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_expressed_gene_names"
                    datasource="db" query="select mrkr_abbrev as expressed_gene,
@@ -1197,17 +1214,7 @@ WHERE  ( NOT g.geno_is_wildtype
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
-<!--  todo: re-write this query without gene_feature_result_view
-           <entity name="fish_construct_coding_sequence"
-                   datasource="db" query="select gfrv_fish_zdb_id as fish_zdb_id, mrkr_abbrev as coding_sequence, dalias_alias as coding_sequence_full_name
-                                             from marker_relationship, marker, gene_feature_result_view, data_alias
-                                             where mrel_type = 'coding sequence of'
-                                               and mrel_mrkr_2_zdb_id = dalias_data_zdb_id
-                                               and mrel_mrkr_2_zdb_id = mrkr_zdb_id
-                                               and mrel_mrkr_1_zdb_id = gfrv_construct_zdb_id;  "
-                   where="fish_zdb_id=fish.id"
-                   processor="CachedSqlEntityProcessor"/>
--->
+
 
 
            <entity name="fish_disease"
