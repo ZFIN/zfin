@@ -390,7 +390,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         FishSearchFormBean formBean = new FishSearchFormBean();
         formBean.setGeneOrFeatureName("fgf8a");
         formBean.setFilter1("excludeMorphants");
-        formBean.setMaxDisplayRecords(20);
+        formBean.setMaxDisplayRecords(100);
         formBean.setFirstPageRecord(1);
         formBean.setSortBy(SortBy.BEST_MATCH.toString());
 
@@ -398,7 +398,10 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
         FishSearchResult result = FishService.getFish(criteria);
         for (FishResult fishResult : result.getResults()) {
-            assertTrue(fishResult.getFish().getName() + " should have no morpolinos", (fishResult.getFish().getStrList() == null || fishResult.getFish().getStrList().size() == 0));
+            //don't bother testing the non-fish records that get returned as well
+            if (fishResult.getFish() != null) {
+                assertTrue(fishResult.getFish().getName() + " should have no morpolinos", (fishResult.getFish().getStrList() == null || fishResult.getFish().getStrList().size() == 0));
+            }
         }
 
     }
