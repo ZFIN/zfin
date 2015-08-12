@@ -105,7 +105,7 @@
     <c:forEach var="result" items="${formBean.fishSearchResult.results}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
             <td class="bold" colspan="5">
-                <zfin:link entity="${result.fish}"/> [${result.fish.order}]
+                <zfin:link entity="${result.fish}"/> <%--[${result.fish.order}]--%>
             </td>
             <td>
 

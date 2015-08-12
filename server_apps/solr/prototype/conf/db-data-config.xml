@@ -1197,6 +1197,7 @@ WHERE  ( NOT g.geno_is_wildtype
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
+<!--  todo: re-write this query without gene_feature_result_view
            <entity name="fish_construct_coding_sequence"
                    datasource="db" query="select gfrv_fish_zdb_id as fish_zdb_id, mrkr_abbrev as coding_sequence, dalias_alias as coding_sequence_full_name
                                              from marker_relationship, marker, gene_feature_result_view, data_alias
@@ -1206,6 +1207,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                                and mrel_mrkr_1_zdb_id = gfrv_construct_zdb_id;  "
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
+-->
 
 
            <entity name="fish_disease"
