@@ -1387,6 +1387,8 @@ public class DTOConversionService {
             }
             dto.setStrList(strs);
         }
+        dto.setOrder(fish.getOrder());
+        dto.setNameOrder(fish.getNameOrder());
         return dto;
     }
 
