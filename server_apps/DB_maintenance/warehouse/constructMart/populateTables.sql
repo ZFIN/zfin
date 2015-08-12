@@ -51,7 +51,7 @@ insert into tmp_ordered_markers (name, construct_id)
     and allmapnm_precedence not in ('Accession number','Orthologue','Sequence similarity');
 
 insert into construct_search_temp (cons_construct_zdb_id, cons_abbrev_order, cons_name, cons_abbrev)
-  select mrkr_Zdb_id, mrkr_abbrev_order, mrkr_name, mrkr_abbrev from marker;
+  select mrkr_Zdb_id, mrkr_abbrev_order, mrkr_name, mrkr_abbrev from marker where mrkr_type in ('PTCONSTRCT','ETCONSTRCT','TGCONSTRCT','GTCONSTRCT');
 
 update construct_search_temp
   set cons_type = 'Gene Trap Construct'
