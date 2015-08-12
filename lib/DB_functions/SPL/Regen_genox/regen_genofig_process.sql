@@ -36,7 +36,8 @@ insert into regen_genofig_temp (rgf_geno_zdb_id,
      and fishstr_fish_zdb_id = fish_Zdb_id
      and phenox_genox_zdb_id = genox_zdb_id
      and exists (Select 'x' from mutant_fast_search
-     	 		where mfs_genox_zdb_id = genox_zdb_id);
+     	 		where mfs_genox_zdb_id = genox_zdb_id
+			and mfs_mrkr_Zdb_id = fishstr_str_zdb_id);
 
 insert into regen_genofig_temp (rgf_geno_zdb_id,
 				rgf_fig_zdb_id,
