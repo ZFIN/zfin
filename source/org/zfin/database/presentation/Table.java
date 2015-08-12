@@ -38,6 +38,7 @@ public enum Table {
     DATA_NOTE("DNOTE", "data_note", "dnote_zdb_id"),
     DBLINK("DBLINK", "db_link", "dblink_zdb_id", "dblink_acc_num_display"),
     EXPERIMENT("EXP", "experiment", "exp_zdb_id", "exp_name"),
+    EXPERIMENT_CONDITION("EXPCOND", "experiment_Condition", "expcond_zdb_id", "expcond_comments"),
     EXPRESSION_EXPERIMENT("XPAT", "expression_experiment", "xpatex_zdb_id", "xpatex_source_zdb_id,xpatex_gene_zdb_id,xpatex_genox_zdb_id", "xpatex_assay_name"),
     EXPRESSION_RESULT("XPATRES", "expression_result", "xpatres_zdb_id", null, "xpatres_expression_found"),
     EXTERNAL_NOTE("EXTNOTE", "external_note", "extnote_zdb_id"),
