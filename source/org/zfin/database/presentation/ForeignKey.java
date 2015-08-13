@@ -155,6 +155,7 @@ public enum ForeignKey {
     TYPE_MARKER_SEQUENCE(Table.SEQUENCE_TYPE, Table.MORPHOLINO, "seq_type"),
     FISH_GENOTYPE(Table.GENOTYPE, Table.FISH, "fish_genotype_zdb_id"),
     EXPERIMENT_CONDITION(Table.EXPERIMENT, Table.EXPERIMENT_CONDITION, "expcond_exp_zdb_id"),
+    EXPERIMENT_CONDITION_CONDITION(Table.CONDITION_DATA_TYPE, Table.EXPERIMENT_CONDITION, "expcond_cdt_zdb_id"),
     //AMBIGUITY_MARKER_SEQUENCE(Table.SEQUENCE_AMBIGUITY_CODE, Table.MORPHOLINO, "seq_ambiguity_code"),
     PUBNOTE_PERSON(Table.PERSON, Table.PUBLICATION_NOTE, "pnote_curator_zdb_id"),
     CURATION_PERSON(Table.PERSON, Table.CURATION, "cur_curator_zdb_id"),
