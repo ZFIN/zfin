@@ -21,14 +21,6 @@ public class DatabaseServiceDbTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getGenoxInfoFromGenoID() {
-        String foreignKeyName = "fas_genotype_group";
-        String parentPkValue = "ZDB-GENO-070215-11";
-        List<ForeignKeyResult> resultList = DatabaseService.createFKResultList(foreignKeyName, parentPkValue);
-        assertNotNull(resultList);
-    }
-
-    @Test
     public void getExpressionExperimentInfoFromGenoXID() {
         String parentPkValue = "ZDB-GENOX-041102-2604";
         String entityName = DatabaseService.getEntityName(parentPkValue, Table.FISH_EXPERIMENT);

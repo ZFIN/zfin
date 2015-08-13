@@ -1424,6 +1424,25 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="1" unique="true">Fish ID</Column>
             <Column id="2">Publication ID</Column>
         </Download>
+        <Download orderIndex="3">
+            <Name>
+                Genotype-Publication relation
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genoPub</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                         ]]>
+            </Query>
+            <Column id="1" unique="true">Genotype ID</Column>
+            <Column id="2">Publication ID</Column>
+        </Download>
         <Download orderIndex="1">
             <Name>
                 All Genomic Features
@@ -1456,6 +1475,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
 	    <Column id="9">Construct name</Column>
 	    <Column id="10">Construct SO ID</Column>
         </Download>
+
         <Download orderIndex="1">
             <Name>
                 Transgenic Insertions
