@@ -40,8 +40,6 @@ public class DatabaseInfoController {
 
     @RequestMapping("/bts-index-info")
     protected String showBtsIndex(Model model) throws Exception {
-        InformixLuceneIndexInspection inspection = new InformixLuceneIndexInspection(Table.WH_FISH, "fas_all");
-        model.addAttribute("statistics", inspection);
         return "bts-index-statistics.page";
     }
 

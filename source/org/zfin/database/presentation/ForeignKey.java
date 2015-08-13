@@ -214,7 +214,6 @@ public enum ForeignKey {
     MARKER_REL_TYPE(Table.MARKER_RELATION_TYPE, Table.MARKER_RELATION, "mrel_type"),
     AMN_MARKER(Table.MARKER, Table.ALL_MAP_NAMES, "allmapnm_zdb_id"),
     EXP_PUBLICATION(Table.PUBLICATION, Table.EXPERIMENT, "exp_source_zdb_id"),
-    FISH_GENE_FEATURE(Table.WH_FISH, Table.WH_GENE_FEATURE_RESULT_VIEW, "gfrv_fas_id"),
     PUBLICATION_RUN_NOMEN(Table.PUBLICATION, Table.RUN, "run_nomen_pub_zdb_id"),
     PUBLICATION_RUN_RELATION(Table.PUBLICATION, Table.RUN, "run_relation_pub_zdb_id"),
     PROGRAM_RUN(Table.RUN_PROGRAM, Table.RUN, "run_program"),
@@ -236,18 +235,12 @@ public enum ForeignKey {
     CHROMOSOME_LOCATION_MARKER(Table.MARKER, Table.SEQUENCE_FEATURE_CHROMSOME_LOCATION, "sfcl_data_zdb_id"),
     CHROMOSOME_LOCATION_FEATURE(Table.FEATURE, Table.SEQUENCE_FEATURE_CHROMSOME_LOCATION, "sfcl_data_zdb_id"),
 
-    WH_FISH_GENOTYPE(Table.GENOTYPE, Table.WH_FISH, "fas_genotype_group"),
     WH_FEATURE_RESULT_GENE(Table.MARKER, Table.WH_GENE_FEATURE_RESULT_VIEW, "gfrv_gene_zdb_id"),
     WH_FEATURE_RESULT_FEATURE(Table.FEATURE, Table.WH_GENE_FEATURE_RESULT_VIEW, "gfrv_affector_id"),
     WH_FEATURE_RESULT_MORPHOLINO(Table.MARKER, Table.WH_GENE_FEATURE_RESULT_VIEW, "gfrv_affector_id"),
     WH_FEATURE_RESULT_CONSTRUCT(Table.MARKER, Table.WH_GENE_FEATURE_RESULT_VIEW, "gfrv_construct_zdb_id"),
-    //WH_FAS_PFIGG(Table.WH_FISH, Table.WH_PHENOTYPE_FIGURE_GROUP, "pfigg_group_name", "fas_pheno_figure_group"),
-    WH_FTFS_FAS(Table.WH_FISH, Table.WH_FIGURE_TERM_FISH_SEARCH, "ftfs_fas_id"),
-    //WH_FAS_STRGG(Table.WH_FISH, Table.WH_STR_GROUP, "strg_group_name", "fas_str_group"),
-    //WH_FTFS_TERMGROUP(Table.WH_TERM_GROUP, Table.WH_FIGURE_TERM_FISH_SEARCH, "ftfs_term_group"),
     WH_FAS_PFIGM(Table.WH_PHENOTYPE_FIGURE_GROUP, Table.WH_PHENOTYPE_FIGURE_GROUP_MEMBER, "pfiggm_group_id"),
-    WH_FAS_STRGM(Table.WH_STR_GROUP, Table.WH_STR_GROUP_MEMBER, "morphgm_group_id"),
-    WH_FTFS_FIGURE(Table.FIGURE, Table.WH_FIGURE_TERM_FISH_SEARCH, "ftfs_fig_zdb_id");
+    WH_FAS_STRGM(Table.WH_STR_GROUP, Table.WH_STR_GROUP_MEMBER, "morphgm_group_id");
 
     private Table entityTable;
     private Table foreignKeyTable;
