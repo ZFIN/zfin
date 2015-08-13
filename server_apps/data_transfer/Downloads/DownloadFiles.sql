@@ -521,6 +521,14 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 	   and recattrib_source_type = 'standard' ;
 
 
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genoPub.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genoPub.txt'
+ DELIMITER "	" select zdb_id, accession_no, recattrib_data_zdb_id from publication, genotype, record_attribution
+ 	   where recattrib_Data_zdb_id = geno_Zdb_id 
+	   and recattrib_source_zdb_id = zdb_id
+	   and recattrib_source_type = 'standard' ;
+
+
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pub_to_pubmed_id_translation.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/pub_to_pubmed_id_translation.txt'
  DELIMITER "	" select zdb_id, accession_no from publication ;
