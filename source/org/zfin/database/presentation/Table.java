@@ -164,7 +164,7 @@ public enum Table {
     // warehouse tables
     SEQUENCE_FEATURE_CHROMSOME_LOCATION("CHROMOSOME", "sequence_feature_chromosome_location", "sfcl_data_zdb_id,sfcl_chromosome,sfcl_location_source,sfcl_location_subsource,\n" +
             "    sfcl_start,sfcl_end"),
-    WH_GENE_FEATURE_RESULT_VIEW("GENE_FEATURE_RESULT_VIEW", "gene_feature_result_view", "gfrv_pk_id", null, "gfrv_affector_type_display", "gfrv_affector_id,gfrv_construct_zdb_id"),
+
     WH_STR_GROUP("WHSTRGG", "str_group", "strg_group_pk_id"),
     WH_STR_GROUP_MEMBER("WHSTRGM", "str_group_member", "strgm_pk_id"),
     WH_PHENOTYPE_FIGURE_GROUP("PFIGG", "phenotype_figure_group", "pfigg_group_pk_id"),
