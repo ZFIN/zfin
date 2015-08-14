@@ -1324,6 +1324,9 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="8">Construct Symbol</Column>
             <Column id="9">Background ID</Column>
 	    <Column id="10">Background Name</Column>
+	    <Column id="11">Genotype ID</Column>
+	    <Column id="12">Genotype Name</Column>
+
         </Download>
         <Download orderIndex="1">
             <Name>
