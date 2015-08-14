@@ -227,21 +227,6 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 --genotypesFeatures
 
 
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/2geneFeatureResultView.txt"
-  select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
-  	 gfrv_construct_name, gfrv_construct_zdb_id,feature_type
-    from gene_Feature_result_view, feature
-    where gfrv_affector_id = feature_zdb_id
-    union
- select gfrv_fas_id, gfrv_geno_name, gfrv_line_handle, gfrv_gene_abbrev, gfrv_gene_zdb_id, gfrv_affector_abbrev, gfrv_affector_id,
-  	 gfrv_construct_name, gfrv_construct_zdb_id,'str'
-    from gene_Feature_result_view
-    where (gfrv_affector_id like 'ZDB-MRPH%' or gfrv_affector_id like 'ZDB-TALEN%' or gfrv_affector_id='ZDB-CRISPR%');
-
-unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/3figureAnat.txt"
-  select ftfs_fas_id, ftfs_genox_zdb_id, ftfs_geno_name, ftfs_geno_handle, ftfs_fig_zdb_id 
-    from figure_Term_fish_search;
-
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genotypes/1genos.txt"
   select distinct geno.*,(select a.zyg_name||","||b.zyg_name from zygocity a, zygocity b where a.zyg_zdb_id = genofeat_dad_zygocity and b.zyg_zdb_id = genofeat_mom_zygocity ),get_genotype_backgrounds(geno_zdb_id)
      from genotype geno, genotype_feature
