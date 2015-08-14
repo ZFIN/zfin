@@ -276,10 +276,9 @@ EFFECTS
     </td>
     <?MICOMMENT>
     <td>$(IF,$(OR,$(EC,$xpcurcond_cdt_group,morpholino),$(EC,$xpcurcond_cdt_group,CRISPR),$(EC,$xpcurcond_cdt_group,TALEN)),ST Reagent:$xpcurcond_cdt_name,$xpcurcond_cdt_group:$(SUBSTR,$xpcurcond_cdt_name,1,25))
-
+    <?/MICOMMENT>
     <td>$(IF,$(OR,$(EC,$xpcurcond_cdt_group,morpholino),$(EC,$xpcurcond_cdt_group,CRISPR),$(EC,$xpcurcond_cdt_group,TALEN)),ST Reagent:$xpcurcond_cdt_name,$xpcurcond_cdt_group:$xpcurcond_cdt_name)
     </td>
-    <?/MICOMMENT>
 
     <td>
           <input name="comments$xpcurcond_expcond_minus_dash" type=textbox size=20 value="$5">
@@ -366,7 +365,7 @@ EFFECTS
           
       </select>
     </td>
-   
+
     <td>
         <input name="xpcur_G_cond_add_comments" type=textbox size=20>
     </td>
