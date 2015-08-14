@@ -163,10 +163,13 @@ public class OntologyManager {
         logger.info("Finished loading all ontologies: took " + DateUtil.getTimeDuration(startTime));
     }
 
-    public Collection<TermDTO> populateRelationships(Map<String, TermDTO> termDTOMap) {
+    public Collection<TermDTO> populateRelationships(Map<String, TermDTO> termDTOMap, OntologyDTO ontology) {
 
         // pass two fills in the rest of the child / parent type info
         for (TermDTO termDTO : termDTOMap.values()) {
+            // don't continue populating terms from a different ontology
+            if (!termDTO.getOntology().equals(ontology))
+                continue;
 
             // populate child
             if (termDTO.getChildrenTerms() != null) {
@@ -174,6 +177,11 @@ public class OntologyManager {
                     TermDTO cachedTerm = termDTOMap.get(childTerm.getZdbID());
                     if (cachedTerm == null) {
                         cachedTerm = ontologyManager.getTermByID(childTerm.getZdbID());
+                        // if it cannot be found in cache go back to DB. Can happen for child terms that
+                        // are not part of the same ontology, e.g. mitochondrion [GO_CC] has children
+                        // from GO_BP (mitochondrial RNA modification).
+                        if (cachedTerm == null)
+                            cachedTerm = DTOConversionService.convertToTermDTO(getOntologyRepository().getTermByZdbID(childTerm.getZdbID()));
                     }
 
                     if (cachedTerm == null) {
@@ -427,7 +435,7 @@ public class OntologyManager {
     public void initOntologyMapFast(Ontology ontology) {
         resetCounter();
         Map<String, TermDTO> termDTOMap = getOntologyRepository().getTermDTOsFromOntology(ontology);
-        Collection<TermDTO> termDTOs = populateRelationships(termDTOMap);
+        Collection<TermDTO> termDTOs = populateRelationships(termDTOMap, DTOConversionService.convertToOntologyDTO(ontology));
         createMapForTerms(termDTOs, ontology);
     }
 

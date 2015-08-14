@@ -65,38 +65,6 @@ public class DatabaseColumnViewControllerTest {
 
     }
 
-/*
-    @Test
-    public void testIndirectForeignKey() {
-        ForeignKey foreignKey = ForeignKey.WH_FAS_PFIGG;
-        Integer id = 428;
-        DatabaseColumnViewController controller = new DatabaseColumnViewController();
-        DatabaseJdbcStatement statement = controller.createJdbcStatement(id, foreignKey, true);
-
-        assertEquals("select count(*) from phenotype_figure_group, fish_annotation_search where fas_pk_id = 428 and " +
-                "fas_pheno_figure_group = pfigg_group_name", statement.getQuery());
-
-    }
-
-    @Test
-    public void testIndirectForeignKeyDetails() {
-        DatabaseQueryFormBean formBean = new DatabaseQueryFormBean();
-        List<String> columnNames = new ArrayList<String>(1);
-        columnNames.add(ForeignKey.WH_FAS_PFIGG.getForeignKey());
-        List<String> columnValues = new ArrayList<String>(1);
-        Integer id = 428;
-        columnValues.add("428");
-        formBean.setColumnName(columnNames);
-        formBean.setColumnValue(columnValues);
-        ForeignKey foreignKey = ForeignKey.WH_FAS_PFIGG;
-        DatabaseColumnViewController controller = new DatabaseColumnViewController();
-        DatabaseJdbcStatement statement = controller.createJoinedJdbcStatement(formBean, foreignKey, false);
-
-        assertEquals("select * from phenotype_figure_group, fish_annotation_search where fas_pk_id = '428' and " +
-                "fas_pheno_figure_group = pfigg_group_name", statement.getQuery());
-
-    }
-*/
 
     @Test
     public void testTripleJoinedJdbcStatement() {

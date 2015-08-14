@@ -109,12 +109,7 @@ public class HibernateFishRepository implements FishRepository {
     }
 
 
-    public String getGenoxMaxLength() {
-        Session session = HibernateUtil.currentSession();
-        String sqlFeatures = "select first 1 fas_genox_group From fish_annotation_search order by length(fas_genox_group) desc ";
-        Query sqlQuery = session.createSQLQuery(sqlFeatures);
-        return (String) sqlQuery.uniqueResult();
-    }
+
 
     /**
      * Retrieve the Warehouse summary info for a given mart.
