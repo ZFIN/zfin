@@ -826,7 +826,7 @@
         <delete dir="org"/>
     </target>
 
-    <target name="max-clause-bts" depends="compile" description="Find out the maximum number of tokes for single letter words">
+    <!--<target name="max-clause-bts" depends="compile" description="Find out the maximum number of tokes for single letter words">
         <echo message="Creating Statistics..."/>
         <java classname="org.zfin.util.InformixLuceneIndexInspection" fork="yes" classpathref="extended.classpath" failonerror="true">
             <classpath refid="classpath"/>
@@ -835,7 +835,7 @@
             <arg value="-columnName"/>
             <arg value="fas_all"/>
         </java>
-    </target>
+    </target>-->
 
 </project>
 
