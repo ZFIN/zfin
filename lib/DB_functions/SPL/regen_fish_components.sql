@@ -60,7 +60,8 @@ create function regen_fish_components()
 	       	    	  		       affector_id varchar(50), 
 			  		       gene_id varchar(50),
 					       construct_id varchar(50),
-					       fish_name varchar(250)
+					       fish_name varchar(250),
+					       genotype_id varchar(50)
 					       )
 	with no log ;
 
@@ -68,14 +69,15 @@ create function regen_fish_components()
 	       	    	  		       affector_id varchar(50), 
 			  		       gene_id varchar(50),
 					       construct_id varchar(50),
-					       fish_name varchar(250))
+					       fish_name varchar(250),
+					       genotype_id varchar(50))
 	with no log ;
 
    let errorHint = "insert into tmp_fish_components";
 
    --FEATURES
-       insert into tmp_fish_components (fish_id, affector_id, gene_id, fish_name) 
-       	      select fish_zdb_id, feature_zdb_id, a.mrkr_zdb_id, fish_name
+       insert into tmp_fish_components (fish_id, affector_id, gene_id, fish_name, genotype_id) 
+       	      select fish_zdb_id, feature_zdb_id, a.mrkr_zdb_id, fish_name, fish_genotype_zdb_id
 	      	from fish, genotype_feature,feature, outer (feature_marker_relationship c, outer marker a)
 		where fish_genotype_zdb_id = genofeat_geno_zdb_id
 		and genofeat_feature_zdb_id = feature_zdb_id
@@ -85,8 +87,8 @@ create function regen_fish_components()
  		and feature_Type != 'TRANSGENIC_INSERTION';
 
    --CONSTRUCTS
-      insert into tmp_fish_components (fish_id, affector_id, gene_id, construct_id, fish_name)
-      	      select fish_zdb_id, feature_zdb_id, a.mrkr_Zdb_id, b.mrkr_zdb_id, fish_name
+      insert into tmp_fish_components (fish_id, affector_id, gene_id, construct_id, fish_name, genotype_id)
+      	      select fish_zdb_id, feature_zdb_id, a.mrkr_Zdb_id, b.mrkr_zdb_id, fish_name, fish_genotype_zdb_id
 	      	from fish, feature, genotype_feature,
      		      outer (feature_marker_relationship c, outer marker a),
       		      outer (feature_marker_relationship d, outer marker b)
@@ -100,23 +102,23 @@ create function regen_fish_components()
  		and d.fmrel_type like 'contains%';
 
    --STRS
-   insert into tmp_fish_components (fish_id, affector_id, gene_id, fish_name)
-      	      select fish_zdb_id, fishstr_str_zdb_id, mrel_mrkr_2_zdb_id, fish_name
+   insert into tmp_fish_components (fish_id, affector_id, gene_id, fish_name, genotype_id)
+      	      select fish_zdb_id, fishstr_str_zdb_id, mrel_mrkr_2_zdb_id, fish_name, fish_genotype_zdb_id
 	      	from fish ,fish_str,marker_relationship
 		where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
 		and  fish_zdb_id = fishstr_fish_zdb_id
 		and mrel_mrkr_2_Zdb_id like 'ZDB-GENE%';
 		
 
-    insert into tmp_fish_components_distinct (fish_id, affector_id, gene_id, construct_id, fish_name)	 
-    	   select distinct fish_id, affector_id, gene_id, construct_id, fish_name
+    insert into tmp_fish_components_distinct (fish_id, affector_id, gene_id, construct_id, fish_name, genotype_id)	 
+    	   select distinct fish_id, affector_id, gene_id, construct_id, fish_name, genotype_id
              from tmp_fish_components;
 
 
     delete from fish_Components;
 
-    insert into fish_components (fc_fish_zdb_id, fc_affector_Zdb_id, fc_gene_zdb_id, fc_construct_zdb_id, fc_fish_name)
-       select fish_id, affector_id, gene_id, construct_id, fish_name
+    insert into fish_components (fc_fish_zdb_id, fc_affector_Zdb_id, fc_gene_zdb_id, fc_construct_zdb_id, fc_fish_name, fc_genotype_zdb_id)
+       select fish_id, affector_id, gene_id, construct_id, fish_name, genotype_id
          from tmp_fish_components_distinct; 
 
 
@@ -124,11 +126,6 @@ create function regen_fish_components()
 
   end -- global exception handler
 
-  begin work;
-
-  update statistics high for table genotype;
-
-  commit work;
   return 0;
 
 end function;
