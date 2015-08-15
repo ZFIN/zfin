@@ -27,6 +27,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.*;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
@@ -36,6 +37,8 @@ import org.zfin.sequence.Sequence;
 import org.zfin.sequence.blast.Database;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  */
@@ -103,7 +106,15 @@ public class SequenceTargetingReagentViewController {
                 if (phenotypeStatement != null)
                     phenotypeStatements.add(phenotypeStatement);
             }
-            sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenotypeStatements,"str"));
+            sequenceTargetingReagentBean.setPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(phenotypeStatements,"str", "phenotypeStatement"));
+        }
+
+        List<PhenotypeStatement> allPhenotypeStatements = RepositoryFactory.getPhenotypeRepository().getAllPhenotypeStatementsForSTR(sequenceTargetingReagent);
+
+        if (allPhenotypeStatements == null || allPhenotypeStatements.size() == 0)  {
+            sequenceTargetingReagentBean.setAllPhenotypeDisplays(null);
+        } else {
+            sequenceTargetingReagentBean.setAllPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(allPhenotypeStatements,"str", "fish"));
         }
 
         // Genomic Features created by STR (CRISPR and TALEN only at this time)
@@ -111,12 +122,6 @@ public class SequenceTargetingReagentViewController {
             List<Feature> features = markerRepository.getFeaturesBySTR(sequenceTargetingReagent);
             sequenceTargetingReagentBean.setGenomicFeatures(features);
         }
-
-        // Fish utilizing the STR
-        List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
-        SortedSet<Fish> sortedFishSet = new TreeSet<>();
-        sortedFishSet.addAll(fishList);
-        sequenceTargetingReagentBean.setFishList(sortedFishSet);
 
         // get sequence attribution
         if (sequenceTargetingReagent.getSequence() != null) {
