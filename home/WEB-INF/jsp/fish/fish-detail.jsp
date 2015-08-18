@@ -122,7 +122,7 @@
         <b>Phenotype in <zfin:name entity="${fish}"/></b>
         <c:choose>
             <c:when test="${phenotypeDisplays != null && fn:length(phenotypeDisplays) > 0 }">
-                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" noFishOrCondition="fales"
+                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
                                      suppressMoDetails="true" secondColumn="condition"/>
             </c:when>
             <c:otherwise>

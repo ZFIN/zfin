@@ -130,7 +130,7 @@
     <div id="phenotype">
     <c:choose>
         <c:when test="${formBean.phenotypeDisplays != null && fn:length(formBean.phenotypeDisplays) > 0 }">
-            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" suppressMoDetails="true" noFishOrCondition="true" secondColumn="fish"/>
+            <zfin2:all-phenotype phenotypeDisplays="${formBean.phenotypeDisplays}" suppressMoDetails="true" fishAndCondition="false" secondColumn="fish"/>
         </c:when>
         <c:otherwise>
             <span class="no-data-tag">No data available</span>
@@ -142,7 +142,7 @@
     <div id="allPhenotype">
         <c:choose>
             <c:when test="${formBean.allPhenotypeDisplays != null && fn:length(formBean.allPhenotypeDisplays) > 0 }">
-                <zfin2:all-phenotype phenotypeDisplays="${formBean.allPhenotypeDisplays}" suppressMoDetails="true" noFishOrCondition="false" secondColumn="fish"/>
+                <zfin2:all-phenotype phenotypeDisplays="${formBean.allPhenotypeDisplays}" suppressMoDetails="true" fishAndCondition="true" secondColumn="fish"/>
             </c:when>
             <c:otherwise>
                 <span class="no-data-tag">No data available</span>
