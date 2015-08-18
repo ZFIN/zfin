@@ -37,6 +37,7 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
     from fish, fish_str a, fish_experiment, regen_genox_input_zdb_id_temp
     where fish_Zdb_id =a.fishstr_fish_Zdb_id
     and fish_zdb_id = genox_fish_zdb_id
+    and fish_functional_affected_gene_count =1
     and genox_is_std_or_generic_control = 't'
     and genox_zdb_id = rggz_zdb_id
 and not exists (Select 'x' from regen_genox_temp
