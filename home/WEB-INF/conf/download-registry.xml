@@ -1431,29 +1431,6 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
         </Download>
         <Download orderIndex="3">
             <Name>
-                Genotype-Publication relation
-            </Name>
-            <Category>
-                Fish Data
-            </Category>
-            <Description></Description>
-            <WikiLink></WikiLink>
-            <FileName>genotype_publication</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                    select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_zdb_id
-                     from record_attribution, genotype
-                     where recattrib_data_zdb_id = geno_zdb_id
-                       and recattrib_source_type = 'standard'
-                         ]]>
-            </Query>
-            <Column id="1" unique="true">Genotype ID</Column>
-            <Column id="2">Publication ID</Column>
-        </Download>
-        <Download orderIndex="3">
-            <Name>
                 Fish-Publication relation
             </Name>
             <Category>
@@ -1488,7 +1465,8 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
                          ]]>
             </Query>
             <Column id="1" unique="true">Genotype ID</Column>
-            <Column id="2">Publication ID</Column>
+	    <Column id="2">OMIM ID </Column>
+            <Column id="3">Publication ID</Column>
         </Download>
         <Download orderIndex="1">
             <Name>

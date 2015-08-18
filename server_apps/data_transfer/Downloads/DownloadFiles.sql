@@ -1122,15 +1122,6 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
    and cloner.mrel_type='clone contains transcript'
 ;
 
--- unload publication - genotype association file
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_publication.txt'"
-unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_publication.txt'
- DELIMITER "	"
-select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_zdb_id
- from record_attribution, genotype
- where recattrib_data_zdb_id = geno_zdb_id
-   and recattrib_source_type = 'standard'
-;
 
 
 -- unload publication - gene/genep association file
