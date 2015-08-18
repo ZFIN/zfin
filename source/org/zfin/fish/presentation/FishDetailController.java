@@ -77,7 +77,7 @@ public class FishDetailController {
         // phenotype
         List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
         model.addAttribute("phenotypeStatements", phenotypeStatements);
-        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
+        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement"));
 
         // disease model
         List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);

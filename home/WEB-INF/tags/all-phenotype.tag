@@ -3,25 +3,26 @@
 
 <%@ attribute name="phenotypeDisplays" type="java.util.Collection" required="false" %>
 <%@ attribute name="suppressMoDetails" type="java.lang.Boolean" required="false" %>
+<%@ attribute name="noFishOrCondition" type="java.lang.Boolean" required="true" %>
 <%@ attribute name="secondColumn" type="java.lang.String" required="true" %>
 
 <table width="100%" class="summary rowstripes">
     <thead>
     <tr>
-        <th width="48%">
+        <th width="40%">
             Phenotype
         </th>
-        <th width="17%">
-            <c:choose>
-                <c:when test="${secondColumn eq 'condition'}">
-                    Conditions
-                </c:when>
-                <c:otherwise>
-                    Fish
-                </c:otherwise>
-            </c:choose>
-        </th>
-        <th width="35%">
+        <c:if test="${!noFishOrCondition && secondColumn ne 'condition'}">
+            <th>
+                Fish
+            </th>
+        </c:if>
+        <c:if test="${!noFishOrCondition}">
+            <th>
+                Conditions
+            </th>
+        </c:if>
+        <th>
             Figures
         </th>
     </tr>
@@ -31,16 +32,16 @@
             <td>
                 <zfin:link entity="${phenotypeDisplay.phenoStatement}"/>
             </td>
-            <td>
-                <c:choose>
-                    <c:when test="${secondColumn eq 'condition'}">
-                        <zfin:link entity="${phenotypeDisplay.experiment}" suppressMoDetails="${displayMoDetails}"/>
-                    </c:when>
-                    <c:otherwise>
-                        <zfin:link entity="${phenotypeDisplay.phenoStatement.phenotypeExperiment.fishExperiment.fish}"/>
-                    </c:otherwise>
-                </c:choose>
-            </td>
+            <c:if test="${!noFishOrCondition && secondColumn ne 'condition'}">
+                <td>
+                    <zfin:link entity="${phenotypeDisplay.phenoStatement.phenotypeExperiment.fishExperiment.fish}"/>
+                </td>
+            </c:if>
+            <c:if test="${!noFishOrCondition}">
+                <td>
+                    <zfin:link entity="${phenotypeDisplay.experiment}" suppressMoDetails="${displayMoDetails}"/>
+                </td>
+            </c:if>
             <td>
                 <c:forEach var="figsPub" items="${phenotypeDisplay.figuresPerPub}">
                     <c:forEach var="fig" items="${figsPub.value}" varStatus="figloop">

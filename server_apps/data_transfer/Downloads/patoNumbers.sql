@@ -113,17 +113,16 @@ create temp table tmp_pheno_genes (gene_id varchar(50))
 with no log;
 
 insert into tmp_pheno_genes
- select gfrv_gene_zdb_id
-   from gene_feature_result_view, fish_annotation_Search
-   where gfrv_fas_id = fas_pk_id 
-   and fas_gene_count = 1
-   and fas_pheno_term_group is not null ;
-   
+  select distinct fc_gene_zdb_id
+    from fish_components
+    inner join fish on fc_fish_zdb_id = fish_zdb_id
+    where fish_functional_affected_gene_count = 1;
+
 insert into tmp_pheno_genes
  select mrel_mrkr_2_zdb_id
    from marker_relationship, genotype_figure_fast_search
    where mrel_type = "knockdown reagent targets gene"
-     and mrel_mrkr_1_zdb_id = gffs_morph_zdb_id;   
+     and mrel_mrkr_1_zdb_id = gffs_morph_zdb_id;
 
 create temp table tmp_unique (gene_id varchar(50)) with no log;
 

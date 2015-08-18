@@ -10,6 +10,7 @@ import org.zfin.gwt.curation.dto.DiseaseModelDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
+import org.zfin.mutant.presentation.PhenotypeDisplayFishComparator;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
@@ -434,7 +435,7 @@ public class PhenotypeService {
      * Create a list of phenotypeDisplay objects organized by phenotype statement first,
      * then by the associated experiment.
      */
-    public static List<PhenotypeDisplay> getPhenotypeDisplays(List<PhenotypeStatement> phenotypeStatements, String groupBy) {
+    public static List<PhenotypeDisplay> getPhenotypeDisplays(List<PhenotypeStatement> phenotypeStatements, String groupBy, String sortBy) {
         if (phenotypeStatements != null && phenotypeStatements.size() > 0) {
 
             // a map of phenotypeStatement-experiment-publication-concatenated-Ids as keys and display objects as values
@@ -495,7 +496,10 @@ public class PhenotypeService {
 
             if (phenoMap.values().size() > 0) {
                 phenoDisplays.addAll(phenoMap.values());
-                Collections.sort(phenoDisplays);
+                if (sortBy.equals("phenotypeStatement"))
+                    Collections.sort(phenoDisplays);
+                else
+                    Collections.sort(phenoDisplays, new PhenotypeDisplayFishComparator());
             }
 
             return phenoDisplays;

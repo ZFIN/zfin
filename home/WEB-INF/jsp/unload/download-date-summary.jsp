@@ -29,8 +29,8 @@
                 <li>Most instances of Genotype IDs (e.g. <code>ZDB-GENO-XXXXXX-X</code>) have been replace by Fish IDs (e.g.
                     <code>ZDB-FISH-YYYYYY-Y</code>). For example, the <code>genofig.txt</code> file previously looked like:
                 <pre>Genotype ID         Figure ID
-ZDB-GENO-000209-20  ZDB-FIG-070117-1869
-ZDB-GENO-000412-1   ZDB-FIG-070117-1870
+ZDB-GENO-000209-20  ZDB-FIG-070117-1874
+ZDB-GENO-000412-1   ZDB-FIG-110224-4
 ...</pre>
                     Now it will look like:
                 <pre>Fish ID              Figure ID
@@ -244,8 +244,8 @@ To obtain previous versions you have to check the archive of the external source
             $($this.data("toggle")).slideToggle(200);
         });
 
-        <%-- TODO: take warning stuff out after expiration date --%>
-        var expDate = new Date(2015, 7, 15);
+        <%-- TODO: take warning stuff out after expiration date (October 10, 2015) --%>
+        var expDate = new Date(2015, 9, 10);
         $(".zfin-warning-close").click(function (evt) {
             evt.preventDefault();
             $(this).closest(".zfin-warning").toggleClass('zfin-collapsed');
