@@ -1317,7 +1317,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
             <Column id="1">Fish ID</Column>
             <Column id="2">Fish Name</Column>
             <Column id="3">Gene ID</Column>
-	    <Column id="4"">Gene Symbol</Column>
+	    <Column id="4">Gene Symbol</Column>
             <Column id="5">Affector ID</Column>
             <Column id="6">Affector Symbol</Column>
 	    <Column id="7">Construct ID</Column>
