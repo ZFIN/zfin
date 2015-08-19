@@ -1803,7 +1803,7 @@ update tmp_dumpCleanPheno
 --remove normals for clean phenotype download.
 --TODO: clean this up so that we don't reuse temp tables for different files.
 delete from tmp_phenotype_statement
-  where tps.quality_tag = 'normal';
+  where quality_tag = 'normal';
 
 !echo "unload phenoGeneCleanData.txt"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData_fish.txt'
