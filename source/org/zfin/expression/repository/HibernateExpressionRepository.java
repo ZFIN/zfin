@@ -1450,6 +1450,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_is_std_or_generic_control = 't' " +
                 "   and genox_fish_zdb_id = fish_zdb_id " +
                 "   and fish_genotype_zdb_id = geno_zdb_id " +
                 "   and geno_is_wildtype = 't' " +
@@ -1458,12 +1459,15 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and not exists(select 'x' from fish_str str2 " +
                 "                   where str2.fishstr_fish_zdb_id = fish_zdb_id " +
                 "   and str2.fishstr_str_zdb_id != :str) " +
+                "   and not exists(select 'x' from experiment_condition " +
+                "                            where genox_exp_zdb_id = expcond_exp_zdb_id) " +
                 "union " +
                 "select distinct xpatres_zdb_id " +
                 "  from expression_result, expression_experiment, fish_experiment, fish, genotype, fish_str str3 " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_is_std_or_generic_control = 't' " +
                 "   and genox_fish_zdb_id = fish_zdb_id " +
                 "   and fish_genotype_zdb_id = geno_zdb_id " +
                 "   and geno_is_wildtype = 'f' " +
@@ -1501,6 +1505,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "    and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "    and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "    and xpatex_genox_zdb_id = genox_zdb_id " +
+                "    and genox_is_std_or_generic_control = 't' " +
                 "    and genox_fish_zdb_id = fish_zdb_id " +
                 "    and fish_genotype_zdb_id = geno_zdb_id " +
                 "    and geno_is_wildtype = 't' " +
@@ -1509,6 +1514,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "    and not exists(select 'x' from fish_str str2 " +
                 "                    where str2.fishstr_fish_zdb_id = fish_zdb_id " +
                 "                      and str2.fishstr_str_zdb_id != :strID) " +
+                "    and not exists(select 'x' from experiment_condition " +
+                "                             where genox_exp_zdb_id = expcond_exp_zdb_id) " +
                 " union " +
                 " select distinct xpatfig_fig_zdb_id  " +
                 "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, fish_str str3 " +
@@ -1544,6 +1551,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and xpatex_gene_zdb_id = :expressedGeneID " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_is_std_or_generic_control = 't' " +
                 "   and genox_fish_zdb_id = fish_zdb_id " +
                 "   and fish_genotype_zdb_id = geno_zdb_id " +
                 "   and geno_is_wildtype = 't' " +
@@ -1552,6 +1560,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and not exists(select 'x' from fish_str str2 " +
                 "                   where str2.fishstr_fish_zdb_id = fish_zdb_id " +
                 "                     and str2.fishstr_str_zdb_id != :strID) " +
+                "    and not exists(select 'x' from experiment_condition " +
+                "                             where genox_exp_zdb_id = expcond_exp_zdb_id) " +
                 "union " +
                 "select distinct xpatfig_fig_zdb_id  " +
                 "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, fish_str str3 " +
@@ -1587,6 +1597,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and fig_zdb_id = xpatfig_fig_zdb_id " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
+                "   and genox_is_std_or_generic_control = 't' " +
                 "   and genox_fish_zdb_id = fish_zdb_id " +
                 "   and fish_genotype_zdb_id = geno_zdb_id " +
                 "   and geno_is_wildtype = 't' " +
@@ -1595,6 +1606,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "   and not exists(select 'x' from fish_str str2 " +
                 "                   where str2.fishstr_fish_zdb_id = fish_zdb_id " +
                 "                     and str2.fishstr_str_zdb_id != :strID) " +
+                "    and not exists(select 'x' from experiment_condition " +
+                "                             where genox_exp_zdb_id = expcond_exp_zdb_id) " +
                 "union " +
                 "select distinct fig_source_zdb_id  " +
                 "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, fish, genotype, fish_str str3 " +
