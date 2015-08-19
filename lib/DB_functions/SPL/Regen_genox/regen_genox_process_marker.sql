@@ -21,7 +21,6 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
     where fish_zdb_id = genox_fish_Zdb_id
     and fish_genotype_zdb_id = genofeat_geno_zdb_id
     and genofeat_feature_Zdb_id = fmrel_ftr_zdb_id
-    and fmrel_type != 'contains phenotypic sequence feature'
     and fish_functional_affected_gene_count = 1
     and get_obj_type(fmrel_mrkr_Zdb_id) in ('GENE','MRPHLNO','TALEN','CRISPR')
     and genox_is_std_or_generic_control = 't'
@@ -35,7 +34,6 @@ insert into regen_genox_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
     from fish, fish_str a, fish_experiment, regen_genox_input_zdb_id_temp
     where fish_Zdb_id =a.fishstr_fish_Zdb_id
     and fish_zdb_id = genox_fish_zdb_id
- and fmrel_type != 'contains phenotypic sequence feature'
  and fish_functional_affected_gene_count = 1
     and genox_is_std_or_generic_control = 't'
     and fishstr_str_zdb_id = rggz_zdb_id
@@ -53,7 +51,6 @@ select mrel_mrkr_2_zdb_id, genox_zdb_id
     and fish_zdb_id = genox_fish_zdb_id
     and fish_functional_affected_gene_count =1
     and fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
- and fmrel_type != 'contains phenotypic sequence feature'
     and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE')
  and genox_is_std_or_generic_control = 't' 
    and mrel_mrkr_2_zdb_id = rggz_zdb_id
