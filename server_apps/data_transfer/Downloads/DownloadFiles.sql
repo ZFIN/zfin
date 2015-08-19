@@ -959,6 +959,7 @@ select distinct fish_zdb_id, fish_name, fish_handle, geno_zdb_id
  from genotype, fish
  where geno_is_wildtype = 't'
   and fish_genotype_Zdb_id = geno_zdb_id
+ and not exists (Select 'x' from fish_str where fishstr_fish_zdb_id = fish_zdb_id)
 ;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.tx'"
