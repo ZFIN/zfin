@@ -474,19 +474,23 @@ public class ResultService {
 
                 if (xpatex.getProbe() == null) {
                     result.addAttribute(GENE, MarkerPresentation.getAbbreviation(xpatex.getGene()));
-                } else if (xpatex.getProbe().isChimeric() == false) {
+                } else if (!xpatex.getProbe().isChimeric()) {
                     result.addAttribute(GENE, MarkerPresentation.getAbbreviation(xpatex.getGene()));
                 }
             }
-            if (xpatex.getAntibody() != null)
+            if (xpatex.getAntibody() != null) {
                 result.addAttribute(ANTIBODY, MarkerPresentation.getName(xpatex.getAntibody()));
-            if (xpatex.getProbe() != null)
+            }
+            if (xpatex.getProbe() != null) {
                 result.addAttribute(PROBE, MarkerPresentation.getName(xpatex.getProbe()));
+            }
 
             result.addAttribute(GENOTYPE, xpatex.getFishExperiment().getFish().getGenotype().getName());
             String conditions = ExperimentPresentation.getLink(xpatex.getFishExperiment().getExperiment(), true);
-           // String conditions = ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(), true, false);
-            result.addAttribute(CONDITIONS, conditions);
+            // String conditions = ExperimentPresentation.getNameForFaceted(xpatex.getGenotypeExperiment().getExperiment(), true, false);
+            if (StringUtils.isNotBlank(conditions)) {
+                result.addAttribute(CONDITIONS, conditions);
+            }
 
             List<String> results = new ArrayList<>();
             List<ExpressionResult> expressionResults = new ArrayList<>();
@@ -500,15 +504,19 @@ public class ResultService {
 
             for (ExpressionResult expressionResult : expressionResults) {
                 StringBuilder sb = new StringBuilder();
-                if (expressionResult.getStartStage() == expressionResult.getEndStage())
+                if (expressionResult.getStartStage() == expressionResult.getEndStage()) {
                     sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true));
-                else
-                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true) + " to " + DevelopmentStagePresentation.getName(expressionResult.getEndStage(), true));
+                } else {
+                    sb.append(DevelopmentStagePresentation.getName(expressionResult.getStartStage(), true))
+                            .append(" to ")
+                            .append(DevelopmentStagePresentation.getName(expressionResult.getEndStage(), true));
+                }
 
                 sb.append(" - ");
 
-                if (expressionResult.isExpressionFound() == false)
+                if (!expressionResult.isExpressionFound()) {
                     sb.append(" <i>not in</i> ");
+                }
                 sb.append(TermPresentation.getLink(expressionResult.getEntity(), true));
                 results.add(sb.toString());
             }
@@ -528,9 +536,12 @@ public class ResultService {
             }
             sb.append(" expression in ");
 
-            sb.append(GenotypePresentation.getName(xpatex.getFishExperiment().getFish().getGenotype()));
-            sb.append(" + ");
-            sb.append(ExperimentPresentation.getNameForFaceted(xpatex.getFishExperiment().getExperiment()));
+            sb.append(FishPresentation.getName(xpatex.getFishExperiment().getFish()));
+            String experimentText = ExperimentPresentation.getNameForFaceted(xpatex.getFishExperiment().getExperiment());
+            if (StringUtils.isNotBlank(experimentText)) {
+                sb.append(" + ");
+                sb.append(experimentText);
+            }
 
             sb.append(" from ");
 
