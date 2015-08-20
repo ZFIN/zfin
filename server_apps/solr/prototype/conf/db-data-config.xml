@@ -1149,7 +1149,7 @@ WHERE  ( NOT g.geno_is_wildtype
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
-           <entity name="fish_construct_alias"
+          <!-- <entity name="fish_construct_alias"
                    query="select
                             dalias_alias as construct,
                             dalias_alias as construct_name,
@@ -1161,7 +1161,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                  join data_alias on dalias_data_zdb_id = fmrel_mrkr_zdb_id
                             where fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');"
                    where="fish_zdb_id=fish.id"
-                   processor="CachedSqlEntityProcessor"/>
+                   processor="CachedSqlEntityProcessor"/>-->
 
            <entity name="fish_construct_coding_sequence"
                    datasource="db" query="select
