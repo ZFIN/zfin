@@ -114,15 +114,18 @@ with no log;
 
 insert into tmp_pheno_genes
   select distinct fc_gene_zdb_id
-    from fish_components
-    inner join fish on fc_fish_zdb_id = fish_zdb_id
-    where fish_functional_affected_gene_count = 1;
+    from fish_components, fish_experiment, mutant_fast_Search
+    where fc_fish_zdb_id = genox_fish_zdb_id
+    and mfs_genox_zdb_id = genox_zdb_id
+    and mfs_mrkr_zdb_id = fc_gene_zdb_id 
+    and fc_affector_zdb_id like 'ZDB-ALT%';
 
 insert into tmp_pheno_genes
- select mrel_mrkr_2_zdb_id
-   from marker_relationship, genotype_figure_fast_search
-   where mrel_type = "knockdown reagent targets gene"
-     and mrel_mrkr_1_zdb_id = gffs_morph_zdb_id;
+  select distinct fc_gene_zdb_id
+    from fish_components, fish_experiment, mutant_fast_Search
+    where fc_fish_zdb_id = genox_fish_zdb_id
+    and mfs_genox_zdb_id = genox_zdb_id
+    and mfs_mrkr_zdb_id = fc_affector_zdb_id ;
 
 create temp table tmp_unique (gene_id varchar(50)) with no log;
 
@@ -170,32 +173,7 @@ select zdb_id, gene_id, mrkr_abbrev, ortho_abbrev, organism,
     and fmrel_type = 'is allele of'
     and genox_zdb_id = mfs_genox_zdb_id
     and mfs_mrkr_zdb_id = mrkr_zdb_id
-union
-  select zdb_id, gene_id, mrkr_abbrev, ortho_abbrev, organism,
-	 a.term_ont_id as a_ont_id,a.term_name as e1superName, a.term_ontology as e1superTermOntology,
-  	 b.term_ont_id as b_ont_id,b.term_name as e1subName, 
-	 b.term_ontology as e1subTermOntology, c.term_ont_id as c_ont_id,
-	 c.term_name as e2supername, c.term_ontology as e2superTermOntology,
-	 d.term_ont_id as d_ont_id,d.term_name as e2subname, d.term_ontology as e2subTermOntology,
-	 e.term_ont_id as e_ont_id, e.term_name as qualityName, phenos_tag,
-	 '' as a_relationship_id,'' as a_relationship_name,'' as b_relationship_id,'' as b_relationship_name, phenos_pk_id as phenos_id
-    from tmp_o_with_p, phenotype_statement, marker, marker_relationship,
-	 term a, 
-	 outer term b, 
-	 outer term c,
-	 outer term d,
-	 outer term e,
-	 genotype_figure_fast_search
-    where mrel_mrkr_2_zdb_id = gene_id
-    and mrel_type = "knockdown reagent targets gene"
-    and mrel_mrkr_2_zdb_id = mrkr_zdb_id
-    and mrel_mrkr_1_zdb_id = gffs_morph_zdb_id
-    and gffs_phenox_pk_id = phenos_phenox_pk_id
-    and a.term_zdb_id = phenos_entity_1_superterm_zdb_id
-    and b.term_zdb_id = phenos_entity_1_subterm_zdb_id
-    and c.term_zdb_id = phenos_entity_2_superterm_zdb_id
-    and d.term_zdb_id = phenos_entity_2_subterm_zdb_id
-    and e.term_zdb_id = phenos_quality_zdb_id
+    and phenos_tag != 'normal'
 union
   select zdb_id, gene_id,  mrkr_abbrev, ortho_abbrev, organism,
 	 a.term_ont_id as a_ont_id,a.term_name as e1superName, a.term_ontology as e1superTermOntology,
@@ -226,8 +204,11 @@ union
     and e.term_zdb_id = phenos_quality_zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
     and mfs_mrkr_zdb_id = mrkr_zdb_id
-and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+    and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+    and phenos_tag != 'normal'
 into temp tmp_ortho_pheno;
+
+select count(*) from tmp_ortho_pheno;
 
 create index tmp_ortho_pheno_index
   on tmp_ortho_pheno (phenos_id)
