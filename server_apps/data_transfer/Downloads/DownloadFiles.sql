@@ -178,6 +178,7 @@ select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id
    AND fish_zdb_id = genox_fish_zdb_id
    AND geno_zdb_id = fish_genotype_zdb_id
    AND geno_is_wildtype = 't'
+   AND fish_functional_affected_gene_count = 0
  order by mrkr_zdb_id
 ;
 

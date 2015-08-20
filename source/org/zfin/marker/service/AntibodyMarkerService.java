@@ -391,7 +391,7 @@ public class AntibodyMarkerService {
             // need to get a Genotype object to check for wildtype; do nothing if not wildtype
             Genotype geno = exp.getFishExperiment().getFish().getGenotype();
 
-            if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl()) {
+            if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl() && exp.getFishExperiment().getFish().isClean()) {
                 ExpressionAssay assay = exp.getAssay();
                 Marker gene = exp.getGene();
 
