@@ -14,6 +14,9 @@ select
  from zfin_ensembl_gene, phenotype_experiment, mutant_fast_search
  where phenox_genox_zdb_id == mfs_genox_zdb_id
    and mfs_mrkr_zdb_id     == zeg_Alias
+   and exists (Select 'x' from phenotype_statement
+       	      	      where phenos_phenox_pk_id = phenox_pk_id
+		      and phenos_tag != 'normal')
  group by 1,3,6,7,8,9
  order by 1,4,5,9
 ;
