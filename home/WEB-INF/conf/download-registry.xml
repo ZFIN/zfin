@@ -1133,9 +1133,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-                <![CDATA[unload to phenoGeneClean.txt
-                          select * From tmp_dumpPheno
-                          order by gene_abbrev
+                <![CDATA[
                           ]]>
             </Query>
             <Column id="1">ID</Column>
@@ -1158,7 +1156,6 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="18">Affected Structure or Process 2 superterm name</Column>
             <Column id="19">Fish ID</Column>
             <Column id="20">Fish Display Name</Column>
-            <Column id="21">Knockdown Reagent ID</Column>
             <Column id="22">Start Stage ID</Column>
             <Column id="23">End Stage ID</Column>
             <Column id="24">Fish Environment ID</Column>

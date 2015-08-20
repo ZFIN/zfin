@@ -1828,7 +1828,6 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 	 tps.bsuperterm_name,
 	 fish_id,
 	 fish_name,
-	 mo_id,
 	 stage_start_id,
 	 stage_end_id,
 	 genox_id,
