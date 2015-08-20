@@ -2374,6 +2374,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                         'xpatex-' || xedg_pk_id as id,
                         xedg_zdb_id as xpat_zdb_id,
                         fig_zdb_id as fig_zdb_id,
+                        geno_display_name as genotype,
                         fish_name as fish,
                         xedg_assay_name as assay,
                         fig_label as figure,
@@ -2411,6 +2412,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
                         from xpat_exp_details_generated
                              join fish_experiment on xedg_genox_zdb_id = genox_zdb_id
                              join fish on genox_fish_zdb_id = fish_zdb_id
+                             join genotype on fish_genotype_zdb_id = geno_zdb_id
                              join figure on xedg_fig_zdb_id = fig_zdb_id
                              join publication on fig_source_zdb_id = publication.zdb_id
                         ;
@@ -2561,7 +2563,7 @@ select quality_alias.dalias_alias || ' ' || entity_alias.dalias_alias as synonym
 
            <entity name="expression_is_wildtype"
                    datasource="db" query="select
-                           case when genox_is_std_or_generic_control = 't' and geno_is_wildtype = 't'
+                           case when genox_is_std_or_generic_control = 't' and geno_is_wildtype = 't'  and fish_functional_affected_gene_count = 0
                            then TRIM('true')
                            else TRIM('false') end
                            as is_wildtype,

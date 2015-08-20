@@ -119,7 +119,7 @@ public enum Category {
             EXPRESSIONS_ANATOMY_TF,
             STAGE,
             ASSAY,
-	    FieldName.FISH,
+            GENOTYPE,
             AUTHOR,
             EXPERIMENTAL_CONDITIONS,
             HAS_IMAGE,

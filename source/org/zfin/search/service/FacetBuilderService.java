@@ -157,7 +157,7 @@ public class FacetBuilderService {
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
         facetGroups.add(buildSingleFacetGroup("Assay", "assay", false, response, filterQuerySelectionMap, baseUrl));
-        FacetGroup e = buildSingleFacetGroup("Fish", "fish", false, response, filterQuerySelectionMap, baseUrl);
+        FacetGroup e = buildSingleFacetGroup("Genotype", "genotype", false, response, filterQuerySelectionMap, baseUrl);
         facetGroups.add(e);
         List<FacetQuery> facetQueryList = new ArrayList<>();
         for (FacetQueryEnum facetQueryEnum : Category.EXPRESSIONS.getFacetQueries()) {
