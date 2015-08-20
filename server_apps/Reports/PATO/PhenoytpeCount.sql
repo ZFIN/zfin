@@ -16,7 +16,7 @@ select distinct fmrel_mrkr_zdb_id
 	feature_marker_relationship,
 	fish
  where fish_genotype_Zdb_id = genofeat_geno_zdb_id
- and fish_Zdb_id = genx_fish_zdb_id
+ and fish_Zdb_id = genox_fish_zdb_id
  and phenox_genox_zdb_id = genox_zdb_id
  and genox_fish_zdb_id = fish_genotype_Zdb_id
  and genofeat_feature_zdb_id = fmrel_ftr_zdb_id

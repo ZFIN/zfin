@@ -24,6 +24,15 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private Set<FishExperiment> fishExperiments;
 
     private List<SequenceTargetingReagent> strList;
+    private long fishFunctionalAffectedGeneCount;
+
+    public long getFishFunctionalAffectedGeneCount() {
+        return fishFunctionalAffectedGeneCount;
+    }
+
+    public void setFishFunctionalAffectedGeneCount(long fishFunctionalAffectedGeneCount) {
+        this.fishFunctionalAffectedGeneCount = fishFunctionalAffectedGeneCount;
+    }
 
     public Genotype getGenotype() {
         return genotype;
@@ -140,5 +149,9 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
             newGenoName += genotype.getBackgroundDisplayName();
         }
         return name.replace(genotype.getName(), newGenoName);
+    }
+
+    public boolean isClean() {
+        return fishFunctionalAffectedGeneCount == 0;
     }
 }

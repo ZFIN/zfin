@@ -178,6 +178,7 @@ select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id
    AND fish_zdb_id = genox_fish_zdb_id
    AND geno_zdb_id = fish_genotype_zdb_id
    AND geno_is_wildtype = 't'
+   AND fish_functional_affected_gene_count = 0
  order by mrkr_zdb_id
 ;
 
@@ -434,7 +435,7 @@ select exp_zdb_id, exp_name,exp_name, "This environment is used for non-standard
 
 
 -- generate a file with genes and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype._fishtxt'"
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'"
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenotype_fish.txt'
  DELIMITER "	"
  select distinct f.fish_zdb_id, f.fish_name,
@@ -959,6 +960,7 @@ select distinct fish_zdb_id, fish_name, fish_handle, geno_zdb_id
  from genotype, fish
  where geno_is_wildtype = 't'
   and fish_genotype_Zdb_id = geno_zdb_id
+ and not exists (Select 'x' from fish_str where fishstr_fish_zdb_id = fish_zdb_id)
 ;
 
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.tx'"
@@ -1757,7 +1759,6 @@ where fmrel_ftr_zdb_id = feature_zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
     and fig_zdb_id = phenox_fig_zdb_id
     and mfs_mrkr_zdb_id like 'ZDB-GENE%'
-
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
  select  phenos_pk_id,
@@ -1800,6 +1801,11 @@ update tmp_dumpCleanPheno
       			  	  from fish
 				  where fish_zdb_id = fish_id);
 
+--remove normals for clean phenotype download.
+--TODO: clean this up so that we don't reuse temp tables for different files.
+delete from tmp_phenotype_statement
+  where quality_tag = 'normal';
+
 !echo "unload phenoGeneCleanData.txt"
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData_fish.txt'
  DELIMITER "	"
@@ -1823,7 +1829,6 @@ unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 	 tps.bsuperterm_name,
 	 fish_id,
 	 fish_name,
-	 mo_id,
 	 stage_start_id,
 	 stage_end_id,
 	 genox_id,

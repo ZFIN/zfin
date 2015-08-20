@@ -1039,7 +1039,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                  join feature on genofeat_feature_zdb_id = feature_zdb_id
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
                                  join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id
-                            where fmrel_type in ('is allele of','markers present', 'markers moved')
+                            where fmrel_type in ('is allele of','markers present', 'markers moved','markers missing')
                                   and mrkr_type in ('GENE','GENEP');"
                    where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
@@ -3925,14 +3925,15 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    where="pub_zdb_id=publication.id"/>
 
 
+           <!-- TODO: this should go back to joining on record_attribution instead of disease_annotation when possible -->
            <entity name="pub_disease"
                    datasource="db" query="select
                                term_name as disease,
                                term_ont_id as xref,
-                               recattrib_source_zdb_id as pub_zdb_id
-                          from term
-                               join record_attribution on recattrib_data_zdb_id = term_zdb_id
-                         where term_ontology = 'disease_ontology';"
+                               da_pub_zdb_id as pub_zdb_id
+                               from term
+                               join disease_annotation on term.term_zdb_id = disease_annotation.da_term_zdb_id
+                               where term_ontology = 'disease_ontology';"
                    processor="CachedSqlEntityProcessor"
                    where="pub_zdb_id=publication.id"/>
 

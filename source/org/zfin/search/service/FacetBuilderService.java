@@ -120,8 +120,8 @@ public class FacetBuilderService {
         facetGroups.add(buildPhenotypeBlock(response, filterQuerySelectionMap, baseUrl));
 
 
-        FacetGroup diseaseModel = new FacetGroup("Disease");
-        diseaseModel.addFacet(buildFacet("disease", true, response, filterQuerySelectionMap, baseUrl));
+        FacetGroup diseaseModel = new FacetGroup("Human Disease");
+        diseaseModel.addFacet(buildFacet(DISEASE.getName(), true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(diseaseModel);
 
 
@@ -157,7 +157,7 @@ public class FacetBuilderService {
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
         facetGroups.add(buildSingleFacetGroup("Assay", "assay", false, response, filterQuerySelectionMap, baseUrl));
-        FacetGroup e = buildSingleFacetGroup("Genotype", "genotype", false, response, filterQuerySelectionMap, baseUrl);
+        FacetGroup e = buildSingleFacetGroup("Fish", "fish", false, response, filterQuerySelectionMap, baseUrl);
         facetGroups.add(e);
         List<FacetQuery> facetQueryList = new ArrayList<>();
         for (FacetQueryEnum facetQueryEnum : Category.EXPRESSIONS.getFacetQueries()) {
