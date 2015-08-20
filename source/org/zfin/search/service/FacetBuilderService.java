@@ -120,8 +120,8 @@ public class FacetBuilderService {
         facetGroups.add(buildPhenotypeBlock(response, filterQuerySelectionMap, baseUrl));
 
 
-        FacetGroup diseaseModel = new FacetGroup("Disease");
-        diseaseModel.addFacet(buildFacet("disease", true, response, filterQuerySelectionMap, baseUrl));
+        FacetGroup diseaseModel = new FacetGroup("Human Disease");
+        diseaseModel.addFacet(buildFacet(DISEASE.getName(), true, response, filterQuerySelectionMap, baseUrl));
         facetGroups.add(diseaseModel);
 
 
