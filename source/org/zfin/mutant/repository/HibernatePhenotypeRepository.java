@@ -859,7 +859,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         if (strPhenotypeStatementsCreatedBy != null && strPhenotypeStatementsCreatedBy.size() > 0)
              strPhenotypeStatementsFish.addAll(strPhenotypeStatementsCreatedBy);
 
-        return strPhenotypeStatementsFish;
+        List<PhenotypeStatement> notNormalPhenotypeStatements = new ArrayList<>();
+        for (PhenotypeStatement phenotypeStatement : strPhenotypeStatementsFish) {
+            if (phenotypeStatement.isNotNormal())
+                notNormalPhenotypeStatements.add(phenotypeStatement);
+        }
 
+        return notNormalPhenotypeStatements;
     }
 }

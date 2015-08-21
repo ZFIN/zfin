@@ -1406,7 +1406,16 @@ public class HibernateMutantRepository implements MutantRepository {
         Query query = session.createQuery(hql);
         query.setParameter("zdbID", str.getZdbID());
 
-        return (List<GenotypeFigure>) query.list();
+        List<GenotypeFigure> genotypeFigures = (List<GenotypeFigure>) query.list();
+
+        List<GenotypeFigure> notNormalGenotypeFigures = new ArrayList<>();
+
+        for (GenotypeFigure genoFig : genotypeFigures) {
+            if (genoFig.getPhenotypeStatement().isNotNormal())
+                notNormalGenotypeFigures.add(genoFig);
+        }
+
+        return notNormalGenotypeFigures;
     }
 
     @Override

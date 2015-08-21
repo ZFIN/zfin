@@ -97,10 +97,20 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
 
     public String getDisplayName() {
         StringBuilder builder = new StringBuilder();
-        if (tag.equals(Tag.NORMAL.toString()))
+        if (isNormal())
             builder.append("(normal or recovered)");
         builder.append(getDisplayNameWithoutTag());
         return builder.toString();
+    }
+
+    public boolean isNormal() {
+
+        return tag.equals(Tag.NORMAL.toString());
+    }
+
+    public boolean isNotNormal() {
+
+        return !isNormal();
     }
 
     public boolean equalsByName(PhenotypeStatement defaultStatement) {
