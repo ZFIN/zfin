@@ -117,8 +117,7 @@ insert into tmp_pheno_genes
     from fish_components, fish_experiment, mutant_fast_Search
     where fc_fish_zdb_id = genox_fish_zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
-    and mfs_mrkr_zdb_id = fc_gene_zdb_id 
-    and fc_affector_zdb_id like 'ZDB-ALT%';
+    and mfs_mrkr_zdb_id = fc_gene_zdb_id; 
 
 insert into tmp_pheno_genes
   select distinct fc_gene_zdb_id
