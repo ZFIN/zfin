@@ -1472,6 +1472,7 @@ and pubcount <= 20
 and jtype='Journal'
 and genox_is_std_or_generic_control = 't'
 and phenos_tag!='normal'
+and fish_functional_affected_gene_count < 2
 
 union
 
@@ -1555,6 +1556,7 @@ and pubcount > 20
 and jtype='Journal'
 and genox_is_std_or_generic_control = 't'
 and phenos_tag!='normal'
+and fish_functional_affected_gene_count < 2
 
 union
 
