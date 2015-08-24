@@ -24,6 +24,10 @@
       <targets>build-solr-index-jenkins</targets>
       <buildFile>$SOURCEROOT/build.xml</buildFile>
     </hudson.tasks.Ant>
+    <hudson.tasks.Ant plugin="ant@1.2">
+      <targets>add-abstracts-to-pubs</targets>
+      <buildFile>$SOURCEROOT/build.xml</buildFile>
+    </hudson.tasks.Ant>
   </builders>
   <publishers>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
