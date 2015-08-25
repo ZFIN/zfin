@@ -1473,7 +1473,7 @@ union
 
 select geneid, szm_term_ont_id, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
 --select count(*)
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, feature_marker_relationship, genotype_feature, fish_experiment,  phenotype_experiment, phenotype_statement, figure, so_zfin_mapping, marker, fish
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication,tmp_gene_pubcount, feature_marker_relationship, genotype_feature, fish_experiment,  phenotype_experiment, phenotype_statement, figure, so_zfin_mapping, marker, fish, mutant_fast_search
 where geneid=dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
@@ -1492,7 +1492,7 @@ and pubcount <= 20
 and jtype='Journal'
 and genox_is_std_or_generic_control = 't'
 and phenos_tag!='normal'
-and fish_functional_affected_gene_count < 2
+and mfs_genox_zdb_id = genox_zdb_id
 
 union
 
@@ -1557,7 +1557,7 @@ union
 
 select geneid, szm_term_ont_id, dblink_acc_num,zdb_id,accession_no,'Phenotype' as  cur_topic
 --select count(*)
-from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication, tmp_gene_pubcount, feature_marker_relationship, genotype_feature, fish, fish_experiment, phenotype_experiment, phenotype_statement, figure, marker, so_zfin_mapping
+from db_link, foreign_db_contains fdbc, foreign_db fdb,  publication, tmp_gene_pubcount, feature_marker_relationship, genotype_feature, fish, fish_experiment, phenotype_experiment, phenotype_statement, figure, marker, so_zfin_mapping, mutant_fast_search
 where geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
@@ -1576,7 +1576,7 @@ and pubcount > 20
 and jtype='Journal'
 and genox_is_std_or_generic_control = 't'
 and phenos_tag!='normal'
-and fish_functional_affected_gene_count < 2
+and mfs_genox_zdb_id = genox_zdb_id
 
 union
 
