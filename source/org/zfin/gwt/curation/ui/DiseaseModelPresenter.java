@@ -60,6 +60,7 @@ public class DiseaseModelPresenter implements Presenter {
                 processing = true;
                 DiseaseModelDTO disease = getDiseaseModel();
                 if (disease == null) {
+                    processing = false;
                     return;
                 }
                 diseaseRpcService.addHumanDiseaseModel(disease, new RetrieveDiseaseModelListCallBack("Could not add a new disease model", view.getErrorLabel()));
