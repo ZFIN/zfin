@@ -166,7 +166,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  DELIMITER "	"
 select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
  from marker, expression_experiment, expression_result, fish, term as super,
-      outer term as sub, fish_experiment, genotype
+      outer term as sub, fish_experiment, genotype, outer clone
  where xpatres_xpatex_zdb_id = xpatex_zdb_id
    AND xpatex_atb_zdb_id = mrkr_zdb_id
    AND mrkr_type = 'ATB'
@@ -178,6 +178,8 @@ select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id
    AND fish_zdb_id = genox_fish_zdb_id
    AND geno_zdb_id = fish_genotype_zdb_id
    AND geno_is_wildtype = 't'
+   and clone_mrkr_Zdb_id = xpatex_probe_Feature_zdb_id
+   and clone_problem_type != 'Chimeric'
    AND exists (Select 'x' from mutant_fast_Search
        	      	      where mfs_genox_zdb_id = xpatex_genox_zdb_id)
  order by mrkr_zdb_id
@@ -417,15 +419,27 @@ select exp_zdb_id, cdt_group, cdt_name, expcond_comments
  where exp_zdb_id = expcond_exp_zdb_id
    and expcond_cdt_zdb_id = cdt_zdb_id
    and exists (
-	select 't' from fish_experiment, expression_experiment
+	select 't' from fish_experiment, expression_experiment, outer clone
 	 where exp_zdb_id = genox_exp_zdb_id
 	   and genox_zdb_id = xpatex_genox_zdb_id
-)
+	   and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
+	   and clone_problem_type != 'Chimeric')
 -- special handling for _Generic-control ;;insert into tmp_env
 union
 select exp_zdb_id, exp_name,exp_name, "This environment is used for non-standard conditions used in control treatments."
  from experiment
  where exp_name = "_Generic-control"
+union
+select exp_zdb_id, exp_name,exp_name,"standard environment"
+ from experiment
+ where not exists (Select 'x' from experiment_condition
+       	   	  	  where exp_zdb_id = expcond_exp_zdb_id)
+  and exists (
+	select 't' from fish_experiment, expression_experiment, outer clone
+	 where exp_zdb_id = genox_exp_zdb_id
+	   and genox_zdb_id = xpatex_genox_zdb_id
+	   and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
+	   and clone_problem_type != 'Chimeric')
  order by  1,2
 ;
 
@@ -472,9 +486,11 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt'
  DELIMITER "	"
 select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
- from expression_experiment, expression_result,expression_pattern_figure
+ from expression_experiment, expression_result,expression_pattern_figure, outer clone
  where xpatex_zdb_id=xpatres_xpatex_zdb_id
    and xpatres_zdb_id=xpatfig_xpatres_zdb_id
+   and clone_probe_feature_zdb_id = clone_mrkr_zdb_id
+ and clone_problem_type != 'Chimeric'
  order by xpatex_zdb_id;
 
 
@@ -1058,9 +1074,11 @@ select xpatres_zdb_id,
        superterm.term_ont_id,
        subterm.term_ont_id,
        xpatres_expression_found
- from expression_result, term superterm, OUTER term subterm -- not snappy
+ from expression_result, term superterm, expression_Experiment, OUTER term subterm, outer clone
  where superterm.term_zdb_id = xpatres_superterm_zdb_id
    and subterm.term_zdb_id = xpatres_subterm_zdb_id
+   and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+   and xpatex_zdb_id = xpatres_xpatex_zdb_id
  order by xpatres_xpatex_zdb_id
 ;
 
@@ -1262,8 +1280,10 @@ FROM (
          m.mrkr_abbrev,
          m.mrkr_type,
          ex.xpatex_source_zdb_id AS source_id
-  FROM expression_experiment ex
-  INNER JOIN marker m ON m.mrkr_zdb_id = ex.xpatex_gene_zdb_id
+  FROM expression_experiment ex,  marker, outer clone
+ where  m.mrkr_zdb_id = ex.xpatex_gene_zdb_id
+ and clone_mrkr_Zdb_id = m.mrkr_zdb_id
+ and clone_problem_type != 'Chimeric'
 )
 INNER JOIN publication pub ON pub.zdb_id = source_id
 WHERE source_id LIKE 'ZDB-PUB%'
@@ -1281,23 +1301,23 @@ select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         xpatex_source_zdb_id,
         case when xpatex_probe_feature_zdb_id = "" then " " else xpatex_probe_feature_zdb_id end as probe_id,
         case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
- from marker
- join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
- join clone on clone_mrkr_Zdb_id = mrkr_Zdb_id
- join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
- join fish on fish_zdb_id = genox_fish_zdb_id
- join genotype on geno_zdb_id = fish_genotype_zdb_id
- join experiment on exp_zdb_id = genox_exp_zdb_id
- join expression_result on xpatres_xpatex_zdb_id = xpatex_zdb_id
- join stage startStage on xpatres_start_stg_zdb_id = startStage.stg_zdb_id
- join stage endStage on xpatres_end_stg_zdb_id = endStage.stg_zdb_id
- join term super on xpatres_superterm_zdb_id = super.term_zdb_id
- left outer join term sub on xpatres_subterm_zdb_id = sub.term_zdb_id  -- why slow
+ from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
+ term super, genotype, outer term sub, outer clone
  where geno_is_wildtype = 't'
    --and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5') -- this ia a slow query
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5') -- might help
    and xpatres_expression_found = 't'
    and clone_problem_type != 'Chimeric'
+   and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+   and mrkr_zdb_id = xpatex_gene_zdb_id
+   and xpatex_genox_zdb_id = genox_zdb_id
+   and xpatres_subterm_zdb_id = sub.term_zdb_id
+   and xpatres_superterm_zdb_id = super.term_zdb_id
+   and fish_zdb_id = genox_fish_zdb_id
+   and xpatres_xpatex_zdb_id = xpatex_zdb_id
+   and xpatres_start_stg_zdb_id = startStage.stage_zdb_id
+   and xpatres_end_stg_zdb_id = endStage.stage_zdb_id
+   and fish_genotype_zdb_id = geno_zdb_id
  group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
         xpatex_source_zdb_id, probe_id, antibody_id, fish_Zdb_id
