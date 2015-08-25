@@ -178,7 +178,8 @@ select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id
    AND fish_zdb_id = genox_fish_zdb_id
    AND geno_zdb_id = fish_genotype_zdb_id
    AND geno_is_wildtype = 't'
-   AND fish_functional_affected_gene_count = 0
+   AND exists (Select 'x' from mutant_fast_Search
+       	      	      where mfs_genox_zdb_id = xpatex_genox_zdb_id)
  order by mrkr_zdb_id
 ;
 
@@ -369,7 +370,8 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
    on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
  left join clone
    on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
- where gene.mrkr_abbrev[1,10] != 'WITHDRAWN:' -- Xiang noticed this misses those without a space after :
+ where gene.mrkr_abbrev[1,10] != 'WITHDRAWN:'
+   clone_problem_type != "Chimeric"
    and exists (
 	select 1 from expression_result
 	 where xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -1287,6 +1289,7 @@ select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
  from marker
  join expression_experiment on xpatex_gene_zdb_id = mrkr_zdb_id
+ join clone on clone_mrkr_Zdb_id = mrkr_Zdb_id
  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
  join fish on fish_zdb_id = genox_fish_zdb_id
  join genotype on geno_zdb_id = fish_genotype_zdb_id
@@ -1300,6 +1303,7 @@ select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
    --and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5') -- this ia a slow query
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5') -- might help
    and xpatres_expression_found = 't'
+   and clone_problem_type != 'Chimeric'
  group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
         xpatex_source_zdb_id, probe_id, antibody_id, fish_Zdb_id
@@ -1422,7 +1426,7 @@ update statistics low for table tmp_gene_pubcount;
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot-zfinpub.txt'
  DELIMITER "	"
 select geneid, szm_term_ont_id, dblink_acc_num,zdb_id,accession_no,'Expression' as  cur_topic
-from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,tmp_gene_pubcount, expression_experiment, so_zfin_mapping, marker
+from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,tmp_gene_pubcount, expression_experiment, so_zfin_mapping, marker, clone
 where geneid=dblink_linked_recid
 and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
@@ -1432,6 +1436,8 @@ and fdb.fdb_db_name = 'UniProtKB'
 and geneid=xpatex_gene_zdb_id
 and xpatex_source_zdb_id=zdb_id
 and pubcount <= 20
+and clone_mrkr_Zdb_id = mrkr_zdb_id
+and clone_problem_type != 'Chimeric'
 and jtype='Journal'
 
 union
