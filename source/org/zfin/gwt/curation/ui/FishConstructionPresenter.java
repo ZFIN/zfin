@@ -218,7 +218,8 @@ public class FishConstructionPresenter implements Presenter {
             strList.add(new RelatedEntityDTO());
             strList.addAll(dtoList);
 
-            listBox.addItem("--", "");
+            listBox.addItem("------", "");
+            listBox.getElement().getElementsByTagName("option").getItem(0).setAttribute("disabled", "disabled");
             for (RelatedEntityDTO entityDTO : dtoList) {
                 listBox.addItem(entityDTO.getName(), entityDTO.getZdbID());
             }
