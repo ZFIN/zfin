@@ -114,7 +114,7 @@ public class SequenceTargetingReagentViewController {
         if (allPhenotypeStatements == null || allPhenotypeStatements.size() == 0)  {
             sequenceTargetingReagentBean.setAllPhenotypeDisplays(null);
         } else {
-            sequenceTargetingReagentBean.setAllPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(allPhenotypeStatements,"str", "fish"));
+            sequenceTargetingReagentBean.setAllPhenotypeDisplays(PhenotypeService.getPhenotypeDisplays(allPhenotypeStatements,"condition", "fish"));
         }
 
         // Genomic Features created by STR (CRISPR and TALEN only at this time)

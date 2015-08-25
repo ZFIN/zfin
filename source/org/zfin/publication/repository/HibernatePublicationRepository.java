@@ -1276,6 +1276,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct geno from Genotype geno, PublicationAttribution record" +
                 "     where record.publication.zdbID = :pubID " +
                 "           and record.dataZdbID = geno.zdbID" +
+                "           and geno.wildtype = 'f'" +
                 "    order by geno.handle ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
