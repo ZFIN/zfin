@@ -525,6 +525,8 @@ public class MutantRepositoryTest {
         Fish fish = getMutantRepository().getFish(fishID);
         long count = getMutantRepository().getPhenotypeByFishAndPublication(fish, "ZDB-PUB-071210-28");
         assertThat((int) (long) count, greaterThan(-1));
+        count = getMutantRepository().getFishExperimentCountByGenotype(fish, "ZDB-PUB-071210-28");
+        assertThat((int) (long) count, greaterThan(-1));
     }
 
     @Test

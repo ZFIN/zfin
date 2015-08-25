@@ -2127,4 +2127,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionExperiment>) criteria.list();
     }
 
+    @Override
+    public long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select count(*) from ExpressionExperiment " +
+                "      where  publication.zdbID = :publicationID" +
+                "        and fishExperiment.fish = :fish ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("publicationID", publicationID);
+
+        return (long) query.uniqueResult();
+    }
+
 }

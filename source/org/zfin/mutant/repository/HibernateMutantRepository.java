@@ -1791,4 +1791,19 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("publicationID", publicationID);
         return (long) query.uniqueResult();
     }
+
+    @Override
+    public long getFishExperimentCountByGenotype(Fish fish, String publicationID) {
+        String hql = "from PhenotypeExperiment " +
+                "where fishExperiment.fish = :fish AND " +
+                "figure.publication.zdbID = :publicationID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("publicationID", publicationID);
+        List<Fish> fishList = query.list();
+        if (fishList == null) {
+            return 0;
+        }
+        return (long) fishList.size();
+    }
 }

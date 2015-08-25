@@ -434,6 +434,9 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         Fish fish = getMutantRepository().getFish("ZDB-FISH-150821-9099");
         long count = expRep.getExpressionResultsByFishAndPublication(fish, "ZDB-PUB-140101-37");
         Assert.assertTrue(count > -1);
+
+        count = expRep.getExpressionExperimentByFishAndPublication(fish, "ZDB-PUB-140101-37");
+        Assert.assertTrue(count > -1);
     }
 
     @Test

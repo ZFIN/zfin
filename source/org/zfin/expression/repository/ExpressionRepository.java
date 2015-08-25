@@ -395,4 +395,5 @@ public interface ExpressionRepository {
      */
     List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
 
+    long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID);
 }

@@ -1196,11 +1196,18 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             if (phenotypeStatementsCount > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there is phenotype data associated to this fish");
             }
+            long count = getMutantRepository().getFishExperimentCountByGenotype(fish, publicationID);
+            if (count > 0)
+                throw new DeAttributionException("Cannot remove attribution as there are  " + count + " fish experiments using this fish");
             long fishExpressionResultsCount = getExpressionRepository().getExpressionResultsByFishAndPublication(fish, publicationID);
             if (fishExpressionResultsCount > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there is expression data associated to this fish");
             }
-            long count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
+            long fishExpressionExpCount = getExpressionRepository().getExpressionExperimentByFishAndPublication(fish, publicationID);
+            if (fishExpressionExpCount > 0) {
+                throw new DeAttributionException("Cannot remove attribution as there are " + fishExpressionExpCount + " expression experiment data associated to this fish");
+            }
+            count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
             if (count == 1)
                 throw new DeAttributionException("It's the last attribution. Please use the delete fish feature");
         }
