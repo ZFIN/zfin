@@ -48,9 +48,7 @@ import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  */
@@ -1194,12 +1192,12 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             if (CollectionUtils.isNotEmpty(diseaseModelList)) {
                 throw new DeAttributionException("Cannot remove attribution as there is human disease data associated to this fish");
             }
-            List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getMutantRepository().getPhenotypeStatementsByFish(fish);
-            if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
+            long phenotypeStatementsCount = getMutantRepository().getPhenotypeByFishAndPublication(fish, publicationID);
+            if (phenotypeStatementsCount > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there is phenotype data associated to this fish");
             }
-            List<ExpressionResult> fishExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByFish(fish);
-            if (CollectionUtils.isNotEmpty(fishExpressionResults)) {
+            long fishExpressionResultsCount = getExpressionRepository().getExpressionResultsByFishAndPublication(fish, publicationID);
+            if (fishExpressionResultsCount > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there is expression data associated to this fish");
             }
             long count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);

@@ -519,6 +519,15 @@ public class MutantRepositoryTest {
     }
 
     @Test
+    public void getPhenotypeByFishAndPublication() {
+        // WT
+        String fishID = "ZDB-FISH-150821-9099";
+        Fish fish = getMutantRepository().getFish(fishID);
+        long count = getMutantRepository().getPhenotypeByFishAndPublication(fish, "ZDB-PUB-071210-28");
+        assertThat((int) (long) count, greaterThan(-1));
+    }
+
+    @Test
     public void getInferredFromCountByGenotype() {
         String genoID = "ZDB-GENO-000412-4";
         String publicationID = "ZDB-PUB-040617-4";

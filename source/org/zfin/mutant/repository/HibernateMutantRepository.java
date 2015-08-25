@@ -1766,6 +1766,21 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public long getPhenotypeByFishAndPublication(Fish fish, String publicationID) {
+        String hql = "from PhenotypeStatement " +
+                "where phenotypeExperiment.fishExperiment.fish = :fish AND " +
+                "phenotypeExperiment.figure.publication.zdbID = :publicationID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("publicationID", publicationID);
+        List<Fish> fishList = query.list();
+        if (fishList == null) {
+            return 0;
+        }
+        return (long) fishList.size();
+    }
+
+    @Override
     public long getInferredFromCountByGenotype(String genotypeID, String publicationID) {
         String hql = "select count(inferred.markerGoTermEvidenceZdbID) from InferenceGroupMember as inferred, MarkerGoTermEvidence as mgt " +
                 "where inferred.inferredFrom = :genotypeID AND " +

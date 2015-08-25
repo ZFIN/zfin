@@ -306,6 +306,8 @@ public interface ExpressionRepository {
      */
     List<ExpressionResult> getExpressionResultsByFish (Fish fish);
 
+    long getExpressionResultsByFishAndPublication(Fish fish, String publicationID);
+
     List<String> getExpressionFigureIDsByFish(Fish fish);
 
     List<String> getExpressionPublicationIDsByFish(Fish fish);
