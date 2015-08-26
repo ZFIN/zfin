@@ -36,18 +36,14 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
     }
 
     public int compareTo(DiseaseDisplay o) {
-        if (diseaseTerm == null && o.getDiseaseTerm() != null)  {
-            return 1;
-        }  else if (o.getDiseaseTerm() == null && diseaseTerm != null)  {
+        if (o.getDiseaseTerm() == null && diseaseTerm == null) {
             return -1;
-        }  else {
-            OmimPhenotype omimPhenotype = new OmimPhenotype();
-            omimPhenotype.setOmimNum(omimNumber);
-            omimPhenotype.setName(omimTerm);
-            OmimPhenotype anotherOmimPhenotype = new OmimPhenotype();
-            anotherOmimPhenotype.setOmimNum(o.getOmimNumber());
-            anotherOmimPhenotype.setName(o.getOmimTerm());
-            return omimPhenotype.compareTo(anotherOmimPhenotype);
+        } else if (diseaseTerm == null) {
+            return 1;
+        } else if (o.getDiseaseTerm() == null) {
+            return -1;
+        } else {
+            return diseaseTerm.compareTo(o.getDiseaseTerm());
         }
     }
 }
