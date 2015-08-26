@@ -168,6 +168,6 @@
 </div>
 <script>
     jQuery(function () {
-        jQuery("#genes-involved").tableCollapse({label: "Genes involved"});
+        jQuery("#genes-involved").tableCollapse({label: ""});
     });
 </script>

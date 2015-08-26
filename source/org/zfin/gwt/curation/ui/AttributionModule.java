@@ -231,7 +231,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     private String getConfirmationMessage(String attributionToRemoveID, String attributionToRemoveLabel) {
         // the default message
-        String removeAttrPopupPrompt = "Are you sure you want to delete: " + attributionToRemoveLabel;
+        String removeAttrPopupPrompt = "Are you sure you want to remove attribution for: " + attributionToRemoveLabel;
         return removeAttrPopupPrompt;
     }
 
