@@ -375,7 +375,6 @@ document.write("<form id=\"header-query-form\" method=\"GET\" action=\"/search\"
 document.write("    <label for=\"search-query-input\">");
 document.write("    Search");
 document.write("    </label>");
-document.write("<img src=\"/images/new1.gif\" />");
 document.write("    <input class=\"search-form-input input\" style=\"width: 300px;\" name=\"q\" id=\"header-search-query-input\" autocomplete=\"off\" type=\"text\"/><input type=\"submit\" style=\"visibility: hidden; position: fixed;\"/>");
 document.write("</form>");
 document.write("   </div>");
