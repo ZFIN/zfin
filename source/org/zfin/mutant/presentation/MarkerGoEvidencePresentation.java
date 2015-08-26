@@ -5,6 +5,7 @@ import org.zfin.gwt.root.dto.InferenceCategory;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.orthology.Species;
 import org.zfin.repository.RepositoryFactory;
@@ -154,16 +155,21 @@ public class MarkerGoEvidencePresentation {
         switch (inferenceCategory) {
             case ZFIN_MRPH_GENO:
             case ZFIN_GENE:
-                if (accession.startsWith("ZDB-MRPHLNO-") || accession.startsWith("ZDB-GENE-")||accession.startsWith("ZDB-TALEN-") ||accession.startsWith("ZDB-CRISPR-")) {
-                    Marker sequenceTargetingReagent = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
+                if (accession.startsWith("ZDB-MRPHLNO-") || accession.startsWith("ZDB-TALEN-") ||accession.startsWith("ZDB-CRISPR-")) {
+                    //Marker sequenceTargetingReagent = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
+                    SequenceTargetingReagent sequenceTargetingReagent = (SequenceTargetingReagent) HibernateUtil.currentSession().get(SequenceTargetingReagent.class, accession);
                     if (sequenceTargetingReagent == null) {
                         return "<span class=error>" + accession + " is a bad link</span>";
                     }
-                    return MarkerPresentation.getLink(sequenceTargetingReagent);
+                    return MarkerPresentation.getLink(sequenceTargetingReagent,false);
                 } else if (accession.startsWith("ZDB-GENO-")) {
                     Genotype genotype = (Genotype) HibernateUtil.currentSession().get(Genotype.class, accession);
                     return GenotypePresentation.getLink(genotype, false);
-                } else {
+                } else if (accession.startsWith("ZDB-GENE-")){
+                    Marker gene = (Marker) HibernateUtil.currentSession().get(Marker.class, accession);
+                    return MarkerPresentation.getLink(gene);
+                }
+                else {
                     return inferredFrom;
                 }
             case UNIPROTKB:
