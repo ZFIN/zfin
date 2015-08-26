@@ -36,11 +36,13 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
     }
 
     public int compareTo(DiseaseDisplay o) {
-        if (diseaseTerm == null && o.getDiseaseTerm() != null)  {
-            return 1;
-        }  else if (o.getDiseaseTerm() == null && diseaseTerm != null)  {
+        if (o.getDiseaseTerm() == null && diseaseTerm == null) {
             return -1;
-        }  else {
+        } else if (diseaseTerm == null) {
+            return 1;
+        } else if (o.getDiseaseTerm() == null) {
+            return -1;
+        } else {
             return diseaseTerm.compareTo(o.getDiseaseTerm());
         }
     }
