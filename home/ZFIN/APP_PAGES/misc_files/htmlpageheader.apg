@@ -326,7 +326,7 @@ function hdrSetTabs() {
   <div id="quicksearchBox">
         <form id="header-query-form" method="GET" action="/search" name="faceted-search" accept-charset="utf-8">
           <label for="search-query-input">
-           Search<img src="/images/new1.gif" />
+           Search
           </label>
           <input class="search-form-input input"
                  style="width: 300px;" name="q"
