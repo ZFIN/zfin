@@ -36,6 +36,9 @@ echo 'execute function regen_expression_term_fast_search(); update statistics fo
 echo "Starting regen_clean_expression at `date`"
 echo 'execute function regen_clean_expression(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
 
+echo "Starting regen_fish_Components at `date`"
+echo 'execute function regen_fish_components(); update statistics for procedure' | dbaccess <!--|DB_NAME|-->
+
 echo "Starting regen_pheno_fast_search at `date`"
 dbaccess -a <!--|DB_NAME|--> <!--|TARGETROOT|-->/server_apps/DB_maintenance/pheno/pheno_term_regen.sql 
 
