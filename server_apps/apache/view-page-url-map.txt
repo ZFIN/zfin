@@ -1,5 +1,5 @@
 ALT	/action/feature/view/ZDB-ALT
-ANAT	/action/anatomy/term-detail?anatomyItem.zdbID=ZDB-ANAT
+ANAT	/action/ontology/term-detail/ZDB-ANAT
 ATB	/action/marker/view/ZDB-ATB
 BAC	/action/marker/view/ZDB-BAC
 BAC_END	/action/marker/view/ZDB-BAC_END
