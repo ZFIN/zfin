@@ -414,7 +414,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
 
-
     @Test
     @Ignore
     //TODO substitute with stable FISH id
@@ -426,6 +425,18 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         List<ExpressionResult> expressionResults = expRep.getExpressionResultsByFish(fish);
         assertNotNull(expressionResults);
+    }
+
+    @Test
+    @Ignore
+    //TODO substitute with stable FISH id
+    public void getExpressionResultsByFishAndPublication() {
+        Fish fish = getMutantRepository().getFish("ZDB-FISH-150821-9099");
+        long count = expRep.getExpressionResultsByFishAndPublication(fish, "ZDB-PUB-140101-37");
+        Assert.assertTrue(count > -1);
+
+        count = expRep.getExpressionExperimentByFishAndPublication(fish, "ZDB-PUB-140101-37");
+        Assert.assertTrue(count > -1);
     }
 
     @Test
