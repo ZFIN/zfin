@@ -90,7 +90,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
             } else if (!this.isChemical() && o.isChemical()) {
                 return 1;
             } else {
-                return 0;
+                return this.getName().compareToIgnoreCase(o.getName());
             }
         }
     }

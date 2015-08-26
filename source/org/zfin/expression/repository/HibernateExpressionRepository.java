@@ -557,7 +557,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * experiment ID and genotype ID
      *
      * @param experimentID id
-     * @param fishID   id
+     * @param fishID       id
      */
     public FishExperiment createFishExperiment(String experimentID, String fishID) {
         Experiment experiment = getExperimentByID(experimentID);
@@ -1380,6 +1380,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionResult>) query.list();
     }
 
+    public long getExpressionResultsByFishAndPublication(Fish fish, String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select count(result) from ExpressionResult result " +
+                "      where  result.expressionExperiment.publication.zdbID = :publicationID" +
+                "        and result.expressionExperiment.fishExperiment.fish = :fish ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("publicationID", publicationID);
+
+        return (long) query.uniqueResult();
+    }
+
     public List<String> getExpressionFigureIDsByFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
@@ -1457,7 +1471,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param sequenceTargetingReagent sequenceTargetingReagent
      * @return list of expression results
      */
-    public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
         String sql = "select distinct xpatres_zdb_id " +
@@ -1513,7 +1527,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return expressionResults;
     }
 
-    public List<String> getExpressionFigureIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<String> getExpressionFigureIDsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = " select distinct xpatfig_fig_zdb_id  " +
                 "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, fish_str str1 " +
                 "  where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
@@ -1558,7 +1572,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<String>) query.list();
     }
 
-    public List<String> getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene (SequenceTargetingReagent sequenceTargetingReagent, Marker expressedGene) {
+    public List<String> getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene(SequenceTargetingReagent sequenceTargetingReagent, Marker expressedGene) {
         String sql = "select distinct xpatfig_fig_zdb_id  " +
                 "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, fish_str str1 " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
@@ -1604,7 +1618,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<String>) query.list();
     }
 
-    public List<String> getExpressionPublicationIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<String> getExpressionPublicationIDsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = "select distinct fig_source_zdb_id  " +
                 "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, fish, genotype, fish_str str1 " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
@@ -2126,6 +2140,21 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Criteria criteria = session.createCriteria(ExpressionExperiment.class);
         criteria.add(Restrictions.eq("gene", gene));
         return (List<ExpressionExperiment>) criteria.list();
+    }
+
+    @Override
+    public long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select count(*) from ExpressionExperiment " +
+                "      where  publication.zdbID = :publicationID" +
+                "        and fishExperiment.fish = :fish ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("publicationID", publicationID);
+
+        return (long) query.uniqueResult();
     }
 
 }
