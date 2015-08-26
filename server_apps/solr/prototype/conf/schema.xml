@@ -746,7 +746,7 @@
 
    <field name="attribution_count" type="sint" indexed="true" stored="true"/>
 
-   <field name="xref" type="string" indexed="true" stored="false" multiValued="true"/>
+   <field name="xref" type="string" indexed="true" stored="true" multiValued="true"/>
 
    <field name="related_gene_symbol" type="gene_symbol" indexed="true" stored="true" multiValued="true"/>
 

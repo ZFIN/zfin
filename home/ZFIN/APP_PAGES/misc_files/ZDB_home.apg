@@ -47,7 +47,7 @@
       <td colspan="2" id="zdbhome-search">
         <div class="centered">
           <form method="GET" action="/search" name="search" accept-charset="utf-8" id="query-form">
-            <label for="search-query-input">Search ZFIN</label><img src="/images/new1.gif" />
+            <label for="search-query-input">Search ZFIN</label>
             <input class="search-form-input input"
                    placeholder="bmp2a, hindbrain development disrupted, pax morpholino"
                    name="q" id="search-query-input" autocomplete="off" type="text"/>

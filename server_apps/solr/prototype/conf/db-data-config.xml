@@ -3587,11 +3587,15 @@ where feature_zdb_id = ids_data_zdb_id
                    where="term_zdb_id=term.internal_id"
                    processor="CachedSqlEntityProcessor"/>
 
-           <entity name="disease_fish_xref"
-                   datasource="db" query="select distinct term_zdb_id, genox_fish_zdb_id as xref
+           <entity name="disease_disease_model"
+                   datasource="db" query="select distinct
+                                          fish_name as disease_model,
+                                          genox_fish_zdb_id as xref,
+                                          term_zdb_id
                                           from term
-                                          inner join disease_annotation on term.term_zdb_id = disease_annotation.da_term_zdb_id
-                                          inner join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id;"
+                                          join disease_annotation on term.term_zdb_id = disease_annotation.da_term_zdb_id
+                                          join fish_experiment on fish_experiment.genox_zdb_id = disease_annotation.da_genox_zdb_id
+                                          join fish on genox_fish_zdb_id = fish_zdb_id;"
                    where="term_zdb_id=term.internal_id"
                    processor="CachedSqlEntityProcessor"/>
 

@@ -49,7 +49,8 @@ public enum Category {
             OBSOLETE
     ),
     DISEASE("Human Disease",
-            FieldName.GENE),  //todo: later will add DISEASE_MODEL and HAS_MODEL
+            FieldName.GENE,
+            FieldName.DISEASE_MODEL),  
     MUTANT("Mutation / Tg",
             TYPE,
             AFFECTED_GENE,
