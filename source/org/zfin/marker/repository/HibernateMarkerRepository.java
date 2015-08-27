@@ -2608,7 +2608,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
-    
+//    changed this code
     public List<ConstructComponentPresentation> getConstructComponents(String zdbID) {
         String sqlCount = " select MAX(cc_cassette_number) from construct_component where cc_construct_zdb_id=:zdbID ";
         Query query = currentSession().createSQLQuery(sqlCount);
