@@ -2608,6 +2608,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
+    
     public List<ConstructComponentPresentation> getConstructComponents(String zdbID) {
         String sqlCount = " select MAX(cc_cassette_number) from construct_component where cc_construct_zdb_id=:zdbID ";
         Query query = currentSession().createSQLQuery(sqlCount);
@@ -2625,7 +2626,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     public ConstructComponentPresentation transformTuple(Object[] tuple, String[] aliases) {
                         ConstructComponentPresentation constructComponentPresentation = new ConstructComponentPresentation();
 
-                        if (tuple[0] != null) {
+                        if (tuple[1] != null) {
                             constructComponentPresentation.setConstructComments(tuple[1].toString());
                         }
 
