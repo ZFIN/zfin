@@ -1,6 +1,10 @@
 package org.zfin.gwt.root.dto;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -110,11 +114,16 @@ public class GenotypeDTO extends RelatedEntityDTO {
     public String getNamePlusBackground() {
         StringBuilder builder = new StringBuilder(name);
         if (backgroundGenotypeList != null) {
+            Collections.sort(backgroundGenotypeList, new Comparator<GenotypeDTO>() {
+                @Override
+                public int compare(GenotypeDTO o1, GenotypeDTO o2) {
+                    return o1.getHandle().compareToIgnoreCase(o2.getHandle());
+                }
+            });
             for (GenotypeDTO genoDTO : backgroundGenotypeList) {
                 builder.append(" (");
-                builder.append(genoDTO.getName());
-                builder.append(")");
-                builder.append(", ");
+                builder.append(genoDTO.getHandle());
+                builder.append("), ");
             }
             builder.deleteCharAt(builder.length() - 1);
             builder.deleteCharAt(builder.length() - 1);
@@ -123,7 +132,7 @@ public class GenotypeDTO extends RelatedEntityDTO {
     }
 
     public void addBackgroundGenotype(GenotypeDTO genotypeDTO) {
-        if(backgroundGenotypeList == null)
+        if (backgroundGenotypeList == null)
             backgroundGenotypeList = new ArrayList<>(2);
         backgroundGenotypeList.add(genotypeDTO);
     }
