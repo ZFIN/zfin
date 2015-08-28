@@ -1102,7 +1102,7 @@ WHERE  ( NOT g.geno_is_wildtype
                                  join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
                                  join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id and fmrel_type = 'created by';"
-                   where="fas_pk_id=fish.internal_id"
+                   where="fish_zdb_id=fish.id"
                    processor="CachedSqlEntityProcessor"/>
 
            <entity name="fish_str_via_created_feature_gene"

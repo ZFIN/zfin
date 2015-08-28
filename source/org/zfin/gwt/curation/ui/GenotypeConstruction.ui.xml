@@ -29,8 +29,10 @@
                     <td class="bold">
                         <g:InlineLabel>Background</g:InlineLabel>
                     </td>
-                    <td class="bold">
+                    <td>
                         <g:ListBox ui:field="backgroundListBox"/>
+                        <g:Button ui:field="addBackgroundGenotype" text="Add"/>
+                        <g:HorizontalPanel ui:field="backgroundGenotypePanel" />
                     </td>
                 </tr>
             </g:HTMLPanel>

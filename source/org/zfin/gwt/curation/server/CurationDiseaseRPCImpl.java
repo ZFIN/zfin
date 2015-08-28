@@ -219,7 +219,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public GenotypeDTO createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, GenotypeDTO genotypeBackgroundDTO, String nickname)
+    public GenotypeDTO createGenotypeFeature(String publicationID, List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<GenotypeDTO> genotypeBackgroundDTOList, String nickname)
             throws TermNotFoundException {
         Genotype genotype;
         HibernateUtil.createTransaction();
@@ -228,13 +228,18 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             if (publication == null)
                 throw new TermNotFoundException("No publication with ID: " + publicationID + " found");
 
-            Genotype genotypeBackground = null;
-            if (genotypeBackgroundDTO != null && genotypeBackgroundDTO.getZdbID() != null) {
-                genotypeBackground = getMutantRepository().getGenotypeByID(genotypeBackgroundDTO.getZdbID());
-                if (genotypeBackground == null)
-                    throw new TermNotFoundException("No genotype with ID: " + genotypeBackgroundDTO.getZdbID() + " found");
+            List<Genotype> genotypeBackgroundList = new ArrayList<>(3);
+            if (genotypeBackgroundDTOList != null) {
+                for (GenotypeDTO genotypeBackgroundDTO : genotypeBackgroundDTOList) {
+                    if (genotypeBackgroundDTO != null && genotypeBackgroundDTO.getZdbID() != null) {
+                        Genotype genotypeBackground = getMutantRepository().getGenotypeByID(genotypeBackgroundDTO.getZdbID());
+                        if (genotypeBackground == null)
+                            throw new TermNotFoundException("No genotype with ID: " + genotypeBackgroundDTO.getZdbID() + " found");
+                        genotypeBackgroundList.add(genotypeBackground);
+                    }
+                }
             }
-            genotype = GenotypeService.createGenotype(genotypeFeatureDTOList, genotypeBackground);
+            genotype = GenotypeService.createGenotype(genotypeFeatureDTOList, genotypeBackgroundList);
             if (nickname != null)
                 genotype.setNickname(nickname);
 
