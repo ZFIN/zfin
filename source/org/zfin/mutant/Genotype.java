@@ -104,9 +104,8 @@ public class Genotype implements Comparable, EntityZdbID {
     }
 
     public void setBackground(Genotype background) {
-        if (!CollectionUtils.isEmpty(associatedGenotypes))
-            throw new RuntimeException("Found already one associated genotype (Background)! " + associatedGenotypes);
-        associatedGenotypes = new HashSet<>();
+        if (CollectionUtils.isEmpty(associatedGenotypes))
+            associatedGenotypes = new HashSet<>();
         associatedGenotypes.add(background);
     }
 
@@ -214,10 +213,10 @@ public class Genotype implements Comparable, EntityZdbID {
     }
 
     public String getBackgroundDisplayName() {
-        String backgroundDisplay = "";
+        String backgroundDisplay = " ";
         if (!CollectionUtils.isEmpty(associatedGenotypes)) {
             for (Genotype background : associatedGenotypes) {
-                backgroundDisplay = " (";
+                backgroundDisplay += "(";
                 backgroundDisplay += background.getHandle();
                 backgroundDisplay += "), ";
             }
