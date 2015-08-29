@@ -24,8 +24,5 @@
 
     <p>
 
-    <p>
-        <b>Note:</b> We may be recording search session information to facilitate improvements to the user experience.
-    </p>
 
 
