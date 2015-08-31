@@ -179,20 +179,30 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
         this.supplierZdbId = supplierZdbId;
     }
 
-    @Override
+
+    public Boolean isSTR() {
+        if (markerType.toLowerCase().contains("talen") || markerType.toLowerCase().contains("morph") || markerType.toLowerCase().contains("crispr")) {
+            return true;
+        }
+else
+            return false;
+    }
+
+
     public String getLink() {
 
-        if (link == null) {
-            if (markerType != null && markerType.toLowerCase().contains("gene")) {
-                return "<i><a href=\"/action/marker/view/" + zdbId + "\">" + abbreviation + "</a></i>";
-            } else  {
-                if ((markerType != null && (markerType.toLowerCase().contains("talen"))|| markerType.toLowerCase().contains("morph") ||markerType.toLowerCase().contains("crispr"))) {
-                    return "<a href=\"/action/marker/view/" + zdbId + "\">" + name + "</a>"+
-                            "<a class='popup-link data-popup-link' "+
-                            " href='/action/marker/popup/"+ zdbId+ "'></a>";
+            if (link == null) {
+                if (markerType != null && markerType.toLowerCase().contains("gene")) {
+                    return "<i><a href=\"/action/marker/view/" + zdbId + "\">" + abbreviation + "</a></i>";
+            } else {
+                    if (markerType != null && isSTR()) {
+                        return "<a href=\"/action/marker/view/" + zdbId + "\">" + name + "</a>" +
+                                "<a class='popup-link data-popup-link' " +
+                                " href='/action/marker/popup/" + zdbId + "'></a>";
+                    }
+               
 
                 }
-            }
 
                 {
                     return "<a href=\"/action/marker/view/" + zdbId + "\">" + name + "</a>";
