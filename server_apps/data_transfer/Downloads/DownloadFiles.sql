@@ -373,7 +373,7 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
  left join clone
    on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
  where gene.mrkr_abbrev[1,10] != 'WITHDRAWN:'
-   clone_problem_type != "Chimeric"
+  AND clone_problem_type != "Chimeric"
    and exists (
 	select 1 from expression_result
 	 where xpatres_xpatex_zdb_id = xpatex_zdb_id
@@ -489,7 +489,7 @@ select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
  from expression_experiment, expression_result,expression_pattern_figure, outer clone
  where xpatex_zdb_id=xpatres_xpatex_zdb_id
    and xpatres_zdb_id=xpatfig_xpatres_zdb_id
-   and clone_probe_feature_zdb_id = clone_mrkr_zdb_id
+   and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
  and clone_problem_type != 'Chimeric'
  order by xpatex_zdb_id;
 
@@ -1276,13 +1276,13 @@ FROM (
 
   UNION -- expression_experiment
 
-  SELECT m.mrkr_zdb_id,
-         m.mrkr_abbrev,
-         m.mrkr_type,
+  SELECT mrkr_zdb_id,
+         mrkr_abbrev,
+         mrkr_type,
          ex.xpatex_source_zdb_id AS source_id
   FROM expression_experiment ex,  marker, outer clone
- where  m.mrkr_zdb_id = ex.xpatex_gene_zdb_id
- and clone_mrkr_Zdb_id = m.mrkr_zdb_id
+ where mrkr_zdb_id = ex.xpatex_gene_zdb_id
+ and clone_mrkr_Zdb_id = mrkr_zdb_id
  and clone_problem_type != 'Chimeric'
 )
 INNER JOIN publication pub ON pub.zdb_id = source_id
@@ -1315,8 +1315,8 @@ select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
    and xpatres_superterm_zdb_id = super.term_zdb_id
    and fish_zdb_id = genox_fish_zdb_id
    and xpatres_xpatex_zdb_id = xpatex_zdb_id
-   and xpatres_start_stg_zdb_id = startStage.stage_zdb_id
-   and xpatres_end_stg_zdb_id = endStage.stage_zdb_id
+   and xpatres_start_stg_zdb_id = startStage.stg_zdb_id
+   and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
    and fish_genotype_zdb_id = geno_zdb_id
  group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
