@@ -3773,8 +3773,6 @@ where exists (select 'x' from marker_go_term_evidence where mrkrgoev_term_zdb_id
                    processor="CachedSqlEntityProcessor"
                    where="pub_zdb_id=publication.id"/>
 
-           <entity name="pub_disease_xref" dataSource=""
-
            <entity name="pub_gene_slow"
                    datasource="db" query="
                    select distinct recattrib_source_zdb_id as pub_zdb_id,
