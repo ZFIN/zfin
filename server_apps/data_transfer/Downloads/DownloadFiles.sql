@@ -165,8 +165,8 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/antibody_expressions_fish.txt'
  DELIMITER "	"
 select distinct mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id, sub.term_name
- from marker, expression_experiment, expression_result, fish, term as super,
-      outer term as sub, fish_experiment, genotype, outer clone
+ from marker, expression_experiment, expression_result, fish, term as super
+      , fish_experiment, genotype, outer clone, outer term as sub
  where xpatres_xpatex_zdb_id = xpatex_zdb_id
    AND xpatex_atb_zdb_id = mrkr_zdb_id
    AND mrkr_type = 'ATB'
@@ -1297,25 +1297,51 @@ select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         case when xpatex_probe_feature_zdb_id = "" then " " else xpatex_probe_feature_zdb_id end as probe_id,
         case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
  from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
- term super, genotype, outer term sub, outer clone
+ term super, genotype, term sub, outer clone
  where geno_is_wildtype = 't'
-   --and (exp_zdb_id = 'ZDB-EXP-041102-1' or exp_zdb_id ='ZDB-EXP-070511-5') -- this ia a slow query
-   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5') -- might help
+   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
    and xpatres_expression_found = 't'
-   and clone_problem_type != 'Chimeric'
-   and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+  and clone_problem_type != 'Chimeric'
+  and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
    and mrkr_zdb_id = xpatex_gene_zdb_id
    and xpatex_genox_zdb_id = genox_zdb_id
    and xpatres_subterm_zdb_id = sub.term_zdb_id
    and xpatres_superterm_zdb_id = super.term_zdb_id
    and fish_zdb_id = genox_fish_zdb_id
+--   and fish_is_wildtype = 't'
+   and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
    and xpatres_xpatex_zdb_id = xpatex_zdb_id
    and xpatres_start_stg_zdb_id = startStage.stg_zdb_id
    and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
    and fish_genotype_zdb_id = geno_zdb_id
- group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
-        sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
-        xpatex_source_zdb_id, probe_id, antibody_id, fish_Zdb_id
+and xpatres_subterm_zdb_id is not null
+union
+select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
+       "","", startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+        xpatex_source_zdb_id,
+        case when xpatex_probe_feature_zdb_id = "" then " " else xpatex_probe_feature_zdb_id end as probe_id,
+        case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
+ from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
+ term super, genotype, outer clone
+ where geno_is_wildtype = 't'
+   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
+   and xpatres_expression_found = 't'
+  and clone_problem_type != 'Chimeric'
+  and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+   and mrkr_zdb_id = xpatex_gene_zdb_id
+   and xpatex_genox_zdb_id = genox_zdb_id
+   and xpatres_superterm_zdb_id = super.term_zdb_id
+   and fish_zdb_id = genox_fish_zdb_id
+--   and fish_is_wildtype = 't'
+   and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
+   and xpatres_xpatex_zdb_id = xpatex_zdb_id
+   and xpatres_start_stg_zdb_id = startStage.stg_zdb_id
+   and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
+   and fish_genotype_zdb_id = geno_zdb_id
+and xpatres_subterm_zdb_id is null
+-- group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
+--        sub.term_ont_id, sub.term_name, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+--        xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
 ;
 
 
