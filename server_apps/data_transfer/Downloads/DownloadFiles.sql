@@ -361,18 +361,13 @@ select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         xpatex_source_zdb_id,
         fish.fish_zdb_id, genox_exp_zdb_id,
         clone_rating
- from expression_experiment
- join fish_experiment
-   on genox_zdb_id = xpatex_genox_zdb_id
- join marker gene
-   on gene.mrkr_zdb_id = xpatex_gene_zdb_id
- join fish fish
-   on fish.fish_zdb_id = genox_fish_zdb_id
- left join marker probe
-   on probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
- left join clone
-   on clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
- where gene.mrkr_abbrev[1,10] != 'WITHDRAWN:'
+ from expression_experiment, fish_experiment,  marker gene, fish fish, outer (marker probe, clone)
+   where genox_zdb_id = xpatex_genox_zdb_id
+   and gene.mrkr_zdb_id = xpatex_gene_zdb_id
+   and fish.fish_zdb_id = genox_fish_zdb_id
+   and  probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
+  and clone_mrkr_zdb_id = probe.mrkr_zdb_id
+  and  gene.mrkr_abbrev[1,10] != 'WITHDRAWN:'
   AND clone_problem_type != "Chimeric"
    and exists (
 	select 1 from expression_result
