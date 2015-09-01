@@ -23,7 +23,7 @@ TARGETDIR = $(TARGETROOT)/server_apps/data_transfer/ResourceCenters
 
 GENERICS = pushToZirc.pl pushToZirc.sql pullFromResourceCenter.pl
 
-STATICS = pullEstsFromZirc.pl pullGenoFromResourceCenter.pl pullAtbFromZirc.pl
+STATICS = pullEstsFromZirc.pl pullGenoFromResourceCenter.pl pullAtbFromZirc.pl syncFishOrderThisLinks.sh
 
 # Define targets that require special handling.  This relies on the
 # home directory being made before the server_apps directory.

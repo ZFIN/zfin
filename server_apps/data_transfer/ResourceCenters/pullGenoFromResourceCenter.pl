@@ -217,17 +217,18 @@ sub geno_load($) {
 
 
 
-    my $to_active_data = $dbh->prepare("insert into zdb_active_data
+    my $to_active_data_geno = $dbh->prepare("insert into zdb_active_data
                                           select epfz_geno_zdb_id
                                              from geno_pulled_From_zirc
                                              where not exists (Select 'x'
     	      	     	                                         from zdb_active_data
 			                                         where epfz_geno_Zdb_id = zactvd_zdb_id)
-                                             and epfz_geno_zdb_id is not null
-                                          union
-                                         select epfz_fish_zdb_id
-                                           from  geno_pulled_From_zirc
-                                             where not exists (Select 'x'
+                                             and epfz_geno_zdb_id is not null");
+
+   my $to_active_data_fish = $dbh->prepare("insert into zdb_active_data
+                                            select epfz_fish_zdb_id
+                                              from  geno_pulled_From_zirc
+                                              where not exists (Select 'x'
     	      	     	                                         from zdb_active_data
 			                                         where epfz_fish_Zdb_id = zactvd_zdb_id)
                                              and epfz_fish_zdb_id is not null;");
@@ -392,7 +393,8 @@ sub geno_load($) {
 	$zactvd_genofeat &&
 	$add_new_fishids &&
 	$add_new_genoids &&
-	$to_active_data &&
+	$to_active_data_geno &&
+	$to_active_data_fish &&
 	$to_genotype &&
 	$to_fish &&
 	$to_genofeat &&
@@ -419,7 +421,8 @@ sub geno_load($) {
     $zactvd_genofeat->execute; 
     $add_new_fishids->execute;
     $add_new_genoids->execute;
-    $to_active_data->execute;
+    $to_active_data_geno->execute;
+    $to_active_data_fish->execute;
     $to_genotype->execute;
     $to_fish->execute;
     $to_genofeat->execute;
