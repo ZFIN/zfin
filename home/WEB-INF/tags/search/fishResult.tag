@@ -16,14 +16,14 @@
                 <c:forEach var="featureGene" items="${result.featureGenes}">
                     <tr>
                         <td title="Affected Gene">
-                            <zfin:link entity="${featureGene.gene}"/>
+                            <zfin:link entity="${featureGene.gene}" suppressPopupLink="true"/>
                         </td>
                         <td title="Line / Reagent">
                             <c:if test="${!empty featureGene.feature}">
-                                <zfin:link entity="${featureGene.feature}"/>
+                                <zfin:link entity="${featureGene.feature}" suppressPopupLink="true"/>
                             </c:if>
                             <c:if test="${!empty featureGene.sequenceTargetingReagent}">
-                                <zfin:link entity="${featureGene.sequenceTargetingReagent}"/>
+                                <zfin:link entity="${featureGene.sequenceTargetingReagent}" suppressPopupLink="true"/>
                             </c:if>
                         </td>
                         <td title="Mutation Type">
@@ -32,7 +32,7 @@
                             </c:if>
                         </td>
                         <td title="Construct">
-                            <zfin:link entity="${featureGene.construct}"/>
+                            <zfin:link entity="${featureGene.construct}" suppressPopupLink="true"/>
                         </td>
                     </tr>
                 </c:forEach>

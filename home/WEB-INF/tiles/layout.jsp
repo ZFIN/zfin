@@ -44,7 +44,7 @@
     <link rel=stylesheet type="text/css" href="/css/tipsy.css">
     <link rel=stylesheet type="text/css" href="/css/jquery.modal.css">
     <link rel=stylesheet type="text/css" href="/css/typeahead.css">
-    <link rel="stylesheet" href="/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/css/datepicker3.css">
 
 
     <script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
