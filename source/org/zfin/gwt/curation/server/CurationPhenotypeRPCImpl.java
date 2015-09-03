@@ -180,16 +180,16 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             tx.rollback();
             throw e;
         }
-        tx = HibernateUtil.currentSession().beginTransaction();
-        try{
-            for (PhenotypeExperiment phenotypeExperiment : phenotypeExperimentsToRunRegen) {
-                getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
-            }
-            tx.commit();
-        } catch (Exception e) {
-            logger.warn("Regen function execution failed.", e);
-            tx.rollback();
-        }
+	// tx = HibernateUtil.currentSession().beginTransaction();
+	//  try{
+	//     for (PhenotypeExperiment phenotypeExperiment : phenotypeExperimentsToRunRegen) {
+	//         getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
+	//     }
+        //    tx.commit();
+	//  } catch (Exception e) {
+	//     logger.warn("Regen function execution failed.", e);
+	//     tx.rollback();
+	//  }
         loggingUtil.logDuration("Duration of updateStructuresForExpression() method: ");
         return updatedAnnotations;
     }
