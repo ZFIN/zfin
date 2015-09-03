@@ -31,9 +31,9 @@ insert into regen_ce_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
     and genox_fish_Zdb_id = fish_zdb_id
     and a.fishstr_fish_zdb_id = fish_zdb_id
     and a.fishstr_str_zdb_id = rggz_mrkr_zdb_id
---    and not exists (Select 'x' from fish_Str b
---    	    	   	   where b.fishstr_fish_Zdb_id = a.fishstr_fish_zdb_id
---			   and b.fishstr_str_zdb_id != a.fishstr_str_zdb_id)
+    and not exists (Select 'x' from fish_Str b
+    	    	   	   where b.fishstr_fish_Zdb_id = a.fishstr_fish_zdb_id
+			   and b.fishstr_str_zdb_id != a.fishstr_str_zdb_id)
 --    and fish_is_wildtype = 't'
     and rggz_mrkr_Zdb_id not like 'ZDB-GENE%';
 
