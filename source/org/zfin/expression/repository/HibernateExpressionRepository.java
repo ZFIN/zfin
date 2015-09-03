@@ -1471,44 +1471,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param sequenceTargetingReagent sequenceTargetingReagent
      * @return list of expression results
      */
-    public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<ExpressionResult> getExpressionResultsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
 
         String sql = "select distinct xpatres_zdb_id " +
-                "  from expression_result, expression_experiment, fish_experiment, fish, genotype, fish_str str1 " +
+                "  from expression_result, expression_experiment, fish_experiment, clean_expression_fast_search " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and genox_is_std_or_generic_control = 't' " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and geno_is_wildtype = 't' " +
-                "   and fish_zdb_id = str1.fishstr_fish_zdb_id " +
-                "   and str1.fishstr_str_zdb_id = :str " +
-                "   and not exists(select 'x' from fish_str str2 " +
-                "                   where str2.fishstr_fish_zdb_id = fish_zdb_id " +
-                "   and str2.fishstr_str_zdb_id != :str) " +
-                "   and not exists(select 'x' from experiment_condition " +
-                "                            where genox_exp_zdb_id = expcond_exp_zdb_id) " +
-                "union " +
-                "select distinct xpatres_zdb_id " +
-                "  from expression_result, expression_experiment, fish_experiment, fish, genotype, fish_str str3 " +
-                " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
-                "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and genox_is_std_or_generic_control = 't' " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and geno_is_wildtype = 'f' " +
-                "   and fish_zdb_id = str3.fishstr_fish_zdb_id " +
-                "   and str3.fishstr_str_zdb_id = :str " +
-                "   and not exists(select 'x' from fish_str str4 " +
-                "                   where str4.fishstr_fish_zdb_id = fish_zdb_id " +
-                "                     and str4.fishstr_str_zdb_id != :str) " +
-                "   and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
-                "                   where genofeat_geno_zdb_id = geno_zdb_id " +
-                "   and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
-                "   and fmrel_type != 'contains innocuous sequence feature') ";
+                "   and cefs_genox_zdb_id = genox_zdb_id " +
+                "   and cefs_mrkr_zdb_id = :str ";
 
         Query query = session.createSQLQuery(sql);
         query.setParameter("str", sequenceTargetingReagent);
@@ -1527,44 +1499,16 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return expressionResults;
     }
 
-    public List<String> getExpressionFigureIDsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+
+    public List<String> getExpressionFigureIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = " select distinct xpatfig_fig_zdb_id  " +
-                "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, fish_str str1 " +
+                "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, clean_expression_fast_search  " +
                 "  where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "    and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "    and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "    and xpatex_genox_zdb_id = genox_zdb_id " +
-                "    and genox_is_std_or_generic_control = 't' " +
-                "    and genox_fish_zdb_id = fish_zdb_id " +
-                "    and fish_genotype_zdb_id = geno_zdb_id " +
-                "    and geno_is_wildtype = 't' " +
-                "    and fish_zdb_id = str1.fishstr_fish_zdb_id " +
-                "    and str1.fishstr_str_zdb_id = :strID " +
-                "    and not exists(select 'x' from fish_str str2 " +
-                "                    where str2.fishstr_fish_zdb_id = fish_zdb_id " +
-                "                      and str2.fishstr_str_zdb_id != :strID) " +
-                "    and not exists(select 'x' from experiment_condition " +
-                "                             where genox_exp_zdb_id = expcond_exp_zdb_id) " +
-                " union " +
-                " select distinct xpatfig_fig_zdb_id  " +
-                "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, fish_str str3 " +
-                "  where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "    and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
-                "    and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
-                "    and xpatex_genox_zdb_id = genox_zdb_id " +
-                "    and genox_fish_zdb_id = fish_zdb_id " +
-                "    and fish_genotype_zdb_id = geno_zdb_id " +
-                "    and genox_is_std_or_generic_control = 't' " +
-                "    and geno_is_wildtype = 'f' " +
-                "    and fish_zdb_id = str3.fishstr_fish_zdb_id " +
-                "    and str3.fishstr_str_zdb_id = :strID " +
-                "    and not exists(select 'x' from fish_str str4 " +
-                "                    where str4.fishstr_fish_zdb_id = fish_zdb_id " +
-                "                      and str4.fishstr_str_zdb_id != :strID) " +
-                "    and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
-                "                    where genofeat_geno_zdb_id = geno_zdb_id " +
-                "                      and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
-                "                      and fmrel_type != 'contains innocuous sequence feature') ";
+                "    and cefs_genox_zdb_id = genox_zdb_id " +
+                "    and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
@@ -1572,92 +1516,32 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<String>) query.list();
     }
 
-    public List<String> getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene(SequenceTargetingReagent sequenceTargetingReagent, Marker expressedGene) {
+    public List<String> getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene (SequenceTargetingReagent sequenceTargetingReagent, Marker expressedGene) {
         String sql = "select distinct xpatfig_fig_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, fish_str str1 " +
+                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, clean_expression_fast_search " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and xpatex_gene_zdb_id = :expressedGeneID " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and genox_is_std_or_generic_control = 't' " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and geno_is_wildtype = 't' " +
-                "   and fish_zdb_id = str1.fishstr_fish_zdb_id " +
-                "   and str1.fishstr_str_zdb_id = :strID " +
-                "   and not exists(select 'x' from fish_str str2 " +
-                "                   where str2.fishstr_fish_zdb_id = fish_zdb_id " +
-                "                     and str2.fishstr_str_zdb_id != :strID) " +
-                "    and not exists(select 'x' from experiment_condition " +
-                "                             where genox_exp_zdb_id = expcond_exp_zdb_id) " +
-                "union " +
-                "select distinct xpatfig_fig_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, fish, genotype, fish_str str3 " +
-                " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
-                "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
-                "   and xpatex_gene_zdb_id = :expressedGeneID " +
-                "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and genox_is_std_or_generic_control = 't' " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and geno_is_wildtype = 'f' " +
-                "   and fish_zdb_id = str3.fishstr_fish_zdb_id " +
-                "   and str3.fishstr_str_zdb_id = :strID " +
-                "   and not exists(select 'x' from fish_str str4 " +
-                "                   where str4.fishstr_fish_zdb_id = fish_zdb_id " +
-                "                     and str4.fishstr_str_zdb_id != :strID) " +
-                "   and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
-                "                   where genofeat_geno_zdb_id = geno_zdb_id " +
-                "                     and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
-                "                     and fmrel_type != 'contains innocuous sequence feature') ";
+                "   and cefs_genox_zdb_id = genox_zdb_id " +
+                "   and cefs_mrkr_zdb_id = :strID ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
         query.setString("expressedGeneID", expressedGene.getZdbID());
         return (List<String>) query.list();
     }
 
-    public List<String> getExpressionPublicationIDsBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
+    public List<String> getExpressionPublicationIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = "select distinct fig_source_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, fish, genotype, fish_str str1 " +
+                "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, clean_expression_fast_search " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and fig_zdb_id = xpatfig_fig_zdb_id " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and genox_is_std_or_generic_control = 't' " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and geno_is_wildtype = 't' " +
-                "   and fish_zdb_id = str1.fishstr_fish_zdb_id " +
-                "   and str1.fishstr_str_zdb_id = :strID " +
-                "   and not exists(select 'x' from fish_str str2 " +
-                "                   where str2.fishstr_fish_zdb_id = fish_zdb_id " +
-                "                     and str2.fishstr_str_zdb_id != :strID) " +
-                "    and not exists(select 'x' from experiment_condition " +
-                "                             where genox_exp_zdb_id = expcond_exp_zdb_id) " +
-                "union " +
-                "select distinct fig_source_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, fish, genotype, fish_str str3 " +
-                " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
-                "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
-                "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
-                "   and fig_zdb_id = xpatfig_fig_zdb_id " +
-                "   and xpatex_genox_zdb_id = genox_zdb_id " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_genotype_zdb_id = geno_zdb_id " +
-                "   and genox_is_std_or_generic_control = 't' " +
-                "   and geno_is_wildtype = 'f' " +
-                "   and fish_zdb_id = str3.fishstr_fish_zdb_id " +
-                "   and str3.fishstr_str_zdb_id = :strID " +
-                "   and not exists(select 'x' from fish_str str4 " +
-                "                   where str4.fishstr_fish_zdb_id = fish_zdb_id " +
-                "                     and str4.fishstr_str_zdb_id != :strID) " +
-                "   and not exists(select 'x' from genotype_feature, feature_marker_relationship " +
-                "                   where genofeat_geno_zdb_id = geno_zdb_id " +
-                "                     and genofeat_feature_zdb_id = fmrel_ftr_zdb_id " +
-                "                     and fmrel_type != 'contains innocuous sequence feature') ";
+                "   and cefs_genox_zdb_id = genox_zdb_id " +
+                "   and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
