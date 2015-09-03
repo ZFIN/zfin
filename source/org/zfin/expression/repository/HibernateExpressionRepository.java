@@ -512,11 +512,11 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      * @param experimentID id
      * @return FishExperiment
      */
-    public FishExperiment getFishExperimentByExperimentIDAndGenotype(String experimentID, String genotypeID) {
+    public FishExperiment getFishExperimentByExperimentIDAndFishID(String experimentID, String fishID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(FishExperiment.class);
         criteria.add(Restrictions.eq("experiment.zdbID", experimentID));
-        criteria.add(Restrictions.eq("fish.zdbID", genotypeID));
+        criteria.add(Restrictions.eq("fish.zdbID", fishID));
         return (FishExperiment) criteria.uniqueResult();
     }
 

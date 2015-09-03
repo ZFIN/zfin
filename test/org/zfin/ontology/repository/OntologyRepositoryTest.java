@@ -56,7 +56,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void getTermWithDefinitionReference() {
         String anatomyRootID = "ZFA:0000089";
         Term term = ontologyRepository.getTermByOboID(anatomyRootID);
@@ -118,7 +117,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void getPhenotypesWithSecondaryTerms() throws Exception {
         List<PhenotypeStatement> phenotypesWithSecondaryTerms = ontologyRepository.getPhenotypesWithSecondaryTerms();
         assertNotNull(phenotypesWithSecondaryTerms);
@@ -385,7 +383,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     // This is a normal condition following an ontology update in which doug receives an email
     // when this condition occurs anyway.
     @Test
-    @Ignore
     public void getGoEvidenceOnSecondaryTerms() {
         List<MarkerGoTermEvidence> term = ontologyRepository.getGoEvidenceOnSecondaryTerms();
         assertEquals(0, term.size());
@@ -421,7 +418,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void getTermsWithInvalidStageDefinition() {
         List<GenericTermRelationship> relationshipTypes = ontologyRepository.getTermsWithInvalidStartStageRange();
         assertNotNull(relationshipTypes);
@@ -432,14 +428,13 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("do not include in regu lar tests as it takes more than a minute")
+    @Ignore("do not include in regular tests as it takes more than a minute")
     public void getExpressionAnnotationStageViolations() {
         List<ExpressionResult> expressionResultList = ontologyRepository.getExpressionResultsViolateStageRanges();
         assertNotNull(expressionResultList);
     }
 
     @Test
-    @Ignore
     public void getListOfMergedTermsInTermRelationship() {
         List<GenericTermRelationship> relationshipList = ontologyRepository.getTermRelationshipsWithMergedTerms();
         assertNotNull(relationshipList);

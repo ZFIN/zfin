@@ -69,7 +69,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void createLinkage() {
         Session session = currentSession();
         // pax2a
@@ -102,7 +102,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void updateLinkage() {
         Session session = currentSession();
         // pax2a
@@ -138,7 +138,7 @@ public class LinkageRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void displayScaffoldingLocation() {
         Session session = currentSession();
 

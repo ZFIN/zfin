@@ -18,12 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests blast repository methods.
@@ -242,7 +239,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("Test performs no assertions")
     public void blastDatabasesProteins() {
         List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession("NP_001071049");
         for (DBLink dbLink : dbLinkList) {

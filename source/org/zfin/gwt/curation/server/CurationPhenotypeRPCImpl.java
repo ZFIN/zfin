@@ -101,7 +101,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         PhenotypeExperiment phenoExperiment = DTOConversionService.convertToPhenotypeExperimentFilter(mutantFigureStage);
         // check if there is a genotypes experiment already.
         // if not create a new one.
-        FishExperiment fishExperiment = getExpressionRepository().getFishExperimentByExperimentIDAndGenotype(
+        FishExperiment fishExperiment = getExpressionRepository().getFishExperimentByExperimentIDAndFishID(
                 mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getFish().getZdbID());
         // create a new genotype experiment if needed
         if (fishExperiment == null) {

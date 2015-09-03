@@ -63,7 +63,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("seems to cause getGoEvidenceDTO() to fail")
     public void validateReferenceDatabases(){
         assertNotNull(MarkerGoEvidencePresentation.getGenbankReferenceDatabase()) ;
         assertNotNull(MarkerGoEvidencePresentation.getEcReferenceDatabase()) ;
@@ -79,7 +79,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
      * Will only be changing the qualifier, evidence code and pub.  The qualifier can be null and not-null.
      */
     @Test
-    @Ignore
+    @Ignore("broken")
     public void editGoEvidenceHeader() throws TermNotFoundException, DuplicateEntryException {
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
@@ -144,7 +144,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
      * Will only be changing the qualifier, evidence code and pub.  The qualifier can be null and not-null.
      */
     @Test
-    @Ignore
+    @Ignore("broken")
     public void createGoEvidenceHeader() throws TermNotFoundException, DuplicateEntryException {
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();
@@ -174,7 +174,7 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
     }
 
     @Test(expected = DuplicateEntryException.class)
-    @Ignore
+    @Ignore("broken")
     public void testDuplicateEntry() throws TermNotFoundException, DuplicateEntryException {
         MarkerGoTermEvidence markerGoTermEvidence = MutantRepositoryTest.findSingleMarkerGoTermEvidenceWithOneInference();
         MarkerGoEvidenceRPCService markerRPCService = new MarkerGoEvidenceRPCServiceImpl();

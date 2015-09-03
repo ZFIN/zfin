@@ -359,9 +359,9 @@ public class FishService {
      * @return boolean
      */
     public static boolean hasImagesOnExpressionFigures(String fishID) {
-        String genotypeID = getGenotypeID(fishID);
-        Set<FishExperiment> fishOx = getMutantRepository().getFish(fishID).getFishExperiments();
-
+        Fish fish = getMutantRepository().getFish(fishID);
+        String genotypeID = fish.getGenotype().getZdbID();
+        Set<FishExperiment> fishOx = fish.getFishExperiments();
 
         return getMutantRepository().hasImagesOnExpressionFigures(genotypeID, fishOx);
     }

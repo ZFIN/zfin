@@ -131,7 +131,7 @@ public class OntologySerializationTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("typically this is too long to run")
     public void serializeQuality() throws Exception {
         long startTime = System.currentTimeMillis();
         int termCount = ontologyRepository.getNumberTermsForOntology(Ontology.QUALITY);

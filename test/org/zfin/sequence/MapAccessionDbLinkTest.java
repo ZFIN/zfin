@@ -390,12 +390,6 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
     }
 
 
-    // this class is not used as of yet
-//    @Test
-//    public void testAnatomyItemDBLink(){
-//
-//    }
-
     @Test
     public void testOrthologueDBLink() {
         Session session = HibernateUtil.currentSession();

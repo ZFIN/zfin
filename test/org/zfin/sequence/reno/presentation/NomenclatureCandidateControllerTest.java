@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.validation.BindException;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
@@ -65,7 +66,8 @@ public class NomenclatureCandidateControllerTest {
         //TestConfiguration.unsetAuthenticatedUser();
     }
 
-    @Ignore
+    @Test
+    @Ignore("broken")
     public void testGeneRename() {
         Session session = currentSession();
         session.beginTransaction() ;
@@ -94,7 +96,8 @@ public class NomenclatureCandidateControllerTest {
         }
     }
 
-    @Ignore
+    @Test
+    @Ignore("broken")
     public void testNomenBeanSetUp() {
         Session session = currentSession();
         session.beginTransaction() ;

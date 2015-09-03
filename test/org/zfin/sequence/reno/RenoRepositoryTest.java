@@ -591,7 +591,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("Test performs no assertions")
     public void findReversedStrand(){
 
         ScrollableResults results = HibernateUtil.currentSession().createCriteria(Hit.class).scroll();

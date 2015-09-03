@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
@@ -686,7 +687,8 @@ public class ExecuteBlastTest {
     /**
      * todo: should really test remote-only services, should fix when doing wsdl stuff
      */
-    //@Test
+    @Test
+    @Ignore("broken")
     public void getSequenceFromRemote(){
         // get a dblink from a genbank database
         List<Sequence> badSequences= MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs("ABC123123123ABC", false) ;

@@ -91,10 +91,10 @@ public interface ExpressionRepository {
      * Retrieve FishExperiment by Experiment ID
      *
      * @param experimentID id
-     * @param genotypeID   genotype id
+     * @param fishID   fish id
      * @return FishExperiment
      */
-    FishExperiment getFishExperimentByExperimentIDAndGenotype(String experimentID, String genotypeID);
+    FishExperiment getFishExperimentByExperimentIDAndFishID(String experimentID, String fishID);
 
     /**
      * Create a new genotype experiment for given experiment and genotype.

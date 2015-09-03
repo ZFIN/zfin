@@ -1,6 +1,7 @@
 package org.zfin.mapping;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.Marker;
@@ -63,7 +64,8 @@ public class MappingServiceTest extends AbstractDatabaseTest {
 
     }
 
-    //@Test
+    @Test
+    @Ignore("test has no assertions")
     public void getAllGenomeLocation() {
         List<Marker> markerList = getMarkerRepository().getMarkersByAbbreviation("");
         List<String> line = new ArrayList<>();
