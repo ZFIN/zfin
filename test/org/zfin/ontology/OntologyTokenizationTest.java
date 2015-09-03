@@ -58,7 +58,7 @@ public class OntologyTokenizationTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void testBadParens(){
         String matchString = "aerobic (for occurrence)" ;
         Set<String> strings ;

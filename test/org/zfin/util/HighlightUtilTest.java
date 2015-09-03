@@ -48,7 +48,7 @@ public class HighlightUtilTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void highlightSpecialCharacter() {
         String text = "mp:zf637-3-001691";
         String highlightString = "300";
@@ -65,7 +65,7 @@ public class HighlightUtilTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void highlightSpecialCharacterInQueryString() {
         String text = "B-ACTZF";
         String highlightString = "b-actzf";

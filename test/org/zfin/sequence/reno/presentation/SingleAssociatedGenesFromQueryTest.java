@@ -188,7 +188,7 @@ public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void estEncodedByOneGeneIsVisible(){
         // defined, but not necessary
 
@@ -217,7 +217,7 @@ public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void estEncodedByTwoGenesOtherEstByOneGeneVisible(){
         // setup est1 being encoded by two genes
         est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
@@ -252,7 +252,7 @@ public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void differentEstsEncodeSameGeneVisible(){
         est1SecondMarkerRelationships.add(est1Gene2MarkerRelationship) ;
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ;
@@ -267,7 +267,7 @@ public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void differentEstsEncodeDifferentGeneCount2(){
         est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ;
@@ -278,7 +278,7 @@ public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void differentHitsWithSameEstVisible(){
         est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ;
         est2SecondMarkerRelationships.add(est2Gene2MarkerRelationship) ;
@@ -297,7 +297,7 @@ public class SingleAssociatedGenesFromQueryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void estHybridizedInOneGeneEncodedInAnotherVisible(){
 
         est1SecondMarkerRelationships.add(est1Gene1MarkerRelationship) ; // encoded

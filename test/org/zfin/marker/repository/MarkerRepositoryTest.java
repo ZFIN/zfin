@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
+import org.zfin.construct.ConstructCuration;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -22,7 +23,6 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.mutant.presentation.Construct;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
@@ -34,7 +34,6 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
-import org.zfin.construct.*;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
@@ -905,7 +904,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void getVegaGeneDBLinksTranscript() {
         Marker m = markerRepository.getMarkerByID("ZDB-GENE-980528-2060");
         List<LinkDisplay> links = markerRepository.getVegaGeneDBLinksTranscript(m, DisplayGroup.GroupName.SUMMARY_PAGE);

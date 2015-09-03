@@ -152,7 +152,7 @@ public class OrthologyRepositoryTest extends AbstractDatabaseTest {
 
     // Equals one position
     @Test
-    @Ignore
+    @Ignore("broken")
     public void createChromsomeWhereClauseHumanPosition() {
         HibernateOrthologyRepository ori = new HibernateOrthologyRepository();
         StringBuilder sb = new StringBuilder();

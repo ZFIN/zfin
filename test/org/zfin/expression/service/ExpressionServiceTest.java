@@ -1,7 +1,6 @@
 package org.zfin.expression.service;
 
 import org.apache.log4j.Logger;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.MarkerExpression;
@@ -63,8 +62,6 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    @Ignore
-    // Should go out as
     public void testMicroarrayWebserviceJob() {
 
         MicroarrayWebServiceBean microarrayWebServiceBean = new MicroarrayWebServiceBean();

@@ -28,12 +28,11 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         TestConfiguration.setAuthenticatedUser();
     }
 
-    //@Test
-    // TODO meed to use fish instead of genotype when code in prod with stable fish IDs.
+    @Test
     public void getPhenotypeFigureStageFromDto() {
         String startID = "ZDB-STAGE-010723-35";
         String endID = "ZDB-STAGE-010723-49";
-        String genotypeID = "ZDB-GENO-030530-1";
+        String fishID = "ZDB-FISH-150901-14317";
         String figureID = "ZDB-FIG-041108-3";
         // Standard
         String envID = "ZDB-EXP-041102-1";
@@ -44,7 +43,7 @@ public class DTOConversionServiceTest extends AbstractDatabaseTest {
         StageDTO end = new StageDTO();
         end.setZdbID(endID);
         FishDTO fishDTO = new FishDTO();
-        fishDTO.setZdbID(genotypeID);
+        fishDTO.setZdbID(fishID);
         FigureDTO fig = new FigureDTO();
         fig.setZdbID(figureID);
         PhenotypeExperimentDTO pfs = new PhenotypeExperimentDTO();

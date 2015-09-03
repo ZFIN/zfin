@@ -77,15 +77,11 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void getFishExperimentByExperiment() {
-        //TODO provide stable fish ID and change assertion
-        String experimentID = "ZDB-EXP-070511-5";
-        String genotypeID = "ZDB-FISH-150609-4000";
-        FishExperiment experiment = expRep.getFishExperimentByExperimentIDAndGenotype(experimentID, genotypeID);
-        assertNull(experiment);
-        //assertTrue(experiment != null);
-
+        String experimentID = "ZDB-EXP-080714-9";
+        String fishID = "ZDB-FISH-150901-5520";
+        FishExperiment experiment = expRep.getFishExperimentByExperimentIDAndFishID(experimentID, fishID);
+        assertThat(experiment, is(notNullValue()));
     }
 
     @Test
@@ -294,7 +290,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     // Excluded until we have the ontologyManager loaded into memory for the unit tests.
     // right now it would load all ontologies when trying to create an expression result record.
     @Test
-    @Ignore
+    @Ignore("need ontologyManager loaded into memory for the unit tests")
     public void createExpressionResult() {
         String xpatexID = "ZDB-XPAT-050128-4";
 
@@ -415,28 +411,20 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
 
     @Test
-    @Ignore
-    //TODO substitute with stable FISH id
     public void getExpressionFigureCountForGivenFish() {
-        Fish fish = getMutantRepository().getFish("ZDB-FISH-150602-4531");
+        Fish fish = getMutantRepository().getFish("ZDB-FISH-150901-16069");
         int count = expRep.getExpressionFigureCountForFish(fish);
-        Assert.assertTrue(count < 200);
-        Assert.assertTrue(count > 1);
+        assertThat(count, both(greaterThan(1)).and(lessThan(200)));
 
         List<ExpressionResult> expressionResults = expRep.getExpressionResultsByFish(fish);
-        assertNotNull(expressionResults);
+        assertThat(expressionResults, is(notNullValue()));
     }
 
     @Test
-    @Ignore
-    //TODO substitute with stable FISH id
     public void getExpressionResultsByFishAndPublication() {
-        Fish fish = getMutantRepository().getFish("ZDB-FISH-150821-9099");
+        Fish fish = getMutantRepository().getFish("ZDB-FISH-150901-29105");
         long count = expRep.getExpressionResultsByFishAndPublication(fish, "ZDB-PUB-140101-37");
-        Assert.assertTrue(count > -1);
-
-        count = expRep.getExpressionExperimentByFishAndPublication(fish, "ZDB-PUB-140101-37");
-        Assert.assertTrue(count > -1);
+        assertThat(count, greaterThan(0L));
     }
 
     @Test

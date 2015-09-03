@@ -1,6 +1,5 @@
 package org.zfin.anatomy.presentation;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.orthology.CriteriaType;
 import org.zfin.orthology.Species;
@@ -159,7 +158,6 @@ public class OrthologyValidationTest {
     }
 
     @Test
-    @Ignore
     public void testZebrafishFalseCriteria() {
         String species = "Zebrafish";
         String criteriaType = "chromosome";
@@ -170,7 +168,7 @@ public class OrthologyValidationTest {
         ErrorCollection coll = validator.getErrors();
         assertEquals("Number of errors", 1, coll.getErrors().size());
         String error = coll.getErrors().get(0);
-        assertEquals("Error message", "The filter type 'kkk' is not supported by the symbol field for Zebrafish in this search.", error);
+        assertEquals("Error message", "The chromosome field for Zebrafish must be an integer.", error);
     }
 
 

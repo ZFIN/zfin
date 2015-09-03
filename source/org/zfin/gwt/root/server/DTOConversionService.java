@@ -669,7 +669,7 @@ public class DTOConversionService {
 
         MutantFigureStage mfs = new MutantFigureStage();
         FishExperiment fishExperiment =
-                getExpressionRepository().getFishExperimentByExperimentIDAndGenotype(mutantFigureStage.getEnvironment().getZdbID(),
+                getExpressionRepository().getFishExperimentByExperimentIDAndFishID(mutantFigureStage.getEnvironment().getZdbID(),
                         mutantFigureStage.getFish().getZdbID());
         if (fishExperiment != null) {
             mfs.setGenotypeExperiment(fishExperiment);

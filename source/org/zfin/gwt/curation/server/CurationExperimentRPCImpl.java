@@ -471,7 +471,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             expressionExperiment.setMarkerDBLink(null);
         }
         // update Environment (=experiment)
-        FishExperiment genox = expRepository.getFishExperimentByExperimentIDAndGenotype(experimentDTO.getEnvironment().getZdbID(), experimentDTO.getFishID());
+        FishExperiment genox = expRepository.getFishExperimentByExperimentIDAndFishID(experimentDTO.getEnvironment().getZdbID(), experimentDTO.getFishID());
         LOG.info("Finding Genotype Experiment for :" + experimentDTO.getEnvironment().getZdbID() + ", " + experimentDTO.getFishID());
         // if no genotype experiment found create a new one.
         if (genox == null) {

@@ -59,7 +59,7 @@ public class ExpressionSmokeTest extends AbstractSmokeTest {
     }
 
 
-    //@Test
+    @Test
     public void testExpressionLookupTableWithSubmitButton() throws IOException {
         HtmlPage page = webClient.getPage(getApgNonSecureUrl() + "?MIval=aa-xpatselect.apg");
         webClient.waitForBackgroundJavaScriptStartingBefore(2000);

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.TestConfiguration;
@@ -21,7 +22,10 @@ import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -181,7 +185,8 @@ public class MergeMarkerDBTest extends AbstractDatabaseTest {
     }
 
 
-   // @Test
+    @Test
+    @Ignore("broken")
     // ToDo: delete antibody is done through DeleteRecordController
     // which does not use MergeService.deleteMarker() method....
     public void deleteRealAntibodies() {

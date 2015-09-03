@@ -1,5 +1,4 @@
 package org.zfin.figure.repository
-
 import org.zfin.AbstractZfinIntegrationSpec
 import org.zfin.expression.Figure
 import org.zfin.figure.FigureData
@@ -9,9 +8,6 @@ import org.zfin.publication.Publication
 import org.zfin.repository.RepositoryFactory
 import spock.lang.Ignore
 import spock.lang.Shared
-
-
-
 
 class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
 
@@ -75,7 +71,7 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
         ["Fig. 1", "Fig. 2", "Fig. 3", "Fig. 4", "Fig. 5", "Fig. 6", "Fig. 7"]== figures*.label
     }
 
-    @Ignore
+    @Ignore("broken")
     def "#figZdbID should have the correct number of fishes"() {
         when: "we get a figure"
 

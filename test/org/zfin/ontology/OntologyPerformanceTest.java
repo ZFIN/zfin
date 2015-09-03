@@ -1,6 +1,7 @@
 package org.zfin.ontology;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
@@ -323,7 +324,8 @@ public class OntologyPerformanceTest extends AbstractOntologyTest {
     }
 
 
-    //    @Test
+    @Test
+    @Ignore("for performance only; no assertions in the test")
     public void getMatchingTermsPerformance() {
         long startTime, endTime, wordTimeToSearch, totalTimeToSearch;
         totalTimeToSearch = 0;

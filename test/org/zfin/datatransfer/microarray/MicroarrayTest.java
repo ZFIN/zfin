@@ -6,6 +6,7 @@ import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
@@ -235,7 +236,8 @@ public class MicroarrayTest {
     /**
      * Add a gene accession when no previous accession was found.
      */
-//    @Test
+    @Test
+    @Ignore("broken")
     public void fullTestAddGeoLinks(){
         Session session = null ;
         try{
