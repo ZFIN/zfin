@@ -1475,14 +1475,12 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
 
         String sql = "select distinct xpatres_zdb_id " +
-                "  from expression_result, expression_experiment, fish_experiment, clean_expression_fast_search, fish, fish_str " +
+                "  from expression_result, expression_experiment, fish_experiment, clean_expression_fast_search " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
                 "   and cefs_genox_zdb_id = genox_zdb_id " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_zdb_id = fishstr_fish_zdb_id " +
-                "   and fishstr_str_zdb_id = :str ";
+                "   and cefs_mrkr_zdb_id = :str ";
 
         Query query = session.createSQLQuery(sql);
         query.setParameter("str", sequenceTargetingReagent);
@@ -1504,15 +1502,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<String> getExpressionFigureIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = " select distinct xpatfig_fig_zdb_id  " +
-                "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, clean_expression_fast_search, fish, fish_str " +
+                "   from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, clean_expression_fast_search  " +
                 "  where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "    and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "    and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "    and xpatex_genox_zdb_id = genox_zdb_id " +
                 "    and cefs_genox_zdb_id = genox_zdb_id " +
-                "    and genox_fish_zdb_id = fish_zdb_id " +
-                "    and fish_zdb_id = fishstr_fish_zdb_id " +
-                "    and fishstr_str_zdb_id = :strID ";
+                "    and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
@@ -1522,16 +1518,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<String> getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene (SequenceTargetingReagent sequenceTargetingReagent, Marker expressedGene) {
         String sql = "select distinct xpatfig_fig_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, clean_expression_fast_search, fish, fish_str " +
+                "  from expression_result, expression_pattern_figure, expression_experiment, fish_experiment, clean_expression_fast_search " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and xpatex_gene_zdb_id = :expressedGeneID " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
                 "   and cefs_genox_zdb_id = genox_zdb_id " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_zdb_id = fishstr_fish_zdb_id " +
-                "   and fishstr_str_zdb_id = :strID ";
+                "   and cefs_mrkr_zdb_id = :strID ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
         query.setString("expressedGeneID", expressedGene.getZdbID());
@@ -1540,16 +1534,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     public List<String> getExpressionPublicationIDsBySequenceTargetingReagent (SequenceTargetingReagent sequenceTargetingReagent) {
         String sql = "select distinct fig_source_zdb_id  " +
-                "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, clean_expression_fast_search, fish, fish_str " +
+                "  from expression_result, expression_pattern_figure, figure, expression_experiment, fish_experiment, clean_expression_fast_search " +
                 " where xpatres_xpatex_zdb_id = xpatex_zdb_id " +
                 "   and xpatex_gene_zdb_id like 'ZDB-GENE%' " +
                 "   and xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
                 "   and fig_zdb_id = xpatfig_fig_zdb_id " +
                 "   and xpatex_genox_zdb_id = genox_zdb_id " +
                 "   and cefs_genox_zdb_id = genox_zdb_id " +
-                "   and genox_fish_zdb_id = fish_zdb_id " +
-                "   and fish_zdb_id = fishstr_fish_zdb_id " +
-                "   and fishstr_str_zdb_id = :strID ";
+                "   and cefs_mrkr_zdb_id = :strID ";
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("strID", sequenceTargetingReagent.getZdbID());
