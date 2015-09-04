@@ -1,4 +1,5 @@
 /**
+ /**
  Javascript file to accompany construct Adding.
  */
 
@@ -21,19 +22,19 @@ var cassette3Stored="";
 var finalCname="";
 var finalStoredName="";
 var closeP=")";
-var constructSeparator=":"
-var storedConstructSeparator=":"
+var constructSeparator=":";
+var storedConstructSeparator=":";
 var cassetteSeparator=",";
 
-jQuery(document).ready(function () {
+$(document).ready(function () {
 
-    jQuery("#prefix").on("focusout", function (e) {
+    $("#prefix").on("focusout", function (e) {
            makeName();
 
     });
 
 
-    jQuery("#chosenType")
+    $("#chosenType")
         .change(function () {
                       makeName();
         })
@@ -46,13 +47,13 @@ jQuery(document).ready(function () {
      the autocomplete is on markers attributed to the pub. It also contains foreign species and other constrolled vocabularies*/
 
     autocompleteSource = '/action/construct/find-constructMarkers';
-    var pubId = jQuery('#constructPublicationZdbID').val();
+    var pubId = $('#constructPublicationZdbID').val();
 
-    jQuery(document).on("focus keyup", "input", function (event) {
+    $(document).on("focus keyup", "input", function (event) {
 
-       jQuery("input[id^='cassette']").autocomplete({
+       $("input[id^='cassette']").autocomplete({
             source: function (request, response) {
-                jQuery.ajax({
+                $.ajax({
                     url: autocompleteSource,
                     dataType: "json",
                     data: {
@@ -67,23 +68,20 @@ jQuery(document).ready(function () {
             },
             minLength: 2,
             autoFocus: true,
-            open: function () {
-                jQuery(this).data("autocomplete").menu.element.width(dropdownWidth);
-            },
 
             select: function (event, ui) {
 
                 event.preventDefault();
 
-                jQuery(this).data("selected", true);
-                jQuery(this).val(ui.item.value);
-                jQuery(this).css({ "background-color": 'white'});
+                $(this).data("selected", true);
+                $(this).val(ui.item.value);
+                $(this).css({ "background-color": 'white'});
 
 
             }, change: function (event, ui) {
                 // If a curator overrides the autocomplete, the background color of the input box chnages ot blue indicating that it was "free text"
                 if (ui.item == null) {
-                    jQuery(this).css({ "background-color": '#F0FFFF'});
+                    $(this).css({ "background-color": '#F0FFFF'});
 
 
                 }
@@ -95,12 +93,12 @@ jQuery(document).ready(function () {
                return false;
            }
 
-    });
-        jQuery("input[id^='cassette']").on('focusout', function (event) {
+    }).on('focusout', function (event) {
 
-            event.preventDefault();
+           event.preventDefault();
 //
-            makeName();
+           makeName();
+
         });
 
 
@@ -115,16 +113,16 @@ jQuery(document).ready(function () {
      if there is a value in between, that value has to eb shifted to the right.*/
 
 
-  jQuery(document).on("click","button[id^='addPromoter']",function (event){
+  $(document).on("click","button[id^='addPromoter']",function (event){
         event.preventDefault();
-        var divToAttachTo = jQuery(this).closest("div").attr("id");
-        var buttonClassName = jQuery(this).attr('class');
+        var divToAttachTo = $(this).closest("div").attr("id");
+        var buttonClassName = $(this).attr('class');
         addComponent(divToAttachTo, this.id, "Promoter", buttonClassName);
       makeName();
 
     });
 
-jQuery(document).on("change","select[id^='selectList']",function (event){
+$(document).on("change","select[id^='selectList']",function (event){
 
     event.preventDefault();
 
@@ -134,32 +132,32 @@ jQuery(document).on("change","select[id^='selectList']",function (event){
 
 
 //this function is for deleting the fields.
-jQuery(document).on("click","button[id^='delPromoter']",function (event){
+$(document).on("click","button[id^='delPromoter']",function (event){
 
 
         event.preventDefault();
-        var divToAttachTo = jQuery(this).closest("div").attr("id");
+        var divToAttachTo = $(this).closest("div").attr("id");
 
-        var buttonClassName = jQuery(this).attr('class');
+        var buttonClassName = $(this).attr('class');
         deleteComponent(divToAttachTo, this.id, "Promoter", buttonClassName);
         makeName();
     });
 
-jQuery(document).on("click","button[id^='addCoding']",function (event){
+$(document).on("click","button[id^='addCoding']",function (event){
 
 
         event.preventDefault();
-    var divToAttachTo = jQuery(this).closest("div").attr("id");
-    var buttonClassName = jQuery(this).attr('class');
+    var divToAttachTo = $(this).closest("div").attr("id");
+    var buttonClassName = $(this).attr('class');
         addComponent(divToAttachTo, this.id, "Coding", buttonClassName);
     makeName();
 
     });
 
-jQuery(document).on("click","button[id^='delCoding']",function (event){
+$(document).on("click","button[id^='delCoding']",function (event){
         event.preventDefault();
-    var divToAttachTo = jQuery(this).closest("div").attr("id");
-    var buttonClassName = jQuery(this).attr('class');
+    var divToAttachTo = $(this).closest("div").attr("id");
+    var buttonClassName = $(this).attr('class');
         deleteComponent(divToAttachTo, this.id, "Coding", buttonClassName);
         makeName();
 
@@ -175,9 +173,9 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
 
         counter++;
         // alert(counter);
-        var num = jQuery('.clonable').length;
+        var num = $('.clonable').length;
         //alert(num);
-        var duplicate = jQuery('#cassette' + num).clone().attr('id', 'cassette' + counter);
+        var duplicate = $('#cassette' + num).clone().attr('id', 'cassette' + counter);
         if (counter > 3) {
             alert("This interface allows for only 3 cassettes");
             return;
@@ -206,11 +204,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
             newButton[i].id = buttonId;
             newButton[i].className = counter.toString();
         }
-        /*var newSelectList = duplicate.getElementsByTagName('select');
-        if (newSelectList.length > 0) {
 
-        newSelectList.remove();
-    }*/
 
 
         var newInput = duplicate.getElementsByTagName('input');
@@ -273,26 +267,26 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
         //only remove extra elements form cassette2 if there is no cassette3
         if (numCassette < 3) {
 
-        jQuery('select', jQuery('.2')).each(function () {
+        $('select', $('.2')).each(function () {
 
-            jQuery(this).remove();
+            $(this).remove();
         });
 
-        jQuery('button', jQuery('.2')).each(function () {
+        $('button', $('.2')).each(function () {
 
             if (this.id.indexOf("1") == -1) {
 
-                jQuery(this).remove();
+                $(this).remove();
             }
         });
 
 
-        jQuery('input', jQuery('.2')).each(function () {
+        $('input', $('.2')).each(function () {
 
             if (this.id.indexOf("Promoter1") == -1) {
                 if (this.id.indexOf("Coding1") == -1) {
 
-                    jQuery(this).remove();
+                    $(this).remove();
                 }
 
             }
@@ -300,25 +294,25 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
     }
         //add cassette but remove extra elements
 
-        jQuery('select',jQuery('.3')).each(function(){
+        $('select',$('.3')).each(function(){
 
-            jQuery(this).remove();
+            $(this).remove();
         });
 
 
-        jQuery('button',jQuery('.3')).each(function(){
+        $('button',$('.3')).each(function(){
 
             if (this.id.indexOf("1")==-1) {
 
-                jQuery(this).remove();
+                $(this).remove();
             }
         });
-        jQuery('input',jQuery('.3')).each(function() {
+        $('input',$('.3')).each(function() {
 
             if (this.id.indexOf("Promoter1") == -1)  {
                 if (this.id.indexOf("Coding1") == -1) {
 
-                    jQuery(this).remove();
+                    $(this).remove();
                 }
 
             }
@@ -345,7 +339,7 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
 
         componentInputArray = [];
 
-        var ul = jQuery("#" + divToAttachTo);
+        var ul = $("#" + divToAttachTo);
 
 
         if (component == "Promoter") {
@@ -355,12 +349,14 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
             var nextComponent = parseInt(thisId.substring(9)) + 1;
         }
         //get number of input components in current div
-        var inputComponents = parseInt(jQuery("#" + divToAttachTo).find("input").size());
+        //var inputComponents = parseInt($("#" + divToAttachTo).find("input").size());
+        var inputComponents = $("#" + divToAttachTo).find("input").length;
         //get id of next component
-        var i = jQuery("#" + divToAttachTo).find("input").size() + 1;
+        var i = $("#" + divToAttachTo).find("input").size() + 1;
 
         //get number of select components
-        var selectComponents = parseInt(jQuery("#" + divToAttachTo).find("select").size());
+        //var selectComponents = parseInt($("#" + divToAttachTo).find("select").size());
+        var selectComponents = $("#" + divToAttachTo).find("select").length;
         //get total number of components to iterate through
         var countOfComponents = selectComponents + inputComponents;
 
@@ -377,25 +373,26 @@ jQuery(document).on("click","button[id^='delCoding']",function (event){
         selectListComponent += "<option>" + "" + "</option>";
 
         selectListComponent += "</select>";
-        var li = jQuery(selectListComponent + "<input   size=10  class='"+componentInputClass +"'+ name='" + componentInputId + "'+ id='" + componentInputId + "' />" + "<button class='"+cassetteNumber+"'+ id='" + btnAddId + "' >+</button>" + "<button class='"+cassetteNumber+"'+ id='" + btnDelId + "' >-</button>");
+        var li = $(selectListComponent + "<input   size=10  class='"+componentInputClass +"'+ name='" + componentInputId + "'+ id='" + componentInputId + "' />" + "<button class='"+cassetteNumber+"'+ id='" + btnAddId + "' >+</button>" + "<button class='"+cassetteNumber+"'+ id='" + btnDelId + "' >-</button>");
         li.appendTo(ul);
 
         //This work is done to "remember" the input values, if a box gets added in between 2 alreday filled boxes.
         for (var k = nextComponent; k <= countOfComponents + 2; k++) {
             var j = k + 1;  //j is incremented to avoid the select box
-            var a = jQuery("#"+"cassette"+cassetteNumber+component + k).val();
+            var a = $("#"+"cassette"+cassetteNumber+component + k).val();
 
             componentInputArray.push({id: j, value: a});
         }
 
-        jQuery.each(componentInputArray, function () {
-            jQuery("#"+"cassette"+cassetteNumber+component + this.id).val(this.value).focus();
+        $.each(componentInputArray, function () {
+            $("#"+"cassette"+cassetteNumber+component + this.id).val(this.value).focus();
         });
-        jQuery("#"+"cassette"+cassetteNumber+component + nextComponent).val("").focus();
+        $("#"+"cassette"+cassetteNumber+component + nextComponent).val("").focus();
         return false;
     }
 
 function deleteComponent(divToAttachTo, thisId, component,buttonClassName) {
+
     if (component == "Promoter") {
         var componentNumber = parseInt(thisId.substring(11));
     }
@@ -403,7 +400,7 @@ function deleteComponent(divToAttachTo, thisId, component,buttonClassName) {
         var componentNumber = parseInt(thisId.substring(9));
     }
 
-    var i = jQuery("#" + divToAttachTo).find("input").size();
+    var i = $("#" + divToAttachTo).find("input").length;
     if (buttonClassName == 1) {
 
         if (i == 1) {
@@ -412,15 +409,14 @@ function deleteComponent(divToAttachTo, thisId, component,buttonClassName) {
         }
     }
 
-    jQuery(jQuery("#"+divToAttachTo)).each(function(){
+    $($("#"+divToAttachTo)).each(function(){
 
 //TODO for code reviewer, this seems to remove buttons always from the first cassette, i dont know why. (meaning if I am in second cassette and the div points to second (or third)cassette, first cassette buttons get deleted).
 
-        jQuery("#" + "add" + component + componentNumber).remove();
-        jQuery("#" + "del" + component + componentNumber).remove();
-       jQuery("#" + "cassette" + buttonClassName + component + componentNumber).remove();
-
-        jQuery("#" + "selectList" + component + componentNumber).remove();
+        $("#" + "add" + component + componentNumber).remove();
+        $("#" + "del" + component + componentNumber).remove();
+       $("#" + "cassette" + buttonClassName + component + componentNumber).remove();
+        $("#" + "selectList" + component + componentNumber).remove();
 
 
     });
@@ -428,33 +424,33 @@ function deleteComponent(divToAttachTo, thisId, component,buttonClassName) {
 
     //after deleting renumber input, select box and button ids and do not lose values of  alreday entered inputs.
 
-    componentCount=1; //counter to increment for each input box
-    jQuery('input',jQuery("#"+divToAttachTo)).each(function(){
+    var componentCount=1; //counter to increment for each input box
+    $('input',$("#"+divToAttachTo)).each(function(){
 
-        jQuery(this).attr("id","cassette"+buttonClassName+component+componentCount);
+        $(this).attr("id","cassette"+buttonClassName+component+componentCount);
         componentCount++;
     });
 
-    addButtonCount=1;
-    delButtonCount=1//counter to increment for each add and delete button
-    jQuery('button',jQuery("#"+divToAttachTo)).each(function(){
+    var addButtonCount=1;
+    var delButtonCount=1//counter to increment for each add and delete button
+    $('button',$("#"+divToAttachTo)).each(function(){
 
        if(this.id.substring(0,3)=="add"){
 
-        jQuery(this).attr("id","add"+component+addButtonCount);
+        $(this).attr("id","add"+component+addButtonCount);
             addButtonCount++;
         }
         else{
 
-            jQuery(this).attr("id","del"+component+delButtonCount);
+            $(this).attr("id","del"+component+delButtonCount);
             delButtonCount++;
         }
 
     });
 
-    selectListCount=2; //counter to keep track of select list for Promoter and coding. starts with 2 since the listbox starts only with the second component
-    jQuery('select',jQuery("#"+divToAttachTo)).each(function(){
-        jQuery(this).attr("id","selectList"+component+selectListCount);
+    var selectListCount=2; //counter to keep track of select list for Promoter and coding. starts with 2 since the listbox starts only with the second component
+    $('select',$("#"+divToAttachTo)).each(function(){
+        $(this).attr("id","selectList"+component+selectListCount);
         selectListCount++;
     });
 
@@ -462,15 +458,15 @@ function deleteComponent(divToAttachTo, thisId, component,buttonClassName) {
  }
 function validateAndSubmit(){
 
-    var param = jQuery("form").serialize();
-var pubID=jQuery('#constructPublicationZdbID').val();
-    console.log(param);
+
+var pubID=$('#constructPublicationZdbID').val();
 
 
-    jQuery.ajax({
+
+    $.ajax({
         url: '/action/construct/construct-add-component/',
         type: 'POST',
-        data: jQuery("form").serialize(),
+        data: $("form").serialize(),
         success: function (response) {
 
             //the 2 functions are for teh GWT to recognixe that new constructs have been added for them to reflect right away in the "Attribute marker" section
@@ -479,23 +475,23 @@ var pubID=jQuery('#constructPublicationZdbID').val();
             refreshRelationship(pubID);
 
             if (response != "") {
-                jQuery("#add-construct-error").html(response);
+                $("#add-construct-error").html(response);
 
-                jQuery("#add-construct-error").show();
+                $("#add-construct-error").show();
                 //need to reset fields upon successful insert.
                 if (response.indexOf("successfully") > 1) {
 
-                    jQuery("#add-construct-error").html(response);
-                    jQuery("#add-construct-error").show();
+                    $("#add-construct-error").html(response);
+                    $("#add-construct-error").show();
                     resetFields();
 
                 }
-                //resetFields();
+
             }
             else{
-                jQuery("#add-construct-error").html(response);
-                jQuery("#add-construct-error").show();
-               // jQuery('#add-construct-error').hide();
+                $("#add-construct-error").html(response);
+                $("#add-construct-error").show();
+               // $('#add-construct-error').hide();
                 resetFields();
             }
 
@@ -512,71 +508,68 @@ var pubID=jQuery('#constructPublicationZdbID').val();
 }
 function resetFields(){
 
-    jQuery("#prefix").val("");
-    jQuery("#constructDisplayName").val("");
-    jQuery("#cName").val("");
-    jQuery("#constructStoredName").val("");
-    jQuery("#storedCass1").val("");
-    jQuery("#constructAlias").val("");
-    jQuery("#constructComments").val("");
-    jQuery("#constructCuratorNote").val("");
-    jQuery(".duplicate").remove();
-    jQuery("#cName").attr("disabled", "disabled");
-    //jQuery('#add-construct-error').hide();
+    $("#prefix").val("");
+    $("#constructDisplayName").val("");
+    $("#cName").val("");
+    $("#constructStoredName").val("");
+    $("#storedCass1").val("");
+    $("#constructAlias").val("");
+    $("#constructComments").val("");
+    $("#constructCuratorNote").val("");
+    $(".duplicate").remove();
+    $("#cName").attr("disabled", "disabled");
+    //$('#add-construct-error').hide();
 
     //The resetting has to remove all extra fields and cassettes, if there is easier way in js to do it will be great
 
-    jQuery('.2').each(function(){
+    $('.2').each(function(){
 
-        jQuery(this).remove();
+        $(this).remove();
     });
-    jQuery('.3').each(function(){
+    $('.3').each(function(){
 
-        jQuery(this).remove();
+        $(this).remove();
     });
 
-       jQuery('button',jQuery('.1')).each(function(){
+       $('button',$('.1')).each(function(){
 
         if (this.id.indexOf("1")==-1) {
 
-            jQuery(this).remove();
+            $(this).remove();
         }
     });
-    jQuery('select',jQuery('.1')).each(function(){
+    $('select',$('.1')).each(function(){
 
-        jQuery(this).remove();
+        $(this).remove();
     });
-    jQuery('input',jQuery('.1')).each(function() {
+    $('input',$('.1')).each(function() {
 
         if (this.id.indexOf("Promoter1") == -1)  {
             if (this.id.indexOf("Coding1") == -1) {
 
-                jQuery(this).remove();
+                $(this).remove();
             }
                 else{
-                    jQuery(this).val("");
-                    jQuery(this).css({"background-color": 'white'});
+                    $(this).val("");
+                    $(this).css({"background-color": 'white'});
 
             }
 
         }
         else{
-            jQuery(this).val("");
-            jQuery(this).css({"background-color": 'white'});
+            $(this).val("");
+            $(this).css({"background-color": 'white'});
         }
     });
-
-
         counter=1;//reset cassette counter to 1
-
-
 }
+
 function makeName(){
     //main function to generate construct name on the fly
     //it also creates a "stored string" to pass on to the controller to store construct components in order
     //the stored string contains special characters to delimit promoters and coding as wlel as to delimit cassettes.
 
-    jQuery('#add-construct-error').hide();
+    $('#add-construct-error').hide();
     var cassette1PromoterString="";
     var cassette1CodingString="";
 
@@ -588,15 +581,16 @@ function makeName(){
 
     var componentDelim="#"
 
-    finalCname=jQuery("#chosenType").val();
-    finalCname+=jQuery("#prefix").val()+openP;
+    finalCname=$("#chosenType").val();
+    finalCname+=$("#prefix").val()+openP;
 
-    jQuery.each(jQuery('.cassette1Promoter'), function (index) {
-        cassette1PromoterString +=jQuery(this).val()+componentDelim;
+    $.each($('.cassette1Promoter'), function (index) {
+        cassette1PromoterString +=$(this).val()+componentDelim;
 
     });
-    jQuery.each(jQuery('.cassette1Coding'), function (index) {
-        cassette1CodingString +=jQuery(this).val()+componentDelim;
+
+    $.each($('.cassette1Coding'), function (index) {
+        cassette1CodingString +=$(this).val()+componentDelim;
 
     });
     if (cassette1PromoterString==componentDelim){
@@ -609,11 +603,11 @@ function makeName(){
     cassette1=((cassette1CodingString!=componentDelim)?cassette1PromoterString+constructSeparator+cassette1CodingString:cassette1PromoterString);
     cassette1Stored=((cassette1CodingString!="")?cassette1PromoterString+storedConstructSeparator+cassette1CodingString:cassette1PromoterString);
 
-    jQuery.each(jQuery('.cassette2Promoter'), function (index) {
-        cassette2PromoterString +=jQuery(this).val()+componentDelim;
+    $.each($('.cassette2Promoter'), function (index) {
+        cassette2PromoterString +=$(this).val()+componentDelim;
     });
-    jQuery.each(jQuery('.cassette2Coding'), function (index) {
-        cassette2CodingString +=jQuery(this).val()+componentDelim;
+    $.each($('.cassette2Coding'), function (index) {
+        cassette2CodingString +=$(this).val()+componentDelim;
     });
     if (cassette2PromoterString==componentDelim){
         constructSeparator=""
@@ -624,11 +618,11 @@ function makeName(){
     cassette2=(((cassette2CodingString!="")&&(cassette2CodingString!=componentDelim))?cassette2PromoterString+constructSeparator+cassette2CodingString:cassette2PromoterString);
     cassette2Stored=((cassette2CodingString!="")?cassette2PromoterString+storedConstructSeparator+cassette2CodingString:cassette2PromoterString);
 
-    jQuery.each(jQuery('.cassette3Promoter'), function (index) {
-        cassette3PromoterString +=jQuery(this).val()+componentDelim;
+    $.each($('.cassette3Promoter'), function (index) {
+        cassette3PromoterString +=$(this).val()+componentDelim;
     });
-    jQuery.each(jQuery('.cassette3Coding'), function (index) {
-        cassette3CodingString +=jQuery(this).val()+componentDelim;
+    $.each($('.cassette3Coding'), function (index) {
+        cassette3CodingString +=$(this).val()+componentDelim;
     });
     if (cassette3PromoterString==componentDelim){
         constructSeparator=""
@@ -659,16 +653,9 @@ function makeName(){
     var storedName=finalStoredName.replace("##","#");
 
 
-    jQuery('#constructDisplayName').val(finalName);
-    jQuery('#constructName').val(finalName);
-    jQuery('#constructStoredName').val(storedName);
-
-
-
-
-
-
-
+    $('#constructDisplayName').val(finalName);
+    $('#constructName').val(finalName);
+    $('#constructStoredName').val(storedName);
 
 }
 
