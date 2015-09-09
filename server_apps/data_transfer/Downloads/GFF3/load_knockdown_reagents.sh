@@ -3,7 +3,7 @@
 GLOBALSTORE="/research/zprodmore/gff3"
 TARGETDIR="$TARGETROOT/server_apps/data_transfer/Downloads/GFF3"
 
-BOWTIE_IDX="$GLOBALSTORE/Ensembl_Zv9.78"
+BOWTIE_IDX="$GLOBALSTORE/Ensembl_GRCz10.81"
 
 cd $TARGETDIR
 rm -f mo_seq.fa_line mo_seq.fa E_mo_seq.sam E_zfin_morpholino.gff3 mo_seq_E_miss.fa talen_seq_1.fa_line \
