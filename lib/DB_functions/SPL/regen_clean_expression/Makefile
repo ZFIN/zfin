@@ -20,8 +20,9 @@ DIR = lib/DB_functions/SPL/regenCleanExpression
 TARGETDIR = $(TARGETROOT)/$(DIR)
 TESTDIR = /tmp/$(DBNAME)/$(DIR)
 
-STATIC_PROCS = regen_clean_expression_create_temp_tables.sql regen_clean_expression.sql \
-               regen_clean_expression_process.sql  \
+STATIC_PROCS= regen_clean_expression_create_temp_tables.sql \
+		regen_clean_expression_process.sql 
+GENERIC_PROCS =  regen_clean_expression.sql
 
 SPECIFIC_PROC_TARGETS = $(foreach SPEC, $(GENERIC_PROCS), $(TARGETDIR)/$(SPEC))
 STATIC_PROC_TARGETS   = $(foreach STAT, $(STATIC_PROCS),  $(TARGETDIR)/$(STAT))

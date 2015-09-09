@@ -1406,7 +1406,16 @@ public class HibernateMutantRepository implements MutantRepository {
         Query query = session.createQuery(hql);
         query.setParameter("zdbID", str.getZdbID());
 
-        return (List<GenotypeFigure>) query.list();
+        List<GenotypeFigure> genotypeFigures = (List<GenotypeFigure>) query.list();
+
+        List<GenotypeFigure> notNormalGenotypeFigures = new ArrayList<>();
+
+        for (GenotypeFigure genoFig : genotypeFigures) {
+            if (genoFig.getPhenotypeStatement().isNotNormal())
+                notNormalGenotypeFigures.add(genoFig);
+        }
+
+        return notNormalGenotypeFigures;
     }
 
     @Override
@@ -1430,7 +1439,7 @@ public class HibernateMutantRepository implements MutantRepository {
             fish = existingFish;
         } else {
             HibernateUtil.currentSession().save(fish);
-            getInfrastructureRepository().insertUpdatesTable(publication, "fish_zdb_id", "create new record", fish.getZdbID(), null);
+            getInfrastructureRepository().insertUpdatesTable(fish, "fish_zdb_id", "create new record", publication.getZdbID(), null);
         }
         getInfrastructureRepository().insertRecordAttribution(fish, publication);
     }
@@ -1757,6 +1766,21 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public long getPhenotypeByFishAndPublication(Fish fish, String publicationID) {
+        String hql = "from PhenotypeStatement " +
+                "where phenotypeExperiment.fishExperiment.fish = :fish AND " +
+                "phenotypeExperiment.figure.publication.zdbID = :publicationID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("publicationID", publicationID);
+        List<Fish> fishList = query.list();
+        if (fishList == null) {
+            return 0;
+        }
+        return (long) fishList.size();
+    }
+
+    @Override
     public long getInferredFromCountByGenotype(String genotypeID, String publicationID) {
         String hql = "select count(inferred.markerGoTermEvidenceZdbID) from InferenceGroupMember as inferred, MarkerGoTermEvidence as mgt " +
                 "where inferred.inferredFrom = :genotypeID AND " +
@@ -1766,5 +1790,20 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("genotypeID", "ZFIN:" + genotypeID);
         query.setParameter("publicationID", publicationID);
         return (long) query.uniqueResult();
+    }
+
+    @Override
+    public long getFishExperimentCountByGenotype(Fish fish, String publicationID) {
+        String hql = "from PhenotypeExperiment " +
+                "where fishExperiment.fish = :fish AND " +
+                "figure.publication.zdbID = :publicationID";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("fish", fish);
+        query.setParameter("publicationID", publicationID);
+        List<Fish> fishList = query.list();
+        if (fishList == null) {
+            return 0;
+        }
+        return (long) fishList.size();
     }
 }

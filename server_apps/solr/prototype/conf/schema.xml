@@ -746,7 +746,7 @@
 
    <field name="attribution_count" type="sint" indexed="true" stored="true"/>
 
-   <field name="xref" type="string" indexed="true" stored="false" multiValued="true"/>
+   <field name="xref" type="string" indexed="true" stored="true" multiValued="true"/>
 
    <field name="related_gene_symbol" type="gene_symbol" indexed="true" stored="true" multiValued="true"/>
 
@@ -1135,6 +1135,7 @@
 
     <copyField source="inserted_in_gene" dest="related_gene_symbol"/>
     <copyField source="affected_gene" dest="related_gene_symbol"/>
+    <copyField source="affected_gene_previous_name" dest="related_gene_symbol"/>
     <copyField source="antigen_gene" dest="related_gene_symbol"/>
     <!--<copyField source="genes_with_altered_expression" dest="related_gene_symbol"/>-->
     <copyField source="gene" dest="related_gene_symbol"/>

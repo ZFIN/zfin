@@ -33,7 +33,7 @@
         <tr>
 
             <th>Synonyms:</th>
-           <td id="term-synonyms">
+            <td id="term-synonyms">
                 <zfin2:toggledHyperlinkStrings collection="${formBean.term.sortedAliases}" maxNumber="3"
                                                id="${formBean.term.zdbID}_alias"/>
             </td>
@@ -101,7 +101,8 @@
     </c:if>
 
     <div class="summary">
-        <span class="summaryTitle">Relationships<a class='popup-link info-popup-link' href='/action/ontology/note/ontology-relationship'></a></span>
+        <span class="summaryTitle">Relationships<a class='popup-link info-popup-link'
+                                                   href='/action/ontology/note/ontology-relationship'></a></span>
         <table class="summary horizontal-solidblock">
             <c:forEach var="relationshipPresentation" items="${formBean.termRelationships}" varStatus="index">
                 <tr id="${fn:replace(relationshipPresentation.type," ","-")}">
@@ -125,13 +126,14 @@
     </script>
 
 
-    <div id="genes-involved">
-        <zfin2:genesAssociatedWithDisease formBean="${formBean}"/>
-    </div>
-
-    <div id="fish-models">
-        <zfin2:fishModels term="${formBean.term}" fishModels="${fishModels}"/>
-    </div>
+    <c:if test="${isDiseaseTerm}">
+        <div id="genes-involved">
+            <zfin2:genesAssociatedWithDisease formBean="${formBean}"/>
+        </div>
+        <div id="fish-models">
+            <zfin2:fishModels term="${formBean.term}" fishModels="${fishModels}"/>
+        </div>
+    </c:if>
 
     <c:if test="${formBean.term.ontology.expressionData}">
         <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
@@ -149,12 +151,11 @@
     </div>--%>
 
 
-     <authz:authorize ifAnyGranted="root">
-         <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
-             <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
-         </c:if>
-     </authz:authorize>
-
+    <authz:authorize ifAnyGranted="root">
+        <c:if test="${formBean.term.ontology.ontologyName == 'disease_ontology'}">
+            <zfin-ontology:phenogrid doid="${formBean.term.oboID}"/>
+        </c:if>
+    </authz:authorize>
 
 
     <c:choose>
@@ -166,7 +167,7 @@
 
 </div>
 <script>
-    jQuery(function() {
-        jQuery("#genes-involved").tableCollapse({label: "Genes involved"});
+    jQuery(function () {
+        jQuery("#genes-involved").tableCollapse({label: ""});
     });
 </script>

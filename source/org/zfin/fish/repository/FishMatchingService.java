@@ -6,17 +6,14 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.fish.FishSearchCriteria;
-import org.zfin.fish.presentation.MartFish;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.framework.search.SearchCriterion;
-import org.zfin.infrastructure.ZfinEntity;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.*;
 import org.zfin.ontology.Term;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.MatchType;
 import org.zfin.util.MatchingService;
 
@@ -35,8 +32,7 @@ public class FishMatchingService {
     private MatchingService service;
     private Fish fish;
 
-    public FishMatchingService(
-            Fish fish) {
+    public FishMatchingService(Fish fish) {
         this.fish = fish;
     }
 
@@ -49,8 +45,9 @@ public class FishMatchingService {
      * @return matching text collection
      */
     public Set<MatchingText> getMatchingText(FishSearchCriteria criteria) {
-        if (criteria == null)
+        if (criteria == null) {
             return null;
+        }
         // no contains.
         MatchType[] honoredMatchTypes = {MatchType.EXACT, MatchType.EXACT_WORD, MatchType.STARTS_WITH_WORDS, MatchType.STARTS_WITH, MatchType.EXACT_MATCH_ON_SOME_WORDS};
         service = new MatchingService(honoredMatchTypes);
@@ -78,15 +75,19 @@ public class FishMatchingService {
             }
         }
         }
-        if (criteria.getPhenotypeAnatomyCriteria().hasValues())
+        if (criteria.getPhenotypeAnatomyCriteria().hasValues()) {
             checkAllTermMatches(criteria.getPhenotypeAnatomyCriteria());
+        }
         // mark as transgenic
-        if (criteria.getRequireTransgenicsCriteria().isTrue())
+        if (criteria.getRequireTransgenicsCriteria().isTrue()) {
             service.addMatchingOnFilter(MatchingTextType.TRANSGENIC, true);
-        if (criteria.getRequireSequenceTargetingReagentCriteria().isTrue())
+        }
+        if (criteria.getRequireSequenceTargetingReagentCriteria().isTrue()) {
             service.addMatchingOnFilter(MatchingTextType.MORPHANT, true);
-        if (criteria.getMutationTypeCriteria().hasValues())
+        }
+        if (criteria.getMutationTypeCriteria().hasValues()) {
             service.addMatchingOnFilter(MatchingTextType.MUTATION_TYPE, true, criteria.getMutationTypeCriteria().getValue());
+        }
         return service.getMatchingTextList();
     }
 
@@ -94,13 +95,15 @@ public class FishMatchingService {
     private void addMatchingConstruct(String value,Feature feature) {
 
             Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getConstructs();
-            if (featureMarkerRelationships == null)
+            if (featureMarkerRelationships == null) {
                 return;
+            }
             for (FeatureMarkerRelationship rel : featureMarkerRelationships) {
                 Marker construct = rel.getMarker();
                 service.addMatchingType(MatchType.CONTAINS);
-                if (checkMarkerMatch(value, construct, MatchingTextType.CONSTRUCT_ABBREVIATION, MatchingTextType.CONSTRUCT_NAME, MatchingTextType.CONSTRUCT_ALIAS))
+                if (checkMarkerMatch(value, construct, MatchingTextType.CONSTRUCT_ABBREVIATION, MatchingTextType.CONSTRUCT_NAME, MatchingTextType.CONSTRUCT_ALIAS)) {
                     break;
+                }
                 // ensure to remove Contains for anything else but constructs
                 service.removeMatchingType(MatchType.CONTAINS);
                 Set<MarkerRelationship> firstRelatedMarker = construct.getFirstMarkerRelationships();
@@ -135,8 +138,9 @@ public class FishMatchingService {
      * @param criterion term criterion
      */
     private void checkAllTermMatches(SearchCriterion criterion) {
-        if (criterion == null || criterion.getValues() == null)
+        if (criterion == null || criterion.getValues() == null) {
             return;
+        }
         // loop over all terms entered in the search form
         for (String queryTermID : criterion.getValues()) {
             checkSingleTermMatch(queryTermID);
@@ -151,8 +155,9 @@ public class FishMatchingService {
      */
     private void checkSingleTermMatch(String queryTermID) {
         // no phenotype associated
-        if (fish.getFishExperiments() == null)
+        if (fish.getFishExperiments() == null) {
             return;
+        }
         // loop over all genotype experiments for a given fish
 
         for (FishExperiment genoxID : fish.getFishExperiments()) {
@@ -183,8 +188,9 @@ public class FishMatchingService {
     private void compareQueryTermWithPhenotypeTermList(String queryTermID, Set<Term> phenotypeTerms) {
         // if an exact match is found continue otherwise check if
         // query term is a substructure of
-        if (service.checkExactTermMatches(queryTermID, phenotypeTerms))
+        if (service.checkExactTermMatches(queryTermID, phenotypeTerms)) {
             return;
+        }
         service.checkSubstructureTermMatches(queryTermID, phenotypeTerms);
     }
 
@@ -199,32 +205,38 @@ public class FishMatchingService {
     }
 
     private void addMatchingGene(String geneNameField) {
-        if (geneNameField == null || StringUtils.isEmpty(geneNameField))
+        if (geneNameField == null || StringUtils.isEmpty(geneNameField)) {
             return;
+        }
         geneNameField = geneNameField.toLowerCase().trim();
-        if (addMatchingGeneSingleWord(geneNameField))
+        if (addMatchingGeneSingleWord(geneNameField)) {
             return;
+        }
         if (geneNameField.contains(" ")) {
             String[] tokens = geneNameField.split(" ");
-            for (String token : tokens)
+            for (String token : tokens) {
                 addMatchingGeneSingleWord(token);
+            }
         }
     }
 
     private boolean addMatchingGeneSingleWord(String geneNameField) {
-       /* List<ZfinEntity> genes = fish.getAffectedGenes();
+        List<Marker> genes = fish.getAffectedGenes();
         if (CollectionUtils.isNotEmpty(genes)) {
             // the loop exists for the first match as this is enough!
-            for (ZfinEntity entity : genes) {
-                if (entity == null)
+            for (Marker entity : genes) {
+                if (entity == null) {
                     continue;
-                Marker gene = getMarkerRepository().getMarkerByID(entity.getID());
-                if (gene == null)
+                }
+                Marker gene = getMarkerRepository().getMarkerByID(entity.getZdbID());
+                if (gene == null) {
                     continue;
-                if (checkMarkerMatch(geneNameField, gene, MatchingTextType.AFFECTED_GENE_ABBREVIATION, MatchingTextType.AFFECTED_GENE_NAME, MatchingTextType.AFFECTED_GENE_ALIAS))
+                }
+                if (checkMarkerMatch(geneNameField, gene, MatchingTextType.AFFECTED_GENE_ABBREVIATION, MatchingTextType.AFFECTED_GENE_NAME, MatchingTextType.AFFECTED_GENE_ALIAS)) {
                     return true;
+                }
             }
-        }*/
+        }
         return false;
     }
 
@@ -237,38 +249,44 @@ public class FishMatchingService {
      * @return
      */
     private boolean checkMarkerMatch(String geneNameField, Marker gene, MatchingTextType... matchingTypes) {
-        if (service.addMatchingText(geneNameField, gene.getAbbreviation(), matchingTypes[0]).equals(MatchType.EXACT))
+        if (service.addMatchingText(geneNameField, gene.getAbbreviation(), matchingTypes[0]).equals(MatchType.EXACT)) {
             return true;
-        if (service.addMatchingText(geneNameField, gene.getName(), matchingTypes[1]).equals(MatchType.EXACT))
+        }
+        if (service.addMatchingText(geneNameField, gene.getName(), matchingTypes[1]).equals(MatchType.EXACT)) {
             return true;
+        }
         Set<MarkerAlias> prevNames = gene.getAliases();
         if (prevNames != null) {
             // loop until the first match is encountered
             for (MarkerAlias prevName : prevNames) {
-                if (service.addMatchingText(geneNameField, prevName.getAlias(), matchingTypes[2], gene.getAbbreviation()).equals(MatchType.EXACT))
+                if (service.addMatchingText(geneNameField, prevName.getAlias(), matchingTypes[2], gene.getAbbreviation()).equals(MatchType.EXACT)) {
                     break;
+                }
             }
         }
         return false;
     }
 
     private void addMatchingSequenceTargetingReagents(String geneNameField) {
-        if (geneNameField == null || StringUtils.isEmpty(geneNameField))
+        if (geneNameField == null || StringUtils.isEmpty(geneNameField)) {
             return;
+        }
         geneNameField = geneNameField.toLowerCase().trim();
         List<SequenceTargetingReagent> sequenceTargetingReagents = fish.getStrList();
         if (CollectionUtils.isNotEmpty(sequenceTargetingReagents)) {
             // the loop exists for the first match as this is enough!
             for (SequenceTargetingReagent sequenceTargetingReagent : sequenceTargetingReagents) {
                 // name and abbreviation is the same for sequenceTargetingReagent
-                if (service.addMatchingText(geneNameField, sequenceTargetingReagent.getName(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_NAME).equals(MatchType.EXACT))
+                if (service.addMatchingText(geneNameField, sequenceTargetingReagent.getName(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_NAME).equals(MatchType.EXACT)) {
                     break;
+                }
                 Set<MarkerAlias> prevNames = sequenceTargetingReagent.getAliases();
                 if (prevNames != null) {
                     // loop until the first match is encountered
                     for (MarkerAlias prevName : prevNames) {
-                        if (service.addMatchingText(geneNameField, prevName.getAlias(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_ALIAS).equals(MatchType.EXACT))
+                        if (service.addMatchingText(geneNameField, prevName.getAlias(), MatchingTextType.SEQUENCE_TARGETING_REAGENT_ALIAS).equals(MatchType.EXACT)) {
                             break;
+                        }
                     }
                 }
             }
@@ -276,38 +294,44 @@ public class FishMatchingService {
     }
 
     private void addMatchingFeatures(String geneNameField) {
-        /*if (geneNameField == null || StringUtils.isEmpty(geneNameField))
+        if (geneNameField == null || StringUtils.isEmpty(geneNameField)) {
             return;
+        }
         geneNameField = geneNameField.toLowerCase().trim();
-        List<ZfinEntity> features = fish.getGenotype().
+        Set<GenotypeFeature> features = fish.getGenotype().getGenotypeFeatures();
         addMatchingFeature(geneNameField, features);
         if (geneNameField.contains(" ")) {
             String[] tokens = geneNameField.split(" ");
-            for (String token : tokens)
+            for (String token : tokens) {
                 addMatchingFeature(token, features);
-        }*/
-
+            }
+        }
     }
 
-    private void addMatchingFeature(String geneFeatureField, List<ZfinEntity> features) {
+    private void addMatchingFeature(String geneFeatureField, Set<GenotypeFeature> features) {
         if (CollectionUtils.isNotEmpty(features)) {
             // the loop exists for the first match as this is enough!
-            for (ZfinEntity entity : features) {
-                Feature feature = getFeatureRepository().getFeatureByID(entity.getID());
-                if (feature == null)
+            for (GenotypeFeature gf : features) {
+                Feature feature = gf.getFeature();
+                if (feature == null) {
                     continue;
-                if (service.addMatchingText(geneFeatureField, feature.getAbbreviation(), MatchingTextType.FEATURE_ABBREVIATION).equals(MatchType.EXACT))
+                }
+                if (service.addMatchingText(geneFeatureField, feature.getAbbreviation(), MatchingTextType.FEATURE_ABBREVIATION).equals(MatchType.EXACT)) {
                     break;
-                if (service.addMatchingText(geneFeatureField, feature.getName(), MatchingTextType.FEATURE_NAME).equals(MatchType.EXACT))
+                }
+                if (service.addMatchingText(geneFeatureField, feature.getName(), MatchingTextType.FEATURE_NAME).equals(MatchType.EXACT)) {
                     break;
-                if (service.addMatchingText(geneFeatureField, feature.getLineNumber(), MatchingTextType.FEATURE_LINE_NUMBER).equals(MatchType.EXACT))
+                }
+                if (service.addMatchingText(geneFeatureField, feature.getLineNumber(), MatchingTextType.FEATURE_LINE_NUMBER).equals(MatchType.EXACT)) {
                     break;
+                }
                 Set<FeatureAlias> prevNames = feature.getAliases();
                 if (prevNames != null) {
                     // loop until the first exact match is encountered
                     for (FeatureAlias prevName : prevNames) {
-                        if (service.addMatchingText(geneFeatureField, prevName.getAlias(), MatchingTextType.FEATURE_ALIAS).equals(MatchType.EXACT))
+                        if (service.addMatchingText(geneFeatureField, prevName.getAlias(), MatchingTextType.FEATURE_ALIAS).equals(MatchType.EXACT)) {
                             break;
+                        }
                     }
                 }
             }

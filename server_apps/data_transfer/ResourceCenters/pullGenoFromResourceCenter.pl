@@ -204,18 +204,34 @@ sub geno_load($) {
     	      	     	                                              from zdb_active_data
 			                                               where epfz_genofeat_Zdb_id = zactvd_zdb_id);");
 
+    my $add_new_fishids = $dbh->prepare("update geno_pulled_from_zirc
+                                          set epfz_fish_zdb_id = get_id('FISH')
+                                          where epfz_fish_zdb_id is null
+                                          and get_obj_type(epfz_alt_zdb_id)='ALT'
+                                          and epfz_geno_zdb_id is null;");
+
     my $add_new_genoids = $dbh->prepare("update geno_pulled_from_zirc
                                           set epfz_geno_zdb_id = get_id('GENO')
                                           where epfz_geno_zdb_id is null
                                           and get_obj_type(epfz_alt_zdb_id)='ALT';");
 
-    my $to_active_data = $dbh->prepare("insert into zdb_active_data
+
+
+    my $to_active_data_geno = $dbh->prepare("insert into zdb_active_data
                                           select epfz_geno_zdb_id
                                              from geno_pulled_From_zirc
                                              where not exists (Select 'x'
     	      	     	                                         from zdb_active_data
 			                                         where epfz_geno_Zdb_id = zactvd_zdb_id)
-                                             and epfz_geno_zdb_id is not null;");
+                                             and epfz_geno_zdb_id is not null");
+
+   my $to_active_data_fish = $dbh->prepare("insert into zdb_active_data
+                                            select epfz_fish_zdb_id
+                                              from  geno_pulled_From_zirc
+                                              where not exists (Select 'x'
+    	      	     	                                         from zdb_active_data
+			                                         where epfz_fish_Zdb_id = zactvd_zdb_id)
+                                             and epfz_fish_zdb_id is not null;");
 
     my $to_genotype = $dbh->prepare("insert into genotype (geno_zdb_id, 
        	    	                                           geno_display_name,
@@ -232,6 +248,12 @@ sub geno_load($) {
   	    	   	                                     from genotype
 			                                     where geno_zdb_id = epfz_geno_zdb_id)
                                           and epfz_geno_zdb_id is not null;");
+
+    my $to_fish = $dbh->prepare("insert into fish (fish_Zdb_id, fish_name, fish_handle, fish_Genotype_zdb_id, fish_modified)
+                                     select epfz_fish_zdb_id, epfz_fish_zdb_id, epfz_fish_Zdb_id, epfz_geno_Zdb_id, 't'
+                                        from geno_pulled_from_zirc
+                                        where not exists (Select 'x' from fish where fish_zdb_id = epfz_fish_zdb_id)
+                                         and epfz_fish_Zdb_id is not null");
 
     my $to_genofeat = $dbh->prepare(
 	"insert into genotype_feature (genofeat_zdb_id,
@@ -369,9 +391,12 @@ sub geno_load($) {
 	$delete_existing_where_supplied &&
 	$update_genofeat &&
 	$zactvd_genofeat &&
+	$add_new_fishids &&
 	$add_new_genoids &&
-	$to_active_data &&
+	$to_active_data_geno &&
+	$to_active_data_fish &&
 	$to_genotype &&
+	$to_fish &&
 	$to_genofeat &&
 	$to_genoback &&
 	$to_recattrib &&
@@ -394,9 +419,12 @@ sub geno_load($) {
     $delete_existing_where_supplied->execute;
     $update_genofeat->execute;
     $zactvd_genofeat->execute; 
+    $add_new_fishids->execute;
     $add_new_genoids->execute;
-    $to_active_data->execute;
+    $to_active_data_geno->execute;
+    $to_active_data_fish->execute;
     $to_genotype->execute;
+    $to_fish->execute;
     $to_genofeat->execute;
     $to_genoback->execute;
     $to_recattrib->execute;
@@ -710,7 +738,8 @@ sub geno_main($$$) {
             epfz_zirc_is_submitter boolean,
 	    epfz_geno_handle varchar(150),
 	    epfz_geno_display_name varchar(150),
-            epfz_genofeat_zdb_id varchar(50))
+            epfz_genofeat_zdb_id varchar(50),
+            epfz_fish_Zdb_id varchar(50))
            with no log; ');
 
     my $resourceTable = $dbh->do('create temp table geno_available

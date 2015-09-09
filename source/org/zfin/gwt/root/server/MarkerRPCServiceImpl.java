@@ -48,9 +48,7 @@ import org.zfin.util.ZfinStringUtils;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  */
@@ -1153,7 +1151,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     public void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO) {
         ConstructRelationship constructRelationship = new ConstructRelationship();
-
+MarkerRelationship markerRelationship=new MarkerRelationship();
         ConstructDTO constructDTO = constructRelationshipDTO.getConstructDTO();
         ConstructCuration construct = constructRepository.getConstructByID(constructDTO.getZdbID());
         constructRelationship.setConstruct(construct);
@@ -1163,13 +1161,16 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         constructRelationship.setMarker(marker);
 
         constructRelationship.setType(ConstructRelationship.Type.getType(constructRelationshipDTO.getRelationshipType()));
-
+markerRelationship.setFirstMarker(markerRepository.getMarkerByID(constructDTO.getZdbID()));
+        markerRelationship.setSecondMarker(marker);
+        markerRelationship.setType(MarkerRelationship.Type.getType(constructRelationshipDTO.getRelationshipType()));
         HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(constructRelationship);
+        HibernateUtil.currentSession().save(markerRelationship);
         infrastructureRepository.insertPublicAttribution(constructRelationship.getZdbID(), constructRelationshipDTO.getPublicationZdbID());
 //        infrastructureRepository.insertUpdatesTable(markerRelationship.getZdbID(), "ConstructMarkerRelationship", markerRelationship.toString(), "Created construct marker relationship");
         HibernateUtil.flushAndCommitCurrentSession();
-        InformixUtil.runInformixProcedure("regen_construct_marker", construct.getZdbID() + "");
+        //InformixUtil.runInformixProcedure("regen_construct_marker", construct.getZdbID() + "");
     }
 
     @Override
@@ -1194,15 +1195,22 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
             if (CollectionUtils.isNotEmpty(diseaseModelList)) {
                 throw new DeAttributionException("Cannot remove attribution as there is human disease data associated to this fish");
             }
-            List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getMutantRepository().getPhenotypeStatementsByFish(fish);
-            if (CollectionUtils.isNotEmpty(phenotypeStatements)) {
+            long phenotypeStatementsCount = getMutantRepository().getPhenotypeByFishAndPublication(fish, publicationID);
+            if (phenotypeStatementsCount > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there is phenotype data associated to this fish");
             }
-            List<ExpressionResult> fishExpressionResults = RepositoryFactory.getExpressionRepository().getExpressionResultsByFish(fish);
-            if (CollectionUtils.isNotEmpty(fishExpressionResults)) {
+            long count = getMutantRepository().getFishExperimentCountByGenotype(fish, publicationID);
+            if (count > 0)
+                throw new DeAttributionException("Cannot remove attribution as there are  " + count + " fish experiments using this fish");
+            long fishExpressionResultsCount = getExpressionRepository().getExpressionResultsByFishAndPublication(fish, publicationID);
+            if (fishExpressionResultsCount > 0) {
                 throw new DeAttributionException("Cannot remove attribution as there is expression data associated to this fish");
             }
-            long count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
+            long fishExpressionExpCount = getExpressionRepository().getExpressionExperimentByFishAndPublication(fish, publicationID);
+            if (fishExpressionExpCount > 0) {
+                throw new DeAttributionException("Cannot remove attribution as there are " + fishExpressionExpCount + " expression experiment data associated to this fish");
+            }
+            count = getInfrastructureRepository().getDistinctPublicationsByData(entityID);
             if (count == 1)
                 throw new DeAttributionException("It's the last attribution. Please use the delete fish feature");
         }

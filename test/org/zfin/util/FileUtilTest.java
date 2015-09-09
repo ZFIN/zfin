@@ -3,7 +3,6 @@ package org.zfin.util;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -12,8 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test class for FileUtil.
@@ -37,12 +37,12 @@ public class FileUtilTest {
         cleanupTestFilesStructure();
     }
 
-    @Ignore
+    @Test
     public void apgFiles() {
         ZfinPropertiesEnum.WEBROOT_DIRECTORY.setValue("home");
         List<File> apgFiles = FileUtil.countApgFiles();
 
-        assertEquals("Number of apg files", 200, apgFiles.size());
+        assertThat("Number of apg files", apgFiles, hasSize(greaterThan(0)));
     }
 
     @Test

@@ -85,7 +85,7 @@ public class PaintGafServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    @Ignore
+    @Ignore("just makes sure that the service is still there, not something we want to run all of the time")
     public void testDownloadPaint() throws Exception {
         DownloadService downloadService = new DownloadService();
 //        File downloadedFile = downloadService.downloadFileHttp(new File(System.getProperty("java.io.tmpdir") + "/" + "gene_association.goa_zebrafish")

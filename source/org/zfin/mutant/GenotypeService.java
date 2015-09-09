@@ -1,11 +1,11 @@
 package org.zfin.mutant;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.gwt.root.dto.GenotypeFeatureDTO;
 import org.zfin.marker.Marker;
-import org.zfin.mutant.presentation.GenoExpStatistics;
 
 import java.util.*;
 
@@ -14,21 +14,11 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 public class GenotypeService {
 
-    public static List<GenoExpStatistics> getGenotypeExpStats(List<Genotype> genotypes, Feature fr) {
-        if (genotypes == null || fr == null)
-            return null;
-
-        List<GenoExpStatistics> stats = new ArrayList<>();
-        for (Genotype genoType : genotypes) {
-            GenoExpStatistics stat = new GenoExpStatistics(genoType, fr);
-            stats.add(stat);
-        }
-        return stats;
-    }
+    public static final String DELIMITER = ", ";
 
     public static SortedSet<Marker> getAffectedMarker(Genotype genotype) {
         Set<GenotypeFeature> features = genotype.getGenotypeFeatures();
-        SortedSet<Marker> markers = new TreeSet<Marker>();
+        SortedSet<Marker> markers = new TreeSet<>();
         for (GenotypeFeature feat : features) {
             Feature feature = feat.getFeature();
             Set<FeatureMarkerRelationship> rels = feature.getFeatureMarkerRelations();
@@ -45,7 +35,7 @@ public class GenotypeService {
         return markers;
     }
 
-    public static void createGenotypeNames(Genotype genotype, Genotype genotypeBackground) {
+    public static void createGenotypeNames(Genotype genotype, List<Genotype> genotypeBackgroundList) {
         if (genotype == null)
             return;
         if (CollectionUtils.isEmpty(genotype.getGenotypeFeatures())) {
@@ -76,8 +66,20 @@ public class GenotypeService {
             handle += " ";
         }
         handle = handle.trim();
-        if (genotypeBackground != null)
-            handle += genotypeBackground.getHandle();
+        if (genotypeBackgroundList != null) {
+            Collections.sort(genotypeBackgroundList, new Comparator<Genotype>() {
+                @Override
+                public int compare(Genotype o1, Genotype o2) {
+                    return o1.getHandle().compareToIgnoreCase(o2.getHandle());
+                }
+            });
+            for (Genotype genotypeBackground : genotypeBackgroundList) {
+                handle += genotypeBackground.getHandle();
+                handle += DELIMITER;
+            }
+            if (genotypeBackgroundList.size() > 0)
+                handle = StringUtils.removeEnd(handle, DELIMITER);
+        }
         genotype.setHandle(handle);
         genotype.setNickname(handle);
         genotype.setName(displayName.substring(0, displayName.length() - 3));
@@ -94,11 +96,12 @@ public class GenotypeService {
         return zygosityAbbreviation;
     }
 
-    public static Genotype createGenotype(List<GenotypeFeatureDTO> genotypeFeatureDTOList, Genotype genotypeBackground) {
+    public static Genotype createGenotype(List<GenotypeFeatureDTO> genotypeFeatureDTOList, List<Genotype> genotypeBackgroundList) {
         Genotype genotype = new Genotype();
         genotype.setWildtype(false);
-        if (genotypeBackground != null)
-            genotype.setBackground(genotypeBackground);
+        if (genotypeBackgroundList != null)
+            for (Genotype genotypeBackground : genotypeBackgroundList)
+                genotype.setBackground(genotypeBackground);
         Set<GenotypeFeature> genotypeFeatureSet = new HashSet<>(genotypeFeatureDTOList.size());
         for (GenotypeFeatureDTO dto : genotypeFeatureDTOList) {
             GenotypeFeature genotypeFeature = new GenotypeFeature();
@@ -110,7 +113,7 @@ public class GenotypeService {
             genotypeFeatureSet.add(genotypeFeature);
         }
         genotype.setGenotypeFeatures(genotypeFeatureSet);
-        GenotypeService.createGenotypeNames(genotype, genotypeBackground);
+        GenotypeService.createGenotypeNames(genotype, genotypeBackgroundList);
         return genotype;
     }
 

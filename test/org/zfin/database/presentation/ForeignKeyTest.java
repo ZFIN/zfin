@@ -81,7 +81,8 @@ public class ForeignKeyTest extends AbstractDatabaseTest {
         assertEquals(Table.ANTIBODY, table);
     }
 
-    //@Test
+    @Test
+    @Ignore("broken")
     public void foreignKeyMap() {
 
         ForeignKey.createDagMap(Table.ONTOLOGY);
@@ -99,7 +100,7 @@ public class ForeignKeyTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void getJoinedForeignKeys() {
         Table genox = Table.FISH_EXPERIMENT;
         List<ForeignKey> foreignKeyList = ForeignKey.getJoinedForeignKeys("phenos_phenox_pk_id", genox.getTableName());

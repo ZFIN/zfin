@@ -60,6 +60,7 @@ public class DiseaseModelPresenter implements Presenter {
                 processing = true;
                 DiseaseModelDTO disease = getDiseaseModel();
                 if (disease == null) {
+                    processing = false;
                     return;
                 }
                 diseaseRpcService.addHumanDiseaseModel(disease, new RetrieveDiseaseModelListCallBack("Could not add a new disease model", view.getErrorLabel()));
@@ -126,7 +127,7 @@ public class DiseaseModelPresenter implements Presenter {
 
         // environment list
         String message = "Error while reading the environment";
-        curationRPCService.getEnvironmentsWithoutSTR(publicationID, new RetrieveEnvironmentListCallBack(message, view.getErrorLabel()));
+        curationRPCService.getEnvironments(publicationID, new RetrieveEnvironmentListCallBack(message, view.getErrorLabel()));
 
         updateFishList();
     }

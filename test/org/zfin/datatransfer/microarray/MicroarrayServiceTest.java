@@ -1,5 +1,6 @@
 package org.zfin.datatransfer.microarray;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.service.ExpressionService;
@@ -17,13 +18,14 @@ import static org.junit.Assert.*;
 public class MicroarrayServiceTest extends AbstractDatabaseTest{
 
     private ExpressionService expressionService = new ExpressionService();
-    // this is more for convenience and shouldn't be run as a regular test
-//    @Test
-//    public void testIndividualGPL() {
-//        DefaultGeoSoftParser defaultSoftParser = new DefaultGeoSoftParser();
-////        defaultSoftParser.setAlwaysUseExistingFile(true);
-//        defaultSoftParser.parseUniqueNumbers("GPL1319", 2, new String[]{"Danio rerio"}, new String[]{"Control"});
-//    }
+
+    @Test
+    @Ignore("this is more for convenience and shouldn't be run as a regular test")
+    public void testIndividualGPL() {
+        DefaultGeoSoftParser defaultSoftParser = new DefaultGeoSoftParser();
+//        defaultSoftParser.setAlwaysUseExistingFile(true);
+        defaultSoftParser.parseUniqueNumbers("GPL1319", 2, new String[]{"Danio rerio"}, new String[]{"Control"});
+    }
 
     @Test
     public void updateGeoLink(){
@@ -45,7 +47,8 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest{
     }
 
 
-    //@Test
+    @Test
+    @Ignore("broken")
     public void findGeoLinkForNCBI(){
         Marker m ;
         m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-EST-010427-5"); // af086761

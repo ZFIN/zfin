@@ -84,7 +84,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
     // Todo: This is broken only within the test environment (must be a bug in spring) as it is working
     // in the true servlet container.
     @Test
-    @Ignore
+    @Ignore("broken only within the test environment")
     public void retrieveTermByAnatomyName() throws Exception {
         request.setRequestURI("/term-detail-by-name/term?name=liver&ontologyName=zebrafish_anatomy");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
@@ -96,7 +96,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
     // Todo: This is broken only within the test environment (must be a bug in spring) as it is working
     // in the true servlet container.
     @Test
-    @Ignore
+    @Ignore("broken only within the test environment")
     public void retrievePopupById() throws Exception {
         request.setRequestURI("/term-detail-popup?termID=GO:0043231");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);

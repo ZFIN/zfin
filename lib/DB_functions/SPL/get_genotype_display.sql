@@ -127,7 +127,7 @@ create function get_genotype_display( genoZdbId varchar(50) )
 	  and fmrel_type = gcs_fmrel_type
 	  and gcs_mrkr_type = mrkr_type
 	  and gcs_ftr_type = feature_type
-	  and fmrel_type != 'is allele of'
+	  and fmrel_type not in ('is allele of', 'created by')
 	  and not exists (
 	          select *
 	          from feature_marker_relationship as fm2

@@ -15,6 +15,8 @@ public class FishDTO extends RelatedEntityDTO implements Comparable {
     private String handle;
     private GenotypeDTO genotypeDTO;
     private List<RelatedEntityDTO> strList;
+    private long order;
+    private String nameOrder;
 
     public String getZdbID() {
         return zdbID;
@@ -56,6 +58,22 @@ public class FishDTO extends RelatedEntityDTO implements Comparable {
         this.handle = handle;
     }
 
+    public long getOrder() {
+        return order;
+    }
+
+    public void setOrder(long order) {
+        this.order = order;
+    }
+
+    public String getNameOrder() {
+        return nameOrder;
+    }
+
+    public void setNameOrder(String nameOrder) {
+        this.nameOrder = nameOrder;
+    }
+
     public String getStrDisplayName() {
         if (strList == null)
             return "";
@@ -94,12 +112,10 @@ public class FishDTO extends RelatedEntityDTO implements Comparable {
             return -1;
         FishDTO dto = (FishDTO) o;
 
-        if (getGenotypeDTO().compareTo(dto.getGenotypeDTO()) != 0)
-            return -1;
-        for (RelatedEntityDTO str : strList) {
-            if (!dto.getStrList().contains(str))
-                return -1;
+        int compareOrder = Long.compare(order, dto.getOrder());
+        if (compareOrder != 0) {
+            return compareOrder;
         }
-        return 0;
+        return nameOrder.compareTo(dto.getNameOrder());
     }
 }

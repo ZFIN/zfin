@@ -168,10 +168,14 @@ public class OntologyTermDetailController {
         int number = getInfrastructureRepository().getTermReferences(term, null).size();
 
         model.addAttribute("numberOfCitations", number);
-        int numberOfGenes = OntologyService.getNumberOfDiseaseGenes(term);
-        model.addAttribute("diseaseGenes", numberOfGenes);
-        form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
-        model.addAttribute("fishModels", OntologyService.getDiseaseModelsWithFishModel(term));
+        boolean isDiseaseTerm = term.getOntology().equals(Ontology.DISEASE_ONTOLOGY);
+        if (isDiseaseTerm) {
+            int numberOfGenes = OntologyService.getNumberOfDiseaseGenes(term);
+            model.addAttribute("diseaseGenes", numberOfGenes);
+            form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
+            model.addAttribute("fishModels", OntologyService.getDiseaseModelsWithFishModel(term));
+        }
+        model.addAttribute("isDiseaseTerm", isDiseaseTerm);
         return "ontology/ontology-term.page";
 
     }

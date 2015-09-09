@@ -38,6 +38,7 @@ public interface ExpressionRepository {
     int getExpressionFigureCountForEfg(Marker marker);
 
     int getExpressionFigureCountForGene(Marker marker);
+    int getExpressionFigureCountForGenotype(Genotype genotype);
 
     int getExpressionFigureCountForFish(Fish fish);
 
@@ -90,10 +91,10 @@ public interface ExpressionRepository {
      * Retrieve FishExperiment by Experiment ID
      *
      * @param experimentID id
-     * @param genotypeID   genotype id
+     * @param fishID   fish id
      * @return FishExperiment
      */
-    FishExperiment getFishExperimentByExperimentIDAndGenotype(String experimentID, String genotypeID);
+    FishExperiment getFishExperimentByExperimentIDAndFishID(String experimentID, String fishID);
 
     /**
      * Create a new genotype experiment for given experiment and genotype.
@@ -306,6 +307,8 @@ public interface ExpressionRepository {
      */
     List<ExpressionResult> getExpressionResultsByFish (Fish fish);
 
+    long getExpressionResultsByFishAndPublication(Fish fish, String publicationID);
+
     List<String> getExpressionFigureIDsByFish(Fish fish);
 
     List<String> getExpressionPublicationIDsByFish(Fish fish);
@@ -393,4 +396,5 @@ public interface ExpressionRepository {
      */
     List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
 
+    long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID);
 }

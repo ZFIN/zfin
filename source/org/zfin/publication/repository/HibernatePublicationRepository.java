@@ -498,20 +498,20 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public List<FeatureMarkerRelationship> getFeatureMarkerRelationshipsByPubID(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select distinct fmRel, fmRel.feature.name from FeatureMarkerRelationship fmRel, PublicationAttribution attr " +
+        String hql = "select distinct fmRel from FeatureMarkerRelationship fmRel, PublicationAttribution attr " +
                 "      where attr.publication.zdbID = :pubID " +
-                "      and attr.dataZdbID=fmRel.feature.zdbID " +
+                "      and attr.dataZdbID=fmRel.feature.zdbID " ;
                 // "      and ftr.type=:tg " +
-                "      order by fmRel.feature.name";
+
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);
         // query.setString("tg", "TRANSGENIC_INSERTION");
 
-        List<Object[]> array = (List<Object[]>) query.list();
-        List<FeatureMarkerRelationship> fmrelList = new ArrayList<>(array.size());
-        for (Object[] arrayObject : array) {
+//        List<Object[]> array = (List<Object[]>) query.list();
+        List<FeatureMarkerRelationship> fmrelList = query.list();
+        /*for (Object[] arrayObject : array) {
             fmrelList.add((FeatureMarkerRelationship) arrayObject[0]);
-        }
+        }*/
         return fmrelList;
 
 
@@ -1276,6 +1276,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct geno from Genotype geno, PublicationAttribution record" +
                 "     where record.publication.zdbID = :pubID " +
                 "           and record.dataZdbID = geno.zdbID" +
+                "           and geno.wildtype = 'f'" +
                 "    order by geno.handle ";
         Query query = session.createQuery(hql);
         query.setString("pubID", publicationID);

@@ -90,7 +90,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
             } else if (!this.isChemical() && o.isChemical()) {
                 return 1;
             } else {
-                return 0;
+                return this.getName().compareToIgnoreCase(o.getName());
             }
         }
     }
@@ -115,17 +115,4 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         return "Experiment";
     }
 
-    // Todo: no way to know an experiment is related to STR any more?
-    /*
-    public boolean isSequenceTargetingReagent() {
-        if (CollectionUtils.isEmpty(experimentConditions))
-            return false;
-        for (ExperimentCondition condition : experimentConditions) {
-            if (condition.getSequenceTargetingReagent() != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-    */
 }

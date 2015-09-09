@@ -196,7 +196,7 @@ public class AbstractFishViewBean {
             return null;
         }
 
-        return PhenotypeService.getPhenotypeDisplays(phenoStatements,"conditon");
+        return PhenotypeService.getPhenotypeDisplays(phenoStatements,"condition", "phenotypeStatement");
     }
 
     public void setPhenoDisplays(List<PhenotypeDisplay> phenoDisplays) {
@@ -208,7 +208,7 @@ public class AbstractFishViewBean {
             return 0;
         } else {
             if (phenoDisplays == null) {
-                phenoDisplays = PhenotypeService.getPhenotypeDisplays(phenoStatements, "condition");
+                phenoDisplays = PhenotypeService.getPhenotypeDisplays(phenoStatements, "condition", "phenotypeStatement");
             }
 
             if (phenoDisplays == null) {

@@ -30,9 +30,12 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
+import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
@@ -140,10 +143,8 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     }
 
     @Test
-  @Ignore
     public void getPhenotypeExperiment() {
-        // TODO Find a good fish Id replacement
-        String fishID = "ZDB-GENO-070119-8";
+        String fishID = "ZDB-FISH-150901-22082";
         Fish fish = getMutantRepository().getFish(fishID);
         FishExperiment genoExperiment = new FishExperiment();
         genoExperiment.setFish(fish);
@@ -180,10 +181,11 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
             phenotypeDTO.setRelatedEntity(relatedEntityDTO);
         }
         phenotypeDTO.setQuality(createTerm(quality, OntologyDTO.QUALITY));
-        if (abnormal)
+        if (abnormal) {
             phenotypeDTO.setTag(PhenotypeStatement.Tag.ABNORMAL.toString());
-        else
+        } else {
             phenotypeDTO.setTag(PhenotypeStatement.Tag.NORMAL.toString());
+        }
         return phenotypeDTO;
     }
 
@@ -272,24 +274,17 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         }
     }
 
+    @Ignore("this causes informix problems, and the feature was taken out of production")
     @Test
-    @Ignore
-    // TODO replace with fish ID
     public void regenGenofigGenotype() {
-        PhenotypeStatement phenotype = new PhenotypeStatement();
-        FishExperiment genox = new FishExperiment();
-        genox.setZdbID("ZDB-GENOX-041102-1948");
-        Fish fish = new Fish();
+        Fish fish = getMutantRepository().getFish("ZDB-FISH-150901-19724");
+        Set<FishExperiment> fishExperiments = fish.getFishExperiments();
+        assertThat(fishExperiments, not(empty()));
 
-        fish.setZdbID("ZDB-GENO-980202-405");
-        genox.setFish(fish);
-        Experiment experiment = new Experiment();
-        experiment.setZdbID("ZDB-EXP-041102-1");
-        genox.setExperiment(experiment);
-        PhenotypeExperiment phenox = new PhenotypeExperiment();
-        phenox.setFishExperiment(genox);
+        Set<PhenotypeExperiment> phenoExperiments = fishExperiments.iterator().next().getPhenotypeExperiments();
+        assertThat(phenoExperiments, not(empty()));
 
-        phenotype.setPhenotypeExperiment(phenox);
+        PhenotypeExperiment phenox = phenoExperiments.iterator().next();
 
         HibernateUtil.createTransaction();
         getPhenotypeRepository().runRegenGenotypeFigureScript(phenox);
@@ -451,15 +446,14 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     @Test
     public void getHumanDiseaseModels() {
         List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModels("ZDB-PUB-990507-16");
-       // assertNotNull(diseaseModels);
+        assertNotNull(diseaseModels);
     }
 
     @Test
-    @Ignore
     public void getHumanDiseaseModelsByFish() {
-        String fishID = "ZDB-FISH-150512-28";
+        String fishID = "ZDB-FISH-150901-19447";
         List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishID);
-        //assertNotNull(diseaseModels);
+        assertNotNull(diseaseModels);
     }
 
     @Test
@@ -467,6 +461,6 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         //ABCD syndrome
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:0050600");
         List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModels(disease);
-        //assertNotNull(diseaseModels);
+        assertNotNull(diseaseModels);
     }
 }

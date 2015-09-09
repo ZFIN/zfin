@@ -105,8 +105,6 @@ public interface CurationExperimentRPC extends RemoteService {
      */
     boolean isReCreatePhenotypePileLinkNeeded(String publicationID);
 
-    List<EnvironmentDTO> getEnvironmentsWithoutSTR(String publicationID);
-
     List<RelatedEntityDTO> getBackgroundGenotypes(String publicationID);
 
     /**

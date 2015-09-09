@@ -174,9 +174,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
         List<EnvironmentDTO> assayDtos = new ArrayList<>();
         for (Experiment experiment : experiments) {
-            EnvironmentDTO env = new EnvironmentDTO();
-            env.setName(experiment.getName());
-            env.setZdbID(experiment.getZdbID());
+            EnvironmentDTO env = DTOConversionService.convertToEnvironmentDTO(experiment);
             assayDtos.add(env);
         }
 
@@ -429,22 +427,6 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     }
 
     @Override
-    public List<EnvironmentDTO> getEnvironmentsWithoutSTR(String publicationID) {
-        List<Experiment> experiments = pubRepository.getExperimentsByPublication(publicationID);
-        List<EnvironmentDTO> assayDtos = new ArrayList<>(experiments.size());
-        for (Experiment experiment : experiments) {
-          //  if (experiment.isSequenceTargetingReagent())
-          //      continue;
-          // Todo: code for the above
-            EnvironmentDTO env = new EnvironmentDTO();
-            env.setName(experiment.getName());
-            env.setZdbID(experiment.getZdbID());
-            assayDtos.add(env);
-        }
-        return assayDtos;
-    }
-
-    @Override
     public List<RelatedEntityDTO> getBackgroundGenotypes(String publicationID) {
         List<Genotype> wildtypes = mutantRep.getAllWildtypeGenotypes();
         List<RelatedEntityDTO> backgroundList = new ArrayList<>(wildtypes.size());
@@ -489,7 +471,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             expressionExperiment.setMarkerDBLink(null);
         }
         // update Environment (=experiment)
-        FishExperiment genox = expRepository.getFishExperimentByExperimentIDAndGenotype(experimentDTO.getEnvironment().getZdbID(), experimentDTO.getFishID());
+        FishExperiment genox = expRepository.getFishExperimentByExperimentIDAndFishID(experimentDTO.getEnvironment().getZdbID(), experimentDTO.getFishID());
         LOG.info("Finding Genotype Experiment for :" + experimentDTO.getEnvironment().getZdbID() + ", " + experimentDTO.getFishID());
         // if no genotype experiment found create a new one.
         if (genox == null) {

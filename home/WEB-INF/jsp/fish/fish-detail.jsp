@@ -2,10 +2,10 @@
 
 <jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishBean" scope="request"/>
 
-<authz:authorize ifAnyGranted="root">
+
     <zfin2:dataManager zdbID="${fish.fishID}"
                        rtype="fish"/>
-</authz:authorize>
+
 
 <div style="float: right;">
     <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
@@ -77,7 +77,8 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${fn:length(disease.publications) == 1}">
-                                        <a href="${disease.publications[0].zdbID}">(1)</a>
+                                        <zfin:link entity="${disease.publications[0]}"/>
+                                        <%--<a href="${disease.publications[0].zdbID}">(1)</a>--%>
                                     </c:when>
                                     <c:otherwise>
                                         <a href="/action/ontology/fish-model-publication-list/${disease.disease.oboID}/${disease.experiment.zdbID}">
@@ -121,7 +122,7 @@
         <b>Phenotype in <zfin:name entity="${fish}"/></b>
         <c:choose>
             <c:when test="${phenotypeDisplays != null && fn:length(phenotypeDisplays) > 0 }">
-                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}"
+                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
                                      suppressMoDetails="true" secondColumn="condition"/>
             </c:when>
             <c:otherwise>

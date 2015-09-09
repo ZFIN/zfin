@@ -71,6 +71,11 @@ if (vUpdate != 't') then
       on genotype_figure_fast_search_new (gffs_phenox_pk_id)
       fillfactor 100
       in idxdbs3;
+
+   create index genotype_figure_fast_search_phenos_foreign_key_index_transient
+      on genotype_figure_fast_search_new (gffs_phenos_id)
+      fillfactor 100
+      in idxdbs2;
         
     update statistics high for table genotype_figure_fast_search_new;
 
@@ -94,6 +99,9 @@ if (vUpdate != 't') then
     rename index genotype_figure_fast_search_phenox_foreign_key_index_transient 
         to genotype_figure_fast_search_phenox_zdb_id_foreign_key_index;
 
+  rename index genotype_figure_fast_search_phenos_foreign_key_index_transient 
+        to genotype_figure_fast_search_phenos_id_foreign_key_index;
+
 
       --let errorHint = "genotype_figure_fast_search add foreign key to reference genotype";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_geno_zdb_id) references genotype on 
@@ -114,6 +122,10 @@ if (vUpdate != 't') then
      --let errorHint = "genotype_figure_fast_search add foreign key to reference phenotype_experiment";
       alter table genotype_figure_fast_search add constraint (foreign key (gffs_phenox_pk_id) references phenotype_Experiment on 
       delete cascade constraint gffs_phenox_pk_id_foreign_key);
+
+alter table genotype_figure_fast_search add constraint 
+    (foreign key (gffs_phenos_id) references phenotype_statement 
+     on delete cascade constraint gffs_phenos_pk_id_foreign_key);
 
 else 
 

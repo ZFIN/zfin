@@ -720,6 +720,7 @@ from this page, all changes go through do-imageupdate.apg and imageupdate.apg
 
         <?MIBLOCK COND="$(XST,$UPDATE)">
             <?MIVAR>$construct_table_pre<?/MIVAR>
+
             <div id="imageConstructBox"></div>
             <?MIVAR>$construct_table_post<?/MIVAR>
         <?MIELSE>

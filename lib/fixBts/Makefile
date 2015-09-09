@@ -20,7 +20,7 @@ TARGETDIR = $(TARGETROOT)/lib/fixBts/
 
 SUBDIRS = 
 GENERICS = 
-STATICS = dropBtsIndexes.sql createBtsIndexes.sql createTempBtsIndexes.sql dropload.sql fix_bts.sql reload.sh
+STATICS = dropBtsIndexes.sql createTempBtsIndexes.sql dropload.sql fix_bts.sql reload.sh
 # ---------------  Production Rules  ------------------------------------
 
 # use default rules for directories without app pages in them

@@ -48,7 +48,7 @@ public class FeatureValidationTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void transgenicInsertion(){
         featureDTO.setFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION);
         Assert.assertEquals(testFeatureName + testLabPrefix+testLineNumber, FeatureValidationService.generateFeatureDisplayName(featureDTO)) ;
@@ -96,7 +96,7 @@ public class FeatureValidationTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("broken")
     public void harderTransgenicInsertionProblem(){
         featureDTO.setFeatureType(FeatureTypeEnum.TRANSGENIC_INSERTION);
         testFeatureName = "Tg(-1.0CaTuba1:GFP)ma1234" ;

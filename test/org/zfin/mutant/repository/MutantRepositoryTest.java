@@ -5,8 +5,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.expression.Figure;
@@ -23,15 +21,13 @@ import org.zfin.ontology.presentation.TermHistogramBean;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.STRMarkerSequence;
-import org.zfin.util.DateUtil;
 
 import java.util.*;
 
-import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
-@SuppressWarnings({"NonBooleanMethodNameMayNotStartWithQuestion"})
 public class MutantRepositoryTest {
 
     private static final Logger LOG = Logger.getLogger(MutantRepositoryTest.class);
@@ -54,7 +50,7 @@ public class MutantRepositoryTest {
         String zdbID = "ZDB-GENO-980202-397";
         Genotype geno = getMutantRepository().getGenotypeByID(zdbID);
 
-        assertNotNull("Background exists", geno.getAssociatedGenotypes());
+        assertThat("Background exists", geno.getAssociatedGenotypes(), notNullValue());
 
     }
 
@@ -62,7 +58,7 @@ public class MutantRepositoryTest {
     public void checkGetGenotypeByHandle() {
         //In particular, this test is against TU because it's the standard background for Vega
         Genotype genotype = getMutantRepository().getGenotypeByHandle(Genotype.Wildtype.TU.toString());
-        Assert.assertNotNull("Got TU genotype by handle", genotype);
+        assertThat("Got TU genotype by handle", genotype, notNullValue());
     }
 
     @Test
@@ -73,8 +69,8 @@ public class MutantRepositoryTest {
         Feature ftr = mr.getFeatureByID(name);
 
         List<Genotype> genos = getMutantRepository().getGenotypesByFeature(ftr);
-        assertNotNull("genos exist", genos);
-        assertTrue("genos exist", genos.size() > 0);
+        assertThat("genos exist", genos, notNullValue());
+        assertThat("genos exist", genos, not(empty()));
 
     }
 
@@ -84,8 +80,8 @@ public class MutantRepositoryTest {
         //  quality term: red
         String name = "red";
         List<GenericTerm> terms = getMutantRepository().getQualityTermsByName(name);
-        assertNotNull(terms);
-        assertTrue(!terms.isEmpty());
+        assertThat(terms, notNullValue());
+        assertThat(terms, not(empty()));
 
         boolean findKnown = false;
         for (GenericTerm term : terms) {
@@ -94,7 +90,7 @@ public class MutantRepositoryTest {
             }
         }
 
-        Assert.assertTrue(findKnown);
+        assertThat(findKnown, is(true));
     }
 
 
@@ -107,7 +103,7 @@ public class MutantRepositoryTest {
         String publicationID = "ZDB-PUB-090828-23";
 
         boolean patoExists = getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, publicationID);
-        assertTrue(!patoExists);
+        assertThat(patoExists, is(false));
 
     }
 
@@ -121,8 +117,7 @@ public class MutantRepositoryTest {
         long start = System.currentTimeMillis();
         getMutantRepository().isPatoExists(genoxID, figureID, startID, endID, publicationID);
         long end = System.currentTimeMillis();
-        if ((end - start) > 4000)
-            fail("Time to execute getMutantRepository().isPatoExists() is too long: " + DateUtil.getTimeDuration(start));
+        assertThat("Time to execute getMutantRepository().isPatoExists() is too long", end - start, lessThan(4000L));
     }
 
     @Test
@@ -130,9 +125,8 @@ public class MutantRepositoryTest {
         String genoxID = "ZDB-GENOX-100111-1";
 
         Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
+        Transaction tx = session.beginTransaction();
         try {
-            tx = session.beginTransaction();
             getMutantRepository().getGenotypeExperiment(genoxID);
         } finally {
             tx.rollback();
@@ -145,14 +139,14 @@ public class MutantRepositoryTest {
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-020724-1");
         List<GenericTerm> goTerms = getMutantRepository().getGoTermsByMarkerAndPublication(marker, publication);
         LOG.debug(goTerms.size());
-        assertTrue(goTerms.size() == 0);
+        assertThat(goTerms, is(empty()));
     }
 
     @Test
     public void goTermsByPhenotypeAndPublication() {
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-080501-10");
         List<GenericTerm> goTerms = getMutantRepository().getGoTermsByPhenotypeAndPublication(publication);
-        assertNotNull(goTerms);
+        assertThat(goTerms, notNullValue());
     }
 
 
@@ -167,8 +161,8 @@ public class MutantRepositoryTest {
                 " from MarkerGoTermEvidence ev where ev.inferredFrom is not empty and size(ev.inferredFrom) = 1 " +
                 "").setMaxResults(1).uniqueResult();
 
-        assertNotNull(markerGoTermEvidence);
-        assertEquals(1, mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence));
+        assertThat(markerGoTermEvidence, notNullValue());
+        assertThat(mutantRepository.getNumberMarkerGoTermEvidences(markerGoTermEvidence), is(1));
         return markerGoTermEvidence;
     }
 
@@ -186,30 +180,30 @@ public class MutantRepositoryTest {
             newMarkerGoTermEvidence.setGoTerm(markerGoTermEvidence.getGoTerm());
             newMarkerGoTermEvidence.setInferredFrom(markerGoTermEvidence.getInferredFrom());
 
-            assertEquals(1, mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence));
+            assertThat(mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence), is(1));
 
             GoEvidenceCode ndEvidenceCode = new GoEvidenceCode();
             ndEvidenceCode.setCode(GoEvidenceCodeEnum.ND.toString());
             newMarkerGoTermEvidence.setEvidenceCode(ndEvidenceCode);
-            assertEquals(0, mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence));
+            assertThat(mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence), is(0));
 
             newMarkerGoTermEvidence.setEvidenceCode(markerGoTermEvidence.getEvidenceCode());
-            assertEquals(1, mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence));
+            assertThat(mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence), is(1));
 
             // copy and change inferences to test
-            Set<InferenceGroupMember> newInferenceGroupMemberSet = new HashSet<InferenceGroupMember>();
+            Set<InferenceGroupMember> newInferenceGroupMemberSet = new HashSet<>();
 
             newMarkerGoTermEvidence.setInferredFrom(newInferenceGroupMemberSet);
-            assertEquals(0, mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence));
+            assertThat(mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence), is(0));
 
             InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
             inferenceGroupMember.setInferredFrom("some inference");
             newInferenceGroupMemberSet.add(inferenceGroupMember);
             newMarkerGoTermEvidence.setInferredFrom(newInferenceGroupMemberSet);
-            assertEquals(0, mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence));
+            assertThat(mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence), is(0));
 
             newMarkerGoTermEvidence.setInferredFrom(markerGoTermEvidence.getInferredFrom());
-            assertEquals(1, mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence));
+            assertThat(mutantRepository.getNumberMarkerGoTermEvidences(newMarkerGoTermEvidence), is(1));
         } finally {
             HibernateUtil.rollbackTransaction();
         }
@@ -218,17 +212,17 @@ public class MutantRepositoryTest {
     @Test
     public void getSTRsWithMarkerRelationships() {
         List<STRMarkerSequence> sequenceTargetingReagents = mutantRepository.getSequenceTargetingReagentsWithMarkerRelationships();
-        assertNotNull(sequenceTargetingReagents);
+        assertThat(sequenceTargetingReagents, notNullValue());
         LOG.info("# of sequence targeting reagents: " + sequenceTargetingReagents.size());
-        assertTrue(sequenceTargetingReagents.size() > 3000);
-        assertNotNull(sequenceTargetingReagents.get(0).getSequence());
+        assertThat(sequenceTargetingReagents, hasSize(greaterThan(3000)));
+        assertThat(sequenceTargetingReagents.get(0).getSequence(), notNullValue());
     }
 
     @Test
     public void phenotypesWithObsoleteTerms() {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
-        assertNotNull(phenotypes);
-        assertEquals(0, phenotypes.size());
+        assertThat(phenotypes, notNullValue());
+        assertThat(phenotypes, is(empty()));
 
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.ANATOMY);
         mutantRepository.getPhenotypesOnObsoletedTerms(Ontology.QUALITY);
@@ -237,156 +231,146 @@ public class MutantRepositoryTest {
     @Test
     public void getGoEvidenceOnObsoletedTerms() {
         List<MarkerGoTermEvidence> goEvidence = mutantRepository.getGoEvidenceOnObsoletedTerms();
-        assertNotNull(goEvidence);
+        assertThat(goEvidence, notNullValue());
     }
 
     @Test
     public void getTermPhenotypeUsage() {
         Map<TermHistogramBean, Long> termHistogramBeanLongMap = mutantRepository.getTermPhenotypeUsage();
-        assertNotNull(termHistogramBeanLongMap);
-        assertTrue(termHistogramBeanLongMap.size() > 0);
+        assertThat(termHistogramBeanLongMap, notNullValue());
+        assertThat(termHistogramBeanLongMap.keySet(), not(empty()));
     }
 
     @Test
     public void phenotypesWithSecondaryTerms() {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnSecondaryTerms();
-        assertNotNull(phenotypes);
-        assertEquals(0, phenotypes.size());
+        assertThat(phenotypes, notNullValue());
+        assertThat(phenotypes, is(empty()));
     }
 
     @Test
     public void getAllelesForMarker() {
         List<Feature> features = mutantRepository.getAllelesForMarker("ZDB-GENE-010606-1", "is allele of");
-        assertTrue(features.size() > 4);
-        assertTrue(features.size() < 20);
+        assertThat(features, hasSize(both(greaterThan(4)).and(lessThan(20))));
     }
 
     @Test
     public void getTransgenicLines() {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-TGCONSTRCT-070117-94");
         List<Genotype> links = mutantRepository.getTransgenicLinesForConstruct(m);
-        assertThat(links.size(), greaterThan(50));
+        assertThat(links, hasSize(greaterThan(50)));
     }
 
     @Test
     public void getPhenotypeStatementsByGenotype() {
-        //String genotypeID = "ZDB-GENO-030619-2";
         String genotypeID = "ZDB-GENO-070215-11";
         Genotype genotype = mutantRepository.getGenotypeByID(genotypeID);
         List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByGenotype(genotype);
-        assertNotNull(statements);
+        assertThat(statements, notNullValue());
     }
 
     @Test
     public void getPhenotypeStatementsByGene() {
         Marker gene = getMarkerRepository().getMarkerByAbbreviation("bmp4");
         List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByMarker(gene);
-        assertNotNull(statements);
+        assertThat(statements, notNullValue());
     }
 
     @Test
     public void getPhenotypeStatementsByGenotypeExperiment() {
-        //String genotypeID = "ZDB-GENO-030619-2";
         String genoxID = "ZDB-GENOX-091027-5";
-        List<String> genoxIds = new ArrayList<String>(1);
+        List<String> genoxIds = new ArrayList<>(1);
         genoxIds.add(genoxID);
         List<PhenotypeStatement> statements = mutantRepository.getPhenotypeStatementsByGenotypeExperiments(genoxIds);
-        assertNotNull(statements);
+        assertThat(statements, notNullValue());
     }
 
     @Test
     public void getMorpholinosById() {
-        //String genotypeID = "ZDB-GENO-030619-2";
         String moID = "ZDB-MRPHLNO-101014-10";
         SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getSequenceTargetingReagentByID(moID);
-        assertNotNull(sequenceTargetingReagent);
-        assertNotNull(sequenceTargetingReagent.getTargetGenes());
-        assertEquals(2, sequenceTargetingReagent.getTargetGenes().size());
+        assertThat(sequenceTargetingReagent, notNullValue());
+        assertThat(sequenceTargetingReagent.getTargetGenes(), notNullValue());
+        assertThat(sequenceTargetingReagent.getTargetGenes(), hasSize(2));
     }
 
     @Test
     public void getGenoxAttributions() {
         String genoxID = "ZDB-GENOX-091027-5";
-        List<String> genoxIds = new ArrayList<String>(1);
+        List<String> genoxIds = new ArrayList<>(1);
         genoxIds.add(genoxID);
         Set<String> attributions = mutantRepository.getGenoxAttributions(genoxIds);
-        assertNotNull(attributions);
-        assertTrue(attributions.size() > 1);
+        assertThat(attributions, notNullValue());
+        assertThat(attributions, hasSize(greaterThan(1)));
     }
 
-    //TODO substitute stable fish id
     @Test
-    @Ignore
     public void getFishCitations() {
         Fish fish = new Fish();
-        fish.setZdbID("ZDB-FISH-150603-15314");
+        fish.setZdbID("ZDB-FISH-150901-1187");
         Genotype genotype = new Genotype();
         genotype.setZdbID("ZDB-GENO-070406-1");
         fish.setGenotype(genotype);
         List<Publication> attributions = mutantRepository.getFishAttributionList(fish);
-        //   assertNotNull(attributions);
-        assertTrue(attributions.size() < 1);
+        assertThat(attributions, notNullValue());
+        assertThat(attributions, hasSize(greaterThan(1)));
     }
 
     @Test
     public void getWildtypeLinesSummary() {
         List<Genotype> wildtypes = mutantRepository.getAllWildtypeGenotypes();
-        assertNotNull(wildtypes);
-        assertTrue(wildtypes.size() > 20);
+        assertThat(wildtypes, notNullValue());
+        assertThat(wildtypes, hasSize(greaterThan(20)));
     }
 
     @Test
     public void getWildtypeFish() {
         List<Fish> wildtypes = mutantRepository.getAllWildtypeFish();
-        assertNotNull(wildtypes);
-        assertTrue(wildtypes.size() < 50);
+        assertThat(wildtypes, notNullValue());
+        assertThat(wildtypes, hasSize(lessThan(50)));
     }
 
     @Test
     public void getPhenotypeFigures() {
-        // actinotrichium
-        ////String oboID = "ZFA:0005435";
         // fin fold actinotrichium
         String oboID = "ZFA:0000089";
         String genotypeID = "ZDB-GENO-090827-1";
         GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
         Genotype genotype = RepositoryFactory.getMutantRepository().getGenotypeByID(genotypeID);
         List<Figure> figures = getMutantRepository().getPhenotypeFigures(term, genotype, true);
-        assertNotNull(figures);
+        assertThat(figures, notNullValue());
     }
 
     @Test
     public void getPhenotypeStatementsForGenoAndStructure() {
-        // actinotrichium
-        ////String oboID = "ZFA:0005435";
         // fin fold actinotrichium
         String oboID = "ZFA:0000089";
         String fishID = "ZDB-FISH-090827-1";
         GenericTerm term = getOntologyRepository().getTermByOboID(oboID);
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
         List<PhenotypeStatement> statements = getMutantRepository().getPhenotypeStatement(term, fish, true);
-        assertNotNull(statements);
+        assertThat(statements, notNullValue());
     }
 
     @Test
     public void gwtStrList() {
         String publicationID = "ZDB-PUB-130403-23";
         List<SequenceTargetingReagent> reagentList = RepositoryFactory.getMutantRepository().getStrList(publicationID);
-        assertNotNull(reagentList);
+        assertThat(reagentList, notNullValue());
     }
 
     @Test
     public void gwtFishList() {
         String publicationID = "ZDB-PUB-130403-23";
         List<Fish> reagentList = RepositoryFactory.getMutantRepository().getFishList(publicationID);
-        assertNotNull(reagentList);
+        assertThat(reagentList, notNullValue());
     }
 
-    //@Test
+    @Test
     public void gwtFish() {
-        String fishID = "ZDB-FISH-150508-17";
+        String fishID = "ZDB-FISH-150901-1441";
         Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
-        assertNotNull(fish);
+        assertThat(fish, notNullValue());
     }
 
     @Test
@@ -417,17 +401,18 @@ public class MutantRepositoryTest {
 
     @Test
     public void getAllPubsForFish() {
-        String fishID = "ZDB-FISH-150512-28";
+        String fishID = "ZDB-FISH-150901-20021";
         List<Publication> publicationList = RepositoryFactory.getMutantRepository().getPublicationWithFish(fishID);
-        //assertNotNull(publicationList);
+        assertThat(publicationList, notNullValue());
+        assertThat(publicationList, not(empty()));
     }
 
     @Test
     public void getFishModel() {
-        String fishID = "ZDB-FISH-150512-28";
-        String expID = "ZDB-FISH-150512-28";
+        String fishID = "ZDB-FISH-150901-20021";
+        String expID = "ZDB-EXP-050930-4";
         FishExperiment fishModel = RepositoryFactory.getMutantRepository().getFishModel(fishID, expID);
-        ///assertNotNull(fishModel);
+        assertThat(fishModel, notNullValue());
     }
 
     @Test
@@ -441,57 +426,56 @@ public class MutantRepositoryTest {
         model.setPublication(pub);
         model.setEvidenceCode("IC");
         DiseaseModel fishModel = RepositoryFactory.getMutantRepository().getDiseaseModel(model);
-        ///assertNotNull(fishModel);
     }
 
     @Test
     public void getFishExperiment() {
         Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-071127-8");
         List<FishExperiment> fishList = mutantRepository.getFishExperiment(genotype);
-        for (FishExperiment experiment : fishList)
+        for (FishExperiment experiment : fishList) {
             System.out.println(experiment.getFish().getHandle());
-        assertNotNull(fishList);
-        assertTrue(fishList.size() > 0);
+        }
+        assertThat(fishList, notNullValue());
+        assertThat(fishList, not(empty()));
     }
 
     @Test
     public void getFishByGenotype() {
         Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-140109-26");
         List<Fish> list = mutantRepository.getFishByGenotype(genotype);
-        assertNotNull(list);
-        assertTrue(list.size() > 0);
+        assertThat(list, notNullValue());
+        assertThat(list, not(empty()));
     }
 
     @Test
     public void getFishByGenotypeNoExperiment() {
         Genotype genotype = getMutantRepository().getGenotypeByID("ZDB-GENO-140109-26");
         List<Fish> list = mutantRepository.getFishByGenotypeNoExperiment(genotype);
-        assertNotNull(list);
-        assertTrue(list.size() > 0);
+        assertThat(list, notNullValue());
+        assertThat(list, not(empty()));
     }
 
     @Test
-    @Ignore
     public void getPhenotypeStatementForMutantSummary() {
-        Fish genotype = getMutantRepository().getFish("ZDB-FISH-150624-1296");
+        Fish genotype = getMutantRepository().getFish("ZDB-FISH-150901-21301");
         GenericTerm term = getOntologyRepository().getTermByOboID("ZFA:0000386/");
         List<PhenotypeStatement> fishList = mutantRepository.getPhenotypeStatementForMutantSummary(term, genotype, false);
-        assertNotNull(fishList);
+        assertThat(fishList, notNullValue());
     }
 
     @Test
     public void getPhenotypeStatementForMarker() {
         Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-000627-2");
         List<PhenotypeStatement> fishList = mutantRepository.getPhenotypeStatementForMarker(marker);
-        assertNotNull(fishList);
+        assertThat(fishList, notNullValue());
     }
 
     @Test
     public void fishListBySequenceTargetingReagent() {
         SequenceTargetingReagent sequenceTargetingReagent = mutantRepository.getSequenceTargetingReagentByID("ZDB-MRPHLNO-060317-4");
         List<Fish> fishList = mutantRepository.getFishListBySequenceTargetingReagent(sequenceTargetingReagent);
-        assertNotNull(fishList);
-        assertTrue(fishList.size() > 20);
+        assertThat(fishList, notNullValue());
+        assertThat(fishList, hasSize(greaterThan(20)));
     }
 
     @Test
@@ -501,21 +485,30 @@ public class MutantRepositoryTest {
         Publication publication = getPublicationRepository().getPublication("ZDB-PUB-140101-33");
         Genotype background = getMutantRepository().getGenotypeByID("ZDB-GENO-010924-10");
         List<Genotype> genotypeList = mutantRepository.getGenotypesByFeatureAndBackground(feature, background, publication);
-        assertNotNull(genotypeList);
+        assertThat(genotypeList, notNullValue());
     }
 
     @Test
     public void getZygosityList() {
         List<Zygosity> zygosityList = getMutantRepository().getListOfZygosity();
-        assertNotNull(zygosityList);
+        assertThat(zygosityList, notNullValue());
     }
 
     @Test
     public void getFishByGenotypeCount() {
-        // TU
-        String genoID = "ZDB-GENO-110914-4";
+        String genoID = "ZDB-GENO-030619-2";
         long count = getMutantRepository().getFishCountByGenotype(genoID, "ZDB-PUB-040617-4");
-        assertThat((int) (long) count, greaterThan(-1));
+        assertThat(count, greaterThan(0L));
+    }
+
+    @Test
+    public void getPhenotypeByFishAndPublication() {
+        String fishID = "ZDB-FISH-150901-1282";
+        Fish fish = getMutantRepository().getFish(fishID);
+        long count = getMutantRepository().getPhenotypeByFishAndPublication(fish, "ZDB-PUB-140822-1");
+        assertThat(count, greaterThan(0L));
+        count = getMutantRepository().getFishExperimentCountByGenotype(fish, "ZDB-PUB-140822-1");
+        assertThat(count, greaterThan(0L));
     }
 
     @Test
@@ -523,6 +516,6 @@ public class MutantRepositoryTest {
         String genoID = "ZDB-GENO-000412-4";
         String publicationID = "ZDB-PUB-040617-4";
         long count = getMutantRepository().getInferredFromCountByGenotype(genoID, publicationID);
-        assertThat((int) (long) count, greaterThan(0));
+        assertThat(count, greaterThan(0L));
     }
 }

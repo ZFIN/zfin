@@ -11,10 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.zfin.ontology.Ontology.*;
 
 
@@ -243,13 +240,12 @@ public class OntologyManagerTest extends AbstractOntologyTest {
     }
 
     @Test
-    @Ignore
     public void getMatchingAnatomyTerms() {
         String query = "mel";
         MatchingTermService matcher = new MatchingTermService();
         List<MatchingTerm> anatomyList = matcher.getMatchingTerms(query, ANATOMY);
         assertNotNull(anatomyList);
-        assertEquals(21, anatomyList.size());
+        assertEquals(13, anatomyList.size());
     }
 
     @Test

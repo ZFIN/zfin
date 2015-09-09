@@ -39,7 +39,7 @@ public interface FishRepository {
      *
      * @return String
      */
-    String getGenoxMaxLength();
+    
 
     /**
      * Retrieve the Warehouse summary info for a given mart.

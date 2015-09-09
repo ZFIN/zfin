@@ -5,13 +5,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
 import org.zfin.marker.Transcript;
 import org.zfin.orthology.Species;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -359,8 +358,8 @@ public class BlastAccessTest extends AbstractDatabaseTest{
         }
     }
 
-
-    //    @Test
+    @Test
+    @Ignore("broken")
     public void regenerateACuratedDatabases() {
 
         Database databaseToCurate = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.LOADEDMICRORNAMATURE);
@@ -400,7 +399,8 @@ public class BlastAccessTest extends AbstractDatabaseTest{
         }
     }
 
-    //    @Test
+    @Test
+    @Ignore("broken")
     public void validateDatabase() {
         Database databaseA = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.LOADEDMICRORNAMATURE);
 
@@ -412,8 +412,8 @@ public class BlastAccessTest extends AbstractDatabaseTest{
     }
 
 
-    // this takes WAY too long
-    //    @Test
+    @Test
+    @Ignore("this takes WAY too long")
     public void regenerateCuratedDatabases() {
         try {
             MountedWublastBlastService.getInstance().regenerateCuratedDatabases();
@@ -426,7 +426,8 @@ public class BlastAccessTest extends AbstractDatabaseTest{
     /**
      * Have to add a valid RNA accession in order for this to work.
      */
-//    @Test
+    @Test
+    @Ignore("broken")
     public void curatedSequenceRegenerationForRNA() {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
                 ForeignDB.AvailableName.CURATED_MIRNA_MATURE,
@@ -460,7 +461,8 @@ public class BlastAccessTest extends AbstractDatabaseTest{
     /**
      * Have to add a valid RNA accession in order for this to work.
      */
-//    @Test
+    @Test
+    @Ignore("broken")
     public void curatedSequenceRegenerationForProtein() {
         ReferenceDatabase referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
                 ForeignDB.AvailableName.PUBPROT,
@@ -519,7 +521,8 @@ public class BlastAccessTest extends AbstractDatabaseTest{
      */
     // ToDo: It's not working as is: updating a record in one thread will not make the change visible in
     // the second thread, at least you cannot update the same record at the same time.
-    // @Test
+    @Test
+    @Ignore("broken")
     public void createMultiThreadLock() {
         Database databaseA = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.CURATEDMICRORNASTEMLOOP);
         MountedWublastBlastService.getInstance().unlockForce(databaseA);
@@ -579,32 +582,6 @@ public class BlastAccessTest extends AbstractDatabaseTest{
             currentSession().getTransaction().rollback();
         }
     }
-
-//
-//    // they aren't quite synced yet
-//    //    @Test
-//    public void validateCuratedDatabases(){
-//        try {
-//            MountedWublastBlastService.getInstance().validateCuratedDatabases();
-//        } catch (BlastDatabaseException e) {
-//            fail(e.fillInStackTrace().toString()) ;
-//        }
-//    }
-//
-//    // not quite ready yet
-//    //    @Test
-//    public void validateRemotePhysicalDatabaseReadability(){
-//        List<String> failures = BlastServerSGEWublastService.getInstance().validateAllPhysicalDatabasesReadable() ;
-//        if(CollectionUtils.isNotEmpty(failures)){
-//            for(String failure : failures){
-//                logger.error(failure);
-//            }
-//            fail("Number of failed databases: "+ failures.size());
-//        }
-//        else{
-//            logger.info("No failed databases found.");
-//        }
-//    }
 
     @Test
     public void backupRestore() {

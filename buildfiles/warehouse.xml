@@ -17,30 +17,12 @@
         </exec>
         <echo message="Create BTS indexes ..."/>
         <echo message="createBtsIndexes.sql ..."/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="${DBNAME}"/>
-            <arg value="/research/zcentral/www_homes/$INSTANCE/server_apps/DB_maintenance/warehouse/fishMart/createBtsIndexes.sql"/>
-        </exec>
-        <echo message="createTempBtsIndexes.sql ..."/>
-        <exec executable="dbaccess" failifexecutionfails="true">
-            <arg value="${DBNAME}"/>
-            <arg value="/research/zcentral/www_homes/$INSTANCE/server_apps/DB_maintenance/warehouse/fishMart/createTempBtsIndexes.sql"/>
-        </exec>
         <echo message="fix_bts.sql ..."/>
         <exec executable="dbaccess" failifexecutionfails="true">
             <arg value="${DBNAME}"/>
             <arg value="/research/zunloads/projects/search/testLoad/fix_bts.sql"/>
         </exec>
     </target>
-
-    <target name="build-fishmart" description="Re-create the warehouse table for mutant search (aka fishmart).">
-        <echo message="Re-create fishmart on '${DBNAME}'"/>
-        <exec executable="${TARGETROOT}/server_apps/DB_maintenance/warehouse/fishMart/runFishMart.sh"
-              failifexecutionfails="true">
-            <arg value="${DBNAME}"/>
-        </exec>
-    </target>
-
     <target name="run-warehouse" depends="check-instance-names" description="Run the whole warehouse script">
         <echo message="Run warehouse script ..."/>
 
@@ -53,9 +35,6 @@
 
         <echo message="Set Warehouse Tracking Table:"/>
         <run-db-query db-query-file="update-warehouse-release-tracking-error.sql" instanceName="esedb"/>
-
-        <echo message="Run Integrity Tests ..."/>
-        <run-db-query db-query-file="fishmart-integrity-tests.sql" instanceName="esedb"/>
 
         <echo message="Set Warehouse Tracking Table:"/>
         <run-db-query db-query-file="update-warehouse-release-tracking-success.sql" instanceName="esedb"/>
@@ -98,12 +77,7 @@
 -->
     </target>
 
-    <target name="run-mart-tests" depends="run-fishmart-unittests,run-constructmart-unittests,run-chromosomemart-unittests"/>
-
-    <target name="run-fishmart-unittests">
-        <echo message="Run unit tests for fishmart"/>
-	<run-sql-query-tests sql-query-file="fishmart-integrity-tests.sql" directory="${warehouseDir}/fishMart"/>
-    </target>
+    <target name="run-mart-tests" depends="run-constructmart-unittests,run-chromosomemart-unittests"/>
 
    <target name="run-constructmart-unittests">
         <echo message="Run unit tests for constructmart"/>

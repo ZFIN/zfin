@@ -155,6 +155,10 @@
         <put-attribute name="staticTitle" value="GWT Feature Curation"/>
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/feature_curation.jsp"/>
     </definition>
+    <definition name="construct-curation" extends="dev_layout">
+        <put-attribute name="staticTitle" value="Construct Curation"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/construct_curation.jsp"/>
+    </definition>
 
     <definition name="transcript-edit" extends="dev_layout">
         <put-attribute name="staticTitle" value="GWT Transcript Edit"/>

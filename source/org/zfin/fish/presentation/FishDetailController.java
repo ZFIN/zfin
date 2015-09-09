@@ -67,26 +67,30 @@ public class FishDetailController {
             }
         }
 
+        if (fish.isWildtypeWithoutReagents()) {
+            return "redirect:/" + fish.getGenotype().getZdbID();
+        }
+
         model.addAttribute("fish", fish);
 
-        if (!fish.isWildtypeWithoutReagents()) {
-            // phenotype
-            List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
-            model.addAttribute("phenotypeStatements", phenotypeStatements);
-            model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition"));
 
-            // disease model
-            List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
-            model.addAttribute("diseases", getDiseaseModelDisplay(diseaseModels));
+        // phenotype
+        List<PhenotypeStatement> phenotypeStatements = getMutantRepository().getPhenotypeStatementsByFish(fish);
+        model.addAttribute("phenotypeStatements", phenotypeStatements);
+        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement"));
 
-            // Expression data
-            ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
-            List<ExpressionResult> fishExpressionResults = expressionRepository.getExpressionResultsByFish(fish);
-            List<String> fishExpressionFigureIDs = expressionRepository.getExpressionFigureIDsByFish(fish);
-            List<String> fishExpressionPublicationIDs = expressionRepository.getExpressionPublicationIDsByFish(fish);
-            List<ExpressionDisplay> fishExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
-            model.addAttribute("geneCentricExpressionDataList", fishExpressionDisplays);
-        }
+        // disease model
+        List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishZdbId);
+        model.addAttribute("diseases", getDiseaseModelDisplay(diseaseModels));
+
+        // Expression data
+        ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+        List<ExpressionResult> fishExpressionResults = expressionRepository.getExpressionResultsByFish(fish);
+        List<String> fishExpressionFigureIDs = expressionRepository.getExpressionFigureIDsByFish(fish);
+        List<String> fishExpressionPublicationIDs = expressionRepository.getExpressionPublicationIDsByFish(fish);
+        List<ExpressionDisplay> fishExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
+        model.addAttribute("geneCentricExpressionDataList", fishExpressionDisplays);
+
 
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute("fishIsWildtypeWithoutReagents", fish.isWildtypeWithoutReagents());

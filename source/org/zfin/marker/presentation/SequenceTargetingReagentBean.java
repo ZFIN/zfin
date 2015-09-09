@@ -33,10 +33,10 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     private String sequenceAttribution;
     private List<Database> databases;
     private List<Feature> genomicFeatures;
-    private SortedSet<Fish> fishList;
     private List<PhenotypeDisplay> phenotypeDisplays;
     private Set<GBrowseImage> gBrowseImages;
     private List<ExpressionDisplay> expressionDisplays;
+    private List<PhenotypeDisplay> allPhenotypeDisplays;
 
     public Set<Marker> getTargetGenes() {
         return targetGenes;
@@ -146,12 +146,12 @@ public class SequenceTargetingReagentBean extends MarkerBean{
         gBrowseImages.add(image);
     }
 
-    public SortedSet<Fish> getFishList() {
-        return fishList;
+    public List<PhenotypeDisplay> getAllPhenotypeDisplays() {
+        return allPhenotypeDisplays;
     }
 
-    public void setFishList(SortedSet<Fish> fishList) {
-        this.fishList = fishList;
+    public void setAllPhenotypeDisplays(List<PhenotypeDisplay> allPhenotypeDisplays) {
+        this.allPhenotypeDisplays = allPhenotypeDisplays;
     }
 }
 

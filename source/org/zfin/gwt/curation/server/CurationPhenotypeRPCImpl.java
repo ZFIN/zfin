@@ -101,7 +101,7 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
         PhenotypeExperiment phenoExperiment = DTOConversionService.convertToPhenotypeExperimentFilter(mutantFigureStage);
         // check if there is a genotypes experiment already.
         // if not create a new one.
-        FishExperiment fishExperiment = getExpressionRepository().getFishExperimentByExperimentIDAndGenotype(
+        FishExperiment fishExperiment = getExpressionRepository().getFishExperimentByExperimentIDAndFishID(
                 mutantFigureStage.getEnvironment().getZdbID(), mutantFigureStage.getFish().getZdbID());
         // create a new genotype experiment if needed
         if (fishExperiment == null) {
@@ -180,16 +180,16 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
             tx.rollback();
             throw e;
         }
-        tx = HibernateUtil.currentSession().beginTransaction();
-        try{
-            for (PhenotypeExperiment phenotypeExperiment : phenotypeExperimentsToRunRegen) {
-                getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
-            }
-            tx.commit();
-        } catch (Exception e) {
-            logger.warn("Regen function execution failed.", e);
-            tx.rollback();
-        }
+	// tx = HibernateUtil.currentSession().beginTransaction();
+	//  try{
+	//     for (PhenotypeExperiment phenotypeExperiment : phenotypeExperimentsToRunRegen) {
+	//         getPhenotypeRepository().runRegenGenotypeFigureScript(phenotypeExperiment);
+	//     }
+        //    tx.commit();
+	//  } catch (Exception e) {
+	//     logger.warn("Regen function execution failed.", e);
+	//     tx.rollback();
+	//  }
         loggingUtil.logDuration("Duration of updateStructuresForExpression() method: ");
         return updatedAnnotations;
     }

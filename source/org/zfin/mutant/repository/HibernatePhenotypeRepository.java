@@ -825,4 +825,46 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         query.setParameter("disease", disease);
         return (List<DiseaseModel>) query.list();
     }
+
+    @Override
+    public List<PhenotypeStatement> getAllPhenotypeStatementsForSTR (SequenceTargetingReagent sequenceTargetingReagent) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, FishExperiment fishExp, Fish fish  " +
+                "      where pheno.phenotypeExperiment = phenoExp " +
+                "        and phenoExp.fishExperiment = fishExp " +
+                "        and fishExp.fish = fish" +
+                "        and :str member of fish.strList ";
+
+        Query query = session.createQuery(hql);
+        query.setParameter("str", sequenceTargetingReagent);
+
+        List<PhenotypeStatement> strPhenotypeStatementsFish = (List<PhenotypeStatement>) query.list();
+
+        hql = "select distinct pheno from PhenotypeStatement pheno, PhenotypeExperiment phenoExp, FishExperiment fishExp, Fish fish, GenotypeFeature genoFeat, FeatureMarkerRelationship featMrkr  " +
+              " where pheno.phenotypeExperiment = phenoExp " +
+              "   and phenoExp.fishExperiment = fishExp " +
+              "   and fishExp.fish = fish" +
+              "   and fish.genotype = genoFeat.genotype " +
+              "   and genoFeat.feature = featMrkr.feature" +
+              "   and featMrkr.marker = :str " +
+              "   and featMrkr.featureMarkerRelationshipType.name = :createdBy ";
+
+        query = session.createQuery(hql);
+        query.setParameter("str", sequenceTargetingReagent);
+        query.setString("createdBy", "created by");
+
+        List<PhenotypeStatement> strPhenotypeStatementsCreatedBy = (List<PhenotypeStatement>) query.list();
+
+        if (strPhenotypeStatementsCreatedBy != null && strPhenotypeStatementsCreatedBy.size() > 0)
+             strPhenotypeStatementsFish.addAll(strPhenotypeStatementsCreatedBy);
+
+        List<PhenotypeStatement> notNormalPhenotypeStatements = new ArrayList<>();
+        for (PhenotypeStatement phenotypeStatement : strPhenotypeStatementsFish) {
+            if (phenotypeStatement.isNotNormal())
+                notNormalPhenotypeStatements.add(phenotypeStatement);
+        }
+
+        return notNormalPhenotypeStatements;
+    }
 }

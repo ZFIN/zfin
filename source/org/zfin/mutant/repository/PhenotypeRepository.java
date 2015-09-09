@@ -257,4 +257,11 @@ public interface PhenotypeRepository {
      * @return
      */
     List<DiseaseModel> getHumanDiseaseModels(GenericTerm disease);
+
+    /**
+     * Retrieve phenotype statements (clean and dirty) for a given sequence targeting reagent.
+     * @param sequenceTargetingReagent
+     * @return list of phenotype statements
+     */
+    List<PhenotypeStatement> getAllPhenotypeStatementsForSTR (SequenceTargetingReagent sequenceTargetingReagent);
 }

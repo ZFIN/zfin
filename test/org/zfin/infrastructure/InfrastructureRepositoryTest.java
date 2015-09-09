@@ -50,7 +50,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     private Logger logger = Logger.getLogger(InfrastructureRepositoryTest.class);
 
     @Test
-    @Ignore
     public void persistActiveData() {
         try {
             HibernateUtil.createTransaction();
@@ -98,7 +97,6 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("infrastructureRepository.getAllNameMarkerMatches(string, type) is not in use")
     public void allMapNamesGenes() {
         String string = "pdx";
         MarkerType type = RepositoryFactory.getMarkerRepository().getMarkerTypeByName(Marker.Type.GENE.toString());
@@ -435,7 +433,7 @@ public class InfrastructureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("for performance; performs no assertions")
     public void getUpdatesFlagPerformance() {
 
         long startTime = System.currentTimeMillis();

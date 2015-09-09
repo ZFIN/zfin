@@ -813,12 +813,10 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void createAntibody() {
         Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
+        Transaction tx = session.beginTransaction();
         try {
-            tx = session.beginTransaction();
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
             MarkerType mt = mr.getMarkerTypeByName(Marker.Type.ATB.name());
             Marker antibody = new Antibody();
@@ -834,15 +832,13 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void updateAntibody() {
 
         // anti-DLX3b
         String abName = "anti-DLX3b";
         Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
+        Transaction tx = session.beginTransaction();
         try {
-            tx = session.beginTransaction();
             AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
             Antibody antibody = antibodyRepository.getAntibodyByName(abName);
             antibody.setName("new name");
@@ -855,15 +851,13 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore
     public void updateAntibodyViaRenameMarkerMethod() {
 
         // anti-DLX3b
         String abName = "anti-DLX3b";
         Session session = HibernateUtil.currentSession();
-        Transaction tx = null;
+        Transaction tx = session.beginTransaction();
         try {
-            tx = session.beginTransaction();
             AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
             Antibody antibody = antibodyRepository.getAntibodyByName(abName);
             antibody.setAbbreviation("new name");
@@ -872,7 +866,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
             PublicationRepository pr = RepositoryFactory.getPublicationRepository();
             Publication pub = pr.getPublication("ZDB-PUB-000104-1");
             MarkerRepository mr = RepositoryFactory.getMarkerRepository();
-            Marker marker = mr.getMarkerByID("ZDB-GENE-000112-30");
+            Marker marker = mr.getMarkerByID("ZDB-GENE-030131-4362");
             marker.setAbbreviation("newman");
             mr.renameMarker(marker, pub, MarkerHistory.Reason.NOT_SPECIFIED);
             session.flush();

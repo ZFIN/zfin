@@ -93,7 +93,8 @@ public class FishConstruction extends Composite {
 
     @UiHandler("addStrButton")
     void onStrClick(@SuppressWarnings("unused") ClickEvent event) {
-        fishConstructionPresenter.onStrClick(strSelectionBox.getSelectedIndex());
+        if (strSelectionBox.getSelectedIndex() != 0)
+            fishConstructionPresenter.onStrClick(strSelectionBox.getSelectedIndex());
     }
 
     public void reCreateStrPanel(final Set<RelatedEntityDTO> newStrList) {

@@ -1133,9 +1133,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <FileExtension>txt</FileExtension>
             <FileFormat>tsv</FileFormat>
             <Query>
-                <![CDATA[unload to phenoGeneClean.txt
-                          select * From tmp_dumpPheno
-                          order by gene_abbrev
+                <![CDATA[
                           ]]>
             </Query>
             <Column id="1">ID</Column>
@@ -1158,7 +1156,6 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="18">Affected Structure or Process 2 superterm name</Column>
             <Column id="19">Fish ID</Column>
             <Column id="20">Fish Display Name</Column>
-            <Column id="21">Knockdown Reagent ID</Column>
             <Column id="22">Start Stage ID</Column>
             <Column id="23">End Stage ID</Column>
             <Column id="24">Fish Environment ID</Column>
@@ -1281,6 +1278,52 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             <Column id="2">Genotype Name</Column>
             <Column id="3">Background</Column>
         </Download>
+       <Download orderIndex="2">
+            <Name>
+                Fish Components
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>fish_components_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.mrkr_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, geno_handle
+   from fish_components,outer (genotype_background,genotype), outer marker a, outer marker b, outer marker c
+   where fc_genotype_zdb_id = genoback_geno_zdb_id
+   and a.mrkr_Zdb_id = fc_gene_zdb_id
+   and genoback_background_zdb_id = geno_Zdb_id
+   and b.mrkr_zdb_id = fc_affector_zdb_id
+   and c.mrkr_Zdb_id = fc_construct_zdb_id
+   and fc_affector_zdb_id not like 'ZDB-ALT%'
+union
+select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.feature_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, geno_handle
+   from fish_components,outer (genotype_background,genotype), outer marker a, outer feature b, outer marker c
+   where fc_genotype_zdb_id = genoback_geno_zdb_id
+   and a.mrkr_Zdb_id = fc_gene_zdb_id
+   and genoback_background_zdb_id = geno_Zdb_id
+   and b.feature_zdb_id = fc_affector_zdb_id
+   and c.mrkr_Zdb_id = fc_construct_zdb_id
+   and fc_affector_zdb_id like 'ZDB-ALT%'
+                  ]]>
+            </Query>
+            <Column id="1">Fish ID</Column>
+            <Column id="2">Fish Name</Column>
+            <Column id="3">Gene ID</Column>
+	    <Column id="4">Gene Symbol</Column>
+            <Column id="5">Affector ID</Column>
+            <Column id="6">Affector Symbol</Column>
+	    <Column id="7">Construct ID</Column>
+            <Column id="8">Construct Symbol</Column>
+            <Column id="9">Background ID</Column>
+	    <Column id="10">Background Name</Column>
+	    <Column id="11">Genotype ID</Column>
+	    <Column id="12">Genotype Name</Column>
+        </Download>
         <Download orderIndex="1">
             <Name>
                 Genotype Features
@@ -1384,29 +1427,6 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
         </Download>
         <Download orderIndex="3">
             <Name>
-                Genotype-Publication relation
-            </Name>
-            <Category>
-                Fish Data
-            </Category>
-            <Description></Description>
-            <WikiLink></WikiLink>
-            <FileName>genotype_publication</FileName>
-            <FileExtension>txt</FileExtension>
-            <FileFormat>tsv</FileFormat>
-            <Query>
-                <![CDATA[
-                    select recattrib_data_zdb_id as genotype_zdb_id, recattrib_Source_zdb_id as pub_zdb_id
-                     from record_attribution, genotype
-                     where recattrib_data_zdb_id = geno_zdb_id
-                       and recattrib_source_type = 'standard'
-                         ]]>
-            </Query>
-            <Column id="1" unique="true">Genotype ID</Column>
-            <Column id="2">Publication ID</Column>
-        </Download>
-        <Download orderIndex="3">
-            <Name>
                 Fish-Publication relation
             </Name>
             <Category>
@@ -1423,6 +1443,26 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
             </Query>
             <Column id="1" unique="true">Fish ID</Column>
             <Column id="2">Publication ID</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Genotype-Publication relation
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genoPub</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                         ]]>
+            </Query>
+            <Column id="1" unique="true">Genotype ID</Column>
+	    <Column id="2">OMIM ID </Column>
+            <Column id="3">Publication ID</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
@@ -1456,6 +1496,7 @@ select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
 	    <Column id="9">Construct name</Column>
 	    <Column id="10">Construct SO ID</Column>
         </Download>
+
         <Download orderIndex="1">
             <Name>
                 Transgenic Insertions

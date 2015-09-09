@@ -14,7 +14,7 @@ public class LookupSmokeTest extends AbstractSmokeTest {
         super(webClient);
     }
 
-    //@Test
+    @Test
     public void testAnatomyLookupForm() {
              try {
                 webClient.waitForBackgroundJavaScriptStartingBefore(2000);
