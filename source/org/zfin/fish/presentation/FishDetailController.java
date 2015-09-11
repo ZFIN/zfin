@@ -133,7 +133,8 @@ public class FishDetailController {
             if (!map.containsKey(model.getDisease(), model.getFishExperiment())) {
                 map.put(model.getDisease(), model.getFishExperiment(), new ArrayList<Publication>());
             }
-            ((Collection<Publication>) map.get(model.getDisease(), model.getFishExperiment())).add(model.getPublication());
+            if (!((Collection<Publication>) map.get(model.getDisease(), model.getFishExperiment())).contains(model.getPublication()))
+                 ((Collection<Publication>) map.get(model.getDisease(), model.getFishExperiment())).add(model.getPublication());
         }
 
         List<DiseaseModelDisplay> modelDisplays = new ArrayList<>();
