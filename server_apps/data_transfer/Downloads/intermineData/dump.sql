@@ -1,10 +1,10 @@
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/1fish.txt"
-select fish_zdb_id, fish_name, fish_handle, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, ""
+select fish_zdb_id, fish_name, fish_handle, fish_is_wildtype, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, ""
 from fish
  where not exists (Select 'x' from fish_str
        	   	  	  where fish_Zdb_id = fishstr_fish_zdb_id)
 union
-select fish_zdb_id, fish_name, fish_handle, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, fishstr_str_zdb_id
+select fish_zdb_id, fish_name, fish_handle, fish_is_wildtype, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, fishstr_str_zdb_id
 from fish, fish_str
    where fish_Zdb_id = fishstr_fish_zdb_id;
 
