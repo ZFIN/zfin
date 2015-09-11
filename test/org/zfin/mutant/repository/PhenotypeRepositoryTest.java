@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.anatomy.DevelopmentStage;
@@ -273,6 +274,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         }
     }
 
+    @Ignore("this causes informix problems, and the feature was taken out of production")
     @Test
     public void regenGenofigGenotype() {
         Fish fish = getMutantRepository().getFish("ZDB-FISH-150901-19724");

@@ -84,6 +84,13 @@
         </td>
     </tr>
     <tr>
+        <td class="sectionTitle">Construct Add</td>
+        <td>
+
+            <a href="/action/devtool/gwt/construct-curation">Construct Add</a>
+        </td>
+    </tr>
+    <tr>
         <td class="sectionTitle">Gene Edit</td>
         <td>
             <a href="/action/devtool/gwt/gene-edit">Marker Edit: Gene on markerview.apg</a>

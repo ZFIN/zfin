@@ -27,7 +27,7 @@ public interface LookupRPCServiceAsync {
 
     void getSupplierSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
-    void getConstructSuggestions(SuggestOracle.Request req, String pubZdbID, AsyncCallback<SuggestOracle.Response> async);
+    void getConstructSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 
     void getFeatureSuggestions(SuggestOracle.Request req, AsyncCallback<SuggestOracle.Response> async);
 

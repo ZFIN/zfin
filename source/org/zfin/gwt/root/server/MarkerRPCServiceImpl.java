@@ -1151,7 +1151,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     public void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO) {
         ConstructRelationship constructRelationship = new ConstructRelationship();
-
+MarkerRelationship markerRelationship=new MarkerRelationship();
         ConstructDTO constructDTO = constructRelationshipDTO.getConstructDTO();
         ConstructCuration construct = constructRepository.getConstructByID(constructDTO.getZdbID());
         constructRelationship.setConstruct(construct);
@@ -1161,13 +1161,16 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         constructRelationship.setMarker(marker);
 
         constructRelationship.setType(ConstructRelationship.Type.getType(constructRelationshipDTO.getRelationshipType()));
-
+markerRelationship.setFirstMarker(markerRepository.getMarkerByID(constructDTO.getZdbID()));
+        markerRelationship.setSecondMarker(marker);
+        markerRelationship.setType(MarkerRelationship.Type.getType(constructRelationshipDTO.getRelationshipType()));
         HibernateUtil.createTransaction();
         HibernateUtil.currentSession().save(constructRelationship);
+        HibernateUtil.currentSession().save(markerRelationship);
         infrastructureRepository.insertPublicAttribution(constructRelationship.getZdbID(), constructRelationshipDTO.getPublicationZdbID());
 //        infrastructureRepository.insertUpdatesTable(markerRelationship.getZdbID(), "ConstructMarkerRelationship", markerRelationship.toString(), "Created construct marker relationship");
         HibernateUtil.flushAndCommitCurrentSession();
-        InformixUtil.runInformixProcedure("regen_construct_marker", construct.getZdbID() + "");
+        //InformixUtil.runInformixProcedure("regen_construct_marker", construct.getZdbID() + "");
     }
 
     @Override

@@ -1,27 +1,10 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
-<%--<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--<%@ page import="org.zfin.properties.ZfinProperties" %>--%>
 <%@ page import="org.zfin.construct.presentation.ConstructAddBean" %>
 
 <jsp:useBean id="formBean" class="org.zfin.construct.presentation.ConstructAddBean" scope="request"/>
-<%--<link rel=stylesheet type="text/css" href="/css/jquery-ui-1.8.16.custom.css">--%>
-<%--<script type="text/javascript" src="/javascript/jquery-1.7.2.js"></script>--%>
-<%--<script type="text/javascript" src="/javascript/jquery-1.10.2.js"></script>--%>
-<%--<script type="text/javascript" src="/javascript/jquery-ui.js"></script>--%>
 
-
-<%--
-<script src="/javascript/jquery-ui-1.10.4.custom.js"></script>
-<link rel=stylesheet type="text/css" href="/css/jquery-ui-1.10.4.custom.css">
-
-&lt;%&ndash;<script src="/javascript/jquery-ui-1.8.16.custom.min.js"></script>&ndash;%&gt;
-<script src="/javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
-<script src="/javascript/constructAdd.js" type="text/javascript"></script>
-
-<script type="text/javascript" src="/javascript/jquery-ui.js"></script>
---%>
 
 <link rel=stylesheet type="text/css" href="/css/tabEdit.css">
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui-1.10.4.custom.css"/>

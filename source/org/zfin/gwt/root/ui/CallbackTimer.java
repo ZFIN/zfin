@@ -59,7 +59,7 @@ class CallbackTimer extends Timer {
             else
                 lookupServiceAsync.getOntologySuggestions(request, lookup.getOntology(), lookup.getUseIdAsValue(), callback);
         } else if (lookup.getType().equals(LookupComposite.CONSTRUCT_LOOKUP)) {
-            lookupServiceAsync.getConstructSuggestions(request, lookup.getPubZdb(), callback);
+            lookupServiceAsync.getConstructSuggestions(request, callback);
         }
 
         this.callback = null;

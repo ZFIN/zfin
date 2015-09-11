@@ -49,14 +49,6 @@
     </span>
     <a href="/ZFIN/misc_html/fish_search_tips.html" class="popup-link help-popup-link"></a>
 
-    <authz:authorize ifAnyGranted="root">
-    <span style="font-style: italic;">
-        Last Updated:  ${zfn:getTimeDurationToday(formBean.summary.releaseDate)} ago
-        (<fmt:formatDate value="${formBean.summary.releaseDate}" type="date"/>
-        <fmt:formatDate value="${formBean.summary.releaseDate}" pattern="HH:mm:ss"/>)
-
-    </span>
-    </authz:authorize>
     <div class="search-form-your-input-welcome">
         <tiles:insertTemplate template="/WEB-INF/jsp-include/input_welcome.jsp" flush="false">
             <tiles:putAttribute name="subjectName" value="Fish search"/>
@@ -65,19 +57,5 @@
 
 </div>
 
-<c:choose>
-    <c:when test="${!zdbFlag.systemUpdateDisabled}">
-        <zfin-fish:fishSearchForm formBean="${formBean}"/>
-    </c:when>
-    <c:otherwise>
-        <span class="error">
-            <p/>
-            <div align="left" style="font-weight: bold;">System Update:</div>
-            The fish mart is currently being re-built and does not allow any mutant searches.
-    <authz:authorize ifAnyGranted="root">
-        <br/>
-        Update started ${zfn:getTimeDurationToday(zdbFlag.dateLastModified)} ago
-    </authz:authorize>
-        </span>
-    </c:otherwise>
-</c:choose>
+<zfin-fish:fishSearchForm formBean="${formBean}"/>
+

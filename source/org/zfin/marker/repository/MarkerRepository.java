@@ -211,6 +211,7 @@ public interface MarkerRepository {
      * @return list of marker objects
      */
     List<Marker> getMarkersByAbbreviationGroupAndAttribution(String name, Marker.TypeGroup markerType, String pubZdbId);
+    List<Marker> getConstructsByAttribution(String name);
 
     // clone methods
 
