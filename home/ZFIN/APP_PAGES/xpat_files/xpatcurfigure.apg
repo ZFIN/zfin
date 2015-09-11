@@ -278,11 +278,17 @@ EFFECTS
              src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
       <div id="imageTermBox"></div>
       <div id="imageStageBox"></div>
+      <p>
       <div>Image for Construct</div>
       <div id="imageConstructBox"></div>
+      <?MICOMMENT>
+      <div>Image for Construct</div>
+      <div id="imageConstructBox"></div>
+      <?/MICOMMENT>
     <?/MIVAR>
     </td>
 </tr>
+<?MICOMMENT>
 <tr>
      <td>
      <?MIVAR>
@@ -296,11 +302,12 @@ EFFECTS
                    <link rel="stylesheet" type="text/css" href="/css/Marker.css"/>
                    <script language="javascript"
                           src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
-                   <div id="imageTermBox"></div>
+                   <div id="imageConstructBox"></div>
 
            <?/MIVAR>
            </td>
 </tr>
+<?/MICOMMENT>
     <?/MIBLOCK>
   </tr> 
   <?/MIVAR>

@@ -292,7 +292,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
     }
 
 
-    public SuggestOracle.Response getConstructSuggestions(SuggestOracle.Request req, String pubZdbID) {
+    public SuggestOracle.Response getConstructSuggestions(SuggestOracle.Request req) {
         SuggestOracle.Response resp = new SuggestOracle.Response();
         String query = req.getQuery();
         highlighter.setMatch(query);
@@ -300,7 +300,8 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 0) {
             MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-            List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(query, Marker.TypeGroup.CONSTRUCT, pubZdbID);
+           // List<Marker> markers = markerRepository.getMarkersByAbbreviationGroupAndAttribution(query, Marker.TypeGroup.CONSTRUCT, pubZdbID);
+            List<Marker> markers = markerRepository.getConstructsByAttribution(query);
             for (Marker marker : markers) {
                 StringBuilder builder = highlighter.hidePureTermNameHtml(marker.getAbbreviation());
                 builder.append(highlighter.highlight(marker.getAbbreviation()));

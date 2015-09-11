@@ -202,7 +202,6 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
 
         publicNoteBox.setEnabled(true);
         curatorNoteBox.setEnabled(true);
-        featureNoteBox.notWorking();
         lineNumberBox.setEnabled(true);
         knownInsertionCheckBox.setEnabled(false);
         dominantCheckBox.setEnabled(true);
@@ -454,7 +453,7 @@ public abstract class AbstractFeatureBox extends AbstractComposite<FeatureDTO> i
     protected class ConstructOracle extends LookupOracle {
         @Override
         public void doLookup(Request request, Callback callback) {
-            LookupRPCService.App.getInstance().getConstructSuggestions(request,dto.getPublicationZdbID(),
+            LookupRPCService.App.getInstance().getConstructSuggestions(request,
                     new LookupCallback(request, callback));
         }
     }
