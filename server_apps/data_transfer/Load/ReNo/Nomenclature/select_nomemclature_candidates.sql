@@ -22,7 +22,13 @@ select distinct mrkr_zdb_id, mrkr_abbrev,0 priority
  from marker
  where mrkr_type[1,4] = 'GENE'
  and  mrkr_abbrev like "si:%"  --or mrkr_name like  "% like")
- and get_date_from_id(mrkr_Zdb_id, "YYYYMMDD") > "20131101"
+ and (get_date_from_id(mrkr_Zdb_id, "YYYYMMDD") > "20141001"
+     	or exists (Select 'x' from db_link, marker_relationship
+	   	  	  where get_date_from_id(dblink_Zdb_id, "YYYYMMDD") > "20141001"
+			  and dblink_linked_recid = mrel_mrkr_2_zdb_id
+			  and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+			  and mrel_type = 'gene produces transcript'
+			  and dblink_Acc_num like 'OTTDART%'))
  and not exists (
  	select 1 from orthologue
  	where mrkr_zdb_id  = c_gene_id
@@ -72,6 +78,18 @@ update tmp_xpat_genes set priority = priority + 64
       and mrel_type == 'gene produces transcript'
 ));
 
+unload to genesRemoved.txt
+  select mrkr_zdb_id
+    from tmp_xpat_genes
+  where not exists (Select 'x' from db_link,foreign_db_contains, foreign_db,
+            	   	   foreign_db_data_type
+  	    	   	   where dblink_linked_recid = mrkr_zdb_id
+			   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+ 			   and    fdbdt_data_type = 'Polypeptide'
+ 			   and    fdb_db_name not in ('PBLAST')
+ 			   and    fdbcont_fdb_db_id = fdb_db_pk_id
+ 			   and    fdbcont_fdbdt_id = fdbdt_pk_id);
+
 
 ! echo "find the longest protein associated with each gene"
 
@@ -97,8 +115,29 @@ select g.mrkr_zdb_id, g.mrkr_abbrev, edbl.dblink_acc_num, edbl.dblink_length,g.p
  and    fdb_db_name not in ('PBLAST')
  and    fdbcont_fdb_db_id = fdb_db_pk_id
  and    fdbcont_fdbdt_id = fdbdt_pk_id
+union
+ select mrkr_zdb_id, mrkr_abbrev, dblink_acc_num, dblink_length,priority, fdb_db_name,fdbdt_data_type
+from tmp_xpat_genes , db_link, marker_relationship, foreign_db_Contains, foreign_db, foreign_db_data_type
+  where mrel_mrkr_2_zdb_id = dblink_linked_recid
+  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+  and fdbcont_fdb_db_id = fdb_db_pk_id
+  and fdbcont_fdbdt_id = fdbdt_pk_id
+and mrkr_zdb_id = mrel_mrkr_1_zdb_id
+and dblink_acc_num like 'OTTDARP%'
  into temp tmp_can_pp with no log
 ;
+
+select count(*) as counter, mrkr_zdb_id as id
+  from tmp_can_pp
+ where dblink_length is null
+ and dblink_acc_num like 'OTTDARP%'
+ group by mrkr_zdb_id
+ having count(*) > 1
+into temp tmp_dups2;
+
+delete from tmp_can_pp
+ where exists (Select 'x' from tmp_dups2
+       	      	      where id = mrkr_zdb_id);
 
 -- drop shorter ones
 select mrkr_zdb_id, max(dblink_length) dblink_length
@@ -197,7 +236,7 @@ insert into nomenclature_candidate(
     fdata_type,
     db_name,
     priority
- from  tmp_can_pp
+ from  tmp_can_pp;
 
  --order by priority DESC
 
@@ -216,7 +255,7 @@ insert into nomenclature_candidate(
 
 
 unload to nomenclature_candidate_pp.unl
- select  *
+ select first 400 *
  --nc_mrkr_zdb_id, nc_priority
  from nomenclature_candidate
  where nc_seq_type = 'Polypeptide'

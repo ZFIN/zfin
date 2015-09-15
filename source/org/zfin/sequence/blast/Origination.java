@@ -33,6 +33,7 @@ public class Origination {
 
     public static enum Type{
         CURATED,
+        CURATED_IGNORE,
         GENERATED,
         LOADED,
         EXTERNAL,
