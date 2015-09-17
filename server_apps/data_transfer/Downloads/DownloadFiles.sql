@@ -1327,7 +1327,8 @@ SELECT distinct mrkr_abbrev,
        END,
        pub.accession_no
 FROM publication pub, tmp_pubs
- where source_id = zdb_id;
+ where source_id = zdb_id
+ and mrkr_zdb_id like 'ZDB-GENE%';
 
 
 select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
