@@ -49,7 +49,7 @@ select mrel_mrkr_2_zdb_id, genox_zdb_id
     from fish, fish_str, fish_experiment, marker_relationship, regen_genox_input_zdb_id_temp
     where fish_Zdb_id =fishstr_fish_Zdb_id
     and fish_zdb_id = genox_fish_zdb_id
-    and fish_functional_affected_gene_count =1
+    and fish_functional_affected_gene_count = 1
     and fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
     and get_obj_type(mrel_mrkr_2_Zdb_id) in ('GENE')
  and genox_is_std_or_generic_control = 't' 

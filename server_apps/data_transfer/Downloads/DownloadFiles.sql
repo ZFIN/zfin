@@ -180,8 +180,11 @@ select  mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id as subo
    AND geno_is_wildtype = 't'
    and not exists ( select 'x' from clone where clone_mrkr_Zdb_id = xpatex_probe_Feature_zdb_id
        	   	    	       	    	  and clone_problem_type = 'Chimeric')
-   AND exists (Select 'x' from mutant_fast_Search
-       	      	      where mfs_genox_zdb_id = xpatex_genox_zdb_id)
+   and fish_functional_Affected_gene_count = 0
+ and not exists (Select 'x' from genotype_feature, feature_marker_relationship
+      	  	 	 where geno_zdb_id = genofeat_geno_zdb_id
+			 and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+			 and fmrel_type = 'contains phenotypic sequence feature')
   and xpatres_subterm_zdb_id is not null
 union
 select  mrkr_zdb_id, super.term_ont_id, super.term_name, "" as subontid, "" as subname
@@ -199,8 +202,11 @@ select  mrkr_zdb_id, super.term_ont_id, super.term_name, "" as subontid, "" as s
    AND geno_is_wildtype = 't'
    and not exists ( select 'x' from clone where clone_mrkr_Zdb_id = xpatex_probe_Feature_zdb_id
        	   	    	       	    	  and clone_problem_type = 'Chimeric')
-   AND exists (Select 'x' from mutant_fast_Search
-       	      	      where mfs_genox_zdb_id = xpatex_genox_zdb_id)
+ and fish_functional_Affected_gene_count = 0
+  and not exists (Select 'x' from genotype_feature, feature_marker_relationship
+      	  	 	 where geno_zdb_id = genofeat_geno_zdb_id
+			 and genofeat_feature_zdb_id = fmrel_ftr_zdb_id
+			 and fmrel_type = 'contains phenotypic sequence feature')
   and xpatres_subterm_zdb_id is null
  order by mrkr_zdb_id
 ;
