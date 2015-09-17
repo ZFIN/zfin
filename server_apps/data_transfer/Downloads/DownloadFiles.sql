@@ -166,7 +166,7 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  DELIMITER "	"
 select  mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id as subontid, sub.term_name as subname
  from marker, expression_experiment, expression_result, fish, term as super
-      , fish_experiment, genotype, term sub, outer clone
+      , fish_experiment, genotype, term sub
  where xpatres_xpatex_zdb_id = xpatex_zdb_id
    AND xpatex_atb_zdb_id = mrkr_zdb_id
    AND mrkr_type = 'ATB'
@@ -178,15 +178,15 @@ select  mrkr_zdb_id, super.term_ont_id, super.term_name, sub.term_ont_id as subo
    AND fish_zdb_id = genox_fish_zdb_id
    AND geno_zdb_id = fish_genotype_zdb_id
    AND geno_is_wildtype = 't'
-   and clone_mrkr_Zdb_id = xpatex_probe_Feature_zdb_id
-   and clone_problem_type != 'Chimeric'
+   and not exists ( select 'x' from clone where clone_mrkr_Zdb_id = xpatex_probe_Feature_zdb_id
+       	   	    	       	    	  and clone_problem_type = 'Chimeric')
    AND exists (Select 'x' from mutant_fast_Search
        	      	      where mfs_genox_zdb_id = xpatex_genox_zdb_id)
   and xpatres_subterm_zdb_id is not null
 union
 select  mrkr_zdb_id, super.term_ont_id, super.term_name, "" as subontid, "" as subname
  from marker, expression_experiment, expression_result, fish, term as super
-      , fish_experiment, genotype, outer clone
+      , fish_experiment, genotype
  where xpatres_xpatex_zdb_id = xpatex_zdb_id
    AND xpatex_atb_zdb_id = mrkr_zdb_id
    AND mrkr_type = 'ATB'
@@ -197,8 +197,8 @@ select  mrkr_zdb_id, super.term_ont_id, super.term_name, "" as subontid, "" as s
    AND fish_zdb_id = genox_fish_zdb_id
    AND geno_zdb_id = fish_genotype_zdb_id
    AND geno_is_wildtype = 't'
-   and clone_mrkr_Zdb_id = xpatex_probe_Feature_zdb_id
-   and clone_problem_type != 'Chimeric'
+   and not exists ( select 'x' from clone where clone_mrkr_Zdb_id = xpatex_probe_Feature_zdb_id
+       	   	    	       	    	  and clone_problem_type = 'Chimeric')
    AND exists (Select 'x' from mutant_fast_Search
        	      	      where mfs_genox_zdb_id = xpatex_genox_zdb_id)
   and xpatres_subterm_zdb_id is null
@@ -372,29 +372,59 @@ select gene_id, zfish_abbrev, zfish_name, ortho_abbrev, ortho_name, mgi, entrez
 
 drop table tmp_ortho_exp;
 
+
 -- generate a file with genes and associated expression experiment
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt'"
-UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt'
- DELIMITER "	"
+create temp table tmp_xpat_Fish (gene_zdb_id varchar(50),
+       	    	  	 	 gene_abbrev lvarchar(255),
+				 probe_zdb_id varchar(50),
+				 probe_abbrev lvarchar(255),
+				 xpatex_assay_name varchar(100),
+				 xpatex_zdb_id varchar(50),
+				 xpat_zdb_id varchar(50),
+				 xpatex_source_zdb_id varchar(50),
+				 fish_zdb_id varchar(50),
+				 source_zdb_id varchar(50),
+				 clone_rating varchar(50))
+with no log;
+
+insert into tmp_xpat_fish (gene_zdb_id,
+				gene_abbrev,
+				probe_zdb_id,
+				probe_abbrev,
+				xpatex_assay_name,
+				xpatex_zdb_id,
+				fish_zdb_id,
+				source_zdb_id,
+				xpatex_source_zdb_id)
 select gene.mrkr_zdb_id gene_zdb, gene.mrkr_abbrev,
         probe.mrkr_zdb_id probe_zdb, probe.mrkr_abbrev,
         xpatex_assay_name, xpatex_zdb_id xpat_zdb,
         xpatex_source_zdb_id,
-        fish.fish_zdb_id, genox_exp_zdb_id,
-        clone_rating
- from expression_experiment, fish_experiment,  marker gene, fish fish, outer (marker probe, clone)
+        fish.fish_zdb_id, genox_exp_zdb_id
+ from expression_experiment, fish_experiment,  marker gene, fish fish, outer (marker probe)
    where genox_zdb_id = xpatex_genox_zdb_id
    and gene.mrkr_zdb_id = xpatex_gene_zdb_id
    and fish.fish_zdb_id = genox_fish_zdb_id
    and  probe.mrkr_zdb_id = xpatex_probe_feature_zdb_id
-  and clone_mrkr_zdb_id = probe.mrkr_zdb_id
   and  gene.mrkr_abbrev[1,10] != 'WITHDRAWN:'
-  AND clone_problem_type != "Chimeric"
    and exists (
 	select 1 from expression_result
 	 where xpatres_xpatex_zdb_id = xpatex_zdb_id
- ) order by gene_zdb, xpat_zdb, probe_zdb
-;
+ ) order by gene_zdb, xpat_zdb, probe_zdb;
+
+delete from tmp_xpat_fish
+ where exists (Select 'x' from clone
+       	      	      where clone_mrkr_Zdb_id = probe_zdb_id
+		      and clone_problem_type = 'Chimeric');
+
+update tmp_xpat_fish
+ set clone_rating = (select clone_rating from clone where clone_mrkr_zdb_id = probe_zdb_id);
+  
+
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt'"
+UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpat_fish.txt'
+ DELIMITER "	"
+select * from tmp_xpat_fish;
 
 -- generate a file with antibodies and associated expression experiment
 ! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/abxpat_fish.txt'"
@@ -403,26 +433,29 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
 	"" as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
- from expression_experiment, fish_experiment, fish, marker atb, outer clone
+ from expression_experiment, fish_experiment, fish, marker atb
  where xpatex_genox_Zdb_id = genox_zdb_id
  and genox_fish_zdb_id = fish_Zdb_id
  and atb.mrkr_zdb_id = xpatex_atb_zdb_id
    and xpatex_gene_zdb_id is null
- and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
- and clone_problem_type != 'Chimeric'
+ AND not exists (Select 'x' from clone
+      where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+      and clone_problem_type = "Chimeric")
 UNION
  select xpatex_atb_zdb_id, atb.mrkr_abbrev, xpatex_gene_zdb_id as gene_zdb,
 	gene.mrkr_abbrev as geneAbbrev, xpatex_assay_name, xpatex_zdb_id as xpat_zdb,
 	xpatex_source_zdb_id, fish_zdb_id, genox_exp_zdb_id
- from expression_experiment, fish_experiment, fish, marker atb, marker gene, outer clone
+ from expression_experiment, fish_experiment, fish, marker atb, marker gene
  where xpatex_genox_Zdb_id = genox_zdb_id
  and genox_fish_zdb_id = fish_Zdb_id
  and atb.mrkr_zdb_id = xpatex_atb_zdb_id
  and gene.mrkr_zdb_id = xpatex_gene_zdb_id
    and xpatex_gene_zdb_id is not null
  and gene.mrkr_abbrev not like 'WITHDRAWN:'
- and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
- and clone_problem_type != 'Chimeric'
+ AND not exists (Select 'x' from clone
+      where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+      and clone_problem_type = "Chimeric")
+
 ;
 
 -- generate a file to map experiment id to environment condition description
@@ -434,11 +467,12 @@ select exp_zdb_id, cdt_group, cdt_name, expcond_comments
  where exp_zdb_id = expcond_exp_zdb_id
    and expcond_cdt_zdb_id = cdt_zdb_id
    and exists (
-	select 't' from fish_experiment, expression_experiment, outer clone
+	select 't' from fish_experiment, expression_experiment
 	 where exp_zdb_id = genox_exp_zdb_id
 	   and genox_zdb_id = xpatex_genox_zdb_id
-	   and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
-	   and clone_problem_type != 'Chimeric')
+           and not exists (Select 'x' from clone
+	    where xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
+	   and clone_problem_type = 'Chimeric'))
 union
 select exp_zdb_id, exp_name,exp_name, "This environment is used for non-standard conditions used in control treatments."
  from experiment
@@ -449,11 +483,12 @@ select exp_zdb_id, exp_name,exp_name,"standard environment"
  where not exists (Select 'x' from experiment_condition
        	   	  	  where exp_zdb_id = expcond_exp_zdb_id)
   and exists (
-	select 't' from fish_experiment, expression_experiment, outer clone
+	select 't' from fish_experiment, expression_experiment
 	 where exp_zdb_id = genox_exp_zdb_id
 	   and genox_zdb_id = xpatex_genox_zdb_id
-	   and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
-	   and clone_problem_type != 'Chimeric')
+and not exists (Select 'x' from clone
+	    where xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
+	   and clone_problem_type = 'Chimeric'))
  order by  1,2
 ;
 
@@ -500,11 +535,12 @@ UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStagi
 UNLOAD to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/xpatfig_fish.txt'
  DELIMITER "	"
 select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
- from expression_experiment, expression_result,expression_pattern_figure, outer clone
+ from expression_experiment, expression_result,expression_pattern_figure
  where xpatex_zdb_id=xpatres_xpatex_zdb_id
    and xpatres_zdb_id=xpatfig_xpatres_zdb_id
-   and xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id
- and clone_problem_type != 'Chimeric'
+ and not exists (select 'x' from clone
+     	 	where clone_problem_type = 'Chimeric'
+		and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id)
  order by xpatex_zdb_id;
 
 
@@ -1152,30 +1188,6 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
    and cloner.mrel_type='clone contains transcript'
 ;
 
-
-
--- unload publication - gene/genep association file
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'"
-unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'
- DELIMITER "	"
-SELECT mrkr_abbrev,
-       mrkr_zdb_id,
-       pub.zdb_id,
-       CASE pub.jtype
-           WHEN "Unpublished" THEN "Data Submission"
-           ELSE pub.jtype
-       END,
-       pub.accession_no
-FROM (
-  SELECT m.mrkr_zdb_id,
-         m.mrkr_abbrev,
-         m.mrkr_type,
-         ra.recattrib_source_zdb_id AS source_id
-  FROM record_attribution ra
-  INNER JOIN marker m ON ra.recattrib_data_zdb_id = m.mrkr_zdb_id
-
-  UNION -- marker relationship 2_1
-
   SELECT m.mrkr_zdb_id,
          m.mrkr_abbrev,
          m.mrkr_type,
@@ -1289,65 +1301,49 @@ FROM (
   INNER JOIN marker m ON m.mrkr_zdb_id = gf.genofeat_feature_zdb_id
 
   UNION -- expression_experiment
-
   SELECT mrkr_zdb_id,
          mrkr_abbrev,
          mrkr_type,
          ex.xpatex_source_zdb_id AS source_id
-  FROM expression_experiment ex,  marker, outer clone
+  FROM expression_experiment ex,  marker
  where mrkr_zdb_id = ex.xpatex_gene_zdb_id
- and clone_mrkr_Zdb_id = mrkr_zdb_id
- and clone_problem_type != 'Chimeric'
-)
-INNER JOIN publication pub ON pub.zdb_id = source_id
-WHERE source_id LIKE 'ZDB-PUB%'
-  AND mrkr_type in ("GENE", "GENEP")
-ORDER BY LOWER(mrkr_abbrev)
-;
+AND mrkr_type in ("GENE", "GENEP")
+--ORDER BY mrkr_abbrev_order
+ and not exists (Select 'x' from clone
+     	 		where clone_mrkr_zdb_id = ex.xpatex_probe_feature_zdb_id
+ 			 and clone_problem_type = 'Chimeric')
+into temp tmp_pubs;
 
--- create full expression file for WT fish: standard condition, expression shown and
--- only wildtype fish
-! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt'"
-unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt'
+-- unload publication - gene/genep association file
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'"
+unload to  '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/gene_publication.txt'
  DELIMITER "	"
-select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
-        sub.term_ont_id as subontid, sub.term_name as subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
-        xpatex_source_zdb_id,
-        case when xpatex_probe_feature_zdb_id = "" then " " else xpatex_probe_feature_zdb_id end as probe_id,
-        case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
- from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
- term super, genotype, term sub, outer clone
- where geno_is_wildtype = 't'
-   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
-   and xpatres_expression_found = 't'
-  and clone_problem_type != 'Chimeric'
-  and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
-   and mrkr_zdb_id = xpatex_gene_zdb_id
-   and xpatex_genox_zdb_id = genox_zdb_id
-   and xpatres_subterm_zdb_id = sub.term_zdb_id
-   and xpatres_superterm_zdb_id = super.term_zdb_id
-   and fish_zdb_id = genox_fish_zdb_id
---   and fish_is_wildtype = 't'
-   and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
-   and xpatres_xpatex_zdb_id = xpatex_zdb_id
-   and xpatres_start_stg_zdb_id = startStage.stg_zdb_id
-   and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
-   and fish_genotype_zdb_id = geno_zdb_id
-and xpatres_subterm_zdb_id is not null
-union
+SELECT distinct mrkr_abbrev,
+       mrkr_zdb_id,
+       source_id,
+       CASE pub.jtype
+           WHEN "Unpublished" THEN "Data Submission"
+           ELSE pub.jtype
+       END,
+       pub.accession_no
+FROM publication pub, tmp_pubs
+ where source_id = zdb_id;
+
+
 select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
        "" as subontid, 
-       "" as subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+       "" as subname, startStage.stg_name as start, endStage.stg_name as end, xpatex_assay_name,
         xpatex_source_zdb_id,
         case when xpatex_probe_feature_zdb_id = "" then " " else xpatex_probe_feature_zdb_id end as probe_id,
         case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
  from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
- term super, genotype, outer clone
+ term super, genotype
  where geno_is_wildtype = 't'
    and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
    and xpatres_expression_found = 't'
-  and clone_problem_type != 'Chimeric'
-  and clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+  and not exists (Select 'x' from clone
+  where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+  and clone_problem_type = 'Chimeric')
    and mrkr_zdb_id = xpatex_gene_zdb_id
    and xpatex_genox_zdb_id = genox_zdb_id
    and xpatres_superterm_zdb_id = super.term_zdb_id
@@ -1362,8 +1358,47 @@ and xpatres_subterm_zdb_id is null
  group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
         subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
         xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
-;
+union
+select mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
+       "" as subontid, 
+       "" as subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+        xpatex_source_zdb_id,
+        case when xpatex_probe_feature_zdb_id = "" then " " else xpatex_probe_feature_zdb_id end as probe_id,
+        case when xpatex_atb_zdb_id = "" then " " else xpatex_atb_zdb_id end as antibody_id, fish_zdb_id
+ from marker, expression_experiment, fish_experiment, fish, experiment, expression_result, stage startStage, stage endStage,
+ term super, genotype
+ where geno_is_wildtype = 't'
+   and exp_zdb_id in ('ZDB-EXP-041102-1','ZDB-EXP-070511-5')
+   and xpatres_expression_found = 't'
+  and not exists (Select 'x' from clone
+      	  	 	 where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+  and clone_problem_type = 'Chimeric')
+   and mrkr_zdb_id = xpatex_gene_zdb_id
+   and xpatex_genox_zdb_id = genox_zdb_id
+   and xpatres_superterm_zdb_id = super.term_zdb_id
+   and fish_zdb_id = genox_fish_zdb_id
+--   and fish_is_wildtype = 't'
+   and not exists (Select 'x' from fish_Str where fish_Zdb_id = fishstr_Fish_zdb_id)
+   and xpatres_xpatex_zdb_id = xpatex_zdb_id
+   and xpatres_start_stg_zdb_id = startStage.stg_zdb_id
+   and xpatres_end_stg_zdb_id = endStage.stg_zdb_id
+   and fish_genotype_zdb_id = geno_zdb_id
+and xpatres_subterm_zdb_id is null
+ group by mrkr_zdb_id, mrkr_abbrev, fish_name, super.term_ont_id, super.term_name,
+        subontid, subname, startStage.stg_name, endStage.stg_name, xpatex_assay_name,
+        xpatex_source_zdb_id,  probe_id,xpatex_atb_zdb_id, fish_Zdb_id
+into temp tmp_wtxpat;
 
+delete from tmp_wtxpat
+ where probe_id in (select clone_mrkr_zdb_id from clone where clone_problem_type = 'Chimeric');
+
+
+-- create full expression file for WT fish: standard condition, expression shown and
+-- only wildtype fish
+! echo "'<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt'"
+unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/wildtype-expression_fish.txt'
+ DELIMITER "	"
+ select * from tmp_wtxpat;
 
 --case 8490 and case, 8886. Report of all publications that use an sa allele
 --not for public consumption
@@ -1481,7 +1516,7 @@ update statistics low for table tmp_gene_pubcount;
 unload to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/uniprot-zfinpub.txt'
  DELIMITER "	"
 select geneid, szm_term_ont_id, dblink_acc_num,zdb_id,accession_no,'Expression' as  cur_topic
-from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,tmp_gene_pubcount, expression_experiment, so_zfin_mapping, marker, outer clone
+from db_link, foreign_db_contains fdbc, foreign_db fdb, publication,tmp_gene_pubcount, expression_experiment, so_zfin_mapping, marker
 where geneid=dblink_linked_recid
 and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
@@ -1491,8 +1526,9 @@ and fdb.fdb_db_name = 'UniProtKB'
 and geneid=xpatex_gene_zdb_id
 and xpatex_source_zdb_id=zdb_id
 and pubcount <= 20
-and clone_mrkr_Zdb_id = xpatex_probe_feature_zdb_id
-and clone_problem_type != 'Chimeric'
+ and not exists (Select 'x' from clone
+     	 		where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+and clone_problem_type = 'Chimeric')
 and jtype='Journal'
 
 union
