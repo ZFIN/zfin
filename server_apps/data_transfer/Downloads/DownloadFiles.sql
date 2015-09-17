@@ -1192,6 +1192,15 @@ select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr
          m.mrkr_abbrev,
          m.mrkr_type,
          ra.recattrib_source_zdb_id AS source_id
+  FROM record_attribution ra, marker m
+  where m.mrkr_zdb_id = ra.recattrib_data_zdb_id
+
+  UNION -- 
+
+  SELECT m.mrkr_zdb_id,
+         m.mrkr_abbrev,
+         m.mrkr_type,
+         ra.recattrib_source_zdb_id AS source_id
   FROM record_attribution ra
   INNER JOIN marker_relationship mr ON ra.recattrib_data_zdb_id = mr.mrel_zdb_id
   INNER JOIN marker m ON m.mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
