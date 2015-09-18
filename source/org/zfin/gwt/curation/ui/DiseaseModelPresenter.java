@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -8,14 +9,20 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Hyperlink;
 import org.zfin.gwt.curation.dto.DiseaseModelDTO;
-import org.zfin.gwt.root.dto.EnvironmentDTO;
-import org.zfin.gwt.root.dto.FishDTO;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.dto.*;
+
 import org.zfin.gwt.root.ui.ErrorHandler;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 
+import org.zfin.mutant.Genotype;
+
+import org.zfin.repository.RepositoryFactory;
+
+
+
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  * Table of associated genotypes
@@ -44,6 +51,9 @@ public class DiseaseModelPresenter implements Presenter {
             @Override
             public void onChange(ChangeEvent changeEvent) {
                 clearErrorMessages();
+                updateConditions();
+
+                //view.getEnvironmentSelectionBox().removeItem(0);
             }
         });
         view.getEnvironmentSelectionBox().addChangeHandler(new ChangeHandler() {
@@ -206,8 +216,27 @@ public class DiseaseModelPresenter implements Presenter {
 
     public void updateFishList() {
         // fish list
+
         String message = "Error while reading Fish";
         diseaseRpcService.getFishList(publicationID, new RetrieveFishListCallBack(message, view.getErrorLabel()));
+    }
+
+    public void updateConditions(){
+        String termSel=view.getFishSelectionBox().getItemText(view.getFishSelectionBox().getSelectedIndex());
+        String envSel=view.getEnvironmentSelectionBox().getItemText(1);
+        String message="geting wildtype";
+        curationRPCService.getBackgroundGenotypes(publicationID, new RetrieveBackgroundNewGenoCallback(message, view.getErrorLabel()));
+
+
+       /* if (termSel.contains("WT")) {
+            view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(1).setAttribute("disabled", "disabled");
+            view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
+            //view.getEnvironmentSelectionBox().setEnabled(false);
+        }
+        else{
+            view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(1).removeAttribute("disabled");
+            view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(2).removeAttribute("disabled");
+        }*/
     }
 
     class RetrieveEnvironmentListCallBack extends ZfinAsyncCallback<List<EnvironmentDTO>> {
@@ -224,10 +253,46 @@ public class DiseaseModelPresenter implements Presenter {
             for (EnvironmentDTO dto : list) {
                 view.getEnvironmentSelectionBox().addItem(dto.getName(), dto.getZdbID());
             }
+
             resetUI();
         }
     }
+    class RetrieveBackgroundNewGenoCallback extends ZfinAsyncCallback<List<GenotypeDTO>> {
 
+        public RetrieveBackgroundNewGenoCallback(String errorMessage, ErrorHandler errorLabel) {
+            super(errorMessage, errorLabel);
+        }
+
+        @Override
+        public void onSuccess(List<GenotypeDTO> list) {
+           List<String>genos= new ArrayList<>();
+            String termSel=view.getFishSelectionBox().getItemText(view.getFishSelectionBox().getSelectedIndex());
+
+            for (GenotypeDTO dto : list) {
+                genos.add(dto.getName());
+            }
+            genos.add("WT");
+            String strGeno=genos.toString();
+            if (view.getEnvironmentSelectionBox().getSelectedValue()== "ZDB-EXP-041102-1" || view.getEnvironmentSelectionBox().getSelectedValue()== "ZDB-EXP-070511-5"){
+                int selInd=view.getEnvironmentSelectionBox().getSelectedIndex();
+                view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(selInd).setAttribute("disabled", "disabled");
+            }
+            else{
+                int selInd=view.getEnvironmentSelectionBox().getSelectedIndex();
+                view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(selInd).removeAttribute("disabled");
+            }
+            if (genos.contains(termSel)) {
+
+                view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(1).setAttribute("disabled", "disabled");
+                view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
+                //view.getEnvironmentSelectionBox().setEnabled(false);
+            }
+            else{
+                view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(1).removeAttribute("disabled");
+                view.getEnvironmentSelectionBox().getElement().getElementsByTagName("option").getItem(2).removeAttribute("disabled");
+            }
+        }
+    }
     class RetrieveFishListCallBack extends ZfinAsyncCallback<List<FishDTO>> {
 
         public RetrieveFishListCallBack(String errorMessage, ErrorHandler errorLabel) {
