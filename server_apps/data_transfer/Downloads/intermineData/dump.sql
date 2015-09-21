@@ -262,14 +262,14 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genofeats/1genofeats.txt"
  select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
- 	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, ids_source_zdb_id, featassay_mutagen, featassay_mutagee
+ 	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, ids_source_zdb_id, featassay_mutagen, featassay_mutagee,feature_lab_prefix_id
   from genotype_feature, feature, int_data_source, feature_assay
   where genofeat_feature_zdb_id = feature_zdb_id
   and ids_datA_zdb_id = feature_zdb_id
 and featassay_feature_zdb_id = feature_zdb_id
  union 
 select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
- 	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, "", featassay_mutagen, featassay_mutagee
+ 	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, "", featassay_mutagen, featassay_mutagee,feature_lab_prefix_id
   from genotype_feature, feature,feature_assay
   where genofeat_feature_zdb_id = feature_zdb_id
   and featassay_feature_zdb_id = feature_zdb_id
