@@ -427,7 +427,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_pubs/1pubs.txt"
   select zdb_id, replace(authors,'
 ',''), title, replace(accession_no,"none",""),
-  	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, substr(pub_date,7,10)
+  	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, substr(get_date_from_id(zdb_id,'YYYYMMDD'),1,4)
     from publication
 where accession_no not in ('24135484','22615492','22071262','23603293','11581520','22328273','19700757');
 
