@@ -484,6 +484,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<String> getFeatureNamesWithNoGenotypesForPub(String pubZdbID);
 
+    int deleteExpressionExperimentIDswithNoExpressionResult(Publication publication);
+
     List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID);
 
 
