@@ -3,7 +3,6 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -79,6 +78,10 @@ public class FishConstruction extends Composite {
     @UiHandler("strSelectionBox")
     void onSTRChange(@SuppressWarnings("unused") ChangeEvent event) {
         fishConstructionPresenter.onSTRSelection();
+        if (strSelectionBox.getSelectedIndex() != 0)
+            enableAddStrButton();
+        else
+            disableAddStrButton();
     }
 
     @UiHandler("createFishButton")
@@ -144,6 +147,14 @@ public class FishConstruction extends Composite {
 
     public void setGenotypeName(GenotypeDTO genotype) {
         genotypeName.setText(genotype.getName());
+    }
+
+    public void disableAddStrButton() {
+        addStrButton.setEnabled(false);
+    }
+
+    public void enableAddStrButton() {
+        addStrButton.setEnabled(true);
     }
 
 }
