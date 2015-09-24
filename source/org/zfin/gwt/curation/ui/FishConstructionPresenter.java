@@ -99,6 +99,7 @@ public class FishConstructionPresenter implements Presenter {
         // get STR list
         updateSTRListBox();
         updateGenotypeList();
+        view.disableAddStrButton();
     }
 
     public void updateGenotypeList() {
@@ -219,7 +220,6 @@ public class FishConstructionPresenter implements Presenter {
             strList.addAll(dtoList);
 
             listBox.addItem("------", "");
-            listBox.getElement().getElementsByTagName("option").getItem(0).setAttribute("disabled", "disabled");
             for (RelatedEntityDTO entityDTO : dtoList) {
                 listBox.addItem(entityDTO.getName(), entityDTO.getZdbID());
             }

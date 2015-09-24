@@ -1997,6 +1997,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return query.list();
     }
 
+    public int deleteExpressionExperimentIDswithNoExpressionResult(Publication publication) {
+        String sql = "delete from expression_experiment x " +
+                     " where x.xpatex_source_zdb_id = :pubID " +
+                     "   and not exists ( " +
+                     "                    select 'x' " +
+                     "                      from expression_result ee " +
+                     "                     where ee.xpatres_xpatex_zdb_id = x.xpatex_zdb_id " +
+                     "                   ); ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("pubID", publication.getZdbID());
+        return query.executeUpdate();
+    }
+
     public List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID) {
         String sql = "select distinct feature_name" +
                 " from record_attribution, feature" +

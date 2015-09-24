@@ -2,7 +2,7 @@
 
 SOLR_GC_LOGGING_OPTS="-verbose:gc -verbose:sizes -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -Xloggc:$SOLR_HOME/solr-gc.log"
 JETTY_OPTS="-Djetty.port=$SOLR_PORT -Djetty.home=$SOLR_HOME/jetty -Djetty.base=$SOLR_HOME/jetty"
-JVM_OPTS="-Xms4g -Xmx4g "
+JVM_OPTS="-Xms4g -Xmx5g "
 SOLR_OPTS="-Dsolr.home=$SOLR_HOME -Denable.slave=false -Denable.master=true"
 
 # solr seems to need to be a subdir of the working directory

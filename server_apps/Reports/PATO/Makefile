@@ -20,7 +20,7 @@ include $(TOP)/make.include
 TARGETDIR = $(TARGETROOT)/server_apps/Reports/PATO
 
 GENERICS = FinCount.pl
-STATICS = PhenoytpeCount.sql
+
 
 
 # ---------------  Production Rules  ------------------------------------

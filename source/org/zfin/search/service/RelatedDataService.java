@@ -139,6 +139,14 @@ public class RelatedDataService {
             getRelatedDataForAnatomyGO(links, id);
             links = sortLinks(links, anatomyGoRelatedDataCategories);
         }
+        if (StringUtils.equals(category, Category.DISEASE.getName())) {
+            for (int i = 0 ; i < links.size() ; i++) {
+                String link = links.get(i).replaceAll(Category.FISH.getName() + " \\(", "Models Disease (");
+                links.set(i, link);
+            }
+
+        }
+
         return links;
     }
 

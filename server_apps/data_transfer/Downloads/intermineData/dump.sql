@@ -1,10 +1,10 @@
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/fish/1fish.txt"
-select fish_zdb_id, fish_name, fish_handle, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, ""
+select fish_zdb_id, fish_name, fish_handle, fish_is_wildtype, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, ""
 from fish
  where not exists (Select 'x' from fish_str
        	   	  	  where fish_Zdb_id = fishstr_fish_zdb_id)
 union
-select fish_zdb_id, fish_name, fish_handle, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, fishstr_str_zdb_id
+select fish_zdb_id, fish_name, fish_handle, fish_is_wildtype, fish_order, fish_functional_affected_gene_count, fish_genotype_zdb_id, fishstr_str_zdb_id
 from fish, fish_str
    where fish_Zdb_id = fishstr_fish_zdb_id;
 
@@ -262,14 +262,14 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_genofeats/1genofeats.txt"
  select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
- 	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, ids_source_zdb_id, featassay_mutagen, featassay_mutagee
+ 	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, ids_source_zdb_id, featassay_mutagen, featassay_mutagee,feature_lab_prefix_id
   from genotype_feature, feature, int_data_source, feature_assay
   where genofeat_feature_zdb_id = feature_zdb_id
   and ids_datA_zdb_id = feature_zdb_id
 and featassay_feature_zdb_id = feature_zdb_id
  union 
 select genofeat_zdb_id, genofeat_geno_Zdb_id, genofeat_feature_zdb_id,
- 	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, "", featassay_mutagen, featassay_mutagee
+ 	(select zyg_name from zygocity where zyg_zdb_id = genofeat_zygocity), feature_type,feature_name, feature_abbrev, "", featassay_mutagen, featassay_mutagee,feature_lab_prefix_id
   from genotype_feature, feature,feature_assay
   where genofeat_feature_zdb_id = feature_zdb_id
   and featassay_feature_zdb_id = feature_zdb_id
@@ -427,7 +427,7 @@ unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/
 unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/zfin_pubs/1pubs.txt"
   select zdb_id, replace(authors,'
 ',''), title, replace(accession_no,"none",""),
-  	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, substr(pub_date,7,10)
+  	 jtype, pub_jrnl_zdb_id, pub_doi, pub_volume, pub_pages, substr(get_date_from_id(zdb_id,'YYYYMMDD'),1,4)
     from publication
 where accession_no not in ('24135484','22615492','22071262','23603293','11581520','22328273','19700757');
 

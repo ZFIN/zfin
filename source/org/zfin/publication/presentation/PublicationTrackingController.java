@@ -155,6 +155,7 @@ public class PublicationTrackingController {
             // looks like this paper's getting closed. close all the topics and do some cleanup, too.
             curationRepository.closeCurationTopics(publication, ProfileService.getCurrentSecurityUser());
             expressionRepository.deleteExpressionStructuresForPub(publication);
+            publicationRepository.deleteExpressionExperimentIDswithNoExpressionResult(publication);
             mutantRepository.updateGenotypeNicknameWithHandleForPublication(publication);
         }
         publication.setCloseDate((GregorianCalendar) dto.getClosedDate());

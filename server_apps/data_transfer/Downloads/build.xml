@@ -62,12 +62,6 @@
         <symlink link="${env.DOWNLOAD_DIRECTORY}/current" action="single" overwrite="true" failonerror="fail" resource="${TARGETROOT}/home/data_transfer/Downloads"/>
     </target>
 
-    <target name="timestamp-download" depends="archive-download-files" description="Set the timestamp of the unload in the database_info table">
-        <echo message="Update time stamp in DATABASE_INFO table:"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <run-db-query db-query-file="set_download_timestamp.sql" instanceName="${DBNAME}"/>
-    </target>
-
     <macrodef name="run-db-query">
         <attribute name="db-query-file"/>
         <attribute name="instanceName"/>
