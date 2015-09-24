@@ -87,6 +87,10 @@ public class FeatureDetailController {
             // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
             // some appropriate amount of padding.
             GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder();
+
+            // We don't yet have GRCz10 coordinates for any features, so for now, they're all Zv9 still
+            imageBuilder.setGenomeBuild(GBrowseImage.GenomeBuild.ZV9);
+
             FeatureGenomeLocation featureLocation = locations.iterator().next();
             if (featureMarkerRelationships.size() == 1) {
                 Marker related = featureMarkerRelationships.iterator().next().getMarker();
