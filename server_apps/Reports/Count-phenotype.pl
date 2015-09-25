@@ -20,7 +20,7 @@ my $dbname = "<!--|DB_NAME|-->";
 #--------------------------------------------------------------------------
 chdir "<!--|ROOT_PATH|-->/server_apps/Reports/PATO";
 
-system("$ENV{'INFORMIXDIR'}/bin/rm -f PhenotypeStatistics.txt");
+system("/bin/rm -f PhenotypeStatistics.txt");
 
 #-------------------non-transgenics-------------------------------
 
