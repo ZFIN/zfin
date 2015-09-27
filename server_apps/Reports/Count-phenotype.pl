@@ -20,7 +20,7 @@ my $dbname = "<!--|DB_NAME|-->";
 print "\nStart running counting SQLs ...\n";
 
 #--------------------------------------------------------------------------
-chdir "<!--|ROOT_PATH|-->/server_apps/Reports/";
+chdir "<!--|ROOT_PATH|-->/server_apps/Reports/PATO";
 
 system("/bin/rm -f PhenotypeStatistics.txt");
 
@@ -39,8 +39,6 @@ my $sql = 'select distinct mrel_mrkr_2_zdb_id
 
 my $ct21 = ZFINPerlModules->countData($sql);
 
-print "\nct21 = $ct21";
-
 $sql = 'select distinct mrel_mrkr_2_zdb_id   
           from marker_relationship 
          where mrel_type = "knockdown reagent targets gene"
@@ -50,8 +48,6 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
                                                  
 
 my $ct22 = ZFINPerlModules->countData($sql);
-
-print "\nct22 = $ct22";
 
 $sql = 'select distinct mrel_mrkr_2_zdb_id
           from marker_relationship, fish_str, fish f1, fish_experiment fx1, phenotype_experiment px1, genotype
@@ -72,8 +68,6 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
 
 my $ct23 = ZFINPerlModules->countData($sql);
 
-print "\nct23 = $ct23";
-
 $sql = 'select distinct mrel_mrkr_2_zdb_id
           from marker_relationship, fish_str, fish f1, fish_experiment fx1, phenotype_experiment px1, genotype
          where mrel_type = "knockdown reagent targets gene"
@@ -92,8 +86,6 @@ $sql = 'select distinct mrel_mrkr_2_zdb_id
 
 my $ct24 = ZFINPerlModules->countData($sql);
 
-print "\nct24 = $ct24";
-
 $sql =  'select distinct mrel_mrkr_2_zdb_id
            from marker_relationship, fish_str, fish, fish_experiment, genotype_feature, genotype, phenotype_experiment
           where mrel_type = "knockdown reagent targets gene"
@@ -110,8 +102,6 @@ $sql =  'select distinct mrel_mrkr_2_zdb_id
             
 my $ct25 = ZFINPerlModules->countData($sql);
 
-print "\nct25 = $ct25";
-
 $sql =  'select distinct mrel_mrkr_2_zdb_id
            from marker_relationship, fish_str, fish, fish_experiment, genotype_feature, genotype, phenotype_experiment
           where mrel_type = "knockdown reagent targets gene"
@@ -127,8 +117,6 @@ $sql =  'select distinct mrel_mrkr_2_zdb_id
             and phenox_genox_zdb_id = genox_zdb_id;';
             
 my $ct26 = ZFINPerlModules->countData($sql);
-
-print "\nct26 = $ct26";
 
 open (PHENO, ">>PhenotypeStatistics.txt") || die "Cannot open PhenotypeStatistics.txt : $!\n";
 
