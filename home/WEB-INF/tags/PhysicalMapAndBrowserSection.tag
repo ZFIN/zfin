@@ -17,7 +17,7 @@
 <c:if test="${not empty locations && not isClone}">
     <table id="meioticPanel" class="summary">
         <tr>
-            <th colspan="3"><a href="/<%= ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value() %>">ZFIN GBrowse (Zv9)</a></th>
+            <th colspan="3"><a href="/<%= ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.value() %>">ZFIN GBrowse (GRCz10)</a></th>
         </tr>
         <tr>
             <td>
