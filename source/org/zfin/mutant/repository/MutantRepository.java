@@ -7,7 +7,6 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -399,9 +398,9 @@ public interface MutantRepository {
     /**
      * create a new disease model
      *
-     * @param diseaseModel
+     * @param diseaseAnnotation
      */
-    void createDiseaseModel(DiseaseModel diseaseModel);
+    void createDiseaseModel(DiseaseAnnotation diseaseAnnotation);
 
     /**
      * Retrieve publications that refer to a given fish
@@ -423,10 +422,10 @@ public interface MutantRepository {
     /**
      * Retrieve Disease Model by composite index: (disease term, pubID,Evidence code)
      *
-     * @param diseaseModel
+     * @param diseaseAnnotation
      * @return
      */
-    DiseaseModel getDiseaseModel(DiseaseModel diseaseModel);
+    DiseaseAnnotation getDiseaseModel(DiseaseAnnotation diseaseAnnotation);
 
     /**
      * Retrieve disease model by ID
@@ -434,14 +433,14 @@ public interface MutantRepository {
      * @param id
      * @return
      */
-    DiseaseModel getDiseaseModelByID(long id);
+    DiseaseAnnotation getDiseaseModelByID(String zdbID);
 
     /**
      * Remove a disease model
      *
-     * @param diseaseModel
+     * @param diseaseAnnotation
      */
-    void deleteDiseaseModel(DiseaseModel diseaseModel);
+    void deleteDiseaseModel(DiseaseAnnotation diseaseAnnotation);
 
     /**
      * Retrieve disease / fish model by fish ID and pub.
@@ -450,7 +449,7 @@ public interface MutantRepository {
      * @param pubID  pubID
      * @return
      */
-    List<DiseaseModel> getDiseaseModel(String fishID, String pubID);
+    List<DiseaseAnnotation> getDiseaseModel(String fishID, String pubID);
 
     /**
      * Retrieve all fish with a given SequenceTargetingReagent

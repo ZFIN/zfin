@@ -33,16 +33,30 @@
                     <zfin:link entity="${disease.disease}"/>
                 </zfin:groupByDisplay>
             </td>
+            <c:choose>
+            <c:when test="${not empty disease.diseaseAnnotationModel}">
+
+            <c:forEach var="diseaseAnnos" items="${disease.diseaseAnnotationModel}" varStatus="loop">
+
             <td>
-                <c:if test="${not empty disease.fishExperiment }">
-                    <zfin:link entity="${disease.fishExperiment.fish}"/>
-                </c:if>
+
+                    <zfin:link entity="${diseaseAnnos.fishExperiment.fish}"/>
+
             </td>
             <td>
-                <c:if test="${not empty disease.fishExperiment }">
-                    <zfin:link entity="${disease.fishExperiment.experiment}"/>
-                </c:if>
+
+                    <zfin:link entity="${diseaseAnnos.fishExperiment.experiment}"/>
+
             </td>
+
+            </c:forEach>
+            </c:when>
+                <c:otherwise>
+                    <td></td>
+                    <td></td>
+                </c:otherwise>
+            </c:choose>
+
             <td>${disease.evidenceCode}</td>
         </zfin:alternating-tr>
     </c:forEach>

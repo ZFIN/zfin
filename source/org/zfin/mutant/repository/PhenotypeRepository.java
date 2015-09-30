@@ -242,21 +242,22 @@ public interface PhenotypeRepository {
      * @param publicationID
      * @return
      */
-    List<DiseaseModel> getHumanDiseaseModels(String publicationID);
+    List<DiseaseAnnotation> getHumanDiseaseModels(String publicationID);
 
     /**
      * Retrieve disease model list by fish id.
      * @param zdbID
      * @return
      */
-    List<DiseaseModel> getHumanDiseaseModelsByFish(String zdbID);
+    List<DiseaseAnnotation> getHumanDiseaseModelsByFish(String zdbID);
 
     /**
      * Retrieve disease models by disease
      * @param disease
      * @return
      */
-    List<DiseaseModel> getHumanDiseaseModels(GenericTerm disease);
+    //List<DiseaseAnnotation> getHumanDiseaseModels(GenericTerm disease);
+    List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease);
 
     /**
      * Retrieve phenotype statements (clean and dirty) for a given sequence targeting reagent.

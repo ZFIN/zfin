@@ -14,8 +14,6 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.database.InformixUtil;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
@@ -31,10 +29,9 @@ import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.orthology.Species;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
@@ -196,11 +193,11 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         }
 
         // if a fish
-        List<DiseaseModel> diseaseModelList = getMutantRepository().getDiseaseModel(zdbID, pubZdbID);
-        if (diseaseModelList != null) {
-            for (DiseaseModel model : diseaseModelList) {
-                if (model.getFishExperiment() != null)
-                    return createMessage(model.getFishExperiment().getFish().getName(), "has a fishmodel");
+        List<DiseaseAnnotation> diseaseAnnotationList = getMutantRepository().getDiseaseModel(zdbID, pubZdbID);
+        if (diseaseAnnotationList != null) {
+            for (DiseaseAnnotation model : diseaseAnnotationList) {
+               /* if (model.getDiseaseAnnotationModel() != null)
+                    return createMessage(model.getEntityName(), "has a fishmodel");*/
             }
             return null;
         }
@@ -1191,8 +1188,8 @@ markerRelationship.setFirstMarker(markerRepository.getMarkerByID(constructDTO.ge
         }
         if (ActiveData.Type.FISH.equals(ActiveData.getType(entityID))) {
             Fish fish = getMutantRepository().getFish(entityID);
-            List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID);
-            if (CollectionUtils.isNotEmpty(diseaseModelList)) {
+            List<DiseaseAnnotation> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(entityID);
+            if (CollectionUtils.isNotEmpty(diseaseAnnotationList)) {
                 throw new DeAttributionException("Cannot remove attribution as there is human disease data associated to this fish");
             }
             long phenotypeStatementsCount = getMutantRepository().getPhenotypeByFishAndPublication(fish, publicationID);

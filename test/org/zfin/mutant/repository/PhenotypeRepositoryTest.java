@@ -445,22 +445,22 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
 
     @Test
     public void getHumanDiseaseModels() {
-        List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModels("ZDB-PUB-990507-16");
-        assertNotNull(diseaseModels);
+        List<DiseaseAnnotation> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels("ZDB-PUB-990507-16");
+        assertNotNull(diseaseAnnotations);
     }
 
     @Test
     public void getHumanDiseaseModelsByFish() {
         String fishID = "ZDB-FISH-150901-19447";
-        List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishID);
-        assertNotNull(diseaseModels);
+        List<DiseaseAnnotation> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(fishID);
+        assertNotNull(diseaseAnnotations);
     }
 
     @Test
     public void getHumanDiseaseModelsByDisease() {
         //ABCD syndrome
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:0050600");
-        List<DiseaseModel> diseaseModels = getPhenotypeRepository().getHumanDiseaseModels(disease);
-        assertNotNull(diseaseModels);
+        List<DiseaseAnnotation> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        assertNotNull(diseaseAnnotations);
     }
 }

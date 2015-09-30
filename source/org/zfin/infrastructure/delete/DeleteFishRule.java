@@ -3,9 +3,8 @@ package org.zfin.infrastructure.delete;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
-import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
@@ -28,9 +27,9 @@ public class DeleteFishRule extends AbstractDeleteEntityRule implements DeleteEn
         if (CollectionUtils.isNotEmpty(publicationList) && publicationList.size() > 1) {
             addToValidationReport(fish.getAbbreviation() + " associated with more than one publication: ", publicationList);
         }
-        List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModelsByFish(zdbID);
-        if (CollectionUtils.isNotEmpty(diseaseModelList) ) {
-            addToValidationReport(fish.getAbbreviation() + " associated with : "+diseaseModelList.size()+" disease model(s)", diseaseModelList);
+        List<DiseaseAnnotation> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModelsByFish(zdbID);
+        if (CollectionUtils.isNotEmpty(diseaseAnnotationList) ) {
+            addToValidationReport(fish.getAbbreviation() + " associated with : "+ diseaseAnnotationList.size()+" disease model(s)", diseaseAnnotationList);
         }
         List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getMutantRepository().getPhenotypeStatementsByFish(fish);
         // Can't delete a genotype if it has phenotypes associated

@@ -9,15 +9,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.DiseaseModel;
+import org.zfin.mutant.DiseaseAnnotation;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.PhenotypeService;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -92,8 +89,8 @@ public class PublicationViewController {
         model.addAttribute("orthologyCount", orthologyCount);
         model.addAttribute("mappingDetailsCount", mappingDetailsCount);
 
-        List<DiseaseModel> diseaseModelList = getPhenotypeRepository().getHumanDiseaseModels(zdbID);
-        model.addAttribute("diseaseCount", diseaseModelList.size());
+        List<DiseaseAnnotation> diseaseAnnotationList = getPhenotypeRepository().getHumanDiseaseModels(zdbID);
+        model.addAttribute("diseaseCount", diseaseAnnotationList.size());
 
         model.addAttribute("expressionAndPhenotypeLabel", PublicationService.getExpressionAndPhenotypeLabel(expressionCount, phenotypeCount));
 
@@ -106,7 +103,7 @@ public class PublicationViewController {
                     antibodyCount, efgCount,
                     cloneProbeCount, expressionCount,
                     phenotypeCount, phenotypeAlleleCount,featureCount,
-                    fishCount,orthologyCount,new Long( diseaseModelList.size())
+                    fishCount,orthologyCount,new Long( diseaseAnnotationList.size())
             ));
         } else {
             model.addAttribute("showAdditionalData", false);

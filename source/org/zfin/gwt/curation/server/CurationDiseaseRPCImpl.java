@@ -8,7 +8,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.ExternalNote;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.curation.dto.DiseaseModelDTO;
+import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -282,31 +282,57 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public List<DiseaseModelDTO> getHumanDiseaseModelList(String publicationID) throws TermNotFoundException {
+    public List<DiseaseAnnotationDTO> getHumanDiseaseModelList(String publicationID) throws TermNotFoundException {
         return PhenotypeService.getDiseaseModelDTOs(publicationID);
     }
 
     @Override
-    public List<DiseaseModelDTO> addHumanDiseaseModel(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException {
-        HibernateUtil.createTransaction();
-        DiseaseModel diseaseModel = null;
-        try {
-            diseaseModel = DTOConversionService.convertToDiseaseFromDiseaseDTO(diseaseModelDTO);
-            getMutantRepository().createDiseaseModel(diseaseModel);
-            HibernateUtil.flushAndCommitCurrentSession();
-        } catch (ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            if (diseaseModel != null)
-                throw new TermNotFoundException("Could not insert fish model [" + diseaseModel + "] as it already exists.");
-            else
-                throw new TermNotFoundException("Could not insert fish model");
+    public List<DiseaseAnnotationDTO> addHumanDiseaseAnnotation(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException {
 
-        } catch (Exception e) {
+        DiseaseAnnotation diseaseAnnotation = null;
+        DiseaseAnnotationModel dam = null;
+        try {
+            HibernateUtil.createTransaction();
+            diseaseAnnotation = DTOConversionService.convertToDiseaseFromDiseaseDTO(diseaseAnnotationDTO);
+            getMutantRepository().createDiseaseModel(diseaseAnnotation);
+            DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
+            //HibernateUtil.flushAndCommitCurrentSession();
+
+            if (diseaseAnnotationDTO.getFish() != null && diseaseAnnotationDTO.getFish().getZdbID() != null) {
+                dam.setDiseaseAnnotation(existingDiseaseAnnotation);
+                dam = DTOConversionService.convertToDiseaseModelFromDiseaseDTO(diseaseAnnotationDTO);
+          //  HibernateUtil.createTransaction();
+                FishExperiment existingModel = getMutantRepository().getFishModel(dam.getFishExperiment().getFish().getZdbID(),
+                        dam.getFishExperiment().getExperiment().getZdbID());
+                if (existingModel == null) {
+              //      dam.setDiseaseAnnotation(existingDiseaseAnnotation);
+                    HibernateUtil.currentSession().save(dam.getFishExperiment());
+                } else {
+                    dam.setFishExperiment(existingModel);
+                }
+
+                HibernateUtil.currentSession().save(dam);
+
+            }
+
+            HibernateUtil.flushAndCommitCurrentSession();
+        }catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+           if (dam==null){
+                if (diseaseAnnotation != null)
+                    throw new TermNotFoundException("Could not insert fish model [" + diseaseAnnotation + "] as it already exists.");
+                else
+                    throw new TermNotFoundException("Could not insert fish model");
+
+        }}
+        catch (Exception e) {
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
-        }
-        return getHumanDiseaseModelList(diseaseModelDTO.getPublication().getZdbID());
+        }return getHumanDiseaseModelList(diseaseAnnotationDTO.getPublication().getZdbID());
+
     }
+
+
 
     @Override
     public List<RelatedEntityDTO> getStrList(String publicationID) {
@@ -347,23 +373,23 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public List<DiseaseModelDTO> deleteDiseaseModel(DiseaseModelDTO diseaseModelDTO) throws TermNotFoundException {
-        if (diseaseModelDTO == null)
+    public List<DiseaseAnnotationDTO> deleteDiseaseModel(DiseaseAnnotationDTO diseaseAnnotationDTO) throws TermNotFoundException {
+        if (diseaseAnnotationDTO == null)
             throw new TermNotFoundException("No disease model found");
-        if (diseaseModelDTO.getPublication() == null || diseaseModelDTO.getPublication().getZdbID() == null)
+        if (diseaseAnnotationDTO.getPublication() == null || diseaseAnnotationDTO.getPublication().getZdbID() == null)
             throw new TermNotFoundException("No Publication found");
 
         Transaction tx = HibernateUtil.currentSession().beginTransaction();
         try {
-            DiseaseModel diseaseModel = getMutantRepository().getDiseaseModelByID(diseaseModelDTO.getID());
-            if (diseaseModel == null)
+            DiseaseAnnotation diseaseAnnotation = getMutantRepository().getDiseaseModelByID(diseaseAnnotationDTO.getZdbID());
+            if (diseaseAnnotation == null)
                 throw new TermNotFoundException("No disease model found ");
-            getMutantRepository().deleteDiseaseModel(diseaseModel);
+            getMutantRepository().deleteDiseaseModel(diseaseAnnotation);
             tx.commit();
         } catch (HibernateException e) {
             tx.rollback();
         }
-        return getHumanDiseaseModelList(diseaseModelDTO.getPublication().getZdbID());
+        return getHumanDiseaseModelList(diseaseAnnotationDTO.getPublication().getZdbID());
     }
 
 }
