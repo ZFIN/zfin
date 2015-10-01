@@ -79,11 +79,11 @@ create procedure regen_names_marker_list()
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
         rgnallnm_precedence, rgnallnm_name_lower )
-    select distinct dblink_acc_num, c_gene_id, nameSignificance, 
-                    namePrecedence, lower(dblink_acc_num)
-      from db_link, orthologue, regen_zdb_id_temp
-      where dblink_linked_recid = orthologue.zdb_id
-        and c_gene_id = rgnz_zdb_id;
+    select distinct oef_accession_number, ortho_gene_zdb_id, nameSignificance, 
+                    namePrecedence, lower(oef_accession_number)
+      from ortholog_external_reference, ortholog, regen_zdb_id_temp
+      where oef_ortho_zdb_id = ortho_zdb_id
+        and ortho_gene_zdb_id = rgnz_zdb_id;
 
 
 
@@ -106,22 +106,23 @@ create procedure regen_names_marker_list()
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
 	rgnallnm_precedence, rgnallnm_name_lower )
-    select distinct ortho_abbrev, c_gene_id, nameSignificance, namePrecedence,
-	     lower(ortho_abbrev)
-      from orthologue, regen_zdb_id_temp
-      where ortho_abbrev is not null
-        and c_gene_id = rgnz_zdb_id;
+    select distinct noi_symbol, ortho_gene_zdb_id, nameSignificance, namePrecedence,
+	     lower(ortho_symbol)
+      from ortholog, ncbi_ortholog, regen_zdb_id_temp
+      where noi_symbol is not null
+        and ortho_gene_zdb_id = rgnz_zdb_id
+	and noi_ncbi_gene_id = ortho_ncbi_gene_id;
 
 
   insert into regen_all_names_temp
       ( rgnallnm_name, rgnallnm_zdb_id, rgnallnm_significance,
 	rgnallnm_precedence, rgnallnm_name_lower )
-    select distinct ortho_name, c_gene_id allmapnm_zdb_id, nameSignificance,
-                    namePrecedence, lower(ortho_name)
-      from orthologue, regen_zdb_id_temp
-      where ortho_name is not null
-        and ortho_abbrev <> ortho_name
-        and c_gene_id = rgnz_zdb_id;
+    select distinct noi_name, ortho_gene_zdb_id allmapnm_zdb_id, nameSignificance,
+                    namePrecedence, lower(noi_name)
+      from ortholog, ncbi_ortholog, regen_zdb_id_temp
+      where noi_name is not null
+        and noi_ncbi_gene_id = ortho_ncbi_gene_id
+        and ortho_gene_zdb_id = rgnz_zdb_id;
 
 
   -- -------------------------------------------------------------------

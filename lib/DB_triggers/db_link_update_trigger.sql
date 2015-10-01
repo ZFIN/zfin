@@ -13,11 +13,6 @@ create trigger db_link_update_trigger
 	new_db_link.dblink_acc_num) 
       into db_link.dblink_acc_num_display,
 
-    execute procedure 
-      p_one_ortho_per_db(
-	new_db_link.dblink_fdbcont_zdb_id,
-	new_db_link.dblink_linked_recid),
- 
    execute procedure 
       p_dblink_has_parent(
 	new_db_link.dblink_linked_recid),

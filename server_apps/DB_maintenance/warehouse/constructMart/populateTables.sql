@@ -150,7 +150,7 @@ select * from construct_gene_feature_result_view_temp
 
 
 update construct_gene_feature_result_view_temp
-  set cgfrv_lab_of_origin = (Select ids_source_zdb_id from int_data_source
+  set cgfrv_lab_of_origin = (Select distinct ids_source_zdb_id from int_data_source
       			    	    where ids_data_zdb_id = cgfrv_feature_zdb_id);
 
 
