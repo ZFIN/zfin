@@ -295,23 +295,26 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             HibernateUtil.createTransaction();
             diseaseAnnotation = DTOConversionService.convertToDiseaseFromDiseaseDTO(diseaseAnnotationDTO);
             getMutantRepository().createDiseaseModel(diseaseAnnotation);
-            DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
-            //HibernateUtil.flushAndCommitCurrentSession();
+
+            String daZDB=diseaseAnnotation.getZdbID();
 
             if (diseaseAnnotationDTO.getFish() != null && diseaseAnnotationDTO.getFish().getZdbID() != null) {
-                dam.setDiseaseAnnotation(existingDiseaseAnnotation);
+               // dam.setDiseaseAnnotation(getMutantRepository().getDiseaseModelByID(daZDB));
+
                 dam = DTOConversionService.convertToDiseaseModelFromDiseaseDTO(diseaseAnnotationDTO);
-          //  HibernateUtil.createTransaction();
+
                 FishExperiment existingModel = getMutantRepository().getFishModel(dam.getFishExperiment().getFish().getZdbID(),
                         dam.getFishExperiment().getExperiment().getZdbID());
                 if (existingModel == null) {
-              //      dam.setDiseaseAnnotation(existingDiseaseAnnotation);
+
                     HibernateUtil.currentSession().save(dam.getFishExperiment());
+
                 } else {
                     dam.setFishExperiment(existingModel);
                 }
-
+dam.setDiseaseAnnotation(diseaseAnnotation);
                 HibernateUtil.currentSession().save(dam);
+
 
             }
 

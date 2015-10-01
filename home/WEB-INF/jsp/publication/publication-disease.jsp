@@ -32,7 +32,7 @@
 
                     <zfin:link entity="${disease.disease}"/>
                 </zfin:groupByDisplay>
-            </td>
+
             <c:choose>
             <c:when test="${not empty disease.diseaseAnnotationModel}">
 
@@ -51,12 +51,9 @@
 
             </c:forEach>
             </c:when>
-                <c:otherwise>
-                    <td></td>
-                    <td></td>
-                </c:otherwise>
-            </c:choose>
 
+            </c:choose>
+            </td>
             <td>${disease.evidenceCode}</td>
         </zfin:alternating-tr>
     </c:forEach>

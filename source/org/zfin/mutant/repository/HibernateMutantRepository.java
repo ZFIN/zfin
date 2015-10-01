@@ -1499,7 +1499,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 diseaseAnnotation.setFishExperiment(existingModel);
             }
         }*/
-         DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
+       //  DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
     }
 
     @Override

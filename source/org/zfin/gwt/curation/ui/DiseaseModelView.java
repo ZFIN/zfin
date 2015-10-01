@@ -1,5 +1,6 @@
 package org.zfin.gwt.curation.ui;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -78,7 +79,7 @@ public class DiseaseModelView extends Composite {
         if (modelDTOList != null) {
             for (DiseaseAnnotationDTO diseaseModel : modelDTOList) {
 
-                if (diseaseModel.getDamoDTO() != null) {
+                if (!diseaseModel.getDamoDTO().isEmpty()) {
 
                     for (DiseaseAnnotationModelDTO damo : diseaseModel.getDamoDTO()) {
 int colIndex=0;
@@ -108,12 +109,13 @@ int colIndex=0;
                         //  deleteButton.setTitle("ID: " + diseaseModel.getID());
                         diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton);
                         groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
-                //        addConstructionRow(rowIndex);
+                //
                     }
                     addConstructionRow(rowIndex);
                 }
-                else
-                {
+
+                if (diseaseModel.getDamoDTO().isEmpty()){
+
                     int colIndex=2;
                     diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
                     diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
@@ -125,7 +127,7 @@ int colIndex=0;
                     diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
                     Button deleteButton = new Button("X");
                     deleteModeMap.put(deleteButton, diseaseModel);
-                    //  deleteButton.setTitle("ID: " + diseaseModel.getID());
+                    deleteButton.setTitle("ID: " + diseaseModel.getZdbID());
                     diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton);
                     groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
                     addConstructionRow(rowIndex);
@@ -142,6 +144,7 @@ int colIndex=0;
 
 
     private void addConstructionRow(int rowIndex) {
+
         int colIndex = 0;
         diseaseModelTable.setWidget(rowIndex, colIndex++, fishSelectionBox);
         diseaseModelTable.setWidget(rowIndex, colIndex++, environmentSelectionBox);
