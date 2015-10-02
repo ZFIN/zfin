@@ -82,7 +82,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         EBI_CELL("EBI-Cell"),
         EC("EC"),
         ENSEMBL("Ensembl"),
-        ENSEMBL_ZV9_("Ensembl(Zv9)"),
+        ENSEMBL_GRCZ10_("Ensembl(GRCz10)"),
         ENSEMBL_CLONE("Ensembl_Clone"),
         ENSEMBL_TRANS("Ensembl_Trans"),
         ENSEMBL_SNP("Ensembl_SNP"),

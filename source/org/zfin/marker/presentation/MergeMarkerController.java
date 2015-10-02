@@ -266,7 +266,7 @@ public class MergeMarkerController {
         } else if (db.equals("UniGene")) {
             return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.UNIGENE, marker);
         } else if (db.equals("EnsemblZV9")) {
-            return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.ENSEMBL_ZV9_, marker);
+            return RepositoryFactory.getSequenceRepository().getAccessionPresentation(ForeignDB.AvailableName.ENSEMBL_GRCZ10_, marker);
         } else if (db.equals("Vega")) {
             List<Marker> transcripts = RepositoryFactory.getMarkerRepository().getSecondMarkersByFirstMarkerAndMarkerRelationshipType(marker, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
 
