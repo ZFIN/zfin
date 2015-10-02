@@ -299,7 +299,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             String daZDB=diseaseAnnotation.getZdbID();
 
             if (diseaseAnnotationDTO.getFish() != null && diseaseAnnotationDTO.getFish().getZdbID() != null) {
-               // dam.setDiseaseAnnotation(getMutantRepository().getDiseaseModelByID(daZDB));
+                // dam.setDiseaseAnnotation(getMutantRepository().getDiseaseModelByID(daZDB));
 
                 dam = DTOConversionService.convertToDiseaseModelFromDiseaseDTO(diseaseAnnotationDTO);
 
@@ -312,13 +312,16 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 } else {
                     dam.setFishExperiment(existingModel);
                 }
-dam.setDiseaseAnnotation(diseaseAnnotation);
+
+
+                DiseaseAnnotation existingDiseaseAnnotation = getMutantRepository().getDiseaseModel(diseaseAnnotation);
+                dam.setDiseaseAnnotation(existingDiseaseAnnotation);
+
                 HibernateUtil.currentSession().save(dam);
-
-
             }
+                HibernateUtil.flushAndCommitCurrentSession();
 
-            HibernateUtil.flushAndCommitCurrentSession();
+
         }catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
            if (dam==null){
