@@ -20,7 +20,9 @@ public class GBrowseImage {
     private final String highlightColor;
     private final boolean grid;
 
+    private String imageUrlBase;
     private String imageUrl;
+    private String linkUrlBase;
     private String linkUrl;
 
     public static GBrowseImageBuilder builder() {
@@ -33,11 +35,21 @@ public class GBrowseImage {
         this.highlightFeature = builder.highlightLandmark;
         this.highlightColor = builder.highlightColor;
         this.grid = builder.grid;
+
+        if (builder.getGenomeBuild() == GenomeBuild.ZV9) {
+            linkUrlBase = ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT.toString();
+            imageUrlBase= ZfinPropertiesEnum.GBROWSE_ZV9_IMG_PATH_FROM_ROOT.toString();
+        } else {
+            linkUrlBase = ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.toString();
+            imageUrlBase= ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.toString();
+        }
+
+
     }
 
     public String getImageUrl() {
         if (imageUrl == null) {
-            URLCreator url = new URLCreator(ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.toString());
+            URLCreator url = new URLCreator(imageUrlBase);
 
             if (StringUtils.isNotBlank(landmark)) {
                 url.addNamevaluePair("name", landmark);
@@ -61,7 +73,7 @@ public class GBrowseImage {
 
     public String getLinkUrl() {
         if (linkUrl == null) {
-            URLCreator url = new URLCreator(ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT.toString());
+            URLCreator url = new URLCreator(linkUrlBase);
 
             if (StringUtils.isNotBlank(landmark)) {
                 url.addNamevaluePair("name", landmark);
@@ -115,6 +127,8 @@ public class GBrowseImage {
 
     public static class GBrowseImageBuilder {
 
+        private GenomeBuild genomeBuild;
+
         private String landmark;
         private Collection<GBrowseTrack> tracks;
         private String highlightLandmark;
@@ -142,6 +156,11 @@ public class GBrowseImage {
                 highlightLandmark = highlightString;
             }
 
+            if (genomeBuild == null) {
+                genomeBuild = GenomeBuild.CURRENT;
+            }
+
+
             // setup range
             if (landmarkLocation != null) {
                 start = landmarkLocation.getStart();
@@ -164,6 +183,14 @@ public class GBrowseImage {
             }
 
             return new GBrowseImage(this);
+        }
+
+        public GenomeBuild getGenomeBuild() {
+            return genomeBuild;
+        }
+
+        public void setGenomeBuild(GenomeBuild genomeBuild) {
+            this.genomeBuild = genomeBuild;
         }
 
         public GBrowseImageBuilder landmark(String landmark) {
@@ -231,4 +258,19 @@ public class GBrowseImage {
         }
 
     }
+
+    public enum GenomeBuild {
+        ZV9("Zv9"),
+        CURRENT("GRCz10");
+
+        private final String value;
+
+        GenomeBuild(String value) {
+            this.value = value;
+        }
+
+        public String getValue() { return value; }
+    }
+
+
 }

@@ -3,7 +3,7 @@
 <i class="fa fa-spinner fa-spin" id="loading"></i>
 
 <%-- this should be the only place that the raw gbrowse url is used --%>
-<iframe src="/gb2/gbrowse/zfin_ensembl?${requestParams}" width="100%"
+<iframe src="${urlPrefix}?${requestParams}" width="100%"
         id="gbrowseFrame" marginheight="0" frameborder="0"></iframe>
 
 <script>

@@ -357,7 +357,7 @@ public class RelatedDataService {
             if (numberOfTargetGenes > 1)
                 return null;
         }
-        return "<a href=\"" + "/" + ZfinPropertiesEnum.GBROWSE_PATH_FROM_ROOT + "?name=" + id + "\">Genome Browser</a>";
+        return "<a href=\"" + "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id + "\">Genome Browser</a>";
     }
 
 

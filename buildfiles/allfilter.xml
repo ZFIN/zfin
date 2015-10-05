@@ -59,6 +59,8 @@
 <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
 <filter token="GBROWSE_IMG_PATH_FROM_ROOT" value="${GBROWSE_IMG_PATH_FROM_ROOT}"/>
 <filter token="GBROWSE_PATH_FROM_ROOT" value="${GBROWSE_PATH_FROM_ROOT}"/>
+<filter token="GBROWSE_ZV9_IMG_PATH_FROM_ROOT" value="${GBROWSE_ZV9_IMG_PATH_FROM_ROOT}"/>
+<filter token="GBROWSE_ZV9_PATH_FROM_ROOT" value="${GBROWSE_ZV9_PATH_FROM_ROOT}"/>
 <filter token="GC_LOGGING_OPTS" value="${GC_LOGGING_OPTS}"/>
 <filter token="GENBANK_DAILY_EMAIL" value="${GENBANK_DAILY_EMAIL}"/>
 <filter token="GOOGLE_ANALYTICS_ID" value="${GOOGLE_ANALYTICS_ID}"/>

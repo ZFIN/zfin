@@ -147,14 +147,14 @@ $(TARGETDIR)/gather_alias.awk
 #	cd $(STORE) && nice +10 /opt/misc/bowtie/bowtie-build --big -f $< $@
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-BOWTIE_E_IDX = $(GLOBALSTORE)/Ensembl_Zv9.78
+BOWTIE_E_IDX = $(GLOBALSTORE)/Ensembl_GRCz10.81
 BOWTIE_V_IDX = $(GLOBALSTORE)/VEGA45_LG_DNA
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # BUILD BOWTIE v2 INDEX
 
-bowtie2_idx_E: $(STORE)/Danio_rerio.Zv9.78.dna.toplevel.fa
-	@cd $(STORE) && /home/pkalita/bowtie2-2.2.4/bowtie2-build -f $< $(BOWTIE_E_IDX)
+bowtie2_idx_E: $(STORE)/Danio_rerio.GRCz10.81.dna.toplevel.fa
+	@cd $(STORE) && /opt/misc/bowtie2/bowtie2-build -f $< $(BOWTIE_E_IDX)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
