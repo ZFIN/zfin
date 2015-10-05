@@ -1,13 +1,8 @@
 #!/private/bin/perl
 
 # NCBIorthology.pl
-# First, the script downloads the following NCBI data files:
-# ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz
-# ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz
-# ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Invertebrates/Drosophila_melanogaster.gene_info.gz
 # The script then parses data in the above files and store related data in a series of data structures and then compare data stored at ZFIN to decide what
-# should be updated. Updating the orthology name would be done automatically by calling updateOrthologyNames.sql. Report of zebrafish names that may be updated 
-# is generated and emailed to Ken, who will update the zebrafish names in place on the report. Then that report will be used by another script, updateZebrafishGeneNames.pl.
+# should be updated. 
 
 use DBI;
 
@@ -86,6 +81,7 @@ while (<NCBI>) {
   $taxId = $fieldsNCBI[0];
   
   ## excluding species other than human, mouse, fly and the documentation lines
+  ## this line does not actually work -- it only parses the first taxId...
   next if $taxId ne "9606" and $taxId ne "10090" and $taxId ne "7227";
   
   $ctLines++;
@@ -460,7 +456,7 @@ close(LOG);
 #$subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for renaming";
 #ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","inconsistentZebrafishGeneNamesReport");
 
-system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/ORTHO/");
+system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/Orthology/");
 
  return() ;
 }
