@@ -12,8 +12,11 @@ $ENV{"ONCONFIG"}="<!--|ONCONFIG_FILE|-->";
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dbname = "<!--|DB_NAME|-->";
-open LOG, '>', "logOrthologyUpdateName" or die "can not open logOrthologyUpdateName: $! \n";
 
+
+
+sub downloadFiles() {
+open LOG, '>', "logOrthologyUpdateName" or die "can not open logOrthologyUpdateName: $! \n";
 
 ## clean up after last run of this script
 doSystemCommand("/bin/rm -f logOrthologyUpdateName");
@@ -45,7 +48,9 @@ doSystemCommand("/local/bin/gunzip Drosophila_melanogaster.gene_info.gz");
 
 doSystemCommand("/bin/cat Mus_musculus.gene_info >> ortholog_info");
 doSystemCommand("/bin/cat Drosophila_melanogaster.gene_info >> ortholog_info");
+return ();
 
+}
 
 sub doSystemCommand {
 

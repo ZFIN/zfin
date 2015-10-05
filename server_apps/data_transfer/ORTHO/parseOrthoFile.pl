@@ -13,6 +13,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dbname = "<!--|DB_NAME|-->";
 
+sub parseOrthoFiles() {
 system("rm -rf <!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt");
 open (NCBI, "<!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/ortholog_info") ||  die "Cannot open ortholog_info : $!\n";
 open PARSED, "><!--|TARGETROOT|-->/server_apps/data_transfer/ORTHO/parsedOrthos.txt" or die "Cannot open parsed ortho file : $!\n" ;
@@ -57,3 +58,6 @@ print LOG "\ntotal number of lines parsed: $ctLines\nnumber of human genes: $ctH
 close(PARSED);
 
 close(NCBI);
+
+return();
+}

@@ -23,48 +23,35 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dbname = "<!--|DB_NAME|-->";
 
-system("/bin/rm -f logOrthologyUpdateName");
-system("/bin/rm -f orthNamesUpdatedReport");
-system("/bin/rm -f updateGeneNamesReport");
-system("/bin/rm -f inconsistentZebrafishGeneNamesReport");
-system("/bin/rm -f ncbiIdsNotFoundReport");
-system("/bin/rm -f orthNamesUpdateList.unl");
-system("/bin/rm -f updateOrthologyNameSQLlog1");
-system("/bin/rm -f updateOrthologyNameSQLlog2");
+sub nameCheck() {
 
-system("rm -f Homo_sapiens.gene_info.gz");
-system("/bin/rm -f Homo_sapiens.gene_info");
-system("/bin/rm -f Mus_musculus.gene_info");
-system("/bin/rm -f Drosophila_melanogaster.gene_info");
+    
+    &doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
+    
+    open (ALREADY, "alreadyExamined") ||  die "Cannot open alreadyExamined : $!\n";
 
-open LOG, '>', "logOrthologyUpdateName" or die "can not open logOrthologyUpdateName: $! \n";
-
-&doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
-
-open (ALREADY, "alreadyExamined") ||  die "Cannot open alreadyExamined : $!\n";
-
-@linesAlreadyDone = <ALREADY>;
-
-close(ALREADY);
-
-$ctAlready = 0;
-
+    @linesAlreadyDone = <ALREADY>;
+    
+    close(ALREADY);
+    
+    $ctAlready = 0;
+    
 # Use the following hash to store the gene records already examined
-
+    
 # %zdbGeneIdsAlreadyExamined
 # key: ZDB gene ID
 # value: gene symbol
+    
+    %zdbGeneIdsAlreadyExamined = ();
 
-%zdbGeneIdsAlreadyExamined = ();
-
-foreach $line (@linesAlreadyDone) {
-       
-  if ($line =~ m/(ZDB\-GENE\-\d{6}\-\d+)\s+([a-zA-Z0-9_]+)/) {
-      $zdbGeneIdsAlreadyExamined{$1} = $2;
-      $ctAlready++; 
-  } 
-  
-}
+    foreach $line (@linesAlreadyDone) {
+	
+	if ($line =~ m/(ZDB\-GENE\-\d{6}\-\d+)\s+([a-zA-Z0-9_]+)/) {
+	    $zdbGeneIdsAlreadyExamined{$1} = $2;
+	    $ctAlready++; 
+	} 
+	
+    }
 
 # Use the following 3 hashes to store the human, mouse and fly gene names parsed from NCBI data files
 
@@ -95,9 +82,9 @@ while (<NCBI>) {
   chomp;
   
   @fieldsNCBI = split("\t");
-
+  
   $taxId = $fieldsNCBI[0];
-    
+  
   ## excluding species other than human, mouse, fly and the documentation lines
   next if $taxId ne "9606" and $taxId ne "10090" and $taxId ne "7227";
   
@@ -164,6 +151,7 @@ $password = "";
 $dbh = DBI->connect ("DBI:Informix:$dbname", $username, $password) 
     or die "Cannot connect to Informix database: $DBI::errstr\n";
 
+### needs to change to conform to new schema.
 $sqlGetZFgeneNamesByHumanAndMouseOrth =
 'select distinct organism,ortho_name,ortho_abbrev,dblink_acc_num,c_gene_id,mrkr_abbrev,mrkr_name ' . 
   'from db_link,orthologue,marker ' . 
@@ -473,8 +461,8 @@ ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$sub
 
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/ORTHO/");
 
-exit;
-
+ return() ;
+}
 
 sub doSystemCommand {
 
