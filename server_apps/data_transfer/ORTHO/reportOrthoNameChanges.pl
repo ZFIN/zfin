@@ -23,7 +23,7 @@ $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
 
 $dbname = "<!--|DB_NAME|-->";
 
-sub nameCheck() {
+sub reportOrthoNameChanges() {
 
     
     &doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
@@ -439,25 +439,26 @@ close(PREVIOUSLYREPORTED);
 
 close(LOG);
 
-$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> updateOrthologyNames.sql >updateOrthologyNameSQLlog1 2> updateOrthologyNameSQLlog2";
-&doSystemCommand($cmd);
+##this is taken care of in the bulk name/chromosome/position/accessionnumber update.
+##$cmd = "$ENV{'INFORMIXDIR'}/bin/dbaccess -a <!--|DB_NAME|--> updateOrthologyNames.sql >updateOrthologyNameSQLlog1 2> updateOrthologyNameSQLlog2";
+##&doSystemCommand($cmd);
+#&doSystemCommand("/bin/cat updateOrthologyNameSQLlog2 >> updateOrthologyNameSQLlog1");
+#$subject = "Auto from $dbname: " . "NCBIorthology.pl :: updateOrthologyNameSQLlog";
+#ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","updateOrthologyNameSQLlog1");
 
-&doSystemCommand("/bin/cat updateOrthologyNameSQLlog2 >> updateOrthologyNameSQLlog1");
 
-$subject = "Auto from $dbname: " . "NCBIorthology.pl :: updateOrthologyNameSQLlog";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","updateOrthologyNameSQLlog1");
+### These should all just be artifacts in jenkins job.  Commenting out for now.
+#$subject = "Auto from $dbname: " . "update.pl :: updateOrthologyNamePerlLog";
+#ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","logOrthologyUpdateName");
 
-$subject = "Auto from $dbname: " . "NCBIorthology.pl :: updateOrthologyNamePerlLog";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","logOrthologyUpdateName");
+#$subject = "Auto from $dbname: " . "$ctUpdatedOrthNames orthologue names have been updated by the script";
+#ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","orthNamesUpdatedReport") if $ctUpdatedOrthNames > 0;
 
-$subject = "Auto from $dbname: " . "$ctUpdatedOrthNames orthologue names have been updated by the script";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","orthNamesUpdatedReport") if $ctUpdatedOrthNames > 0;
+#$subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for updating";
+#ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","inconsistentZebrafishGeneNamesReport") if $ctDiffrentZFgeneNames > 0;
 
-$subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for updating";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|VALIDATION_EMAIL_GENE|-->","$subject","inconsistentZebrafishGeneNamesReport") if $ctDiffrentZFgeneNames > 0;
-
-$subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for renaming";
-ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","inconsistentZebrafishGeneNamesReport");
+#$subject = "Auto from $dbname: " . "$ctDiffrentZFgeneNames zebrafish gene names to be considered for renaming";
+#ZFINPerlModules->sendMailWithAttachedReport("<!--|SWISSPROT_EMAIL_ERR|-->","$subject","inconsistentZebrafishGeneNamesReport");
 
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/ORTHO/");
 

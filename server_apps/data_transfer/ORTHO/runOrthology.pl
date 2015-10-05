@@ -18,6 +18,6 @@ require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parseOrthoFile.pl")
 require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/downloadFiles.pl");
 &downloadFiles;
 &parseOrthoFiles;
-&nameCheck;
+&reportOrthoNameChanges;
 
 ;
