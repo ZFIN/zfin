@@ -112,7 +112,7 @@ delete from tmp_ortho_xref
  where fdbcont_id is null;
 
 unload to orthologExternalReferencesGoingAway.txt
- select ortho_zdb_id, ortho_symbol, oef_accession_number from ortholog, ortholog_external_references
+ select ortho_zdb_id, ortho_symbol, oef_accession_number from ortholog, ortholog_external_reference
    where ortho_zdb_id = oef_ortho_Zdb_id
    and not exists (Select 'x' from tmp_ortho_xref
        	   	  	  where oef_accession_number = xrefaccnum
