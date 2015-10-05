@@ -93,6 +93,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         GENPEPT("GenPept"),
         GEO("GEO"),
         HAMAP("HAMAP"),
+        HGNC("HGNC"),
         INTERPRO("InterPro"),
         MIRBASE_MATURE("miRBASE Mature"),
         MESH("MESH"),
