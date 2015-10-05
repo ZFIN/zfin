@@ -41,20 +41,6 @@ open LOG, '>', "logOrthologyUpdateName" or die "can not open logOrthologyUpdateN
 
 &doSystemCommand("scp /research/zarchive/load_files/Orthology/alreadyExamined <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/")  if (!-e "alreadyExamined");
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Homo_sapiens.gene_info.gz");
-&doSystemCommand("/local/bin/gunzip Homo_sapiens.gene_info.gz");
-
-
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Mammalia/Mus_musculus.gene_info.gz");
-&doSystemCommand("/local/bin/gunzip Mus_musculus.gene_info.gz");
-
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Invertebrates/Drosophila_melanogaster.gene_info.gz");
-&doSystemCommand("/local/bin/gunzip Drosophila_melanogaster.gene_info.gz");
-
-&doSystemCommand("/bin/cat Mus_musculus.gene_info >> Homo_sapiens.gene_info");
-
-&doSystemCommand("/bin/cat Drosophila_melanogaster.gene_info >> Homo_sapiens.gene_info");
-
 open (ALREADY, "alreadyExamined") ||  die "Cannot open alreadyExamined : $!\n";
 
 @linesAlreadyDone = <ALREADY>;
