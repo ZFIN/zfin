@@ -458,7 +458,6 @@ close(LOG);
 
 system("scp <!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/alreadyExamined /research/zarchive/load_files/Orthology/");
 
- return() ;
 }
 
 sub doSystemCommand {
