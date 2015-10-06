@@ -430,7 +430,7 @@ public interface MutantRepository {
     /**
      * Retrieve disease model by ID
      *
-     * @param id
+     * @param zdbID
      * @return
      */
     DiseaseAnnotation getDiseaseModelByID(String zdbID);
@@ -441,6 +441,20 @@ public interface MutantRepository {
      * @param diseaseAnnotation
      */
     void deleteDiseaseModel(DiseaseAnnotation diseaseAnnotation);
+    /**
+     * Retrieve disease model by ID
+     *
+     * @param id
+     * @return
+     */
+    DiseaseAnnotationModel getDiseaseAnnotationModelByID(Long id);
+
+    /**
+     * Remove a disease model
+     *
+     * @param diseaseAnnotationModel
+     */
+    void deleteDiseaseAnnotationModel(DiseaseAnnotationModel diseaseAnnotationModel);
 
     /**
      * Retrieve disease / fish model by fish ID and pub.

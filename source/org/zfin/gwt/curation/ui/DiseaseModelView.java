@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -68,6 +69,7 @@ public class DiseaseModelView extends Composite {
     }
 
     private Map<Button, DiseaseAnnotationDTO> deleteModeMap = new HashMap<>();
+    private Map<Button, DiseaseAnnotationModelDTO> deleteModeMap1 = new HashMap<>();
     private Map<Hyperlink, DiseaseAnnotationDTO> termLinkDiseaseModelMap = new HashMap<>();
 
     public void updateDiseaseModelTableContent(List<DiseaseAnnotationDTO> modelDTOList) {
@@ -75,14 +77,14 @@ public class DiseaseModelView extends Composite {
         initDiseaseModelTable();
         int groupIndex = 0;
         int rowIndex = 1;
+        int damoCount=0;
 
         if (modelDTOList != null) {
             for (DiseaseAnnotationDTO diseaseModel : modelDTOList) {
 
-                if (!diseaseModel.getDamoDTO().isEmpty()) {
-
+               if (diseaseModel.getDamoDTO()!= null) {
                     for (DiseaseAnnotationModelDTO damo : diseaseModel.getDamoDTO()) {
-int colIndex=0;
+                         int colIndex=0;
                         //if (diseaseModel.getFish() != null) {
                         //   Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(diseaseModel.getFish().getHandle()), "/" + diseaseModel.getFish().getZdbID());
                         Anchor fish = new Anchor(SafeHtmlUtils.fromTrustedString(damo.getFish().getHandle()), "/" + damo.getFish().getZdbID());
@@ -104,18 +106,18 @@ int colIndex=0;
                         termLinkDiseaseModelMap.put(disease, diseaseModel);
                         diseaseModelTable.setWidget(rowIndex, colIndex++, disease);
                         diseaseModelTable.setText(rowIndex, colIndex++, diseaseModel.getEvidenceCode());
-                        Button deleteButton = new Button("X");
-                        deleteModeMap.put(deleteButton, diseaseModel);
-                        //  deleteButton.setTitle("ID: " + diseaseModel.getID());
-                        diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton);
+                        Button deleteButton1 = new Button("X");
+
+                        deleteModeMap1.put(deleteButton1, damo);
+                        deleteButton1.setTitle("ID: " + damo.getDamoID());
+                        diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton1);
                         groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
                 //
                     }
                     addConstructionRow(rowIndex);
                 }
 
-                if (diseaseModel.getDamoDTO().isEmpty()){
-
+                else{
                     int colIndex=2;
                     diseaseModelTable.setText(rowIndex, colIndex, IS_A_MODEL_OF);
                     diseaseModelTable.getCellFormatter().setStyleName(rowIndex, colIndex++, "bold");
@@ -130,10 +132,9 @@ int colIndex=0;
                     deleteButton.setTitle("ID: " + diseaseModel.getZdbID());
                     diseaseModelTable.setWidget(rowIndex, colIndex, deleteButton);
                     groupIndex = diseaseModelTable.setRowStyle(rowIndex++, null, diseaseModel.getDisease().getZdbID(), groupIndex);
-                    addConstructionRow(rowIndex);
-
-                }
+                                    }
             }
+            addConstructionRow(rowIndex);
         }
     }
 
@@ -186,6 +187,9 @@ int colIndex=0;
 
     public Map<Button, DiseaseAnnotationDTO> getDeleteModeMap() {
         return deleteModeMap;
+    }
+    public Map<Button, DiseaseAnnotationModelDTO> getDeleteModeMap1() {
+        return deleteModeMap1;
     }
 
     public Map<Hyperlink, DiseaseAnnotationDTO> getTermLinkDiseaseModelMap() {

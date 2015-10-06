@@ -40,6 +40,7 @@
 
             <td>
 
+
                     <zfin:link entity="${diseaseAnnos.fishExperiment.fish}"/>
 
             </td>

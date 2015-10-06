@@ -460,7 +460,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     public void getHumanDiseaseModelsByDisease() {
         //ABCD syndrome
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:0050600");
-        List<DiseaseAnnotation> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease);
         assertNotNull(diseaseAnnotations);
     }
 }
